@@ -11,7 +11,7 @@ const schema = buildClientSchema(schemaData);
 
 describe('#parseQueryDocument()', () => {
   it('should parse a simple query document', () => {
-    const queryDocument = readFileSync(path.join(__dirname, './starwars/HeroName.graphql'));
+    const queryDocument = readFileSync(path.join(__dirname, './starwars/HeroName.graphql'), 'utf8');
 
     const definitions = parseQueryDocument(queryDocument, schema);
 
