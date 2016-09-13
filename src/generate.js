@@ -8,10 +8,7 @@ import {
 } from 'graphql';
 
 import parseQueryDocument from './parseQueryDocument'
-import {
-  generateSourceForQueryDefinition,
-  generateSourceForTypes
-} from './swift/codeGenerator'
+import SwiftCodeGenerator from './swift/codeGenerator'
 
 export default function generate(inputPaths, schemaPath, outputPath) {
   if (!fs.existsSync(schemaPath)) {
@@ -25,8 +22,7 @@ export default function generate(inputPaths, schemaPath, outputPath) {
 
   const schema = buildClientSchema(schemaData);
 
-  // Ensure output path exists, creating intermediate directories if needed
-  mkdirp.sync(outputPath);
+  const codeGenerator = new SwiftCodeGenerator();
 
   inputPaths.forEach(inputPath => {
     const queryDocument = fs.readFileSync(inputPath, 'utf8');
@@ -41,9 +37,7 @@ export default function generate(inputPaths, schemaPath, outputPath) {
         return;
       }
 
-      const source = generateSourceForQueryDefinition(definition);
-      const filePath = path.join(outputPath, `${definition.name}Query.swift`);
-      fs.writeFileSync(filePath, source);
+      codeGenerator.processQueryDefinition(definition);
     });
   });
 
@@ -59,7 +53,8 @@ export default function generate(inputPaths, schemaPath, outputPath) {
     }
   });
 
-  const source = generateSourceForTypes(typesUsed);
-  const filePath = path.join(outputPath, `Types.swift`);
-  fs.writeFileSync(filePath, source);
+  codeGenerator.processTypes(typesUsed);
+
+  const source = codeGenerator.generateSource();
+  fs.writeFileSync(outputPath, source);
 }
