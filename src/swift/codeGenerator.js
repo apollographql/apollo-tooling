@@ -11,8 +11,35 @@ import { GraphQLEnumType } from 'graphql';
 
 import { propertiesFromSelectionSet, typeNameFromGraphQLType } from './mapping'
 
-export function generateSourceForQueryDefinition(queryDefinition) {
-  return importDeclarations() + '\n\n' + classDefinition(queryDefinition) + '\n';
+export default class SwiftCodeGenerator {
+  constructor() {
+    this.typeDefinitions = [];
+    this.classDefinitions = [];
+  }
+
+  processQueryDefinition(queryDefinition) {
+    this.classDefinitions.push(wrap('\n', classDefinition(queryDefinition)));
+  }
+
+  processTypes(typesUsed) {
+    for (const type of typesUsed) {
+      if (type instanceof GraphQLEnumType) {
+        this.typeDefinitions.push(wrap('\n', enumerationDeclaration(type)));
+      }
+    }
+  }
+
+  generateSource() {
+    return join([
+      importDeclarations(),
+      wrap('\n', join(this.typeDefinitions, '\n')),
+      wrap('\n', join(this.classDefinitions, '\n'))
+    ]);
+  }
+}
+
+function generateSourceForQueryDefinition(queryDefinition) {
+  return classDefinition(queryDefinition) + '\n';
 }
 
 function importDeclarations() {
@@ -72,13 +99,13 @@ function structDeclaration({ name, properties = [] }) {
       `${property.name} = try map.${ property.isList ? 'list' : 'value' }(forKey: "${property.fieldName}")`));
 
   const compositeProperties = properties.filter(property => property.isComposite);
-  const nestedStructDeclarations = compositeProperties.map(property => structDeclaration(property.typeDeclaration) );
+  const nestedStructDeclarations = compositeProperties.map(property => wrap('\n', structDeclaration(property.typeDeclaration)) );
 
   return `public struct ${name}: GraphQLMapConvertible ` +
     block([
       wrap('', join(propertyDeclarations, '\n'), '\n'),
       initializerDeclaration,
-      wrap('\n', join(nestedStructDeclarations, '\n'), '')
+      join(nestedStructDeclarations, '\n')
     ]);
 }
 
@@ -94,15 +121,6 @@ function multilineString(string) {
   }).join('\n');
 }
 
-export function generateSourceForTypes(types) {
-  const typeDeclarations = types.map(type => {
-    if (type instanceof GraphQLEnumType) {
-      return enumerationDeclaration(type);
-    }
-  });
-  return importDeclarations() + '\n' + join(typeDeclarations, '\n');
-}
-
 function enumerationDeclaration(type) {
   const { name, description } = type;
   const values = type.getValues();
@@ -110,7 +128,6 @@ function enumerationDeclaration(type) {
   const caseDeclarations = values.map(value => `case ${camelCase(value.name)} = "${value.value}"`);
 
   return join([
-    '\n',
     description && `/// ${description}\n`,
     `public enum ${name}: String `,
     block(caseDeclarations),
