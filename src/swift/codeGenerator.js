@@ -31,6 +31,7 @@ export default class SwiftCodeGenerator {
 
   generateSource() {
     return join([
+      '//  This file was automatically generated and should not be edited.\n\n',
       importDeclarations(),
       wrap('\n', join(this.typeDefinitions, '\n')),
       wrap('\n', join(this.classDefinitions, '\n'))
