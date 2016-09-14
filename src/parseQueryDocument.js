@@ -1,14 +1,24 @@
 import {
   parse,
+  validate,
   visit,
   visitWithTypeInfo,
   TypeInfo
 } from 'graphql';
 
 export default function parseQueryDocument(queryDocument, schema) {
-  const typeInfo = new TypeInfo(schema);
-
   const ast = parse(queryDocument);
+
+  const validationErrors = validate(schema, ast);
+  if (validationErrors && validationErrors.length > 0) {
+    for (const error of validationErrors) {
+      const location = error.locations[0];
+      console.log(`graphql:${location.line}: error: ${error.message}`);
+    }
+    throw Error("Validation of GraphQL query document failed");
+  }
+
+  const typeInfo = new TypeInfo(schema);
 
   function source(location) {
     return queryDocument.slice(location.start, location.end);
