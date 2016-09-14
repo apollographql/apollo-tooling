@@ -4,10 +4,13 @@ import mkdirp from 'mkdirp'
 
 import {
   buildClientSchema,
+  Source,
+  concatAST,
+  parse,
   GraphQLEnumType
 } from 'graphql';
 
-import parseQueryDocument from './parseQueryDocument'
+import processQueryDocument from './processQueryDocument'
 import SwiftCodeGenerator from './swift/codeGenerator'
 
 export default function generate(inputPaths, schemaPath, outputPath) {
@@ -22,24 +25,15 @@ export default function generate(inputPaths, schemaPath, outputPath) {
 
   const schema = buildClientSchema(schemaData);
 
-  const codeGenerator = new SwiftCodeGenerator();
-
-  inputPaths.forEach(inputPath => {
-    const queryDocument = fs.readFileSync(inputPath, 'utf8');
-
-    const definitions = parseQueryDocument(queryDocument, schema);
-
-    definitions.forEach(definition => {
-      if (definition.operation !== 'query') return;
-
-      if (!definition.name) {
-        console.error(`Query definitions without a name are not supported:\n${definition.source}\n(from ${inputPath})`);
-        return;
-      }
-
-      codeGenerator.processQueryDefinition(definition);
-    });
+  const sources = inputPaths.map(inputPath => {
+    const body = fs.readFileSync(inputPath, 'utf8')
+    return new Source(body, inputPath);
   });
+
+  const asts = sources.map(source => parse(source));
+  const ast = concatAST(asts);
+
+  const definitions = processQueryDocument(ast, schema);
 
   const typeMap = schema.getTypeMap();
   // TODO: Only generate code for types that are actually used in the query documents
@@ -51,6 +45,18 @@ export default function generate(inputPaths, schemaPath, outputPath) {
     if (type instanceof GraphQLEnumType) {
       typesUsed.push(type);
     }
+  });
+
+  const codeGenerator = new SwiftCodeGenerator();
+
+  definitions.forEach(definition => {
+    if (definition.operation !== 'query') return;
+
+    if (!definition.name) {
+      throw Error('Query definitions without a name are not supported');
+    }
+
+    codeGenerator.processQueryDefinition(definition);
   });
 
   codeGenerator.processTypes(typesUsed);
