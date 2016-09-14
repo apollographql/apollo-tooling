@@ -12,7 +12,7 @@ export default function processQueryDocument(document, schema) {
     for (const error of validationErrors) {
       const source = error.source;
       const location = error.locations[0];
-      console.error(`${source.name}:${location.line}: error: ${error.message}`);
+      console.log(`${source.name}:${location.line}: error: ${error.message}`);
     }
     throw Error("Validation of GraphQL query document failed");
   }

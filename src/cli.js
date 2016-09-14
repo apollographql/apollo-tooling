@@ -15,9 +15,9 @@ function handleError(error) {
   // Check if we're running from an Xcode script
   if (process.env.XCODE_VERSION_ACTUAL) {
     // Prefixing error output with 'error: ', so Xcode will display it correctly
-    console.error("error: " + error.message);
+    console.log("error: " + error.message);
   } else {
-    console.error(error.message);
+    console.log(error.message);
   }
   process.exit(1);
 }
