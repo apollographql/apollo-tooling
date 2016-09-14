@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
+import process from 'process';
 import path from 'path';
 import yargs from 'yargs';
 
 import { downloadSchema, generate } from '.';
+
+// Make sure unhandled errors in async code are propagated correctly
+process.on('unhandledRejection', (error) => { throw error });
 
 yargs
   .command(
@@ -18,11 +22,7 @@ yargs
     },
     async argv => {
       const outputPath = path.resolve(argv.output);
-      try {
-        await downloadSchema(argv.server, outputPath);
-      } catch (error) {
-        console.error(error);
-      }
+      await downloadSchema(argv.server, outputPath);
     }
   )
   .command(
@@ -41,14 +41,10 @@ yargs
       }
     },
     argv => {
-      try {
-        const inputPaths = argv.input.map(input => path.resolve(input));
-        const schemaPath = path.resolve(argv.schema);
-        const outputPath = path.resolve(argv.output);
-        generate(inputPaths, schemaPath, outputPath);
-      } catch (error) {
-        console.error(error.stack);
-      }
+      const inputPaths = argv.input.map(input => path.resolve(input));
+      const schemaPath = path.resolve(argv.schema);
+      const outputPath = path.resolve(argv.output);
+      generate(inputPaths, schemaPath, outputPath);
     },
   )
   .showHelpOnFail(false)
