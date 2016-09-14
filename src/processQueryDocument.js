@@ -23,7 +23,7 @@ export default function processQueryDocument(document, schema) {
     return location.source.body.slice(location.start, location.end);
   }
 
-  return visit(ast, visitWithTypeInfo(typeInfo, {
+  return visit(document, visitWithTypeInfo(typeInfo, {
     leave: {
       Name: node => node.value,
       Document: node => node.definitions,
