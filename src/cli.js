@@ -9,6 +9,19 @@ import { downloadSchema, generate } from '.';
 // Make sure unhandled errors in async code are propagated correctly
 process.on('unhandledRejection', (error) => { throw error });
 
+process.on('uncaughtException', handleError);
+
+function handleError(error) {
+  // Check if we're running from an Xcode script
+  if (process.env.XCODE_VERSION_ACTUAL) {
+    // Prefixing error output with 'error: ', so Xcode will display it correctly
+    console.error("error: " + error.message);
+  } else {
+    console.error(error.message);
+  }
+  process.exit(1);
+}
+
 yargs
   .command(
     'download-schema <server>',
@@ -47,7 +60,9 @@ yargs
       generate(inputPaths, schemaPath, outputPath);
     },
   )
-  .showHelpOnFail(false)
+  .fail(function(message, error) {
+    handleError(error ? error : new Error(message));
+  })
   .help()
   .strict()
   .argv
