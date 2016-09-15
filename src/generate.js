@@ -6,11 +6,11 @@ import {
   buildClientSchema,
   Source,
   concatAST,
-  parse,
-  validate,
+  parse
 } from 'graphql';
 
 import { ToolError, logError } from './errors'
+import { validateQueryDocument } from './validation'
 import { generateSource } from './swift/codeGenerator'
 
 export default function generate(inputPaths, schemaPath, outputPath) {
@@ -44,14 +44,4 @@ export function loadAndMergeQueryDocuments(inputPaths) {
   });
 
   return concatAST(sources.map(source => parse(source)));
-}
-
-export function validateQueryDocument(schema, document) {
-  const validationErrors = validate(schema, document);
-  if (validationErrors && validationErrors.length > 0) {
-    for (const error of validationErrors) {
-      logError(error);
-    }
-    throw ToolError("Validation of GraphQL query document failed");
-  }
 }

@@ -1,0 +1,10 @@
+fragment HeroDetails on Character {
+  name
+  appearsIn
+}
+
+query HeroDetailsFragmentQuery($episode: Episode) {
+  hero(episode: $episode) {
+    ...HeroDetails
+  }
+}

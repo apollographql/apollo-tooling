@@ -18,8 +18,8 @@ export function logError(error) {
   if (error instanceof ToolError) {
     logErrorMessage(error.message);
   } else if (error instanceof GraphQLError) {
-    const fileName = error.source.name;
-    const lineNumber = error.locations[0].line;
+    const fileName = error.source && error.source.name;
+    const lineNumber = error.locations && error.locations.length > 0 && error.locations[0].line;
     logErrorMessage(error.message, fileName, lineNumber);
   } else {
     console.log(error.stack);
