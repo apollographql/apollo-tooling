@@ -10,6 +10,7 @@ import {
   validate,
 } from 'graphql';
 
+import logGraphQLError from './logGraphQLError'
 import { generateSource } from './swift/codeGenerator'
 
 export default function generate(inputPaths, schemaPath, outputPath) {
@@ -34,9 +35,7 @@ export default function generate(inputPaths, schemaPath, outputPath) {
   const validationErrors = validate(schema, document);
   if (validationErrors && validationErrors.length > 0) {
     for (const error of validationErrors) {
-      const source = error.source;
-      const location = error.locations[0];
-      console.log(`${source.name}:${location.line}: error: ${error.message}`);
+      logGraphQLError(error);
     }
     throw Error("Validation of GraphQL query document failed");
   }
