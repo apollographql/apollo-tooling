@@ -126,7 +126,9 @@ function enumerationDeclaration(type) {
   const { name, description } = type;
   const values = type.getValues();
 
-  const caseDeclarations = values.map(value => `case ${camelCase(value.name)} = "${value.value}"`);
+  const caseDeclarations = values.map(value =>
+    `case ${camelCase(value.name)} = "${value.value}"${wrap(' /// ', value.description)}`
+  );
 
   return join([
     description && `/// ${description}\n`,
