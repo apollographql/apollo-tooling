@@ -7,47 +7,94 @@ import {
 
 import { camelCase } from 'change-case';
 
-import { GraphQLEnumType } from 'graphql';
+import {
+  visit,
+  visitWithTypeInfo,
+  TypeInfo,
+  GraphQLEnumType
+} from 'graphql';
 
 import { propertiesFromSelectionSet, typeNameFromGraphQLType } from './mapping'
 
-export default class SwiftCodeGenerator {
-  constructor() {
-    this.typeDefinitions = [];
-    this.classDefinitions = [];
-  }
+export function generateSource(schema, document) {
+  const typeInfo = new TypeInfo(schema);
 
-  processQueryDefinition(queryDefinition) {
-    this.classDefinitions.push(wrap('\n', classDefinition(queryDefinition)));
-  }
+  let typesUsed = [];
+  let queryDefinitions = [];
 
-  processTypes(typesUsed) {
-    for (const type of typesUsed) {
-      if (type instanceof GraphQLEnumType) {
-        this.typeDefinitions.push(wrap('\n', enumerationDeclaration(type)));
+  visit(document, visitWithTypeInfo(typeInfo, {
+    leave: {
+      Name: node => node.value,
+      Document: node => node.definitions,
+      OperationDefinition: ({ loc, name, operation, variableDefinitions, selectionSet }) => {
+        queryDefinitions.push({ name, operation, source: sourceAt(loc), variableDefinitions, selectionSet });
+      },
+      VariableDefinition: node => {
+        const type = typeInfo.getInputType();
+        typesUsed.push(type);
+        return { name: node.variable, type: type };
+      },
+      Variable: node => node.name,
+      SelectionSet: ({ selections }) => selections,
+      Field: ({ kind, alias, name, arguments: args, directives, selectionSet }) => {
+        const type = typeInfo.getType();
+        typesUsed.push(type);
+        return { kind, alias, name, type: type, selectionSet: selectionSet ? selectionSet : undefined }
       }
     }
-  }
+  }));
 
-  generateSource() {
-    return join([
-      '//  This file was automatically generated and should not be edited.\n\n',
-      importDeclarations(),
-      wrap('\n', join(this.typeDefinitions, '\n')),
-      wrap('\n', join(this.classDefinitions, '\n'))
-    ]);
-  }
+  const typeDefinitions = typesUsed.map(type => typeDeclarationForGraphQLType(type));
+  const classDefinitions = queryDefinitions.map(query => classDefinitionFromQuery(query));
+
+  return join([
+    '//  This file was automatically generated and should not be edited.\n\n',
+    importDeclarations() + '\n',
+    wrap('\n', join(typeDefinitions, '\n\n'), '\n'),
+    wrap('\n', join(classDefinitions, '\n\n'), '\n')
+  ]);
 }
 
-function generateSourceForQueryDefinition(queryDefinition) {
-  return classDefinition(queryDefinition) + '\n';
+function sourceAt(location) {
+  return location.source.body.slice(location.start, location.end);
+}
+
+function multilineString(string) {
+  const lines = string.split('\n');
+  return lines.map((line, index) => {
+    const isLastLine = index != lines.length - 1;
+    return `"${line}"` + (isLastLine ? ' +' : '');
+  }).join('\n');
 }
 
 function importDeclarations() {
   return 'import Apollo';
 }
 
-function classDefinition({ source, name, variableDefinitions, selectionSet }) {
+function typeDeclarationForGraphQLType(type) {
+  if (type instanceof GraphQLEnumType) {
+    return enumerationDeclaration(type);
+  }
+}
+
+function enumerationDeclaration(type) {
+  const { name, description } = type;
+  const values = type.getValues();
+
+  const caseDeclarations = values.map(value =>
+    `case ${camelCase(value.name)} = "${value.value}"${wrap(' /// ', value.description)}`
+  );
+
+  return join([
+    description && `/// ${description}\n`,
+    `public enum ${name}: String `,
+    block(caseDeclarations),
+    '\n\n',
+    `extension ${name}: JSONDecodable, JSONEncodable {}`
+  ]);
+}
+
+function classDefinitionFromQuery({ source, name, variableDefinitions, selectionSet }) {
   const properties = propertiesFromSelectionSet(selectionSet);
 
   return `public class ${name}Query: GraphQLQuery ` +
@@ -112,29 +159,4 @@ function structDeclaration({ name, properties = [] }) {
 
 function propertyDeclaration({ name, typeName }) {
   return `public let ${name}: ${typeName}`;
-}
-
-function multilineString(string) {
-  const lines = string.split('\n');
-  return lines.map((line, index) => {
-    const isLastLine = index != lines.length - 1;
-    return `"${line}"` + (isLastLine ? ' +' : '');
-  }).join('\n');
-}
-
-function enumerationDeclaration(type) {
-  const { name, description } = type;
-  const values = type.getValues();
-
-  const caseDeclarations = values.map(value =>
-    `case ${camelCase(value.name)} = "${value.value}"${wrap(' /// ', value.description)}`
-  );
-
-  return join([
-    description && `/// ${description}\n`,
-    `public enum ${name}: String `,
-    block(caseDeclarations),
-    '\n\n',
-    `extension ${name}: JSONDecodable, JSONEncodable {}`
-  ]);
 }

@@ -7,11 +7,10 @@ import {
   Source,
   concatAST,
   parse,
-  GraphQLEnumType
+  validate,
 } from 'graphql';
 
-import processQueryDocument from './processQueryDocument'
-import SwiftCodeGenerator from './swift/codeGenerator'
+import { generateSource } from './swift/codeGenerator'
 
 export default function generate(inputPaths, schemaPath, outputPath) {
   if (!fs.existsSync(schemaPath)) {
@@ -30,37 +29,18 @@ export default function generate(inputPaths, schemaPath, outputPath) {
     return new Source(body, inputPath);
   });
 
-  const asts = sources.map(source => parse(source));
-  const ast = concatAST(asts);
+  const document = concatAST(sources.map(source => parse(source)));
 
-  const definitions = processQueryDocument(ast, schema);
-
-  const typeMap = schema.getTypeMap();
-  // TODO: Only generate code for types that are actually used in the query documents
-  let typesUsed = [];
-  Object.values(typeMap).forEach(type => {
-    // Skip introspection types
-    if (type.name.startsWith('__')) return;
-
-    if (type instanceof GraphQLEnumType) {
-      typesUsed.push(type);
+  const validationErrors = validate(schema, document);
+  if (validationErrors && validationErrors.length > 0) {
+    for (const error of validationErrors) {
+      const source = error.source;
+      const location = error.locations[0];
+      console.log(`${source.name}:${location.line}: error: ${error.message}`);
     }
-  });
+    throw Error("Validation of GraphQL query document failed");
+  }
 
-  const codeGenerator = new SwiftCodeGenerator();
-
-  definitions.forEach(definition => {
-    if (definition.operation !== 'query') return;
-
-    if (!definition.name) {
-      throw Error('Query definitions without a name are not supported');
-    }
-
-    codeGenerator.processQueryDefinition(definition);
-  });
-
-  codeGenerator.processTypes(typesUsed);
-
-  const source = codeGenerator.generateSource();
+  const source = generateSource(schema, document);
   fs.writeFileSync(outputPath, source);
 }
