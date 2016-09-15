@@ -14,6 +14,17 @@ import { ToolError, logError } from './errors'
 import { generateSource } from './swift/codeGenerator'
 
 export default function generate(inputPaths, schemaPath, outputPath) {
+  const schema = loadSchema(schemaPath);
+
+  const document = loadAndMergeQueryDocuments(inputPaths);
+
+  validateQueryDocument(schema, document);
+
+  const source = generateSource(schema, document);
+  fs.writeFileSync(outputPath, source);
+}
+
+export function loadSchema(schemaPath) {
   if (!fs.existsSync(schemaPath)) {
     throw new ToolError(`Cannot find GraphQL schema file: ${schemaPath}`);
   }
@@ -23,15 +34,19 @@ export default function generate(inputPaths, schemaPath, outputPath) {
     throw new ToolError('GraphQL schema file should contain a valid GraphQL introspection query result');
   }
 
-  const schema = buildClientSchema(schemaData);
+  return buildClientSchema(schemaData);
+}
 
+export function loadAndMergeQueryDocuments(inputPaths) {
   const sources = inputPaths.map(inputPath => {
     const body = fs.readFileSync(inputPath, 'utf8')
     return new Source(body, inputPath);
   });
 
-  const document = concatAST(sources.map(source => parse(source)));
+  return concatAST(sources.map(source => parse(source)));
+}
 
+export function validateQueryDocument(schema, document) {
   const validationErrors = validate(schema, document);
   if (validationErrors && validationErrors.length > 0) {
     for (const error of validationErrors) {
@@ -39,7 +54,4 @@ export default function generate(inputPaths, schemaPath, outputPath) {
     }
     throw ToolError("Validation of GraphQL query document failed");
   }
-
-  const source = generateSource(schema, document);
-  fs.writeFileSync(outputPath, source);
 }

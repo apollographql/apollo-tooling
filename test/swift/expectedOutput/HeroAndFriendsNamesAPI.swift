@@ -1,4 +1,14 @@
+//  This file was automatically generated and should not be edited.
+
 import Apollo
+
+public enum Episode: String {
+  case newhope = "NEWHOPE"
+  case empire = "EMPIRE"
+  case jedi = "JEDI"
+}
+
+extension Episode: JSONDecodable, JSONEncodable {}
 
 public class HeroAndFriendsNamesQuery: GraphQLQuery {
   public let episode: Episode?
@@ -29,7 +39,7 @@ public class HeroAndFriendsNamesQuery: GraphQLQuery {
     }
     
     public struct Hero: GraphQLMapConvertible {
-      public let name: String?
+      public let name: String
       public let friends: [Friends?]?
       
       public init(map: GraphQLMap) throws {
@@ -38,7 +48,7 @@ public class HeroAndFriendsNamesQuery: GraphQLQuery {
       }
       
       public struct Friends: GraphQLMapConvertible {
-        public let name: String?
+        public let name: String
         
         public init(map: GraphQLMap) throws {
           name = try map.value(forKey: "name")
