@@ -4,10 +4,8 @@ import process from 'process';
 import path from 'path';
 import yargs from 'yargs';
 
-import { GraphQLError } from 'graphql';
-
 import { downloadSchema, generate } from '.';
-import logGraphQLError from './logGraphQLError'
+import { ApolloError, logError } from './errors'
 
 // Make sure unhandled errors in async code are propagated correctly
 process.on('unhandledRejection', (error) => { throw error });
@@ -15,11 +13,7 @@ process.on('unhandledRejection', (error) => { throw error });
 process.on('uncaughtException', handleError);
 
 function handleError(error) {
-  if (error instanceof GraphQLError) {
-    logGraphQLError(error);
-  } else {
-    console.log(error.stack);
-  }
+  logError(error);
   process.exit(1);
 }
 
