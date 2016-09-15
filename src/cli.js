@@ -5,7 +5,7 @@ import path from 'path';
 import yargs from 'yargs';
 
 import { downloadSchema, generate } from '.';
-import { ApolloError, logError } from './errors'
+import { ToolError, logError } from './errors'
 
 // Make sure unhandled errors in async code are propagated correctly
 process.on('unhandledRejection', (error) => { throw error });

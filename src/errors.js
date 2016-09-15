@@ -1,21 +1,21 @@
 import { GraphQLError } from 'graphql';
 
-// ApolloError is used for errors that are part of the expected flow
+// ToolError is used for errors that are part of the expected flow
 // and for which a stack trace should not be printed
 
-export function ApolloError(message) {
+export function ToolError(message) {
   this.message = message;
 }
 
-ApolloError.prototype = Object.create(Error.prototype, {
-  constructor: { value: ApolloError },
-  name: { value: 'ApolloError' }
+ToolError.prototype = Object.create(Error.prototype, {
+  constructor: { value: ToolError },
+  name: { value: 'ToolError' }
 });
 
 const isRunningFromXcodeScript = process.env.XCODE_VERSION_ACTUAL;
 
 export function logError(error) {
-  if (error instanceof ApolloError) {
+  if (error instanceof ToolError) {
     logErrorMessage(error.message);
   } else if (error instanceof GraphQLError) {
     const fileName = error.source.name;
