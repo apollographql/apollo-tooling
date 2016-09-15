@@ -4,7 +4,10 @@ import process from 'process';
 import path from 'path';
 import yargs from 'yargs';
 
+import { GraphQLError } from 'graphql';
+
 import { downloadSchema, generate } from '.';
+import logGraphQLError from './logGraphQLError'
 
 // Make sure unhandled errors in async code are propagated correctly
 process.on('unhandledRejection', (error) => { throw error });
@@ -12,12 +15,10 @@ process.on('unhandledRejection', (error) => { throw error });
 process.on('uncaughtException', handleError);
 
 function handleError(error) {
-  // Check if we're running from an Xcode script
-  if (process.env.XCODE_VERSION_ACTUAL) {
-    // Prefixing error output with 'error: ', so Xcode will display it correctly
-    console.log("error: " + error.message);
+  if (error instanceof GraphQLError) {
+    logGraphQLError(error);
   } else {
-    console.log(error.message);
+    console.log(error.stack);
   }
   process.exit(1);
 }
