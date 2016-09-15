@@ -10,7 +10,7 @@ import {
   printSchema,
 } from 'graphql/utilities';
 
-import { ApolloError } from './errors'
+import { ToolError } from './errors'
 
 export default async function downloadSchema(url, outputPath) {
   let result;
@@ -26,16 +26,16 @@ export default async function downloadSchema(url, outputPath) {
 
     result = await response.json();
   } catch (error) {
-    throw new ApolloError(`Error while fetching introspection query result: ${error.message}`);
+    throw new ToolError(`Error while fetching introspection query result: ${error.message}`);
   }
 
   if (result.errors) {
-    throw new ApolloError(`Errors in introspection query result: ${result.errors}`);
+    throw new ToolError(`Errors in introspection query result: ${result.errors}`);
   }
 
   const schemaData = result.data;
   if (!schemaData) {
-    throw new ApolloError(`No introspection query result data found, server responded with: ${JSON.stringify(result)}`);
+    throw new ToolError(`No introspection query result data found, server responded with: ${JSON.stringify(result)}`);
   }
 
   fs.writeFileSync(outputPath, JSON.stringify(schemaData, null, 2));

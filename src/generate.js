@@ -10,17 +10,17 @@ import {
   validate,
 } from 'graphql';
 
-import { ApolloError, logError } from './errors'
+import { ToolError, logError } from './errors'
 import { generateSource } from './swift/codeGenerator'
 
 export default function generate(inputPaths, schemaPath, outputPath) {
   if (!fs.existsSync(schemaPath)) {
-    throw new ApolloError(`Cannot find GraphQL schema file: ${schemaPath}`);
+    throw new ToolError(`Cannot find GraphQL schema file: ${schemaPath}`);
   }
   const schemaData = require(schemaPath);
 
   if (!schemaData.__schema) {
-    throw new ApolloError('GraphQL schema file should contain a valid GraphQL introspection query result');
+    throw new ToolError('GraphQL schema file should contain a valid GraphQL introspection query result');
   }
 
   const schema = buildClientSchema(schemaData);
@@ -37,7 +37,7 @@ export default function generate(inputPaths, schemaPath, outputPath) {
     for (const error of validationErrors) {
       logError(error);
     }
-    throw ApolloError("Validation of GraphQL query document failed");
+    throw ToolError("Validation of GraphQL query document failed");
   }
 
   const source = generateSource(schema, document);
