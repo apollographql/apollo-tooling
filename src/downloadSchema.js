@@ -35,7 +35,7 @@ export default async function downloadSchema(url, outputPath) {
 
   const schemaData = result.data;
   if (!schemaData) {
-    throw new ApolloError('No instrospection query result data');
+    throw new ApolloError(`No introspection query result data found, server responded with: ${JSON.stringify(result)}`);
   }
 
   fs.writeFileSync(outputPath, JSON.stringify(schemaData, null, 2));
