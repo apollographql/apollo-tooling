@@ -10,25 +10,32 @@ import {
   printSchema,
 } from 'graphql/utilities';
 
-export default async function downloadSchema(url, outputPath) {
-  const response = await fetch(`${url}`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ 'query': introspectionQuery }),
-  });
+import { ApolloError } from './errors'
 
-  const result = await response.json();
+export default async function downloadSchema(url, outputPath) {
+  let result;
+  try {
+    const response = await fetch(`${url}`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 'query': introspectionQuery }),
+    });
+
+    result = await response.json();
+  } catch (error) {
+    throw new ApolloError(`Error while fetching introspection query result: ${error.message}`);
+  }
 
   if (result.errors) {
-    throw new Error(`Errors in introspection query result: ${result.errors}`);
+    throw new ApolloError(`Errors in introspection query result: ${result.errors}`);
   }
 
   const schemaData = result.data;
   if (!schemaData) {
-    throw new Error('No instrospection query result data');
+    throw new ApolloError('No instrospection query result data');
   }
 
   fs.writeFileSync(outputPath, JSON.stringify(schemaData, null, 2));
