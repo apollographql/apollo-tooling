@@ -26,11 +26,28 @@ yargs
         demand: true,
         describe: 'Output path for GraphQL schema file',
         normalize: true
-      }
+      },
+      header: {
+        alias: 'H',
+        describe: 'Additional header to send to the server as part of the introspection query request',
+        type: 'array',
+        coerce: (arg) => {
+          let additionalHeaders = {};
+          for (const header of arg) {
+            const [name, value] = header.split(/\s*:\s*/);
+            if (!(name && value)) {
+              throw new ToolError('Headers should be specified as "Name: Value"');
+            }
+            additionalHeaders[name] = value;
+          }
+          return additionalHeaders;
+        }
+      },
     },
     async argv => {
       const outputPath = path.resolve(argv.output);
-      await downloadSchema(argv.server, outputPath);
+      const additionalHeaders = argv.header;
+      await downloadSchema(argv.server, outputPath, additionalHeaders);
     }
   )
   .command(

@@ -12,15 +12,19 @@ import {
 
 import { ToolError } from './errors'
 
-export default async function downloadSchema(url, outputPath) {
+const defaultHeaders = {
+  'Accept': 'application/json',
+  'Content-Type': 'application/json'
+};
+
+export default async function downloadSchema(url, outputPath, additionalHeaders) {
+  const headers = Object.assign(defaultHeaders, additionalHeaders);
+
   let result;
   try {
-    const response = await fetch(`${url}`, {
+    const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
+      headers: headers,
       body: JSON.stringify({ 'query': introspectionQuery }),
     });
 
