@@ -5,7 +5,7 @@ import {
   indent
 } from '../utilities/printing.js';
 
-import { camelCase } from 'change-case';
+import { camelCase, pascalCase } from 'change-case';
 
 import {
   visit,
@@ -99,9 +99,10 @@ function enumerationDeclaration(type) {
 }
 
 function classDefinitionFromQuery({ source, name, variableDefinitions, selectionSet }) {
+  const className = `${pascalCase(name)}Query`;
   const properties = propertiesFromSelectionSet(selectionSet);
 
-  return `public class ${name}Query: GraphQLQuery ` +
+  return `public class ${className}: GraphQLQuery ` +
     block([
       wrap('', instancePropertyDeclarations(variableDefinitions), '\n'),
       initializerDeclaration(variableDefinitions),
