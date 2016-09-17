@@ -22,6 +22,8 @@ To download a GraphQL schema by sending an introspection query to a server:
 apollo-codegen download-schema http://localhost:8080/graphql --output GitHuntAPI/Definitions/schema.json
 ```
 
+You can use the `header` option to add additional HTTP headers to the request. For example, to include an authentication token, use `--header "Authorization: Bearer <token>"`.
+
 To generate Swift code from a set of query definitions in `.graphql` files:
 
 ```sh
