@@ -95,11 +95,11 @@ describe('#propertyFromField()', () => {
 
     assert.containSubset(property, {
       name: 'friends',
-      typeName: '[Friends?]?',
+      typeName: '[Friend?]?',
       isList: true,
       isComposite: true,
       typeDeclaration: {
-        name: 'Friends',
+        name: 'Friend',
         properties: [
           { name: 'name', typeName: 'String?' }
         ]

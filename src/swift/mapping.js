@@ -8,6 +8,7 @@ import {
 } from 'graphql';
 
 import { camelCase, pascalCase } from 'change-case';
+import Inflector from 'inflected'
 
 export function propertiesFromSelectionSet(selectionSet) {
   return selectionSet.map(selection => {
@@ -32,7 +33,7 @@ export function propertyFromField(field) {
     const typeName = typeNameFromGraphQLType(type);
     return { ...property, typeName };
   } else if (isCompositeType(namedType)) {
-    const valueTypeName = pascalCase(name);
+    const valueTypeName = pascalCase(Inflector.singularize(name));
     const typeName =  typeNameFromGraphQLType(type, valueTypeName);
     const properties = propertiesFromSelectionSet(field.selectionSet);
     return { ...property, typeName, isComposite: true, typeDeclaration: { name : valueTypeName , properties } };
