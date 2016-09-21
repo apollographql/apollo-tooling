@@ -4,6 +4,7 @@ chai.use(chaiSubset);
 
 import {
   buildClientSchema,
+  GraphQLID,
   GraphQLString,
   GraphQLList,
   GraphQLNonNull
@@ -109,6 +110,10 @@ describe('#propertyFromField()', () => {
 });
 
 describe('#typeNameFromGraphQLType()', () => {
+  it('should return GraphQLID? for GraphQLID', () => {
+    assert.equal(typeNameFromGraphQLType(GraphQLID), 'GraphQLID?');
+  });
+
   it('should return String? for GraphQLString', () => {
     assert.equal(typeNameFromGraphQLType(GraphQLString), 'String?');
   });

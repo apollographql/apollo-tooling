@@ -5,6 +5,7 @@ import {
   GraphQLEnumType,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLID
 } from 'graphql';
 
 import { camelCase, pascalCase } from 'change-case';
@@ -45,6 +46,8 @@ export function typeNameFromGraphQLType(type, unwrappedName, nullable = true) {
   let typeName;
   if (type instanceof GraphQLList) {
     typeName = '[' + typeNameFromGraphQLType(type.ofType, unwrappedName, true) + ']';
+  } else if (type === GraphQLID) {
+    typeName = 'GraphQLID'
   } else {
     typeName = unwrappedName || type.name;
   }
