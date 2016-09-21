@@ -14,38 +14,11 @@ import {
   GraphQLEnumType
 } from 'graphql';
 
-import { propertiesFromSelectionSet, typeNameFromGraphQLType } from './mapping'
+import { propertiesFromFields, typeNameFromGraphQLType } from './mapping'
 
-export function generateSource(schema, document) {
-  const typeInfo = new TypeInfo(schema);
-
-  let typesUsed = [];
-  let queryDefinitions = [];
-
-  visit(document, visitWithTypeInfo(typeInfo, {
-    leave: {
-      Name: node => node.value,
-      Document: node => node.definitions,
-      OperationDefinition: ({ loc, name, operation, variableDefinitions, selectionSet }) => {
-        queryDefinitions.push({ name, operation, source: sourceAt(loc), variableDefinitions, selectionSet });
-      },
-      VariableDefinition: node => {
-        const type = typeInfo.getInputType();
-        typesUsed.push(type);
-        return { name: node.variable, type: type };
-      },
-      Variable: node => node.name,
-      SelectionSet: ({ selections }) => selections,
-      Field: ({ kind, alias, name, arguments: args, directives, selectionSet }) => {
-        const type = typeInfo.getType();
-        typesUsed.push(type);
-        return { kind, alias, name, type: type, selectionSet: selectionSet ? selectionSet : undefined }
-      }
-    }
-  }));
-
-  const typeDefinitions = typesUsed.map(type => typeDeclarationForGraphQLType(type));
-  const classDefinitions = queryDefinitions.map(query => classDefinitionFromQuery(query));
+export function generateSource(context) {
+  const typeDefinitions = context.typesUsed.map(type => typeDeclarationForGraphQLType(type));
+  const classDefinitions = context.queries.map(query => classDefinitionFromQuery(query));
 
   return join([
     '//  This file was automatically generated and should not be edited.\n\n',
@@ -53,10 +26,6 @@ export function generateSource(schema, document) {
     wrap('\n', join(typeDefinitions, '\n\n'), '\n'),
     wrap('\n', join(classDefinitions, '\n\n'), '\n')
   ]);
-}
-
-function sourceAt(location) {
-  return location.source.body.slice(location.start, location.end);
 }
 
 function escapedString(string) {
@@ -98,41 +67,41 @@ function enumerationDeclaration(type) {
   ]);
 }
 
-function classDefinitionFromQuery({ source, name, variableDefinitions, selectionSet }) {
+function classDefinitionFromQuery({ source, name, variables, fields }) {
   const className = `${pascalCase(name)}Query`;
-  const properties = propertiesFromSelectionSet(selectionSet);
+  const properties = propertiesFromFields(fields);
 
   return `public class ${className}: GraphQLQuery ` +
     block([
-      wrap('', instancePropertyDeclarations(variableDefinitions), '\n'),
-      initializerDeclaration(variableDefinitions),
+      wrap('', instancePropertyDeclarations(variables), '\n'),
+      initializerDeclaration(variables),
       wrap('\n', operationDefinition(source)),
-      wrap('\n', variablesProperty(variableDefinitions)),
+      wrap('\n', variablesProperty(variables)),
       wrap('\n', structDeclaration({ name: "Data", properties }))]);
 }
 
-function instancePropertyDeclarations(variableDefinitions = []) {
-  return join(variableDefinitions.map(variable => {
+function instancePropertyDeclarations(variables = []) {
+  return join(variables.map(variable => {
     return `public let ${variable.name}: ${typeNameFromGraphQLType(variable.type)}`;
   }), '\n');
 }
 
-function initializerDeclaration(variableDefinitions = []) {
-  const initializationParameters = join(variableDefinitions.map(variable => {
+function initializerDeclaration(variables = []) {
+  const initializationParameters = join(variables.map(variable => {
     return `${variable.name}: ${typeNameFromGraphQLType(variable.type)}`;
   }), ', ');
 
-  const propertyInitializations = variableDefinitions.map(variable => {
+  const propertyInitializations = variables.map(variable => {
     return `self.${variable.name} = ${variable.name}`;
   });
 
   return `public init(${initializationParameters}) ` + block(propertyInitializations);
 }
 
-function variablesProperty(variableDefinitions = []) {
-  if (variableDefinitions.length < 1) return null;
+function variablesProperty(variables = []) {
+  if (variables.length < 1) return null;
 
-  const variablesMap = wrap(`return [`, join(variableDefinitions.map(variable => {
+  const variablesMap = wrap(`return [`, join(variables.map(variable => {
     return `"${variable.name}": ${variable.name}`;
   }), ', '), `]`);
 

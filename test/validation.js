@@ -22,14 +22,4 @@ describe('#validateQueryDocument()', () => {
       'Validation of GraphQL query document failed'
     );
   });
-
-  it(`should throw an error for UnsupportedFragmentQuery.graphql`, () => {
-    const inputPaths = [path.join(__dirname, './starwars/UnsupportedFragmentQuery.graphql')];
-    const document = loadAndMergeQueryDocuments(inputPaths);
-
-    assert.throws(
-      () => validateQueryDocument(schema, document),
-      'Validation of GraphQL query document failed'
-    );
-  });
 });

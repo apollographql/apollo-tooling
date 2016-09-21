@@ -10,22 +10,17 @@ import {
 import { camelCase, pascalCase } from 'change-case';
 import Inflector from 'inflected'
 
-export function propertiesFromSelectionSet(selectionSet) {
-  return selectionSet.map(selection => {
-    if (selection.kind == 'Field') {
-      return propertyFromField(selection);
-    }
-  }).filter(property => property);
+export function propertiesFromFields(fields) {
+  return fields.map(field => propertyFromField(field));
 }
 
 export function propertyFromField(field) {
-  const fieldName = field.alias || field.name;
-  const name = camelCase(fieldName);
+  const name = camelCase(field.name);
 
   const type = field.type;
   const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList;
 
-  let property = { name, fieldName, isList };
+  let property = { name, fieldName: field.name, isList };
 
   const namedType = getNamedType(type);
 
@@ -35,7 +30,7 @@ export function propertyFromField(field) {
   } else if (isCompositeType(namedType)) {
     const valueTypeName = pascalCase(Inflector.singularize(name));
     const typeName =  typeNameFromGraphQLType(type, valueTypeName);
-    const properties = propertiesFromSelectionSet(field.selectionSet);
+    const properties = propertiesFromFields(field.subfields);
     return { ...property, typeName, isComposite: true, typeDeclaration: { name : valueTypeName , properties } };
   } else {
     throw Error(`Unsupported field type: ${type}`);
