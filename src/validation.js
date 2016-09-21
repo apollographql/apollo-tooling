@@ -7,7 +7,7 @@ import {
 import { ToolError, logError } from './errors'
 
 export function validateQueryDocument(schema, document) {
-  const rules = [NoAnonymousQueries, FragmentsNotSupported].concat(specifiedRules);
+  const rules = [NoAnonymousQueries].concat(specifiedRules);
 
   const validationErrors = validate(schema, document, rules);
   if (validationErrors && validationErrors.length > 0) {
@@ -31,28 +31,11 @@ export function NoAnonymousQueries(context) {
       if (!node.name) {
         fixNodeLocation(node);
         context.reportError(new GraphQLError(
-          'Anonymous operations are not supported by Apollo iOS',
+          'Apollo iOS does not support anonymous operations',
           [node]
         ));
       }
       return false;
     }
   };
-}
-
-export function FragmentsNotSupported(context) {
-  return {
-    FragmentDefinition: notSupported,
-    FragmentSpread: notSupported,
-    InlineFragment: notSupported
-  };
-
-  function notSupported(node) {
-    fixNodeLocation(node);
-    context.reportError(new GraphQLError(
-      'Fragments are not yet supported by Apollo iOS',
-      [node]
-    ));
-    return false;
-  }
 }

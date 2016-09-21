@@ -47,7 +47,7 @@ describe('#propertyFromField()', () => {
     const field = {
       name: 'hero',
       type: schema.getType('Character'),
-      selectionSet: [ { kind: 'Field', name: 'name', type: GraphQLString} ]
+      subfields: [ { name: 'name', type: GraphQLString} ]
     };
     const property = propertyFromField(field);
 
@@ -68,7 +68,7 @@ describe('#propertyFromField()', () => {
     const field = {
       name: 'hero',
       type: new GraphQLNonNull(schema.getType('Character')),
-      selectionSet: [ { kind: 'Field', name: 'name', type: GraphQLString} ]
+      subfields: [ { name: 'name', type: GraphQLString} ]
     };
     const property = propertyFromField(field);
 
@@ -89,7 +89,7 @@ describe('#propertyFromField()', () => {
     const field = {
       name: 'friends',
       type: new GraphQLList(schema.getType('Character')),
-      selectionSet: [ { kind: 'Field', name: 'name', type: GraphQLString} ]
+      subfields: [ { name: 'name', type: GraphQLString} ]
     };
     const property = propertyFromField(field);
 

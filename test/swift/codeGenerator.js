@@ -8,6 +8,8 @@ import {
   loadAndMergeQueryDocuments,
 } from '../../src/generate'
 
+import { CodeGenerationContext } from '../../src/codeGeneration'
+
 import { generateSource } from '../../src/swift/codeGenerator'
 
 const schema = loadSchema(require.resolve('../starwars/schema.json'));
@@ -17,7 +19,8 @@ describe('#generateSource()', () => {
     const inputPaths = [path.join(__dirname, '../starwars/HeroAndFriendsNames.graphql')];
     const document = loadAndMergeQueryDocuments(inputPaths);
 
-    const output = generateSource(schema, document);
+    const context = new CodeGenerationContext(schema, document);
+    const output = generateSource(context);
 
     const expectedOutput = readFileSync(path.join(__dirname, `./expectedOutput/HeroAndFriendsNamesAPI.swift`), 'utf8');
     assert.equal(output, expectedOutput);
