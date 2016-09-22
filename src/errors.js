@@ -19,8 +19,13 @@ export function logError(error) {
     logErrorMessage(error.message);
   } else if (error instanceof GraphQLError) {
     const fileName = error.source && error.source.name;
-    const lineNumber = error.locations && error.locations.length > 0 && error.locations[0].line;
-    logErrorMessage(error.message, fileName, lineNumber);
+    if (error.locations) {
+      for (const location of error.locations) {
+        logErrorMessage(error.message, fileName, location.line);
+      }
+    } else {
+      logErrorMessage(error.message, fileName);
+    }
   } else {
     console.log(error.stack);
   }
