@@ -23,12 +23,12 @@ import {
 export class CodeGenerationContext {
   constructor(schema, document) {
     this.schema = schema;
-    this.typesUsed = [];
+    this.typesUsedSet = new Set();
 
-    this.fragments = Object.create(null);
+    this.fragmentsByName = Object.create(null);
     for (const definition of document.definitions) {
       if (definition.kind === Kind.FRAGMENT_DEFINITION) {
-        this.fragments[definition.name.value] = definition;
+        this.fragmentsByName[definition.name.value] = definition;
       }
     }
 
@@ -55,16 +55,33 @@ export class CodeGenerationContext {
       leave: {
         VariableDefinition: node => {
           const type = typeInfo.getInputType();
-          this.typesUsed.push(type);
+          this.addUsedType(type);
           return { ...node, type };
         },
         Field: node => {
           const type = typeInfo.getType();
-          this.typesUsed.push(type);
+          this.addUsedType(type);
           return { ...node, type }
         }
       }
     }));
+  }
+
+  addUsedType(type) {
+    const namedType = getNamedType(type);
+    this.typesUsedSet.add(namedType);
+  }
+
+  getTypesUsed() {
+    return Array.from(this.typesUsedSet);
+  }
+
+  getQueries() {
+    return this.queries;
+  }
+
+  getFragment(name) {
+    return this.fragmentsByName[name];
   }
 
   collectFieldsAndFragmentNames(parentType, selectionSet, groupedFieldSet = Object.create(null), visitedFragmentSet = Object.create(null)) {
@@ -114,7 +131,7 @@ export class CodeGenerationContext {
           if (visitedFragmentSet[fragmentName]) continue;
           visitedFragmentSet[fragmentName] = true;
 
-          const fragment = this.fragments[fragmentName];
+          const fragment = this.getFragment(fragmentName);
           if (!fragment) continue;
 
           const typeCondition = fragment.typeCondition;

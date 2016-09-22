@@ -18,8 +18,8 @@ import { propertiesFromFields } from './properties'
 import { escapedString, multilineString } from './strings'
 
 export function generateSource(context) {
-  const typeDefinitions = context.typesUsed.map(type => typeDeclarationForGraphQLType(type));
-  const queryClassDefinitions = context.queries.map(query => classDefinitionForQuery(query));
+  const typeDefinitions = context.getTypesUsed().map(type => typeDeclarationForGraphQLType(type));
+  const queryClassDefinitions = context.getQueries().map(query => classDefinitionForQuery(query));
 
   return join([
     '//  This file was automatically generated and should not be edited.\n\n',
@@ -84,7 +84,7 @@ function structDeclaration({ name, properties = [] }) {
 
   const compositeProperties = properties.filter(property => property.isComposite);
   const nestedStructDeclarations = compositeProperties.map(property =>
-    wrap('\n', structDeclaration(property.typeDeclaration))
+    wrap('\n', structDeclaration({ name: property.unmodifiedTypeName, properties: property.subproperties }))
   );
 
   return `public struct ${name}: GraphQLMapConvertible ` +
