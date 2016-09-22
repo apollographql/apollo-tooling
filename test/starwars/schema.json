@@ -11,15 +11,15 @@
       {
         "kind": "OBJECT",
         "name": "Query",
-        "description": null,
+        "description": "The query type, represents all of the entry points into our object graph",
         "fields": [
           {
             "name": "hero",
-            "description": null,
+            "description": "",
             "args": [
               {
                 "name": "episode",
-                "description": null,
+                "description": "",
                 "type": {
                   "kind": "ENUM",
                   "name": "Episode",
@@ -38,11 +38,11 @@
           },
           {
             "name": "reviews",
-            "description": null,
+            "description": "",
             "args": [
               {
                 "name": "episode",
-                "description": null,
+                "description": "",
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -69,11 +69,11 @@
           },
           {
             "name": "search",
-            "description": null,
+            "description": "",
             "args": [
               {
                 "name": "text",
-                "description": null,
+                "description": "",
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -96,11 +96,11 @@
           },
           {
             "name": "droid",
-            "description": null,
+            "description": "",
             "args": [
               {
                 "name": "id",
-                "description": null,
+                "description": "",
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -123,11 +123,11 @@
           },
           {
             "name": "human",
-            "description": null,
+            "description": "",
             "args": [
               {
                 "name": "id",
-                "description": null,
+                "description": "",
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -150,11 +150,11 @@
           },
           {
             "name": "starship",
-            "description": null,
+            "description": "",
             "args": [
               {
                 "name": "id",
-                "description": null,
+                "description": "",
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -184,26 +184,26 @@
       {
         "kind": "ENUM",
         "name": "Episode",
-        "description": null,
+        "description": "The episodes in the Star Wars trilogy",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
           {
             "name": "NEWHOPE",
-            "description": null,
+            "description": "Star Wars Episode IV: A New Hope, released in 1977.",
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "EMPIRE",
-            "description": null,
+            "description": "Star Wars Episode V: The Empire Strikes Back, released in 1980.",
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "JEDI",
-            "description": null,
+            "description": "Star Wars Episode VI: Return of the Jedi, released in 1983.",
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -213,11 +213,11 @@
       {
         "kind": "INTERFACE",
         "name": "Character",
-        "description": null,
+        "description": "A character from the Star Wars universe",
         "fields": [
           {
             "name": "id",
-            "description": null,
+            "description": "The ID of the character",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -233,7 +233,7 @@
           },
           {
             "name": "name",
-            "description": null,
+            "description": "The name of the character",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -249,7 +249,7 @@
           },
           {
             "name": "friends",
-            "description": null,
+            "description": "The friends of the character, or an empty list if they have none",
             "args": [],
             "type": {
               "kind": "LIST",
@@ -265,7 +265,7 @@
           },
           {
             "name": "appearsIn",
-            "description": null,
+            "description": "The movies this character appears in",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -323,11 +323,11 @@
       {
         "kind": "OBJECT",
         "name": "Review",
-        "description": null,
+        "description": "Represents a review for a movie",
         "fields": [
           {
             "name": "stars",
-            "description": null,
+            "description": "The number of stars this review gave, 1-5",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -343,7 +343,7 @@
           },
           {
             "name": "commentary",
-            "description": null,
+            "description": "Comment about the movie",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -372,7 +372,7 @@
       {
         "kind": "UNION",
         "name": "SearchResult",
-        "description": null,
+        "description": "",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -398,11 +398,11 @@
       {
         "kind": "OBJECT",
         "name": "Human",
-        "description": null,
+        "description": "A humanoid creature from the Star Wars universe",
         "fields": [
           {
             "name": "id",
-            "description": null,
+            "description": "The ID of the human",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -418,7 +418,7 @@
           },
           {
             "name": "name",
-            "description": null,
+            "description": "What this human calls themselves",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -434,11 +434,11 @@
           },
           {
             "name": "height",
-            "description": null,
+            "description": "Height in the preferred unit, default is meters",
             "args": [
               {
                 "name": "unit",
-                "description": null,
+                "description": "",
                 "type": {
                   "kind": "ENUM",
                   "name": "LengthUnit",
@@ -457,7 +457,7 @@
           },
           {
             "name": "mass",
-            "description": null,
+            "description": "Mass in kilograms, or null if unknown",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -469,7 +469,7 @@
           },
           {
             "name": "friends",
-            "description": null,
+            "description": "This human's friends, or an empty list if they have none",
             "args": [],
             "type": {
               "kind": "LIST",
@@ -485,7 +485,7 @@
           },
           {
             "name": "appearsIn",
-            "description": null,
+            "description": "The movies this human appears in",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -505,7 +505,7 @@
           },
           {
             "name": "starships",
-            "description": null,
+            "description": "A list of starships this person has piloted, or an empty list if none",
             "args": [],
             "type": {
               "kind": "LIST",
@@ -521,7 +521,7 @@
           },
           {
             "name": "homePlanet",
-            "description": null,
+            "description": "The home planet of the human, or null if unknown",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -546,20 +546,20 @@
       {
         "kind": "ENUM",
         "name": "LengthUnit",
-        "description": null,
+        "description": "Units of height",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
           {
             "name": "METER",
-            "description": null,
+            "description": "The standard unit around the world",
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "FOOT",
-            "description": null,
+            "description": "Primarily used in the United States",
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -579,11 +579,11 @@
       {
         "kind": "OBJECT",
         "name": "Starship",
-        "description": null,
+        "description": "",
         "fields": [
           {
             "name": "id",
-            "description": null,
+            "description": "The ID of the starship",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -599,7 +599,7 @@
           },
           {
             "name": "name",
-            "description": null,
+            "description": "The name of the starship",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -615,11 +615,11 @@
           },
           {
             "name": "length",
-            "description": null,
+            "description": "Length of the starship, along the longest axis",
             "args": [
               {
                 "name": "unit",
-                "description": null,
+                "description": "",
                 "type": {
                   "kind": "ENUM",
                   "name": "LengthUnit",
@@ -645,11 +645,11 @@
       {
         "kind": "OBJECT",
         "name": "Droid",
-        "description": null,
+        "description": "An autonomous mechanical character in the Star Wars universe",
         "fields": [
           {
             "name": "id",
-            "description": null,
+            "description": "The ID of the droid",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -665,7 +665,7 @@
           },
           {
             "name": "name",
-            "description": null,
+            "description": "What others call this droid",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -681,7 +681,7 @@
           },
           {
             "name": "friends",
-            "description": null,
+            "description": "This droid's friends, or an empty list if they have none",
             "args": [],
             "type": {
               "kind": "LIST",
@@ -697,7 +697,7 @@
           },
           {
             "name": "appearsIn",
-            "description": null,
+            "description": "The movies this droid appears in",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -717,7 +717,7 @@
           },
           {
             "name": "primaryFunction",
-            "description": null,
+            "description": "This droid's primary function",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -742,15 +742,15 @@
       {
         "kind": "OBJECT",
         "name": "Mutation",
-        "description": null,
+        "description": "The mutation type, represents all updates we can make to our data",
         "fields": [
           {
             "name": "createReview",
-            "description": null,
+            "description": "",
             "args": [
               {
                 "name": "episode",
-                "description": null,
+                "description": "",
                 "type": {
                   "kind": "ENUM",
                   "name": "Episode",
@@ -760,7 +760,7 @@
               },
               {
                 "name": "review",
-                "description": null,
+                "description": "",
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -790,12 +790,12 @@
       {
         "kind": "INPUT_OBJECT",
         "name": "ReviewInput",
-        "description": null,
+        "description": "The input object sent when someone is creating a new review",
         "fields": null,
         "inputFields": [
           {
             "name": "stars",
-            "description": null,
+            "description": "0-5 stars",
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -809,7 +809,7 @@
           },
           {
             "name": "commentary",
-            "description": null,
+            "description": "Comment about the movie, optional",
             "type": {
               "kind": "SCALAR",
               "name": "String",
