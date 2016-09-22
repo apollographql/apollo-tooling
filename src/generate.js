@@ -12,7 +12,7 @@ import {
 import { ToolError, logError } from './errors'
 import { validateQueryDocument } from './validation'
 import { CodeGenerationContext } from './codeGeneration'
-import { generateSource } from './swift/codeGenerator'
+import { generateSource } from './swift'
 
 export default function generate(inputPaths, schemaPath, outputPath) {
   const schema = loadSchema(schemaPath);
