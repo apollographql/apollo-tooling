@@ -50,6 +50,7 @@ describe('CodeGenerationContext', () => {
         {
           name: 'hero',
           type: 'Character',
+          fragmentNames: ['HeroName', 'HeroAppearsIn'],
           subfields: [
             {
               name: 'id',
@@ -93,6 +94,7 @@ describe('CodeGenerationContext', () => {
         {
           name: 'hero',
           type: 'Character',
+          fragmentNames: ['HeroDetails'],
           subfields: [
             {
               name: 'name',
@@ -101,6 +103,7 @@ describe('CodeGenerationContext', () => {
             {
               name: 'friends',
               type: '[Character]',
+              fragmentNames: ['HeroDetails'],
               subfields: [
                 {
                   name: 'name',

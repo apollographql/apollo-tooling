@@ -40,7 +40,7 @@ export class CodeGenerationContext {
         const variables = variableDefinitions.map(node => ({ name: node.variable.name.value, type: node.type }));
 
         const rootType = operationRootType(this.schema, operation);
-        const groupedFieldSet = this.collectFields(rootType, selectionSet);
+        const [groupedFieldSet] = this.collectFieldsAndFragmentNames(rootType, selectionSet);
         const fields = this.resolveFields(groupedFieldSet);
 
         this.queries.push({ name: name.value, variables, fields, source: sourceAt(loc) });
@@ -67,7 +67,7 @@ export class CodeGenerationContext {
     }));
   }
 
-  collectFields(parentType, selectionSet, groupedFieldSet = Object.create(null), visitedFragmentNames = Object.create(null)) {
+  collectFieldsAndFragmentNames(parentType, selectionSet, groupedFieldSet = Object.create(null), visitedFragmentSet = Object.create(null)) {
     if (!isCompositeType(parentType)) {
       throw new Error('parentType should be a composite type');
     }
@@ -100,19 +100,19 @@ export class CodeGenerationContext {
             throw new GraphQLError('Apollo iOS does not yet support polymorphic results through type conditions', [typeCondition])
           }
 
-          this.collectFields(
+          this.collectFieldsAndFragmentNames(
             inlineFragmentType,
             selection.selectionSet,
             groupedFieldSet,
-            visitedFragmentNames
+            visitedFragmentSet
           );
           break;
         }
         case Kind.FRAGMENT_SPREAD: {
           const fragmentName = selection.name.value;
 
-          if (visitedFragmentNames[fragmentName]) continue;
-          visitedFragmentNames[fragmentName] = true;
+          if (visitedFragmentSet[fragmentName]) continue;
+          visitedFragmentSet[fragmentName] = true;
 
           const fragment = this.fragments[fragmentName];
           if (!fragment) continue;
@@ -126,17 +126,17 @@ export class CodeGenerationContext {
             throw new GraphQLError('Apollo iOS does not yet support polymorphic results through type conditions', [typeCondition])
           }
 
-          this.collectFields(
+          this.collectFieldsAndFragmentNames(
             fragmentType,
             fragment.selectionSet,
             groupedFieldSet,
-            visitedFragmentNames
+            visitedFragmentSet
           );
           break;
         }
       }
     }
-    return groupedFieldSet;
+    return [groupedFieldSet, visitedFragmentSet];
   }
 
   resolveFields(groupedFieldSet) {
@@ -147,7 +147,9 @@ export class CodeGenerationContext {
       const field = { name, type };
       const namedType = getNamedType(type);
       if (isCompositeType(namedType)) {
-        field.subfields = this.resolveFields(this.mergeSelectionSets(namedType, fieldSet));
+        const [groupedFieldSet, fragmentNameSet] = this.mergeSelectionSets(namedType, fieldSet)
+        field.fragmentNames = Object.keys(fragmentNameSet);
+        field.subfields = this.resolveFields(groupedFieldSet);
       }
       fields.push(field);
     }
@@ -156,16 +158,16 @@ export class CodeGenerationContext {
 
   mergeSelectionSets(parentType, fieldSet) {
     let groupedFieldSet = Object.create(null);
-    const visitedFragmentNames = Object.create(null);
+    const visitedFragmentSet = Object.create(null);
 
     for (const field of fieldSet) {
       const selectionSet = field.selectionSet;
       if (selectionSet) {
-        groupedFieldSet = this.collectFields(parentType, selectionSet, groupedFieldSet, visitedFragmentNames);
+        this.collectFieldsAndFragmentNames(parentType, selectionSet, groupedFieldSet, visitedFragmentSet);
       };
     }
 
-    return groupedFieldSet;
+    return [groupedFieldSet, visitedFragmentSet];
   }
 }
 
@@ -193,7 +195,7 @@ function operationRootType(schema, operation) {
       if (!mutationType) {
         throw new GraphQLError(
           'Schema is not configured for mutations',
-          [ operation ]
+          [operation]
         );
       }
       return mutationType;
@@ -202,14 +204,14 @@ function operationRootType(schema, operation) {
       if (!subscriptionType) {
         throw new GraphQLError(
           'Schema is not configured for subscriptions',
-          [ operation ]
+          [operation]
         );
       }
       return subscriptionType;
     default:
       throw new GraphQLError(
         'Can only execute queries, mutations and subscriptions',
-        [ operation ]
+        [operation]
       );
   }
 }
