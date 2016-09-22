@@ -11,6 +11,8 @@ import {
 import { camelCase, pascalCase } from 'change-case';
 import Inflector from 'inflected'
 
+import { typeNameFromGraphQLType } from './types';
+
 export function propertiesFromFields(fields) {
   return fields.map(field => propertyFromField(field));
 }
@@ -36,21 +38,4 @@ export function propertyFromField(field) {
   } else {
     throw Error(`Unsupported field type: ${type}`);
   }
-}
-
-export function typeNameFromGraphQLType(type, unwrappedName, nullable = true) {
-  if (type instanceof GraphQLNonNull) {
-    return typeNameFromGraphQLType(type.ofType, unwrappedName, false)
-  }
-
-  let typeName;
-  if (type instanceof GraphQLList) {
-    typeName = '[' + typeNameFromGraphQLType(type.ofType, unwrappedName, true) + ']';
-  } else if (type === GraphQLID) {
-    typeName = 'GraphQLID'
-  } else {
-    typeName = unwrappedName || type.name;
-  }
-
-  return nullable ? typeName + '?' : typeName;
 }

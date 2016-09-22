@@ -2,9 +2,6 @@ import chai, { assert } from 'chai'
 import chaiSubset from 'chai-subset'
 chai.use(chaiSubset);
 
-import { readFileSync } from 'fs'
-import path from 'path'
-
 import {
   parse,
   isType,

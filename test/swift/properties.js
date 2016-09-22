@@ -10,7 +10,7 @@ import {
   GraphQLNonNull
 } from 'graphql';
 
-import { propertyFromField, typeNameFromGraphQLType } from '../../src/swift/mapping'
+import { propertyFromField } from '../../src/swift/properties'
 
 const schemaData = require('../starwars/schema.json');
 const schema = buildClientSchema(schemaData);
@@ -106,35 +106,5 @@ describe('#propertyFromField()', () => {
         ]
       }
     });
-  });
-});
-
-describe('#typeNameFromGraphQLType()', () => {
-  it('should return GraphQLID? for GraphQLID', () => {
-    assert.equal(typeNameFromGraphQLType(GraphQLID), 'GraphQLID?');
-  });
-
-  it('should return String? for GraphQLString', () => {
-    assert.equal(typeNameFromGraphQLType(GraphQLString), 'String?');
-  });
-
-  it('should return String for GraphQLNonNull(GraphQLString)', () => {
-    assert.equal(typeNameFromGraphQLType(new GraphQLNonNull(GraphQLString)), 'String');
-  });
-
-  it('should return [String?]? for GraphQLList(GraphQLString)', () => {
-    assert.equal(typeNameFromGraphQLType(new GraphQLList(GraphQLString)), '[String?]?');
-  });
-
-  it('should return [String?] for GraphQLNonNull(GraphQLList(GraphQLString))', () => {
-    assert.equal(typeNameFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLString))), '[String?]');
-  });
-
-  it('should return [String]? for GraphQLList(GraphQLNonNull(GraphQLString))', () => {
-    assert.equal(typeNameFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLString))), '[String]?');
-  });
-
-  it('should return [String] for GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))', () => {
-    assert.equal(typeNameFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString)))), '[String]');
   });
 });
