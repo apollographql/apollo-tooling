@@ -24,7 +24,7 @@ export function propertyFromField(field) {
   const type = field.type;
   const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList;
 
-  let property = { name, fieldName: field.name, isList };
+  let property = { name, fieldName: field.name, isList, fragmentNames: field.fragmentNames };
 
   const namedType = getNamedType(type);
 

@@ -17,15 +17,17 @@ import { typeNameFromGraphQLType, typeDeclarationForGraphQLType } from './types'
 import { propertiesFromFields } from './properties'
 import { escapedString, multilineString } from './strings'
 
-export function generateSource(context) {
-  const typeDefinitions = context.getTypesUsed().map(type => typeDeclarationForGraphQLType(type));
-  const queryClassDefinitions = context.getQueries().map(query => classDefinitionForQuery(query));
+export function generateSource({ typesUsed, queries, fragments }) {
+  const typeDefinitions = typesUsed.map(typeDeclarationForGraphQLType);
+  const queryClassDefinitions = queries.map(classDefinitionForQuery);
+  const fragmentClassDefinitions = fragments.map(classDefinitionForFragment);
 
   return join([
     '//  This file was automatically generated and should not be edited.\n\n',
     importDeclarations() + '\n',
     wrap('\n', join(typeDefinitions, '\n\n'), '\n'),
-    wrap('\n', join(queryClassDefinitions, '\n\n'), '\n')
+    wrap('\n', join(queryClassDefinitions, '\n\n'), '\n'),
+    wrap('\n', join(fragmentClassDefinitions, '\n\n'), '\n')
   ]);
 }
 
@@ -33,7 +35,7 @@ function importDeclarations() {
   return 'import Apollo';
 }
 
-function classDefinitionForQuery({ name, variables, fields, source }) {
+function classDefinitionForQuery({ name, variables, fields, source, fragmentNames }) {
   const className = `${pascalCase(name)}Query`;
   const properties = propertiesFromFields(fields);
 
@@ -63,17 +65,28 @@ function classDefinitionForQuery({ name, variables, fields, source }) {
     return 'public var variables: GraphQLMap? ' + block([variablesMap])
   })();
 
+  let queryDocument;
+  if (fragmentNames && fragmentNames.length > 0) {
+    queryDocument = 'public var queryDocument: String ' +
+      block([
+        join(['return operationDefinition', ...fragmentNames.map(fragmentName =>
+          `.appending(${protocolNameForFragmentName(fragmentName)}Fragment.fragmentDefinition)`
+        )])
+      ]);
+  }
+
   return `public class ${className}: GraphQLQuery ` +
     block([
       wrap('', instancePropertyDeclarations, '\n'),
       initializerDeclaration,
       wrap('\n', 'public let operationDefinition =' + indent('\n' + multilineString(source))),
+      wrap('\n', queryDocument),
       wrap('\n', variablesProperty),
       wrap('\n', structDeclaration({ name: "Data", properties }))
     ]);
 }
 
-function structDeclaration({ name, properties = [] }) {
+function structDeclaration({ name, properties = [], fragmentNames }) {
   const propertyDeclarations = properties.map(({ name, typeName }) =>
     `public let ${name}: ${typeName}`
   );
@@ -84,13 +97,43 @@ function structDeclaration({ name, properties = [] }) {
 
   const compositeProperties = properties.filter(property => property.isComposite);
   const nestedStructDeclarations = compositeProperties.map(property =>
-    wrap('\n', structDeclaration({ name: property.unmodifiedTypeName, properties: property.subproperties }))
-  );
+    wrap('\n', structDeclaration({
+      name: property.unmodifiedTypeName,
+      properties: property.subproperties,
+      fragmentNames: property.fragmentNames
+    })
+  ));
 
-  return `public struct ${name}: GraphQLMapConvertible ` +
+  return join([`public struct ${name}: GraphQLMapConvertible`,
+    wrap(', ', join(fragmentNames && fragmentNames.map(protocolNameForFragmentName), ', ')),
+    ' ',
     block([
       wrap('', join(propertyDeclarations, '\n'), '\n'),
       initializerDeclaration,
       join(nestedStructDeclarations, '\n')
-    ]);
+    ])
+  ]);
+}
+
+function protocolNameForFragmentName(fragmentName) {
+  return pascalCase(fragmentName);
+}
+
+function classDefinitionForFragment({ name, fields, source }) {
+  const protocolName = protocolNameForFragmentName(name);
+  const className = `${protocolName}Fragment`;
+  const properties = propertiesFromFields(fields);
+
+  return join([
+    `public class ${className}: GraphQLFragment `,
+    block([
+      'public static let fragmentDefinition =' + indent('\n' + multilineString(source) + '\n'),
+      `public typealias Data = ${protocolName}`
+    ]),
+    '\n\n',
+    `public protocol ${protocolName} `,
+    block(properties.map(({ name, typeName }) =>
+      `var ${name}: ${typeName} { get }`
+    ))
+  ]);
 }

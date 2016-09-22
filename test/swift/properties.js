@@ -48,6 +48,7 @@ describe('#propertyFromField()', () => {
     const field = {
       name: 'hero',
       type: schema.getType('Character'),
+      fragmentNames: ['HeroDetails'],
       subfields: [ { name: 'name', type: GraphQLString} ]
     };
     const property = propertyFromField(field);
@@ -57,6 +58,7 @@ describe('#propertyFromField()', () => {
       typeName: 'Hero?',
       unmodifiedTypeName: 'Hero',
       isComposite: true,
+      fragmentNames: ['HeroDetails'],
       subproperties: [
         { name: 'name', typeName: 'String?' }
       ]
@@ -67,6 +69,7 @@ describe('#propertyFromField()', () => {
     const field = {
       name: 'hero',
       type: new GraphQLNonNull(schema.getType('Character')),
+      fragmentNames: ['HeroDetails'],
       subfields: [ { name: 'name', type: GraphQLString} ]
     };
     const property = propertyFromField(field);
@@ -76,6 +79,7 @@ describe('#propertyFromField()', () => {
       typeName: 'Hero',
       unmodifiedTypeName: 'Hero',
       isComposite: true,
+      fragmentNames: ['HeroDetails'],
       subproperties: [
         { name: 'name', typeName: 'String?' }
       ]
