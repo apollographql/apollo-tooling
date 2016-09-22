@@ -10,7 +10,7 @@ import {
 
 import { CodeGenerationContext } from '../../src/codeGeneration'
 
-import { generateSource } from '../../src/swift/codeGenerator'
+import { generateSource } from '../../src/swift'
 
 const schema = loadSchema(require.resolve('../starwars/schema.json'));
 
