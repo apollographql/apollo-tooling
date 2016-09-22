@@ -55,13 +55,11 @@ describe('#propertyFromField()', () => {
     assert.containSubset(property, {
       name: 'hero',
       typeName: 'Hero?',
+      unmodifiedTypeName: 'Hero',
       isComposite: true,
-      typeDeclaration: {
-        name: 'Hero',
-        properties: [
-          { name: 'name', typeName: 'String?' }
-        ]
-      }
+      subproperties: [
+        { name: 'name', typeName: 'String?' }
+      ]
     });
   });
 
@@ -76,13 +74,11 @@ describe('#propertyFromField()', () => {
     assert.containSubset(property, {
       name: 'hero',
       typeName: 'Hero',
+      unmodifiedTypeName: 'Hero',
       isComposite: true,
-      typeDeclaration: {
-        name: 'Hero',
-        properties: [
-          { name: 'name', typeName: 'String?' }
-        ]
-      }
+      subproperties: [
+        { name: 'name', typeName: 'String?' }
+      ]
     });
   });
 
@@ -97,14 +93,12 @@ describe('#propertyFromField()', () => {
     assert.containSubset(property, {
       name: 'friends',
       typeName: '[Friend?]?',
+      unmodifiedTypeName: 'Friend',
       isList: true,
       isComposite: true,
-      typeDeclaration: {
-        name: 'Friend',
-        properties: [
-          { name: 'name', typeName: 'String?' }
-        ]
-      }
+      subproperties: [
+        { name: 'name', typeName: 'String?' }
+      ]
     });
   });
 });
