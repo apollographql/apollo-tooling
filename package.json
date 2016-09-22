@@ -1,6 +1,6 @@
 {
   "name": "apollo-codegen",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Generate client code based on a GraphQL schema and query documents",
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
