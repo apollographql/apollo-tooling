@@ -1,4 +1,5 @@
 import {
+  GraphQLError,
   getNamedType,
   isCompositeType,
   GraphQLScalarType,
@@ -31,11 +32,11 @@ export function propertyFromField(field) {
     const typeName = typeNameFromGraphQLType(type);
     return { ...property, typeName };
   } else if (isCompositeType(namedType)) {
-    const valueTypeName = pascalCase(Inflector.singularize(name));
-    const typeName =  typeNameFromGraphQLType(type, valueTypeName);
-    const properties = propertiesFromFields(field.subfields);
-    return { ...property, typeName, isComposite: true, typeDeclaration: { name : valueTypeName , properties } };
+    const unmodifiedTypeName = pascalCase(Inflector.singularize(name));
+    const typeName =  typeNameFromGraphQLType(type, unmodifiedTypeName);
+    const subproperties = propertiesFromFields(field.subfields);
+    return { ...property, typeName, unmodifiedTypeName, isComposite: true, subproperties };
   } else {
-    throw Error(`Unsupported field type: ${type}`);
+    throw new GraphQLError(`Unsupported field type: ${String(type)}`);
   }
 }

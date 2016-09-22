@@ -14,18 +14,18 @@ import {
   GraphQLEnumType
 } from 'graphql';
 
-export function typeNameFromGraphQLType(type, unwrappedName, nullable = true) {
+export function typeNameFromGraphQLType(type, unmodifiedTypeName, nullable = true) {
   if (type instanceof GraphQLNonNull) {
-    return typeNameFromGraphQLType(type.ofType, unwrappedName, false)
+    return typeNameFromGraphQLType(type.ofType, unmodifiedTypeName, false)
   }
 
   let typeName;
   if (type instanceof GraphQLList) {
-    typeName = '[' + typeNameFromGraphQLType(type.ofType, unwrappedName, true) + ']';
+    typeName = '[' + typeNameFromGraphQLType(type.ofType, unmodifiedTypeName, true) + ']';
   } else if (type === GraphQLID) {
     typeName = 'GraphQLID'
   } else {
-    typeName = unwrappedName || type.name;
+    typeName = unmodifiedTypeName || type.name;
   }
 
   return nullable ? typeName + '?' : typeName;
