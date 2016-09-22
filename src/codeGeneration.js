@@ -20,15 +20,17 @@ import {
   indent
 } from './utilities/printing.js';
 
+// Parts of this code are adapted from graphql-js
+
 export class CodeGenerationContext {
   constructor(schema, document) {
     this.schema = schema;
     this.typesUsedSet = new Set();
 
-    this.fragmentsByName = Object.create(null);
+    this.fragmentMap = Object.create(null);
     for (const definition of document.definitions) {
       if (definition.kind === Kind.FRAGMENT_DEFINITION) {
-        this.fragmentsByName[definition.name.value] = definition;
+        this.fragmentMap[definition.name.value] = this.augmentWithTypes(definition);
       }
     }
 
@@ -41,11 +43,18 @@ export class CodeGenerationContext {
 
         const rootType = operationRootType(this.schema, operation);
         const [groupedFieldSet] = this.collectFieldsAndFragmentNames(rootType, selectionSet);
-        const fields = this.resolveFields(groupedFieldSet);
+        const [fields, fragmentNames] = this.resolveFields(groupedFieldSet);
 
-        this.queries.push({ name: name.value, variables, fields, source: sourceAt(loc) });
+        this.queries.push({ name: name.value, variables, fields, source: sourceAt(loc), fragmentNames });
       }
     }
+
+    this.fragments = Object.values(this.fragmentMap).map(({ loc, name, typeCondition, selectionSet }) => {
+      const fragmentType = typeFromAST(this.schema, typeCondition)
+      const [groupedFieldSet] = this.collectFieldsAndFragmentNames(fragmentType, selectionSet);
+      const [fields] = this.resolveFields(groupedFieldSet);
+      return { name: name.value, fields, source: sourceAt(loc) };
+    });
   }
 
   augmentWithTypes(ast) {
@@ -72,16 +81,8 @@ export class CodeGenerationContext {
     this.typesUsedSet.add(namedType);
   }
 
-  getTypesUsed() {
+  get typesUsed() {
     return Array.from(this.typesUsedSet);
-  }
-
-  getQueries() {
-    return this.queries;
-  }
-
-  getFragment(name) {
-    return this.fragmentsByName[name];
   }
 
   collectFieldsAndFragmentNames(parentType, selectionSet, groupedFieldSet = Object.create(null), visitedFragmentSet = Object.create(null)) {
@@ -131,13 +132,11 @@ export class CodeGenerationContext {
           if (visitedFragmentSet[fragmentName]) continue;
           visitedFragmentSet[fragmentName] = true;
 
-          const fragment = this.getFragment(fragmentName);
+          const fragment = this.fragmentMap[fragmentName];
           if (!fragment) continue;
 
           const typeCondition = fragment.typeCondition;
-          const fragmentType = typeCondition ?
-            typeFromAST(this.schema, typeCondition) :
-            parentType;
+          const fragmentType = typeFromAST(this.schema, typeCondition)
 
           if (fragmentType !== parentType) {
             throw new GraphQLError('Apollo iOS does not yet support polymorphic results through type conditions', [typeCondition])
@@ -158,19 +157,26 @@ export class CodeGenerationContext {
 
   resolveFields(groupedFieldSet) {
     let fields = [];
+    let fragmentNameSet = Object.create(null);
+
     for (const name of Object.keys(groupedFieldSet)) {
       const fieldSet = groupedFieldSet[name];
       const type = fieldSet[0].type;
       const field = { name, type };
       const namedType = getNamedType(type);
+
       if (isCompositeType(namedType)) {
-        const [groupedFieldSet, fragmentNameSet] = this.mergeSelectionSets(namedType, fieldSet)
-        field.fragmentNames = Object.keys(fragmentNameSet);
-        field.subfields = this.resolveFields(groupedFieldSet);
+        const [nestedGroupedFieldSet, nestedFragmentNameSet] = this.mergeSelectionSets(namedType, fieldSet)
+        fragmentNameSet = Object.assign(fragmentNameSet, nestedFragmentNameSet);
+        field.fragmentNames = Object.keys(nestedFragmentNameSet);
+        const [subfields] = this.resolveFields(nestedGroupedFieldSet);
+        field.subfields = subfields;
       }
+
       fields.push(field);
     }
-    return fields;
+
+    return [fields, Object.keys(fragmentNameSet)];
   }
 
   mergeSelectionSets(parentType, fieldSet) {
@@ -197,8 +203,6 @@ export function printFields(fields) {
     return `${field.name}: ${String(field.type)}` + wrap(' ', printFields(field.subfields));
   }));
 }
-
-// Adapted from graphql-js
 
 /**
  * Extracts the root type of the operation from the schema.
