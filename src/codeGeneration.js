@@ -43,17 +43,18 @@ export class CodeGenerationContext {
 
         const rootType = operationRootType(this.schema, operation);
         const [groupedFieldSet] = this.collectFieldsAndFragmentNames(rootType, selectionSet);
-        const [fields, fragmentNames] = this.resolveFields(groupedFieldSet);
+        const [fields, fragmentsUsed] = this.resolveFields(groupedFieldSet);
 
-        this.queries.push({ name: name.value, variables, fields, source: sourceAt(loc), fragmentNames });
+        this.queries.push({ operationName: name.value, variables, fields, source: sourceAt(loc), fragmentsUsed });
       }
     }
 
-    this.fragments = Object.values(this.fragmentMap).map(({ loc, name, typeCondition, selectionSet }) => {
+    Object.values(this.fragmentMap).forEach(({ loc, name, typeCondition, selectionSet }) => {
+      const fragmentName = name.value;
       const fragmentType = typeFromAST(this.schema, typeCondition)
       const [groupedFieldSet] = this.collectFieldsAndFragmentNames(fragmentType, selectionSet);
       const [fields] = this.resolveFields(groupedFieldSet);
-      return { name: name.value, fields, source: sourceAt(loc) };
+      this.fragmentMap[fragmentName] = { fragmentName, fields, source: sourceAt(loc) };
     });
   }
 
@@ -83,6 +84,14 @@ export class CodeGenerationContext {
 
   get typesUsed() {
     return Array.from(this.typesUsedSet);
+  }
+
+  fragmentNamed(fragmentName) {
+    return this.fragmentMap[fragmentName];
+  }
+
+  get fragments() {
+    return Array.from(this.fragmentMap);
   }
 
   collectFieldsAndFragmentNames(parentType, selectionSet, groupedFieldSet = Object.create(null), visitedFragmentSet = Object.create(null)) {
@@ -168,7 +177,7 @@ export class CodeGenerationContext {
       if (isCompositeType(namedType)) {
         const [nestedGroupedFieldSet, nestedFragmentNameSet] = this.mergeSelectionSets(namedType, fieldSet)
         fragmentNameSet = Object.assign(fragmentNameSet, nestedFragmentNameSet);
-        field.fragmentNames = Object.keys(nestedFragmentNameSet);
+        field.fragmentsUsed = Object.keys(nestedFragmentNameSet);
         const [subfields] = this.resolveFields(nestedGroupedFieldSet);
         field.subfields = subfields;
       }
