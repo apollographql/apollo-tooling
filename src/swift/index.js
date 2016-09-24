@@ -35,8 +35,8 @@ function importDeclarations() {
   return 'import Apollo';
 }
 
-function classDefinitionForQuery({ name, variables, fields, source, fragmentNames }) {
-  const className = `${pascalCase(name)}Query`;
+function classDefinitionForQuery({ operationName, variables, fields, source, fragmentsUsed }) {
+  const className = `${pascalCase(operationName)}Query`;
   const properties = propertiesFromFields(fields);
 
   const instancePropertyDeclarations = join(variables.map(variable =>
@@ -66,11 +66,11 @@ function classDefinitionForQuery({ name, variables, fields, source, fragmentName
   })();
 
   let queryDocument;
-  if (fragmentNames && fragmentNames.length > 0) {
+  if (fragmentsUsed && fragmentsUsed.length > 0) {
     queryDocument = 'public var queryDocument: String ' +
       block([
-        join(['return operationDefinition', ...fragmentNames.map(fragmentName =>
-          `.appending(${protocolNameForFragmentName(fragmentName)}Fragment.fragmentDefinition)`
+        join(['return operationDefinition', ...fragmentsUsed.map(fragment =>
+          `.appending(${protocolNameForFragmentName(fragment)}Fragment.fragmentDefinition)`
         )])
       ]);
   }
@@ -86,7 +86,7 @@ function classDefinitionForQuery({ name, variables, fields, source, fragmentName
     ]);
 }
 
-function structDeclaration({ name, properties = [], fragmentNames }) {
+function structDeclaration({ name, properties = [], fragmentsUsed }) {
   const propertyDeclarations = properties.map(({ name, typeName }) =>
     `public let ${name}: ${typeName}`
   );
@@ -105,7 +105,7 @@ function structDeclaration({ name, properties = [], fragmentNames }) {
   ));
 
   return join([`public struct ${name}: GraphQLMapConvertible`,
-    wrap(', ', join(fragmentNames && fragmentNames.map(protocolNameForFragmentName), ', ')),
+    wrap(', ', join(fragmentsUsed && fragmentsUsed.map(protocolNameForFragmentName), ', ')),
     ' ',
     block([
       wrap('', join(propertyDeclarations, '\n'), '\n'),

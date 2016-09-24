@@ -1,6 +1,4 @@
-import chai, { assert } from 'chai'
-import chaiSubset from 'chai-subset'
-chai.use(chaiSubset);
+import { assert } from 'chai'
 
 import {
   parse,
@@ -17,37 +15,71 @@ import { CodeGenerationContext, printFields } from '../src/codeGeneration'
 const schema = loadSchema(require.resolve('./starwars/schema.json'));
 
 describe('CodeGenerationContext', () => {
-  it(`should merge fields from fragment spreads`, () => {
+  it(`should include defined variables for queries`, () => {
     const document = parse(`
-      query Hero {
-        hero {
-          id
-          ...HeroName
+      query HeroName($episode: Episode) {
+        hero(episode: $episode) {
+          name
         }
-      }
-
-      fragment HeroName on Character {
-        id
-        ...HeroAppearsIn
-        name
-      }
-
-      fragment HeroAppearsIn on Character {
-        id
-        appearsIn
       }
     `);
 
     const context = new CodeGenerationContext(schema, document);
-    const query = context.queries[0];
 
-    assert.containSubset(stringifyTypes(query), {
-      name: 'Hero',
+    assert.deepEqual(stringifySchemaReferences(context.queries[0]), {
+      operationName: 'HeroName',
+      variables: [
+        { name: "episode", type: 'Episode' }
+      ],
+      fragmentsUsed: [],
       fields: [
         {
           name: 'hero',
           type: 'Character',
-          fragmentNames: ['HeroName', 'HeroAppearsIn'],
+          fragmentsUsed: [],
+          subfields: [
+            {
+              name: 'name',
+              type: 'String!'
+            }
+          ]
+        }
+      ]
+    });
+  });
+
+  it(`should merge fields from fragment spreads recursively`, () => {
+    const document = parse(`
+      query Hero {
+        hero {
+          id
+          ...HeroDetails
+        }
+      }
+
+      fragment HeroDetails on Character {
+        id
+        ...MoreHeroDetails
+        name
+      }
+
+      fragment MoreHeroDetails on Character {
+        appearsIn
+        id
+      }
+    `);
+
+    const context = new CodeGenerationContext(schema, document);
+
+    assert.deepEqual(stringifySchemaReferences(context.queries[0]), {
+      operationName: 'Hero',
+      variables: [],
+      fragmentsUsed: ['HeroDetails', 'MoreHeroDetails'],
+      fields: [
+        {
+          name: 'hero',
+          type: 'Character',
+          fragmentsUsed: ['HeroDetails', 'MoreHeroDetails'],
           subfields: [
             {
               name: 'id',
@@ -64,14 +96,47 @@ describe('CodeGenerationContext', () => {
         }
       ]
     });
+
+    assert.deepEqual(stringifySchemaReferences(context.fragmentNamed('HeroDetails')), {
+      fragmentName: 'HeroDetails',
+      fields: [
+        {
+          name: 'id',
+          type: 'ID!'
+        },
+        { name: 'appearsIn',
+          type: '[Episode]!'
+        },
+        {
+          name: 'name',
+          type: 'String!'
+        }
+      ]
+    });
+
+    assert.deepEqual(stringifySchemaReferences(context.fragmentNamed('MoreHeroDetails')), {
+      fragmentName: 'MoreHeroDetails',
+      fields: [
+        { name: 'appearsIn',
+          type: '[Episode]!'
+        },
+        {
+          name: 'id',
+          type: 'ID!'
+        }
+      ]
+    });
   });
 
-  it(`should merge fields from fragment spreads at nested levels`, () => {
+  it(`should merge fields from fragment spreads at each nested level`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
           ...HeroDetails
+          appearsIn
+          id
           friends {
+            id
             ...HeroDetails
           }
         }
@@ -79,29 +144,42 @@ describe('CodeGenerationContext', () => {
 
       fragment HeroDetails on Character {
       	name
+        id
       }
     `);
+    
     const context = new CodeGenerationContext(schema, document);
 
-    const query = context.queries[0];
-
-    assert.containSubset(stringifyTypes(query), {
-      name: 'HeroAndFriends',
+    assert.deepEqual(stringifySchemaReferences(context.queries[0]), {
+      operationName: 'HeroAndFriends',
+      variables: [],
+      fragmentsUsed: ['HeroDetails'],
       fields: [
         {
           name: 'hero',
           type: 'Character',
-          fragmentNames: ['HeroDetails'],
+          fragmentsUsed: ['HeroDetails'],
           subfields: [
             {
               name: 'name',
               type: 'String!'
             },
             {
+              name: 'id',
+              type: 'ID!'
+            },
+            { name: 'appearsIn',
+              type: '[Episode]!'
+            },
+            {
               name: 'friends',
               type: '[Character]',
-              fragmentNames: ['HeroDetails'],
+              fragmentsUsed: ['HeroDetails'],
               subfields: [
+                {
+                  name: 'id',
+                  type: 'ID!'
+                },
                 {
                   name: 'name',
                   type: 'String!'
@@ -112,44 +190,62 @@ describe('CodeGenerationContext', () => {
         }
       ]
     });
+
+    assert.deepEqual(stringifySchemaReferences(context.fragmentNamed('HeroDetails')), {
+      fragmentName: 'HeroDetails',
+      fields: [
+        {
+          name: 'name',
+          type: 'String!'
+        },
+        {
+          name: 'id',
+          type: 'ID!'
+        }
+      ]
+    });
   });
 
-  it(`should merge fields from inline fragments`, () => {
+  it(`should merge fields from inline fragments recursively`, () => {
     const document = parse(`
       query Hero {
         hero {
           id
           ... on Character {
+            name
             ... on Character {
+              id
               appearsIn
             }
-            name
+            id
           }
         }
       }
     `);
 
     const context = new CodeGenerationContext(schema, document);
-    const query = context.queries[0];
 
-    assert.containSubset(stringifyTypes(query), {
-      name: 'Hero',
+    assert.deepEqual(stringifySchemaReferences(context.queries[0]), {
+      operationName: 'Hero',
+      variables: [],
+      fragmentsUsed: [],
       fields: [
         {
           name: 'hero',
           type: 'Character',
+          fragmentsUsed: [],
           subfields: [
             {
               name: 'id',
               type: 'ID!'
             },
             {
-              name: 'appearsIn',
-              type: '[Episode]!'
-            },
-            {
               name: 'name',
               type: 'String!'
+            },
+            {
+              name: 'appearsIn',
+              type: '[Episode]!'
             }
           ]
         }
@@ -224,12 +320,69 @@ describe('CodeGenerationContext', () => {
   });
 });
 
-function stringifyTypes(ast) {
+describe('parsed fragments', () => {
+  it(`should merge fields from fragment spreads recursively`, () => {
+    const document = parse(`
+      query Hero {
+        hero {
+          id
+          ...HeroDetails
+        }
+      }
+
+      fragment HeroDetails on Character {
+        id
+        ...MoreHeroDetails
+        name
+      }
+
+      fragment MoreHeroDetails on Character {
+        id
+        appearsIn
+      }
+    `);
+
+    const context = new CodeGenerationContext(schema, document);
+    const query = context.queries[0];
+
+    assert.deepEqual(stringifySchemaReferences(query), {
+      operationName: 'Hero',
+      variables: [],
+      fragmentsUsed: ['HeroDetails', 'MoreHeroDetails'],
+      fields: [
+        {
+          name: 'hero',
+          type: 'Character',
+          fragmentsUsed: ['HeroDetails', 'MoreHeroDetails'],
+          subfields: [
+            {
+              name: 'id',
+              type: 'ID!'
+            },
+            { name: 'appearsIn',
+              type: '[Episode]!'
+            },
+            {
+              name: 'name',
+              type: 'String!'
+            }
+          ]
+        }
+      ]
+    });
+  });
+});
+
+function stringifySchemaReferences(ast) {
   return JSON.parse(JSON.stringify(ast, function(key, value) {
+    if (key === "source") {
+      return undefined;
+    }
+
     if (isType(value)) {
       return String(value);
-    } else {
-      return value;
     }
+
+    return value;
   }));
 }
