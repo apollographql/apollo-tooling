@@ -320,59 +320,6 @@ describe('CodeGenerationContext', () => {
   });
 });
 
-describe('parsed fragments', () => {
-  it(`should merge fields from fragment spreads recursively`, () => {
-    const document = parse(`
-      query Hero {
-        hero {
-          id
-          ...HeroDetails
-        }
-      }
-
-      fragment HeroDetails on Character {
-        id
-        ...MoreHeroDetails
-        name
-      }
-
-      fragment MoreHeroDetails on Character {
-        id
-        appearsIn
-      }
-    `);
-
-    const context = new CodeGenerationContext(schema, document);
-    const query = context.queries[0];
-
-    assert.deepEqual(stringifySchemaReferences(query), {
-      operationName: 'Hero',
-      variables: [],
-      fragmentsUsed: ['HeroDetails', 'MoreHeroDetails'],
-      fields: [
-        {
-          name: 'hero',
-          type: 'Character',
-          fragmentsUsed: ['HeroDetails', 'MoreHeroDetails'],
-          subfields: [
-            {
-              name: 'id',
-              type: 'ID!'
-            },
-            { name: 'appearsIn',
-              type: '[Episode]!'
-            },
-            {
-              name: 'name',
-              type: 'String!'
-            }
-          ]
-        }
-      ]
-    });
-  });
-});
-
 function stringifySchemaReferences(ast) {
   return JSON.parse(JSON.stringify(ast, function(key, value) {
     if (key === "source") {
