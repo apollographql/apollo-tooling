@@ -11,7 +11,7 @@ import {
 
 import { ToolError, logError } from './errors'
 import { validateQueryDocument } from './validation'
-import { CodeGenerationContext } from './codeGeneration'
+import { CompilationContext } from './compilation'
 import { generateSource } from './swift'
 
 export default function generate(inputPaths, schemaPath, outputPath) {
@@ -21,7 +21,7 @@ export default function generate(inputPaths, schemaPath, outputPath) {
 
   validateQueryDocument(schema, document);
 
-  const context = new CodeGenerationContext(schema, document);
+  const context = new CompilationContext(schema, document);
   const source = generateSource(context);
   fs.writeFileSync(outputPath, source);
 }

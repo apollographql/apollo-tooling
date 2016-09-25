@@ -24,7 +24,7 @@ export function propertyFromField(field) {
   const type = field.type;
   const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList;
 
-  let property = { name, fieldName: field.name, isList, fragmentNames: field.fragmentNames };
+  let property = { name, fieldName: field.name, isList, fragmentSpreads: field.fragmentSpreads };
 
   const namedType = getNamedType(type);
 
@@ -34,8 +34,8 @@ export function propertyFromField(field) {
   } else if (isCompositeType(namedType)) {
     const unmodifiedTypeName = pascalCase(Inflector.singularize(name));
     const typeName =  typeNameFromGraphQLType(type, unmodifiedTypeName);
-    const subproperties = propertiesFromFields(field.subfields);
-    return { ...property, typeName, unmodifiedTypeName, isComposite: true, subproperties };
+    const properties = propertiesFromFields(field.fields);
+    return { ...property, typeName, unmodifiedTypeName, isComposite: true, properties };
   } else {
     throw new GraphQLError(`Unsupported field type: ${String(type)}`);
   }

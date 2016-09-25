@@ -8,7 +8,7 @@ import {
   loadAndMergeQueryDocuments,
 } from '../../src/generate'
 
-import { CodeGenerationContext } from '../../src/codeGeneration'
+import { CompilationContext } from '../../src/compilation'
 
 import { generateSource } from '../../src/swift'
 
@@ -19,7 +19,7 @@ describe('#generateSource()', () => {
     const inputPaths = [path.join(__dirname, '../starwars/HeroAndFriendsNames.graphql')];
     const document = loadAndMergeQueryDocuments(inputPaths);
 
-    const context = new CodeGenerationContext(schema, document);
+    const context = new CompilationContext(schema, document);
     const output = generateSource(context);
 
     const expectedOutput = readFileSync(path.join(__dirname, `./expectedOutput/HeroAndFriendsNamesAPI.swift`), 'utf8');
