@@ -19,7 +19,7 @@ import {
   block,
   wrap,
   indent
-} from './utilities/printing.js';
+} from './utilities/printing';
 
 // Parts of this code are adapted from graphql-js
 
