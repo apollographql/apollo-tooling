@@ -17,17 +17,20 @@ import { typeNameFromGraphQLType, typeDeclarationForGraphQLType } from './types'
 import { propertiesFromFields } from './properties'
 import { escapedString, multilineString } from './strings'
 
-export function generateSource({ typesUsed, queries, fragments }) {
-  const typeDefinitions = typesUsed.map(typeDeclarationForGraphQLType);
-  const queryClassDefinitions = queries.map(classDefinitionForQuery);
-  const fragmentClassDefinitions = fragments.map(classDefinitionForFragment);
+export function generateSource(context) {
+  const operations = context.compileOperations();
+  const fragments = context.compileFragments();
+
+  const typeDeclarations = context.typesUsed.map(typeDeclarationForGraphQLType);
+  const operationClassDeclarations = operations.map(classDeclarationForOperation);
+  const fragmentClassDeclarations = fragments.map(classDeclarationForFragment);
 
   return join([
     '//  This file was automatically generated and should not be edited.\n\n',
     importDeclarations() + '\n',
-    wrap('\n', join(typeDefinitions, '\n\n'), '\n'),
-    wrap('\n', join(queryClassDefinitions, '\n\n'), '\n'),
-    wrap('\n', join(fragmentClassDefinitions, '\n\n'), '\n')
+    wrap('\n', join(typeDeclarations, '\n\n'), '\n'),
+    wrap('\n', join(operationClassDeclarations, '\n\n'), '\n'),
+    wrap('\n', join(fragmentClassDeclarations, '\n\n'), '\n')
   ]);
 }
 
@@ -35,7 +38,7 @@ function importDeclarations() {
   return 'import Apollo';
 }
 
-function classDefinitionForQuery({ operationName, variables, fields, source, fragmentsUsed }) {
+function classDeclarationForOperation({ operationName, variables, fields, source, fragmentsReferenced }) {
   const className = `${pascalCase(operationName)}Query`;
   const properties = propertiesFromFields(fields);
 
@@ -66,10 +69,10 @@ function classDefinitionForQuery({ operationName, variables, fields, source, fra
   })();
 
   let queryDocument;
-  if (fragmentsUsed && fragmentsUsed.length > 0) {
+  if (fragmentsReferenced && fragmentsReferenced.length > 0) {
     queryDocument = 'public var queryDocument: String ' +
       block([
-        join(['return operationDefinition', ...fragmentsUsed.map(fragment =>
+        join(['return operationDefinition', ...fragmentsReferenced.map(fragment =>
           `.appending(${protocolNameForFragmentName(fragment)}Fragment.fragmentDefinition)`
         )])
       ]);
@@ -86,7 +89,7 @@ function classDefinitionForQuery({ operationName, variables, fields, source, fra
     ]);
 }
 
-function structDeclaration({ name, properties = [], fragmentsUsed }) {
+function structDeclaration({ name, properties = [], fragmentSpreads }) {
   const propertyDeclarations = properties.map(({ name, typeName }) =>
     `public let ${name}: ${typeName}`
   );
@@ -99,13 +102,13 @@ function structDeclaration({ name, properties = [], fragmentsUsed }) {
   const nestedStructDeclarations = compositeProperties.map(property =>
     wrap('\n', structDeclaration({
       name: property.unmodifiedTypeName,
-      properties: property.subproperties,
-      fragmentNames: property.fragmentNames
+      properties: property.properties,
+      fragmentSpreads: property.fragmentSpreads
     })
   ));
 
   return join([`public struct ${name}: GraphQLMapConvertible`,
-    wrap(', ', join(fragmentsUsed && fragmentsUsed.map(protocolNameForFragmentName), ', ')),
+    wrap(', ', join(fragmentSpreads && fragmentSpreads.map(protocolNameForFragmentName), ', ')),
     ' ',
     block([
       wrap('', join(propertyDeclarations, '\n'), '\n'),
@@ -119,8 +122,8 @@ function protocolNameForFragmentName(fragmentName) {
   return pascalCase(fragmentName);
 }
 
-function classDefinitionForFragment({ name, fields, source }) {
-  const protocolName = protocolNameForFragmentName(name);
+function classDeclarationForFragment({ fragmentName, fields, source }) {
+  const protocolName = protocolNameForFragmentName(fragmentName);
   const className = `${protocolName}Fragment`;
   const properties = propertiesFromFields(fields);
 
