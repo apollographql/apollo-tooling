@@ -3,7 +3,7 @@ import {
   block,
   wrap,
   indent
-} from '../utilities/printing.js';
+} from '../utilities/printing';
 
 import { camelCase, pascalCase } from 'change-case';
 
