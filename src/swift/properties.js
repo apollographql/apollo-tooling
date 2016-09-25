@@ -18,13 +18,12 @@ export function propertiesFromFields(fields) {
   return fields.map(field => propertyFromField(field));
 }
 
-export function propertyFromField(field) {
-  const name = camelCase(field.name);
+export function propertyFromField({ name: fieldName, type, fields, fragmentSpreads, inlineFragments }) {
+  const name = camelCase(fieldName);
 
-  const type = field.type;
   const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList;
 
-  let property = { name, fieldName: field.name, isList, fragmentSpreads: field.fragmentSpreads };
+  let property = { name, fieldName, isList, fragmentSpreads };
 
   const namedType = getNamedType(type);
 
@@ -34,8 +33,11 @@ export function propertyFromField(field) {
   } else if (isCompositeType(namedType)) {
     const unmodifiedTypeName = pascalCase(Inflector.singularize(name));
     const typeName =  typeNameFromGraphQLType(type, unmodifiedTypeName);
-    const properties = propertiesFromFields(field.fields);
-    return { ...property, typeName, unmodifiedTypeName, isComposite: true, properties };
+    const properties = propertiesFromFields(fields);
+    inlineFragments = inlineFragments && inlineFragments.map(({ typeCondition, fields }) =>
+      ({ typeCondition, properties: propertiesFromFields(fields) })
+    );
+    return { ...property, typeName, unmodifiedTypeName, isComposite: true, properties, inlineFragments };
   } else {
     throw new GraphQLError(`Unsupported field type: ${String(type)}`);
   }

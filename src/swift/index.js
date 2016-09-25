@@ -99,13 +99,6 @@ function structDeclaration({ name, properties = [], fragmentSpreads }) {
       `${property.name} = try map.${ property.isList ? 'list' : 'value' }(forKey: "${property.fieldName}")`));
 
   const compositeProperties = properties.filter(property => property.isComposite);
-  const nestedStructDeclarations = compositeProperties.map(property =>
-    wrap('\n', structDeclaration({
-      name: property.unmodifiedTypeName,
-      properties: property.properties,
-      fragmentSpreads: property.fragmentSpreads
-    })
-  ));
 
   return join([`public struct ${name}: GraphQLMapConvertible`,
     wrap(', ', join(fragmentSpreads && fragmentSpreads.map(protocolNameForFragmentName), ', ')),
@@ -113,9 +106,27 @@ function structDeclaration({ name, properties = [], fragmentSpreads }) {
     block([
       wrap('', join(propertyDeclarations, '\n'), '\n'),
       initializerDeclaration,
-      join(nestedStructDeclarations, '\n')
+      join(nestedStructDeclarations(compositeProperties), '\n')
     ])
   ]);
+}
+
+function nestedStructDeclarations(properties) {
+  let declarations = [];
+  for (const property of properties) {
+    const { unmodifiedTypeName: name, properties, fragmentSpreads, inlineFragments } = property;
+
+    declarations.push(wrap('\n', structDeclaration({ name, properties, fragmentSpreads })));
+
+    for (const inlineFragment of inlineFragments) {
+      const { typeCondition, properties, fragmentSpreads } = inlineFragment;
+
+      declarations.push(wrap('\n',
+        structDeclaration({ name: `${name}_${String(typeCondition)}`, properties, fragmentSpreads })
+      ));
+    }
+  }
+  return declarations;
 }
 
 function protocolNameForFragmentName(fragmentName) {
