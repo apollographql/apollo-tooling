@@ -70,19 +70,16 @@ function classDeclarationForOperation({ operationName, variables, fields, source
 
   let queryDocument;
   if (fragmentsReferenced && fragmentsReferenced.length > 0) {
-    queryDocument = 'public var queryDocument: String ' +
-      block([
-        join(['return operationDefinition', ...fragmentsReferenced.map(fragment =>
-          `.appending(${protocolNameForFragmentName(fragment)}Fragment.fragmentDefinition)`
-        )])
-      ]);
+    queryDocument = 'public static let queryDocument = ' + join(['operationDefinition', ...fragmentsReferenced.map(fragment =>
+      `.appending(${protocolNameForFragmentName(fragment)}Fragment.fragmentDefinition)`
+    )])
   }
 
-  return `public class ${className}: GraphQLQuery ` +
+  return `public final class ${className}: GraphQLQuery ` +
     block([
       wrap('', instancePropertyDeclarations, '\n'),
       initializerDeclaration,
-      wrap('\n', 'public let operationDefinition =' + indent('\n' + multilineString(source))),
+      wrap('\n', 'public static let operationDefinition =' + indent('\n' + multilineString(source))),
       wrap('\n', queryDocument),
       wrap('\n', variablesProperty),
       wrap('\n', structDeclaration({ name: "Data", properties }))
@@ -139,7 +136,7 @@ function classDeclarationForFragment({ fragmentName, fields, source }) {
   const properties = propertiesFromFields(fields);
 
   return join([
-    `public class ${className}: GraphQLFragment `,
+    `public final class ${className}: GraphQLFragment `,
     block([
       'public static let fragmentDefinition =' + indent('\n' + multilineString(source) + '\n'),
       `public typealias Data = ${protocolName}`
