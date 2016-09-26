@@ -1,8 +1,10 @@
 import {
+  print,
   visit,
   visitWithTypeInfo,
   typeFromAST,
   getNamedType,
+  isAbstractType,
   isTypeSubTypeOf,
   Kind,
   TypeInfo,
@@ -13,6 +15,11 @@ import {
   GraphQLUnionType,
   GraphQLError
 } from 'graphql';
+
+import {
+  getOperationRootType,
+  getFieldDef
+} from './utilities/graphql';
 
 import {
   join,
@@ -70,12 +77,14 @@ export class CompilationContext {
       return { name, type };
     });
 
-    const rootType = this.rootTypeForOperation(operationDefinition);
+    const rootType = getOperationRootType(this.schema, operationDefinition);
     const { groupedFieldSet, visitedFragmentSet } =
       this.collectFields(rootType, operationDefinition.selectionSet);
     const { fields, fragmentsReferencedSet } = this.resolveFields(rootType, groupedFieldSet);
 
-    return { operationName, variables, source: sourceAt(operationDefinition.loc), fragmentsReferenced: Object.keys(fragmentsReferencedSet), fields };
+    const source = print(addTypenameFieldToSelectionsWithAbstractParentTypes(this.schema, operationDefinition));
+
+    return { operationName, variables, source, fragmentsReferenced: Object.keys(fragmentsReferencedSet), fields };
   }
 
   compileFragments() {
@@ -90,7 +99,9 @@ export class CompilationContext {
       this.collectFields(fragmentType, fragmentDefinition.selectionSet);
     const { fields, fragmentsReferencedSet } = this.resolveFields(fragmentType, groupedFieldSet);
 
-    return { fragmentName, source: sourceAt(fragmentDefinition.loc), fields };
+    const source = print(addTypenameFieldToSelectionsWithAbstractParentTypes(this.schema, fragmentDefinition));
+
+    return { fragmentName, source, fields };
   }
 
   collectFields(parentType, selectionSet, groupedFieldSet = Object.create(null), visitedFragmentSet = Object.create(null)) {
@@ -104,7 +115,7 @@ export class CompilationContext {
           const fieldName = selection.name.value;
           const responseName = selection.alias ? selection.alias.value : fieldName;
 
-          const field = parentType.getFields()[fieldName];
+          const field = getFieldDef(this.schema, parentType, selection);
           if (!field) {
             throw new GraphQLError(`Cannot query field "${fieldName}" on type "${String(parentType)}"`, [selection]);
           }
@@ -224,39 +235,24 @@ export class CompilationContext {
     }
     return Array.from(typeConditions);
   }
+}
 
-  /**
-   * Extracts the root type of the operation from the schema.
-   */
-  rootTypeForOperation(operationDefinition) {
-    switch (operationDefinition.operation) {
-      case 'query':
-        return this.schema.getQueryType();
-      case 'mutation':
-        const mutationType = this.schema.getMutationType();
-        if (!mutationType) {
-          throw new GraphQLError(
-            'Schema is not configured for mutations',
-            [operation]
-          );
+const typenameField = { kind: Kind.FIELD, name: { kind: Kind.NAME, value: '__typename' } };
+
+function addTypenameFieldToSelectionsWithAbstractParentTypes(schema, ast) {
+  const typeInfo = new TypeInfo(schema);
+
+  return visit(ast, visitWithTypeInfo(typeInfo, {
+    leave: {
+      SelectionSet: node => {
+        const parentType = typeInfo.getParentType();
+        if (isAbstractType(parentType)) {
+          node.selections.unshift(typenameField);
         }
-        return mutationType;
-      case 'subscription':
-        const subscriptionType = this.schema.getSubscriptionType();
-        if (!subscriptionType) {
-          throw new GraphQLError(
-            'Schema is not configured for subscriptions',
-            [operation]
-          );
-        }
-        return subscriptionType;
-      default:
-        throw new GraphQLError(
-          'Can only compile queries, mutations and subscriptions',
-          [operation]
-        );
+        return node;
+      }
     }
-  }
+  }));
 }
 
 function sourceAt(location) {

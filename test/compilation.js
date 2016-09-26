@@ -507,7 +507,7 @@ describe('compilation', () => {
     });
   });
 
-  it(`should include the source of operations`, () => {
+  it(`should include the source of operations with __typename added`, () => {
     const source = stripIndent`
       query HeroName {
         hero {
@@ -520,10 +520,17 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const querySpec = context.compileOperation(context.operations[0]);
 
-    assert.equal(querySpec.source, source);
+    assert.equal(querySpec.source, stripIndent`
+      query HeroName {
+        hero {
+          __typename
+          name
+        }
+      }
+    `);
   });
 
-  it(`should include the source of fragments`, () => {
+  it(`should include the source of fragments with __typename added`, () => {
     const source = stripIndent`
       fragment HeroDetails on Character {
         name
@@ -534,7 +541,12 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const fragmentSpec = context.compileFragment(context.fragments[0]);
 
-    assert.equal(fragmentSpec.source, source);
+    assert.equal(fragmentSpec.source, stripIndent`
+      fragment HeroDetails on Character {
+        __typename
+        name
+      }
+    `);
   });
 });
 
