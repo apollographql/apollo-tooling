@@ -4,6 +4,7 @@ chai.use(chaiSubset);
 
 import {
   buildClientSchema,
+  isType,
   GraphQLID,
   GraphQLString,
   GraphQLList,
@@ -20,28 +21,52 @@ describe('#propertyFromField()', () => {
     const field = { name: 'name', type: GraphQLString };
     const property = propertyFromField(field);
 
-    assert.containSubset(property, { name: 'name', typeName: 'String?' });
+    assert.containSubset(stringify(property), {
+      name: 'name',
+      typeName: 'String?',
+      isOptional: true,
+      isList: false,
+      isComposite: false
+    });
   });
 
   it('should return a property for a non-null scalar field', () => {
     const field = { name: 'name', type: new GraphQLNonNull(GraphQLString) };
     const property = propertyFromField(field);
 
-    assert.containSubset(property, { name: 'name', typeName: 'String' });
+    assert.containSubset(stringify(property), {
+      name: 'name',
+      typeName: 'String',
+      isOptional: false,
+      isList: false,
+      isComposite: false
+    });
   });
 
   it('should return a property for a list field', () => {
     const field = { name: 'name', type: new GraphQLList(GraphQLString) };
     const property = propertyFromField(field);
 
-    assert.containSubset(property, { name: 'name', typeName: '[String?]?' });
+    assert.containSubset(stringify(property), {
+      name: 'name',
+      typeName: '[String?]?',
+      isOptional: true,
+      isList: true,
+      isComposite: false
+    });
   });
 
   it('should return a property for a non-null list field', () => {
     const field = { name: 'name', type: new GraphQLNonNull(new GraphQLList(GraphQLString)) };
     const property = propertyFromField(field);
 
-    assert.containSubset(property, { name: 'name', typeName: '[String?]', isList: true });
+    assert.containSubset(stringify(property), {
+      name: 'name',
+      typeName: '[String?]',
+      isOptional: false,
+      isList: true,
+      isComposite: false
+    });
   });
 
   it('should return a property for a composite field', () => {
@@ -53,10 +78,11 @@ describe('#propertyFromField()', () => {
     };
     const property = propertyFromField(field);
 
-    assert.containSubset(property, {
+    assert.containSubset(stringify(property), {
       name: 'hero',
-      typeName: 'Hero?',
       unmodifiedTypeName: 'Hero',
+      isOptional: true,
+      isList: false,
       isComposite: true,
       fragmentSpreads: ['HeroDetails'],
       properties: [
@@ -74,10 +100,11 @@ describe('#propertyFromField()', () => {
     };
     const property = propertyFromField(field);
 
-    assert.containSubset(property, {
+    assert.containSubset(stringify(property), {
       name: 'hero',
-      typeName: 'Hero',
       unmodifiedTypeName: 'Hero',
+      isOptional: false,
+      isList: false,
       isComposite: true,
       fragmentSpreads: ['HeroDetails'],
       properties: [
@@ -94,10 +121,10 @@ describe('#propertyFromField()', () => {
     };
     const property = propertyFromField(field);
 
-    assert.containSubset(property, {
+    assert.containSubset(stringify(property), {
       name: 'friends',
-      typeName: '[Friend?]?',
       unmodifiedTypeName: 'Friend',
+      isOptional: true,
       isList: true,
       isComposite: true,
       properties: [
@@ -106,3 +133,12 @@ describe('#propertyFromField()', () => {
     });
   });
 });
+
+function stringify(ast) {
+  return JSON.parse(JSON.stringify(ast, function(key, value) {
+    if (isType(value)) {
+      return String(value);
+    }
+    return value;
+  }));
+}
