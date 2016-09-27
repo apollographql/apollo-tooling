@@ -33,8 +33,8 @@ export function classDeclarationForOperation({ operationName, variables, fields,
     )])
   }
 
-  const path = [className];
-  const protocolsReferenced = [];
+  const stack = new DeclarationStack();
+  stack.push(className);
 
   return join([
     `public final class ${className}: GraphQLQuery ` +
@@ -44,16 +44,10 @@ export function classDeclarationForOperation({ operationName, variables, fields,
       wrap('\n', 'public static let operationDefinition =' + indent('\n' + multilineString(source))),
       wrap('\n', queryDocument),
       wrap('\n', variablesProperty(variables)),
-      wrap('\n', structDeclaration({ name: "Data", properties }, path, protocolsReferenced))
+      wrap('\n', structDeclaration({ typeName: "Data", properties }, stack))
     ]),
-    ...protocolsReferenced.map(protocolDeclaration),
+    ...stack.topLevel.declarations,
   ], '\n\n');
-}
-
-function protocolDeclaration({ protocolName, properties }) {
-  return `public protocol ${protocolName} ` + block(properties.map(property =>
-    `var ${property.name}: ${typeNameForProperty(property)} { get }`
-  ));
 }
 
 function initializerDeclaration(variables) {
@@ -78,8 +72,9 @@ function variablesProperty(variables) {
   return 'public var variables: GraphQLMap? ' + block([variablesMap])
 }
 
-function structDeclaration({ name, properties = [], protocolsAdopted }, path, protocolsReferenced) {
-  path = path.concat(name);
+function structDeclaration({ typeName, discriminator, properties = [], protocolsAdopted }, stack) {
+  stack.push(typeName, discriminator);
+  const structName = polymorphicTypeName(typeName, discriminator);
 
   const propertyDeclarations = properties.map(property =>
     `public let ${property.name}: ${typeNameForProperty(property)}`
@@ -89,16 +84,87 @@ function structDeclaration({ name, properties = [], protocolsAdopted }, path, pr
     block(properties.map(initializationForProperty));
 
   const compositeProperties = properties.filter(property => property.isComposite);
+  for (const property of compositeProperties) {
+    addDeclarationsForCompositeProperty(property, stack);
+  }
 
-  return join([`public struct ${name}: GraphQLMapConvertible`,
+  return join([
+    `public struct ${structName}: GraphQLMapConvertible`,
     wrap(', ', join(protocolsAdopted, ', ')),
     ' ',
     block([
       wrap('', join(propertyDeclarations, '\n'), '\n'),
       initializerDeclaration,
-      join(nestedDeclarationsForProperties(compositeProperties, path, protocolsReferenced), '\n')
+      wrap('\n', join(stack.pop().declarations, '\n\n'))
     ])
   ]);
+}
+
+function addDeclarationsForCompositeProperty({ unmodifiedTypeName: typeName, properties, isPolymorphic, subTypes, fragmentSpreads }, stack) {
+  if (isPolymorphic) {
+    const mangledProtocolName = addProtocolDeclaration({
+      protocolName: typeName,
+      properties: properties,
+      protocolsAdopted: protocolsAdoptedForFragmentSpreads(fragmentSpreads)
+    }, stack);
+    stack.currentLevel.declarations.push(`public typealias ${typeName} = ${mangledProtocolName}`);
+
+    const protocolsAdopted = [typeName];
+
+    stack.currentLevel.declarations.push(structDeclaration({
+      typeName,
+      discriminator: 'Base',
+      properties,
+      protocolsAdopted
+    }, stack));
+
+    for (const subType of subTypes) {
+      stack.currentLevel.declarations.push(structDeclaration({
+        typeName,
+        discriminator: subType.typeName,
+        properties: subType.properties,
+        protocolsAdopted: protocolsAdopted.concat(protocolsAdoptedForFragmentSpreads(subType.fragmentSpreads))
+      }, stack));
+    }
+  } else {
+    const mangledProtocolName = stack.isNestedInPolymorphicType ? [mangledTypeName(typeName, stack.pathWithoutLastDiscriminator)] : null;
+    const protocolsAdopted = [mangledProtocolName, ...protocolsAdoptedForFragmentSpreads(fragmentSpreads)];
+
+    stack.currentLevel.declarations.push(structDeclaration({
+      typeName,
+      properties,
+      protocolsAdopted,
+    }, stack));
+  }
+}
+
+function addProtocolDeclaration({ protocolName, properties, protocolsAdopted }, stack) {
+  const mangledProtocolName = mangledTypeName(protocolName, stack.path);
+  stack.push(protocolName);
+
+  const mangledProperties = properties.map(subproperty => {
+    if (!subproperty.isComposite) return subproperty;
+
+    const mangledPropertyTypeName = addProtocolDeclaration({
+      protocolName: subproperty.unmodifiedTypeName,
+      properties: subproperty.properties,
+      protocolsAdopted: subproperty.protocolsAdopted
+    }, stack);
+    return { ...subproperty, unmodifiedTypeName: mangledPropertyTypeName };
+  });
+
+  stack.topLevel.declarations.unshift(join([
+    `public protocol ${mangledProtocolName}`,
+    wrap(': ', join(protocolsAdopted, ', ')),
+    ' ',
+    block(mangledProperties.map(property =>
+      `var ${property.name}: ${typeNameForProperty(property)} { get }`
+    ))
+  ]));
+
+  stack.pop();
+
+  return mangledProtocolName;
 }
 
 function initializationForProperty({ name, fieldName, unmodifiedTypeName, isOptional, isList, isPolymorphic, subTypes }) {
@@ -107,8 +173,8 @@ function initializationForProperty({ name, fieldName, unmodifiedTypeName, isOpti
   const args = [`forKey: "${fieldName}"`];
 
   if (isPolymorphic) {
-    const possibleTypes = subTypes.map(({ typeCondition }) =>
-      `"${String(typeCondition)}": ${polymorphicTypeName(unmodifiedTypeName, typeCondition)}.self`
+    const possibleTypes = subTypes.map(({ typeName: subTypeName }) =>
+      `"${subTypeName}": ${polymorphicTypeName(unmodifiedTypeName, subTypeName)}.self`
     );
     args.push(`possibleTypes: [${ join(possibleTypes, ', ') }]`);
   }
@@ -116,56 +182,10 @@ function initializationForProperty({ name, fieldName, unmodifiedTypeName, isOpti
   return `${name} = try map.${methodName}(${ join(args, ', ') })`;
 }
 
-function nestedDeclarationsForProperties(properties, path, protocolsReferenced) {
-  return properties.reduce((declarations, property) =>
-    nestedDeclarationsForProperty(property, path, declarations, protocolsReferenced)
-  , []);
-}
+function polymorphicTypeName(name, discriminator) {
+  if (!discriminator) return name;
 
-function nestedDeclarationsForProperty(property, path, declarations, protocolsReferenced) {
-  const { unmodifiedTypeName: name, properties, fragmentSpreads, isPolymorphic, subTypes } = property;
-
-  const protocolsAdopted = protocolsAdoptedForFragmentSpreads(fragmentSpreads);
-
-  if (isPolymorphic) {
-    const baseProtocol = {
-      protocolName: mangledProtocolName(name, path),
-      properties: properties.map(property => {
-        if (property.isComposite) {
-          return { ...property, unmodifiedTypeName: qualifiedTypeName(property.unmodifiedTypeName, path.concat(name)) }
-        } else {
-          return property;
-        }
-      })
-    };
-
-    protocolsReferenced.push(baseProtocol);
-    protocolsAdopted.unshift(name);
-    declarations.push(`\npublic typealias ${name} = ${baseProtocol.protocolName}`);
-
-    declarations.push(wrap('\n', structDeclaration({ name: polymorphicTypeName(name), properties, protocolsAdopted }, path, protocolsReferenced)));
-
-    for (const subType of subTypes) {
-      const { typeCondition, properties, fragmentSpreads } = subType;
-      const protocolsAdopted = [name, ...protocolsAdoptedForFragmentSpreads(fragmentSpreads)];
-
-      declarations.push(wrap('\n',
-        structDeclaration({ name: polymorphicTypeName(name, typeCondition), properties, protocolsAdopted }, path, protocolsReferenced)
-      ));
-    }
-  } else {
-    declarations.push(wrap('\n', structDeclaration({ name, properties, protocolsAdopted }, path, protocolsReferenced)));
-  }
-
-  return declarations;
-}
-
-function polymorphicTypeName(name, typeCondition) {
-  if (typeCondition) {
-    return name + '$' + String(typeCondition);
-  } else {
-    return name + '$Base';
-  }
+  return name + '$' + discriminator;
 }
 
 function protocolsAdoptedForFragmentSpreads(fragmentSpreads) {
@@ -173,10 +193,46 @@ function protocolsAdoptedForFragmentSpreads(fragmentSpreads) {
   return fragmentSpreads.map(protocolNameForFragmentName);
 }
 
-function mangledProtocolName(protocolName, path) {
-  return [...path, protocolName].join('_');
+function mangledTypeName(typeName, path) {
+  return [...path, typeName].join('_');
 }
 
 function qualifiedTypeName(typeName, path) {
   return [...path, typeName].join('.');
+}
+
+class DeclarationStack {
+  constructor() {
+    this.stack = [];
+  }
+
+  push(name, discriminator) {
+    this.stack.push({ name, discriminator, declarations: [] });
+  }
+
+  pop() {
+    return this.stack.pop();
+  }
+
+  get currentLevel() {
+    return this.stack[this.stack.length - 1];
+  }
+
+  get topLevel() {
+    return this.stack[0];
+  }
+
+  get path() {
+    return this.stack.map(({ name, discriminator }) => polymorphicTypeName(name, discriminator));
+  }
+
+  get pathWithoutLastDiscriminator() {
+    return this.stack.slice(0, -1)
+      .map(({ name, discriminator }) => polymorphicTypeName(name, discriminator))
+      .concat(this.currentLevel.name);
+  }
+
+  get isNestedInPolymorphicType() {
+    return this.stack.some(({ discriminator }) => discriminator);
+  }
 }
