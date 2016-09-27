@@ -35,7 +35,7 @@ export function propertyFromField({ name: fieldName, type: fieldType, fields, fr
     const unmodifiedTypeName = pascalCase(Inflector.singularize(name));
     const properties = propertiesFromFields(fields);
     const subTypes = inlineFragments && inlineFragments.map(({ typeCondition, fields }) =>
-      ({ typeCondition, properties: propertiesFromFields(fields) })
+      ({ typeName: String(typeCondition), properties: propertiesFromFields(fields) })
     );
     const isPolymorphic = subTypes && subTypes.length > 0;
     return { ...property, unmodifiedTypeName, isComposite: true, properties, isPolymorphic, subTypes };
