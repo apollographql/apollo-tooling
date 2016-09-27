@@ -12,7 +12,7 @@ import {
 } from 'graphql';
 
 import { loadSchema } from '../src/generate'
-import { CompilationContext, printFields } from '../src/compilation'
+import { CompilationContext, printSpec } from '../src/compilation'
 
 const schema = loadSchema(require.resolve('./starwars/schema.json'));
 
@@ -29,7 +29,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const querySpec = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringifyReferences(querySpec), {
+    assert.deepEqual(stringify(querySpec), {
       operationName: 'HeroName',
       variables: [
         { name: "episode", type: 'Episode' }
@@ -64,10 +64,10 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringifyReferences(context.typesUsed), ['Episode']);
+    assert.deepEqual(stringify(context.typesUsed), ['Episode']);
   });
 
-  it(`should merge fields from inline fragments recursively`, () => {
+  it(`should compile inline fragments recursively`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -87,7 +87,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const querySpec = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringifyReferences(querySpec), {
+    assert.deepEqual(stringify(querySpec), {
       operationName: 'Hero',
       variables: [],
       fragmentsReferenced: [],
@@ -116,7 +116,7 @@ describe('compilation', () => {
     });
   });
 
-  it(`should merge fields from fragment spreads recursively`, () => {
+  it(`should compile fragment spreads recursively`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -140,7 +140,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const querySpec = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringifyReferences(querySpec), {
+    assert.deepEqual(stringify(querySpec), {
       operationName: 'Hero',
       variables: [],
       fragmentsReferenced: ['HeroDetails', 'MoreHeroDetails'],
@@ -169,7 +169,7 @@ describe('compilation', () => {
 
     const heroDetailsSpec = context.compileFragment(context.fragmentNamed('HeroDetails'));
 
-    assert.deepEqual(stringifyReferences(heroDetailsSpec), {
+    assert.deepEqual(stringify(heroDetailsSpec), {
       fragmentName: 'HeroDetails',
       fields: [
         {
@@ -188,7 +188,7 @@ describe('compilation', () => {
 
     const moreHeroDetailsSpec = context.compileFragment(context.fragmentNamed('MoreHeroDetails'));
 
-    assert.deepEqual(stringifyReferences(moreHeroDetailsSpec), {
+    assert.deepEqual(stringify(moreHeroDetailsSpec), {
       fragmentName: 'MoreHeroDetails',
       fields: [
         { name: 'appearsIn',
@@ -202,7 +202,7 @@ describe('compilation', () => {
     });
   });
 
-  it(`should merge fields from fragment spreads at each nested level`, () => {
+  it(`should compile fragment spreads at each nested level`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
@@ -225,7 +225,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const querySpec = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringifyReferences(querySpec), {
+    assert.deepEqual(stringify(querySpec), {
       operationName: 'HeroAndFriends',
       variables: [],
       fragmentsReferenced: ['HeroDetails'],
@@ -270,7 +270,7 @@ describe('compilation', () => {
 
     const heroDetailsSpec = context.compileFragment(context.fragmentNamed('HeroDetails'));
 
-    assert.deepEqual(stringifyReferences(heroDetailsSpec), {
+    assert.deepEqual(stringify(heroDetailsSpec), {
       fragmentName: 'HeroDetails',
       fields: [
         {
@@ -285,7 +285,7 @@ describe('compilation', () => {
     });
   });
 
-  it(`should merge fields for inline fragments with type conditions`, () => {
+  it(`should compile inline fragments with type conditions`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -303,7 +303,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const querySpec = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringifyReferences(querySpec), {
+    assert.deepEqual(stringify(querySpec), {
       operationName: 'Hero',
       variables: [],
       fragmentsReferenced: [],
@@ -321,6 +321,7 @@ describe('compilation', () => {
           inlineFragments: [
             {
               typeCondition: 'Droid',
+              fragmentSpreads: [],
               fields: [
                 {
                   name: 'name',
@@ -334,6 +335,7 @@ describe('compilation', () => {
             },
             {
               typeCondition: 'Human',
+              fragmentSpreads: [],
               fields: [
                 {
                   name: 'name',
@@ -351,7 +353,7 @@ describe('compilation', () => {
     });
   });
 
-  it(`should merge fields for fragments with type conditions`, () => {
+  it(`should compile fragment spreads with type conditions`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -373,7 +375,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const querySpec = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringifyReferences(querySpec), {
+    assert.deepEqual(stringify(querySpec), {
       operationName: 'Hero',
       variables: [],
       fragmentsReferenced: ['DroidDetails', 'HumanDetails'],
@@ -381,7 +383,7 @@ describe('compilation', () => {
         {
           name: 'hero',
           type: 'Character',
-          fragmentSpreads: ['DroidDetails', 'HumanDetails'],
+          fragmentSpreads: [],
           fields: [
             {
               name: 'name',
@@ -391,6 +393,7 @@ describe('compilation', () => {
           inlineFragments: [
             {
               typeCondition: 'Droid',
+              fragmentSpreads: ['DroidDetails'],
               fields: [
                 {
                   name: 'name',
@@ -404,6 +407,7 @@ describe('compilation', () => {
             },
             {
               typeCondition: 'Human',
+              fragmentSpreads: ['HumanDetails'],
               fields: [
                 {
                   name: 'name',
@@ -422,7 +426,7 @@ describe('compilation', () => {
 
     const droidDetailsSpec = context.compileFragment(context.fragmentNamed('DroidDetails'));
 
-    assert.deepEqual(stringifyReferences(droidDetailsSpec), {
+    assert.deepEqual(stringify(droidDetailsSpec), {
       fragmentName: 'DroidDetails',
       fields: [
         {
@@ -434,7 +438,7 @@ describe('compilation', () => {
 
     const humanDetailsSpec = context.compileFragment(context.fragmentNamed('HumanDetails'));
 
-    assert.deepEqual(stringifyReferences(humanDetailsSpec), {
+    assert.deepEqual(stringify(humanDetailsSpec), {
       fragmentName: 'HumanDetails',
       fields: [
         {
@@ -445,7 +449,183 @@ describe('compilation', () => {
     });
   });
 
-  it(`should merge fields for inline fragments on a union type`, () => {
+  it(`should compile a nested inline fragment with a super type as a type condition`, () => {
+    const document = parse(`
+      query HeroName {
+        hero {
+          ... on Droid {
+            ... on Character {
+              name
+            }
+          }
+        }
+      }
+    `);
+
+    const context = new CompilationContext(schema, document);
+    const querySpec = context.compileOperation(context.operations[0]);
+
+    assert.deepEqual(stringify(querySpec), {
+      operationName: 'HeroName',
+      variables: [],
+      fragmentsReferenced: [],
+      fields: [
+        {
+          name: 'hero',
+          type: 'Character',
+          fragmentSpreads: [],
+          fields: [],
+          inlineFragments: [
+            {
+              typeCondition: 'Droid',
+              fragmentSpreads: [],
+              fields: [
+                {
+                  name: 'name',
+                  type: 'String!'
+                }
+              ],
+            }
+          ]
+        }
+      ]
+    });
+  });
+
+  it(`should compile a nested inline fragment with a subtype as a type condition`, () => {
+    const document = parse(`
+      query HeroName {
+        hero {
+          ... on Character {
+            ... on Droid {
+              name
+            }
+          }
+        }
+      }
+    `);
+
+    const context = new CompilationContext(schema, document);
+    const querySpec = context.compileOperation(context.operations[0]);
+
+    assert.deepEqual(stringify(querySpec), {
+      operationName: 'HeroName',
+      variables: [],
+      fragmentsReferenced: [],
+      fields: [
+        {
+          name: 'hero',
+          type: 'Character',
+          fragmentSpreads: [],
+          fields: [],
+          inlineFragments: [
+            {
+              typeCondition: 'Droid',
+              fragmentSpreads: [],
+              fields: [
+                {
+                  name: 'name',
+                  type: 'String!'
+                }
+              ],
+            }
+          ]
+        }
+      ]
+    });
+  });
+
+  it(`should compile a nested fragment spread with a supertype as a type condition`, () => {
+    const document = parse(`
+      query HeroName {
+        hero {
+          ... on Droid {
+            ...HeroName
+          }
+        }
+      }
+
+      fragment HeroName on Character {
+        name
+      }
+    `);
+
+    const context = new CompilationContext(schema, document);
+    const querySpec = context.compileOperation(context.operations[0]);
+
+    assert.deepEqual(stringify(querySpec), {
+      operationName: 'HeroName',
+      variables: [],
+      fragmentsReferenced: ['HeroName'],
+      fields: [
+        {
+          name: 'hero',
+          type: 'Character',
+          fragmentSpreads: [],
+          fields: [],
+          inlineFragments: [
+            {
+              typeCondition: 'Droid',
+              fragmentSpreads: ['HeroName'],
+              fields: [
+                {
+                  name: 'name',
+                  type: 'String!'
+                }
+              ],
+            }
+          ]
+        }
+      ]
+    });
+  });
+
+  it(`should compile a nested fragment spread with a subtype as a type condition`, () => {
+    const document = parse(`
+      query HeroName {
+        hero {
+          ... on Character {
+            ...DroidName
+          }
+        }
+      }
+
+      fragment DroidName on Droid {
+        name
+      }
+    `);
+
+    const context = new CompilationContext(schema, document);
+    const querySpec = context.compileOperation(context.operations[0]);
+
+    assert.deepEqual(stringify(querySpec), {
+      operationName: 'HeroName',
+      variables: [],
+      fragmentsReferenced: ['DroidName'],
+      fields: [
+        {
+          name: 'hero',
+          type: 'Character',
+          fragmentSpreads: [],
+          fields: [],
+          inlineFragments: [
+            {
+              typeCondition: 'Droid',
+              fragmentSpreads: ['DroidName'],
+              fields: [
+                {
+                  name: 'name',
+                  type: 'String!'
+                }
+              ],
+            }
+          ]
+        }
+      ]
+    });
+  });
+
+  it(`should compile inline fragments on a union type`, () => {
     const document = parse(`
       query Search {
         search(text: "an") {
@@ -464,7 +644,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const querySpec = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringifyReferences(querySpec), {
+    assert.deepEqual(stringify(querySpec), {
       operationName: 'Search',
       variables: [],
       fragmentsReferenced: [],
@@ -477,6 +657,7 @@ describe('compilation', () => {
           inlineFragments: [
             {
               typeCondition: 'Droid',
+              fragmentSpreads: [],
               fields: [
                 {
                   name: 'name',
@@ -490,6 +671,7 @@ describe('compilation', () => {
             },
             {
               typeCondition: 'Human',
+              fragmentSpreads: [],
               fields: [
                 {
                   name: 'name',
@@ -505,6 +687,52 @@ describe('compilation', () => {
         }
       ]
     });
+  });
+
+  it(`should keep track of fragments referenced at a nested level`, () => {
+    const document = parse(`
+      query HeroAndFriends {
+        hero {
+          name
+          friends {
+            ...HeroDetails
+          }
+        }
+      }
+
+      fragment HeroDetails on Character {
+        name
+      }
+    `);
+
+    const context = new CompilationContext(schema, document);
+    const querySpec = context.compileOperation(context.operations[0]);
+
+    assert.deepEqual(querySpec.fragmentsReferenced, ['HeroDetails']);
+  });
+
+  it(`should keep track of fragments with a type condition referenced at a nested level`, () => {
+    const document = parse(`
+      query HeroAndFriends {
+        hero {
+          name
+          ... on Droid {
+            friends {
+              ...HeroDetails
+            }
+          }
+        }
+      }
+
+      fragment HeroDetails on Character {
+        name
+      }
+    `);
+
+    const context = new CompilationContext(schema, document);
+    const querySpec = context.compileOperation(context.operations[0]);
+
+    assert.deepEqual(querySpec.fragmentsReferenced, ['HeroDetails']);
   });
 
   it(`should include the source of operations with __typename added`, () => {
@@ -550,7 +778,7 @@ describe('compilation', () => {
   });
 });
 
-function stringifyReferences(ast) {
+function stringify(ast) {
   return JSON.parse(JSON.stringify(ast, function(key, value) {
     if (key === "source") {
       return undefined;
