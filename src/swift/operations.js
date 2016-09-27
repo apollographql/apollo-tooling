@@ -107,6 +107,15 @@ function addDeclarationsForCompositeProperty({ unmodifiedTypeName: typeName, pro
       properties: properties,
       protocolsAdopted: protocolsAdoptedForFragmentSpreads(fragmentSpreads)
     }, stack);
+
+    stack.topLevel.declarations.push(join([
+      `public extension ${mangledProtocolName} `,
+      block(subTypes.map(subType => {
+        const asTypeName = qualifiedTypeName(polymorphicTypeName(typeName, subType.typeName), stack.path);
+        return `var as${subType.typeName}: ${asTypeName}? { return self as? ${asTypeName} }`
+        }))
+    ]));
+
     stack.currentLevel.declarations.push(`public typealias ${typeName} = ${mangledProtocolName}`);
 
     const protocolsAdopted = [typeName];
