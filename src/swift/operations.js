@@ -224,10 +224,11 @@ function initializationForProperty({ name, fieldName, unmodifiedTypeName, isOpti
   const args = [`forKey: "${fieldName}"`];
 
   if (isPolymorphic) {
-    const possibleTypes = subTypes.map(({ typeName: subTypeName }) =>
+    const baseTypeName = polymorphicTypeName(unmodifiedTypeName, 'Base');
+    const subTypeNameMap = subTypes.map(({ typeName: subTypeName }) =>
       `"${subTypeName}": ${polymorphicTypeName(unmodifiedTypeName, subTypeName)}.self`
     );
-    args.push(`possibleTypes: [${ join(possibleTypes, ', ') }]`);
+    args.push(`baseType: ${baseTypeName}.self, subTypes: [${ join(subTypeNameMap, ', ') }]`);
   }
 
   return `${name} = try map.${methodName}(${ join(args, ', ') })`;
