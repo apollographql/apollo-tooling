@@ -2,6 +2,7 @@ import {
   visit,
   visitWithTypeInfo,
   TypeInfo,
+  GraphQLNonNull
 } from 'graphql';
 
 import { camelCase, pascalCase } from 'change-case';
@@ -51,9 +52,10 @@ export function classDeclarationForOperation({ operationName, variables, fields,
 }
 
 function initializerDeclaration(variables) {
-  const initializationParameters = join(variables.map(variable =>
-    `${variable.name}: ${typeNameFromGraphQLType(variable.type)}`
-  ), ', ');
+  const initializationParameters = join(variables.map(variable => {
+    const isNonNullType = variable.type instanceof GraphQLNonNull;
+    return join([`${variable.name}: ${typeNameFromGraphQLType(variable.type)}`, !isNonNullType && ' = nil'])
+  }), ', ');
 
   const propertyInitializations = variables.map(variable =>
     `self.${variable.name} = ${variable.name}`
