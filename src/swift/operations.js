@@ -73,20 +73,45 @@ function variablesProperty(variables) {
 }
 
 function structDeclaration({ typeName, discriminator, properties = [], protocolsAdopted }, stack) {
-  stack.push(typeName, discriminator);
   const structName = polymorphicTypeName(typeName, discriminator);
+  const qualifiedStructName = qualifiedTypeName(structName, stack.path);
 
-  const propertyDeclarations = properties.map(property =>
-    `public let ${property.name}: ${typeNameForProperty(property)}`
-  );
-
-  const initializerDeclaration = `public init(map: GraphQLMap) throws ` +
-    block(properties.map(initializationForProperty));
+  stack.push(typeName, discriminator);
 
   const compositeProperties = properties.filter(property => property.isComposite);
+
   for (const property of compositeProperties) {
     addDeclarationsForCompositeProperty(property, stack);
   }
+
+  if (discriminator && compositeProperties && compositeProperties.length > 0) {
+    stack.topLevel.declarations.push(join([
+      `public extension ${qualifiedStructName} `,
+      block(compositeProperties.map(property => {
+        const propertyTypeName = typeNameFromGraphQLType(property.fieldType, qualifiedTypeName(property.unmodifiedTypeName, stack.path));
+        return `var ${property.name}: ${propertyTypeName} ` + block([
+          `return _${property.name}`
+        ]);
+      }))
+    ]));
+
+    properties = properties.map(
+      property => property.isComposite ? { ...property, name: '_' + property.name } : property
+    );
+  }
+
+  const propertyDeclarations = properties.map(property => {
+    const propertyName = property.name;
+    const propertyTypeName = typeNameForProperty(property);
+    const propertySuperTypeName = typeNameFromGraphQLType(property.fieldType, mangledTypeName(property.unmodifiedTypeName, stack.pathWithoutLastDiscriminator));
+    return join([
+      `public let ${propertyName}: ${propertyTypeName}`,
+      propertyName.startsWith('_') ? `public var _${propertyName}: ${propertySuperTypeName} { return ${propertyName} }` : null
+    ], '\n');
+  });
+
+  const initializerDeclaration = `public init(map: GraphQLMap) throws ` +
+    block(properties.map(initializationForProperty));
 
   return join([
     `public struct ${structName}: GraphQLMapConvertible`,
@@ -102,10 +127,14 @@ function structDeclaration({ typeName, discriminator, properties = [], protocols
 
 function addDeclarationsForCompositeProperty({ unmodifiedTypeName: typeName, properties, isPolymorphic, subTypes, fragmentSpreads }, stack) {
   if (isPolymorphic) {
+    const adoptedProtocolName = stack.isNestedInPolymorphicType ? [mangledTypeName(typeName, stack.pathWithoutLastDiscriminator)] : null;
+
     const mangledProtocolName = addProtocolDeclaration({
       protocolName: typeName,
-      properties: properties,
-      protocolsAdopted: protocolsAdoptedForFragmentSpreads(fragmentSpreads)
+      properties: properties.map(
+        property => property.isComposite ? { ...property, name: '__' + property.name } : property
+      ),
+      protocolsAdopted: [adoptedProtocolName, ...protocolsAdoptedForFragmentSpreads(fragmentSpreads)]
     }, stack);
 
     stack.topLevel.declarations.push(join([
@@ -115,6 +144,18 @@ function addDeclarationsForCompositeProperty({ unmodifiedTypeName: typeName, pro
         return `var as${subType.typeName}: ${asTypeName}? { return self as? ${asTypeName} }`
         }))
     ]));
+
+    const compositeProperties = properties.filter(property => property.isComposite);
+
+    if (compositeProperties && compositeProperties.length > 0) {
+      stack.topLevel.declarations.push(join([
+        `public extension ${mangledProtocolName} `,
+        block(compositeProperties.map(property => {
+          const asTypeName =  typeNameFromGraphQLType(property.fieldType, mangledTypeName(property.unmodifiedTypeName, stack.path.concat(typeName)));
+          return `var ${property.name}: ${asTypeName} { return __${property.name} }`
+          }))
+      ]));
+    }
 
     stack.currentLevel.declarations.push(`public typealias ${typeName} = ${mangledProtocolName}`);
 
