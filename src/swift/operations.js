@@ -141,7 +141,8 @@ function addDeclarationsForCompositeProperty({ unmodifiedTypeName: typeName, pro
       `public extension ${mangledProtocolName} `,
       block(subTypes.map(subType => {
         const asTypeName = qualifiedTypeName(polymorphicTypeName(typeName, subType.typeName), stack.path);
-        return `var as${subType.typeName}: ${asTypeName}? { return self as? ${asTypeName} }`
+        return `var is${subType.typeName}: Bool { return self is ${asTypeName} }\n` +
+          `var as${subType.typeName}: ${asTypeName}? { return self as? ${asTypeName} }`;
         }))
     ]));
 
