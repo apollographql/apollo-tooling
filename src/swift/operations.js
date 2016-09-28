@@ -106,10 +106,13 @@ function structDeclaration({ typeName, discriminator, properties = [], protocols
     const propertyName = property.name;
     const propertyTypeName = typeNameForProperty(property);
     const propertySuperTypeName = typeNameFromGraphQLType(property.fieldType, mangledTypeName(property.unmodifiedTypeName, stack.pathWithoutLastDiscriminator));
-    return join([
-      `public let ${propertyName}: ${propertyTypeName}`,
-      propertyName.startsWith('_') ? `public var _${propertyName}: ${propertySuperTypeName} { return ${propertyName} }` : null
-    ], '\n');
+
+    if (propertyName.startsWith('_')) {
+      return `fileprivate let ${propertyName}: ${propertyTypeName}\n`
+        + `fileprivate var _${propertyName}: ${propertySuperTypeName} { return ${propertyName} }`;
+    } else {
+      return `public let ${propertyName}: ${propertyTypeName}`;
+    }
   });
 
   const initializerDeclaration = `public init(map: GraphQLMap) throws ` +
@@ -133,9 +136,7 @@ function addDeclarationsForCompositeProperty({ unmodifiedTypeName: typeName, pro
 
     const mangledProtocolName = addProtocolDeclaration({
       protocolName: typeName,
-      properties: properties.map(
-        property => property.isComposite ? { ...property, name: '__' + property.name } : property
-      ),
+      properties: properties.filter(property => !property.isComposite),
       protocolsAdopted: [adoptedProtocolName, ...protocolsAdoptedForFragmentSpreads(fragmentSpreads)]
     }, stack);
 
@@ -148,21 +149,31 @@ function addDeclarationsForCompositeProperty({ unmodifiedTypeName: typeName, pro
         }))
     ]));
 
+    stack.currentLevel.declarations.push(`public typealias ${typeName} = ${mangledProtocolName}`);
+
     const compositeProperties = properties.filter(property => property.isComposite);
 
+    let mangledPrivateProtocolName;
     if (compositeProperties && compositeProperties.length > 0) {
+      mangledPrivateProtocolName = addProtocolDeclaration({
+        accessLevel: 'fileprivate',
+        protocolName: typeName,
+        properties: properties.filter(property => property.isComposite).map(property =>
+          ({ ...property, name: '__' + property.name })
+        ),
+        protocolsAdopted: []
+      }, stack);
+
       stack.topLevel.declarations.push(join([
-        `public extension ${mangledProtocolName} `,
+        `extension ${mangledProtocolName} `,
         block(compositeProperties.map(property => {
           const asTypeName =  typeNameFromGraphQLType(property.fieldType, mangledTypeName(property.unmodifiedTypeName, stack.path.concat(typeName)));
-          return `var ${property.name}: ${asTypeName} { return __${property.name} }`
+          return `var ${property.name}: ${asTypeName} { return (self as! ${mangledPrivateProtocolName}).__${property.name} }`
           }))
       ]));
     }
 
-    stack.currentLevel.declarations.push(`public typealias ${typeName} = ${mangledProtocolName}`);
-
-    const protocolsAdopted = [typeName];
+    const protocolsAdopted = [typeName, mangledPrivateProtocolName];
 
     stack.currentLevel.declarations.push(structDeclaration({
       typeName,
@@ -191,8 +202,8 @@ function addDeclarationsForCompositeProperty({ unmodifiedTypeName: typeName, pro
   }
 }
 
-function addProtocolDeclaration({ protocolName, properties, protocolsAdopted }, stack) {
-  const mangledProtocolName = mangledTypeName(protocolName, stack.path);
+function addProtocolDeclaration({ accessLevel = 'public', protocolName, properties, protocolsAdopted }, stack) {
+  const mangledProtocolName = mangledTypeName(protocolName, stack.path, accessLevel);
   stack.push(protocolName);
 
   const mangledProperties = properties.map(subproperty => {
@@ -207,7 +218,7 @@ function addProtocolDeclaration({ protocolName, properties, protocolsAdopted }, 
   });
 
   stack.topLevel.declarations.unshift(join([
-    `public protocol ${mangledProtocolName}`,
+    `${accessLevel} protocol ${mangledProtocolName}`,
     wrap(': ', join(protocolsAdopted, ', ')),
     ' ',
     block(mangledProperties.map(property =>
@@ -247,8 +258,8 @@ function protocolsAdoptedForFragmentSpreads(fragmentSpreads) {
   return fragmentSpreads.map(protocolNameForFragmentName);
 }
 
-function mangledTypeName(typeName, path) {
-  return [...path, typeName].join('_');
+function mangledTypeName(typeName, path, accessLevel) {
+  return join([accessLevel === 'fileprivate' && '_', ...path, typeName], '_');
 }
 
 function qualifiedTypeName(typeName, path) {
