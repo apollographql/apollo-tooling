@@ -9,6 +9,7 @@
     "watch": "babel src --out-dir lib --watch",
     "prepublish": "npm run compile",
     "test": "mocha --recursive --compilers js:babel-register",
+    "prepublish": "rm -rf lib && npm run compile",
     "regenerate-expected-output": "apollo-codegen generate test/starwars/HeroAndFriendsNames.graphql --schema test/starwars/schema.json --output test/swift/expectedOutput/HeroAndFriendsNamesAPI.swift"
   },
   "repository": {
@@ -26,7 +27,8 @@
     "chai-subset": "^1.3.0",
     "common-tags": "^1.3.0",
     "glob": "^7.0.5",
-    "mocha": "^2.5.3"
+    "mocha": "^2.5.3",
+    "source-map-support": "^0.4.2"
   },
   "dependencies": {
     "babel-runtime": "^6.11.6",
