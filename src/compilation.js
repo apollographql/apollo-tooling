@@ -212,10 +212,10 @@ export class CompilationContext {
 
         field.fields = this.resolveFields(unmodifiedFieldType, subSelectionSet, fragmentsReferencedSet);
 
-        field.inlineFragments = this.collectSubTypeConditions(unmodifiedFieldType, subSelectionSet).map(typeCondition => {
-          const fields = this.resolveFields(typeCondition, subSelectionSet, fragmentsReferencedSet);
-          const fragmentSpreads = fragmentSpreadsForType(typeCondition, visitedFragmentSet);
-          return { typeCondition, fields, fragmentSpreads }
+        field.typeConditions = this.collectSubTypes(unmodifiedFieldType, subSelectionSet).map(subType => {
+          const fields = this.resolveFields(subType, subSelectionSet, fragmentsReferencedSet);
+          const fragmentSpreads = fragmentSpreadsForType(subType, visitedFragmentSet);
+          return { type: subType, fields, fragmentSpreads }
         });
       }
 
@@ -225,7 +225,7 @@ export class CompilationContext {
     return fields;
   }
 
-  collectSubTypeConditions(parentType, groupedFieldSet) {
+  collectSubTypes(parentType, groupedFieldSet) {
     const typeConditions = new Set();
     for (const fieldSet of Object.values(groupedFieldSet)) {
       for (const [typeCondition,] of fieldSet) {
@@ -264,10 +264,10 @@ function sourceAt(location) {
   return location.source.body.slice(location.start, location.end);
 }
 
-export function printSpec({ fields, inlineFragments, fragmentSpreads }) {
+export function printIR({ fields, typeConditions, fragmentSpreads }) {
   return fields && wrap('<', join(fragmentSpreads, ', '), '> ')
     + block(fields.map(field =>
-      `${field.name}: ${String(field.type)}` + wrap(' ', printSpec(field))
-    ).concat(inlineFragments && inlineFragments.map((inlineFragment) =>
-      `... on ${String(inlineFragment.typeCondition)}` + wrap(' ', printSpec(inlineFragment)))));
+      `${field.name}: ${String(field.type)}` + wrap(' ', printIR(field))
+    ).concat(typeConditions && typeConditions.map(type =>
+      `${String(typeCondition.type)}` + wrap(' ', printIR(inlineFragment)))));
 }
