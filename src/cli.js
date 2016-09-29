@@ -65,13 +65,17 @@ yargs
         demand: true,
         describe: 'Output directory for the generated files',
         normalize: true
+      },
+      target: {
+        demand: false,
+        describe: 'Code generation target language',
       }
     },
     argv => {
       const inputPaths = argv.input.map(input => path.resolve(input));
       const schemaPath = path.resolve(argv.schema);
       const outputPath = path.resolve(argv.output);
-      generate(inputPaths, schemaPath, outputPath);
+      generate(inputPaths, schemaPath, outputPath, argv.target);
     },
   )
   .fail(function(message, error) {
