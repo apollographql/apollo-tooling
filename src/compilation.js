@@ -100,8 +100,9 @@ export class CompilationContext {
     const fragmentType = typeFromAST(this.schema, fragmentDefinition.typeCondition);
     const groupedFieldSet = this.collectFields(fragmentType, fragmentDefinition.selectionSet);
     const fields = this.resolveFields(fragmentType, groupedFieldSet);
+    const typeConditions = this.resolveSubTypes(fragmentType, groupedFieldSet);
 
-    return { fragmentName, source, fields };
+    return { fragmentName, source, fields, typeConditions };
   }
 
   collectFields(parentType, selectionSet, groupedFieldSet = Object.create(null), visitedFragmentSet = Object.create(null)) {
@@ -212,18 +213,21 @@ export class CompilationContext {
         }
 
         field.fields = this.resolveFields(unmodifiedFieldType, subSelectionSet, fragmentsReferencedSet);
-
-        field.typeConditions = this.collectSubTypes(unmodifiedFieldType, subSelectionSet).map(subType => {
-          const fields = this.resolveFields(subType, subSelectionSet, fragmentsReferencedSet);
-          const fragmentSpreads = fragmentSpreadsForType(subType, visitedFragmentSet);
-          return { type: subType, fields, fragmentSpreads }
-        });
+        field.typeConditions = this.resolveSubTypes(unmodifiedFieldType, subSelectionSet, visitedFragmentSet, fragmentsReferencedSet);
       }
 
       fields.push(field);
     }
 
     return fields;
+  }
+
+  resolveSubTypes(parentType, groupedFieldSet, visitedFragmentSet = Object.create(null), fragmentsReferencedSet) {
+    return this.collectSubTypes(parentType, groupedFieldSet).map(type => {
+      const fields = this.resolveFields(type, groupedFieldSet, fragmentsReferencedSet);
+      const fragmentSpreads = fragmentSpreadsForType(type, visitedFragmentSet);
+      return { type, fields, fragmentSpreads };
+    });
   }
 
   collectSubTypes(parentType, groupedFieldSet) {
