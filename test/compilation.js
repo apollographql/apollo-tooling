@@ -1,4 +1,6 @@
-import { assert } from 'chai'
+import chai, { assert, expect } from 'chai'
+import chaiSubset from 'chai-subset'
+chai.use(chaiSubset);
 
 import { stripIndent } from 'common-tags'
 
@@ -12,7 +14,7 @@ import {
 } from 'graphql';
 
 import { loadSchema } from '../src/generate'
-import { CompilationContext, printSpec } from '../src/compilation'
+import { CompilationContext, printIR } from '../src/compilation'
 
 const schema = loadSchema(require.resolve('./starwars/schema.json'));
 
@@ -27,12 +29,12 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringify(querySpec), {
+    expect(stringifyIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
       variables: [
-        { name: "episode", type: 'Episode' }
+        { name: 'episode', type: 'Episode' }
       ],
       fragmentsReferenced: [],
       fields: [
@@ -46,7 +48,7 @@ describe('compilation', () => {
               type: 'String!'
             }
           ],
-          inlineFragments: [],
+          typeConditions: [],
         }
       ]
     });
@@ -64,7 +66,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringify(context.typesUsed), ['Episode']);
+    assert.deepEqual(stringifyIR(context.typesUsed), ['Episode']);
   });
 
   it(`should compile inline fragments recursively`, () => {
@@ -85,9 +87,9 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringify(querySpec), {
+    expect(stringifyIR(queryIR)).to.containSubset({
       operationName: 'Hero',
       variables: [],
       fragmentsReferenced: [],
@@ -110,7 +112,7 @@ describe('compilation', () => {
               type: '[Episode]!'
             }
           ],
-          inlineFragments: []
+          typeConditions: []
         }
       ]
     });
@@ -138,9 +140,9 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringify(querySpec), {
+    expect(stringifyIR(queryIR)).to.containSubset({
       operationName: 'Hero',
       variables: [],
       fragmentsReferenced: ['HeroDetails', 'MoreHeroDetails'],
@@ -162,14 +164,14 @@ describe('compilation', () => {
               type: 'String!'
             }
           ],
-          inlineFragments: []
+          typeConditions: []
         }
       ]
     });
 
-    const heroDetailsSpec = context.compileFragment(context.fragmentNamed('HeroDetails'));
+    const heroDetailsIR = context.compileFragment(context.fragmentNamed('HeroDetails'));
 
-    assert.deepEqual(stringify(heroDetailsSpec), {
+    expect(stringifyIR(heroDetailsIR)).to.containSubset({
       fragmentName: 'HeroDetails',
       fields: [
         {
@@ -186,9 +188,9 @@ describe('compilation', () => {
       ]
     });
 
-    const moreHeroDetailsSpec = context.compileFragment(context.fragmentNamed('MoreHeroDetails'));
+    const moreHeroDetailsIR = context.compileFragment(context.fragmentNamed('MoreHeroDetails'));
 
-    assert.deepEqual(stringify(moreHeroDetailsSpec), {
+    expect(stringifyIR(moreHeroDetailsIR)).to.containSubset({
       fragmentName: 'MoreHeroDetails',
       fields: [
         { name: 'appearsIn',
@@ -223,9 +225,10 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringify(querySpec), {
+
+    expect(stringifyIR(queryIR)).to.containSubset({
       operationName: 'HeroAndFriends',
       variables: [],
       fragmentsReferenced: ['HeroDetails'],
@@ -260,17 +263,17 @@ describe('compilation', () => {
                   type: 'String!'
                 }
               ],
-              inlineFragments: []
+              typeConditions: []
             }
           ],
-          inlineFragments: []
+          typeConditions: []
         }
       ]
     });
 
-    const heroDetailsSpec = context.compileFragment(context.fragmentNamed('HeroDetails'));
+    const heroDetailsIR = context.compileFragment(context.fragmentNamed('HeroDetails'));
 
-    assert.deepEqual(stringify(heroDetailsSpec), {
+    expect(stringifyIR(heroDetailsIR)).to.containSubset({
       fragmentName: 'HeroDetails',
       fields: [
         {
@@ -301,9 +304,9 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringify(querySpec), {
+    expect(stringifyIR(queryIR)).to.containSubset({
       operationName: 'Hero',
       variables: [],
       fragmentsReferenced: [],
@@ -318,9 +321,9 @@ describe('compilation', () => {
               type: 'String!'
             }
           ],
-          inlineFragments: [
+          typeConditions: [
             {
-              typeCondition: 'Droid',
+              type: 'Droid',
               fragmentSpreads: [],
               fields: [
                 {
@@ -334,7 +337,7 @@ describe('compilation', () => {
               ],
             },
             {
-              typeCondition: 'Human',
+              type: 'Human',
               fragmentSpreads: [],
               fields: [
                 {
@@ -373,9 +376,9 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringify(querySpec), {
+    expect(stringifyIR(queryIR)).to.containSubset({
       operationName: 'Hero',
       variables: [],
       fragmentsReferenced: ['DroidDetails', 'HumanDetails'],
@@ -390,9 +393,9 @@ describe('compilation', () => {
               type: 'String!'
             }
           ],
-          inlineFragments: [
+          typeConditions: [
             {
-              typeCondition: 'Droid',
+              type: 'Droid',
               fragmentSpreads: ['DroidDetails'],
               fields: [
                 {
@@ -406,7 +409,7 @@ describe('compilation', () => {
               ],
             },
             {
-              typeCondition: 'Human',
+              type: 'Human',
               fragmentSpreads: ['HumanDetails'],
               fields: [
                 {
@@ -424,9 +427,9 @@ describe('compilation', () => {
       ]
     });
 
-    const droidDetailsSpec = context.compileFragment(context.fragmentNamed('DroidDetails'));
+    const droidDetailsIR = context.compileFragment(context.fragmentNamed('DroidDetails'));
 
-    assert.deepEqual(stringify(droidDetailsSpec), {
+    expect(stringifyIR(droidDetailsIR)).to.containSubset({
       fragmentName: 'DroidDetails',
       fields: [
         {
@@ -436,9 +439,9 @@ describe('compilation', () => {
       ]
     });
 
-    const humanDetailsSpec = context.compileFragment(context.fragmentNamed('HumanDetails'));
+    const humanDetailsIR = context.compileFragment(context.fragmentNamed('HumanDetails'));
 
-    assert.deepEqual(stringify(humanDetailsSpec), {
+    expect(stringifyIR(humanDetailsIR)).to.containSubset({
       fragmentName: 'HumanDetails',
       fields: [
         {
@@ -463,9 +466,9 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringify(querySpec), {
+    expect(stringifyIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
       variables: [],
       fragmentsReferenced: [],
@@ -475,9 +478,9 @@ describe('compilation', () => {
           type: 'Character',
           fragmentSpreads: [],
           fields: [],
-          inlineFragments: [
+          typeConditions: [
             {
-              typeCondition: 'Droid',
+              type: 'Droid',
               fragmentSpreads: [],
               fields: [
                 {
@@ -506,9 +509,9 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringify(querySpec), {
+    expect(stringifyIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
       variables: [],
       fragmentsReferenced: [],
@@ -518,9 +521,9 @@ describe('compilation', () => {
           type: 'Character',
           fragmentSpreads: [],
           fields: [],
-          inlineFragments: [
+          typeConditions: [
             {
-              typeCondition: 'Droid',
+              type: 'Droid',
               fragmentSpreads: [],
               fields: [
                 {
@@ -551,9 +554,9 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringify(querySpec), {
+    expect(stringifyIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
       variables: [],
       fragmentsReferenced: ['HeroName'],
@@ -563,9 +566,9 @@ describe('compilation', () => {
           type: 'Character',
           fragmentSpreads: [],
           fields: [],
-          inlineFragments: [
+          typeConditions: [
             {
-              typeCondition: 'Droid',
+              type: 'Droid',
               fragmentSpreads: ['HeroName'],
               fields: [
                 {
@@ -596,9 +599,9 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringify(querySpec), {
+    expect(stringifyIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
       variables: [],
       fragmentsReferenced: ['DroidName'],
@@ -608,9 +611,9 @@ describe('compilation', () => {
           type: 'Character',
           fragmentSpreads: [],
           fields: [],
-          inlineFragments: [
+          typeConditions: [
             {
-              typeCondition: 'Droid',
+              type: 'Droid',
               fragmentSpreads: ['DroidName'],
               fields: [
                 {
@@ -642,9 +645,9 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringify(querySpec), {
+    expect(stringifyIR(queryIR)).to.containSubset({
       operationName: 'Search',
       variables: [],
       fragmentsReferenced: [],
@@ -654,9 +657,9 @@ describe('compilation', () => {
           type: '[SearchResult]',
           fragmentSpreads: [],
           fields: [],
-          inlineFragments: [
+          typeConditions: [
             {
-              typeCondition: 'Droid',
+              type: 'Droid',
               fragmentSpreads: [],
               fields: [
                 {
@@ -670,7 +673,7 @@ describe('compilation', () => {
               ],
             },
             {
-              typeCondition: 'Human',
+              type: 'Human',
               fragmentSpreads: [],
               fields: [
                 {
@@ -706,9 +709,9 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(querySpec.fragmentsReferenced, ['HeroDetails']);
+    assert.deepEqual(queryIR.fragmentsReferenced, ['HeroDetails']);
   });
 
   it(`should keep track of fragments with a type condition referenced at a nested level`, () => {
@@ -730,12 +733,12 @@ describe('compilation', () => {
     `);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(querySpec.fragmentsReferenced, ['HeroDetails']);
+    assert.deepEqual(queryIR.fragmentsReferenced, ['HeroDetails']);
   });
 
-  it(`should include the source of operations with __typename added`, () => {
+  it(`should include the source of operations with __typename added for abstract types`, () => {
     const source = stripIndent`
       query HeroName {
         hero {
@@ -746,9 +749,9 @@ describe('compilation', () => {
     const document = parse(source);
 
     const context = new CompilationContext(schema, document);
-    const querySpec = context.compileOperation(context.operations[0]);
+    const queryIR = context.compileOperation(context.operations[0]);
 
-    assert.equal(querySpec.source, stripIndent`
+    assert.equal(queryIR.source, stripIndent`
       query HeroName {
         hero {
           __typename
@@ -758,7 +761,7 @@ describe('compilation', () => {
     `);
   });
 
-  it(`should include the source of fragments with __typename added`, () => {
+  it(`should include the source of fragments with __typename added for abstract types`, () => {
     const source = stripIndent`
       fragment HeroDetails on Character {
         name
@@ -767,9 +770,9 @@ describe('compilation', () => {
     const document = parse(source);
 
     const context = new CompilationContext(schema, document);
-    const fragmentSpec = context.compileFragment(context.fragments[0]);
+    const fragmentIR = context.compileFragment(context.fragments[0]);
 
-    assert.equal(fragmentSpec.source, stripIndent`
+    assert.equal(fragmentIR.source, stripIndent`
       fragment HeroDetails on Character {
         __typename
         name
@@ -778,16 +781,11 @@ describe('compilation', () => {
   });
 });
 
-function stringify(ast) {
+function stringifyIR(ast) {
   return JSON.parse(JSON.stringify(ast, function(key, value) {
-    if (key === "source") {
-      return undefined;
-    }
-
     if (isType(value)) {
       return String(value);
     }
-
     return value;
   }));
 }
