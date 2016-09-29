@@ -14,7 +14,7 @@ import {
 } from 'graphql';
 
 import { loadSchema } from '../src/generate'
-import { CompilationContext, printIR } from '../src/compilation'
+import { CompilationContext, stringifyIR, printIR } from '../src/compilation'
 
 const schema = loadSchema(require.resolve('./starwars/schema.json'));
 
@@ -31,7 +31,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const queryIR = context.compileOperation(context.operations[0]);
 
-    expect(stringifyIR(queryIR)).to.containSubset({
+    expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
       variables: [
         { name: 'episode', type: 'Episode' }
@@ -66,7 +66,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     context.compileOperation(context.operations[0]);
 
-    assert.deepEqual(stringifyIR(context.typesUsed), ['Episode']);
+    assert.deepEqual(stringifyAndParseIR(context.typesUsed), ['Episode']);
   });
 
   it(`should compile inline fragments recursively`, () => {
@@ -89,7 +89,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const queryIR = context.compileOperation(context.operations[0]);
 
-    expect(stringifyIR(queryIR)).to.containSubset({
+    expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'Hero',
       variables: [],
       fragmentsReferenced: [],
@@ -142,7 +142,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const queryIR = context.compileOperation(context.operations[0]);
 
-    expect(stringifyIR(queryIR)).to.containSubset({
+    expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'Hero',
       variables: [],
       fragmentsReferenced: ['HeroDetails', 'MoreHeroDetails'],
@@ -171,7 +171,7 @@ describe('compilation', () => {
 
     const heroDetailsIR = context.compileFragment(context.fragmentNamed('HeroDetails'));
 
-    expect(stringifyIR(heroDetailsIR)).to.containSubset({
+    expect(stringifyAndParseIR(heroDetailsIR)).to.containSubset({
       fragmentName: 'HeroDetails',
       fields: [
         {
@@ -190,7 +190,7 @@ describe('compilation', () => {
 
     const moreHeroDetailsIR = context.compileFragment(context.fragmentNamed('MoreHeroDetails'));
 
-    expect(stringifyIR(moreHeroDetailsIR)).to.containSubset({
+    expect(stringifyAndParseIR(moreHeroDetailsIR)).to.containSubset({
       fragmentName: 'MoreHeroDetails',
       fields: [
         { name: 'appearsIn',
@@ -228,7 +228,7 @@ describe('compilation', () => {
     const queryIR = context.compileOperation(context.operations[0]);
 
 
-    expect(stringifyIR(queryIR)).to.containSubset({
+    expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'HeroAndFriends',
       variables: [],
       fragmentsReferenced: ['HeroDetails'],
@@ -273,7 +273,7 @@ describe('compilation', () => {
 
     const heroDetailsIR = context.compileFragment(context.fragmentNamed('HeroDetails'));
 
-    expect(stringifyIR(heroDetailsIR)).to.containSubset({
+    expect(stringifyAndParseIR(heroDetailsIR)).to.containSubset({
       fragmentName: 'HeroDetails',
       fields: [
         {
@@ -306,7 +306,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const queryIR = context.compileOperation(context.operations[0]);
 
-    expect(stringifyIR(queryIR)).to.containSubset({
+    expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'Hero',
       variables: [],
       fragmentsReferenced: [],
@@ -378,7 +378,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const queryIR = context.compileOperation(context.operations[0]);
 
-    expect(stringifyIR(queryIR)).to.containSubset({
+    expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'Hero',
       variables: [],
       fragmentsReferenced: ['DroidDetails', 'HumanDetails'],
@@ -429,7 +429,7 @@ describe('compilation', () => {
 
     const droidDetailsIR = context.compileFragment(context.fragmentNamed('DroidDetails'));
 
-    expect(stringifyIR(droidDetailsIR)).to.containSubset({
+    expect(stringifyAndParseIR(droidDetailsIR)).to.containSubset({
       fragmentName: 'DroidDetails',
       fields: [
         {
@@ -441,7 +441,7 @@ describe('compilation', () => {
 
     const humanDetailsIR = context.compileFragment(context.fragmentNamed('HumanDetails'));
 
-    expect(stringifyIR(humanDetailsIR)).to.containSubset({
+    expect(stringifyAndParseIR(humanDetailsIR)).to.containSubset({
       fragmentName: 'HumanDetails',
       fields: [
         {
@@ -468,7 +468,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const queryIR = context.compileOperation(context.operations[0]);
 
-    expect(stringifyIR(queryIR)).to.containSubset({
+    expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
       variables: [],
       fragmentsReferenced: [],
@@ -511,7 +511,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const queryIR = context.compileOperation(context.operations[0]);
 
-    expect(stringifyIR(queryIR)).to.containSubset({
+    expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
       variables: [],
       fragmentsReferenced: [],
@@ -556,7 +556,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const queryIR = context.compileOperation(context.operations[0]);
 
-    expect(stringifyIR(queryIR)).to.containSubset({
+    expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
       variables: [],
       fragmentsReferenced: ['HeroName'],
@@ -601,7 +601,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const queryIR = context.compileOperation(context.operations[0]);
 
-    expect(stringifyIR(queryIR)).to.containSubset({
+    expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
       variables: [],
       fragmentsReferenced: ['DroidName'],
@@ -647,7 +647,7 @@ describe('compilation', () => {
     const context = new CompilationContext(schema, document);
     const queryIR = context.compileOperation(context.operations[0]);
 
-    expect(stringifyIR(queryIR)).to.containSubset({
+    expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'Search',
       variables: [],
       fragmentsReferenced: [],
@@ -781,11 +781,6 @@ describe('compilation', () => {
   });
 });
 
-function stringifyIR(ast) {
-  return JSON.parse(JSON.stringify(ast, function(key, value) {
-    if (isType(value)) {
-      return String(value);
-    }
-    return value;
-  }));
+function stringifyAndParseIR(ir) {
+  return JSON.parse(stringifyIR(ir));
 }

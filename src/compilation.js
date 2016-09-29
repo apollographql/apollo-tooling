@@ -8,6 +8,7 @@ import {
   isTypeSubTypeOf,
   Kind,
   TypeInfo,
+  isType,
   isCompositeType,
   GraphQLEnumType,
   GraphQLObjectType,
@@ -264,10 +265,19 @@ function sourceAt(location) {
   return location.source.body.slice(location.start, location.end);
 }
 
+export function stringifyIR(ast, space) {
+  return JSON.stringify(ast, function(key, value) {
+    if (isType(value)) {
+      return String(value);
+    }
+    return value;
+  }, space);
+}
+
 export function printIR({ fields, typeConditions, fragmentSpreads }) {
   return fields && wrap('<', join(fragmentSpreads, ', '), '> ')
     + block(fields.map(field =>
       `${field.name}: ${String(field.type)}` + wrap(' ', printIR(field))
-    ).concat(typeConditions && typeConditions.map(type =>
-      `${String(typeCondition.type)}` + wrap(' ', printIR(inlineFragment)))));
+    ).concat(typeConditions && typeConditions.map(typeCondition =>
+      `${String(typeCondition.type)}` + wrap(' ', printIR(typeCondition)))));
 }

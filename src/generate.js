@@ -11,10 +11,10 @@ import {
 
 import { ToolError, logError } from './errors'
 import { validateQueryDocument } from './validation'
-import { CompilationContext } from './compilation'
+import { CompilationContext, stringifyIR } from './compilation'
 import { generateSource } from './swift'
 
-export default function generate(inputPaths, schemaPath, outputPath) {
+export default function generate(inputPaths, schemaPath, outputPath, target) {
   const schema = loadSchema(schemaPath);
 
   const document = loadAndMergeQueryDocuments(inputPaths);
@@ -22,8 +22,17 @@ export default function generate(inputPaths, schemaPath, outputPath) {
   validateQueryDocument(schema, document);
 
   const context = new CompilationContext(schema, document);
-  const source = generateSource(context);
-  fs.writeFileSync(outputPath, source);
+
+  const output = (target && target.toLowerCase() === 'json') ? generateIR(context) : generateSource(context);
+
+  fs.writeFileSync(outputPath, output);
+}
+
+function generateIR(context) {
+  return stringifyIR({
+    operations: context.operations.map(operation => context.compileOperation(operation)),
+    fragments: context.fragments.map(fragment => context.compileFragment(fragment)),
+  }, '\t');
 }
 
 export function loadSchema(schemaPath) {
