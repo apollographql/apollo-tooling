@@ -1,15 +1,14 @@
 {
   "name": "apollo-codegen",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Generate client code based on a GraphQL schema and query documents",
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
   "scripts": {
     "compile": "babel src --out-dir lib",
     "watch": "babel src --out-dir lib --watch",
-    "prepublish": "npm run compile",
-    "test": "mocha --recursive --compilers js:babel-register",
     "prepublish": "rm -rf lib && npm run compile",
+    "test": "mocha --recursive --compilers js:babel-register",
     "regenerate-expected-output": "apollo-codegen generate test/starwars/HeroAndFriendsNames.graphql --schema test/starwars/schema.json --output test/swift/expectedOutput/HeroAndFriendsNamesAPI.swift"
   },
   "repository": {
