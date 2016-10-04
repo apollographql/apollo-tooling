@@ -31,7 +31,7 @@ describe('operations', function() {
   });
 
   describe('#initializerDeclarationForVariables()', function() {
-    it(`should print initializer for a variable`, function() {
+    it(`should generate initializer for a variable`, function() {
       initializerDeclarationForVariables(this.generator, [
         { name: 'episode', type: new GraphQLNonNull(schema.getType('Episode')) }
       ]);
@@ -43,7 +43,7 @@ describe('operations', function() {
       `);
     });
 
-    it(`should print initializer for an optional variable`, function() {
+    it(`should generate initializer for an optional variable`, function() {
       initializerDeclarationForVariables(this.generator, [
         { name: 'episode', type: schema.getType('Episode') }
       ]);
@@ -55,7 +55,7 @@ describe('operations', function() {
       `);
     });
 
-    it(`should print initializer for multiple variables`, function() {
+    it(`should generate initializer for multiple variables`, function() {
       initializerDeclarationForVariables(this.generator, [
         { name: 'episode', type: schema.getType('Episode') },
         { name: 'scene', type: GraphQLString }
@@ -71,7 +71,7 @@ describe('operations', function() {
   });
 
   describe('#variablesProperty()', function() {
-    it(`should print variables property for a variable`, function() {
+    it(`should generate variables property for a variable`, function() {
       variablesProperty(this.generator, [
         { name: 'episode', type: new GraphQLNonNull(schema.getType('Episode')) }
       ]);
@@ -83,7 +83,7 @@ describe('operations', function() {
       `);
     });
 
-    it(`should print variables property for multiple variables`, function() {
+    it(`should generate variables property for multiple variables`, function() {
       variablesProperty(this.generator, [
         { name: 'episode', type: schema.getType('Episode') },
         { name: 'scene', type: GraphQLString }
@@ -98,7 +98,7 @@ describe('operations', function() {
   });
 
   describe('#classDeclarationForOperation()', function() {
-    it(`should print a class declaration for a query`, function() {
+    it(`should generate a class declaration for a query`, function() {
       classDeclarationForOperation(this.generator, {
         operationName: 'HeroName',
         variables: [
@@ -142,7 +142,7 @@ describe('operations', function() {
   });
 
   describe('#structDeclarationForProperty()', function() {
-    it(`should print a struct declaration`, function() {
+    it(`should generate a struct declaration`, function() {
       structDeclarationForProperty(this.generator, propertyFromField({
         name: 'Hero',
         type: schema.getType('Character'),
@@ -162,7 +162,7 @@ describe('operations', function() {
       `);
     });
 
-    it(`should print a nested struct declaration`, function() {
+    it(`should generate a nested struct declaration`, function() {
       structDeclarationForProperty(this.generator, propertyFromField({
         name: 'Hero',
         type: schema.getType('Character'),
