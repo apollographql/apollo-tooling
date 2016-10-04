@@ -41,7 +41,7 @@ export function protocolDeclarationForFragment(generator, { fragmentName, fields
   const protocolName = protocolNameForFragmentName(fragmentName);
   const className = `${protocolName}Fragment`;
 
-  protocolDeclaration(generator, { name: 'HeroDetails' }, () => {
+  protocolDeclaration(generator, { name: protocolName }, () => {
     const properties = propertiesFromFields(fields);
     protocolPropertyDeclarations(generator, properties);
   });
