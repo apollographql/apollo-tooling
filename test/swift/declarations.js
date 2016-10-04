@@ -68,13 +68,13 @@ describe('declarations', function() {
   });
 
   it(`should generate a protocol declaration`, function() {
-    protocolDeclaration(this.generator, { name: 'HeroDetails' }, () => {
+    protocolDeclaration(this.generator, { name: 'HeroDetails', adoptedProtocols: ['HasName'] }, () => {
       protocolPropertyDeclaration(this.generator, { name: 'name', typeName: 'String' });
       protocolPropertyDeclaration(this.generator, { name: 'age', typeName: 'Int' });
     });
 
     expect(this.generator.output).to.equal(stripIndent`
-      public protocol HeroDetails {
+      public protocol HeroDetails: HasName {
         var name: String { get }
         var age: Int { get }
       }
