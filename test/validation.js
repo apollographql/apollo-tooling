@@ -6,7 +6,7 @@ import path from 'path'
 import {
   loadSchema,
   loadAndMergeQueryDocuments,
-} from '../src/generate'
+} from '../src/loading'
 
 import { validateQueryDocument } from '../src/validation'
 

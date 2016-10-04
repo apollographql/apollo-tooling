@@ -2,10 +2,10 @@ export function escapedString(string) {
   return string.replace(/"/g, '\\"');
 }
 
-export function multilineString(string) {
+export function multilineString(context, string) {
   const lines = string.split('\n');
-  return lines.map((line, index) => {
+  lines.forEach((line, index) => {
     const isLastLine = index != lines.length - 1;
-    return `"${escapedString(line)}"` + (isLastLine ? ' +' : '');
-  }).join('\n');
+    context.printOnNewline(`"${escapedString(line)}"` + (isLastLine ? ' +' : ''));
+  });
 }
