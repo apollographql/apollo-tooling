@@ -31,7 +31,7 @@ import {
 
 // Parts of this code are adapted from graphql-js
 
-export class CompilationContext {
+export class Compiler {
   constructor(schema, document) {
     this.schema = schema;
 

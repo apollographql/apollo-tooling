@@ -14,42 +14,41 @@ import {
   GraphQLEnumType
 } from 'graphql';
 
-export function typeNameFromGraphQLType(type, unmodifiedTypeName, nullable = true) {
+export function typeNameFromGraphQLType(type, bareTypeName, nullable = true) {
   if (type instanceof GraphQLNonNull) {
-    return typeNameFromGraphQLType(type.ofType, unmodifiedTypeName, false)
+    return typeNameFromGraphQLType(type.ofType, bareTypeName, false)
   }
 
   let typeName;
   if (type instanceof GraphQLList) {
-    typeName = '[' + typeNameFromGraphQLType(type.ofType, unmodifiedTypeName, true) + ']';
+    typeName = '[' + typeNameFromGraphQLType(type.ofType, bareTypeName, true) + ']';
   } else if (type === GraphQLID) {
     typeName = 'GraphQLID'
   } else {
-    typeName = unmodifiedTypeName || type.name;
+    typeName = bareTypeName || type.name;
   }
 
   return nullable ? typeName + '?' : typeName;
 }
 
-export function typeDeclarationForGraphQLType(type) {
+export function typeDeclarationForGraphQLType(generator, type) {
   if (type instanceof GraphQLEnumType) {
-    return enumerationDeclaration(type);
+    return enumerationDeclaration(generator, type);
   }
 }
 
-function enumerationDeclaration(type) {
+function enumerationDeclaration(generator, type) {
   const { name, description } = type;
   const values = type.getValues();
 
-  const caseDeclarations = values.map(value =>
-    `case ${camelCase(value.name)} = "${value.value}"${wrap(' /// ', value.description)}`
-  );
-
-  return join([
-    description && `/// ${description}\n`,
-    `public enum ${name}: String `,
-    block(caseDeclarations),
-    '\n\n',
-    `extension ${name}: JSONDecodable, JSONEncodable {}`
-  ]);
+  generator.printNewlineIfNeeded();
+  generator.printOnNewline(description && `/// ${description}`);
+  generator.printOnNewline(`public enum ${name}: String`);
+  generator.withinBlock(() => {
+    values.forEach(value =>
+      generator.printOnNewline(`case ${camelCase(value.name)} = "${value.value}"${wrap(' /// ', value.description)}`)
+    );
+  });
+  generator.printNewline();
+  generator.printOnNewline(`extension ${name}: JSONDecodable, JSONEncodable {}`);
 }

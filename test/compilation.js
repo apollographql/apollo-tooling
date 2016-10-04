@@ -13,8 +13,9 @@ import {
   GraphQLNonNull
 } from 'graphql';
 
-import { loadSchema } from '../src/generate'
-import { CompilationContext, stringifyIR, printIR } from '../src/compilation'
+import { loadSchema } from '../src/loading'
+
+import { Compiler, stringifyIR, printIR } from '../src/compilation'
 
 const schema = loadSchema(require.resolve('./starwars/schema.json'));
 
@@ -28,9 +29,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
@@ -49,11 +50,11 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    context.compileOperation(context.operations[0]);
+    compiler.compileOperation(compiler.operations[0]);
 
-    assert.deepEqual(stringifyAndParseIR(context.typesUsed), ['Episode']);
+    assert.deepEqual(stringifyAndParseIR(compiler.typesUsed), ['Episode']);
   });
 
   it(`should flatten inline fragments with the same parent type`, () => {
@@ -73,9 +74,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'Hero',
@@ -124,9 +125,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'Hero',
@@ -153,7 +154,7 @@ describe('compilation', () => {
       ]
     });
 
-    const heroDetailsIR = context.compileFragment(context.fragmentNamed('HeroDetails'));
+    const heroDetailsIR = compiler.compileFragment(compiler.fragmentNamed('HeroDetails'));
 
     expect(stringifyAndParseIR(heroDetailsIR)).to.containSubset({
       fragmentName: 'HeroDetails',
@@ -172,7 +173,7 @@ describe('compilation', () => {
       ]
     });
 
-    const moreHeroDetailsIR = context.compileFragment(context.fragmentNamed('MoreHeroDetails'));
+    const moreHeroDetailsIR = compiler.compileFragment(compiler.fragmentNamed('MoreHeroDetails'));
 
     expect(stringifyAndParseIR(moreHeroDetailsIR)).to.containSubset({
       fragmentName: 'MoreHeroDetails',
@@ -208,9 +209,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'HeroAndFriends',
@@ -253,7 +254,7 @@ describe('compilation', () => {
       ]
     });
 
-    const heroDetailsIR = context.compileFragment(context.fragmentNamed('HeroDetails'));
+    const heroDetailsIR = compiler.compileFragment(compiler.fragmentNamed('HeroDetails'));
 
     expect(stringifyAndParseIR(heroDetailsIR)).to.containSubset({
       fragmentName: 'HeroDetails',
@@ -285,9 +286,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'Hero',
@@ -353,9 +354,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'Hero',
@@ -405,7 +406,7 @@ describe('compilation', () => {
       ]
     });
 
-    const droidDetailsIR = context.compileFragment(context.fragmentNamed('DroidDetails'));
+    const droidDetailsIR = compiler.compileFragment(compiler.fragmentNamed('DroidDetails'));
 
     expect(stringifyAndParseIR(droidDetailsIR)).to.containSubset({
       fragmentName: 'DroidDetails',
@@ -417,7 +418,7 @@ describe('compilation', () => {
       ]
     });
 
-    const humanDetailsIR = context.compileFragment(context.fragmentNamed('HumanDetails'));
+    const humanDetailsIR = compiler.compileFragment(compiler.fragmentNamed('HumanDetails'));
 
     expect(stringifyAndParseIR(humanDetailsIR)).to.containSubset({
       fragmentName: 'HumanDetails',
@@ -449,9 +450,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'Hero',
@@ -501,7 +502,7 @@ describe('compilation', () => {
       ]
     });
 
-    const heroDetailsIR = context.compileFragment(context.fragmentNamed('HeroDetails'));
+    const heroDetailsIR = compiler.compileFragment(compiler.fragmentNamed('HeroDetails'));
 
     expect(stringifyAndParseIR(heroDetailsIR)).to.containSubset({
       fragmentName: 'HeroDetails',
@@ -557,9 +558,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
@@ -597,9 +598,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
@@ -639,9 +640,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
@@ -684,9 +685,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'HeroName',
@@ -730,9 +731,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     expect(stringifyAndParseIR(queryIR)).to.containSubset({
       operationName: 'Search',
@@ -790,9 +791,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     assert.deepEqual(queryIR.fragmentsReferenced, ['HeroDetails']);
   });
@@ -815,9 +816,9 @@ describe('compilation', () => {
       }
     `);
 
-    const context = new CompilationContext(schema, document);
+    const compiler = new Compiler(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     assert.deepEqual(queryIR.fragmentsReferenced, ['HeroDetails']);
   });
@@ -831,9 +832,10 @@ describe('compilation', () => {
       }
     `
     const document = parse(source);
-    const context = new CompilationContext(schema, document);
 
-    const queryIR = context.compileOperation(context.operations[0]);
+    const compiler = new Compiler(schema, document);
+
+    const queryIR = compiler.compileOperation(compiler.operations[0]);
 
     assert.equal(queryIR.source, stripIndent`
       query HeroName {
@@ -852,9 +854,10 @@ describe('compilation', () => {
       }
     `
     const document = parse(source);
-    const context = new CompilationContext(schema, document);
 
-    const fragmentIR = context.compileFragment(context.fragments[0]);
+    const compiler = new Compiler(schema, document);
+    
+    const fragmentIR = compiler.compileFragment(compiler.fragments[0]);
 
     assert.equal(fragmentIR.source, stripIndent`
       fragment HeroDetails on Character {

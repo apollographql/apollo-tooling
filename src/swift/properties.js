@@ -32,18 +32,15 @@ export function propertyFromField({ name: fieldName, type: fieldType, fields, fr
     const typeName = typeNameFromGraphQLType(fieldType);
     return { ...property, typeName, isComposite: false };
   } else if (isCompositeType(namedType)) {
-    const unmodifiedTypeName = pascalCase(Inflector.singularize(name));
+    const bareTypeName = pascalCase(Inflector.singularize(name));
+    const typeName = typeNameFromGraphQLType(fieldType, bareTypeName);
     const properties = propertiesFromFields(fields);
     const subTypes = inlineFragments && inlineFragments.map(({ typeCondition, fields }) =>
       ({ typeName: String(typeCondition), properties: propertiesFromFields(fields) })
     );
     const isPolymorphic = subTypes && subTypes.length > 0;
-    return { ...property, unmodifiedTypeName, isComposite: true, properties, isPolymorphic, subTypes };
+    return { ...property, typeName, bareTypeName, isComposite: true, properties, isPolymorphic, subTypes };
   } else {
     throw new GraphQLError(`Unsupported field type: ${String(type)}`);
   }
-}
-
-export function typeNameForProperty({ fieldType, unmodifiedTypeName }) {
-  return typeNameFromGraphQLType(fieldType, unmodifiedTypeName);
 }

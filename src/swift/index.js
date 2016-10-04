@@ -2,33 +2,38 @@ import { camelCase, pascalCase } from 'change-case';
 
 import {
   join,
-  block,
   wrap,
-  indent
 } from '../utilities/printing';
+
+import CodeGenerator from '../CodeGenerator';
 
 import { escapedString, multilineString } from './strings'
 import { typeNameFromGraphQLType, typeDeclarationForGraphQLType } from './types';
 import { classDeclarationForOperation } from './operations'
-import { classDeclarationForFragment } from './fragments'
+import { classDeclarationForFragment, protocolDeclarationForFragment } from './fragments'
 
-export function generateSource(context) {
-  const operations = context.compileOperations();
-  const fragments = context.compileFragments();
+export function generateSource(compiler) {
+  const operations = compiler.compileOperations();
+  const fragments = compiler.compileFragments();
 
-  const typeDeclarations = context.typesUsed.map(typeDeclarationForGraphQLType);
-  const operationClassDeclarations = operations.map(classDeclarationForOperation);
-  const fragmentClassDeclarations = fragments.map(classDeclarationForFragment);
+  const context = new CodeGenerator();
 
-  return join([
-    '//  This file was automatically generated and should not be edited.\n\n',
-    importDeclarations() + '\n',
-    wrap('\n', join(typeDeclarations, '\n\n'), '\n'),
-    wrap('\n', join(operationClassDeclarations, '\n\n'), '\n'),
-    wrap('\n', join(fragmentClassDeclarations, '\n\n'), '\n')
-  ]);
-}
+  context.printOnNewline('//  This file was automatically generated and should not be edited.');
+  context.printNewline();
+  context.printOnNewline('import Apollo');
 
-function importDeclarations() {
-  return 'import Apollo';
+  compiler.typesUsed.forEach(type => {
+    typeDeclarationForGraphQLType(context, type);
+  });
+
+  operations.forEach(operation => {
+    classDeclarationForOperation(context, operation);
+  });
+
+  fragments.forEach(fragment => {
+    classDeclarationForFragment(context, fragment);
+    protocolDeclarationForFragment(context, fragment);
+  });
+
+  return context.output;
 }
