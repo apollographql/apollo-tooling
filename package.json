@@ -8,8 +8,7 @@
     "compile": "babel src --out-dir lib",
     "watch": "babel src --out-dir lib --watch",
     "prepublish": "rm -rf lib && npm run compile",
-    "test": "mocha --recursive --compilers js:babel-register",
-    "regenerate-expected-output": "apollo-codegen generate test/starwars/HeroAndFriendsNames.graphql --schema test/starwars/schema.json --output test/swift/expectedOutput/HeroAndFriendsNamesAPI.swift"
+    "test": "mocha --recursive --compilers js:babel-register"
   },
   "repository": {
     "type": "git",
