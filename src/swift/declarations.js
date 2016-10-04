@@ -33,7 +33,8 @@ export function propertyDeclarations(generator, properties) {
 
 export function protocolDeclaration(generator, { name, adoptedProtocols, properties }, closure) {
   generator.printNewlineIfNeeded();
-  generator.printOnNewline(`public protocol ${name}`, wrap(': ', join(adoptedProtocols, ', ')));
+  generator.printOnNewline(`public protocol ${name}`);
+  generator.print(wrap(': ', join(adoptedProtocols, ', ')));
   generator.pushScope({ typeName: name });
   generator.withinBlock(closure);
   generator.popScope();
