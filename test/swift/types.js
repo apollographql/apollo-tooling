@@ -48,7 +48,7 @@ describe('#typeNameFromGraphQLType()', () => {
 });
 
 describe('#typeDeclarationForGraphQLType()', () => {
-  it('should print an enum declaration for a GraphQLEnumType', () => {
+  it('should generate an enum declaration for a GraphQLEnumType', () => {
     const generator = new CodeGenerator();
 
     typeDeclarationForGraphQLType(generator, schema.getType('Episode'));
