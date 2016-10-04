@@ -37,7 +37,7 @@ export function classDeclarationForOperation(generator,
   classDeclaration(generator, {
     name: className,
     modifiers: ['public', 'final'],
-    adoptedProtocols: ['GraphQLQuery'] 
+    adoptedProtocols: ['GraphQLQuery']
   }, () => {
     generator.printOnNewline('public static let operationDefinition =');
     generator.withIndent(() => {
@@ -95,8 +95,11 @@ export function variablesProperty(generator, variables) {
   });
 }
 
-export function structDeclarationForProperty(generator, { bareTypeName, properties = [] }) {
-  structDeclaration(generator, { name: bareTypeName, adoptedProtocols: ['GraphQLMapConvertible'] }, () => {
+export function structDeclarationForProperty(generator,
+    { bareTypeName, fragmentSpreads = [], properties = [] }) {
+  const adoptedProtocols = ['GraphQLMapConvertible', ...fragmentSpreads.map(protocolNameForFragmentName)];
+
+  structDeclaration(generator, { name: bareTypeName, adoptedProtocols }, () => {
     propertyDeclarations(generator, properties);
 
     generator.printNewlineIfNeeded();

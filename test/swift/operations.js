@@ -142,7 +142,7 @@ describe('operations', function() {
   });
 
   describe('#structDeclarationForProperty()', function() {
-    it(`should generate a struct declaration`, function() {
+    it(`should generate a struct declaration for a property`, function() {
       structDeclarationForProperty(this.generator, propertyFromField({
         name: 'Hero',
         type: schema.getType('Character'),
@@ -162,7 +162,28 @@ describe('operations', function() {
       `);
     });
 
-    it(`should generate a nested struct declaration`, function() {
+    it(`should generate a struct declaration for a property with a fragment spread`, function() {
+      structDeclarationForProperty(this.generator, propertyFromField({
+        name: 'Hero',
+        type: schema.getType('Character'),
+        fragmentSpreads: ['HeroName'],
+        fields: [
+          { name: 'name', type: GraphQLString }
+        ]
+      }));
+
+      expect(this.generator.output).to.equal(stripIndent`
+        public struct Hero: GraphQLMapConvertible, HeroName {
+          public let name: String?
+
+          public init(map: GraphQLMap) throws {
+            name = try map.optionalValue(forKey: "name")
+          }
+        }
+      `);
+    });
+
+    it(`should generate a nested struct declaration for a property with subproperties`, function() {
       structDeclarationForProperty(this.generator, propertyFromField({
         name: 'Hero',
         type: schema.getType('Character'),
