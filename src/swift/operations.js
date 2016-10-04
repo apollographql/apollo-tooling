@@ -46,9 +46,9 @@ export function classDeclarationForOperation(generator,
 
     if (fragmentsReferenced && fragmentsReferenced.length > 0) {
       generator.printOnNewline('public static let queryDocument = operationDefinition');
-      generator.print(fragmentsReferenced.map(fragment =>
-        `.appending(${protocolNameForFragmentName(fragment)}Fragment.fragmentDefinition)`
-      ));
+      fragmentsReferenced.forEach(fragment => {
+        generator.print(`.appending(${protocolNameForFragmentName(fragment)}Fragment.fragmentDefinition)`)
+      });
     }
 
     if (variables && variables.length > 0) {
