@@ -5,8 +5,8 @@
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
   "scripts": {
-    "compile": "babel src --out-dir lib",
-    "watch": "babel src --out-dir lib --watch",
+    "compile": "babel src --out-dir lib --source-maps",
+    "watch": "babel src --out-dir lib --watch --source-maps",
     "prepublish": "rm -rf lib && npm run compile",
     "test": "mocha --recursive --compilers js:babel-register"
   },
