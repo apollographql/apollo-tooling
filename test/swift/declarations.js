@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { stripIndent } from 'common-tags';
 
-import CodeGenerator from '../../src/CodeGenerator';
+import CodeGenerator from '../../src/utilities/CodeGenerator';
 
 import {
   classDeclaration,
@@ -12,15 +12,15 @@ import {
   protocolPropertyDeclaration
 } from '../../src/swift/declarations';
 
-describe('declarations', function() {
+describe('Swift code generation: Basic declarations', function() {
   beforeEach(function() {
     this.generator = new CodeGenerator();
   });
 
   it(`should generate a class declaration`, function() {
-    classDeclaration(this.generator, { name: 'Hero', modifiers: ['public', 'final'] }, () => {
-      propertyDeclaration(this.generator, { name: 'name', typeName: 'String' });
-      propertyDeclaration(this.generator, { name: 'age', typeName: 'Int' });
+    classDeclaration(this.generator, { className: 'Hero', modifiers: ['public', 'final'] }, () => {
+      propertyDeclaration(this.generator, { propertyName: 'name', typeName: 'String' });
+      propertyDeclaration(this.generator, { propertyName: 'age', typeName: 'Int' });
     });
 
     expect(this.generator.output).to.equal(stripIndent`
@@ -32,9 +32,9 @@ describe('declarations', function() {
   });
 
   it(`should generate a struct declaration`, function() {
-    structDeclaration(this.generator, { name: 'Hero' }, () => {
-      propertyDeclaration(this.generator, { name: 'name', typeName: 'String' });
-      propertyDeclaration(this.generator, { name: 'age', typeName: 'Int' });
+    structDeclaration(this.generator, { structName: 'Hero' }, () => {
+      propertyDeclaration(this.generator, { propertyName: 'name', typeName: 'String' });
+      propertyDeclaration(this.generator, { propertyName: 'age', typeName: 'Int' });
     });
 
     expect(this.generator.output).to.equal(stripIndent`
@@ -46,12 +46,12 @@ describe('declarations', function() {
   });
 
   it(`should generate nested struct declarations`, function() {
-    structDeclaration(this.generator, { name: 'Hero' }, () => {
-      propertyDeclaration(this.generator, { name: 'name', typeName: 'String' });
-      propertyDeclaration(this.generator, { name: 'friends', typeName: '[Friend]' });
+    structDeclaration(this.generator, { structName: 'Hero' }, () => {
+      propertyDeclaration(this.generator, { propertyName: 'name', typeName: 'String' });
+      propertyDeclaration(this.generator, { propertyName: 'friends', typeName: '[Friend]' });
 
-      structDeclaration(this.generator, { name: 'Friend' }, () => {
-        propertyDeclaration(this.generator, { name: 'name', typeName: 'String' });
+      structDeclaration(this.generator, { structName: 'Friend' }, () => {
+        propertyDeclaration(this.generator, { propertyName: 'name', typeName: 'String' });
       });
     });
 
@@ -68,9 +68,9 @@ describe('declarations', function() {
   });
 
   it(`should generate a protocol declaration`, function() {
-    protocolDeclaration(this.generator, { name: 'HeroDetails', adoptedProtocols: ['HasName'] }, () => {
-      protocolPropertyDeclaration(this.generator, { name: 'name', typeName: 'String' });
-      protocolPropertyDeclaration(this.generator, { name: 'age', typeName: 'Int' });
+    protocolDeclaration(this.generator, { protocolName: 'HeroDetails', adoptedProtocols: ['HasName'] }, () => {
+      protocolPropertyDeclaration(this.generator, { propertyName: 'name', typeName: 'String' });
+      protocolPropertyDeclaration(this.generator, { propertyName: 'age', typeName: 'Int' });
     });
 
     expect(this.generator.output).to.equal(stripIndent`

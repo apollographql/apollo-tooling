@@ -12,7 +12,7 @@ import { validateQueryDocument } from '../src/validation'
 
 const schema = loadSchema(require.resolve('./starwars/schema.json'));
 
-describe('#validateQueryDocument()', () => {
+describe('Validation', () => {
   it(`should throw an error for AnonymousQuery.graphql`, () => {
     const inputPaths = [path.join(__dirname, './starwars/AnonymousQuery.graphql')];
     const document = loadAndMergeQueryDocuments(inputPaths);
