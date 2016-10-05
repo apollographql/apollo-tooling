@@ -1,10 +1,12 @@
 import {
   join,
   wrap,
-} from './utilities/printing';
+} from './printing';
 
 export default class CodeGenerator {
-  constructor() {
+  constructor(context) {
+    this.context = context;
+    
     this.scopeStack = [];
 
     this.indentWidth = 2;
@@ -35,7 +37,7 @@ export default class CodeGenerator {
   }
 
   printNewlineIfNeeded() {
-    if (!this.startOfIndentLevelLevel) {
+    if (!this.startOfIndentLevel) {
       this.printNewline();
     }
   }

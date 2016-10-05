@@ -3,7 +3,7 @@ import fs from 'fs'
 import { ToolError, logError } from './errors'
 import { loadSchema,  loadAndMergeQueryDocuments } from './loading'
 import { validateQueryDocument } from './validation'
-import { Compiler, stringifyIR } from './compilation'
+import { compileToIR, stringifyIR } from './compilation'
 import { generateSource } from './swift'
 
 export default function generate(inputPaths, schemaPath, outputPath, target) {
@@ -13,7 +13,7 @@ export default function generate(inputPaths, schemaPath, outputPath, target) {
 
   validateQueryDocument(schema, document);
 
-  const context = new Compiler(schema, document);
+  const context = compileToIR(schema, document);
 
   const output = (target && target.toLowerCase() === 'json') ? generateIR(context) : generateSource(context);
 
@@ -21,8 +21,5 @@ export default function generate(inputPaths, schemaPath, outputPath, target) {
 }
 
 function generateIR(context) {
-  return stringifyIR({
-    operations: context.operations.map(operation => context.compileOperation(operation)),
-    fragments: context.fragments.map(fragment => context.compileFragment(fragment)),
-  }, '\t');
+  return stringifyIR(context, '\t');
 }
