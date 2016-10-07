@@ -25,7 +25,7 @@ const schema = loadSchema(require.resolve('../starwars/schema.json'));
 
 import CodeGenerator from '../../src/utilities/CodeGenerator';
 
-import { compileToIR } from '../../src/compilation';
+import { compileToIR, printIR } from '../../src/compilation';
 
 describe('Swift code generation', function() {
   beforeEach(function() {
@@ -176,19 +176,68 @@ describe('Swift code generation', function() {
 
               public let fragments: Fragments
 
-              public let asDroid: AsDroid?
-
               public init(map: GraphQLMap) throws {
                 __typename = try map.value(forKey: "__typename")
 
                 let droidDetails = try DroidDetails(map: map, ifTypeMatches: __typename)
                 fragments = Fragments(droidDetails: droidDetails)
-
-                asDroid = try AsDroid(map: map, ifTypeMatches: __typename)
               }
 
               public struct Fragments {
                 public let droidDetails: DroidDetails?
+              }
+            }
+          }
+        }
+      `);
+    });
+
+    it(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, function() {
+      const { operations } = this.compileFromSource(`
+        query Hero {
+          hero {
+            ... on Droid {
+              ...HeroDetails
+            }
+          }
+        }
+
+        fragment HeroDetails on Character {
+          name
+        }
+      `);
+
+      classDeclarationForOperation(this.generator, operations['Hero']);
+
+      expect(this.generator.output).to.equal(stripIndent`
+        public final class HeroQuery: GraphQLQuery {
+          public static let operationDefinition =
+            "query Hero {" +
+            "  hero {" +
+            "    __typename" +
+            "    ... on Droid {" +
+            "      ...HeroDetails" +
+            "    }" +
+            "  }" +
+            "}"
+          public static let queryDocument = operationDefinition.appending(HeroDetails.fragmentDefinition)
+
+          public struct Data: GraphQLMapConvertible {
+            public let hero: Hero?
+
+            public init(map: GraphQLMap) throws {
+              hero = try map.optionalValue(forKey: "hero")
+            }
+
+            public struct Hero: GraphQLMapConvertible {
+              public let __typename: String
+
+              public let asDroid: AsDroid?
+
+              public init(map: GraphQLMap) throws {
+                __typename = try map.value(forKey: "__typename")
+
+                asDroid = try AsDroid(map: map, ifTypeMatches: __typename)
               }
 
               public struct AsDroid: GraphQLConditionalFragment {
@@ -199,12 +248,12 @@ describe('Swift code generation', function() {
                 public let fragments: Fragments
 
                 public init(map: GraphQLMap) throws {
-                  let droidDetails = try DroidDetails(map: map)
-                  fragments = Fragments(droidDetails: droidDetails)
+                  let heroDetails = try HeroDetails(map: map)
+                  fragments = Fragments(heroDetails: heroDetails)
                 }
 
                 public struct Fragments {
-                  public let droidDetails: DroidDetails
+                  public let heroDetails: HeroDetails
                 }
               }
             }
@@ -392,6 +441,51 @@ describe('Swift code generation', function() {
               __typename = try map.value(forKey: "__typename")
               name = try map.value(forKey: "name")
             }
+          }
+        }
+      `);
+    });
+
+    it(`should generate a struct declaration for a fragment that includes a fragment spread`, function() {
+      const { fragments } = this.compileFromSource(`
+        fragment HeroDetails on Character {
+          name
+          ...MoreHeroDetails
+        }
+
+        fragment MoreHeroDetails on Character {
+          appearsIn
+        }
+      `);
+
+      structDeclarationForFragment(this.generator, fragments['HeroDetails']);
+
+      expect(this.generator.output).to.equal(stripIndent`
+        public struct HeroDetails: GraphQLNamedFragment {
+          public static let fragmentDefinition =
+            "fragment HeroDetails on Character {" +
+            "  __typename" +
+            "  name" +
+            "  ...MoreHeroDetails" +
+            "}"
+
+          public static let possibleTypes = ["Human", "Droid"]
+
+          public let __typename: String
+          public let name: String
+
+          public let fragments: Fragments
+
+          public init(map: GraphQLMap) throws {
+            __typename = try map.value(forKey: "__typename")
+            name = try map.value(forKey: "name")
+
+            let moreHeroDetails = try MoreHeroDetails(map: map)
+            fragments = Fragments(moreHeroDetails: moreHeroDetails)
+          }
+
+          public struct Fragments {
+            public let moreHeroDetails: MoreHeroDetails
           }
         }
       `);

@@ -19,6 +19,7 @@ import {
 } from 'graphql';
 
 import {
+  isTypeProperSuperTypeOf,
   getOperationRootType,
   getFieldDef
 } from './utilities/graphql';
@@ -100,11 +101,15 @@ export class Compiler {
     const source = print(withTypenameFieldAddedWhereNeeded(this.schema, operationDefinition));
 
     const rootType = getOperationRootType(this.schema, operationDefinition);
-    const groupedFieldSet = this.collectFields(rootType, operationDefinition.selectionSet);
-    const fragmentsReferencedSet = Object.create(null);
-    const fields = this.resolveFields(rootType, groupedFieldSet, fragmentsReferencedSet);
 
-    return { operationName, variables, source, fields, fragmentsReferenced: Object.keys(fragmentsReferencedSet) };
+    const groupedVisitedFragmentSet = new Map();
+    const groupedFieldSet = this.collectFields(rootType, operationDefinition.selectionSet, undefined, groupedVisitedFragmentSet);
+
+    const fragmentsReferencedSet = Object.create(null);
+    const { fields } = this.resolveFields(rootType, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet);
+    const fragmentsReferenced = Object.keys(fragmentsReferencedSet);
+
+    return { operationName, variables, source, fields, fragmentsReferenced };
   }
 
   compileFragment(fragmentDefinition) {
@@ -112,12 +117,14 @@ export class Compiler {
 
     const source = print(withTypenameFieldAddedWhereNeeded(this.schema, fragmentDefinition));
 
-    const fragmentType = typeFromAST(this.schema, fragmentDefinition.typeCondition);
-    const groupedFieldSet = this.collectFields(fragmentType, fragmentDefinition.selectionSet);
-    const fields = this.resolveFields(fragmentType, groupedFieldSet);
-    const inlineFragments = this.resolveInlineFragments(fragmentType, groupedFieldSet);
+    const typeCondition = typeFromAST(this.schema, fragmentDefinition.typeCondition);
 
-    return { fragmentName, source, typeCondition: fragmentType, fields, inlineFragments };
+    const groupedVisitedFragmentSet = new Map();
+    const groupedFieldSet = this.collectFields(typeCondition, fragmentDefinition.selectionSet, undefined, groupedVisitedFragmentSet);
+
+    const { fields, fragmentSpreads, inlineFragments } = this.resolveFields(typeCondition, groupedFieldSet, groupedVisitedFragmentSet);
+
+    return { fragmentName, source, typeCondition, fields, fragmentSpreads, inlineFragments };
   }
 
   collectFields(parentType, selectionSet, groupedFieldSet = Object.create(null), groupedVisitedFragmentSet = new Map()) {
@@ -169,16 +176,18 @@ export class Compiler {
           const typeCondition = fragment.typeCondition;
           const fragmentType = typeFromAST(this.schema, typeCondition)
 
-          const effectiveType = isTypeSubTypeOf(this.schema, fragmentType, parentType) ? fragmentType : parentType;
+          if (groupedVisitedFragmentSet) {
+            let visitedFragmentSet = groupedVisitedFragmentSet.get(parentType);
+            if (!visitedFragmentSet) {
+              visitedFragmentSet = {};
+              groupedVisitedFragmentSet.set(parentType, visitedFragmentSet);
+            }
 
-          let visitedFragmentSet = groupedVisitedFragmentSet.get(effectiveType);
-          if (!visitedFragmentSet) {
-            visitedFragmentSet = {};
-            groupedVisitedFragmentSet.set(effectiveType, visitedFragmentSet);
+            if (visitedFragmentSet[fragmentName]) continue;
+            visitedFragmentSet[fragmentName] = true;
           }
 
-          if (visitedFragmentSet[fragmentName]) continue;
-          visitedFragmentSet[fragmentName] = true;
+          const effectiveType = isTypeSubTypeOf(this.schema, fragmentType, parentType) ? fragmentType : parentType;
 
           this.collectFields(
             effectiveType,
@@ -190,6 +199,7 @@ export class Compiler {
         }
       }
     }
+
     return groupedFieldSet;
   }
 
@@ -207,7 +217,7 @@ export class Compiler {
     return groupedFieldSet;
   }
 
-  resolveFields(parentType, groupedFieldSet, fragmentsReferencedSet) {
+  resolveFields(parentType, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet) {
     const fields = [];
 
     for (let [fieldName, fieldSet] of Object.entries(groupedFieldSet)) {
@@ -217,34 +227,48 @@ export class Compiler {
       const [,firstField] = fieldSet[0];
       const fieldType = firstField.type;
 
-      const field = { name: fieldName, type: fieldType };
+      let field = { name: fieldName, type: fieldType };
 
       const bareFieldType = getNamedType(fieldType);
 
       if (isCompositeType(bareFieldType)) {
-        const groupedVisitedFragmentSet = new Map();
-        const subSelectionSet = this.mergeSelectionSets(bareFieldType, fieldSet, groupedVisitedFragmentSet);
+        const subSelectionGroupedVisitedFragmentSet = new Map();
+        const subSelectionGroupedFieldSet = this.mergeSelectionSets(
+          bareFieldType,
+          fieldSet,
+          subSelectionGroupedVisitedFragmentSet
+        );
 
-        field.fragmentSpreads = this.fragmentSpreadsForParentType(bareFieldType, groupedVisitedFragmentSet);
-
-        if (fragmentsReferencedSet) {
-          Object.assign(fragmentsReferencedSet, ...groupedVisitedFragmentSet.values());
-        }
-
-        field.fields = this.resolveFields(bareFieldType, subSelectionSet, fragmentsReferencedSet);
-        field.inlineFragments = this.resolveInlineFragments(bareFieldType, subSelectionSet, groupedVisitedFragmentSet, fragmentsReferencedSet);
+        const { fields, fragmentSpreads, inlineFragments } = this.resolveFields(
+          bareFieldType,
+          subSelectionGroupedFieldSet,
+          subSelectionGroupedVisitedFragmentSet,
+          fragmentsReferencedSet
+        );
+        Object.assign(field, { fields, fragmentSpreads, inlineFragments });
       }
 
       fields.push(field);
     }
 
-    return fields;
+    const fragmentSpreads = this.fragmentSpreadsForParentType(parentType, groupedVisitedFragmentSet);
+    const inlineFragments = this.resolveInlineFragments(parentType, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet);
+
+    if (fragmentsReferencedSet) {
+      Object.assign(fragmentsReferencedSet, ...groupedVisitedFragmentSet.values());
+    }
+
+    return { fields, fragmentSpreads, inlineFragments };
   }
 
   resolveInlineFragments(parentType, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet) {
     return this.collectPossibleTypes(parentType, groupedFieldSet, groupedVisitedFragmentSet).map(typeCondition => {
-      const fields = this.resolveFields(typeCondition, groupedFieldSet, fragmentsReferencedSet);
-      const fragmentSpreads = this.fragmentSpreadsForParentType(typeCondition, groupedVisitedFragmentSet);
+      const { fields, fragmentSpreads } = this.resolveFields(
+        typeCondition,
+        groupedFieldSet,
+        groupedVisitedFragmentSet,
+        fragmentsReferencedSet
+      );
       return { typeCondition, fields, fragmentSpreads };
     });
   }
@@ -280,8 +304,7 @@ export class Compiler {
     let fragmentSpreads = new Set();
 
     for (const [effectiveType, visitedFragmentSet] of groupedVisitedFragmentSet) {
-      if (!(isEqualType(parentType, effectiveType) ||
-        isAbstractType(parentType) && this.schema.isPossibleType(parentType, effectiveType))) continue;
+      if (!isTypeProperSuperTypeOf(this.schema, effectiveType, parentType)) continue;
 
       for (const fragmentName of Object.keys(visitedFragmentSet)) {
         fragmentSpreads.add(fragmentName);
@@ -327,6 +350,6 @@ export function printIR({ fields, inlineFragments, fragmentSpreads }) {
   return fields && wrap('<', join(fragmentSpreads, ', '), '> ')
     + block(fields.map(field =>
       `${field.name}: ${String(field.type)}` + wrap(' ', printIR(field))
-    ).concat(inlineFragments && inlineFragments.map(typeCondition =>
-      `${String(typeCondition.type)}` + wrap(' ', printIR(typeCondition)))));
+    ).concat(inlineFragments && inlineFragments.map(inlineFragment =>
+      `${String(inlineFragment.typeCondition)}` + wrap(' ', printIR(inlineFragment)))));
 }

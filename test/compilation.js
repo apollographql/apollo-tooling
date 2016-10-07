@@ -31,7 +31,7 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['HeroName'])).to.containSubset({
+    expect(filteredIR(operations['HeroName'])).to.containSubset({
       operationName: 'HeroName',
       variables: [
         { name: 'episode', type: 'Episode' }
@@ -50,7 +50,7 @@ describe('Compiling query documents', () => {
 
     const { typesUsed } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(typesUsed)).to.deep.equal(['Episode']);
+    expect(filteredIR(typesUsed)).to.deep.equal(['Episode']);
   });
 
   it(`should recursively flatten inline fragments with type conditions that match the parent type`, () => {
@@ -72,8 +72,10 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['Hero'])).to.containSubset({
+    expect(filteredIR(operations['Hero'])).to.deep.equal({
       operationName: 'Hero',
+      variables: [],
+      fragmentsReferenced: [],
       fields: [
         {
           name: 'hero',
@@ -92,6 +94,7 @@ describe('Compiling query documents', () => {
               type: '[Episode]!'
             }
           ],
+          fragmentSpreads: [],
           inlineFragments: []
         }
       ]
@@ -121,26 +124,29 @@ describe('Compiling query documents', () => {
 
     const { operations, fragments } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['Hero'])).to.containSubset({
+    expect(filteredIR(operations['Hero'])).to.deep.equal({
       operationName: 'Hero',
+      variables: [],
       fragmentsReferenced: ['HeroDetails', 'MoreHeroDetails'],
       fields: [
         {
           name: 'hero',
           type: 'Character',
-          fragmentSpreads: ['HeroDetails'],
           fields: [
             {
               name: 'id',
               type: 'ID!'
             }
           ],
+          fragmentSpreads: ['HeroDetails', 'MoreHeroDetails'],
+          inlineFragments: [],
         }
-      ]
+      ],
     });
 
-    expect(stringifyAndParseIR(fragments['HeroDetails'])).to.containSubset({
+    expect(filteredIR(fragments['HeroDetails'])).to.deep.equal({
       fragmentName: 'HeroDetails',
+      typeCondition: 'Character',
       fields: [
         {
           name: 'id',
@@ -150,11 +156,14 @@ describe('Compiling query documents', () => {
           name: 'name',
           type: 'String!'
         }
-      ]
+      ],
+      fragmentSpreads: ['MoreHeroDetails'],
+      inlineFragments: []
     });
 
-    expect(stringifyAndParseIR(fragments['MoreHeroDetails'])).to.containSubset({
+    expect(filteredIR(fragments['MoreHeroDetails'])).to.deep.equal({
       fragmentName: 'MoreHeroDetails',
+      typeCondition: 'Character',
       fields: [
         { name: 'appearsIn',
           type: '[Episode]!'
@@ -163,11 +172,13 @@ describe('Compiling query documents', () => {
           name: 'id',
           type: 'ID!'
         }
-      ]
+      ],
+      fragmentSpreads: [],
+      inlineFragments: []
     });
   });
 
-  it(`should include fragment spreads at each nested level`, () => {
+  it(`should include fragment spreads from subselections`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
@@ -189,7 +200,7 @@ describe('Compiling query documents', () => {
 
     const { operations, fragments } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['HeroAndFriends'])).to.containSubset({
+    expect(filteredIR(operations['HeroAndFriends'])).to.deep.equal({
       operationName: 'HeroAndFriends',
       variables: [],
       fragmentsReferenced: ['HeroDetails'],
@@ -197,33 +208,36 @@ describe('Compiling query documents', () => {
         {
           name: 'hero',
           type: 'Character',
-          fragmentSpreads: ['HeroDetails'],
           fields: [
-            {
-              name: 'id',
-              type: 'ID!'
-            },
             { name: 'appearsIn',
               type: '[Episode]!'
             },
             {
+              name: 'id',
+              type: 'ID!'
+            },
+            {
               name: 'friends',
               type: '[Character]',
-              fragmentSpreads: ['HeroDetails'],
               fields: [
                 {
                   name: 'id',
                   type: 'ID!'
                 }
               ],
+              fragmentSpreads: ['HeroDetails'],
+              inlineFragments: []
             }
           ],
+          fragmentSpreads: ['HeroDetails'],
+          inlineFragments: []
         }
       ]
     });
 
-    expect(stringifyAndParseIR(fragments['HeroDetails'])).to.containSubset({
+    expect(filteredIR(fragments['HeroDetails'])).to.deep.equal({
       fragmentName: 'HeroDetails',
+      typeCondition: 'Character',
       fields: [
         {
           name: 'name',
@@ -233,7 +247,9 @@ describe('Compiling query documents', () => {
           name: 'id',
           type: 'ID!'
         }
-      ]
+      ],
+      fragmentSpreads: [],
+      inlineFragments: []
     });
   });
 
@@ -254,8 +270,10 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['Hero'])).to.containSubset({
+    expect(filteredIR(operations['Hero'])).to.deep.equal({
       operationName: 'Hero',
+      variables: [],
+      fragmentsReferenced: [],
       fields: [
         {
           name: 'hero',
@@ -266,6 +284,7 @@ describe('Compiling query documents', () => {
               type: 'String!'
             }
           ],
+          fragmentSpreads: [],
           inlineFragments: [
             {
               typeCondition: 'Droid',
@@ -279,6 +298,7 @@ describe('Compiling query documents', () => {
                   type: 'String'
                 },
               ],
+              fragmentSpreads: []
             },
             {
               typeCondition: 'Human',
@@ -292,6 +312,7 @@ describe('Compiling query documents', () => {
                   type: 'Float'
                 },
               ],
+              fragmentSpreads: []
             }
           ]
         }
@@ -320,8 +341,9 @@ describe('Compiling query documents', () => {
 
     const { operations, fragments } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['Hero'])).to.containSubset({
+    expect(filteredIR(operations['Hero'])).to.deep.equal({
       operationName: 'Hero',
+      variables: [],
       fragmentsReferenced: ['DroidDetails', 'HumanDetails'],
       fields: [
         {
@@ -339,7 +361,7 @@ describe('Compiling query documents', () => {
       ]
     });
 
-    expect(stringifyAndParseIR(fragments['DroidDetails'])).to.containSubset({
+    expect(filteredIR(fragments['DroidDetails'])).to.deep.equal({
       fragmentName: 'DroidDetails',
       typeCondition: 'Droid',
       fields: [
@@ -347,10 +369,12 @@ describe('Compiling query documents', () => {
           name: 'primaryFunction',
           type: 'String'
         }
-      ]
+      ],
+      fragmentSpreads: [],
+      inlineFragments: []
     });
 
-    expect(stringifyAndParseIR(fragments['HumanDetails'])).to.containSubset({
+    expect(filteredIR(fragments['HumanDetails'])).to.deep.equal({
       fragmentName: 'HumanDetails',
       typeCondition: 'Human',
       fields: [
@@ -358,7 +382,9 @@ describe('Compiling query documents', () => {
           name: 'height',
           type: 'Float'
         }
-      ]
+      ],
+      fragmentSpreads: [],
+      inlineFragments: []
     });
   });
 
@@ -378,8 +404,9 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['Hero'])).to.containSubset({
+    expect(filteredIR(operations['Hero'])).to.deep.equal({
       operationName: 'Hero',
+      variables: [],
       fragmentsReferenced: ['HeroDetails'],
       fields: [
         {
@@ -419,31 +446,34 @@ describe('Compiling query documents', () => {
 
     const { operations, fragments } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['Hero'])).to.containSubset({
+    expect(filteredIR(operations['Hero'])).to.deep.equal({
       operationName: 'Hero',
+      variables: [],
       fragmentsReferenced: ['HeroDetails'],
       fields: [
         {
           name: 'hero',
           type: 'Character',
-          fragmentSpreads: ['HeroDetails'],
           fields: [],
+          fragmentSpreads: ['HeroDetails'],
+          inlineFragments: []
         }
       ]
     });
 
-    expect(stringifyAndParseIR(fragments['HeroDetails'])).to.containSubset({
+    expect(filteredIR(fragments['HeroDetails'])).to.deep.equal({
       fragmentName: 'HeroDetails',
+      typeCondition: 'Character',
       fields: [
         {
           name: 'name',
           type: 'String!'
         }
       ],
+      fragmentSpreads: [],
       inlineFragments: [
         {
           typeCondition: 'Droid',
-          fragmentSpreads: [],
           fields: [
             {
               name: 'name',
@@ -454,10 +484,10 @@ describe('Compiling query documents', () => {
               type: 'String'
             },
           ],
+          fragmentSpreads: []
         },
         {
           typeCondition: 'Human',
-          fragmentSpreads: [],
           fields: [
             {
               name: 'name',
@@ -468,6 +498,7 @@ describe('Compiling query documents', () => {
               type: 'Float'
             },
           ],
+          fragmentSpreads: []
         }
       ]
     });
@@ -488,13 +519,16 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['HeroName'])).to.containSubset({
+    expect(filteredIR(operations['HeroName'])).to.deep.equal({
       operationName: 'HeroName',
+      variables: [],
+      fragmentsReferenced: [],
       fields: [
         {
           name: 'hero',
           type: 'Character',
           fields: [],
+          fragmentSpreads: [],
           inlineFragments: [
             {
               typeCondition: 'Droid',
@@ -504,6 +538,7 @@ describe('Compiling query documents', () => {
                   type: 'String!'
                 }
               ],
+              fragmentSpreads: []
             }
           ]
         }
@@ -526,13 +561,16 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['HeroName'])).to.containSubset({
+    expect(filteredIR(operations['HeroName'])).to.deep.equal({
       operationName: 'HeroName',
+      variables: [],
+      fragmentsReferenced: [],
       fields: [
         {
           name: 'hero',
           type: 'Character',
           fields: [],
+          fragmentSpreads: [],
           inlineFragments: [
             {
               typeCondition: 'Droid',
@@ -542,6 +580,7 @@ describe('Compiling query documents', () => {
                   type: 'String!'
                 }
               ],
+              fragmentSpreads: [],
             }
           ]
         }
@@ -566,15 +605,16 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['HeroName'])).to.containSubset({
+    expect(filteredIR(operations['HeroName'])).to.deep.equal({
       operationName: 'HeroName',
+      variables: [],
       fragmentsReferenced: ['HeroName'],
       fields: [
         {
           name: 'hero',
           type: 'Character',
-          fragmentSpreads: [],
           fields: [],
+          fragmentSpreads: [],
           inlineFragments: [
             {
               typeCondition: 'Droid',
@@ -604,22 +644,17 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['HeroName'])).to.containSubset({
+    expect(filteredIR(operations['HeroName'])).to.deep.equal({
       operationName: 'HeroName',
+      variables: [],
       fragmentsReferenced: ['DroidName'],
       fields: [
         {
           name: 'hero',
           type: 'Character',
-          fragmentSpreads: [],
           fields: [],
-          inlineFragments: [
-            {
-              typeCondition: 'Droid',
-              fragmentSpreads: ['DroidName'],
-              fields: []
-            }
-          ]
+          fragmentSpreads: ['DroidName'],
+          inlineFragments: []
         }
       ]
     });
@@ -643,13 +678,16 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(stringifyAndParseIR(operations['Search'])).to.containSubset({
+    expect(filteredIR(operations['Search'])).to.deep.equal({
       operationName: 'Search',
+      variables: [],
+      fragmentsReferenced: [],
       fields: [
         {
           name: 'search',
           type: '[SearchResult]',
           fields: [],
+          fragmentSpreads: [],
           inlineFragments: [
             {
               typeCondition: 'Droid',
@@ -663,6 +701,7 @@ describe('Compiling query documents', () => {
                   type: 'String'
                 },
               ],
+              fragmentSpreads: [],
             },
             {
               typeCondition: 'Human',
@@ -676,6 +715,7 @@ describe('Compiling query documents', () => {
                   type: 'Float'
                 },
               ],
+              fragmentSpreads: [],
             }
           ]
         }
@@ -683,7 +723,7 @@ describe('Compiling query documents', () => {
     });
   });
 
-  it(`should keep track of fragments referenced at a nested level`, () => {
+  it(`should keep track of fragments referenced in a subselection`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
@@ -704,7 +744,7 @@ describe('Compiling query documents', () => {
     expect(operations['HeroAndFriends'].fragmentsReferenced).to.deep.equal(['HeroDetails']);
   });
 
-  it(`should keep track of fragments with a type condition referenced at a nested level`, () => {
+  it(`should keep track of fragments referenced in a subselection nested in an inline fragment`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
@@ -768,6 +808,11 @@ describe('Compiling query documents', () => {
   });
 });
 
-function stringifyAndParseIR(ir) {
-  return JSON.parse(stringifyIR(ir));
+function filteredIR(ir) {
+  return JSON.parse(stringifyIR(ir), function(key, value) {
+    if (key === 'source') {
+      return undefined;
+    }
+    return value;
+  });
 }
