@@ -145,6 +145,7 @@ export function structDeclarationForFragment(
     typeCondition,
     fields,
     inlineFragments,
+    fragmentSpreads,
     source
   }
 ) {
@@ -156,6 +157,7 @@ export function structDeclarationForFragment(
     parentType: typeCondition,
     possibleTypes: possibleTypesForType(generator.context, typeCondition),
     fields,
+    fragmentSpreads,
     inlineFragments
   }, () => {
     if (source) {
