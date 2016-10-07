@@ -26,7 +26,7 @@ import {
   structDeclaration,
   propertyDeclaration,
   propertyDeclarations
-} from './declarations';
+} from './language';
 
 import { escapedString, multilineString } from './strings';
 
