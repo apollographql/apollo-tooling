@@ -3,10 +3,14 @@ import { expect } from 'chai';
 import { stripIndent } from 'common-tags'
 
 import {
-  GraphQLID,
   GraphQLString,
+  GraphQLInt,
+  GraphQLFloat,
+  GraphQLBoolean,
+  GraphQLID,
   GraphQLList,
-  GraphQLNonNull
+  GraphQLNonNull,
+  GraphQLScalarType,
 } from 'graphql';
 
 import { loadSchema } from '../../src/loading'
@@ -18,10 +22,6 @@ import { typeNameFromGraphQLType, typeDeclarationForGraphQLType } from '../../sr
 
 describe('Swift code generation: Types', function() {
   describe('#typeNameFromGraphQLType()', function() {
-    it('should return GraphQLID? for GraphQLID', function() {
-      expect(typeNameFromGraphQLType(GraphQLID)).to.equal('GraphQLID?');
-    });
-
     it('should return String? for GraphQLString', function() {
       expect(typeNameFromGraphQLType(GraphQLString)).to.equal('String?');
     });
@@ -44,6 +44,26 @@ describe('Swift code generation: Types', function() {
 
     it('should return [String] for GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))', function() {
       expect(typeNameFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))))).to.equal('[String]');
+    });
+
+    it('should return Int? for GraphQLInt', function() {
+      expect(typeNameFromGraphQLType(GraphQLInt)).to.equal('Int?');
+    });
+
+    it('should return Float? for GraphQLFloat', function() {
+      expect(typeNameFromGraphQLType(GraphQLFloat)).to.equal('Float?');
+    });
+
+    it('should return Bool? for GraphQLBoolean', function() {
+      expect(typeNameFromGraphQLType(GraphQLBoolean)).to.equal('Bool?');
+    });
+
+    it('should return GraphQLID? for GraphQLID', function() {
+      expect(typeNameFromGraphQLType(GraphQLID)).to.equal('GraphQLID?');
+    });
+
+    it('should return String? for a custom scalar type', function() {
+      expect(typeNameFromGraphQLType(new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).to.equal('String?');
     });
   });
 
