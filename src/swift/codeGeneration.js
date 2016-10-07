@@ -11,6 +11,8 @@ import {
   GraphQLID
 } from 'graphql'
 
+import  { isTypeProperSuperTypeOf } from '../utilities/graphql'
+
 import { camelCase, pascalCase } from 'change-case';
 import Inflector from 'inflected';
 
@@ -197,10 +199,10 @@ export function structDeclarationForSelectionSet(
       if (!fragment) {
         throw new GraphQLError(`Cannot find fragment "${fragmentName}"`);
       }
-      const fragmentType = fragment.typeCondition;
       const propertyName = camelCase(fragmentName);
       const typeName = typeNameForFragmentName(fragmentName);
-      return { fragmentType, propertyName, typeName, bareTypeName: typeName };
+      const isProperSuperType = isTypeProperSuperTypeOf(generator.context.schema, fragment.typeCondition, parentType);
+      return { propertyName, typeName, bareTypeName: typeName, isProperSuperType };
     });
 
     const inlineFragmentProperties = inlineFragments && inlineFragments.map(inlineFragment => {
@@ -247,9 +249,9 @@ export function structDeclarationForSelectionSet(
 
       if (fragmentProperties && fragmentProperties.length > 0) {
         generator.printNewlineIfNeeded();
-        fragmentProperties.forEach(({ fragmentType, propertyName, typeName, bareTypeName }) => {
+        fragmentProperties.forEach(({ propertyName, typeName, bareTypeName, isProperSuperType }) => {
           generator.printOnNewline(`let ${propertyName} = try ${typeName}(map: map`);
-          if (isEqualType(fragmentType, parentType)) {
+          if (isProperSuperType) {
             generator.print(')');
           } else {
             generator.print(`, ifTypeMatches: __typename)`);
@@ -278,8 +280,8 @@ export function structDeclarationForSelectionSet(
           structName: 'Fragments'
         },
         () => {
-          fragmentProperties.forEach(({ propertyName, typeName, fragmentType }) => {
-            if (!isEqualType(fragmentType, parentType)) {
+          fragmentProperties.forEach(({ propertyName, typeName, isProperSuperType }) => {
+            if (!isProperSuperType) {
               typeName += '?';
             }
             propertyDeclaration(generator, { propertyName, typeName });

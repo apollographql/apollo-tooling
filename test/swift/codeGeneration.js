@@ -459,7 +459,7 @@ describe('Swift code generation', function() {
       `);
     });
 
-    it(`should generate a struct declaration for a selection set with a fragment spread with a type condition that matches the parent type`, function() {
+    it(`should generate a struct declaration for a selection set with a fragment spread that matches the parent type`, function() {
       this.addFragment({
         fragmentName: 'HeroDetails',
         typeCondition: schema.getType('Character')
@@ -533,7 +533,7 @@ describe('Swift code generation', function() {
       `);
     });
 
-    it(`should generate a struct declaration for a selection set with type conditions`, function() {
+    it(`should generate a struct declaration for a selection set with an inline fragment`, function() {
       structDeclarationForSelectionSet(this.generator, {
         structName: 'Hero',
         parentType: schema.getType('Character'),
@@ -584,6 +584,57 @@ describe('Swift code generation', function() {
             public init(map: GraphQLMap) throws {
               name = try map.value(forKey: "name")
               primaryFunction = try map.optionalValue(forKey: "primaryFunction")
+            }
+          }
+        }
+      `);
+    });
+
+    it(`should generate a struct declaration for a fragment spread nested in an inline fragment`, function() {
+      this.addFragment({
+        fragmentName: 'HeroDetails',
+        typeCondition: schema.getType('Character')
+      });
+
+      structDeclarationForSelectionSet(this.generator, {
+        structName: 'Hero',
+        parentType: schema.getType('Character'),
+        fields: [],
+        inlineFragments: [
+          {
+            typeCondition: schema.getType('Droid'),
+            fields: [],
+            fragmentSpreads: ['HeroDetails'],
+          }
+        ]
+      });
+
+      expect(this.generator.output).to.equal(stripIndent`
+        public struct Hero: GraphQLMapConvertible {
+          public let __typename: String
+
+          public let asDroid: AsDroid?
+
+          public init(map: GraphQLMap) throws {
+            __typename = try map.value(forKey: "__typename")
+
+            asDroid = try AsDroid(map: map, ifTypeMatches: __typename)
+          }
+
+          public struct AsDroid: GraphQLConditionalFragment {
+            public static let possibleTypes = ["Droid"]
+
+            public let __typename = "Droid"
+
+            public let fragments: Fragments
+
+            public init(map: GraphQLMap) throws {
+              let heroDetails = try HeroDetails(map: map)
+              fragments = Fragments(heroDetails: heroDetails)
+            }
+
+            public struct Fragments {
+              public let heroDetails: HeroDetails
             }
           }
         }
