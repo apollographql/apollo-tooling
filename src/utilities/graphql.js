@@ -7,8 +7,14 @@ import {
   TypeNameMetaFieldDef,
   GraphQLObjectType,
   GraphQLInterfaceType,
-  GraphQLUnionType
+  GraphQLUnionType,
+  GraphQLEnumType
 } from 'graphql';
+
+export function isBuiltInType(type) {
+  if (type instanceof GraphQLEnumType) return false;
+  return true;
+}
 
 export function isTypeProperSuperTypeOf(schema, maybeSuperType, subType) {
   return isEqualType(maybeSuperType, subType) || (isAbstractType(maybeSuperType) && schema.isPossibleType(maybeSuperType, subType));
