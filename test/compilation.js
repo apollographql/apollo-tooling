@@ -53,6 +53,21 @@ describe('Compiling query documents', () => {
     expect(filteredIR(typesUsed)).to.deep.equal(['Episode']);
   });
 
+  it(`should keep track of types used in fields`, () => {
+    const document = parse(`
+      query Hero {
+        hero {
+          name
+          appearsIn
+        }
+      }
+    `);
+
+    const { typesUsed } = compileToIR(schema, document);
+
+    expect(filteredIR(typesUsed)).to.deep.equal(['Episode']);
+  });
+
   it(`should recursively flatten inline fragments with type conditions that match the parent type`, () => {
     const document = parse(`
       query Hero {

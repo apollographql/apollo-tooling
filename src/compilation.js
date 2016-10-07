@@ -19,6 +19,7 @@ import {
 } from 'graphql';
 
 import {
+  isBuiltInType,
   isTypeProperSuperTypeOf,
   getOperationRootType,
   getFieldDef
@@ -230,6 +231,10 @@ export class Compiler {
       let field = { name: fieldName, type: fieldType };
 
       const bareFieldType = getNamedType(fieldType);
+
+      if (!isBuiltInType(bareFieldType)) {
+        this.typesUsedSet.add(bareFieldType);
+      }
 
       if (isCompositeType(bareFieldType)) {
         const subSelectionGroupedVisitedFragmentSet = new Map();
