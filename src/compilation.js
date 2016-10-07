@@ -91,6 +91,7 @@ export class Compiler {
 
   compileOperation(operationDefinition) {
     const operationName = operationDefinition.name.value;
+    const operationType = operationDefinition.operation;
 
     const variables = operationDefinition.variableDefinitions.map(node => {
       const name = node.variable.name.value;
@@ -110,7 +111,7 @@ export class Compiler {
     const { fields } = this.resolveFields(rootType, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet);
     const fragmentsReferenced = Object.keys(fragmentsReferencedSet);
 
-    return { operationName, variables, source, fields, fragmentsReferenced };
+    return { operationName, operationType, variables, source, fields, fragmentsReferenced };
   }
 
   compileFragment(fragmentDefinition) {
