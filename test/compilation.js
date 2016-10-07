@@ -33,6 +33,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['HeroName'])).to.containSubset({
       operationName: 'HeroName',
+      operationType: 'query',
       variables: [
         { name: 'episode', type: 'Episode' }
       ]
@@ -89,6 +90,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['Hero'])).to.deep.equal({
       operationName: 'Hero',
+      operationType: 'query',
       variables: [],
       fragmentsReferenced: [],
       fields: [
@@ -141,6 +143,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['Hero'])).to.deep.equal({
       operationName: 'Hero',
+      operationType: 'query',
       variables: [],
       fragmentsReferenced: ['HeroDetails', 'MoreHeroDetails'],
       fields: [
@@ -217,6 +220,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['HeroAndFriends'])).to.deep.equal({
       operationName: 'HeroAndFriends',
+      operationType: 'query',
       variables: [],
       fragmentsReferenced: ['HeroDetails'],
       fields: [
@@ -287,6 +291,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['Hero'])).to.deep.equal({
       operationName: 'Hero',
+      operationType: 'query',
       variables: [],
       fragmentsReferenced: [],
       fields: [
@@ -358,6 +363,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['Hero'])).to.deep.equal({
       operationName: 'Hero',
+      operationType: 'query',
       variables: [],
       fragmentsReferenced: ['DroidDetails', 'HumanDetails'],
       fields: [
@@ -421,6 +427,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['Hero'])).to.deep.equal({
       operationName: 'Hero',
+      operationType: 'query',
       variables: [],
       fragmentsReferenced: ['HeroDetails'],
       fields: [
@@ -463,6 +470,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['Hero'])).to.deep.equal({
       operationName: 'Hero',
+      operationType: 'query',
       variables: [],
       fragmentsReferenced: ['HeroDetails'],
       fields: [
@@ -536,6 +544,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['HeroName'])).to.deep.equal({
       operationName: 'HeroName',
+      operationType: 'query',
       variables: [],
       fragmentsReferenced: [],
       fields: [
@@ -578,6 +587,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['HeroName'])).to.deep.equal({
       operationName: 'HeroName',
+      operationType: 'query',
       variables: [],
       fragmentsReferenced: [],
       fields: [
@@ -622,6 +632,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['HeroName'])).to.deep.equal({
       operationName: 'HeroName',
+      operationType: 'query',
       variables: [],
       fragmentsReferenced: ['HeroName'],
       fields: [
@@ -661,6 +672,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['HeroName'])).to.deep.equal({
       operationName: 'HeroName',
+      operationType: 'query',
       variables: [],
       fragmentsReferenced: ['DroidName'],
       fields: [
@@ -695,6 +707,7 @@ describe('Compiling query documents', () => {
 
     expect(filteredIR(operations['Search'])).to.deep.equal({
       operationName: 'Search',
+      operationType: 'query',
       variables: [],
       fragmentsReferenced: [],
       fields: [
@@ -820,6 +833,37 @@ describe('Compiling query documents', () => {
         name
       }
     `);
+  });
+
+  it(`should include the operationType for a query`, () => {
+    const source = stripIndent`
+      query HeroName {
+        hero {
+          name
+        }
+      }
+    `
+    const document = parse(source);
+
+    const { operations } = compileToIR(schema, document);
+
+    expect(operations['HeroName'].operationType).to.equal('query');
+  });
+
+  it(`should include the operationType for a mutation`, () => {
+    const source = stripIndent`
+      mutation CreateReview {
+        createReview {
+          stars
+          commentary
+        }
+      }
+    `
+    const document = parse(source);
+
+    const { operations } = compileToIR(schema, document);
+
+    expect(operations['CreateReview'].operationType).to.equal('mutation');
   });
 });
 
