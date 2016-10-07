@@ -8,11 +8,24 @@ import {
 import { camelCase } from 'change-case';
 
 import {
+  GraphQLString,
+  GraphQLInt,
+  GraphQLFloat,
+  GraphQLBoolean,
   GraphQLID,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLScalarType,
   GraphQLEnumType
 } from 'graphql';
+
+const builtInScalarMap = {
+  [GraphQLString.name]: 'String',
+  [GraphQLInt.name]: 'Int',
+  [GraphQLFloat.name]: 'Float',
+  [GraphQLBoolean.name]: 'Bool',
+  [GraphQLID.name]: 'GraphQLID',
+}
 
 export function typeNameFromGraphQLType(type, bareTypeName, nullable = true) {
   if (type instanceof GraphQLNonNull) {
@@ -22,8 +35,8 @@ export function typeNameFromGraphQLType(type, bareTypeName, nullable = true) {
   let typeName;
   if (type instanceof GraphQLList) {
     typeName = '[' + typeNameFromGraphQLType(type.ofType, bareTypeName, true) + ']';
-  } else if (type === GraphQLID) {
-    typeName = 'GraphQLID'
+  } else if (type instanceof GraphQLScalarType) {
+    typeName = builtInScalarMap[type.name] || GraphQLString;
   } else {
     typeName = bareTypeName || type.name;
   }
