@@ -21,5 +21,9 @@ export default function generate(inputPaths, schemaPath, outputPath, target) {
 }
 
 function generateIR(context) {
-  return stringifyIR(context, '\t');
+  return stringifyIR({
+    operations: Object.values(context.operations),
+    fragments: Object.values(context.fragments),
+    typesUsed: context.typesUsed
+  }, '\t');
 }
