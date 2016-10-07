@@ -10,9 +10,9 @@ import {
   propertyDeclaration,
   protocolDeclaration,
   protocolPropertyDeclaration
-} from '../../src/swift/declarations';
+} from '../../src/swift/language';
 
-describe('Swift code generation: Basic declarations', function() {
+describe('Swift code generation: Basic language constructs', function() {
   beforeEach(function() {
     this.generator = new CodeGenerator();
   });
