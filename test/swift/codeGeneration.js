@@ -261,6 +261,40 @@ describe('Swift code generation', function() {
         }
       `);
     });
+
+    it(`should generate a class declaration for a mutation with variables`, function() {
+      const { operations } = this.compileFromSource(`
+        mutation CreateReview($episode: Episode) {
+          createReview(episode: $episode, review: { stars: 5, commentary: "Wow!" }) {
+            stars
+            commentary
+          }
+        }
+      `);
+
+      classDeclarationForOperation(this.generator, operations['CreateReview']);
+
+      expect(this.generator.output).to.include(stripIndent`
+        public final class CreateReviewMutation: GraphQLMutation {
+          public static let operationDefinition =
+            "mutation CreateReview($episode: Episode) {" +
+            "  createReview(episode: $episode, review: {stars: 5, commentary: \\"Wow!\\"}) {" +
+            "    stars" +
+            "    commentary" +
+            "  }" +
+            "}"
+
+          public let episode: Episode?
+
+          public init(episode: Episode? = nil) {
+            self.episode = episode
+          }
+
+          public var variables: GraphQLMap? {
+            return ["episode": episode]
+          }
+      `);
+    });
   });
 
   describe('#initializerDeclarationForVariables()', function() {
