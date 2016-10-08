@@ -63,18 +63,34 @@ export function classDeclarationForOperation(
   generator,
   {
     operationName,
+    operationType,
     variables,
     fields,
     fragmentsReferenced,
     source,
   }
 ) {
-  const className = `${pascalCase(operationName)}Query`;
+
+  let className;
+  let protocol;
+
+  switch (operationType) {
+    case 'query':
+      className = `${pascalCase(operationName)}Query`;
+      protocol = 'GraphQLQuery';
+      break;
+    case 'mutation':
+      className = `${pascalCase(operationName)}Mutation`;
+      protocol = 'GraphQLMutation';
+      break;
+    default:
+      throw new GraphQLError(`Unsupported operation type "${operationType}"`);
+  }
 
   classDeclaration(generator, {
     className,
     modifiers: ['public', 'final'],
-    adoptedProtocols: ['GraphQLQuery']
+    adoptedProtocols: [protocol]
   }, () => {
     if (source) {
       generator.printOnNewline('public static let operationDefinition =');
