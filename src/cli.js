@@ -82,5 +82,6 @@ yargs
     handleError(error ? error : new ToolError(message));
   })
   .help()
+  .version()
   .strict()
   .argv
