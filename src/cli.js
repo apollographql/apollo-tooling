@@ -79,7 +79,7 @@ yargs
     },
   )
   .fail(function(message, error) {
-    handleError(error ? error : new Error(message));
+    handleError(error ? error : new ToolError(message));
   })
   .help()
   .strict()
