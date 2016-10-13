@@ -53,7 +53,7 @@ yargs
     }
   )
   .command(
-    'generate <input...>',
+    'generate [input...]',
     'Generate code from a GraphQL schema and query documents',
     {
       schema: {
