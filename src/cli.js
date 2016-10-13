@@ -27,6 +27,7 @@ yargs
       output: {
         demand: true,
         describe: 'Output path for GraphQL schema file',
+        default: 'schema.json',
         normalize: true
       },
       header: {
@@ -59,6 +60,7 @@ yargs
       schema: {
         demand: true,
         describe: 'Path to GraphQL schema file',
+        default: 'schema.json',
         normalize: true
       },
       output: {
