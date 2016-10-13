@@ -27,8 +27,11 @@ export function loadSchema(schemaPath) {
 export function loadAndMergeQueryDocuments(inputPaths) {
   const sources = inputPaths.map(inputPath => {
     const body = fs.readFileSync(inputPath, 'utf8')
+    if (!body) {
+      return null;
+    }
     return new Source(body, inputPath);
-  });
+  }).filter(source => source);
 
   return concatAST(sources.map(source => parse(source)));
 }
