@@ -108,7 +108,7 @@ export function classDeclarationForOperation(
 
     if (variables && variables.length > 0) {
       generator.printNewlineIfNeeded();
-      propertyDeclarations(generator, propertiesFromFields(variables));
+      propertyDeclarations(generator, propertiesFromFields(generator.context, variables));
       generator.printNewlineIfNeeded();
       initializerDeclarationForVariables(generator, variables);
       generator.printNewlineIfNeeded();
@@ -130,7 +130,7 @@ export function initializerDeclarationForVariables(generator, variables) {
   generator.print('(');
   generator.print(join(variables.map(({ name, type }) =>
     join([
-      `${name}: ${typeNameFromGraphQLType(type)}`,
+      `${name}: ${typeNameFromGraphQLType(generator.context, type)}`,
       !(type instanceof GraphQLNonNull) && ' = nil'
     ])
   ), ', '));
@@ -210,7 +210,7 @@ export function structDeclarationForSelectionSet(
       generator.print(']');
     }
 
-    const properties = fields && propertiesFromFields(fields);
+    const properties = fields && propertiesFromFields(generator.context, fields);
 
     const fragmentProperties = fragmentSpreads && fragmentSpreads.map(fragmentName => {
       const fragment = generator.context.fragments[fragmentName];
@@ -352,11 +352,11 @@ export function initializationForProperty(generator, { propertyName, fieldName, 
   generator.printOnNewline(`${propertyName} = try map.${methodName}(${ join(args, ', ') })`);
 }
 
-export function propertiesFromFields(fields) {
-  return fields.map(field => propertyFromField(field));
+export function propertiesFromFields(context, fields) {
+  return fields.map(field => propertyFromField(context, field));
 }
 
-export function propertyFromField(field) {
+export function propertyFromField(context, field) {
   const { name: fieldName, type: fieldType, fragmentSpreads, inlineFragments } = field;
 
   const propertyName = camelCase(fieldName);
@@ -366,11 +366,11 @@ export function propertyFromField(field) {
   const namedType = getNamedType(fieldType);
 
   if (namedType instanceof GraphQLScalarType || namedType instanceof GraphQLEnumType) {
-    const typeName = typeNameFromGraphQLType(fieldType);
+    const typeName = typeNameFromGraphQLType(context, fieldType);
     return { ...property, typeName, isComposite: false };
   } else if (isCompositeType(namedType)) {
     const bareTypeName = pascalCase(Inflector.singularize(propertyName));
-    const typeName = typeNameFromGraphQLType(fieldType, bareTypeName);
+    const typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
     return { ...property, typeName, bareTypeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments };
   } else {
     throw new GraphQLError(`Unsupported field type: ${String(fieldType)}`);
