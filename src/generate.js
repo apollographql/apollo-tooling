@@ -15,9 +15,21 @@ export default function generate(inputPaths, schemaPath, outputPath, target) {
 
   const context = compileToIR(schema, document);
 
-  const output = (target && target.toLowerCase() === 'json') ? generateIR(context) : generateSource(context);
+  let output;
+  switch (target) {
+    case 'json':
+      output = generateIR(context);
+      break;
+    default:
+      output = generateSource(context);
+      break;
+  }
 
-  fs.writeFileSync(outputPath, output);
+  if (outputPath) {
+    fs.writeFileSync(outputPath, output);
+  } else {
+    console.log(output);
+  }
 }
 
 function generateIR(context) {

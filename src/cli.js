@@ -28,7 +28,8 @@ yargs
         demand: true,
         describe: 'Output path for GraphQL schema file',
         default: 'schema.json',
-        normalize: true
+        normalize: true,
+        coerce: path.resolve,
       },
       header: {
         alias: 'H',
@@ -61,23 +62,24 @@ yargs
         demand: true,
         describe: 'Path to GraphQL schema file',
         default: 'schema.json',
-        normalize: true
+        normalize: true,
+        coerce: path.resolve,
       },
       output: {
-        demand: true,
         describe: 'Output directory for the generated files',
-        normalize: true
+        normalize: true,
+        coerce: path.resolve,
       },
       target: {
         demand: false,
         describe: 'Code generation target language',
+        choices: ['swift', 'json'],
+        default: 'swift'
       }
     },
     argv => {
       const inputPaths = argv.input.map(input => path.resolve(input));
-      const schemaPath = path.resolve(argv.schema);
-      const outputPath = path.resolve(argv.output);
-      generate(inputPaths, schemaPath, outputPath, argv.target);
+      generate(inputPaths, argv.schema, argv.output, argv.target);
     },
   )
   .fail(function(message, error) {
