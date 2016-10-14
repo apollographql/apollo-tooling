@@ -75,11 +75,17 @@ yargs
         describe: 'Code generation target language',
         choices: ['swift', 'json'],
         default: 'swift'
+      },
+      "passthrough-custom-scalars": {
+        demand: false,
+        describe: "Don't attempt to map custom scalars [temporary option]",
+        default: false
       }
     },
     argv => {
       const inputPaths = argv.input.map(input => path.resolve(input));
-      generate(inputPaths, argv.schema, argv.output, argv.target);
+      const options = { passthroughCustomScalars: argv["passthrough-custom-scalars"] };
+      generate(inputPaths, argv.schema, argv.output, argv.target, options);
     },
   )
   .fail(function(message, error) {

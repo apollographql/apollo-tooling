@@ -27,16 +27,16 @@ const builtInScalarMap = {
   [GraphQLID.name]: 'GraphQLID',
 }
 
-export function typeNameFromGraphQLType(type, bareTypeName, nullable = true) {
+export function typeNameFromGraphQLType(context, type, bareTypeName, nullable = true) {
   if (type instanceof GraphQLNonNull) {
-    return typeNameFromGraphQLType(type.ofType, bareTypeName, false)
+    return typeNameFromGraphQLType(context, type.ofType, bareTypeName, false)
   }
 
   let typeName;
   if (type instanceof GraphQLList) {
-    typeName = '[' + typeNameFromGraphQLType(type.ofType, bareTypeName, true) + ']';
+    typeName = '[' + typeNameFromGraphQLType(context, type.ofType, bareTypeName, true) + ']';
   } else if (type instanceof GraphQLScalarType) {
-    typeName = builtInScalarMap[type.name] || GraphQLString;
+    typeName = builtInScalarMap[type.name] || (context.passthroughCustomScalars ? type.name: GraphQLString);
   } else {
     typeName = bareTypeName || type.name;
   }

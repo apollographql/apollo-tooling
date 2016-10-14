@@ -6,7 +6,7 @@ import { validateQueryDocument } from './validation'
 import { compileToIR, stringifyIR } from './compilation'
 import { generateSource } from './swift'
 
-export default function generate(inputPaths, schemaPath, outputPath, target) {
+export default function generate(inputPaths, schemaPath, outputPath, target, options) {
   const schema = loadSchema(schemaPath);
 
   const document = loadAndMergeQueryDocuments(inputPaths);
@@ -14,6 +14,7 @@ export default function generate(inputPaths, schemaPath, outputPath, target) {
   validateQueryDocument(schema, document);
 
   const context = compileToIR(schema, document);
+  Object.assign(context, options);
 
   let output;
   switch (target) {
