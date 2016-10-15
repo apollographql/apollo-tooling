@@ -4,14 +4,10 @@ node_js:
   - "4"
 cache:
   directories:
-    # cache node modules
-    - node_modules
+    - $HOME/.npm
 install:
   - npm install
-  - npm prune
-
 script:
   - npm test
-
 # Allow Travis tests to run in containers.
 sudo: false
