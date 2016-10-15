@@ -1,13 +1,18 @@
 language: node_js
+
+# Allow Travis tests to run in containers.
+sudo: false
+
 node_js:
   - "6"
   - "4"
+
 cache:
   directories:
     - $HOME/.npm
+
 install:
   - npm install
+
 script:
   - npm test
-# Allow Travis tests to run in containers.
-sudo: false
