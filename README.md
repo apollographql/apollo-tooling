@@ -27,3 +27,14 @@ To generate Swift code from a set of query definitions in `.graphql` files:
 ```sh
 apollo-codegen generate **/*.graphql --schema schema.json --output API.swift
 ```
+
+## Contributing
+
+[![Build status](https://travis-ci.org/apollostack/apollo-codegen.svg?branch=master)](https://travis-ci.org/apollostack/apollo-codegen)
+
+Running tests locally:
+
+```
+npm install
+npm test
+```
