@@ -797,8 +797,8 @@ describe('Swift code generation', function() {
       expect(generator.output).to.equal(stripIndent`
         /// The input object sent when someone is creating a new review
         public struct ReviewInput: JSONEncodable {
-          public let stars: Int
-          public let commentary: String?
+          public let stars: Int /// 0-5 stars
+          public let commentary: String? /// Comment about the movie, optional
 
           public var jsonValue: JSONValue {
             return ["stars": stars, "commentary": commentary]

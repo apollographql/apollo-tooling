@@ -24,8 +24,9 @@ export function structDeclaration(generator, { structName, description, adoptedP
   generator.popScope();
 }
 
-export function propertyDeclaration(generator, { propertyName, typeName }) {
+export function propertyDeclaration(generator, { propertyName, typeName, description }) {
   generator.printOnNewline(`public let ${propertyName}: ${typeName}`);
+  generator.print(description && ` /// ${description}`);
 }
 
 export function propertyDeclarations(generator, properties) {
