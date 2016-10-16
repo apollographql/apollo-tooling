@@ -358,11 +358,11 @@ export function propertiesFromFields(context, fields) {
 }
 
 export function propertyFromField(context, field) {
-  const { name: fieldName, type: fieldType, fragmentSpreads, inlineFragments } = field;
+  const { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
 
   const propertyName = camelCase(fieldName);
 
-  let property = { fieldName, fieldType, propertyName };
+  let property = { fieldName, fieldType, propertyName, description };
 
   const namedType = getNamedType(fieldType);
 
