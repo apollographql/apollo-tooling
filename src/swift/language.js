@@ -14,8 +14,9 @@ export function classDeclaration(generator, { className, modifiers, superClass, 
   generator.popScope();
 }
 
-export function structDeclaration(generator, { structName, adoptedProtocols = [] }, closure) {
+export function structDeclaration(generator, { structName, description, adoptedProtocols = [] }, closure) {
   generator.printNewlineIfNeeded();
+  generator.printOnNewline(description && `/// ${description}`);
   generator.printOnNewline(`public struct ${structName}`);
   generator.print(wrap(': ', join(adoptedProtocols, ', ')));
   generator.pushScope({ typeName: structName });
