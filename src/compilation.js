@@ -12,6 +12,7 @@ import {
   isType,
   isCompositeType,
   GraphQLEnumType,
+  GraphQLInputObjectType,
   GraphQLObjectType,
   GraphQLInterfaceType,
   GraphQLUnionType,
@@ -19,7 +20,6 @@ import {
 } from 'graphql';
 
 import {
-  isBuiltInType,
   isTypeProperSuperTypeOf,
   getOperationRootType,
   getFieldDef
@@ -77,6 +77,12 @@ export class Compiler {
     this.compiledFragmentMap = Object.create(null);
   }
 
+  addTypeUsed(type) {
+    if (type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType) {
+      this.typesUsedSet.add(type);
+    }
+  }
+
   get typesUsed() {
     return Array.from(this.typesUsedSet);
   }
@@ -96,7 +102,7 @@ export class Compiler {
     const variables = operationDefinition.variableDefinitions.map(node => {
       const name = node.variable.name.value;
       const type = typeFromAST(this.schema, node.type);
-      this.typesUsedSet.add(type);
+      this.addTypeUsed(getNamedType(type));
       return { name, type };
     });
 
@@ -235,9 +241,7 @@ export class Compiler {
 
       const bareFieldType = getNamedType(fieldType);
 
-      if (!isBuiltInType(bareFieldType)) {
-        this.typesUsedSet.add(bareFieldType);
-      }
+      this.addTypeUsed(bareFieldType);
 
       if (isCompositeType(bareFieldType)) {
         const subSelectionGroupedVisitedFragmentSet = new Map();

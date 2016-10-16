@@ -20,45 +20,90 @@ import { compileToIR, stringifyIR, printIR } from '../src/compilation'
 const schema = loadSchema(require.resolve('./starwars/schema.json'));
 
 describe('Compiling query documents', () => {
-  it(`should include defined variables`, () => {
+  it(`should include variables defined in operations`, () => {
     const document = parse(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
           name
+        }
+      }
+
+      query Search($text: String!) {
+        search(text: $text) {
+          ... on Character {
+            name
+          }
+        }
+      }
+
+      mutation CreateReviewForEpisode($episode: Episode!, $review: ReviewInput!) {
+        createReview(episode: $episode, review: $review) {
+          stars
+          commentary
         }
       }
     `);
 
     const { operations } = compileToIR(schema, document);
 
-    expect(filteredIR(operations['HeroName'])).to.containSubset({
-      operationName: 'HeroName',
-      operationType: 'query',
-      variables: [
+    expect(filteredIR(operations['HeroName']).variables).to.deep.equal(
+      [
         { name: 'episode', type: 'Episode' }
       ]
-    });
+    );
+
+    expect(filteredIR(operations['Search']).variables).to.deep.equal(
+      [
+        { name: 'text', type: 'String!' }
+      ]
+    );
+
+    expect(filteredIR(operations['CreateReviewForEpisode']).variables).to.deep.equal(
+      [
+        { name: 'episode', type: 'Episode!' },
+        { name: 'review', type: 'ReviewInput!' }
+      ]
+    );
   });
 
-  it(`should keep track of types used in variables`, () => {
+  it(`should keep track of enums and input object types used in variables`, () => {
     const document = parse(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
           name
         }
       }
+
+      query Search($text: String) {
+        search(text: $text) {
+          ... on Character {
+            name
+          }
+        }
+      }
+
+      mutation CreateReviewForEpisode($episode: Episode!, $review: ReviewInput!) {
+        createReview(episode: $episode, review: $review) {
+          stars
+          commentary
+        }
+      }
     `);
 
     const { typesUsed } = compileToIR(schema, document);
 
-    expect(filteredIR(typesUsed)).to.deep.equal(['Episode']);
+    expect(filteredIR(typesUsed)).to.deep.equal(['Episode', 'ReviewInput']);
   });
 
-  it(`should keep track of types used in fields`, () => {
+  it(`should keep track of enums used in fields`, () => {
     const document = parse(`
       query Hero {
         hero {
           name
+          appearsIn
+        }
+
+        droid(id: "2001") {
           appearsIn
         }
       }
