@@ -691,12 +691,13 @@ describe('Compiling query documents', () => {
     const document = parse(`
       query Search {
         search(text: "an") {
-          ... on Droid {
+          ... on Character {
             name
+          }
+          ... on Droid {
             primaryFunction
           }
           ... on Human {
-            name
             height
           }
         }

@@ -161,8 +161,10 @@ export class Compiler {
             typeFromAST(this.schema, typeCondition) :
             parentType;
 
+          const effectiveType = parentType instanceof GraphQLObjectType ? parentType : inlineFragmentType;
+
           this.collectFields(
-            isTypeSubTypeOf(this.schema, inlineFragmentType, parentType) ? inlineFragmentType : parentType,
+            effectiveType,
             selection.selectionSet,
             groupedFieldSet,
             groupedVisitedFragmentSet
@@ -189,7 +191,7 @@ export class Compiler {
             visitedFragmentSet[fragmentName] = true;
           }
 
-          const effectiveType = isTypeSubTypeOf(this.schema, fragmentType, parentType) ? fragmentType : parentType;
+          const effectiveType = parentType instanceof GraphQLObjectType ? parentType : fragmentType;
 
           this.collectFields(
             effectiveType,
