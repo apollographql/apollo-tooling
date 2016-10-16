@@ -347,10 +347,13 @@ function sourceAt(location) {
 
 export function stringifyIR(ast, space) {
   return JSON.stringify(ast, function(key, value) {
-    if (isType(value)) {
+    if (value === undefined) {
+      return null;
+    } else if (isType(value)) {
       return String(value);
+    } else {
+      return value;
     }
-    return value;
   }, space);
 }
 
