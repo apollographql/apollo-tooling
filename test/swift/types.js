@@ -18,7 +18,7 @@ const schema = loadSchema(require.resolve('../starwars/schema.json'));
 
 import CodeGenerator from '../../src/utilities/CodeGenerator';
 
-import { typeNameFromGraphQLType, typeDeclarationForGraphQLType } from '../../src/swift/types'
+import { typeNameFromGraphQLType } from '../../src/swift/types'
 
 describe('Swift code generation: Types', function() {
   describe('#typeNameFromGraphQLType()', function() {
@@ -68,25 +68,6 @@ describe('Swift code generation: Types', function() {
 
     it('should return a passed through custom scalar type with the passthroughCustomScalars option', function() {
       expect(typeNameFromGraphQLType({ passthroughCustomScalars: true }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).to.equal('CustomScalarType?');
-    });
-  });
-
-  describe('#typeDeclarationForGraphQLType()', function() {
-    it('should generate an enum declaration for a GraphQLEnumType', function() {
-      const generator = new CodeGenerator();
-
-      typeDeclarationForGraphQLType(generator, schema.getType('Episode'));
-
-      expect(generator.output).to.equal(stripIndent`
-        /// The episodes in the Star Wars trilogy
-        public enum Episode: String {
-          case newhope = "NEWHOPE" /// Star Wars Episode IV: A New Hope, released in 1977.
-          case empire = "EMPIRE" /// Star Wars Episode V: The Empire Strikes Back, released in 1980.
-          case jedi = "JEDI" /// Star Wars Episode VI: Return of the Jedi, released in 1983.
-        }
-
-        extension Episode: JSONDecodable, JSONEncodable {}
-      `);
     });
   });
 });

@@ -8,7 +8,8 @@ import {
   GraphQLEnumType,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLID
+  GraphQLID,
+  GraphQLInputObjectType
 } from 'graphql'
 
 import  { isTypeProperSuperTypeOf } from '../utilities/graphql'
@@ -32,7 +33,6 @@ import { escapedString, multilineString } from './strings';
 
 import {
   typeNameFromGraphQLType,
-  typeDeclarationForGraphQLType
 } from './types';
 
 import CodeGenerator from '../utilities/CodeGenerator';
@@ -107,12 +107,13 @@ export function classDeclarationForOperation(
     }
 
     if (variables && variables.length > 0) {
+      const properties = propertiesFromFields(generator.context, variables);
       generator.printNewlineIfNeeded();
-      propertyDeclarations(generator, propertiesFromFields(generator.context, variables));
+      propertyDeclarations(generator, properties);
       generator.printNewlineIfNeeded();
-      initializerDeclarationForVariables(generator, variables);
+      initializerDeclarationForProperties(generator, properties);
       generator.printNewlineIfNeeded();
-      variablesProperty(generator, variables);
+      mappedProperty(generator, { propertyName: 'variables', propertyType: 'GraphQLMap?' }, properties);
     }
 
     structDeclarationForSelectionSet(
@@ -125,30 +126,30 @@ export function classDeclarationForOperation(
   });
 }
 
-export function initializerDeclarationForVariables(generator, variables) {
+export function initializerDeclarationForProperties(generator, properties) {
   generator.printOnNewline(`public init`);
   generator.print('(');
-  generator.print(join(variables.map(({ name, type }) =>
+  generator.print(join(properties.map(({ propertyName, fieldType }) =>
     join([
-      `${name}: ${typeNameFromGraphQLType(generator.context, type)}`,
-      !(type instanceof GraphQLNonNull) && ' = nil'
+      `${propertyName}: ${typeNameFromGraphQLType(generator.context, fieldType)}`,
+      !(fieldType instanceof GraphQLNonNull) && ' = nil'
     ])
   ), ', '));
   generator.print(')');
 
   generator.withinBlock(() => {
-    variables.forEach(({ name }) => {
-      generator.printOnNewline(`self.${name} = ${name}`);
+    properties.forEach(({ propertyName }) => {
+      generator.printOnNewline(`self.${propertyName} = ${propertyName}`);
     });
   });
 }
 
-export function variablesProperty(generator, variables) {
-  generator.printOnNewline('public var variables: GraphQLMap?');
+export function mappedProperty(generator, { propertyName, propertyType }, properties) {
+  generator.printOnNewline(`public var ${propertyName}: ${propertyType}`);
   generator.withinBlock(() => {
     generator.printOnNewline(wrap(
       `return [`,
-      join(variables.map(({ name }) => `"${name}": ${name}`), ', '),
+      join(properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`), ', '),
       `]`
     ));
   });
@@ -365,15 +366,13 @@ export function propertyFromField(context, field) {
 
   const namedType = getNamedType(fieldType);
 
-  if (namedType instanceof GraphQLScalarType || namedType instanceof GraphQLEnumType) {
-    const typeName = typeNameFromGraphQLType(context, fieldType);
-    return { ...property, typeName, isComposite: false };
-  } else if (isCompositeType(namedType)) {
+  if (isCompositeType(namedType)) {
     const bareTypeName = pascalCase(Inflector.singularize(propertyName));
     const typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
     return { ...property, typeName, bareTypeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments };
   } else {
-    throw new GraphQLError(`Unsupported field type: ${String(fieldType)}`);
+    const typeName = typeNameFromGraphQLType(context, fieldType);
+    return { ...property, typeName, isComposite: false };
   }
 }
 
@@ -391,4 +390,40 @@ export function possibleTypesForType(context, type) {
   } else {
     return [type];
   }
+}
+
+export function typeDeclarationForGraphQLType(generator, type) {
+  if (type instanceof GraphQLEnumType) {
+    enumerationDeclaration(generator, type);
+  } else if (type instanceof GraphQLInputObjectType) {
+    structDeclarationForInputObjectType(generator, type);
+  }
+}
+
+function enumerationDeclaration(generator, type) {
+  const { name, description } = type;
+  const values = type.getValues();
+
+  generator.printNewlineIfNeeded();
+  generator.printOnNewline(description && `/// ${description}`);
+  generator.printOnNewline(`public enum ${name}: String`);
+  generator.withinBlock(() => {
+    values.forEach(value =>
+      generator.printOnNewline(`case ${camelCase(value.name)} = "${value.value}"${wrap(' /// ', value.description)}`)
+    );
+  });
+  generator.printNewline();
+  generator.printOnNewline(`extension ${name}: JSONDecodable, JSONEncodable {}`);
+}
+
+function structDeclarationForInputObjectType(generator, type) {
+  const { name: structName, description } = type;
+  const adoptedProtocols = ['JSONEncodable'];
+  const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
+
+  structDeclaration(generator, { structName, description, adoptedProtocols }, () => {
+    propertyDeclarations(generator, properties);
+    generator.printNewline();
+    mappedProperty(generator, { propertyName: 'jsonValue', propertyType: 'JSONValue' }, properties);
+  });
 }

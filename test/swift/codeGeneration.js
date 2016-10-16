@@ -14,10 +14,11 @@ import {
 
 import {
   classDeclarationForOperation,
-  initializerDeclarationForVariables,
-  variablesProperty,
+  initializerDeclarationForProperties,
+  mappedProperty,
   structDeclarationForFragment,
   structDeclarationForSelectionSet,
+  typeDeclarationForGraphQLType,
 } from '../../src/swift/codeGeneration';
 
 import { loadSchema } from '../../src/loading';
@@ -297,10 +298,10 @@ describe('Swift code generation', function() {
     });
   });
 
-  describe('#initializerDeclarationForVariables()', function() {
-    it(`should generate initializer for a variable`, function() {
-      initializerDeclarationForVariables(this.generator, [
-        { name: 'episode', type: new GraphQLNonNull(schema.getType('Episode')) }
+  describe('#initializerDeclarationForProperties()', function() {
+    it(`should generate initializer for a porperty`, function() {
+      initializerDeclarationForProperties(this.generator, [
+        { propertyName: 'episode', fieldType: new GraphQLNonNull(schema.getType('Episode')) }
       ]);
 
       expect(this.generator.output).to.equal(stripIndent`
@@ -310,9 +311,9 @@ describe('Swift code generation', function() {
       `);
     });
 
-    it(`should generate initializer for an optional variable`, function() {
-      initializerDeclarationForVariables(this.generator, [
-        { name: 'episode', type: schema.getType('Episode') }
+    it(`should generate initializer for an optional property`, function() {
+      initializerDeclarationForProperties(this.generator, [
+        { propertyName: 'episode', fieldType: schema.getType('Episode') }
       ]);
 
       expect(this.generator.output).to.equal(stripIndent`
@@ -322,10 +323,10 @@ describe('Swift code generation', function() {
       `);
     });
 
-    it(`should generate initializer for multiple variables`, function() {
-      initializerDeclarationForVariables(this.generator, [
-        { name: 'episode', type: schema.getType('Episode') },
-        { name: 'scene', type: GraphQLString }
+    it(`should generate initializer for multiple properties`, function() {
+      initializerDeclarationForProperties(this.generator, [
+        { propertyName: 'episode', fieldType: schema.getType('Episode') },
+        { propertyName: 'scene', fieldType: GraphQLString }
       ]);
 
       expect(this.generator.output).to.equal(stripIndent`
@@ -337,10 +338,10 @@ describe('Swift code generation', function() {
     });
   });
 
-  describe('#variablesProperty()', function() {
+  describe('#mappedProperty()', function() {
     it(`should generate variables property for a variable`, function() {
-      variablesProperty(this.generator, [
-        { name: 'episode', type: new GraphQLNonNull(schema.getType('Episode')) }
+      mappedProperty(this.generator, { propertyName: 'variables', propertyType: 'GraphQLMap?' }, [
+        { propertyName: 'episode', fieldType: new GraphQLNonNull(schema.getType('Episode')) }
       ]);
 
       expect(this.generator.output).to.equal(stripIndent`
@@ -351,9 +352,9 @@ describe('Swift code generation', function() {
     });
 
     it(`should generate variables property for multiple variables`, function() {
-      variablesProperty(this.generator, [
-        { name: 'episode', type: schema.getType('Episode') },
-        { name: 'scene', type: GraphQLString }
+      mappedProperty(this.generator, { propertyName: 'variables', propertyType: 'GraphQLMap?' }, [
+        { propertyName: 'episode', fieldType: schema.getType('Episode') },
+        { propertyName: 'scene', fieldType: GraphQLString }
       ]);
 
       expect(this.generator.output).to.equal(stripIndent`
@@ -764,6 +765,43 @@ describe('Swift code generation', function() {
             public struct Fragments {
               public let heroDetails: HeroDetails
             }
+          }
+        }
+      `);
+    });
+  });
+
+  describe('#typeDeclarationForGraphQLType()', function() {
+    it('should generate an enum declaration for a GraphQLEnumType', function() {
+      const generator = new CodeGenerator();
+
+      typeDeclarationForGraphQLType(generator, schema.getType('Episode'));
+
+      expect(generator.output).to.equal(stripIndent`
+        /// The episodes in the Star Wars trilogy
+        public enum Episode: String {
+          case newhope = "NEWHOPE" /// Star Wars Episode IV: A New Hope, released in 1977.
+          case empire = "EMPIRE" /// Star Wars Episode V: The Empire Strikes Back, released in 1980.
+          case jedi = "JEDI" /// Star Wars Episode VI: Return of the Jedi, released in 1983.
+        }
+
+        extension Episode: JSONDecodable, JSONEncodable {}
+      `);
+    });
+
+    it('should generate a struct declaration for a GraphQLInputObjectType', function() {
+      const generator = new CodeGenerator();
+
+      typeDeclarationForGraphQLType(generator, schema.getType('ReviewInput'));
+
+      expect(generator.output).to.equal(stripIndent`
+        /// The input object sent when someone is creating a new review
+        public struct ReviewInput: JSONEncodable {
+          public let stars: Int
+          public let commentary: String?
+
+          public var jsonValue: JSONValue {
+            return ["stars": stars, "commentary": commentary]
           }
         }
       `);
