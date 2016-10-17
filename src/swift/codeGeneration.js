@@ -418,12 +418,12 @@ function enumerationDeclaration(generator, type) {
 
 function structDeclarationForInputObjectType(generator, type) {
   const { name: structName, description } = type;
-  const adoptedProtocols = ['JSONEncodable'];
+  const adoptedProtocols = ['GraphQLMapEncodable'];
   const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
 
   structDeclaration(generator, { structName, description, adoptedProtocols }, () => {
     propertyDeclarations(generator, properties);
     generator.printNewline();
-    mappedProperty(generator, { propertyName: 'jsonValue', propertyType: 'JSONValue' }, properties);
+    mappedProperty(generator, { propertyName: 'graphQLMap', propertyType: 'GraphQLMap' }, properties);
   });
 }

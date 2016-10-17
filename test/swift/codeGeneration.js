@@ -796,11 +796,11 @@ describe('Swift code generation', function() {
 
       expect(generator.output).to.equal(stripIndent`
         /// The input object sent when someone is creating a new review
-        public struct ReviewInput: JSONEncodable {
+        public struct ReviewInput: GraphQLMapEncodable {
           public let stars: Int /// 0-5 stars
           public let commentary: String? /// Comment about the movie, optional
 
-          public var jsonValue: JSONValue {
+          public var graphQLMap: GraphQLMap {
             return ["stars": stars, "commentary": commentary]
           }
         }
