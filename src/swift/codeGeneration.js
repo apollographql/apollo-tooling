@@ -190,7 +190,7 @@ export function structDeclarationForSelectionSet(
   generator,
   {
     structName,
-    adoptedProtocols = ['GraphQLMapConvertible'],
+    adoptedProtocols = ['GraphQLMapDecodable'],
     parentType,
     possibleTypes,
     fields,
