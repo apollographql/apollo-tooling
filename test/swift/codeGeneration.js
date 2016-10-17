@@ -111,14 +111,14 @@ describe('Swift code generation', function() {
             "}"
           public static let queryDocument = operationDefinition.appending(HeroDetails.fragmentDefinition)
 
-          public struct Data: GraphQLMapConvertible {
+          public struct Data: GraphQLMapDecodable {
             public let hero: Hero?
 
             public init(map: GraphQLMap) throws {
               hero = try map.optionalValue(forKey: "hero")
             }
 
-            public struct Hero: GraphQLMapConvertible {
+            public struct Hero: GraphQLMapDecodable {
               public let __typename: String
 
               public let fragments: Fragments
@@ -165,14 +165,14 @@ describe('Swift code generation', function() {
             "}"
           public static let queryDocument = operationDefinition.appending(DroidDetails.fragmentDefinition)
 
-          public struct Data: GraphQLMapConvertible {
+          public struct Data: GraphQLMapDecodable {
             public let hero: Hero?
 
             public init(map: GraphQLMap) throws {
               hero = try map.optionalValue(forKey: "hero")
             }
 
-            public struct Hero: GraphQLMapConvertible {
+            public struct Hero: GraphQLMapDecodable {
               public let __typename: String
 
               public let fragments: Fragments
@@ -223,14 +223,14 @@ describe('Swift code generation', function() {
             "}"
           public static let queryDocument = operationDefinition.appending(HeroDetails.fragmentDefinition)
 
-          public struct Data: GraphQLMapConvertible {
+          public struct Data: GraphQLMapDecodable {
             public let hero: Hero?
 
             public init(map: GraphQLMap) throws {
               hero = try map.optionalValue(forKey: "hero")
             }
 
-            public struct Hero: GraphQLMapConvertible {
+            public struct Hero: GraphQLMapDecodable {
               public let __typename: String
 
               public let asDroid: AsDroid?
@@ -468,7 +468,7 @@ describe('Swift code generation', function() {
             friends = try map.optionalList(forKey: "friends")
           }
 
-          public struct Friend: GraphQLMapConvertible {
+          public struct Friend: GraphQLMapDecodable {
             public let __typename: String
             public let name: String
 
@@ -538,7 +538,7 @@ describe('Swift code generation', function() {
       });
 
       expect(this.generator.output).to.equal(stripIndent`
-        public struct Hero: GraphQLMapConvertible {
+        public struct Hero: GraphQLMapDecodable {
           public let __typename: String
           public let name: String?
 
@@ -566,7 +566,7 @@ describe('Swift code generation', function() {
       });
 
       expect(this.generator.output).to.equal(stripIndent`
-        public struct Hero: GraphQLMapConvertible {
+        public struct Hero: GraphQLMapDecodable {
           public let __typename: String
           public let friends: [Friend?]?
 
@@ -575,7 +575,7 @@ describe('Swift code generation', function() {
             friends = try map.optionalList(forKey: "friends")
           }
 
-          public struct Friend: GraphQLMapConvertible {
+          public struct Friend: GraphQLMapDecodable {
             public let __typename: String
             public let name: String?
 
@@ -604,7 +604,7 @@ describe('Swift code generation', function() {
       });
 
       expect(this.generator.output).to.equal(stripIndent`
-        public struct Hero: GraphQLMapConvertible {
+        public struct Hero: GraphQLMapDecodable {
           public let __typename: String
           public let name: String?
 
@@ -641,7 +641,7 @@ describe('Swift code generation', function() {
       });
 
       expect(this.generator.output).to.equal(stripIndent`
-        public struct Hero: GraphQLMapConvertible {
+        public struct Hero: GraphQLMapDecodable {
           public let __typename: String
           public let name: String?
 
@@ -690,7 +690,7 @@ describe('Swift code generation', function() {
       });
 
       expect(this.generator.output).to.equal(stripIndent`
-        public struct Hero: GraphQLMapConvertible {
+        public struct Hero: GraphQLMapDecodable {
           public let __typename: String
           public let name: String
 
@@ -739,7 +739,7 @@ describe('Swift code generation', function() {
       });
 
       expect(this.generator.output).to.equal(stripIndent`
-        public struct Hero: GraphQLMapConvertible {
+        public struct Hero: GraphQLMapDecodable {
           public let __typename: String
 
           public let asDroid: AsDroid?
