@@ -26,7 +26,12 @@ import CodeGenerator from '../utilities/CodeGenerator';
 
 import {
   interfaceDeclaration,
+  propertyDeclaration,
 } from './language';
+
+import {
+  typeNameFromGraphQLType,
+} from './types';
 
 export function generateSource(context) {
   const generator = new CodeGenerator(context);
@@ -60,7 +65,7 @@ function enumerationDeclaration(generator, type) {
 
   generator.printNewlineIfNeeded();
   generator.printOnNewline(description && `// ${description}`);
-  generator.printOnNewline(`type ${name} =`);
+  generator.printOnNewline(`export type ${name} =`);
   const nValues = values.length;
   values.forEach((value, i) => 
     generator.printOnNewline(`  "${value.value}"${i === nValues-1 ? ';' : ','}${wrap(' // ', value.description)}`)
@@ -99,7 +104,7 @@ export function interfaceVariablesDeclarationForOperation(
     source,
   }
 ) {
-  if (!variables || Object.keys(variables).length < 1) {
+  if (!variables || variables.length < 1) {
     return null;
   }
   const interfaceName = `${interfaceNameFromOperation({operationName, operationType})}Variables`;
@@ -107,7 +112,8 @@ export function interfaceVariablesDeclarationForOperation(
   interfaceDeclaration(generator, {
     interfaceName,
   }, () => {
-
+    const properties = propertiesFromFields(generator.context, variables);
+    propertyDeclarations(generator, properties, true);
   });
 }
 
@@ -118,6 +124,7 @@ export function interfaceDeclarationForOperation(
     operationType,
     variables,
     fields,
+    fragmentSpreads,
     fragmentsReferenced,
     source,
   }
@@ -127,7 +134,8 @@ export function interfaceDeclarationForOperation(
   interfaceDeclaration(generator, {
     interfaceName,
   }, () => {
-
+    const properties = propertiesFromFields(generator.context, fields);
+    propertyDeclarations(generator, properties, true);
   });
 }
 
@@ -142,11 +150,49 @@ export function interfaceDeclarationForFragment(
     source,
   }
 ) {
-  const interfaceName = `${fragmentName}On${typeCondition}Fragment`;
+  const interfaceName = `${pascalCase(fragmentName)}On${pascalCase(typeCondition)}Fragment`;
 
   interfaceDeclaration(generator, {
     interfaceName,
   }, () => {
+    const properties = propertiesFromFields(generator.context, fields);
+    propertyDeclarations(generator, properties, true);
+  });
+}
 
+export function propertiesFromFields(context, fields) {
+  return fields.map(field => propertyFromField(context, field));
+}
+
+export function propertyFromField(context, field) {
+  const { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
+
+  const propertyName = camelCase(fieldName);
+
+  let property = { fieldName, fieldType, propertyName, description };
+
+  const namedType = getNamedType(fieldType);
+
+  if (isCompositeType(namedType)) {
+    const bareTypeName = pascalCase(Inflector.singularize(propertyName));
+    const typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
+    return { ...property, typeName, bareTypeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments };
+  } else {
+    const typeName = typeNameFromGraphQLType(context, fieldType);
+    return { ...property, typeName, isComposite: false };
+  }
+}
+
+export function propertyDeclarations(generator, properties, inInterface) {
+  if (!properties) return;
+  properties.forEach(property => {
+    if (property.fields) {
+      propertyDeclaration(generator, {...property, inInterface}, () => {
+        const properties = propertiesFromFields(generator.context, property.fields);
+        propertyDeclarations(generator, properties);
+      });
+    } else {
+      propertyDeclaration(generator, {...property, inInterface});
+    }
   });
 }

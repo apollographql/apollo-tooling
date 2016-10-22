@@ -6,7 +6,7 @@ import {
 export function interfaceDeclaration(generator, { interfaceName }, closure) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
-  generator.print(`interface ${ interfaceName }`);
+  generator.print(`export interface ${ interfaceName }`);
   generator.pushScope({ typeName: interfaceName });
   generator.withinBlock(closure);
   generator.popScope();
@@ -16,14 +16,14 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
   generator.printNewlineIfNeeded();
   generator.printOnNewline(description && `// ${description}`);
   if (closure) {
-    generator.printOnNewline(`${propertyName}: `);
-    generator.pushScope({ typeName: structName });
+    generator.printOnNewline(`${propertyName}:`);
+    generator.pushScope({ typeName: propertyName });
     generator.withinBlock(closure);
     generator.popScope();
-    generator.print(inInterface ? ';' : ',');
   } else {
-    generator.printOnNewline(`${propertyName}: ${typeName},`);
+    generator.printOnNewline(`${propertyName}: ${typeName}`);
   }
+  generator.print(inInterface ? ';' : ',');
 }
 
 export function propertyDeclarations(generator, properties) {
