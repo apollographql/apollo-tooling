@@ -12,7 +12,7 @@ export function interfaceDeclaration(generator, { interfaceName }, closure) {
   generator.popScope();
 }
 
-export function propertyDeclaration(generator, { propertyName, typeName, description }, closure) {
+export function propertyDeclaration(generator, { propertyName, typeName, description, inInterface }, closure) {
   generator.printNewlineIfNeeded();
   generator.printOnNewline(description && `// ${description}`);
   if (closure) {
@@ -20,7 +20,7 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
     generator.pushScope({ typeName: structName });
     generator.withinBlock(closure);
     generator.popScope();
-    generator.print(',');
+    generator.print(inInterface ? ';' : ',');
   } else {
     generator.printOnNewline(`${propertyName}: ${typeName},`);
   }

@@ -24,6 +24,10 @@ import {
 
 import CodeGenerator from '../utilities/CodeGenerator';
 
+import {
+  interfaceDeclaration,
+} from './language';
+
 export function generateSource(context) {
   const generator = new CodeGenerator(context);
 
@@ -31,8 +35,13 @@ export function generateSource(context) {
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
   ));
-  //generator.printOnNewline(JSON.stringify(context.operations));
-  //generator.printOnNewline(JSON.stringify(context.fragments));
+  Object.values(context.operations).forEach(operation => {
+    interfaceVariablesDeclarationForOperation(generator, operation);
+    interfaceDeclarationForOperation(generator, operation);
+  });
+  Object.values(context.fragments).forEach(operation =>
+    interfaceDeclarationForFragment(generator, operation)
+  );
 
   return generator.output;
 }
@@ -53,7 +62,7 @@ function enumerationDeclaration(generator, type) {
   generator.printOnNewline(description && `// ${description}`);
   generator.printOnNewline(`type ${name} =`);
   const nValues = values.length;
-  values.forEach((value, i) =>
+  values.forEach((value, i) => 
     generator.printOnNewline(`  "${value.value}"${i === nValues-1 ? ';' : ','}${wrap(' // ', value.description)}`)
   );
   generator.printNewline();
@@ -61,4 +70,83 @@ function enumerationDeclaration(generator, type) {
 
 function structDeclarationForInputObjectType(generator, type) {
   // TODO
+}
+
+function interfaceNameFromOperation({operationName, operationType}) {
+  switch (operationType) {
+    case 'query':
+      return `${pascalCase(operationName)}Query`;
+      break;
+    case 'mutation':
+      return `${pascalCase(operationName)}Mutation`;
+      break;
+    case 'subscription':
+      return `${pascalCase(operationName)}Subscription`;
+      break;
+    default:
+      throw new GraphQLError(`Unsupported operation type "${operationType}"`);
+  }
+}
+
+export function interfaceVariablesDeclarationForOperation(
+  generator,
+  {
+    operationName,
+    operationType,
+    variables,
+    fields,
+    fragmentsReferenced,
+    source,
+  }
+) {
+  if (!variables || Object.keys(variables).length < 1) {
+    return null;
+  }
+  const interfaceName = `${interfaceNameFromOperation({operationName, operationType})}Variables`;
+
+  interfaceDeclaration(generator, {
+    interfaceName,
+  }, () => {
+
+  });
+}
+
+export function interfaceDeclarationForOperation(
+  generator,
+  {
+    operationName,
+    operationType,
+    variables,
+    fields,
+    fragmentsReferenced,
+    source,
+  }
+) {
+  const interfaceName = interfaceNameFromOperation({operationName, operationType});
+
+  interfaceDeclaration(generator, {
+    interfaceName,
+  }, () => {
+
+  });
+}
+
+export function interfaceDeclarationForFragment(
+  generator,
+  {
+    fragmentName,
+    typeCondition,
+    fields,
+    inlineFragments,
+    fragmentSpreads,
+    source,
+  }
+) {
+  const interfaceName = `${fragmentName}On${typeCondition}Fragment`;
+
+  interfaceDeclaration(generator, {
+    interfaceName,
+  }, () => {
+
+  });
 }
