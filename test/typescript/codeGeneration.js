@@ -47,6 +47,28 @@ describe('TypeScript code generation', function() {
   });
 
   describe('#generateSource()', function() {
+    it(`should generate simple query operations`, function() {
+      const context = this.compileFromSource(`
+        query HeroName {
+          hero {
+            name
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+
+      expect(source).to.include(stripIndent`
+        //  This file was automatically generated and should not be edited.
+
+        export interface HeroNameQuery {
+          hero: {
+            name: string,
+          } | null;
+        }
+      `);
+    });
+
     it(`should generate simple query operations including input variables`, function() {
       const context = this.compileFromSource(`
         query HeroName($episode: Episode) {
