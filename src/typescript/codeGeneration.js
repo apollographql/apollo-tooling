@@ -130,9 +130,9 @@ export function interfaceDeclarationForOperation(
   }
 ) {
   const interfaceName = interfaceNameFromOperation({operationName, operationType});
-
   interfaceDeclaration(generator, {
     interfaceName,
+    extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
   }, () => {
     const properties = propertiesFromFields(generator.context, fields);
     propertyDeclarations(generator, properties, true);
@@ -154,17 +154,22 @@ export function interfaceDeclarationForFragment(
 
   interfaceDeclaration(generator, {
     interfaceName,
+    extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
   }, () => {
-    const properties = propertiesFromFields(generator.context, fields);
+    const properties = propertiesFromFields(generator.context, fields)
+    .concat(...(inlineFragments || []).map(fragment =>
+      propertiesFromFields(generator.context, fragment.fields, true)
+    ));
+
     propertyDeclarations(generator, properties, true);
   });
 }
 
-export function propertiesFromFields(context, fields) {
-  return fields.map(field => propertyFromField(context, field));
+export function propertiesFromFields(context, fields, forceNullable) {
+  return fields.map(field => propertyFromField(context, field, forceNullable));
 }
 
-export function propertyFromField(context, field) {
+export function propertyFromField(context, field, forceNullable) {
   const { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
 
   const propertyName = camelCase(fieldName);
@@ -181,7 +186,7 @@ export function propertyFromField(context, field) {
       isArray = true;
     }
     let isNullable = true;
-    if (fieldType instanceof GraphQLNonNull) {
+    if (fieldType instanceof GraphQLNonNull && !forceNullable) {
       isNullable = false;
     }
     return {
@@ -198,9 +203,12 @@ export function propertyFromField(context, field) {
 export function propertyDeclarations(generator, properties, inInterface) {
   if (!properties) return;
   properties.forEach(property => {
-    if (property.fields) {
+    if (property.fields && property.fields.length > 0 || property.inlineFragments && property.inlineFragments.length > 0) {
       propertyDeclaration(generator, {...property, inInterface}, () => {
-        const properties = propertiesFromFields(generator.context, property.fields);
+        const properties = propertiesFromFields(generator.context, property.fields)
+        .concat(...(property.inlineFragments || []).map(fragment =>
+          propertiesFromFields(generator.context, fragment.fields, true)
+        ));
         propertyDeclarations(generator, properties);
       });
     } else {
