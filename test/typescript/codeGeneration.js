@@ -75,7 +75,47 @@ describe('TypeScript code generation', function() {
         export interface HeroNameQuery {
           hero: {
             name: string,
-          };
+          } | null;
+        }
+      `);
+    });
+
+    it(`should generate simple nested query operations including input variables`, function() {
+      const context = this.compileFromSource(`
+        query HeroAndFriendsNames($episode: Episode) {
+          hero(episode: $episode) {
+            name
+            friends {
+              name
+            }
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+
+      expect(source).to.include(stripIndent`
+        //  This file was automatically generated and should not be edited.
+
+        // The episodes in the Star Wars trilogy
+        export type Episode =
+          "NEWHOPE" | // Star Wars Episode IV: A New Hope, released in 1977.
+          "EMPIRE" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+          "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+        export interface HeroAndFriendsNamesQueryVariables {
+          episode: Episode | null;
+        }
+
+        export interface HeroAndFriendsNamesQuery {
+          hero: {
+            name: string,
+
+            friends: Array< {
+              name: string,
+            } > | null,
+          } | null;
         }
       `);
     });
