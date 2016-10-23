@@ -150,7 +150,7 @@ export function interfaceDeclarationForFragment(
     source,
   }
 ) {
-  const interfaceName = `${pascalCase(fragmentName)}On${pascalCase(typeCondition)}Fragment`;
+  const interfaceName = `${pascalCase(fragmentName)}Fragment`;
 
   interfaceDeclaration(generator, {
     interfaceName,

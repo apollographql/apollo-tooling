@@ -141,5 +141,40 @@ describe('TypeScript code generation', function() {
         }
       `);
     });
+
+    it(`should generate fragmented query operations`, function() {
+      const context = this.compileFromSource(`
+        query HeroAndFriendsNames {
+          hero {
+            name
+            ...HeroFriends
+          }
+        }
+
+        fragment HeroFriends on Character {
+          friends {
+            name
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+
+      expect(source).to.include(stripIndent`
+        //  This file was automatically generated and should not be edited.
+
+        export interface HeroAndFriendsNamesQuery {
+          hero: HeroFriendsFragment & {
+            name: string,
+          } | null;
+        }
+
+        export interface HeroFriendsFragment {
+          friends: Array< {
+            name: string,
+          } > | null;
+        }
+      `);
+    });
   });
 });
