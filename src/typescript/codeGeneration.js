@@ -68,7 +68,7 @@ function enumerationDeclaration(generator, type) {
   generator.printOnNewline(`export type ${name} =`);
   const nValues = values.length;
   values.forEach((value, i) => 
-    generator.printOnNewline(`  "${value.value}"${i === nValues-1 ? ';' : ','}${wrap(' // ', value.description)}`)
+    generator.printOnNewline(`  "${value.value}"${i === nValues-1 ? ';' : ' |'}${wrap(' // ', value.description)}`)
   );
   generator.printNewline();
 }
