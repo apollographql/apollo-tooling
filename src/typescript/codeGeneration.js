@@ -176,10 +176,22 @@ export function propertyFromField(context, field) {
   if (isCompositeType(namedType)) {
     const bareTypeName = pascalCase(Inflector.singularize(propertyName));
     const typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
-    return { ...property, typeName, bareTypeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments };
+    let isArray = false;
+    if (fieldType instanceof GraphQLList) {
+      isArray = true;
+    }
+    let isNullable = true;
+    if (fieldType instanceof GraphQLNonNull) {
+      isNullable = false;
+    }
+    return {
+      ...property,
+      typeName, bareTypeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments, fieldType,
+      isArray, isNullable,
+    };
   } else {
     const typeName = typeNameFromGraphQLType(context, fieldType);
-    return { ...property, typeName, isComposite: false };
+    return { ...property, typeName, isComposite: false, fieldType };
   }
 }
 

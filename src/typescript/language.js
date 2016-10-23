@@ -12,14 +12,23 @@ export function interfaceDeclaration(generator, { interfaceName }, closure) {
   generator.popScope();
 }
 
-export function propertyDeclaration(generator, { propertyName, typeName, description, inInterface }, closure) {
+export function propertyDeclaration(generator, { propertyName, typeName, description, isArray, isNullable, inInterface }, closure) {
   generator.printNewlineIfNeeded();
   generator.printOnNewline(description && `// ${description}`);
   if (closure) {
     generator.printOnNewline(`${propertyName}:`);
+    if (isArray) {
+      generator.print(' Array<');
+    }
     generator.pushScope({ typeName: propertyName });
     generator.withinBlock(closure);
     generator.popScope();
+    if (isArray) {
+      generator.print(' >');
+    }
+    if (isNullable) {
+      generator.print(' | null');
+    }
   } else {
     generator.printOnNewline(`${propertyName}: ${typeName}`);
   }
