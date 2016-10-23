@@ -3,17 +3,19 @@ import {
   wrap,
 } from '../utilities/printing';
 
-export function interfaceDeclaration(generator, { interfaceName }, closure) {
+export function interfaceDeclaration(generator, { interfaceName, extendTypes }, closure) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
   generator.print(`export interface ${ interfaceName }`);
+  if (extendTypes && extendTypes.length > 0) {
+    generator.print(` extends ${extendTypes.join(', ')}`);
+  }
   generator.pushScope({ typeName: interfaceName });
   generator.withinBlock(closure);
   generator.popScope();
 }
 
 export function propertyDeclaration(generator, { propertyName, typeName, description, isArray, isNullable, inInterface, fragmentSpreads }, closure) {
-  generator.printNewlineIfNeeded();
   generator.printOnNewline(description && `// ${description}`);
   if (closure) {
     generator.printOnNewline(`${propertyName}:`);
@@ -33,7 +35,7 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
       generator.print(' | null');
     }
   } else if (fragmentSpreads && fragmentSpreads.length > 0) {
-    generator.print(` ${fragmentSpreads.map(n => `${n}Fragment`).join(' & ')}`);
+    generator.printOnNewline(`${propertyName}: ${fragmentSpreads.map(n => `${n}Fragment`).join(' & ')}`);
   } else {
     generator.printOnNewline(`${propertyName}: ${typeName}`);
   }

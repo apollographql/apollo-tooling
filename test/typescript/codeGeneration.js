@@ -133,7 +133,6 @@ describe('TypeScript code generation', function() {
         export interface HeroAndFriendsNamesQuery {
           hero: {
             name: string,
-
             friends: Array< {
               name: string,
             } > | null,
@@ -173,6 +172,43 @@ describe('TypeScript code generation', function() {
           friends: Array< {
             name: string,
           } > | null;
+        }
+      `);
+    });
+
+    it(`should generate query operations with inline fragments`, function() {
+      const context = this.compileFromSource(`
+        query HeroAndDetails {
+          hero {
+            name
+            ...HeroDetails
+          }
+        }
+
+        fragment HeroDetails on Character {
+          ... on Droid {
+            primaryFunction
+          }
+          ... on Human {
+            height
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+
+      expect(source).to.include(stripIndent`
+        //  This file was automatically generated and should not be edited.
+
+        export interface HeroAndDetailsQuery {
+          hero: HeroDetailsFragment & {
+            name: string,
+          } | null;
+        }
+
+        export interface HeroDetailsFragment {
+          primaryFunction: string | null;
+          height: number | null;
         }
       `);
     });
