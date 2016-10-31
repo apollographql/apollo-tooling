@@ -17,11 +17,10 @@ export function loadSchema(schemaPath) {
   }
   const schemaData = require(schemaPath);
 
-  if (!schemaData.__schema) {
+  if (!schemaData.data && !schemaData.__schema) {
     throw new ToolError('GraphQL schema file should contain a valid GraphQL introspection query result');
   }
-
-  return buildClientSchema(schemaData);
+  return buildClientSchema((schemaData.data) ? schemaData.data : schemaData);
 }
 
 export function loadAndMergeQueryDocuments(inputPaths) {

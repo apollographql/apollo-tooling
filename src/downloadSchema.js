@@ -37,8 +37,8 @@ export default async function downloadSchema(url, outputPath, additionalHeaders)
     throw new ToolError(`Errors in introspection query result: ${result.errors}`);
   }
 
-  const schemaData = result.data;
-  if (!schemaData) {
+  const schemaData = result;
+  if (!schemaData.data) {
     throw new ToolError(`No introspection query result data found, server responded with: ${JSON.stringify(result)}`);
   }
 
