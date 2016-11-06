@@ -130,9 +130,11 @@ export class Compiler {
     const groupedVisitedFragmentSet = new Map();
     const groupedFieldSet = this.collectFields(typeCondition, fragmentDefinition.selectionSet, undefined, groupedVisitedFragmentSet);
 
-    const { fields, fragmentSpreads, inlineFragments } = this.resolveFields(typeCondition, groupedFieldSet, groupedVisitedFragmentSet);
+    const fragmentsReferencedSet = Object.create(null);
+    const { fields, fragmentSpreads, inlineFragments } = this.resolveFields(typeCondition, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet);
+    const fragmentsReferenced = Object.keys(fragmentsReferencedSet);
 
-    return { fragmentName, source, typeCondition, fields, fragmentSpreads, inlineFragments };
+    return { fragmentName, source, typeCondition, fields, fragmentSpreads, inlineFragments, fragmentsReferenced };
   }
 
   collectFields(parentType, selectionSet, groupedFieldSet = Object.create(null), groupedVisitedFragmentSet = new Map()) {
@@ -268,6 +270,17 @@ export class Compiler {
 
     if (fragmentsReferencedSet) {
       Object.assign(fragmentsReferencedSet, ...groupedVisitedFragmentSet.values());
+
+      // TODO: This is a really inefficient way of keeping track of fragments referenced by other fragments
+      // We need to either cache compiled fragments or find a way to make resolveFields smarter
+      for (let fragmentName of fragmentSpreads) {
+        const fragment = this.fragmentNamed(fragmentName);
+        if (!fragment) throw new GraphQLError(`Cannot find fragment "${fragmentName}"`);
+        const { fragmentsReferenced: fragmentsReferencedFromFragment } = this.compileFragment(fragment);
+        for (let fragmentReferenced of fragmentsReferencedFromFragment) {
+          fragmentsReferencedSet[fragmentReferenced] = true;
+        }
+      }
     }
 
     return { fields, fragmentSpreads, inlineFragments };

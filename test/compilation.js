@@ -210,6 +210,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['HeroDetails'])).to.deep.equal({
       fragmentName: 'HeroDetails',
       typeCondition: 'Character',
+      fragmentsReferenced: ['MoreHeroDetails'],
       fields: [
         {
           name: 'id',
@@ -227,6 +228,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['MoreHeroDetails'])).to.deep.equal({
       fragmentName: 'MoreHeroDetails',
       typeCondition: 'Character',
+      fragmentsReferenced: [],
       fields: [
         { name: 'appearsIn',
           type: '[Episode]!'
@@ -302,6 +304,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['HeroDetails'])).to.deep.equal({
       fragmentName: 'HeroDetails',
       typeCondition: 'Character',
+      fragmentsReferenced: [],
       fields: [
         {
           name: 'name',
@@ -430,6 +433,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['DroidDetails'])).to.deep.equal({
       fragmentName: 'DroidDetails',
       typeCondition: 'Droid',
+      fragmentsReferenced: [],
       fields: [
         {
           name: 'primaryFunction',
@@ -443,6 +447,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['HumanDetails'])).to.deep.equal({
       fragmentName: 'HumanDetails',
       typeCondition: 'Human',
+      fragmentsReferenced: [],
       fields: [
         {
           name: 'height',
@@ -532,6 +537,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['HeroDetails'])).to.deep.equal({
       fragmentName: 'HeroDetails',
       typeCondition: 'Character',
+      fragmentsReferenced: [],
       fields: [
         {
           name: 'name',
@@ -816,6 +822,30 @@ describe('Compiling query documents', () => {
     const { operations } = compileToIR(schema, document);
 
     expect(operations['HeroAndFriends'].fragmentsReferenced).to.deep.equal(['HeroDetails']);
+  });
+
+  it(`should keep track of fragments referenced in a fragment within a subselection`, () => {
+    const document = parse(`
+      query HeroAndFriends {
+        hero {
+          ...HeroDetails
+        }
+      }
+
+      fragment HeroDetails on Character {
+        friends {
+          ...HeroName
+        }
+      }
+
+      fragment HeroName on Character {
+        name
+      }
+    `);
+
+    const { operations } = compileToIR(schema, document);
+
+    expect(operations['HeroAndFriends'].fragmentsReferenced).to.deep.equal(['HeroDetails', 'HeroName']);
   });
 
   it(`should keep track of fragments referenced in a subselection nested in an inline fragment`, () => {
