@@ -152,14 +152,13 @@ export class Compiler {
           if (!field) {
             throw new GraphQLError(`Cannot query field "${fieldName}" on type "${String(parentType)}"`, [selection]);
           }
-          const fieldType = field.type;
 
           if (groupedFieldSet) {
             if (!groupedFieldSet[responseName]) {
               groupedFieldSet[responseName] = [];
             }
 
-            groupedFieldSet[responseName].push([parentType, { ...selection, type: fieldType }]);
+            groupedFieldSet[responseName].push([parentType, { responseName, fieldName, type: field.type, selectionSet: selection.selectionSet }]);
           }
           break;
         }
@@ -232,29 +231,30 @@ export class Compiler {
   resolveFields(parentType, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet) {
     const fields = [];
 
-    for (let [fieldName, fieldSet] of Object.entries(groupedFieldSet)) {
+    for (let [responseName, fieldSet] of Object.entries(groupedFieldSet)) {
       fieldSet = fieldSet.filter(([typeCondition,]) => isTypeSubTypeOf(this.schema, parentType, typeCondition));
       if (fieldSet.length < 1) continue;
 
       const [,firstField] = fieldSet[0];
-      const fieldType = firstField.type;
+      const fieldName = firstField.fieldName;
+      const type = firstField.type;
 
-      let field = { name: fieldName, type: fieldType };
+      let field = { responseName, fieldName, type };
 
-      const bareFieldType = getNamedType(fieldType);
+      const bareType = getNamedType(type);
 
-      this.addTypeUsed(bareFieldType);
+      this.addTypeUsed(bareType);
 
-      if (isCompositeType(bareFieldType)) {
+      if (isCompositeType(bareType)) {
         const subSelectionGroupedVisitedFragmentSet = new Map();
         const subSelectionGroupedFieldSet = this.mergeSelectionSets(
-          bareFieldType,
+          bareType,
           fieldSet,
           subSelectionGroupedVisitedFragmentSet
         );
 
         const { fields, fragmentSpreads, inlineFragments } = this.resolveFields(
-          bareFieldType,
+          bareType,
           subSelectionGroupedFieldSet,
           subSelectionGroupedVisitedFragmentSet,
           fragmentsReferencedSet
