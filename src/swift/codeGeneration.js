@@ -107,7 +107,11 @@ export function classDeclarationForOperation(
     }
 
     if (variables && variables.length > 0) {
-      const properties = propertiesFromFields(generator.context, variables);
+      const properties = variables.map(({ name, type }) => {
+        const propertyName = camelCase(name);
+        const typeName = typeNameFromGraphQLType(generator.context, type);
+        return { propertyName, type, typeName };
+      });
       generator.printNewlineIfNeeded();
       propertyDeclarations(generator, properties);
       generator.printNewlineIfNeeded();
@@ -129,10 +133,10 @@ export function classDeclarationForOperation(
 export function initializerDeclarationForProperties(generator, properties) {
   generator.printOnNewline(`public init`);
   generator.print('(');
-  generator.print(join(properties.map(({ propertyName, fieldType }) =>
+  generator.print(join(properties.map(({ propertyName, type, typeName }) =>
     join([
-      `${propertyName}: ${typeNameFromGraphQLType(generator.context, fieldType)}`,
-      !(fieldType instanceof GraphQLNonNull) && ' = nil'
+      `${propertyName}: ${typeName}`,
+      !(type instanceof GraphQLNonNull) && ' = nil'
     ])
   ), ', '));
   generator.print(')');
@@ -190,7 +194,7 @@ export function structDeclarationForSelectionSet(
   generator,
   {
     structName,
-    adoptedProtocols = ['GraphQLMapDecodable'],
+    adoptedProtocols = ['GraphQLMappable'],
     parentType,
     possibleTypes,
     fields,
@@ -256,10 +260,10 @@ export function structDeclarationForSelectionSet(
     }
 
     generator.printNewlineIfNeeded();
-    generator.printOnNewline('public init(map: GraphQLMap) throws');
+    generator.printOnNewline('public init(reader: GraphQLResultReader) throws');
     generator.withinBlock(() => {
       if (parentType && isAbstractType(parentType)) {
-        generator.printOnNewline(`__typename = try map.value(forKey: "__typename")`);
+        generator.printOnNewline(`__typename = try reader.value(for: Field(responseName: "__typename"))`);
       }
 
       if (properties) {
@@ -269,7 +273,7 @@ export function structDeclarationForSelectionSet(
       if (fragmentProperties && fragmentProperties.length > 0) {
         generator.printNewlineIfNeeded();
         fragmentProperties.forEach(({ propertyName, typeName, bareTypeName, isProperSuperType }) => {
-          generator.printOnNewline(`let ${propertyName} = try ${typeName}(map: map`);
+          generator.printOnNewline(`let ${propertyName} = try ${typeName}(reader: reader`);
           if (isProperSuperType) {
             generator.print(')');
           } else {
@@ -287,7 +291,7 @@ export function structDeclarationForSelectionSet(
       if (inlineFragmentProperties && inlineFragmentProperties.length > 0) {
         generator.printNewlineIfNeeded();
         inlineFragmentProperties.forEach(({ propertyName, typeName, bareTypeName }) => {
-          generator.printOnNewline(`${propertyName} = try ${bareTypeName}(map: map, ifTypeMatches: __typename)`);
+          generator.printOnNewline(`${propertyName} = try ${bareTypeName}(reader: reader, ifTypeMatches: __typename)`);
         });
       }
     });
@@ -331,7 +335,7 @@ export function structDeclarationForSelectionSet(
           generator,
           {
             structName: structNameForProperty(property),
-            parentType: getNamedType(property.fieldType),
+            parentType: getNamedType(property.type),
             fields: property.fields,
             fragmentSpreads: property.fragmentSpreads,
             inlineFragments: property.inlineFragments
@@ -342,15 +346,16 @@ export function structDeclarationForSelectionSet(
   });
 }
 
-export function initializationForProperty(generator, { propertyName, fieldName, fieldType }) {
-  const isOptional = !(fieldType instanceof GraphQLNonNull || fieldType.ofType instanceof GraphQLNonNull);
-  const isList = fieldType instanceof GraphQLList || fieldType.ofType instanceof GraphQLList;
+export function initializationForProperty(generator, { propertyName, responseName, fieldName, type }) {
+  const isOptional = !(type instanceof GraphQLNonNull || type.ofType instanceof GraphQLNonNull);
+  const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList;
 
   const methodName = isOptional ? (isList ? 'optionalList' : 'optionalValue') : (isList ? 'list' : 'value');
 
-  const args = [`forKey: "${fieldName}"`];
+  const fieldArgs = join([`responseName: "${responseName}"`, responseName != fieldName ? `fieldName: "${fieldName}"` : null], ', ');
+  const args = [`for: Field(${fieldArgs})`];
 
-  generator.printOnNewline(`${propertyName} = try map.${methodName}(${ join(args, ', ') })`);
+  generator.printOnNewline(`${propertyName} = try reader.${methodName}(${ join(args, ', ') })`);
 }
 
 export function propertiesFromFields(context, fields) {
@@ -358,26 +363,24 @@ export function propertiesFromFields(context, fields) {
 }
 
 export function propertyFromField(context, field) {
-  const { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
+  const name = field.name || field.responseName;
+  const propertyName = camelCase(name);
 
-  const propertyName = camelCase(fieldName);
+  const type = field.type;
+  const bareType = getNamedType(type);
 
-  let property = { fieldName, fieldType, propertyName, description };
-
-  const namedType = getNamedType(fieldType);
-
-  if (isCompositeType(namedType)) {
+  if (isCompositeType(bareType)) {
     const bareTypeName = pascalCase(Inflector.singularize(propertyName));
-    const typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
-    return { ...property, typeName, bareTypeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments };
+    const typeName = typeNameFromGraphQLType(context, type, bareTypeName);
+    return { ...field, propertyName, typeName, bareTypeName, isComposite: true };
   } else {
-    const typeName = typeNameFromGraphQLType(context, fieldType);
-    return { ...property, typeName, isComposite: false };
+    const typeName = typeNameFromGraphQLType(context, type);
+    return { ...field, propertyName, typeName, isComposite: false };
   }
 }
 
 export function structNameForProperty(property) {
-  return pascalCase(Inflector.singularize(property.fieldName));
+  return pascalCase(Inflector.singularize(property.responseName));
 }
 
 export function typeNameForFragmentName(fragmentName) {
@@ -418,7 +421,7 @@ function enumerationDeclaration(generator, type) {
 
 function structDeclarationForInputObjectType(generator, type) {
   const { name: structName, description } = type;
-  const adoptedProtocols = ['GraphQLMapEncodable'];
+  const adoptedProtocols = ['GraphQLMapConvertible'];
   const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
 
   structDeclaration(generator, { structName, description, adoptedProtocols }, () => {
