@@ -18,18 +18,10 @@ export function validateQueryDocument(schema, document) {
   }
 }
 
-function fixNodeLocation(node) {
-  // FIXME: Workaround for bug in graphql-js, see https://github.com/graphql/graphql-js/pull/487
-  if (node.loc.start === 0) {
-    node.loc.start = 1;
-  }
-}
-
 export function NoAnonymousQueries(context) {
   return {
     OperationDefinition(node) {
       if (!node.name) {
-        fixNodeLocation(node);
         context.reportError(new GraphQLError(
           'Apollo iOS does not support anonymous operations',
           [node]
