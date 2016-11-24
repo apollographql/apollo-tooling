@@ -114,6 +114,39 @@ describe('Compiling query documents', () => {
     expect(filteredIR(typesUsed)).to.deep.equal(['Episode']);
   });
 
+  it(`should keep track of types used in fields of input objects`, () => {
+    const bookstore_schema = loadSchema(require.resolve('./bookstore/schema.json'));
+    const document = parse(`
+      query ListBooks {
+        books {
+          id name writtenBy { author { id name } }
+        }
+      }
+
+      mutation CreateBook($book: BookInput!) {
+        createBook(book: $book) {
+          id, name, writtenBy { author { id name } }
+        }
+      }
+
+      query ListPublishers {
+        publishers {
+          id name
+        }
+      }
+
+      query ListAuthors($publishedBy: PublishedByInput!) {
+        authors(publishedBy: $publishedBy) {
+          id name publishedBy { publisher { id name } }
+        }
+      }
+    `)
+
+    const { typesUsed } = compileToIR(bookstore_schema, document);
+    expect(filteredIR(typesUsed)).to.deep.include('IdInput');
+    expect(filteredIR(typesUsed)).to.deep.include('WrittenByInput');
+  });
+
   it(`should include the original field name for an aliased field`, () => {
     const document = parse(`
       query TwoHeroes {

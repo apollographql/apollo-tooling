@@ -81,6 +81,11 @@ export class Compiler {
     if (type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType) {
       this.typesUsedSet.add(type);
     }
+    if (type instanceof GraphQLInputObjectType) {
+      for (const field of Object.values(type.getFields())) {
+        this.addTypeUsed(getNamedType(field.type));
+      }
+    }
   }
 
   get typesUsed() {
