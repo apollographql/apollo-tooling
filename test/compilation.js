@@ -199,6 +199,72 @@ describe('Compiling query documents', () => {
     });
   });
 
+  it(`should include isOptional if a field has skip or include directives`, () => {
+    const document = parse(`
+      query HeroNameConditionalInclusion {
+        hero {
+          name @include(if: false)
+        }
+      }
+
+      query HeroNameConditionalExclusion {
+        hero {
+          name @skip(if: true)
+        }
+      }
+    `);
+
+    const { operations } = compileToIR(schema, document);
+
+    expect(filteredIR(operations['HeroNameConditionalInclusion'])).to.deep.equal({
+      operationName: 'HeroNameConditionalInclusion',
+      operationType: 'query',
+      variables: [],
+      fragmentsReferenced: [],
+      fields: [
+        {
+          responseName: 'hero',
+          fieldName: 'hero',
+          type: 'Character',
+          fields: [
+            {
+              responseName: 'name',
+              fieldName: 'name',
+              type: 'String!',
+              isConditional: true
+            },
+          ],
+          fragmentSpreads: [],
+          inlineFragments: []
+        }
+      ]
+    });
+
+    expect(filteredIR(operations['HeroNameConditionalExclusion'])).to.deep.equal({
+      operationName: 'HeroNameConditionalExclusion',
+      operationType: 'query',
+      variables: [],
+      fragmentsReferenced: [],
+      fields: [
+        {
+          responseName: 'hero',
+          fieldName: 'hero',
+          type: 'Character',
+          fields: [
+            {
+              responseName: 'name',
+              fieldName: 'name',
+              type: 'String!',
+              isConditional: true
+            },
+          ],
+          fragmentSpreads: [],
+          inlineFragments: []
+        }
+      ]
+    });
+  });
+
   it(`should recursively flatten inline fragments with type conditions that match the parent type`, () => {
     const document = parse(`
       query Hero {

@@ -110,7 +110,8 @@ export function classDeclarationForOperation(
       const properties = variables.map(({ name, type }) => {
         const propertyName = camelCase(name);
         const typeName = typeNameFromGraphQLType(generator.context, type);
-        return { propertyName, type, typeName };
+        const isOptional = !(type instanceof GraphQLNonNull || type.ofType instanceof GraphQLNonNull);
+        return { propertyName, type, typeName, isOptional };
       });
       generator.printNewlineIfNeeded();
       propertyDeclarations(generator, properties);
@@ -133,10 +134,10 @@ export function classDeclarationForOperation(
 export function initializerDeclarationForProperties(generator, properties) {
   generator.printOnNewline(`public init`);
   generator.print('(');
-  generator.print(join(properties.map(({ propertyName, type, typeName }) =>
+  generator.print(join(properties.map(({ propertyName, type, typeName, isOptional }) =>
     join([
       `${propertyName}: ${typeName}`,
-      !(type instanceof GraphQLNonNull) && ' = nil'
+      isOptional && ' = nil'
     ])
   ), ', '));
   generator.print(')');
@@ -346,8 +347,7 @@ export function structDeclarationForSelectionSet(
   });
 }
 
-export function initializationForProperty(generator, { propertyName, responseName, fieldName, type }) {
-  const isOptional = !(type instanceof GraphQLNonNull || type.ofType instanceof GraphQLNonNull);
+export function initializationForProperty(generator, { propertyName, responseName, fieldName, type, isOptional }) {
   const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList;
 
   const methodName = isOptional ? (isList ? 'optionalList' : 'optionalValue') : (isList ? 'list' : 'value');
@@ -367,15 +367,16 @@ export function propertyFromField(context, field) {
   const propertyName = camelCase(name);
 
   const type = field.type;
+  const isOptional = field.isConditional || !(type instanceof GraphQLNonNull || type.ofType instanceof GraphQLNonNull);
   const bareType = getNamedType(type);
 
   if (isCompositeType(bareType)) {
     const bareTypeName = pascalCase(Inflector.singularize(propertyName));
-    const typeName = typeNameFromGraphQLType(context, type, bareTypeName);
-    return { ...field, propertyName, typeName, bareTypeName, isComposite: true };
+    const typeName = typeNameFromGraphQLType(context, type, bareTypeName, isOptional);
+    return { ...field, propertyName, typeName, bareTypeName, isOptional, isComposite: true };
   } else {
-    const typeName = typeNameFromGraphQLType(context, type);
-    return { ...field, propertyName, typeName, isComposite: false };
+    const typeName = typeNameFromGraphQLType(context, type, undefined, isOptional);
+    return { ...field, propertyName, typeName, isOptional, isComposite: false };
   }
 }
 

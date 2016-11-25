@@ -313,7 +313,7 @@ describe('Swift code generation', function() {
 
     it(`should generate initializer for an optional property`, function() {
       initializerDeclarationForProperties(this.generator, [
-        { propertyName: 'episode', type: schema.getType('Episode'), typeName: 'Episode?' }
+        { propertyName: 'episode', type: schema.getType('Episode'), typeName: 'Episode?', isOptional: true }
       ]);
 
       expect(this.generator.output).to.equal(stripIndent`
@@ -325,8 +325,8 @@ describe('Swift code generation', function() {
 
     it(`should generate initializer for multiple properties`, function() {
       initializerDeclarationForProperties(this.generator, [
-        { propertyName: 'episode', type: schema.getType('Episode'), typeName: 'Episode?' },
-        { propertyName: 'scene', type: GraphQLString, typeName: 'String?' }
+        { propertyName: 'episode', type: schema.getType('Episode'), typeName: 'Episode?', isOptional: true },
+        { propertyName: 'scene', type: GraphQLString, typeName: 'String?', isOptional: true }
       ]);
 
       expect(this.generator.output).to.equal(stripIndent`
