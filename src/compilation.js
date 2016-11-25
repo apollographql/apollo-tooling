@@ -163,7 +163,7 @@ export class Compiler {
               groupedFieldSet[responseName] = [];
             }
 
-            groupedFieldSet[responseName].push([parentType, { responseName, fieldName, type: field.type, selectionSet: selection.selectionSet }]);
+            groupedFieldSet[responseName].push([parentType, { responseName, fieldName, type: field.type, directives: selection.directives, selectionSet: selection.selectionSet }]);
           }
           break;
         }
@@ -245,6 +245,17 @@ export class Compiler {
       const type = firstField.type;
 
       let field = { responseName, fieldName, type };
+
+      const isConditional = fieldSet.some(([,field]) => {
+        return field.directives && field.directives.some(directive => {
+          const directiveName = directive.name.value;
+          return directiveName == 'skip' || directiveName == 'include';
+        });
+      });
+
+      if (isConditional) {
+        field.isConditional = true;
+      }
 
       const bareType = getNamedType(type);
 
