@@ -817,11 +817,22 @@ describe('Swift code generation', function() {
       expect(generator.output).to.equal(stripIndent`
         /// The input object sent when someone is creating a new review
         public struct ReviewInput: GraphQLMapConvertible {
-          public let stars: Int /// 0-5 stars
-          public let commentary: String? /// Comment about the movie, optional
+          public var graphQLMap: GraphQLMap
 
-          public var graphQLMap: GraphQLMap {
-            return ["stars": stars, "commentary": commentary]
+          public init(stars: Int) {
+            graphQLMap = ["stars": stars]
+          }
+
+          public init(stars: Int, favoriteColor: ColorInput?) {
+            graphQLMap = ["stars": stars, "favoriteColor": favoriteColor]
+          }
+
+          public init(stars: Int, commentary: String?) {
+            graphQLMap = ["stars": stars, "commentary": commentary]
+          }
+
+          public init(stars: Int, commentary: String?, favoriteColor: ColorInput?) {
+            graphQLMap = ["stars": stars, "commentary": commentary, "favoriteColor": favoriteColor]
           }
         }
       `);

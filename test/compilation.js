@@ -92,7 +92,7 @@ describe('Compiling query documents', () => {
 
     const { typesUsed } = compileToIR(schema, document);
 
-    expect(filteredIR(typesUsed)).to.deep.equal(['Episode', 'ReviewInput']);
+    expect(filteredIR(typesUsed)).to.deep.equal(['Episode', 'ReviewInput', 'ColorInput']);
   });
 
   it(`should keep track of enums used in fields`, () => {
