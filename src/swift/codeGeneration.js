@@ -118,7 +118,14 @@ export function classDeclarationForOperation(
       generator.printNewlineIfNeeded();
       initializerDeclarationForProperties(generator, properties);
       generator.printNewlineIfNeeded();
-      mappedProperty(generator, { propertyName: 'variables', propertyType: 'GraphQLMap?' }, properties);
+      generator.printOnNewline(`public var variables: GraphQLMap?`);
+      generator.withinBlock(() => {
+        generator.printOnNewline(wrap(
+          `return [`,
+          join(properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`), ', '),
+          `]`
+        ));
+      });
     }
 
     structDeclarationForSelectionSet(
@@ -426,8 +433,36 @@ function structDeclarationForInputObjectType(generator, type) {
   const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
 
   structDeclaration(generator, { structName, description, adoptedProtocols }, () => {
-    propertyDeclarations(generator, properties);
-    generator.printNewline();
-    mappedProperty(generator, { propertyName: 'graphQLMap', propertyType: 'GraphQLMap' }, properties);
+    generator.printOnNewline(`public var graphQLMap: GraphQLMap`);
+
+    // Compute permutations with and without optional properties
+    let permutations = [[]];
+    for (const property of properties) {
+      permutations = [].concat(...permutations.map(prefix => {
+        if (property.isOptional) {
+          return [prefix, [...prefix, property]];
+        } else {
+          return [[...prefix, property]];
+        }
+      }));
+    }
+
+    permutations.forEach(properties => {
+      generator.printNewlineIfNeeded();
+      generator.printOnNewline(`public init`);
+      generator.print('(');
+      generator.print(join(properties.map(({ propertyName, typeName }) =>
+        `${propertyName}: ${typeName}`
+      ), ', '));
+      generator.print(')');
+
+      generator.withinBlock(() => {
+        generator.printOnNewline(wrap(
+          `graphQLMap = [`,
+          join(properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`), ', '),
+          `]`
+        ));
+      });
+    });
   });
 }
