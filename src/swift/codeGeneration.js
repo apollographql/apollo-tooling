@@ -126,6 +126,8 @@ export function classDeclarationForOperation(
           `]`
         ));
       });
+    } else {
+      initializerDeclarationForProperties(generator, []);
     }
 
     structDeclarationForSelectionSet(

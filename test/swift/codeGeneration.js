@@ -110,6 +110,8 @@ describe('Swift code generation', function() {
             "  }" +
             "}"
           public static let queryDocument = operationDefinition.appending(HeroDetails.fragmentDefinition)
+          public init() {
+          }
 
           public struct Data: GraphQLMappable {
             public let hero: Hero?
@@ -164,6 +166,8 @@ describe('Swift code generation', function() {
             "  }" +
             "}"
           public static let queryDocument = operationDefinition.appending(DroidDetails.fragmentDefinition)
+          public init() {
+          }
 
           public struct Data: GraphQLMappable {
             public let hero: Hero?
@@ -222,6 +226,8 @@ describe('Swift code generation', function() {
             "  }" +
             "}"
           public static let queryDocument = operationDefinition.appending(HeroDetails.fragmentDefinition)
+          public init() {
+          }
 
           public struct Data: GraphQLMappable {
             public let hero: Hero?
