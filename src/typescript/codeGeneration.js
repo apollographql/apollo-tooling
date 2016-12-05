@@ -73,8 +73,17 @@ function enumerationDeclaration(generator, type) {
   generator.printNewline();
 }
 
-function structDeclarationForInputObjectType(generator, type) {
-  // TODO
+function structDeclarationForInputObjectType(
+  generator,
+  type
+  ) {
+  const interfaceName = pascalCase(type.name);
+  interfaceDeclaration(generator, {
+    interfaceName,
+  }, () => {
+    const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
+    propertyDeclarations(generator, properties, true);
+  });
 }
 
 function interfaceNameFromOperation({operationName, operationType}) {
