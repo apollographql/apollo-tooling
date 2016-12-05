@@ -212,5 +212,39 @@ describe('TypeScript code generation', function() {
         }
       `);
     });
+
+    it(`should generate mutation operations with complex input types`, function() {
+      const context = this.compileFromSource(`
+        mutation ReviewMovie($episode: Episode, $review: Review) {
+          createReview(episode: $episode, review: $review) {
+            stars
+            commentary
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+
+      expect(source).to.include(stripIndent`
+        //  This file was automatically generated and should not be edited.
+
+        export interface ReviewInput {
+          stars: number;
+          commentary: string | null;
+          favoriteColor: {
+            red: number,
+            green: number,
+            blue: number,
+          } | null;
+        }
+
+        export interface ReviewMovieMutation {
+          createReview: {
+            stars: number,
+            commentary: string | null,
+          };
+        }
+      `);
+    });
   });
 });
