@@ -215,7 +215,7 @@ describe('TypeScript code generation', function() {
 
     it(`should generate mutation operations with complex input types`, function() {
       const context = this.compileFromSource(`
-        mutation ReviewMovie($episode: Episode, $review: Review) {
+        mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
           createReview(episode: $episode, review: $review) {
             stars
             commentary
@@ -228,21 +228,38 @@ describe('TypeScript code generation', function() {
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
 
+        // The episodes in the Star Wars trilogy
+        export type Episode =
+          "NEWHOPE" | // Star Wars Episode IV: A New Hope, released in 1977.
+          "EMPIRE" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+          "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
         export interface ReviewInput {
+          // 0-5 stars
           stars: number;
+          // Comment about the movie, optional
           commentary: string | null;
-          favoriteColor: {
-            red: number,
-            green: number,
-            blue: number,
-          } | null;
+          // Favorite color, optional
+          favoriteColor: ColorInput | null;
+        }
+
+        export interface ColorInput {
+          red: number;
+          green: number;
+          blue: number;
+        }
+
+        export interface ReviewMovieMutationVariables {
+          episode: Episode | null;
+          review: ReviewInput | null;
         }
 
         export interface ReviewMovieMutation {
           createReview: {
             stars: number,
             commentary: string | null,
-          };
+          } | null;
         }
       `);
     });
