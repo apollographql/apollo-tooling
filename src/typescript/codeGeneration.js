@@ -172,10 +172,8 @@ export function propertiesFromFields(context, fields, forceNullable) {
 export function propertyFromField(context, field, forceNullable) {
   const { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
 
-  const propertyName = camelCase(fieldName);
-
+  const propertyName = fieldName;
   let property = { fieldName, fieldType, propertyName, description };
-
   const namedType = getNamedType(fieldType);
 
   if (isCompositeType(namedType)) {
