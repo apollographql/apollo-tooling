@@ -170,7 +170,8 @@ export function propertiesFromFields(context, fields, forceNullable) {
 }
 
 export function propertyFromField(context, field, forceNullable) {
-  const { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
+  let { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
+  fieldName = fieldName || field.responseName;
 
   const propertyName = camelCase(fieldName);
 
