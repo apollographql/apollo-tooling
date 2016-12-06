@@ -378,18 +378,6 @@ function sourceAt(location) {
   return location.source.body.slice(location.start, location.end);
 }
 
-export function stringifyIR(ast, space) {
-  return JSON.stringify(ast, function(key, value) {
-    if (value === undefined) {
-      return null;
-    } else if (isType(value)) {
-      return String(value);
-    } else {
-      return value;
-    }
-  }, space);
-}
-
 export function printIR({ fields, inlineFragments, fragmentSpreads }) {
   return fields && wrap('<', join(fragmentSpreads, ', '), '> ')
     + block(fields.map(field =>

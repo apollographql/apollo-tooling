@@ -15,7 +15,8 @@ import {
 
 import { loadSchema } from '../src/loading'
 
-import { compileToIR, stringifyIR, printIR } from '../src/compilation'
+import { compileToIR } from '../src/compilation'
+import { serializeAST } from '../src/serializeToJSON'
 
 const schema = loadSchema(require.resolve('./starwars/schema.json'));
 
@@ -1141,7 +1142,7 @@ describe('Compiling query documents', () => {
 });
 
 function filteredIR(ir) {
-  return JSON.parse(stringifyIR(ir), function(key, value) {
+  return JSON.parse(serializeAST(ir), function(key, value) {
     if (key === 'source') {
       return undefined;
     }
