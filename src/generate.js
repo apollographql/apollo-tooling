@@ -3,7 +3,8 @@ import fs from 'fs'
 import { ToolError, logError } from './errors'
 import { loadSchema,  loadAndMergeQueryDocuments } from './loading'
 import { validateQueryDocument } from './validation'
-import { compileToIR, stringifyIR } from './compilation'
+import { compileToIR } from './compilation'
+import serializeToJSON from './serializeToJSON'
 import { generateSource as generateSwiftSource } from './swift'
 import { generateSource as generateTypescriptSource } from './typescript'
 
@@ -20,7 +21,7 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
   let output;
   switch (target) {
     case 'json':
-      output = generateIR(context);
+      output = serializeToJSON(context);
       break;
     case 'ts':
     case 'typescript':
@@ -37,12 +38,4 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
   } else {
     console.log(output);
   }
-}
-
-function generateIR(context) {
-  return stringifyIR({
-    operations: Object.values(context.operations),
-    fragments: Object.values(context.fragments),
-    typesUsed: context.typesUsed
-  }, '\t');
 }

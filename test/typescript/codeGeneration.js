@@ -21,7 +21,7 @@ const schema = loadSchema(require.resolve('../starwars/schema.json'));
 
 import CodeGenerator from '../../src/utilities/CodeGenerator';
 
-import { compileToIR, printIR } from '../../src/compilation';
+import { compileToIR } from '../../src/compilation';
 
 describe('TypeScript code generation', function() {
   beforeEach(function() {
