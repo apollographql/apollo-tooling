@@ -182,7 +182,7 @@ export function propertyFromField(context, field, forceNullable) {
   let { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
   fieldName = fieldName || field.responseName;
 
-  const propertyName = camelCase(fieldName);
+  const propertyName = fieldName;
 
   let property = { fieldName, fieldType, propertyName, description };
 
