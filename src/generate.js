@@ -7,6 +7,7 @@ import { compileToIR } from './compilation'
 import serializeToJSON from './serializeToJSON'
 import { generateSource as generateSwiftSource } from './swift'
 import { generateSource as generateTypescriptSource } from './typescript'
+import { generateSource as generateFlowSource } from './flow'
 
 export default function generate(inputPaths, schemaPath, outputPath, target, options) {
   const schema = loadSchema(schemaPath);
@@ -26,6 +27,10 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
     case 'ts':
     case 'typescript':
       output = generateTypescriptSource(context);
+      break;
+    case 'flow':
+    case 'flowtype':
+      output = generateFlowSource(context);
       break;
     case 'swift':
     default:
