@@ -461,7 +461,7 @@ function structDeclarationForInputObjectType(generator, type) {
       generator.withinBlock(() => {
         generator.printOnNewline(wrap(
           `graphQLMap = [`,
-          join(properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`), ', '),
+          join(properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`), ', ') || ':',
           `]`
         ));
       });
