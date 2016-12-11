@@ -35,7 +35,7 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
       generator.print(' | null');
     }
   } else if (fragmentSpreads && fragmentSpreads.length > 0) {
-    generator.printOnNewline(`${propertyName}: ${fragmentSpreads.map(n => `${n}Fragment`).join(' & ')}`);
+    generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}${fragmentSpreads.map(n => `${n}Fragment`).join(' & ')}${isArray ? '>' : ''}`);
   } else {
     generator.printOnNewline(`${propertyName}: ${typeName}`);
   }
