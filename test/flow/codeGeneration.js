@@ -59,6 +59,7 @@ describe('Flow code generation', function() {
       const source = generateSource(context);
 
       expect(source).to.include(stripIndent`
+        /* @flow */
         //  This file was automatically generated and should not be edited.
 
         export interface HeroNameQuery {
@@ -81,6 +82,7 @@ describe('Flow code generation', function() {
       const source = generateSource(context);
 
       expect(source).to.include(stripIndent`
+        /* @flow */
         //  This file was automatically generated and should not be edited.
 
         // The episodes in the Star Wars trilogy
@@ -117,6 +119,7 @@ describe('Flow code generation', function() {
       const source = generateSource(context);
 
       expect(source).to.include(stripIndent`
+        /* @flow */
         //  This file was automatically generated and should not be edited.
 
         // The episodes in the Star Wars trilogy
@@ -160,6 +163,7 @@ describe('Flow code generation', function() {
       const source = generateSource(context);
 
       expect(source).to.include(stripIndent`
+        /* @flow */
         //  This file was automatically generated and should not be edited.
 
         export interface HeroAndFriendsNamesQuery {
@@ -198,6 +202,7 @@ describe('Flow code generation', function() {
       const source = generateSource(context);
 
       expect(source).to.include(stripIndent`
+        /* @flow */
         //  This file was automatically generated and should not be edited.
 
         export interface HeroAndDetailsQuery {
@@ -226,6 +231,7 @@ describe('Flow code generation', function() {
       const source = generateSource(context);
 
       expect(source).to.include(stripIndent`
+        /* @flow */
         //  This file was automatically generated and should not be edited.
 
         // The episodes in the Star Wars trilogy
@@ -283,6 +289,7 @@ describe('Flow code generation', function() {
       const source = generateSource(context);
 
       expect(source).to.include(stripIndent`
+        /* @flow */
         //  This file was automatically generated and should not be edited.
         
         // The episodes in the Star Wars trilogy
