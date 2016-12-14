@@ -36,6 +36,7 @@ import {
 export function generateSource(context) {
   const generator = new CodeGenerator(context);
 
+  generator.printOnNewline('/* @flow */');
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
