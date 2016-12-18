@@ -62,10 +62,10 @@ describe('Flow code generation', function() {
         /* @flow */
         //  This file was automatically generated and should not be edited.
 
-        export interface HeroNameQuery {
+        export type HeroNameQuery = {
           hero: ? {
             name: string,
-          };
+          },
         }
       `);
     });
@@ -92,14 +92,14 @@ describe('Flow code generation', function() {
           "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-        export interface HeroNameQueryVariables {
-          episode: ?Episode;
+        export type HeroNameQueryVariables = {
+          episode: ?Episode,
         }
 
-        export interface HeroNameQuery {
+        export type HeroNameQuery = {
           hero: ? {
             name: string,
-          };
+          },
         }
       `);
     });
@@ -129,17 +129,17 @@ describe('Flow code generation', function() {
           "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-        export interface HeroAndFriendsNamesQueryVariables {
-          episode: ?Episode;
+        export type HeroAndFriendsNamesQueryVariables = {
+          episode: ?Episode,
         }
 
-        export interface HeroAndFriendsNamesQuery {
+        export type HeroAndFriendsNamesQuery = {
           hero: ? {
             name: string,
             friends: ?Array< {
               name: string,
             } >,
-          };
+          },
         }
       `);
     });
@@ -166,16 +166,16 @@ describe('Flow code generation', function() {
         /* @flow */
         //  This file was automatically generated and should not be edited.
 
-        export interface HeroAndFriendsNamesQuery {
+        export type HeroAndFriendsNamesQuery = {
           hero: ?(HeroFriendsFragment & {
             name: string,
-          });
+          }),
         }
 
-        export interface HeroFriendsFragment {
+        export type HeroFriendsFragment = {
           friends: ?Array< {
             name: string,
-          } >;
+          } >,
         }
       `);
     });
@@ -205,15 +205,15 @@ describe('Flow code generation', function() {
         /* @flow */
         //  This file was automatically generated and should not be edited.
 
-        export interface HeroAndDetailsQuery {
+        export type HeroAndDetailsQuery = {
           hero: ?(HeroDetailsFragment & {
             name: string,
-          });
+          }),
         }
 
-        export interface HeroDetailsFragment {
-          primaryFunction: ?string;
-          height: ?number;
+        export type HeroDetailsFragment = {
+          primaryFunction: ?string,
+          height: ?number,
         }
       `);
     });
@@ -241,31 +241,31 @@ describe('Flow code generation', function() {
           "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-        export interface ReviewInput {
+        export type ReviewInput = {
           // 0-5 stars
-          stars: number;
+          stars: number,
           // Comment about the movie, optional
-          commentary: ?string;
+          commentary: ?string,
           // Favorite color, optional
-          favoriteColor: ?ColorInput;
+          favoriteColor: ?ColorInput,
         }
 
-        export interface ColorInput {
-          red: number;
-          green: number;
-          blue: number;
+        export type ColorInput = {
+          red: number,
+          green: number,
+          blue: number,
         }
 
-        export interface ReviewMovieMutationVariables {
-          episode: ?Episode;
-          review: ?ReviewInput;
+        export type ReviewMovieMutationVariables = {
+          episode: ?Episode,
+          review: ?ReviewInput,
         }
 
-        export interface ReviewMovieMutation {
+        export type ReviewMovieMutation = {
           createReview: ? {
             stars: number,
             commentary: ?string,
-          };
+          },
         }
       `);
     });
@@ -299,19 +299,19 @@ describe('Flow code generation', function() {
           "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
         
         
-        export interface HeroAndFriendsNamesQueryVariables {
-          episode: ?Episode;
+        export type HeroAndFriendsNamesQueryVariables = {
+          episode: ?Episode,
         }
         
-        export interface HeroAndFriendsNamesQuery {
+        export type HeroAndFriendsNamesQuery = {
           hero: ? {
             name: string,
             friends: Array<FriendFragment>,
-          };
+          },
         }
         
-        export interface FriendFragment {
-          name: string;
+        export type FriendFragment = {
+          name: string,
         }
       `);
     });
