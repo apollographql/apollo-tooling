@@ -10,6 +10,7 @@ export function typeDeclaration(generator, { interfaceName }, closure) {
   generator.pushScope({ typeName: interfaceName });
   generator.withinBlock(closure);
   generator.popScope();
+  generator.print(';');
 }
 
 export function propertyDeclaration(generator, { propertyName, typeName, description, isArray, isNullable, inInterface, fragmentSpreads }, closure) {

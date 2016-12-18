@@ -66,7 +66,7 @@ describe('Flow code generation', function() {
           hero: ? {
             name: string,
           },
-        }
+        };
       `);
     });
 
@@ -94,13 +94,13 @@ describe('Flow code generation', function() {
 
         export type HeroNameQueryVariables = {
           episode: ?Episode,
-        }
+        };
 
         export type HeroNameQuery = {
           hero: ? {
             name: string,
           },
-        }
+        };
       `);
     });
 
@@ -131,7 +131,7 @@ describe('Flow code generation', function() {
 
         export type HeroAndFriendsNamesQueryVariables = {
           episode: ?Episode,
-        }
+        };
 
         export type HeroAndFriendsNamesQuery = {
           hero: ? {
@@ -140,7 +140,7 @@ describe('Flow code generation', function() {
               name: string,
             } >,
           },
-        }
+        };
       `);
     });
 
@@ -170,13 +170,13 @@ describe('Flow code generation', function() {
           hero: ?(HeroFriendsFragment & {
             name: string,
           }),
-        }
+        };
 
         export type HeroFriendsFragment = {
           friends: ?Array< {
             name: string,
           } >,
-        }
+        };
       `);
     });
 
@@ -209,12 +209,12 @@ describe('Flow code generation', function() {
           hero: ?(HeroDetailsFragment & {
             name: string,
           }),
-        }
+        };
 
         export type HeroDetailsFragment = {
           primaryFunction: ?string,
           height: ?number,
-        }
+        };
       `);
     });
 
@@ -248,25 +248,25 @@ describe('Flow code generation', function() {
           commentary: ?string,
           // Favorite color, optional
           favoriteColor: ?ColorInput,
-        }
+        };
 
         export type ColorInput = {
           red: number,
           green: number,
           blue: number,
-        }
+        };
 
         export type ReviewMovieMutationVariables = {
           episode: ?Episode,
           review: ?ReviewInput,
-        }
+        };
 
         export type ReviewMovieMutation = {
           createReview: ? {
             stars: number,
             commentary: ?string,
           },
-        }
+        };
       `);
     });
 
@@ -301,18 +301,18 @@ describe('Flow code generation', function() {
         
         export type HeroAndFriendsNamesQueryVariables = {
           episode: ?Episode,
-        }
+        };
         
         export type HeroAndFriendsNamesQuery = {
           hero: ? {
             name: string,
             friends: Array<FriendFragment>,
           },
-        }
+        };
         
         export type FriendFragment = {
           name: string,
-        }
+        };
       `);
     });
   });
