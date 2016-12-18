@@ -93,7 +93,7 @@ describe('Flow code generation', function() {
 
 
         export interface HeroNameQueryVariables {
-          episode: ? Episode;
+          episode: ?Episode;
         }
 
         export interface HeroNameQuery {
@@ -130,13 +130,13 @@ describe('Flow code generation', function() {
 
 
         export interface HeroAndFriendsNamesQueryVariables {
-          episode: ? Episode;
+          episode: ?Episode;
         }
 
         export interface HeroAndFriendsNamesQuery {
           hero: ? {
             name: string,
-            friends: ? Array< {
+            friends: ?Array< {
               name: string,
             } >,
           };
@@ -167,13 +167,13 @@ describe('Flow code generation', function() {
         //  This file was automatically generated and should not be edited.
 
         export interface HeroAndFriendsNamesQuery {
-          hero: ? HeroFriendsFragment & {
+          hero: ?(HeroFriendsFragment & {
             name: string,
-          };
+          });
         }
 
         export interface HeroFriendsFragment {
-          friends: ? Array< {
+          friends: ?Array< {
             name: string,
           } >;
         }
@@ -206,14 +206,14 @@ describe('Flow code generation', function() {
         //  This file was automatically generated and should not be edited.
 
         export interface HeroAndDetailsQuery {
-          hero: ? HeroDetailsFragment & {
+          hero: ?(HeroDetailsFragment & {
             name: string,
-          };
+          });
         }
 
         export interface HeroDetailsFragment {
-          primaryFunction: ? string;
-          height: ? number;
+          primaryFunction: ?string;
+          height: ?number;
         }
       `);
     });
@@ -245,9 +245,9 @@ describe('Flow code generation', function() {
           // 0-5 stars
           stars: number;
           // Comment about the movie, optional
-          commentary: ? string;
+          commentary: ?string;
           // Favorite color, optional
-          favoriteColor: ? ColorInput;
+          favoriteColor: ?ColorInput;
         }
 
         export interface ColorInput {
@@ -257,14 +257,14 @@ describe('Flow code generation', function() {
         }
 
         export interface ReviewMovieMutationVariables {
-          episode: ? Episode;
-          review: ? ReviewInput;
+          episode: ?Episode;
+          review: ?ReviewInput;
         }
 
         export interface ReviewMovieMutation {
           createReview: ? {
             stars: number,
-            commentary: ? string,
+            commentary: ?string,
           };
         }
       `);
@@ -300,7 +300,7 @@ describe('Flow code generation', function() {
         
         
         export interface HeroAndFriendsNamesQueryVariables {
-          episode: ? Episode;
+          episode: ?Episode;
         }
         
         export interface HeroAndFriendsNamesQuery {

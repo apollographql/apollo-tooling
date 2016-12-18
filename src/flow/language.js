@@ -23,14 +23,25 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
       generator.print(' ?');
     }
     if (isArray) {
-      generator.print(' Array<');
+      if (!isNullable) {
+        generator.print(' ');
+      }
+      generator.print('Array<');
     }
     if (fragmentSpreads && fragmentSpreads.length > 0) {
-      generator.print(` ${fragmentSpreads.map(n => `${n}Fragment`).join(' & ')} &`);
+      if (!isNullable) {
+        generator.print(' ');
+      } else {
+        generator.print('(');
+      }
+      generator.print(`${fragmentSpreads.map(n => `${n}Fragment`).join(' & ')} &`);
     }
     generator.pushScope({ typeName: propertyName });
     generator.withinBlock(closure);
     generator.popScope();
+    if (isNullable && fragmentSpreads && fragmentSpreads.length > 0) {
+      generator.print(')');
+    }
     if (isArray) {
       generator.print(' >');
     }

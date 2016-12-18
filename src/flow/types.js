@@ -41,5 +41,5 @@ export function typeNameFromGraphQLType(context, type, bareTypeName, nullable = 
     typeName = bareTypeName || type.name;
   }
 
-  return nullable ? '? ' + typeName : typeName;
+  return nullable ? '?' + typeName : typeName;
 }
