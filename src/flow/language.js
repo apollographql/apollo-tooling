@@ -3,13 +3,10 @@ import {
   wrap,
 } from '../utilities/printing';
 
-export function interfaceDeclaration(generator, { interfaceName, extendTypes }, closure) {
+export function typeDeclaration(generator, { interfaceName }, closure) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
-  generator.print(`export interface ${ interfaceName }`);
-  if (extendTypes && extendTypes.length > 0) {
-    generator.print(` extends ${extendTypes.join(', ')}`);
-  }
+  generator.print(`export type ${ interfaceName } =`);
   generator.pushScope({ typeName: interfaceName });
   generator.withinBlock(closure);
   generator.popScope();
@@ -50,7 +47,7 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
   } else {
     generator.printOnNewline(`${propertyName}: ${typeName}`);
   }
-  generator.print(inInterface ? ';' : ',');
+  generator.print(',');
 }
 
 export function propertyDeclarations(generator, properties) {

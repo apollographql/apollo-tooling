@@ -25,7 +25,7 @@ import {
 import CodeGenerator from '../utilities/CodeGenerator';
 
 import {
-  interfaceDeclaration,
+  typeDeclaration,
   propertyDeclaration,
 } from './language';
 
@@ -43,10 +43,10 @@ export function generateSource(context) {
   ));
   Object.values(context.operations).forEach(operation => {
     interfaceVariablesDeclarationForOperation(generator, operation);
-    interfaceDeclarationForOperation(generator, operation);
+    typeDeclarationForOperation(generator, operation);
   });
   Object.values(context.fragments).forEach(operation =>
-    interfaceDeclarationForFragment(generator, operation)
+    typeDeclarationForFragment(generator, operation)
   );
 
   return generator.output;
@@ -79,7 +79,7 @@ function structDeclarationForInputObjectType(
   type
   ) {
   const interfaceName = pascalCase(type.name);
-  interfaceDeclaration(generator, {
+  typeDeclaration(generator, {
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
@@ -119,7 +119,7 @@ export function interfaceVariablesDeclarationForOperation(
   }
   const interfaceName = `${interfaceNameFromOperation({operationName, operationType})}Variables`;
 
-  interfaceDeclaration(generator, {
+  typeDeclaration(generator, {
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, variables);
@@ -127,7 +127,7 @@ export function interfaceVariablesDeclarationForOperation(
   });
 }
 
-export function interfaceDeclarationForOperation(
+export function typeDeclarationForOperation(
   generator,
   {
     operationName,
@@ -140,7 +140,7 @@ export function interfaceDeclarationForOperation(
   }
 ) {
   const interfaceName = interfaceNameFromOperation({operationName, operationType});
-  interfaceDeclaration(generator, {
+  typeDeclaration(generator, {
     interfaceName,
     extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
   }, () => {
@@ -149,7 +149,7 @@ export function interfaceDeclarationForOperation(
   });
 }
 
-export function interfaceDeclarationForFragment(
+export function typeDeclarationForFragment(
   generator,
   {
     fragmentName,
@@ -162,7 +162,7 @@ export function interfaceDeclarationForFragment(
 ) {
   const interfaceName = `${pascalCase(fragmentName)}Fragment`;
 
-  interfaceDeclaration(generator, {
+  typeDeclaration(generator, {
     interfaceName,
     extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
   }, () => {
