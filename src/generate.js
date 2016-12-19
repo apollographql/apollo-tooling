@@ -29,7 +29,6 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
       output = generateTypescriptSource(context);
       break;
     case 'flow':
-    case 'flowtype':
       output = generateFlowSource(context);
       break;
     case 'swift':
