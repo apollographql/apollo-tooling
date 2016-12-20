@@ -8,10 +8,15 @@ import {
   GraphQLObjectType,
   GraphQLInterfaceType,
   GraphQLUnionType,
-  GraphQLEnumType
+  GraphQLEnumType,
+  GraphQLSchema,
+  GraphQLType,
+  GraphQLError,
+  OperationDefinitionNode,
+  FieldNode
 } from 'graphql';
 
-export function isTypeProperSuperTypeOf(schema, maybeSuperType, subType) {
+export function isTypeProperSuperTypeOf(schema: GraphQLSchema, maybeSuperType: GraphQLObjectType, subType: GraphQLObjectType) {
   return isEqualType(maybeSuperType, subType) || (isAbstractType(maybeSuperType) && schema.isPossibleType(maybeSuperType, subType));
 }
 
@@ -20,7 +25,7 @@ export function isTypeProperSuperTypeOf(schema, maybeSuperType, subType) {
 /**
  * Extracts the root type of the operation from the schema.
  */
-export function getOperationRootType(schema, operation) {
+export function getOperationRootType(schema: GraphQLSchema, operation: OperationDefinitionNode) {
   switch (operation.operation) {
     case 'query':
       return schema.getQueryType();
@@ -55,7 +60,7 @@ export function getOperationRootType(schema, operation) {
  * statically evaluated environment we do not always have an Object type,
  * and need to handle Interface and Union types.
  */
-export function getFieldDef(schema, parentType, fieldAST) {
+export function getFieldDef(schema: GraphQLSchema, parentType: GraphQLObjectType, fieldAST: FieldNode) {
   const name = fieldAST.name.value;
   if (name === SchemaMetaFieldDef.name &&
       schema.getQueryType() === parentType) {

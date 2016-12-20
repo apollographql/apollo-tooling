@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "module": "es2015",
+        "target": "es2017",
+        "allowJs": true,
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "rootDir": "src",
+        "outDir": "temp",
+        "sourceMap": true,
+        "strictNullChecks": true,
+        "lib": [
+            "es2017"
+        ],
+        "types": [
+            "node"
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        "test",
+        "lib",
+        "temp"
+    ]
+}

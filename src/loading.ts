@@ -1,17 +1,17 @@
-import path from 'path'
-import fs from 'fs'
-import mkdirp from 'mkdirp'
+import * as path from 'path'
+import * as fs from 'fs'
 
 import {
   buildClientSchema,
   Source,
   concatAST,
-  parse
+  parse,
+  DocumentNode,
 } from 'graphql';
 
 import { ToolError, logError } from './errors'
 
-export function loadSchema(schemaPath) {
+export function loadSchema(schemaPath: string) {
   if (!fs.existsSync(schemaPath)) {
     throw new ToolError(`Cannot find GraphQL schema file: ${schemaPath}`);
   }
@@ -23,14 +23,14 @@ export function loadSchema(schemaPath) {
   return buildClientSchema((schemaData.data) ? schemaData.data : schemaData);
 }
 
-export function loadAndMergeQueryDocuments(inputPaths) {
+export function loadAndMergeQueryDocuments(inputPaths: string[]): DocumentNode {
   const sources = inputPaths.map(inputPath => {
     const body = fs.readFileSync(inputPath, 'utf8')
     if (!body) {
       return null;
     }
     return new Source(body, inputPath);
-  }).filter(source => source);
+  }).filter(source => source) as Source[];
 
   return concatAST(sources.map(source => parse(source)));
 }

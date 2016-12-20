@@ -2,9 +2,20 @@ import {
   isType,
   GraphQLEnumType,
   GraphQLInputObjectType,
+  GraphQLType,
 } from 'graphql';
 
-export default function serializeToJSON(context) {
+import {Context} from './generate';
+
+interface AST {
+  operations: any[];
+  fragments: any[];
+  typesUsed: any[];
+}
+
+declare const expandTypes: boolean;
+
+export default function serializeToJSON(context: Context) {
   return serializeAST({
     operations: Object.values(context.operations),
     fragments: Object.values(context.fragments),
@@ -12,7 +23,7 @@ export default function serializeToJSON(context) {
   }, '\t');
 }
 
-export function serializeAST(ast, space) {
+export function serializeAST(ast: AST, space: string) {
   return JSON.stringify(ast, function(key, value) {
     if (value === undefined) {
       return null;
@@ -28,7 +39,7 @@ export function serializeAST(ast, space) {
   }, space);
 }
 
-function serializeType(type) {
+function serializeType(type: GraphQLType) {
   if (type instanceof GraphQLEnumType) {
     return serializeEnumType(type);
   } else if (type instanceof GraphQLInputObjectType) {
@@ -36,7 +47,7 @@ function serializeType(type) {
   }
 }
 
-function serializeEnumType(type) {
+function serializeEnumType(type: GraphQLEnumType) {
   const { name, description } = type;
   const values = type.getValues();
 
@@ -50,7 +61,7 @@ function serializeEnumType(type) {
   }
 }
 
-function serializeInputObjectType(type) {
+function serializeInputObjectType(type: GraphQLInputObjectType) {
   const { name, description } = type;
   const fields = Object.values(type.getFields());
 

@@ -1,8 +1,8 @@
 // Based on https://facebook.github.io/relay/docs/guides-babel-plugin.html#using-other-graphql-implementations
 
 import fetch from 'node-fetch';
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 
 import {
   buildClientSchema,
@@ -17,7 +17,7 @@ const defaultHeaders = {
   'Content-Type': 'application/json'
 };
 
-export default async function downloadSchema(url, outputPath, additionalHeaders) {
+export default async function downloadSchema(url: string, outputPath: string, additionalHeaders: {[key: string]: string}) {
   const headers = Object.assign(defaultHeaders, additionalHeaders);
 
   let result;

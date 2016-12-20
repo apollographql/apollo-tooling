@@ -1,20 +1,26 @@
 #!/usr/bin/env node
 
-import process from 'process';
-import path from 'path';
-import yargs from 'yargs';
+import * as process from 'process';
+import * as path from 'path';
+import * as yargs from 'yargs';
 
 import { downloadSchema, generate } from '.';
 import { ToolError, logError } from './errors'
 
 import 'source-map-support/register'
 
+export type targetChoices = 'swift' | 'json' | 'ts' | 'typescript';
+
+export interface Options {
+  passthroughCustomScalars: boolean;
+}
+
 // Make sure unhandled errors in async code are propagated correctly
-process.on('unhandledRejection', (error) => { throw error });
+process.on('unhandledRejection', (error: Error) => { throw error });
 
 process.on('uncaughtException', handleError);
 
-function handleError(error) {
+function handleError(error: Error) {
   logError(error);
   process.exit(1);
 }
@@ -30,15 +36,15 @@ yargs
         default: 'schema.json',
         normalize: true,
         coerce: path.resolve,
-      },
+      } as yargs.Options,
       header: {
         alias: 'H',
         describe: 'Additional header to send to the server as part of the introspection query request',
         type: 'array',
         coerce: (arg) => {
-          let additionalHeaders = {};
+          let additionalHeaders: {[key: string]: string} = {};
           for (const header of arg) {
-            const [name, value] = header.split(/\s*:\s*/);
+            const [name, value] = (header as string).split(/\s*:\s*/);
             if (!(name && value)) {
               throw new ToolError('Headers should be specified as "Name: Value"');
             }
@@ -46,12 +52,12 @@ yargs
           }
           return additionalHeaders;
         }
-      },
+      } as yargs.Options,
     },
     async argv => {
       const outputPath = path.resolve(argv.output);
       const additionalHeaders = argv.header;
-      await downloadSchema(argv.server, outputPath, additionalHeaders);
+      await downloadSchema(argv.server as string, outputPath as string, additionalHeaders as {[key: string]: string});
     }
   )
   .command(
@@ -83,15 +89,15 @@ yargs
       }
     },
     argv => {
-      const inputPaths = argv.input.map(input => path.resolve(input));
-      const options = { passthroughCustomScalars: argv["passthrough-custom-scalars"] };
-      generate(inputPaths, argv.schema, argv.output, argv.target, options);
+      const inputPaths: string[] = argv.input.map((input: string) => path.resolve(input));
+      const options: Options = { passthroughCustomScalars: argv["passthrough-custom-scalars"] };
+      generate(inputPaths, argv.schema as string, argv.output as string, argv.target as targetChoices, options);
     },
   )
   .fail(function(message, error) {
     handleError(error ? error : new ToolError(message));
   })
   .help()
-  .version()
+  .version(() => require('../package').version) // needs to fix yargs typings to take plain version()
   .strict()
   .argv
