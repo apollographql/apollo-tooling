@@ -1,12 +1,17 @@
 import {
   validate,
   specifiedRules,
-  GraphQLError
+  GraphQLError,
+  GraphQLSchema,
+  DocumentNode,
+  ValidationContext,
+  OperationDefinitionNode,
+  FieldNode
 } from 'graphql';
 
 import { ToolError, logError } from './errors'
 
-export function validateQueryDocument(schema, document) {
+export function validateQueryDocument(schema: GraphQLSchema, document: DocumentNode) {
   const rules = [NoAnonymousQueries, NoExplicitTypename, NoTypenameAlias].concat(specifiedRules);
 
   const validationErrors = validate(schema, document, rules);
@@ -18,9 +23,9 @@ export function validateQueryDocument(schema, document) {
   }
 }
 
-export function NoAnonymousQueries(context) {
+export function NoAnonymousQueries(context: ValidationContext) {
   return {
-    OperationDefinition(node) {
+    OperationDefinition(node: OperationDefinitionNode) {
       if (!node.name) {
         context.reportError(new GraphQLError(
           'Apollo iOS does not support anonymous operations',
@@ -32,9 +37,9 @@ export function NoAnonymousQueries(context) {
   };
 }
 
-export function NoExplicitTypename(context) {
+export function NoExplicitTypename(context: ValidationContext) {
   return {
-    Field(node) {
+    Field(node: FieldNode) {
       const fieldName = node.name.value;
       if (fieldName == "__typename") {
         context.reportError(new GraphQLError(
@@ -46,9 +51,9 @@ export function NoExplicitTypename(context) {
   };
 }
 
-export function NoTypenameAlias(context) {
+export function NoTypenameAlias(context: ValidationContext) {
   return {
-    Field(node) {
+    Field(node: FieldNode) {
       const aliasName = node.alias && node.alias.value;
       if (aliasName == "__typename") {
         context.reportError(new GraphQLError(
