@@ -194,6 +194,8 @@ export function propertyFromField(context, field, forceNullable) {
     let isArray = false;
     if (fieldType instanceof GraphQLList) {
       isArray = true;
+    } else if (fieldType instanceof GraphQLNonNull && fieldType.ofType instanceof GraphQLList) {
+      isArray = true
     }
     let isNullable = true;
     if (fieldType instanceof GraphQLNonNull && !forceNullable) {
