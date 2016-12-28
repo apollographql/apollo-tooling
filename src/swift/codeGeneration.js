@@ -111,7 +111,7 @@ export function classDeclarationForOperation(
         const propertyName = camelCase(name);
         const typeName = typeNameFromGraphQLType(generator.context, type);
         const isOptional = !(type instanceof GraphQLNonNull || type.ofType instanceof GraphQLNonNull);
-        return { propertyName, type, typeName, isOptional };
+        return { name, propertyName, type, typeName, isOptional };
       });
       generator.printNewlineIfNeeded();
       propertyDeclarations(generator, properties);
@@ -122,7 +122,7 @@ export function classDeclarationForOperation(
       generator.withinBlock(() => {
         generator.printOnNewline(wrap(
           `return [`,
-          join(properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`), ', '),
+          join(properties.map(({ name, propertyName }) => `"${name}": ${propertyName}`), ', '),
           `]`
         ));
       });
