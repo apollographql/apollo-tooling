@@ -50,8 +50,8 @@ describe('Swift code generation: Types', function() {
       expect(typeNameFromGraphQLType({}, GraphQLInt)).to.equal('Int?');
     });
 
-    it('should return Float? for GraphQLFloat', function() {
-      expect(typeNameFromGraphQLType({}, GraphQLFloat)).to.equal('Float?');
+    it('should return Double? for GraphQLFloat', function() {
+      expect(typeNameFromGraphQLType({}, GraphQLFloat)).to.equal('Double?');
     });
 
     it('should return Bool? for GraphQLBoolean', function() {
