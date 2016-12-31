@@ -22,7 +22,7 @@ import {
 const builtInScalarMap = {
   [GraphQLString.name]: 'String',
   [GraphQLInt.name]: 'Int',
-  [GraphQLFloat.name]: 'Float',
+  [GraphQLFloat.name]: 'Double',
   [GraphQLBoolean.name]: 'Bool',
   [GraphQLID.name]: 'GraphQLID',
 }
