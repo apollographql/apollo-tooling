@@ -80,11 +80,27 @@ yargs
         demand: false,
         describe: "Don't attempt to map custom scalars [temporary option]",
         default: false
+      },
+      "ts-namespace": {
+        demand: false,
+        describe: "Typescript: An [optional] namespace name for generated types.",
+        default: null
+      },
+      "ts-namespace-type": {
+        demand: false,
+        describe: "Typescript: How the namespace should be generated. Either `export` or `declare`." +
+                  "Defaults to `export`, unless the `output` path ends in `.d.ts`, in which case it deafults to `declare`.",
+        default: null
       }
     },
     argv => {
       const inputPaths = argv.input.map(input => path.resolve(input));
-      const options = { passthroughCustomScalars: argv["passthrough-custom-scalars"] };
+
+      const options = {
+        passthroughCustomScalars: argv["passthrough-custom-scalars"],
+        tsNamespace: argv["ts-namespace"],
+        tsNamespaceType: (argv["ts-namespace-type"] || (argv["ts-namespace"] && argv.output.match(/\.d\.ts$/) ? "declare" : "export"))
+      };
       generate(inputPaths, argv.schema, argv.output, argv.target, options);
     },
   )

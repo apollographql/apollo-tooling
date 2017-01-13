@@ -69,6 +69,36 @@ describe('TypeScript code generation', function() {
       `);
     });
 
+    it(`should generate in a namespace`, function() {
+      const context = this.compileFromSource(`
+        query HeroName {
+          hero {
+            name
+          }
+        }
+      `);
+
+      let contextWithNamespace = Object.assign({}, context, {
+        tsNamespace: "GQL",
+        tsNamespaceType: "declare"
+      });
+      let source = generateSource(contextWithNamespace);
+
+      expect(source).to.include(stripIndent`
+        declare namespace GQL {
+      `);
+
+      contextWithNamespace = Object.assign({}, context, {
+        tsNamespace: "MyNamespace",
+        tsNamespaceType: "export"
+      });
+      source = generateSource(contextWithNamespace);
+
+      expect(source).to.include(stripIndent`
+        export namespace MyNamespace {
+      `);
+    });
+
     it(`should generate simple query operations including input variables`, function() {
       const context = this.compileFromSource(`
         query HeroName($episode: Episode) {
@@ -269,7 +299,7 @@ describe('TypeScript code generation', function() {
         fragment Friend on Character {
           name
         }
-        
+
         query HeroAndFriendsNames($episode: Episode) {
           hero(episode: $episode) {
             name
@@ -284,25 +314,25 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
-        
+
         // The episodes in the Star Wars trilogy
         export type Episode =
           "NEWHOPE" | // Star Wars Episode IV: A New Hope, released in 1977.
           "EMPIRE" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
           "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
-        
-        
+
+
         export interface HeroAndFriendsNamesQueryVariables {
           episode: Episode | null;
         }
-        
+
         export interface HeroAndFriendsNamesQuery {
           hero: {
             name: string,
             friends: Array<FriendFragment>,
           } | null;
         }
-        
+
         export interface FriendFragment {
           name: string;
         }

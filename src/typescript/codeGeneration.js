@@ -37,6 +37,21 @@ export function generateSource(context) {
   const generator = new CodeGenerator(context);
 
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
+
+  if (context.tsNamespace) {
+    const exportType = context.tsNamespaceType || 'export';
+    generator.printOnNewline(exportType + " namespace "+context.tsNamespace);
+    generator.withinBlock(() => {
+      generateDeclarations(context, generator);
+    });
+  } else {
+    generateDeclarations(context, generator);
+  }
+
+  return generator.output;
+}
+
+function generateDeclarations(context, generator) {
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
   ));
@@ -47,8 +62,6 @@ export function generateSource(context) {
   Object.values(context.fragments).forEach(operation =>
     interfaceDeclarationForFragment(generator, operation)
   );
-
-  return generator.output;
 }
 
 export function typeDeclarationForGraphQLType(generator, type) {
