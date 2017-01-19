@@ -150,7 +150,7 @@ describe('Compiling query documents', () => {
 
   it(`should include the original field name for an aliased field`, () => {
     const document = parse(`
-      query TwoHeroes {
+      query HeroName {
         r2: hero {
           name
         }
@@ -162,42 +162,22 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(filteredIR(operations['TwoHeroes'])).to.deep.equal({
-      operationName: 'TwoHeroes',
-      operationType: 'query',
-      variables: [],
-      fragmentsReferenced: [],
-      fields: [
-        {
-          responseName: 'r2',
-          fieldName: 'hero',
-          type: 'Character',
-          fields: [
-            {
-              responseName: 'name',
-              fieldName: 'name',
-              type: 'String!'
-            },
-          ],
-          fragmentSpreads: [],
-          inlineFragments: []
-        },
-        {
-          responseName: 'luke',
-          fieldName: 'hero',
-          type: 'Character',
-          fields: [
-            {
-              responseName: 'name',
-              fieldName: 'name',
-              type: 'String!'
-            },
-          ],
-          fragmentSpreads: [],
-          inlineFragments: []
+    expect(operations['HeroName'].fields[0].fieldName).to.equal("hero");
+  });
+
+  it(`should include field arguments`, () => {
+    const document = parse(`
+      query HeroName {
+        hero(episode: EMPIRE) {
+          name
         }
-      ]
-    });
+      }
+    `);
+
+    const { operations } = compileToIR(schema, document);
+
+    expect(operations['HeroName'].fields[0].args)
+      .to.deep.equal([{ name: "episode", value: "EMPIRE" }]);
   });
 
   it(`should include isOptional if a field has skip or include directives`, () => {
@@ -950,55 +930,40 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(filteredIR(operations['Search'])).to.deep.equal({
-      operationName: 'Search',
-      operationType: 'query',
-      variables: [],
-      fragmentsReferenced: [],
-      fields: [
-        {
-          responseName: 'search',
-          fieldName: 'search',
-          type: '[SearchResult]',
-          fields: [],
-          fragmentSpreads: [],
-          inlineFragments: [
-            {
-              typeCondition: 'Droid',
-              fields: [
-                {
-                  responseName: 'name',
-                  fieldName: 'name',
-                  type: 'String!'
-                },
-                {
-                  responseName: 'primaryFunction',
-                  fieldName: 'primaryFunction',
-                  type: 'String'
-                },
-              ],
-              fragmentSpreads: [],
-            },
-            {
-              typeCondition: 'Human',
-              fields: [
-                {
-                  responseName: 'name',
-                  fieldName: 'name',
-                  type: 'String!'
-                },
-                {
-                  responseName: 'height',
-                  fieldName: 'height',
-                  type: 'Float'
-                },
-              ],
-              fragmentSpreads: [],
-            }
-          ]
-        }
-      ]
-    });
+    expect(filteredIR(operations['Search']).fields[0].inlineFragments).to.deep.equal([
+      {
+        typeCondition: 'Droid',
+        fields: [
+          {
+            responseName: 'name',
+            fieldName: 'name',
+            type: 'String!'
+          },
+          {
+            responseName: 'primaryFunction',
+            fieldName: 'primaryFunction',
+            type: 'String'
+          },
+        ],
+        fragmentSpreads: [],
+      },
+      {
+        typeCondition: 'Human',
+        fields: [
+          {
+            responseName: 'name',
+            fieldName: 'name',
+            type: 'String!'
+          },
+          {
+            responseName: 'height',
+            fieldName: 'height',
+            type: 'Float'
+          },
+        ],
+        fragmentSpreads: [],
+      }
+    ]);
   });
 
   it(`should keep track of fragments referenced in a subselection`, () => {

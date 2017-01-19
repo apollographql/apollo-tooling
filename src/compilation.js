@@ -253,7 +253,11 @@ export class Compiler {
       const args = firstField.args;
       const type = firstField.type;
 
-      let field = { responseName, fieldName, args, type };
+      let field = { responseName, fieldName, type };
+
+      if (args && args.length > 0) {
+        field.args = args;
+      }
 
       const isConditional = fieldSet.some(([,field]) => {
         return field.directives && field.directives.some(directive => {
