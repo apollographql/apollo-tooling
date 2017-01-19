@@ -23,7 +23,8 @@ import {
   isTypeProperSuperTypeOf,
   getOperationRootType,
   getFieldDef,
-  valueFromValueNode
+  valueFromValueNode,
+  filePathForNode
 } from './utilities/graphql';
 
 import {
@@ -102,6 +103,7 @@ export class Compiler {
   }
 
   compileOperation(operationDefinition) {
+    const filePath = filePathForNode(operationDefinition);
     const operationName = operationDefinition.name.value;
     const operationType = operationDefinition.operation;
 
@@ -123,10 +125,11 @@ export class Compiler {
     const { fields } = this.resolveFields(rootType, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet);
     const fragmentsReferenced = Object.keys(fragmentsReferencedSet);
 
-    return { operationName, operationType, variables, source, fields, fragmentsReferenced };
+    return { filePath, operationName, operationType, variables, source, fields, fragmentsReferenced };
   }
 
   compileFragment(fragmentDefinition) {
+    const filePath = filePathForNode(fragmentDefinition);
     const fragmentName = fragmentDefinition.name.value;
 
     const source = print(withTypenameFieldAddedWhereNeeded(this.schema, fragmentDefinition));
@@ -140,7 +143,7 @@ export class Compiler {
     const { fields, fragmentSpreads, inlineFragments } = this.resolveFields(typeCondition, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet);
     const fragmentsReferenced = Object.keys(fragmentsReferencedSet);
 
-    return { fragmentName, source, typeCondition, fields, fragmentSpreads, inlineFragments, fragmentsReferenced };
+    return { filePath, fragmentName, source, typeCondition, fields, fragmentSpreads, inlineFragments, fragmentsReferenced };
   }
 
   collectFields(parentType, selectionSet, groupedFieldSet = Object.create(null), groupedVisitedFragmentSet = new Map()) {

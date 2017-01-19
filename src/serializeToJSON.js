@@ -14,9 +14,7 @@ export default function serializeToJSON(context) {
 
 export function serializeAST(ast, space) {
   return JSON.stringify(ast, function(key, value) {
-    if (value === undefined) {
-      return null;
-    } else if (isType(value)) {
+    if (isType(value)) {
       if (expandTypes) {
         return serializeType(value);
       } else {

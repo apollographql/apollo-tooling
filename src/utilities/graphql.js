@@ -11,6 +11,15 @@ import {
   GraphQLEnumType
 } from 'graphql';
 
+export function sourceAt(location) {
+  return location.source.body.slice(location.start, location.end);
+}
+
+export function filePathForNode(node) {
+  const name = node.loc.source && node.loc.source.name;
+  return (name === "GraphQL") ? undefined : name;
+}
+
 export function valueFromValueNode(valueNode) {
   const kind = valueNode.kind;
 
