@@ -11,6 +11,25 @@ import {
   GraphQLEnumType
 } from 'graphql';
 
+export function valueFromValueNode(valueNode) {
+  const kind = valueNode.kind;
+
+  if (kind === 'IntValue' || kind === 'FloatValue') {
+    return Number(valueNode.value);
+  } else if (kind === 'NullValue') {
+    return null;
+  } else if (kind === 'ListValue') {
+    return valueNode.values.map(valueFromValueNode);
+  } else if (kind === 'ObjectValue') {
+    return valueNode.fields.reduce((object, field) => {
+      object[field.name.value] = valueFromValueNode(field.value);
+      return object;
+    }, {});
+  } else {
+    return valueNode.value;
+  }
+}
+
 export function isTypeProperSuperTypeOf(schema, maybeSuperType, subType) {
   return isEqualType(maybeSuperType, subType) || (isAbstractType(maybeSuperType) && schema.isPossibleType(maybeSuperType, subType));
 }

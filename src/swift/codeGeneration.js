@@ -29,7 +29,7 @@ import {
   propertyDeclarations
 } from './language';
 
-import { escapedString, multilineString } from './strings';
+import { escapedString, multilineString, literalFromValue } from './values';
 
 import {
   typeNameFromGraphQLType,
@@ -356,15 +356,29 @@ export function structDeclarationForSelectionSet(
   });
 }
 
-export function initializationForProperty(generator, { propertyName, responseName, fieldName, type, isOptional }) {
+export function initializationForProperty(generator, { propertyName, responseName, fieldName, args: fieldArgs, type, isOptional }) {
   const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList;
 
   const methodName = isOptional ? (isList ? 'optionalList' : 'optionalValue') : (isList ? 'list' : 'value');
 
-  const fieldArgs = join([`responseName: "${responseName}"`, responseName != fieldName ? `fieldName: "${fieldName}"` : null], ', ');
-  const args = [`for: Field(${fieldArgs})`];
+  const fieldInitArgs = join([
+    `responseName: "${responseName}"`,
+    responseName != fieldName ? `fieldName: "${fieldName}"` : null,
+    fieldArgs && fieldArgs.length && `arguments: ${dictionaryFromArguments(fieldArgs)}`
+  ], ', ');
+  const args = [`for: Field(${fieldInitArgs})`];
 
   generator.printOnNewline(`${propertyName} = try reader.${methodName}(${ join(args, ', ') })`);
+}
+
+function dictionaryFromArguments(args) {
+  return wrap('[', join(args.map(arg => {
+    if (arg.kind === 'Variable') {
+      return `"${arg.name}": reader.variables["${arg.variableName}"]`;
+    } else {
+      return `"${arg.name}": ${literalFromValue(arg.value)}`;
+    }
+  }), ', '), ']');
 }
 
 export function propertiesFromFields(context, fields) {
