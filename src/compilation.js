@@ -22,7 +22,8 @@ import {
 import {
   isTypeProperSuperTypeOf,
   getOperationRootType,
-  getFieldDef
+  getFieldDef,
+  valueFromValueNode
 } from './utilities/graphql';
 
 import {
@@ -163,7 +164,14 @@ export class Compiler {
               groupedFieldSet[responseName] = [];
             }
 
-            groupedFieldSet[responseName].push([parentType, { responseName, fieldName, type: field.type, directives: selection.directives, selectionSet: selection.selectionSet }]);
+            groupedFieldSet[responseName].push([parentType, {
+              responseName,
+              fieldName,
+              args: argumentsFromAST(selection.arguments),
+              type: field.type,
+              directives: selection.directives,
+              selectionSet: selection.selectionSet
+            }]);
           }
           break;
         }
@@ -242,9 +250,10 @@ export class Compiler {
 
       const [,firstField] = fieldSet[0];
       const fieldName = firstField.fieldName;
+      const args = firstField.args;
       const type = firstField.type;
 
-      let field = { responseName, fieldName, type };
+      let field = { responseName, fieldName, args, type };
 
       const isConditional = fieldSet.some(([,field]) => {
         return field.directives && field.directives.some(directive => {
@@ -376,6 +385,24 @@ function withTypenameFieldAddedWhereNeeded(schema, ast) {
 
 function sourceAt(location) {
   return location.source.body.slice(location.start, location.end);
+}
+
+function argumentsFromAST(args) {
+  return args.map(arg => {
+    const kind = arg.value.kind;
+    if (kind === 'Variable') {
+      return {
+        kind,
+        name: arg.name.value,
+        variableName: arg.value.name.value
+      };
+    } else {
+      return {
+        name: arg.name.value,
+        value: valueFromValueNode(arg.value)
+      };
+    }
+  });
 }
 
 export function printIR({ fields, inlineFragments, fragmentSpreads }) {
