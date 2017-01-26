@@ -16,7 +16,6 @@ import {
 import {
   classDeclarationForOperation,
   initializerDeclarationForProperties,
-  mappedProperty,
   structDeclarationForFragment,
   structDeclarationForSelectionSet,
   typeDeclarationForGraphQLType,
@@ -340,33 +339,6 @@ describe('Swift code generation', function() {
         public init(episode: Episode? = nil, scene: String? = nil) {
           self.episode = episode
           self.scene = scene
-        }
-      `);
-    });
-  });
-
-  describe('#mappedProperty()', function() {
-    it(`should generate variables property for a variable`, function() {
-      mappedProperty(this.generator, { propertyName: 'variables', propertyType: 'GraphQLMap?' }, [
-        { propertyName: 'episode', type: new GraphQLNonNull(schema.getType('Episode')) }
-      ]);
-
-      expect(this.generator.output).to.equal(stripIndent`
-        public var variables: GraphQLMap? {
-          return ["episode": episode]
-        }
-      `);
-    });
-
-    it(`should generate variables property for multiple variables`, function() {
-      mappedProperty(this.generator, { propertyName: 'variables', propertyType: 'GraphQLMap?' }, [
-        { propertyName: 'episode', fieldType: schema.getType('Episode') },
-        { propertyName: 'scene', fieldType: GraphQLString }
-      ]);
-
-      expect(this.generator.output).to.equal(stripIndent`
-        public var variables: GraphQLMap? {
-          return ["episode": episode, "scene": scene]
         }
       `);
     });
