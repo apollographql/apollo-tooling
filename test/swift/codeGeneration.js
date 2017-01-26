@@ -533,6 +533,32 @@ describe('Swift code generation', function() {
       `);
     });
 
+    it(`should escape reserved keywords in a struct declaration for a selection set`, function() {
+      structDeclarationForSelectionSet(this.generator, {
+        structName: 'Hero',
+        parentType: schema.getType('Character'),
+        fields: [
+          {
+            responseName: 'private',
+            fieldName: 'name',
+            type: GraphQLString
+          }
+        ]
+      });
+
+      expect(this.generator.output).to.equal(stripIndent`
+        public struct Hero: GraphQLMappable {
+          public let __typename: String
+          public let \`private\`: String?
+
+          public init(reader: GraphQLResultReader) throws {
+            __typename = try reader.value(for: Field(responseName: "__typename"))
+            \`private\` = try reader.optionalValue(for: Field(responseName: "private", fieldName: "name"))
+          }
+        }
+      `);
+    });
+
     it(`should generate a nested struct declaration for a selection set with subselections`, function() {
       structDeclarationForSelectionSet(this.generator, {
         structName: 'Hero',

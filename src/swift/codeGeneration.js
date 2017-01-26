@@ -26,7 +26,8 @@ import {
   classDeclaration,
   structDeclaration,
   propertyDeclaration,
-  propertyDeclarations
+  propertyDeclarations,
+  escapeIdentifierIfNeeded
 } from './language';
 
 import { escapedString, multilineString, literalFromValue } from './values';
@@ -108,7 +109,7 @@ export function classDeclarationForOperation(
 
     if (variables && variables.length > 0) {
       const properties = variables.map(({ name, type }) => {
-        const propertyName = camelCase(name);
+        const propertyName = escapeIdentifierIfNeeded(camelCase(name));
         const typeName = typeNameFromGraphQLType(generator.context, type);
         const isOptional = !(type instanceof GraphQLNonNull || type.ofType instanceof GraphQLNonNull);
         return { name, propertyName, type, typeName, isOptional };
@@ -376,14 +377,14 @@ export function propertiesFromFields(context, fields) {
 
 export function propertyFromField(context, field) {
   const name = field.name || field.responseName;
-  const propertyName = camelCase(name);
+  const propertyName = escapeIdentifierIfNeeded(camelCase(name));
 
   const type = field.type;
   const isOptional = field.isConditional || !(type instanceof GraphQLNonNull || type.ofType instanceof GraphQLNonNull);
   const bareType = getNamedType(type);
 
   if (isCompositeType(bareType)) {
-    const bareTypeName = pascalCase(Inflector.singularize(propertyName));
+    const bareTypeName = escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)));
     const typeName = typeNameFromGraphQLType(context, type, bareTypeName, isOptional);
     return { ...field, propertyName, typeName, bareTypeName, isOptional, isComposite: true };
   } else {
