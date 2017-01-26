@@ -798,47 +798,8 @@ describe('Swift code generation', function() {
         public struct ReviewInput: GraphQLMapConvertible {
           public var graphQLMap: GraphQLMap
 
-          public init(stars: Int) {
-            graphQLMap = ["stars": stars]
-          }
-
-          public init(stars: Int, favoriteColor: ColorInput?) {
-            graphQLMap = ["stars": stars, "favoriteColor": favoriteColor]
-          }
-
-          public init(stars: Int, commentary: String?) {
-            graphQLMap = ["stars": stars, "commentary": commentary]
-          }
-
-          public init(stars: Int, commentary: String?, favoriteColor: ColorInput?) {
+          public init(stars: Int, commentary: String? = nil, favoriteColor: ColorInput? = nil) {
             graphQLMap = ["stars": stars, "commentary": commentary, "favoriteColor": favoriteColor]
-          }
-        }
-      `);
-    });
-
-    it('should generate a valid struct declaration for a GraphQLInputObjectType with only optional fields', function() {
-      const generator = new CodeGenerator();
-
-      const inputType = new GraphQLInputObjectType({
-        name: 'OnlyOptionalFieldsInput',
-        fields: {
-          optionalString: { type: GraphQLString },
-        }
-      });
-
-      typeDeclarationForGraphQLType(generator, inputType);
-
-      expect(generator.output).to.equal(stripIndent`
-        public struct OnlyOptionalFieldsInput: GraphQLMapConvertible {
-          public var graphQLMap: GraphQLMap
-
-          public init() {
-            graphQLMap = [:]
-          }
-
-          public init(optionalString: String?) {
-            graphQLMap = ["optionalString": optionalString]
           }
         }
       `);

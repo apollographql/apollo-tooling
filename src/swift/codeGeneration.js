@@ -440,34 +440,23 @@ function structDeclarationForInputObjectType(generator, type) {
   structDeclaration(generator, { structName, description, adoptedProtocols }, () => {
     generator.printOnNewline(`public var graphQLMap: GraphQLMap`);
 
-    // Compute permutations with and without optional properties
-    let permutations = [[]];
-    for (const property of properties) {
-      permutations = [].concat(...permutations.map(prefix => {
-        if (property.isOptional) {
-          return [prefix, [...prefix, property]];
-        } else {
-          return [[...prefix, property]];
-        }
-      }));
-    }
+    generator.printNewlineIfNeeded();
+    generator.printOnNewline(`public init`);
+    generator.print('(');
+    generator.print(join(properties.map(({ propertyName, type, typeName, isOptional }) =>
+      join([
+        `${propertyName}: ${typeName}`,
+        isOptional && ' = nil'
+      ])
+    ), ', '));
+    generator.print(')');
 
-    permutations.forEach(properties => {
-      generator.printNewlineIfNeeded();
-      generator.printOnNewline(`public init`);
-      generator.print('(');
-      generator.print(join(properties.map(({ propertyName, typeName }) =>
-        `${propertyName}: ${typeName}`
-      ), ', '));
-      generator.print(')');
-
-      generator.withinBlock(() => {
-        generator.printOnNewline(wrap(
-          `graphQLMap = [`,
-          join(properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`), ', ') || ':',
-          `]`
-        ));
-      });
+    generator.withinBlock(() => {
+      generator.printOnNewline(wrap(
+        `graphQLMap = [`,
+        join(properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`), ', ') || ':',
+        `]`
+      ));
     });
   });
 }
