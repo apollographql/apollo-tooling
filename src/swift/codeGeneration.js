@@ -158,17 +158,6 @@ export function initializerDeclarationForProperties(generator, properties) {
   });
 }
 
-export function mappedProperty(generator, { propertyName, propertyType }, properties) {
-  generator.printOnNewline(`public var ${propertyName}: ${propertyType}`);
-  generator.withinBlock(() => {
-    generator.printOnNewline(wrap(
-      `return [`,
-      join(properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`), ', '),
-      `]`
-    ));
-  });
-}
-
 export function structDeclarationForFragment(
   generator,
   {
