@@ -60,12 +60,15 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
 
         export interface HeroNameQuery {
           hero: {
             name: string,
           } | null;
         }
+        /* tslint:enable */
+
       `);
     });
 
@@ -82,6 +85,7 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
 
         // The episodes in the Star Wars trilogy
         export type Episode =
@@ -99,6 +103,8 @@ describe('TypeScript code generation', function() {
             name: string,
           } | null;
         }
+        /* tslint:enable */
+
       `);
     });
 
@@ -118,6 +124,7 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
 
         // The episodes in the Star Wars trilogy
         export type Episode =
@@ -138,6 +145,8 @@ describe('TypeScript code generation', function() {
             } > | null,
           } | null;
         }
+        /* tslint:enable */
+
       `);
     });
 
@@ -161,6 +170,7 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
 
         export interface HeroAndFriendsNamesQuery {
           hero: HeroFriendsFragment & {
@@ -173,6 +183,8 @@ describe('TypeScript code generation', function() {
             name: string,
           } > | null;
         }
+        /* tslint:enable */
+
       `);
     });
 
@@ -199,6 +211,7 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
 
         export interface HeroAndDetailsQuery {
           hero: HeroDetailsFragment & {
@@ -210,6 +223,8 @@ describe('TypeScript code generation', function() {
           primaryFunction: string | null;
           height: number | null;
         }
+        /* tslint:enable */
+
       `);
     });
 
@@ -227,6 +242,7 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
 
         // The episodes in the Star Wars trilogy
         export type Episode =
@@ -261,6 +277,8 @@ describe('TypeScript code generation', function() {
             commentary: string | null,
           } | null;
         }
+        /* tslint:enable */
+
       `);
     });
 
@@ -284,6 +302,7 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
         
         // The episodes in the Star Wars trilogy
         export type Episode =
@@ -306,6 +325,8 @@ describe('TypeScript code generation', function() {
         export interface FriendFragment {
           name: string;
         }
+        /* tslint:enable */
+
       `);
     });
   });

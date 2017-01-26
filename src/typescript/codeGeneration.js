@@ -37,6 +37,8 @@ export function generateSource(context) {
   const generator = new CodeGenerator(context);
 
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
+  generator.printOnNewline('/* tslint:disable */');
+
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
   ));
@@ -47,6 +49,9 @@ export function generateSource(context) {
   Object.values(context.fragments).forEach(operation =>
     interfaceDeclarationForFragment(generator, operation)
   );
+
+  generator.printOnNewline('/* tslint:enable */');
+  generator.printOnNewline();
 
   return generator.output;
 }
