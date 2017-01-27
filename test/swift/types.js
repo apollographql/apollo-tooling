@@ -46,6 +46,14 @@ describe('Swift code generation: Types', function() {
       expect(typeNameFromGraphQLType({}, new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))))).to.equal('[String]');
     });
 
+    it('should return [[String?]?]? for GraphQLList(GraphQLList(GraphQLString))', function() {
+      expect(typeNameFromGraphQLType({}, new GraphQLList(new GraphQLList(GraphQLString)))).to.equal('[[String?]?]?');
+    });
+
+    it('should return [[String?]]? for GraphQLList(GraphQLNonNull(GraphQLList(GraphQLString)))', function() {
+      expect(typeNameFromGraphQLType({}, new GraphQLList(new GraphQLNonNull(new GraphQLList(GraphQLString))))).to.equal('[[String?]]?');
+    });
+
     it('should return Int? for GraphQLInt', function() {
       expect(typeNameFromGraphQLType({}, GraphQLInt)).to.equal('Int?');
     });
