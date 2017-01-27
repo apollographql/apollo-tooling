@@ -380,7 +380,7 @@ export function propertyFromField(context, field) {
   const propertyName = escapeIdentifierIfNeeded(camelCase(name));
 
   const type = field.type;
-  const isOptional = field.isConditional || !(type instanceof GraphQLNonNull || type.ofType instanceof GraphQLNonNull);
+  const isOptional = field.isConditional || !(type instanceof GraphQLNonNull);
   const bareType = getNamedType(type);
 
   if (isCompositeType(bareType)) {
