@@ -16,6 +16,9 @@
   },
   "author": "Martijn Walraven <martijn@martijnwalraven.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=4.0"
+  },
   "devDependencies": {
     "babel-cli": "^6.11.4",
     "babel-plugin-transform-runtime": "^6.12.0",
