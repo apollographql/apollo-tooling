@@ -11,11 +11,17 @@ import {
   TypeInfo,
   isType,
   isCompositeType,
+  GraphQLScalarType,
   GraphQLEnumType,
   GraphQLInputObjectType,
   GraphQLObjectType,
   GraphQLInterfaceType,
   GraphQLUnionType,
+  GraphQLString,
+  GraphQLInt,
+  GraphQLFloat,
+  GraphQLBoolean,
+  GraphQLID,
   GraphQLError
 } from 'graphql';
 
@@ -33,6 +39,12 @@ import {
   wrap,
   indent
 } from './utilities/printing';
+
+const builtInScalarTypes = new Set([GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID]);
+
+function isBuiltInScalarType(type) {
+  return builtInScalarTypes.has(type);
+}
 
 // Parts of this code are adapted from graphql-js
 
@@ -80,7 +92,9 @@ export class Compiler {
   }
 
   addTypeUsed(type) {
-    if (type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType) {
+    if (type instanceof GraphQLEnumType ||
+        type instanceof GraphQLInputObjectType ||
+        (type instanceof GraphQLScalarType && !isBuiltInScalarType(type))) {
       this.typesUsedSet.add(type);
     }
     if (type instanceof GraphQLInputObjectType) {
