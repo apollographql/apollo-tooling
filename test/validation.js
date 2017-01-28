@@ -42,4 +42,14 @@ describe('Validation', () => {
       'Validation of GraphQL query document failed'
     );
   });
+
+  it.only(`should not throw an error for NoUnusedFragments violation`, () => {
+    const inputPaths = [path.join(__dirname, './starwars/HeroDetailsFragment.graphql')];
+    const document = loadAndMergeQueryDocuments(inputPaths);
+
+    assert.doesNotThrow(
+      () => validateQueryDocument(schema, document),
+      'Validation of GraphQL query document failed'
+    );
+  });
 });
