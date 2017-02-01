@@ -825,7 +825,7 @@ describe('Swift code generation', function() {
           public var graphQLMap: GraphQLMap
 
           public init(stars: Int, commentary: String? = nil, favoriteColor: ColorInput? = nil) {
-            graphQLMap = ["stars": stars, "commentary": commentary, "favoriteColor": favoriteColor]
+            graphQLMap = ["stars": stars, "commentary": commentary, "favorite_color": favoriteColor]
           }
         }
       `);
