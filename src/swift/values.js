@@ -14,15 +14,3 @@ export function multilineString(context, string) {
     context.printOnNewline(`"${escapedString(line)}"` + (isLastLine ? ' +' : ''));
   });
 }
-
-export function literalFromValue(value) {
-  if (Array.isArray(value)) {
-    return wrap('[', join(value.map(literalFromValue), ', '), ']');
-  } else if (typeof value === 'object') {
-    return wrap('[', join(Object.entries(value).map(([key, value]) => {
-      return `"${key}": ${literalFromValue(value)}`;
-    }), ', '), ']');
-  } else {
-    return JSON.stringify(value);
-  }
-}

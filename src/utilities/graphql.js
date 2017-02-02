@@ -34,6 +34,8 @@ export function valueFromValueNode(valueNode) {
       object[field.name.value] = valueFromValueNode(field.value);
       return object;
     }, {});
+  } else if (kind === 'Variable') {
+    return { kind, variableName: valueNode.name.value };
   } else {
     return valueNode.value;
   }

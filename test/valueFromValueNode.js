@@ -49,17 +49,24 @@ describe('#valueFromValueNode', () => {
     expect(value).to.equal("JEDI");
   });
 
-  it(`should return an array for a ListValue`, () => {
-    const valueNode = parseValue("[ \"foo\", 1, JEDI ]");
+  it(`should return an object for a Variable`, () => {
+    const valueNode = parseValue("$something");
     const value = valueFromValueNode(valueNode);
 
-    expect(value).to.deep.equal([ "foo", 1, "JEDI" ]);
+    expect(value).to.deep.equal({ kind: 'Variable', variableName: 'something' });
+  });
+
+  it(`should return an array for a ListValue`, () => {
+    const valueNode = parseValue("[ \"foo\", 1, JEDI, $something ]");
+    const value = valueFromValueNode(valueNode);
+
+    expect(value).to.deep.equal([ "foo", 1, "JEDI", { kind: 'Variable', variableName: 'something' } ]);
   });
 
   it(`should return an object for an ObjectValue`, () => {
-    const valueNode = parseValue("{ foo: \"foo\", bar: 1, bla: JEDI }");
+    const valueNode = parseValue("{ foo: \"foo\", bar: 1, bla: JEDI, baz: $something }");
     const value = valueFromValueNode(valueNode);
 
-    expect(value).to.deep.equal({ foo: "foo", bar: 1, bla: "JEDI" });
+    expect(value).to.deep.equal({ foo: "foo", bar: 1, bla: "JEDI", baz: { kind: 'Variable', variableName: 'something' } });
   });
 });
