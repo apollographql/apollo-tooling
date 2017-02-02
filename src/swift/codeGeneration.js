@@ -354,20 +354,30 @@ export function initializationForProperty(generator, { propertyName, responseNam
   const fieldInitArgs = join([
     `responseName: "${responseName}"`,
     responseName != fieldName ? `fieldName: "${fieldName}"` : null,
-    fieldArgs && fieldArgs.length && `arguments: ${dictionaryFromArguments(fieldArgs)}`
+    fieldArgs && fieldArgs.length && `arguments: ${dictionaryLiteralForFieldArguments(fieldArgs)}`
   ], ', ');
   const args = [`for: Field(${fieldInitArgs})`];
 
   generator.printOnNewline(`${propertyName} = try reader.${methodName}(${ join(args, ', ') })`);
 }
 
-function dictionaryFromArguments(args) {
-  return wrap('[', join(args.map(arg => {
-    if (arg.kind === 'Variable') {
-      return `"${arg.name}": reader.variables["${arg.variableName}"]`;
+export function dictionaryLiteralForFieldArguments(args) {
+  function expressionFromValue(value) {
+    if (value.kind === 'Variable') {
+      return `reader.variables["${value.variableName}"]`;
+    } else if (Array.isArray(value)) {
+      return wrap('[', join(value.map(expressionFromValue), ', '), ']');
+    } else if (typeof value === 'object') {
+      return wrap('[', join(Object.entries(value).map(([key, value]) => {
+        return `"${key}": ${expressionFromValue(value)}`;
+      }), ', '), ']');
     } else {
-      return `"${arg.name}": ${literalFromValue(arg.value)}`;
+      return JSON.stringify(value);
     }
+  }
+
+  return wrap('[', join(args.map(arg => {
+    return `"${arg.name}": ${expressionFromValue(arg.value)}`;
   }), ', '), ']');
 }
 

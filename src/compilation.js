@@ -410,19 +410,7 @@ function sourceAt(location) {
 
 function argumentsFromAST(args) {
   return args.map(arg => {
-    const kind = arg.value.kind;
-    if (kind === 'Variable') {
-      return {
-        kind,
-        name: arg.name.value,
-        variableName: arg.value.name.value
-      };
-    } else {
-      return {
-        name: arg.name.value,
-        value: valueFromValueNode(arg.value)
-      };
-    }
+    return { name: arg.name.value, value: valueFromValueNode(arg.value) };
   });
 }
 

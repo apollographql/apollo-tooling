@@ -18,6 +18,7 @@ import {
   initializerDeclarationForProperties,
   structDeclarationForFragment,
   structDeclarationForSelectionSet,
+  dictionaryLiteralForFieldArguments,
   typeDeclarationForGraphQLType,
 } from '../../src/swift/codeGeneration';
 
@@ -793,6 +794,23 @@ describe('Swift code generation', function() {
           }
         }
       `);
+    });
+  });
+
+  describe('#dictionaryLiteralForFieldArguments()', function() {
+    it('should include expressions for input objects with variables', function() {
+      const { operations } = this.compileFromSource(`
+        mutation FieldArgumentsWithInputObjects($commentary: String!, $red: Int!) {
+          createReview(episode: JEDI, review: { stars: 2, commentary: $commentary, favorite_color: { red: $red, blue: 100, green: 50 } }) {
+            commentary
+          }
+        }
+      `);
+
+      const fieldArguments = operations['FieldArgumentsWithInputObjects'].fields[0].args;
+      const dictionaryLiteral = dictionaryLiteralForFieldArguments(fieldArguments);
+
+      expect(dictionaryLiteral).to.equal('["episode": "JEDI", "review": ["stars": 2, "commentary": reader.variables["commentary"], "favorite_color": ["red": reader.variables["red"], "blue": 100, "green": 50]]]');
     });
   });
 
