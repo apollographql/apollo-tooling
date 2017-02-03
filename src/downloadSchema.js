@@ -18,9 +18,9 @@ const defaultHeaders = {
   'Content-Type': 'application/json'
 };
 
-export default async function downloadSchema(url, outputPath, additionalHeaders, skipSsl) {
+export default async function downloadSchema(url, outputPath, additionalHeaders, insecure) {
   const headers = Object.assign(defaultHeaders, additionalHeaders);
-  const agent = skipSsl ? new https.Agent({ rejectUnauthorized: false }) : null;
+  const agent = insecure ? new https.Agent({ rejectUnauthorized: false }) : null;
 
   let result;
   try {

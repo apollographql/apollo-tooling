@@ -47,7 +47,7 @@ yargs
           return additionalHeaders;
         }
       },
-      skipSsl: {
+      insecure: {
         alias: 'K',
         describe: 'Allows "insecure" SSL connection to the server',
         type: 'boolean'
@@ -56,7 +56,7 @@ yargs
     async argv => {
       const outputPath = path.resolve(argv.output);
       const additionalHeaders = argv.header;
-      await downloadSchema(argv.server, outputPath, additionalHeaders, argv.skipSsl);
+      await downloadSchema(argv.server, outputPath, additionalHeaders, argv.insecure);
     }
   )
   .command(
