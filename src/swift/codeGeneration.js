@@ -238,13 +238,7 @@ export function structDeclarationForSelectionSet(
     generator.printNewlineIfNeeded();
 
     if (parentType) {
-      generator.printOnNewline('public let __typename');
-
-      if (isAbstractType(parentType)) {
-        generator.print(`: String`);
-      } else {
-        generator.print(` = "${String(parentType)}"`);
-      }
+      generator.printOnNewline('public let __typename: String');
     }
 
     propertyDeclarations(generator, properties);
@@ -262,7 +256,7 @@ export function structDeclarationForSelectionSet(
     generator.printNewlineIfNeeded();
     generator.printOnNewline('public init(reader: GraphQLResultReader) throws');
     generator.withinBlock(() => {
-      if (parentType && isAbstractType(parentType)) {
+      if (parentType) {
         generator.printOnNewline(`__typename = try reader.value(for: Field(responseName: "__typename"))`);
       }
 
