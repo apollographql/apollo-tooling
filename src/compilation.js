@@ -389,6 +389,12 @@ export class Compiler {
 const typenameField = { kind: Kind.FIELD, name: { kind: Kind.NAME, value: '__typename' } };
 
 function withTypenameFieldAddedWhereNeeded(schema, ast) {
+  function isOperationRootType(type) {
+    return type === schema.getQueryType() ||
+      type === schema.getMutationType() ||
+      type === schema.getSubscriptionType();
+  }
+
   const typeInfo = new TypeInfo(schema);
 
   return visit(ast, visitWithTypeInfo(typeInfo, {
@@ -396,7 +402,7 @@ function withTypenameFieldAddedWhereNeeded(schema, ast) {
       SelectionSet: node => {
         const parentType = typeInfo.getParentType();
 
-        if (isAbstractType(parentType)) {
+        if (!isOperationRootType(parentType)) {
           return { ...node, selections: [typenameField, ...node.selections] };
         }
       }

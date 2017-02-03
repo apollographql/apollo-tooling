@@ -222,6 +222,7 @@ describe('Swift code generation', function() {
             "  hero {" +
             "    __typename" +
             "    ... on Droid {" +
+            "      __typename" +
             "      ...HeroDetails" +
             "    }" +
             "  }" +
@@ -251,11 +252,13 @@ describe('Swift code generation', function() {
               public struct AsDroid: GraphQLConditionalFragment {
                 public static let possibleTypes = ["Droid"]
 
-                public let __typename = "Droid"
+                public let __typename: String
 
                 public let fragments: Fragments
 
                 public init(reader: GraphQLResultReader) throws {
+                  __typename = try reader.value(for: Field(responseName: "__typename"))
+
                   let heroDetails = try HeroDetails(reader: reader)
                   fragments = Fragments(heroDetails: heroDetails)
                 }
@@ -287,6 +290,7 @@ describe('Swift code generation', function() {
           public static let operationDefinition =
             "mutation CreateReview($episode: Episode) {" +
             "  createReview(episode: $episode, review: {stars: 5, commentary: \\"Wow!\\"}) {" +
+            "    __typename" +
             "    stars" +
             "    commentary" +
             "  }" +
@@ -394,17 +398,19 @@ describe('Swift code generation', function() {
         public struct DroidDetails: GraphQLNamedFragment {
           public static let fragmentDefinition =
             "fragment DroidDetails on Droid {" +
+            "  __typename" +
             "  name" +
             "  primaryFunction" +
             "}"
 
           public static let possibleTypes = ["Droid"]
 
-          public let __typename = "Droid"
+          public let __typename: String
           public let name: String
           public let primaryFunction: String?
 
           public init(reader: GraphQLResultReader) throws {
+            __typename = try reader.value(for: Field(responseName: "__typename"))
             name = try reader.value(for: Field(responseName: "name"))
             primaryFunction = try reader.optionalValue(for: Field(responseName: "primaryFunction"))
           }
@@ -732,11 +738,12 @@ describe('Swift code generation', function() {
           public struct AsDroid: GraphQLConditionalFragment {
             public static let possibleTypes = ["Droid"]
 
-            public let __typename = "Droid"
+            public let __typename: String
             public let name: String
             public let primaryFunction: String?
 
             public init(reader: GraphQLResultReader) throws {
+              __typename = try reader.value(for: Field(responseName: "__typename"))
               name = try reader.value(for: Field(responseName: "name"))
               primaryFunction = try reader.optionalValue(for: Field(responseName: "primaryFunction"))
             }
@@ -779,11 +786,13 @@ describe('Swift code generation', function() {
           public struct AsDroid: GraphQLConditionalFragment {
             public static let possibleTypes = ["Droid"]
 
-            public let __typename = "Droid"
+            public let __typename: String
 
             public let fragments: Fragments
 
             public init(reader: GraphQLResultReader) throws {
+              __typename = try reader.value(for: Field(responseName: "__typename"))
+
               let heroDetails = try HeroDetails(reader: reader)
               fragments = Fragments(heroDetails: heroDetails)
             }
