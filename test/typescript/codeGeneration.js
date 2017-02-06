@@ -68,8 +68,7 @@ describe('TypeScript code generation', function() {
           } | null;
         }
         /* tslint:enable */
-
-      `);
+      ` + `\n`);
     });
 
     it(`should generate simple query operations including input variables`, function() {
@@ -104,8 +103,7 @@ describe('TypeScript code generation', function() {
           } | null;
         }
         /* tslint:enable */
-
-      `);
+      ` + `\n`);
     });
 
     it(`should generate simple nested query operations including input variables`, function() {
@@ -146,8 +144,7 @@ describe('TypeScript code generation', function() {
           } | null;
         }
         /* tslint:enable */
-
-      `);
+      ` + `\n`);
     });
 
     it(`should generate fragmented query operations`, function() {
@@ -184,8 +181,7 @@ describe('TypeScript code generation', function() {
           } > | null;
         }
         /* tslint:enable */
-
-      `);
+      ` + `\n`);
     });
 
     it(`should generate query operations with inline fragments`, function() {
@@ -224,8 +220,7 @@ describe('TypeScript code generation', function() {
           height: number | null;
         }
         /* tslint:enable */
-
-      `);
+      ` + `\n`);
     });
 
     it(`should generate mutation operations with complex input types`, function() {
@@ -278,8 +273,7 @@ describe('TypeScript code generation', function() {
           } | null;
         }
         /* tslint:enable */
-
-      `);
+      ` + `\n`);
     });
 
     it(`should generate correct list with custom fragment`, function() {
@@ -326,8 +320,7 @@ describe('TypeScript code generation', function() {
           name: string;
         }
         /* tslint:enable */
-
-      `);
+      ` + `\n`);
     });
   });
 });
