@@ -51,7 +51,7 @@ export function generateSource(context) {
   );
 
   generator.printOnNewline('/* tslint:enable */');
-  generator.printOnNewline();
+  generator.printNewline();
 
   return generator.output;
 }
