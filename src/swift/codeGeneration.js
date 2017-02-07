@@ -238,13 +238,7 @@ export function structDeclarationForSelectionSet(
     generator.printNewlineIfNeeded();
 
     if (parentType) {
-      generator.printOnNewline('public let __typename');
-
-      if (isAbstractType(parentType)) {
-        generator.print(`: String`);
-      } else {
-        generator.print(` = "${String(parentType)}"`);
-      }
+      generator.printOnNewline('public let __typename: String');
     }
 
     propertyDeclarations(generator, properties);
@@ -262,7 +256,7 @@ export function structDeclarationForSelectionSet(
     generator.printNewlineIfNeeded();
     generator.printOnNewline('public init(reader: GraphQLResultReader) throws');
     generator.withinBlock(() => {
-      if (parentType && isAbstractType(parentType)) {
+      if (parentType) {
         generator.printOnNewline(`__typename = try reader.value(for: Field(responseName: "__typename"))`);
       }
 
@@ -436,7 +430,7 @@ function enumerationDeclaration(generator, type) {
   generator.printOnNewline(`public enum ${name}: String`);
   generator.withinBlock(() => {
     values.forEach(value =>
-      generator.printOnNewline(`case ${camelCase(value.name)} = "${value.value}"${wrap(' /// ', value.description)}`)
+      generator.printOnNewline(`case ${escapeIdentifierIfNeeded(camelCase(value.name))} = "${value.value}"${wrap(' /// ', value.description)}`)
     );
   });
   generator.printNewline();
