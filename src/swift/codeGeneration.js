@@ -430,7 +430,7 @@ function enumerationDeclaration(generator, type) {
   generator.printOnNewline(`public enum ${name}: String`);
   generator.withinBlock(() => {
     values.forEach(value =>
-      generator.printOnNewline(`case ${camelCase(value.name)} = "${value.value}"${wrap(' /// ', value.description)}`)
+      generator.printOnNewline(`case ${escapeIdentifierIfNeeded(camelCase(value.name))} = "${value.value}"${wrap(' /// ', value.description)}`)
     );
   });
   generator.printNewline();
