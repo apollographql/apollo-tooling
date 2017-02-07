@@ -90,7 +90,7 @@ yargs
     },
     argv => {
       const inputPaths = argv.input.map(input => path.resolve(input));
-      const options = { passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] != '', customScalarsPrefix: argv["custom-scalars-prefix"] || '' };
+      const options = { passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '', customScalarsPrefix: argv["custom-scalars-prefix"] || '' };
       generate(inputPaths, argv.schema, argv.output, argv.target, options);
     },
   )
