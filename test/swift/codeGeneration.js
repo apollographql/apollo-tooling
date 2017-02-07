@@ -10,7 +10,8 @@ import {
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLInputObjectType
+  GraphQLInputObjectType,
+  GraphQLEnumType
 } from 'graphql';
 
 import {
@@ -838,6 +839,26 @@ describe('Swift code generation', function() {
         }
 
         extension Episode: JSONDecodable, JSONEncodable {}
+      `);
+    });
+
+    it('should escape identifiers in cases of enum declaration for a GraphQLEnumType', function() {
+      const generator = new CodeGenerator();
+
+      const albumPrivaciesEnum = new GraphQLEnumType({
+        name: 'AlbumPrivacies',
+        values: { PUBLIC: { value: "PUBLIC" }, PRIVATE: { value: "PRIVATE" } }
+      });
+
+      typeDeclarationForGraphQLType(generator, albumPrivaciesEnum);
+
+      expect(generator.output).to.equal(stripIndent`
+        public enum AlbumPrivacies: String {
+          case \`public\` = "PUBLIC"
+          case \`private\` = "PRIVATE"
+        }
+
+        extension AlbumPrivacies: JSONDecodable, JSONEncodable {}
       `);
     });
 
