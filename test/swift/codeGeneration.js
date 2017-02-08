@@ -10,15 +10,16 @@ import {
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLInputObjectType
+  GraphQLInputObjectType,
+  GraphQLEnumType
 } from 'graphql';
 
 import {
   classDeclarationForOperation,
   initializerDeclarationForProperties,
-  mappedProperty,
   structDeclarationForFragment,
   structDeclarationForSelectionSet,
+  dictionaryLiteralForFieldArguments,
   typeDeclarationForGraphQLType,
 } from '../../src/swift/codeGeneration';
 
@@ -222,6 +223,7 @@ describe('Swift code generation', function() {
             "  hero {" +
             "    __typename" +
             "    ... on Droid {" +
+            "      __typename" +
             "      ...HeroDetails" +
             "    }" +
             "  }" +
@@ -251,11 +253,13 @@ describe('Swift code generation', function() {
               public struct AsDroid: GraphQLConditionalFragment {
                 public static let possibleTypes = ["Droid"]
 
-                public let __typename = "Droid"
+                public let __typename: String
 
                 public let fragments: Fragments
 
                 public init(reader: GraphQLResultReader) throws {
+                  __typename = try reader.value(for: Field(responseName: "__typename"))
+
                   let heroDetails = try HeroDetails(reader: reader)
                   fragments = Fragments(heroDetails: heroDetails)
                 }
@@ -287,6 +291,7 @@ describe('Swift code generation', function() {
           public static let operationDefinition =
             "mutation CreateReview($episode: Episode) {" +
             "  createReview(episode: $episode, review: {stars: 5, commentary: \\"Wow!\\"}) {" +
+            "    __typename" +
             "    stars" +
             "    commentary" +
             "  }" +
@@ -345,33 +350,6 @@ describe('Swift code generation', function() {
     });
   });
 
-  describe('#mappedProperty()', function() {
-    it(`should generate variables property for a variable`, function() {
-      mappedProperty(this.generator, { propertyName: 'variables', propertyType: 'GraphQLMap?' }, [
-        { propertyName: 'episode', type: new GraphQLNonNull(schema.getType('Episode')) }
-      ]);
-
-      expect(this.generator.output).to.equal(stripIndent`
-        public var variables: GraphQLMap? {
-          return ["episode": episode]
-        }
-      `);
-    });
-
-    it(`should generate variables property for multiple variables`, function() {
-      mappedProperty(this.generator, { propertyName: 'variables', propertyType: 'GraphQLMap?' }, [
-        { propertyName: 'episode', fieldType: schema.getType('Episode') },
-        { propertyName: 'scene', fieldType: GraphQLString }
-      ]);
-
-      expect(this.generator.output).to.equal(stripIndent`
-        public var variables: GraphQLMap? {
-          return ["episode": episode, "scene": scene]
-        }
-      `);
-    });
-  });
-
   describe('#structDeclarationForFragment()', function() {
     it(`should generate a struct declaration for a fragment with an abstract type condition`, function() {
       const { fragments } = this.compileFromSource(`
@@ -421,17 +399,19 @@ describe('Swift code generation', function() {
         public struct DroidDetails: GraphQLNamedFragment {
           public static let fragmentDefinition =
             "fragment DroidDetails on Droid {" +
+            "  __typename" +
             "  name" +
             "  primaryFunction" +
             "}"
 
           public static let possibleTypes = ["Droid"]
 
-          public let __typename = "Droid"
+          public let __typename: String
           public let name: String
           public let primaryFunction: String?
 
           public init(reader: GraphQLResultReader) throws {
+            __typename = try reader.value(for: Field(responseName: "__typename"))
             name = try reader.value(for: Field(responseName: "name"))
             primaryFunction = try reader.optionalValue(for: Field(responseName: "primaryFunction"))
           }
@@ -556,6 +536,32 @@ describe('Swift code generation', function() {
           public init(reader: GraphQLResultReader) throws {
             __typename = try reader.value(for: Field(responseName: "__typename"))
             name = try reader.optionalValue(for: Field(responseName: "name"))
+          }
+        }
+      `);
+    });
+
+    it(`should escape reserved keywords in a struct declaration for a selection set`, function() {
+      structDeclarationForSelectionSet(this.generator, {
+        structName: 'Hero',
+        parentType: schema.getType('Character'),
+        fields: [
+          {
+            responseName: 'private',
+            fieldName: 'name',
+            type: GraphQLString
+          }
+        ]
+      });
+
+      expect(this.generator.output).to.equal(stripIndent`
+        public struct Hero: GraphQLMappable {
+          public let __typename: String
+          public let \`private\`: String?
+
+          public init(reader: GraphQLResultReader) throws {
+            __typename = try reader.value(for: Field(responseName: "__typename"))
+            \`private\` = try reader.optionalValue(for: Field(responseName: "private", fieldName: "name"))
           }
         }
       `);
@@ -733,11 +739,12 @@ describe('Swift code generation', function() {
           public struct AsDroid: GraphQLConditionalFragment {
             public static let possibleTypes = ["Droid"]
 
-            public let __typename = "Droid"
+            public let __typename: String
             public let name: String
             public let primaryFunction: String?
 
             public init(reader: GraphQLResultReader) throws {
+              __typename = try reader.value(for: Field(responseName: "__typename"))
               name = try reader.value(for: Field(responseName: "name"))
               primaryFunction = try reader.optionalValue(for: Field(responseName: "primaryFunction"))
             }
@@ -780,11 +787,13 @@ describe('Swift code generation', function() {
           public struct AsDroid: GraphQLConditionalFragment {
             public static let possibleTypes = ["Droid"]
 
-            public let __typename = "Droid"
+            public let __typename: String
 
             public let fragments: Fragments
 
             public init(reader: GraphQLResultReader) throws {
+              __typename = try reader.value(for: Field(responseName: "__typename"))
+
               let heroDetails = try HeroDetails(reader: reader)
               fragments = Fragments(heroDetails: heroDetails)
             }
@@ -795,6 +804,23 @@ describe('Swift code generation', function() {
           }
         }
       `);
+    });
+  });
+
+  describe('#dictionaryLiteralForFieldArguments()', function() {
+    it('should include expressions for input objects with variables', function() {
+      const { operations } = this.compileFromSource(`
+        mutation FieldArgumentsWithInputObjects($commentary: String!, $red: Int!) {
+          createReview(episode: JEDI, review: { stars: 2, commentary: $commentary, favorite_color: { red: $red, blue: 100, green: 50 } }) {
+            commentary
+          }
+        }
+      `);
+
+      const fieldArguments = operations['FieldArgumentsWithInputObjects'].fields[0].args;
+      const dictionaryLiteral = dictionaryLiteralForFieldArguments(fieldArguments);
+
+      expect(dictionaryLiteral).to.equal('["episode": "JEDI", "review": ["stars": 2, "commentary": reader.variables["commentary"], "favorite_color": ["red": reader.variables["red"], "blue": 100, "green": 50]]]');
     });
   });
 
@@ -816,6 +842,26 @@ describe('Swift code generation', function() {
       `);
     });
 
+    it('should escape identifiers in cases of enum declaration for a GraphQLEnumType', function() {
+      const generator = new CodeGenerator();
+
+      const albumPrivaciesEnum = new GraphQLEnumType({
+        name: 'AlbumPrivacies',
+        values: { PUBLIC: { value: "PUBLIC" }, PRIVATE: { value: "PRIVATE" } }
+      });
+
+      typeDeclarationForGraphQLType(generator, albumPrivaciesEnum);
+
+      expect(generator.output).to.equal(stripIndent`
+        public enum AlbumPrivacies: String {
+          case \`public\` = "PUBLIC"
+          case \`private\` = "PRIVATE"
+        }
+
+        extension AlbumPrivacies: JSONDecodable, JSONEncodable {}
+      `);
+    });
+
     it('should generate a struct declaration for a GraphQLInputObjectType', function() {
       const generator = new CodeGenerator();
 
@@ -826,47 +872,8 @@ describe('Swift code generation', function() {
         public struct ReviewInput: GraphQLMapConvertible {
           public var graphQLMap: GraphQLMap
 
-          public init(stars: Int) {
-            graphQLMap = ["stars": stars]
-          }
-
-          public init(stars: Int, favoriteColor: ColorInput?) {
-            graphQLMap = ["stars": stars, "favoriteColor": favoriteColor]
-          }
-
-          public init(stars: Int, commentary: String?) {
-            graphQLMap = ["stars": stars, "commentary": commentary]
-          }
-
-          public init(stars: Int, commentary: String?, favoriteColor: ColorInput?) {
-            graphQLMap = ["stars": stars, "commentary": commentary, "favoriteColor": favoriteColor]
-          }
-        }
-      `);
-    });
-
-    it('should generate a valid struct declaration for a GraphQLInputObjectType with only optional fields', function() {
-      const generator = new CodeGenerator();
-
-      const inputType = new GraphQLInputObjectType({
-        name: 'OnlyOptionalFieldsInput',
-        fields: {
-          optionalString: { type: GraphQLString },
-        }
-      });
-
-      typeDeclarationForGraphQLType(generator, inputType);
-
-      expect(generator.output).to.equal(stripIndent`
-        public struct OnlyOptionalFieldsInput: GraphQLMapConvertible {
-          public var graphQLMap: GraphQLMap
-
-          public init() {
-            graphQLMap = [:]
-          }
-
-          public init(optionalString: String?) {
-            graphQLMap = ["optionalString": optionalString]
+          public init(stars: Int, commentary: String? = nil, favoriteColor: ColorInput? = nil) {
+            graphQLMap = ["stars": stars, "commentary": commentary, "favorite_color": favoriteColor]
           }
         }
       `);

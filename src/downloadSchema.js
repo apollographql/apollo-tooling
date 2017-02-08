@@ -3,6 +3,7 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
+import https from 'https';
 
 import {
   buildClientSchema,
@@ -17,8 +18,9 @@ const defaultHeaders = {
   'Content-Type': 'application/json'
 };
 
-export default async function downloadSchema(url, outputPath, additionalHeaders) {
+export default async function downloadSchema(url, outputPath, additionalHeaders, insecure) {
   const headers = Object.assign(defaultHeaders, additionalHeaders);
+  const agent = insecure ? new https.Agent({ rejectUnauthorized: false }) : null;
 
   let result;
   try {
@@ -26,6 +28,7 @@ export default async function downloadSchema(url, outputPath, additionalHeaders)
       method: 'POST',
       headers: headers,
       body: JSON.stringify({ 'query': introspectionQuery }),
+      agent,
     });
 
     result = await response.json();

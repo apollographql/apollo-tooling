@@ -26,10 +26,11 @@ import {
   classDeclaration,
   structDeclaration,
   propertyDeclaration,
-  propertyDeclarations
+  propertyDeclarations,
+  escapeIdentifierIfNeeded
 } from './language';
 
-import { escapedString, multilineString } from './strings';
+import { escapedString, multilineString, literalFromValue } from './values';
 
 import {
   typeNameFromGraphQLType,
@@ -108,7 +109,7 @@ export function classDeclarationForOperation(
 
     if (variables && variables.length > 0) {
       const properties = variables.map(({ name, type }) => {
-        const propertyName = camelCase(name);
+        const propertyName = escapeIdentifierIfNeeded(camelCase(name));
         const typeName = typeNameFromGraphQLType(generator.context, type);
         const isOptional = !(type instanceof GraphQLNonNull || type.ofType instanceof GraphQLNonNull);
         return { name, propertyName, type, typeName, isOptional };
@@ -155,17 +156,6 @@ export function initializerDeclarationForProperties(generator, properties) {
     properties.forEach(({ propertyName }) => {
       generator.printOnNewline(`self.${propertyName} = ${propertyName}`);
     });
-  });
-}
-
-export function mappedProperty(generator, { propertyName, propertyType }, properties) {
-  generator.printOnNewline(`public var ${propertyName}: ${propertyType}`);
-  generator.withinBlock(() => {
-    generator.printOnNewline(wrap(
-      `return [`,
-      join(properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`), ', '),
-      `]`
-    ));
   });
 }
 
@@ -248,13 +238,7 @@ export function structDeclarationForSelectionSet(
     generator.printNewlineIfNeeded();
 
     if (parentType) {
-      generator.printOnNewline('public let __typename');
-
-      if (isAbstractType(parentType)) {
-        generator.print(`: String`);
-      } else {
-        generator.print(` = "${String(parentType)}"`);
-      }
+      generator.printOnNewline('public let __typename: String');
     }
 
     propertyDeclarations(generator, properties);
@@ -272,7 +256,7 @@ export function structDeclarationForSelectionSet(
     generator.printNewlineIfNeeded();
     generator.printOnNewline('public init(reader: GraphQLResultReader) throws');
     generator.withinBlock(() => {
-      if (parentType && isAbstractType(parentType)) {
+      if (parentType) {
         generator.printOnNewline(`__typename = try reader.value(for: Field(responseName: "__typename"))`);
       }
 
@@ -356,15 +340,39 @@ export function structDeclarationForSelectionSet(
   });
 }
 
-export function initializationForProperty(generator, { propertyName, responseName, fieldName, type, isOptional }) {
+export function initializationForProperty(generator, { propertyName, responseName, fieldName, args: fieldArgs, type, isOptional }) {
   const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList;
 
   const methodName = isOptional ? (isList ? 'optionalList' : 'optionalValue') : (isList ? 'list' : 'value');
 
-  const fieldArgs = join([`responseName: "${responseName}"`, responseName != fieldName ? `fieldName: "${fieldName}"` : null], ', ');
-  const args = [`for: Field(${fieldArgs})`];
+  const fieldInitArgs = join([
+    `responseName: "${responseName}"`,
+    responseName != fieldName ? `fieldName: "${fieldName}"` : null,
+    fieldArgs && fieldArgs.length && `arguments: ${dictionaryLiteralForFieldArguments(fieldArgs)}`
+  ], ', ');
+  const args = [`for: Field(${fieldInitArgs})`];
 
   generator.printOnNewline(`${propertyName} = try reader.${methodName}(${ join(args, ', ') })`);
+}
+
+export function dictionaryLiteralForFieldArguments(args) {
+  function expressionFromValue(value) {
+    if (value.kind === 'Variable') {
+      return `reader.variables["${value.variableName}"]`;
+    } else if (Array.isArray(value)) {
+      return wrap('[', join(value.map(expressionFromValue), ', '), ']');
+    } else if (typeof value === 'object') {
+      return wrap('[', join(Object.entries(value).map(([key, value]) => {
+        return `"${key}": ${expressionFromValue(value)}`;
+      }), ', '), ']');
+    } else {
+      return JSON.stringify(value);
+    }
+  }
+
+  return wrap('[', join(args.map(arg => {
+    return `"${arg.name}": ${expressionFromValue(arg.value)}`;
+  }), ', '), ']');
 }
 
 export function propertiesFromFields(context, fields) {
@@ -373,14 +381,14 @@ export function propertiesFromFields(context, fields) {
 
 export function propertyFromField(context, field) {
   const name = field.name || field.responseName;
-  const propertyName = camelCase(name);
+  const propertyName = escapeIdentifierIfNeeded(camelCase(name));
 
   const type = field.type;
-  const isOptional = field.isConditional || !(type instanceof GraphQLNonNull || type.ofType instanceof GraphQLNonNull);
+  const isOptional = field.isConditional || !(type instanceof GraphQLNonNull);
   const bareType = getNamedType(type);
 
   if (isCompositeType(bareType)) {
-    const bareTypeName = pascalCase(Inflector.singularize(propertyName));
+    const bareTypeName = escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)));
     const typeName = typeNameFromGraphQLType(context, type, bareTypeName, isOptional);
     return { ...field, propertyName, typeName, bareTypeName, isOptional, isComposite: true };
   } else {
@@ -422,7 +430,7 @@ function enumerationDeclaration(generator, type) {
   generator.printOnNewline(`public enum ${name}: String`);
   generator.withinBlock(() => {
     values.forEach(value =>
-      generator.printOnNewline(`case ${camelCase(value.name)} = "${value.value}"${wrap(' /// ', value.description)}`)
+      generator.printOnNewline(`case ${escapeIdentifierIfNeeded(camelCase(value.name))} = "${value.value}"${wrap(' /// ', value.description)}`)
     );
   });
   generator.printNewline();
@@ -437,34 +445,23 @@ function structDeclarationForInputObjectType(generator, type) {
   structDeclaration(generator, { structName, description, adoptedProtocols }, () => {
     generator.printOnNewline(`public var graphQLMap: GraphQLMap`);
 
-    // Compute permutations with and without optional properties
-    let permutations = [[]];
-    for (const property of properties) {
-      permutations = [].concat(...permutations.map(prefix => {
-        if (property.isOptional) {
-          return [prefix, [...prefix, property]];
-        } else {
-          return [[...prefix, property]];
-        }
-      }));
-    }
+    generator.printNewlineIfNeeded();
+    generator.printOnNewline(`public init`);
+    generator.print('(');
+    generator.print(join(properties.map(({ propertyName, type, typeName, isOptional }) =>
+      join([
+        `${propertyName}: ${typeName}`,
+        isOptional && ' = nil'
+      ])
+    ), ', '));
+    generator.print(')');
 
-    permutations.forEach(properties => {
-      generator.printNewlineIfNeeded();
-      generator.printOnNewline(`public init`);
-      generator.print('(');
-      generator.print(join(properties.map(({ propertyName, typeName }) =>
-        `${propertyName}: ${typeName}`
-      ), ', '));
-      generator.print(')');
-
-      generator.withinBlock(() => {
-        generator.printOnNewline(wrap(
-          `graphQLMap = [`,
-          join(properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`), ', ') || ':',
-          `]`
-        ));
-      });
+    generator.withinBlock(() => {
+      generator.printOnNewline(wrap(
+        `graphQLMap = [`,
+        join(properties.map(({ name, propertyName }) => `"${name}": ${propertyName}`), ', ') || ':',
+        `]`
+      ));
     });
   });
 }

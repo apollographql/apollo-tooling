@@ -60,13 +60,15 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
 
         export interface HeroNameQuery {
           hero: {
             name: string,
           } | null;
         }
-      `);
+        /* tslint:enable */
+      ` + `\n`);
     });
 
     it(`should generate simple query operations including input variables`, function() {
@@ -82,6 +84,7 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
 
         // The episodes in the Star Wars trilogy
         export type Episode =
@@ -99,7 +102,8 @@ describe('TypeScript code generation', function() {
             name: string,
           } | null;
         }
-      `);
+        /* tslint:enable */
+      ` + `\n`);
     });
 
     it(`should generate simple nested query operations including input variables`, function() {
@@ -118,6 +122,7 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
 
         // The episodes in the Star Wars trilogy
         export type Episode =
@@ -138,7 +143,8 @@ describe('TypeScript code generation', function() {
             } > | null,
           } | null;
         }
-      `);
+        /* tslint:enable */
+      ` + `\n`);
     });
 
     it(`should generate fragmented query operations`, function() {
@@ -161,6 +167,7 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
 
         export interface HeroAndFriendsNamesQuery {
           hero: HeroFriendsFragment & {
@@ -173,7 +180,8 @@ describe('TypeScript code generation', function() {
             name: string,
           } > | null;
         }
-      `);
+        /* tslint:enable */
+      ` + `\n`);
     });
 
     it(`should generate query operations with inline fragments`, function() {
@@ -199,6 +207,7 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
 
         export interface HeroAndDetailsQuery {
           hero: HeroDetailsFragment & {
@@ -210,7 +219,8 @@ describe('TypeScript code generation', function() {
           primaryFunction: string | null;
           height: number | null;
         }
-      `);
+        /* tslint:enable */
+      ` + `\n`);
     });
 
     it(`should generate mutation operations with complex input types`, function() {
@@ -227,6 +237,7 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
+        /* tslint:disable */
 
         // The episodes in the Star Wars trilogy
         export type Episode =
@@ -241,7 +252,7 @@ describe('TypeScript code generation', function() {
           // Comment about the movie, optional
           commentary: string | null;
           // Favorite color, optional
-          favoriteColor: ColorInput | null;
+          favorite_color: ColorInput | null;
         }
 
         export interface ColorInput {
@@ -261,7 +272,8 @@ describe('TypeScript code generation', function() {
             commentary: string | null,
           } | null;
         }
-      `);
+        /* tslint:enable */
+      ` + `\n`);
     });
 
     it(`should generate correct list with custom fragment`, function() {
@@ -269,7 +281,7 @@ describe('TypeScript code generation', function() {
         fragment Friend on Character {
           name
         }
-        
+
         query HeroAndFriendsNames($episode: Episode) {
           hero(episode: $episode) {
             name
@@ -284,29 +296,31 @@ describe('TypeScript code generation', function() {
 
       expect(source).to.include(stripIndent`
         //  This file was automatically generated and should not be edited.
-        
+        /* tslint:disable */
+
         // The episodes in the Star Wars trilogy
         export type Episode =
           "NEWHOPE" | // Star Wars Episode IV: A New Hope, released in 1977.
           "EMPIRE" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
           "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
-        
-        
+
+
         export interface HeroAndFriendsNamesQueryVariables {
           episode: Episode | null;
         }
-        
+
         export interface HeroAndFriendsNamesQuery {
           hero: {
             name: string,
             friends: Array<FriendFragment>,
           } | null;
         }
-        
+
         export interface FriendFragment {
           name: string;
         }
-      `);
+        /* tslint:enable */
+      ` + `\n`);
     });
   });
 });

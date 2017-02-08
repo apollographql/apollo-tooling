@@ -1,7 +1,7 @@
 {
   "name": "apollo-codegen",
-  "version": "0.9.6",
-  "description": "Generate client code based on a GraphQL schema and query documents",
+  "version": "0.10.6",
+  "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
   "scripts": {
@@ -12,15 +12,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "apollostack/apollo-codegen"
+    "url": "apollographql/apollo-codegen"
   },
   "author": "Martijn Walraven <martijn@martijnwalraven.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=4.0"
+  },
   "devDependencies": {
     "babel-cli": "^6.11.4",
     "babel-plugin-transform-runtime": "^6.12.0",
-    "babel-preset-es2015": "^6.13.2",
-    "babel-preset-stage-0": "^6.5.0",
+    "babel-preset-full-node4": "^1.0.0",
     "babel-register": "^6.16.3",
     "chai": "^3.5.0",
     "chai-subset": "^1.3.0",
@@ -29,10 +31,10 @@
     "mocha": "^3.1.2"
   },
   "dependencies": {
-    "babel-runtime": "^6.11.6",
+    "babel-runtime": "^6.20.0",
     "source-map-support": "^0.4.2",
     "change-case": "^3.0.0",
-    "graphql": "^0.8.1",
+    "graphql": "^0.9.1",
     "inflected": "^1.1.7",
     "mkdirp": "^0.5.1",
     "node-fetch": "^1.5.3",

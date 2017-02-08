@@ -37,6 +37,8 @@ export function generateSource(context) {
   const generator = new CodeGenerator(context);
 
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
+  generator.printOnNewline('/* tslint:disable */');
+
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
   ));
@@ -47,6 +49,9 @@ export function generateSource(context) {
   Object.values(context.fragments).forEach(operation =>
     interfaceDeclarationForFragment(generator, operation)
   );
+
+  generator.printOnNewline('/* tslint:enable */');
+  generator.printNewline();
 
   return generator.output;
 }
@@ -194,6 +199,8 @@ export function propertyFromField(context, field, forceNullable) {
     let isArray = false;
     if (fieldType instanceof GraphQLList) {
       isArray = true;
+    } else if (fieldType instanceof GraphQLNonNull && fieldType.ofType instanceof GraphQLList) {
+      isArray = true
     }
     let isNullable = true;
     if (fieldType instanceof GraphQLNonNull && !forceNullable) {

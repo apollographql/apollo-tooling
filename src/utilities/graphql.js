@@ -11,6 +11,36 @@ import {
   GraphQLEnumType
 } from 'graphql';
 
+export function sourceAt(location) {
+  return location.source.body.slice(location.start, location.end);
+}
+
+export function filePathForNode(node) {
+  const name = node.loc.source && node.loc.source.name;
+  return (name === "GraphQL") ? undefined : name;
+}
+
+export function valueFromValueNode(valueNode) {
+  const kind = valueNode.kind;
+
+  if (kind === 'IntValue' || kind === 'FloatValue') {
+    return Number(valueNode.value);
+  } else if (kind === 'NullValue') {
+    return null;
+  } else if (kind === 'ListValue') {
+    return valueNode.values.map(valueFromValueNode);
+  } else if (kind === 'ObjectValue') {
+    return valueNode.fields.reduce((object, field) => {
+      object[field.name.value] = valueFromValueNode(field.value);
+      return object;
+    }, {});
+  } else if (kind === 'Variable') {
+    return { kind, variableName: valueNode.name.value };
+  } else {
+    return valueNode.value;
+  }
+}
+
 export function isTypeProperSuperTypeOf(schema, maybeSuperType, subType) {
   return isEqualType(maybeSuperType, subType) || (isAbstractType(maybeSuperType) && schema.isPossibleType(maybeSuperType, subType));
 }

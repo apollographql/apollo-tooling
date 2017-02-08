@@ -11,18 +11,26 @@ import {
   TypeInfo,
   isType,
   isCompositeType,
+  GraphQLScalarType,
   GraphQLEnumType,
   GraphQLInputObjectType,
   GraphQLObjectType,
   GraphQLInterfaceType,
   GraphQLUnionType,
+  GraphQLString,
+  GraphQLInt,
+  GraphQLFloat,
+  GraphQLBoolean,
+  GraphQLID,
   GraphQLError
 } from 'graphql';
 
 import {
   isTypeProperSuperTypeOf,
   getOperationRootType,
-  getFieldDef
+  getFieldDef,
+  valueFromValueNode,
+  filePathForNode
 } from './utilities/graphql';
 
 import {
@@ -31,6 +39,12 @@ import {
   wrap,
   indent
 } from './utilities/printing';
+
+const builtInScalarTypes = new Set([GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID]);
+
+function isBuiltInScalarType(type) {
+  return builtInScalarTypes.has(type);
+}
 
 // Parts of this code are adapted from graphql-js
 
@@ -78,7 +92,9 @@ export class Compiler {
   }
 
   addTypeUsed(type) {
-    if (type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType) {
+    if (type instanceof GraphQLEnumType ||
+        type instanceof GraphQLInputObjectType ||
+        (type instanceof GraphQLScalarType && !isBuiltInScalarType(type))) {
       this.typesUsedSet.add(type);
     }
     if (type instanceof GraphQLInputObjectType) {
@@ -101,6 +117,7 @@ export class Compiler {
   }
 
   compileOperation(operationDefinition) {
+    const filePath = filePathForNode(operationDefinition);
     const operationName = operationDefinition.name.value;
     const operationType = operationDefinition.operation;
 
@@ -122,10 +139,11 @@ export class Compiler {
     const { fields } = this.resolveFields(rootType, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet);
     const fragmentsReferenced = Object.keys(fragmentsReferencedSet);
 
-    return { operationName, operationType, variables, source, fields, fragmentsReferenced };
+    return { filePath, operationName, operationType, variables, source, fields, fragmentsReferenced };
   }
 
   compileFragment(fragmentDefinition) {
+    const filePath = filePathForNode(fragmentDefinition);
     const fragmentName = fragmentDefinition.name.value;
 
     const source = print(withTypenameFieldAddedWhereNeeded(this.schema, fragmentDefinition));
@@ -139,7 +157,7 @@ export class Compiler {
     const { fields, fragmentSpreads, inlineFragments } = this.resolveFields(typeCondition, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet);
     const fragmentsReferenced = Object.keys(fragmentsReferencedSet);
 
-    return { fragmentName, source, typeCondition, fields, fragmentSpreads, inlineFragments, fragmentsReferenced };
+    return { filePath, fragmentName, source, typeCondition, fields, fragmentSpreads, inlineFragments, fragmentsReferenced };
   }
 
   collectFields(parentType, selectionSet, groupedFieldSet = Object.create(null), groupedVisitedFragmentSet = new Map()) {
@@ -163,7 +181,14 @@ export class Compiler {
               groupedFieldSet[responseName] = [];
             }
 
-            groupedFieldSet[responseName].push([parentType, { responseName, fieldName, type: field.type, directives: selection.directives, selectionSet: selection.selectionSet }]);
+            groupedFieldSet[responseName].push([parentType, {
+              responseName,
+              fieldName,
+              args: argumentsFromAST(selection.arguments),
+              type: field.type,
+              directives: selection.directives,
+              selectionSet: selection.selectionSet
+            }]);
           }
           break;
         }
@@ -242,9 +267,14 @@ export class Compiler {
 
       const [,firstField] = fieldSet[0];
       const fieldName = firstField.fieldName;
+      const args = firstField.args;
       const type = firstField.type;
 
       let field = { responseName, fieldName, type };
+
+      if (args && args.length > 0) {
+        field.args = args;
+      }
 
       const isConditional = fieldSet.some(([,field]) => {
         return field.directives && field.directives.some(directive => {
@@ -359,6 +389,12 @@ export class Compiler {
 const typenameField = { kind: Kind.FIELD, name: { kind: Kind.NAME, value: '__typename' } };
 
 function withTypenameFieldAddedWhereNeeded(schema, ast) {
+  function isOperationRootType(type) {
+    return type === schema.getQueryType() ||
+      type === schema.getMutationType() ||
+      type === schema.getSubscriptionType();
+  }
+
   const typeInfo = new TypeInfo(schema);
 
   return visit(ast, visitWithTypeInfo(typeInfo, {
@@ -366,7 +402,7 @@ function withTypenameFieldAddedWhereNeeded(schema, ast) {
       SelectionSet: node => {
         const parentType = typeInfo.getParentType();
 
-        if (isAbstractType(parentType)) {
+        if (!isOperationRootType(parentType)) {
           return { ...node, selections: [typenameField, ...node.selections] };
         }
       }
@@ -376,6 +412,12 @@ function withTypenameFieldAddedWhereNeeded(schema, ast) {
 
 function sourceAt(location) {
   return location.source.body.slice(location.start, location.end);
+}
+
+function argumentsFromAST(args) {
+  return args.map(arg => {
+    return { name: arg.name.value, value: valueFromValueNode(arg.value) };
+  });
 }
 
 export function printIR({ fields, inlineFragments, fragmentSpreads }) {

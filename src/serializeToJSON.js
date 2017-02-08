@@ -1,5 +1,6 @@
 import {
   isType,
+  GraphQLScalarType,
   GraphQLEnumType,
   GraphQLInputObjectType,
 } from 'graphql';
@@ -14,9 +15,7 @@ export default function serializeToJSON(context) {
 
 export function serializeAST(ast, space) {
   return JSON.stringify(ast, function(key, value) {
-    if (value === undefined) {
-      return null;
-    } else if (isType(value)) {
+    if (isType(value)) {
       if (expandTypes) {
         return serializeType(value);
       } else {
@@ -33,6 +32,8 @@ function serializeType(type) {
     return serializeEnumType(type);
   } else if (type instanceof GraphQLInputObjectType) {
     return serializeInputObjectType(type);
+  } else if (type instanceof GraphQLScalarType) {
+    return serializeScalarType(type);
   }
 }
 
@@ -41,7 +42,7 @@ function serializeEnumType(type) {
   const values = type.getValues();
 
   return {
-    kind: "EnumType",
+    kind: 'EnumType',
     name,
     description,
     values: values.map(value => (
@@ -55,9 +56,19 @@ function serializeInputObjectType(type) {
   const fields = Object.values(type.getFields());
 
   return {
-    kind: "InputObjectType",
+    kind: 'InputObjectType',
     name,
     description,
     fields
+  }
+}
+
+function serializeScalarType(type) {
+  const { name, description } = type;
+
+  return {
+    kind: 'ScalarType',
+    name,
+    description
   }
 }
