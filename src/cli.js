@@ -5,7 +5,7 @@ import process from 'process';
 import path from 'path';
 import yargs from 'yargs';
 
-import { downloadSchema, generate } from '.';
+import { downloadSchema, introspectSchema, generate } from '.';
 import { ToolError, logError } from './errors'
 
 import 'source-map-support/register'
@@ -58,6 +58,22 @@ yargs
       const outputPath = path.resolve(argv.output);
       const additionalHeaders = argv.header;
       await downloadSchema(argv.server, outputPath, additionalHeaders, argv.insecure);
+    }
+  )
+  .command(
+    'introspect-schema <schemaPath>',
+    'Generate an introspection JSON from a local GraphQL file',
+    {
+      output: {
+        demand: true,
+        describe: 'Output path for GraphQL introspection JSON file',
+        default: 'schema.json',
+        normalize: true,
+        coerce: path.resolve,
+      }
+    },
+    async argv => {
+      await introspectSchema(argv.schemaPath, argv.output);
     }
   )
   .command(

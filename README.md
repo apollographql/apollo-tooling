@@ -24,6 +24,12 @@ apollo-codegen download-schema http://localhost:8080/graphql --output schema.jso
 
 You can use the `header` option to add additional HTTP headers to the request. For example, to include an authentication token, use `--header "Authorization: Bearer <token>"`.
 
+To generate a GraphQL schema introspection JSON from a local GraphQL schema:
+
+```sh
+apollo-codegen introspect-schema schema.graphql --output schema.json
+```
+
 This tool will generate Swift code by default from a set of query definitions in `.graphql` files:
 
 ```sh
