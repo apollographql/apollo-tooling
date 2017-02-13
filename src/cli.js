@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import glob from 'glob';
 import process from 'process';
 import path from 'path';
 import yargs from 'yargs';
@@ -94,7 +95,14 @@ yargs
       }
     },
     argv => {
-      const inputPaths = argv.input.map(input => path.resolve(input));
+      let { input } = argv;
+
+      // Use glob if the user's shell was unable to expand the pattern
+      if (input.length === 1 && glob.hasMagic(input[0])) {
+        input = glob.sync(input[0]);
+      }
+      const inputPaths = input.map(input => path.resolve(input));
+
       const options = { passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '', customScalarsPrefix: argv["custom-scalars-prefix"] || '' };
       generate(inputPaths, argv.schema, argv.output, argv.target, options);
     },
