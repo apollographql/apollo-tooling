@@ -75,7 +75,11 @@ describe('Swift code generation: Types', function() {
     });
 
     it('should return a passed through custom scalar type with the passthroughCustomScalars option', function() {
-      expect(typeNameFromGraphQLType({ passthroughCustomScalars: true }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).to.equal('CustomScalarType?');
+      expect(typeNameFromGraphQLType({ passthroughCustomScalars: true, customScalarsPrefix: '' }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).to.equal('CustomScalarType?');
+    });
+
+    it('should return a passed through custom scalar type with a prefix with the customScalarsPrefix option', function() {
+      expect(typeNameFromGraphQLType({ passthroughCustomScalars: true, customScalarsPrefix: 'My' }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).to.equal('MyCustomScalarType?');
     });
   });
 });

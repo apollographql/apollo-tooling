@@ -86,6 +86,12 @@ yargs
         demand: false,
         describe: "Don't attempt to map custom scalars [temporary option]",
         default: false
+      },
+      "custom-scalars-prefix": {
+        demand: false,
+        describe: "Prefix for custom scalars. (Implies that passthrough-custom-scalars is true if set)",
+        default: '',
+        normalize: true
       }
     },
     argv => {
@@ -97,7 +103,7 @@ yargs
       }
       const inputPaths = input.map(input => path.resolve(input));
 
-      const options = { passthroughCustomScalars: argv["passthrough-custom-scalars"] };
+      const options = { passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '', customScalarsPrefix: argv["custom-scalars-prefix"] || '' };
       generate(inputPaths, argv.schema, argv.output, argv.target, options);
     },
   )
