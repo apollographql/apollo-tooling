@@ -68,7 +68,7 @@ function enumerationDeclaration(generator, type) {
   generator.printOnNewline(description && `// ${description}`);
   generator.printOnNewline(`export type ${name} =`);
   const nValues = values.length;
-  values.forEach((value, i) => 
+  values.forEach((value, i) =>
     generator.printOnNewline(`  "${value.value}"${i === nValues-1 ? ';' : ' |'}${wrap(' // ', value.description)}`)
   );
   generator.printNewline();
@@ -194,6 +194,8 @@ export function propertyFromField(context, field, forceNullable) {
     const typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
     let isArray = false;
     if (fieldType instanceof GraphQLList) {
+      isArray = true;
+    } else if (fieldType instanceof GraphQLNonNull && fieldType.ofType instanceof GraphQLList) {
       isArray = true;
     }
     let isNullable = true;
