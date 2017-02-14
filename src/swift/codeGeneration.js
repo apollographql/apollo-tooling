@@ -123,8 +123,8 @@ export function classDeclarationForOperation(
       generator.withinBlock(() => {
         generator.printOnNewline(wrap(
           `return [`,
-          join(properties.map(({ name, propertyName }) => `"${name}": ${propertyName}`), ', '),
-          `]`
+          join(properties.map(({ name, propertyName }) => `"${name}": ${propertyName}`), ', ') || ':',
+          `]`,
         ));
       });
     } else {
@@ -364,7 +364,7 @@ export function dictionaryLiteralForFieldArguments(args) {
     } else if (typeof value === 'object') {
       return wrap('[', join(Object.entries(value).map(([key, value]) => {
         return `"${key}": ${expressionFromValue(value)}`;
-      }), ', '), ']');
+      }), ', ') || ':', ']');
     } else {
       return JSON.stringify(value);
     }
@@ -372,7 +372,7 @@ export function dictionaryLiteralForFieldArguments(args) {
 
   return wrap('[', join(args.map(arg => {
     return `"${arg.name}": ${expressionFromValue(arg.value)}`;
-  }), ', '), ']');
+  }), ', ') || ':', ']');
 }
 
 export function propertiesFromFields(context, fields) {
