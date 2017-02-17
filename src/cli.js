@@ -22,8 +22,8 @@ function handleError(error) {
 
 yargs
   .command(
-    'download-schema <server>',
-    'Download a GraphQL schema from a server',
+    ['introspect-schema <schema>', 'download-schema'],
+    'Generate an introspection JSON from a local GraphQL file or from a remote GraphQL server',
     {
       output: {
         demand: true,
@@ -55,25 +55,14 @@ yargs
       }
     },
     async argv => {
-      const outputPath = path.resolve(argv.output);
-      const additionalHeaders = argv.header;
-      await downloadSchema(argv.server, outputPath, additionalHeaders, argv.insecure);
-    }
-  )
-  .command(
-    'introspect-schema <schemaPath>',
-    'Generate an introspection JSON from a local GraphQL file',
-    {
-      output: {
-        demand: true,
-        describe: 'Output path for GraphQL introspection JSON file',
-        default: 'schema.json',
-        normalize: true,
-        coerce: path.resolve,
-      }
-    },
-    async argv => {
-      await introspectSchema(argv.schemaPath, argv.output);
+      const { schema, output, header, insecure } = argv;
+      
+      const urlRegex = /^https?:\/\//i;
+      if (urlRegex.test(schema)) {
+        await downloadSchema(schema, output, header, insecure);
+      } else {
+        await introspectSchema(schema, output);
+      } 
     }
   )
   .command(
