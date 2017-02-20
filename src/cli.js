@@ -5,7 +5,7 @@ import process from 'process';
 import path from 'path';
 import yargs from 'yargs';
 
-import { downloadSchema, generate } from '.';
+import { downloadSchema, introspectSchema, generate } from '.';
 import { ToolError, logError } from './errors'
 
 import 'source-map-support/register'
@@ -22,8 +22,8 @@ function handleError(error) {
 
 yargs
   .command(
-    'download-schema <server>',
-    'Download a GraphQL schema from a server',
+    ['introspect-schema <schema>', 'download-schema'],
+    'Generate an introspection JSON from a local GraphQL file or from a remote GraphQL server',
     {
       output: {
         demand: true,
@@ -55,9 +55,14 @@ yargs
       }
     },
     async argv => {
-      const outputPath = path.resolve(argv.output);
-      const additionalHeaders = argv.header;
-      await downloadSchema(argv.server, outputPath, additionalHeaders, argv.insecure);
+      const { schema, output, header, insecure } = argv;
+      
+      const urlRegex = /^https?:\/\//i;
+      if (urlRegex.test(schema)) {
+        await downloadSchema(schema, output, header, insecure);
+      } else {
+        await introspectSchema(schema, output);
+      } 
     }
   )
   .command(
