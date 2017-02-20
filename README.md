@@ -19,10 +19,20 @@ npm install -g apollo-codegen
 To download a GraphQL schema by sending an introspection query to a server:
 
 ```sh
-apollo-codegen download-schema http://localhost:8080/graphql --output schema.json
+apollo-codegen introspect-schema http://localhost:8080/graphql --output schema.json
 ```
 
 You can use the `header` option to add additional HTTP headers to the request. For example, to include an authentication token, use `--header "Authorization: Bearer <token>"`.
+
+You can use the `insecure` option to ignore any SSL errors (for example if the server is running with self-signed certificate).
+
+**Note:** The command for downloading an introspection query was named `download-schema` but it was renamed to `introspect-schema` in order to have a single command for introspecting local or remote schemas. The old name `download-schema` is still available is an alias for backward compatibility.
+
+To generate a GraphQL schema introspection JSON from a local GraphQL schema:
+
+```sh
+apollo-codegen introspect-schema schema.graphql --output schema.json
+```
 
 This tool will generate Swift code by default from a set of query definitions in `.graphql` files:
 
