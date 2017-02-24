@@ -164,6 +164,7 @@ export function structDeclarationForFragment(
   {
     fragmentName,
     typeCondition,
+    possibleTypes,
     fields,
     inlineFragments,
     fragmentSpreads,
@@ -176,7 +177,7 @@ export function structDeclarationForFragment(
     structName,
     adoptedProtocols: ['GraphQLNamedFragment'],
     parentType: typeCondition,
-    possibleTypes: possibleTypesForType(generator.context, typeCondition),
+    possibleTypes,
     fields,
     fragmentSpreads,
     inlineFragments
@@ -309,12 +310,13 @@ export function structDeclarationForSelectionSet(
 
     if (inlineFragmentProperties && inlineFragmentProperties.length > 0) {
       inlineFragmentProperties.forEach(property => {
+        console.log("!!!", property.possibleTypes)
         structDeclarationForSelectionSet(
           generator,
           {
             structName: property.bareTypeName,
             parentType: property.typeCondition,
-            possibleTypes: possibleTypesForType(generator.context, property.typeCondition),
+            possibleTypes: property.possibleTypes,
             adoptedProtocols: ['GraphQLConditionalFragment'],
             fields: property.fields,
             fragmentSpreads: property.fragmentSpreads
@@ -403,14 +405,6 @@ export function structNameForProperty(property) {
 
 export function typeNameForFragmentName(fragmentName) {
   return pascalCase(fragmentName);
-}
-
-export function possibleTypesForType(context, type) {
-  if (isAbstractType(type)) {
-    return context.schema.getPossibleTypes(type);
-  } else {
-    return [type];
-  }
 }
 
 export function typeDeclarationForGraphQLType(generator, type) {

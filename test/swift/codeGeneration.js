@@ -706,6 +706,7 @@ describe('Swift code generation', function() {
         inlineFragments: [
           {
             typeCondition: schema.getType('Droid'),
+            possibleTypes: ['Droid'],
             fields: [
               {
                 responseName: 'name',
@@ -766,6 +767,7 @@ describe('Swift code generation', function() {
         inlineFragments: [
           {
             typeCondition: schema.getType('Droid'),
+            possibleTypes: ['Droid'],
             fields: [],
             fragmentSpreads: ['HeroDetails'],
           }
