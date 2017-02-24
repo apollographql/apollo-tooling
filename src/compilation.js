@@ -149,6 +149,7 @@ export class Compiler {
     const source = print(withTypenameFieldAddedWhereNeeded(this.schema, fragmentDefinition));
 
     const typeCondition = typeFromAST(this.schema, fragmentDefinition.typeCondition);
+    const possibleTypes = this.possibleTypesForType(typeCondition)
 
     const groupedVisitedFragmentSet = new Map();
     const groupedFieldSet = this.collectFields(typeCondition, fragmentDefinition.selectionSet, undefined, groupedVisitedFragmentSet);
@@ -157,7 +158,7 @@ export class Compiler {
     const { fields, fragmentSpreads, inlineFragments } = this.resolveFields(typeCondition, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet);
     const fragmentsReferenced = Object.keys(fragmentsReferencedSet);
 
-    return { filePath, fragmentName, source, typeCondition, fields, fragmentSpreads, inlineFragments, fragmentsReferenced };
+    return { filePath, fragmentName, source, typeCondition, possibleTypes, fields, fragmentSpreads, inlineFragments, fragmentsReferenced };
   }
 
   collectFields(parentType, selectionSet, groupedFieldSet = Object.create(null), groupedVisitedFragmentSet = new Map()) {
@@ -242,6 +243,14 @@ export class Compiler {
     }
 
     return groupedFieldSet;
+  }
+
+  possibleTypesForType(type) {
+    if (isAbstractType(type)) {
+      return this.schema.getPossibleTypes(type);
+    } else {
+      return [type];
+    }
   }
 
   mergeSelectionSets(parentType, fieldSet, groupedVisitedFragmentSet) {
@@ -340,7 +349,8 @@ export class Compiler {
         groupedVisitedFragmentSet,
         fragmentsReferencedSet
       );
-      return { typeCondition, fields, fragmentSpreads };
+      const possibleTypes = this.possibleTypesForType(typeCondition)
+      return { typeCondition, possibleTypes, fields, fragmentSpreads };
     });
   }
 
