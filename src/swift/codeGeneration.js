@@ -310,7 +310,6 @@ export function structDeclarationForSelectionSet(
 
     if (inlineFragmentProperties && inlineFragmentProperties.length > 0) {
       inlineFragmentProperties.forEach(property => {
-        console.log("!!!", property.possibleTypes)
         structDeclarationForSelectionSet(
           generator,
           {
