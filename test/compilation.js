@@ -362,7 +362,8 @@ describe('Compiling query documents', () => {
         }
       ],
       fragmentSpreads: ['MoreHeroDetails'],
-      inlineFragments: []
+      inlineFragments: [],
+      possibleTypes: ['Human', 'Droid']
     });
 
     expect(filteredIR(fragments['MoreHeroDetails'])).to.deep.equal({
@@ -381,7 +382,8 @@ describe('Compiling query documents', () => {
         }
       ],
       fragmentSpreads: [],
-      inlineFragments: []
+      inlineFragments: [],
+      possibleTypes: ['Human', 'Droid']
     });
   });
 
@@ -451,6 +453,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['HeroDetails'])).to.deep.equal({
       fragmentName: 'HeroDetails',
       typeCondition: 'Character',
+      possibleTypes: ['Human', 'Droid'],
       fragmentsReferenced: [],
       fields: [
         {
@@ -507,6 +510,7 @@ describe('Compiling query documents', () => {
           inlineFragments: [
             {
               typeCondition: 'Droid',
+              possibleTypes: ['Droid'],
               fields: [
                 {
                   responseName: 'name',
@@ -523,6 +527,7 @@ describe('Compiling query documents', () => {
             },
             {
               typeCondition: 'Human',
+              possibleTypes: ['Human'],
               fields: [
                 {
                   responseName: 'name',
@@ -590,6 +595,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['DroidDetails'])).to.deep.equal({
       fragmentName: 'DroidDetails',
       typeCondition: 'Droid',
+      possibleTypes: ['Droid'],
       fragmentsReferenced: [],
       fields: [
         {
@@ -605,6 +611,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['HumanDetails'])).to.deep.equal({
       fragmentName: 'HumanDetails',
       typeCondition: 'Human',
+      possibleTypes: ['Human'],
       fragmentsReferenced: [],
       fields: [
         {
@@ -699,6 +706,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['HeroDetails'])).to.deep.equal({
       fragmentName: 'HeroDetails',
       typeCondition: 'Character',
+      possibleTypes: ['Human', 'Droid'],
       fragmentsReferenced: [],
       fields: [
         {
@@ -711,6 +719,7 @@ describe('Compiling query documents', () => {
       inlineFragments: [
         {
           typeCondition: 'Droid',
+          possibleTypes: ['Droid'],
           fields: [
             {
               responseName: 'name',
@@ -727,6 +736,7 @@ describe('Compiling query documents', () => {
         },
         {
           typeCondition: 'Human',
+          possibleTypes: ['Human'],
           fields: [
             {
               responseName: 'name',
@@ -775,6 +785,7 @@ describe('Compiling query documents', () => {
           inlineFragments: [
             {
               typeCondition: 'Droid',
+              possibleTypes: ['Droid'],
               fields: [
                 {
                   responseName: 'name',
@@ -820,6 +831,7 @@ describe('Compiling query documents', () => {
           inlineFragments: [
             {
               typeCondition: 'Droid',
+              possibleTypes: ['Droid'],
               fields: [
                 {
                   responseName: 'name',
@@ -867,6 +879,7 @@ describe('Compiling query documents', () => {
           inlineFragments: [
             {
               typeCondition: 'Droid',
+              possibleTypes: ['Droid'],
               fragmentSpreads: ['HeroName'],
               fields: [],
             }
@@ -933,6 +946,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(operations['Search']).fields[0].inlineFragments).to.deep.equal([
       {
         typeCondition: 'Droid',
+        possibleTypes: ['Droid'],
         fields: [
           {
             responseName: 'name',
@@ -949,6 +963,7 @@ describe('Compiling query documents', () => {
       },
       {
         typeCondition: 'Human',
+        possibleTypes: ['Human'],
         fields: [
           {
             responseName: 'name',
