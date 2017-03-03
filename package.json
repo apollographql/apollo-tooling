@@ -38,6 +38,6 @@
     "inflected": "^1.1.7",
     "mkdirp": "^0.5.1",
     "node-fetch": "^1.5.3",
-    "yargs": "^6.4.0"
+    "yargs": "^7.0.1"
   }
 }
