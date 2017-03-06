@@ -1,4 +1,8 @@
 import {
+  visit,
+  visitWithTypeInfo,
+  Kind,
+  TypeInfo,
   isEqualType,
   isTypeSubTypeOf,
   isAbstractType,
@@ -8,8 +12,43 @@ import {
   GraphQLObjectType,
   GraphQLInterfaceType,
   GraphQLUnionType,
-  GraphQLEnumType
+  GraphQLEnumType,
+  GraphQLString,
+  GraphQLInt,
+  GraphQLFloat,
+  GraphQLBoolean,
+  GraphQLID,
 } from 'graphql';
+
+const builtInScalarTypes = new Set([GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID]);
+
+export function isBuiltInScalarType(type) {
+  return builtInScalarTypes.has(type);
+}
+
+const typenameField = { kind: Kind.FIELD, name: { kind: Kind.NAME, value: '__typename' } };
+
+export function withTypenameFieldAddedWhereNeeded(schema, ast) {
+  function isOperationRootType(type) {
+    return type === schema.getQueryType() ||
+      type === schema.getMutationType() ||
+      type === schema.getSubscriptionType();
+  }
+
+  const typeInfo = new TypeInfo(schema);
+
+  return visit(ast, visitWithTypeInfo(typeInfo, {
+    leave: {
+      SelectionSet: node => {
+        const parentType = typeInfo.getParentType();
+
+        if (!isOperationRootType(parentType)) {
+          return { ...node, selections: [typenameField, ...node.selections] };
+        }
+      }
+    }
+  }));
+}
 
 export function sourceAt(location) {
   return location.source.body.slice(location.start, location.end);
