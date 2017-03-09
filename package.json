@@ -30,12 +30,14 @@
     "mocha": "^3.1.2"
   },
   "dependencies": {
+    "@types/lodash.uniqwith": "^4.5.1",
     "babel-runtime": "^6.20.0",
     "glob": "^7.0.5",
     "source-map-support": "^0.4.2",
     "change-case": "^3.0.0",
     "graphql": "^0.9.1",
     "inflected": "^1.1.7",
+    "lodash.uniqwith": "^4.5.0",
     "mkdirp": "^0.5.1",
     "node-fetch": "^1.5.3",
     "yargs": "^6.4.0"

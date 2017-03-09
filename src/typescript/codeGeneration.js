@@ -16,6 +16,7 @@ import  { isTypeProperSuperTypeOf } from '../utilities/graphql';
 
 import { camelCase, pascalCase } from 'change-case';
 import Inflector from 'inflected';
+const uniqWith = require("lodash.uniqwith");
 
 import {
   join,
@@ -170,10 +171,12 @@ export function interfaceDeclarationForFragment(
     interfaceName,
     extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
   }, () => {
-    const properties = propertiesFromFields(generator.context, fields)
+    const properties = uniqWith(propertiesFromFields(generator.context, fields)
     .concat(...(inlineFragments || []).map(fragment =>
       propertiesFromFields(generator.context, fragment.fields, true)
-    ));
+    )), (p1, p2) => {
+      return (p1.fieldName === p2.fieldName) && (p1.typeName || p2.typeName);
+    });
 
     propertyDeclarations(generator, properties, true);
   });
