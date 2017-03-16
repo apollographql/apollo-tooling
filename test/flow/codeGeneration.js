@@ -149,11 +149,11 @@ describe('Flow code generation', function() {
         query HeroAndFriendsNames {
           hero {
             name
-            ...HeroFriends
+            ...heroFriends
           }
         }
 
-        fragment HeroFriends on Character {
+        fragment heroFriends on Character {
           friends {
             name
           }

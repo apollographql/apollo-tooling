@@ -3,6 +3,8 @@ import {
   wrap,
 } from '../utilities/printing';
 
+import { pascalCase } from 'change-case';
+
 export function typeDeclaration(generator, { interfaceName }, closure) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
@@ -32,7 +34,7 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
       } else {
         generator.print('(');
       }
-      generator.print(`${fragmentSpreads.map(n => `${n}Fragment`).join(' & ')} &`);
+      generator.print(`${fragmentSpreads.map(n => `${pascalCase(n)}Fragment`).join(' & ')} &`);
     }
     generator.pushScope({ typeName: propertyName });
     generator.withinBlock(closure);
@@ -44,7 +46,7 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
       generator.print(' >');
     }
   } else if (fragmentSpreads && fragmentSpreads.length > 0) {
-    generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}${fragmentSpreads.map(n => `${n}Fragment`).join(' & ')}${isArray ? '>' : ''}`);
+    generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}${fragmentSpreads.map(n => `${pascalCase(n)}Fragment`).join(' & ')}${isArray ? '>' : ''}`);
   } else {
     generator.printOnNewline(`${propertyName}: ${typeName}`);
   }
