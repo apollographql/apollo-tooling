@@ -17,38 +17,42 @@ import {
 } from '../../src/flow/codeGeneration';
 
 import { loadSchema } from '../../src/loading';
-const schema = loadSchema(require.resolve('../starwars/schema.json'));
+const swapiSchema = loadSchema(require.resolve('../starwars/schema.json'));
+const miscSchema = loadSchema(require.resolve('../misc/schema.json'));
 
 import CodeGenerator from '../../src/utilities/CodeGenerator';
 
 import { compileToIR } from '../../src/compilation';
 
+function setup(schema) {
+  const context = {
+    schema: schema,
+    operations: {},
+    fragments: {},
+    typesUsed: {}
+  }
+
+  const generator = new CodeGenerator(context);
+
+  const compileFromSource = (source) => {
+    const document = parse(source);
+    const context = compileToIR(schema, document);
+    generator.context = context;
+    return context;
+  };
+
+  const addFragment = (fragment) => {
+    this.generator.context.fragments[fragment.fragmentName] = fragment;
+  };
+
+  return { generator, compileFromSource, addFragment };
+}
+
 describe('Flow code generation', function() {
-  beforeEach(function() {
-    const context = {
-      schema: schema,
-      operations: {},
-      fragments: {},
-      typesUsed: {}
-    }
-
-    this.generator = new CodeGenerator(context);
-
-    this.compileFromSource = (source) => {
-      const document = parse(source);
-      const context = compileToIR(schema, document);
-      this.generator.context = context;
-      return context;
-    };
-
-    this.addFragment = (fragment) => {
-      this.generator.context.fragments[fragment.fragmentName] = fragment;
-    };
-  });
-
   describe('#generateSource()', function() {
     it(`should generate simple query operations`, function() {
-      const context = this.compileFromSource(`
+      const { compileFromSource } = setup(swapiSchema);
+      const context = compileFromSource(`
         query HeroName {
           hero {
             name
@@ -71,7 +75,8 @@ describe('Flow code generation', function() {
     });
 
     it(`should generate simple query operations including input variables`, function() {
-      const context = this.compileFromSource(`
+      const { compileFromSource } = setup(swapiSchema);
+      const context = compileFromSource(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
             name
@@ -105,7 +110,8 @@ describe('Flow code generation', function() {
     });
 
     it(`should generate simple nested query operations including input variables`, function() {
-      const context = this.compileFromSource(`
+      const { compileFromSource } = setup(swapiSchema);
+      const context = compileFromSource(`
         query HeroAndFriendsNames($episode: Episode) {
           hero(episode: $episode) {
             name
@@ -145,7 +151,8 @@ describe('Flow code generation', function() {
     });
 
     it(`should generate fragmented query operations`, function() {
-      const context = this.compileFromSource(`
+      const { compileFromSource } = setup(swapiSchema);
+      const context = compileFromSource(`
         query HeroAndFriendsNames {
           hero {
             name
@@ -181,7 +188,8 @@ describe('Flow code generation', function() {
     });
 
     it(`should generate query operations with inline fragments`, function() {
-      const context = this.compileFromSource(`
+      const { compileFromSource } = setup(swapiSchema);
+      const context = compileFromSource(`
         query HeroAndDetails {
           hero {
             name
@@ -219,7 +227,8 @@ describe('Flow code generation', function() {
     });
 
     it(`should generate mutation operations with complex input types`, function() {
-      const context = this.compileFromSource(`
+      const { compileFromSource } = setup(swapiSchema);
+      const context = compileFromSource(`
         mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
           createReview(episode: $episode, review: $review) {
             stars
@@ -271,7 +280,8 @@ describe('Flow code generation', function() {
     });
 
     it(`should generate correct list with custom fragment`, function() {
-      const context = this.compileFromSource(`
+      const { compileFromSource } = setup(swapiSchema);
+      const context = compileFromSource(`
         fragment Friend on Character {
           name
         }
@@ -312,6 +322,30 @@ describe('Flow code generation', function() {
 
         export type FriendFragment = {
           name: string,
+        };
+      `);
+    });
+
+    it(`should annotate custom scalars as string`, function() {
+      const { compileFromSource } = setup(miscSchema);
+      const context = compileFromSource(`
+        query CustomScalar {
+          misc {
+            date
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+
+      expect(source).to.include(stripIndent`
+        /* @flow */
+        //  This file was automatically generated and should not be edited.
+
+        export type CustomScalarQuery = {
+          misc: ? {
+            date: ?any,
+          },
         };
       `);
     });
