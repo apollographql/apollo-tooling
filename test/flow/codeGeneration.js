@@ -66,11 +66,11 @@ describe('Flow code generation', function() {
         /* @flow */
         //  This file was automatically generated and should not be edited.
 
-        export type HeroNameQuery = {
-          hero: ? {
+        export type HeroNameQuery = {|
+          hero: ? {|
             name: string,
-          },
-        };
+          |},
+        |};
       `);
     });
 
@@ -97,15 +97,15 @@ describe('Flow code generation', function() {
           "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-        export type HeroNameQueryVariables = {
+        export type HeroNameQueryVariables = {|
           episode: ?Episode,
-        };
+        |};
 
-        export type HeroNameQuery = {
-          hero: ? {
+        export type HeroNameQuery = {|
+          hero: ? {|
             name: string,
-          },
-        };
+          |},
+        |};
       `);
     });
 
@@ -135,18 +135,18 @@ describe('Flow code generation', function() {
           "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-        export type HeroAndFriendsNamesQueryVariables = {
+        export type HeroAndFriendsNamesQueryVariables = {|
           episode: ?Episode,
-        };
+        |};
 
-        export type HeroAndFriendsNamesQuery = {
-          hero: ? {
+        export type HeroAndFriendsNamesQuery = {|
+          hero: ? {|
             name: string,
-            friends: ?Array< {
+            friends: ?Array< {|
               name: string,
-            } >,
-          },
-        };
+            |} >,
+          |},
+        |};
       `);
     });
 
@@ -173,17 +173,18 @@ describe('Flow code generation', function() {
         /* @flow */
         //  This file was automatically generated and should not be edited.
 
-        export type HeroAndFriendsNamesQuery = {
-          hero: ?(HeroFriendsFragment & {
+        export type HeroAndFriendsNamesQuery = {|
+          hero: ? {|
+            ...HeroFriendsFragment,
             name: string,
-          }),
-        };
+          |},
+        |};
 
-        export type HeroFriendsFragment = {
-          friends: ?Array< {
+        export type HeroFriendsFragment = {|
+          friends: ?Array< {|
             name: string,
-          } >,
-        };
+          |} >,
+        |};
       `);
     });
 
@@ -213,16 +214,17 @@ describe('Flow code generation', function() {
         /* @flow */
         //  This file was automatically generated and should not be edited.
 
-        export type HeroAndDetailsQuery = {
-          hero: ?(HeroDetailsFragment & {
+        export type HeroAndDetailsQuery = {|
+          hero: ? {|
+            ...HeroDetailsFragment,
             name: string,
-          }),
-        };
+          |},
+        |};
 
-        export type HeroDetailsFragment = {
+        export type HeroDetailsFragment = {|
           primaryFunction: ?string,
           height: ?number,
-        };
+        |};
       `);
     });
 
@@ -250,36 +252,36 @@ describe('Flow code generation', function() {
           "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-        export type ReviewInput = {
+        export type ReviewInput = {|
           // 0-5 stars
           stars: number,
           // Comment about the movie, optional
           commentary: ?string,
           // Favorite color, optional
           favorite_color: ?ColorInput,
-        };
+        |};
 
-        export type ColorInput = {
+        export type ColorInput = {|
           red: number,
           green: number,
           blue: number,
-        };
+        |};
 
-        export type ReviewMovieMutationVariables = {
+        export type ReviewMovieMutationVariables = {|
           episode: ?Episode,
           review: ?ReviewInput,
-        };
+        |};
 
-        export type ReviewMovieMutation = {
-          createReview: ? {
+        export type ReviewMovieMutation = {|
+          createReview: ? {|
             stars: number,
             commentary: ?string,
-          },
-        };
+          |},
+        |};
       `);
     });
 
-    it(`should generate correct list with custom fragment`, function() {
+    it(`should generate correct typedefs with a single custom fragment`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         fragment Friend on Character {
@@ -309,20 +311,79 @@ describe('Flow code generation', function() {
           "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-        export type HeroAndFriendsNamesQueryVariables = {
+        export type HeroAndFriendsNamesQueryVariables = {|
           episode: ?Episode,
-        };
+        |};
 
-        export type HeroAndFriendsNamesQuery = {
-          hero: ? {
+        export type HeroAndFriendsNamesQuery = {|
+          hero: ? {|
             name: string,
             friends: Array<FriendFragment>,
-          },
-        };
+          |},
+        |};
 
-        export type FriendFragment = {
+        export type FriendFragment = {|
           name: string,
-        };
+        |};
+      `);
+    });
+
+    it(`should generate correct typedefs with a multiple custom fragments`, function() {
+      const { compileFromSource } = setup(swapiSchema);
+      const context = compileFromSource(`
+        fragment Friend on Character {
+          name
+        }
+
+        fragment Person on Character {
+          name
+        }
+
+        query HeroAndFriendsNames($episode: Episode) {
+          hero(episode: $episode) {
+            name
+            friends {
+              ...Friend
+              ...Person
+            }
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+
+      expect(source).to.include(stripIndent`
+        /* @flow */
+        //  This file was automatically generated and should not be edited.
+
+        // The episodes in the Star Wars trilogy
+        export type Episode =
+          "NEWHOPE" | // Star Wars Episode IV: A New Hope, released in 1977.
+          "EMPIRE" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+          "JEDI"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+        export type HeroAndFriendsNamesQueryVariables = {|
+          episode: ?Episode,
+        |};
+
+        export type HeroAndFriendsNamesQuery = {|
+          hero: ? {|
+            name: string,
+            friends: Array<{|
+              ...FriendFragment,
+              ...PersonFragment,
+            |}>,
+          |},
+        |};
+
+        export type FriendFragment = {|
+          name: string,
+        |};
+
+        export type PersonFragment = {|
+          name: string,
+        |};
       `);
     });
 
@@ -342,11 +403,11 @@ describe('Flow code generation', function() {
         /* @flow */
         //  This file was automatically generated and should not be edited.
 
-        export type CustomScalarQuery = {
-          misc: ? {
+        export type CustomScalarQuery = {|
+          misc: ? {|
             date: ?any,
-          },
-        };
+          |},
+        |};
       `);
     });
   });

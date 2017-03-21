@@ -64,9 +64,9 @@ export default class CodeGenerator {
     this.indentLevel--;
   }
 
-  withinBlock(closure) {
-    this.print(' {');
+  withinBlock(closure, open = ' {', close = '}') {
+    this.print(open);
     this.withIndent(closure);
-    this.printOnNewline('}');
+    this.printOnNewline(close);
   }
 }
