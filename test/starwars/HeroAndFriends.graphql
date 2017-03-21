@@ -1,10 +1,10 @@
 query HeroAndFriends($episode: Episode) {
   hero(episode: $episode) {
-    ...HeroDetails
+    ...heroDetails
   }
 }
 
-fragment HeroDetails on Character {
+fragment heroDetails on Character {
   name
   ... on Droid {
     primaryFunction
