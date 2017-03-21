@@ -1,0 +1,19 @@
+schema {
+  query: Query
+}
+
+scalar Date
+
+type doubleHump {
+  humpOne: String
+  humpTwo: String
+}
+
+type OddType {
+  date: Date
+  camel: doubleHump
+}
+
+type Query {
+  misc: OddType
+}
