@@ -10,7 +10,7 @@ export function typeDeclaration(generator, { interfaceName }, closure) {
   generator.printNewline();
   generator.print(`export type ${ interfaceName } =`);
   generator.pushScope({ typeName: interfaceName });
-  generator.withinBlock(closure);
+  generator.withinBlock(closure, ' {|', '|}');
   generator.popScope();
   generator.print(';');
 }
@@ -28,25 +28,33 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
       }
       generator.print('Array<');
     }
-    if (fragmentSpreads && fragmentSpreads.length > 0) {
-      if (!isNullable) {
-        generator.print(' ');
-      } else {
-        generator.print('(');
-      }
-      generator.print(`${fragmentSpreads.map(n => `${pascalCase(n)}Fragment`).join(' & ')} &`);
-    }
+
     generator.pushScope({ typeName: propertyName });
-    generator.withinBlock(closure);
+
+    generator.withinBlock(() => {
+      if (fragmentSpreads && fragmentSpreads.length > 0) {
+        fragmentSpreads.forEach(n => generator.printOnNewline(`...${pascalCase(n)}Fragment,`));
+      }
+
+      closure();
+    }, ' {|', '|}');
+
     generator.popScope();
-    if (isNullable && fragmentSpreads && fragmentSpreads.length > 0) {
-      generator.print(')');
-    }
+
     if (isArray) {
       generator.print(' >');
     }
-  } else if (fragmentSpreads && fragmentSpreads.length > 0) {
-    generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}${fragmentSpreads.map(n => `${pascalCase(n)}Fragment`).join(' & ')}${isArray ? '>' : ''}`);
+
+  } else if (fragmentSpreads && fragmentSpreads.length === 1) {
+    generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}${pascalCase(fragmentSpreads[0])}Fragment${isArray ? '>' : ''}`);
+  } else if (fragmentSpreads && fragmentSpreads.length > 1) {
+    generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}`);
+
+    generator.withinBlock(() => {
+      fragmentSpreads.forEach(n => generator.printOnNewline(`...${pascalCase(n)}Fragment,`));
+    }, '{|', '|}');
+
+    generator.print(isArray ? '>' : '');
   } else {
     generator.printOnNewline(`${propertyName}: ${typeName}`);
   }
