@@ -1,7 +1,5 @@
 # Apollo GraphQL code generator
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/apollographql/apollo-codegen.svg)](https://greenkeeper.io/)
-
 [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg?maxAge=2592000)](https://raw.githubusercontent.com/apollostack/apollo-ios/master/LICENSE) [![npm](https://img.shields.io/npm/v/apollo-codegen.svg)](https://www.npmjs.com/package/apollo-codegen) [![Get on Slack](https://img.shields.io/badge/slack-join-orange.svg)](http://www.apollostack.com/#slack)
 
 This is a tool to generate API code or type annotations based on a GraphQL schema and query documents.
