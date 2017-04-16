@@ -23,7 +23,7 @@ export function NoAnonymousQueries(context) {
     OperationDefinition(node) {
       if (!node.name) {
         context.reportError(new GraphQLError(
-          'Apollo iOS does not support anonymous operations',
+          'Apollo does not support anonymous operations',
           [node]
         ));
       }
@@ -38,7 +38,7 @@ export function NoExplicitTypename(context) {
       const fieldName = node.name.value;
       if (fieldName == "__typename") {
         context.reportError(new GraphQLError(
-          'Apollo iOS inserts __typename automatically when needed, please do not include it explicitly',
+          'Apollo inserts __typename automatically when needed, please do not include it explicitly',
           [node]
         ));
       }
@@ -52,7 +52,7 @@ export function NoTypenameAlias(context) {
       const aliasName = node.alias && node.alias.value;
       if (aliasName == "__typename") {
         context.reportError(new GraphQLError(
-          'Apollo iOS needs to be able to insert __typename when needed, please do not use it as an alias',
+          'Apollo needs to be able to insert __typename when needed, please do not use it as an alias',
           [node]
         ));
       }
