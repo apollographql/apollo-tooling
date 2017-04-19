@@ -296,6 +296,12 @@ export class Compiler {
         field.isConditional = true;
       }
 
+      const description = parentType.getFields()[fieldName].description;
+
+      if (description) {
+        field.description = description
+      }
+
       const bareType = getNamedType(type);
 
       this.addTypeUsed(bareType);
