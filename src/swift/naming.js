@@ -50,7 +50,7 @@ export function propertiesFromSelectionSet(context, selectionSet) {
 
 export function propertyFromField(context, field) {
   const name = field.name || field.responseName;
-  const propertyName = escapeIdentifierIfNeeded(name);
+  const propertyName = escapeIdentifierIfNeeded(camelCase(name));
 
   const type = field.type;
   const isOptional = field.isConditional || !(type instanceof GraphQLNonNull);
