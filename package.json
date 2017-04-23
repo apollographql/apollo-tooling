@@ -45,8 +45,8 @@
       "**/test/*.js"
     ],
     "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/lib/"
+      "<rootDir>/node_modules/",
+      "<rootDir>/lib/"
     ]
   }
 }
