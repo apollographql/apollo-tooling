@@ -44,6 +44,7 @@
       "**/test/*.js"
     ],
     "testPathIgnorePatterns": [
+      "/node_modules/",
       "/lib/"
     ]
   }
