@@ -25,6 +25,8 @@
     "babel-preset-full-node4": "^1.0.0",
     "babel-register": "^6.16.3",
     "common-tags": "^1.3.0",
+    "chai": "^3.5.0",
+    "chai-subset": "^1.3.0",
     "jest": "^19.0.2"
   },
   "dependencies": {
@@ -40,7 +42,8 @@
   },
   "jest": {
     "testMatch": [
-      "**/test/**/*.js"
+      "**/test/**/*.js",
+      "**/test/*.js"
     ],
     "testPathIgnorePatterns": [
       "/lib/"
