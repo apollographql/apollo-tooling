@@ -1,0 +1,225 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Flow code generation #generateSource() should annotate custom scalars as string 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type CustomScalarQuery = {|
+  misc: ? {|
+    date: ?any,
+  |},
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should generate correct typedefs with a multiple custom fragments 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export type HeroAndFriendsNamesQueryVariables = {|
+  episode: ?Episode,
+|};
+
+export type HeroAndFriendsNamesQuery = {|
+  hero: ? {|
+    // The name of the character
+    name: string,
+    // The friends of the character, or an empty list if they have none
+    friends: Array<{|
+      ...FriendFragment,
+      ...PersonFragment,
+    |}>,
+  |},
+|};
+
+export type FriendFragment = {|
+  // The name of the character
+  name: string,
+|};
+
+export type PersonFragment = {|
+  // The name of the character
+  name: string,
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should generate correct typedefs with a single custom fragment 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export type HeroAndFriendsNamesQueryVariables = {|
+  episode: ?Episode,
+|};
+
+export type HeroAndFriendsNamesQuery = {|
+  hero: ? {|
+    // The name of the character
+    name: string,
+    // The friends of the character, or an empty list if they have none
+    friends: Array<FriendFragment>,
+  |},
+|};
+
+export type FriendFragment = {|
+  // The name of the character
+  name: string,
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should generate fragmented query operations 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type HeroAndFriendsNamesQuery = {|
+  hero: ? {|
+    ...HeroFriendsFragment,
+    // The name of the character
+    name: string,
+  |},
+|};
+
+export type HeroFriendsFragment = {|
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< {|
+    // The name of the character
+    name: string,
+  |} >,
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should generate mutation operations with complex input types 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export type ReviewInput = {|
+  // 0-5 stars
+  stars: number,
+  // Comment about the movie, optional
+  commentary: ?string,
+  // Favorite color, optional
+  favorite_color: ?ColorInput,
+|};
+
+export type ColorInput = {|
+  red: number,
+  green: number,
+  blue: number,
+|};
+
+export type ReviewMovieMutationVariables = {|
+  episode: ?Episode,
+  review: ?ReviewInput,
+|};
+
+export type ReviewMovieMutation = {|
+  createReview: ? {|
+    // The number of stars this review gave, 1-5
+    stars: number,
+    // Comment about the movie
+    commentary: ?string,
+  |},
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should generate query operations with inline fragments 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type HeroAndDetailsQuery = {|
+  hero: ? {|
+    ...HeroDetailsFragment,
+    // The name of the character
+    name: string,
+  |},
+|};
+
+export type HeroDetailsFragment = {|
+  // This droid's primary function
+  primaryFunction: ?string,
+  // Height in the preferred unit, default is meters
+  height: ?number,
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should generate simple nested query operations including input variables 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export type HeroAndFriendsNamesQueryVariables = {|
+  episode: ?Episode,
+|};
+
+export type HeroAndFriendsNamesQuery = {|
+  hero: ? {|
+    // The name of the character
+    name: string,
+    // The friends of the character, or an empty list if they have none
+    friends: ?Array< {|
+      // The name of the character
+      name: string,
+    |} >,
+  |},
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should generate simple query operations 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type HeroNameQuery = {|
+  hero: ? {|
+    // The name of the character
+    name: string,
+  |},
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should generate simple query operations including input variables 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export type HeroNameQueryVariables = {|
+  episode: ?Episode,
+|};
+
+export type HeroNameQuery = {|
+  hero: ? {|
+    // The name of the character
+    name: string,
+  |},
+|};"
+`;
