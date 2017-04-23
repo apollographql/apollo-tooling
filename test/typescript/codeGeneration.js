@@ -45,7 +45,7 @@ describe('TypeScript code generation', function() {
   });
 
   describe('#generateSource()', function() {
-    it(`should generate simple query operations`, function() {
+    test(`should generate simple query operations`, function() {
       const context = this.compileFromSource(`
         query HeroName {
           hero {
@@ -58,7 +58,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate simple query operations including input variables`, function() {
+    test(`should generate simple query operations including input variables`, function() {
       const context = this.compileFromSource(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
@@ -71,7 +71,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate simple nested query operations including input variables`, function() {
+    test(`should generate simple nested query operations including input variables`, function() {
       const context = this.compileFromSource(`
         query HeroAndFriendsNames($episode: Episode) {
           hero(episode: $episode) {
@@ -87,7 +87,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate fragmented query operations`, function() {
+    test(`should generate fragmented query operations`, function() {
       const context = this.compileFromSource(`
         query HeroAndFriendsNames {
           hero {
@@ -107,7 +107,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate query operations with inline fragments`, function() {
+    test(`should generate query operations with inline fragments`, function() {
       const context = this.compileFromSource(`
         query HeroAndDetails {
           hero {
@@ -130,7 +130,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate mutation operations with complex input types`, function() {
+    test(`should generate mutation operations with complex input types`, function() {
       const context = this.compileFromSource(`
         mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
           createReview(episode: $episode, review: $review) {
@@ -144,7 +144,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate correct list with custom fragment`, function() {
+    test(`should generate correct list with custom fragment`, function() {
       const context = this.compileFromSource(`
         fragment Friend on Character {
           name

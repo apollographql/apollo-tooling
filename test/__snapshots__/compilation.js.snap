@@ -210,6 +210,15 @@ Object {
 }
 `;
 
+exports[`Compiling query documents should include the source of operations with __typename added for abstract types 1`] = `
+"query HeroName {
+  hero {
+    __typename
+    name
+  }
+}"
+`;
+
 exports[`Compiling query documents should include type conditions for inline fragments in fragments 1`] = `
 Object {
   "fields": Array [
