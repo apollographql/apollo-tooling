@@ -1,5 +1,3 @@
-import { stripIndent } from 'common-tags';
-
 import {
   parse,
   isType,
@@ -40,7 +38,7 @@ function setup(schema) {
   };
 
   const addFragment = (fragment) => {
-    this.generator.context.fragments[fragment.fragmentName] = fragment;
+    generator.context.fragments[fragment.fragmentName] = fragment;
   };
 
   return { generator, compileFromSource, addFragment };
@@ -48,7 +46,7 @@ function setup(schema) {
 
 describe('Flow code generation', function() {
   describe('#generateSource()', function() {
-    it(`should generate simple query operations`, function() {
+    test(`should generate simple query operations`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         query HeroName {
@@ -62,7 +60,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate simple query operations including input variables`, function() {
+    test(`should generate simple query operations including input variables`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         query HeroName($episode: Episode) {
@@ -76,7 +74,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate simple nested query operations including input variables`, function() {
+    test(`should generate simple nested query operations including input variables`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         query HeroAndFriendsNames($episode: Episode) {
@@ -93,7 +91,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate fragmented query operations`, function() {
+    test(`should generate fragmented query operations`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         query HeroAndFriendsNames {
@@ -114,7 +112,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate query operations with inline fragments`, function() {
+    test(`should generate query operations with inline fragments`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         query HeroAndDetails {
@@ -138,7 +136,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate mutation operations with complex input types`, function() {
+    test(`should generate mutation operations with complex input types`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
@@ -153,7 +151,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate correct typedefs with a single custom fragment`, function() {
+    test(`should generate correct typedefs with a single custom fragment`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         fragment Friend on Character {
@@ -174,7 +172,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should generate correct typedefs with a multiple custom fragments`, function() {
+    test(`should generate correct typedefs with a multiple custom fragments`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         fragment Friend on Character {
@@ -200,7 +198,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it(`should annotate custom scalars as string`, function() {
+    test(`should annotate custom scalars as string`, function() {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
         query CustomScalar {

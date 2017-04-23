@@ -17,7 +17,7 @@ import { serializeAST } from '../src/serializeToJSON'
 const schema = loadSchema(require.resolve('./starwars/schema.json'));
 
 describe('Compiling query documents', () => {
-  it(`should include variables defined in operations`, () => {
+  test(`should include variables defined in operations`, () => {
     const document = parse(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -48,7 +48,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(operations['CreateReviewForEpisode']).variables).toMatchSnapshot();
   });
 
-  it(`should keep track of enums and input object types used in variables`, () => {
+  test(`should keep track of enums and input object types used in variables`, () => {
     const document = parse(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -77,7 +77,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(typesUsed)).toEqual(['Episode', 'ReviewInput', 'ColorInput']);
   });
 
-  it(`should keep track of enums used in fields`, () => {
+  test(`should keep track of enums used in fields`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -96,7 +96,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(typesUsed)).toEqual(['Episode']);
   });
 
-  it(`should keep track of types used in fields of input objects`, () => {
+  test(`should keep track of types used in fields of input objects`, () => {
     const bookstore_schema = loadSchema(require.resolve('./bookstore/schema.json'));
     const document = parse(`
       query ListBooks {
@@ -129,7 +129,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(typesUsed)).toContain('WrittenByInput');
   });
 
-  it(`should include the original field name for an aliased field`, () => {
+  test(`should include the original field name for an aliased field`, () => {
     const document = parse(`
       query HeroName {
         r2: hero {
@@ -146,7 +146,7 @@ describe('Compiling query documents', () => {
     expect(operations['HeroName'].fields[0].fieldName).toBe("hero");
   });
 
-  it(`should include field arguments`, () => {
+  test(`should include field arguments`, () => {
     const document = parse(`
       query HeroName {
         hero(episode: EMPIRE) {
@@ -161,7 +161,7 @@ describe('Compiling query documents', () => {
       .toEqual([{ name: "episode", value: "EMPIRE" }]);
   });
 
-  it(`should include isOptional if a field has skip or include directives`, () => {
+  test(`should include isOptional if a field has skip or include directives`, () => {
     const document = parse(`
       query HeroNameConditionalInclusion {
         hero {
@@ -182,7 +182,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(operations['HeroNameConditionalExclusion'])).toMatchSnapshot();
   });
 
-  it(`should recursively flatten inline fragments with type conditions that match the parent type`, () => {
+  test(`should recursively flatten inline fragments with type conditions that match the parent type`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -204,7 +204,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(operations['Hero'])).toMatchSnapshot();
   });
 
-  it(`should recursively include fragment spreads with type conditions that match the parent type`, () => {
+  test(`should recursively include fragment spreads with type conditions that match the parent type`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -232,7 +232,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['MoreHeroDetails'])).toMatchSnapshot();
   });
 
-  it(`should include fragment spreads from subselections`, () => {
+  test(`should include fragment spreads from subselections`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
@@ -258,7 +258,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['HeroDetails'])).toMatchSnapshot();
   });
 
-  it(`should include type conditions with merged fields for inline fragments`, () => {
+  test(`should include type conditions with merged fields for inline fragments`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -278,7 +278,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(operations['Hero'])).toMatchSnapshot();
   });
 
-  it(`should include fragment spreads with type conditions`, () => {
+  test(`should include fragment spreads with type conditions`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -304,7 +304,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['HumanDetails'])).toMatchSnapshot();
   });
 
-  it(`should not include type conditions for fragment spreads with type conditions that match the parent type`, () => {
+  test(`should not include type conditions for fragment spreads with type conditions that match the parent type`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -323,7 +323,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(operations['Hero'])).toMatchSnapshot();
   });
 
-  it(`should include type conditions for inline fragments in fragments`, () => {
+  test(`should include type conditions for inline fragments in fragments`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -348,7 +348,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(fragments['HeroDetails'])).toMatchSnapshot();
   });
 
-  it(`should inherit type condition when nesting an inline fragment in an inline fragment with a more specific type condition`, () => {
+  test(`should inherit type condition when nesting an inline fragment in an inline fragment with a more specific type condition`, () => {
     const document = parse(`
       query HeroName {
         hero {
@@ -366,7 +366,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(operations['HeroName'])).toMatchSnapshot();
   });
 
-  it(`should not inherit type condition when nesting an inline fragment in an inline fragment with a less specific type condition`, () => {
+  test(`should not inherit type condition when nesting an inline fragment in an inline fragment with a less specific type condition`, () => {
     const document = parse(`
       query HeroName {
         hero {
@@ -384,7 +384,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(operations['HeroName'])).toMatchSnapshot();
   });
 
-  it(`should inherit type condition when nesting a fragment spread in an inline fragment with a more specific type condition`, () => {
+  test(`should inherit type condition when nesting a fragment spread in an inline fragment with a more specific type condition`, () => {
     const document = parse(`
       query HeroName {
         hero {
@@ -404,7 +404,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(operations['HeroName'])).toMatchSnapshot();
   });
 
-  it(`should not inherit type condition when nesting a fragment spread in an inline fragment with a less specific type condition`, () => {
+  test(`should not inherit type condition when nesting a fragment spread in an inline fragment with a less specific type condition`, () => {
     const document = parse(`
       query HeroName {
         hero {
@@ -423,7 +423,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(operations['HeroName'])).toMatchSnapshot();
   });
 
-  it(`should include type conditions for inline fragments on a union type`, () => {
+  test(`should include type conditions for inline fragments on a union type`, () => {
     const document = parse(`
       query Search {
         search(text: "an") {
@@ -445,7 +445,7 @@ describe('Compiling query documents', () => {
     expect(filteredIR(operations['Search']).fields[0].inlineFragments).toMatchSnapshot();
   });
 
-  it(`should keep track of fragments referenced in a subselection`, () => {
+  test(`should keep track of fragments referenced in a subselection`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
@@ -466,7 +466,7 @@ describe('Compiling query documents', () => {
     expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails']);
   });
 
-  it(`should keep track of fragments referenced in a fragment within a subselection`, () => {
+  test(`should keep track of fragments referenced in a fragment within a subselection`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
@@ -490,7 +490,7 @@ describe('Compiling query documents', () => {
     expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails', 'HeroName']);
   });
 
-  it(`should keep track of fragments referenced in a subselection nested in an inline fragment`, () => {
+  test(`should keep track of fragments referenced in a subselection nested in an inline fragment`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
@@ -513,7 +513,7 @@ describe('Compiling query documents', () => {
     expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails']);
   });
 
-  it(`should include the source of operations with __typename added for abstract types`, () => {
+  test(`should include the source of operations with __typename added for abstract types`, () => {
     const source = stripIndent`
       query HeroName {
         hero {
@@ -525,17 +525,10 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(operations['HeroName'].source).toBe(stripIndent`
-      query HeroName {
-        hero {
-          __typename
-          name
-        }
-      }
-    `);
+    expect(operations['HeroName'].source).toMatchSnapshot();
   });
 
-  it(`should include the source of fragments with __typename added for abstract types`, () => {
+  test(`should include the source of fragments with __typename added for abstract types`, () => {
     const source = stripIndent`
       fragment HeroDetails on Character {
         name
@@ -553,7 +546,7 @@ describe('Compiling query documents', () => {
     `);
   });
 
-  it(`should include the operationType for a query`, () => {
+  test(`should include the operationType for a query`, () => {
     const source = stripIndent`
       query HeroName {
         hero {
@@ -568,7 +561,7 @@ describe('Compiling query documents', () => {
     expect(operations['HeroName'].operationType).toBe('query');
   });
 
-  it(`should include the operationType for a mutation`, () => {
+  test(`should include the operationType for a mutation`, () => {
     const source = stripIndent`
       mutation CreateReview {
         createReview {

@@ -52,7 +52,7 @@ describe('Swift code generation', function() {
   });
 
   describe('#classDeclarationForOperation()', function() {
-    it(`should generate a class declaration for a query with variables`, function() {
+    test(`should generate a class declaration for a query with variables`, function() {
       const { operations } = this.compileFromSource(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
@@ -65,7 +65,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate a class declaration for a query with fragment spreads`, function() {
+    test(`should generate a class declaration for a query with fragment spreads`, function() {
       const { operations } = this.compileFromSource(`
         query Hero {
           hero {
@@ -82,7 +82,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate a class declaration for a query with conditional fragment spreads`, function() {
+    test(`should generate a class declaration for a query with conditional fragment spreads`, function() {
       const { operations } = this.compileFromSource(`
         query Hero {
           hero {
@@ -99,7 +99,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, function() {
+    test(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, function() {
       const { operations } = this.compileFromSource(`
         query Hero {
           hero {
@@ -119,7 +119,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate a class declaration for a mutation with variables`, function() {
+    test(`should generate a class declaration for a mutation with variables`, function() {
       const { operations } = this.compileFromSource(`
         mutation CreateReview($episode: Episode) {
           createReview(episode: $episode, review: { stars: 5, commentary: "Wow!" }) {
@@ -136,7 +136,7 @@ describe('Swift code generation', function() {
   });
 
   describe('#initializerDeclarationForProperties()', function() {
-    it(`should generate initializer for a property`, function() {
+    test(`should generate initializer for a property`, function() {
       initializerDeclarationForProperties(this.generator, [
         { propertyName: 'episode', type: new GraphQLNonNull(schema.getType('Episode')), typeName: 'Episode' }
       ]);
@@ -144,7 +144,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate initializer for an optional property`, function() {
+    test(`should generate initializer for an optional property`, function() {
       initializerDeclarationForProperties(this.generator, [
         { propertyName: 'episode', type: schema.getType('Episode'), typeName: 'Episode?', isOptional: true }
       ]);
@@ -152,7 +152,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate initializer for multiple properties`, function() {
+    test(`should generate initializer for multiple properties`, function() {
       initializerDeclarationForProperties(this.generator, [
         { propertyName: 'episode', type: schema.getType('Episode'), typeName: 'Episode?', isOptional: true },
         { propertyName: 'scene', type: GraphQLString, typeName: 'String?', isOptional: true }
@@ -163,7 +163,7 @@ describe('Swift code generation', function() {
   });
 
   describe('#structDeclarationForFragment()', function() {
-    it(`should generate a struct declaration for a fragment with an abstract type condition`, function() {
+    test(`should generate a struct declaration for a fragment with an abstract type condition`, function() {
       const { fragments } = this.compileFromSource(`
         fragment HeroDetails on Character {
           name
@@ -176,7 +176,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate a struct declaration for a fragment with a concrete type condition`, function() {
+    test(`should generate a struct declaration for a fragment with a concrete type condition`, function() {
       const { fragments } = this.compileFromSource(`
         fragment DroidDetails on Droid {
           name
@@ -189,7 +189,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate a struct declaration for a fragment with a subselection`, function() {
+    test(`should generate a struct declaration for a fragment with a subselection`, function() {
       const { fragments } = this.compileFromSource(`
         fragment HeroDetails on Character {
           name
@@ -204,7 +204,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate a struct declaration for a fragment that includes a fragment spread`, function() {
+    test(`should generate a struct declaration for a fragment that includes a fragment spread`, function() {
       const { fragments } = this.compileFromSource(`
         fragment HeroDetails on Character {
           name
@@ -223,7 +223,7 @@ describe('Swift code generation', function() {
   });
 
   describe('#structDeclarationForSelectionSet()', function() {
-    it(`should generate a struct declaration for a selection set`, function() {
+    test(`should generate a struct declaration for a selection set`, function() {
       structDeclarationForSelectionSet(this.generator, {
         structName: 'Hero',
         parentType: schema.getType('Character'),
@@ -239,7 +239,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should escape reserved keywords in a struct declaration for a selection set`, function() {
+    test(`should escape reserved keywords in a struct declaration for a selection set`, function() {
       structDeclarationForSelectionSet(this.generator, {
         structName: 'Hero',
         parentType: schema.getType('Character'),
@@ -255,7 +255,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate a nested struct declaration for a selection set with subselections`, function() {
+    test(`should generate a nested struct declaration for a selection set with subselections`, function() {
       structDeclarationForSelectionSet(this.generator, {
         structName: 'Hero',
         parentType: schema.getType('Character'),
@@ -278,7 +278,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate a struct declaration for a selection set with a fragment spread that matches the parent type`, function() {
+    test(`should generate a struct declaration for a selection set with a fragment spread that matches the parent type`, function() {
       this.addFragment({
         fragmentName: 'HeroDetails',
         typeCondition: schema.getType('Character')
@@ -300,7 +300,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate a struct declaration for a selection set with a fragment spread with a more specific type condition`, function() {
+    test(`should generate a struct declaration for a selection set with a fragment spread with a more specific type condition`, function() {
       this.addFragment({
         fragmentName: 'DroidDetails',
         typeCondition: schema.getType('Droid')
@@ -322,7 +322,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate a struct declaration for a selection set with an inline fragment`, function() {
+    test(`should generate a struct declaration for a selection set with an inline fragment`, function() {
       structDeclarationForSelectionSet(this.generator, {
         structName: 'Hero',
         parentType: schema.getType('Character'),
@@ -356,7 +356,7 @@ describe('Swift code generation', function() {
       expect(this.generator.output).toMatchSnapshot();
     });
 
-    it(`should generate a struct declaration for a fragment spread nested in an inline fragment`, function() {
+    test(`should generate a struct declaration for a fragment spread nested in an inline fragment`, function() {
       this.addFragment({
         fragmentName: 'HeroDetails',
         typeCondition: schema.getType('Character')
@@ -381,7 +381,7 @@ describe('Swift code generation', function() {
   });
 
   describe('#dictionaryLiteralForFieldArguments()', function() {
-    it('should include expressions for input objects with variables', function() {
+    test('should include expressions for input objects with variables', function() {
       const { operations } = this.compileFromSource(`
         mutation FieldArgumentsWithInputObjects($commentary: String!, $red: Int!) {
           createReview(episode: JEDI, review: { stars: 2, commentary: $commentary, favorite_color: { red: $red, blue: 100, green: 50 } }) {
@@ -398,7 +398,7 @@ describe('Swift code generation', function() {
   });
 
   describe('#typeDeclarationForGraphQLType()', function() {
-    it('should generate an enum declaration for a GraphQLEnumType', function() {
+    test('should generate an enum declaration for a GraphQLEnumType', function() {
       const generator = new CodeGenerator();
 
       typeDeclarationForGraphQLType(generator, schema.getType('Episode'));
@@ -406,7 +406,7 @@ describe('Swift code generation', function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    it('should escape identifiers in cases of enum declaration for a GraphQLEnumType', function() {
+    test('should escape identifiers in cases of enum declaration for a GraphQLEnumType', function() {
       const generator = new CodeGenerator();
 
       const albumPrivaciesEnum = new GraphQLEnumType({
@@ -419,7 +419,7 @@ describe('Swift code generation', function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    it('should generate a struct declaration for a GraphQLInputObjectType', function() {
+    test('should generate a struct declaration for a GraphQLInputObjectType', function() {
       const generator = new CodeGenerator();
 
       typeDeclarationForGraphQLType(generator, schema.getType('ReviewInput'));
