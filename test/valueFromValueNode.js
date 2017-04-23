@@ -1,5 +1,3 @@
-import { expect } from 'chai'
-
 import {
   parseValue,
 } from 'graphql';
@@ -7,66 +5,66 @@ import {
 import { valueFromValueNode }  from '../src/utilities/graphql';
 
 describe('#valueFromValueNode', () => {
-  it(`should return a number for an IntValue`, () => {
+  test(`should return a number for an IntValue`, () => {
     const valueNode = parseValue("1");
     const value = valueFromValueNode(valueNode);
 
-    expect(value).to.equal(1);
+    expect(value).toBe(1);
   });
 
-  it(`should return a number for a FloatValue`, () => {
+  test(`should return a number for a FloatValue`, () => {
     const valueNode = parseValue("1.0");
     const value = valueFromValueNode(valueNode);
 
-    expect(value).to.equal(1.0);
+    expect(value).toBe(1.0);
   });
 
-  it(`should return a boolean for a BooleanValue`, () => {
+  test(`should return a boolean for a BooleanValue`, () => {
     const valueNode = parseValue("true");
     const value = valueFromValueNode(valueNode);
 
-    expect(value).to.equal(true);
+    expect(value).toBe(true);
   });
 
-  it(`should return null for a NullValue`, () => {
+  test(`should return null for a NullValue`, () => {
     const valueNode = parseValue("null");
     const value = valueFromValueNode(valueNode);
 
-    expect(value).to.equal(null);
+    expect(value).toBe(null);
   });
 
-  it(`should return a string for a StringValue`, () => {
+  test(`should return a string for a StringValue`, () => {
     const valueNode = parseValue("\"foo\"");
     const value = valueFromValueNode(valueNode);
 
-    expect(value).to.equal("foo");
+    expect(value).toBe("foo");
   });
 
-  it(`should return a string for an EnumValue`, () => {
+  test(`should return a string for an EnumValue`, () => {
     const valueNode = parseValue("JEDI");
     const value = valueFromValueNode(valueNode);
 
-    expect(value).to.equal("JEDI");
+    expect(value).toBe("JEDI");
   });
 
-  it(`should return an object for a Variable`, () => {
+  test(`should return an object for a Variable`, () => {
     const valueNode = parseValue("$something");
     const value = valueFromValueNode(valueNode);
 
-    expect(value).to.deep.equal({ kind: 'Variable', variableName: 'something' });
+    expect(value).toEqual({ kind: 'Variable', variableName: 'something' });
   });
 
-  it(`should return an array for a ListValue`, () => {
+  test(`should return an array for a ListValue`, () => {
     const valueNode = parseValue("[ \"foo\", 1, JEDI, $something ]");
     const value = valueFromValueNode(valueNode);
 
-    expect(value).to.deep.equal([ "foo", 1, "JEDI", { kind: 'Variable', variableName: 'something' } ]);
+    expect(value).toEqual([ "foo", 1, "JEDI", { kind: 'Variable', variableName: 'something' } ]);
   });
 
-  it(`should return an object for an ObjectValue`, () => {
+  test(`should return an object for an ObjectValue`, () => {
     const valueNode = parseValue("{ foo: \"foo\", bar: 1, bla: JEDI, baz: $something }");
     const value = valueFromValueNode(valueNode);
 
-    expect(value).to.deep.equal({ foo: "foo", bar: 1, bla: "JEDI", baz: { kind: 'Variable', variableName: 'something' } });
+    expect(value).toEqual({ foo: "foo", bar: 1, bla: "JEDI", baz: { kind: 'Variable', variableName: 'something' } });
   });
 });
