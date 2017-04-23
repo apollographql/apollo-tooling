@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import { stripIndent } from 'common-tags'
 
 import {
@@ -22,64 +20,64 @@ import { typeNameFromGraphQLType } from '../../src/swift/types'
 
 describe('Swift code generation: Types', function() {
   describe('#typeNameFromGraphQLType()', function() {
-    it('should return String? for GraphQLString', function() {
-      expect(typeNameFromGraphQLType({}, GraphQLString)).to.equal('String?');
+    test('should return String? for GraphQLString', function() {
+      expect(typeNameFromGraphQLType({}, GraphQLString)).toBe('String?');
     });
 
-    it('should return String for GraphQLNonNull(GraphQLString)', function() {
-      expect(typeNameFromGraphQLType({}, new GraphQLNonNull(GraphQLString))).to.equal('String');
+    test('should return String for GraphQLNonNull(GraphQLString)', function() {
+      expect(typeNameFromGraphQLType({}, new GraphQLNonNull(GraphQLString))).toBe('String');
     });
 
-    it('should return [String?]? for GraphQLList(GraphQLString)', function() {
-      expect(typeNameFromGraphQLType({}, new GraphQLList(GraphQLString))).to.equal('[String?]?');
+    test('should return [String?]? for GraphQLList(GraphQLString)', function() {
+      expect(typeNameFromGraphQLType({}, new GraphQLList(GraphQLString))).toBe('[String?]?');
     });
 
-    it('should return [String?] for GraphQLNonNull(GraphQLList(GraphQLString))', function() {
-      expect(typeNameFromGraphQLType({}, new GraphQLNonNull(new GraphQLList(GraphQLString)))).to.equal('[String?]');
+    test('should return [String?] for GraphQLNonNull(GraphQLList(GraphQLString))', function() {
+      expect(typeNameFromGraphQLType({}, new GraphQLNonNull(new GraphQLList(GraphQLString)))).toBe('[String?]');
     });
 
-    it('should return [String]? for GraphQLList(GraphQLNonNull(GraphQLString))', function() {
-      expect(typeNameFromGraphQLType({}, new GraphQLList(new GraphQLNonNull(GraphQLString)))).to.equal('[String]?');
+    test('should return [String]? for GraphQLList(GraphQLNonNull(GraphQLString))', function() {
+      expect(typeNameFromGraphQLType({}, new GraphQLList(new GraphQLNonNull(GraphQLString)))).toBe('[String]?');
     });
 
-    it('should return [String] for GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))', function() {
-      expect(typeNameFromGraphQLType({}, new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))))).to.equal('[String]');
+    test('should return [String] for GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))', function() {
+      expect(typeNameFromGraphQLType({}, new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))))).toBe('[String]');
     });
 
-    it('should return [[String?]?]? for GraphQLList(GraphQLList(GraphQLString))', function() {
-      expect(typeNameFromGraphQLType({}, new GraphQLList(new GraphQLList(GraphQLString)))).to.equal('[[String?]?]?');
+    test('should return [[String?]?]? for GraphQLList(GraphQLList(GraphQLString))', function() {
+      expect(typeNameFromGraphQLType({}, new GraphQLList(new GraphQLList(GraphQLString)))).toBe('[[String?]?]?');
     });
 
-    it('should return [[String?]]? for GraphQLList(GraphQLNonNull(GraphQLList(GraphQLString)))', function() {
-      expect(typeNameFromGraphQLType({}, new GraphQLList(new GraphQLNonNull(new GraphQLList(GraphQLString))))).to.equal('[[String?]]?');
+    test('should return [[String?]]? for GraphQLList(GraphQLNonNull(GraphQLList(GraphQLString)))', function() {
+      expect(typeNameFromGraphQLType({}, new GraphQLList(new GraphQLNonNull(new GraphQLList(GraphQLString))))).toBe('[[String?]]?');
     });
 
-    it('should return Int? for GraphQLInt', function() {
-      expect(typeNameFromGraphQLType({}, GraphQLInt)).to.equal('Int?');
+    test('should return Int? for GraphQLInt', function() {
+      expect(typeNameFromGraphQLType({}, GraphQLInt)).toBe('Int?');
     });
 
-    it('should return Double? for GraphQLFloat', function() {
-      expect(typeNameFromGraphQLType({}, GraphQLFloat)).to.equal('Double?');
+    test('should return Double? for GraphQLFloat', function() {
+      expect(typeNameFromGraphQLType({}, GraphQLFloat)).toBe('Double?');
     });
 
-    it('should return Bool? for GraphQLBoolean', function() {
-      expect(typeNameFromGraphQLType({}, GraphQLBoolean)).to.equal('Bool?');
+    test('should return Bool? for GraphQLBoolean', function() {
+      expect(typeNameFromGraphQLType({}, GraphQLBoolean)).toBe('Bool?');
     });
 
-    it('should return GraphQLID? for GraphQLID', function() {
-      expect(typeNameFromGraphQLType({}, GraphQLID)).to.equal('GraphQLID?');
+    test('should return GraphQLID? for GraphQLID', function() {
+      expect(typeNameFromGraphQLType({}, GraphQLID)).toBe('GraphQLID?');
     });
 
-    it('should return String? for a custom scalar type', function() {
-      expect(typeNameFromGraphQLType({}, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).to.equal('String?');
+    test('should return String? for a custom scalar type', function() {
+      expect(typeNameFromGraphQLType({}, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).toBe('String?');
     });
 
-    it('should return a passed through custom scalar type with the passthroughCustomScalars option', function() {
-      expect(typeNameFromGraphQLType({ passthroughCustomScalars: true, customScalarsPrefix: '' }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).to.equal('CustomScalarType?');
+    test('should return a passed through custom scalar type with the passthroughCustomScalars option', function() {
+      expect(typeNameFromGraphQLType({ passthroughCustomScalars: true, customScalarsPrefix: '' }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).toBe('CustomScalarType?');
     });
 
-    it('should return a passed through custom scalar type with a prefix with the customScalarsPrefix option', function() {
-      expect(typeNameFromGraphQLType({ passthroughCustomScalars: true, customScalarsPrefix: 'My' }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).to.equal('MyCustomScalarType?');
+    test('should return a passed through custom scalar type with a prefix with the customScalarsPrefix option', function() {
+      expect(typeNameFromGraphQLType({ passthroughCustomScalars: true, customScalarsPrefix: 'My' }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).toBe('MyCustomScalarType?');
     });
   });
 });
