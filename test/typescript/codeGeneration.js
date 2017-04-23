@@ -22,6 +22,10 @@ import CodeGenerator from '../../src/utilities/CodeGenerator';
 import { compileToIR } from '../../src/compilation';
 
 describe('TypeScript code generation', function() {
+  let generator;
+  let compileFromSource;
+  let addFragment;
+
   beforeEach(function() {
     const context = {
       schema: schema,
@@ -30,23 +34,23 @@ describe('TypeScript code generation', function() {
       typesUsed: {}
     }
 
-    this.generator = new CodeGenerator(context);
+    generator = new CodeGenerator(context);
 
-    this.compileFromSource = (source) => {
+    compileFromSource = (source) => {
       const document = parse(source);
       const context = compileToIR(schema, document);
-      this.generator.context = context;
+      generator.context = context;
       return context;
     };
 
-    this.addFragment = (fragment) => {
-      this.generator.context.fragments[fragment.fragmentName] = fragment;
+    addFragment = (fragment) => {
+      generator.context.fragments[fragment.fragmentName] = fragment;
     };
   });
 
   describe('#generateSource()', function() {
     test(`should generate simple query operations`, function() {
-      const context = this.compileFromSource(`
+      const context = compileFromSource(`
         query HeroName {
           hero {
             name
@@ -59,7 +63,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate simple query operations including input variables`, function() {
-      const context = this.compileFromSource(`
+      const context = compileFromSource(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
             name
@@ -72,7 +76,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate simple nested query operations including input variables`, function() {
-      const context = this.compileFromSource(`
+      const context = compileFromSource(`
         query HeroAndFriendsNames($episode: Episode) {
           hero(episode: $episode) {
             name
@@ -88,7 +92,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate fragmented query operations`, function() {
-      const context = this.compileFromSource(`
+      const context = compileFromSource(`
         query HeroAndFriendsNames {
           hero {
             name
@@ -108,7 +112,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate query operations with inline fragments`, function() {
-      const context = this.compileFromSource(`
+      const context = compileFromSource(`
         query HeroAndDetails {
           hero {
             name
@@ -131,7 +135,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate mutation operations with complex input types`, function() {
-      const context = this.compileFromSource(`
+      const context = compileFromSource(`
         mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
           createReview(episode: $episode, review: $review) {
             stars
@@ -145,7 +149,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate correct list with custom fragment`, function() {
-      const context = this.compileFromSource(`
+      const context = compileFromSource(`
         fragment Friend on Character {
           name
         }
