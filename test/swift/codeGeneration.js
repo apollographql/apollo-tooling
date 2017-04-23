@@ -29,6 +29,10 @@ import CodeGenerator from '../../src/utilities/CodeGenerator';
 import { compileToIR } from '../../src/compilation';
 
 describe('Swift code generation', function() {
+  let generator;
+  let compileFromSource;
+  let addFragment;
+
   beforeEach(function() {
     const context = {
       schema: schema,
@@ -37,23 +41,23 @@ describe('Swift code generation', function() {
       typesUsed: {}
     }
 
-    this.generator = new CodeGenerator(context);
+    generator = new CodeGenerator(context);
 
-    this.compileFromSource = (source) => {
+    compileFromSource = (source) => {
       const document = parse(source);
       const context = compileToIR(schema, document);
-      this.generator.context = context;
+      generator.context = context;
       return context;
     };
 
-    this.addFragment = (fragment) => {
-      this.generator.context.fragments[fragment.fragmentName] = fragment;
+    addFragment = (fragment) => {
+      generator.context.fragments[fragment.fragmentName] = fragment;
     };
   });
 
   describe('#classDeclarationForOperation()', function() {
     test(`should generate a class declaration for a query with variables`, function() {
-      const { operations } = this.compileFromSource(`
+      const { operations } = compileFromSource(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
             name
@@ -61,12 +65,12 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(this.generator, operations['HeroName']);
-      expect(this.generator.output).toMatchSnapshot();
+      classDeclarationForOperation(generator, operations['HeroName']);
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a class declaration for a query with fragment spreads`, function() {
-      const { operations } = this.compileFromSource(`
+      const { operations } = compileFromSource(`
         query Hero {
           hero {
             ...HeroDetails
@@ -78,12 +82,12 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(this.generator, operations['Hero']);
-      expect(this.generator.output).toMatchSnapshot();
+      classDeclarationForOperation(generator, operations['Hero']);
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a class declaration for a query with conditional fragment spreads`, function() {
-      const { operations } = this.compileFromSource(`
+      const { operations } = compileFromSource(`
         query Hero {
           hero {
             ...DroidDetails
@@ -95,12 +99,12 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(this.generator, operations['Hero']);
-      expect(this.generator.output).toMatchSnapshot();
+      classDeclarationForOperation(generator, operations['Hero']);
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, function() {
-      const { operations } = this.compileFromSource(`
+      const { operations } = compileFromSource(`
         query Hero {
           hero {
             ... on Droid {
@@ -114,13 +118,13 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(this.generator, operations['Hero']);
+      classDeclarationForOperation(generator, operations['Hero']);
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a class declaration for a mutation with variables`, function() {
-      const { operations } = this.compileFromSource(`
+      const { operations } = compileFromSource(`
         mutation CreateReview($episode: Episode) {
           createReview(episode: $episode, review: { stars: 5, commentary: "Wow!" }) {
             stars
@@ -129,68 +133,68 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(this.generator, operations['CreateReview']);
+      classDeclarationForOperation(generator, operations['CreateReview']);
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
   });
 
   describe('#initializerDeclarationForProperties()', function() {
     test(`should generate initializer for a property`, function() {
-      initializerDeclarationForProperties(this.generator, [
+      initializerDeclarationForProperties(generator, [
         { propertyName: 'episode', type: new GraphQLNonNull(schema.getType('Episode')), typeName: 'Episode' }
       ]);
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate initializer for an optional property`, function() {
-      initializerDeclarationForProperties(this.generator, [
+      initializerDeclarationForProperties(generator, [
         { propertyName: 'episode', type: schema.getType('Episode'), typeName: 'Episode?', isOptional: true }
       ]);
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate initializer for multiple properties`, function() {
-      initializerDeclarationForProperties(this.generator, [
+      initializerDeclarationForProperties(generator, [
         { propertyName: 'episode', type: schema.getType('Episode'), typeName: 'Episode?', isOptional: true },
         { propertyName: 'scene', type: GraphQLString, typeName: 'String?', isOptional: true }
       ]);
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
   });
 
   describe('#structDeclarationForFragment()', function() {
     test(`should generate a struct declaration for a fragment with an abstract type condition`, function() {
-      const { fragments } = this.compileFromSource(`
+      const { fragments } = compileFromSource(`
         fragment HeroDetails on Character {
           name
           appearsIn
         }
       `);
 
-      structDeclarationForFragment(this.generator, fragments['HeroDetails']);
+      structDeclarationForFragment(generator, fragments['HeroDetails']);
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a struct declaration for a fragment with a concrete type condition`, function() {
-      const { fragments } = this.compileFromSource(`
+      const { fragments } = compileFromSource(`
         fragment DroidDetails on Droid {
           name
           primaryFunction
         }
       `);
 
-      structDeclarationForFragment(this.generator, fragments['DroidDetails']);
+      structDeclarationForFragment(generator, fragments['DroidDetails']);
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a struct declaration for a fragment with a subselection`, function() {
-      const { fragments } = this.compileFromSource(`
+      const { fragments } = compileFromSource(`
         fragment HeroDetails on Character {
           name
           friends {
@@ -199,13 +203,13 @@ describe('Swift code generation', function() {
         }
       `);
 
-      structDeclarationForFragment(this.generator, fragments['HeroDetails']);
+      structDeclarationForFragment(generator, fragments['HeroDetails']);
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a struct declaration for a fragment that includes a fragment spread`, function() {
-      const { fragments } = this.compileFromSource(`
+      const { fragments } = compileFromSource(`
         fragment HeroDetails on Character {
           name
           ...MoreHeroDetails
@@ -216,15 +220,15 @@ describe('Swift code generation', function() {
         }
       `);
 
-      structDeclarationForFragment(this.generator, fragments['HeroDetails']);
+      structDeclarationForFragment(generator, fragments['HeroDetails']);
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
   });
 
   describe('#structDeclarationForSelectionSet()', function() {
     test(`should generate a struct declaration for a selection set`, function() {
-      structDeclarationForSelectionSet(this.generator, {
+      structDeclarationForSelectionSet(generator, {
         structName: 'Hero',
         parentType: schema.getType('Character'),
         fields: [
@@ -236,11 +240,11 @@ describe('Swift code generation', function() {
         ]
       });
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should escape reserved keywords in a struct declaration for a selection set`, function() {
-      structDeclarationForSelectionSet(this.generator, {
+      structDeclarationForSelectionSet(generator, {
         structName: 'Hero',
         parentType: schema.getType('Character'),
         fields: [
@@ -252,11 +256,11 @@ describe('Swift code generation', function() {
         ]
       });
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a nested struct declaration for a selection set with subselections`, function() {
-      structDeclarationForSelectionSet(this.generator, {
+      structDeclarationForSelectionSet(generator, {
         structName: 'Hero',
         parentType: schema.getType('Character'),
         fields: [
@@ -275,16 +279,16 @@ describe('Swift code generation', function() {
         ]
       });
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a struct declaration for a selection set with a fragment spread that matches the parent type`, function() {
-      this.addFragment({
+      addFragment({
         fragmentName: 'HeroDetails',
         typeCondition: schema.getType('Character')
       });
 
-      structDeclarationForSelectionSet(this.generator, {
+      structDeclarationForSelectionSet(generator, {
         structName: 'Hero',
         parentType: schema.getType('Character'),
         fragmentSpreads: ['HeroDetails'],
@@ -297,16 +301,16 @@ describe('Swift code generation', function() {
         ]
       });
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a struct declaration for a selection set with a fragment spread with a more specific type condition`, function() {
-      this.addFragment({
+      addFragment({
         fragmentName: 'DroidDetails',
         typeCondition: schema.getType('Droid')
       });
 
-      structDeclarationForSelectionSet(this.generator, {
+      structDeclarationForSelectionSet(generator, {
         structName: 'Hero',
         parentType: schema.getType('Character'),
         fragmentSpreads: ['DroidDetails'],
@@ -319,11 +323,11 @@ describe('Swift code generation', function() {
         ]
       });
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a struct declaration for a selection set with an inline fragment`, function() {
-      structDeclarationForSelectionSet(this.generator, {
+      structDeclarationForSelectionSet(generator, {
         structName: 'Hero',
         parentType: schema.getType('Character'),
         fields: [
@@ -353,16 +357,16 @@ describe('Swift code generation', function() {
         ]
       });
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a struct declaration for a fragment spread nested in an inline fragment`, function() {
-      this.addFragment({
+      addFragment({
         fragmentName: 'HeroDetails',
         typeCondition: schema.getType('Character')
       });
 
-      structDeclarationForSelectionSet(this.generator, {
+      structDeclarationForSelectionSet(generator, {
         structName: 'Hero',
         parentType: schema.getType('Character'),
         fields: [],
@@ -376,13 +380,13 @@ describe('Swift code generation', function() {
         ]
       });
 
-      expect(this.generator.output).toMatchSnapshot();
+      expect(generator.output).toMatchSnapshot();
     });
   });
 
   describe('#dictionaryLiteralForFieldArguments()', function() {
     test('should include expressions for input objects with variables', function() {
-      const { operations } = this.compileFromSource(`
+      const { operations } = compileFromSource(`
         mutation FieldArgumentsWithInputObjects($commentary: String!, $red: Int!) {
           createReview(episode: JEDI, review: { stars: 2, commentary: $commentary, favorite_color: { red: $red, blue: 100, green: 50 } }) {
             commentary

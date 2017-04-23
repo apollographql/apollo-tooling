@@ -11,17 +11,19 @@ import {
 } from '../../src/swift/language';
 
 describe('Swift code generation: Basic language constructs', function() {
+  let generator;
+
   beforeEach(function() {
-    this.generator = new CodeGenerator();
+    generator = new CodeGenerator();
   });
 
   test(`should generate a class declaration`, function() {
-    classDeclaration(this.generator, { className: 'Hero', modifiers: ['public', 'final'] }, () => {
-      propertyDeclaration(this.generator, { propertyName: 'name', typeName: 'String' });
-      propertyDeclaration(this.generator, { propertyName: 'age', typeName: 'Int' });
+    classDeclaration(generator, { className: 'Hero', modifiers: ['public', 'final'] }, () => {
+      propertyDeclaration(generator, { propertyName: 'name', typeName: 'String' });
+      propertyDeclaration(generator, { propertyName: 'age', typeName: 'Int' });
     });
 
-    expect(this.generator.output).toBe(stripIndent`
+    expect(generator.output).toBe(stripIndent`
       public final class Hero {
         public let name: String
         public let age: Int
@@ -30,12 +32,12 @@ describe('Swift code generation: Basic language constructs', function() {
   });
 
   test(`should generate a struct declaration`, function() {
-    structDeclaration(this.generator, { structName: 'Hero' }, () => {
-      propertyDeclaration(this.generator, { propertyName: 'name', typeName: 'String' });
-      propertyDeclaration(this.generator, { propertyName: 'age', typeName: 'Int' });
+    structDeclaration(generator, { structName: 'Hero' }, () => {
+      propertyDeclaration(generator, { propertyName: 'name', typeName: 'String' });
+      propertyDeclaration(generator, { propertyName: 'age', typeName: 'Int' });
     });
 
-    expect(this.generator.output).toBe(stripIndent`
+    expect(generator.output).toBe(stripIndent`
       public struct Hero {
         public let name: String
         public let age: Int
@@ -44,16 +46,16 @@ describe('Swift code generation: Basic language constructs', function() {
   });
 
   test(`should generate nested struct declarations`, function() {
-    structDeclaration(this.generator, { structName: 'Hero' }, () => {
-      propertyDeclaration(this.generator, { propertyName: 'name', typeName: 'String' });
-      propertyDeclaration(this.generator, { propertyName: 'friends', typeName: '[Friend]' });
+    structDeclaration(generator, { structName: 'Hero' }, () => {
+      propertyDeclaration(generator, { propertyName: 'name', typeName: 'String' });
+      propertyDeclaration(generator, { propertyName: 'friends', typeName: '[Friend]' });
 
-      structDeclaration(this.generator, { structName: 'Friend' }, () => {
-        propertyDeclaration(this.generator, { propertyName: 'name', typeName: 'String' });
+      structDeclaration(generator, { structName: 'Friend' }, () => {
+        propertyDeclaration(generator, { propertyName: 'name', typeName: 'String' });
       });
     });
 
-    expect(this.generator.output).toBe(stripIndent`
+    expect(generator.output).toBe(stripIndent`
       public struct Hero {
         public let name: String
         public let friends: [Friend]
@@ -66,12 +68,12 @@ describe('Swift code generation: Basic language constructs', function() {
   });
 
   test(`should generate a protocol declaration`, function() {
-    protocolDeclaration(this.generator, { protocolName: 'HeroDetails', adoptedProtocols: ['HasName'] }, () => {
-      protocolPropertyDeclaration(this.generator, { propertyName: 'name', typeName: 'String' });
-      protocolPropertyDeclaration(this.generator, { propertyName: 'age', typeName: 'Int' });
+    protocolDeclaration(generator, { protocolName: 'HeroDetails', adoptedProtocols: ['HasName'] }, () => {
+      protocolPropertyDeclaration(generator, { propertyName: 'name', typeName: 'String' });
+      protocolPropertyDeclaration(generator, { propertyName: 'age', typeName: 'Int' });
     });
 
-    expect(this.generator.output).toBe(stripIndent`
+    expect(generator.output).toBe(stripIndent`
       public protocol HeroDetails: HasName {
         var name: String { get }
         var age: Int { get }
