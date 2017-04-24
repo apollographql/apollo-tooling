@@ -404,6 +404,32 @@ describe('Compiling query documents', () => {
     expect(filteredIR(operations['HeroName'])).toMatchSnapshot();
   });
 
+  test(`should ignore a fragment's inline fragments whose type conditions do not match more specific effective type`, () => {
+    const document = parse(`
+      fragment CharacterFragment on Character {
+        ... on Droid {
+          primaryFunction
+        }
+        ... on Human {
+          height
+        }
+      }
+
+      query HumanAndDroid {
+        human(id: "human") {
+          ...CharacterFragment
+        }
+        droid(id: "droid") {
+          ...CharacterFragment
+        }
+      }
+    `);
+
+    const { operations } = compileToIR(schema, document);
+
+    expect(filteredIR(operations['HumanAndDroid'])).toMatchSnapshot();
+  });
+
   test(`should not inherit type condition when nesting a fragment spread in an inline fragment with a less specific type condition`, () => {
     const document = parse(`
       query HeroName {
