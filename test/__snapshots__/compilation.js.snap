@@ -1,5 +1,50 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Compiling query documents should ignore a fragment's inline fragments whose type conditions do not match more specific effective type 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "args": Array [
+        Object {
+          "name": "id",
+          "value": "human",
+        },
+      ],
+      "fieldName": "human",
+      "fields": Array [],
+      "fragmentSpreads": Array [
+        "CharacterFragment",
+      ],
+      "inlineFragments": Array [],
+      "responseName": "human",
+      "type": "Human",
+    },
+    Object {
+      "args": Array [
+        Object {
+          "name": "id",
+          "value": "droid",
+        },
+      ],
+      "fieldName": "droid",
+      "fields": Array [],
+      "fragmentSpreads": Array [
+        "CharacterFragment",
+      ],
+      "inlineFragments": Array [],
+      "responseName": "droid",
+      "type": "Droid",
+    },
+  ],
+  "fragmentsReferenced": Array [
+    "CharacterFragment",
+  ],
+  "operationName": "HumanAndDroid",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
 exports[`Compiling query documents should include fragment spreads from subselections 1`] = `
 Object {
   "fields": Array [
