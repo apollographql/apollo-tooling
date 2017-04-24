@@ -200,6 +200,9 @@ export class Compiler {
             parentType;
 
           const effectiveType = parentType instanceof GraphQLObjectType ? parentType : inlineFragmentType;
+          if (inlineFragmentType !== effectiveType && !isTypeProperSuperTypeOf(this.schema, inlineFragmentType, effectiveType)) {
+            break;
+          }
 
           this.collectFields(
             effectiveType,
