@@ -6,7 +6,7 @@ import {
 function printDescription(generator, description) {
   description && description.split('/n')
     .forEach(line => {
-      generator.printOnNewline(`// ${line.trim()}`);
+      generator.printOnNewline(`/// ${line.trim()}`);
     });
 }
 
@@ -32,8 +32,8 @@ export function structDeclaration(generator, { structName, description, adoptedP
 }
 
 export function propertyDeclaration(generator, { propertyName, typeName, description }) {
-  generator.printOnNewline(`public let ${propertyName}: ${typeName}`);
   printDescription(generator, description);
+  generator.printOnNewline(`public let ${propertyName}: ${typeName}`);
 }
 
 export function propertyDeclarations(generator, properties) {
