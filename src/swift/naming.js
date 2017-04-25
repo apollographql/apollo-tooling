@@ -50,7 +50,8 @@ export function propertiesFromSelectionSet(context, selectionSet) {
 
 export function propertyFromField(context, field) {
   const name = field.name || field.responseName;
-  const propertyName = escapeIdentifierIfNeeded(camelCase(name));
+  const unescapedPropertyName = isMetaFieldName(name) ? name : camelCase(name)
+  const propertyName = escapeIdentifierIfNeeded(unescapedPropertyName);
 
   const type = field.type;
   const isOptional = field.isConditional || !(type instanceof GraphQLNonNull);
@@ -82,4 +83,8 @@ export function propertyFromFragmentSpread(context, fragmentSpread) {
   const propertyName = camelCase(fragmentName);
   const typeName = structNameForFragmentName(fragmentName);
   return { propertyName, typeName, fragment, ...fragmentSpread };
+}
+
+function isMetaFieldName(name) {
+  return name.startsWith("__");
 }
