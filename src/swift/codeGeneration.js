@@ -20,6 +20,7 @@ import {
 } from '../utilities/printing';
 
 import {
+  namespaceDeclaration,
   classDeclaration,
   structDeclaration,
   propertyDeclaration,
@@ -58,17 +59,20 @@ export function generateSource(context) {
   generator.printNewline();
   generator.printOnNewline('import Apollo');
 
-  context.typesUsed.forEach(type => {
-    typeDeclarationForGraphQLType(generator, type);
-  });
+  namespaceDeclaration(generator, context.namespace, () => {
 
-  Object.values(context.operations).forEach(operation => {
-    classDeclarationForOperation(generator, { ...operation, selectionSet: selectionSetFrom(operation) });
-  });
+    context.typesUsed.forEach(type => {
+      typeDeclarationForGraphQLType(generator, type);
+    });
 
-  Object.values(context.fragments).forEach(fragment => {
-    structDeclarationForFragment(generator, { ...fragment, selectionSet: selectionSetFrom(fragment) });
-  });
+    Object.values(context.operations).forEach(operation => {
+      classDeclarationForOperation(generator, { ...operation, selectionSet: selectionSetFrom(operation) });
+    });
+
+    Object.values(context.fragments).forEach(fragment => {
+      structDeclarationForFragment(generator, { ...fragment, selectionSet: selectionSetFrom(fragment) });
+    });
+  })
 
   return generator.output;
 }
