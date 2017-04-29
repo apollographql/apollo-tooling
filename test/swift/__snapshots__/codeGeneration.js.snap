@@ -30,8 +30,10 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public struct CreateReview: GraphQLMappable {
       public let __typename: String
-      public let stars: Int /// The number of stars this review gave, 1-5
-      public let commentary: String? /// Comment about the movie
+      /// The number of stars this review gave, 1-5
+      public let stars: Int
+      /// Comment about the movie
+      public let commentary: String?
 
       public init(reader: GraphQLResultReader) throws {
         __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
@@ -209,7 +211,8 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public struct Hero: GraphQLMappable {
       public let __typename: String
-      public let name: String /// The name of the character
+      /// The name of the character
+      public let name: String
 
       public init(reader: GraphQLResultReader) throws {
         __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
@@ -251,7 +254,8 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public let __typename: String
-  public let name: String /// The name of the character
+  /// The name of the character
+  public let name: String
 
   public let fragments: Fragments
 
@@ -281,8 +285,10 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   public static let possibleTypes = [\\"Droid\\"]
 
   public let __typename: String
-  public let name: String /// What others call this droid
-  public let primaryFunction: String? /// This droid's primary function
+  /// What others call this droid
+  public let name: String
+  /// This droid's primary function
+  public let primaryFunction: String?
 
   public init(reader: GraphQLResultReader) throws {
     __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
@@ -307,8 +313,10 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public let __typename: String
-  public let name: String /// The name of the character
-  public let friends: [Friend?]? /// The friends of the character, or an empty list if they have none
+  /// The name of the character
+  public let name: String
+  /// The friends of the character, or an empty list if they have none
+  public let friends: [Friend?]?
 
   public init(reader: GraphQLResultReader) throws {
     __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
@@ -318,7 +326,8 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
   public struct Friend: GraphQLMappable {
     public let __typename: String
-    public let name: String /// The name of the character
+    /// The name of the character
+    public let name: String
 
     public init(reader: GraphQLResultReader) throws {
       __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
@@ -340,8 +349,10 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public let __typename: String
-  public let name: String /// The name of the character
-  public let appearsIn: [Episode?] /// The movies this character appears in
+  /// The name of the character
+  public let name: String
+  /// The movies this character appears in
+  public let appearsIn: [Episode?]
 
   public init(reader: GraphQLResultReader) throws {
     __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
