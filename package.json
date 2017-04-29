@@ -34,7 +34,7 @@
     "glob": "^7.0.5",
     "source-map-support": "^0.4.2",
     "change-case": "^3.0.0",
-    "graphql": "^0.9.1",
+    "graphql": "^0.9.5",
     "inflected": "^1.1.7",
     "mkdirp": "^0.5.1",
     "node-fetch": "^1.5.3",
