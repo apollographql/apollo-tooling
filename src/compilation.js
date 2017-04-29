@@ -92,6 +92,8 @@ export class Compiler {
   }
 
   addTypeUsed(type) {
+    if (this.typesUsedSet.has(type)) return;
+    
     if (type instanceof GraphQLEnumType ||
         type instanceof GraphQLInputObjectType ||
         (type instanceof GraphQLScalarType && !isBuiltInScalarType(type))) {
