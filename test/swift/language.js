@@ -80,4 +80,13 @@ describe('Swift code generation: Basic language constructs', function() {
       }
     `);
   });
+
+  test(`should handle multi-line descriptions`, () => {
+    structDeclaration(generator, { structName: 'Hero', description: 'A hero' }, () => {
+      propertyDeclaration(generator, { propertyName: 'name', typeName: 'String', description: `A multiline comment /n on the hero's name.` });
+      propertyDeclaration(generator, { propertyName: 'age', typeName: 'String', description: `A multiline comment /n on the hero's age.` });
+    });
+
+    expect(generator.output).toMatchSnapshot();
+  });
 });
