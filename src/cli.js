@@ -56,13 +56,13 @@ yargs
     },
     async argv => {
       const { schema, output, header, insecure } = argv;
-      
+
       const urlRegex = /^https?:\/\//i;
       if (urlRegex.test(schema)) {
         await downloadSchema(schema, output, header, insecure);
       } else {
         await introspectSchema(schema, output);
-      } 
+      }
     }
   )
   .command(
@@ -106,7 +106,11 @@ yargs
       if (input.length === 1 && glob.hasMagic(input[0])) {
         input = glob.sync(input[0]);
       }
-      const inputPaths = input.map(input => path.resolve(input));
+
+      const inputPaths = input
+        .map(input => path.resolve(input))
+        // Sort to normalize different glob expansions between different terminals.
+        .sort();
 
       const options = { passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '', customScalarsPrefix: argv["custom-scalars-prefix"] || '' };
       generate(inputPaths, argv.schema, argv.output, argv.target, options);
