@@ -5,7 +5,7 @@ import process from 'process';
 import path from 'path';
 import yargs from 'yargs';
 
-import { downloadSchema, introspectSchema, generate } from '.';
+import { downloadSchema, introspectSchema, printSchema, generate } from '.';
 import { ToolError, logError } from './errors'
 
 import 'source-map-support/register'
@@ -63,6 +63,30 @@ yargs
       } else {
         await introspectSchema(schema, output);
       }
+    }
+  )
+  .command(
+    ['print-schema [schema]'],
+    'Print the provided schema in the GraphQL schema language format',
+    {
+      schema: {
+        demand: true,
+        describe: 'Path to GraphQL introspection query result',
+        default: 'schema.json',
+        normalize: true,
+        coerce: path.resolve,
+      },
+      output: {
+        demand: true,
+        describe: 'Output path for GraphQL schema language file',
+        default: 'schema.graphql',
+        normalize: true,
+        coerce: path.resolve,
+      }
+    },
+    async argv => {
+      const { schema, output } = argv;
+      await printSchema(schema, output);
     }
   )
   .command(
