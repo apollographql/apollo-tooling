@@ -4,7 +4,7 @@ import {
 } from '../utilities/printing';
 
 function printDescription(generator, description) {
-  description && description.split('/n')
+  description && description.split('\n')
     .forEach(line => {
       generator.printOnNewline(`/// ${line.trim()}`);
     });
