@@ -1,5 +1,100 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`TypeScript code generation #generateSource() should correctly handle inline fragments on interfaces 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export interface HeroQueryQueryVariables {
+  episode: Episode | null;
+}
+
+export interface HeroQueryQuery {
+  hero: {
+    // The name of the character
+    name: string,
+    // The friends of the character exposed as a connection with edges
+    friendsConnection: {
+      // A list of the friends, as a convenience when edges are not needed.
+      friends: Array<CharacterFragmentFragment>,
+    },
+  } | null;
+}
+
+export interface CharacterFragmentFragment {
+  // The name of the character
+  name: string;
+  // What this human calls themselves
+  name: string;
+  // The home planet of the human, or null if unknown
+  homePlanet: string | null;
+  // What others call this droid
+  name: string;
+  // This droid's primary function
+  primaryFunction: string | null;
+}
+/* tslint:enable */
+"
+`;
+
+exports[`TypeScript code generation #generateSource() should correctly handle nested inline fragments on interfaces 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export interface HeroQueryQueryVariables {
+  episode: Episode | null;
+}
+
+export interface HeroQueryQuery {
+  hero: {
+    // The name of the character
+    name: string,
+    // The friends of the character exposed as a connection with edges
+    friendsConnection: {
+      // A list of the friends, as a convenience when edges are not needed.
+      friends: Array<CharacterFragmentFragment>,
+    },
+  } | null;
+}
+
+export interface CharacterFragmentFragment {
+  // The name of the character
+  name: string;
+  // What this human calls themselves
+  name: string;
+  // The home planet of the human, or null if unknown
+  homePlanet: string | null;
+  // This human's friends, or an empty list if they have none
+  friends: Array<OtherCharacterFragmentFragment>;
+  // What others call this droid
+  name: string;
+  // This droid's primary function
+  primaryFunction: string | null;
+}
+
+export interface OtherCharacterFragmentFragment {
+  // Height in the preferred unit, default is meters
+  height: number | null;
+  // The movies this droid appears in
+  appearsIn: Array< Episode | null >;
+}
+/* tslint:enable */
+"
+`;
+
 exports[`TypeScript code generation #generateSource() should generate correct list with custom fragment 1`] = `
 "//  This file was automatically generated and should not be edited.
 /* tslint:disable */

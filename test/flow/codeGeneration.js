@@ -246,7 +246,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    it('should correctly handle nested inline fragments on interfaces', function() {
+    test('should correctly handle nested inline fragments on interfaces', function() {
       const {compileFromSource} = setup(swapiSchema);
       const context = compileFromSource(
         `
