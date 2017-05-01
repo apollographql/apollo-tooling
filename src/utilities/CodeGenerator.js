@@ -6,7 +6,7 @@ import {
 export default class CodeGenerator {
   constructor(context) {
     this.context = context;
-    
+
     this.scopeStack = [];
 
     this.indentWidth = 2;
