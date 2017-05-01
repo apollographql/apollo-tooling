@@ -167,5 +167,84 @@ describe('TypeScript code generation', function() {
       const source = generateSource(context);
       expect(source).toMatchSnapshot();
     });
+
+    test('should correctly handle inline fragments on interfaces', function() {
+      const context = compileFromSource(
+        `
+        query HeroQuery($episode: Episode){
+          hero(episode: $episode) {
+            name
+            friendsConnection {
+              friends {
+                ...CharacterFragment
+              }
+            }
+          }
+        }
+
+        fragment CharacterFragment on Character {
+          name
+
+          ... on Human {
+            homePlanet
+          }
+
+          ... on Droid {
+            primaryFunction
+          }
+        }
+      `
+      );
+
+      const source = generateSource(context);
+
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should correctly handle nested inline fragments on interfaces', function() {
+      const context = compileFromSource(
+        `
+        query HeroQuery($episode: Episode) {
+          hero(episode: $episode) {
+            name
+            friendsConnection {
+              friends {
+                ...CharacterFragment
+              }
+            }
+          }
+        }
+
+        fragment CharacterFragment on Character {
+          name
+
+          ... on Human {
+            homePlanet
+            friends {
+              ...OtherCharacterFragment
+            }
+          }
+
+          ... on Droid {
+            primaryFunction
+          }
+        }
+
+        fragment OtherCharacterFragment on Character {
+          ... on Human {
+            height
+          }
+
+          ... on Droid {
+            appearsIn
+          }
+        }
+      `
+      );
+
+      const source = generateSource(context);
+
+      expect(source).toMatchSnapshot();
+    });
   });
 });
