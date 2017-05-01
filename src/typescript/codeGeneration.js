@@ -26,7 +26,9 @@ import CodeGenerator from '../utilities/CodeGenerator';
 
 import {
   interfaceDeclaration,
+  typeDeclaration,
   propertyDeclaration,
+  unionDeclaration
 } from './language';
 
 import {
@@ -166,17 +168,43 @@ export function interfaceDeclarationForFragment(
 ) {
   const interfaceName = `${pascalCase(fragmentName)}Fragment`;
 
-  interfaceDeclaration(generator, {
-    interfaceName,
-    extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
-  }, () => {
-    const properties = propertiesFromFields(generator.context, fields)
-    .concat(...(inlineFragments || []).map(fragment =>
-      propertiesFromFields(generator.context, fragment.fields, true)
-    ));
+  if (inlineFragments.length > 0) {
+    let typeNames = [];
+    inlineFragments.forEach(inlineFragment => {
+      const typeName = `${fragmentName}On${inlineFragment.typeCondition}`;
+      typeNames.push(typeName);
+      interfaceDeclaration(
+        generator,
+        {
+          interfaceName: typeName,
+        },
+        () => {
+          let properties = propertiesFromFields(
+            generator.context,
+            inlineFragment.fields
+          );
 
-    propertyDeclarations(generator, properties, true);
-  });
+          propertyDeclarations(generator, properties, true);
+        }
+      )
+    });
+
+    typeDeclaration(generator, { interfaceName, noBrackets: true }, () => {
+      unionDeclaration(generator, typeNames);
+    });
+  } else {
+    interfaceDeclaration(generator, {
+      interfaceName,
+      extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
+    }, () => {
+      const properties = propertiesFromFields(generator.context, fields)
+      .concat(...(inlineFragments || []).map(fragment =>
+        propertiesFromFields(generator.context, fragment.fields, true)
+      ));
+
+      propertyDeclarations(generator, properties, true);
+    });
+  }
 }
 
 export function propertiesFromFields(context, fields, forceNullable) {
