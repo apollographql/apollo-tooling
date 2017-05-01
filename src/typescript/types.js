@@ -36,7 +36,7 @@ export function typeNameFromGraphQLType(context, type, bareTypeName, nullable = 
   if (type instanceof GraphQLList) {
     typeName = `Array< ${typeNameFromGraphQLType(context, type.ofType, bareTypeName, true)} >`;
   } else if (type instanceof GraphQLScalarType) {
-    typeName = builtInScalarMap[type.name] || (context.passthroughCustomScalars ? context.customScalarsPrefix + type.name: GraphQLString);
+    typeName = builtInScalarMap[type.name] || (context.passthroughCustomScalars ? context.customScalarsPrefix + type.name: builtInScalarMap[GraphQLString.name]);
   } else {
     typeName = bareTypeName || type.name;
   }
