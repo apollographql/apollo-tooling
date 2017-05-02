@@ -14,7 +14,7 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
 
   const document = loadAndMergeQueryDocuments(inputPaths);
 
-  validateQueryDocument(schema, document);
+  validateQueryDocument(schema, document, target);
 
   const context = compileToIR(schema, document);
   Object.assign(context, options);
