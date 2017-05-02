@@ -93,7 +93,7 @@ export class Compiler {
 
   addTypeUsed(type) {
     if (this.typesUsedSet.has(type)) return;
-    
+
     if (type instanceof GraphQLEnumType ||
         type instanceof GraphQLInputObjectType ||
         (type instanceof GraphQLScalarType && !isBuiltInScalarType(type))) {
@@ -301,7 +301,10 @@ export class Compiler {
         field.isConditional = true;
       }
 
-      const description = parentType.getFields()[fieldName].description;
+      const isIntrospection = parentType.getFields()[fieldName] === undefined;
+      const description = isIntrospection ?
+        null :
+        parentType.getFields()[fieldName].description;
 
       if (description) {
         field.description = description
