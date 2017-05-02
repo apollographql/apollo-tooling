@@ -27,18 +27,23 @@ export interface HeroQueryQuery {
   } | null;
 }
 
-export interface CharacterFragmentFragment {
-  // The name of the character
-  name: string;
+export interface CharacterFragmentOnHuman {
   // What this human calls themselves
   name: string;
   // The home planet of the human, or null if unknown
   homePlanet: string | null;
+}
+
+export interface CharacterFragmentOnDroid {
   // What others call this droid
   name: string;
   // This droid's primary function
   primaryFunction: string | null;
 }
+
+export type CharacterFragmentFragment =
+  | CharacterFragmentOnHuman
+  | CharacterFragmentOnDroid
 /* tslint:enable */
 "
 `;
@@ -70,27 +75,39 @@ export interface HeroQueryQuery {
   } | null;
 }
 
-export interface CharacterFragmentFragment {
-  // The name of the character
-  name: string;
+export interface CharacterFragmentOnHuman {
   // What this human calls themselves
   name: string;
   // The home planet of the human, or null if unknown
   homePlanet: string | null;
   // This human's friends, or an empty list if they have none
   friends: Array<OtherCharacterFragmentFragment>;
+}
+
+export interface CharacterFragmentOnDroid {
   // What others call this droid
   name: string;
   // This droid's primary function
   primaryFunction: string | null;
 }
 
-export interface OtherCharacterFragmentFragment {
+export type CharacterFragmentFragment =
+  | CharacterFragmentOnHuman
+  | CharacterFragmentOnDroid
+
+export interface OtherCharacterFragmentOnHuman {
   // Height in the preferred unit, default is meters
   height: number | null;
+}
+
+export interface OtherCharacterFragmentOnDroid {
   // The movies this droid appears in
   appearsIn: Array< Episode | null >;
 }
+
+export type OtherCharacterFragmentFragment =
+  | OtherCharacterFragmentOnHuman
+  | OtherCharacterFragmentOnDroid
 /* tslint:enable */
 "
 `;
@@ -203,12 +220,19 @@ export interface HeroAndDetailsQuery {
   } | null;
 }
 
-export interface HeroDetailsFragment {
+export interface HeroDetailsOnDroid {
   // This droid's primary function
   primaryFunction: string | null;
+}
+
+export interface HeroDetailsOnHuman {
   // Height in the preferred unit, default is meters
   height: number | null;
 }
+
+export type HeroDetailsFragment =
+  | HeroDetailsOnDroid
+  | HeroDetailsOnHuman
 /* tslint:enable */
 "
 `;
