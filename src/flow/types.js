@@ -28,7 +28,6 @@ const builtInScalarMap = {
 }
 
 export function typeNameFromGraphQLType(context, type, bareTypeName, nullable = true) {
-  console.log(type);
   if (type instanceof GraphQLNonNull) {
     return typeNameFromGraphQLType(context, type.ofType, bareTypeName, false)
   }
