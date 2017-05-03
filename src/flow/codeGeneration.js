@@ -232,7 +232,13 @@ export function propertyFromField(context, field, forceNullable) {
       isArray, isNullable,
     };
   } else {
-    const typeName = typeNameFromGraphQLType(context, fieldType);
+    // handle __typename
+    let typeName;
+    if (fieldName === '__typename') {
+      typeName = typeNameFromGraphQLType(context, null, fieldType, false);
+    } else {
+      typeName = typeNameFromGraphQLType(context, fieldType);
+    }
     return { ...property, typeName, isComposite: false, fieldType };
   }
 }
