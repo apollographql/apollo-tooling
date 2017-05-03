@@ -72,7 +72,7 @@ function enumerationDeclaration(generator, type) {
   generator.printOnNewline(description && `// ${description}`);
   generator.printOnNewline(`export type ${name} =`);
   const nValues = values.length;
-  values.forEach((value, i) => 
+  values.forEach((value, i) =>
     generator.printOnNewline(`  "${value.value}"${i === nValues-1 ? ';' : ' |'}${wrap(' // ', value.description)}`)
   );
   generator.printNewline();
@@ -212,7 +212,10 @@ export function propertyFromField(context, field, forceNullable) {
       isArray, isNullable,
     };
   } else {
-    const typeName = typeNameFromGraphQLType(context, fieldType);
+    const typeName = fieldName === '__typename' ?
+      typeNameFromGraphQLType(context, null, fieldType, false) :
+      typeNameFromGraphQLType(context, fieldType);
+
     return { ...property, typeName, isComposite: false, fieldType };
   }
 }

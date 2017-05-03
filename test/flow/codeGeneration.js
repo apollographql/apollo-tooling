@@ -185,7 +185,6 @@ describe('Flow code generation', function() {
 
         query HeroAndFriendsNames($episode: Episode) {
           hero(episode: $episode) {
-            __typename
             name
             friends {
               ...Friend
