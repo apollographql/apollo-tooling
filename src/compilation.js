@@ -301,13 +301,11 @@ export class Compiler {
         field.isConditional = true;
       }
 
-      const isIntrospection = parentType.getFields()[fieldName] === undefined;
-      const description = isIntrospection ?
-        null :
-        parentType.getFields()[fieldName].description;
-
-      if (description) {
-        field.description = description
+      // short circuit typenames for now
+      if (fieldName === '__typename') {
+        field.type = `"${parentType}"`
+      } else {
+        field.description = parentType.getFields()[fieldName].description
       }
 
       const bareType = getNamedType(type);
