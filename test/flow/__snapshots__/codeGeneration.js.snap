@@ -11,7 +11,7 @@ export type CustomScalarQuery = {|
 |};"
 `;
 
-exports[`Flow code generation #generateSource() should correctly add typename to inline fragments on interfaces if addTypename is true 1`] = `
+exports[`Flow code generation #generateSource() should correctly add typename to nested fragments on interfaces if addTypename is true 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
@@ -38,7 +38,7 @@ export type HeroQueryQuery = {|
   |},
 |};
 
-export type CharacterFragmentOnHuman = {|
+export type CharacterFragmentFragmentOnHuman = {|
   __typename: \\"Human\\",
   // What this human calls themselves
   name: string,
@@ -46,7 +46,7 @@ export type CharacterFragmentOnHuman = {|
   homePlanet: ?string,
 |};
 
-export type CharacterFragmentOnDroid = {|
+export type CharacterFragmentFragmentOnDroid = {|
   __typename: \\"Droid\\",
   // What others call this droid
   name: string,
@@ -55,11 +55,11 @@ export type CharacterFragmentOnDroid = {|
 |};
 
 export type CharacterFragmentFragment =
-  | CharacterFragmentOnHuman
-  | CharacterFragmentOnDroid;"
+  | CharacterFragmentFragmentOnHuman
+  | CharacterFragmentFragmentOnDroid;"
 `;
 
-exports[`Flow code generation #generateSource() should correctly handle inline fragments on interfaces 1`] = `
+exports[`Flow code generation #generateSource() should correctly handle doubly nested fragments on interfaces 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
@@ -86,53 +86,7 @@ export type HeroQueryQuery = {|
   |},
 |};
 
-export type CharacterFragmentOnHuman = {|
-  // What this human calls themselves
-  name: string,
-  // The home planet of the human, or null if unknown
-  homePlanet: ?string,
-|};
-
-export type CharacterFragmentOnDroid = {|
-  // What others call this droid
-  name: string,
-  // This droid's primary function
-  primaryFunction: ?string,
-|};
-
-export type CharacterFragmentFragment =
-  | CharacterFragmentOnHuman
-  | CharacterFragmentOnDroid;"
-`;
-
-exports[`Flow code generation #generateSource() should correctly handle nested inline fragments on interfaces 1`] = `
-"/* @flow */
-//  This file was automatically generated and should not be edited.
-
-// The episodes in the Star Wars trilogy
-export type Episode =
-  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
-  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
-
-
-export type HeroQueryQueryVariables = {|
-  episode: ?Episode,
-|};
-
-export type HeroQueryQuery = {|
-  hero: ? {|
-    // The name of the character
-    name: string,
-    // The friends of the character exposed as a connection with edges
-    friendsConnection: {|
-      // A list of the friends, as a convenience when edges are not needed.
-      friends: Array<CharacterFragmentFragment>,
-    |},
-  |},
-|};
-
-export type CharacterFragmentOnHuman = {|
+export type CharacterFragmentFragmentOnHuman = {|
   // What this human calls themselves
   name: string,
   // The home planet of the human, or null if unknown
@@ -141,7 +95,7 @@ export type CharacterFragmentOnHuman = {|
   friends: Array<OtherCharacterFragmentFragment>,
 |};
 
-export type CharacterFragmentOnDroid = {|
+export type CharacterFragmentFragmentOnDroid = {|
   // What others call this droid
   name: string,
   // This droid's primary function
@@ -149,22 +103,106 @@ export type CharacterFragmentOnDroid = {|
 |};
 
 export type CharacterFragmentFragment =
-  | CharacterFragmentOnHuman
-  | CharacterFragmentOnDroid;
+  | CharacterFragmentFragmentOnHuman
+  | CharacterFragmentFragmentOnDroid;
 
-export type OtherCharacterFragmentOnHuman = {|
+export type OtherCharacterFragmentFragmentOnHuman = {|
   // Height in the preferred unit, default is meters
   height: ?number,
 |};
 
-export type OtherCharacterFragmentOnDroid = {|
+export type OtherCharacterFragmentFragmentOnDroid = {|
   // The movies this droid appears in
   appearsIn: Array< ?Episode >,
 |};
 
 export type OtherCharacterFragmentFragment =
-  | OtherCharacterFragmentOnHuman
-  | OtherCharacterFragmentOnDroid;"
+  | OtherCharacterFragmentFragmentOnHuman
+  | OtherCharacterFragmentFragmentOnDroid;"
+`;
+
+exports[`Flow code generation #generateSource() should correctly handle fragments on interfaces 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export type HeroQueryQueryVariables = {|
+  episode: ?Episode,
+|};
+
+export type HeroQueryQuery = {|
+  hero: ?HeroFragment,
+|};
+
+export type HeroFragmentOnHuman = {|
+  // What this human calls themselves
+  name: string,
+  // The home planet of the human, or null if unknown
+  homePlanet: ?string,
+|};
+
+export type HeroFragmentOnDroid = {|
+  // What others call this droid
+  name: string,
+  // This droid's primary function
+  primaryFunction: ?string,
+|};
+
+export type HeroFragment =
+  | HeroFragmentOnHuman
+  | HeroFragmentOnDroid;"
+`;
+
+exports[`Flow code generation #generateSource() should correctly handle nested fragments on interfaces 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export type HeroQueryQueryVariables = {|
+  episode: ?Episode,
+|};
+
+export type HeroQueryQuery = {|
+  hero: ? {|
+    // The name of the character
+    name: string,
+    // The friends of the character exposed as a connection with edges
+    friendsConnection: {|
+      // A list of the friends, as a convenience when edges are not needed.
+      friends: Array<CharacterFragmentFragment>,
+    |},
+  |},
+|};
+
+export type CharacterFragmentFragmentOnHuman = {|
+  // What this human calls themselves
+  name: string,
+  // The home planet of the human, or null if unknown
+  homePlanet: ?string,
+|};
+
+export type CharacterFragmentFragmentOnDroid = {|
+  // What others call this droid
+  name: string,
+  // This droid's primary function
+  primaryFunction: ?string,
+|};
+
+export type CharacterFragmentFragment =
+  | CharacterFragmentFragmentOnHuman
+  | CharacterFragmentFragmentOnDroid;"
 `;
 
 exports[`Flow code generation #generateSource() should generate correct typedefs with a multiple custom fragments 1`] = `
@@ -309,19 +347,19 @@ export type HeroAndDetailsQuery = {|
   |},
 |};
 
-export type HeroDetailsOnDroid = {|
+export type HeroDetailsFragmentOnDroid = {|
   // This droid's primary function
   primaryFunction: ?string,
 |};
 
-export type HeroDetailsOnHuman = {|
+export type HeroDetailsFragmentOnHuman = {|
   // Height in the preferred unit, default is meters
   height: ?number,
 |};
 
 export type HeroDetailsFragment =
-  | HeroDetailsOnDroid
-  | HeroDetailsOnHuman;"
+  | HeroDetailsFragmentOnDroid
+  | HeroDetailsFragmentOnHuman;"
 `;
 
 exports[`Flow code generation #generateSource() should generate simple nested query operations including input variables 1`] = `
@@ -384,5 +422,92 @@ export type HeroNameQuery = {|
     // The name of the character
     name: string,
   |},
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should handle complex fragments with type aliases 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export type HeroAndFriendsNamesQuery = {|
+  hero: ? {|
+    ...SomethingFragment,
+    // The name of the character
+    name: string,
+  |},
+  empireHero: ? {|
+    ...SomethingFragment,
+    // The name of the character
+    name: string,
+  |},
+|};
+
+export type SomethingFragmentOnHuman = {|
+  // This human's friends, or an empty list if they have none
+  friends: ?Array< ?FriendFragment >,
+|};
+
+export type FriendFragmentOnHuman = {|
+  // The home planet of the human, or null if unknown
+  homePlanet: ?string,
+|};
+
+export type FriendFragmentOnDroid = {|
+  // This droid's primary function
+  primaryFunction: ?string,
+|};
+
+export type FriendFragment =
+  | FriendFragmentOnHuman
+  | FriendFragmentOnDroid;
+
+export type SomethingFragmentOnDroid = {|
+  // The movies this droid appears in
+  appearsIn: Array< ?Episode >,
+|};
+
+export type SomethingFragment =
+  | SomethingFragmentOnHuman
+  | SomethingFragmentOnDroid;"
+`;
+
+exports[`Flow code generation #generateSource() should handle multi-fragmented query operations 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export type HeroAndFriendsNamesQuery = {|
+  hero: ? {|
+    ...HeroFriendsFragment,
+    ...HeroAppearsFragment,
+    // The name of the character
+    name: string,
+  |},
+|};
+
+export type HeroFriendsFragment = {|
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< {|
+    // The name of the character
+    name: string,
+  |} >,
+|};
+
+export type HeroAppearsFragment = {|
+  // The movies this character appears in
+  appearsIn: Array< ?Episode >,
 |};"
 `;

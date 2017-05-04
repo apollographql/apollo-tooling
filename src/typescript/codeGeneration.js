@@ -146,12 +146,20 @@ export function interfaceDeclarationForOperation(
   }
 ) {
   const interfaceName = interfaceNameFromOperation({operationName, operationType});
+  const properties = propertiesFromFields(generator.context, fields);
+
   interfaceDeclaration(generator, {
     interfaceName,
     extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
   }, () => {
-    const properties = propertiesFromFields(generator.context, fields);
     propertyDeclarations(generator, properties, true);
+  });
+
+  properties.forEach(property => {
+    if (property.inlineFragments.length > 0) {
+      const fragmentName = `${pascalCase(property.bareTypeName)}Fragment`;
+      handleInlineFragments(generator, fragmentName, property.inlineFragments);
+    }
   });
 }
 
@@ -170,43 +178,7 @@ export function interfaceDeclarationForFragment(
   const interfaceName = `${pascalCase(fragmentName)}Fragment`;
 
   if (inlineFragments.length > 0) {
-    let typeNames = [];
-    inlineFragments.forEach(inlineFragment => {
-      const typeName = `${fragmentName}On${inlineFragment.typeCondition}`;
-      typeNames.push(typeName);
-
-      const hasTypenameField = inlineFragment.fields
-        .some(field => field.fieldName === '__typename' || field.responseName === '__typename');
-
-      let fields = inlineFragment.fields;
-
-      if (hasTypenameField) {
-        fields = fields.filter(field => field.fieldName !== '__typename' || field.responseName !== '__typename');
-      }
-
-      if (generator.context.addTypename || hasTypenameField) {
-        fields.unshift(makeTypenameField(inlineFragment.typeCondition));
-      }
-
-      interfaceDeclaration(
-        generator,
-        {
-          interfaceName: typeName,
-        },
-        () => {
-          let properties = propertiesFromFields(
-            generator.context,
-            fields
-          );
-
-          propertyDeclarations(generator, properties, true);
-        }
-      )
-    });
-
-    typeDeclaration(generator, { interfaceName, noBrackets: true }, () => {
-      unionDeclaration(generator, typeNames);
-    });
+    handleInlineFragments(generator, interfaceName, inlineFragments);
   } else {
     interfaceDeclaration(generator, {
       interfaceName,
@@ -228,7 +200,7 @@ export function propertyFromField(context, field, forceNullable) {
 
   const propertyName = fieldName;
 
-  let property = { fieldName, fieldType, propertyName, description };
+  let property = { fieldName, fieldType, propertyName, description, inlineFragments };
 
   const namedType = getNamedType(fieldType);
 
@@ -242,7 +214,11 @@ export function propertyFromField(context, field, forceNullable) {
       typeName = `"${fieldType}"`;
     } else {
       bareTypeName = pascalCase(Inflector.singularize(propertyName));
-      typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
+      if (property.inlineFragments && property.inlineFragments.length > 0) {
+        typeName = typeNameFromGraphQLType(context, fieldType, `${bareTypeName}Fragment`);
+      } else {
+        typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
+      }
     }
     let isArray = false;
     if (fieldType instanceof GraphQLList) {
@@ -272,13 +248,17 @@ export function propertyDeclarations(generator, properties, inInterface) {
   if (!properties) return;
   properties.forEach(property => {
     if (property.fields && property.fields.length > 0 || property.inlineFragments && property.inlineFragments.length > 0) {
-      propertyDeclaration(generator, {...property, inInterface}, () => {
-        const properties = propertiesFromFields(generator.context, property.fields)
-        .concat(...(property.inlineFragments || []).map(fragment =>
-          propertiesFromFields(generator.context, fragment.fields, true)
-        ));
-        propertyDeclarations(generator, properties);
-      });
+      if (property.inlineFragments.length > 0) {
+        propertyDeclaration(generator, {
+          ...property,
+          inInterface,
+        });
+      } else {
+        propertyDeclaration(generator, {...property, inInterface}, () => {
+          const properties = propertiesFromFields(generator.context, property.fields)
+          propertyDeclarations(generator, properties);
+        });
+      }
     } else {
       propertyDeclaration(generator, {...property, inInterface});
     }
@@ -291,4 +271,44 @@ function makeTypenameField(stringLiteralType) {
     fieldName: '__typename',
     type: stringLiteralType,
   };
+}
+
+function handleInlineFragments(generator, fragmentName, inlineFragments) {
+  let typeNames = [];
+  inlineFragments.forEach(inlineFragment => {
+    const typeName = `${fragmentName}On${inlineFragment.typeCondition}`;
+    typeNames.push(typeName);
+
+    const hasTypenameField = inlineFragment.fields
+      .find(field => field.fieldName === '__typename' || field.responseName === '__typename');
+
+    let fields = inlineFragment.fields;
+    if (hasTypenameField) {
+      fields = fields.filter(field => field.fieldName !== '__typename' || field.responseName !== '__typename');
+    }
+
+    if (generator.context.addTypename || hasTypenameField) {
+      fields.unshift(makeTypenameField(inlineFragment.typeCondition));
+    }
+
+    let properties = propertiesFromFields(generator.context, fields);
+
+    interfaceDeclaration(generator, {
+      interfaceName: typeName,
+    }, () => {
+      propertyDeclarations(generator, properties, true);
+    });
+
+    properties.forEach(property => {
+      if (property.inlineFragments && property.inlineFragments.length > 0) {
+        const innerFragmentName = `${property.bareTypeName}Fragment`;
+        handleInlineFragments(generator, innerFragmentName, property.inlineFragments);
+      }
+    });
+  });
+
+  // TODO: Refactor typeDeclaration to not automatically assume bracketed type
+  typeDeclaration(generator, { interfaceName: fragmentName, noBrackets: true }, () => {
+    unionDeclaration(generator, typeNames);
+  });
 }
