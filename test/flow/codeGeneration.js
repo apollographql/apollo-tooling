@@ -112,6 +112,32 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
+    test(`should handle multi-fragmented query operations`, function() {
+      const { compileFromSource } = setup(swapiSchema);
+      const context = compileFromSource(`
+        query HeroAndFriendsNames {
+          hero {
+            name
+            ...heroFriends
+            ...heroAppears
+          }
+        }
+
+        fragment heroFriends on Character {
+          friends {
+            name
+          }
+        }
+
+        fragment heroAppears on Character {
+          appearsIn
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
     test(`should generate query operations with inline fragments`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
@@ -198,6 +224,43 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
+    test(`should handle complex fragments with type aliases`, function() {
+      const { compileFromSource } = setup(swapiSchema);
+      const context = compileFromSource(`
+        query HeroAndFriendsNames {
+          hero(episode: NEWHOPE) {
+            name
+            ...Something
+          }
+          empireHero: hero(episode: EMPIRE) {
+            name
+            ...Something
+          }
+        }
+
+        fragment Something on Character {
+          ... on Human {
+            friends {
+              ... on Human {
+                homePlanet
+              }
+
+              ... on Droid {
+                primaryFunction
+              }
+            }
+          }
+
+          ... on Droid {
+            appearsIn
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
     test(`should annotate custom scalars as string`, function() {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
@@ -212,7 +275,30 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should correctly handle inline fragments on interfaces', function() {
+    test('should correctly handle fragments on interfaces', function() {
+      const {compileFromSource} = setup(swapiSchema);
+      const context = compileFromSource(
+        `
+        query HeroQuery($episode: Episode){
+          hero(episode: $episode) {
+            name
+            ... on Human {
+              homePlanet
+            }
+
+            ... on Droid {
+              primaryFunction
+            }
+          }
+        }
+      `
+      );
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should correctly handle nested fragments on interfaces', function() {
       const {compileFromSource} = setup(swapiSchema);
       const context = compileFromSource(
         `
@@ -246,7 +332,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should correctly add typename to inline fragments on interfaces if addTypename is true', function() {
+    test('should correctly add typename to nested fragments on interfaces if addTypename is true', function() {
       const {compileFromSource} = setup(swapiSchema);
       const context = compileFromSource(
         `
@@ -281,7 +367,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should correctly handle nested inline fragments on interfaces', function() {
+    test('should correctly handle doubly nested fragments on interfaces', function() {
       const {compileFromSource} = setup(swapiSchema);
       const context = compileFromSource(
         `

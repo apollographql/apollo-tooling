@@ -111,6 +111,31 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
+    test(`should handle multi-fragmented query operations`, function() {
+      const context = compileFromSource(`
+        query HeroAndFriendsNames {
+          hero {
+            name
+            ...heroFriends
+            ...heroAppears
+          }
+        }
+
+        fragment heroFriends on Character {
+          friends {
+            name
+          }
+        }
+
+        fragment heroAppears on Character {
+          appearsIn
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
     test(`should generate query operations with inline fragments`, function() {
       const context = compileFromSource(`
         query HeroAndDetails {
@@ -148,7 +173,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test(`should generate correct list with custom fragment`, function() {
+    test(`should generate correct typedefs with a single custom fragment`, function() {
       const context = compileFromSource(`
         fragment Friend on Character {
           name
@@ -168,7 +193,90 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should correctly handle inline fragments on interfaces', function() {
+    test(`should generate correct typedefs with a multiple custom fragments`, function() {
+      const context = compileFromSource(`
+        fragment Friend on Character {
+          name
+        }
+
+        fragment Person on Character {
+          name
+        }
+
+        query HeroAndFriendsNames($episode: Episode) {
+          hero(episode: $episode) {
+            name
+            friends {
+              ...Friend
+              ...Person
+            }
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test(`should handle complex fragments with type aliases`, function() {
+      const context = compileFromSource(`
+        query HeroAndFriendsNames {
+          hero(episode: NEWHOPE) {
+            name
+            ...Something
+          }
+          empireHero: hero(episode: EMPIRE) {
+            name
+            ...Something
+          }
+        }
+
+        fragment Something on Character {
+          ... on Human {
+            friends {
+              ... on Human {
+                homePlanet
+              }
+
+              ... on Droid {
+                primaryFunction
+              }
+            }
+          }
+
+          ... on Droid {
+            appearsIn
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should correctly handle fragments on interfaces', function() {
+      const context = compileFromSource(
+        `
+        query HeroQuery($episode: Episode){
+          hero(episode: $episode) {
+            name
+            ... on Human {
+              homePlanet
+            }
+
+            ... on Droid {
+              primaryFunction
+            }
+          }
+        }
+      `
+      );
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should correctly handle nested fragments on interfaces', function() {
       const context = compileFromSource(
         `
         query HeroQuery($episode: Episode){
@@ -202,7 +310,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should correctly add typename to inline fragments on interfaces if addTypename is true', function() {
+    test('should correctly add typename to nested fragments on interfaces if addTypename is true', function() {
       const context = compileFromSource(
         `
         query HeroQuery($episode: Episode){
@@ -236,7 +344,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should correctly handle nested inline fragments on interfaces', function() {
+    test('should correctly handle doubly nested fragments on interfaces', function() {
       const context = compileFromSource(
         `
         query HeroQuery($episode: Episode) {
