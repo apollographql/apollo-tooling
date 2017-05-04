@@ -34,9 +34,8 @@ import {
   typeNameFromGraphQLType,
 } from './types';
 
-export function generateSource(context) {
+export function generateSource(context, options) {
   const generator = new CodeGenerator(context);
-
   generator.printOnNewline('/* @flow */');
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
@@ -78,7 +77,7 @@ function enumerationDeclaration(generator, type) {
 function structDeclarationForInputObjectType(
   generator,
   type
-  ) {
+) {
   const interfaceName = pascalCase(type.name);
   typeDeclaration(generator, {
     interfaceName,
@@ -159,6 +158,7 @@ export function typeDeclarationForFragment(
     inlineFragments,
     fragmentSpreads,
     source,
+    possibleTypes
   }
 ) {
   const interfaceName = `${pascalCase(fragmentName)}Fragment`;
@@ -168,6 +168,19 @@ export function typeDeclarationForFragment(
     inlineFragments.forEach(inlineFragment => {
       const typeName = `${fragmentName}On${inlineFragment.typeCondition}`;
       typeNames.push(typeName);
+
+      const hasTypenameField = inlineFragment.fields
+        .find(field => field.fieldName === '__typename' || field.responseName === '__typename');
+
+      let fields = inlineFragment.fields;
+      if (hasTypenameField) {
+        fields = fields.filter(field => field.fieldName !== '__typename' || field.responseName !== '__typename');
+      }
+
+      if (generator.context.addTypename || hasTypenameField) {
+        fields.unshift(makeTypenameField(inlineFragment.typeCondition));
+      }
+
       typeDeclaration(
         generator,
         {
@@ -176,7 +189,7 @@ export function typeDeclarationForFragment(
         () => {
           let properties = propertiesFromFields(
             generator.context,
-            inlineFragment.fields
+            fields
           );
 
           propertyDeclarations(generator, properties, true);
@@ -214,8 +227,17 @@ export function propertyFromField(context, field, forceNullable) {
   const namedType = getNamedType(fieldType);
 
   if (isCompositeType(namedType)) {
-    const bareTypeName = pascalCase(Inflector.singularize(propertyName));
-    const typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
+    let typeName, bareTypeName;
+    if (propertyName === '__typename') {
+      // Handle the __typename field specially. the fieldType is set
+      // to the parentType but we want the flow type to be a string literal
+      // of the parentType.
+      bareTypeName = `"${fieldType}"`;
+      typeName = `"${fieldType}"`;
+    } else {
+      bareTypeName = pascalCase(Inflector.singularize(propertyName));
+      typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
+    }
     let isArray = false;
     if (fieldType instanceof GraphQLList) {
       isArray = true;
@@ -255,4 +277,12 @@ export function propertyDeclarations(generator, properties, inInterface) {
       propertyDeclaration(generator, {...property, inInterface});
     }
   });
+}
+
+function makeTypenameField(stringLiteralType) {
+  return {
+    responseName: '__typename',
+    fieldName: '__typename',
+    type: stringLiteralType,
+  };
 }

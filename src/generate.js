@@ -16,7 +16,7 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
 
   validateQueryDocument(schema, document, target);
 
-  const context = compileToIR(schema, document);
+  const context = compileToIR(schema, document, options);
   Object.assign(context, options);
 
   let output;
@@ -26,14 +26,18 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
       break;
     case 'ts':
     case 'typescript':
-      output = generateTypescriptSource(context);
+      output = generateTypescriptSource(context, options);
       break;
     case 'flow':
-      output = generateFlowSource(context);
+      output = generateFlowSource(context, options);
       break;
     case 'swift':
     default:
-      output = generateSwiftSource(context);
+      if (options.addTypename) {
+        console.warn('This option is a no-op for Swift because __typename is already added automatically');
+      }
+
+      output = generateSwiftSource(context, options);
       break;
   }
 

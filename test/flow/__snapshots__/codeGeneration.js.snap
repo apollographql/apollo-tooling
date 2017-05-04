@@ -11,6 +11,54 @@ export type CustomScalarQuery = {|
 |};"
 `;
 
+exports[`Flow code generation #generateSource() should correctly add typename to inline fragments on interfaces if addTypename is true 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export type HeroQueryQueryVariables = {|
+  episode: ?Episode,
+|};
+
+export type HeroQueryQuery = {|
+  hero: ? {|
+    // The name of the character
+    name: string,
+    // The friends of the character exposed as a connection with edges
+    friendsConnection: {|
+      // A list of the friends, as a convenience when edges are not needed.
+      friends: Array<CharacterFragmentFragment>,
+    |},
+  |},
+|};
+
+export type CharacterFragmentOnHuman = {|
+  __typename: \\"Human\\",
+  // What this human calls themselves
+  name: string,
+  // The home planet of the human, or null if unknown
+  homePlanet: ?string,
+|};
+
+export type CharacterFragmentOnDroid = {|
+  __typename: \\"Droid\\",
+  // What others call this droid
+  name: string,
+  // This droid's primary function
+  primaryFunction: ?string,
+|};
+
+export type CharacterFragmentFragment =
+  | CharacterFragmentOnHuman
+  | CharacterFragmentOnDroid;"
+`;
+
 exports[`Flow code generation #generateSource() should correctly handle inline fragments on interfaces 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
