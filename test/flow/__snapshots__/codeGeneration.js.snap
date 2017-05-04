@@ -137,26 +137,26 @@ export type HeroQueryQueryVariables = {|
 |};
 
 export type HeroQueryQuery = {|
-  hero: ?HeroFragment,
+  hero: ?HeroFromHeroQuery,
 |};
 
-export type HeroFragmentOnHuman = {|
+export type HeroFromHeroQueryOnHuman = {|
   // What this human calls themselves
   name: string,
   // The home planet of the human, or null if unknown
   homePlanet: ?string,
 |};
 
-export type HeroFragmentOnDroid = {|
+export type HeroFromHeroQueryOnDroid = {|
   // What others call this droid
   name: string,
   // This droid's primary function
   primaryFunction: ?string,
 |};
 
-export type HeroFragment =
-  | HeroFragmentOnHuman
-  | HeroFragmentOnDroid;"
+export type HeroFromHeroQuery =
+  | HeroFromHeroQueryOnHuman
+  | HeroFromHeroQueryOnDroid;"
 `;
 
 exports[`Flow code generation #generateSource() should correctly handle nested fragments on interfaces 1`] = `
