@@ -121,6 +121,11 @@ yargs
         describe: "Prefix for custom scalars. (Implies that passthrough-custom-scalars is true if set)",
         default: '',
         normalize: true
+      },
+      "add-typename": {
+        demand: false,
+        describe: "For non-swift targets, always add the __typename GraphQL introspection type when generating target types",
+        default: false
       }
     },
     argv => {
@@ -136,7 +141,12 @@ yargs
         // Sort to normalize different glob expansions between different terminals.
         .sort();
 
-      const options = { passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '', customScalarsPrefix: argv["custom-scalars-prefix"] || '' };
+      const options = {
+        passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '',
+        customScalarsPrefix: argv["custom-scalars-prefix"] || '',
+        addTypename: argv["add-typename"]
+      };
+
       generate(inputPaths, argv.schema, argv.output, argv.target, options);
     },
   )

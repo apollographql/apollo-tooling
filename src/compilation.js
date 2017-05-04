@@ -48,7 +48,7 @@ function isBuiltInScalarType(type) {
 
 // Parts of this code are adapted from graphql-js
 
-export function compileToIR(schema, document) {
+export function compileToIR(schema, document, options) {
   const compiler = new Compiler(schema, document);
 
   const operations = Object.create(null);
@@ -131,7 +131,6 @@ export class Compiler {
     });
 
     const source = print(withTypenameFieldAddedWhereNeeded(this.schema, operationDefinition));
-
     const rootType = getOperationRootType(this.schema, operationDefinition);
 
     const groupedVisitedFragmentSet = new Map();
@@ -299,11 +298,6 @@ export class Compiler {
 
       if (isConditional) {
         field.isConditional = true;
-      }
-
-      if (fieldName === '__typename') {
-        // Use a string literal of the parent type.
-        field.type = `"${parentType}"`
       }
 
       // Introspection fields do not have descriptions

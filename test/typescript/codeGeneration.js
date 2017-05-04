@@ -184,6 +184,7 @@ describe('TypeScript code generation', function() {
 
         fragment CharacterFragment on Character {
           name
+          __typename
 
           ... on Human {
             homePlanet
@@ -197,6 +198,40 @@ describe('TypeScript code generation', function() {
       );
 
       const source = generateSource(context);
+
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should correctly add typename to inline fragments on interfaces if addTypename is true', function() {
+      const context = compileFromSource(
+        `
+        query HeroQuery($episode: Episode){
+          hero(episode: $episode) {
+            name
+            friendsConnection {
+              friends {
+                ...CharacterFragment
+              }
+            }
+          }
+        }
+
+        fragment CharacterFragment on Character {
+          name
+          __typename
+
+          ... on Human {
+            homePlanet
+          }
+
+          ... on Droid {
+            primaryFunction
+          }
+        }
+      `
+      );
+
+      const source = generateSource(context, { addTypename: true });
 
       expect(source).toMatchSnapshot();
     });
