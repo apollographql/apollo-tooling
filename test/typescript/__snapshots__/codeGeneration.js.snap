@@ -130,26 +130,26 @@ export interface HeroQueryQueryVariables {
 }
 
 export interface HeroQueryQuery {
-  hero: HeroFragment | null;
+  hero: HeroFromHeroQuery | null;
 }
 
-export interface HeroFragmentOnHuman {
+export interface HeroFromHeroQueryOnHuman {
   // What this human calls themselves
   name: string;
   // The home planet of the human, or null if unknown
   homePlanet: string | null;
 }
 
-export interface HeroFragmentOnDroid {
+export interface HeroFromHeroQueryOnDroid {
   // What others call this droid
   name: string;
   // This droid's primary function
   primaryFunction: string | null;
 }
 
-export type HeroFragment =
-  | HeroFragmentOnHuman
-  | HeroFragmentOnDroid
+export type HeroFromHeroQuery =
+  | HeroFromHeroQueryOnHuman
+  | HeroFromHeroQueryOnDroid
 /* tslint:enable */
 "
 `;
