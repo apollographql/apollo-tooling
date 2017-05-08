@@ -144,11 +144,6 @@ export function classDeclarationForOperation(
 
     generator.printNewlineIfNeeded();
 
-    generator.printOnNewline('public static let selectionSet: [Selection] = ');
-    selectionSetInitialization(generator, selectionSet, 'Data');
-
-    generator.printNewlineIfNeeded();
-
     if (variables && variables.length > 0) {
       const properties = variables.map(({ name, type }) => {
         const propertyName = escapeIdentifierIfNeeded(name);
@@ -156,9 +151,12 @@ export function classDeclarationForOperation(
         const isOptional = !(type instanceof GraphQLNonNull || type.ofType instanceof GraphQLNonNull);
         return { name, propertyName, type, typeName, isOptional };
       });
+
       propertyDeclarations(generator, properties);
+
       generator.printNewlineIfNeeded();
       initializerDeclarationForProperties(generator, properties);
+
       generator.printNewlineIfNeeded();
       generator.printOnNewline(`public var variables: GraphQLMap?`);
       generator.withinBlock(() => {
@@ -213,7 +211,7 @@ export function structDeclarationForSelectionSet(
   generator,
   {
     structName,
-    adoptedProtocols = ['GraphQLMappable'],
+    adoptedProtocols = ['GraphQLSelectionSet'],
     parentType,
     possibleTypes,
     selectionSet
@@ -230,66 +228,81 @@ export function structDeclarationForSelectionSet(
       generator.printOnNewline('public static let possibleTypes = [');
       generator.print(join(possibleTypes.map(type => `"${String(type)}"`), ', '));
       generator.print(']');
-
-      generator.printNewlineIfNeeded();
-      generator.printOnNewline('public static let selectionSet: [Selection] = ');
-      selectionSetInitialization(generator, selectionSet, structName);
     }
 
     generator.printNewlineIfNeeded();
+    generator.printOnNewline('public static let selections: [Selection] = ');
+    selectionSetInitialization(generator, selectionSet, structName);
+
+    generator.printNewlineIfNeeded();
+
+    propertyDeclaration(generator, { propertyName: "snapshot", typeName: "Snapshot" });
+
+    generator.printNewlineIfNeeded();
+    generator.printOnNewline('public init(snapshot: Snapshot)');
+    generator.withinBlock(() => {
+      generator.printOnNewline(`self.snapshot = snapshot`);
+    });
 
     const properties = propertiesFromSelectionSet(generator.context, selectionSet);
-
-    properties.forEach(({ kind, propertyName, typeName }) => {
-      if (kind === 'FragmentSpread') return;
-
-      propertyDeclaration(generator, {
-        propertyName,
-        typeName
-      });
-    });
 
     const fields = properties.filter(property => property.kind === 'Field');
     const inlineFragments = properties.filter(property => property.kind === 'InlineFragment');
     const fragmentSpreads = properties.filter(property => property.kind === 'FragmentSpread').map(fragmentSpread => {
       if (!isTypeProperSuperTypeOf(generator.context.schema, fragmentSpread.fragment.typeCondition, parentType)) {
+        fragmentSpread.isOptional = true;
         fragmentSpread.typeName += '?';
       }
       return fragmentSpread;
     });
 
-    if (fragmentSpreads.length > 0) {
-      generator.printNewlineIfNeeded();
-      propertyDeclaration(generator, { propertyName: 'fragments', typeName: 'Fragments' })
-    }
-
     generator.printNewlineIfNeeded();
-    generator.printOnNewline('public init(values: [Any?])');
-    generator.withinBlock(() => {
-      properties.forEach(({ kind, propertyName, typeName }, index) => {
-        if (kind == 'FragmentSpread') {
-          generator.printOnNewline(`let ${propertyName} = values[${index}] as! ${typeName}`);
-        } else {
-          generator.printOnNewline(`${propertyName} = values[${index}] as! ${typeName}`);
-        }
-      });
+    generator.printOnNewline(`public init`);
+    generator.print('(');
+    generator.print(join(fields.map(({ propertyName, type, typeName, isOptional }) =>
+      join([
+        `${propertyName}: ${typeName}`,
+        isOptional && ' = nil'
+      ])
+    ), ', '));
+    generator.print(')');
 
-      if (fragmentSpreads.length > 0) {
-        generator.printNewlineIfNeeded();
-        generator.printOnNewline(`fragments = Fragments(`);
-        generator.print(join(fragmentSpreads.map(({ propertyName }) => {
-          return `${propertyName}: ${propertyName}`;
-        }), ', '));
-        generator.print(')');
-      }
+    generator.withinBlock(() => {
+      generator.printOnNewline(wrap(
+        `self.snapshot = [`,
+        join(fields.map(({ name, propertyName }) => `"${propertyName}": ${propertyName}`), ', ') || ':',
+        `]`
+      ));
     });
 
+    properties.forEach(property => {
+      if (property.kind === 'FragmentSpread') return;
+
+      generator.printNewlineIfNeeded();
+      propertyDeclarationForSelection(generator, property);
+    });
+
+    if (fragmentSpreads.length > 0) {
+      generator.printNewlineIfNeeded();
+      generator.printOnNewline(`public var fragments: Fragments`);
+      generator.withinBlock(() => {
+        generator.printOnNewline("get");
+        generator.withinBlock(() => {
+          generator.printOnNewline(`return Fragments(snapshot: snapshot)`);
+        });
+        generator.printOnNewline("set");
+        generator.withinBlock(() => {
+          generator.printOnNewline(`snapshot = newValue.snapshot`);
+        });
+      });
+    }
+
     if (inlineFragments.length > 0) {
-      inlineFragments.forEach(({ bareTypeName, typeCondition, selectionSet }) => {
+      inlineFragments.forEach(({ structName, typeCondition, selectionSet }) => {
         structDeclarationForSelectionSet(
           generator,
           {
-            structName: bareTypeName,
+            structName: structName,
             parentType: typeCondition,
             possibleTypes: possibleTypesForType(generator.context, typeCondition),
             adoptedProtocols: ['GraphQLFragment'],
@@ -306,8 +319,23 @@ export function structDeclarationForSelectionSet(
           structName: 'Fragments'
         },
         () => {
-          fragmentSpreads.forEach(({ propertyName, typeName })  => {
-            propertyDeclaration(generator, { propertyName, typeName });
+          propertyDeclaration(generator, { propertyName: "snapshot", typeName: "Snapshot" });
+          fragmentSpreads.forEach(({ propertyName, bareTypeName, typeName, isOptional })  => {
+            generator.printNewlineIfNeeded();
+            generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
+            generator.withinBlock(() => {
+              generator.printOnNewline("get");
+              generator.withinBlock(() => {
+                if (isOptional) {
+                  generator.printOnNewline(`if !${typeName}.possibleTypes.contains(__typename) { return nil }`);
+                }
+                generator.printOnNewline(`return ${typeName}(snapshot: snapshot)`);
+              });
+              generator.printOnNewline("set");
+              generator.withinBlock(() => {
+                generator.printOnNewline(`snapshot = newValue.snapshot`);
+              });
+            });
           })
         }
       );
@@ -323,6 +351,96 @@ export function structDeclarationForSelectionSet(
         }
       );
     });
+  });
+}
+
+function mapExpressionForType(context, type, expression, prefix = '') {
+  let isOptional;
+  if (type instanceof GraphQLNonNull) {
+    isOptional = false;
+    type = type.ofType;
+  } else {
+    isOptional = true;
+  }
+
+  if (type instanceof GraphQLList) {
+    if (isOptional) {
+      return `${prefix}.flatMap { $0.map { ${mapExpressionForType(context, type.ofType, expression, '$0')} } }`;
+    } else {
+      return `${prefix}.map { ${mapExpressionForType(context, type.ofType, expression, '$0')} }`;
+    }
+  } else if (isOptional) {
+    return `${prefix}.flatMap { ${expression} }`;
+  } else {
+    return expression;
+  }
+}
+
+function propertyDeclarationForSelection(generator, selection) {
+  const { kind, propertyName, typeName, type, isConditional, description } = selection;
+
+  generator.printOnNewline(description && ` /// ${description}`);
+  generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
+  generator.withinBlock(() => {
+    const namedType = getNamedType(type);
+
+    if (kind === 'InlineFragment') {
+      const structName = structNameForInlineFragment(selection);
+
+      generator.printOnNewline("get");
+      generator.withinBlock(() => {
+        generator.printOnNewline(`if !${structName}.possibleTypes.contains(__typename) { return nil }`);
+        generator.printOnNewline(`return ${structName}(snapshot: snapshot)`);
+      });
+      generator.printOnNewline("set");
+      generator.withinBlock(() => {
+        generator.printOnNewline(`guard let newValue = newValue else { return }`);
+        generator.printOnNewline(`snapshot = newValue.snapshot`);
+      });
+    } else if (isCompositeType(namedType)) {
+      const isOptional = isConditional || !(type instanceof GraphQLNonNull);
+      const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList;
+      const structName = escapeIdentifierIfNeeded(structNameForPropertyName(propertyName));
+
+      if (isList) {
+        generator.printOnNewline("get");
+        generator.withinBlock(() => {
+          const snapshotTypeName = typeNameFromGraphQLType(generator.context, type, 'Snapshot', isOptional);
+          let getter = `return (snapshot["${propertyName}"]! as! ${snapshotTypeName})`;
+          getter += mapExpressionForType(generator.context, type, `${structName}(snapshot: $0)`);
+          generator.printOnNewline(getter);
+        });
+        generator.printOnNewline("set");
+        generator.withinBlock(() => {
+          let setter = `snapshot["${propertyName}"] = newValue`;
+          setter += mapExpressionForType(generator.context, type, `$0.snapshot`);
+          generator.printOnNewline(setter);
+        });
+      } else {
+        generator.printOnNewline("get");
+        generator.withinBlock(() => {
+          generator.printOnNewline(`return ${structName}(snapshot: snapshot["${propertyName}"]! as! Snapshot)`);
+        });
+        generator.printOnNewline("set");
+        generator.withinBlock(() => {
+          generator.printOnNewline(`snapshot["${propertyName}"] = `);
+          if (isOptional) {
+            generator.print('newValue?.snapshot');
+          } else {
+            generator.print('newValue.snapshot');
+          }
+        });
+      }
+    } else {
+      generator.printOnNewline("get");
+      generator.withinBlock(() => {
+        generator.printOnNewline(`return snapshot["${propertyName}"]! as! ${typeName}`);
+      });
+      generator.printOnNewline("set");
+      generator.withinBlock(() => {
+        generator.printOnNewline(`snapshot["${propertyName}"] = newValue`);
+      });
+    }
   });
 }
 
@@ -349,7 +467,7 @@ export function selectionSetInitialization(generator, selectionSet, parentStruct
   generator.withIndent(() => {
     selectionSet.forEach(selection => {
       if (selection.kind === 'Field') {
-        const { responseName, fieldName, args, type, selectionSet: fieldSelectionSet } = selection;
+        const { responseName, fieldName, args, type } = selection;
         const structName = join([parentStructName, structNameForPropertyName(responseName)], '.');
 
         generator.printOnNewline(`Field(`);
@@ -359,10 +477,6 @@ export function selectionSetInitialization(generator, selectionSet, parentStruct
           args && args.length && `arguments: ${dictionaryLiteralForFieldArguments(args)}`,
           `type: ${fieldTypeEnum(generator.context, type, structName)}`
         ], ', '));
-        if (fieldSelectionSet && fieldSelectionSet.length > 0) {
-          generator.print(', selectionSet: ');
-          selectionSetInitialization(generator, selection.selectionSet, structName)
-        }
         generator.print('),');
       } else if (selection.kind === 'FragmentSpread') {
         const structName = structNameForFragmentName(selection.fragmentName);

@@ -11,6 +11,7 @@ import {
 
 import {
   GraphQLError,
+  GraphQLList,
   GraphQLNonNull,
   getNamedType,
   isCompositeType,
@@ -54,24 +55,25 @@ export function propertyFromField(context, field) {
   const propertyName = escapeIdentifierIfNeeded(unescapedPropertyName);
 
   const type = field.type;
+  const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList
   const isOptional = field.isConditional || !(type instanceof GraphQLNonNull);
   const bareType = getNamedType(type);
 
   if (isCompositeType(bareType)) {
     const bareTypeName = escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)));
     const typeName = typeNameFromGraphQLType(context, type, bareTypeName, isOptional);
-    return { ...field, propertyName, typeName, bareTypeName, isOptional, isComposite: true };
+    return { ...field, propertyName, typeName, bareTypeName, isOptional, isList, isComposite: true };
   } else {
     const typeName = typeNameFromGraphQLType(context, type, undefined, isOptional);
-    return { ...field, propertyName, typeName, isOptional, isComposite: false };
+    return { ...field, propertyName, typeName, isOptional, isList, isComposite: false };
   }
 }
 
 export function propertyFromInlineFragment(context, inlineFragment) {
-  const bareTypeName = structNameForInlineFragment(inlineFragment);
-  const propertyName = camelCase(bareTypeName);
-  const typeName = bareTypeName + '?'
-  return { propertyName, typeName, bareTypeName, ...inlineFragment };
+  const structName = structNameForInlineFragment(inlineFragment);
+  const propertyName = camelCase(structName);
+  const typeName = structName + '?'
+  return { propertyName, typeName, structName, isComposite: true, ...inlineFragment };
 }
 
 export function propertyFromFragmentSpread(context, fragmentSpread) {
@@ -82,7 +84,7 @@ export function propertyFromFragmentSpread(context, fragmentSpread) {
   }
   const propertyName = camelCase(fragmentName);
   const typeName = structNameForFragmentName(fragmentName);
-  return { propertyName, typeName, fragment, ...fragmentSpread };
+  return { propertyName, typeName, fragment, isComposite: true, ...fragmentSpread };
 }
 
 function isMetaFieldName(name) {
