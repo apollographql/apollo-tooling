@@ -1,0 +1,9 @@
+fragment HeroDetails on Character {
+  name
+  ... on Droid {
+    primaryFunction
+  }
+  ... on Human {
+    height
+  }
+}

@@ -6,9 +6,11 @@ import {
 
 import { ToolError, logError } from './errors'
 
-export function validateQueryDocument(schema, document) {
-  const rules = [NoAnonymousQueries, NoExplicitTypename, NoTypenameAlias].concat(specifiedRules);
+// `specifiedRules` validates queries but codegen may run on just fragments of an actual query to the resolver.
+const baseRules = specifiedRules.filter(r => !r.name.startsWith('NoUnused'));
+const rules = [NoAnonymousQueries, NoExplicitTypename, NoTypenameAlias].concat(baseRules);
 
+export function validateQueryDocument(schema, document) {
   const validationErrors = validate(schema, document, rules);
   if (validationErrors && validationErrors.length > 0) {
     for (const error of validationErrors) {
