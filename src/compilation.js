@@ -93,7 +93,7 @@ export class Compiler {
 
   addTypeUsed(type) {
     if (this.typesUsedSet.has(type)) return;
-    
+
     if (type instanceof GraphQLEnumType ||
         type instanceof GraphQLInputObjectType ||
         (type instanceof GraphQLScalarType && !isBuiltInScalarType(type))) {
@@ -301,10 +301,11 @@ export class Compiler {
         field.isConditional = true;
       }
 
-      const description = parentType.getFields()[fieldName].description;
-
-      if (description) {
-        field.description = description
+      // short circuit typenames for now
+      if (fieldName === '__typename') {
+        field.type = `"${parentType}"`
+      } else {
+        field.description = parentType.getFields()[fieldName].description
       }
 
       const bareType = getNamedType(type);
