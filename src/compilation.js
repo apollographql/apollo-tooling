@@ -92,6 +92,8 @@ export class Compiler {
   }
 
   addTypeUsed(type) {
+    if (this.typesUsedSet.has(type)) return;
+    
     if (type instanceof GraphQLEnumType ||
         type instanceof GraphQLInputObjectType ||
         (type instanceof GraphQLScalarType && !isBuiltInScalarType(type))) {
@@ -200,6 +202,9 @@ export class Compiler {
             parentType;
 
           const effectiveType = parentType instanceof GraphQLObjectType ? parentType : inlineFragmentType;
+          if (inlineFragmentType !== effectiveType && !isTypeProperSuperTypeOf(this.schema, inlineFragmentType, effectiveType)) {
+            break;
+          }
 
           this.collectFields(
             effectiveType,
@@ -294,6 +299,12 @@ export class Compiler {
 
       if (isConditional) {
         field.isConditional = true;
+      }
+
+      const description = parentType.getFields()[fieldName].description;
+
+      if (description) {
+        field.description = description
       }
 
       const bareType = getNamedType(type);

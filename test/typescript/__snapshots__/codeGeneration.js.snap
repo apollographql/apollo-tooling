@@ -1,0 +1,188 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TypeScript code generation #generateSource() should generate correct list with custom fragment 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export interface HeroAndFriendsNamesQueryVariables {
+  episode: Episode | null;
+}
+
+export interface HeroAndFriendsNamesQuery {
+  hero: {
+    // The name of the character
+    name: string,
+    // The friends of the character, or an empty list if they have none
+    friends: Array<FriendFragment>,
+  } | null;
+}
+
+export interface FriendFragment {
+  // The name of the character
+  name: string;
+}
+/* tslint:enable */
+"
+`;
+
+exports[`TypeScript code generation #generateSource() should generate fragmented query operations 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+export interface HeroAndFriendsNamesQuery {
+  hero: HeroFriendsFragment & {
+    // The name of the character
+    name: string,
+  } | null;
+}
+
+export interface HeroFriendsFragment {
+  // The friends of the character, or an empty list if they have none
+  friends: Array< {
+    // The name of the character
+    name: string,
+  } > | null;
+}
+/* tslint:enable */
+"
+`;
+
+exports[`TypeScript code generation #generateSource() should generate mutation operations with complex input types 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export interface ReviewInput {
+  // 0-5 stars
+  stars: number;
+  // Comment about the movie, optional
+  commentary: string | null;
+  // Favorite color, optional
+  favorite_color: ColorInput | null;
+}
+
+export interface ColorInput {
+  red: number;
+  green: number;
+  blue: number;
+}
+
+export interface ReviewMovieMutationVariables {
+  episode: Episode | null;
+  review: ReviewInput | null;
+}
+
+export interface ReviewMovieMutation {
+  createReview: {
+    // The number of stars this review gave, 1-5
+    stars: number,
+    // Comment about the movie
+    commentary: string | null,
+  } | null;
+}
+/* tslint:enable */
+"
+`;
+
+exports[`TypeScript code generation #generateSource() should generate query operations with inline fragments 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+export interface HeroAndDetailsQuery {
+  hero: HeroDetailsFragment & {
+    // The name of the character
+    name: string,
+  } | null;
+}
+
+export interface HeroDetailsFragment {
+  // This droid's primary function
+  primaryFunction: string | null;
+  // Height in the preferred unit, default is meters
+  height: number | null;
+}
+/* tslint:enable */
+"
+`;
+
+exports[`TypeScript code generation #generateSource() should generate simple nested query operations including input variables 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export interface HeroAndFriendsNamesQueryVariables {
+  episode: Episode | null;
+}
+
+export interface HeroAndFriendsNamesQuery {
+  hero: {
+    // The name of the character
+    name: string,
+    // The friends of the character, or an empty list if they have none
+    friends: Array< {
+      // The name of the character
+      name: string,
+    } > | null,
+  } | null;
+}
+/* tslint:enable */
+"
+`;
+
+exports[`TypeScript code generation #generateSource() should generate simple query operations 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+export interface HeroNameQuery {
+  hero: {
+    // The name of the character
+    name: string,
+  } | null;
+}
+/* tslint:enable */
+"
+`;
+
+exports[`TypeScript code generation #generateSource() should generate simple query operations including input variables 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export interface HeroNameQueryVariables {
+  episode: Episode | null;
+}
+
+export interface HeroNameQuery {
+  hero: {
+    // The name of the character
+    name: string,
+  } | null;
+}
+/* tslint:enable */
+"
+`;

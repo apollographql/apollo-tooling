@@ -3,6 +3,13 @@ import {
   wrap,
 } from '../utilities/printing';
 
+function printDescription(generator, description) {
+  description && description.split('\n')
+    .forEach(line => {
+      generator.printOnNewline(`/// ${line.trim()}`);
+    });
+}
+
 export function classDeclaration(generator, { className, modifiers, superClass, adoptedProtocols = [], properties }, closure) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
@@ -16,7 +23,7 @@ export function classDeclaration(generator, { className, modifiers, superClass, 
 
 export function structDeclaration(generator, { structName, description, adoptedProtocols = [] }, closure) {
   generator.printNewlineIfNeeded();
-  generator.printOnNewline(description && `/// ${description}`);
+  printDescription(generator, description);
   generator.printOnNewline(`public struct ${structName}`);
   generator.print(wrap(': ', join(adoptedProtocols, ', ')));
   generator.pushScope({ typeName: structName });
@@ -25,8 +32,8 @@ export function structDeclaration(generator, { structName, description, adoptedP
 }
 
 export function propertyDeclaration(generator, { propertyName, typeName, description }) {
+  printDescription(generator, description);
   generator.printOnNewline(`public let ${propertyName}: ${typeName}`);
-  generator.print(description && ` /// ${description}`);
 }
 
 export function propertyDeclarations(generator, properties) {

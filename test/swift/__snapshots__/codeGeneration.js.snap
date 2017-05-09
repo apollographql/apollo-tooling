@@ -1,0 +1,545 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a mutation with variables 1`] = `
+"public final class CreateReviewMutation: GraphQLMutation {
+  public static let operationDefinition =
+    \\"mutation CreateReview($episode: Episode) {\\" +
+    \\"  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"Wow!\\\\\\"}) {\\" +
+    \\"    __typename\\" +
+    \\"    stars\\" +
+    \\"    commentary\\" +
+    \\"  }\\" +
+    \\"}\\"
+
+  public let episode: Episode?
+
+  public init(episode: Episode? = nil) {
+    self.episode = episode
+  }
+
+  public var variables: GraphQLMap? {
+    return [\\"episode\\": episode]
+  }
+
+  public struct Data: GraphQLMappable {
+    public let createReview: CreateReview?
+
+    public init(reader: GraphQLResultReader) throws {
+      createReview = try reader.optionalValue(for: Field(responseName: \\"createReview\\", arguments: [\\"episode\\": reader.variables[\\"episode\\"], \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\"]]))
+    }
+
+    public struct CreateReview: GraphQLMappable {
+      public let __typename: String
+      /// The number of stars this review gave, 1-5
+      public let stars: Int
+      /// Comment about the movie
+      public let commentary: String?
+
+      public init(reader: GraphQLResultReader) throws {
+        __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+        stars = try reader.value(for: Field(responseName: \\"stars\\"))
+        commentary = try reader.optionalValue(for: Field(responseName: \\"commentary\\"))
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with a fragment spread nested in an inline fragment 1`] = `
+"public final class HeroQuery: GraphQLQuery {
+  public static let operationDefinition =
+    \\"query Hero {\\" +
+    \\"  hero {\\" +
+    \\"    __typename\\" +
+    \\"    ... on Droid {\\" +
+    \\"      __typename\\" +
+    \\"      ...HeroDetails\\" +
+    \\"    }\\" +
+    \\"  }\\" +
+    \\"}\\"
+  public static let queryDocument = operationDefinition.appending(HeroDetails.fragmentDefinition)
+  public init() {
+  }
+
+  public struct Data: GraphQLMappable {
+    public let hero: Hero?
+
+    public init(reader: GraphQLResultReader) throws {
+      hero = try reader.optionalValue(for: Field(responseName: \\"hero\\"))
+    }
+
+    public struct Hero: GraphQLMappable {
+      public let __typename: String
+
+      public let asDroid: AsDroid?
+
+      public init(reader: GraphQLResultReader) throws {
+        __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+
+        asDroid = try AsDroid(reader: reader, ifTypeMatches: __typename)
+      }
+
+      public struct AsDroid: GraphQLConditionalFragment {
+        public static let possibleTypes = [\\"Droid\\"]
+
+        public let __typename: String
+
+        public let fragments: Fragments
+
+        public init(reader: GraphQLResultReader) throws {
+          __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+
+          let heroDetails = try HeroDetails(reader: reader)
+          fragments = Fragments(heroDetails: heroDetails)
+        }
+
+        public struct Fragments {
+          public let heroDetails: HeroDetails
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with conditional fragment spreads 1`] = `
+"public final class HeroQuery: GraphQLQuery {
+  public static let operationDefinition =
+    \\"query Hero {\\" +
+    \\"  hero {\\" +
+    \\"    __typename\\" +
+    \\"    ...DroidDetails\\" +
+    \\"  }\\" +
+    \\"}\\"
+  public static let queryDocument = operationDefinition.appending(DroidDetails.fragmentDefinition)
+  public init() {
+  }
+
+  public struct Data: GraphQLMappable {
+    public let hero: Hero?
+
+    public init(reader: GraphQLResultReader) throws {
+      hero = try reader.optionalValue(for: Field(responseName: \\"hero\\"))
+    }
+
+    public struct Hero: GraphQLMappable {
+      public let __typename: String
+
+      public let fragments: Fragments
+
+      public init(reader: GraphQLResultReader) throws {
+        __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+
+        let droidDetails = try DroidDetails(reader: reader, ifTypeMatches: __typename)
+        fragments = Fragments(droidDetails: droidDetails)
+      }
+
+      public struct Fragments {
+        public let droidDetails: DroidDetails?
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with fragment spreads 1`] = `
+"public final class HeroQuery: GraphQLQuery {
+  public static let operationDefinition =
+    \\"query Hero {\\" +
+    \\"  hero {\\" +
+    \\"    __typename\\" +
+    \\"    ...HeroDetails\\" +
+    \\"  }\\" +
+    \\"}\\"
+  public static let queryDocument = operationDefinition.appending(HeroDetails.fragmentDefinition)
+  public init() {
+  }
+
+  public struct Data: GraphQLMappable {
+    public let hero: Hero?
+
+    public init(reader: GraphQLResultReader) throws {
+      hero = try reader.optionalValue(for: Field(responseName: \\"hero\\"))
+    }
+
+    public struct Hero: GraphQLMappable {
+      public let __typename: String
+
+      public let fragments: Fragments
+
+      public init(reader: GraphQLResultReader) throws {
+        __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+
+        let heroDetails = try HeroDetails(reader: reader)
+        fragments = Fragments(heroDetails: heroDetails)
+      }
+
+      public struct Fragments {
+        public let heroDetails: HeroDetails
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with variables 1`] = `
+"public final class HeroNameQuery: GraphQLQuery {
+  public static let operationDefinition =
+    \\"query HeroName($episode: Episode) {\\" +
+    \\"  hero(episode: $episode) {\\" +
+    \\"    __typename\\" +
+    \\"    name\\" +
+    \\"  }\\" +
+    \\"}\\"
+
+  public let episode: Episode?
+
+  public init(episode: Episode? = nil) {
+    self.episode = episode
+  }
+
+  public var variables: GraphQLMap? {
+    return [\\"episode\\": episode]
+  }
+
+  public struct Data: GraphQLMappable {
+    public let hero: Hero?
+
+    public init(reader: GraphQLResultReader) throws {
+      hero = try reader.optionalValue(for: Field(responseName: \\"hero\\", arguments: [\\"episode\\": reader.variables[\\"episode\\"]]))
+    }
+
+    public struct Hero: GraphQLMappable {
+      public let __typename: String
+      /// The name of the character
+      public let name: String
+
+      public init(reader: GraphQLResultReader) throws {
+        __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+        name = try reader.value(for: Field(responseName: \\"name\\"))
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation #initializerDeclarationForProperties() should generate initializer for a property 1`] = `
+"public init(episode: Episode) {
+  self.episode = episode
+}"
+`;
+
+exports[`Swift code generation #initializerDeclarationForProperties() should generate initializer for an optional property 1`] = `
+"public init(episode: Episode? = nil) {
+  self.episode = episode
+}"
+`;
+
+exports[`Swift code generation #initializerDeclarationForProperties() should generate initializer for multiple properties 1`] = `
+"public init(episode: Episode? = nil, scene: String? = nil) {
+  self.episode = episode
+  self.scene = scene
+}"
+`;
+
+exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment that includes a fragment spread 1`] = `
+"public struct HeroDetails: GraphQLNamedFragment {
+  public static let fragmentDefinition =
+    \\"fragment HeroDetails on Character {\\" +
+    \\"  __typename\\" +
+    \\"  name\\" +
+    \\"  ...MoreHeroDetails\\" +
+    \\"}\\"
+
+  public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+  public let __typename: String
+  /// The name of the character
+  public let name: String
+
+  public let fragments: Fragments
+
+  public init(reader: GraphQLResultReader) throws {
+    __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+    name = try reader.value(for: Field(responseName: \\"name\\"))
+
+    let moreHeroDetails = try MoreHeroDetails(reader: reader)
+    fragments = Fragments(moreHeroDetails: moreHeroDetails)
+  }
+
+  public struct Fragments {
+    public let moreHeroDetails: MoreHeroDetails
+  }
+}"
+`;
+
+exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a concrete type condition 1`] = `
+"public struct DroidDetails: GraphQLNamedFragment {
+  public static let fragmentDefinition =
+    \\"fragment DroidDetails on Droid {\\" +
+    \\"  __typename\\" +
+    \\"  name\\" +
+    \\"  primaryFunction\\" +
+    \\"}\\"
+
+  public static let possibleTypes = [\\"Droid\\"]
+
+  public let __typename: String
+  /// What others call this droid
+  public let name: String
+  /// This droid's primary function
+  public let primaryFunction: String?
+
+  public init(reader: GraphQLResultReader) throws {
+    __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+    name = try reader.value(for: Field(responseName: \\"name\\"))
+    primaryFunction = try reader.optionalValue(for: Field(responseName: \\"primaryFunction\\"))
+  }
+}"
+`;
+
+exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a subselection 1`] = `
+"public struct HeroDetails: GraphQLNamedFragment {
+  public static let fragmentDefinition =
+    \\"fragment HeroDetails on Character {\\" +
+    \\"  __typename\\" +
+    \\"  name\\" +
+    \\"  friends {\\" +
+    \\"    __typename\\" +
+    \\"    name\\" +
+    \\"  }\\" +
+    \\"}\\"
+
+  public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+  public let __typename: String
+  /// The name of the character
+  public let name: String
+  /// The friends of the character, or an empty list if they have none
+  public let friends: [Friend?]?
+
+  public init(reader: GraphQLResultReader) throws {
+    __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+    name = try reader.value(for: Field(responseName: \\"name\\"))
+    friends = try reader.optionalList(for: Field(responseName: \\"friends\\"))
+  }
+
+  public struct Friend: GraphQLMappable {
+    public let __typename: String
+    /// The name of the character
+    public let name: String
+
+    public init(reader: GraphQLResultReader) throws {
+      __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+      name = try reader.value(for: Field(responseName: \\"name\\"))
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with an abstract type condition 1`] = `
+"public struct HeroDetails: GraphQLNamedFragment {
+  public static let fragmentDefinition =
+    \\"fragment HeroDetails on Character {\\" +
+    \\"  __typename\\" +
+    \\"  name\\" +
+    \\"  appearsIn\\" +
+    \\"}\\"
+
+  public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+  public let __typename: String
+  /// The name of the character
+  public let name: String
+  /// The movies this character appears in
+  public let appearsIn: [Episode?]
+
+  public init(reader: GraphQLResultReader) throws {
+    __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+    name = try reader.value(for: Field(responseName: \\"name\\"))
+    appearsIn = try reader.list(for: Field(responseName: \\"appearsIn\\"))
+  }
+}"
+`;
+
+exports[`Swift code generation #structDeclarationForSelectionSet() should escape reserved keywords in a struct declaration for a selection set 1`] = `
+"public struct Hero: GraphQLMappable {
+  public let __typename: String
+  public let \`private\`: String?
+
+  public init(reader: GraphQLResultReader) throws {
+    __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+    \`private\` = try reader.optionalValue(for: Field(responseName: \\"private\\", fieldName: \\"name\\"))
+  }
+}"
+`;
+
+exports[`Swift code generation #structDeclarationForSelectionSet() should generate a nested struct declaration for a selection set with subselections 1`] = `
+"public struct Hero: GraphQLMappable {
+  public let __typename: String
+  public let friends: [Friend?]?
+
+  public init(reader: GraphQLResultReader) throws {
+    __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+    friends = try reader.optionalList(for: Field(responseName: \\"friends\\"))
+  }
+
+  public struct Friend: GraphQLMappable {
+    public let __typename: String
+    public let name: String?
+
+    public init(reader: GraphQLResultReader) throws {
+      __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+      name = try reader.optionalValue(for: Field(responseName: \\"name\\"))
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a fragment spread nested in an inline fragment 1`] = `
+"public struct Hero: GraphQLMappable {
+  public let __typename: String
+
+  public let asDroid: AsDroid?
+
+  public init(reader: GraphQLResultReader) throws {
+    __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+
+    asDroid = try AsDroid(reader: reader, ifTypeMatches: __typename)
+  }
+
+  public struct AsDroid: GraphQLConditionalFragment {
+    public static let possibleTypes = [\\"Droid\\"]
+
+    public let __typename: String
+
+    public let fragments: Fragments
+
+    public init(reader: GraphQLResultReader) throws {
+      __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+
+      let heroDetails = try HeroDetails(reader: reader)
+      fragments = Fragments(heroDetails: heroDetails)
+    }
+
+    public struct Fragments {
+      public let heroDetails: HeroDetails
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set 1`] = `
+"public struct Hero: GraphQLMappable {
+  public let __typename: String
+  public let name: String?
+
+  public init(reader: GraphQLResultReader) throws {
+    __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+    name = try reader.optionalValue(for: Field(responseName: \\"name\\"))
+  }
+}"
+`;
+
+exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a fragment spread that matches the parent type 1`] = `
+"public struct Hero: GraphQLMappable {
+  public let __typename: String
+  public let name: String?
+
+  public let fragments: Fragments
+
+  public init(reader: GraphQLResultReader) throws {
+    __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+    name = try reader.optionalValue(for: Field(responseName: \\"name\\"))
+
+    let heroDetails = try HeroDetails(reader: reader)
+    fragments = Fragments(heroDetails: heroDetails)
+  }
+
+  public struct Fragments {
+    public let heroDetails: HeroDetails
+  }
+}"
+`;
+
+exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a fragment spread with a more specific type condition 1`] = `
+"public struct Hero: GraphQLMappable {
+  public let __typename: String
+  public let name: String?
+
+  public let fragments: Fragments
+
+  public init(reader: GraphQLResultReader) throws {
+    __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+    name = try reader.optionalValue(for: Field(responseName: \\"name\\"))
+
+    let droidDetails = try DroidDetails(reader: reader, ifTypeMatches: __typename)
+    fragments = Fragments(droidDetails: droidDetails)
+  }
+
+  public struct Fragments {
+    public let droidDetails: DroidDetails?
+  }
+}"
+`;
+
+exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with an inline fragment 1`] = `
+"public struct Hero: GraphQLMappable {
+  public let __typename: String
+  public let name: String
+
+  public let asDroid: AsDroid?
+
+  public init(reader: GraphQLResultReader) throws {
+    __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+    name = try reader.value(for: Field(responseName: \\"name\\"))
+
+    asDroid = try AsDroid(reader: reader, ifTypeMatches: __typename)
+  }
+
+  public struct AsDroid: GraphQLConditionalFragment {
+    public static let possibleTypes = [\\"Droid\\"]
+
+    public let __typename: String
+    public let name: String
+    public let primaryFunction: String?
+
+    public init(reader: GraphQLResultReader) throws {
+      __typename = try reader.value(for: Field(responseName: \\"__typename\\"))
+      name = try reader.value(for: Field(responseName: \\"name\\"))
+      primaryFunction = try reader.optionalValue(for: Field(responseName: \\"primaryFunction\\"))
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation #typeDeclarationForGraphQLType() should escape identifiers in cases of enum declaration for a GraphQLEnumType 1`] = `
+"public enum AlbumPrivacies: String {
+  case \`public\` = \\"PUBLIC\\"
+  case \`private\` = \\"PRIVATE\\"
+}
+
+extension AlbumPrivacies: Apollo.JSONDecodable, Apollo.JSONEncodable {}"
+`;
+
+exports[`Swift code generation #typeDeclarationForGraphQLType() should generate a struct declaration for a GraphQLInputObjectType 1`] = `
+"/// The input object sent when someone is creating a new review
+public struct ReviewInput: GraphQLMapConvertible {
+  public var graphQLMap: GraphQLMap
+
+  public init(stars: Int, commentary: String? = nil, favoriteColor: ColorInput? = nil) {
+    graphQLMap = [\\"stars\\": stars, \\"commentary\\": commentary, \\"favorite_color\\": favoriteColor]
+  }
+}"
+`;
+
+exports[`Swift code generation #typeDeclarationForGraphQLType() should generate an enum declaration for a GraphQLEnumType 1`] = `
+"/// The episodes in the Star Wars trilogy
+public enum Episode: String {
+  case newhope = \\"NEWHOPE\\" /// Star Wars Episode IV: A New Hope, released in 1977.
+  case empire = \\"EMPIRE\\" /// Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  case jedi = \\"JEDI\\" /// Star Wars Episode VI: Return of the Jedi, released in 1983.
+}
+
+extension Episode: Apollo.JSONDecodable, Apollo.JSONEncodable {}"
+`;

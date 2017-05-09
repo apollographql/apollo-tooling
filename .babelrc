@@ -1,4 +1,13 @@
 {
-  "presets": ["full-node4"],
-  "plugins": ["transform-runtime"]
+  "presets": [
+    ["env", {
+      "targets": {
+        node: 4
+      }
+    }]
+  ],
+  "plugins": [
+    "transform-runtime",
+    "transform-object-rest-spread"
+  ]
 }

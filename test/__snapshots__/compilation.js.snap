@@ -1,0 +1,785 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Compiling query documents should ignore a fragment's inline fragments whose type conditions do not match more specific effective type 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "args": Array [
+        Object {
+          "name": "id",
+          "value": "human",
+        },
+      ],
+      "fieldName": "human",
+      "fields": Array [],
+      "fragmentSpreads": Array [
+        "CharacterFragment",
+      ],
+      "inlineFragments": Array [],
+      "responseName": "human",
+      "type": "Human",
+    },
+    Object {
+      "args": Array [
+        Object {
+          "name": "id",
+          "value": "droid",
+        },
+      ],
+      "fieldName": "droid",
+      "fields": Array [],
+      "fragmentSpreads": Array [
+        "CharacterFragment",
+      ],
+      "inlineFragments": Array [],
+      "responseName": "droid",
+      "type": "Droid",
+    },
+  ],
+  "fragmentsReferenced": Array [
+    "CharacterFragment",
+  ],
+  "operationName": "HumanAndDroid",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should include fragment spreads from subselections 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [
+        Object {
+          "description": "The movies this character appears in",
+          "fieldName": "appearsIn",
+          "responseName": "appearsIn",
+          "type": "[Episode]!",
+        },
+        Object {
+          "description": "The ID of the character",
+          "fieldName": "id",
+          "responseName": "id",
+          "type": "ID!",
+        },
+        Object {
+          "description": "The friends of the character, or an empty list if they have none",
+          "fieldName": "friends",
+          "fields": Array [
+            Object {
+              "description": "The ID of the character",
+              "fieldName": "id",
+              "responseName": "id",
+              "type": "ID!",
+            },
+          ],
+          "fragmentSpreads": Array [
+            "HeroDetails",
+          ],
+          "inlineFragments": Array [],
+          "responseName": "friends",
+          "type": "[Character]",
+        },
+      ],
+      "fragmentSpreads": Array [
+        "HeroDetails",
+      ],
+      "inlineFragments": Array [],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [
+    "HeroDetails",
+  ],
+  "operationName": "HeroAndFriends",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should include fragment spreads from subselections 2`] = `
+Object {
+  "fields": Array [
+    Object {
+      "description": "The name of the character",
+      "fieldName": "name",
+      "responseName": "name",
+      "type": "String!",
+    },
+    Object {
+      "description": "The ID of the character",
+      "fieldName": "id",
+      "responseName": "id",
+      "type": "ID!",
+    },
+  ],
+  "fragmentName": "HeroDetails",
+  "fragmentSpreads": Array [],
+  "fragmentsReferenced": Array [],
+  "inlineFragments": Array [],
+  "possibleTypes": Array [
+    "Human",
+    "Droid",
+  ],
+  "typeCondition": "Character",
+}
+`;
+
+exports[`Compiling query documents should include fragment spreads with type conditions 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [
+        Object {
+          "description": "The name of the character",
+          "fieldName": "name",
+          "responseName": "name",
+          "type": "String!",
+        },
+      ],
+      "fragmentSpreads": Array [
+        "DroidDetails",
+        "HumanDetails",
+      ],
+      "inlineFragments": Array [],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [
+    "DroidDetails",
+    "HumanDetails",
+  ],
+  "operationName": "Hero",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should include fragment spreads with type conditions 2`] = `
+Object {
+  "fields": Array [
+    Object {
+      "description": "This droid's primary function",
+      "fieldName": "primaryFunction",
+      "responseName": "primaryFunction",
+      "type": "String",
+    },
+  ],
+  "fragmentName": "DroidDetails",
+  "fragmentSpreads": Array [],
+  "fragmentsReferenced": Array [],
+  "inlineFragments": Array [],
+  "possibleTypes": Array [
+    "Droid",
+  ],
+  "typeCondition": "Droid",
+}
+`;
+
+exports[`Compiling query documents should include fragment spreads with type conditions 3`] = `
+Object {
+  "fields": Array [
+    Object {
+      "description": "Height in the preferred unit, default is meters",
+      "fieldName": "height",
+      "responseName": "height",
+      "type": "Float",
+    },
+  ],
+  "fragmentName": "HumanDetails",
+  "fragmentSpreads": Array [],
+  "fragmentsReferenced": Array [],
+  "inlineFragments": Array [],
+  "possibleTypes": Array [
+    "Human",
+  ],
+  "typeCondition": "Human",
+}
+`;
+
+exports[`Compiling query documents should include isOptional if a field has skip or include directives 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [
+        Object {
+          "description": "The name of the character",
+          "fieldName": "name",
+          "isConditional": true,
+          "responseName": "name",
+          "type": "String!",
+        },
+      ],
+      "fragmentSpreads": Array [],
+      "inlineFragments": Array [],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [],
+  "operationName": "HeroNameConditionalInclusion",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should include isOptional if a field has skip or include directives 2`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [
+        Object {
+          "description": "The name of the character",
+          "fieldName": "name",
+          "isConditional": true,
+          "responseName": "name",
+          "type": "String!",
+        },
+      ],
+      "fragmentSpreads": Array [],
+      "inlineFragments": Array [],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [],
+  "operationName": "HeroNameConditionalExclusion",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should include the source of operations with __typename added for abstract types 1`] = `
+"query HeroName {
+  hero {
+    __typename
+    name
+  }
+}"
+`;
+
+exports[`Compiling query documents should include type conditions for inline fragments in fragments 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [],
+      "fragmentSpreads": Array [
+        "HeroDetails",
+      ],
+      "inlineFragments": Array [],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [
+    "HeroDetails",
+  ],
+  "operationName": "Hero",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should include type conditions for inline fragments in fragments 2`] = `
+Object {
+  "fields": Array [
+    Object {
+      "description": "The name of the character",
+      "fieldName": "name",
+      "responseName": "name",
+      "type": "String!",
+    },
+  ],
+  "fragmentName": "HeroDetails",
+  "fragmentSpreads": Array [],
+  "fragmentsReferenced": Array [],
+  "inlineFragments": Array [
+    Object {
+      "fields": Array [
+        Object {
+          "description": "What others call this droid",
+          "fieldName": "name",
+          "responseName": "name",
+          "type": "String!",
+        },
+        Object {
+          "description": "This droid's primary function",
+          "fieldName": "primaryFunction",
+          "responseName": "primaryFunction",
+          "type": "String",
+        },
+      ],
+      "fragmentSpreads": Array [],
+      "possibleTypes": Array [
+        "Droid",
+      ],
+      "typeCondition": "Droid",
+    },
+    Object {
+      "fields": Array [
+        Object {
+          "description": "What this human calls themselves",
+          "fieldName": "name",
+          "responseName": "name",
+          "type": "String!",
+        },
+        Object {
+          "description": "Height in the preferred unit, default is meters",
+          "fieldName": "height",
+          "responseName": "height",
+          "type": "Float",
+        },
+      ],
+      "fragmentSpreads": Array [],
+      "possibleTypes": Array [
+        "Human",
+      ],
+      "typeCondition": "Human",
+    },
+  ],
+  "possibleTypes": Array [
+    "Human",
+    "Droid",
+  ],
+  "typeCondition": "Character",
+}
+`;
+
+exports[`Compiling query documents should include type conditions for inline fragments on a union type 1`] = `
+Array [
+  Object {
+    "fields": Array [
+      Object {
+        "description": "What others call this droid",
+        "fieldName": "name",
+        "responseName": "name",
+        "type": "String!",
+      },
+      Object {
+        "description": "This droid's primary function",
+        "fieldName": "primaryFunction",
+        "responseName": "primaryFunction",
+        "type": "String",
+      },
+    ],
+    "fragmentSpreads": Array [],
+    "possibleTypes": Array [
+      "Droid",
+    ],
+    "typeCondition": "Droid",
+  },
+  Object {
+    "fields": Array [
+      Object {
+        "description": "What this human calls themselves",
+        "fieldName": "name",
+        "responseName": "name",
+        "type": "String!",
+      },
+      Object {
+        "description": "Height in the preferred unit, default is meters",
+        "fieldName": "height",
+        "responseName": "height",
+        "type": "Float",
+      },
+    ],
+    "fragmentSpreads": Array [],
+    "possibleTypes": Array [
+      "Human",
+    ],
+    "typeCondition": "Human",
+  },
+]
+`;
+
+exports[`Compiling query documents should include type conditions with merged fields for inline fragments 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [
+        Object {
+          "description": "The name of the character",
+          "fieldName": "name",
+          "responseName": "name",
+          "type": "String!",
+        },
+      ],
+      "fragmentSpreads": Array [],
+      "inlineFragments": Array [
+        Object {
+          "fields": Array [
+            Object {
+              "description": "What others call this droid",
+              "fieldName": "name",
+              "responseName": "name",
+              "type": "String!",
+            },
+            Object {
+              "description": "This droid's primary function",
+              "fieldName": "primaryFunction",
+              "responseName": "primaryFunction",
+              "type": "String",
+            },
+          ],
+          "fragmentSpreads": Array [],
+          "possibleTypes": Array [
+            "Droid",
+          ],
+          "typeCondition": "Droid",
+        },
+        Object {
+          "fields": Array [
+            Object {
+              "description": "What this human calls themselves",
+              "fieldName": "name",
+              "responseName": "name",
+              "type": "String!",
+            },
+            Object {
+              "description": "Height in the preferred unit, default is meters",
+              "fieldName": "height",
+              "responseName": "height",
+              "type": "Float",
+            },
+          ],
+          "fragmentSpreads": Array [],
+          "possibleTypes": Array [
+            "Human",
+          ],
+          "typeCondition": "Human",
+        },
+      ],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [],
+  "operationName": "Hero",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should include variables defined in operations 1`] = `
+Array [
+  Object {
+    "name": "episode",
+    "type": "Episode",
+  },
+]
+`;
+
+exports[`Compiling query documents should include variables defined in operations 2`] = `
+Array [
+  Object {
+    "name": "text",
+    "type": "String!",
+  },
+]
+`;
+
+exports[`Compiling query documents should include variables defined in operations 3`] = `
+Array [
+  Object {
+    "name": "episode",
+    "type": "Episode!",
+  },
+  Object {
+    "name": "review",
+    "type": "ReviewInput!",
+  },
+]
+`;
+
+exports[`Compiling query documents should inherit type condition when nesting a fragment spread in an inline fragment with a more specific type condition 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [],
+      "fragmentSpreads": Array [],
+      "inlineFragments": Array [
+        Object {
+          "fields": Array [],
+          "fragmentSpreads": Array [
+            "HeroName",
+          ],
+          "possibleTypes": Array [
+            "Droid",
+          ],
+          "typeCondition": "Droid",
+        },
+      ],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [
+    "HeroName",
+  ],
+  "operationName": "HeroName",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should inherit type condition when nesting an inline fragment in an inline fragment with a more specific type condition 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [],
+      "fragmentSpreads": Array [],
+      "inlineFragments": Array [
+        Object {
+          "fields": Array [
+            Object {
+              "description": "What others call this droid",
+              "fieldName": "name",
+              "responseName": "name",
+              "type": "String!",
+            },
+          ],
+          "fragmentSpreads": Array [],
+          "possibleTypes": Array [
+            "Droid",
+          ],
+          "typeCondition": "Droid",
+        },
+      ],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [],
+  "operationName": "HeroName",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should not include type conditions for fragment spreads with type conditions that match the parent type 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [
+        Object {
+          "description": "The name of the character",
+          "fieldName": "name",
+          "responseName": "name",
+          "type": "String!",
+        },
+      ],
+      "fragmentSpreads": Array [
+        "HeroDetails",
+      ],
+      "inlineFragments": Array [],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [
+    "HeroDetails",
+  ],
+  "operationName": "Hero",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should not inherit type condition when nesting a fragment spread in an inline fragment with a less specific type condition 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [],
+      "fragmentSpreads": Array [
+        "DroidName",
+      ],
+      "inlineFragments": Array [],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [
+    "DroidName",
+  ],
+  "operationName": "HeroName",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should not inherit type condition when nesting an inline fragment in an inline fragment with a less specific type condition 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [],
+      "fragmentSpreads": Array [],
+      "inlineFragments": Array [
+        Object {
+          "fields": Array [
+            Object {
+              "description": "What others call this droid",
+              "fieldName": "name",
+              "responseName": "name",
+              "type": "String!",
+            },
+          ],
+          "fragmentSpreads": Array [],
+          "possibleTypes": Array [
+            "Droid",
+          ],
+          "typeCondition": "Droid",
+        },
+      ],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [],
+  "operationName": "HeroName",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should recursively flatten inline fragments with type conditions that match the parent type 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [
+        Object {
+          "description": "The ID of the character",
+          "fieldName": "id",
+          "responseName": "id",
+          "type": "ID!",
+        },
+        Object {
+          "description": "The name of the character",
+          "fieldName": "name",
+          "responseName": "name",
+          "type": "String!",
+        },
+        Object {
+          "description": "The movies this character appears in",
+          "fieldName": "appearsIn",
+          "responseName": "appearsIn",
+          "type": "[Episode]!",
+        },
+      ],
+      "fragmentSpreads": Array [],
+      "inlineFragments": Array [],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [],
+  "operationName": "Hero",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should recursively include fragment spreads with type conditions that match the parent type 1`] = `
+Object {
+  "fields": Array [
+    Object {
+      "fieldName": "hero",
+      "fields": Array [
+        Object {
+          "description": "The ID of the character",
+          "fieldName": "id",
+          "responseName": "id",
+          "type": "ID!",
+        },
+      ],
+      "fragmentSpreads": Array [
+        "HeroDetails",
+        "MoreHeroDetails",
+      ],
+      "inlineFragments": Array [],
+      "responseName": "hero",
+      "type": "Character",
+    },
+  ],
+  "fragmentsReferenced": Array [
+    "HeroDetails",
+    "MoreHeroDetails",
+  ],
+  "operationName": "Hero",
+  "operationType": "query",
+  "variables": Array [],
+}
+`;
+
+exports[`Compiling query documents should recursively include fragment spreads with type conditions that match the parent type 2`] = `
+Object {
+  "fields": Array [
+    Object {
+      "description": "The ID of the character",
+      "fieldName": "id",
+      "responseName": "id",
+      "type": "ID!",
+    },
+    Object {
+      "description": "The name of the character",
+      "fieldName": "name",
+      "responseName": "name",
+      "type": "String!",
+    },
+  ],
+  "fragmentName": "HeroDetails",
+  "fragmentSpreads": Array [
+    "MoreHeroDetails",
+  ],
+  "fragmentsReferenced": Array [
+    "MoreHeroDetails",
+  ],
+  "inlineFragments": Array [],
+  "possibleTypes": Array [
+    "Human",
+    "Droid",
+  ],
+  "typeCondition": "Character",
+}
+`;
+
+exports[`Compiling query documents should recursively include fragment spreads with type conditions that match the parent type 3`] = `
+Object {
+  "fields": Array [
+    Object {
+      "description": "The movies this character appears in",
+      "fieldName": "appearsIn",
+      "responseName": "appearsIn",
+      "type": "[Episode]!",
+    },
+    Object {
+      "description": "The ID of the character",
+      "fieldName": "id",
+      "responseName": "id",
+      "type": "ID!",
+    },
+  ],
+  "fragmentName": "MoreHeroDetails",
+  "fragmentSpreads": Array [],
+  "fragmentsReferenced": Array [],
+  "inlineFragments": Array [],
+  "possibleTypes": Array [
+    "Human",
+    "Droid",
+  ],
+  "typeCondition": "Character",
+}
+`;

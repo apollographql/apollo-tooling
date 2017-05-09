@@ -5,7 +5,7 @@ import process from 'process';
 import path from 'path';
 import yargs from 'yargs';
 
-import { downloadSchema, introspectSchema, generate } from '.';
+import { downloadSchema, introspectSchema, printSchema, generate } from '.';
 import { ToolError, logError } from './errors'
 
 import 'source-map-support/register'
@@ -56,13 +56,37 @@ yargs
     },
     async argv => {
       const { schema, output, header, insecure } = argv;
-      
+
       const urlRegex = /^https?:\/\//i;
       if (urlRegex.test(schema)) {
         await downloadSchema(schema, output, header, insecure);
       } else {
         await introspectSchema(schema, output);
-      } 
+      }
+    }
+  )
+  .command(
+    ['print-schema [schema]'],
+    'Print the provided schema in the GraphQL schema language format',
+    {
+      schema: {
+        demand: true,
+        describe: 'Path to GraphQL introspection query result',
+        default: 'schema.json',
+        normalize: true,
+        coerce: path.resolve,
+      },
+      output: {
+        demand: true,
+        describe: 'Output path for GraphQL schema language file',
+        default: 'schema.graphql',
+        normalize: true,
+        coerce: path.resolve,
+      }
+    },
+    async argv => {
+      const { schema, output } = argv;
+      await printSchema(schema, output);
     }
   )
   .command(
@@ -106,7 +130,11 @@ yargs
       if (input.length === 1 && glob.hasMagic(input[0])) {
         input = glob.sync(input[0]);
       }
-      const inputPaths = input.map(input => path.resolve(input));
+
+      const inputPaths = input
+        .map(input => path.resolve(input))
+        // Sort to normalize different glob expansions between different terminals.
+        .sort();
 
       const options = { passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '', customScalarsPrefix: argv["custom-scalars-prefix"] || '' };
       generate(inputPaths, argv.schema, argv.output, argv.target, options);
