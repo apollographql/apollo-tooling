@@ -31,14 +31,15 @@ describe('TypeScript code generation', function() {
       schema: schema,
       operations: {},
       fragments: {},
-      typesUsed: {}
+      typesUsed: {},
     }
 
     generator = new CodeGenerator(context);
 
-    compileFromSource = (source) => {
+    compileFromSource = (source, addTypename = false) => {
       const document = parse(source);
       const context = compileToIR(schema, document);
+      context.addTypename = addTypename;
       generator.context = context;
       return context;
     };
@@ -49,6 +50,106 @@ describe('TypeScript code generation', function() {
   });
 
   describe('#generateSource()', function() {
+    describe('__typename', function() {
+      test('in an object', function() {
+        const context = compileFromSource(`
+          query HeroName {
+            hero {
+              __typename
+              name
+            }
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+
+      // TODO: Enable after fixing operation
+      test.skip('in an operation', function() {
+        const context = compileFromSource(`
+          query Hero {
+            ...Hero
+          }
+
+          fragment Hero on Query {
+            hero {
+              __typename
+              name
+            }
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+
+      test('single fragment spread', () => {
+        const context = compileFromSource(`
+          query HeroName {
+            hero {
+              ...humanFriends
+            }
+          }
+
+          fragment humanFriends on Character {
+            friends {
+              __typename
+              name
+            }
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+
+      test('in fragment spreads, allows for disjoint union via __typename string literals', function() {
+        const context = compileFromSource(`
+          query HeroName {
+            hero {
+              __typename
+              ...humanHero
+              ...droidHero
+            }
+          }
+
+          fragment droidHero on Droid {
+            primaryFunction
+          }
+
+          fragment humanHero on Human {
+            homePlanet
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+
+      test('in inline fragments, allows for disjoint union via __typename string literals', function() {
+        const context = compileFromSource(`
+          query HeroName {
+            hero {
+              __typename
+
+              ... on Droid {
+                friends {
+                  name
+                }
+              }
+              ... on Human {
+                homePlanet
+              }
+            }
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+    });
+
     test(`should generate simple query operations`, function() {
       const context = compileFromSource(`
         query HeroName {
@@ -111,6 +212,31 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
+    test(`should handle multi-fragmented query operations`, function() {
+      const context = compileFromSource(`
+        query HeroAndFriendsNames {
+          hero {
+            name
+            ...heroFriends
+            ...heroAppears
+          }
+        }
+
+        fragment heroFriends on Character {
+          friends {
+            name
+          }
+        }
+
+        fragment heroAppears on Character {
+          appearsIn
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
     test(`should generate query operations with inline fragments`, function() {
       const context = compileFromSource(`
         query HeroAndDetails {
@@ -148,7 +274,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test(`should generate correct list with custom fragment`, function() {
+    test(`should generate correct typedefs with a single custom fragment`, function() {
       const context = compileFromSource(`
         fragment Friend on Character {
           name
@@ -165,6 +291,203 @@ describe('TypeScript code generation', function() {
       `);
 
       const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test(`should generate correct typedefs with a multiple custom fragments`, function() {
+      const context = compileFromSource(`
+        fragment Friend on Character {
+          name
+        }
+
+        fragment Person on Character {
+          name
+        }
+
+        query HeroAndFriendsNames($episode: Episode) {
+          hero(episode: $episode) {
+            name
+            friends {
+              ...Friend
+              ...Person
+            }
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test(`should handle complex fragments with type aliases`, function() {
+      const context = compileFromSource(`
+        query HeroAndFriendsNames {
+          hero(episode: NEWHOPE) {
+            name
+            ...Something
+          }
+          empireHero: hero(episode: EMPIRE) {
+            name
+            ...Something
+          }
+        }
+
+        fragment Something on Character {
+          ... on Human {
+            friends {
+              ... on Human {
+                homePlanet
+              }
+
+              ... on Droid {
+                primaryFunction
+              }
+            }
+          }
+
+          ... on Droid {
+            appearsIn
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should correctly handle fragments on interfaces', function() {
+      const context = compileFromSource(
+        `
+        query HeroQuery($episode: Episode){
+          hero(episode: $episode) {
+            name
+            ... on Human {
+              homePlanet
+            }
+
+            ... on Droid {
+              primaryFunction
+            }
+          }
+        }
+      `
+      );
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should correctly handle nested fragments on interfaces', function() {
+      const context = compileFromSource(
+        `
+        query HeroQuery($episode: Episode){
+          hero(episode: $episode) {
+            name
+            friendsConnection {
+              friends {
+                ...CharacterFragment
+              }
+            }
+          }
+        }
+
+        fragment CharacterFragment on Character {
+          name
+          __typename
+
+          ... on Human {
+            homePlanet
+          }
+
+          ... on Droid {
+            primaryFunction
+          }
+        }
+      `
+      );
+
+      const source = generateSource(context);
+
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should correctly add typename to nested fragments on interfaces if addTypename is true', function() {
+      const context = compileFromSource(
+        `
+        query HeroQuery($episode: Episode){
+          hero(episode: $episode) {
+            name
+            friendsConnection {
+              friends {
+                ...CharacterFragment
+              }
+            }
+          }
+        }
+
+        fragment CharacterFragment on Character {
+          name
+          __typename
+
+          ... on Human {
+            homePlanet
+          }
+
+          ... on Droid {
+            primaryFunction
+          }
+        }
+      `
+      );
+
+      const source = generateSource(context, { addTypename: true });
+
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should correctly handle doubly nested fragments on interfaces', function() {
+      const context = compileFromSource(
+        `
+        query HeroQuery($episode: Episode) {
+          hero(episode: $episode) {
+            name
+            friendsConnection {
+              friends {
+                ...CharacterFragment
+              }
+            }
+          }
+        }
+
+        fragment CharacterFragment on Character {
+          name
+
+          ... on Human {
+            homePlanet
+            friends {
+              ...OtherCharacterFragment
+            }
+          }
+
+          ... on Droid {
+            primaryFunction
+          }
+        }
+
+        fragment OtherCharacterFragment on Character {
+          ... on Human {
+            height
+          }
+
+          ... on Droid {
+            appearsIn
+          }
+        }
+      `
+      );
+
+      const source = generateSource(context);
+
       expect(source).toMatchSnapshot();
     });
   });
