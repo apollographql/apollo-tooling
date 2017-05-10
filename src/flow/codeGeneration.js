@@ -41,12 +41,18 @@ export function generateSource(context, options) {
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
   ));
+
+  // When an object has fragment spreads or inline fragments
+  // and __typename is requested at the top level, __typename
+  // needs to be added as a property of the fragments
+  const fragmentsWithTypenameField = {};
   Object.values(context.operations).forEach(operation => {
     interfaceVariablesDeclarationForOperation(generator, operation);
-    typeDeclarationForOperation(generator, operation);
+    typeDeclarationForOperation(generator, operation, fragmentsWithTypenameField);
   });
+
   Object.values(context.fragments).forEach(operation =>
-    typeDeclarationForFragment(generator, operation)
+    typeDeclarationForFragment(generator, operation, fragmentsWithTypenameField)
   );
 
   return generator.output;
@@ -83,7 +89,6 @@ function structDeclarationForInputObjectType(
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
-
     propertyDeclarations(generator, properties, true);
   });
 }
@@ -136,27 +141,34 @@ export function typeDeclarationForOperation(
     variables,
     fields,
     fragmentSpreads,
+    inlineFragments,
     fragmentsReferenced,
     source,
-  }
+  },
+  fragmentsWithTypenameField
 ) {
+  if (hasTypenameField(fields)) {
+    console.error('__typename on operations are not yet supported');
+  }
   const interfaceName = interfaceNameFromOperation({operationName, operationType});
   const properties = propertiesFromFields(generator.context, fields, {
-    inlineFragmentTypeSuffix: `From${operationName}`
+    typeNameSuffix: `From${operationName}`
   });
 
-  typeDeclaration(generator, {
-    interfaceName,
-    extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
-  }, () => {
+  typeDeclaration(generator, { interfaceName }, () => {
     propertyDeclarations(generator, properties, true);
   });
 
+  properties.forEach(({ fragmentSpreads, inlineFragments, bareTypeName }) => {
+    if (fragmentSpreads.length > 0) {
+      fragmentSpreads.forEach(fragmentSpread => {
+        fragmentsWithTypenameField[fragmentSpread] = true;
+      });
+    }
 
-  properties.forEach(property => {
-    if (property.inlineFragments.length > 0) {
-      const fragmentName = `${pascalCase(property.bareTypeName)}From${operationName}`;
-      handleInlineFragments(generator, fragmentName, property.inlineFragments);
+    if (inlineFragments.length > 0) {
+      const fragmentName = `${pascalCase(bareTypeName)}From${operationName}`;
+      handleInlineFragments(generator, fragmentName, inlineFragments);
     }
   });
 }
@@ -171,7 +183,8 @@ export function typeDeclarationForFragment(
     fragmentSpreads,
     source,
     possibleTypes
-  }
+  },
+  fragmentsWithTypenameField
 ) {
   const interfaceName = `${pascalCase(fragmentName)}Fragment`;
 
@@ -180,42 +193,48 @@ export function typeDeclarationForFragment(
   } else {
     typeDeclaration(generator, {
       interfaceName,
-      extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
+      // extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
     }, () => {
+      if (fragmentsWithTypenameField[fragmentName]) {
+        addTypenameFieldIfNeeded(generator, fields, typeCondition);
+      }
+
       const properties = propertiesFromFields(generator.context, fields, {
-        inlineFragmentTypeSuffix: 'Fragment'
+        typeNameSuffix: 'Fragment'
       });
+
       propertyDeclarations(generator, properties, true);
     });
   }
 }
 
-export function propertiesFromFields(context, fields, { forceNullable, inlineFragmentTypeSuffix } = {}) {
-  return fields.map(field => propertyFromField(context, field, { forceNullable, inlineFragmentTypeSuffix }));
+export function propertiesFromFields(context, fields, { forceNullable, typeNameSuffix } = {}) {
+  return fields.map(field => propertyFromField(context, field, { forceNullable, typeNameSuffix }));
 }
 
-export function propertyFromField(context, field, { forceNullable, inlineFragmentTypeSuffix } = {}) {
+export function propertyFromField(context, field, { forceNullable, typeNameSuffix } = {}) {
   let { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
   fieldName = fieldName || field.responseName;
 
   const propertyName = fieldName;
-
   let property = { fieldName, fieldType, propertyName, description, inlineFragments };
-
   const namedType = getNamedType(fieldType);
 
   if (isCompositeType(namedType)) {
     let typeName, bareTypeName;
     if (propertyName === '__typename') {
       // Handle the __typename field specially. the fieldType is set
-      // to the parentType but we want the flow type to be a string literal
+      // to the parentType but we want the target type to be a string literal
       // of the parentType.
       bareTypeName = `"${fieldType}"`;
       typeName = `"${fieldType}"`;
     } else {
       bareTypeName = pascalCase(Inflector.singularize(propertyName));
-      if (property.inlineFragments && property.inlineFragments.length > 0) {
-        typeName = typeNameFromGraphQLType(context, fieldType, `${pascalCase(bareTypeName)}${inlineFragmentTypeSuffix}`);
+      if (
+        inlineFragments && inlineFragments.length > 0 ||
+        fragmentSpreads && fragmentSpreads.length > 0
+      ) {
+        typeName = typeNameFromGraphQLType(context, fieldType, `${pascalCase(bareTypeName)}${typeNameSuffix}`);
       } else {
         typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
       }
@@ -236,10 +255,7 @@ export function propertyFromField(context, field, { forceNullable, inlineFragmen
       isArray, isNullable,
     };
   } else {
-    const typeName = fieldName === '__typename' ?
-      typeNameFromGraphQLType(context, null, fieldType, false) :
-      typeNameFromGraphQLType(context, fieldType);
-
+    const typeName = typeNameFromGraphQLType(context, fieldType);
     return { ...property, typeName, isComposite: false, fieldType };
   }
 }
@@ -247,7 +263,10 @@ export function propertyFromField(context, field, { forceNullable, inlineFragmen
 export function propertyDeclarations(generator, properties, inInterface) {
   if (!properties) return;
   properties.forEach(property => {
-    if (property.fields && property.fields.length > 0 || property.inlineFragments && property.inlineFragments.length > 0) {
+    if (
+      property.fields && property.fields.length > 0 ||
+      property.inlineFragments && property.inlineFragments.length > 0
+    ) {
       if (property.inlineFragments.length > 0 ) {
         propertyDeclaration(generator, {
           ...property,
@@ -265,34 +284,53 @@ export function propertyDeclarations(generator, properties, inInterface) {
   });
 }
 
-function makeTypenameField(stringLiteralType) {
+function makeTypenameField(typeName) {
   return {
     responseName: '__typename',
     fieldName: '__typename',
-    type: stringLiteralType,
+    type: typeName,
   };
 }
 
+function hasTypenameField(fields) {
+  if (!fields) {
+    return false;
+  }
+
+  return fields.find(field => field.fieldName === '__typename' || field.responseName === '__typename');
+}
+
+function removeTypenameFieldIfExists(generator, fields) {
+  if (hasTypenameField(fields)) {
+    fields = fields.filter(field => field.fieldName !== '__typename' || field.responseName !== '__typename');
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
+ * NOTE: Mutates `fields`
+ */
+function addTypenameFieldIfNeeded(generator, fields, parentTypeName) {
+  const removed = removeTypenameFieldIfExists();
+
+  if (generator.context.addTypename || removed) {
+    fields.unshift(makeTypenameField(parentTypeName));
+  }
+}
+
 function handleInlineFragments(generator, fragmentName, inlineFragments) {
-  let typeNames = [];
-  inlineFragments.forEach(inlineFragment => {
-    const typeName = `${fragmentName}On${inlineFragment.typeCondition}`;
-    typeNames.push(typeName);
+  // Keep track of these generated destination type names so we can build a union afterwards
+  let unionTypes = [];
+  inlineFragments.forEach(({ fields, typeCondition }) => {
+    const typeName = `${fragmentName}On${typeCondition}`;
+    unionTypes.push(typeName);
 
-    const hasTypenameField = inlineFragment.fields
-      .find(field => field.fieldName === '__typename' || field.responseName === '__typename');
-
-    let fields = inlineFragment.fields;
-    if (hasTypenameField) {
-      fields = fields.filter(field => field.fieldName !== '__typename' || field.responseName !== '__typename');
-    }
-
-    if (generator.context.addTypename || hasTypenameField) {
-      fields.unshift(makeTypenameField(inlineFragment.typeCondition));
-    }
+    addTypenameFieldIfNeeded(generator, fields, typeCondition);
 
     let properties = propertiesFromFields(generator.context, fields, {
-      inlineFragmentTypeSuffix: 'Fragment'
+      typeNameSuffix: 'Fragment'
     });
 
     typeDeclaration(generator, {
@@ -301,16 +339,16 @@ function handleInlineFragments(generator, fragmentName, inlineFragments) {
       propertyDeclarations(generator, properties, true);
     })
 
-    properties.forEach(property => {
-      if (property.inlineFragments && property.inlineFragments.length > 0) {
-        const innerFragmentName = `${property.bareTypeName}Fragment`;
-        handleInlineFragments(generator, innerFragmentName, property.inlineFragments);
+    properties.forEach(({ inlineFragments, bareTypeName }) => {
+      if (inlineFragments && inlineFragments.length > 0) {
+        const innerFragmentName = `${bareTypeName}Fragment`;
+        handleInlineFragments(generator, innerFragmentName, inlineFragments);
       }
     });
   });
 
   // TODO: Refactor typeDeclaration to not automatically assume bracketed type
   typeDeclaration(generator, { interfaceName: fragmentName, noBrackets: true }, () => {
-    unionDeclaration(generator, typeNames);
+    unionDeclaration(generator, unionTypes);
   });
 }

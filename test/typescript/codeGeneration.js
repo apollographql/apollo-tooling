@@ -31,14 +31,15 @@ describe('TypeScript code generation', function() {
       schema: schema,
       operations: {},
       fragments: {},
-      typesUsed: {}
+      typesUsed: {},
     }
 
     generator = new CodeGenerator(context);
 
-    compileFromSource = (source) => {
+    compileFromSource = (source, addTypename = false) => {
       const document = parse(source);
       const context = compileToIR(schema, document);
+      context.addTypename = addTypename;
       generator.context = context;
       return context;
     };
@@ -49,6 +50,106 @@ describe('TypeScript code generation', function() {
   });
 
   describe('#generateSource()', function() {
+    describe('__typename', function() {
+      test('in an object', function() {
+        const context = compileFromSource(`
+          query HeroName {
+            hero {
+              __typename
+              name
+            }
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+
+      // TODO: Enable after fixing operation
+      test.skip('in an operation', function() {
+        const context = compileFromSource(`
+          query Hero {
+            ...Hero
+          }
+
+          fragment Hero on Query {
+            hero {
+              __typename
+              name
+            }
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+
+      test('single fragment spread', () => {
+        const context = compileFromSource(`
+          query HeroName {
+            hero {
+              ...humanFriends
+            }
+          }
+
+          fragment humanFriends on Character {
+            friends {
+              __typename
+              name
+            }
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+
+      test('in fragment spreads, allows for disjoint union via __typename string literals', function() {
+        const context = compileFromSource(`
+          query HeroName {
+            hero {
+              __typename
+              ...humanHero
+              ...droidHero
+            }
+          }
+
+          fragment droidHero on Droid {
+            primaryFunction
+          }
+
+          fragment humanHero on Human {
+            homePlanet
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+
+      test('in inline fragments, allows for disjoint union via __typename string literals', function() {
+        const context = compileFromSource(`
+          query HeroName {
+            hero {
+              __typename
+
+              ... on Droid {
+                friends {
+                  name
+                }
+              }
+              ... on Human {
+                homePlanet
+              }
+            }
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+    });
+
     test(`should generate simple query operations`, function() {
       const context = compileFromSource(`
         query HeroName {
