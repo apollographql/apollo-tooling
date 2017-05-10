@@ -427,7 +427,7 @@ function enumerationDeclaration(generator, type) {
     );
   });
   generator.printNewline();
-  generator.printOnNewline(`extension ${name}: JSONDecodable, JSONEncodable {}`);
+  generator.printOnNewline(`extension ${name}: Apollo.JSONDecodable, Apollo.JSONEncodable {}`);
 }
 
 function structDeclarationForInputObjectType(generator, type) {
