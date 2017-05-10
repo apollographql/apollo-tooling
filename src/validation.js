@@ -6,8 +6,13 @@ import {
 
 import { ToolError, logError } from './errors'
 
-export function validateQueryDocument(schema, document) {
-  const rules = [NoAnonymousQueries, NoExplicitTypename, NoTypenameAlias].concat(specifiedRules);
+export function validateQueryDocument(schema, document, target) {
+  const rules = [
+    NoAnonymousQueries,
+    NoTypenameAlias,
+    ...(target === 'swift' ? [NoExplicitTypename] : []),
+    ...specifiedRules
+  ];
 
   const validationErrors = validate(schema, document, rules);
   if (validationErrors && validationErrors.length > 0) {
