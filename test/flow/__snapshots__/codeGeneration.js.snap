@@ -1,5 +1,103 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Flow code generation #generateSource() __typename in an object 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type HeroNameQuery = {|
+  hero: ? {|
+    __typename: string,
+    // The name of the character
+    name: string,
+  |},
+|};"
+`;
+
+exports[`Flow code generation #generateSource() __typename in an operation 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type HeroQuery = {|
+|};
+
+export type HeroFragment = {|
+  hero: ? {|
+    __typename: string,
+    // The name of the character
+    name: string,
+  |},
+|};"
+`;
+
+exports[`Flow code generation #generateSource() __typename in fragment spreads, allows for disjoint union via __typename string literals 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type HeroNameQuery = {|
+  hero: ? {|
+    ...HumanHeroFragment,
+    ...DroidHeroFragment,
+    __typename: string,
+  |},
+|};
+
+export type DroidHeroFragment = {|
+  // This droid's primary function
+  primaryFunction: ?string,
+|};
+
+export type HumanHeroFragment = {|
+  // The home planet of the human, or null if unknown
+  homePlanet: ?string,
+|};"
+`;
+
+exports[`Flow code generation #generateSource() __typename in inline fragments, allows for disjoint union via __typename string literals 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type HeroNameQuery = {|
+  hero: ?HeroFromHeroName,
+|};
+
+export type HeroFromHeroNameOnDroid = {|
+  __typename: string,
+  // This droid's friends, or an empty list if they have none
+  friends: ?Array< {|
+    // The name of the character
+    name: string,
+  |} >,
+|};
+
+export type HeroFromHeroNameOnHuman = {|
+  __typename: string,
+  // The home planet of the human, or null if unknown
+  homePlanet: ?string,
+|};
+
+export type HeroFromHeroName =
+  | HeroFromHeroNameOnDroid
+  | HeroFromHeroNameOnHuman;"
+`;
+
+exports[`Flow code generation #generateSource() __typename single fragment spread 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type HeroNameQuery = {|
+  hero: HumanFriendsFragment,
+|};
+
+export type HumanFriendsFragment = {|
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< {|
+    __typename: string,
+    // The name of the character
+    name: string,
+  |} >,
+|};"
+`;
+
 exports[`Flow code generation #generateSource() should annotate custom scalars as string 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
@@ -39,7 +137,6 @@ export type HeroQueryQuery = {|
 |};
 
 export type CharacterFragmentFragmentOnHuman = {|
-  __typename: \\"Human\\",
   // What this human calls themselves
   name: string,
   // The home planet of the human, or null if unknown
@@ -47,7 +144,6 @@ export type CharacterFragmentFragmentOnHuman = {|
 |};
 
 export type CharacterFragmentFragmentOnDroid = {|
-  __typename: \\"Droid\\",
   // What others call this droid
   name: string,
   // This droid's primary function
@@ -119,6 +215,41 @@ export type OtherCharacterFragmentFragmentOnDroid = {|
 export type OtherCharacterFragmentFragment =
   | OtherCharacterFragmentFragmentOnHuman
   | OtherCharacterFragmentFragmentOnDroid;"
+`;
+
+exports[`Flow code generation #generateSource() should correctly handle fragment spreads on interfaces 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode =
+  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
+  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
+
+
+export type HeroQueryQueryVariables = {|
+  episode: ?Episode,
+|};
+
+export type HeroQueryQuery = {|
+  hero: ? {|
+    ...HumanFragmentFragment,
+    ...DroidFragmentFragment,
+    // The name of the character
+    name: string,
+  |},
+|};
+
+export type HumanFragmentFragment = {|
+  // The home planet of the human, or null if unknown
+  homePlanet: ?string,
+|};
+
+export type DroidFragmentFragment = {|
+  // This droid's primary function
+  primaryFunction: ?string,
+|};"
 `;
 
 exports[`Flow code generation #generateSource() should correctly handle fragments on interfaces 1`] = `

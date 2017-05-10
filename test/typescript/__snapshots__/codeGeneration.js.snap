@@ -1,5 +1,93 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`TypeScript code generation #generateSource() __typename in an object 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+export interface HeroNameQuery {
+  hero: {
+    __typename: string,
+    // The name of the character
+    name: string,
+  } | null;
+}
+/* tslint:enable */
+"
+`;
+
+exports[`TypeScript code generation #generateSource() __typename in fragment spreads, allows for disjoint union via __typename string literals 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+export interface HeroNameQuery {
+  hero: HumanHeroFragment & DroidHeroFragment & {
+    __typename: string,
+  } | null;
+}
+
+export interface DroidHeroFragment {
+  // This droid's primary function
+  primaryFunction: string | null;
+}
+
+export interface HumanHeroFragment {
+  // The home planet of the human, or null if unknown
+  homePlanet: string | null;
+}
+/* tslint:enable */
+"
+`;
+
+exports[`TypeScript code generation #generateSource() __typename in inline fragments, allows for disjoint union via __typename string literals 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+export interface HeroNameQuery {
+  hero: HeroFromHeroName | null;
+}
+
+export interface HeroFromHeroNameOnDroid {
+  __typename: \\"Droid\\";
+  // This droid's friends, or an empty list if they have none
+  friends: Array< {
+    // The name of the character
+    name: string,
+  } > | null;
+}
+
+export interface HeroFromHeroNameOnHuman {
+  __typename: \\"Human\\";
+  // The home planet of the human, or null if unknown
+  homePlanet: string | null;
+}
+
+export type HeroFromHeroName =
+  | HeroFromHeroNameOnDroid
+  | HeroFromHeroNameOnHuman
+/* tslint:enable */
+"
+`;
+
+exports[`TypeScript code generation #generateSource() __typename single fragment spread 1`] = `
+"//  This file was automatically generated and should not be edited.
+/* tslint:disable */
+
+export interface HeroNameQuery {
+  hero: HumanFriendsFragment;
+}
+
+export interface HumanFriendsFragment {
+  // The friends of the character, or an empty list if they have none
+  friends: Array< {
+    __typename: string,
+    // The name of the character
+    name: string,
+  } > | null;
+}
+/* tslint:enable */
+"
+`;
+
 exports[`TypeScript code generation #generateSource() should correctly add typename to nested fragments on interfaces if addTypename is true 1`] = `
 "//  This file was automatically generated and should not be edited.
 /* tslint:disable */

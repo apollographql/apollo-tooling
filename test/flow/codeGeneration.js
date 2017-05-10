@@ -30,9 +30,10 @@ function setup(schema) {
 
   const generator = new CodeGenerator(context);
 
-  const compileFromSource = (source) => {
+  const compileFromSource = (source, addTypename = false) => {
     const document = parse(source);
     const context = compileToIR(schema, document);
+    context.addTypename = addTypename;
     generator.context = context;
     return context;
   };
@@ -46,6 +47,111 @@ function setup(schema) {
 
 describe('Flow code generation', function() {
   describe('#generateSource()', function() {
+    describe('__typename', function() {
+      test('in an object', function() {
+        const { compileFromSource } = setup(swapiSchema);
+        const context = compileFromSource(`
+          query HeroName {
+            hero {
+              __typename
+              name
+            }
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+
+      // TODO: Enable after fixing operation
+      test.skip('in an operation', function() {
+        const { compileFromSource } = setup(swapiSchema);
+        const context = compileFromSource(`
+          query Hero {
+            ...Hero
+          }
+
+          fragment Hero on Query {
+            hero {
+              __typename
+              name
+            }
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+
+      test('single fragment spread', () => {
+        const { compileFromSource } = setup(swapiSchema);
+        const context = compileFromSource(`
+          query HeroName {
+            hero {
+              ...humanFriends
+            }
+          }
+
+          fragment humanFriends on Character {
+            friends {
+              __typename
+              name
+            }
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+
+      test('in fragment spreads, allows for disjoint union via __typename string literals', function() {
+        const { compileFromSource } = setup(swapiSchema);
+        const context = compileFromSource(`
+          query HeroName {
+            hero {
+              __typename
+              ...humanHero
+              ...droidHero
+            }
+          }
+
+          fragment droidHero on Droid {
+            primaryFunction
+          }
+
+          fragment humanHero on Human {
+            homePlanet
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+
+      test('in inline fragments, allows for disjoint union via __typename string literals', function() {
+        const { compileFromSource } = setup(swapiSchema);
+        const context = compileFromSource(`
+          query HeroName {
+            hero {
+              __typename
+
+              ... on Droid {
+                friends {
+                  name
+                }
+              }
+              ... on Human {
+                homePlanet
+              }
+            }
+          }
+        `);
+
+        const source = generateSource(context);
+        expect(source).toMatchSnapshot();
+      });
+    });
+
     test(`should generate simple query operations`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
@@ -298,6 +404,32 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
+    test('should correctly handle fragment spreads on interfaces', function() {
+      const {compileFromSource} = setup(swapiSchema);
+      const context = compileFromSource(
+        `
+        query HeroQuery($episode: Episode){
+          hero(episode: $episode) {
+            name
+            ...humanFragment
+            ...droidFragment
+          }
+        }
+
+        fragment humanFragment on Human {
+          homePlanet
+        }
+
+        fragment droidFragment on Droid {
+          primaryFunction
+        }
+      `
+      );
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
     test('should correctly handle nested fragments on interfaces', function() {
       const {compileFromSource} = setup(swapiSchema);
       const context = compileFromSource(
@@ -349,7 +481,6 @@ describe('Flow code generation', function() {
 
         fragment CharacterFragment on Character {
           name
-          __typename
 
           ... on Human {
             homePlanet
