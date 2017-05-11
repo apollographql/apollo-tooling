@@ -412,9 +412,9 @@ function propertyDeclarationForSelection(generator, selection) {
         });
         generator.printOnNewline("set");
         generator.withinBlock(() => {
-          let setter = `snapshot["${propertyName}"] = newValue`;
-          setter += mapExpressionForType(generator.context, type, `$0.snapshot`);
-          generator.printOnNewline(setter);
+          let newValueExpression = "newValue" + mapExpressionForType(generator.context, type, `$0.snapshot`);
+          generator.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${propertyName}")`);
+
         });
       } else {
         generator.printOnNewline("get");
@@ -423,12 +423,13 @@ function propertyDeclarationForSelection(generator, selection) {
         });
         generator.printOnNewline("set");
         generator.withinBlock(() => {
-          generator.printOnNewline(`snapshot["${propertyName}"] = `);
+          let newValueExpression;
           if (isOptional) {
-            generator.print('newValue?.snapshot');
+            newValueExpression = 'newValue?.snapshot';
           } else {
-            generator.print('newValue.snapshot');
+            newValueExpression = 'newValue.snapshot';
           }
+          generator.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${propertyName}")`);
         });
       }
     } else {
@@ -438,7 +439,7 @@ function propertyDeclarationForSelection(generator, selection) {
       });
       generator.printOnNewline("set");
       generator.withinBlock(() => {
-        generator.printOnNewline(`snapshot["${propertyName}"] = newValue`);
+        generator.printOnNewline(`snapshot.updateValue(newValue, forKey: "${propertyName}")`);
       });
     }
   });
