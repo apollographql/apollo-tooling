@@ -23,12 +23,36 @@ export function loadSchema(schemaPath) {
   return buildClientSchema((schemaData.data) ? schemaData.data : schemaData);
 }
 
+function extractDocumentFromJavascript(content) {
+  const re = /gql`([^`]*)`/g;
+  let match
+  const matches = []
+
+  while(match = re.exec(content)) {
+    const doc = match[1]
+      .replace(/\${[^}]*}/g, '')
+
+    matches.push(doc)
+  }
+
+  const doc = matches.join('\n')
+  return doc.length ? doc : null;
+}
+
 export function loadAndMergeQueryDocuments(inputPaths) {
   const sources = inputPaths.map(inputPath => {
-    const body = fs.readFileSync(inputPath, 'utf8')
+    const body = fs.readFileSync(inputPath, 'utf8');
     if (!body) {
       return null;
     }
+
+    if (inputPath.endsWith('.jsx') || inputPath.endsWith('.js')
+      || inputPath.endsWith('.tsx') || inputPath.endsWith('.ts')
+    ) {
+      const doc = extractDocumentFromJavascript(body.toString());
+      return doc ? new Source(doc, inputPath) : null;
+    }
+
     return new Source(body, inputPath);
   }).filter(source => source);
 
