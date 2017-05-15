@@ -58,14 +58,4 @@ describe('Validation', () => {
       'Validation of GraphQL query document failed'
     );
   });
-
-  test(`should extract gql snippet from javascript file`, () => {
-    const inputPaths = [
-      path.join(__dirname, './starwars/gqlQueries.js'),
-    ];
-
-    const document = loadAndMergeQueryDocuments(inputPaths);
-
-    expect(document).toMatchSnapshot();
-  })
 });
