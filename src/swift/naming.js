@@ -2,6 +2,10 @@ import { camelCase, pascalCase } from 'change-case';
 import Inflector from 'inflected';
 
 import {
+  join
+} from '../utilities/printing';
+
+import {
   escapeIdentifierIfNeeded
 } from './language';
 
@@ -37,10 +41,10 @@ export function structNameForInlineFragment(inlineFragment) {
   return 'As' + pascalCase(String(inlineFragment.typeCondition));
 }
 
-export function propertiesFromSelectionSet(context, selectionSet) {
+export function propertiesFromSelectionSet(context, selectionSet, namespace) {
   return selectionSet.map(selection => {
     if (selection.kind === 'Field') {
-      return propertyFromField(context, selection);
+      return propertyFromField(context, selection, namespace);
     } else if (selection.kind === 'InlineFragment') {
       return propertyFromInlineFragment(context, selection);
     } else if (selection.kind === 'FragmentSpread') {
@@ -49,7 +53,7 @@ export function propertiesFromSelectionSet(context, selectionSet) {
   });
 }
 
-export function propertyFromField(context, field) {
+export function propertyFromField(context, field, namespace) {
   const name = field.name || field.responseName;
   const unescapedPropertyName = isMetaFieldName(name) ? name : camelCase(name)
   const propertyName = escapeIdentifierIfNeeded(unescapedPropertyName);
@@ -60,7 +64,10 @@ export function propertyFromField(context, field) {
   const bareType = getNamedType(type);
 
   if (isCompositeType(bareType)) {
-    const bareTypeName = escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)));
+    const bareTypeName = join([
+      namespace,
+      escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)))
+    ], '.');
     const typeName = typeNameFromGraphQLType(context, type, bareTypeName, isOptional);
     return { ...field, propertyName, typeName, bareTypeName, isOptional, isList, isComposite: true };
   } else {

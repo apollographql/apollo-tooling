@@ -256,24 +256,52 @@ export function structDeclarationForSelectionSet(
       return fragmentSpread;
     });
 
-    generator.printNewlineIfNeeded();
-    generator.printOnNewline(`public init`);
-    generator.print('(');
-    generator.print(join(fields.map(({ propertyName, type, typeName, isOptional }) =>
-      join([
-        `${propertyName}: ${typeName}`,
-        isOptional && ' = nil'
-      ])
-    ), ', '));
-    generator.print(')');
+    if (inlineFragments.length < 1) {
+      generator.printNewlineIfNeeded();
+      generator.printOnNewline(`public init`);
+      generator.print('(');
+      generator.print(join(fields.map(({ propertyName, type, typeName, isOptional }) =>
+        join([
+          `${propertyName}: ${typeName}`,
+          isOptional && ' = nil'
+        ])
+      ), ', '));
+      generator.print(')');
 
-    generator.withinBlock(() => {
-      generator.printOnNewline(wrap(
-        `self.snapshot = [`,
-        join(fields.map(({ name, propertyName }) => `"${propertyName}": ${propertyName}`), ', ') || ':',
-        `]`
-      ));
-    });
+      generator.withinBlock(() => {
+        generator.printOnNewline(wrap(
+          `self.init(snapshot: [`,
+          join(fields.map(({ name, propertyName }) => `"${propertyName}": ${propertyName}`), ', ') || ':',
+          `])`
+        ));
+      });
+    } else {
+      inlineFragments.forEach(inlineFragment => {
+        generator.printNewlineIfNeeded();
+        generator.printOnNewline(`public static func make${inlineFragment.typeCondition}`);
+        generator.print('(');
+        const properties = propertiesFromSelectionSet(generator.context, inlineFragment.selectionSet, inlineFragment.structName);
+        const fields = properties.filter(property => property.kind === 'Field' && property.propertyName !== '__typename');
+        generator.print(join(fields.map(({ propertyName, type, typeName, isOptional }) =>
+          join([
+            `${propertyName}: ${typeName}`,
+            isOptional && ' = nil'
+          ])
+        ), ', '));
+        generator.print(`) -> ${structName}`);
+
+        generator.withinBlock(() => {
+          generator.printOnNewline(wrap(
+            `return ${structName}(snapshot: [`,
+            join([
+              `"__typename": "${inlineFragment.typeCondition}"`,
+              ...fields.map(({ name, propertyName }) => `"${propertyName}": ${propertyName}`)
+            ], ', '),
+            `])`
+          ));
+        });
+      });
+    }
 
     properties.forEach(property => {
       if (property.kind === 'FragmentSpread') return;
@@ -527,12 +555,13 @@ function structDeclarationForInputObjectType(generator, type) {
     generator.printNewlineIfNeeded();
     generator.printOnNewline(`public init`);
     generator.print('(');
-    generator.print(join(properties.map(({ propertyName, type, typeName, isOptional }) =>
-      join([
-        `${propertyName}: ${typeName}`,
-        isOptional && ' = nil'
-      ])
-    ), ', '));
+    generator.print(join(properties.map(({ propertyName, type, typeName, isOptional }) => {
+      if (isOptional) {
+        return `${propertyName}: Optional<${typeName}> = nil`;
+      } else {
+        return `${propertyName}: ${typeName}`;
+      }
+    }), ', '));
     generator.print(')');
 
     generator.withinBlock(() => {
