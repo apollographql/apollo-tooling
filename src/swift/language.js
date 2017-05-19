@@ -6,7 +6,6 @@ import {
 export function namespaceDeclaration(generator, namespace, closure) {
   if (namespace) {
     generator.printNewlineIfNeeded();
-    generator.printNewline();
     generator.printOnNewline(`/// ${namespace} namespace`);
     generator.printOnNewline(`public enum ${namespace}`);
     generator.pushScope({ typeName: namespace });
@@ -19,7 +18,6 @@ export function namespaceDeclaration(generator, namespace, closure) {
 
 export function classDeclaration(generator, { className, modifiers, superClass, adoptedProtocols = [], properties }, closure) {
   generator.printNewlineIfNeeded();
-  generator.printNewline();
   generator.printOnNewline(wrap('', join(modifiers, ' '), ' ') + `class ${className}`);
   generator.print(wrap(': ', join([superClass, ...adoptedProtocols], ', ')));
   generator.pushScope({ typeName: className });
