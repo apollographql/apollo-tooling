@@ -126,6 +126,11 @@ yargs
         demand: false,
         describe: "For non-swift targets, always add the __typename GraphQL introspection type when generating target types",
         default: false
+      },
+      "tag-name": {
+        demand: false,
+        describe: "Name of the template literal tag used to identify template literals containing GraphQL queries",
+        default: 'gql'
       }
     },
     argv => {
@@ -147,7 +152,7 @@ yargs
         addTypename: argv["add-typename"]
       };
 
-      generate(inputPaths, argv.schema, argv.output, argv.target, options);
+      generate(inputPaths, argv.schema, argv.output, argv.target, argv.tagName, options);
     },
   )
   .fail(function(message, error) {

@@ -9,10 +9,10 @@ import { generateSource as generateSwiftSource } from './swift'
 import { generateSource as generateTypescriptSource } from './typescript'
 import { generateSource as generateFlowSource } from './flow'
 
-export default function generate(inputPaths, schemaPath, outputPath, target, options) {
+export default function generate(inputPaths, schemaPath, outputPath, target, tagName, options) {
   const schema = loadSchema(schemaPath);
 
-  const document = loadAndMergeQueryDocuments(inputPaths);
+  const document = loadAndMergeQueryDocuments(inputPaths, tagName);
 
   validateQueryDocument(schema, document, target);
 

@@ -57,6 +57,8 @@ apollo-codegen generate **/*.graphql --schema schema.json --target flow --output
 
 If the source file for generation is a javascript or typescript file, the codegen will try to extrapolate the queries inside the [gql tag](https://github.com/apollographql/graphql-tag) templates.
 
+The tag name is configurable using the CLI `--tag-name` option.
+
 ## Contributing
 
 [![Build status](https://travis-ci.org/apollographql/apollo-codegen.svg?branch=master)](https://travis-ci.org/apollographql/apollo-codegen)
