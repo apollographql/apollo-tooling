@@ -129,9 +129,13 @@ yargs
       },
       "add-typename": {
         demand: false,
-        describe: "Automatically add the __typename field to every selection set",
-        default: '',
-        normalize: true
+        describe: "For non-swift targets, always add the __typename GraphQL introspection type when generating target types",
+        default: false
+      },
+      "tag-name": {
+        demand: false,
+        describe: "Name of the template literal tag used to identify template literals containing GraphQL queries",
+        default: 'gql'
       }
     },
     argv => {
@@ -154,7 +158,7 @@ yargs
         namespace: argv.namespace
       };
 
-      generate(inputPaths, argv.schema, argv.output, argv.target, options);
+      generate(inputPaths, argv.schema, argv.output, argv.target, argv.tagName, options);
     },
   )
   .fail(function(message, error) {
