@@ -437,19 +437,12 @@ export interface HeroAndDetailsQuery {
   } | null;
 }
 
-export interface HeroDetailsFragmentOnDroid {
+export interface HeroDetailsFragment {
   // This droid's primary function
   primaryFunction: string | null;
-}
-
-export interface HeroDetailsFragmentOnHuman {
   // Height in the preferred unit, default is meters
   height: number | null;
 }
-
-export type HeroDetailsFragment =
-  | HeroDetailsFragmentOnDroid
-  | HeroDetailsFragmentOnHuman
 /* tslint:enable */
 "
 `;
