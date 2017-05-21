@@ -5,16 +5,12 @@ import {
 
 import { pascalCase } from 'change-case';
 
-export function typeDeclaration(generator, { interfaceName, noBrackets }, closure) {
+export function typeDeclaration(generator, { interfaceName }, closure) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
   generator.print(`export type ${ interfaceName } =`);
   generator.pushScope({ typeName: interfaceName });
-  if (!noBrackets) {
-    generator.withinBlock(closure, ' {|', '|}');
-  } else {
-    generator.withinBlock(closure, '', '');
-  }
+  generator.withinBlock(closure, ' {|', '|}');
   generator.popScope();
   generator.print(';');
 }
@@ -68,12 +64,4 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
 export function propertyDeclarations(generator, properties) {
   if (!properties) return;
   properties.forEach(property => propertyDeclaration(generator, property));
-}
-
-export function unionDeclaration(generator, typeNames) {
-  if (!typeNames) throw new Error('Union Declaration requires types');
-
-  typeNames.forEach(typeName => {
-    generator.printOnNewline(`| ${typeName}`);
-  });
 }
