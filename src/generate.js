@@ -14,7 +14,7 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
 
   const document = loadAndMergeQueryDocuments(inputPaths);
 
-  validateQueryDocument(schema, document, target);
+  validateQueryDocument(schema, document);
 
   if (target === 'swift') {
     if (options.addTypename) {
@@ -36,10 +36,10 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
       break;
     case 'ts':
     case 'typescript':
-      output = generateTypescriptSource(context, options);
+      output = generateTypescriptSource(context);
       break;
     case 'flow':
-      output = generateFlowSource(context, options);
+      output = generateFlowSource(context);
       break;
     case 'swift':
       output = generateSwiftSource(context, options);
