@@ -44,22 +44,7 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
       generator.print(' >');
     }
 
-  }
-  /*
-  else if (fragmentSpreads && fragmentSpreads.length === 1) {
-    generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}${pascalCase(fragmentSpreads[0])}Fragment${isArray ? '>' : ''}`);
-  } else if (fragmentSpreads && fragmentSpreads.length > 1) {
-    generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}`);
-
-    generator.withinBlock(() => {
-      fragmentSpreads.forEach(n => generator.printOnNewline(`...${pascalCase(n)}Fragment,`));
-    }, '{|', '|}');
-
-    generator.print(isArray ? '>' : '');
-  }
-  */
-  
-  else {
+  } else {
     generator.printOnNewline(`${propertyName}: ${typeName}`);
   }
   generator.print(',');
@@ -69,34 +54,6 @@ export function propertySetsDeclaration(generator, property, propertySets) {
   const { description, propertyName, typeName, isNullable, isArray } = property;
 
   generator.printOnNewline(description && `// ${description}`);
-  // if (closure) {
-  //   generator.printOnNewline(`${propertyName}:`);
-  //   if (isNullable) {
-  //     generator.print(' ?');
-  //   }
-  //   if (isArray) {
-  //     if (!isNullable) {
-  //       generator.print(' ');
-  //     }
-  //     generator.print('Array<');
-  //   }
-
-  //   generator.pushScope({ typeName: propertyName });
-
-  //   generator.withinBlock(() => {
-  //     closure();
-  //   }, open, close);
-
-
-  //   generator.popScope();
-
-  //   if (isArray) {
-  //     generator.print(' >');
-  //   }
-
-  // } else {
-  // generator.printOnNewline(`${propertyName}: ${typeName}`);
-  // }
   generator.printOnNewline(`${propertyName}:`);
 
   if (isNullable) {
@@ -111,15 +68,14 @@ export function propertySetsDeclaration(generator, property, propertySets) {
 
   generator.withinBlock(() => {
     propertySets.forEach((propertySet, index, propertySets) => {
-      // generator.printOnNewline(`${propertyName}: ${typeName}`);
       generator.withinBlock(() => {
         propertyDeclarations(generator, propertySet);
       });
       if (index !== propertySets.length - 1) {
-        generator.print(' |')
+        generator.print(' |');
       }
     })
-  }, ' (', ')');
+  }, '(', ')');
 
   generator.popScope();
 
