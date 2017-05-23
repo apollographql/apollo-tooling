@@ -166,34 +166,36 @@ export function typeDeclarationForOperation(
 
 export function typeDeclarationForFragment(
   generator,
-  {
+  operation
+) {
+  const {
     fragmentName,
     typeCondition,
     fields,
     inlineFragments,
     fragmentSpreads,
     source,
-  }
-) {
+    isAbstract
+  } = operation;
+
   const interfaceName = `${pascalCase(fragmentName)}Fragment`;
+
 
   typeDeclaration(generator, {
     interfaceName,
-    extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
+    noBrackets: isAbstractType(typeCondition)
   }, () => {
-    /*
-    const properties = propertiesFromFields(generator.context, fields)
-    .concat(...(inlineFragments || []).map(fragment =>
-      propertiesFromFields(generator.context, fragment.fields, true)
-    ));
-    */
-    const properties = propertiesFromFields(generator.context, fields)
-    // if (inlineFragments.length > 0) console.log(inlineFragments);
-    // if (fragmentSpreads.length > 0) console.log(fragmentSpreads);
+    if (isAbstractType(typeCondition)) {
+      const fieldSets = computeFieldSetsOfAbstractTypeProperty(generator, operation);
+      const propertySets = Object.keys(fieldSets)
+        .map(typeCondition => fieldSets[typeCondition].fields)
+        .map(fields => propertiesFromFields(generator.context, fields));
 
-    propertyDeclarations(generator, properties, true);
-    // TODO: Implement this
-    // unionDeclarations(generator, [properties], true);
+      propertySetsDeclaration(generator, operation, propertySets, true);
+    } else {
+      const properties = propertiesFromFields(generator.context, fields)
+      propertyDeclarations(generator, properties, true);
+    }
   });
 }
 
@@ -230,8 +232,13 @@ export function propertyFromField(context, field, forceNullable) {
       isArray, isNullable, isAbstract: isAbstractType(getNamedType(fieldType))
     };
   } else {
-    const typeName = typeNameFromGraphQLType(context, fieldType);
-    return { ...property, typeName, isComposite: false, fieldType };
+    if (field.fieldName === '__typename') {
+      const typeName = typeNameFromGraphQLType(context, fieldType, null, false);
+      return { ...property, typeName, isComposite: false, fieldType, isNullable: false };
+    } else {
+      const typeName = typeNameFromGraphQLType(context, fieldType);
+      return { ...property, typeName, isComposite: false, fieldType };
+    }
   }
 }
 
@@ -240,6 +247,7 @@ export function propertyDeclarations(generator, properties, inInterface) {
   properties.forEach(property => {
     if (property.isAbstract) {
       const fieldSets = computeFieldSetsOfAbstractTypeProperty(generator, property);
+  
       const propertySets = Object.keys(fieldSets)
         .map(typeCondition => fieldSets[typeCondition].fields)
         .map(fields => propertiesFromFields(generator.context, fields));
@@ -269,17 +277,32 @@ export function propertyDeclarations(generator, properties, inInterface) {
  * for fragmentSpreads. The logic here accounts for that.
  */
 function computeFieldSetsOfAbstractTypeProperty(generator, property) {
-  const { fieldName, fields, inlineFragments, fragmentSpreads, typeName, fieldType, isArray, isNullable } = property;
+  const { fieldName, fields, inlineFragments, fragmentSpreads, typeName, fieldType, isArray, isNullable, typeCondition } = property;
 
-  const concreteTypes = getConcreteTypesForAbstractType(generator, getNamedType(fieldType));
+  const concreteTypes = getConcreteTypesForAbstractType(generator, getNamedType(fieldType || typeCondition));
   const fieldSetMap = {};
   concreteTypes.forEach(concreteType => { fieldSetMap[concreteType] = { fields: [] }; });
+
   _resolveSelectionSet(generator, fieldSetMap, property);
+
+  // Process fields for __typename and make sure to set it to the right type condition
+  concreteTypes.forEach(concreteType => {
+    fieldSetMap[concreteType].fields = fieldSetMap[concreteType].fields.map((field) => {
+      if (field.fieldName === '__typename') {
+        return {
+          ...field,
+          type: { name: `"${concreteType}"` }
+        }
+      } else {
+        return field;
+      }
+    });
+  });
 
   return fieldSetMap; 
 }
 
-function _resolveSelectionSet(generator, fieldSetMap, selectionSet, fromFragment = false) {
+function _resolveSelectionSet(generator, fieldSetMap, selectionSet) {
   const {typeCondition, fieldType, inlineFragments, fragmentSpreads, fields} = selectionSet;
 
 
@@ -288,9 +311,10 @@ function _resolveSelectionSet(generator, fieldSetMap, selectionSet, fromFragment
     isAbstractType(getNamedType(typeCondition))  // fragments have type conditions
    ) {
     const type = getNamedType(fieldType || typeCondition);
-
-    getConcreteTypesForAbstractType(generator, type).forEach(concreteType => {
-      fieldSetMap[concreteType].fields = mergeFields(fieldSetMap[concreteType].fields, fields);
+    const possibleTypes = getConcreteTypesForAbstractType(generator, type)
+    
+    possibleTypes.forEach(possibleType => {
+      fieldSetMap[possibleType].fields = mergeFields(fieldSetMap[possibleType].fields, fields);
     });
 
     inlineFragments.forEach(inlineFragment => {
@@ -301,7 +325,7 @@ function _resolveSelectionSet(generator, fieldSetMap, selectionSet, fromFragment
 
     fragmentSpreads.forEach(fragmentSpread => {
       const fragment = generator.context.fragments[fragmentSpread];
-      _resolveSelectionSet(generator, fieldSetMap, fragment, true);
+      _resolveSelectionSet(generator, fieldSetMap, fragment);
     });
   } else {
     const concreteType = getNamedType(typeCondition);
@@ -316,7 +340,7 @@ function _resolveSelectionSet(generator, fieldSetMap, selectionSet, fromFragment
 function mergeFields(destFields, sourceFields) {
   sourceFields.forEach(sourceField => {
     if (destFields.every(field => field.fieldName !== sourceField.fieldName)) {
-      destFields = destFields.concat(sourceField);
+      destFields = [...destFields, sourceField];
     }
   });
 
