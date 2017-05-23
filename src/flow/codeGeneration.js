@@ -201,8 +201,8 @@ export function propertyFromField(context, field, forceNullable) {
   const namedType = getNamedType(fieldType);
 
   if (isCompositeType(namedType)) {
-    const bareTypeName = pascalCase(Inflector.singularize(propertyName));
-    const typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
+    // const bareTypeName = pascalCase(Inflector.singularize(propertyName));
+    const typeName = typeNameFromGraphQLType(context, fieldType);
     let isArray = false;
     if (fieldType instanceof GraphQLList) {
       isArray = true;
@@ -215,7 +215,7 @@ export function propertyFromField(context, field, forceNullable) {
     }
     return {
       ...property,
-      typeName, bareTypeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments, fieldType,
+      typeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments, fieldType,
       isArray, isNullable, isAbstract: isAbstractType(getNamedType(fieldType))
     };
   } else {
@@ -241,12 +241,28 @@ export function propertyDeclarations(generator, properties, inInterface) {
 
       propertySetsDeclaration(generator, property, propertySets);
     } else {
-      if (property.fields && property.fields.length > 0 || property.inlineFragments && property.inlineFragments.length > 0) {
-        propertyDeclaration(generator, {...property, inInterface}, () => {
-          const properties = propertiesFromFields(generator.context, property.fields)
-          .concat(...(property.inlineFragments || []).map(fragment =>
-            propertiesFromFields(generator.context, fragment.fields, true)
-          ));
+      if (property.fields && property.fields.length > 0
+        || property.inlineFragments && property.inlineFragments.length > 0
+        || property.fragmentSpreads && property.fragmentSpreads.length > 0
+      ) {
+        const type = getNamedType(property.fieldType);
+        let fieldSetMap = {
+          [type]: {
+            fields: property.fields
+          }
+        };
+
+        propertyDeclaration(generator, property, () => {
+          property.inlineFragments.forEach(inlineFragment => {
+            fieldSetMap[type] = mergeFields(fieldSetMap[type].fields, inlineFragment.fields);
+          });
+
+          property.fragmentSpreads.forEach(fragmentSpread => {
+            const fragment = generator.context.fragments[fragmentSpread];
+            _resolveSelectionSet(generator, fieldSetMap, fragment);
+          });
+
+          const properties = propertiesFromFields(generator.context, fieldSetMap[type].fields);
           propertyDeclarations(generator, properties);
         });
       } else {
@@ -315,7 +331,6 @@ function _resolveSelectionSet(generator, fieldSetMap, selectionSet) {
     });
   } else {
     // handle fragment spread on a concrete type
-  
     const concreteType = getNamedType(typeCondition);
     fieldSetMap[concreteType].fields = mergeFields(
       fieldSetMap[concreteType].fields,
