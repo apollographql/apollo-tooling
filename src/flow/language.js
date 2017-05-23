@@ -7,18 +7,31 @@ import { propertyDeclarations } from './codeGeneration';
 
 import { pascalCase } from 'change-case';
 
-export function typeDeclaration(generator, { interfaceName }, closure) {
+export function typeDeclaration(generator, { interfaceName, noBrackets }, closure) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
   generator.print(`export type ${ interfaceName } =`);
   generator.pushScope({ typeName: interfaceName });
-  generator.withinBlock(closure, ' {|', '|}');
+  if (noBrackets) {
+    generator.withinBlock(closure, '', '');
+  } else {
+    generator.withinBlock(closure, ' {|', '|}');
+  }
   generator.popScope();
   generator.print(';');
 }
 
-export function propertyDeclaration(generator, { propertyName, typeName, description, isArray, isNullable, inInterface, fragmentSpreads }, closure, open = ' {|', close = '|}') {
+export function propertyDeclaration(generator, {
+  propertyName,
+  typeName,
+  description,
+  isArray,
+  isNullable,
+  inInterface,
+  fragmentSpreads
+}, closure, open = ' {|', close = '|}') {
   generator.printOnNewline(description && `// ${description}`);
+
   if (closure) {
     generator.printOnNewline(`${propertyName}:`);
     if (isNullable) {
@@ -50,11 +63,13 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
   generator.print(',');
 }
 
-export function propertySetsDeclaration(generator, property, propertySets) {
+export function propertySetsDeclaration(generator, property, propertySets, standalone = false) {
   const { description, propertyName, typeName, isNullable, isArray } = property;
 
   generator.printOnNewline(description && `// ${description}`);
-  generator.printOnNewline(`${propertyName}:`);
+  if (!standalone) {
+    generator.printOnNewline(`${propertyName}:`);
+  }
 
   if (isNullable) {
     generator.print(' ?');
@@ -75,7 +90,7 @@ export function propertySetsDeclaration(generator, property, propertySets) {
         generator.print(' |');
       }
     })
-  }, '(', ')');
+  }, ' (', ')');
 
   generator.popScope();
 
@@ -83,5 +98,7 @@ export function propertySetsDeclaration(generator, property, propertySets) {
     generator.print(' >');
   }
 
-  generator.print(',');
+  if (!standalone) {
+    generator.print(',');
+  }
 }
