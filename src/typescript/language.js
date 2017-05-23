@@ -17,19 +17,6 @@ export function interfaceDeclaration(generator, { interfaceName, extendTypes }, 
   generator.popScope();
 }
 
-export function typeDeclaration(generator, { interfaceName, noBrackets }, closure) {
-  generator.printNewlineIfNeeded();
-  generator.printNewline();
-  generator.print(`export type ${ interfaceName } =`);
-  generator.pushScope({ typeName: interfaceName });
-  if (!noBrackets) {
-    generator.withinBlock(closure);
-  } else {
-    generator.withinBlock(closure, '', '');
-  }
-  generator.popScope();
-}
-
 export function propertyDeclaration(generator, { propertyName, typeName, description, isArray, isNullable, inInterface, fragmentSpreads }, closure) {
   generator.printOnNewline(description && `// ${description}`);
   if (closure) {
@@ -60,12 +47,4 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
 export function propertyDeclarations(generator, properties) {
   if (!properties) return;
   properties.forEach(property => propertyDeclaration(generator, property));
-}
-
-export function unionDeclaration(generator, typeNames) {
-  if (!typeNames) throw new Error('Union Declaration requires types');
-
-  typeNames.forEach(typeName => {
-    generator.printOnNewline(`| ${typeName}`);
-  });
 }
