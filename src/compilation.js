@@ -301,10 +301,12 @@ export class Compiler {
         field.isConditional = true;
       }
 
-      const description = parentType.getFields()[fieldName].description;
+      if (fieldName !== '__typename') {
+        const description = parentType.getFields()[fieldName].description;
 
-      if (description) {
-        field.description = description
+        if (description) {
+          field.description = description
+        }
       }
 
       const bareType = getNamedType(type);
