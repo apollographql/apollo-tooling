@@ -1,4 +1,5 @@
 import { GraphQLError } from 'graphql';
+import path from 'path';
 
 // ToolError is used for errors that are part of the expected flow
 // and for which a stack trace should not be printed
@@ -42,6 +43,11 @@ export function logErrorMessage(message, fileName, lineNumber) {
       console.log(`error: ${message}`);
     }
   } else {
-    console.log(message);
+    if (fileName) {
+      const truncatedFileName = '/' + fileName.split(path.sep).slice(-4).join(path.sep);
+      console.log(`...${truncatedFileName}: ${message}`);
+    } else {
+      console.log(`error: ${message}`);
+    }
   }
 }
