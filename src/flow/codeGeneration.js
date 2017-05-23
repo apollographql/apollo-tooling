@@ -27,6 +27,7 @@ import CodeGenerator from '../utilities/CodeGenerator';
 import {
   typeDeclaration,
   propertyDeclaration,
+  propertySetsDeclaration
 } from './language';
 
 import {
@@ -41,6 +42,7 @@ export function generateSource(context) {
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
   ));
+
   Object.values(context.operations).forEach(operation => {
     interfaceVariablesDeclarationForOperation(generator, operation);
     typeDeclarationForOperation(generator, operation);
@@ -166,12 +168,19 @@ export function typeDeclarationForFragment(
     interfaceName,
     extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
   }, () => {
+    /*
     const properties = propertiesFromFields(generator.context, fields)
     .concat(...(inlineFragments || []).map(fragment =>
       propertiesFromFields(generator.context, fragment.fields, true)
     ));
+    */
+    const properties = propertiesFromFields(generator.context, fields)
+    // if (inlineFragments.length > 0) console.log(inlineFragments);
+    // if (fragmentSpreads.length > 0) console.log(fragmentSpreads);
 
     propertyDeclarations(generator, properties, true);
+    // TODO: Implement this
+    // unionDeclarations(generator, [properties], true);
   });
 }
 
@@ -205,7 +214,7 @@ export function propertyFromField(context, field, forceNullable) {
     return {
       ...property,
       typeName, bareTypeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments, fieldType,
-      isArray, isNullable,
+      isArray, isNullable, isAbstract: isAbstractType(getNamedType(fieldType))
     };
   } else {
     const typeName = typeNameFromGraphQLType(context, fieldType);
@@ -216,16 +225,87 @@ export function propertyFromField(context, field, forceNullable) {
 export function propertyDeclarations(generator, properties, inInterface) {
   if (!properties) return;
   properties.forEach(property => {
-    if (property.fields && property.fields.length > 0 || property.inlineFragments && property.inlineFragments.length > 0) {
-      propertyDeclaration(generator, {...property, inInterface}, () => {
-        const properties = propertiesFromFields(generator.context, property.fields)
-        .concat(...(property.inlineFragments || []).map(fragment =>
-          propertiesFromFields(generator.context, fragment.fields, true)
-        ));
-        propertyDeclarations(generator, properties);
-      });
+    if (property.isAbstract) {
+      const fieldSets = computeFieldSetsOfAbstractTypeProperty(generator, property);
+      const propertySets = Object.keys(fieldSets)
+        .map(typeCondition => fieldSets[typeCondition].fields)
+        .map(fields => propertiesFromFields(generator.context, fields));
+
+      propertySetsDeclaration(generator, property, propertySets);
     } else {
-      propertyDeclaration(generator, {...property, inInterface});
+      if (property.fields && property.fields.length > 0 || property.inlineFragments && property.inlineFragments.length > 0) {
+        propertyDeclaration(generator, {...property, inInterface}, () => {
+          const properties = propertiesFromFields(generator.context, property.fields)
+          .concat(...(property.inlineFragments || []).map(fragment =>
+            propertiesFromFields(generator.context, fragment.fields, true)
+          ));
+          propertyDeclarations(generator, properties);
+        });
+      } else {
+        propertyDeclaration(generator, {...property, inInterface});
+      }
     }
   });
+}
+
+/**
+ * Given properties, fragments, and inline spreads, compute the resulting property sets. The number of property sets
+ * is upper-bounded by the possible type conditions for this property.
+ *
+ * NOTE: The IR already merges fragmentSpreads and fields into inline fragments -- however it does not do the same
+ * for fragmentSpreads. The logic here accounts for that.
+ */
+function computeFieldSetsOfAbstractTypeProperty(generator, property) {
+  const { fieldName, fields, inlineFragments, fragmentSpreads, typeName, fieldType, isArray, isNullable } = property;
+
+  const concreteTypes = getConcreteTypesForAbstractType(generator, getNamedType(fieldType));
+  const fieldSetMap = {};
+  concreteTypes.forEach(concreteType => { fieldSetMap[concreteType] = { fields: [] }; });
+  _resolveSelectionSet(generator, fieldSetMap, property);
+
+  return fieldSetMap; 
+}
+
+function _resolveSelectionSet(generator, fieldSetMap, selectionSet, fromFragment = false) {
+  const {typeCondition, fieldType, inlineFragments, fragmentSpreads, fields} = selectionSet;
+
+  if (
+    isAbstractType(getNamedType(fieldType)) ||   // properties have fieldTypes
+    isAbstractType(getNamedType(typeCondition))  // fragments have type conditions
+   ) {
+    const type = getNamedType(fieldType);
+    getConcreteTypesForAbstractType(generator, type).forEach(concreteType => {
+      fieldSetMap[concreteType].fields = mergeFields(fieldSetMap[concreteType].fields, fields);
+    });
+
+    inlineFragments.forEach(inlineFragment => {
+      inlineFragment.possibleTypes.forEach(concreteType => {
+        fieldSetMap[concreteType].fields = mergeFields(fieldSetMap[concreteType].fields, inlineFragment.fields);
+      });
+    });
+
+    fragmentSpreads.forEach(fragmentSpread => {
+      const fragment = generator.context.fragments[fragmentSpread];
+      _resolveSelectionSet(generator, fieldSetMap, fragment, true);
+    });
+  }
+}
+
+function mergeFields(destFields, sourceFields) {
+  sourceFields.forEach(sourceField => {
+    if (destFields.every(field => field.fieldName !== sourceField.fieldName)) {
+      destFields = destFields.concat(sourceField);
+    }
+  });
+
+  return destFields;
+}
+
+function getConcreteTypesForAbstractType(generator, typeName) {
+  const possibleTypeMap = generator.context.schema._possibleTypeMap[typeName];
+  if (possibleTypeMap) {
+    return Object.keys(possibleTypeMap);
+  } else {
+    return [];
+  }
 }
