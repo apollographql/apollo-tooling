@@ -282,11 +282,13 @@ function computeFieldSetsOfAbstractTypeProperty(generator, property) {
 function _resolveSelectionSet(generator, fieldSetMap, selectionSet, fromFragment = false) {
   const {typeCondition, fieldType, inlineFragments, fragmentSpreads, fields} = selectionSet;
 
+
   if (
     isAbstractType(getNamedType(fieldType)) ||   // properties have fieldTypes
     isAbstractType(getNamedType(typeCondition))  // fragments have type conditions
    ) {
-    const type = getNamedType(fieldType);
+    const type = getNamedType(fieldType || typeCondition);
+
     getConcreteTypesForAbstractType(generator, type).forEach(concreteType => {
       fieldSetMap[concreteType].fields = mergeFields(fieldSetMap[concreteType].fields, fields);
     });
@@ -301,6 +303,13 @@ function _resolveSelectionSet(generator, fieldSetMap, selectionSet, fromFragment
       const fragment = generator.context.fragments[fragmentSpread];
       _resolveSelectionSet(generator, fieldSetMap, fragment, true);
     });
+  } else {
+    const concreteType = getNamedType(typeCondition);
+    // handle fragment spread on a concrete type
+    fieldSetMap[concreteType].fields = mergeFields(
+      fieldSetMap[concreteType].fields,
+      fields
+    );
   }
 }
 
