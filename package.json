@@ -50,7 +50,8 @@
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
-      "<rootDir>/lib/"
+      "<rootDir>/lib/",
+      "<rootDir>/test/starwars/"
     ]
   }
 }

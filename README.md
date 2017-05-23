@@ -16,6 +16,8 @@ If you want to experiment with the tool, you can install the `apollo-codegen` co
 npm install -g apollo-codegen
 ```
 
+### `introspect-schema`
+
 To download a GraphQL schema by sending an introspection query to a server:
 
 ```sh
@@ -34,6 +36,8 @@ To generate a GraphQL schema introspection JSON from a local GraphQL schema:
 apollo-codegen introspect-schema schema.graphql --output schema.json
 ```
 
+### `generate`
+
 This tool will generate Swift code by default from a set of query definitions in `.graphql` files:
 
 ```sh
@@ -48,6 +52,10 @@ apollo-codegen generate **/*.graphql --schema schema.json --target typescript --
 # Flow
 apollo-codegen generate **/*.graphql --schema schema.json --target flow --output schema.flow.js
 ```
+
+#### `gql` template support
+
+If the source file for generation is a javascript or typescript file, the codegen will try to extrapolate the queries inside the [gql tag](https://github.com/apollographql/graphql-tag) templates.
 
 ## Contributing
 
