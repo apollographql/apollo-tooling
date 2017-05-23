@@ -3,6 +3,8 @@ import {
   wrap,
 } from '../utilities/printing';
 
+import { propertyDeclarations } from './codeGeneration';
+
 import { pascalCase } from 'change-case';
 
 export function typeDeclaration(generator, { interfaceName }, closure) {
@@ -15,7 +17,7 @@ export function typeDeclaration(generator, { interfaceName }, closure) {
   generator.print(';');
 }
 
-export function propertyDeclaration(generator, { propertyName, typeName, description, isArray, isNullable, inInterface, fragmentSpreads }, closure) {
+export function propertyDeclaration(generator, { propertyName, typeName, description, isArray, isNullable, inInterface, fragmentSpreads }, closure, open = ' {|', close = '|}') {
   generator.printOnNewline(description && `// ${description}`);
   if (closure) {
     generator.printOnNewline(`${propertyName}:`);
@@ -32,12 +34,9 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
     generator.pushScope({ typeName: propertyName });
 
     generator.withinBlock(() => {
-      if (fragmentSpreads && fragmentSpreads.length > 0) {
-        fragmentSpreads.forEach(n => generator.printOnNewline(`...${pascalCase(n)}Fragment,`));
-      }
-
       closure();
-    }, ' {|', '|}');
+    }, open, close);
+
 
     generator.popScope();
 
@@ -45,7 +44,9 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
       generator.print(' >');
     }
 
-  } else if (fragmentSpreads && fragmentSpreads.length === 1) {
+  }
+  /*
+  else if (fragmentSpreads && fragmentSpreads.length === 1) {
     generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}${pascalCase(fragmentSpreads[0])}Fragment${isArray ? '>' : ''}`);
   } else if (fragmentSpreads && fragmentSpreads.length > 1) {
     generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}`);
@@ -55,13 +56,76 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
     }, '{|', '|}');
 
     generator.print(isArray ? '>' : '');
-  } else {
+  }
+  */
+  
+  else {
     generator.printOnNewline(`${propertyName}: ${typeName}`);
   }
   generator.print(',');
 }
 
-export function propertyDeclarations(generator, properties) {
-  if (!properties) return;
-  properties.forEach(property => propertyDeclaration(generator, property));
+export function propertySetsDeclaration(generator, property, propertySets) {
+  const { description, propertyName, typeName, isNullable, isArray } = property;
+
+  generator.printOnNewline(description && `// ${description}`);
+  // if (closure) {
+  //   generator.printOnNewline(`${propertyName}:`);
+  //   if (isNullable) {
+  //     generator.print(' ?');
+  //   }
+  //   if (isArray) {
+  //     if (!isNullable) {
+  //       generator.print(' ');
+  //     }
+  //     generator.print('Array<');
+  //   }
+
+  //   generator.pushScope({ typeName: propertyName });
+
+  //   generator.withinBlock(() => {
+  //     closure();
+  //   }, open, close);
+
+
+  //   generator.popScope();
+
+  //   if (isArray) {
+  //     generator.print(' >');
+  //   }
+
+  // } else {
+  // generator.printOnNewline(`${propertyName}: ${typeName}`);
+  // }
+  generator.printOnNewline(`${propertyName}:`);
+
+  if (isNullable) {
+    generator.print(' ?');
+  }
+
+  if (isArray) {
+    generator.print('Array< ');
+  }
+
+  generator.pushScope({ typeName: propertyName });
+
+  generator.withinBlock(() => {
+    propertySets.forEach((propertySet, index, propertySets) => {
+      // generator.printOnNewline(`${propertyName}: ${typeName}`);
+      generator.withinBlock(() => {
+        propertyDeclarations(generator, propertySet);
+      });
+      if (index !== propertySets.length - 1) {
+        generator.print(' |')
+      }
+    })
+  }, ' (', ')');
+
+  generator.popScope();
+
+  if (isArray) {
+    generator.print(' >');
+  }
+
+  generator.print(',');
 }
