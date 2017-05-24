@@ -1,14 +1,17 @@
 import {
   validate,
   specifiedRules,
+  NoUnusedFragments,
   GraphQLError
 } from 'graphql';
 
 import { ToolError, logError } from './errors'
 
-export function validateQueryDocument(schema, document) {
-  const rules = [NoAnonymousQueries, NoExplicitTypename, NoTypenameAlias].concat(specifiedRules);
+const specifiedRulesToBeRemoved = [NoUnusedFragments];
+const additionalRules = [NoAnonymousQueries, NoExplicitTypename, NoTypenameAlias];
+const rules = additionalRules.concat(specifiedRules.filter(rule => specifiedRulesToBeRemoved.includes(rule)));
 
+export function validateQueryDocument(schema, document) {
   const validationErrors = validate(schema, document, rules);
   if (validationErrors && validationErrors.length > 0) {
     for (const error of validationErrors) {
