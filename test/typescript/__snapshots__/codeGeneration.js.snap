@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TypeScript code generation #generateSource() __typename in an object 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 export interface HeroNameQuery {
   hero: {
@@ -16,8 +16,8 @@ export interface HeroNameQuery {
 `;
 
 exports[`TypeScript code generation #generateSource() __typename in fragment spreads, allows for disjoint union via __typename string literals 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 export interface HeroNameQuery {
   hero: HumanHeroFragment & DroidHeroFragment & {
@@ -39,8 +39,8 @@ export interface HumanHeroFragment {
 `;
 
 exports[`TypeScript code generation #generateSource() __typename in inline fragments, allows for disjoint union via __typename string literals 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 export interface HeroNameQuery {
   hero: HeroFromHeroName | null;
@@ -69,8 +69,8 @@ export type HeroFromHeroName =
 `;
 
 exports[`TypeScript code generation #generateSource() __typename single fragment spread 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 export interface HeroNameQuery {
   hero: HumanFriendsFragment;
@@ -89,8 +89,8 @@ export interface HumanFriendsFragment {
 `;
 
 exports[`TypeScript code generation #generateSource() should correctly add typename to nested fragments on interfaces if addTypename is true 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 // The episodes in the Star Wars trilogy
 export type Episode =
@@ -139,8 +139,8 @@ export type CharacterFragmentFragment =
 `;
 
 exports[`TypeScript code generation #generateSource() should correctly handle doubly nested fragments on interfaces 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 // The episodes in the Star Wars trilogy
 export type Episode =
@@ -203,8 +203,8 @@ export type OtherCharacterFragmentFragment =
 `;
 
 exports[`TypeScript code generation #generateSource() should correctly handle fragments on interfaces 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 // The episodes in the Star Wars trilogy
 export type Episode =
@@ -243,8 +243,8 @@ export type HeroFromHeroQuery =
 `;
 
 exports[`TypeScript code generation #generateSource() should correctly handle nested fragments on interfaces 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 // The episodes in the Star Wars trilogy
 export type Episode =
@@ -293,8 +293,8 @@ export type CharacterFragmentFragment =
 `;
 
 exports[`TypeScript code generation #generateSource() should generate correct typedefs with a multiple custom fragments 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 // The episodes in the Star Wars trilogy
 export type Episode =
@@ -330,8 +330,8 @@ export interface PersonFragment {
 `;
 
 exports[`TypeScript code generation #generateSource() should generate correct typedefs with a single custom fragment 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 // The episodes in the Star Wars trilogy
 export type Episode =
@@ -362,8 +362,8 @@ export interface FriendFragment {
 `;
 
 exports[`TypeScript code generation #generateSource() should generate fragmented query operations 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 export interface HeroAndFriendsNamesQuery {
   hero: HeroFriendsFragment & {
@@ -384,8 +384,8 @@ export interface HeroFriendsFragment {
 `;
 
 exports[`TypeScript code generation #generateSource() should generate mutation operations with complex input types 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 // The episodes in the Star Wars trilogy
 export type Episode =
@@ -427,8 +427,8 @@ export interface ReviewMovieMutation {
 `;
 
 exports[`TypeScript code generation #generateSource() should generate query operations with inline fragments 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 export interface HeroAndDetailsQuery {
   hero: HeroDetailsFragment & {
@@ -455,8 +455,8 @@ export type HeroDetailsFragment =
 `;
 
 exports[`TypeScript code generation #generateSource() should generate simple nested query operations including input variables 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 // The episodes in the Star Wars trilogy
 export type Episode =
@@ -485,8 +485,8 @@ export interface HeroAndFriendsNamesQuery {
 `;
 
 exports[`TypeScript code generation #generateSource() should generate simple query operations 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 export interface HeroNameQuery {
   hero: {
@@ -499,8 +499,8 @@ export interface HeroNameQuery {
 `;
 
 exports[`TypeScript code generation #generateSource() should generate simple query operations including input variables 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 // The episodes in the Star Wars trilogy
 export type Episode =
@@ -524,8 +524,8 @@ export interface HeroNameQuery {
 `;
 
 exports[`TypeScript code generation #generateSource() should handle complex fragments with type aliases 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 // The episodes in the Star Wars trilogy
 export type Episode =
@@ -577,8 +577,8 @@ export type SomethingFragment =
 `;
 
 exports[`TypeScript code generation #generateSource() should handle multi-fragmented query operations 1`] = `
-"//  This file was automatically generated and should not be edited.
-/* tslint:disable */
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
 
 // The episodes in the Star Wars trilogy
 export type Episode =
