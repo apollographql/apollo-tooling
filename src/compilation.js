@@ -136,7 +136,7 @@ export class Compiler {
     const { fields } = this.resolveFields(rootType, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet);
     const fragmentsReferenced = Object.keys(fragmentsReferencedSet);
 
-    return { filePath, operationName, operationType, variables, source, fields, fragmentsReferenced };
+    return { filePath, operationName, operationType, rootType, variables, source, fields, fragmentsReferenced };
   }
 
   compileFragment(fragmentDefinition) {

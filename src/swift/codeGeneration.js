@@ -100,6 +100,7 @@ export function classDeclarationForOperation(
   {
     operationName,
     operationType,
+    rootType,
     variables,
     selectionSet,
     fragmentsReferenced,
@@ -174,6 +175,7 @@ export function classDeclarationForOperation(
       generator,
       {
         structName: "Data",
+        parentType: rootType,
         selectionSet
       }
     );
