@@ -230,7 +230,7 @@ export class Compiler {
           this.collectFields(
             effectiveType,
             fragment.selectionSet,
-            null,
+            groupedFieldSet,
             groupedVisitedFragmentSet
           );
           break;
