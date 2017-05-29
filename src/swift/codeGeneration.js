@@ -195,7 +195,6 @@ export function structDeclarationForFragment(
     structName,
     adoptedProtocols: ['GraphQLFragment'],
     parentType: typeCondition,
-    possibleTypes: possibleTypesForType(generator.context, typeCondition),
     selectionSet
   }, () => {
     if (source) {
@@ -213,11 +212,12 @@ export function structDeclarationForSelectionSet(
     structName,
     adoptedProtocols = ['GraphQLSelectionSet'],
     parentType,
-    possibleTypes,
     selectionSet
   },
   beforeClosure
 ) {
+  const possibleTypes = parentType ? possibleTypesForType(generator.context, parentType) : null;
+
   structDeclaration(generator, { structName, adoptedProtocols }, () => {
     if (beforeClosure) {
       beforeClosure();
@@ -246,17 +246,11 @@ export function structDeclarationForSelectionSet(
 
     const properties = propertiesFromSelectionSet(generator.context, selectionSet);
 
-    const fields = properties.filter(property => property.kind === 'Field');
+    const fields = properties.filter(property => property.kind === 'Field' && property.propertyName !== '__typename');
     const inlineFragments = properties.filter(property => property.kind === 'InlineFragment');
-    const fragmentSpreads = properties.filter(property => property.kind === 'FragmentSpread').map(fragmentSpread => {
-      if (!isTypeProperSuperTypeOf(generator.context.schema, fragmentSpread.fragment.typeCondition, parentType)) {
-        fragmentSpread.isOptional = true;
-        fragmentSpread.typeName += '?';
-      }
-      return fragmentSpread;
-    });
+    const fragmentSpreads = properties.filter(property => property.kind === 'FragmentSpread');
 
-    if (inlineFragments.length < 1) {
+    if (!possibleTypes || possibleTypes.length == 1) {
       generator.printNewlineIfNeeded();
       generator.printOnNewline(`public init`);
       generator.print('(');
@@ -271,17 +265,28 @@ export function structDeclarationForSelectionSet(
       generator.withinBlock(() => {
         generator.printOnNewline(wrap(
           `self.init(snapshot: [`,
-          join(fields.map(({ name, propertyName }) => `"${propertyName}": ${propertyName}`), ', ') || ':',
+          join([
+            possibleTypes && possibleTypes.length > 0 && `"__typename": "${possibleTypes[0]}"`,
+            ...fields.map(({ name, propertyName }) => `"${propertyName}": ${propertyName}`)
+          ], ', ') || ':',
           `])`
         ));
       });
     } else {
-      inlineFragments.forEach(inlineFragment => {
+      possibleTypes.forEach(possibleType => {
         generator.printNewlineIfNeeded();
-        generator.printOnNewline(`public static func make${inlineFragment.typeCondition}`);
+        generator.printOnNewline(`public static func make${possibleType}`);
         generator.print('(');
-        const properties = propertiesFromSelectionSet(generator.context, inlineFragment.selectionSet, inlineFragment.structName);
+
+        const inlineFragment = inlineFragments.find(inlineFragment => inlineFragment.typeCondition === possibleType);
+        let properties;
+        if (inlineFragment) {
+          properties = propertiesFromSelectionSet(generator.context, inlineFragment.selectionSet, inlineFragment.structName);
+        } else {
+          properties = propertiesFromSelectionSet(generator.context, selectionSet);
+        }
         const fields = properties.filter(property => property.kind === 'Field' && property.propertyName !== '__typename');
+
         generator.print(join(fields.map(({ propertyName, type, typeName, isOptional }) =>
           join([
             `${propertyName}: ${typeName}`,
@@ -294,7 +299,7 @@ export function structDeclarationForSelectionSet(
           generator.printOnNewline(wrap(
             `return ${structName}(snapshot: [`,
             join([
-              `"__typename": "${inlineFragment.typeCondition}"`,
+              `"__typename": "${possibleType}"`,
               ...fields.map(({ name, propertyName }) => `"${propertyName}": ${propertyName}`)
             ], ', '),
             `])`
@@ -348,20 +353,27 @@ export function structDeclarationForSelectionSet(
         },
         () => {
           propertyDeclaration(generator, { propertyName: "snapshot", typeName: "Snapshot" });
-          fragmentSpreads.forEach(({ propertyName, bareTypeName, typeName, isOptional })  => {
+          fragmentSpreads.forEach(({ propertyName, bareTypeName, typeName, fragment })  => {
+            const isOptional = !isTypeProperSuperTypeOf(generator.context.schema, fragment.typeCondition, parentType);
+
             generator.printNewlineIfNeeded();
-            generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
+            generator.printOnNewline(`public var ${propertyName}: ${isOptional ? typeName + '?' : typeName}`);
             generator.withinBlock(() => {
               generator.printOnNewline("get");
               generator.withinBlock(() => {
                 if (isOptional) {
-                  generator.printOnNewline(`if !${typeName}.possibleTypes.contains(__typename) { return nil }`);
+                  generator.printOnNewline(`if !${typeName}.possibleTypes.contains(snapshot["__typename"]! as! String) { return nil }`);
                 }
                 generator.printOnNewline(`return ${typeName}(snapshot: snapshot)`);
               });
               generator.printOnNewline("set");
               generator.withinBlock(() => {
-                generator.printOnNewline(`snapshot = newValue.snapshot`);
+                if (isOptional) {
+                  generator.printOnNewline(`guard let newValue = newValue else { return }`);
+                  generator.printOnNewline(`snapshot = newValue.snapshot`);
+                } else {
+                  generator.printOnNewline(`snapshot = newValue.snapshot`);
+                }
               });
             });
           })
