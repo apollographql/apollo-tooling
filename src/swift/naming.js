@@ -41,18 +41,6 @@ export function structNameForInlineFragment(inlineFragment) {
   return 'As' + pascalCase(String(inlineFragment.typeCondition));
 }
 
-export function propertiesFromSelectionSet(context, selectionSet, namespace) {
-  return selectionSet.map(selection => {
-    if (selection.kind === 'Field') {
-      return propertyFromField(context, selection, namespace);
-    } else if (selection.kind === 'InlineFragment') {
-      return propertyFromInlineFragment(context, selection);
-    } else if (selection.kind === 'FragmentSpread') {
-      return propertyFromFragmentSpread(context, selection);
-    }
-  });
-}
-
 export function propertyFromField(context, field, namespace) {
   const name = field.name || field.responseName;
   const unescapedPropertyName = isMetaFieldName(name) ? name : camelCase(name)
@@ -84,14 +72,14 @@ export function propertyFromInlineFragment(context, inlineFragment) {
 }
 
 export function propertyFromFragmentSpread(context, fragmentSpread) {
-  const fragmentName = fragmentSpread.fragmentName;
+  const fragmentName = fragmentSpread;
   const fragment = context.fragments[fragmentName];
   if (!fragment) {
     throw new GraphQLError(`Cannot find fragment "${fragmentName}"`);
   }
   const propertyName = camelCase(fragmentName);
   const typeName = structNameForFragmentName(fragmentName);
-  return { propertyName, typeName, fragment, isComposite: true, ...fragmentSpread };
+  return { propertyName, typeName, fragment, isComposite: true };
 }
 
 function isMetaFieldName(name) {

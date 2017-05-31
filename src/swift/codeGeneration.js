@@ -37,6 +37,8 @@ import {
   enumCaseName,
   propertiesFromSelectionSet,
   propertyFromField,
+  propertyFromInlineFragment,
+  propertyFromFragmentSpread
 } from './naming';
 
 import {
@@ -67,33 +69,15 @@ export function generateSource(context) {
     });
 
     Object.values(context.operations).forEach(operation => {
-      classDeclarationForOperation(generator, { ...operation, selectionSet: selectionSetFrom(operation) });
+      classDeclarationForOperation(generator, operation);
     });
 
     Object.values(context.fragments).forEach(fragment => {
-      structDeclarationForFragment(generator, { ...fragment, selectionSet: selectionSetFrom(fragment) });
+      structDeclarationForFragment(generator, fragment);
     });
   })
 
   return generator.output;
-}
-
-function selectionSetFrom({ fields, inlineFragments, fragmentSpreads }) {
-  let selectionSet = [];
-
-  fields && fields.forEach(field => {
-    selectionSet.push({ kind: 'Field', ...field, selectionSet: selectionSetFrom(field) });
-  });
-
-  inlineFragments && inlineFragments.forEach(inlineFragment => {
-    selectionSet.push({ kind: 'InlineFragment', ...inlineFragment, selectionSet: selectionSetFrom(inlineFragment) });
-  });
-
-  fragmentSpreads && fragmentSpreads.forEach(fragmentSpread => {
-    selectionSet.push({ kind: 'FragmentSpread', fragmentName: fragmentSpread });
-  });
-
-  return selectionSet;
 }
 
 export function classDeclarationForOperation(
@@ -103,7 +87,9 @@ export function classDeclarationForOperation(
     operationType,
     rootType,
     variables,
-    selectionSet,
+    fields,
+    inlineFragments,
+    fragmentSpreads,
     fragmentsReferenced,
     source,
   }
@@ -177,7 +163,9 @@ export function classDeclarationForOperation(
       {
         structName: "Data",
         parentType: rootType,
-        selectionSet
+        fields,
+        inlineFragments,
+        fragmentSpreads
       }
     );
   });
@@ -188,7 +176,9 @@ export function structDeclarationForFragment(
   {
     fragmentName,
     typeCondition,
-    selectionSet,
+    fields,
+    inlineFragments,
+    fragmentSpreads,
     source
   }
 ) {
@@ -198,7 +188,9 @@ export function structDeclarationForFragment(
     structName,
     adoptedProtocols: ['GraphQLFragment'],
     parentType: typeCondition,
-    selectionSet
+    fields,
+    inlineFragments,
+    fragmentSpreads
   }, () => {
     if (source) {
       generator.printOnNewline('public static let fragmentString =');
@@ -215,7 +207,9 @@ export function structDeclarationForSelectionSet(
     structName,
     adoptedProtocols = ['GraphQLSelectionSet'],
     parentType,
-    selectionSet
+    fields,
+    inlineFragments,
+    fragmentSpreads,
   },
   beforeClosure
 ) {
@@ -235,7 +229,7 @@ export function structDeclarationForSelectionSet(
 
     generator.printNewlineIfNeeded();
     generator.printOnNewline('public static let selections: [Selection] = ');
-    selectionSetInitialization(generator, selectionSet, structName);
+    selectionSetInitialization(generator, fields, inlineFragments, structName);
 
     generator.printNewlineIfNeeded();
 
@@ -247,30 +241,22 @@ export function structDeclarationForSelectionSet(
       generator.printOnNewline(`self.snapshot = snapshot`);
     });
 
-    const properties = propertiesFromSelectionSet(generator.context, selectionSet);
-
-    const fields = properties.filter(property => property.kind === 'Field' && property.propertyName !== "__typename");
-    const inlineFragments = properties.filter(property => property.kind === 'InlineFragment');
-    const fragmentSpreads = properties.filter(property => property.kind === 'FragmentSpread');
-
     if (!possibleTypes || possibleTypes.length == 1) {
       generator.printNewlineIfNeeded();
       generator.printOnNewline(`public init`);
-      generator.print('(');
-      generator.print(join(fields.map(({ propertyName, type, typeName, isOptional }) =>
-        join([
-          `${propertyName}: ${typeName}`,
-          isOptional && ' = nil'
-        ])
-      ), ', '));
-      generator.print(')');
+
+      const properties = fields
+        .map(field => propertyFromField(generator.context, field))
+        .filter(field => field.propertyName != "__typename");
+
+      parametersForProperties(generator, properties);
 
       generator.withinBlock(() => {
         generator.printOnNewline(wrap(
           `self.init(snapshot: [`,
           join([
-            possibleTypes && possibleTypes.length > 0 && `"__typename": "${possibleTypes[0]}"`,
-            ...fields.map(({ name, propertyName }) => `"${propertyName}": ${propertyName}`)
+            `"__typename": "${possibleTypes[0]}"`,
+            ...properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`)
           ], ', ') || ':',
           `])`
         ));
@@ -279,46 +265,35 @@ export function structDeclarationForSelectionSet(
       possibleTypes.forEach(possibleType => {
         generator.printNewlineIfNeeded();
         generator.printOnNewline(`public static func make${possibleType}`);
-        generator.print('(');
 
-        const inlineFragment = inlineFragments.find(inlineFragment => inlineFragment.typeCondition === possibleType);
-        let properties;
-        if (inlineFragment) {
-          properties = propertiesFromSelectionSet(generator.context, inlineFragment.selectionSet, inlineFragment.structName);
-        } else {
-          properties = propertiesFromSelectionSet(generator.context, selectionSet);
-        }
-        const fields = properties.filter(property => property.kind === 'Field' && property.propertyName !== "__typename");
+        const inlineFragment = inlineFragments && inlineFragments.find(inlineFragment => inlineFragment.typeCondition === possibleType);
+        const fieldsForPossibleType = inlineFragment ? inlineFragment.fields : fields;
 
-        generator.print(join(fields.map(({ propertyName, type, typeName, isOptional }) =>
-          join([
-            `${propertyName}: ${typeName}`,
-            isOptional && ' = nil'
-          ])
-        ), ', '));
-        generator.print(`) -> ${structName}`);
+        const properties = fieldsForPossibleType
+          .map(field => propertyFromField(generator.context, field, inlineFragment && structNameForInlineFragment(inlineFragment)))
+          .filter(field => field.propertyName != "__typename");
+
+        parametersForProperties(generator, properties);
+
+        generator.print(` -> ${structName}`);
 
         generator.withinBlock(() => {
           generator.printOnNewline(wrap(
             `return ${structName}(snapshot: [`,
             join([
               `"__typename": "${possibleType}"`,
-              ...fields.map(({ name, propertyName }) => `"${propertyName}": ${propertyName}`)
-            ], ', '),
+              ...properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`)
+            ], ', ') || ':',
             `])`
           ));
         });
       });
     }
 
-    properties.forEach(property => {
-      if (property.kind === 'FragmentSpread') return;
+    fields.forEach(field => propertyDeclarationForField(generator, field));
+    inlineFragments && inlineFragments.forEach(inlineFragment => propertyDeclarationForInlineFragment(generator, inlineFragment));
 
-      generator.printNewlineIfNeeded();
-      propertyDeclarationForSelection(generator, property);
-    });
-
-    if (fragmentSpreads.length > 0) {
+    if (fragmentSpreads && fragmentSpreads.length > 0) {
       generator.printNewlineIfNeeded();
       generator.printOnNewline(`public var fragments: Fragments`);
       generator.withinBlock(() => {
@@ -333,22 +308,23 @@ export function structDeclarationForSelectionSet(
       });
     }
 
-    if (inlineFragments.length > 0) {
-      inlineFragments.forEach(({ structName, typeCondition, selectionSet }) => {
+    if (inlineFragments && inlineFragments.length > 0) {
+      inlineFragments.forEach((inlineFragment) => {
         structDeclarationForSelectionSet(
           generator,
           {
-            structName: structName,
-            parentType: typeCondition,
-            possibleTypes: possibleTypesForType(generator.context, typeCondition),
+            structName: structNameForInlineFragment(inlineFragment),
+            parentType: inlineFragment.typeCondition,
             adoptedProtocols: ['GraphQLFragment'],
-            selectionSet: selectionSet
+            fields: inlineFragment.fields,
+            inlineFragments: inlineFragment.inlineFragments,
+            fragmentSpreads: inlineFragment.fragmentSpreads
           }
         );
       });
     }
 
-    if (fragmentSpreads.length > 0) {
+    if (fragmentSpreads && fragmentSpreads.length > 0) {
       structDeclaration(
         generator,
         {
@@ -356,7 +332,8 @@ export function structDeclarationForSelectionSet(
         },
         () => {
           propertyDeclaration(generator, { propertyName: "snapshot", typeName: "Snapshot" });
-          fragmentSpreads.forEach(({ propertyName, bareTypeName, typeName, fragment })  => {
+          fragmentSpreads.forEach(fragmentSpread  => {
+            const { propertyName, bareTypeName, typeName, fragment } = propertyFromFragmentSpread(generator.context, fragmentSpread);
             const isOptional = !isTypeProperSuperTypeOf(generator.context.schema, fragment.typeCondition, parentType);
 
             generator.printNewlineIfNeeded();
@@ -390,57 +367,24 @@ export function structDeclarationForSelectionSet(
         {
           structName: structNameForPropertyName(field.responseName),
           parentType: getNamedType(field.type),
-          selectionSet: field.selectionSet
+          fields: field.fields,
+          inlineFragments: field.inlineFragments,
+          fragmentSpreads: field.fragmentSpreads
         }
       );
     });
   });
 }
 
-function mapExpressionForType(context, type, expression, prefix = '') {
-  let isOptional;
-  if (type instanceof GraphQLNonNull) {
-    isOptional = false;
-    type = type.ofType;
-  } else {
-    isOptional = true;
-  }
+function propertyDeclarationForField(generator, field) {
+  const { kind, propertyName, typeName, type, isConditional, description } = propertyFromField(generator.context, field);
+  const namedType = getNamedType(type);
 
-  if (type instanceof GraphQLList) {
-    if (isOptional) {
-      return `${prefix}.flatMap { $0.map { ${mapExpressionForType(context, type.ofType, expression, '$0')} } }`;
-    } else {
-      return `${prefix}.map { ${mapExpressionForType(context, type.ofType, expression, '$0')} }`;
-    }
-  } else if (isOptional) {
-    return `${prefix}.flatMap { ${expression} }`;
-  } else {
-    return expression;
-  }
-}
-
-function propertyDeclarationForSelection(generator, selection) {
-  const { kind, propertyName, typeName, type, isConditional, description } = selection;
-
+  generator.printNewlineIfNeeded();
   generator.printOnNewline(description && `/// ${description}`);
   generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
   generator.withinBlock(() => {
-    const namedType = getNamedType(type);
-
-    if (kind === 'InlineFragment') {
-      const structName = structNameForInlineFragment(selection);
-
-      generator.printOnNewline("get");
-      generator.withinBlock(() => {
-        generator.printOnNewline(`if !${structName}.possibleTypes.contains(__typename) { return nil }`);
-        generator.printOnNewline(`return ${structName}(snapshot: snapshot)`);
-      });
-      generator.printOnNewline("set");
-      generator.withinBlock(() => {
-        generator.printOnNewline(`guard let newValue = newValue else { return }`);
-        generator.printOnNewline(`snapshot = newValue.snapshot`);
-      });
-    } else if (isCompositeType(namedType)) {
+    if (isCompositeType(namedType)) {
       const isOptional = isConditional || !(type instanceof GraphQLNonNull);
       const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList;
       const structName = escapeIdentifierIfNeeded(structNameForPropertyName(propertyName));
@@ -488,16 +432,54 @@ function propertyDeclarationForSelection(generator, selection) {
   });
 }
 
+function propertyDeclarationForInlineFragment(generator, inlineFragment) {
+  const { kind, propertyName, typeName, type, isConditional, description } = propertyFromInlineFragment(generator.context, inlineFragment);
+  const namedType = getNamedType(type);
+
+  generator.printNewlineIfNeeded();
+  generator.printOnNewline(description && `/// ${description}`);
+  generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
+  generator.withinBlock(() => {
+    const structName = structNameForInlineFragment(inlineFragment);
+
+    generator.printOnNewline("get");
+    generator.withinBlock(() => {
+      generator.printOnNewline(`if !${structName}.possibleTypes.contains(__typename) { return nil }`);
+      generator.printOnNewline(`return ${structName}(snapshot: snapshot)`);
+    });
+    generator.printOnNewline("set");
+    generator.withinBlock(() => {
+      generator.printOnNewline(`guard let newValue = newValue else { return }`);
+      generator.printOnNewline(`snapshot = newValue.snapshot`);
+    });
+  });
+}
+
+function mapExpressionForType(context, type, expression, prefix = '') {
+  let isOptional;
+  if (type instanceof GraphQLNonNull) {
+    isOptional = false;
+    type = type.ofType;
+  } else {
+    isOptional = true;
+  }
+
+  if (type instanceof GraphQLList) {
+    if (isOptional) {
+      return `${prefix}.flatMap { $0.map { ${mapExpressionForType(context, type.ofType, expression, '$0')} } }`;
+    } else {
+      return `${prefix}.map { ${mapExpressionForType(context, type.ofType, expression, '$0')} }`;
+    }
+  } else if (isOptional) {
+    return `${prefix}.flatMap { ${expression} }`;
+  } else {
+    return expression;
+  }
+}
+
 export function initializerDeclarationForProperties(generator, properties) {
   generator.printOnNewline(`public init`);
-  generator.print('(');
-  generator.print(join(properties.map(({ propertyName, type, typeName, isOptional }) =>
-    join([
-      `${propertyName}: ${typeName}`,
-      isOptional && ' = nil'
-    ])
-  ), ', '));
-  generator.print(')');
+  parametersForProperties(generator, properties);
 
   generator.withinBlock(() => {
     properties.forEach(({ propertyName }) => {
@@ -506,29 +488,37 @@ export function initializerDeclarationForProperties(generator, properties) {
   });
 }
 
-export function selectionSetInitialization(generator, selectionSet, parentStructName) {
+function parametersForProperties(generator, properties) {
+  generator.print('(');
+  generator.print(join(properties.map(({ propertyName, type, typeName, isOptional }) =>
+    join([
+      `${propertyName}: ${typeName}`,
+      isOptional && ' = nil'
+    ])
+  ), ', '));
+  generator.print(')');
+}
+
+export function selectionSetInitialization(generator, fields, inlineFragments, parentStructName) {
   generator.print('[');
   generator.withIndent(() => {
-    selectionSet.forEach(selection => {
-      if (selection.kind === 'Field') {
-        const { responseName, fieldName, args, type } = selection;
-        const structName = join([parentStructName, structNameForPropertyName(responseName)], '.');
+    fields.forEach(field => {
+      const { responseName, fieldName, args, type } = field;
+      const structName = join([parentStructName, structNameForPropertyName(responseName)], '.');
 
-        generator.printOnNewline(`Field(`);
-        generator.print(join([
-          `"${fieldName}"`,
-          responseName != fieldName ? `alias: "${responseName}"` : null,
-          args && args.length && `arguments: ${dictionaryLiteralForFieldArguments(args)}`,
-          `type: ${fieldTypeEnum(generator.context, type, structName)}`
-        ], ', '));
-        generator.print('),');
-      } else if (selection.kind === 'FragmentSpread') {
-        const structName = structNameForFragmentName(selection.fragmentName);
-        generator.printOnNewline(`FragmentSpread(${structName}.self),`);
-      } else if (selection.kind === 'InlineFragment') {
-        const structName = join([parentStructName, structNameForInlineFragment(selection)], '.');
-        generator.printOnNewline(`FragmentSpread(${structName}.self),`);
-      }
+      generator.printOnNewline(`Field(`);
+      generator.print(join([
+        `"${fieldName}"`,
+        responseName != fieldName ? `alias: "${responseName}"` : null,
+        args && args.length && `arguments: ${dictionaryLiteralForFieldArguments(args)}`,
+        `type: ${fieldTypeEnum(generator.context, type, structName)}`
+      ], ', '));
+      generator.print('),');
+    });
+
+    inlineFragments && inlineFragments.forEach(InlineFragment => {
+      const structName = join([parentStructName, structNameForInlineFragment(InlineFragment)], '.');
+      generator.printOnNewline(`FragmentSpread(${structName}.self),`);
     });
   });
   generator.printOnNewline(']');

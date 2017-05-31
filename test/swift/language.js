@@ -25,8 +25,8 @@ describe('Swift code generation: Basic language constructs', function() {
 
     expect(generator.output).toBe(stripIndent`
       public final class Hero {
-        public let name: String
-        public let age: Int
+        public var name: String
+        public var age: Int
       }
     `);
   });
@@ -39,8 +39,8 @@ describe('Swift code generation: Basic language constructs', function() {
 
     expect(generator.output).toBe(stripIndent`
       public struct Hero {
-        public let name: String
-        public let age: Int
+        public var name: String
+        public var age: Int
       }
     `);
   });
@@ -57,11 +57,11 @@ describe('Swift code generation: Basic language constructs', function() {
 
     expect(generator.output).toBe(stripIndent`
       public struct Hero {
-        public let name: String
-        public let friends: [Friend]
+        public var name: String
+        public var friends: [Friend]
 
         public struct Friend {
-          public let name: String
+          public var name: String
         }
       }
     `);
