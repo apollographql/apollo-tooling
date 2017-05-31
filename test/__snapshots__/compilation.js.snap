@@ -11,7 +11,19 @@ Object {
         },
       ],
       "fieldName": "human",
-      "fields": Array [],
+      "fields": Array [
+        Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
+        Object {
+          "description": "Height in the preferred unit, default is meters",
+          "fieldName": "height",
+          "responseName": "height",
+          "type": "Float",
+        },
+      ],
       "fragmentSpreads": Array [
         "CharacterFragment",
       ],
@@ -27,7 +39,19 @@ Object {
         },
       ],
       "fieldName": "droid",
-      "fields": Array [],
+      "fields": Array [
+        Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
+        Object {
+          "description": "This droid's primary function",
+          "fieldName": "primaryFunction",
+          "responseName": "primaryFunction",
+          "type": "String",
+        },
+      ],
       "fragmentSpreads": Array [
         "CharacterFragment",
       ],
@@ -41,6 +65,7 @@ Object {
   ],
   "operationName": "HumanAndDroid",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -52,10 +77,15 @@ Object {
       "fieldName": "hero",
       "fields": Array [
         Object {
-          "description": "The movies this character appears in",
-          "fieldName": "appearsIn",
-          "responseName": "appearsIn",
-          "type": "[Episode]!",
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
+        Object {
+          "description": "The name of the character",
+          "fieldName": "name",
+          "responseName": "name",
+          "type": "String!",
         },
         Object {
           "description": "The ID of the character",
@@ -64,14 +94,31 @@ Object {
           "type": "ID!",
         },
         Object {
+          "description": "The movies this character appears in",
+          "fieldName": "appearsIn",
+          "responseName": "appearsIn",
+          "type": "[Episode]!",
+        },
+        Object {
           "description": "The friends of the character, or an empty list if they have none",
           "fieldName": "friends",
           "fields": Array [
+            Object {
+              "fieldName": "__typename",
+              "responseName": "__typename",
+              "type": "String!",
+            },
             Object {
               "description": "The ID of the character",
               "fieldName": "id",
               "responseName": "id",
               "type": "ID!",
+            },
+            Object {
+              "description": "The name of the character",
+              "fieldName": "name",
+              "responseName": "name",
+              "type": "String!",
             },
           ],
           "fragmentSpreads": Array [
@@ -95,6 +142,7 @@ Object {
   ],
   "operationName": "HeroAndFriends",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -102,6 +150,11 @@ Object {
 exports[`Compiling query documents should include fragment spreads from subselections 2`] = `
 Object {
   "fields": Array [
+    Object {
+      "fieldName": "__typename",
+      "responseName": "__typename",
+      "type": "String!",
+    },
     Object {
       "description": "The name of the character",
       "fieldName": "name",
@@ -134,6 +187,11 @@ Object {
       "fieldName": "hero",
       "fields": Array [
         Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
+        Object {
           "description": "The name of the character",
           "fieldName": "name",
           "responseName": "name",
@@ -144,7 +202,66 @@ Object {
         "DroidDetails",
         "HumanDetails",
       ],
-      "inlineFragments": Array [],
+      "inlineFragments": Array [
+        Object {
+          "fields": Array [
+            Object {
+              "fieldName": "__typename",
+              "responseName": "__typename",
+              "type": "String!",
+            },
+            Object {
+              "description": "What others call this droid",
+              "fieldName": "name",
+              "responseName": "name",
+              "type": "String!",
+            },
+            Object {
+              "description": "This droid's primary function",
+              "fieldName": "primaryFunction",
+              "responseName": "primaryFunction",
+              "type": "String",
+            },
+          ],
+          "fragmentSpreads": Array [
+            "DroidDetails",
+            "HumanDetails",
+          ],
+          "possibleTypes": Array [
+            "Droid",
+          ],
+          "typeCondition": "Droid",
+        },
+        Object {
+          "fields": Array [
+            Object {
+              "fieldName": "__typename",
+              "responseName": "__typename",
+              "type": "String!",
+            },
+            Object {
+              "description": "What this human calls themselves",
+              "fieldName": "name",
+              "responseName": "name",
+              "type": "String!",
+            },
+            Object {
+              "description": "Height in the preferred unit, default is meters",
+              "fieldName": "height",
+              "responseName": "height",
+              "type": "Float",
+            },
+          ],
+          "fragmentSpreads": Array [
+            "DroidDetails",
+            "HumanDetails",
+          ],
+          "possibleTypes": Array [
+            "Human",
+          ],
+          "typeCondition": "Human",
+        },
+      ],
       "responseName": "hero",
       "type": "Character",
     },
@@ -155,6 +272,7 @@ Object {
   ],
   "operationName": "Hero",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -162,6 +280,11 @@ Object {
 exports[`Compiling query documents should include fragment spreads with type conditions 2`] = `
 Object {
   "fields": Array [
+    Object {
+      "fieldName": "__typename",
+      "responseName": "__typename",
+      "type": "String!",
+    },
     Object {
       "description": "This droid's primary function",
       "fieldName": "primaryFunction",
@@ -183,6 +306,11 @@ Object {
 exports[`Compiling query documents should include fragment spreads with type conditions 3`] = `
 Object {
   "fields": Array [
+    Object {
+      "fieldName": "__typename",
+      "responseName": "__typename",
+      "type": "String!",
+    },
     Object {
       "description": "Height in the preferred unit, default is meters",
       "fieldName": "height",
@@ -208,6 +336,11 @@ Object {
       "fieldName": "hero",
       "fields": Array [
         Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
+        Object {
           "description": "The name of the character",
           "fieldName": "name",
           "isConditional": true,
@@ -224,6 +357,7 @@ Object {
   "fragmentsReferenced": Array [],
   "operationName": "HeroNameConditionalInclusion",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -234,6 +368,11 @@ Object {
     Object {
       "fieldName": "hero",
       "fields": Array [
+        Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
         Object {
           "description": "The name of the character",
           "fieldName": "name",
@@ -251,6 +390,7 @@ Object {
   "fragmentsReferenced": Array [],
   "operationName": "HeroNameConditionalExclusion",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -269,11 +409,80 @@ Object {
   "fields": Array [
     Object {
       "fieldName": "hero",
-      "fields": Array [],
+      "fields": Array [
+        Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
+        Object {
+          "description": "The name of the character",
+          "fieldName": "name",
+          "responseName": "name",
+          "type": "String!",
+        },
+      ],
       "fragmentSpreads": Array [
         "HeroDetails",
       ],
-      "inlineFragments": Array [],
+      "inlineFragments": Array [
+        Object {
+          "fields": Array [
+            Object {
+              "fieldName": "__typename",
+              "responseName": "__typename",
+              "type": "String!",
+            },
+            Object {
+              "description": "What others call this droid",
+              "fieldName": "name",
+              "responseName": "name",
+              "type": "String!",
+            },
+            Object {
+              "description": "This droid's primary function",
+              "fieldName": "primaryFunction",
+              "responseName": "primaryFunction",
+              "type": "String",
+            },
+          ],
+          "fragmentSpreads": Array [
+            "HeroDetails",
+          ],
+          "possibleTypes": Array [
+            "Droid",
+          ],
+          "typeCondition": "Droid",
+        },
+        Object {
+          "fields": Array [
+            Object {
+              "fieldName": "__typename",
+              "responseName": "__typename",
+              "type": "String!",
+            },
+            Object {
+              "description": "What this human calls themselves",
+              "fieldName": "name",
+              "responseName": "name",
+              "type": "String!",
+            },
+            Object {
+              "description": "Height in the preferred unit, default is meters",
+              "fieldName": "height",
+              "responseName": "height",
+              "type": "Float",
+            },
+          ],
+          "fragmentSpreads": Array [
+            "HeroDetails",
+          ],
+          "possibleTypes": Array [
+            "Human",
+          ],
+          "typeCondition": "Human",
+        },
+      ],
       "responseName": "hero",
       "type": "Character",
     },
@@ -283,6 +492,7 @@ Object {
   ],
   "operationName": "Hero",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -290,6 +500,11 @@ Object {
 exports[`Compiling query documents should include type conditions for inline fragments in fragments 2`] = `
 Object {
   "fields": Array [
+    Object {
+      "fieldName": "__typename",
+      "responseName": "__typename",
+      "type": "String!",
+    },
     Object {
       "description": "The name of the character",
       "fieldName": "name",
@@ -303,6 +518,11 @@ Object {
   "inlineFragments": Array [
     Object {
       "fields": Array [
+        Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
         Object {
           "description": "What others call this droid",
           "fieldName": "name",
@@ -324,6 +544,11 @@ Object {
     },
     Object {
       "fields": Array [
+        Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
         Object {
           "description": "What this human calls themselves",
           "fieldName": "name",
@@ -357,6 +582,11 @@ Array [
   Object {
     "fields": Array [
       Object {
+        "fieldName": "__typename",
+        "responseName": "__typename",
+        "type": "String!",
+      },
+      Object {
         "description": "What others call this droid",
         "fieldName": "name",
         "responseName": "name",
@@ -377,6 +607,11 @@ Array [
   },
   Object {
     "fields": Array [
+      Object {
+        "fieldName": "__typename",
+        "responseName": "__typename",
+        "type": "String!",
+      },
       Object {
         "description": "What this human calls themselves",
         "fieldName": "name",
@@ -406,6 +641,11 @@ Object {
       "fieldName": "hero",
       "fields": Array [
         Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
+        Object {
           "description": "The name of the character",
           "fieldName": "name",
           "responseName": "name",
@@ -416,6 +656,11 @@ Object {
       "inlineFragments": Array [
         Object {
           "fields": Array [
+            Object {
+              "fieldName": "__typename",
+              "responseName": "__typename",
+              "type": "String!",
+            },
             Object {
               "description": "What others call this droid",
               "fieldName": "name",
@@ -437,6 +682,11 @@ Object {
         },
         Object {
           "fields": Array [
+            Object {
+              "fieldName": "__typename",
+              "responseName": "__typename",
+              "type": "String!",
+            },
             Object {
               "description": "What this human calls themselves",
               "fieldName": "name",
@@ -464,6 +714,7 @@ Object {
   "fragmentsReferenced": Array [],
   "operationName": "Hero",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -504,11 +755,29 @@ Object {
   "fields": Array [
     Object {
       "fieldName": "hero",
-      "fields": Array [],
+      "fields": Array [
+        Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
+      ],
       "fragmentSpreads": Array [],
       "inlineFragments": Array [
         Object {
-          "fields": Array [],
+          "fields": Array [
+            Object {
+              "fieldName": "__typename",
+              "responseName": "__typename",
+              "type": "String!",
+            },
+            Object {
+              "description": "What others call this droid",
+              "fieldName": "name",
+              "responseName": "name",
+              "type": "String!",
+            },
+          ],
           "fragmentSpreads": Array [
             "HeroName",
           ],
@@ -527,6 +796,7 @@ Object {
   ],
   "operationName": "HeroName",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -536,11 +806,22 @@ Object {
   "fields": Array [
     Object {
       "fieldName": "hero",
-      "fields": Array [],
+      "fields": Array [
+        Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
+      ],
       "fragmentSpreads": Array [],
       "inlineFragments": Array [
         Object {
           "fields": Array [
+            Object {
+              "fieldName": "__typename",
+              "responseName": "__typename",
+              "type": "String!",
+            },
             Object {
               "description": "What others call this droid",
               "fieldName": "name",
@@ -562,6 +843,7 @@ Object {
   "fragmentsReferenced": Array [],
   "operationName": "HeroName",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -572,6 +854,11 @@ Object {
     Object {
       "fieldName": "hero",
       "fields": Array [
+        Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
         Object {
           "description": "The name of the character",
           "fieldName": "name",
@@ -592,6 +879,7 @@ Object {
   ],
   "operationName": "Hero",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -601,11 +889,40 @@ Object {
   "fields": Array [
     Object {
       "fieldName": "hero",
-      "fields": Array [],
+      "fields": Array [
+        Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
+      ],
       "fragmentSpreads": Array [
         "DroidName",
       ],
-      "inlineFragments": Array [],
+      "inlineFragments": Array [
+        Object {
+          "fields": Array [
+            Object {
+              "fieldName": "__typename",
+              "responseName": "__typename",
+              "type": "String!",
+            },
+            Object {
+              "description": "What others call this droid",
+              "fieldName": "name",
+              "responseName": "name",
+              "type": "String!",
+            },
+          ],
+          "fragmentSpreads": Array [
+            "DroidName",
+          ],
+          "possibleTypes": Array [
+            "Droid",
+          ],
+          "typeCondition": "Droid",
+        },
+      ],
       "responseName": "hero",
       "type": "Character",
     },
@@ -615,6 +932,7 @@ Object {
   ],
   "operationName": "HeroName",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -624,11 +942,22 @@ Object {
   "fields": Array [
     Object {
       "fieldName": "hero",
-      "fields": Array [],
+      "fields": Array [
+        Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
+      ],
       "fragmentSpreads": Array [],
       "inlineFragments": Array [
         Object {
           "fields": Array [
+            Object {
+              "fieldName": "__typename",
+              "responseName": "__typename",
+              "type": "String!",
+            },
             Object {
               "description": "What others call this droid",
               "fieldName": "name",
@@ -650,6 +979,7 @@ Object {
   "fragmentsReferenced": Array [],
   "operationName": "HeroName",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -660,6 +990,11 @@ Object {
     Object {
       "fieldName": "hero",
       "fields": Array [
+        Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
         Object {
           "description": "The ID of the character",
           "fieldName": "id",
@@ -688,6 +1023,7 @@ Object {
   "fragmentsReferenced": Array [],
   "operationName": "Hero",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -699,10 +1035,27 @@ Object {
       "fieldName": "hero",
       "fields": Array [
         Object {
+          "fieldName": "__typename",
+          "responseName": "__typename",
+          "type": "String!",
+        },
+        Object {
           "description": "The ID of the character",
           "fieldName": "id",
           "responseName": "id",
           "type": "ID!",
+        },
+        Object {
+          "description": "The movies this character appears in",
+          "fieldName": "appearsIn",
+          "responseName": "appearsIn",
+          "type": "[Episode]!",
+        },
+        Object {
+          "description": "The name of the character",
+          "fieldName": "name",
+          "responseName": "name",
+          "type": "String!",
         },
       ],
       "fragmentSpreads": Array [
@@ -720,6 +1073,7 @@ Object {
   ],
   "operationName": "Hero",
   "operationType": "query",
+  "rootType": "Query",
   "variables": Array [],
 }
 `;
@@ -728,10 +1082,21 @@ exports[`Compiling query documents should recursively include fragment spreads w
 Object {
   "fields": Array [
     Object {
+      "fieldName": "__typename",
+      "responseName": "__typename",
+      "type": "String!",
+    },
+    Object {
       "description": "The ID of the character",
       "fieldName": "id",
       "responseName": "id",
       "type": "ID!",
+    },
+    Object {
+      "description": "The movies this character appears in",
+      "fieldName": "appearsIn",
+      "responseName": "appearsIn",
+      "type": "[Episode]!",
     },
     Object {
       "description": "The name of the character",
@@ -759,6 +1124,11 @@ Object {
 exports[`Compiling query documents should recursively include fragment spreads with type conditions that match the parent type 3`] = `
 Object {
   "fields": Array [
+    Object {
+      "fieldName": "__typename",
+      "responseName": "__typename",
+      "type": "String!",
+    },
     Object {
       "description": "The movies this character appears in",
       "fieldName": "appearsIn",

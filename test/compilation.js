@@ -513,7 +513,7 @@ describe('Compiling query documents', () => {
 
     const { operations } = compileToIR(schema, document);
 
-    expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails', 'HeroName']);
+    expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroName', 'HeroDetails']);
   });
 
   test(`should keep track of fragments referenced in a subselection nested in an inline fragment`, () => {
