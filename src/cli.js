@@ -111,6 +111,11 @@ yargs
         choices: ['swift', 'json', 'ts', 'typescript', 'flow'],
         default: 'swift'
       },
+      namespace: {
+        demand: false,
+        describe: 'Optional namespace for generated types [currently Swift-only]',
+        type: 'string'
+      },
       "passthrough-custom-scalars": {
         demand: false,
         describe: "Don't attempt to map custom scalars [temporary option]",
@@ -144,7 +149,8 @@ yargs
       const options = {
         passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '',
         customScalarsPrefix: argv["custom-scalars-prefix"] || '',
-        addTypename: argv["add-typename"]
+        addTypename: argv["add-typename"],
+        namespace: argv.namespace
       };
 
       generate(inputPaths, argv.schema, argv.output, argv.target, options);
