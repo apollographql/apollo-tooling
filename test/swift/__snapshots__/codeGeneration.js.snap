@@ -1350,7 +1350,7 @@ exports[`Swift code generation #typeDeclarationForGraphQLType() should escape id
   case \`private\` = \\"PRIVATE\\"
 }
 
-extension AlbumPrivacies: JSONDecodable, JSONEncodable {}"
+extension AlbumPrivacies: Apollo.JSONDecodable, Apollo.JSONEncodable {}"
 `;
 
 exports[`Swift code generation #typeDeclarationForGraphQLType() should generate a struct declaration for a GraphQLInputObjectType 1`] = `
@@ -1372,5 +1372,5 @@ public enum Episode: String {
   case jedi = \\"JEDI\\" /// Star Wars Episode VI: Return of the Jedi, released in 1983.
 }
 
-extension Episode: JSONDecodable, JSONEncodable {}"
+extension Episode: Apollo.JSONDecodable, Apollo.JSONEncodable {}"
 `;
