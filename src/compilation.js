@@ -45,8 +45,12 @@ import {
 
 // Parts of this code are adapted from graphql-js
 
-export function compileToIR(schema, document, options) {
-  const compiler = new Compiler(schema, withTypenameFieldAddedWhereNeeded(schema, document));
+export function compileToIR(schema, document, options = {}) {
+  if (options.addTypename) {
+    document = withTypenameFieldAddedWhereNeeded(schema, document);
+  }
+
+  const compiler = new Compiler(schema, document);
 
   const operations = Object.create(null);
 
