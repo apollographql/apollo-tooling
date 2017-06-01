@@ -523,9 +523,9 @@ describe('Compiling query documents', () => {
     // expect(operations['HeroName'].fields[0].fragmentSpreads).toEqual([]);
   });
 
-  test(`should ignore a fragment's inline fragments whose type conditions do not match more specific effective type`, () => {
+  test(`should ignore inline fragment when the type condition does not overlap with the currently effective type`, () => {
     const document = parse(`
-      fragment CharacterFragment on Character {
+      fragment CharacterDetails on Character {
         ... on Droid {
           primaryFunction
         }
@@ -536,10 +536,47 @@ describe('Compiling query documents', () => {
 
       query HumanAndDroid {
         human(id: "human") {
-          ...CharacterFragment
+          ...CharacterDetails
         }
         droid(id: "droid") {
-          ...CharacterFragment
+          ...CharacterDetails
+        }
+      }
+    `);
+
+    const { operations } = compileToIR(schema, document);
+
+    expect(operations['HumanAndDroid'].fields.map(field => field.fieldName))
+      .toEqual(['human', 'droid']);
+    expect(operations['HumanAndDroid'].fields[0].fields.map(field => field.fieldName))
+      .toEqual(['height']);
+    expect(operations['HumanAndDroid'].fields[0].inlineFragments).toEqual([]);
+    expect(operations['HumanAndDroid'].fields[1].fields.map(field => field.fieldName))
+      .toEqual(['primaryFunction']);
+    expect(operations['HumanAndDroid'].fields[1].inlineFragments).toEqual([]);
+  });
+
+  test(`should ignore fragment spread when the type condition does not overlap with the currently effective type`, () => {
+    const document = parse(`
+      fragment DroidPrimaryFunction on Droid {
+        primaryFunction
+      }
+
+      fragment HumanHeight on Human {
+        height
+      }
+
+      fragment CharacterDetails on Character {
+        ...DroidPrimaryFunction
+        ...HumanHeight
+      }
+
+      query HumanAndDroid {
+        human(id: "human") {
+          ...CharacterDetails
+        }
+        droid(id: "droid") {
+          ...CharacterDetails
         }
       }
     `);

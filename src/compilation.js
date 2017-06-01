@@ -7,6 +7,7 @@ import {
   isAbstractType,
   isEqualType,
   isTypeSubTypeOf,
+  doTypesOverlap,
   Kind,
   TypeInfo,
   isType,
@@ -201,10 +202,8 @@ export class Compiler {
             typeFromAST(this.schema, typeCondition) :
             parentType;
 
+          if (!doTypesOverlap(this.schema, inlineFragmentType, parentType)) continue;
           const effectiveType = parentType instanceof GraphQLObjectType ? parentType : inlineFragmentType;
-          if (inlineFragmentType !== effectiveType && !isTypeProperSuperTypeOf(this.schema, inlineFragmentType, effectiveType)) {
-            break;
-          }
 
           this.collectFields(
             effectiveType,
@@ -234,6 +233,7 @@ export class Compiler {
             visitedFragmentSet[fragmentName] = true;
           }
 
+          if (!doTypesOverlap(this.schema, fragmentType, parentType)) continue;
           const effectiveType = parentType instanceof GraphQLObjectType ? parentType : fragmentType;
 
           this.collectFields(
