@@ -16,6 +16,13 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
 
   validateQueryDocument(schema, document, target);
 
+  if (target === 'swift') {
+    if (options.addTypename) {
+      console.warn('This option is a no-op for Swift because __typename is already added automatically');
+    }
+    options.addTypename = true;
+  }
+
   const context = compileToIR(schema, document, options);
   Object.assign(context, options);
 
@@ -32,11 +39,6 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
       output = generateFlowSource(context, options);
       break;
     case 'swift':
-    default:
-      if (options.addTypename) {
-        console.warn('This option is a no-op for Swift because __typename is already added automatically');
-      }
-
       output = generateSwiftSource(context, options);
       break;
   }
