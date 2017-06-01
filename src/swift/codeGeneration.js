@@ -26,7 +26,7 @@ import {
   propertyDeclaration,
   propertyDeclarations,
   escapeIdentifierIfNeeded,
-  printDescription
+  comment
 } from './language';
 
 import {
@@ -381,7 +381,7 @@ function propertyDeclarationForField(generator, field) {
   const namedType = getNamedType(type);
 
   generator.printNewlineIfNeeded();
-  generator.printOnNewline(description && `/// ${description}`);
+  comment(generator, description);
   generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
   generator.withinBlock(() => {
     if (isCompositeType(namedType)) {
@@ -437,7 +437,7 @@ function propertyDeclarationForInlineFragment(generator, inlineFragment) {
   const namedType = getNamedType(type);
 
   generator.printNewlineIfNeeded();
-  generator.printOnNewline(description && `/// ${description}`);
+  comment(generator, description);
   generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
   generator.withinBlock(() => {
     const structName = structNameForInlineFragment(inlineFragment);

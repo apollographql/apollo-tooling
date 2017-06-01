@@ -3,8 +3,8 @@ import {
   wrap,
 } from '../utilities/printing';
 
-function printDescription(generator, description) {
-  description && description.split('\n')
+export function comment(generator, comment) {
+  comment && comment.split('\n')
     .forEach(line => {
       generator.printOnNewline(`/// ${line.trim()}`);
     });
@@ -34,7 +34,7 @@ export function classDeclaration(generator, { className, modifiers, superClass, 
 
 export function structDeclaration(generator, { structName, description, adoptedProtocols = [] }, closure) {
   generator.printNewlineIfNeeded();
-  printDescription(generator, description);
+  comment(generator, description);
   generator.printOnNewline(`public struct ${structName}`);
   generator.print(wrap(': ', join(adoptedProtocols, ', ')));
   generator.pushScope({ typeName: structName });
@@ -43,7 +43,7 @@ export function structDeclaration(generator, { structName, description, adoptedP
 }
 
 export function propertyDeclaration(generator, { propertyName, typeName, description }) {
-  printDescription(generator, description);
+  comment(generator, description);
   generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
 }
 
