@@ -26,7 +26,7 @@ export default function generate(
 
   if (target === 'swift') {
     if (!options.addTypename) {
-      console.warn('Apollo iOS requires the __typename field to be added automatically');
+      console.warn('This option is a no-op for Swift because __typename is already added automatically');
     }
     options.addTypename = true;
     options.mergeInFieldsFromFragmentSpreads = true;
