@@ -587,6 +587,27 @@ describe('Compiling query documents', () => {
       .toEqual(['name', 'height']);
   });
 
+  test(`should keep correct field ordering even if field has been visited before for other type condition`, () => {
+    const document = parse(`
+      fragment HeroDetails on Character {
+        ... on Human {
+          appearsIn
+        }
+
+        ... on Droid {
+          name
+          appearsIn
+        }
+      }
+    `);
+
+    const { fragments } = compileToIR(schema, document);
+
+    expect(fragments['HeroDetails'].inlineFragments[1].typeCondition.toString()).toEqual('Droid');
+    expect(fragments['HeroDetails'].inlineFragments[1].fields.map(field => field.fieldName))
+      .toEqual(['name', 'appearsIn']);
+  });
+
   test(`should keep track of fragments referenced in a subselection`, () => {
     const document = parse(`
       query HeroAndFriends {
