@@ -38,7 +38,7 @@ describe('TypeScript code generation', function() {
 
     compileFromSource = (source, addTypename = false) => {
       const document = parse(source);
-      const context = compileToIR(schema, document);
+      const context = compileToIR(schema, document, { mergeInFieldsFromFragmentSpreads: false });
       context.addTypename = addTypename;
       generator.context = context;
       return context;

@@ -21,6 +21,9 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
       console.warn('This option is a no-op for Swift because __typename is already added automatically');
     }
     options.addTypename = true;
+    options.mergeInFieldsFromFragmentSpreads = true;
+  } else {
+    options.mergeInFieldsFromFragmentSpreads = false;
   }
 
   const context = compileToIR(schema, document, options);

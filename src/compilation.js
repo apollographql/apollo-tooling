@@ -46,12 +46,12 @@ import {
 
 // Parts of this code are adapted from graphql-js
 
-export function compileToIR(schema, document, options = {}) {
+export function compileToIR(schema, document, options = { mergeInFieldsFromFragmentSpreads: true }) {
   if (options.addTypename) {
     document = withTypenameFieldAddedWhereNeeded(schema, document);
   }
 
-  const compiler = new Compiler(schema, document);
+  const compiler = new Compiler(schema, document, options);
 
   const operations = Object.create(null);
 
@@ -71,8 +71,9 @@ export function compileToIR(schema, document, options = {}) {
 }
 
 export class Compiler {
-  constructor(schema, document) {
+  constructor(schema, document, options) {
     this.schema = schema;
+    this.options = options;
 
     this.typesUsedSet = new Set();
 
@@ -239,7 +240,7 @@ export class Compiler {
           this.collectFields(
             effectiveType,
             fragment.selectionSet,
-            groupedFieldSet,
+            this.options.mergeInFieldsFromFragmentSpreads ? groupedFieldSet : null,
             groupedVisitedFragmentSet
           );
           break;
