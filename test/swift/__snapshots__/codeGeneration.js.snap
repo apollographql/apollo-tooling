@@ -5,7 +5,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public static let operationString =
     \\"mutation CreateReview($episode: Episode) {\\" +
     \\"  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"Wow!\\\\\\"}) {\\" +
-    \\"    __typename\\" +
     \\"    stars\\" +
     \\"    commentary\\" +
     \\"  }\\" +
@@ -51,7 +50,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       public static let possibleTypes = [\\"Review\\"]
 
       public static let selections: [Selection] = [
-        Field(\\"__typename\\", type: .nonNull(.scalar(String.self))),
         Field(\\"stars\\", type: .nonNull(.scalar(Int.self))),
         Field(\\"commentary\\", type: .scalar(String.self)),
       ]
@@ -64,15 +62,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
       public init(stars: Int, commentary: String? = nil) {
         self.init(snapshot: [\\"__typename\\": \\"Review\\", \\"stars\\": stars, \\"commentary\\": commentary])
-      }
-
-      public var __typename: String {
-        get {
-          return snapshot[\\"__typename\\"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: \\"__typename\\")
-        }
       }
 
       /// The number of stars this review gave, 1-5
@@ -104,9 +93,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public static let operationString =
     \\"query Hero {\\" +
     \\"  hero {\\" +
-    \\"    __typename\\" +
     \\"    ... on Droid {\\" +
-    \\"      __typename\\" +
     \\"      ...HeroDetails\\" +
     \\"    }\\" +
     \\"  }\\" +
@@ -146,7 +133,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [Selection] = [
-        Field(\\"__typename\\", type: .nonNull(.scalar(String.self))),
         FragmentSpread(Hero.AsDroid.self),
       ]
 
@@ -164,15 +150,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
       }
 
-      public var __typename: String {
-        get {
-          return snapshot[\\"__typename\\"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: \\"__typename\\")
-        }
-      }
-
       public var asDroid: AsDroid? {
         get {
           if !AsDroid.possibleTypes.contains(__typename) { return nil }
@@ -188,7 +165,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         public static let possibleTypes = [\\"Droid\\"]
 
         public static let selections: [Selection] = [
-          Field(\\"__typename\\", type: .nonNull(.scalar(String.self))),
           Field(\\"name\\", type: .nonNull(.scalar(String.self))),
         ]
 
@@ -200,15 +176,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
         public init(name: String) {
           self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
-        }
-
-        public var __typename: String {
-          get {
-            return snapshot[\\"__typename\\"]! as! String
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: \\"__typename\\")
-          }
         }
 
         /// What others call this droid
@@ -253,7 +220,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public static let operationString =
     \\"query Hero {\\" +
     \\"  hero {\\" +
-    \\"    __typename\\" +
     \\"    ...DroidDetails\\" +
     \\"  }\\" +
     \\"}\\"
@@ -292,7 +258,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [Selection] = [
-        Field(\\"__typename\\", type: .nonNull(.scalar(String.self))),
         FragmentSpread(Hero.AsDroid.self),
       ]
 
@@ -308,15 +273,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
       public static func makeDroid(primaryFunction: String? = nil) -> Hero {
         return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"primaryFunction\\": primaryFunction])
-      }
-
-      public var __typename: String {
-        get {
-          return snapshot[\\"__typename\\"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: \\"__typename\\")
-        }
       }
 
       public var asDroid: AsDroid? {
@@ -343,7 +299,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         public static let possibleTypes = [\\"Droid\\"]
 
         public static let selections: [Selection] = [
-          Field(\\"__typename\\", type: .nonNull(.scalar(String.self))),
           Field(\\"primaryFunction\\", type: .scalar(String.self)),
         ]
 
@@ -355,15 +310,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
         public init(primaryFunction: String? = nil) {
           self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"primaryFunction\\": primaryFunction])
-        }
-
-        public var __typename: String {
-          get {
-            return snapshot[\\"__typename\\"]! as! String
-          }
-          set {
-            snapshot.updateValue(newValue, forKey: \\"__typename\\")
-          }
         }
 
         /// This droid's primary function
@@ -423,7 +369,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public static let operationString =
     \\"query Hero {\\" +
     \\"  hero {\\" +
-    \\"    __typename\\" +
     \\"    ...HeroDetails\\" +
     \\"  }\\" +
     \\"}\\"
@@ -462,7 +407,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [Selection] = [
-        Field(\\"__typename\\", type: .nonNull(.scalar(String.self))),
         Field(\\"name\\", type: .nonNull(.scalar(String.self))),
       ]
 
@@ -478,15 +422,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
       public static func makeDroid(name: String) -> Hero {
         return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
-      }
-
-      public var __typename: String {
-        get {
-          return snapshot[\\"__typename\\"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: \\"__typename\\")
-        }
       }
 
       /// The name of the character
@@ -530,7 +465,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public static let operationString =
     \\"query HeroName($episode: Episode) {\\" +
     \\"  hero(episode: $episode) {\\" +
-    \\"    __typename\\" +
     \\"    name\\" +
     \\"  }\\" +
     \\"}\\"
@@ -575,7 +509,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [Selection] = [
-        Field(\\"__typename\\", type: .nonNull(.scalar(String.self))),
         Field(\\"name\\", type: .nonNull(.scalar(String.self))),
       ]
 
@@ -591,15 +524,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
       public static func makeDroid(name: String) -> Hero {
         return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
-      }
-
-      public var __typename: String {
-        get {
-          return snapshot[\\"__typename\\"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: \\"__typename\\")
-        }
       }
 
       /// The name of the character
@@ -639,7 +563,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 "public struct HeroDetails: GraphQLFragment {
   public static let fragmentString =
     \\"fragment HeroDetails on Character {\\" +
-    \\"  __typename\\" +
     \\"  name\\" +
     \\"  ...MoreHeroDetails\\" +
     \\"}\\"
@@ -647,7 +570,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [Selection] = [
-    Field(\\"__typename\\", type: .nonNull(.scalar(String.self))),
     Field(\\"name\\", type: .nonNull(.scalar(String.self))),
     Field(\\"appearsIn\\", type: .nonNull(.list(.scalar(Episode.self)))),
   ]
@@ -664,15 +586,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
   public static func makeDroid(name: String, appearsIn: [Episode?]) -> HeroDetails {
     return HeroDetails(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
-  }
-
-  public var __typename: String {
-    get {
-      return snapshot[\\"__typename\\"]! as! String
-    }
-    set {
-      snapshot.updateValue(newValue, forKey: \\"__typename\\")
-    }
   }
 
   /// The name of the character
@@ -723,7 +636,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 "public struct DroidDetails: GraphQLFragment {
   public static let fragmentString =
     \\"fragment DroidDetails on Droid {\\" +
-    \\"  __typename\\" +
     \\"  name\\" +
     \\"  primaryFunction\\" +
     \\"}\\"
@@ -731,7 +643,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   public static let possibleTypes = [\\"Droid\\"]
 
   public static let selections: [Selection] = [
-    Field(\\"__typename\\", type: .nonNull(.scalar(String.self))),
     Field(\\"name\\", type: .nonNull(.scalar(String.self))),
     Field(\\"primaryFunction\\", type: .scalar(String.self)),
   ]
@@ -744,15 +655,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
   public init(name: String, primaryFunction: String? = nil) {
     self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
-  }
-
-  public var __typename: String {
-    get {
-      return snapshot[\\"__typename\\"]! as! String
-    }
-    set {
-      snapshot.updateValue(newValue, forKey: \\"__typename\\")
-    }
   }
 
   /// What others call this droid
@@ -781,10 +683,8 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 "public struct HeroDetails: GraphQLFragment {
   public static let fragmentString =
     \\"fragment HeroDetails on Character {\\" +
-    \\"  __typename\\" +
     \\"  name\\" +
     \\"  friends {\\" +
-    \\"    __typename\\" +
     \\"    name\\" +
     \\"  }\\" +
     \\"}\\"
@@ -792,7 +692,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [Selection] = [
-    Field(\\"__typename\\", type: .nonNull(.scalar(String.self))),
     Field(\\"name\\", type: .nonNull(.scalar(String.self))),
     Field(\\"friends\\", type: .list(.object(HeroDetails.Friend.self))),
   ]
@@ -809,15 +708,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
   public static func makeDroid(name: String, friends: [Friend?]? = nil) -> HeroDetails {
     return HeroDetails(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"friends\\": friends])
-  }
-
-  public var __typename: String {
-    get {
-      return snapshot[\\"__typename\\"]! as! String
-    }
-    set {
-      snapshot.updateValue(newValue, forKey: \\"__typename\\")
-    }
   }
 
   /// The name of the character
@@ -844,7 +734,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
     public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
     public static let selections: [Selection] = [
-      Field(\\"__typename\\", type: .nonNull(.scalar(String.self))),
       Field(\\"name\\", type: .nonNull(.scalar(String.self))),
     ]
 
@@ -860,15 +749,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
     public static func makeDroid(name: String) -> Friend {
       return Friend(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
-    }
-
-    public var __typename: String {
-      get {
-        return snapshot[\\"__typename\\"]! as! String
-      }
-      set {
-        snapshot.updateValue(newValue, forKey: \\"__typename\\")
-      }
     }
 
     /// The name of the character
@@ -888,7 +768,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 "public struct HeroDetails: GraphQLFragment {
   public static let fragmentString =
     \\"fragment HeroDetails on Character {\\" +
-    \\"  __typename\\" +
     \\"  name\\" +
     \\"  appearsIn\\" +
     \\"}\\"
@@ -896,7 +775,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [Selection] = [
-    Field(\\"__typename\\", type: .nonNull(.scalar(String.self))),
     Field(\\"name\\", type: .nonNull(.scalar(String.self))),
     Field(\\"appearsIn\\", type: .nonNull(.list(.scalar(Episode.self)))),
   ]
@@ -913,15 +791,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
   public static func makeDroid(name: String, appearsIn: [Episode?]) -> HeroDetails {
     return HeroDetails(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
-  }
-
-  public var __typename: String {
-    get {
-      return snapshot[\\"__typename\\"]! as! String
-    }
-    set {
-      snapshot.updateValue(newValue, forKey: \\"__typename\\")
-    }
   }
 
   /// The name of the character
@@ -1356,10 +1225,21 @@ extension AlbumPrivacies: Apollo.JSONDecodable, Apollo.JSONEncodable {}"
 exports[`Swift code generation #typeDeclarationForGraphQLType() should generate a struct declaration for a GraphQLInputObjectType 1`] = `
 "/// The input object sent when someone is creating a new review
 public struct ReviewInput: GraphQLMapConvertible {
-  public var graphQLMap: GraphQLMap
+  /// 0-5 stars
+  public var stars: Int
+  /// Comment about the movie, optional
+  public var commentary: Optional<String?>
+  /// Favorite color, optional
+  public var favoriteColor: Optional<ColorInput?>
 
   public init(stars: Int, commentary: Optional<String?> = nil, favoriteColor: Optional<ColorInput?> = nil) {
-    graphQLMap = [\\"stars\\": stars, \\"commentary\\": commentary, \\"favorite_color\\": favoriteColor]
+    self.stars = stars
+    self.commentary = commentary
+    self.favoriteColor = favoriteColor
+  }
+
+  public var graphQLMap: GraphQLMap {
+    return [\\"stars\\": stars, \\"commentary\\": commentary, \\"favorite_color\\": favoriteColor]
   }
 }"
 `;
