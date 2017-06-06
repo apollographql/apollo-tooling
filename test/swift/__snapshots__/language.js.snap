@@ -5,9 +5,9 @@ exports[`Swift code generation: Basic language constructs should handle multi-li
 public struct Hero {
   /// A multiline comment
   /// on the hero's name.
-  public let name: String
+  public var name: String
   /// A multiline comment
   /// on the hero's age.
-  public let age: String
+  public var age: String
 }"
 `;

@@ -3,18 +3,29 @@ import {
   wrap,
 } from '../utilities/printing';
 
-function printDescription(generator, description) {
-  description && description.split('\n')
+export function comment(generator, comment) {
+  comment && comment.split('\n')
     .forEach(line => {
       generator.printOnNewline(`/// ${line.trim()}`);
     });
 }
 
+export function namespaceDeclaration(generator, namespace, closure) {
+  if (namespace) {
+    generator.printNewlineIfNeeded();
+    generator.printOnNewline(`/// ${namespace} namespace`);
+    generator.printOnNewline(`public enum ${namespace}`);
+    generator.pushScope({ typeName: namespace });
+    generator.withinBlock(closure);
+    generator.popScope();
+  } else {
+    closure();
+  }
+}
+
 export function classDeclaration(generator, { className, modifiers, superClass, adoptedProtocols = [], properties }, closure) {
   generator.printNewlineIfNeeded();
-  generator.printNewline();
-  generator.print(wrap('', join(modifiers, ' '), ' '));
-  generator.print(`class ${ className }`);
+  generator.printOnNewline(wrap('', join(modifiers, ' '), ' ') + `class ${className}`);
   generator.print(wrap(': ', join([superClass, ...adoptedProtocols], ', ')));
   generator.pushScope({ typeName: className });
   generator.withinBlock(closure);
@@ -23,7 +34,7 @@ export function classDeclaration(generator, { className, modifiers, superClass, 
 
 export function structDeclaration(generator, { structName, description, adoptedProtocols = [] }, closure) {
   generator.printNewlineIfNeeded();
-  printDescription(generator, description);
+  comment(generator, description);
   generator.printOnNewline(`public struct ${structName}`);
   generator.print(wrap(': ', join(adoptedProtocols, ', ')));
   generator.pushScope({ typeName: structName });
@@ -32,8 +43,8 @@ export function structDeclaration(generator, { structName, description, adoptedP
 }
 
 export function propertyDeclaration(generator, { propertyName, typeName, description }) {
-  printDescription(generator, description);
-  generator.printOnNewline(`public let ${propertyName}: ${typeName}`);
+  comment(generator, description);
+  generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
 }
 
 export function propertyDeclarations(generator, properties) {

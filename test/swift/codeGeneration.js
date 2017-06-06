@@ -17,9 +17,12 @@ import {
   initializerDeclarationForProperties,
   structDeclarationForFragment,
   structDeclarationForSelectionSet,
-  dictionaryLiteralForFieldArguments,
   typeDeclarationForGraphQLType,
 } from '../../src/swift/codeGeneration';
+
+import {
+  dictionaryLiteralForFieldArguments,
+} from '../../src/swift/values';
 
 import { loadSchema } from '../../src/loading';
 const schema = loadSchema(require.resolve('../starwars/schema.json'));
@@ -397,7 +400,7 @@ describe('Swift code generation', function() {
       const fieldArguments = operations['FieldArgumentsWithInputObjects'].fields[0].args;
       const dictionaryLiteral = dictionaryLiteralForFieldArguments(fieldArguments);
 
-      expect(dictionaryLiteral).toBe('["episode": "JEDI", "review": ["stars": 2, "commentary": reader.variables["commentary"], "favorite_color": ["red": reader.variables["red"], "blue": 100, "green": 50]]]');
+      expect(dictionaryLiteral).toBe('["episode": "JEDI", "review": ["stars": 2, "commentary": Variable("commentary"), "favorite_color": ["red": Variable("red"), "blue": 100, "green": 50]]]');
     });
   });
 

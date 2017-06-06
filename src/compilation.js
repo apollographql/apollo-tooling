@@ -7,6 +7,7 @@ import {
   isAbstractType,
   isEqualType,
   isTypeSubTypeOf,
+  doTypesOverlap,
   Kind,
   TypeInfo,
   isType,
@@ -30,7 +31,10 @@ import {
   getOperationRootType,
   getFieldDef,
   valueFromValueNode,
-  filePathForNode
+  filePathForNode,
+  sourceAt,
+  withTypenameFieldAddedWhereNeeded,
+  isBuiltInScalarType
 } from './utilities/graphql';
 
 import {
@@ -40,16 +44,14 @@ import {
   indent
 } from './utilities/printing';
 
-const builtInScalarTypes = new Set([GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID]);
-
-function isBuiltInScalarType(type) {
-  return builtInScalarTypes.has(type);
-}
-
 // Parts of this code are adapted from graphql-js
 
-export function compileToIR(schema, document, options) {
-  const compiler = new Compiler(schema, document);
+export function compileToIR(schema, document, options = { mergeInFieldsFromFragmentSpreads: true }) {
+  if (options.addTypename) {
+    document = withTypenameFieldAddedWhereNeeded(schema, document);
+  }
+
+  const compiler = new Compiler(schema, document, options);
 
   const operations = Object.create(null);
 
@@ -69,8 +71,9 @@ export function compileToIR(schema, document, options) {
 }
 
 export class Compiler {
-  constructor(schema, document) {
+  constructor(schema, document, options) {
     this.schema = schema;
+    this.options = options;
 
     this.typesUsedSet = new Set();
 
@@ -130,7 +133,7 @@ export class Compiler {
       return { name, type };
     });
 
-    const source = print(withTypenameFieldAddedWhereNeeded(this.schema, operationDefinition));
+    const source = print(operationDefinition);
     const rootType = getOperationRootType(this.schema, operationDefinition);
 
     const groupedVisitedFragmentSet = new Map();
@@ -140,14 +143,14 @@ export class Compiler {
     const { fields } = this.resolveFields(rootType, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet);
     const fragmentsReferenced = Object.keys(fragmentsReferencedSet);
 
-    return { filePath, operationName, operationType, variables, source, fields, fragmentsReferenced };
+    return { filePath, operationName, operationType, rootType, variables, source, fields, fragmentsReferenced };
   }
 
   compileFragment(fragmentDefinition) {
     const filePath = filePathForNode(fragmentDefinition);
     const fragmentName = fragmentDefinition.name.value;
 
-    const source = print(withTypenameFieldAddedWhereNeeded(this.schema, fragmentDefinition));
+    const source = print(fragmentDefinition);
 
     const typeCondition = typeFromAST(this.schema, fragmentDefinition.typeCondition);
     const possibleTypes = this.possibleTypesForType(typeCondition)
@@ -200,10 +203,8 @@ export class Compiler {
             typeFromAST(this.schema, typeCondition) :
             parentType;
 
+          if (!doTypesOverlap(this.schema, inlineFragmentType, parentType)) continue;
           const effectiveType = parentType instanceof GraphQLObjectType ? parentType : inlineFragmentType;
-          if (inlineFragmentType !== effectiveType && !isTypeProperSuperTypeOf(this.schema, inlineFragmentType, effectiveType)) {
-            break;
-          }
 
           this.collectFields(
             effectiveType,
@@ -233,12 +234,13 @@ export class Compiler {
             visitedFragmentSet[fragmentName] = true;
           }
 
+          if (!doTypesOverlap(this.schema, fragmentType, parentType)) continue;
           const effectiveType = parentType instanceof GraphQLObjectType ? parentType : fragmentType;
 
           this.collectFields(
             effectiveType,
             fragment.selectionSet,
-            null,
+            this.options.mergeInFieldsFromFragmentSpreads ? groupedFieldSet : null,
             groupedVisitedFragmentSet
           );
           break;
@@ -408,36 +410,8 @@ export class Compiler {
   }
 }
 
-const typenameField = { kind: Kind.FIELD, name: { kind: Kind.NAME, value: '__typename' } };
-
-function withTypenameFieldAddedWhereNeeded(schema, ast) {
-  function isOperationRootType(type) {
-    return type === schema.getQueryType() ||
-      type === schema.getMutationType() ||
-      type === schema.getSubscriptionType();
-  }
-
-  const typeInfo = new TypeInfo(schema);
-
-  return visit(ast, visitWithTypeInfo(typeInfo, {
-    leave: {
-      SelectionSet: node => {
-        const parentType = typeInfo.getParentType();
-
-        if (!isOperationRootType(parentType)) {
-          return { ...node, selections: [typenameField, ...node.selections] };
-        }
-      }
-    }
-  }));
-}
-
-function sourceAt(location) {
-  return location.source.body.slice(location.start, location.end);
-}
-
 function argumentsFromAST(args) {
-  return args.map(arg => {
+  return args && args.map(arg => {
     return { name: arg.name.value, value: valueFromValueNode(arg.value) };
   });
 }
