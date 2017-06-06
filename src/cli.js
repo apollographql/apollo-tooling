@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import './env-setup';
+
 import glob from 'glob';
 import process from 'process';
 import path from 'path';
