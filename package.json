@@ -17,7 +17,7 @@
   "author": "Martijn Walraven <martijn@martijnwalraven.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=4.0"
+    "node": ">=6.0"
   },
   "devDependencies": {
     "ansi-regex": "^2.1.1",
