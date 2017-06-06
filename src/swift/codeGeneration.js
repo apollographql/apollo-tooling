@@ -554,26 +554,26 @@ function structDeclarationForInputObjectType(generator, type) {
   const fields = Object.values(type.getFields());
   const properties = fields.map(field => propertyFromField(generator.context, field));
 
+  properties.forEach(property => {
+    if (property.isOptional) {
+      property.typeName = `Optional<${property.typeName}>`;
+    }
+  });
+
   structDeclaration(generator, { structName, description, adoptedProtocols }, () => {
-    generator.printOnNewline(`public var graphQLMap: GraphQLMap`);
+    propertyDeclarations(generator, properties);
 
     generator.printNewlineIfNeeded();
-    generator.printOnNewline(`public init`);
-    generator.print('(');
-    generator.print(join(properties.map(({ propertyName, type, typeName, isOptional }) => {
-      if (isOptional) {
-        return `${propertyName}: Optional<${typeName}> = nil`;
-      } else {
-        return `${propertyName}: ${typeName}`;
-      }
-    }), ', '));
-    generator.print(')');
 
+    initializerDeclarationForProperties(generator, properties);
+
+    generator.printNewlineIfNeeded();
+    generator.printOnNewline(`public var graphQLMap: GraphQLMap`);
     generator.withinBlock(() => {
       generator.printOnNewline(wrap(
-        `graphQLMap = [`,
+        `return [`,
         join(properties.map(({ name, propertyName }) => `"${name}": ${propertyName}`), ', ') || ':',
-        `]`
+        `]`,
       ));
     });
   });
