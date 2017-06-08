@@ -302,12 +302,17 @@ export class Compiler {
         field.isConditional = true;
       }
 
-      // Introspection fields do not have descriptions
-      if (fieldName !== '__typename') {
-        const description = parentType.getFields()[fieldName].description;
+      const fieldDef = parentType.getFields()[fieldName];
+      if (fieldDef) {
+        const description = fieldDef.description;
         if (description) {
           field.description = description
         }
+
+        Object.assign(field, {
+          isDeprecated: fieldDef.isDeprecated,
+          deprecationReason: fieldDef.deprecationReason,
+        });
       }
 
       const bareType = getNamedType(type);
