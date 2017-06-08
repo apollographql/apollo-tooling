@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "es2015",
+    "module": "es2015",
     "moduleResolution": "node",
     "sourceMap": true,
     "rootDir": ".",
-    "outDir": "lib",
+    "outDir": "es2015lib",
     "noLib": true,
     "allowSyntheticDefaultImports": true,
     "removeComments": true,

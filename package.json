@@ -5,9 +5,8 @@
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
   "scripts": {
-    "compile": "tsc",
-    "watch": "tsc --watch",
-    "prepublish": "rm -rf lib && npm run compile",
+    "compile": "tsc && babel es2015lib --out-dir lib --source-maps",
+    "prepublish": "rm -rf lib es2015lib && npm run compile",
     "test": "jest"
   },
   "repository": {
