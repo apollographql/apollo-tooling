@@ -839,10 +839,10 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
 
   public var \`private\`: String? {
     get {
-      return snapshot[\\"\`private\`\\"]! as! String?
+      return snapshot[\\"private\\"]! as! String?
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"\`private\`\\")
+      snapshot.updateValue(newValue, forKey: \\"private\\")
     }
   }
 }"
