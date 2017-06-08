@@ -378,6 +378,7 @@ export function structDeclarationForSelectionSet(
 
 function propertyDeclarationForField(generator, field) {
   const { kind, propertyName, typeName, type, isConditional, description } = propertyFromField(generator.context, field);
+  const responseName = field.responseName;
   const namedType = getNamedType(type);
 
   generator.printNewlineIfNeeded();
@@ -393,23 +394,23 @@ function propertyDeclarationForField(generator, field) {
         generator.printOnNewline("get");
         generator.withinBlock(() => {
           const snapshotTypeName = typeNameFromGraphQLType(generator.context, type, 'Snapshot', isOptional);
-          let getter = `return (snapshot["${propertyName}"]! as! ${snapshotTypeName})`;
+          let getter = `return (snapshot["${responseName}"]! as! ${snapshotTypeName})`;
           getter += mapExpressionForType(generator.context, type, `${structName}(snapshot: $0)`);
           generator.printOnNewline(getter);
         });
         generator.printOnNewline("set");
         generator.withinBlock(() => {
           let newValueExpression = "newValue" + mapExpressionForType(generator.context, type, `$0.snapshot`);
-          generator.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${propertyName}")`);
+          generator.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${responseName}")`);
 
         });
       } else {
         generator.printOnNewline("get");
         generator.withinBlock(() => {
           if (isOptional) {
-            generator.printOnNewline(`return (snapshot["${propertyName}"]! as! Snapshot?).flatMap { ${structName}(snapshot: $0) }`);
+            generator.printOnNewline(`return (snapshot["${responseName}"]! as! Snapshot?).flatMap { ${structName}(snapshot: $0) }`);
           } else {
-            generator.printOnNewline(`return ${structName}(snapshot: snapshot["${propertyName}"]! as! Snapshot)`);
+            generator.printOnNewline(`return ${structName}(snapshot: snapshot["${responseName}"]! as! Snapshot)`);
           }
         });
         generator.printOnNewline("set");
@@ -420,17 +421,17 @@ function propertyDeclarationForField(generator, field) {
           } else {
             newValueExpression = 'newValue.snapshot';
           }
-          generator.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${propertyName}")`);
+          generator.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${responseName}")`);
         });
       }
     } else {
       generator.printOnNewline("get");
       generator.withinBlock(() => {
-        generator.printOnNewline(`return snapshot["${propertyName}"]! as! ${typeName}`);
+        generator.printOnNewline(`return snapshot["${responseName}"]! as! ${typeName}`);
       });
       generator.printOnNewline("set");
       generator.withinBlock(() => {
-        generator.printOnNewline(`snapshot.updateValue(newValue, forKey: "${propertyName}")`);
+        generator.printOnNewline(`snapshot.updateValue(newValue, forKey: "${responseName}")`);
       });
     }
   });
