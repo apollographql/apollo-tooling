@@ -39,7 +39,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var createReview: CreateReview? {
       get {
-        return CreateReview(snapshot: snapshot[\\"createReview\\"]! as! Snapshot)
+        return (snapshot[\\"createReview\\"]! as! Snapshot?).flatMap { CreateReview(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"createReview\\")
@@ -122,7 +122,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return Hero(snapshot: snapshot[\\"hero\\"]! as! Snapshot)
+        return (snapshot[\\"hero\\"]! as! Snapshot?).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
@@ -247,7 +247,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return Hero(snapshot: snapshot[\\"hero\\"]! as! Snapshot)
+        return (snapshot[\\"hero\\"]! as! Snapshot?).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
@@ -396,7 +396,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return Hero(snapshot: snapshot[\\"hero\\"]! as! Snapshot)
+        return (snapshot[\\"hero\\"]! as! Snapshot?).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
@@ -498,7 +498,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return Hero(snapshot: snapshot[\\"hero\\"]! as! Snapshot)
+        return (snapshot[\\"hero\\"]! as! Snapshot?).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")

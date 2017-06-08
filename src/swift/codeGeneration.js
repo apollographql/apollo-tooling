@@ -406,7 +406,11 @@ function propertyDeclarationForField(generator, field) {
       } else {
         generator.printOnNewline("get");
         generator.withinBlock(() => {
-          generator.printOnNewline(`return ${structName}(snapshot: snapshot["${propertyName}"]! as! Snapshot)`);
+          if (isOptional) {
+            generator.printOnNewline(`return (snapshot["${propertyName}"]! as! Snapshot?).flatMap { ${structName}(snapshot: $0) }`);
+          } else {
+            generator.printOnNewline(`return ${structName}(snapshot: snapshot["${propertyName}"]! as! Snapshot)`);
+          }
         });
         generator.printOnNewline("set");
         generator.withinBlock(() => {
