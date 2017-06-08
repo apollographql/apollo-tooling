@@ -19,6 +19,13 @@
     "node": ">=6.0"
   },
   "devDependencies": {
+    "@types/change-case": "^2.3.1",
+    "@types/glob": "^5.0.30",
+    "@types/graphql": "^0.9.1",
+    "@types/inflected": "^1.1.29",
+    "@types/mkdirp": "^0.3.29",
+    "@types/node-fetch": "^1.6.7",
+    "@types/yargs": "^6.6.0",
     "ansi-regex": "^2.1.1",
     "babel-cli": "^6.24.1",
     "babel-jest": "^20.0.3",
@@ -29,7 +36,8 @@
     "jest": "^20.0.4",
     "jest-matcher-utils": "^20.0.0",
     "regenerator-runtime": "^0.10.5",
-    "ts-jest": "^20.0.5"
+    "ts-jest": "^20.0.5",
+    "typescript": "^2.3.4"
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
@@ -40,7 +48,6 @@
     "mkdirp": "^0.5.1",
     "node-fetch": "^1.5.3",
     "source-map-support": "^0.4.2",
-    "typescript": "^2.3.4",
     "yargs": "^8.0.1"
   },
   "jest": {
@@ -59,6 +66,9 @@
     "transform": {
       ".(js|ts)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "moduleFileExtensions": [ "ts", "js" ]
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ]
   }
 }
