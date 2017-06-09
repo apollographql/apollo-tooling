@@ -42,7 +42,12 @@ function serializeEnumType(type) {
     name,
     description,
     values: values.map(value => (
-      { name: value.name, description: value.description }
+      {
+        name: value.name,
+        description: value.description,
+        isDeprecated: value.isDeprecated,
+        deprecationReason: value.deprecationReason
+      }
     ))
   }
 }
