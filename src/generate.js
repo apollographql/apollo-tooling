@@ -17,8 +17,8 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
   validateQueryDocument(schema, document, target);
 
   if (target === 'swift') {
-    if (options.addTypename) {
-      console.warn('This option is a no-op for Swift because __typename is already added automatically');
+    if (!options.addTypename) {
+      console.warn('Apollo iOS requires the __typename field to be added automatically');
     }
     options.addTypename = true;
     options.mergeInFieldsFromFragmentSpreads = true;

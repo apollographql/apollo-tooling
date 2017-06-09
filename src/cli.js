@@ -131,8 +131,8 @@ yargs
       },
       "add-typename": {
         demand: false,
-        describe: "For non-swift targets, always add the __typename GraphQL introspection type when generating target types",
-        default: false
+        describe: "Automatically add the __typename field to every selection set",
+        default: true
       }
     },
     argv => {
