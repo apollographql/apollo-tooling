@@ -1,13 +1,11 @@
 {
   "compilerOptions": {
     "target": "es2015",
-    "module": "es2015",
+    "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
-    "rootDir": ".",
-    "outDir": "es2015lib",
-    "noLib": true,
-    "allowSyntheticDefaultImports": true,
+    "outDir": "lib",
+    "lib": ["es2017"],
     "removeComments": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
@@ -16,10 +14,7 @@
     "allowJs": true,
     "allowUnreachableCode": true
   },
-  "files": [
-    "node_modules/typescript/lib/lib.es2015.d.ts",
-    "node_modules/typescript/lib/lib.dom.d.ts",
-    "src/index.ts",
-    "src/cli.js"
-   ]
+  "include" : [
+    "src/**/*"
+  ]
 }

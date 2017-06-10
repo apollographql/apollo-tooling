@@ -1,9 +1,9 @@
 // Based on https://facebook.github.io/relay/docs/guides-babel-plugin.html#using-other-graphql-implementations
 
-import fetch from 'node-fetch';
-import fs from 'fs';
-import path from 'path';
-import https from 'https';
+import * as fetch from 'node-fetch';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as https from 'https';
 
 import {
   buildClientSchema,

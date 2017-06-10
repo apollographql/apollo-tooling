@@ -5,8 +5,9 @@
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
   "scripts": {
-    "compile": "tsc && babel es2015lib --out-dir lib --source-maps",
-    "prepublish": "rm -rf lib es2015lib && npm run compile",
+    "clean": "rm -rf lib",
+    "compile": "tsc",
+    "prepublish": "npm run clean && npm run compile",
     "test": "jest"
   },
   "repository": {
@@ -27,20 +28,13 @@
     "@types/node-fetch": "^1.6.7",
     "@types/yargs": "^6.6.0",
     "ansi-regex": "^2.1.1",
-    "babel-cli": "^6.24.1",
-    "babel-jest": "^20.0.3",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-preset-env": "^1.4.0",
-    "babel-register": "^6.24.1",
     "common-tags": "^1.3.0",
     "jest": "^20.0.4",
     "jest-matcher-utils": "^20.0.0",
-    "regenerator-runtime": "^0.10.5",
     "ts-jest": "^20.0.5",
     "typescript": "^2.3.4"
   },
   "dependencies": {
-    "babel-polyfill": "^6.23.0",
     "change-case": "^3.0.0",
     "glob": "^7.0.5",
     "graphql": "^0.10.0",
@@ -51,6 +45,14 @@
     "yargs": "^8.0.1"
   },
   "jest": {
+    "globals": {
+      "ts-jest": {
+        "skipBabel": true
+      }
+    },
+    "setupFiles": [
+      "<rootDir>/src/polyfills.js"
+    ],
     "testMatch": [
       "**/test/**/*.(js|ts)",
       "**/test/*.(js|ts)"
@@ -59,9 +61,6 @@
       "<rootDir>/node_modules/",
       "<rootDir>/lib/",
       "<rootDir>/test/starwars/"
-    ],
-    "setupFiles": [
-      "<rootDir>/src/env-setup.js"
     ],
     "transform": {
       ".(js|ts)": "<rootDir>/node_modules/ts-jest/preprocessor.js"

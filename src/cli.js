@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
-import './env-setup';
-
-import glob from 'glob';
-import process from 'process';
-import path from 'path';
-import yargs from 'yargs';
+import * as glob from 'glob';
+import * as process from 'process';
+import * as path from 'path';
+import * as yargs from 'yargs';
 
 import { downloadSchema, introspectSchema, printSchema, generate } from '.';
 import { ToolError, logError } from './errors'
