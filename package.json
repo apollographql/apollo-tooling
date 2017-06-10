@@ -31,7 +31,6 @@
     "common-tags": "^1.3.0",
     "jest": "^20.0.4",
     "jest-matcher-utils": "^20.0.0",
-    "ts-jest": "^20.0.5",
     "typescript": "^2.3.4"
   },
   "dependencies": {
@@ -60,10 +59,11 @@
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/lib/",
-      "<rootDir>/test/starwars/"
+      "<rootDir>/test/starwars/",
+      "<rootDir>/test/preprocessor.js"
     ],
     "transform": {
-      ".(js|ts)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      ".(js|ts)": "<rootDir>/test/preprocessor.js"
     },
     "moduleFileExtensions": [
       "ts",
