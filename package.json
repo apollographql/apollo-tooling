@@ -20,7 +20,6 @@
     "node": ">=6.0"
   },
   "devDependencies": {
-    "@types/change-case": "^2.3.1",
     "@types/glob": "^5.0.30",
     "@types/graphql": "^0.9.1",
     "@types/inflected": "^1.1.29",
