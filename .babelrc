@@ -3,11 +3,15 @@
     ["env", {
       "targets": {
         node: 4
-      }
+      },
+      "useBuiltIns": true
     }]
   ],
   "plugins": [
-    "transform-runtime",
-    "transform-object-rest-spread"
+    ["transform-object-rest-spread",
+      {
+        "useBuiltIns": true
+      }
+    ],
   ]
 }

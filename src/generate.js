@@ -21,6 +21,9 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
       console.warn('This option is a no-op for Swift because __typename is already added automatically');
     }
     options.addTypename = true;
+    options.mergeInFieldsFromFragmentSpreads = true;
+  } else {
+    options.mergeInFieldsFromFragmentSpreads = true;
   }
 
   const context = compileToIR(schema, document, options);
@@ -33,10 +36,10 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
       break;
     case 'ts':
     case 'typescript':
-      output = generateTypescriptSource(context, options);
+      output = generateTypescriptSource(context);
       break;
     case 'flow':
-      output = generateFlowSource(context, options);
+      output = generateFlowSource(context);
       break;
     case 'swift':
       output = generateSwiftSource(context, options);

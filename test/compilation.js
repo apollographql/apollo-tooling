@@ -624,7 +624,7 @@ describe('Compiling query documents', () => {
       .toEqual(['name', 'height']);
   });
 
-  test(`should keep correct field ordering even if field has been visited before for other type condition`, () => {
+  xtest(`should keep correct field ordering even if field has been visited before for other type condition`, () => {
     const document = parse(`
       fragment HeroDetails on Character {
         ... on Human {

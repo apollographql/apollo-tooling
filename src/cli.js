@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import './env-setup';
+
 import glob from 'glob';
 import process from 'process';
 import path from 'path';
@@ -126,11 +128,6 @@ yargs
         describe: "Prefix for custom scalars. (Implies that passthrough-custom-scalars is true if set)",
         default: '',
         normalize: true
-      },
-      "add-typename": {
-        demand: false,
-        describe: "For non-swift targets, always add the __typename GraphQL introspection type when generating target types",
-        default: false
       }
     },
     argv => {

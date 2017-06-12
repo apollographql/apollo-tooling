@@ -46,12 +46,12 @@ import {
 
 // Parts of this code are adapted from graphql-js
 
-export function compileToIR(schema, document, options = {}) {
+export function compileToIR(schema, document, options = { mergeInFieldsFromFragmentSpreads: true }) {
   if (options.addTypename) {
     document = withTypenameFieldAddedWhereNeeded(schema, document);
   }
 
-  const compiler = new Compiler(schema, document);
+  const compiler = new Compiler(schema, document, options);
 
   const operations = Object.create(null);
 
@@ -71,8 +71,9 @@ export function compileToIR(schema, document, options = {}) {
 }
 
 export class Compiler {
-  constructor(schema, document) {
+  constructor(schema, document, options) {
     this.schema = schema;
+    this.options = options;
 
     this.typesUsedSet = new Set();
 
@@ -95,7 +96,7 @@ export class Compiler {
 
   addTypeUsed(type) {
     if (this.typesUsedSet.has(type)) return;
-
+    
     if (type instanceof GraphQLEnumType ||
         type instanceof GraphQLInputObjectType ||
         (type instanceof GraphQLScalarType && !isBuiltInScalarType(type))) {
@@ -239,7 +240,7 @@ export class Compiler {
           this.collectFields(
             effectiveType,
             fragment.selectionSet,
-            groupedFieldSet,
+            this.options.mergeInFieldsFromFragmentSpreads ? groupedFieldSet : null,
             groupedVisitedFragmentSet
           );
           break;
@@ -301,12 +302,17 @@ export class Compiler {
         field.isConditional = true;
       }
 
-      // Introspection fields do not have descriptions
-      if (fieldName !== '__typename') {
-        const description = parentType.getFields()[fieldName].description;
+      const fieldDef = parentType.getFields()[fieldName];
+      if (fieldDef) {
+        const description = fieldDef.description;
         if (description) {
           field.description = description
         }
+
+        Object.assign(field, {
+          isDeprecated: fieldDef.isDeprecated,
+          deprecationReason: fieldDef.deprecationReason,
+        });
       }
 
       const bareType = getNamedType(type);
