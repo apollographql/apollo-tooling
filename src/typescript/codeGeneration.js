@@ -15,7 +15,7 @@ import {
 import  { isTypeProperSuperTypeOf } from '../utilities/graphql';
 
 import { camelCase, pascalCase } from 'change-case';
-import Inflector from 'inflected';
+import * as Inflector from 'inflected';
 
 import {
   join,

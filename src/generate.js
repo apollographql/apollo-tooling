@@ -1,4 +1,4 @@
-import fs from 'fs'
+import * as fs from 'fs'
 
 import { ToolError, logError } from './errors'
 import { loadSchema,  loadAndMergeQueryDocuments } from './loading'
