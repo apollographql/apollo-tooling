@@ -4,6 +4,7 @@ import {
 } from '../utilities/printing';
 
 import { propertyDeclarations } from './codeGeneration';
+import { typeNameFromGraphQLType } from './types';
 
 import { pascalCase } from 'change-case';
 
@@ -22,6 +23,8 @@ export function typeDeclaration(generator, { interfaceName, noBrackets }, closur
 }
 
 export function propertyDeclaration(generator, {
+  fieldName,
+  type,
   propertyName,
   typeName,
   description,
@@ -33,7 +36,7 @@ export function propertyDeclaration(generator, {
   generator.printOnNewline(description && `// ${description}`);
 
   if (closure) {
-    generator.printOnNewline(`${propertyName}:`);
+    generator.printOnNewline(`${fieldName || propertyName}:`);
     if (isNullable) {
       generator.print(' ?');
     }
@@ -44,7 +47,7 @@ export function propertyDeclaration(generator, {
       generator.print('Array<');
     }
 
-    generator.pushScope({ typeName: propertyName });
+    generator.pushScope({ typeName: fieldName || propertyName });
 
     generator.withinBlock(() => {
       closure();
@@ -58,17 +61,17 @@ export function propertyDeclaration(generator, {
     }
 
   } else {
-    generator.printOnNewline(`${propertyName}: ${typeName}`);
+    generator.printOnNewline(`${propertyName || fieldName}: ${typeName || typeNameFromGraphQLType(generator.context, type)}`);
   }
   generator.print(',');
 }
 
 export function propertySetsDeclaration(generator, property, propertySets, standalone = false) {
-  const { description, propertyName, typeName, isNullable, isArray } = property;
+  const { description, fieldName, propertyName, typeName, isNullable, isArray } = property;
 
   generator.printOnNewline(description && `// ${description}`);
   if (!standalone) {
-    generator.printOnNewline(`${propertyName}:`);
+    generator.printOnNewline(`${propertyName || fieldName}:`);
   }
 
   if (isNullable) {
@@ -79,7 +82,7 @@ export function propertySetsDeclaration(generator, property, propertySets, stand
     generator.print('Array< ');
   }
 
-  generator.pushScope({ typeName: propertyName });
+  generator.pushScope({ typeName: fieldName || propertyName });
 
   generator.withinBlock(() => {
     propertySets.forEach((propertySet, index, propertySets) => {

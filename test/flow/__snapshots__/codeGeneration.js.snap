@@ -6,6 +6,7 @@ exports[`Flow code generation #generateSource() should annotate custom scalars a
 
 export type CustomScalarQuery = {|
   misc: ? {|
+    __typename: string,
     date: ?any,
   |},
 |};"
@@ -27,26 +28,61 @@ export type HeroAndFriendsNamesQueryVariables = {|
 |};
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ? {|
-    // The name of the character
-    name: string,
-    // The friends of the character, or an empty list if they have none
-    friends: Array<{|
-      ...FriendFragment,
-      ...PersonFragment,
-    |}>,
-  |},
+  hero: ? ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array<  ( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array<  ( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    }
+  ),
 |};
 
-export type FriendFragment = {|
-  // The name of the character
-  name: string,
-|};
+export type FriendFragment = ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  );
 
-export type PersonFragment = {|
-  // The name of the character
-  name: string,
-|};"
+export type PersonFragment = ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  );"
 `;
 
 exports[`Flow code generation #generateSource() should generate correct typedefs with a single custom fragment 1`] = `
@@ -65,18 +101,50 @@ export type HeroAndFriendsNamesQueryVariables = {|
 |};
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ? {|
-    // The name of the character
-    name: string,
-    // The friends of the character, or an empty list if they have none
-    friends: Array<FriendFragment>,
-  |},
+  hero: ? ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array<  ( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array<  ( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    }
+  ),
 |};
 
-export type FriendFragment = {|
-  // The name of the character
-  name: string,
-|};"
+export type FriendFragment = ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  );"
 `;
 
 exports[`Flow code generation #generateSource() should generate fragmented query operations 1`] = `
@@ -84,20 +152,68 @@ exports[`Flow code generation #generateSource() should generate fragmented query
 //  This file was automatically generated and should not be edited.
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ? {|
-    ...HeroFriendsFragment,
-    // The name of the character
-    name: string,
-  |},
+  hero: ? ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array<  ( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array<  ( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    }
+  ),
 |};
 
-export type HeroFriendsFragment = {|
-  // The friends of the character, or an empty list if they have none
-  friends: ?Array< {|
-    // The name of the character
-    name: string,
-  |} >,
-|};"
+export type HeroFriendsFragment = ( {
+      __typename: \\"Human\\",
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array<  ( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    } | {
+      __typename: \\"Droid\\",
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array<  ( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    }
+  );"
 `;
 
 exports[`Flow code generation #generateSource() should generate mutation operations with complex input types 1`] = `
@@ -133,6 +249,7 @@ export type ReviewMovieMutationVariables = {|
 
 export type ReviewMovieMutation = {|
   createReview: ? {|
+    __typename: string,
     // The number of stars this review gave, 1-5
     stars: number,
     // Comment about the movie
@@ -146,19 +263,32 @@ exports[`Flow code generation #generateSource() should generate query operations
 //  This file was automatically generated and should not be edited.
 
 export type HeroAndDetailsQuery = {|
-  hero: ? {|
-    ...HeroDetailsFragment,
-    // The name of the character
-    name: string,
-  |},
+  hero: ? ( {
+      __typename: \\"Human\\",
+      // What this human calls themselves
+      name: string,
+      // Height in the preferred unit, default is meters
+      height: ?number,
+    } | {
+      __typename: \\"Droid\\",
+      // What others call this droid
+      name: string,
+      // This droid's primary function
+      primaryFunction: ?string,
+    }
+  ),
 |};
 
-export type HeroDetailsFragment = {|
-  // This droid's primary function
-  primaryFunction: ?string,
-  // Height in the preferred unit, default is meters
-  height: ?number,
-|};"
+export type HeroDetailsFragment = ( {
+      __typename: \\"Human\\",
+      // Height in the preferred unit, default is meters
+      height: ?number,
+    } | {
+      __typename: \\"Droid\\",
+      // This droid's primary function
+      primaryFunction: ?string,
+    }
+  );"
 `;
 
 exports[`Flow code generation #generateSource() should generate simple nested query operations including input variables 1`] = `
@@ -177,15 +307,38 @@ export type HeroAndFriendsNamesQueryVariables = {|
 |};
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ? {|
-    // The name of the character
-    name: string,
-    // The friends of the character, or an empty list if they have none
-    friends: ?Array< {|
+  hero: ? ( {
+      __typename: \\"Human\\",
       // The name of the character
       name: string,
-    |} >,
-  |},
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array<  ( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array<  ( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    }
+  ),
 |};"
 `;
 
@@ -194,10 +347,16 @@ exports[`Flow code generation #generateSource() should generate simple query ope
 //  This file was automatically generated and should not be edited.
 
 export type HeroNameQuery = {|
-  hero: ? {|
-    // The name of the character
-    name: string,
-  |},
+  hero: ? ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  ),
 |};"
 `;
 
@@ -217,9 +376,15 @@ export type HeroNameQueryVariables = {|
 |};
 
 export type HeroNameQuery = {|
-  hero: ? {|
-    // The name of the character
-    name: string,
-  |},
+  hero: ? ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  ),
 |};"
 `;
