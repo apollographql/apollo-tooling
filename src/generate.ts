@@ -31,7 +31,7 @@ export default function generate(
     options.addTypename = true;
     options.mergeInFieldsFromFragmentSpreads = true;
   } else {
-    options.mergeInFieldsFromFragmentSpreads = false;
+    options.mergeInFieldsFromFragmentSpreads = true;
   }
 
   const context = compileToIR(schema, document, options);
