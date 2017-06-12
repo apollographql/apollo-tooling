@@ -160,13 +160,13 @@ export function typeDeclarationForOperation(
   });
 
   properties.forEach(({ fragmentSpreads, inlineFragments, bareTypeName }) => {
-    if (fragmentSpreads.length > 0) {
+    if (fragmentSpreads && fragmentSpreads.length > 0) {
       fragmentSpreads.forEach(fragmentSpread => {
         fragmentsWithTypenameField[fragmentSpread] = true;
       });
     }
 
-    if (inlineFragments.length > 0) {
+    if (inlineFragments && inlineFragments.length > 0) {
       const fragmentName = `${pascalCase(bareTypeName)}From${operationName}`;
       handleInlineFragments(generator, fragmentName, inlineFragments);
     }
