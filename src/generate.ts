@@ -9,7 +9,15 @@ import { generateSource as generateSwiftSource } from './swift'
 import { generateSource as generateTypescriptSource } from './typescript'
 import { generateSource as generateFlowSource } from './flow'
 
-export default function generate(inputPaths, schemaPath, outputPath, target, options) {
+type TargetType = 'json' | 'swift' | 'ts' | 'typescript' | 'flow';
+
+export default function generate(
+  inputPaths: string[],
+  schemaPath: string,
+  outputPath: string,
+  target: TargetType,
+  options: any
+) {
   const schema = loadSchema(schemaPath);
 
   const document = loadAndMergeQueryDocuments(inputPaths);
@@ -29,7 +37,7 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
   const context = compileToIR(schema, document, options);
   Object.assign(context, options);
 
-  let output;
+  let output = '';
   switch (target) {
     case 'json':
       output = serializeToJSON(context);

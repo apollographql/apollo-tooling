@@ -6,12 +6,14 @@ import {
   buildClientSchema,
   Source,
   concatAST,
-  parse
+  parse,
+  DocumentNode,
+  GraphQLSchema
 } from 'graphql';
 
 import { ToolError, logError } from './errors'
 
-export function loadSchema(schemaPath) {
+export function loadSchema(schemaPath: string): GraphQLSchema {
   if (!fs.existsSync(schemaPath)) {
     throw new ToolError(`Cannot find GraphQL schema file: ${schemaPath}`);
   }
@@ -23,7 +25,7 @@ export function loadSchema(schemaPath) {
   return buildClientSchema((schemaData.data) ? schemaData.data : schemaData);
 }
 
-function extractDocumentFromJavascript(content) {
+function extractDocumentFromJavascript(content: string): string | null {
   const re = /gql`([^`]*)`/g;
   let match
   const matches = []
@@ -39,7 +41,7 @@ function extractDocumentFromJavascript(content) {
   return doc.length ? doc : null;
 }
 
-export function loadAndMergeQueryDocuments(inputPaths) {
+export function loadAndMergeQueryDocuments(inputPaths: string[]): DocumentNode {
   const sources = inputPaths.map(inputPath => {
     const body = fs.readFileSync(inputPath, 'utf8');
     if (!body) {
@@ -56,5 +58,5 @@ export function loadAndMergeQueryDocuments(inputPaths) {
     return new Source(body, inputPath);
   }).filter(source => source);
 
-  return concatAST(sources.map(source => parse(source)));
+  return concatAST((sources as Source[]).map(source => parse(source)));
 }
