@@ -1,5 +1,5 @@
-import {readFileSync} from 'fs';
-import path from 'path';
+import { readFileSync } from 'fs';
+import * as path from 'path';
 
 import { loadAndMergeQueryDocuments } from '../src/loading';
 

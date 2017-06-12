@@ -1,9 +1,9 @@
-import {readFileSync} from 'fs';
-import path from 'path';
+import { readFileSync } from 'fs';
+import * as path from 'path';
 
-import {loadSchema, loadAndMergeQueryDocuments} from '../src/loading';
+import { loadSchema, loadAndMergeQueryDocuments } from '../src/loading';
 
-import {validateQueryDocument} from '../src/validation';
+import { validateQueryDocument } from '../src/validation';
 
 const schema = loadSchema(require.resolve('./starwars/schema.json'));
 
