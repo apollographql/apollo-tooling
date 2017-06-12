@@ -55,7 +55,7 @@ import {
 
 import CodeGenerator from '../utilities/CodeGenerator';
 
-export function generateSource(context) {
+export function generateSource(context, options) {
   const generator = new CodeGenerator(context);
 
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
