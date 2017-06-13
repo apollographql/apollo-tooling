@@ -33,6 +33,8 @@ export function propertyDeclaration(generator, {
   inInterface,
   fragmentSpreads
 }, closure, open = ' {|', close = '|}') {
+  const name = fieldName || propertyName;
+
   generator.printOnNewline(description && `// ${description}`);
 
   if (closure) {
@@ -47,12 +49,11 @@ export function propertyDeclaration(generator, {
       generator.print('Array<');
     }
 
-    generator.pushScope({ typeName: fieldName || propertyName });
+    generator.pushScope({ typeName: name });
 
     generator.withinBlock(() => {
       closure();
     }, open, close);
-
 
     generator.popScope();
 
@@ -61,17 +62,18 @@ export function propertyDeclaration(generator, {
     }
 
   } else {
-    generator.printOnNewline(`${propertyName || fieldName}: ${typeName || typeNameFromGraphQLType(generator.context, type)}`);
+    generator.printOnNewline(`${name}: ${typeName || typeNameFromGraphQLType(generator.context, type)}`);
   }
   generator.print(',');
 }
 
 export function propertySetsDeclaration(generator, property, propertySets, standalone = false) {
   const { description, fieldName, propertyName, typeName, isNullable, isArray } = property;
+  const name = fieldName || propertyName;
 
   generator.printOnNewline(description && `// ${description}`);
   if (!standalone) {
-    generator.printOnNewline(`${propertyName || fieldName}:`);
+    generator.printOnNewline(`${name}:`);
   }
 
   if (isNullable) {
@@ -82,7 +84,7 @@ export function propertySetsDeclaration(generator, property, propertySets, stand
     generator.print('Array< ');
   }
 
-  generator.pushScope({ typeName: fieldName || propertyName });
+  generator.pushScope({ typeName: name });
 
   generator.withinBlock(() => {
     propertySets.forEach((propertySet, index, propertySets) => {
