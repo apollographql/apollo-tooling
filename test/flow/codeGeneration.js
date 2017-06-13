@@ -32,7 +32,7 @@ function setup(schema) {
 
   const compileFromSource = (source) => {
     const document = parse(source);
-    const context = compileToIR(schema, document, { mergeInFieldsFromFragmentSpreads: true, addTypename: true } );
+    const context = compileToIR(schema, document, { mergeInFieldsFromFragmentSpreads: true } );
     generator.context = context;
     return context;
   };

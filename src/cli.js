@@ -128,6 +128,12 @@ yargs
         describe: "Prefix for custom scalars. (Implies that passthrough-custom-scalars is true if set)",
         default: '',
         normalize: true
+      },
+      "add-typename": {
+        demand: false,
+        describe: "Add __typename to every selection set.",
+        default: '',
+        normalize: true
       }
     },
     argv => {

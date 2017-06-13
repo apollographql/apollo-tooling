@@ -23,6 +23,9 @@ export default function generate(inputPaths, schemaPath, outputPath, target, opt
     options.addTypename = true;
     options.mergeInFieldsFromFragmentSpreads = true;
   } else {
+    if (options.addTypename) {
+      options.addTypename = true;
+    }
     options.mergeInFieldsFromFragmentSpreads = true;
   }
 
