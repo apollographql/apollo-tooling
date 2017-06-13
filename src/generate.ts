@@ -31,6 +31,9 @@ export default function generate(
     options.addTypename = true;
     options.mergeInFieldsFromFragmentSpreads = true;
   } else {
+    if (options.addTypename) {
+      options.addTypename = true;
+    }
     options.mergeInFieldsFromFragmentSpreads = true;
   }
 
