@@ -302,17 +302,19 @@ export class Compiler {
         field.isConditional = true;
       }
 
-      const fieldDef = parentType.getFields()[fieldName];
-      if (fieldDef) {
-        const description = fieldDef.description;
-        if (description) {
-          field.description = description
-        }
+      if (parentType instanceof GraphQLObjectType || parentType instanceof GraphQLInterfaceType) {
+        const fieldDef = parentType.getFields()[fieldName];
+        if (fieldDef) {
+          const description = fieldDef.description;
+          if (description) {
+            field.description = description
+          }
 
-        Object.assign(field, {
-          isDeprecated: fieldDef.isDeprecated,
-          deprecationReason: fieldDef.deprecationReason,
-        });
+          Object.assign(field, {
+            isDeprecated: fieldDef.isDeprecated,
+            deprecationReason: fieldDef.deprecationReason,
+          });
+        }
       }
 
       const bareType = getNamedType(type);
