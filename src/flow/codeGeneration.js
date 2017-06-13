@@ -162,7 +162,6 @@ export function typeDeclarationForFragment(
     inlineFragments,
     fragmentSpreads,
     source,
-    isAbstract
   } = fragment;
 
   const interfaceName = `${pascalCase(fragmentName)}Fragment`;
@@ -245,7 +244,7 @@ export function propertyFromField(context, field, forceNullable) {
     return {
       ...property,
       typeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments, fieldType,
-      isArray, isNullable, isAbstract: isAbstractType(getNamedType(fieldType))
+      isArray, isNullable
     };
   } else {
     if (field.fieldName === '__typename') {
