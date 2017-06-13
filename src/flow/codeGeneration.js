@@ -144,7 +144,6 @@ export function typeDeclarationForOperation(
   const interfaceName = interfaceNameFromOperation({operationName, operationType});
   typeDeclaration(generator, {
     interfaceName,
-    extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
   }, () => {
     const properties = propertiesFromFields(generator.context, fields);
     propertyDeclarations(generator, properties, true);
@@ -173,6 +172,9 @@ export function typeDeclarationForFragment(
     if (isAbstractType(typeCondition)) {
       const propertySets = fragment.possibleTypes
         .map(type => {
+          // NOTE: inlineFragment currently consists of the merged fields
+          // from both inline fragments and fragment spreads.
+          // TODO: Rename inlineFragments in the IR.
           const inlineFragment = inlineFragments.find(inlineFragment => {
             return inlineFragment.typeCondition.toString() == type
           });
@@ -316,6 +318,11 @@ export function propertyDeclarations(generator, properties, inInterface) {
   });
 }
 
+/**
+ * This exists only to properly generate types for union/interface typed fields that
+ * do not have inline fragments. This currently can happen and the IR does give us
+ * a set of fields per type condition unless fragments are used within the selection set.
+ */
 function getPossibleTypes(generator, property) {
   return generator.context.schema._possibleTypeMap[getNamedType(property.fieldType || property.type)];
 }
