@@ -25,6 +25,7 @@ describe('TypeScript code generation', function() {
   let generator;
   let compileFromSource;
   let addFragment;
+  let addTypename;
 
   beforeEach(function() {
     const context = {

@@ -144,25 +144,12 @@ export function interfaceDeclarationForOperation(
   }
 ) {
   const interfaceName = interfaceNameFromOperation({operationName, operationType});
+  const properties = propertiesFromFields(generator.context, fields);
   interfaceDeclaration(generator, {
     interfaceName,
     extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
   }, () => {
-    const properties = propertiesFromFields(generator.context, fields);
     propertyDeclarations(generator, properties, true);
-  });
-
-  properties.forEach(({ fragmentSpreads, inlineFragments, bareTypeName }) => {
-    if (fragmentSpreads && fragmentSpreads.length > 0) {
-      fragmentSpreads.forEach(fragmentSpread => {
-        fragmentsWithTypenameField[fragmentSpread] = true;
-      });
-    }
-
-    if (inlineFragments && inlineFragments.length > 0) {
-      const objectName = `${pascalCase(bareTypeName)}From${operationName}`;
-      handleInlineFragments(generator, objectName, inlineFragments);
-    }
   });
 }
 
