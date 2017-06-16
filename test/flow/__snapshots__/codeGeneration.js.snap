@@ -85,7 +85,7 @@ exports[`Flow code generation #generateSource() __typename single fragment sprea
 //  This file was automatically generated and should not be edited.
 
 export type HeroNameQuery = {|
-  hero: HumanFriendsFragment,
+  hero: ?HumanFriendsFragment,
 |};
 
 export type HumanFriendsFragment = {|
@@ -131,7 +131,7 @@ export type HeroQueryQuery = {|
     // The friends of the character exposed as a connection with edges
     friendsConnection: {|
       // A list of the friends, as a convenience when edges are not needed.
-      friends: Array<CharacterFragmentFragment>,
+      friends: ?Array<CharacterFragmentFragment>,
     |},
   |},
 |};
@@ -177,7 +177,7 @@ export type HeroQueryQuery = {|
     // The friends of the character exposed as a connection with edges
     friendsConnection: {|
       // A list of the friends, as a convenience when edges are not needed.
-      friends: Array<CharacterFragmentFragment>,
+      friends: ?Array<CharacterFragmentFragment>,
     |},
   |},
 |};
@@ -188,7 +188,7 @@ export type CharacterFragmentFragmentOnHuman = {|
   // The home planet of the human, or null if unknown
   homePlanet: ?string,
   // This human's friends, or an empty list if they have none
-  friends: Array<OtherCharacterFragmentFragment>,
+  friends: ?Array<OtherCharacterFragmentFragment>,
 |};
 
 export type CharacterFragmentFragmentOnDroid = {|
@@ -312,7 +312,7 @@ export type HeroQueryQuery = {|
     // The friends of the character exposed as a connection with edges
     friendsConnection: {|
       // A list of the friends, as a convenience when edges are not needed.
-      friends: Array<CharacterFragmentFragment>,
+      friends: ?Array<CharacterFragmentFragment>,
     |},
   |},
 |};
@@ -356,7 +356,7 @@ export type HeroAndFriendsNamesQuery = {|
     // The name of the character
     name: string,
     // The friends of the character, or an empty list if they have none
-    friends: Array<{|
+    friends: ?Array<{|
       ...FriendFragment,
       ...PersonFragment,
     |}>,
@@ -394,7 +394,7 @@ export type HeroAndFriendsNamesQuery = {|
     // The name of the character
     name: string,
     // The friends of the character, or an empty list if they have none
-    friends: Array<FriendFragment>,
+    friends: ?Array<FriendFragment>,
   |},
 |};
 
