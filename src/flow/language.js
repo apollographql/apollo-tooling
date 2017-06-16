@@ -50,9 +50,9 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
     }
 
   } else if (fragmentSpreads && fragmentSpreads.length === 1) {
-    generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}${pascalCase(fragmentSpreads[0])}Fragment${isArray ? '>' : ''}`);
+    generator.printOnNewline(`${propertyName}: ${isNullable ? '?' : ''}${isArray ? 'Array<' : ''}${pascalCase(fragmentSpreads[0])}Fragment${isArray ? '>' : ''}`);
   } else if (fragmentSpreads && fragmentSpreads.length > 1) {
-    generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}`);
+    generator.printOnNewline(`${propertyName}: ${isNullable ? '?' : ''}${isArray ? 'Array<' : ''}`);
 
     generator.withinBlock(() => {
       fragmentSpreads.forEach(n => generator.printOnNewline(`...${pascalCase(n)}Fragment,`));
