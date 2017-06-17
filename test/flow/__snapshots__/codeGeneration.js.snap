@@ -28,12 +28,12 @@ export type HeroAndFriendsNamesQueryVariables = {|
 |};
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ? ( {
+  hero: ?( {
       __typename: \\"Human\\",
       // The name of the character
       name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array<  ( {
+      friends: ?Array< ( {
           __typename: \\"Human\\",
           // The name of the character
           name: string,
@@ -48,7 +48,7 @@ export type HeroAndFriendsNamesQuery = {|
       // The name of the character
       name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array<  ( {
+      friends: ?Array< ( {
           __typename: \\"Human\\",
           // The name of the character
           name: string,
@@ -101,12 +101,12 @@ export type HeroAndFriendsNamesQueryVariables = {|
 |};
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ? ( {
+  hero: ?( {
       __typename: \\"Human\\",
       // The name of the character
       name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array<  ( {
+      friends: ?Array< ( {
           __typename: \\"Human\\",
           // The name of the character
           name: string,
@@ -121,7 +121,7 @@ export type HeroAndFriendsNamesQuery = {|
       // The name of the character
       name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array<  ( {
+      friends: ?Array< ( {
           __typename: \\"Human\\",
           // The name of the character
           name: string,
@@ -152,12 +152,12 @@ exports[`Flow code generation #generateSource() should generate fragmented query
 //  This file was automatically generated and should not be edited.
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ? ( {
+  hero: ?( {
       __typename: \\"Human\\",
       // The name of the character
       name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array<  ( {
+      friends: ?Array< ( {
           __typename: \\"Human\\",
           // The name of the character
           name: string,
@@ -172,7 +172,7 @@ export type HeroAndFriendsNamesQuery = {|
       // The name of the character
       name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array<  ( {
+      friends: ?Array< ( {
           __typename: \\"Human\\",
           // The name of the character
           name: string,
@@ -189,7 +189,7 @@ export type HeroAndFriendsNamesQuery = {|
 export type HeroFriendsFragment = ( {
       __typename: \\"Human\\",
       // The friends of the character, or an empty list if they have none
-      friends: ?Array<  ( {
+      friends: ?Array< ( {
           __typename: \\"Human\\",
           // The name of the character
           name: string,
@@ -202,7 +202,7 @@ export type HeroFriendsFragment = ( {
     } | {
       __typename: \\"Droid\\",
       // The friends of the character, or an empty list if they have none
-      friends: ?Array<  ( {
+      friends: ?Array< ( {
           __typename: \\"Human\\",
           // The name of the character
           name: string,
@@ -263,7 +263,7 @@ exports[`Flow code generation #generateSource() should generate query operations
 //  This file was automatically generated and should not be edited.
 
 export type HeroAndDetailsQuery = {|
-  hero: ? ( {
+  hero: ?( {
       __typename: \\"Human\\",
       // What this human calls themselves
       name: string,
@@ -307,12 +307,12 @@ export type HeroAndFriendsNamesQueryVariables = {|
 |};
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ? ( {
+  hero: ?( {
       __typename: \\"Human\\",
       // The name of the character
       name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array<  ( {
+      friends: ?Array< ( {
           __typename: \\"Human\\",
           // The name of the character
           name: string,
@@ -327,7 +327,7 @@ export type HeroAndFriendsNamesQuery = {|
       // The name of the character
       name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array<  ( {
+      friends: ?Array< ( {
           __typename: \\"Human\\",
           // The name of the character
           name: string,
@@ -347,7 +347,7 @@ exports[`Flow code generation #generateSource() should generate simple query ope
 //  This file was automatically generated and should not be edited.
 
 export type HeroNameQuery = {|
-  hero: ? ( {
+  hero: ?( {
       __typename: \\"Human\\",
       // The name of the character
       name: string,
@@ -376,7 +376,7 @@ export type HeroNameQueryVariables = {|
 |};
 
 export type HeroNameQuery = {|
-  hero: ? ( {
+  hero: ?( {
       __typename: \\"Human\\",
       // The name of the character
       name: string,

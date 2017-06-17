@@ -27,6 +27,7 @@ import CodeGenerator from '../utilities/CodeGenerator';
 import {
   interfaceDeclaration,
   propertyDeclaration,
+  propertySetsDeclaration
 } from './language';
 
 import {
@@ -147,7 +148,6 @@ export function interfaceDeclarationForOperation(
   const properties = propertiesFromFields(generator.context, fields);
   interfaceDeclaration(generator, {
     interfaceName,
-    extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
   }, () => {
     propertyDeclarations(generator, properties, true);
   });
@@ -155,27 +155,69 @@ export function interfaceDeclarationForOperation(
 
 export function interfaceDeclarationForFragment(
   generator,
-  {
+  fragment
+) {
+  const {
     fragmentName,
     typeCondition,
     fields,
     inlineFragments,
     fragmentSpreads,
     source,
-  }
-) {
+  } = fragment;
+
   const interfaceName = `${pascalCase(fragmentName)}Fragment`;
 
   interfaceDeclaration(generator, {
     interfaceName,
-    extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
+    noBrackets: isAbstractType(typeCondition)
   }, () => {
-    const properties = propertiesFromFields(generator.context, fields)
-    .concat(...(inlineFragments || []).map(fragment =>
-      propertiesFromFields(generator.context, fragment.fields, true)
-    ));
+    if (isAbstractType(typeCondition)) {
+      const propertySets = fragment.possibleTypes
+        .map(type => {
+          // NOTE: inlineFragment currently consists of the merged fields
+          // from both inline fragments and fragment spreads.
+          // TODO: Rename inlineFragments in the IR.
+          const inlineFragment = inlineFragments.find(inlineFragment => {
+            return inlineFragment.typeCondition.toString() == type
+          });
 
-    propertyDeclarations(generator, properties, true);
+          if (inlineFragment) {
+            const fields = inlineFragment.fields.map(field => {
+              if (field.fieldName === '__typename') {
+                return {
+                  ...field,
+                  typeName: `"${inlineFragment.typeCondition}"`,
+                  type: { name: `"${inlineFragment.typeCondition}"` }
+                }
+              } else {
+                return field;
+              }
+            });
+
+            return propertiesFromFields(generator, fields);
+          } else {
+            const fragmentFields = fields.map(field => {
+              if (field.fieldName === '__typename') {
+                return {
+                  ...field,
+                  typeName: `"${type}"`,
+                  type: { name: `"${type}"` }
+                }
+              } else {
+                return field;
+              }
+            });
+
+            return propertiesFromFields(generator, fragmentFields);
+          }
+        });
+
+      propertySetsDeclaration(generator, fragment, propertySets, true);
+    } else {
+      const properties = propertiesFromFields(generator.context, fields)
+      propertyDeclarations(generator, properties, true);
+    }
   });
 }
 
@@ -194,8 +236,7 @@ export function propertyFromField(context, field, forceNullable) {
   const namedType = getNamedType(fieldType);
 
   if (isCompositeType(namedType)) {
-    const bareTypeName = pascalCase(Inflector.singularize(propertyName));
-    const typeName = typeNameFromGraphQLType(context, fieldType, bareTypeName);
+    const typeName = typeNameFromGraphQLType(context, fieldType);
     let isArray = false;
     if (fieldType instanceof GraphQLList) {
       isArray = true;
@@ -208,28 +249,84 @@ export function propertyFromField(context, field, forceNullable) {
     }
     return {
       ...property,
-      typeName, bareTypeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments, fieldType,
+      typeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments, fieldType,
       isArray, isNullable,
     };
   } else {
-    const typeName = typeNameFromGraphQLType(context, fieldType);
-    return { ...property, typeName, isComposite: false, fieldType };
+    if (field.fieldName === '__typename') {
+      const typeName = typeNameFromGraphQLType(context, fieldType, null, false);
+      return { ...property, typeName, isComposite: false, fieldType, isNullable: false };
+    } else {
+      const typeName = typeNameFromGraphQLType(context, fieldType);
+      return { ...property, typeName, isComposite: false, fieldType };
+    }
   }
 }
 
 export function propertyDeclarations(generator, properties, inInterface) {
   if (!properties) return;
   properties.forEach(property => {
-    if (property.fields && property.fields.length > 0 || property.inlineFragments && property.inlineFragments.length > 0) {
-      propertyDeclaration(generator, {...property, inInterface}, () => {
-        const properties = propertiesFromFields(generator.context, property.fields)
-        .concat(...(property.inlineFragments || []).map(fragment =>
-          propertiesFromFields(generator.context, fragment.fields, true)
-        ));
-        propertyDeclarations(generator, properties);
-      });
+    if (isAbstractType(getNamedType(property.type || property.fieldType))) {
+      const possibleTypes = getPossibleTypes(generator, property);
+      const propertySets = Object.keys(possibleTypes)
+        .map(type => {
+          const inlineFragment = property.inlineFragments.find(inlineFragment => {
+            return inlineFragment.typeCondition.toString() == type
+          });
+
+          if (inlineFragment) {
+            const fields = inlineFragment.fields.map(field => {
+              if (field.fieldName === '__typename') {
+                return {
+                  ...field,
+                  typeName: `"${inlineFragment.typeCondition}"`,
+                  type: { name: `"${inlineFragment.typeCondition}"` }
+                }
+              } else {
+                return field;
+              }
+            });
+
+            return propertiesFromFields(generator, fields);
+          } else {
+            const fields = property.fields.map(field => {
+              if (field.fieldName === '__typename') {
+                return {
+                  ...field,
+                  typeName: `"${type}"`,
+                  type: { name: `"${type}"` }
+                }
+              } else {
+                return field;
+              }
+            });
+
+            return propertiesFromFields(generator, fields);
+          }
+        });
+
+      propertySetsDeclaration(generator, property, propertySets);
     } else {
-      propertyDeclaration(generator, {...property, inInterface});
+      if (property.fields && property.fields.length > 0
+        || property.inlineFragments && property.inlineFragments.length > 0
+        || property.fragmentSpreads && property.fragmentSpreads.length > 0
+      ) {
+        propertyDeclaration(generator, property, () => {
+          const properties = propertiesFromFields(generator.context, property.fields);
+          propertyDeclarations(generator, properties);
+        });
+      } else {
+        propertyDeclaration(generator, {...property, inInterface});
+      }
     }
   });
+}
+
+/**
+ * This exists only to properly generate types for union/interface typed fields that
+ * do not have inline fragments. This currently can happen and the IR does give us
+ * a set of fields per type condition unless fragments are used within the selection set.
+ */
+function getPossibleTypes(generator, property) {
+  return generator.context.schema._possibleTypeMap[getNamedType(property.fieldType || property.type)];
 }

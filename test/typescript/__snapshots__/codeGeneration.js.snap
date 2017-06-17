@@ -11,23 +11,55 @@ export type Episode =
   \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-export interface HeroAndFriendsNamesQueryVariables {
-  episode: Episode | null;
-}
+export type HeroAndFriendsNamesQueryVariables = {
+  episode: Episode | null,
+};
 
-export interface HeroAndFriendsNamesQuery {
-  hero: {
-    // The name of the character
-    name: string,
-    // The friends of the character, or an empty list if they have none
-    friends: Array<FriendFragment>,
-  } | null;
-}
+export type HeroAndFriendsNamesQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    }
+  ) | null,
+};
 
-export interface FriendFragment {
-  // The name of the character
-  name: string;
-}
+export type FriendFragment = ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  );
 /* tslint:enable */
 "
 `;
@@ -36,20 +68,69 @@ exports[`TypeScript code generation #generateSource() should generate fragmented
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export interface HeroAndFriendsNamesQuery {
-  hero: HeroFriendsFragment & {
-    // The name of the character
-    name: string,
-  } | null;
-}
+export type HeroAndFriendsNamesQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    }
+  ) | null,
+};
 
-export interface HeroFriendsFragment {
-  // The friends of the character, or an empty list if they have none
-  friends: Array< {
-    // The name of the character
-    name: string,
-  } > | null;
-}
+export type HeroFriendsFragment = ( {
+      __typename: \\"Human\\",
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    } | {
+      __typename: \\"Droid\\",
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    }
+  );
 /* tslint:enable */
 "
 `;
@@ -65,34 +146,35 @@ export type Episode =
   \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-export interface ReviewInput {
+export type ReviewInput = {
   // 0-5 stars
-  stars: number;
+  stars: number,
   // Comment about the movie, optional
-  commentary: string | null;
+  commentary: string | null,
   // Favorite color, optional
-  favorite_color: ColorInput | null;
-}
+  favorite_color: ColorInput | null,
+};
 
-export interface ColorInput {
-  red: number;
-  green: number;
-  blue: number;
-}
+export type ColorInput = {
+  red: number,
+  green: number,
+  blue: number,
+};
 
-export interface ReviewMovieMutationVariables {
-  episode: Episode | null;
-  review: ReviewInput | null;
-}
+export type ReviewMovieMutationVariables = {
+  episode: Episode | null,
+  review: ReviewInput | null,
+};
 
-export interface ReviewMovieMutation {
-  createReview: {
+export type ReviewMovieMutation = {
+  createReview:  {
+    __typename: string,
     // The number of stars this review gave, 1-5
     stars: number,
     // Comment about the movie
     commentary: string | null,
-  } | null;
-}
+  } | null,
+};
 /* tslint:enable */
 "
 `;
@@ -101,19 +183,33 @@ exports[`TypeScript code generation #generateSource() should generate query oper
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export interface HeroAndDetailsQuery {
-  hero: HeroDetailsFragment & {
-    // The name of the character
-    name: string,
-  } | null;
-}
+export type HeroAndDetailsQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
+      // What this human calls themselves
+      name: string,
+      // Height in the preferred unit, default is meters
+      height: number | null,
+    } | {
+      __typename: \\"Droid\\",
+      // What others call this droid
+      name: string,
+      // This droid's primary function
+      primaryFunction: string | null,
+    }
+  ) | null,
+};
 
-export interface HeroDetailsFragment {
-  // This droid's primary function
-  primaryFunction: string | null;
-  // Height in the preferred unit, default is meters
-  height: number | null;
-}
+export type HeroDetailsFragment = ( {
+      __typename: \\"Human\\",
+      // Height in the preferred unit, default is meters
+      height: number | null,
+    } | {
+      __typename: \\"Droid\\",
+      // This droid's primary function
+      primaryFunction: string | null,
+    }
+  );
 /* tslint:enable */
 "
 `;
@@ -129,21 +225,44 @@ export type Episode =
   \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-export interface HeroAndFriendsNamesQueryVariables {
-  episode: Episode | null;
-}
+export type HeroAndFriendsNamesQueryVariables = {
+  episode: Episode | null,
+};
 
-export interface HeroAndFriendsNamesQuery {
-  hero: {
-    // The name of the character
-    name: string,
-    // The friends of the character, or an empty list if they have none
-    friends: Array< {
+export type HeroAndFriendsNamesQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
       // The name of the character
       name: string,
-    } > | null,
-  } | null;
-}
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    }
+  ) | null,
+};
 /* tslint:enable */
 "
 `;
@@ -152,12 +271,18 @@ exports[`TypeScript code generation #generateSource() should generate simple que
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export interface HeroNameQuery {
-  hero: {
-    // The name of the character
-    name: string,
-  } | null;
-}
+export type HeroNameQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  ) | null,
+};
 /* tslint:enable */
 "
 `;
@@ -173,16 +298,22 @@ export type Episode =
   \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-export interface HeroNameQueryVariables {
-  episode: Episode | null;
-}
+export type HeroNameQueryVariables = {
+  episode: Episode | null,
+};
 
-export interface HeroNameQuery {
-  hero: {
-    // The name of the character
-    name: string,
-  } | null;
-}
+export type HeroNameQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  ) | null,
+};
 /* tslint:enable */
 "
 `;

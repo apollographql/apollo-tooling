@@ -11,12 +11,12 @@ import { pascalCase } from 'change-case';
 export function typeDeclaration(generator, { interfaceName, noBrackets }, closure) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
-  generator.print(`export type ${ interfaceName } =`);
+  generator.print(`export type ${ interfaceName } = `);
   generator.pushScope({ typeName: interfaceName });
   if (noBrackets) {
     generator.withinBlock(closure, '', '');
   } else {
-    generator.withinBlock(closure, ' {|', '|}');
+    generator.withinBlock(closure, '{|', '|}');
   }
   generator.popScope();
   generator.print(';');
@@ -38,7 +38,7 @@ export function propertyDeclaration(generator, {
   generator.printOnNewline(description && `// ${description}`);
 
   if (closure) {
-    generator.printOnNewline(`${fieldName || propertyName}:`);
+    generator.printOnNewline(`${name}:`);
     if (isNullable) {
       generator.print(' ?');
     }
@@ -46,14 +46,12 @@ export function propertyDeclaration(generator, {
       if (!isNullable) {
         generator.print(' ');
       }
-      generator.print('Array<');
+      generator.print(' Array<');
     }
 
     generator.pushScope({ typeName: name });
 
-    generator.withinBlock(() => {
-      closure();
-    }, open, close);
+    generator.withinBlock(closure, open, close);
 
     generator.popScope();
 
@@ -95,7 +93,7 @@ export function propertySetsDeclaration(generator, property, propertySets, stand
         generator.print(' |');
       }
     })
-  }, ' (', ')');
+  }, '(', ')');
 
   generator.popScope();
 

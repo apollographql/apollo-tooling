@@ -42,7 +42,6 @@ export function generateSource(context) {
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
   ));
-
   Object.values(context.operations).forEach(operation => {
     interfaceVariablesDeclarationForOperation(generator, operation);
     typeDeclarationForOperation(generator, operation);

@@ -25,7 +25,6 @@ describe('TypeScript code generation', function() {
   let generator;
   let compileFromSource;
   let addFragment;
-  let addTypename;
 
   beforeEach(function() {
     const context = {
@@ -39,8 +38,10 @@ describe('TypeScript code generation', function() {
 
     compileFromSource = (source) => {
       const document = parse(source);
-      const context = compileToIR(schema, document, { mergeInFieldsFromFragmentSpreads: false });
-      context.addTypename = addTypename;
+      const context = compileToIR(schema, document, {
+        mergeInFieldsFromFragmentSpreads: true,
+        addTypename: true
+      });
       generator.context = context;
       return context;
     };
