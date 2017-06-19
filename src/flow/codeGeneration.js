@@ -78,7 +78,7 @@ function enumerationDeclaration(generator, type) {
 function structDeclarationForInputObjectType(
   generator,
   type
-  ) {
+) {
   const interfaceName = pascalCase(type.name);
   typeDeclaration(generator, {
     interfaceName,
