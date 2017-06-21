@@ -13,7 +13,7 @@ export function validateQueryDocument(schema, document, target) {
   const rules = [
     NoAnonymousQueries,
     NoTypenameAlias,
-    NoExplicitTypename,
+    ...(target === 'swift' ? [NoExplicitTypename] : []),
     ...specifiedRules.filter(rule => specifiedRulesToBeRemoved.includes(rule))
   ];
 
