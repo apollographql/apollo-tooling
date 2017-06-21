@@ -57,6 +57,89 @@ apollo-codegen generate **/*.graphql --schema schema.json --target flow --output
 
 If the source file for generation is a javascript or typescript file, the codegen will try to extrapolate the queries inside the [gql tag](https://github.com/apollographql/graphql-tag) templates.
 
+## Typescript and Flow
+
+When using `apollo-codegen` with Typescript and Flow, make sure to add the '__typename' introspection field to every selection set within your graphql operations. This is already done by default in `apollo-client`.
+
+`apollo-codegen` will assume the field is in resulting data in order to ensure type safety for `GraphQLUnionType` and `GraphQLInterfaceType`. 
+
+### Why is the __typename field required?
+
+Using the type information from the GraphQL schema, we can infer the possible types for a field of type `GraphQLUnionType` or `GraphQLInterfaceType` and provide that in the generated Flow/Typescript types. For instance, for a simple schema with types:
+
+```graphql
+interface Character {
+  name: String!
+}
+
+type Human implements Character {
+  homePlanet: String
+}
+
+type Droid implements Character {
+  primaryFunction: String
+}
+```
+
+We know that whenever we encounter a field of type `Character`, it could be either a Human or Droid, both with a potentially
+different set of fields. Within your UI, when interacting with a `Character` you'll want to make sure to handle both of these
+cases. This is easily done by using discriminant union (also known as disjoint unions), using the `__typename` field as the
+discriminant.
+
+For instance, if the following query is used to query characters:
+
+```graphql
+
+query Characters {
+  characters(episode: NEW_HOPE) {
+    name
+    
+    ... on Human {
+      homePlanet
+    }
+    
+    ... on Droid {
+      primaryFunction
+    }
+  }
+}
+```
+
+Apollo Codegen will generate a type that reflects the interface type.
+
+```javascript
+
+type CharactersQuery = {
+  characters: {
+    __typename: 'Human',
+    name: string,
+    homePlanet: ?string
+  } | {
+    __typename: 'Droid',
+    name: string,
+    primaryFunction: ?string
+  }
+}
+
+```
+
+This type can then be used as follows to ensure that all possible types are handled:
+
+```javascript
+// if `characters` is an array of Characters
+
+function CharacterFigures({ characters }: CharactersQuery) {
+  return characters.map(character => {
+    switch(character.__typename) {
+      case "Human":
+        return <HumanFigure homePlanet={character.homePlanet} name={character.name} />
+      case "Droid":
+        return <DroidFigure primaryFunction={character.homePlanet} name={character.name} />
+    }
+  });
+}
+```
+
 ## Contributing
 
 [![Build status](https://travis-ci.org/apollographql/apollo-codegen.svg?branch=master)](https://travis-ci.org/apollographql/apollo-codegen)
