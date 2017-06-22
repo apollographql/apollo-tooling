@@ -69,7 +69,7 @@ export function generateSource(context, options) {
     });
 
     Object.values(context.operations).forEach(operation => {
-      classDeclarationForOperation(generator, operation);
+      classDeclarationForOperation(generator, operation, Object.values(context.fragments));
     });
 
     Object.values(context.fragments).forEach(fragment => {
@@ -92,7 +92,8 @@ export function classDeclarationForOperation(
     fragmentSpreads,
     fragmentsReferenced,
     source,
-  }
+  },
+  fragments
 ) {
   let className;
   let protocol;
@@ -121,6 +122,22 @@ export function classDeclarationForOperation(
         multilineString(generator, source);
       });
     }
+
+    generator.printNewlineIfNeeded();
+
+    // TODO: add check for argument
+    generator.printOnNewline('public static let operationId =');
+    generator.withIndent(() => {
+      const sources = fragmentsReferenced.sort().map(referencedFragmentName => {
+        return fragments.find(fragment => {
+          return fragment.fragmentName == referencedFragmentName;
+        }).source;
+      });
+      sources.unshift(source);
+      multilineString(generator, sources.join('\n'));
+    });
+
+    generator.printNewlineIfNeeded();
 
     if (fragmentsReferenced && fragmentsReferenced.length > 0) {
       generator.printOnNewline('public static var requestString: String { return operationString');
