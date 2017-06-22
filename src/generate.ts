@@ -1,4 +1,4 @@
-import * as fs from 'fs'
+import * as fs from 'fs';
 
 import { ToolError, logError } from './errors'
 import { loadSchema,  loadAndMergeQueryDocuments } from './loading'
@@ -55,5 +55,10 @@ export default function generate(
     fs.writeFileSync(outputPath, output);
   } else {
     console.log(output);
+  }
+
+  if (context.operationIdsPath) {
+    const operationIdsMap = JSON.stringify(context.operationIdsMap, null, 2);
+    fs.writeFileSync(context.operationIdsPath, operationIdsMap);
   }
 }
