@@ -59,15 +59,19 @@ If the source file for generation is a javascript or typescript file, the codege
 
 ## Typescript and Flow
 
-When using `apollo-codegen` with Typescript and Flow, make sure to add the `__typename` introspection field to every selection set within your graphql operations.
+When using `apollo-codegen` with Typescript or Flow, make sure to add the `__typename` introspection field to every selection set within your graphql operations.
 
-If you're using a client like `apollo-client` that does this automatically for your GraphQL operations, pass in the -`-addTypename` option to `apollo-codegen` to make sure the generated Typescript and Flow types have the `__typename` field as well. This is required to ensure proper support for `GraphQLUnionType` and `GraphQLInterfaceType`. 
+If you're using a client like `apollo-client` that does this automatically for your GraphQL operations, pass in the -`-addTypename` option to `apollo-codegen` to make sure the generated Typescript and Flow types have the `__typename` field as well. This is required to ensure proper type generation support for `GraphQLUnionType` and `GraphQLInterfaceType` fields. 
 
 ### Why is the __typename field required?
 
-Using the type information from the GraphQL schema, we can infer the possible types for a field of type `GraphQLUnionType` or `GraphQLInterfaceType` and provide that in the generated Flow/Typescript types. For instance, for a simple schema with types:
+Using the type information from the GraphQL schema, we can infer the possible types for fields. However, in the case of a `GraphQLUnionType` or `GraphQLInterfaceType`, there are multiple types that are possible for that field. This is best modeled using a disjoint union with the `__typename`
+as the discriminant.
 
+For example, given a schema:
 ```graphql
+...
+
 interface Character {
   name: String!
 }
@@ -79,17 +83,16 @@ type Human implements Character {
 type Droid implements Character {
   primaryFunction: String
 }
+
+...
 ```
 
-We know that whenever we encounter a field of type `Character`, it could be either a Human or Droid, both with a potentially
-different set of fields. Within your UI, when interacting with a `Character` you'll want to make sure to handle both of these
-cases. This is easily done by using discriminant union (also known as disjoint unions), using the `__typename` field as the
-discriminant.
+Whenever a field of type `Character` is encountered, it could be either a Human or Droid. Human and Droid objects
+will have a different set of fields. Within your application code, when interacting with a `Character` you'll want to make sure to handle both of these cases.
 
-For instance, if the following query is used to query characters:
+Given this query:
 
 ```graphql
-
 query Characters {
   characters(episode: NEW_HOPE) {
     name
@@ -105,12 +108,11 @@ query Characters {
 }
 ```
 
-Apollo Codegen will generate a type that reflects the interface type.
+Apollo Codegen will generate a union type for Character.
 
 ```javascript
-
-type CharactersQuery = {
-  characters: {
+export type CharactersQuery = {
+  characters: Array<{
     __typename: 'Human',
     name: string,
     homePlanet: ?string
@@ -118,16 +120,13 @@ type CharactersQuery = {
     __typename: 'Droid',
     name: string,
     primaryFunction: ?string
-  }
+  }>
 }
-
 ```
 
 This type can then be used as follows to ensure that all possible types are handled:
 
 ```javascript
-// if `characters` is an array of Characters
-
 function CharacterFigures({ characters }: CharactersQuery) {
   return characters.map(character => {
     switch(character.__typename) {
