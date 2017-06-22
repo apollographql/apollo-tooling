@@ -127,17 +127,7 @@ export function classDeclarationForOperation(
 
     generator.printNewlineIfNeeded();
 
-    // TODO: add check for argument
-    const sources = fragmentsReferenced.sort().map(referencedFragmentName => {
-      return fragments.find(fragment => {
-        return fragment.fragmentName == referencedFragmentName;
-      }).source;
-    });
-    sources.unshift(source);
-    const combinedSource = sources.join('\n');
-    const idBits = sjcl.hash.sha256.hash(combinedSource);
-    const id = sjcl.codec.hex.fromBits(idBits)
-    generator.printOnNewline(`public static let operationId = "${id}"`);
+    operationId(generator, { fragmentsReferenced, source }, fragments);
 
     generator.printNewlineIfNeeded();
 
@@ -393,6 +383,20 @@ export function structDeclarationForSelectionSet(
       );
     });
   });
+}
+
+function operationId(generator,  { fragmentsReferenced, source }, fragments) {
+  // TODO: add check for argument
+  const sources = fragmentsReferenced.sort().map(referencedFragmentName => {
+    return fragments.find(fragment => {
+      return fragment.fragmentName == referencedFragmentName;
+    }).source;
+  });
+  sources.unshift(source);
+  const combinedSource = sources.join('\n');
+  const idBits = sjcl.hash.sha256.hash(combinedSource);
+  const id = sjcl.codec.hex.fromBits(idBits)
+  generator.printOnNewline(`public static let operationId = "${id}"`);
 }
 
 function propertyDeclarationForField(generator, field) {
