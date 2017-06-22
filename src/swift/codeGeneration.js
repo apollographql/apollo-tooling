@@ -53,6 +53,8 @@ import {
   fieldTypeEnum,
 } from './types';
 
+import * as sjcl from 'sjcl';
+
 import CodeGenerator from '../utilities/CodeGenerator';
 
 export function generateSource(context, options) {
@@ -126,16 +128,16 @@ export function classDeclarationForOperation(
     generator.printNewlineIfNeeded();
 
     // TODO: add check for argument
-    generator.printOnNewline('public static let operationId =');
-    generator.withIndent(() => {
-      const sources = fragmentsReferenced.sort().map(referencedFragmentName => {
-        return fragments.find(fragment => {
-          return fragment.fragmentName == referencedFragmentName;
-        }).source;
-      });
-      sources.unshift(source);
-      multilineString(generator, sources.join('\n'));
+    const sources = fragmentsReferenced.sort().map(referencedFragmentName => {
+      return fragments.find(fragment => {
+        return fragment.fragmentName == referencedFragmentName;
+      }).source;
     });
+    sources.unshift(source);
+    const combinedSource = sources.join('\n');
+    const idBits = sjcl.hash.sha256.hash(combinedSource);
+    const id = sjcl.codec.hex.fromBits(idBits)
+    generator.printOnNewline(`public static let operationId = "${id}"`);
 
     generator.printNewlineIfNeeded();
 
