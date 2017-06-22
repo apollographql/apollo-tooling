@@ -59,9 +59,9 @@ If the source file for generation is a javascript or typescript file, the codege
 
 ## Typescript and Flow
 
-When using `apollo-codegen` with Typescript and Flow, make sure to add the '__typename' introspection field to every selection set within your graphql operations. This is already done by default in `apollo-client`.
+When using `apollo-codegen` with Typescript and Flow, make sure to add the `__typename` introspection field to every selection set within your graphql operations.
 
-`apollo-codegen` will assume the field is in resulting data in order to ensure type safety for `GraphQLUnionType` and `GraphQLInterfaceType`. 
+If you're using a client like `apollo-client` that does this automatically for your GraphQL operations, pass in the -`-addTypename` option to `apollo-codegen` to make sure the generated Typescript and Flow types have the `__typename` field as well. This is required to ensure proper support for `GraphQLUnionType` and `GraphQLInterfaceType`. 
 
 ### Why is the __typename field required?
 
