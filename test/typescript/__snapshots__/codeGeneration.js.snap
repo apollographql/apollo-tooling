@@ -1,94 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TypeScript code generation #generateSource() __typename in an object 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-export interface HeroNameQuery {
-  hero: {
-    __typename: string,
-    // The name of the character
-    name: string,
-  } | null;
-}
-/* tslint:enable */
-"
-`;
-
-exports[`TypeScript code generation #generateSource() __typename in fragment spreads, allows for disjoint union via __typename string literals 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-export interface HeroNameQuery {
-  hero: HumanHeroFragment & DroidHeroFragment & {
-    __typename: string,
-  } | null;
-}
-
-export interface DroidHeroFragment {
-  // This droid's primary function
-  primaryFunction: string | null;
-}
-
-export interface HumanHeroFragment {
-  // The home planet of the human, or null if unknown
-  homePlanet: string | null;
-}
-/* tslint:enable */
-"
-`;
-
-exports[`TypeScript code generation #generateSource() __typename in inline fragments, allows for disjoint union via __typename string literals 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-export interface HeroNameQuery {
-  hero: HeroFromHeroName | null;
-}
-
-export interface HeroFromHeroNameOnDroid {
-  __typename: \\"Droid\\";
-  // This droid's friends, or an empty list if they have none
-  friends: Array< {
-    // The name of the character
-    name: string,
-  } > | null;
-}
-
-export interface HeroFromHeroNameOnHuman {
-  __typename: \\"Human\\";
-  // The home planet of the human, or null if unknown
-  homePlanet: string | null;
-}
-
-export type HeroFromHeroName =
-  | HeroFromHeroNameOnDroid
-  | HeroFromHeroNameOnHuman
-/* tslint:enable */
-"
-`;
-
-exports[`TypeScript code generation #generateSource() __typename single fragment spread 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-export interface HeroNameQuery {
-  hero: HumanFriendsFragment;
-}
-
-export interface HumanFriendsFragment {
-  // The friends of the character, or an empty list if they have none
-  friends: Array< {
-    __typename: string,
-    // The name of the character
-    name: string,
-  } > | null;
-}
-/* tslint:enable */
-"
-`;
-
-exports[`TypeScript code generation #generateSource() should correctly add typename to nested fragments on interfaces if addTypename is true 1`] = `
+exports[`TypeScript code generation #generateSource() should generate correct list with custom fragment 1`] = `
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
@@ -99,264 +11,55 @@ export type Episode =
   \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-export interface HeroQueryQueryVariables {
-  episode: Episode | null;
-}
+export type HeroAndFriendsNamesQueryVariables = {
+  episode: Episode | null,
+};
 
-export interface HeroQueryQuery {
-  hero: {
-    // The name of the character
-    name: string,
-    // The friends of the character exposed as a connection with edges
-    friendsConnection: {
-      // A list of the friends, as a convenience when edges are not needed.
-      friends: Array<CharacterFragmentFragment>,
-    },
-  } | null;
-}
+export type HeroAndFriendsNamesQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    }
+  ) | null,
+};
 
-export interface CharacterFragmentFragmentOnHuman {
-  __typename: \\"Human\\";
-  // What this human calls themselves
-  name: string;
-  // The home planet of the human, or null if unknown
-  homePlanet: string | null;
-}
-
-export interface CharacterFragmentFragmentOnDroid {
-  __typename: \\"Droid\\";
-  // What others call this droid
-  name: string;
-  // This droid's primary function
-  primaryFunction: string | null;
-}
-
-export type CharacterFragmentFragment =
-  | CharacterFragmentFragmentOnHuman
-  | CharacterFragmentFragmentOnDroid
-/* tslint:enable */
-"
-`;
-
-exports[`TypeScript code generation #generateSource() should correctly handle doubly nested fragments on interfaces 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-// The episodes in the Star Wars trilogy
-export type Episode =
-  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
-  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
-
-
-export interface HeroQueryQueryVariables {
-  episode: Episode | null;
-}
-
-export interface HeroQueryQuery {
-  hero: {
-    // The name of the character
-    name: string,
-    // The friends of the character exposed as a connection with edges
-    friendsConnection: {
-      // A list of the friends, as a convenience when edges are not needed.
-      friends: Array<CharacterFragmentFragment>,
-    },
-  } | null;
-}
-
-export interface CharacterFragmentFragmentOnHuman {
-  // What this human calls themselves
-  name: string;
-  // The home planet of the human, or null if unknown
-  homePlanet: string | null;
-  // This human's friends, or an empty list if they have none
-  friends: Array<OtherCharacterFragmentFragment>;
-}
-
-export interface CharacterFragmentFragmentOnDroid {
-  // What others call this droid
-  name: string;
-  // This droid's primary function
-  primaryFunction: string | null;
-}
-
-export type CharacterFragmentFragment =
-  | CharacterFragmentFragmentOnHuman
-  | CharacterFragmentFragmentOnDroid
-
-export interface OtherCharacterFragmentFragmentOnHuman {
-  // Height in the preferred unit, default is meters
-  height: number | null;
-}
-
-export interface OtherCharacterFragmentFragmentOnDroid {
-  // The movies this droid appears in
-  appearsIn: Array< Episode | null >;
-}
-
-export type OtherCharacterFragmentFragment =
-  | OtherCharacterFragmentFragmentOnHuman
-  | OtherCharacterFragmentFragmentOnDroid
-/* tslint:enable */
-"
-`;
-
-exports[`TypeScript code generation #generateSource() should correctly handle fragments on interfaces 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-// The episodes in the Star Wars trilogy
-export type Episode =
-  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
-  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
-
-
-export interface HeroQueryQueryVariables {
-  episode: Episode | null;
-}
-
-export interface HeroQueryQuery {
-  hero: HeroFromHeroQuery | null;
-}
-
-export interface HeroFromHeroQueryOnHuman {
-  // What this human calls themselves
-  name: string;
-  // The home planet of the human, or null if unknown
-  homePlanet: string | null;
-}
-
-export interface HeroFromHeroQueryOnDroid {
-  // What others call this droid
-  name: string;
-  // This droid's primary function
-  primaryFunction: string | null;
-}
-
-export type HeroFromHeroQuery =
-  | HeroFromHeroQueryOnHuman
-  | HeroFromHeroQueryOnDroid
-/* tslint:enable */
-"
-`;
-
-exports[`TypeScript code generation #generateSource() should correctly handle nested fragments on interfaces 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-// The episodes in the Star Wars trilogy
-export type Episode =
-  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
-  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
-
-
-export interface HeroQueryQueryVariables {
-  episode: Episode | null;
-}
-
-export interface HeroQueryQuery {
-  hero: {
-    // The name of the character
-    name: string,
-    // The friends of the character exposed as a connection with edges
-    friendsConnection: {
-      // A list of the friends, as a convenience when edges are not needed.
-      friends: Array<CharacterFragmentFragment>,
-    },
-  } | null;
-}
-
-export interface CharacterFragmentFragmentOnHuman {
-  __typename: \\"Human\\";
-  // What this human calls themselves
-  name: string;
-  // The home planet of the human, or null if unknown
-  homePlanet: string | null;
-}
-
-export interface CharacterFragmentFragmentOnDroid {
-  __typename: \\"Droid\\";
-  // What others call this droid
-  name: string;
-  // This droid's primary function
-  primaryFunction: string | null;
-}
-
-export type CharacterFragmentFragment =
-  | CharacterFragmentFragmentOnHuman
-  | CharacterFragmentFragmentOnDroid
-/* tslint:enable */
-"
-`;
-
-exports[`TypeScript code generation #generateSource() should generate correct typedefs with a multiple custom fragments 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-// The episodes in the Star Wars trilogy
-export type Episode =
-  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
-  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
-
-
-export interface HeroAndFriendsNamesQueryVariables {
-  episode: Episode | null;
-}
-
-export interface HeroAndFriendsNamesQuery {
-  hero: {
-    // The name of the character
-    name: string,
-    // The friends of the character, or an empty list if they have none
-    friends: Array<FriendFragment & PersonFragment>,
-  } | null;
-}
-
-export interface FriendFragment {
-  // The name of the character
-  name: string;
-}
-
-export interface PersonFragment {
-  // The name of the character
-  name: string;
-}
-/* tslint:enable */
-"
-`;
-
-exports[`TypeScript code generation #generateSource() should generate correct typedefs with a single custom fragment 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-// The episodes in the Star Wars trilogy
-export type Episode =
-  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
-  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
-
-
-export interface HeroAndFriendsNamesQueryVariables {
-  episode: Episode | null;
-}
-
-export interface HeroAndFriendsNamesQuery {
-  hero: {
-    // The name of the character
-    name: string,
-    // The friends of the character, or an empty list if they have none
-    friends: Array<FriendFragment>,
-  } | null;
-}
-
-export interface FriendFragment {
-  // The name of the character
-  name: string;
-}
+export type FriendFragment = ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  );
 /* tslint:enable */
 "
 `;
@@ -365,20 +68,69 @@ exports[`TypeScript code generation #generateSource() should generate fragmented
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export interface HeroAndFriendsNamesQuery {
-  hero: HeroFriendsFragment & {
-    // The name of the character
-    name: string,
-  } | null;
-}
+export type HeroAndFriendsNamesQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    }
+  ) | null,
+};
 
-export interface HeroFriendsFragment {
-  // The friends of the character, or an empty list if they have none
-  friends: Array< {
-    // The name of the character
-    name: string,
-  } > | null;
-}
+export type HeroFriendsFragment = ( {
+      __typename: \\"Human\\",
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    } | {
+      __typename: \\"Droid\\",
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    }
+  );
 /* tslint:enable */
 "
 `;
@@ -394,34 +146,35 @@ export type Episode =
   \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-export interface ReviewInput {
+export type ReviewInput = {
   // 0-5 stars
-  stars: number;
+  stars: number,
   // Comment about the movie, optional
-  commentary: string | null;
+  commentary: string | null,
   // Favorite color, optional
-  favorite_color: ColorInput | null;
-}
+  favorite_color: ColorInput | null,
+};
 
-export interface ColorInput {
-  red: number;
-  green: number;
-  blue: number;
-}
+export type ColorInput = {
+  red: number,
+  green: number,
+  blue: number,
+};
 
-export interface ReviewMovieMutationVariables {
-  episode: Episode | null;
-  review: ReviewInput | null;
-}
+export type ReviewMovieMutationVariables = {
+  episode: Episode | null,
+  review: ReviewInput | null,
+};
 
-export interface ReviewMovieMutation {
-  createReview: {
+export type ReviewMovieMutation = {
+  createReview:  {
+    __typename: string,
     // The number of stars this review gave, 1-5
     stars: number,
     // Comment about the movie
     commentary: string | null,
-  } | null;
-}
+  } | null,
+};
 /* tslint:enable */
 "
 `;
@@ -430,26 +183,33 @@ exports[`TypeScript code generation #generateSource() should generate query oper
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export interface HeroAndDetailsQuery {
-  hero: HeroDetailsFragment & {
-    // The name of the character
-    name: string,
-  } | null;
-}
+export type HeroAndDetailsQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
+      // What this human calls themselves
+      name: string,
+      // Height in the preferred unit, default is meters
+      height: number | null,
+    } | {
+      __typename: \\"Droid\\",
+      // What others call this droid
+      name: string,
+      // This droid's primary function
+      primaryFunction: string | null,
+    }
+  ) | null,
+};
 
-export interface HeroDetailsFragmentOnDroid {
-  // This droid's primary function
-  primaryFunction: string | null;
-}
-
-export interface HeroDetailsFragmentOnHuman {
-  // Height in the preferred unit, default is meters
-  height: number | null;
-}
-
-export type HeroDetailsFragment =
-  | HeroDetailsFragmentOnDroid
-  | HeroDetailsFragmentOnHuman
+export type HeroDetailsFragment = ( {
+      __typename: \\"Human\\",
+      // Height in the preferred unit, default is meters
+      height: number | null,
+    } | {
+      __typename: \\"Droid\\",
+      // This droid's primary function
+      primaryFunction: string | null,
+    }
+  );
 /* tslint:enable */
 "
 `;
@@ -465,21 +225,44 @@ export type Episode =
   \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-export interface HeroAndFriendsNamesQueryVariables {
-  episode: Episode | null;
-}
+export type HeroAndFriendsNamesQueryVariables = {
+  episode: Episode | null,
+};
 
-export interface HeroAndFriendsNamesQuery {
-  hero: {
-    // The name of the character
-    name: string,
-    // The friends of the character, or an empty list if they have none
-    friends: Array< {
+export type HeroAndFriendsNamesQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
       // The name of the character
       name: string,
-    } > | null,
-  } | null;
-}
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends:  Array<( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) > | null,
+    }
+  ) | null,
+};
 /* tslint:enable */
 "
 `;
@@ -488,12 +271,18 @@ exports[`TypeScript code generation #generateSource() should generate simple que
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export interface HeroNameQuery {
-  hero: {
-    // The name of the character
-    name: string,
-  } | null;
-}
+export type HeroNameQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  ) | null,
+};
 /* tslint:enable */
 "
 `;
@@ -509,103 +298,22 @@ export type Episode =
   \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
 
-export interface HeroNameQueryVariables {
-  episode: Episode | null;
-}
+export type HeroNameQueryVariables = {
+  episode: Episode | null,
+};
 
-export interface HeroNameQuery {
-  hero: {
-    // The name of the character
-    name: string,
-  } | null;
-}
-/* tslint:enable */
-"
-`;
-
-exports[`TypeScript code generation #generateSource() should handle complex fragments with type aliases 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-// The episodes in the Star Wars trilogy
-export type Episode =
-  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
-  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
-
-
-export interface HeroAndFriendsNamesQuery {
-  hero: SomethingFragment & {
-    // The name of the character
-    name: string,
-  } | null;
-  empireHero: SomethingFragment & {
-    // The name of the character
-    name: string,
-  } | null;
-}
-
-export interface SomethingFragmentOnHuman {
-  // This human's friends, or an empty list if they have none
-  friends: Array< FriendFragment | null > | null;
-}
-
-export interface FriendFragmentOnHuman {
-  // The home planet of the human, or null if unknown
-  homePlanet: string | null;
-}
-
-export interface FriendFragmentOnDroid {
-  // This droid's primary function
-  primaryFunction: string | null;
-}
-
-export type FriendFragment =
-  | FriendFragmentOnHuman
-  | FriendFragmentOnDroid
-
-export interface SomethingFragmentOnDroid {
-  // The movies this droid appears in
-  appearsIn: Array< Episode | null >;
-}
-
-export type SomethingFragment =
-  | SomethingFragmentOnHuman
-  | SomethingFragmentOnDroid
-/* tslint:enable */
-"
-`;
-
-exports[`TypeScript code generation #generateSource() should handle multi-fragmented query operations 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-// The episodes in the Star Wars trilogy
-export type Episode =
-  \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
-  \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
-
-
-export interface HeroAndFriendsNamesQuery {
-  hero: HeroFriendsFragment & HeroAppearsFragment & {
-    // The name of the character
-    name: string,
-  } | null;
-}
-
-export interface HeroFriendsFragment {
-  // The friends of the character, or an empty list if they have none
-  friends: Array< {
-    // The name of the character
-    name: string,
-  } > | null;
-}
-
-export interface HeroAppearsFragment {
-  // The movies this character appears in
-  appearsIn: Array< Episode | null >;
-}
+export type HeroNameQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  ) | null,
+};
 /* tslint:enable */
 "
 `;
