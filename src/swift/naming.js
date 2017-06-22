@@ -85,7 +85,3 @@ export function propertyFromFragmentSpread(context, fragmentSpread) {
 function isMetaFieldName(name) {
   return name.startsWith("__");
 }
-
-function isMetaFieldName(name) {
-  return name.startsWith("__");
-}
