@@ -130,7 +130,8 @@ yargs
       "add-typename": {
         demand: false,
         describe: "Automatically add the __typename field to every selection set",
-        default: true
+        default: '',
+        normalize: true
       }
     },
     argv => {

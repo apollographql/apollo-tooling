@@ -3,26 +3,42 @@ import {
   wrap,
 } from '../utilities/printing';
 
+import { propertyDeclarations } from './codeGeneration';
+import { typeNameFromGraphQLType } from './types';
+
 import { pascalCase } from 'change-case';
 
 export function typeDeclaration(generator, { interfaceName, noBrackets }, closure) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
-  generator.print(`export type ${ interfaceName } =`);
+  generator.print(`export type ${ interfaceName } = `);
   generator.pushScope({ typeName: interfaceName });
-  if (!noBrackets) {
-    generator.withinBlock(closure, ' {|', '|}');
-  } else {
+  if (noBrackets) {
     generator.withinBlock(closure, '', '');
+  } else {
+    generator.withinBlock(closure, '{|', '|}');
   }
   generator.popScope();
   generator.print(';');
 }
 
-export function propertyDeclaration(generator, { propertyName, typeName, description, isArray, isNullable, inInterface, fragmentSpreads }, closure) {
+export function propertyDeclaration(generator, {
+  fieldName,
+  type,
+  propertyName,
+  typeName,
+  description,
+  isArray,
+  isNullable,
+  inInterface,
+  fragmentSpreads
+}, closure, open = ' {|', close = '|}') {
+  const name = fieldName || propertyName;
+
   generator.printOnNewline(description && `// ${description}`);
+
   if (closure) {
-    generator.printOnNewline(`${propertyName}:`);
+    generator.printOnNewline(`${name}:`);
     if (isNullable) {
       generator.print(' ?');
     }
@@ -30,18 +46,12 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
       if (!isNullable) {
         generator.print(' ');
       }
-      generator.print('Array<');
+      generator.print(' Array<');
     }
 
-    generator.pushScope({ typeName: propertyName });
+    generator.pushScope({ typeName: name });
 
-    generator.withinBlock(() => {
-      if (fragmentSpreads && fragmentSpreads.length > 0) {
-        fragmentSpreads.forEach(n => generator.printOnNewline(`...${pascalCase(n)}Fragment,`));
-      }
-
-      closure();
-    }, ' {|', '|}');
+    generator.withinBlock(closure, open, close);
 
     generator.popScope();
 
@@ -49,31 +59,49 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
       generator.print(' >');
     }
 
-  } else if (fragmentSpreads && fragmentSpreads.length === 1) {
-    generator.printOnNewline(`${propertyName}: ${isNullable ? '?' : ''}${isArray ? 'Array<' : ''}${pascalCase(fragmentSpreads[0])}Fragment${isArray ? '>' : ''}`);
-  } else if (fragmentSpreads && fragmentSpreads.length > 1) {
-    generator.printOnNewline(`${propertyName}: ${isNullable ? '?' : ''}${isArray ? 'Array<' : ''}`);
-
-    generator.withinBlock(() => {
-      fragmentSpreads.forEach(n => generator.printOnNewline(`...${pascalCase(n)}Fragment,`));
-    }, '{|', '|}');
-
-    generator.print(isArray ? '>' : '');
   } else {
-    generator.printOnNewline(`${propertyName}: ${typeName}`);
+    generator.printOnNewline(`${name}: ${typeName || typeNameFromGraphQLType(generator.context, type)}`);
   }
   generator.print(',');
 }
 
-export function propertyDeclarations(generator, properties) {
-  if (!properties) return;
-  properties.forEach(property => propertyDeclaration(generator, property));
-}
+export function propertySetsDeclaration(generator, property, propertySets, standalone = false) {
+  const { description, fieldName, propertyName, typeName, isNullable, isArray } = property;
+  const name = fieldName || propertyName;
 
-export function unionDeclaration(generator, typeNames) {
-  if (!typeNames) throw new Error('Union Declaration requires types');
+  generator.printOnNewline(description && `// ${description}`);
+  if (!standalone) {
+    generator.printOnNewline(`${name}:`);
+  }
 
-  typeNames.forEach(typeName => {
-    generator.printOnNewline(`| ${typeName}`);
-  });
+  if (isNullable) {
+    generator.print(' ?');
+  }
+
+  if (isArray) {
+    generator.print('Array< ');
+  }
+
+  generator.pushScope({ typeName: name });
+
+  generator.withinBlock(() => {
+    propertySets.forEach((propertySet, index, propertySets) => {
+      generator.withinBlock(() => {
+        propertyDeclarations(generator, propertySet);
+      });
+      if (index !== propertySets.length - 1) {
+        generator.print(' |');
+      }
+    })
+  }, '(', ')');
+
+  generator.popScope();
+
+  if (isArray) {
+    generator.print(' >');
+  }
+
+  if (!standalone) {
+    generator.print(',');
+  }
 }

@@ -21,7 +21,7 @@ describe('Validation', () => {
     );
   });
 
-  test(`should throw an error for ExplicitTypename.graphql when the target is Swift`, () => {
+  test(`should throw an error for ExplicitTypename.graphql for the Swift target`, () => {
     const inputPaths = [
       path.join(__dirname, './starwars/ExplicitTypename.graphql'),
     ];
@@ -32,18 +32,6 @@ describe('Validation', () => {
     ).toThrow(
       'Validation of GraphQL query document failed'
     );
-  });
-
-  test(`should not throw an error for ExplicitTypename.graphql when the target is not Swift`, () => {
-    const inputPaths = [
-      path.join(__dirname, './starwars/ExplicitTypename.graphql'),
-    ];
-    const document = loadAndMergeQueryDocuments(inputPaths);
-
-    validateQueryDocument(schema, document, 'flow');
-    validateQueryDocument(schema, document, 'typescript');
-    validateQueryDocument(schema, document, 'ts');
-    validateQueryDocument(schema, document, 'json');
   });
 
   test(`should throw an error for TypenameAlias.graphql`, () => {

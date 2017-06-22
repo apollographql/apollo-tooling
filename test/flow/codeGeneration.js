@@ -30,10 +30,9 @@ function setup(schema) {
 
   const generator = new CodeGenerator(context);
 
-  const compileFromSource = (source, addTypename = false) => {
+  const compileFromSource = (source) => {
     const document = parse(source);
-    const context = compileToIR(schema, document, { mergeInFieldsFromFragmentSpreads: false } );
-    context.addTypename = addTypename;
+    const context = compileToIR(schema, document, { mergeInFieldsFromFragmentSpreads: true, addTypename: true } );
     generator.context = context;
     return context;
   };
@@ -47,111 +46,6 @@ function setup(schema) {
 
 describe('Flow code generation', function() {
   describe('#generateSource()', function() {
-    describe('__typename', function() {
-      test('in an object', function() {
-        const { compileFromSource } = setup(swapiSchema);
-        const context = compileFromSource(`
-          query HeroName {
-            hero {
-              __typename
-              name
-            }
-          }
-        `);
-
-        const source = generateSource(context);
-        expect(source).toMatchSnapshot();
-      });
-
-      // TODO: Enable after fixing operation
-      test.skip('in an operation', function() {
-        const { compileFromSource } = setup(swapiSchema);
-        const context = compileFromSource(`
-          query Hero {
-            ...Hero
-          }
-
-          fragment Hero on Query {
-            hero {
-              __typename
-              name
-            }
-          }
-        `);
-
-        const source = generateSource(context);
-        expect(source).toMatchSnapshot();
-      });
-
-      test('single fragment spread', () => {
-        const { compileFromSource } = setup(swapiSchema);
-        const context = compileFromSource(`
-          query HeroName {
-            hero {
-              ...humanFriends
-            }
-          }
-
-          fragment humanFriends on Character {
-            friends {
-              __typename
-              name
-            }
-          }
-        `);
-
-        const source = generateSource(context);
-        expect(source).toMatchSnapshot();
-      });
-
-      test('in fragment spreads, allows for disjoint union via __typename string literals', function() {
-        const { compileFromSource } = setup(swapiSchema);
-        const context = compileFromSource(`
-          query HeroName {
-            hero {
-              __typename
-              ...humanHero
-              ...droidHero
-            }
-          }
-
-          fragment droidHero on Droid {
-            primaryFunction
-          }
-
-          fragment humanHero on Human {
-            homePlanet
-          }
-        `);
-
-        const source = generateSource(context);
-        expect(source).toMatchSnapshot();
-      });
-
-      test('in inline fragments, allows for disjoint union via __typename string literals', function() {
-        const { compileFromSource } = setup(swapiSchema);
-        const context = compileFromSource(`
-          query HeroName {
-            hero {
-              __typename
-
-              ... on Droid {
-                friends {
-                  name
-                }
-              }
-              ... on Human {
-                homePlanet
-              }
-            }
-          }
-        `);
-
-        const source = generateSource(context);
-        expect(source).toMatchSnapshot();
-      });
-    });
-
     test(`should generate simple query operations`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
@@ -211,32 +105,6 @@ describe('Flow code generation', function() {
           friends {
             name
           }
-        }
-      `);
-
-      const source = generateSource(context);
-      expect(source).toMatchSnapshot();
-    });
-
-    test(`should handle multi-fragmented query operations`, function() {
-      const { compileFromSource } = setup(swapiSchema);
-      const context = compileFromSource(`
-        query HeroAndFriendsNames {
-          hero {
-            name
-            ...heroFriends
-            ...heroAppears
-          }
-        }
-
-        fragment heroFriends on Character {
-          friends {
-            name
-          }
-        }
-
-        fragment heroAppears on Character {
-          appearsIn
         }
       `);
 
@@ -330,43 +198,6 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test(`should handle complex fragments with type aliases`, function() {
-      const { compileFromSource } = setup(swapiSchema);
-      const context = compileFromSource(`
-        query HeroAndFriendsNames {
-          hero(episode: NEWHOPE) {
-            name
-            ...Something
-          }
-          empireHero: hero(episode: EMPIRE) {
-            name
-            ...Something
-          }
-        }
-
-        fragment Something on Character {
-          ... on Human {
-            friends {
-              ... on Human {
-                homePlanet
-              }
-
-              ... on Droid {
-                primaryFunction
-              }
-            }
-          }
-
-          ... on Droid {
-            appearsIn
-          }
-        }
-      `);
-
-      const source = generateSource(context);
-      expect(source).toMatchSnapshot();
-    });
-
     test(`should annotate custom scalars as string`, function() {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
@@ -378,170 +209,6 @@ describe('Flow code generation', function() {
       `);
 
       const source = generateSource(context);
-      expect(source).toMatchSnapshot();
-    });
-
-    test('should correctly handle fragments on interfaces', function() {
-      const {compileFromSource} = setup(swapiSchema);
-      const context = compileFromSource(
-        `
-        query HeroQuery($episode: Episode){
-          hero(episode: $episode) {
-            name
-            ... on Human {
-              homePlanet
-            }
-
-            ... on Droid {
-              primaryFunction
-            }
-          }
-        }
-      `
-      );
-
-      const source = generateSource(context);
-      expect(source).toMatchSnapshot();
-    });
-
-    test('should correctly handle fragment spreads on interfaces', function() {
-      const {compileFromSource} = setup(swapiSchema);
-      const context = compileFromSource(
-        `
-        query HeroQuery($episode: Episode){
-          hero(episode: $episode) {
-            name
-            ...humanFragment
-            ...droidFragment
-          }
-        }
-
-        fragment humanFragment on Human {
-          homePlanet
-        }
-
-        fragment droidFragment on Droid {
-          primaryFunction
-        }
-      `
-      );
-
-      const source = generateSource(context);
-      expect(source).toMatchSnapshot();
-    });
-
-    test('should correctly handle nested fragments on interfaces', function() {
-      const {compileFromSource} = setup(swapiSchema);
-      const context = compileFromSource(
-        `
-        query HeroQuery($episode: Episode){
-          hero(episode: $episode) {
-            name
-            friendsConnection {
-              friends {
-                ...CharacterFragment
-              }
-            }
-          }
-        }
-
-        fragment CharacterFragment on Character {
-          name
-
-          ... on Human {
-            homePlanet
-          }
-
-          ... on Droid {
-            primaryFunction
-          }
-        }
-      `
-      );
-
-      const source = generateSource(context);
-
-      expect(source).toMatchSnapshot();
-    });
-
-    test('should correctly add typename to nested fragments on interfaces if addTypename is true', function() {
-      const {compileFromSource} = setup(swapiSchema);
-      const context = compileFromSource(
-        `
-        query HeroQuery($episode: Episode){
-          hero(episode: $episode) {
-            name
-            friendsConnection {
-              friends {
-                ...CharacterFragment
-              }
-            }
-          }
-        }
-
-        fragment CharacterFragment on Character {
-          name
-
-          ... on Human {
-            homePlanet
-          }
-
-          ... on Droid {
-            primaryFunction
-          }
-        }
-      `
-      );
-
-      const source = generateSource(context, { addTypename: true });
-
-      expect(source).toMatchSnapshot();
-    });
-
-    test('should correctly handle doubly nested fragments on interfaces', function() {
-      const {compileFromSource} = setup(swapiSchema);
-      const context = compileFromSource(
-        `
-        query HeroQuery($episode: Episode) {
-          hero(episode: $episode) {
-            name
-            friendsConnection {
-              friends {
-                ...CharacterFragment
-              }
-            }
-          }
-        }
-
-        fragment CharacterFragment on Character {
-          name
-
-          ... on Human {
-            homePlanet
-            friends {
-              ...OtherCharacterFragment
-            }
-          }
-
-          ... on Droid {
-            primaryFunction
-          }
-        }
-
-        fragment OtherCharacterFragment on Character {
-          ... on Human {
-            height
-          }
-
-          ... on Droid {
-            appearsIn
-          }
-        }
-      `
-      );
-
-      const source = generateSource(context);
-
       expect(source).toMatchSnapshot();
     });
   });
