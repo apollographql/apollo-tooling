@@ -392,7 +392,7 @@ function operationId(generator,  { operationName, fragmentsReferenced, source },
   generator.printNewlineIfNeeded();
   const sources = fragmentsReferenced.sort().map(referencedFragmentName => {
     return fragments.find(fragment => {
-      return fragment.fragmentName == referencedFragmentName;
+      return fragment.fragmentName === referencedFragmentName;
     }).source;
   });
   sources.unshift(source);
