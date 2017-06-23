@@ -401,8 +401,8 @@ function operationId(generator,  { operationName, fragmentsReferenced, source },
   const id = sjcl.codec.hex.fromBits(idBits)
   generator.printOnNewline(`public static let operationId = "${id}"`);
 
-  generator.context.operationIdsMap[operationName] = {
-    id: id
+  generator.context.operationIdsMap[id] = {
+    name: operationName,
     source: combinedSource
   };
 }
