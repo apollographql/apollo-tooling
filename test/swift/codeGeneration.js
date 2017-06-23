@@ -60,7 +60,7 @@ describe('Swift code generation', function() {
 
   describe('#classDeclarationForOperation()', function() {
     test(`should generate a class declaration for a query with variables`, function() {
-      const { operations } = compileFromSource(`
+      const { operations, fragments } = compileFromSource(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
             name
@@ -68,12 +68,12 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['HeroName']);
+      classDeclarationForOperation(generator, operations['HeroName'], Object.values(fragments));
       expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a class declaration for a query with fragment spreads`, function() {
-      const { operations } = compileFromSource(`
+      const { operations, fragments } = compileFromSource(`
         query Hero {
           hero {
             ...HeroDetails
@@ -85,12 +85,12 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['Hero']);
+      classDeclarationForOperation(generator, operations['Hero'], Object.values(fragments));
       expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a class declaration for a query with conditional fragment spreads`, function() {
-      const { operations } = compileFromSource(`
+      const { operations, fragments } = compileFromSource(`
         query Hero {
           hero {
             ...DroidDetails
@@ -102,12 +102,12 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['Hero']);
+      classDeclarationForOperation(generator, operations['Hero'], Object.values(fragments));
       expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, function() {
-      const { operations } = compileFromSource(`
+      const { operations, fragments } = compileFromSource(`
         query Hero {
           hero {
             ... on Droid {
@@ -121,13 +121,13 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['Hero']);
+      classDeclarationForOperation(generator, operations['Hero'], Object.values(fragments));
 
       expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a class declaration for a mutation with variables`, function() {
-      const { operations } = compileFromSource(`
+      const { operations, fragments } = compileFromSource(`
         mutation CreateReview($episode: Episode) {
           createReview(episode: $episode, review: { stars: 5, commentary: "Wow!" }) {
             stars
@@ -136,7 +136,7 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['CreateReview']);
+      classDeclarationForOperation(generator, operations['CreateReview'], Object.values(fragments));
 
       expect(generator.output).toMatchSnapshot();
     });
