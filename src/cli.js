@@ -139,7 +139,7 @@ yargs
       },
       "operation-ids-path": {
         demand: false,
-        describe: "Path to a operation-id mapping file. If specified, also stores the ids (hashes) as properties on operation types [currently Swift-only]"
+        describe: "Path to a operation-id mapping file. If specified, also stores the ids (hashes) as properties on operation types [currently Swift-only]",
         default: null,
         normalize: true
       }
