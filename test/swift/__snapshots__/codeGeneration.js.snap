@@ -98,6 +98,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     \\"    }\\" +
     \\"  }\\" +
     \\"}\\"
+
   public static var requestString: String { return operationString.appending(HeroDetails.fragmentString) }
 
   public init() {
@@ -223,6 +224,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     \\"    ...DroidDetails\\" +
     \\"  }\\" +
     \\"}\\"
+
   public static var requestString: String { return operationString.appending(DroidDetails.fragmentString) }
 
   public init() {
@@ -372,6 +374,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     \\"    ...HeroDetails\\" +
     \\"  }\\" +
     \\"}\\"
+
   public static var requestString: String { return operationString.appending(HeroDetails.fragmentString) }
 
   public init() {
