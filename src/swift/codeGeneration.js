@@ -127,7 +127,7 @@ export function classDeclarationForOperation(
       });
     }
 
-    operationId(generator, { fragmentsReferenced, source }, fragments);
+    operationId(generator, { operationName, fragmentsReferenced, source }, fragments);
 
     if (fragmentsReferenced && fragmentsReferenced.length > 0) {
       generator.printNewlineIfNeeded();
@@ -384,7 +384,7 @@ export function structDeclarationForSelectionSet(
   });
 }
 
-function operationId(generator,  { fragmentsReferenced, source }, fragments) {
+function operationId(generator,  { operationName, fragmentsReferenced, source }, fragments) {
   if (!generator.context.generateOperationIds) {
     return
   }
@@ -401,7 +401,10 @@ function operationId(generator,  { fragmentsReferenced, source }, fragments) {
   const id = sjcl.codec.hex.fromBits(idBits)
   generator.printOnNewline(`public static let operationId = "${id}"`);
 
-  generator.context.operationIdsMap[combinedSource] = id
+  generator.context.operationIdsMap[operationName] = {
+    id: id
+    source: combinedSource
+  };
 }
 
 function propertyDeclarationForField(generator, field) {
