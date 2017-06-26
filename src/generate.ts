@@ -16,11 +16,12 @@ export default function generate(
   schemaPath: string,
   outputPath: string,
   target: TargetType,
+  tagName: string,
   options: any
 ) {
   const schema = loadSchema(schemaPath);
 
-  const document = loadAndMergeQueryDocuments(inputPaths);
+  const document = loadAndMergeQueryDocuments(inputPaths, tagName);
 
   validateQueryDocument(schema, document, target);
 
