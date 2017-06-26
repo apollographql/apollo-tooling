@@ -151,10 +151,6 @@ yargs
         // Sort to normalize different glob expansions between different terminals.
         .sort();
 
-      if (argv.tagName && !['flow', 'typescript', 'ts'].includes(argv.target)) {
-        throw new ToolError('The --tag-name flag is only applicable for the "flow" and "typescript" targets. Please specify one of those targets or remove the --tag-name flag')
-      }
-
       const options = {
         passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '',
         customScalarsPrefix: argv["custom-scalars-prefix"] || '',
