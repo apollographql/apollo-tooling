@@ -18,6 +18,7 @@ import {
   GraphQLFloat,
   GraphQLBoolean,
   GraphQLID,
+  GraphQLError
 } from 'graphql';
 
 const builtInScalarTypes = new Set([GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID]);
