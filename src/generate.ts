@@ -9,7 +9,6 @@ import { generateSource as generateSwiftSource } from './swift'
 import { generateSource as generateTypescriptSource } from './typescript'
 import { generateSource as generateFlowSource } from './flow'
 
-<<<<<<< HEAD:src/generate.ts
 type TargetType = 'json' | 'swift' | 'ts' | 'typescript' | 'flow';
 
 export default function generate(
@@ -20,9 +19,6 @@ export default function generate(
   tagName: string,
   options: any
 ) {
-=======
-export default function generate(inputPaths, schemaPath, outputPath, target, tagName, options) {
->>>>>>> 19f860a68805d3596fb895a2f6fc4987b3e18bb8:src/generate.js
   const schema = loadSchema(schemaPath);
 
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
