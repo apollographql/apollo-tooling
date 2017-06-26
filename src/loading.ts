@@ -25,8 +25,9 @@ export function loadSchema(schemaPath: string): GraphQLSchema {
   return buildClientSchema((schemaData.data) ? schemaData.data : schemaData);
 }
 
-function extractDocumentFromJavascript(content: string): string | null {
-  const re = /gql`([^`]*)`/g;
+function extractDocumentFromJavascript(content: string, tagName: string = 'gql'): string | null {
+  const re = new RegExp(tagName + '`([^`]*)`', 'g');
+
   let match
   const matches = []
 
@@ -41,7 +42,7 @@ function extractDocumentFromJavascript(content: string): string | null {
   return doc.length ? doc : null;
 }
 
-export function loadAndMergeQueryDocuments(inputPaths: string[]): DocumentNode {
+export function loadAndMergeQueryDocuments(inputPaths: string[], tagName: string): DocumentNode {
   const sources = inputPaths.map(inputPath => {
     const body = fs.readFileSync(inputPath, 'utf8');
     if (!body) {
@@ -51,7 +52,7 @@ export function loadAndMergeQueryDocuments(inputPaths: string[]): DocumentNode {
     if (inputPath.endsWith('.jsx') || inputPath.endsWith('.js')
       || inputPath.endsWith('.tsx') || inputPath.endsWith('.ts')
     ) {
-      const doc = extractDocumentFromJavascript(body.toString());
+      const doc = extractDocumentFromJavascript(body.toString(), tagName);
       return doc ? new Source(doc, inputPath) : null;
     }
 

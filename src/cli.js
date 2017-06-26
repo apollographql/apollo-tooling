@@ -129,9 +129,13 @@ yargs
       },
       "add-typename": {
         demand: false,
-        describe: "Automatically add the __typename field to every selection set",
-        default: '',
-        normalize: true
+        describe: "For non-swift targets, always add the __typename GraphQL introspection type when generating target types",
+        default: false
+      },
+      "tag-name": {
+        demand: false,
+        describe: "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
+        default: 'gql'
       }
     },
     argv => {
@@ -147,6 +151,10 @@ yargs
         // Sort to normalize different glob expansions between different terminals.
         .sort();
 
+      if (argv.tagName && !['flow', 'typescript', 'ts'].includes(argv.target)) {
+        throw new ToolError('The --tag-name flag is only applicable for the "flow" and "typescript" targets. Please specify one of those targets or remove the --tag-name flag')
+      }
+
       const options = {
         passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '',
         customScalarsPrefix: argv["custom-scalars-prefix"] || '',
@@ -154,7 +162,7 @@ yargs
         namespace: argv.namespace
       };
 
-      generate(inputPaths, argv.schema, argv.output, argv.target, options);
+      generate(inputPaths, argv.schema, argv.output, argv.target, argv.tagName, options);
     },
   )
   .fail(function(message, error) {
