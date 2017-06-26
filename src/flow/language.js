@@ -35,7 +35,12 @@ export function propertyDeclaration(generator, {
 }, closure, open = ' {|', close = '|}') {
   const name = fieldName || propertyName;
 
-  generator.printOnNewline(description && `// ${description}`);
+  if (description) {
+    description.split('\n')
+      .forEach(line => {
+        generator.printOnNewline(`// ${line.trim()}`);
+      })
+  }
 
   if (closure) {
     generator.printOnNewline(`${name}:`);
@@ -69,7 +74,12 @@ export function propertySetsDeclaration(generator, property, propertySets, stand
   const { description, fieldName, propertyName, typeName, isNullable, isArray } = property;
   const name = fieldName || propertyName;
 
-  generator.printOnNewline(description && `// ${description}`);
+  if (description) {
+    description.split('\n')
+      .forEach(line => {
+        generator.printOnNewline(`// ${line.trim()}`);
+      })
+  }
   if (!standalone) {
     generator.printOnNewline(`${name}:`);
   }
