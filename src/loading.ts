@@ -25,7 +25,7 @@ export function loadSchema(schemaPath: string): GraphQLSchema {
   return buildClientSchema((schemaData.data) ? schemaData.data : schemaData);
 }
 
-function extractDocumentFromJavascript(content, tagName = 'gql'): string | null {
+function extractDocumentFromJavascript(content: string, tagName: string = 'gql'): string | null {
   const re = new RegExp(tagName + '`([^`]*)`', 'g');
 
   let match
@@ -42,7 +42,7 @@ function extractDocumentFromJavascript(content, tagName = 'gql'): string | null 
   return doc.length ? doc : null;
 }
 
-export function loadAndMergeQueryDocuments(inputPaths, tagName): DocumentNode {
+export function loadAndMergeQueryDocuments(inputPaths: string[], tagName: string): DocumentNode {
   const sources = inputPaths.map(inputPath => {
     const body = fs.readFileSync(inputPath, 'utf8');
     if (!body) {
