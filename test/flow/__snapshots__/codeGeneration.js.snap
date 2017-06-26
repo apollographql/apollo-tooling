@@ -388,3 +388,30 @@ export type HeroNameQuery = {|
   ),
 |};"
 `;
+
+exports[`Flow code generation #generateSource() should handle multi-line comments 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type CustomScalarQuery = {|
+  commentTest: ? {|
+    __typename: string,
+    // This is a multi-line
+    // comment.
+    multiLine: ?string,
+  |},
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should handle single line comments 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type CustomScalarQuery = {|
+  commentTest: ? {|
+    __typename: string,
+    // This is a single-line comment
+    singleLine: ?string,
+  |},
+|};"
+`;

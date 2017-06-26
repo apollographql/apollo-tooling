@@ -15,7 +15,8 @@ import {
 } from '../../src/typescript/codeGeneration';
 
 import { loadSchema } from '../../src/loading';
-const schema = loadSchema(require.resolve('../starwars/schema.json'));
+const swapiSchema = loadSchema(require.resolve('../starwars/schema.json'));
+const miscSchema = loadSchema(require.resolve('../misc/schema.json'));
 
 import CodeGenerator from '../../src/utilities/CodeGenerator';
 
@@ -26,7 +27,7 @@ describe('TypeScript code generation', function() {
   let compileFromSource;
   let addFragment;
 
-  beforeEach(function() {
+  function setup(schema) {
     const context = {
       schema: schema,
       operations: {},
@@ -49,10 +50,13 @@ describe('TypeScript code generation', function() {
     addFragment = (fragment) => {
       generator.context.fragments[fragment.fragmentName] = fragment;
     };
-  });
+
+    return { generator, compileFromSource, addFragment };
+  }
 
   describe('#generateSource()', function() {
     test(`should generate simple query operations`, function() {
+      const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         query HeroName {
           hero {
@@ -66,6 +70,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate simple query operations including input variables`, function() {
+      const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
@@ -79,6 +84,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate simple nested query operations including input variables`, function() {
+      const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         query HeroAndFriendsNames($episode: Episode) {
           hero(episode: $episode) {
@@ -95,6 +101,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate fragmented query operations`, function() {
+      const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         query HeroAndFriendsNames {
           hero {
@@ -115,6 +122,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate query operations with inline fragments`, function() {
+      const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         query HeroAndDetails {
           hero {
@@ -138,6 +146,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate mutation operations with complex input types`, function() {
+      const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
           createReview(episode: $episode, review: $review) {
@@ -152,6 +161,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate correct list with custom fragment`, function() {
+      const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`
         fragment Friend on Character {
           name
@@ -163,6 +173,34 @@ describe('TypeScript code generation', function() {
             friends {
               ...Friend
             }
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should handle single line comments', () => {
+      const { compileFromSource } = setup(miscSchema);
+      const context = compileFromSource(`
+        query CustomScalar {
+          commentTest {
+            singleLine
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should handle multi-line comments', () => {
+      const { compileFromSource } = setup(miscSchema);
+      const context = compileFromSource(`
+        query CustomScalar {
+          commentTest {
+            multiLine
           }
         }
       `);

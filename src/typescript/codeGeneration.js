@@ -70,7 +70,12 @@ function enumerationDeclaration(generator, type) {
   const values = type.getValues();
 
   generator.printNewlineIfNeeded();
-  generator.printOnNewline(description && `// ${description}`);
+  if (description) {
+    description.split('\n')
+      .forEach(line => {
+        generator.printOnNewline(`// ${line.trim()}`);
+      })
+  }
   generator.printOnNewline(`export type ${name} =`);
   const nValues = values.length;
   values.forEach((value, i) => 
