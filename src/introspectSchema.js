@@ -1,4 +1,4 @@
-import fs from 'fs';
+import * as fs from 'fs';
 
 import { buildASTSchema, graphql, parse } from 'graphql';
 import { introspectionQuery } from 'graphql/utilities';
