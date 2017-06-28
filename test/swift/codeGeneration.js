@@ -264,6 +264,26 @@ describe('Swift code generation', function() {
 
         expect(output1).toBe(output2);
       });
+
+      test(`should generate appropriate operation id mapping source when there are nested fragment references`, function() {
+        const source = `
+          query Hero {
+            hero {
+              ...HeroDetails
+            }
+          }
+          fragment HeroName on Character {
+            name
+          }
+          fragment HeroDetails on Character {
+            ...HeroName
+            appearsIn
+          }
+        `;
+        const context = compileFromSource(source, true);
+        expect(context.operations['Hero'].sourceWithFragments).toMatchSnapshot();
+      });
+
     });
   });
 

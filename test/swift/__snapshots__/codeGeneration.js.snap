@@ -642,6 +642,21 @@ exports[`Swift code generation #classDeclarationForOperation() when generateOper
 }"
 `;
 
+exports[`Swift code generation #classDeclarationForOperation() when generateOperationIds is specified should generate appropriate operation id mapping source when there are nested fragment references 1`] = `
+"query Hero {
+  hero {
+    ...HeroDetails
+  }
+}
+fragment HeroDetails on Character {
+  ...HeroName
+  appearsIn
+}
+fragment HeroName on Character {
+  name
+}"
+`;
+
 exports[`Swift code generation #initializerDeclarationForProperties() should generate initializer for a property 1`] = `
 "public init(episode: Episode) {
   self.episode = episode
