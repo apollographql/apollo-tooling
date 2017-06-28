@@ -62,8 +62,13 @@ export default function generate(
   }
 }
 
-function writeOperationIdsMap(context) {
-  let operationIdsMap = {};
+interface OperationIdsMap {
+  name: string,
+  source: string
+}
+
+function writeOperationIdsMap(context: any) {
+  let operationIdsMap: { [id: string]: OperationIdsMap } = {};
   Object.values(context.operations).forEach(operation => {
     operationIdsMap[operation.operationId] = {
       name: operation.operationName,
