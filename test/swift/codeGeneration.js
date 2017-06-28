@@ -165,24 +165,6 @@ describe('Swift code generation', function() {
         expect(generator.output).toMatchSnapshot();
       });
 
-      test(`should save a mapping from operation id to name and source`, function() {
-        const source = `
-          query Hero {
-            hero {
-              ...HeroDetails
-            }
-          }
-          fragment HeroDetails on Character {
-            name
-          }
-        `;
-        const context = compileFromSource(source, true);
-
-        classDeclarationForOperation(generator, context.operations['Hero'], Object.values(context.fragments));
-
-        expect(generator.context.operationIdsMap).toMatchSnapshot();
-      });
-
       test(`should generate different operation ids for different operations`, function() {
         const context1 = compileFromSource(`
           query Hero {

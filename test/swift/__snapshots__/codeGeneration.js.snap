@@ -642,22 +642,6 @@ exports[`Swift code generation #classDeclarationForOperation() when generateOper
 }"
 `;
 
-exports[`Swift code generation #classDeclarationForOperation() when generateOperationIds is specified should save a mapping from operation id to name and source 1`] = `
-Object {
-  "90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4": Object {
-    "name": "Hero",
-    "source": "query Hero {
-  hero {
-    ...HeroDetails
-  }
-}
-fragment HeroDetails on Character {
-  name
-}",
-  },
-}
-`;
-
 exports[`Swift code generation #initializerDeclarationForProperties() should generate initializer for a property 1`] = `
 "public init(episode: Episode) {
   self.episode = episode
