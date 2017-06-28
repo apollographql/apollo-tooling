@@ -89,7 +89,7 @@ function structDeclarationForInputObjectType(
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
-    propertyDeclarations(generator, properties);
+    propertyDeclarations(generator, properties, true);
   });
 }
 
@@ -129,7 +129,7 @@ export function interfaceVariablesDeclarationForOperation(
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, variables);
-    propertyDeclarations(generator, properties);
+    propertyDeclarations(generator, properties, true);
   });
 }
 
@@ -234,6 +234,10 @@ export function propertyFromField(context, field) {
 
   let property = { fieldName, fieldType, propertyName, description };
 
+  let isNullable = true;
+  if (fieldType instanceof GraphQLNonNull) {
+    isNullable = false;
+  }
   const namedType = getNamedType(fieldType);
   if (isCompositeType(namedType)) {
     const typeName = typeNameFromGraphQLType(context, fieldType);
@@ -242,10 +246,6 @@ export function propertyFromField(context, field) {
       isArray = true;
     } else if (fieldType instanceof GraphQLNonNull && fieldType.ofType instanceof GraphQLList) {
       isArray = true;
-    }
-    let isNullable = true;
-    if (fieldType instanceof GraphQLNonNull) {
-      isNullable = false;
     }
     return {
       ...property,
@@ -257,13 +257,13 @@ export function propertyFromField(context, field) {
       const typeName = typeNameFromGraphQLType(context, fieldType, null, false);
       return { ...property, typeName, isComposite: false, fieldType, isNullable: false };
     } else {
-      const typeName = typeNameFromGraphQLType(context, fieldType);
-      return { ...property, typeName, isComposite: false, fieldType };
+      const typeName = typeNameFromGraphQLType(context, fieldType, null, isNullable);
+      return { ...property, typeName, isComposite: false, fieldType, isNullable };
     }
   }
 }
 
-export function propertyDeclarations(generator, properties) {
+export function propertyDeclarations(generator, properties, isInput) {
   if (!properties) return;
   properties.forEach(property => {
     if (isAbstractType(getNamedType(property.type || property.fieldType))) {
@@ -313,10 +313,10 @@ export function propertyDeclarations(generator, properties) {
       ) {
         propertyDeclaration(generator, property, () => {
           const properties = propertiesFromFields(generator.context, property.fields);
-          propertyDeclarations(generator, properties);
+          propertyDeclarations(generator, properties, isInput);
         });
       } else {
-        propertyDeclaration(generator, property);
+        propertyDeclaration(generator, {...property, isInput});
       }
     }
   });
