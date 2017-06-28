@@ -53,14 +53,10 @@ import {
   fieldTypeEnum,
 } from './types';
 
-import * as sjcl from 'sjcl';
-
 import CodeGenerator from '../utilities/CodeGenerator';
 
 export function generateSource(context, options) {
   const generator = new CodeGenerator(context);
-
-  context.operationIdsMap = {};
 
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
   generator.printNewline();
@@ -96,8 +92,9 @@ export function classDeclarationForOperation(
     fragmentSpreads,
     fragmentsReferenced,
     source,
-  },
-  fragments
+    sourceWithFragments,
+    operationId
+  }
 ) {
   let className;
   let protocol;
@@ -127,7 +124,7 @@ export function classDeclarationForOperation(
       });
     }
 
-    operationId(generator, { operationName, fragmentsReferenced, source }, fragments);
+    operationIdentifier(generator, { operationName, sourceWithFragments, operationId });
 
     if (fragmentsReferenced && fragmentsReferenced.length > 0) {
       generator.printNewlineIfNeeded();
@@ -384,27 +381,13 @@ export function structDeclarationForSelectionSet(
   });
 }
 
-function operationId(generator,  { operationName, fragmentsReferenced, source }, fragments) {
+function operationIdentifier(generator,  { operationName, sourceWithFragments, operationId }) {
   if (!generator.context.generateOperationIds) {
     return
   }
 
   generator.printNewlineIfNeeded();
-  const sources = fragmentsReferenced.sort().map(referencedFragmentName => {
-    return fragments.find(fragment => {
-      return fragment.fragmentName === referencedFragmentName;
-    }).source;
-  });
-  sources.unshift(source);
-  const combinedSource = sources.join('\n');
-  const idBits = sjcl.hash.sha256.hash(combinedSource);
-  const id = sjcl.codec.hex.fromBits(idBits)
-  generator.printOnNewline(`public static let operationId = "${id}"`);
-
-  generator.context.operationIdsMap[id] = {
-    name: operationName,
-    source: combinedSource
-  };
+  generator.printOnNewline(`public static let operationId = "${operationId}"`);
 }
 
 function propertyDeclarationForField(generator, field) {

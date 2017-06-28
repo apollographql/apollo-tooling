@@ -57,8 +57,18 @@ export default function generate(
     console.log(output);
   }
 
-  if (context.operationIdsPath) {
-    const operationIdsMap = JSON.stringify(context.operationIdsMap, null, 2);
-    fs.writeFileSync(context.operationIdsPath, operationIdsMap);
+  if (context.generateOperationIds) {
+    writeOperationIdsMap(context)
   }
+}
+
+function writeOperationIdsMap(context) {
+  let operationIdsMap = {};
+  Object.values(context.operations).forEach(operation => {
+    operationIdsMap[operation.operationId] = {
+      name: operation.operationName,
+      source: operation.sourceWithFragments  
+    };
+  });
+  fs.writeFileSync(context.operationIdsPath, JSON.stringify(operationIdsMap, null, 2));
 }
