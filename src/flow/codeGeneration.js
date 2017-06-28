@@ -222,11 +222,11 @@ export function typeDeclarationForFragment(
   });
 }
 
-export function propertiesFromFields(context, fields, forceNullable) {
-  return fields.map(field => propertyFromField(context, field, forceNullable));
+export function propertiesFromFields(context, fields) {
+  return fields.map(field => propertyFromField(context, field));
 }
 
-export function propertyFromField(context, field, forceNullable) {
+export function propertyFromField(context, field) {
   let { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
   fieldName = fieldName || field.responseName;
 
@@ -244,7 +244,7 @@ export function propertyFromField(context, field, forceNullable) {
       isArray = true;
     }
     let isNullable = true;
-    if (fieldType instanceof GraphQLNonNull && !forceNullable) {
+    if (fieldType instanceof GraphQLNonNull) {
       isNullable = false;
     }
     return {
