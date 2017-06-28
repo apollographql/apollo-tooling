@@ -49,10 +49,10 @@ describe('Swift code generation', function() {
       generator = new CodeGenerator(context);  
     };
 
-    compileFromSource = (source, generateOperationIds = false) => {
+    compileFromSource = (source, options = { generateOperationIds: false }) => {
       const document = parse(source);
       let context = compileToIR(schema, document);
-      generateOperationIds && Object.assign(context, { generateOperationIds: true, operationIdsMap: {} });
+      options.generateOperationIds && Object.assign(context, { generateOperationIds: true, operationIdsMap: {} });
       generator.context = context;
       return context;
     };
@@ -148,6 +148,7 @@ describe('Swift code generation', function() {
     });
 
     describe(`when generateOperationIds is specified`, function() {
+      let compileOptions = { generateOperationIds: true };
 
       test(`should generate a class declaration with an operationId property`, function() {
         const context = compileFromSource(`
@@ -159,7 +160,7 @@ describe('Swift code generation', function() {
           fragment HeroDetails on Character {
             name
           }
-        `, true);
+        `, compileOptions);
 
         classDeclarationForOperation(generator, context.operations['Hero'], Object.values(context.fragments));
         expect(generator.output).toMatchSnapshot();
@@ -175,7 +176,7 @@ describe('Swift code generation', function() {
           fragment HeroDetails on Character {
             name
           }
-        `, true);
+        `, compileOptions);
 
         classDeclarationForOperation(generator, context1.operations['Hero'], Object.values(context1.fragments));
         const output1 = generator.output;
@@ -190,7 +191,7 @@ describe('Swift code generation', function() {
           fragment HeroDetails on Character {
             appearsIn
           }
-        `, true);
+        `, compileOptions);
 
         classDeclarationForOperation(generator, context2.operations['Hero'], Object.values(context2.fragments));
         const output2 = generator.output;
@@ -205,7 +206,7 @@ describe('Swift code generation', function() {
               name
             }
           }
-        `, true);
+        `, compileOptions);
 
         classDeclarationForOperation(generator, context1.operations['HeroName'], Object.values(context1.fragments));
         const output1 = generator.output;
@@ -215,7 +216,7 @@ describe('Swift code generation', function() {
           # Profound comment
           query HeroName($episode:Episode) { hero(episode: $episode) { name } }
           # Deeply meaningful comment
-        `, true);
+        `, compileOptions);
 
         classDeclarationForOperation(generator, context2.operations['HeroName'], Object.values(context2.fragments));
         const output2 = generator.output;
@@ -237,7 +238,7 @@ describe('Swift code generation', function() {
           fragment HeroAppearsIn on Character {
             appearsIn
           }
-        `, true);
+        `, compileOptions);
 
         classDeclarationForOperation(generator, context1.operations['Hero'], Object.values(context1.fragments));
         const output1 = generator.output;
@@ -256,7 +257,7 @@ describe('Swift code generation', function() {
           fragment HeroName on Character {
             name
           }
-        `, true);
+        `, compileOptions);
 
         classDeclarationForOperation(generator, context2.operations['Hero'], Object.values(context2.fragments));
         const output2 = generator.output;
