@@ -89,7 +89,7 @@ function structDeclarationForInputObjectType(
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
-    propertyDeclarations(generator, properties, true);
+    propertyDeclarations(generator, properties);
   });
 }
 
@@ -129,7 +129,7 @@ export function interfaceVariablesDeclarationForOperation(
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, variables);
-    propertyDeclarations(generator, properties, true);
+    propertyDeclarations(generator, properties);
   });
 }
 
@@ -150,13 +150,13 @@ export function typeDeclarationForOperation(
   typeDeclaration(generator, {
     interfaceName,
   }, () => {
-    propertyDeclarations(generator, properties, true);
+    propertyDeclarations(generator, properties);
   });
 }
 
 export function typeDeclarationForFragment(
   generator,
-  fragment 
+  fragment
 ) {
   const {
     fragmentName,
@@ -217,7 +217,7 @@ export function typeDeclarationForFragment(
       propertySetsDeclaration(generator, fragment, propertySets, true);
     } else {
       const properties = propertiesFromFields(generator.context, fields)
-      propertyDeclarations(generator, properties, true);
+      propertyDeclarations(generator, properties);
     }
   });
 }
@@ -263,7 +263,7 @@ export function propertyFromField(context, field, forceNullable) {
   }
 }
 
-export function propertyDeclarations(generator, properties, inInterface) {
+export function propertyDeclarations(generator, properties) {
   if (!properties) return;
   properties.forEach(property => {
     if (isAbstractType(getNamedType(property.type || property.fieldType))) {
@@ -316,7 +316,7 @@ export function propertyDeclarations(generator, properties, inInterface) {
           propertyDeclarations(generator, properties);
         });
       } else {
-        propertyDeclaration(generator, {...property, inInterface});
+        propertyDeclaration(generator, property);
       }
     }
   });

@@ -36,7 +36,7 @@ import {
 
 export function generateSource(context) {
   const generator = new CodeGenerator(context);
-  
+
   generator.printOnNewline('/* tslint:disable */');
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
 
@@ -78,7 +78,7 @@ function enumerationDeclaration(generator, type) {
   }
   generator.printOnNewline(`export type ${name} =`);
   const nValues = values.length;
-  values.forEach((value, i) => 
+  values.forEach((value, i) =>
     generator.printOnNewline(`  "${value.value}"${i === nValues-1 ? ';' : ' |'}${wrap(' // ', value.description)}`)
   );
   generator.printNewline();
@@ -93,7 +93,7 @@ function structDeclarationForInputObjectType(
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
-    propertyDeclarations(generator, properties, true);
+    propertyDeclarations(generator, properties);
   });
 }
 
@@ -133,7 +133,7 @@ export function interfaceVariablesDeclarationForOperation(
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, variables);
-    propertyDeclarations(generator, properties, true);
+    propertyDeclarations(generator, properties);
   });
 }
 
@@ -154,7 +154,7 @@ export function interfaceDeclarationForOperation(
   interfaceDeclaration(generator, {
     interfaceName,
   }, () => {
-    propertyDeclarations(generator, properties, true);
+    propertyDeclarations(generator, properties);
   });
 }
 
@@ -221,7 +221,7 @@ export function interfaceDeclarationForFragment(
       propertySetsDeclaration(generator, fragment, propertySets, true);
     } else {
       const properties = propertiesFromFields(generator.context, fields)
-      propertyDeclarations(generator, properties, true);
+      propertyDeclarations(generator, properties);
     }
   });
 }
@@ -268,7 +268,7 @@ export function propertyFromField(context, field, forceNullable) {
   }
 }
 
-export function propertyDeclarations(generator, properties, inInterface) {
+export function propertyDeclarations(generator, properties) {
   if (!properties) return;
   properties.forEach(property => {
     if (isAbstractType(getNamedType(property.type || property.fieldType))) {
@@ -321,7 +321,7 @@ export function propertyDeclarations(generator, properties, inInterface) {
           propertyDeclarations(generator, properties);
         });
       } else {
-        propertyDeclaration(generator, {...property, inInterface});
+        propertyDeclaration(generator, property);
       }
     }
   });

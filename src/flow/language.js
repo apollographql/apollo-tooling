@@ -30,7 +30,6 @@ export function propertyDeclaration(generator, {
   description,
   isArray,
   isNullable,
-  inInterface,
   fragmentSpreads
 }, closure, open = ' {|', close = '|}') {
   const name = fieldName || propertyName;
