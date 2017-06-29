@@ -33,22 +33,26 @@ import { compileToIR } from '../../src/compilation';
 
 describe('Swift code generation', function() {
   let generator;
+  let resetGenerator;
   let compileFromSource;
   let addFragment;
 
   beforeEach(function() {
-    const context = {
-      schema: schema,
-      operations: {},
-      fragments: {},
-      typesUsed: {}
-    }
 
-    generator = new CodeGenerator(context);
+    resetGenerator = () => {
+      const context = {
+        schema: schema,
+        operations: {},
+        fragments: {},
+        typesUsed: {}
+      }
+      generator = new CodeGenerator(context);  
+    };
 
-    compileFromSource = (source) => {
+    compileFromSource = (source, options = { generateOperationIds: false }) => {
       const document = parse(source);
-      const context = compileToIR(schema, document);
+      let context = compileToIR(schema, document);
+      options.generateOperationIds && Object.assign(context, { generateOperationIds: true, operationIdsMap: {} });
       generator.context = context;
       return context;
     };
@@ -56,11 +60,13 @@ describe('Swift code generation', function() {
     addFragment = (fragment) => {
       generator.context.fragments[fragment.fragmentName] = fragment;
     };
+
+    resetGenerator();
   });
 
   describe('#classDeclarationForOperation()', function() {
     test(`should generate a class declaration for a query with variables`, function() {
-      const { operations } = compileFromSource(`
+      const { operations, fragments } = compileFromSource(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
             name
@@ -68,12 +74,12 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['HeroName']);
+      classDeclarationForOperation(generator, operations['HeroName'], Object.values(fragments));
       expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a class declaration for a query with fragment spreads`, function() {
-      const { operations } = compileFromSource(`
+      const { operations, fragments } = compileFromSource(`
         query Hero {
           hero {
             ...HeroDetails
@@ -85,12 +91,12 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['Hero']);
+      classDeclarationForOperation(generator, operations['Hero'], Object.values(fragments));
       expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a class declaration for a query with conditional fragment spreads`, function() {
-      const { operations } = compileFromSource(`
+      const { operations, fragments } = compileFromSource(`
         query Hero {
           hero {
             ...DroidDetails
@@ -102,12 +108,12 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['Hero']);
+      classDeclarationForOperation(generator, operations['Hero'], Object.values(fragments));
       expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, function() {
-      const { operations } = compileFromSource(`
+      const { operations, fragments } = compileFromSource(`
         query Hero {
           hero {
             ... on Droid {
@@ -121,13 +127,13 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['Hero']);
+      classDeclarationForOperation(generator, operations['Hero'], Object.values(fragments));
 
       expect(generator.output).toMatchSnapshot();
     });
 
     test(`should generate a class declaration for a mutation with variables`, function() {
-      const { operations } = compileFromSource(`
+      const { operations, fragments } = compileFromSource(`
         mutation CreateReview($episode: Episode) {
           createReview(episode: $episode, review: { stars: 5, commentary: "Wow!" }) {
             stars
@@ -136,9 +142,148 @@ describe('Swift code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['CreateReview']);
+      classDeclarationForOperation(generator, operations['CreateReview'], Object.values(fragments));
 
       expect(generator.output).toMatchSnapshot();
+    });
+
+    describe(`when generateOperationIds is specified`, function() {
+      let compileOptions = { generateOperationIds: true };
+
+      test(`should generate a class declaration with an operationId property`, function() {
+        const context = compileFromSource(`
+          query Hero {
+            hero {
+              ...HeroDetails
+            }
+          }
+          fragment HeroDetails on Character {
+            name
+          }
+        `, compileOptions);
+
+        classDeclarationForOperation(generator, context.operations['Hero'], Object.values(context.fragments));
+        expect(generator.output).toMatchSnapshot();
+      });
+
+      test(`should generate different operation ids for different operations`, function() {
+        const context1 = compileFromSource(`
+          query Hero {
+            hero {
+              ...HeroDetails
+            }
+          }
+          fragment HeroDetails on Character {
+            name
+          }
+        `, compileOptions);
+
+        classDeclarationForOperation(generator, context1.operations['Hero'], Object.values(context1.fragments));
+        const output1 = generator.output;
+
+        resetGenerator();
+        const context2 = compileFromSource(`
+          query Hero {
+            hero {
+              ...HeroDetails
+            }
+          }
+          fragment HeroDetails on Character {
+            appearsIn
+          }
+        `, compileOptions);
+
+        classDeclarationForOperation(generator, context2.operations['Hero'], Object.values(context2.fragments));
+        const output2 = generator.output;
+
+        expect(output1).not.toBe(output2);
+      });
+
+      test(`should generate the same operation id regardless of operation formatting/commenting`, function() {
+        const context1 = compileFromSource(`
+          query HeroName($episode: Episode) {
+            hero(episode: $episode) {
+              name
+            }
+          }
+        `, compileOptions);
+
+        classDeclarationForOperation(generator, context1.operations['HeroName'], Object.values(context1.fragments));
+        const output1 = generator.output;
+
+        resetGenerator();
+        const context2 = compileFromSource(`
+          # Profound comment
+          query HeroName($episode:Episode) { hero(episode: $episode) { name } }
+          # Deeply meaningful comment
+        `, compileOptions);
+
+        classDeclarationForOperation(generator, context2.operations['HeroName'], Object.values(context2.fragments));
+        const output2 = generator.output;
+
+        expect(output1).toBe(output2);
+      });
+
+      test(`should generate the same operation id regardless of fragment order`, function() {
+        const context1 = compileFromSource(`
+          query Hero {
+            hero {
+              ...HeroName
+              ...HeroAppearsIn
+            }
+          }
+          fragment HeroName on Character {
+            name
+          }
+          fragment HeroAppearsIn on Character {
+            appearsIn
+          }
+        `, compileOptions);
+
+        classDeclarationForOperation(generator, context1.operations['Hero'], Object.values(context1.fragments));
+        const output1 = generator.output;
+
+        resetGenerator();
+        const context2 = compileFromSource(`
+          query Hero {
+            hero {
+              ...HeroName
+              ...HeroAppearsIn
+            }
+          }
+          fragment HeroAppearsIn on Character {
+            appearsIn
+          }
+          fragment HeroName on Character {
+            name
+          }
+        `, compileOptions);
+
+        classDeclarationForOperation(generator, context2.operations['Hero'], Object.values(context2.fragments));
+        const output2 = generator.output;
+
+        expect(output1).toBe(output2);
+      });
+
+      test(`should generate appropriate operation id mapping source when there are nested fragment references`, function() {
+        const source = `
+          query Hero {
+            hero {
+              ...HeroDetails
+            }
+          }
+          fragment HeroName on Character {
+            name
+          }
+          fragment HeroDetails on Character {
+            ...HeroName
+            appearsIn
+          }
+        `;
+        const context = compileFromSource(source, true);
+        expect(context.operations['Hero'].sourceWithFragments).toMatchSnapshot();
+      });
+
     });
   });
 

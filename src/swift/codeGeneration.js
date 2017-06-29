@@ -92,6 +92,8 @@ export function classDeclarationForOperation(
     fragmentSpreads,
     fragmentsReferenced,
     source,
+    sourceWithFragments,
+    operationId
   }
 ) {
   let className;
@@ -122,7 +124,10 @@ export function classDeclarationForOperation(
       });
     }
 
+    operationIdentifier(generator, { operationName, sourceWithFragments, operationId });
+
     if (fragmentsReferenced && fragmentsReferenced.length > 0) {
+      generator.printNewlineIfNeeded();
       generator.printOnNewline('public static var requestString: String { return operationString');
       fragmentsReferenced.forEach(fragment => {
         generator.print(`.appending(${structNameForFragmentName(fragment)}.fragmentString)`)
@@ -374,6 +379,15 @@ export function structDeclarationForSelectionSet(
       );
     });
   });
+}
+
+function operationIdentifier(generator,  { operationName, sourceWithFragments, operationId }) {
+  if (!generator.context.generateOperationIds) {
+    return
+  }
+
+  generator.printNewlineIfNeeded();
+  generator.printOnNewline(`public static let operationIdentifier = "${operationId}"`);
 }
 
 function propertyDeclarationForField(generator, field) {
