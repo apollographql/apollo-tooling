@@ -28,6 +28,7 @@ export function propertyDeclaration(generator, {
   propertyName,
   typeName,
   description,
+  isInput,
   isArray,
   isNullable,
   fragmentSpreads
@@ -42,7 +43,13 @@ export function propertyDeclaration(generator, {
   }
 
   if (closure) {
-    generator.printOnNewline(`${name}: `);
+    generator.printOnNewline(name);
+
+    if (isNullable && isInput) {
+      generator.print('?');
+    }
+    generator.print(': ');
+
     if (isArray) {
       generator.print(' Array<');
     }
@@ -61,7 +68,11 @@ export function propertyDeclaration(generator, {
     }
 
   } else {
-    generator.printOnNewline(`${name}: ${typeName || typeNameFromGraphQLType(generator.context, type)}`);
+    generator.printOnNewline(name);
+    if (isInput && isNullable) {
+      generator.print('?')
+    }
+    generator.print(`: ${typeName || typeNameFromGraphQLType(generator.context, type)}`);
   }
   generator.print(',');
 }

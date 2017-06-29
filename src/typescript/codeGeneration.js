@@ -240,6 +240,11 @@ export function propertyFromField(context, field) {
 
   const namedType = getNamedType(fieldType);
 
+  let isNullable = true;
+  if (fieldType instanceof GraphQLNonNull) {
+    isNullable = false;
+  }
+
   if (isCompositeType(namedType)) {
     const typeName = typeNameFromGraphQLType(context, fieldType);
     let isArray = false;
@@ -248,10 +253,7 @@ export function propertyFromField(context, field) {
     } else if (fieldType instanceof GraphQLNonNull && fieldType.ofType instanceof GraphQLList) {
       isArray = true
     }
-    let isNullable = true;
-    if (fieldType instanceof GraphQLNonNull) {
-      isNullable = false;
-    }
+
     return {
       ...property,
       typeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments, fieldType,
@@ -262,13 +264,14 @@ export function propertyFromField(context, field) {
       const typeName = typeNameFromGraphQLType(context, fieldType, null, false);
       return { ...property, typeName, isComposite: false, fieldType, isNullable: false };
     } else {
-      const typeName = typeNameFromGraphQLType(context, fieldType);
-      return { ...property, typeName, isComposite: false, fieldType };
+      const typeName = typeNameFromGraphQLType(context, fieldType, null, isNullable);
+      return { ...property, typeName, isComposite: false, fieldType, isNullable };
     }
   }
 }
 
-export function propertyDeclarations(generator, properties) {
+export function propertyDeclarations(generator, properties, isInput = false) {
+
   if (!properties) return;
   properties.forEach(property => {
     if (isAbstractType(getNamedType(property.type || property.fieldType))) {
@@ -318,10 +321,10 @@ export function propertyDeclarations(generator, properties) {
       ) {
         propertyDeclaration(generator, property, () => {
           const properties = propertiesFromFields(generator.context, property.fields);
-          propertyDeclarations(generator, properties);
+          propertyDeclarations(generator, properties, isInput);
         });
       } else {
-        propertyDeclaration(generator, property);
+        propertyDeclaration(generator, {...property, isInput});
       }
     }
   });
