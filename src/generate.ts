@@ -1,4 +1,4 @@
-import * as fs from 'fs'
+import * as fs from 'fs';
 
 import { ToolError, logError } from './errors'
 import { loadSchema,  loadAndMergeQueryDocuments } from './loading'
@@ -56,4 +56,24 @@ export default function generate(
   } else {
     console.log(output);
   }
+
+  if (context.generateOperationIds) {
+    writeOperationIdsMap(context)
+  }
+}
+
+interface OperationIdsMap {
+  name: string,
+  source: string
+}
+
+function writeOperationIdsMap(context: any) {
+  let operationIdsMap: { [id: string]: OperationIdsMap } = {};
+  Object.values(context.operations).forEach(operation => {
+    operationIdsMap[operation.operationId] = {
+      name: operation.operationName,
+      source: operation.sourceWithFragments  
+    };
+  });
+  fs.writeFileSync(context.operationIdsPath, JSON.stringify(operationIdsMap, null, 2));
 }

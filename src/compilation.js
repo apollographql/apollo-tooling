@@ -44,6 +44,13 @@ import {
   indent
 } from './utilities/printing';
 
+import { 
+  flatMap, 
+  uniqBy 
+} from 'lodash';
+
+import * as sjcl from 'sjcl';
+
 // Parts of this code are adapted from graphql-js
 
 export function compileToIR(schema, document, options = { mergeInFieldsFromFragmentSpreads: true }) {
@@ -63,6 +70,10 @@ export function compileToIR(schema, document, options = { mergeInFieldsFromFragm
 
   compiler.fragments.forEach(fragment => {
     fragments[fragment.name.value] = compiler.compileFragment(fragment)
+  });
+
+  Object.values(operations).forEach(operation => {
+    augmentCompiledOperationWithFragments(operation, fragments)
   });
 
   const typesUsed = compiler.typesUsed;
@@ -415,6 +426,29 @@ export class Compiler {
 
     return Array.from(fragmentSpreads);
   }
+}
+
+function augmentCompiledOperationWithFragments(compiledOperation, compiledFragments) {
+  const operationAndFragments = operationAndRelatedFragments(compiledOperation, compiledFragments);
+  compiledOperation.sourceWithFragments = operationAndFragments.map(operationOrFragment => { 
+    return operationOrFragment.source; 
+  }).join('\n');
+  const idBits = sjcl.hash.sha256.hash(compiledOperation.sourceWithFragments);
+  compiledOperation.operationId = sjcl.codec.hex.fromBits(idBits);
+}
+
+function operationAndRelatedFragments(compiledOperationOrFragment, allCompiledFragments) {
+  let result = flatMap(compiledOperationOrFragment.fragmentsReferenced, (fragmentName) => {
+    return operationAndRelatedFragments(allCompiledFragments[fragmentName], allCompiledFragments);
+  });
+  result.unshift(compiledOperationOrFragment);
+  result = uniqBy(result, (compiledOperationOrFragment) => {
+    return compiledOperationOrFragment.fragmentName;
+  });
+  result = result.sort((a, b) => {
+    return a.fragmentName > b.fragmentName;
+  });
+  return result;
 }
 
 function argumentsFromAST(args) {

@@ -136,6 +136,12 @@ yargs
         demand: false,
         describe: "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
         default: 'gql'
+      },
+      "operation-ids-path": {
+        demand: false,
+        describe: "Path to an operation id JSON map file. If specified, also stores the operation ids (hashes) as properties on operation types [currently Swift-only]",
+        default: null,
+        normalize: true
       }
     },
     argv => {
@@ -155,7 +161,9 @@ yargs
         passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '',
         customScalarsPrefix: argv["custom-scalars-prefix"] || '',
         addTypename: argv["add-typename"],
-        namespace: argv.namespace
+        namespace: argv.namespace,
+        operationIdsPath: argv["operation-ids-path"],
+        generateOperationIds: !!argv["operation-ids-path"]
       };
 
       generate(inputPaths, argv.schema, argv.output, argv.target, argv.tagName, options);

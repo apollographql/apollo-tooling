@@ -98,6 +98,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     \\"    }\\" +
     \\"  }\\" +
     \\"}\\"
+
   public static var requestString: String { return operationString.appending(HeroDetails.fragmentString) }
 
   public init() {
@@ -223,6 +224,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     \\"    ...DroidDetails\\" +
     \\"  }\\" +
     \\"}\\"
+
   public static var requestString: String { return operationString.appending(DroidDetails.fragmentString) }
 
   public init() {
@@ -372,6 +374,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     \\"    ...HeroDetails\\" +
     \\"  }\\" +
     \\"}\\"
+
   public static var requestString: String { return operationString.appending(HeroDetails.fragmentString) }
 
   public init() {
@@ -537,6 +540,120 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       }
     }
   }
+}"
+`;
+
+exports[`Swift code generation #classDeclarationForOperation() when generateOperationIds is specified should generate a class declaration with an operationId property 1`] = `
+"public final class HeroQuery: GraphQLQuery {
+  public static let operationString =
+    \\"query Hero {\\" +
+    \\"  hero {\\" +
+    \\"    ...HeroDetails\\" +
+    \\"  }\\" +
+    \\"}\\"
+
+  public static let operationIdentifier = \\"90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4\\"
+
+  public static var requestString: String { return operationString.appending(HeroDetails.fragmentString) }
+
+  public init() {
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes = [\\"Query\\"]
+
+    public static let selections: [Selection] = [
+      Field(\\"hero\\", type: .object(Data.Hero.self)),
+    ]
+
+    public var snapshot: Snapshot
+
+    public init(snapshot: Snapshot) {
+      self.snapshot = snapshot
+    }
+
+    public init(hero: Hero? = nil) {
+      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero])
+    }
+
+    public var hero: Hero? {
+      get {
+        return (snapshot[\\"hero\\"]! as! Snapshot?).flatMap { Hero(snapshot: $0) }
+      }
+      set {
+        snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
+      }
+    }
+
+    public struct Hero: GraphQLSelectionSet {
+      public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+      public static let selections: [Selection] = [
+        Field(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]
+
+      public var snapshot: Snapshot
+
+      public init(snapshot: Snapshot) {
+        self.snapshot = snapshot
+      }
+
+      public static func makeHuman(name: String) -> Hero {
+        return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+      }
+
+      public static func makeDroid(name: String) -> Hero {
+        return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+      }
+
+      /// The name of the character
+      public var name: String {
+        get {
+          return snapshot[\\"name\\"]! as! String
+        }
+        set {
+          snapshot.updateValue(newValue, forKey: \\"name\\")
+        }
+      }
+
+      public var fragments: Fragments {
+        get {
+          return Fragments(snapshot: snapshot)
+        }
+        set {
+          snapshot = newValue.snapshot
+        }
+      }
+
+      public struct Fragments {
+        public var snapshot: Snapshot
+
+        public var heroDetails: HeroDetails {
+          get {
+            return HeroDetails(snapshot: snapshot)
+          }
+          set {
+            snapshot = newValue.snapshot
+          }
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation #classDeclarationForOperation() when generateOperationIds is specified should generate appropriate operation id mapping source when there are nested fragment references 1`] = `
+"query Hero {
+  hero {
+    ...HeroDetails
+  }
+}
+fragment HeroDetails on Character {
+  ...HeroName
+  appearsIn
+}
+fragment HeroName on Character {
+  name
 }"
 `;
 
