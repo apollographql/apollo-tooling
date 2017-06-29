@@ -30,7 +30,6 @@ export function propertyDeclaration(generator, {
   description,
   isArray,
   isNullable,
-  inInterface,
   fragmentSpreads
 }, closure) {
   const name = fieldName || propertyName;
@@ -48,19 +47,19 @@ export function propertyDeclaration(generator, {
       generator.print(' Array<');
     }
     generator.pushScope({ typeName: name });
-  
+
     generator.withinBlock(closure);
-  
+
     generator.popScope();
-  
+
     if (isArray) {
       generator.print(' >');
     }
-  
+
     if (isNullable) {
       generator.print(' | null');
     }
-  
+
   } else {
     generator.printOnNewline(`${name}: ${typeName || typeNameFromGraphQLType(generator.context, type)}`);
   }

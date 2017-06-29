@@ -150,13 +150,13 @@ export function typeDeclarationForOperation(
   typeDeclaration(generator, {
     interfaceName,
   }, () => {
-    propertyDeclarations(generator, properties, true);
+    propertyDeclarations(generator, properties);
   });
 }
 
 export function typeDeclarationForFragment(
   generator,
-  fragment 
+  fragment
 ) {
   const {
     fragmentName,
@@ -217,16 +217,16 @@ export function typeDeclarationForFragment(
       propertySetsDeclaration(generator, fragment, propertySets, true);
     } else {
       const properties = propertiesFromFields(generator.context, fields)
-      propertyDeclarations(generator, properties, true);
+      propertyDeclarations(generator, properties);
     }
   });
 }
 
-export function propertiesFromFields(context, fields, forceNullable) {
-  return fields.map(field => propertyFromField(context, field, forceNullable));
+export function propertiesFromFields(context, fields) {
+  return fields.map(field => propertyFromField(context, field));
 }
 
-export function propertyFromField(context, field, forceNullable) {
+export function propertyFromField(context, field) {
   let { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
   fieldName = fieldName || field.responseName;
 
@@ -234,6 +234,10 @@ export function propertyFromField(context, field, forceNullable) {
 
   let property = { fieldName, fieldType, propertyName, description };
 
+  let isNullable = true;
+  if (fieldType instanceof GraphQLNonNull) {
+    isNullable = false;
+  }
   const namedType = getNamedType(fieldType);
   if (isCompositeType(namedType)) {
     const typeName = typeNameFromGraphQLType(context, fieldType);
@@ -242,10 +246,6 @@ export function propertyFromField(context, field, forceNullable) {
       isArray = true;
     } else if (fieldType instanceof GraphQLNonNull && fieldType.ofType instanceof GraphQLList) {
       isArray = true;
-    }
-    let isNullable = true;
-    if (fieldType instanceof GraphQLNonNull && !forceNullable) {
-      isNullable = false;
     }
     return {
       ...property,
@@ -257,13 +257,13 @@ export function propertyFromField(context, field, forceNullable) {
       const typeName = typeNameFromGraphQLType(context, fieldType, null, false);
       return { ...property, typeName, isComposite: false, fieldType, isNullable: false };
     } else {
-      const typeName = typeNameFromGraphQLType(context, fieldType);
-      return { ...property, typeName, isComposite: false, fieldType };
+      const typeName = typeNameFromGraphQLType(context, fieldType, null, isNullable);
+      return { ...property, typeName, isComposite: false, fieldType, isNullable };
     }
   }
 }
 
-export function propertyDeclarations(generator, properties, inInterface) {
+export function propertyDeclarations(generator, properties, isInput) {
   if (!properties) return;
   properties.forEach(property => {
     if (isAbstractType(getNamedType(property.type || property.fieldType))) {
@@ -313,10 +313,10 @@ export function propertyDeclarations(generator, properties, inInterface) {
       ) {
         propertyDeclaration(generator, property, () => {
           const properties = propertiesFromFields(generator.context, property.fields);
-          propertyDeclarations(generator, properties);
+          propertyDeclarations(generator, properties, isInput);
         });
       } else {
-        propertyDeclaration(generator, {...property, inInterface});
+        propertyDeclaration(generator, {...property, isInput});
       }
     }
   });
