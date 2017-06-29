@@ -30,8 +30,8 @@ export function propertyDeclaration(generator, {
   description,
   isArray,
   isNullable,
-  inInterface,
-  fragmentSpreads
+  fragmentSpreads,
+  isInput
 }, closure, open = ' {|', close = '|}') {
   const name = fieldName || propertyName;
 
@@ -43,7 +43,11 @@ export function propertyDeclaration(generator, {
   }
 
   if (closure) {
-    generator.printOnNewline(`${name}:`);
+    generator.printOnNewline(name)
+    if (isInput && isNullable) {
+      generator.print('?')
+    }
+    generator.print(':')
     if (isNullable) {
       generator.print(' ?');
     }
@@ -65,7 +69,11 @@ export function propertyDeclaration(generator, {
     }
 
   } else {
-    generator.printOnNewline(`${name}: ${typeName || typeNameFromGraphQLType(generator.context, type)}`);
+    generator.printOnNewline(name)
+    if (isInput && isNullable) {
+      generator.print('?')
+    }
+    generator.print(`: ${typeName || typeNameFromGraphQLType(generator.context, type)}`);
   }
   generator.print(',');
 }

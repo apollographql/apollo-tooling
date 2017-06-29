@@ -24,7 +24,7 @@ export type Episode =
 
 
 export type HeroAndFriendsNamesQueryVariables = {|
-  episode: ?Episode,
+  episode?: ?Episode,
 |};
 
 export type HeroAndFriendsNamesQuery = {|
@@ -97,7 +97,7 @@ export type Episode =
 
 
 export type HeroAndFriendsNamesQueryVariables = {|
-  episode: ?Episode,
+  episode?: ?Episode,
 |};
 
 export type HeroAndFriendsNamesQuery = {|
@@ -231,9 +231,9 @@ export type ReviewInput = {|
   // 0-5 stars
   stars: number,
   // Comment about the movie, optional
-  commentary: ?string,
+  commentary?: ?string,
   // Favorite color, optional
-  favorite_color: ?ColorInput,
+  favorite_color?: ?ColorInput,
 |};
 
 export type ColorInput = {|
@@ -243,8 +243,8 @@ export type ColorInput = {|
 |};
 
 export type ReviewMovieMutationVariables = {|
-  episode: ?Episode,
-  review: ?ReviewInput,
+  episode?: ?Episode,
+  review?: ?ReviewInput,
 |};
 
 export type ReviewMovieMutation = {|
@@ -303,7 +303,7 @@ export type Episode =
 
 
 export type HeroAndFriendsNamesQueryVariables = {|
-  episode: ?Episode,
+  episode?: ?Episode,
 |};
 
 export type HeroAndFriendsNamesQuery = {|
@@ -372,7 +372,7 @@ export type Episode =
 
 
 export type HeroNameQueryVariables = {|
-  episode: ?Episode,
+  episode?: ?Episode,
 |};
 
 export type HeroNameQuery = {|
