@@ -93,7 +93,7 @@ function structDeclarationForInputObjectType(
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
-    propertyDeclarations(generator, properties, true);
+    propertyDeclarations(generator, properties);
   });
 }
 
@@ -133,7 +133,7 @@ export function interfaceVariablesDeclarationForOperation(
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, variables);
-    propertyDeclarations(generator, properties, true);
+    propertyDeclarations(generator, properties);
   });
 }
 
@@ -253,6 +253,7 @@ export function propertyFromField(context, field) {
     } else if (fieldType instanceof GraphQLNonNull && fieldType.ofType instanceof GraphQLList) {
       isArray = true
     }
+
     return {
       ...property,
       typeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments, fieldType,
@@ -270,6 +271,7 @@ export function propertyFromField(context, field) {
 }
 
 export function propertyDeclarations(generator, properties, isInput = false) {
+
   if (!properties) return;
   properties.forEach(property => {
     if (isAbstractType(getNamedType(property.type || property.fieldType))) {
