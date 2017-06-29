@@ -552,7 +552,7 @@ exports[`Swift code generation #classDeclarationForOperation() when generateOper
     \\"  }\\" +
     \\"}\\"
 
-  public static let operationId = \\"90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4\\"
+  public static let operationIdentifier = \\"90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4\\"
 
   public static var requestString: String { return operationString.appending(HeroDetails.fragmentString) }
 
