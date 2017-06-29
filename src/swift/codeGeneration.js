@@ -69,7 +69,7 @@ export function generateSource(context, options) {
     });
 
     Object.values(context.operations).forEach(operation => {
-      classDeclarationForOperation(generator, operation, Object.values(context.fragments));
+      classDeclarationForOperation(generator, operation);
     });
 
     Object.values(context.fragments).forEach(fragment => {
@@ -387,7 +387,7 @@ function operationIdentifier(generator,  { operationName, sourceWithFragments, o
   }
 
   generator.printNewlineIfNeeded();
-  generator.printOnNewline(`public static let operationId = "${operationId}"`);
+  generator.printOnNewline(`public static let operationIdentifier = "${operationId}"`);
 }
 
 function propertyDeclarationForField(generator, field) {
