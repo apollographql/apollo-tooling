@@ -93,7 +93,7 @@ function structDeclarationForInputObjectType(
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
-    propertyDeclarations(generator, properties);
+    propertyDeclarations(generator, properties, true);
   });
 }
 
@@ -133,7 +133,7 @@ export function interfaceVariablesDeclarationForOperation(
     interfaceName,
   }, () => {
     const properties = propertiesFromFields(generator.context, variables);
-    propertyDeclarations(generator, properties);
+    propertyDeclarations(generator, properties, true);
   });
 }
 
