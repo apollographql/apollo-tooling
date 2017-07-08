@@ -43,7 +43,7 @@ export function propertyDeclaration(generator, {
   }
 
   if (closure) {
-    generator.printOnNewline(name)
+    generator.printOnNewline(`+${name}`)
     if (isInput && isNullable) {
       generator.print('?')
     }
@@ -69,7 +69,7 @@ export function propertyDeclaration(generator, {
     }
 
   } else {
-    generator.printOnNewline(name)
+    generator.printOnNewline(`+${name}`)
     if (isInput && isNullable) {
       generator.print('?')
     }
@@ -89,7 +89,7 @@ export function propertySetsDeclaration(generator, property, propertySets, stand
       })
   }
   if (!standalone) {
-    generator.printOnNewline(`${name}:`);
+    generator.printOnNewline(`+${name}:`);
   }
 
   if (isNullable) {
