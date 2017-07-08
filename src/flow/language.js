@@ -55,7 +55,7 @@ export function propertyDeclaration(generator, {
       if (!isNullable) {
         generator.print(' ');
       }
-      generator.print(' Array<');
+      generator.print(' $ReadOnlyArray<');
     }
 
     generator.pushScope({ typeName: name });
@@ -97,7 +97,7 @@ export function propertySetsDeclaration(generator, property, propertySets, stand
   }
 
   if (isArray) {
-    generator.print('Array< ');
+    generator.print('$ReadOnlyArray< ');
   }
 
   generator.pushScope({ typeName: name });
