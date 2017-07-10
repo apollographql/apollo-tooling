@@ -9,7 +9,8 @@
     "compile": "tsc",
     "watch": "tsc -w",
     "prepublish": "npm run clean && npm run compile",
-    "test": "jest"
+    "test": "jest",
+    "test:smoke": "rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
   },
   "repository": {
     "type": "git",
