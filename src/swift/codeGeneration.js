@@ -59,8 +59,11 @@ export function generateSource(context, options) {
   const generator = new CodeGenerator(context);
 
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
-  generator.printNewline();
-  generator.printOnNewline('import Apollo');
+
+  if (!options.skipSwiftImportStatement) {
+    generator.printNewline();
+    generator.printOnNewline('import Apollo');
+  }
 
   namespaceDeclaration(generator, context.namespace, () => {
 
