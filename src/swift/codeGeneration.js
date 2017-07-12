@@ -387,7 +387,7 @@ function operationIdentifier(generator,  { operationName, sourceWithFragments, o
   }
 
   generator.printNewlineIfNeeded();
-  generator.printOnNewline(`public static let operationIdentifier = "${operationId}"`);
+  generator.printOnNewline(`public static let operationIdentifier: String? = "${operationId}"`);
 }
 
 function propertyDeclarationForField(generator, field) {
