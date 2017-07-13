@@ -556,12 +556,13 @@ function enumerationDeclaration(generator, type) {
   const values = type.getValues();
 
   generator.printNewlineIfNeeded();
-  generator.printOnNewline(description && `/// ${description}`);
+  comment(generator, description);
   generator.printOnNewline(`public enum ${name}: String`);
   generator.withinBlock(() => {
-    values.forEach(value =>
-      generator.printOnNewline(`case ${escapeIdentifierIfNeeded(enumCaseName(value.name))} = "${value.value}"${wrap(' /// ', value.description)}`)
-    );
+    values.forEach(value => {
+      comment(generator, value.description);
+      generator.printOnNewline(`case ${escapeIdentifierIfNeeded(enumCaseName(value.name))} = "${value.value}"`);
+    });
   });
   generator.printNewline();
   generator.printOnNewline(`extension ${name}: Apollo.JSONDecodable, Apollo.JSONEncodable {}`);
