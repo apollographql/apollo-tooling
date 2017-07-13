@@ -52,14 +52,21 @@ yargs
         alias: 'K',
         describe: 'Allows "insecure" SSL connection to the server',
         type: 'boolean'
+      },
+      method: {
+        demand: false,
+        describe: 'The HTTP request method to use for the introspection query request',
+        type: 'string',
+        default: 'POST',
+        choices: ['POST', 'GET', 'post', 'get']
       }
     },
     async argv => {
-      const { schema, output, header, insecure } = argv;
+      const { schema, output, header, insecure, method } = argv;
 
       const urlRegex = /^https?:\/\//i;
       if (urlRegex.test(schema)) {
-        await downloadSchema(schema, output, header, insecure);
+        await downloadSchema(schema, output, header, insecure, method);
       } else {
         await introspectSchema(schema, output);
       }
