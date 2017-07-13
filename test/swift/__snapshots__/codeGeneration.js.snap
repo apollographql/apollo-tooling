@@ -1364,9 +1364,12 @@ public struct ReviewInput: GraphQLMapConvertible {
 exports[`Swift code generation #typeDeclarationForGraphQLType() should generate an enum declaration for a GraphQLEnumType 1`] = `
 "/// The episodes in the Star Wars trilogy
 public enum Episode: String {
-  case newhope = \\"NEWHOPE\\" /// Star Wars Episode IV: A New Hope, released in 1977.
-  case empire = \\"EMPIRE\\" /// Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  case jedi = \\"JEDI\\" /// Star Wars Episode VI: Return of the Jedi, released in 1983.
+  /// Star Wars Episode IV: A New Hope, released in 1977.
+  case newhope = \\"NEWHOPE\\"
+  /// Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  case empire = \\"EMPIRE\\"
+  /// Star Wars Episode VI: Return of the Jedi, released in 1983.
+  case jedi = \\"JEDI\\"
 }
 
 extension Episode: Apollo.JSONDecodable, Apollo.JSONEncodable {}"
