@@ -152,8 +152,9 @@ yargs
       },
       "merge-in-fields-from-fragment-spreads": {
         demand: false,
-        describe: "Merge fragment fields onto its enclosing type [default: true]",
-        default: true
+        describe: "Merge fragment fields onto its enclosing type",
+        default: true,
+        type: 'boolean'
       }
     },
     argv => {
