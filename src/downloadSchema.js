@@ -18,14 +18,14 @@ const defaultHeaders = {
   'Content-Type': 'application/json'
 };
 
-export default async function downloadSchema(url, outputPath, additionalHeaders, insecure) {
+export default async function downloadSchema(url, outputPath, additionalHeaders, insecure, method) {
   const headers = Object.assign(defaultHeaders, additionalHeaders);
   const agent = insecure ? new https.Agent({ rejectUnauthorized: false }) : null;
 
   let result;
   try {
     const response = await fetch(url, {
-      method: 'POST',
+      method: method,
       headers: headers,
       body: JSON.stringify({ 'query': introspectionQuery }),
       agent,
