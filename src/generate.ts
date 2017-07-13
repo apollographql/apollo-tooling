@@ -29,8 +29,6 @@ export default function generate(
     options.addTypename = true;
   }
 
-  options.mergeInFieldsFromFragmentSpreads = true;
-
   const context = compileToIR(schema, document, options);
   Object.assign(context, options);
 
