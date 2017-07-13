@@ -149,6 +149,11 @@ yargs
         describe: "Path to an operation id JSON map file. If specified, also stores the operation ids (hashes) as properties on operation types [currently Swift-only]",
         default: null,
         normalize: true
+      },
+      "merge-in-fields-from-fragment-spreads": {
+        demand: false,
+        describe: "Merge fragment fields onto its enclosing type [default: true]",
+        default: true
       }
     },
     argv => {
@@ -170,7 +175,8 @@ yargs
         addTypename: argv["add-typename"],
         namespace: argv.namespace,
         operationIdsPath: argv["operation-ids-path"],
-        generateOperationIds: !!argv["operation-ids-path"]
+        generateOperationIds: !!argv["operation-ids-path"],
+        mergeInFieldsFromFragmentSpreads: argv["merge-in-fields-from-fragment-spreads"]
       };
 
       generate(inputPaths, argv.schema, argv.output, argv.target, argv.tagName, options);
