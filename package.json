@@ -25,7 +25,7 @@
     "@types/glob": "^5.0.30",
     "@types/graphql": "^0.9.1",
     "@types/inflected": "^1.1.29",
-    "@types/mkdirp": "^0.3.29",
+    "@types/mkdirp": "^0.5.0",
     "@types/node-fetch": "^1.6.7",
     "@types/yargs": "^8.0.0",
     "ansi-regex": "^3.0.0",
