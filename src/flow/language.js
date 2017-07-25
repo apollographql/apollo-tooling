@@ -43,7 +43,7 @@ export function propertyDeclaration(generator, {
   }
 
   if (closure) {
-    generator.printOnNewline(name)
+    generator.printOnNewline(`+${name}`)
     if (isInput && isNullable) {
       generator.print('?')
     }
@@ -55,7 +55,7 @@ export function propertyDeclaration(generator, {
       if (!isNullable) {
         generator.print(' ');
       }
-      generator.print(' Array<');
+      generator.print(' $ReadOnlyArray<');
     }
 
     generator.pushScope({ typeName: name });
@@ -69,7 +69,7 @@ export function propertyDeclaration(generator, {
     }
 
   } else {
-    generator.printOnNewline(name)
+    generator.printOnNewline(`+${name}`)
     if (isInput && isNullable) {
       generator.print('?')
     }
@@ -89,7 +89,7 @@ export function propertySetsDeclaration(generator, property, propertySets, stand
       })
   }
   if (!standalone) {
-    generator.printOnNewline(`${name}:`);
+    generator.printOnNewline(`+${name}:`);
   }
 
   if (isNullable) {
@@ -97,7 +97,7 @@ export function propertySetsDeclaration(generator, property, propertySets, stand
   }
 
   if (isArray) {
-    generator.print('Array< ');
+    generator.print('$ReadOnlyArray< ');
   }
 
   generator.pushScope({ typeName: name });

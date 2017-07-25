@@ -5,9 +5,9 @@ exports[`Flow code generation #generateSource() should annotate custom scalars a
 //  This file was automatically generated and should not be edited.
 
 export type CustomScalarQuery = {|
-  misc: ? {|
-    __typename: string,
-    date: ?any,
+  +misc: ? {|
+    +__typename: string,
+    +date: ?any,
   |},
 |};"
 `;
@@ -24,38 +24,38 @@ export type Episode =
 
 
 export type HeroAndFriendsNamesQueryVariables = {|
-  episode?: ?Episode,
+  +episode?: ?Episode,
 |};
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
+  +hero: ?( {
+      +__typename: \\"Human\\",
       // The name of the character
-      name: string,
+      +name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array< ( {
-          __typename: \\"Human\\",
+      +friends: ?$ReadOnlyArray< ( {
+          +__typename: \\"Human\\",
           // The name of the character
-          name: string,
+          +name: string,
         } | {
-          __typename: \\"Droid\\",
+          +__typename: \\"Droid\\",
           // The name of the character
-          name: string,
+          +name: string,
         }
       ) >,
     } | {
-      __typename: \\"Droid\\",
+      +__typename: \\"Droid\\",
       // The name of the character
-      name: string,
+      +name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array< ( {
-          __typename: \\"Human\\",
+      +friends: ?$ReadOnlyArray< ( {
+          +__typename: \\"Human\\",
           // The name of the character
-          name: string,
+          +name: string,
         } | {
-          __typename: \\"Droid\\",
+          +__typename: \\"Droid\\",
           // The name of the character
-          name: string,
+          +name: string,
         }
       ) >,
     }
@@ -63,24 +63,24 @@ export type HeroAndFriendsNamesQuery = {|
 |};
 
 export type FriendFragment = ( {
-      __typename: \\"Human\\",
+      +__typename: \\"Human\\",
       // The name of the character
-      name: string,
+      +name: string,
     } | {
-      __typename: \\"Droid\\",
+      +__typename: \\"Droid\\",
       // The name of the character
-      name: string,
+      +name: string,
     }
   );
 
 export type PersonFragment = ( {
-      __typename: \\"Human\\",
+      +__typename: \\"Human\\",
       // The name of the character
-      name: string,
+      +name: string,
     } | {
-      __typename: \\"Droid\\",
+      +__typename: \\"Droid\\",
       // The name of the character
-      name: string,
+      +name: string,
     }
   );"
 `;
@@ -97,38 +97,38 @@ export type Episode =
 
 
 export type HeroAndFriendsNamesQueryVariables = {|
-  episode?: ?Episode,
+  +episode?: ?Episode,
 |};
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
+  +hero: ?( {
+      +__typename: \\"Human\\",
       // The name of the character
-      name: string,
+      +name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array< ( {
-          __typename: \\"Human\\",
+      +friends: ?$ReadOnlyArray< ( {
+          +__typename: \\"Human\\",
           // The name of the character
-          name: string,
+          +name: string,
         } | {
-          __typename: \\"Droid\\",
+          +__typename: \\"Droid\\",
           // The name of the character
-          name: string,
+          +name: string,
         }
       ) >,
     } | {
-      __typename: \\"Droid\\",
+      +__typename: \\"Droid\\",
       // The name of the character
-      name: string,
+      +name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array< ( {
-          __typename: \\"Human\\",
+      +friends: ?$ReadOnlyArray< ( {
+          +__typename: \\"Human\\",
           // The name of the character
-          name: string,
+          +name: string,
         } | {
-          __typename: \\"Droid\\",
+          +__typename: \\"Droid\\",
           // The name of the character
-          name: string,
+          +name: string,
         }
       ) >,
     }
@@ -136,13 +136,13 @@ export type HeroAndFriendsNamesQuery = {|
 |};
 
 export type FriendFragment = ( {
-      __typename: \\"Human\\",
+      +__typename: \\"Human\\",
       // The name of the character
-      name: string,
+      +name: string,
     } | {
-      __typename: \\"Droid\\",
+      +__typename: \\"Droid\\",
       // The name of the character
-      name: string,
+      +name: string,
     }
   );"
 `;
@@ -152,34 +152,34 @@ exports[`Flow code generation #generateSource() should generate fragmented query
 //  This file was automatically generated and should not be edited.
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
+  +hero: ?( {
+      +__typename: \\"Human\\",
       // The name of the character
-      name: string,
+      +name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array< ( {
-          __typename: \\"Human\\",
+      +friends: ?$ReadOnlyArray< ( {
+          +__typename: \\"Human\\",
           // The name of the character
-          name: string,
+          +name: string,
         } | {
-          __typename: \\"Droid\\",
+          +__typename: \\"Droid\\",
           // The name of the character
-          name: string,
+          +name: string,
         }
       ) >,
     } | {
-      __typename: \\"Droid\\",
+      +__typename: \\"Droid\\",
       // The name of the character
-      name: string,
+      +name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array< ( {
-          __typename: \\"Human\\",
+      +friends: ?$ReadOnlyArray< ( {
+          +__typename: \\"Human\\",
           // The name of the character
-          name: string,
+          +name: string,
         } | {
-          __typename: \\"Droid\\",
+          +__typename: \\"Droid\\",
           // The name of the character
-          name: string,
+          +name: string,
         }
       ) >,
     }
@@ -187,29 +187,29 @@ export type HeroAndFriendsNamesQuery = {|
 |};
 
 export type HeroFriendsFragment = ( {
-      __typename: \\"Human\\",
+      +__typename: \\"Human\\",
       // The friends of the character, or an empty list if they have none
-      friends: ?Array< ( {
-          __typename: \\"Human\\",
+      +friends: ?$ReadOnlyArray< ( {
+          +__typename: \\"Human\\",
           // The name of the character
-          name: string,
+          +name: string,
         } | {
-          __typename: \\"Droid\\",
+          +__typename: \\"Droid\\",
           // The name of the character
-          name: string,
+          +name: string,
         }
       ) >,
     } | {
-      __typename: \\"Droid\\",
+      +__typename: \\"Droid\\",
       // The friends of the character, or an empty list if they have none
-      friends: ?Array< ( {
-          __typename: \\"Human\\",
+      +friends: ?$ReadOnlyArray< ( {
+          +__typename: \\"Human\\",
           // The name of the character
-          name: string,
+          +name: string,
         } | {
-          __typename: \\"Droid\\",
+          +__typename: \\"Droid\\",
           // The name of the character
-          name: string,
+          +name: string,
         }
       ) >,
     }
@@ -229,31 +229,31 @@ export type Episode =
 
 export type ReviewInput = {|
   // 0-5 stars
-  stars: number,
+  +stars: number,
   // Comment about the movie, optional
-  commentary?: ?string,
+  +commentary?: ?string,
   // Favorite color, optional
-  favorite_color?: ?ColorInput,
+  +favorite_color?: ?ColorInput,
 |};
 
 export type ColorInput = {|
-  red: number,
-  green: number,
-  blue: number,
+  +red: number,
+  +green: number,
+  +blue: number,
 |};
 
 export type ReviewMovieMutationVariables = {|
-  episode?: ?Episode,
-  review?: ?ReviewInput,
+  +episode?: ?Episode,
+  +review?: ?ReviewInput,
 |};
 
 export type ReviewMovieMutation = {|
-  createReview: ? {|
-    __typename: string,
+  +createReview: ? {|
+    +__typename: string,
     // The number of stars this review gave, 1-5
-    stars: number,
+    +stars: number,
     // Comment about the movie
-    commentary: ?string,
+    +commentary: ?string,
   |},
 |};"
 `;
@@ -263,30 +263,30 @@ exports[`Flow code generation #generateSource() should generate query operations
 //  This file was automatically generated and should not be edited.
 
 export type HeroAndDetailsQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
+  +hero: ?( {
+      +__typename: \\"Human\\",
       // What this human calls themselves
-      name: string,
+      +name: string,
       // Height in the preferred unit, default is meters
-      height: ?number,
+      +height: ?number,
     } | {
-      __typename: \\"Droid\\",
+      +__typename: \\"Droid\\",
       // What others call this droid
-      name: string,
+      +name: string,
       // This droid's primary function
-      primaryFunction: ?string,
+      +primaryFunction: ?string,
     }
   ),
 |};
 
 export type HeroDetailsFragment = ( {
-      __typename: \\"Human\\",
+      +__typename: \\"Human\\",
       // Height in the preferred unit, default is meters
-      height: ?number,
+      +height: ?number,
     } | {
-      __typename: \\"Droid\\",
+      +__typename: \\"Droid\\",
       // This droid's primary function
-      primaryFunction: ?string,
+      +primaryFunction: ?string,
     }
   );"
 `;
@@ -303,38 +303,38 @@ export type Episode =
 
 
 export type HeroAndFriendsNamesQueryVariables = {|
-  episode?: ?Episode,
+  +episode?: ?Episode,
 |};
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
+  +hero: ?( {
+      +__typename: \\"Human\\",
       // The name of the character
-      name: string,
+      +name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array< ( {
-          __typename: \\"Human\\",
+      +friends: ?$ReadOnlyArray< ( {
+          +__typename: \\"Human\\",
           // The name of the character
-          name: string,
+          +name: string,
         } | {
-          __typename: \\"Droid\\",
+          +__typename: \\"Droid\\",
           // The name of the character
-          name: string,
+          +name: string,
         }
       ) >,
     } | {
-      __typename: \\"Droid\\",
+      +__typename: \\"Droid\\",
       // The name of the character
-      name: string,
+      +name: string,
       // The friends of the character, or an empty list if they have none
-      friends: ?Array< ( {
-          __typename: \\"Human\\",
+      +friends: ?$ReadOnlyArray< ( {
+          +__typename: \\"Human\\",
           // The name of the character
-          name: string,
+          +name: string,
         } | {
-          __typename: \\"Droid\\",
+          +__typename: \\"Droid\\",
           // The name of the character
-          name: string,
+          +name: string,
         }
       ) >,
     }
@@ -347,14 +347,14 @@ exports[`Flow code generation #generateSource() should generate simple query ope
 //  This file was automatically generated and should not be edited.
 
 export type HeroNameQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
+  +hero: ?( {
+      +__typename: \\"Human\\",
       // The name of the character
-      name: string,
+      +name: string,
     } | {
-      __typename: \\"Droid\\",
+      +__typename: \\"Droid\\",
       // The name of the character
-      name: string,
+      +name: string,
     }
   ),
 |};"
@@ -372,18 +372,18 @@ export type Episode =
 
 
 export type HeroNameQueryVariables = {|
-  episode?: ?Episode,
+  +episode?: ?Episode,
 |};
 
 export type HeroNameQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
+  +hero: ?( {
+      +__typename: \\"Human\\",
       // The name of the character
-      name: string,
+      +name: string,
     } | {
-      __typename: \\"Droid\\",
+      +__typename: \\"Droid\\",
       // The name of the character
-      name: string,
+      +name: string,
     }
   ),
 |};"
@@ -394,11 +394,11 @@ exports[`Flow code generation #generateSource() should handle multi-line comment
 //  This file was automatically generated and should not be edited.
 
 export type CustomScalarQuery = {|
-  commentTest: ? {|
-    __typename: string,
+  +commentTest: ? {|
+    +__typename: string,
     // This is a multi-line
     // comment.
-    multiLine: ?string,
+    +multiLine: ?string,
   |},
 |};"
 `;
@@ -408,10 +408,10 @@ exports[`Flow code generation #generateSource() should handle single line commen
 //  This file was automatically generated and should not be edited.
 
 export type CustomScalarQuery = {|
-  commentTest: ? {|
-    __typename: string,
+  +commentTest: ? {|
+    +__typename: string,
     // This is a single-line comment
-    singleLine: ?string,
+    +singleLine: ?string,
   |},
 |};"
 `;
