@@ -6,7 +6,7 @@ exports[`Flow code generation #generateSource() should annotate custom scalars a
 
 export type CustomScalarQuery = {|
   misc: ? {|
-    __typename: string,
+    __typename: \\"OddType\\",
     date: ?any,
   |},
 |};"
@@ -249,7 +249,7 @@ export type ReviewMovieMutationVariables = {|
 
 export type ReviewMovieMutation = {|
   createReview: ? {|
-    __typename: string,
+    __typename: \\"Review\\",
     // The number of stars this review gave, 1-5
     stars: number,
     // Comment about the movie
@@ -348,7 +348,7 @@ exports[`Flow code generation #generateSource() should generate simple nested wi
 
 export type StarshipCoordsQuery = {|
   starship: ? {|
-    __typename: string,
+    __typename: \\"Starship\\",
     coordinates: ?Array< Array< number > >,
   |},
 |};"
@@ -401,13 +401,31 @@ export type HeroNameQuery = {|
 |};"
 `;
 
+exports[`Flow code generation #generateSource() should handle interfaces at root 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type CustomScalarQuery = {|
+  interfaceTest: ?( {
+      __typename: \\"ImplA\\",
+      prop: string,
+      propA: string,
+    } | {
+      __typename: \\"ImplB\\",
+      prop: string,
+      propB: ?number,
+    }
+  ),
+|};"
+`;
+
 exports[`Flow code generation #generateSource() should handle multi-line comments 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
 export type CustomScalarQuery = {|
   commentTest: ? {|
-    __typename: string,
+    __typename: \\"CommentTest\\",
     // This is a multi-line
     // comment.
     multiLine: ?string,
@@ -421,9 +439,25 @@ exports[`Flow code generation #generateSource() should handle single line commen
 
 export type CustomScalarQuery = {|
   commentTest: ? {|
-    __typename: string,
+    __typename: \\"CommentTest\\",
     // This is a single-line comment
     singleLine: ?string,
   |},
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should handle unions at root 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type CustomScalarQuery = {|
+  unionTest: ?( {
+      __typename: \\"PartialA\\",
+      prop: string,
+    } | {
+      __typename: \\"PartialB\\",
+      prop: string,
+    }
+  ),
 |};"
 `;

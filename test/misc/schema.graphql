@@ -23,8 +23,35 @@ type CommentTest {
   multiLine: String
 }
 
+interface InterfaceTestCase {
+  prop: String!
+}
+
+type ImplA implements InterfaceTestCase {
+  prop: String!
+  propA: String!
+}
+
+type ImplB implements InterfaceTestCase {
+  prop: String!
+  propB: Int
+}
+
+type PartialA {
+  prop: String!
+}
+
+type PartialB {
+  prop: String!
+}
+
+union UnionTestCase = PartialA | PartialB
+
 type Query {
   misc: OddType
   commentTest: CommentTest
+  interfaceTest: InterfaceTestCase
+  unionTest: UnionTestCase
 }
+
 
