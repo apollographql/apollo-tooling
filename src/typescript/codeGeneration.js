@@ -149,6 +149,22 @@ export function interfaceDeclarationForOperation(
   }
 ) {
   const interfaceName = interfaceNameFromOperation({operationName, operationType});
+  fields = fields.map(rootField => {
+    const fields = rootField.fields.map(field => {
+      if (field.fieldName === '__typename') {
+        return {
+          ...field,
+          typeName: `"${rootField.type.name}"`,
+          type: { name: `"${rootField.type.name}"` },
+        };
+      }
+      return field;
+    });
+    return {
+      ...rootField,
+      fields,
+    };
+  });
   const properties = propertiesFromFields(generator.context, fields);
   interfaceDeclaration(generator, {
     interfaceName,
