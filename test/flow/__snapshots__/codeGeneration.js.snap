@@ -342,6 +342,18 @@ export type HeroAndFriendsNamesQuery = {|
 |};"
 `;
 
+exports[`Flow code generation #generateSource() should generate simple nested with required elements in lists 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type StarshipCoordsQuery = {|
+  starship: ? {|
+    __typename: string,
+    coordinates: ?Array< Array< number > >,
+  |},
+|};"
+`;
+
 exports[`Flow code generation #generateSource() should generate simple query operations 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
