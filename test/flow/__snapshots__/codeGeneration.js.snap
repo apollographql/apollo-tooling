@@ -348,7 +348,7 @@ exports[`Flow code generation #generateSource() should generate simple nested wi
 
 export type StarshipCoordsQuery = {|
   starship: ? {|
-    __typename: string,
+    __typename: \\"Starship\\",
     coordinates: ?Array< Array< number > >,
   |},
 |};"

@@ -273,7 +273,7 @@ exports[`TypeScript code generation #generateSource() should generate simple nes
 
 export type StarshipCoordsQuery = {
   starship:  {
-    __typename: string,
+    __typename: \\"Starship\\",
     coordinates: Array< Array< number > > | null,
   } | null,
 };
@@ -332,26 +332,6 @@ export type HeroNameQuery = {
 "
 `;
 
-exports[`TypeScript code generation #generateSource() should handle interfaces at root 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-export type CustomScalarQuery = {
-  interfaceTest: ( {
-      __typename: \\"ImplA\\",
-      prop: string,
-      propA: string,
-    } | {
-      __typename: \\"ImplB\\",
-      prop: string,
-      propB: number | null,
-    }
-  ) | null,
-};
-/* tslint:enable */
-"
-`;
-
 exports[`TypeScript code generation #generateSource() should handle multi-line comments 1`] = `
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
@@ -378,24 +358,6 @@ export type CustomScalarQuery = {
     // This is a single-line comment
     singleLine: string | null,
   } | null,
-};
-/* tslint:enable */
-"
-`;
-
-exports[`TypeScript code generation #generateSource() should handle unions at root 1`] = `
-"/* tslint:disable */
-//  This file was automatically generated and should not be edited.
-
-export type CustomScalarQuery = {
-  unionTest: ( {
-      __typename: \\"PartialA\\",
-      prop: string,
-    } | {
-      __typename: \\"PartialB\\",
-      prop: string,
-    }
-  ) | null,
 };
 /* tslint:enable */
 "
