@@ -401,6 +401,24 @@ export type HeroNameQuery = {|
 |};"
 `;
 
+exports[`Flow code generation #generateSource() should handle interfaces at root 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type CustomScalarQuery = {|
+  interfaceTest: ?( {
+      __typename: \\"ImplA\\",
+      prop: string,
+      propA: string,
+    } | {
+      __typename: \\"ImplB\\",
+      prop: string,
+      propB: ?number,
+    }
+  ),
+|};"
+`;
+
 exports[`Flow code generation #generateSource() should handle multi-line comments 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
@@ -425,5 +443,21 @@ export type CustomScalarQuery = {|
     // This is a single-line comment
     singleLine: ?string,
   |},
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should handle unions at root 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type CustomScalarQuery = {|
+  unionTest: ?( {
+      __typename: \\"PartialA\\",
+      prop: string,
+    } | {
+      __typename: \\"PartialB\\",
+      prop: string,
+    }
+  ),
 |};"
 `;

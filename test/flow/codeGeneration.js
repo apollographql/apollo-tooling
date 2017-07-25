@@ -253,5 +253,44 @@ describe('Flow code generation', function() {
       const source = generateSource(context);
       expect(source).toMatchSnapshot();
     });
+
+    test('should handle interfaces at root', () => {
+      const { compileFromSource } = setup(miscSchema);
+      const context = compileFromSource(`
+        query CustomScalar {
+          interfaceTest {
+            prop
+            ... on ImplA {
+              propA
+            }
+            ... on ImplB {
+              propB
+            }
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should handle unions at root', () => {
+      const { compileFromSource } = setup(miscSchema);
+      const context = compileFromSource(`
+        query CustomScalar {
+          unionTest {
+            ... on PartialA {
+              prop
+            }
+            ... on PartialB {
+              prop
+            }
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
   });
 });
