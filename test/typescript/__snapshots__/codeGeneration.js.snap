@@ -30,7 +30,7 @@ export type HeroAndFriendsNamesQuery = {
           // The name of the character
           name: string,
         }
-      ) > | null,
+      ) | null > | null,
     } | {
       __typename: \\"Droid\\",
       // The name of the character
@@ -45,7 +45,7 @@ export type HeroAndFriendsNamesQuery = {
           // The name of the character
           name: string,
         }
-      ) > | null,
+      ) | null > | null,
     }
   ) | null,
 };
@@ -83,7 +83,7 @@ export type HeroAndFriendsNamesQuery = {
           // The name of the character
           name: string,
         }
-      ) > | null,
+      ) | null > | null,
     } | {
       __typename: \\"Droid\\",
       // The name of the character
@@ -98,7 +98,7 @@ export type HeroAndFriendsNamesQuery = {
           // The name of the character
           name: string,
         }
-      ) > | null,
+      ) | null > | null,
     }
   ) | null,
 };
@@ -115,7 +115,7 @@ export type heroFriendsFragment = ( {
           // The name of the character
           name: string,
         }
-      ) > | null,
+      ) | null > | null,
     } | {
       __typename: \\"Droid\\",
       // The friends of the character, or an empty list if they have none
@@ -128,7 +128,7 @@ export type heroFriendsFragment = ( {
           // The name of the character
           name: string,
         }
-      ) > | null,
+      ) | null > | null,
     }
   );
 /* tslint:enable */
@@ -244,7 +244,7 @@ export type HeroAndFriendsNamesQuery = {
           // The name of the character
           name: string,
         }
-      ) > | null,
+      ) | null > | null,
     } | {
       __typename: \\"Droid\\",
       // The name of the character
@@ -259,9 +259,23 @@ export type HeroAndFriendsNamesQuery = {
           // The name of the character
           name: string,
         }
-      ) > | null,
+      ) | null > | null,
     }
   ) | null,
+};
+/* tslint:enable */
+"
+`;
+
+exports[`TypeScript code generation #generateSource() should generate simple nested with required elements in lists 1`] = `
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
+
+export type StarshipCoordsQuery = {
+  starship:  {
+    __typename: string,
+    coordinates: Array< Array< number > > | null,
+  } | null,
 };
 /* tslint:enable */
 "
