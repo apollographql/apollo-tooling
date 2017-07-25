@@ -103,7 +103,7 @@ export type HeroAndFriendsNamesQuery = {
   ) | null,
 };
 
-export type HeroFriendsFragment = ( {
+export type heroFriendsFragment = ( {
       __typename: \\"Human\\",
       // The friends of the character, or an empty list if they have none
       friends:  Array<( {
