@@ -14,7 +14,6 @@ import {
 
 import  { isTypeProperSuperTypeOf } from '../utilities/graphql';
 
-import { camelCase, pascalCase } from 'change-case';
 import * as Inflector from 'inflected';
 
 import {
@@ -88,7 +87,7 @@ function structDeclarationForInputObjectType(
   generator,
   type
 ) {
-  const interfaceName = pascalCase(type.name);
+  const interfaceName = type.name;
   interfaceDeclaration(generator, {
     interfaceName,
   }, () => {
@@ -100,13 +99,13 @@ function structDeclarationForInputObjectType(
 function interfaceNameFromOperation({operationName, operationType}) {
   switch (operationType) {
     case 'query':
-      return `${pascalCase(operationName)}Query`;
+      return `${operationName}Query`;
       break;
     case 'mutation':
-      return `${pascalCase(operationName)}Mutation`;
+      return `${operationName}Mutation`;
       break;
     case 'subscription':
-      return `${pascalCase(operationName)}Subscription`;
+      return `${operationName}Subscription`;
       break;
     default:
       throw new GraphQLError(`Unsupported operation type "${operationType}"`);
@@ -171,7 +170,7 @@ export function interfaceDeclarationForFragment(
     source,
   } = fragment;
 
-  const interfaceName = `${pascalCase(fragmentName)}Fragment`;
+  const interfaceName = `${fragmentName}Fragment`;
 
   interfaceDeclaration(generator, {
     interfaceName,
