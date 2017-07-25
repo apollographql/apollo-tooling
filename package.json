@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@types/glob": "^5.0.30",
-    "@types/graphql": "^0.9.1",
+    "@types/graphql": "^0.10.1",
     "@types/inflected": "^1.1.29",
     "@types/mkdirp": "^0.3.29",
     "@types/node-fetch": "^1.6.7",
