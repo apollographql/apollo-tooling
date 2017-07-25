@@ -6,7 +6,7 @@ exports[`Flow code generation #generateSource() should annotate custom scalars a
 
 export type CustomScalarQuery = {|
   misc: ? {|
-    __typename: string,
+    __typename: \\"OddType\\",
     date: ?any,
   |},
 |};"
@@ -249,7 +249,7 @@ export type ReviewMovieMutationVariables = {|
 
 export type ReviewMovieMutation = {|
   createReview: ? {|
-    __typename: string,
+    __typename: \\"Review\\",
     // The number of stars this review gave, 1-5
     stars: number,
     // Comment about the movie
@@ -407,7 +407,7 @@ exports[`Flow code generation #generateSource() should handle multi-line comment
 
 export type CustomScalarQuery = {|
   commentTest: ? {|
-    __typename: string,
+    __typename: \\"CommentTest\\",
     // This is a multi-line
     // comment.
     multiLine: ?string,
@@ -421,7 +421,7 @@ exports[`Flow code generation #generateSource() should handle single line commen
 
 export type CustomScalarQuery = {|
   commentTest: ? {|
-    __typename: string,
+    __typename: \\"CommentTest\\",
     // This is a single-line comment
     singleLine: ?string,
   |},
