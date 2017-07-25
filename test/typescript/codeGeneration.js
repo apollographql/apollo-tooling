@@ -100,6 +100,20 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
+    test(`should generate simple nested with required elements in lists`, function() {
+      const { compileFromSource } = setup(swapiSchema);
+      const context = compileFromSource(`
+        query StarshipCoords {
+          starship {
+            coordinates
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
     test(`should generate fragmented query operations`, function() {
       const { compileFromSource } = setup(swapiSchema);
       const context = compileFromSource(`

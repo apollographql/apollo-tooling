@@ -31,6 +31,7 @@ export function propertyDeclaration(generator, {
   isInput,
   isArray,
   isNullable,
+  isArrayElementNullable,
   fragmentSpreads
 }, closure) {
   const name = fieldName || propertyName;
@@ -60,6 +61,9 @@ export function propertyDeclaration(generator, {
     generator.popScope();
 
     if (isArray) {
+      if (isArrayElementNullable) {
+        generator.print(' | null');
+      }
       generator.print(' >');
     }
 
@@ -78,7 +82,10 @@ export function propertyDeclaration(generator, {
 }
 
 export function propertySetsDeclaration(generator, property, propertySets, standalone = false) {
-  const { description, fieldName, propertyName, typeName, isNullable, isArray } = property;
+  const { 
+    description, fieldName, propertyName, typeName,
+    isNullable, isArray, isArrayElementNullable,
+  } = property;
   const name = fieldName || propertyName;
 
   if (description) {
@@ -112,6 +119,9 @@ export function propertySetsDeclaration(generator, property, propertySets, stand
   generator.popScope();
 
   if (isArray) {
+    if (isArrayElementNullable) {
+      generator.print(' | null');
+    }
     generator.print(' >');
   }
 
