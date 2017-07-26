@@ -79,7 +79,7 @@ export default class CodeGenerator {
     this.queue.push(closure);
   }
 
-  flushQueued(closure) {
+  printQueuedBlocks(closure) {
     while (this.queue.length > 0) {
       this.queue.pop()();
     }
