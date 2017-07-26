@@ -8,6 +8,7 @@ export default class CodeGenerator {
     this.context = context;
     
     this.scopeStack = [];
+    this.queue = [];
 
     this.indentWidth = 2;
     this.indentLevel = 0;
@@ -64,9 +65,23 @@ export default class CodeGenerator {
     this.indentLevel--;
   }
 
-  withinBlock(closure, open = ' {', close = '}') {
+  withinBlock(closure, open = ' {', close = '}', closeOnNewLine = true) {
     this.print(open);
     this.withIndent(closure);
-    this.printOnNewline(close);
+    if (closeOnNewLine) {
+      this.printOnNewline(close);
+    } else {
+      this.print(close);
+    }
+  }
+
+  queueBlock(closure, open = ' {', close = '}') {
+    this.queue.push(closure);
+  }
+
+  flushQueued(closure) {
+    while (this.queue.length > 0) {
+      this.queue.pop()();
+    }
   }
 }
