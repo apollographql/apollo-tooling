@@ -29,7 +29,7 @@ export default function generate(
     options.addTypename = true;
   }
 
-  const context = compileToIR(schema, document, options);
+  const context: any = compileToIR(schema, document, options);
   Object.assign(context, options);
 
   let output = '';

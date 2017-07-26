@@ -23,7 +23,18 @@ import {
   GraphQLFloat,
   GraphQLBoolean,
   GraphQLID,
-  GraphQLError
+  GraphQLError,
+  GraphQLSchema,
+  GraphQLType,
+  GraphQLCompositeType,
+  DocumentNode,
+  OperationDefinitionNode,
+  FragmentDefinitionNode,
+  VariableNode,
+  SelectionSetNode,
+  FieldNode,
+  ArgumentNode,
+  DirectiveNode
 } from 'graphql';
 
 import {
@@ -53,9 +64,66 @@ import {
   createHash,
 } from 'crypto';
 
+export interface CompilerOptions {
+  addTypename?: boolean;
+  mergeInFieldsFromFragmentSpreads?: boolean;
+}
+
+export interface CompiledOperation { 
+  filePath?: string;
+  operationName: string;
+  operationId?: string;
+  operationType: string;
+  rootType: GraphQLObjectType;
+  variables: {
+    name: string;
+    type: GraphQLType;
+  }[];
+  source: string;
+  sourceWithFragments?: string;
+  fields: Field[];
+  fragmentsReferenced: string[];
+}
+
+export interface CompiledFragment { 
+  filePath?: string; 
+  fragmentName: string;
+  source: string;
+  typeCondition: GraphQLCompositeType;
+  possibleTypes: GraphQLObjectType[];
+    fields: Field[];
+  fragmentSpreads: string[];
+  inlineFragments: any[];
+  fragmentsReferenced: string[];
+}
+
+export interface CompiledSelectionSet {
+  fields: Field[];
+  fragmentSpreads: string[];
+  inlineFragments: any[];
+}
+
+export interface Field {
+  responseName: string;
+  fieldName: string;
+  args?: { [name:string]: any }[];
+  type: GraphQLType;
+  description?: string;
+  directives?: DirectiveNode[];
+  selectionSet?: SelectionSetNode;
+  isConditional?: boolean;
+}
+
+type GroupedFieldSet = { [responseName: string]: FieldSet };
+type FieldSet = [GraphQLCompositeType, Field][];
+
+type VisitedFragmentSet = { [fragmentName: string]: boolean };
+type GroupedVisitedFragmentSet = Map<GraphQLCompositeType, VisitedFragmentSet>;
+type FragmentsReferencedSet = { [fragmentName: string]: boolean };
+
 // Parts of this code are adapted from graphql-js
 
-export function compileToIR(schema, document, options = { mergeInFieldsFromFragmentSpreads: true }) {
+export function compileToIR(schema: GraphQLSchema, document: DocumentNode, options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }) {
   if (options.addTypename) {
     document = withTypenameFieldAddedWhereNeeded(schema, document);
   }
@@ -65,12 +133,18 @@ export function compileToIR(schema, document, options = { mergeInFieldsFromFragm
   const operations = Object.create(null);
 
   compiler.operations.forEach(operation => {
+    if (!operation.name) {
+      throw new Error("Operations should be named");
+    }
     operations[operation.name.value] = compiler.compileOperation(operation)
   });
 
   const fragments = Object.create(null);
 
   compiler.fragments.forEach(fragment => {
+    if (!fragment.name) {
+      throw new Error("Fragments should be named");
+    }
     fragments[fragment.name.value] = compiler.compileFragment(fragment)
   });
 
@@ -84,7 +158,14 @@ export function compileToIR(schema, document, options = { mergeInFieldsFromFragm
 }
 
 export class Compiler {
-  constructor(schema, document, options) {
+  options: CompilerOptions;
+  schema: GraphQLSchema;
+  typesUsedSet: Set<GraphQLType>;
+  operations: OperationDefinitionNode[];
+  fragmentMap: { [name: string]: FragmentDefinitionNode };
+  compiledFragmentMap: { [name: string]: CompiledFragment };
+
+  constructor(schema: GraphQLSchema, document: DocumentNode, options: CompilerOptions) {
     this.schema = schema;
     this.options = options;
 
@@ -107,7 +188,7 @@ export class Compiler {
     this.compiledFragmentMap = Object.create(null);
   }
 
-  addTypeUsed(type) {
+  addTypeUsed(type: GraphQLType) {
     if (this.typesUsedSet.has(type)) return;
 
     if (type instanceof GraphQLEnumType ||
@@ -126,7 +207,7 @@ export class Compiler {
     return Array.from(this.typesUsedSet);
   }
 
-  fragmentNamed(fragmentName) {
+  fragmentNamed(fragmentName: string) {
     return this.fragmentMap[fragmentName];
   }
 
@@ -134,12 +215,16 @@ export class Compiler {
     return Object.values(this.fragmentMap);
   }
 
-  compileOperation(operationDefinition) {
+  compileOperation(operationDefinition: OperationDefinitionNode): CompiledOperation {
+    if (!operationDefinition.name) {
+      throw new Error("Operations should be named");
+    }
+    
     const filePath = filePathForNode(operationDefinition);
     const operationName = operationDefinition.name.value;
     const operationType = operationDefinition.operation;
 
-    const variables = operationDefinition.variableDefinitions.map(node => {
+    const variables = (operationDefinition.variableDefinitions || []).map(node => {
       const name = node.variable.name.value;
       const type = typeFromAST(this.schema, node.type);
       this.addTypeUsed(getNamedType(type));
@@ -159,13 +244,13 @@ export class Compiler {
     return { filePath, operationName, operationType, rootType, variables, source, fields, fragmentsReferenced };
   }
 
-  compileFragment(fragmentDefinition) {
+  compileFragment(fragmentDefinition: FragmentDefinitionNode): CompiledFragment {
     const filePath = filePathForNode(fragmentDefinition);
     const fragmentName = fragmentDefinition.name.value;
 
     const source = print(fragmentDefinition);
 
-    const typeCondition = typeFromAST(this.schema, fragmentDefinition.typeCondition);
+    const typeCondition = typeFromAST(this.schema, fragmentDefinition.typeCondition) as GraphQLCompositeType;
     const possibleTypes = this.possibleTypesForType(typeCondition)
 
     const groupedVisitedFragmentSet = new Map();
@@ -178,7 +263,7 @@ export class Compiler {
     return { filePath, fragmentName, source, typeCondition, possibleTypes, fields, fragmentSpreads, inlineFragments, fragmentsReferenced };
   }
 
-  collectFields(parentType, selectionSet, groupedFieldSet = Object.create(null), groupedVisitedFragmentSet = new Map()) {
+  collectFields(parentType: GraphQLCompositeType, selectionSet: SelectionSetNode, groupedFieldSet: GroupedFieldSet = Object.create(null), groupedVisitedFragmentSet: GroupedVisitedFragmentSet = new Map()) {
     if (!isCompositeType(parentType)) {
       throw new Error(`parentType should be a composite type, but is "${String(parentType)}"`);
     }
@@ -202,7 +287,7 @@ export class Compiler {
             groupedFieldSet[responseName].push([parentType, {
               responseName,
               fieldName,
-              args: argumentsFromAST(selection.arguments),
+              args: selection.arguments ? argumentsFromAST(selection.arguments) : undefined,
               type: field.type,
               directives: selection.directives,
               selectionSet: selection.selectionSet
@@ -213,7 +298,7 @@ export class Compiler {
         case Kind.INLINE_FRAGMENT: {
           const typeCondition = selection.typeCondition;
           const inlineFragmentType = typeCondition ?
-            typeFromAST(this.schema, typeCondition) :
+            typeFromAST(this.schema, typeCondition) as GraphQLCompositeType :
             parentType;
 
           if (!doTypesOverlap(this.schema, inlineFragmentType, parentType)) continue;
@@ -234,7 +319,7 @@ export class Compiler {
           if (!fragment) throw new GraphQLError(`Cannot find fragment "${fragmentName}"`);
 
           const typeCondition = fragment.typeCondition;
-          const fragmentType = typeFromAST(this.schema, typeCondition)
+          const fragmentType = typeFromAST(this.schema, typeCondition) as GraphQLCompositeType;
 
           if (groupedVisitedFragmentSet) {
             let visitedFragmentSet = groupedVisitedFragmentSet.get(parentType);
@@ -253,7 +338,7 @@ export class Compiler {
           this.collectFields(
             effectiveType,
             fragment.selectionSet,
-            this.options.mergeInFieldsFromFragmentSpreads ? groupedFieldSet : null,
+            this.options.mergeInFieldsFromFragmentSpreads ? groupedFieldSet : undefined,
             groupedVisitedFragmentSet
           );
           break;
@@ -264,7 +349,7 @@ export class Compiler {
     return groupedFieldSet;
   }
 
-  possibleTypesForType(type) {
+  possibleTypesForType(type: GraphQLCompositeType) {
     if (isAbstractType(type)) {
       return this.schema.getPossibleTypes(type);
     } else {
@@ -272,7 +357,7 @@ export class Compiler {
     }
   }
 
-  mergeSelectionSets(parentType, fieldSet, groupedVisitedFragmentSet) {
+  mergeSelectionSets(parentType: GraphQLCompositeType, fieldSet: FieldSet, groupedVisitedFragmentSet: GroupedVisitedFragmentSet) {
     const groupedFieldSet = Object.create(null);
 
     for (const [,field] of fieldSet) {
@@ -286,7 +371,7 @@ export class Compiler {
     return groupedFieldSet;
   }
 
-  resolveFields(parentType, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet) {
+  resolveFields(parentType: GraphQLCompositeType, groupedFieldSet: GroupedFieldSet, groupedVisitedFragmentSet: GroupedVisitedFragmentSet, fragmentsReferencedSet: FragmentsReferencedSet): CompiledSelectionSet {
     const fields = [];
 
     for (let [responseName, fieldSet] of Object.entries(groupedFieldSet)) {
@@ -298,14 +383,14 @@ export class Compiler {
       const args = firstField.args;
       const type = firstField.type;
 
-      let field = { responseName, fieldName, type };
+      let field: Field = { responseName, fieldName, type };
 
       if (args && args.length > 0) {
         field.args = args;
       }
 
       const isConditional = fieldSet.some(([,field]) => {
-        return field.directives && field.directives.some(directive => {
+        return !!field.directives && field.directives.some(directive => {
           const directiveName = directive.name.value;
           return directiveName == 'skip' || directiveName == 'include';
         });
@@ -375,7 +460,7 @@ export class Compiler {
     return { fields, fragmentSpreads, inlineFragments };
   }
 
-  resolveInlineFragments(parentType, groupedFieldSet, groupedVisitedFragmentSet, fragmentsReferencedSet) {
+  resolveInlineFragments(parentType: GraphQLCompositeType, groupedFieldSet: GroupedFieldSet, groupedVisitedFragmentSet: GroupedVisitedFragmentSet, fragmentsReferencedSet: FragmentsReferencedSet) {
     return this.collectPossibleTypes(parentType, groupedFieldSet, groupedVisitedFragmentSet).map(typeCondition => {
       const { fields, fragmentSpreads } = this.resolveFields(
         typeCondition,
@@ -388,14 +473,14 @@ export class Compiler {
     });
   }
 
-  collectPossibleTypes(parentType, groupedFieldSet, groupedVisitedFragmentSet) {
+  collectPossibleTypes(parentType: GraphQLCompositeType, groupedFieldSet: GroupedFieldSet, groupedVisitedFragmentSet: GroupedVisitedFragmentSet) {
     if (!isAbstractType(parentType)) return [];
 
     const possibleTypes = new Set();
 
     for (const fieldSet of Object.values(groupedFieldSet)) {
       for (const [typeCondition,] of fieldSet) {
-        if (this.schema.isPossibleType(parentType, typeCondition)) {
+        if (typeCondition instanceof GraphQLObjectType && this.schema.isPossibleType(parentType, typeCondition)) {
           possibleTypes.add(typeCondition);
         }
       }
@@ -404,7 +489,7 @@ export class Compiler {
     // Also include type conditions for fragment spreads
     if (groupedVisitedFragmentSet) {
       for (const effectiveType of groupedVisitedFragmentSet.keys()) {
-        if (this.schema.isPossibleType(parentType, effectiveType)) {
+        if (effectiveType instanceof GraphQLObjectType && this.schema.isPossibleType(parentType, effectiveType)) {
           possibleTypes.add(effectiveType);
         }
       }
@@ -413,7 +498,7 @@ export class Compiler {
     return Array.from(possibleTypes);
   }
 
-  fragmentSpreadsForParentType(parentType, groupedVisitedFragmentSet) {
+  fragmentSpreadsForParentType(parentType: GraphQLCompositeType, groupedVisitedFragmentSet: GroupedVisitedFragmentSet): string[] {
     if (!groupedVisitedFragmentSet) return [];
 
     let fragmentSpreads = new Set();
@@ -430,7 +515,7 @@ export class Compiler {
   }
 }
 
-function augmentCompiledOperationWithFragments(compiledOperation, compiledFragments) {
+function augmentCompiledOperationWithFragments(compiledOperation: CompiledOperation, compiledFragments: { [fragmentName: string]: CompiledFragment }) {
   const operationAndFragments = operationAndRelatedFragments(compiledOperation, compiledFragments);
   compiledOperation.sourceWithFragments = operationAndFragments.map(operationOrFragment => { 
     return operationOrFragment.source; 
@@ -440,30 +525,28 @@ function augmentCompiledOperationWithFragments(compiledOperation, compiledFragme
   compiledOperation.operationId = hash.digest('hex');
 }
 
-function operationAndRelatedFragments(compiledOperationOrFragment, allCompiledFragments) {
-  let result = flatMap(compiledOperationOrFragment.fragmentsReferenced, (fragmentName) => {
+function operationAndRelatedFragments(compiledOperationOrFragment: CompiledOperation | CompiledFragment, allCompiledFragments: { [fragmentName: string]: CompiledFragment }): (CompiledOperation | CompiledFragment)[] {
+  let result: (CompiledOperation | CompiledFragment)[] = flatMap(compiledOperationOrFragment.fragmentsReferenced, (fragmentName) => {
     return operationAndRelatedFragments(allCompiledFragments[fragmentName], allCompiledFragments);
   });
   result.unshift(compiledOperationOrFragment);
-  result = uniqBy(result, (compiledOperationOrFragment) => {
-    return compiledOperationOrFragment.fragmentName;
+  result = uniqBy(result, compiledOperationOrFragment => {
+    return (<CompiledFragment>compiledOperationOrFragment).fragmentName;
   });
   result = result.sort((a, b) => {
-    return a.fragmentName > b.fragmentName;
+    if ((<CompiledFragment>a).fragmentName < (<CompiledFragment>b).fragmentName) {
+      return -1;
+    } else if ((<CompiledFragment>a).fragmentName > (<CompiledFragment>b).fragmentName) {
+      return 1;
+    } else {
+      return 0;
+    }
   });
   return result;
 }
 
-function argumentsFromAST(args) {
+function argumentsFromAST(args: ArgumentNode[]) {
   return args && args.map(arg => {
     return { name: arg.name.value, value: valueFromValueNode(arg.value) };
   });
-}
-
-export function printIR({ fields, inlineFragments, fragmentSpreads }) {
-  return fields && wrap('<', join(fragmentSpreads, ', '), '> ')
-    + block(fields.map(field =>
-      `${field.name}: ${String(field.type)}` + wrap(' ', printIR(field))
-    ).concat(inlineFragments && inlineFragments.map(inlineFragment =>
-      `${String(inlineFragment.typeCondition)}` + wrap(' ', printIR(inlineFragment)))));
 }

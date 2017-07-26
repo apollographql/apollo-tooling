@@ -29,6 +29,7 @@
     "@types/lodash": "^4.14.71",
     "@types/mkdirp": "^0.5.0",
     "@types/node-fetch": "^1.6.7",
+    "@types/sjcl": "^1.0.28",
     "@types/yargs": "^8.0.0",
     "ansi-regex": "^3.0.0",
     "common-tags": "^1.3.0",
