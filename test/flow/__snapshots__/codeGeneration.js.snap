@@ -7,12 +7,19 @@ exports[`Flow code generation #generateSource() should annotate custom scalars a
 /* GraphQL Operation: CustomScalar */
 
 export type CustomScalarQuery = {|
+<<<<<<< HEAD
   misc: ? CustomScalarQuery_misc,
 |};
 
 export type CustomScalarQuery_misc = {|
   __typename: string,
   date: ?any,
+=======
+  misc: ? {|
+    __typename: \\"OddType\\",
+    date: ?any,
+  |},
+>>>>>>> master
 |};"
 `;
 
@@ -34,6 +41,7 @@ export type HeroAndFriendsNamesQueryVariables = {|
 |};
 
 export type HeroAndFriendsNamesQuery = {|
+<<<<<<< HEAD
   hero: ?(HeroAndFriendsNamesQuery_hero_Human | HeroAndFriendsNamesQuery_hero_Droid),
 |};
 
@@ -104,6 +112,63 @@ export type PersonFragment__Human = {|
   // The name of the character
   name: string,
 |};"
+=======
+  hero: ?( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array< ?( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array< ?( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    }
+  ),
+|};
+
+export type FriendFragment = ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  );
+
+export type PersonFragment = ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  );"
+>>>>>>> master
 `;
 
 exports[`Flow code generation #generateSource() should generate correct typedefs with a single custom fragment 1`] = `
@@ -124,6 +189,7 @@ export type HeroAndFriendsNamesQueryVariables = {|
 |};
 
 export type HeroAndFriendsNamesQuery = {|
+<<<<<<< HEAD
   hero: ?(HeroAndFriendsNamesQuery_hero_Human | HeroAndFriendsNamesQuery_hero_Droid),
 |};
 
@@ -180,6 +246,52 @@ export type FriendFragment__Human = {|
   // The name of the character
   name: string,
 |};"
+=======
+  hero: ?( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array< ?( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array< ?( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    }
+  ),
+|};
+
+export type FriendFragment = ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  );"
+>>>>>>> master
 `;
 
 exports[`Flow code generation #generateSource() should generate fragmented query operations 1`] = `
@@ -189,6 +301,7 @@ exports[`Flow code generation #generateSource() should generate fragmented query
 /* GraphQL Operation: HeroAndFriendsNames */
 
 export type HeroAndFriendsNamesQuery = {|
+<<<<<<< HEAD
   hero: ?(HeroAndFriendsNamesQuery_hero_Human | HeroAndFriendsNamesQuery_hero_Droid),
 |};
 
@@ -269,6 +382,70 @@ export type HeroFriendsFragment__Human_friends_Human = {|
   // The name of the character
   name: string,
 |};"
+=======
+  hero: ?( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array< ?( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array< ?( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    }
+  ),
+|};
+
+export type heroFriendsFragment = ( {
+      __typename: \\"Human\\",
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array< ?( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    } | {
+      __typename: \\"Droid\\",
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array< ?( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    }
+  );"
+>>>>>>> master
 `;
 
 exports[`Flow code generation #generateSource() should generate mutation operations with complex input types 1`] = `
@@ -305,6 +482,7 @@ export type ReviewMovieMutationVariables = {|
 |};
 
 export type ReviewMovieMutation = {|
+<<<<<<< HEAD
   createReview: ? ReviewMovieMutation_createReview,
 |};
 
@@ -314,6 +492,15 @@ export type ReviewMovieMutation_createReview = {|
   stars: number,
   // Comment about the movie
   commentary: ?string,
+=======
+  createReview: ? {|
+    __typename: \\"Review\\",
+    // The number of stars this review gave, 1-5
+    stars: number,
+    // Comment about the movie
+    commentary: ?string,
+  |},
+>>>>>>> master
 |};"
 `;
 
@@ -376,6 +563,7 @@ export type HeroAndFriendsNamesQueryVariables = {|
 |};
 
 export type HeroAndFriendsNamesQuery = {|
+<<<<<<< HEAD
   hero: ?(HeroAndFriendsNamesQuery_hero_Human | HeroAndFriendsNamesQuery_hero_Droid),
 |};
 
@@ -417,6 +605,52 @@ export type HeroAndFriendsNamesQuery_hero_Human_friends_Human = {|
   __typename: \\"Human\\",
   // The name of the character
   name: string,
+=======
+  hero: ?( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array< ?( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+      // The friends of the character, or an empty list if they have none
+      friends: ?Array< ?( {
+          __typename: \\"Human\\",
+          // The name of the character
+          name: string,
+        } | {
+          __typename: \\"Droid\\",
+          // The name of the character
+          name: string,
+        }
+      ) >,
+    }
+  ),
+>>>>>>> master
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should generate simple nested with required elements in lists 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type StarshipCoordsQuery = {|
+  starship: ? {|
+    __typename: \\"Starship\\",
+    coordinates: ?Array< Array< number > >,
+  |},
 |};"
 `;
 
@@ -477,6 +711,24 @@ export type HeroNameQuery_hero_Human = {|
 |};"
 `;
 
+exports[`Flow code generation #generateSource() should handle interfaces at root 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type CustomScalarQuery = {|
+  interfaceTest: ?( {
+      __typename: \\"ImplA\\",
+      prop: string,
+      propA: string,
+    } | {
+      __typename: \\"ImplB\\",
+      prop: string,
+      propB: ?number,
+    }
+  ),
+|};"
+`;
+
 exports[`Flow code generation #generateSource() should handle multi-line comments 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
@@ -484,6 +736,7 @@ exports[`Flow code generation #generateSource() should handle multi-line comment
 /* GraphQL Operation: CustomScalar */
 
 export type CustomScalarQuery = {|
+<<<<<<< HEAD
   commentTest: ? CustomScalarQuery_commentTest,
 |};
 
@@ -492,6 +745,14 @@ export type CustomScalarQuery_commentTest = {|
   // This is a multi-line
   // comment.
   multiLine: ?string,
+=======
+  commentTest: ? {|
+    __typename: \\"CommentTest\\",
+    // This is a multi-line
+    // comment.
+    multiLine: ?string,
+  |},
+>>>>>>> master
 |};"
 `;
 
@@ -502,6 +763,7 @@ exports[`Flow code generation #generateSource() should handle single line commen
 /* GraphQL Operation: CustomScalar */
 
 export type CustomScalarQuery = {|
+<<<<<<< HEAD
   commentTest: ? CustomScalarQuery_commentTest,
 |};
 
@@ -509,5 +771,28 @@ export type CustomScalarQuery_commentTest = {|
   __typename: string,
   // This is a single-line comment
   singleLine: ?string,
+=======
+  commentTest: ? {|
+    __typename: \\"CommentTest\\",
+    // This is a single-line comment
+    singleLine: ?string,
+  |},
+>>>>>>> master
+|};"
+`;
+
+exports[`Flow code generation #generateSource() should handle unions at root 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type CustomScalarQuery = {|
+  unionTest: ?( {
+      __typename: \\"PartialA\\",
+      prop: string,
+    } | {
+      __typename: \\"PartialB\\",
+      prop: string,
+    }
+  ),
 |};"
 `;

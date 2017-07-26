@@ -57,6 +57,7 @@ export function propertyDeclaration(generator, {
   description,
   isArray,
   isNullable,
+  isArrayElementNullable,
   fragmentSpreads,
   isInput
 }, closure, open = ' {|', close = '|}') {
@@ -83,6 +84,9 @@ export function propertyDeclaration(generator, {
         generator.print(' ');
       }
       generator.print(' Array<');
+      if (isArrayElementNullable) {
+        generator.print('?');
+      }
     }
 
     generator.pushScope({ typeName: name });
@@ -113,7 +117,10 @@ export function propertyDeclaration(generator, {
 }
 
 export function propertySetsDeclaration(generator, property, propertySets, standalone = false) {
-  const { description, fieldName, propertyName, typeName, isNullable, isArray } = property;
+  const {
+    description, fieldName, propertyName, typeName,
+    isNullable, isArray, isArrayElementNullable
+  } = property;
   const name = fieldName || propertyName;
 
   if (description) {
@@ -132,6 +139,9 @@ export function propertySetsDeclaration(generator, property, propertySets, stand
 
   if (isArray) {
     generator.print('Array< ');
+    if (isArrayElementNullable) {
+      generator.print('?');
+    }
   }
 
   const fullName = typeNameFromScopeStack(generator, name);

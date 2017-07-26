@@ -14,7 +14,6 @@ import {
 
 import  { isTypeProperSuperTypeOf } from '../utilities/graphql';
 
-import { camelCase, pascalCase } from 'change-case';
 import * as Inflector from 'inflected';
 
 import {
@@ -90,7 +89,7 @@ function structDeclarationForInputObjectType(
   generator,
   type
 ) {
-  const interfaceName = pascalCase(type.name);
+  const interfaceName = type.name;
   typeDeclaration(generator, {
     interfaceName,
   }, () => {
@@ -102,13 +101,13 @@ function structDeclarationForInputObjectType(
 function interfaceNameFromOperation({operationName, operationType}) {
   switch (operationType) {
     case 'query':
-      return `${pascalCase(operationName)}Query`;
+      return `${operationName}Query`;
       break;
     case 'mutation':
-      return `${pascalCase(operationName)}Mutation`;
+      return `${operationName}Mutation`;
       break;
     case 'subscription':
-      return `${pascalCase(operationName)}Subscription`;
+      return `${operationName}Subscription`;
       break;
     default:
       throw new GraphQLError(`Unsupported operation type "${operationType}"`);
@@ -152,6 +151,22 @@ export function typeDeclarationForOperation(
   }
 ) {
   const interfaceName = interfaceNameFromOperation({operationName, operationType});
+  fields = fields.map(rootField => {
+    const fields = rootField.fields.map(field => {
+      if (field.fieldName === '__typename') {
+        return {
+          ...field,
+          typeName: `"${rootField.type.name}"`,
+          type: { name: `"${rootField.type.name}"` },
+        };
+      }
+      return field;
+    });
+    return {
+      ...rootField,
+      fields,
+    };
+  });
   const properties = propertiesFromFields(generator.context, fields);
   typeDeclaration(generator, {
     interfaceName,
@@ -173,7 +188,7 @@ export function typeDeclarationForFragment(
     source,
   } = fragment;
 
-  const interfaceName = `${pascalCase(fragmentName)}Fragment`;
+  const interfaceName = `${fragmentName}Fragment`;
 
   typeDeclaration(generator, {
     interfaceName,
@@ -248,15 +263,18 @@ export function propertyFromField(context, field) {
   if (isCompositeType(namedType)) {
     const typeName = typeNameFromGraphQLType(context, fieldType);
     let isArray = false;
+    let isArrayElementNullable = null;
     if (fieldType instanceof GraphQLList) {
       isArray = true;
+      isArrayElementNullable = !(fieldType.ofType instanceof GraphQLNonNull);
     } else if (fieldType instanceof GraphQLNonNull && fieldType.ofType instanceof GraphQLList) {
       isArray = true;
+      isArrayElementNullable = !(fieldType.ofType.ofType instanceof GraphQLNonNull);
     }
     return {
       ...property,
       typeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments, fieldType,
-      isArray, isNullable
+      isArray, isNullable, isArrayElementNullable,
     };
   } else {
     if (field.fieldName === '__typename') {
