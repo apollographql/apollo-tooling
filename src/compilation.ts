@@ -112,6 +112,11 @@ export interface Field {
   directives?: DirectiveNode[];
   selectionSet?: SelectionSetNode;
   isConditional?: boolean;
+  isDeprecated?: boolean;
+  deprecationReason?: string;
+  fields?: Field[];
+  fragmentSpreads?: string[];
+  inlineFragments?: any[];
 }
 
 type GroupedFieldSet = { [responseName: string]: FieldSet };
@@ -408,10 +413,8 @@ export class Compiler {
             field.description = description
           }
 
-          Object.assign(field, {
-            isDeprecated: fieldDef.isDeprecated,
-            deprecationReason: fieldDef.deprecationReason,
-          });
+          field.isDeprecated = fieldDef.isDeprecated;
+          field.deprecationReason = fieldDef.deprecationReason;
         }
       }
 
@@ -433,7 +436,7 @@ export class Compiler {
           subSelectionGroupedVisitedFragmentSet,
           fragmentsReferencedSet
         );
-        Object.assign(field, { fields, fragmentSpreads, inlineFragments });
+        field = { ...field, fields, fragmentSpreads, inlineFragments }
       }
 
       fields.push(field);
