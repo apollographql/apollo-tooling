@@ -1,5 +1,11 @@
 node_modules
 lib
 
+# npm
+package-lock.json
+
+# yarn
+yarn.lock
+
 # Visual Studio Code workspace settings
 .vscode
