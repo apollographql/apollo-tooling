@@ -41,18 +41,18 @@ export function generateSource(context) {
   generator.print('\n');
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type => {
     typeDeclarationForGraphQLType(generator, type);
-    generator.flushQueued();
+    generator.printQueuedBlocks();
   }));
   Object.values(context.operations).forEach(operation => {
     generator.printOnNewline(`/* GraphQL Operation: ${operation.operationName} */`);
     interfaceVariablesDeclarationForOperation(generator, operation);
     typeDeclarationForOperation(generator, operation);
-    generator.flushQueued();
+    generator.printQueuedBlocks();
   });
   Object.values(context.fragments).forEach(fragment => {
     generator.printOnNewline(`/* GraphQL Fragment: ${fragment.fragmentName} */`);
     typeDeclarationForFragment(generator, fragment)
-    generator.flushQueued();
+    generator.printQueuedBlocks();
   });
 
   return generator.output;
