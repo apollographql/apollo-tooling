@@ -1,5 +1,5 @@
 import { parse } from "graphql";
-import { compileToIR } from "../src/compilation";
+import { compileToIR, CompilerOptions } from "../src/compilation";
 import serializeToJSON from "../src/serializeToJSON";
 
 import { loadSchema } from "../src/loading";
@@ -7,7 +7,10 @@ const schema = loadSchema(require.resolve("./starwars/schema.json"));
 
 function compileFromSource(
   source,
-  options = { mergeInFieldsFromFragmentSpreads: false, addTypename: true }
+  options: CompilerOptions = {
+    mergeInFieldsFromFragmentSpreads: false,
+    addTypename: true
+  }
 ) {
   const document = parse(source);
   return compileToIR(schema, document, options);
