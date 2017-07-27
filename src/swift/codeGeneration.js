@@ -233,7 +233,7 @@ export function structDeclarationForSelectionSet(
     }
 
     generator.printNewlineIfNeeded();
-    generator.printOnNewline('public static let selections: [Selection] = ');
+    generator.printOnNewline('public static let selections: [GraphQLSelection] = ');
     selectionSetInitialization(generator, fields, inlineFragments);
 
     generator.printNewlineIfNeeded();
@@ -525,7 +525,7 @@ export function selectionSetInitialization(generator, fields, inlineFragments) {
       const { responseName, fieldName, args, type } = field;
       const structName = structNameForPropertyName(responseName);
 
-      generator.printOnNewline(`Field(`);
+      generator.printOnNewline(`GraphQLField(`);
       generator.print(join([
         `"${fieldName}"`,
         responseName != fieldName ? `alias: "${responseName}"` : null,
@@ -537,7 +537,7 @@ export function selectionSetInitialization(generator, fields, inlineFragments) {
 
     inlineFragments && inlineFragments.forEach(InlineFragment => {
       const structName = structNameForInlineFragment(InlineFragment);
-      generator.printOnNewline(`FragmentSpread(${structName}.self),`);
+      generator.printOnNewline(`GraphQLFragmentSpread(${structName}.self),`);
     });
   });
   generator.printOnNewline(']');
