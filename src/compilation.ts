@@ -69,6 +69,13 @@ export interface CompilerOptions {
   mergeInFieldsFromFragmentSpreads?: boolean;
 }
 
+export interface CompilationContext {
+  schema: GraphQLSchema;
+  operations: { [operationName: string]: CompiledOperation };
+  fragments: { [fragmentName: string]: CompiledFragment };
+  typesUsed: GraphQLType[];
+}
+
 export interface CompiledOperation { 
   filePath?: string;
   operationName: string;
@@ -128,14 +135,14 @@ type FragmentsReferencedSet = { [fragmentName: string]: boolean };
 
 // Parts of this code are adapted from graphql-js
 
-export function compileToIR(schema: GraphQLSchema, document: DocumentNode, options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }) {
+export function compileToIR(schema: GraphQLSchema, document: DocumentNode, options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }): CompilationContext {
   if (options.addTypename) {
     document = withTypenameFieldAddedWhereNeeded(schema, document);
   }
 
   const compiler = new Compiler(schema, document, options);
 
-  const operations = Object.create(null);
+  const operations: { [operationName: string]: CompiledOperation } = Object.create(null);
 
   compiler.operations.forEach(operation => {
     if (!operation.name) {
@@ -144,7 +151,7 @@ export function compileToIR(schema: GraphQLSchema, document: DocumentNode, optio
     operations[operation.name.value] = compiler.compileOperation(operation)
   });
 
-  const fragments = Object.create(null);
+  const fragments: { [fragmentName: string]: CompiledFragment } = Object.create(null);
 
   compiler.fragments.forEach(fragment => {
     if (!fragment.name) {
