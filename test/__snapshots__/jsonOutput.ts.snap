@@ -1,0 +1,447 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`JSON output should generate JSON output for a mutation with an enum and an input object variable 1`] = `
+"{
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"GraphQL request\\",
+			\\"operationName\\": \\"CreateReview\\",
+			\\"operationType\\": \\"mutation\\",
+			\\"rootType\\": \\"Mutation\\",
+			\\"variables\\": [
+				{
+					\\"name\\": \\"episode\\",
+					\\"type\\": \\"Episode\\"
+				},
+				{
+					\\"name\\": \\"review\\",
+					\\"type\\": \\"ReviewInput\\"
+				}
+			],
+			\\"source\\": \\"mutation CreateReview($episode: Episode, $review: ReviewInput) {\\\\n  createReview(episode: $episode, review: $review) {\\\\n    __typename\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\",
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"createReview\\",
+					\\"fieldName\\": \\"createReview\\",
+					\\"type\\": \\"Review\\",
+					\\"args\\": [
+						{
+							\\"name\\": \\"episode\\",
+							\\"value\\": {
+								\\"kind\\": \\"Variable\\",
+								\\"variableName\\": \\"episode\\"
+							}
+						},
+						{
+							\\"name\\": \\"review\\",
+							\\"value\\": {
+								\\"kind\\": \\"Variable\\",
+								\\"variableName\\": \\"review\\"
+							}
+						}
+					],
+					\\"isDeprecated\\": false,
+					\\"deprecationReason\\": null,
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\"
+						},
+						{
+							\\"responseName\\": \\"stars\\",
+							\\"fieldName\\": \\"stars\\",
+							\\"type\\": \\"Int!\\",
+							\\"description\\": \\"The number of stars this review gave, 1-5\\",
+							\\"isDeprecated\\": false,
+							\\"deprecationReason\\": null
+						},
+						{
+							\\"responseName\\": \\"commentary\\",
+							\\"fieldName\\": \\"commentary\\",
+							\\"type\\": \\"String\\",
+							\\"description\\": \\"Comment about the movie\\",
+							\\"isDeprecated\\": false,
+							\\"deprecationReason\\": null
+						}
+					],
+					\\"fragmentSpreads\\": [],
+					\\"inlineFragments\\": []
+				}
+			],
+			\\"fragmentsReferenced\\": [],
+			\\"sourceWithFragments\\": \\"mutation CreateReview($episode: Episode, $review: ReviewInput) {\\\\n  createReview(episode: $episode, review: $review) {\\\\n    __typename\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"0ce790562a5f5a8afc1e0d002d0436768d7649e4ec8b4aa816d3849f66768c7e\\"
+		}
+	],
+	\\"fragments\\": [],
+	\\"typesUsed\\": [
+		{
+			\\"kind\\": \\"EnumType\\",
+			\\"name\\": \\"Episode\\",
+			\\"description\\": \\"The episodes in the Star Wars trilogy\\",
+			\\"values\\": [
+				{
+					\\"name\\": \\"NEWHOPE\\",
+					\\"description\\": \\"Star Wars Episode IV: A New Hope, released in 1977.\\",
+					\\"isDeprecated\\": false,
+					\\"deprecationReason\\": null
+				},
+				{
+					\\"name\\": \\"EMPIRE\\",
+					\\"description\\": \\"Star Wars Episode V: The Empire Strikes Back, released in 1980.\\",
+					\\"isDeprecated\\": false,
+					\\"deprecationReason\\": null
+				},
+				{
+					\\"name\\": \\"JEDI\\",
+					\\"description\\": \\"Star Wars Episode VI: Return of the Jedi, released in 1983.\\",
+					\\"isDeprecated\\": false,
+					\\"deprecationReason\\": null
+				}
+			]
+		},
+		{
+			\\"kind\\": \\"InputObjectType\\",
+			\\"name\\": \\"ReviewInput\\",
+			\\"description\\": \\"The input object sent when someone is creating a new review\\",
+			\\"fields\\": [
+				{
+					\\"name\\": \\"stars\\",
+					\\"description\\": \\"0-5 stars\\",
+					\\"type\\": \\"Int!\\"
+				},
+				{
+					\\"name\\": \\"commentary\\",
+					\\"description\\": \\"Comment about the movie, optional\\",
+					\\"type\\": \\"String\\"
+				},
+				{
+					\\"name\\": \\"favorite_color\\",
+					\\"description\\": \\"Favorite color, optional\\",
+					\\"type\\": \\"ColorInput\\"
+				}
+			]
+		},
+		{
+			\\"kind\\": \\"InputObjectType\\",
+			\\"name\\": \\"ColorInput\\",
+			\\"description\\": \\"The input object sent when passing in a color\\",
+			\\"fields\\": [
+				{
+					\\"name\\": \\"red\\",
+					\\"description\\": \\"\\",
+					\\"type\\": \\"Int!\\"
+				},
+				{
+					\\"name\\": \\"green\\",
+					\\"description\\": \\"\\",
+					\\"type\\": \\"Int!\\"
+				},
+				{
+					\\"name\\": \\"blue\\",
+					\\"description\\": \\"\\",
+					\\"type\\": \\"Int!\\"
+				}
+			]
+		}
+	]
+}"
+`;
+
+exports[`JSON output should generate JSON output for a query with a fragment spread and nested inline fragments 1`] = `
+"{
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"GraphQL request\\",
+			\\"operationName\\": \\"HeroAndDetails\\",
+			\\"operationType\\": \\"query\\",
+			\\"rootType\\": \\"Query\\",
+			\\"variables\\": [],
+			\\"source\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    name\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\",
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"hero\\",
+					\\"fieldName\\": \\"hero\\",
+					\\"type\\": \\"Character\\",
+					\\"isDeprecated\\": false,
+					\\"deprecationReason\\": null,
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\"
+						},
+						{
+							\\"responseName\\": \\"name\\",
+							\\"fieldName\\": \\"name\\",
+							\\"type\\": \\"String!\\",
+							\\"description\\": \\"The name of the character\\",
+							\\"isDeprecated\\": false,
+							\\"deprecationReason\\": null
+						}
+					],
+					\\"fragmentSpreads\\": [
+						\\"CharacterDetails\\"
+					],
+					\\"inlineFragments\\": []
+				}
+			],
+			\\"fragmentsReferenced\\": [
+				\\"CharacterDetails\\"
+			],
+			\\"sourceWithFragments\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    name\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\\\nfragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    __typename\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    __typename\\\\n    height\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"80a82e211f4ec9d2286a726d560f31680d376245a791413a92af68077df308a6\\"
+		}
+	],
+	\\"fragments\\": [
+		{
+			\\"filePath\\": \\"GraphQL request\\",
+			\\"fragmentName\\": \\"CharacterDetails\\",
+			\\"source\\": \\"fragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    __typename\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    __typename\\\\n    height\\\\n  }\\\\n}\\",
+			\\"typeCondition\\": \\"Character\\",
+			\\"possibleTypes\\": [
+				\\"Human\\",
+				\\"Droid\\"
+			],
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"__typename\\",
+					\\"fieldName\\": \\"__typename\\",
+					\\"type\\": \\"String!\\"
+				},
+				{
+					\\"responseName\\": \\"name\\",
+					\\"fieldName\\": \\"name\\",
+					\\"type\\": \\"String!\\",
+					\\"description\\": \\"The name of the character\\",
+					\\"isDeprecated\\": false,
+					\\"deprecationReason\\": null
+				}
+			],
+			\\"fragmentSpreads\\": [],
+			\\"inlineFragments\\": [
+				{
+					\\"typeCondition\\": \\"Droid\\",
+					\\"possibleTypes\\": [
+						\\"Droid\\"
+					],
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\"
+						},
+						{
+							\\"responseName\\": \\"name\\",
+							\\"fieldName\\": \\"name\\",
+							\\"type\\": \\"String!\\",
+							\\"description\\": \\"What others call this droid\\",
+							\\"isDeprecated\\": false,
+							\\"deprecationReason\\": null
+						},
+						{
+							\\"responseName\\": \\"primaryFunction\\",
+							\\"fieldName\\": \\"primaryFunction\\",
+							\\"type\\": \\"String\\",
+							\\"description\\": \\"This droid's primary function\\",
+							\\"isDeprecated\\": false,
+							\\"deprecationReason\\": null
+						}
+					],
+					\\"fragmentSpreads\\": []
+				},
+				{
+					\\"typeCondition\\": \\"Human\\",
+					\\"possibleTypes\\": [
+						\\"Human\\"
+					],
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\"
+						},
+						{
+							\\"responseName\\": \\"name\\",
+							\\"fieldName\\": \\"name\\",
+							\\"type\\": \\"String!\\",
+							\\"description\\": \\"What this human calls themselves\\",
+							\\"isDeprecated\\": false,
+							\\"deprecationReason\\": null
+						},
+						{
+							\\"responseName\\": \\"height\\",
+							\\"fieldName\\": \\"height\\",
+							\\"type\\": \\"Float\\",
+							\\"description\\": \\"Height in the preferred unit, default is meters\\",
+							\\"isDeprecated\\": false,
+							\\"deprecationReason\\": null
+						}
+					],
+					\\"fragmentSpreads\\": []
+				}
+			],
+			\\"fragmentsReferenced\\": []
+		}
+	],
+	\\"typesUsed\\": []
+}"
+`;
+
+exports[`JSON output should generate JSON output for a query with a nested selection set 1`] = `
+"{
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"GraphQL request\\",
+			\\"operationName\\": \\"HeroAndFriendsNames\\",
+			\\"operationType\\": \\"query\\",
+			\\"rootType\\": \\"Query\\",
+			\\"variables\\": [],
+			\\"source\\": \\"query HeroAndFriendsNames {\\\\n  hero {\\\\n    __typename\\\\n    name\\\\n    friends {\\\\n      __typename\\\\n      name\\\\n    }\\\\n  }\\\\n}\\",
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"hero\\",
+					\\"fieldName\\": \\"hero\\",
+					\\"type\\": \\"Character\\",
+					\\"isDeprecated\\": false,
+					\\"deprecationReason\\": null,
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\"
+						},
+						{
+							\\"responseName\\": \\"name\\",
+							\\"fieldName\\": \\"name\\",
+							\\"type\\": \\"String!\\",
+							\\"description\\": \\"The name of the character\\",
+							\\"isDeprecated\\": false,
+							\\"deprecationReason\\": null
+						},
+						{
+							\\"responseName\\": \\"friends\\",
+							\\"fieldName\\": \\"friends\\",
+							\\"type\\": \\"[Character]\\",
+							\\"description\\": \\"The friends of the character, or an empty list if they have none\\",
+							\\"isDeprecated\\": false,
+							\\"deprecationReason\\": null,
+							\\"fields\\": [
+								{
+									\\"responseName\\": \\"__typename\\",
+									\\"fieldName\\": \\"__typename\\",
+									\\"type\\": \\"String!\\"
+								},
+								{
+									\\"responseName\\": \\"name\\",
+									\\"fieldName\\": \\"name\\",
+									\\"type\\": \\"String!\\",
+									\\"description\\": \\"The name of the character\\",
+									\\"isDeprecated\\": false,
+									\\"deprecationReason\\": null
+								}
+							],
+							\\"fragmentSpreads\\": [],
+							\\"inlineFragments\\": []
+						}
+					],
+					\\"fragmentSpreads\\": [],
+					\\"inlineFragments\\": []
+				}
+			],
+			\\"fragmentsReferenced\\": [],
+			\\"sourceWithFragments\\": \\"query HeroAndFriendsNames {\\\\n  hero {\\\\n    __typename\\\\n    name\\\\n    friends {\\\\n      __typename\\\\n      name\\\\n    }\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"d424c7c31d5147b382972b3c316ace3d51f2f039b53852a280d707df2848f715\\"
+		}
+	],
+	\\"fragments\\": [],
+	\\"typesUsed\\": []
+}"
+`;
+
+exports[`JSON output should generate JSON output for a query with an enum variable 1`] = `
+"{
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"GraphQL request\\",
+			\\"operationName\\": \\"HeroName\\",
+			\\"operationType\\": \\"query\\",
+			\\"rootType\\": \\"Query\\",
+			\\"variables\\": [
+				{
+					\\"name\\": \\"episode\\",
+					\\"type\\": \\"Episode\\"
+				}
+			],
+			\\"source\\": \\"query HeroName($episode: Episode) {\\\\n  hero(episode: $episode) {\\\\n    __typename\\\\n    name\\\\n  }\\\\n}\\",
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"hero\\",
+					\\"fieldName\\": \\"hero\\",
+					\\"type\\": \\"Character\\",
+					\\"args\\": [
+						{
+							\\"name\\": \\"episode\\",
+							\\"value\\": {
+								\\"kind\\": \\"Variable\\",
+								\\"variableName\\": \\"episode\\"
+							}
+						}
+					],
+					\\"isDeprecated\\": false,
+					\\"deprecationReason\\": null,
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\"
+						},
+						{
+							\\"responseName\\": \\"name\\",
+							\\"fieldName\\": \\"name\\",
+							\\"type\\": \\"String!\\",
+							\\"description\\": \\"The name of the character\\",
+							\\"isDeprecated\\": false,
+							\\"deprecationReason\\": null
+						}
+					],
+					\\"fragmentSpreads\\": [],
+					\\"inlineFragments\\": []
+				}
+			],
+			\\"fragmentsReferenced\\": [],
+			\\"sourceWithFragments\\": \\"query HeroName($episode: Episode) {\\\\n  hero(episode: $episode) {\\\\n    __typename\\\\n    name\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"f6e76545cd03aa21368d9969cb39447f6e836a16717823281803778e7805d671\\"
+		}
+	],
+	\\"fragments\\": [],
+	\\"typesUsed\\": [
+		{
+			\\"kind\\": \\"EnumType\\",
+			\\"name\\": \\"Episode\\",
+			\\"description\\": \\"The episodes in the Star Wars trilogy\\",
+			\\"values\\": [
+				{
+					\\"name\\": \\"NEWHOPE\\",
+					\\"description\\": \\"Star Wars Episode IV: A New Hope, released in 1977.\\",
+					\\"isDeprecated\\": false,
+					\\"deprecationReason\\": null
+				},
+				{
+					\\"name\\": \\"EMPIRE\\",
+					\\"description\\": \\"Star Wars Episode V: The Empire Strikes Back, released in 1980.\\",
+					\\"isDeprecated\\": false,
+					\\"deprecationReason\\": null
+				},
+				{
+					\\"name\\": \\"JEDI\\",
+					\\"description\\": \\"Star Wars Episode VI: Return of the Jedi, released in 1983.\\",
+					\\"isDeprecated\\": false,
+					\\"deprecationReason\\": null
+				}
+			]
+		}
+	]
+}"
+`;
