@@ -104,16 +104,17 @@ export interface CompiledFragment {
   fragmentsReferenced: string[];
 }
 
-export interface CompiledSelectionSet {
+export interface CompiledInlineFragment {
+  typeCondition: GraphQLObjectType;
+  possibleTypes: GraphQLObjectType[];
   fields: Field[];
   fragmentSpreads: string[];
-  inlineFragments: any[];
 }
 
 export interface Field {
   responseName: string;
   fieldName: string;
-  args?: { [name:string]: any }[];
+  args?: Argument[];
   type: GraphQLType;
   description?: string;
   directives?: DirectiveNode[];
@@ -123,7 +124,12 @@ export interface Field {
   deprecationReason?: string;
   fields?: Field[];
   fragmentSpreads?: string[];
-  inlineFragments?: any[];
+  inlineFragments?: CompiledInlineFragment[];
+}
+
+export interface Argument {
+  name: string;
+  value: any
 }
 
 type GroupedFieldSet = { [responseName: string]: FieldSet };
@@ -215,15 +221,15 @@ export class Compiler {
     }
   }
 
-  get typesUsed() {
+  get typesUsed(): GraphQLType[] {
     return Array.from(this.typesUsedSet);
   }
 
-  fragmentNamed(fragmentName: string) {
+  fragmentNamed(fragmentName: string): FragmentDefinitionNode {
     return this.fragmentMap[fragmentName];
   }
 
-  get fragments() {
+  get fragments(): FragmentDefinitionNode[] {
     return Object.values(this.fragmentMap);
   }
 
@@ -275,7 +281,7 @@ export class Compiler {
     return { filePath, fragmentName, source, typeCondition, possibleTypes, fields, fragmentSpreads, inlineFragments, fragmentsReferenced };
   }
 
-  collectFields(parentType: GraphQLCompositeType, selectionSet: SelectionSetNode, groupedFieldSet: GroupedFieldSet = Object.create(null), groupedVisitedFragmentSet: GroupedVisitedFragmentSet = new Map()) {
+  collectFields(parentType: GraphQLCompositeType, selectionSet: SelectionSetNode, groupedFieldSet: GroupedFieldSet = Object.create(null), groupedVisitedFragmentSet: GroupedVisitedFragmentSet = new Map()): GroupedFieldSet {
     if (!isCompositeType(parentType)) {
       throw new Error(`parentType should be a composite type, but is "${String(parentType)}"`);
     }
@@ -361,7 +367,7 @@ export class Compiler {
     return groupedFieldSet;
   }
 
-  possibleTypesForType(type: GraphQLCompositeType) {
+  possibleTypesForType(type: GraphQLCompositeType): GraphQLObjectType[] {
     if (isAbstractType(type)) {
       return this.schema.getPossibleTypes(type);
     } else {
@@ -369,7 +375,7 @@ export class Compiler {
     }
   }
 
-  mergeSelectionSets(parentType: GraphQLCompositeType, fieldSet: FieldSet, groupedVisitedFragmentSet: GroupedVisitedFragmentSet) {
+  mergeSelectionSets(parentType: GraphQLCompositeType, fieldSet: FieldSet, groupedVisitedFragmentSet: GroupedVisitedFragmentSet): GroupedFieldSet {
     const groupedFieldSet = Object.create(null);
 
     for (const [,field] of fieldSet) {
@@ -383,7 +389,9 @@ export class Compiler {
     return groupedFieldSet;
   }
 
-  resolveFields(parentType: GraphQLCompositeType, groupedFieldSet: GroupedFieldSet, groupedVisitedFragmentSet: GroupedVisitedFragmentSet, fragmentsReferencedSet: FragmentsReferencedSet): CompiledSelectionSet {
+  resolveFields(parentType: GraphQLCompositeType, groupedFieldSet: GroupedFieldSet, groupedVisitedFragmentSet: GroupedVisitedFragmentSet, fragmentsReferencedSet: FragmentsReferencedSet): { fields: Field[],
+  fragmentSpreads: string[],
+  inlineFragments: CompiledInlineFragment[] } {
     const fields = [];
 
     for (let [responseName, fieldSet] of Object.entries(groupedFieldSet)) {
@@ -470,7 +478,7 @@ export class Compiler {
     return { fields, fragmentSpreads, inlineFragments };
   }
 
-  resolveInlineFragments(parentType: GraphQLCompositeType, groupedFieldSet: GroupedFieldSet, groupedVisitedFragmentSet: GroupedVisitedFragmentSet, fragmentsReferencedSet: FragmentsReferencedSet) {
+  resolveInlineFragments(parentType: GraphQLCompositeType, groupedFieldSet: GroupedFieldSet, groupedVisitedFragmentSet: GroupedVisitedFragmentSet, fragmentsReferencedSet: FragmentsReferencedSet): CompiledInlineFragment[] {
     return this.collectPossibleTypes(parentType, groupedFieldSet, groupedVisitedFragmentSet).map(typeCondition => {
       const { fields, fragmentSpreads } = this.resolveFields(
         typeCondition,
@@ -483,10 +491,10 @@ export class Compiler {
     });
   }
 
-  collectPossibleTypes(parentType: GraphQLCompositeType, groupedFieldSet: GroupedFieldSet, groupedVisitedFragmentSet: GroupedVisitedFragmentSet) {
+  collectPossibleTypes(parentType: GraphQLCompositeType, groupedFieldSet: GroupedFieldSet, groupedVisitedFragmentSet: GroupedVisitedFragmentSet): GraphQLObjectType[] {
     if (!isAbstractType(parentType)) return [];
 
-    const possibleTypes = new Set();
+    const possibleTypes = new Set<GraphQLObjectType>();
 
     for (const fieldSet of Object.values(groupedFieldSet)) {
       for (const [typeCondition,] of fieldSet) {
@@ -555,7 +563,7 @@ function operationAndRelatedFragments(compiledOperationOrFragment: CompiledOpera
   return result;
 }
 
-function argumentsFromAST(args: ArgumentNode[]) {
+function argumentsFromAST(args: ArgumentNode[]): Argument[] {
   return args && args.map(arg => {
     return { name: arg.name.value, value: valueFromValueNode(arg.value) };
   });
