@@ -234,7 +234,7 @@ export function structDeclarationForSelectionSet(
 
     generator.printNewlineIfNeeded();
     generator.printOnNewline('public static let selections: [Selection] = ');
-    selectionSetInitialization(generator, fields, inlineFragments, structName);
+    selectionSetInitialization(generator, fields, inlineFragments);
 
     generator.printNewlineIfNeeded();
 
@@ -518,12 +518,12 @@ function parametersForProperties(generator, properties) {
   generator.print(')');
 }
 
-export function selectionSetInitialization(generator, fields, inlineFragments, parentStructName) {
+export function selectionSetInitialization(generator, fields, inlineFragments) {
   generator.print('[');
   generator.withIndent(() => {
     fields.forEach(field => {
       const { responseName, fieldName, args, type } = field;
-      const structName = join([parentStructName, structNameForPropertyName(responseName)], '.');
+      const structName = structNameForPropertyName(responseName);
 
       generator.printOnNewline(`Field(`);
       generator.print(join([
@@ -536,7 +536,7 @@ export function selectionSetInitialization(generator, fields, inlineFragments, p
     });
 
     inlineFragments && inlineFragments.forEach(InlineFragment => {
-      const structName = join([parentStructName, structNameForInlineFragment(InlineFragment)], '.');
+      const structName = structNameForInlineFragment(InlineFragment);
       generator.printOnNewline(`FragmentSpread(${structName}.self),`);
     });
   });
