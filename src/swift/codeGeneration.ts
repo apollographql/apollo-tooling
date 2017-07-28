@@ -62,7 +62,7 @@ export function generateSource(context: CompilationContext, options: CompilerOpt
   generator.printNewline();
   generator.printOnNewline('import Apollo');
 
-  namespaceDeclaration(generator, context.namespace, () => {
+  namespaceDeclaration(generator, context.options.namespace, () => {
     context.typesUsed.forEach(type => {
       typeDeclarationForGraphQLType(generator, type);
     });
