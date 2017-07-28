@@ -75,8 +75,8 @@ function typeNameForScalarType(
 ): string {
   return (
     builtInScalarMap[type.name] ||
-    (context.passthroughCustomScalars
-      ? context.customScalarsPrefix + type.name
+    (context.options.passthroughCustomScalars
+      ? context.options.customScalarsPrefix + type.name
       : GraphQLString.name)
   );
 }

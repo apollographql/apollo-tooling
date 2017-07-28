@@ -69,15 +69,15 @@ describe('Swift code generation: Types', function() {
     });
 
     test('should return String? for a custom scalar type', function() {
-      expect(typeNameFromGraphQLType({}, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).toBe('String?');
+      expect(typeNameFromGraphQLType({ options: {} }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).toBe('String?');
     });
 
     test('should return a passed through custom scalar type with the passthroughCustomScalars option', function() {
-      expect(typeNameFromGraphQLType({ passthroughCustomScalars: true, customScalarsPrefix: '' }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).toBe('CustomScalarType?');
+      expect(typeNameFromGraphQLType({ options: { passthroughCustomScalars: true, customScalarsPrefix: '' } }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).toBe('CustomScalarType?');
     });
 
     test('should return a passed through custom scalar type with a prefix with the customScalarsPrefix option', function() {
-      expect(typeNameFromGraphQLType({ passthroughCustomScalars: true, customScalarsPrefix: 'My' }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).toBe('MyCustomScalarType?');
+      expect(typeNameFromGraphQLType({ options: { passthroughCustomScalars: true, customScalarsPrefix: 'My' } }, new GraphQLScalarType({ name: 'CustomScalarType', serialize: String }))).toBe('MyCustomScalarType?');
     });
   });
 });
