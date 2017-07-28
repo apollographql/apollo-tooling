@@ -166,7 +166,7 @@ object Friend {
 `;
 
 exports[`Scala code generation #classDeclarationForOperation() should generate a class declaration for a mutation with variables 1`] = `
-"object CreateReviewMutation extends me.shadaj.apollo.GraphQLMutation {
+"object CreateReviewMutation extends com.apollographql.scalajs.GraphQLMutation {
   val operationString =
     \\"mutation CreateReview($episode: Episode) {\\" +
     \\"  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"Wow!\\\\\\"}) {\\" +
@@ -174,7 +174,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
     \\"    commentary\\" +
     \\"  }\\" +
     \\"}\\"
-  val operation = me.shadaj.apollo.gql(operationString)
+  val operation = com.apollographql.scalajs.gql(operationString)
 
 
   case class Variables(episode: Option[String]) {
@@ -197,7 +197,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 `;
 
 exports[`Scala code generation #classDeclarationForOperation() should generate a class declaration for a query with a fragment spread nested in an inline fragment 1`] = `
-"object HeroQuery extends me.shadaj.apollo.GraphQLQuery {
+"object HeroQuery extends com.apollographql.scalajs.GraphQLQuery {
   val operationString =
     \\"query Hero {\\" +
     \\"  hero {\\" +
@@ -208,8 +208,9 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
     \\"}\\"
 
   val requestString: String = { operationString + HeroDetails.fragmentString }
-  val operation = me.shadaj.apollo.gql(requestString)
+  val operation = com.apollographql.scalajs.gql(requestString)
 
+  type Variables = Unit
 
   case class Data(hero: Option[Hero]) {
   }
@@ -241,7 +242,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 `;
 
 exports[`Scala code generation #classDeclarationForOperation() should generate a class declaration for a query with conditional fragment spreads 1`] = `
-"object HeroQuery extends me.shadaj.apollo.GraphQLQuery {
+"object HeroQuery extends com.apollographql.scalajs.GraphQLQuery {
   val operationString =
     \\"query Hero {\\" +
     \\"  hero {\\" +
@@ -250,8 +251,9 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
     \\"}\\"
 
   val requestString: String = { operationString + DroidDetails.fragmentString }
-  val operation = me.shadaj.apollo.gql(requestString)
+  val operation = com.apollographql.scalajs.gql(requestString)
 
+  type Variables = Unit
 
   case class Data(hero: Option[Hero]) {
   }
@@ -286,7 +288,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 `;
 
 exports[`Scala code generation #classDeclarationForOperation() should generate a class declaration for a query with fragment spreads 1`] = `
-"object HeroQuery extends me.shadaj.apollo.GraphQLQuery {
+"object HeroQuery extends com.apollographql.scalajs.GraphQLQuery {
   val operationString =
     \\"query Hero {\\" +
     \\"  hero {\\" +
@@ -295,8 +297,9 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
     \\"}\\"
 
   val requestString: String = { operationString + HeroDetails.fragmentString }
-  val operation = me.shadaj.apollo.gql(requestString)
+  val operation = com.apollographql.scalajs.gql(requestString)
 
+  type Variables = Unit
 
   case class Data(hero: Option[Hero]) {
   }
@@ -317,14 +320,14 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 `;
 
 exports[`Scala code generation #classDeclarationForOperation() should generate a class declaration for a query with variables 1`] = `
-"object HeroNameQuery extends me.shadaj.apollo.GraphQLQuery {
+"object HeroNameQuery extends com.apollographql.scalajs.GraphQLQuery {
   val operationString =
     \\"query HeroName($episode: Episode) {\\" +
     \\"  hero(episode: $episode) {\\" +
     \\"    name\\" +
     \\"  }\\" +
     \\"}\\"
-  val operation = me.shadaj.apollo.gql(operationString)
+  val operation = com.apollographql.scalajs.gql(operationString)
 
 
   case class Variables(episode: Option[String]) {
@@ -348,7 +351,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 `;
 
 exports[`Scala code generation #classDeclarationForOperation() when generateOperationIds is specified should generate a class declaration with an operationId property 1`] = `
-"object HeroQuery extends me.shadaj.apollo.GraphQLQuery {
+"object HeroQuery extends com.apollographql.scalajs.GraphQLQuery {
   val operationString =
     \\"query Hero {\\" +
     \\"  hero {\\" +
@@ -359,8 +362,9 @@ exports[`Scala code generation #classDeclarationForOperation() when generateOper
   val operationIdentifier: String = \\"90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4\\"
 
   val requestString: String = { operationString + HeroDetails.fragmentString }
-  val operation = me.shadaj.apollo.gql(requestString)
+  val operation = com.apollographql.scalajs.gql(requestString)
 
+  type Variables = Unit
 
   case class Data(hero: Option[Hero]) {
   }

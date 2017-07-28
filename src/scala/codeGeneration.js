@@ -101,11 +101,11 @@ export function classDeclarationForOperation(
   switch (operationType) {
     case 'query':
       objectName = `${operationClassName(operationName)}Query`;
-      protocol = 'me.shadaj.apollo.GraphQLQuery';
+      protocol = 'com.apollographql.scalajs.GraphQLQuery';
       break;
     case 'mutation':
       objectName = `${operationClassName(operationName)}Mutation`;
-      protocol = 'me.shadaj.apollo.GraphQLMutation';
+      protocol = 'com.apollographql.scalajs.GraphQLMutation';
       break;
     default:
       throw new GraphQLError(`Unsupported operation type "${operationType}"`);
@@ -133,9 +133,9 @@ export function classDeclarationForOperation(
       });
       generator.print(' }');
 
-      generator.printOnNewline('val operation = me.shadaj.apollo.gql(requestString)');
+      generator.printOnNewline('val operation = com.apollographql.scalajs.gql(requestString)');
     } else {
-      generator.printOnNewline('val operation = me.shadaj.apollo.gql(operationString)');
+      generator.printOnNewline('val operation = com.apollographql.scalajs.gql(operationString)');
     }
 
     generator.printNewlineIfNeeded();
@@ -154,6 +154,8 @@ export function classDeclarationForOperation(
           type: p.typeName
         };
       })}, () => {});
+    } else {
+      generator.printOnNewline('type Variables = Unit');
     }
 
     caseClassDeclarationForSelectionSet(
