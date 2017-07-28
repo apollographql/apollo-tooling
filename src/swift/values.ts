@@ -1,22 +1,26 @@
+import { Argument } from '../compilation';
+
+import CodeGenerator from '../utilities/CodeGenerator';
+
 import {
   join,
   wrap,
 } from '../utilities/printing';
 
-export function escapedString(string) {
+export function escapedString(string: string) {
   return string.replace(/"/g, '\\"');
 }
 
-export function multilineString(context, string) {
+export function multilineString(generator: CodeGenerator, string: string) {
   const lines = string.split('\n');
   lines.forEach((line, index) => {
     const isLastLine = index != lines.length - 1;
-    context.printOnNewline(`"${escapedString(line)}"` + (isLastLine ? ' +' : ''));
+    generator.printOnNewline(`"${escapedString(line)}"` + (isLastLine ? ' +' : ''));
   });
 }
 
-export function dictionaryLiteralForFieldArguments(args) {
-  function expressionFromValue(value) {
+export function dictionaryLiteralForFieldArguments(args: Argument[]) {
+  function expressionFromValue(value: any): string {
     if (value.kind === 'Variable') {
       return `Variable("${value.variableName}")`;
     } else if (Array.isArray(value)) {
