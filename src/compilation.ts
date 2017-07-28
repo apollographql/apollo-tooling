@@ -66,6 +66,9 @@ export interface CompilationContext {
   operations: { [operationName: string]: CompiledOperation };
   fragments: { [fragmentName: string]: CompiledFragment };
   typesUsed: GraphQLType[];
+  passthroughCustomScalars?: boolean;
+  customScalarsPrefix?: string;
+  namespace?: string;
 }
 
 export interface CompiledOperation {
@@ -81,6 +84,8 @@ export interface CompiledOperation {
   source: string;
   sourceWithFragments?: string;
   fields: Field[];
+  fragmentSpreads?: string[];
+  inlineFragments?: CompiledInlineFragment[];
   fragmentsReferenced: string[];
 }
 
@@ -150,7 +155,7 @@ export function compileToIR(
 
   compiler.operations.forEach(operation => {
     if (!operation.name) {
-      throw new Error("Operations should be named");
+      throw new Error('Operations should be named');
     }
     operations[operation.name.value] = compiler.compileOperation(operation);
   });
@@ -161,7 +166,7 @@ export function compileToIR(
 
   compiler.fragments.forEach(fragment => {
     if (!fragment.name) {
-      throw new Error("Fragments should be named");
+      throw new Error('Fragments should be named');
     }
     fragments[fragment.name.value] = compiler.compileFragment(fragment);
   });
@@ -243,7 +248,7 @@ export class Compiler {
     operationDefinition: OperationDefinitionNode
   ): CompiledOperation {
     if (!operationDefinition.name) {
-      throw new Error("Operations should be named");
+      throw new Error('Operations should be named');
     }
 
     const filePath = filePathForNode(operationDefinition);
@@ -515,7 +520,7 @@ export class Compiler {
           !!field.directives &&
           field.directives.some(directive => {
             const directiveName = directive.name.value;
-            return directiveName == "skip" || directiveName == "include";
+            return directiveName == 'skip' || directiveName == 'include';
           })
         );
       });
