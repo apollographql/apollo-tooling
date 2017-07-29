@@ -28,10 +28,7 @@ const builtInScalarMap = {
   [GraphQLID.name]: 'GraphQLID'
 };
 
-export function possibleTypesForType(
-  context: CompilationContext,
-  type: GraphQLCompositeType
-) {
+export function possibleTypesForType(context: CompilationContext, type: GraphQLCompositeType) {
   if (isAbstractType(type)) {
     return context.schema.getPossibleTypes(type);
   } else {
@@ -46,20 +43,14 @@ export function typeNameFromGraphQLType(
   isOptional?: boolean
 ): string {
   if (type instanceof GraphQLNonNull) {
-    return typeNameFromGraphQLType(
-      context,
-      type.ofType,
-      bareTypeName,
-      isOptional || false
-    );
+    return typeNameFromGraphQLType(context, type.ofType, bareTypeName, isOptional || false);
   } else if (isOptional === undefined) {
     isOptional = true;
   }
 
   let typeName;
   if (type instanceof GraphQLList) {
-    typeName =
-      '[' + typeNameFromGraphQLType(context, type.ofType, bareTypeName) + ']';
+    typeName = '[' + typeNameFromGraphQLType(context, type.ofType, bareTypeName) + ']';
   } else if (type instanceof GraphQLScalarType) {
     typeName = typeNameForScalarType(context, type);
   } else {
@@ -69,10 +60,7 @@ export function typeNameFromGraphQLType(
   return isOptional ? typeName + '?' : typeName;
 }
 
-function typeNameForScalarType(
-  context: CompilationContext,
-  type: GraphQLScalarType
-): string {
+function typeNameForScalarType(context: CompilationContext, type: GraphQLScalarType): string {
   return (
     builtInScalarMap[type.name] ||
     (context.options.passthroughCustomScalars
@@ -81,11 +69,7 @@ function typeNameForScalarType(
   );
 }
 
-export function fieldTypeEnum(
-  context: CompilationContext,
-  type: GraphQLType,
-  structName: string
-): string {
+export function fieldTypeEnum(context: CompilationContext, type: GraphQLType, structName: string): string {
   if (type instanceof GraphQLNonNull) {
     return `.nonNull(${fieldTypeEnum(context, type.ofType, structName)})`;
   } else if (type instanceof GraphQLList) {

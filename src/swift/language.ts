@@ -1,10 +1,10 @@
-import CodeGenerator from "../utilities/CodeGenerator";
+import CodeGenerator from '../utilities/CodeGenerator';
 
-import { join, wrap } from "../utilities/printing";
+import { join, wrap } from '../utilities/printing';
 
 export function comment(generator: CodeGenerator, comment: string | undefined) {
   comment &&
-    comment.split("\n").forEach(line => {
+    comment.split('\n').forEach(line => {
       generator.printOnNewline(`/// ${line.trim()}`);
     });
 }
@@ -35,19 +35,12 @@ export interface Class {
 
 export function classDeclaration(
   generator: CodeGenerator,
-  {
-    className,
-    modifiers,
-    superClass,
-    adoptedProtocols = []
-  }: Class,
+  { className, modifiers, superClass, adoptedProtocols = [] }: Class,
   closure: Function
 ) {
   generator.printNewlineIfNeeded();
-  generator.printOnNewline(
-    wrap("", join(modifiers, " "), " ") + `class ${className}`
-  );
-  generator.print(wrap(": ", join([superClass, ...adoptedProtocols], ", ")));
+  generator.printOnNewline(wrap('', join(modifiers, ' '), ' ') + `class ${className}`);
+  generator.print(wrap(': ', join([superClass, ...adoptedProtocols], ', ')));
   generator.pushScope({ typeName: className });
   generator.withinBlock(closure);
   generator.popScope();
@@ -67,7 +60,7 @@ export function structDeclaration(
   generator.printNewlineIfNeeded();
   comment(generator, description);
   generator.printOnNewline(`public struct ${structName}`);
-  generator.print(wrap(": ", join(adoptedProtocols, ", ")));
+  generator.print(wrap(': ', join(adoptedProtocols, ', ')));
   generator.pushScope({ typeName: structName });
   generator.withinBlock(closure);
   generator.popScope();
@@ -88,10 +81,7 @@ export function propertyDeclaration(
   generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
 }
 
-export function propertyDeclarations(
-  generator: CodeGenerator,
-  properties: Property[]
-) {
+export function propertyDeclarations(generator: CodeGenerator, properties: Property[]) {
   if (!properties) return;
   properties.forEach(property => propertyDeclaration(generator, property));
 }
@@ -109,27 +99,19 @@ export function protocolDeclaration(
 ) {
   generator.printNewlineIfNeeded();
   generator.printOnNewline(`public protocol ${protocolName}`);
-  generator.print(wrap(": ", join(adoptedProtocols, ", ")));
+  generator.print(wrap(': ', join(adoptedProtocols, ', ')));
   generator.pushScope({ typeName: protocolName });
   generator.withinBlock(closure);
   generator.popScope();
 }
 
-export function protocolPropertyDeclaration(
-  generator: CodeGenerator,
-  { propertyName, typeName }: Property
-) {
+export function protocolPropertyDeclaration(generator: CodeGenerator, { propertyName, typeName }: Property) {
   generator.printOnNewline(`var ${propertyName}: ${typeName} { get }`);
 }
 
-export function protocolPropertyDeclarations(
-  generator: CodeGenerator,
-  properties: Property[]
-) {
+export function protocolPropertyDeclarations(generator: CodeGenerator, properties: Property[]) {
   if (!properties) return;
-  properties.forEach(property =>
-    protocolPropertyDeclaration(generator, property)
-  );
+  properties.forEach(property => protocolPropertyDeclaration(generator, property));
 }
 
 // prettier-ignore
@@ -147,7 +129,7 @@ const reservedKeywords = new Set(['associatedtype', 'class', 'deinit', 'enum', '
 
 export function escapeIdentifierIfNeeded(identifier: string) {
   if (reservedKeywords.has(identifier)) {
-    return "`" + identifier + "`";
+    return '`' + identifier + '`';
   } else {
     return identifier;
   }
