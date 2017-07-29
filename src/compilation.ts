@@ -694,53 +694,15 @@ function augmentCompiledOperationWithFragments(
   compiledOperation: CompiledOperation,
   compiledFragments: { [fragmentName: string]: CompiledFragment }
 ) {
-  const operationAndFragments = operationAndRelatedFragments(
-    compiledOperation,
-    compiledFragments
-  );
-  compiledOperation.sourceWithFragments = operationAndFragments
-    .map(operationOrFragment => {
-      return operationOrFragment.source;
+  compiledOperation.sourceWithFragments = [
+    compiledOperation.source,
+    ...compiledOperation.fragmentsReferenced.map(fragmentName => {
+      return compiledFragments[fragmentName].source;
     })
-    .join("\n");
+  ].join("\n");
   const hash = createHash('sha256')
   hash.update(compiledOperation.sourceWithFragments)
   compiledOperation.operationId = hash.digest('hex');
-}
-
-function operationAndRelatedFragments(
-  compiledOperationOrFragment: CompiledOperation | CompiledFragment,
-  allCompiledFragments: { [fragmentName: string]: CompiledFragment }
-): (CompiledOperation | CompiledFragment)[] {
-  let result: (
-    | CompiledOperation
-    | CompiledFragment)[] = flatMap(
-    compiledOperationOrFragment.fragmentsReferenced,
-    fragmentName => {
-      return operationAndRelatedFragments(
-        allCompiledFragments[fragmentName],
-        allCompiledFragments
-      );
-    }
-  );
-  result.unshift(compiledOperationOrFragment);
-  result = uniqBy(result, compiledOperationOrFragment => {
-    return (<CompiledFragment>compiledOperationOrFragment).fragmentName;
-  });
-  result = result.sort((a, b) => {
-    if (
-      (<CompiledFragment>a).fragmentName < (<CompiledFragment>b).fragmentName
-    ) {
-      return -1;
-    } else if (
-      (<CompiledFragment>a).fragmentName > (<CompiledFragment>b).fragmentName
-    ) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
-  return result;
 }
 
 function argumentsFromAST(args: ArgumentNode[]): Argument[] {
