@@ -68,7 +68,7 @@ export interface CompilationContext {
   operations: { [operationName: string]: CompiledOperation };
   fragments: { [fragmentName: string]: CompiledFragment };
   typesUsed: GraphQLType[];
-  options: CompilerOptions
+  options: CompilerOptions;
 }
 
 export interface CompiledOperation {
@@ -153,40 +153,34 @@ export function compileToIR(
     [operationName: string]: CompiledOperation;
   } = Object.create(null);
 
-  compiler.operations.forEach(operation => {
-    if (!operation.name) {
-      throw new Error('Operations should be named');
-    }
-    operations[operation.name.value] = compiler.compileOperation(operation);
+  compiler.compiledOperations.forEach(operation => {
+    operations[operation.operationName] = operation;
   });
 
   const fragments: { [fragmentName: string]: CompiledFragment } = Object.create(
     null
   );
-
-  compiler.fragments.forEach(fragment => {
-    if (!fragment.name) {
-      throw new Error('Fragments should be named');
-    }
-    fragments[fragment.name.value] = compiler.compileFragment(fragment);
-  });
-
-  Object.values(operations).forEach(operation => {
-    augmentCompiledOperationWithFragments(operation, fragments);
-  });
+  for (const [
+    fragmentName,
+    compiledFragment
+  ] of compiler.compiledFragmentMap.entries()) {
+    fragments[fragmentName] = compiledFragment;
+  }
 
   const typesUsed = compiler.typesUsed;
 
   return { schema, operations, fragments, typesUsed, options };
 }
 
-export class Compiler {
+class Compiler {
   options: CompilerOptions;
   schema: GraphQLSchema;
-  typesUsedSet: Set<GraphQLType>;
-  operations: OperationDefinitionNode[];
+
   fragmentMap: Map<string, FragmentDefinitionNode>;
+
+  compiledOperations: CompiledOperation[];
   compiledFragmentMap: Map<string, CompiledFragment>;
+  typesUsedSet: Set<GraphQLType>;
 
   constructor(
     schema: GraphQLSchema,
@@ -199,12 +193,12 @@ export class Compiler {
     this.typesUsedSet = new Set();
 
     this.fragmentMap = new Map();
-    this.operations = [];
+    const operations: OperationDefinitionNode[] = [];
 
     for (const definition of document.definitions) {
       switch (definition.kind) {
         case Kind.OPERATION_DEFINITION:
-          this.operations.push(definition);
+          operations.push(definition);
           break;
         case Kind.FRAGMENT_DEFINITION:
           this.fragmentMap.set(definition.name.value, definition);
@@ -213,6 +207,11 @@ export class Compiler {
     }
 
     this.compiledFragmentMap = new Map();
+
+    this.compiledOperations = operations.map(this.compileOperation, this);
+    for (const fragmentName of this.fragmentMap.keys()) {
+      this.compiledFragmentNamed(fragmentName);
+    }
   }
 
   addTypeUsed(type: GraphQLType) {
@@ -234,14 +233,6 @@ export class Compiler {
 
   get typesUsed(): GraphQLType[] {
     return Array.from(this.typesUsedSet);
-  }
-
-  fragmentNamed(fragmentName: string): FragmentDefinitionNode | undefined {
-    return this.fragmentMap.get(fragmentName);
-  }
-
-  get fragments(): FragmentDefinitionNode[] {
-    return Array.from(this.fragmentMap.values());
   }
 
   compileOperation(
@@ -283,6 +274,17 @@ export class Compiler {
     );
     const fragmentsReferenced = Array.from(fragmentsReferencedSet.keys());
 
+    const sourceWithFragments = [
+      source,
+      ...fragmentsReferenced.map(fragmentName => {
+        return this.compiledFragmentNamed(fragmentName).source;
+      })
+    ].join('\n');
+
+  const hash = createHash('sha256')
+  hash.update(sourceWithFragments)
+  const operationId = hash.digest('hex');
+
     return {
       filePath,
       operationName,
@@ -291,28 +293,37 @@ export class Compiler {
       variables,
       source,
       fields,
-      fragmentsReferenced
+      fragmentsReferenced,
+      sourceWithFragments,
+      operationId
     };
   }
 
-  compileFragment(
-    fragmentDefinition: FragmentDefinitionNode
-  ): CompiledFragment {
-    const filePath = filePathForNode(fragmentDefinition);
-    const fragmentName = fragmentDefinition.name.value;
+  fragmentNamed(fragmentName: string): FragmentDefinitionNode {
+    const fragment = this.fragmentMap.get(fragmentName);
+    if (!fragment) {
+      throw new GraphQLError(`Cannot find fragment "${fragmentName}"`);
+    }
+    return fragment;
+  }
 
-    const source = print(fragmentDefinition);
+  compiledFragmentNamed(fragmentName: string): CompiledFragment {
+    const fragment = this.fragmentNamed(fragmentName);
+
+    const filePath = filePathForNode(fragment);
+
+    const source = print(fragment);
 
     const typeCondition = typeFromAST(
       this.schema,
-      fragmentDefinition.typeCondition
+      fragment.typeCondition
     ) as GraphQLCompositeType;
     const possibleTypes = this.possibleTypesForType(typeCondition);
 
     const groupedVisitedFragmentSet = new Map();
     const groupedFieldSet = this.collectFields(
       typeCondition,
-      fragmentDefinition.selectionSet,
+      fragment.selectionSet,
       undefined,
       groupedVisitedFragmentSet
     );
@@ -326,7 +337,7 @@ export class Compiler {
     );
     const fragmentsReferenced = Array.from(fragmentsReferencedSet.keys());
 
-    return {
+    const compiledFragment: CompiledFragment = {
       filePath,
       fragmentName,
       source,
@@ -337,6 +348,10 @@ export class Compiler {
       inlineFragments,
       fragmentsReferenced
     };
+
+    this.compiledFragmentMap.set(fragmentName, compiledFragment);
+
+    return compiledFragment;
   }
 
   collectFields(
@@ -369,27 +384,26 @@ export class Compiler {
             );
           }
 
-          if (groupedFieldSet) {
-            let fieldSet = groupedFieldSet.get(responseName);
-            if (!fieldSet) {
-              fieldSet = [];
-              groupedFieldSet.set(responseName, fieldSet);
-            }
-
-            fieldSet.push([
-              parentType,
-              {
-                responseName,
-                fieldName,
-                args: selection.arguments
-                  ? argumentsFromAST(selection.arguments)
-                  : undefined,
-                type: field.type,
-                directives: selection.directives,
-                selectionSet: selection.selectionSet
-              }
-            ]);
+          let fieldSet = groupedFieldSet.get(responseName);
+          if (!fieldSet) {
+            fieldSet = [];
+            groupedFieldSet.set(responseName, fieldSet);
           }
+
+          fieldSet.push([
+            parentType,
+            {
+              responseName,
+              fieldName,
+              args: selection.arguments
+                ? argumentsFromAST(selection.arguments)
+                : undefined,
+              type: field.type,
+              directives: selection.directives,
+              selectionSet: selection.selectionSet
+            }
+          ]);
+
           break;
         }
         case Kind.INLINE_FRAGMENT: {
@@ -417,8 +431,6 @@ export class Compiler {
           const fragmentName = selection.name.value;
 
           const fragment = this.fragmentNamed(fragmentName);
-          if (!fragment)
-            throw new GraphQLError(`Cannot find fragment "${fragmentName}"`);
 
           const typeCondition = fragment.typeCondition;
           const fragmentType = typeFromAST(
@@ -426,16 +438,14 @@ export class Compiler {
             typeCondition
           ) as GraphQLCompositeType;
 
-          if (groupedVisitedFragmentSet) {
-            let visitedFragmentSet = groupedVisitedFragmentSet.get(parentType);
-            if (!visitedFragmentSet) {
-              visitedFragmentSet = new Set();
-              groupedVisitedFragmentSet.set(parentType, visitedFragmentSet);
-            }
-
-            if (visitedFragmentSet.has(fragmentName)) continue;
-            visitedFragmentSet.add(fragmentName);
+          let visitedFragmentSet = groupedVisitedFragmentSet.get(parentType);
+          if (!visitedFragmentSet) {
+            visitedFragmentSet = new Set();
+            groupedVisitedFragmentSet.set(parentType, visitedFragmentSet);
           }
+
+          if (visitedFragmentSet.has(fragmentName)) continue;
+          visitedFragmentSet.add(fragmentName);
 
           if (!doTypesOverlap(this.schema, fragmentType, parentType)) continue;
           const effectiveType =
@@ -589,16 +599,9 @@ export class Compiler {
         }
       }
 
-      // TODO: This is a really inefficient way of keeping track of fragments referenced by other fragments
-      // We need to either cache compiled fragments or find a way to make resolveFields smarter
       for (let fragmentName of fragmentSpreads) {
-        const fragment = this.fragmentNamed(fragmentName);
-        if (!fragment)
-          throw new GraphQLError(`Cannot find fragment "${fragmentName}"`);
-        const {
-          fragmentsReferenced: fragmentsReferencedFromFragment
-        } = this.compileFragment(fragment);
-        for (let fragmentReferenced of fragmentsReferencedFromFragment) {
+        const compiledFragment = this.compiledFragmentNamed(fragmentName);
+        for (let fragmentReferenced of compiledFragment.fragmentsReferenced) {
           fragmentsReferencedSet.add(fragmentReferenced);
         }
       }
@@ -686,21 +689,6 @@ export class Compiler {
 
     return Array.from(fragmentSpreads);
   }
-}
-
-function augmentCompiledOperationWithFragments(
-  compiledOperation: CompiledOperation,
-  compiledFragments: { [fragmentName: string]: CompiledFragment }
-) {
-  compiledOperation.sourceWithFragments = [
-    compiledOperation.source,
-    ...compiledOperation.fragmentsReferenced.map(fragmentName => {
-      return compiledFragments[fragmentName].source;
-    })
-  ].join("\n");
-  const hash = createHash('sha256')
-  hash.update(compiledOperation.sourceWithFragments)
-  compiledOperation.operationId = hash.digest('hex');
 }
 
 function argumentsFromAST(args: ArgumentNode[]): Argument[] {
