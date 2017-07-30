@@ -1342,21 +1342,40 @@ extension AlbumPrivacies: Apollo.JSONDecodable, Apollo.JSONEncodable {}"
 exports[`Swift code generation #typeDeclarationForGraphQLType() should generate a struct declaration for a GraphQLInputObjectType 1`] = `
 "/// The input object sent when someone is creating a new review
 public struct ReviewInput: GraphQLMapConvertible {
-  /// 0-5 stars
-  public var stars: Int
-  /// Comment about the movie, optional
-  public var commentary: Optional<String?>
-  /// Favorite color, optional
-  public var favoriteColor: Optional<ColorInput?>
+  public var graphQLMap: GraphQLMap
 
   public init(stars: Int, commentary: Optional<String?> = nil, favoriteColor: Optional<ColorInput?> = nil) {
-    self.stars = stars
-    self.commentary = commentary
-    self.favoriteColor = favoriteColor
+    graphQLMap = [\\"stars\\": stars, \\"commentary\\": commentary, \\"favorite_color\\": favoriteColor]
   }
 
-  public var graphQLMap: GraphQLMap {
-    return [\\"stars\\": stars, \\"commentary\\": commentary, \\"favorite_color\\": favoriteColor]
+  /// 0-5 stars
+  public var stars: Int {
+    get {
+      return graphQLMap[\\"stars\\"] as! Int
+    }
+    set {
+      graphQLMap.updateValue(newValue, forKey: \\"stars\\")
+    }
+  }
+
+  /// Comment about the movie, optional
+  public var commentary: Optional<String?> {
+    get {
+      return graphQLMap[\\"commentary\\"] as! Optional<String?>
+    }
+    set {
+      graphQLMap.updateValue(newValue, forKey: \\"commentary\\")
+    }
+  }
+
+  /// Favorite color, optional
+  public var favoriteColor: Optional<ColorInput?> {
+    get {
+      return graphQLMap[\\"favoriteColor\\"] as! Optional<ColorInput?>
+    }
+    set {
+      graphQLMap.updateValue(newValue, forKey: \\"favoriteColor\\")
+    }
   }
 }"
 `;
