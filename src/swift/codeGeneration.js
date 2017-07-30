@@ -581,20 +581,41 @@ function structDeclarationForInputObjectType(generator, type) {
   });
 
   structDeclaration(generator, { structName, description, adoptedProtocols }, () => {
-    propertyDeclarations(generator, properties);
-
-    generator.printNewlineIfNeeded();
-
-    initializerDeclarationForProperties(generator, properties);
-
-    generator.printNewlineIfNeeded();
     generator.printOnNewline(`public var graphQLMap: GraphQLMap`);
+
+    generator.printNewlineIfNeeded();
+    generator.printOnNewline(`public init`);
+    generator.print('(');
+    generator.print(join(properties.map(({ propertyName, type, typeName, isOptional }) =>
+      join([
+        `${propertyName}: ${typeName}`,
+        isOptional && ' = nil'
+      ])
+    ), ', '));
+    generator.print(')');
+
     generator.withinBlock(() => {
       generator.printOnNewline(wrap(
-        `return [`,
+        `graphQLMap = [`,
         join(properties.map(({ name, propertyName }) => `"${name}": ${propertyName}`), ', ') || ':',
-        `]`,
+        `]`
       ));
     });
+
+    for (const { propertyName, typeName, description } of properties) {
+      generator.printNewlineIfNeeded();
+      comment(generator, description);
+      generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
+      generator.withinBlock(() => {
+        generator.printOnNewline("get");
+        generator.withinBlock(() => {
+          generator.printOnNewline(`return graphQLMap["${propertyName}"] as! ${typeName}`);
+        });
+        generator.printOnNewline("set");
+        generator.withinBlock(() => {
+          generator.printOnNewline(`graphQLMap.updateValue(newValue, forKey: "${propertyName}")`);
+        });
+      });
+    }
   });
 }
