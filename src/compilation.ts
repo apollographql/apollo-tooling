@@ -296,6 +296,9 @@ class Compiler {
   }
 
   compiledFragmentNamed(fragmentName: string): CompiledFragment {
+    let compiledFragment = this.compiledFragmentMap.get(fragmentName);
+    if (compiledFragment) return compiledFragment;
+
     const fragment = this.fragmentNamed(fragmentName);
 
     const filePath = filePathForNode(fragment);
@@ -322,7 +325,7 @@ class Compiler {
     );
     const fragmentsReferenced = Array.from(fragmentsReferencedSet.keys());
 
-    const compiledFragment: CompiledFragment = {
+    compiledFragment = {
       filePath,
       fragmentName,
       source,
