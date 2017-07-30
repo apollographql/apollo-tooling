@@ -45,7 +45,6 @@
     "lodash": "^4.2.0",
     "mkdirp": "^0.5.1",
     "node-fetch": "^1.5.3",
-    "sjcl": "^1.0.6",
     "source-map-support": "^0.4.15",
     "yargs": "^8.0.1"
   },
