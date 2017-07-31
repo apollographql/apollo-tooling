@@ -49,7 +49,9 @@ import {
   uniqBy 
 } from 'lodash';
 
-import * as sjcl from 'sjcl';
+import {
+  createHash,
+} from 'crypto';
 
 // Parts of this code are adapted from graphql-js
 
@@ -433,8 +435,9 @@ function augmentCompiledOperationWithFragments(compiledOperation, compiledFragme
   compiledOperation.sourceWithFragments = operationAndFragments.map(operationOrFragment => { 
     return operationOrFragment.source; 
   }).join('\n');
-  const idBits = sjcl.hash.sha256.hash(compiledOperation.sourceWithFragments);
-  compiledOperation.operationId = sjcl.codec.hex.fromBits(idBits);
+  const hash = createHash('sha256')
+  hash.update(compiledOperation.sourceWithFragments)
+  compiledOperation.operationId = hash.digest('hex');
 }
 
 function operationAndRelatedFragments(compiledOperationOrFragment, allCompiledFragments) {
