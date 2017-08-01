@@ -30,7 +30,6 @@ export default function generate(
   }
 
   const context = compileToIR(schema, document, options);
-  Object.assign(context, options);
 
   let output = '';
   switch (target) {
@@ -55,7 +54,7 @@ export default function generate(
     console.log(output);
   }
 
-  if (context.generateOperationIds) {
+  if (options.generateOperationIds) {
     writeOperationIdsMap(context)
   }
 }

@@ -9,6 +9,7 @@ import {
   SchemaMetaFieldDef,
   TypeMetaFieldDef,
   TypeNameMetaFieldDef,
+  GraphQLCompositeType,
   GraphQLObjectType,
   GraphQLInterfaceType,
   GraphQLUnionType,
@@ -18,19 +19,31 @@ import {
   GraphQLFloat,
   GraphQLBoolean,
   GraphQLID,
-  GraphQLError
+  GraphQLError,
+  GraphQLSchema,
+  GraphQLType,
+  GraphQLScalarType,
+  ASTNode,
+  SelectionSetNode,
+  Location,
+  ValueNode,
+  IntValueNode,
+  FloatValueNode,
+  OperationDefinitionNode,
+  FieldNode,
+  GraphQLField,
 } from 'graphql';
 
 const builtInScalarTypes = new Set([GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID]);
 
-export function isBuiltInScalarType(type) {
+export function isBuiltInScalarType(type: GraphQLScalarType) {
   return builtInScalarTypes.has(type);
 }
 
 const typenameField = { kind: Kind.FIELD, name: { kind: Kind.NAME, value: '__typename' } };
 
-export function withTypenameFieldAddedWhereNeeded(schema, ast) {
-  function isOperationRootType(type) {
+export function withTypenameFieldAddedWhereNeeded(schema: GraphQLSchema, ast: ASTNode) {
+  function isOperationRootType(type: GraphQLType) {
     return type === schema.getQueryType() ||
       type === schema.getMutationType() ||
       type === schema.getSubscriptionType();
@@ -40,49 +53,51 @@ export function withTypenameFieldAddedWhereNeeded(schema, ast) {
 
   return visit(ast, visitWithTypeInfo(typeInfo, {
     leave: {
-      SelectionSet: node => {
+      SelectionSet: (node: SelectionSetNode) => {
         const parentType = typeInfo.getParentType();
 
         if (!isOperationRootType(parentType)) {
           return { ...node, selections: [typenameField, ...node.selections] };
+        } else {
+          return undefined;
         }
       }
     }
   }));
 }
 
-export function sourceAt(location) {
+export function sourceAt(location: Location) {
   return location.source.body.slice(location.start, location.end);
 }
 
-export function filePathForNode(node) {
-  const name = node.loc.source && node.loc.source.name;
+export function filePathForNode(node: ASTNode): string | undefined {
+  const name = node.loc && node.loc.source && node.loc.source.name;
   return (name === "GraphQL") ? undefined : name;
 }
 
-export function valueFromValueNode(valueNode) {
-  const kind = valueNode.kind;
-
-  if (kind === 'IntValue' || kind === 'FloatValue') {
-    return Number(valueNode.value);
-  } else if (kind === 'NullValue') {
-    return null;
-  } else if (kind === 'ListValue') {
-    return valueNode.values.map(valueFromValueNode);
-  } else if (kind === 'ObjectValue') {
-    return valueNode.fields.reduce((object, field) => {
-      object[field.name.value] = valueFromValueNode(field.value);
-      return object;
-    }, {});
-  } else if (kind === 'Variable') {
-    return { kind, variableName: valueNode.name.value };
-  } else {
-    return valueNode.value;
+export function valueFromValueNode(valueNode: ValueNode): any {
+  switch (valueNode.kind) {
+    case 'IntValue':
+    case 'FloatValue':
+      return Number(valueNode.value);
+    case 'NullValue':
+      return null;
+    case 'ListValue':
+      return valueNode.values.map(valueFromValueNode);
+    case 'ObjectValue':
+      return valueNode.fields.reduce((object, field) => {
+        object[field.name.value] = valueFromValueNode(field.value);
+        return object;
+      }, {} as any);
+    case 'Variable':
+      return { kind: 'Variable', variableName: valueNode.name.value };
+    default:
+      return valueNode.value;
   }
 }
 
-export function isTypeProperSuperTypeOf(schema, maybeSuperType, subType) {
-  return isEqualType(maybeSuperType, subType) || (isAbstractType(maybeSuperType) && schema.isPossibleType(maybeSuperType, subType));
+export function isTypeProperSuperTypeOf(schema: GraphQLSchema, maybeSuperType: GraphQLCompositeType, subType: GraphQLCompositeType) {
+  return isEqualType(maybeSuperType, subType) || subType instanceof GraphQLObjectType && (isAbstractType(maybeSuperType) && schema.isPossibleType(maybeSuperType, subType));
 }
 
 // Utility functions extracted from graphql-js
@@ -90,7 +105,7 @@ export function isTypeProperSuperTypeOf(schema, maybeSuperType, subType) {
 /**
  * Extracts the root type of the operation from the schema.
  */
-export function getOperationRootType(schema, operation) {
+export function getOperationRootType(schema: GraphQLSchema, operation: OperationDefinitionNode) {
   switch (operation.operation) {
     case 'query':
       return schema.getQueryType();
@@ -125,7 +140,7 @@ export function getOperationRootType(schema, operation) {
  * statically evaluated environment we do not always have an Object type,
  * and need to handle Interface and Union types.
  */
-export function getFieldDef(schema, parentType, fieldAST) {
+export function getFieldDef(schema: GraphQLSchema, parentType: GraphQLCompositeType, fieldAST: FieldNode): GraphQLField<any, any> | undefined {
   const name = fieldAST.name.value;
   if (name === SchemaMetaFieldDef.name &&
       schema.getQueryType() === parentType) {
@@ -146,4 +161,6 @@ export function getFieldDef(schema, parentType, fieldAST) {
       parentType instanceof GraphQLInterfaceType) {
     return parentType.getFields()[name];
   }
+
+  return undefined;
 }

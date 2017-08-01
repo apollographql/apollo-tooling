@@ -1,25 +1,13 @@
 import { camelCase, pascalCase } from 'change-case';
 import * as Inflector from 'inflected';
 
-import {
-  join
-} from '../utilities/printing';
+import { join } from '../utilities/printing';
 
-import {
-  escapeIdentifierIfNeeded
-} from './language';
+import { escapeIdentifierIfNeeded } from './language';
 
-import {
-  typeNameFromGraphQLType
-} from './types';
+import { typeNameFromGraphQLType } from './types';
 
-import {
-  GraphQLError,
-  GraphQLList,
-  GraphQLNonNull,
-  getNamedType,
-  isCompositeType,
-} from 'graphql';
+import { GraphQLError, GraphQLList, GraphQLNonNull, getNamedType, isCompositeType } from 'graphql';
 
 export function enumCaseName(name) {
   return camelCase(name);
@@ -43,19 +31,19 @@ export function structNameForInlineFragment(inlineFragment) {
 
 export function propertyFromField(context, field, namespace) {
   const name = field.name || field.responseName;
-  const unescapedPropertyName = isMetaFieldName(name) ? name : camelCase(name)
+  const unescapedPropertyName = isMetaFieldName(name) ? name : camelCase(name);
   const propertyName = escapeIdentifierIfNeeded(unescapedPropertyName);
 
   const type = field.type;
-  const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList
+  const isList = type instanceof GraphQLList || type.ofType instanceof GraphQLList;
   const isOptional = field.isConditional || !(type instanceof GraphQLNonNull);
   const bareType = getNamedType(type);
 
   if (isCompositeType(bareType)) {
-    const bareTypeName = join([
-      namespace,
-      escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)))
-    ], '.');
+    const bareTypeName = join(
+      [namespace, escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)))],
+      '.'
+    );
     const typeName = typeNameFromGraphQLType(context, type, bareTypeName, isOptional);
     return { ...field, propertyName, typeName, bareTypeName, isOptional, isList, isComposite: true };
   } else {
@@ -67,7 +55,7 @@ export function propertyFromField(context, field, namespace) {
 export function propertyFromInlineFragment(context, inlineFragment) {
   const structName = structNameForInlineFragment(inlineFragment);
   const propertyName = camelCase(structName);
-  const typeName = structName + '?'
+  const typeName = structName + '?';
   return { propertyName, typeName, structName, isComposite: true, ...inlineFragment };
 }
 
@@ -83,5 +71,5 @@ export function propertyFromFragmentSpread(context, fragmentSpread) {
 }
 
 function isMetaFieldName(name) {
-  return name.startsWith("__");
+  return name.startsWith('__');
 }

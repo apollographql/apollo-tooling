@@ -1,16 +1,19 @@
-import {
-  join,
-  wrap,
-} from '../utilities/printing';
+import CodeGenerator from '../utilities/CodeGenerator';
 
-export function comment(generator, comment) {
-  comment && comment.split('\n')
-    .forEach(line => {
+import { join, wrap } from '../utilities/printing';
+
+export function comment(generator: CodeGenerator, comment: string | undefined) {
+  comment &&
+    comment.split('\n').forEach(line => {
       generator.printOnNewline(`/// ${line.trim()}`);
     });
 }
 
-export function namespaceDeclaration(generator, namespace, closure) {
+export function namespaceDeclaration(
+  generator: CodeGenerator,
+  namespace: string | undefined,
+  closure: Function
+) {
   if (namespace) {
     generator.printNewlineIfNeeded();
     generator.printOnNewline(`/// ${namespace} namespace`);
@@ -23,7 +26,18 @@ export function namespaceDeclaration(generator, namespace, closure) {
   }
 }
 
-export function classDeclaration(generator, { className, modifiers, superClass, adoptedProtocols = [], properties }, closure) {
+export interface Class {
+  className: string;
+  modifiers: string[];
+  superClass?: string;
+  adoptedProtocols: string[];
+}
+
+export function classDeclaration(
+  generator: CodeGenerator,
+  { className, modifiers, superClass, adoptedProtocols = [] }: Class,
+  closure: Function
+) {
   generator.printNewlineIfNeeded();
   generator.printOnNewline(wrap('', join(modifiers, ' '), ' ') + `class ${className}`);
   generator.print(wrap(': ', join([superClass, ...adoptedProtocols], ', ')));
@@ -32,7 +46,17 @@ export function classDeclaration(generator, { className, modifiers, superClass, 
   generator.popScope();
 }
 
-export function structDeclaration(generator, { structName, description, adoptedProtocols = [] }, closure) {
+export interface Struct {
+  structName: string;
+  description?: string;
+  adoptedProtocols?: string[];
+}
+
+export function structDeclaration(
+  generator: CodeGenerator,
+  { structName, description, adoptedProtocols = [] }: Struct,
+  closure: Function
+) {
   generator.printNewlineIfNeeded();
   comment(generator, description);
   generator.printOnNewline(`public struct ${structName}`);
@@ -42,17 +66,37 @@ export function structDeclaration(generator, { structName, description, adoptedP
   generator.popScope();
 }
 
-export function propertyDeclaration(generator, { propertyName, typeName, description }) {
+export interface Property {
+  propertyName: string;
+  typeName: string;
+  isOptional?: boolean;
+  description?: string;
+}
+
+export function propertyDeclaration(
+  generator: CodeGenerator,
+  { propertyName, typeName, description }: Property
+) {
   comment(generator, description);
   generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
 }
 
-export function propertyDeclarations(generator, properties) {
+export function propertyDeclarations(generator: CodeGenerator, properties: Property[]) {
   if (!properties) return;
   properties.forEach(property => propertyDeclaration(generator, property));
 }
 
-export function protocolDeclaration(generator, { protocolName, adoptedProtocols, properties }, closure) {
+export interface Protocol {
+  protocolName: string;
+  adoptedProtocols: string;
+  properties: Property[];
+}
+
+export function protocolDeclaration(
+  generator: CodeGenerator,
+  { protocolName, adoptedProtocols, properties }: Protocol,
+  closure: Function
+) {
   generator.printNewlineIfNeeded();
   generator.printOnNewline(`public protocol ${protocolName}`);
   generator.print(wrap(': ', join(adoptedProtocols, ', ')));
@@ -61,15 +105,16 @@ export function protocolDeclaration(generator, { protocolName, adoptedProtocols,
   generator.popScope();
 }
 
-export function protocolPropertyDeclaration(generator, { propertyName, typeName }) {
+export function protocolPropertyDeclaration(generator: CodeGenerator, { propertyName, typeName }: Property) {
   generator.printOnNewline(`var ${propertyName}: ${typeName} { get }`);
 }
 
-export function protocolPropertyDeclarations(generator, properties) {
+export function protocolPropertyDeclarations(generator: CodeGenerator, properties: Property[]) {
   if (!properties) return;
   properties.forEach(property => protocolPropertyDeclaration(generator, property));
 }
 
+// prettier-ignore
 const reservedKeywords = new Set(['associatedtype', 'class', 'deinit', 'enum', 'extension',
   'fileprivate', 'func', 'import', 'init', 'inout', 'internal', 'let', 'open',
   'operator', 'private', 'protocol', 'public', 'static', 'struct', 'subscript',
@@ -82,7 +127,7 @@ const reservedKeywords = new Set(['associatedtype', 'class', 'deinit', 'enum', '
   'override', 'postfix', 'precedence', 'prefix', 'Protocol', 'required', 'right',
   'set', 'Type', 'unowned', 'weak', 'willSet']);
 
-export function escapeIdentifierIfNeeded(identifier) {
+export function escapeIdentifierIfNeeded(identifier: string) {
   if (reservedKeywords.has(identifier)) {
     return '`' + identifier + '`';
   } else {

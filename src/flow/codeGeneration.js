@@ -285,8 +285,7 @@ export function propertyDeclarations(generator, properties, isInput) {
   if (!properties) return;
   properties.forEach(property => {
     if (isAbstractType(getNamedType(property.type || property.fieldType))) {
-      const possibleTypes = getPossibleTypes(generator, property);
-      const propertySets = Object.keys(possibleTypes)
+      const propertySets = getPossibleTypeNames(generator, property)
         .map(type => {
           const inlineFragment = property.inlineFragments.find(inlineFragment => {
             return inlineFragment.typeCondition.toString() == type
@@ -345,6 +344,6 @@ export function propertyDeclarations(generator, properties, isInput) {
  * do not have inline fragments. This currently can happen and the IR does give us
  * a set of fields per type condition unless fragments are used within the selection set.
  */
-function getPossibleTypes(generator, property) {
-  return generator.context.schema._possibleTypeMap[getNamedType(property.fieldType || property.type)];
+function getPossibleTypeNames(generator, property) {
+  return generator.context.schema.getPossibleTypes(getNamedType(property.fieldType || property.type)).map(type => type.name);
 }
