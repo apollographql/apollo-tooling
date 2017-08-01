@@ -97,7 +97,7 @@ export interface CompiledFragment {
   possibleTypes: GraphQLObjectType[];
   fields: Field[];
   fragmentSpreads: string[];
-  inlineFragments: any[];
+  inlineFragments: CompiledInlineFragment[];
   fragmentsReferenced: string[];
 }
 
