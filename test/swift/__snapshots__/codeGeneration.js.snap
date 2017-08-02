@@ -947,11 +947,11 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
   }
 
   public static func makeHuman(\`private\`: String? = nil) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"\`private\`\\": \`private\`])
+    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"private\\": \`private\`])
   }
 
   public static func makeDroid(\`private\`: String? = nil) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"\`private\`\\": \`private\`])
+    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"private\\": \`private\`])
   }
 
   public var \`private\`: String? {

@@ -274,7 +274,7 @@ export function structDeclarationForSelectionSet(
             join(
               [
                 `"__typename": "${possibleTypes[0]}"`,
-                ...properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`)
+                ...properties.map(({ responseName, propertyName }) => `"${responseName}": ${propertyName}`)
               ],
               ', '
             ) || ':',
@@ -313,7 +313,7 @@ export function structDeclarationForSelectionSet(
               join(
                 [
                   `"__typename": "${possibleType}"`,
-                  ...properties.map(({ propertyName }) => `"${propertyName}": ${propertyName}`)
+                  ...properties.map(({ responseName, propertyName }) => `"${responseName}": ${propertyName}`)
                 ],
                 ', '
               ) || ':',
