@@ -242,7 +242,7 @@ export function structDeclarationForSelectionSet(
 
     generator.printNewlineIfNeeded();
     generator.printOnNewline('public static let selections: [GraphQLSelection] = ');
-    selectionSetInitialization(generator, fields, inlineFragments);
+    selectionSetInitialization(generator, fields, inlineFragments, fragmentSpreads);
 
     generator.printNewlineIfNeeded();
 
@@ -588,7 +588,8 @@ function parametersForProperties(generator: CodeGenerator, properties: Property[
 export function selectionSetInitialization(
   generator: CodeGenerator,
   fields: Field[],
-  inlineFragments?: CompiledInlineFragment[]
+  inlineFragments?: CompiledInlineFragment[],
+  fragmentSpreads?: string[],
 ) {
   generator.print('[');
   generator.withIndent(() => {
@@ -616,6 +617,14 @@ export function selectionSetInitialization(
         const structName = structNameForInlineFragment(inlineFragment);
         generator.printOnNewline(`GraphQLFragmentSpread(${structName}.self),`);
       });
+
+    if (!generator.context.options.mergeInFieldsFromFragmentSpreads) {
+      fragmentSpreads &&
+        fragmentSpreads.forEach(fragmentName => {
+          const structName = structNameForFragmentName(fragmentName);
+          generator.printOnNewline(`GraphQLFragmentSpread(${structName}.self),`);
+        });
+    }
   });
   generator.printOnNewline(']');
 }
