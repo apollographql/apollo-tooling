@@ -44,7 +44,8 @@ describe('Swift code generation', function() {
         schema: schema,
         operations: {},
         fragments: {},
-        typesUsed: {}
+        typesUsed: {},
+        options: { mergeInFieldsFromFragmentSpreads: true },
       }
       generator = new CodeGenerator(context);  
     };
