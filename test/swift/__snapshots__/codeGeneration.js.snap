@@ -20,7 +20,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     return [\\"episode\\": episode]
   }
 
-  public struct Data: GraphQLSelectionSet {
+  public struct Data: GraphQLSelectionSet, Equatable {
     public static let possibleTypes = [\\"Mutation\\"]
 
     public static let selections: [GraphQLSelection] = [
@@ -46,7 +46,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       }
     }
 
-    public struct CreateReview: GraphQLSelectionSet {
+    public struct CreateReview: GraphQLSelectionSet, Equatable {
       public static let possibleTypes = [\\"Review\\"]
 
       public static let selections: [GraphQLSelection] = [
@@ -83,6 +83,16 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           snapshot.updateValue(newValue, forKey: \\"commentary\\")
         }
       }
+
+      static func ==(lhs: CreateReview, rhs: CreateReview) -> Bool {
+        return
+                lhs.stars == rhs.stars &&
+                lhs.commentary == rhs.commentary
+      }
+    }
+
+    static func ==(lhs: Data, rhs: Data) -> Bool {
+      return lhs.createReview == rhs.createReview
     }
   }
 }"
@@ -104,7 +114,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public init() {
   }
 
-  public struct Data: GraphQLSelectionSet {
+  public struct Data: GraphQLSelectionSet, Equatable {
     public static let possibleTypes = [\\"Query\\"]
 
     public static let selections: [GraphQLSelection] = [
@@ -130,7 +140,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       }
     }
 
-    public struct Hero: GraphQLSelectionSet {
+    public struct Hero: GraphQLSelectionSet, Equatable {
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [GraphQLSelection] = [
@@ -210,7 +220,15 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
             }
           }
         }
+
+        static func ==(lhs: AsDroid, rhs: AsDroid) -> Bool {
+          return lhs.name == rhs.name
+        }
       }
+    }
+
+    static func ==(lhs: Data, rhs: Data) -> Bool {
+      return lhs.hero == rhs.hero
     }
   }
 }"
@@ -230,7 +248,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public init() {
   }
 
-  public struct Data: GraphQLSelectionSet {
+  public struct Data: GraphQLSelectionSet, Equatable {
     public static let possibleTypes = [\\"Query\\"]
 
     public static let selections: [GraphQLSelection] = [
@@ -256,7 +274,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       }
     }
 
-    public struct Hero: GraphQLSelectionSet {
+    public struct Hero: GraphQLSelectionSet, Equatable {
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [GraphQLSelection] = [
@@ -345,6 +363,10 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
             }
           }
         }
+
+        static func ==(lhs: AsDroid, rhs: AsDroid) -> Bool {
+          return lhs.primaryFunction == rhs.primaryFunction
+        }
       }
 
       public struct Fragments {
@@ -361,6 +383,10 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           }
         }
       }
+    }
+
+    static func ==(lhs: Data, rhs: Data) -> Bool {
+      return lhs.hero == rhs.hero
     }
   }
 }"
@@ -380,7 +406,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public init() {
   }
 
-  public struct Data: GraphQLSelectionSet {
+  public struct Data: GraphQLSelectionSet, Equatable {
     public static let possibleTypes = [\\"Query\\"]
 
     public static let selections: [GraphQLSelection] = [
@@ -406,7 +432,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       }
     }
 
-    public struct Hero: GraphQLSelectionSet {
+    public struct Hero: GraphQLSelectionSet, Equatable {
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [GraphQLSelection] = [
@@ -458,6 +484,14 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           }
         }
       }
+
+      static func ==(lhs: Hero, rhs: Hero) -> Bool {
+        return lhs.name == rhs.name
+      }
+    }
+
+    static func ==(lhs: Data, rhs: Data) -> Bool {
+      return lhs.hero == rhs.hero
     }
   }
 }"
@@ -482,7 +516,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     return [\\"episode\\": episode]
   }
 
-  public struct Data: GraphQLSelectionSet {
+  public struct Data: GraphQLSelectionSet, Equatable {
     public static let possibleTypes = [\\"Query\\"]
 
     public static let selections: [GraphQLSelection] = [
@@ -508,7 +542,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       }
     }
 
-    public struct Hero: GraphQLSelectionSet {
+    public struct Hero: GraphQLSelectionSet, Equatable {
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [GraphQLSelection] = [
@@ -538,6 +572,14 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           snapshot.updateValue(newValue, forKey: \\"name\\")
         }
       }
+
+      static func ==(lhs: Hero, rhs: Hero) -> Bool {
+        return lhs.name == rhs.name
+      }
+    }
+
+    static func ==(lhs: Data, rhs: Data) -> Bool {
+      return lhs.hero == rhs.hero
     }
   }
 }"
@@ -559,7 +601,7 @@ exports[`Swift code generation #classDeclarationForOperation() when generateOper
   public init() {
   }
 
-  public struct Data: GraphQLSelectionSet {
+  public struct Data: GraphQLSelectionSet, Equatable {
     public static let possibleTypes = [\\"Query\\"]
 
     public static let selections: [GraphQLSelection] = [
@@ -585,7 +627,7 @@ exports[`Swift code generation #classDeclarationForOperation() when generateOper
       }
     }
 
-    public struct Hero: GraphQLSelectionSet {
+    public struct Hero: GraphQLSelectionSet, Equatable {
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [GraphQLSelection] = [
@@ -637,6 +679,14 @@ exports[`Swift code generation #classDeclarationForOperation() when generateOper
           }
         }
       }
+
+      static func ==(lhs: Hero, rhs: Hero) -> Bool {
+        return lhs.name == rhs.name
+      }
+    }
+
+    static func ==(lhs: Data, rhs: Data) -> Bool {
+      return lhs.hero == rhs.hero
     }
   }
 }"
@@ -746,6 +796,12 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
       }
     }
   }
+
+  static func ==(lhs: HeroDetails, rhs: HeroDetails) -> Bool {
+    return
+        lhs.name == rhs.name &&
+        lhs.appearsIn == rhs.appearsIn
+  }
 }"
 `;
 
@@ -792,6 +848,12 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
     set {
       snapshot.updateValue(newValue, forKey: \\"primaryFunction\\")
     }
+  }
+
+  static func ==(lhs: DroidDetails, rhs: DroidDetails) -> Bool {
+    return
+        lhs.name == rhs.name &&
+        lhs.primaryFunction == rhs.primaryFunction
   }
 }"
 `;
@@ -847,7 +909,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
     }
   }
 
-  public struct Friend: GraphQLSelectionSet {
+  public struct Friend: GraphQLSelectionSet, Equatable {
     public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
     public static let selections: [GraphQLSelection] = [
@@ -877,6 +939,16 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
         snapshot.updateValue(newValue, forKey: \\"name\\")
       }
     }
+
+    static func ==(lhs: Friend, rhs: Friend) -> Bool {
+      return lhs.name == rhs.name
+    }
+  }
+
+  static func ==(lhs: HeroDetails, rhs: HeroDetails) -> Bool {
+    return
+        lhs.name == rhs.name &&
+        lhs.friends == rhs.friends
   }
 }"
 `;
@@ -929,11 +1001,17 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
       snapshot.updateValue(newValue, forKey: \\"appearsIn\\")
     }
   }
+
+  static func ==(lhs: HeroDetails, rhs: HeroDetails) -> Bool {
+    return
+        lhs.name == rhs.name &&
+        lhs.appearsIn == rhs.appearsIn
+  }
 }"
 `;
 
 exports[`Swift code generation #structDeclarationForSelectionSet() should escape reserved keywords in a struct declaration for a selection set 1`] = `
-"public struct Hero: GraphQLSelectionSet {
+"public struct Hero: GraphQLSelectionSet, Equatable {
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [GraphQLSelection] = [
@@ -962,11 +1040,15 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
       snapshot.updateValue(newValue, forKey: \\"private\\")
     }
   }
+
+  static func ==(lhs: Hero, rhs: Hero) -> Bool {
+    return lhs.\`private\` == rhs.\`private\`
+  }
 }"
 `;
 
 exports[`Swift code generation #structDeclarationForSelectionSet() should generate a nested struct declaration for a selection set with subselections 1`] = `
-"public struct Hero: GraphQLSelectionSet {
+"public struct Hero: GraphQLSelectionSet, Equatable {
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [GraphQLSelection] = [
@@ -996,7 +1078,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     }
   }
 
-  public struct Friend: GraphQLSelectionSet {
+  public struct Friend: GraphQLSelectionSet, Equatable {
     public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
     public static let selections: [GraphQLSelection] = [
@@ -1025,12 +1107,20 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
         snapshot.updateValue(newValue, forKey: \\"name\\")
       }
     }
+
+    static func ==(lhs: Friend, rhs: Friend) -> Bool {
+      return lhs.name == rhs.name
+    }
+  }
+
+  static func ==(lhs: Hero, rhs: Hero) -> Bool {
+    return lhs.friends == rhs.friends
   }
 }"
 `;
 
 exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a fragment spread nested in an inline fragment 1`] = `
-"public struct Hero: GraphQLSelectionSet {
+"public struct Hero: GraphQLSelectionSet, Equatable {
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [GraphQLSelection] = [
@@ -1104,7 +1194,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 `;
 
 exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set 1`] = `
-"public struct Hero: GraphQLSelectionSet {
+"public struct Hero: GraphQLSelectionSet, Equatable {
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [GraphQLSelection] = [
@@ -1133,11 +1223,15 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       snapshot.updateValue(newValue, forKey: \\"name\\")
     }
   }
+
+  static func ==(lhs: Hero, rhs: Hero) -> Bool {
+    return lhs.name == rhs.name
+  }
 }"
 `;
 
 exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a fragment spread that matches the parent type 1`] = `
-"public struct Hero: GraphQLSelectionSet {
+"public struct Hero: GraphQLSelectionSet, Equatable {
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [GraphQLSelection] = [
@@ -1188,11 +1282,15 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       }
     }
   }
+
+  static func ==(lhs: Hero, rhs: Hero) -> Bool {
+    return lhs.name == rhs.name
+  }
 }"
 `;
 
 exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a fragment spread with a more specific type condition 1`] = `
-"public struct Hero: GraphQLSelectionSet {
+"public struct Hero: GraphQLSelectionSet, Equatable {
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [GraphQLSelection] = [
@@ -1245,11 +1343,15 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       }
     }
   }
+
+  static func ==(lhs: Hero, rhs: Hero) -> Bool {
+    return lhs.name == rhs.name
+  }
 }"
 `;
 
 exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with an inline fragment 1`] = `
-"public struct Hero: GraphQLSelectionSet {
+"public struct Hero: GraphQLSelectionSet, Equatable {
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [GraphQLSelection] = [
@@ -1326,6 +1428,16 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
         snapshot.updateValue(newValue, forKey: \\"primaryFunction\\")
       }
     }
+
+    static func ==(lhs: AsDroid, rhs: AsDroid) -> Bool {
+      return
+            lhs.name == rhs.name &&
+            lhs.primaryFunction == rhs.primaryFunction
+    }
+  }
+
+  static func ==(lhs: Hero, rhs: Hero) -> Bool {
+    return lhs.name == rhs.name
   }
 }"
 `;
