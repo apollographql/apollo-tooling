@@ -212,7 +212,7 @@ export function structDeclarationForSelectionSet(
   generator: CodeGenerator,
   {
     structName,
-    adoptedProtocols = ['GraphQLSelectionSet'],
+    adoptedProtocols = ['GraphQLSelectionSet', 'Equatable'],
     parentType,
     fields,
     inlineFragments,
@@ -419,6 +419,8 @@ export function structDeclarationForSelectionSet(
         });
       }
     });
+
+    equtableDeclarationForStruct(generator, structName, fields);
   });
 }
 
@@ -713,4 +715,39 @@ function structDeclarationForInputObjectType(generator: CodeGenerator, type: Gra
       });
     }
   });
+}
+
+function equtableDeclarationForStruct(generator: CodeGenerator, structName: string, fields: Field[]) {
+  if (fields.length > 0) {
+    generator.printNewlineIfNeeded()
+
+    generator.printOnNewline(`static func ==(lhs: ${structName}, rhs: ${structName}) -> Bool`)
+    generator.withinBlock(() => {
+      generator.printOnNewline('return')
+      equtableDeclarationForFields(generator, fields)
+    })
+  }
+}
+
+function equtableDeclarationForFields(generator: CodeGenerator, fields: Field[]) {
+  fields.forEach((field, idx) => {
+    if (idx == 0 && fields.length == 1) {
+      generator.print(' ')
+    } else if (idx == 0 && fields.length > 1) {
+      generator.printNewlineIfNeeded()
+      generator.printIndent()
+      generator.printIndent()
+    } else {
+      generator.printNewlineIfNeeded()
+      generator.printIndent()
+      generator.printIndent()
+    }
+
+    const { propertyName } = propertyFromField(generator.context,field);
+    generator.print(`lhs.${propertyName} == rhs.${propertyName}`)
+
+    if (idx != fields.length - 1) {
+      generator.print(' &&')
+    }
+  })
 }
