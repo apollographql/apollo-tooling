@@ -26,7 +26,7 @@ export function loadSchema(schemaPath: string): GraphQLSchema {
 }
 
 function extractDocumentFromJavascript(content: string, tagName: string = 'gql'): string | null {
-  const re = new RegExp(tagName + '`([^`]*)`', 'g');
+  const re = new RegExp(tagName + '\\s*`([^`]*)`', 'g');
 
   let match
   const matches = []
