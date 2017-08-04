@@ -9,6 +9,13 @@ export function comment(generator: CodeGenerator, comment: string | undefined) {
     });
 }
 
+export function deprecation(generator: CodeGenerator, isDeprecated: boolean | undefined, deprecationReason: string | undefined) {
+  if (isDeprecated !== undefined && isDeprecated) {
+    deprecationReason = (deprecationReason !== undefined && deprecationReason.length > 0) ? deprecationReason : ""
+    generator.printOnNewline(`@available(*, deprecated, message: "${deprecationReason}")`)
+  }
+}
+
 export function namespaceDeclaration(
   generator: CodeGenerator,
   namespace: string | undefined,
