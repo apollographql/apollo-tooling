@@ -37,6 +37,7 @@ import {
   propertyDeclarations,
   escapeIdentifierIfNeeded,
   comment,
+  deprecation,
   Property
 } from './language';
 
@@ -434,7 +435,7 @@ function operationIdentifier(
 }
 
 function propertyDeclarationForField(generator: CodeGenerator, field: Field) {
-  const { kind, propertyName, typeName, type, isConditional, description } = propertyFromField(
+  const { kind, propertyName, typeName, type, isConditional, description, isDeprecated, deprecationReason } = propertyFromField(
     generator.context,
     field
   );
@@ -443,6 +444,7 @@ function propertyDeclarationForField(generator: CodeGenerator, field: Field) {
 
   generator.printNewlineIfNeeded();
   comment(generator, description);
+  deprecation(generator, isDeprecated, deprecationReason)
   generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
   generator.withinBlock(() => {
     if (isCompositeType(namedType)) {
@@ -647,6 +649,7 @@ function enumerationDeclaration(generator: CodeGenerator, type: GraphQLEnumType)
   generator.withinBlock(() => {
     values.forEach(value => {
       comment(generator, value.description);
+      deprecation(generator, value.isDeprecated, value.deprecationReason)
       generator.printOnNewline(
         `case ${escapeIdentifierIfNeeded(enumCaseName(value.name))} = "${value.value}"`
       );
