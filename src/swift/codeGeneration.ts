@@ -191,7 +191,7 @@ export function structDeclarationForFragment(
     generator,
     {
       structName,
-      adoptedProtocols: ['GraphQLFragment'],
+      adoptedProtocols: ['GraphQLFragment', 'Equatable'],
       parentType: typeCondition,
       fields,
       inlineFragments,
@@ -351,7 +351,7 @@ export function structDeclarationForSelectionSet(
         structDeclarationForSelectionSet(generator, {
           structName: structNameForInlineFragment(inlineFragment),
           parentType: inlineFragment.typeCondition,
-          adoptedProtocols: ['GraphQLFragment'],
+          adoptedProtocols: ['GraphQLFragment', 'Equatable'],
           fields: inlineFragment.fields,
           fragmentSpreads: inlineFragment.fragmentSpreads
         });
@@ -721,7 +721,7 @@ function equtableDeclarationForStruct(generator: CodeGenerator, structName: stri
   if (fields.length > 0) {
     generator.printNewlineIfNeeded()
 
-    generator.printOnNewline(`static func ==(lhs: ${structName}, rhs: ${structName}) -> Bool`)
+    generator.printOnNewline(`public static func ==(lhs: ${structName}, rhs: ${structName}) -> Bool`)
     generator.withinBlock(() => {
       generator.printOnNewline('return')
       equtableDeclarationForFields(generator, fields)
@@ -730,24 +730,22 @@ function equtableDeclarationForStruct(generator: CodeGenerator, structName: stri
 }
 
 function equtableDeclarationForFields(generator: CodeGenerator, fields: Field[]) {
-  fields.forEach((field, idx) => {
-    if (idx == 0 && fields.length == 1) {
-      generator.print(' ')
-    } else if (idx == 0 && fields.length > 1) {
-      generator.printNewlineIfNeeded()
-      generator.printIndent()
-      generator.printIndent()
-    } else {
-      generator.printNewlineIfNeeded()
-      generator.printIndent()
-      generator.printIndent()
-    }
+  generator.withIndent(() => {
+    fields.forEach((field, idx) => {
+      if (idx == 0 && fields.length > 1) {
+        generator.printNewline()
+        generator.printIndent()
+      } else {
+        generator.printNewline()
+        generator.printIndent()
+      }
 
-    const { propertyName } = propertyFromField(generator.context,field);
-    generator.print(`lhs.${propertyName} == rhs.${propertyName}`)
+      const { propertyName } = propertyFromField(generator.context,field);
+      generator.print(`lhs.${propertyName} == rhs.${propertyName}`)
 
-    if (idx != fields.length - 1) {
-      generator.print(' &&')
-    }
+      if (idx != fields.length - 1) {
+        generator.print(' &&')
+      }
+    })
   })
 }

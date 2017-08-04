@@ -84,15 +84,16 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         }
       }
 
-      static func ==(lhs: CreateReview, rhs: CreateReview) -> Bool {
+      public static func ==(lhs: CreateReview, rhs: CreateReview) -> Bool {
         return
-                lhs.stars == rhs.stars &&
-                lhs.commentary == rhs.commentary
+          lhs.stars == rhs.stars &&
+          lhs.commentary == rhs.commentary
       }
     }
 
-    static func ==(lhs: Data, rhs: Data) -> Bool {
-      return lhs.createReview == rhs.createReview
+    public static func ==(lhs: Data, rhs: Data) -> Bool {
+      return
+        lhs.createReview == rhs.createReview
     }
   }
 }"
@@ -172,7 +173,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         }
       }
 
-      public struct AsDroid: GraphQLFragment {
+      public struct AsDroid: GraphQLFragment, Equatable {
         public static let possibleTypes = [\\"Droid\\"]
 
         public static let selections: [GraphQLSelection] = [
@@ -221,14 +222,16 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           }
         }
 
-        static func ==(lhs: AsDroid, rhs: AsDroid) -> Bool {
-          return lhs.name == rhs.name
+        public static func ==(lhs: AsDroid, rhs: AsDroid) -> Bool {
+          return
+            lhs.name == rhs.name
         }
       }
     }
 
-    static func ==(lhs: Data, rhs: Data) -> Bool {
-      return lhs.hero == rhs.hero
+    public static func ==(lhs: Data, rhs: Data) -> Bool {
+      return
+        lhs.hero == rhs.hero
     }
   }
 }"
@@ -315,7 +318,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         }
       }
 
-      public struct AsDroid: GraphQLFragment {
+      public struct AsDroid: GraphQLFragment, Equatable {
         public static let possibleTypes = [\\"Droid\\"]
 
         public static let selections: [GraphQLSelection] = [
@@ -364,8 +367,9 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           }
         }
 
-        static func ==(lhs: AsDroid, rhs: AsDroid) -> Bool {
-          return lhs.primaryFunction == rhs.primaryFunction
+        public static func ==(lhs: AsDroid, rhs: AsDroid) -> Bool {
+          return
+            lhs.primaryFunction == rhs.primaryFunction
         }
       }
 
@@ -385,8 +389,9 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       }
     }
 
-    static func ==(lhs: Data, rhs: Data) -> Bool {
-      return lhs.hero == rhs.hero
+    public static func ==(lhs: Data, rhs: Data) -> Bool {
+      return
+        lhs.hero == rhs.hero
     }
   }
 }"
@@ -485,13 +490,15 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         }
       }
 
-      static func ==(lhs: Hero, rhs: Hero) -> Bool {
-        return lhs.name == rhs.name
+      public static func ==(lhs: Hero, rhs: Hero) -> Bool {
+        return
+          lhs.name == rhs.name
       }
     }
 
-    static func ==(lhs: Data, rhs: Data) -> Bool {
-      return lhs.hero == rhs.hero
+    public static func ==(lhs: Data, rhs: Data) -> Bool {
+      return
+        lhs.hero == rhs.hero
     }
   }
 }"
@@ -573,13 +580,15 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         }
       }
 
-      static func ==(lhs: Hero, rhs: Hero) -> Bool {
-        return lhs.name == rhs.name
+      public static func ==(lhs: Hero, rhs: Hero) -> Bool {
+        return
+          lhs.name == rhs.name
       }
     }
 
-    static func ==(lhs: Data, rhs: Data) -> Bool {
-      return lhs.hero == rhs.hero
+    public static func ==(lhs: Data, rhs: Data) -> Bool {
+      return
+        lhs.hero == rhs.hero
     }
   }
 }"
@@ -680,13 +689,15 @@ exports[`Swift code generation #classDeclarationForOperation() when generateOper
         }
       }
 
-      static func ==(lhs: Hero, rhs: Hero) -> Bool {
-        return lhs.name == rhs.name
+      public static func ==(lhs: Hero, rhs: Hero) -> Bool {
+        return
+          lhs.name == rhs.name
       }
     }
 
-    static func ==(lhs: Data, rhs: Data) -> Bool {
-      return lhs.hero == rhs.hero
+    public static func ==(lhs: Data, rhs: Data) -> Bool {
+      return
+        lhs.hero == rhs.hero
     }
   }
 }"
@@ -727,7 +738,7 @@ exports[`Swift code generation #initializerDeclarationForProperties() should gen
 `;
 
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment that includes a fragment spread 1`] = `
-"public struct HeroDetails: GraphQLFragment {
+"public struct HeroDetails: GraphQLFragment, Equatable {
   public static let fragmentString =
     \\"fragment HeroDetails on Character {\\" +
     \\"  name\\" +
@@ -797,16 +808,16 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
     }
   }
 
-  static func ==(lhs: HeroDetails, rhs: HeroDetails) -> Bool {
+  public static func ==(lhs: HeroDetails, rhs: HeroDetails) -> Bool {
     return
-        lhs.name == rhs.name &&
-        lhs.appearsIn == rhs.appearsIn
+      lhs.name == rhs.name &&
+      lhs.appearsIn == rhs.appearsIn
   }
 }"
 `;
 
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a concrete type condition 1`] = `
-"public struct DroidDetails: GraphQLFragment {
+"public struct DroidDetails: GraphQLFragment, Equatable {
   public static let fragmentString =
     \\"fragment DroidDetails on Droid {\\" +
     \\"  name\\" +
@@ -850,16 +861,16 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
     }
   }
 
-  static func ==(lhs: DroidDetails, rhs: DroidDetails) -> Bool {
+  public static func ==(lhs: DroidDetails, rhs: DroidDetails) -> Bool {
     return
-        lhs.name == rhs.name &&
-        lhs.primaryFunction == rhs.primaryFunction
+      lhs.name == rhs.name &&
+      lhs.primaryFunction == rhs.primaryFunction
   }
 }"
 `;
 
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a subselection 1`] = `
-"public struct HeroDetails: GraphQLFragment {
+"public struct HeroDetails: GraphQLFragment, Equatable {
   public static let fragmentString =
     \\"fragment HeroDetails on Character {\\" +
     \\"  name\\" +
@@ -940,21 +951,22 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
       }
     }
 
-    static func ==(lhs: Friend, rhs: Friend) -> Bool {
-      return lhs.name == rhs.name
+    public static func ==(lhs: Friend, rhs: Friend) -> Bool {
+      return
+        lhs.name == rhs.name
     }
   }
 
-  static func ==(lhs: HeroDetails, rhs: HeroDetails) -> Bool {
+  public static func ==(lhs: HeroDetails, rhs: HeroDetails) -> Bool {
     return
-        lhs.name == rhs.name &&
-        lhs.friends == rhs.friends
+      lhs.name == rhs.name &&
+      lhs.friends == rhs.friends
   }
 }"
 `;
 
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with an abstract type condition 1`] = `
-"public struct HeroDetails: GraphQLFragment {
+"public struct HeroDetails: GraphQLFragment, Equatable {
   public static let fragmentString =
     \\"fragment HeroDetails on Character {\\" +
     \\"  name\\" +
@@ -1002,10 +1014,10 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
     }
   }
 
-  static func ==(lhs: HeroDetails, rhs: HeroDetails) -> Bool {
+  public static func ==(lhs: HeroDetails, rhs: HeroDetails) -> Bool {
     return
-        lhs.name == rhs.name &&
-        lhs.appearsIn == rhs.appearsIn
+      lhs.name == rhs.name &&
+      lhs.appearsIn == rhs.appearsIn
   }
 }"
 `;
@@ -1041,8 +1053,9 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
     }
   }
 
-  static func ==(lhs: Hero, rhs: Hero) -> Bool {
-    return lhs.\`private\` == rhs.\`private\`
+  public static func ==(lhs: Hero, rhs: Hero) -> Bool {
+    return
+      lhs.\`private\` == rhs.\`private\`
   }
 }"
 `;
@@ -1108,13 +1121,15 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       }
     }
 
-    static func ==(lhs: Friend, rhs: Friend) -> Bool {
-      return lhs.name == rhs.name
+    public static func ==(lhs: Friend, rhs: Friend) -> Bool {
+      return
+        lhs.name == rhs.name
     }
   }
 
-  static func ==(lhs: Hero, rhs: Hero) -> Bool {
-    return lhs.friends == rhs.friends
+  public static func ==(lhs: Hero, rhs: Hero) -> Bool {
+    return
+      lhs.friends == rhs.friends
   }
 }"
 `;
@@ -1152,7 +1167,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     }
   }
 
-  public struct AsDroid: GraphQLFragment {
+  public struct AsDroid: GraphQLFragment, Equatable {
     public static let possibleTypes = [\\"Droid\\"]
 
     public static let selections: [GraphQLSelection] = [
@@ -1224,8 +1239,9 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     }
   }
 
-  static func ==(lhs: Hero, rhs: Hero) -> Bool {
-    return lhs.name == rhs.name
+  public static func ==(lhs: Hero, rhs: Hero) -> Bool {
+    return
+      lhs.name == rhs.name
   }
 }"
 `;
@@ -1283,8 +1299,9 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     }
   }
 
-  static func ==(lhs: Hero, rhs: Hero) -> Bool {
-    return lhs.name == rhs.name
+  public static func ==(lhs: Hero, rhs: Hero) -> Bool {
+    return
+      lhs.name == rhs.name
   }
 }"
 `;
@@ -1344,8 +1361,9 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     }
   }
 
-  static func ==(lhs: Hero, rhs: Hero) -> Bool {
-    return lhs.name == rhs.name
+  public static func ==(lhs: Hero, rhs: Hero) -> Bool {
+    return
+      lhs.name == rhs.name
   }
 }"
 `;
@@ -1393,7 +1411,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     }
   }
 
-  public struct AsDroid: GraphQLFragment {
+  public struct AsDroid: GraphQLFragment, Equatable {
     public static let possibleTypes = [\\"Droid\\"]
 
     public static let selections: [GraphQLSelection] = [
@@ -1429,15 +1447,16 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       }
     }
 
-    static func ==(lhs: AsDroid, rhs: AsDroid) -> Bool {
+    public static func ==(lhs: AsDroid, rhs: AsDroid) -> Bool {
       return
-            lhs.name == rhs.name &&
-            lhs.primaryFunction == rhs.primaryFunction
+        lhs.name == rhs.name &&
+        lhs.primaryFunction == rhs.primaryFunction
     }
   }
 
-  static func ==(lhs: Hero, rhs: Hero) -> Bool {
-    return lhs.name == rhs.name
+  public static func ==(lhs: Hero, rhs: Hero) -> Bool {
+    return
+      lhs.name == rhs.name
   }
 }"
 `;
