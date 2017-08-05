@@ -62,12 +62,25 @@ yargs
       }
     },
     async argv => {
-      const { schema, output, header, insecure, method } = argv;
+      let { schema, output, header, insecure, method } = argv;
 
       const urlRegex = /^https?:\/\//i;
       if (urlRegex.test(schema)) {
         await downloadSchema(schema, output, header, insecure, method);
       } else {
+        // Use glob if the user's shell was unable to expand the pattern
+        if (glob.hasMagic(schema)) {
+          schema = glob.sync(schema);
+        }
+        else {
+          schema = [schema];
+        }
+
+        schema = schema
+          .map(schema => path.resolve(schema))
+          // Sort to normalize different glob expansions between different terminals.
+          .sort();
+
         await introspectSchema(schema, output);
       }
     }
@@ -170,6 +183,12 @@ yargs
         // Sort to normalize different glob expansions between different terminals.
         .sort();
 
+      let schemaPaths = argv.schema ? [argv.schema] : [];
+      // Use glob if the user's shell was unable to expand the pattern
+      if (schemaPaths.length === 1 && glob.hasMagic(schemaPaths[0])) {
+        schemaPaths = glob.sync(schemaPaths[0]);
+      }
+
       const options = {
         passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '',
         customScalarsPrefix: argv["custom-scalars-prefix"] || '',
@@ -180,7 +199,7 @@ yargs
         mergeInFieldsFromFragmentSpreads: argv["merge-in-fields-from-fragment-spreads"]
       };
 
-      generate(inputPaths, argv.schema, argv.output, argv.target, argv.tagName, options);
+      generate(inputPaths, schemaPaths, argv.output, argv.target, argv.tagName, options);
     },
   )
   .fail(function(message, error) {

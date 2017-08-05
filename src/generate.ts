@@ -8,28 +8,35 @@ import serializeToJSON from './serializeToJSON'
 import { generateSource as generateSwiftSource } from './swift'
 import { generateSource as generateTypescriptSource } from './typescript'
 import { generateSource as generateFlowSource } from './flow'
+import {buildASTSchema, extendSchema} from "graphql";
+import { Kind } from 'graphql/language';
 
 type TargetType = 'json' | 'swift' | 'ts' | 'typescript' | 'flow';
 
 export default function generate(
   inputPaths: string[],
-  schemaPath: string,
+  schemaPaths: string[],
   outputPath: string,
   target: TargetType,
   tagName: string,
   options: any
 ) {
-  const schema = loadSchema(schemaPath);
+  let schema = loadAndMergeQueryDocuments(schemaPaths, tagName);
+  let schemaAST = buildASTSchema(schema);
+  let extensionDefs = schema.definitions.filter((def) => def.kind === Kind.TYPE_EXTENSION_DEFINITION);
+  if( extensionDefs.length > 0 )
+    schemaAST = extendSchema(schemaAST, {...schema, definitions:extensionDefs});
+
 
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
 
-  validateQueryDocument(schema, document, target);
+  validateQueryDocument(schemaAST, document, target);
 
   if (target === 'swift') {
     options.addTypename = true;
   }
 
-  const context = compileToIR(schema, document, options);
+  const context = compileToIR(schemaAST, document, options);
 
   let output = '';
   switch (target) {
