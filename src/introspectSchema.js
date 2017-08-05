@@ -7,10 +7,7 @@ import { introspectionQuery } from 'graphql/utilities';
 
 import { ToolError } from './errors'
 
-export async function introspect(schemaContents, parsed=false) {
-  if( !parsed ) {
-    schemaContents = parse(schemaContents);
-  }
+export async function introspect(schemaContents) {
   let schema = buildASTSchema(schemaContents);
   const extensionDefs = schemaContents.definitions.filter((def) => def.kind === Kind.TYPE_EXTENSION_DEFINITION);
   if( extensionDefs.length > 0 )
@@ -25,13 +22,13 @@ export default async function introspectSchema(schemaPaths, outputPath) {
     if (!fs.existsSync(schemaPaths[0])) {
       throw new ToolError(`Cannot find GraphQL schema file: ${schemaPaths[0]}`);
     }
-    schemaContents = fs.readFileSync(schemaPaths[0]).toString();
+    schemaContents = parse(fs.readFileSync(schemaPaths[0]).toString());
   }
   else {
     schemaContents = loadAndMergeQueryDocuments(schemaPaths, 'gql');
   }
 
-  const result = await introspect(schemaContents, true);
+  const result = await introspect(schemaContents);
 
   if (result.errors) {
     throw new ToolError(`Errors in introspection query result: ${result.errors}`);
