@@ -1,8 +1,4 @@
-import { CompilationContext } from '../compilation';
-
-import { join, block, wrap, indent } from '../utilities/printing';
-
-import { camelCase } from 'change-case';
+import { LegacyCompilerContext } from '../compiler/legacyIR';
 
 import {
   GraphQLType,
@@ -17,7 +13,8 @@ import {
   GraphQLEnumType,
   GraphQLCompositeType,
   isCompositeType,
-  isAbstractType
+  isAbstractType,
+  GraphQLObjectType
 } from 'graphql';
 
 const builtInScalarMap = {
@@ -28,7 +25,7 @@ const builtInScalarMap = {
   [GraphQLID.name]: 'GraphQLID'
 };
 
-export function possibleTypesForType(context: CompilationContext, type: GraphQLCompositeType) {
+export function possibleTypesForType(context: LegacyCompilerContext, type: GraphQLCompositeType): GraphQLObjectType[] {
   if (isAbstractType(type)) {
     return context.schema.getPossibleTypes(type);
   } else {
@@ -37,7 +34,7 @@ export function possibleTypesForType(context: CompilationContext, type: GraphQLC
 }
 
 export function typeNameFromGraphQLType(
-  context: CompilationContext,
+  context: LegacyCompilerContext,
   type: GraphQLType,
   bareTypeName?: string,
   isOptional?: boolean
@@ -60,7 +57,7 @@ export function typeNameFromGraphQLType(
   return isOptional ? typeName + '?' : typeName;
 }
 
-function typeNameForScalarType(context: CompilationContext, type: GraphQLScalarType): string {
+function typeNameForScalarType(context: LegacyCompilerContext, type: GraphQLScalarType): string {
   return (
     builtInScalarMap[type.name] ||
     (context.options.passthroughCustomScalars
@@ -69,7 +66,7 @@ function typeNameForScalarType(context: CompilationContext, type: GraphQLScalarT
   );
 }
 
-export function fieldTypeEnum(context: CompilationContext, type: GraphQLType, structName: string): string {
+export function fieldTypeEnum(context: LegacyCompilerContext, type: GraphQLType, structName: string): string {
   if (type instanceof GraphQLNonNull) {
     return `.nonNull(${fieldTypeEnum(context, type.ofType, structName)})`;
   } else if (type instanceof GraphQLList) {

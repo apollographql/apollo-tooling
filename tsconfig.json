@@ -7,10 +7,11 @@
     "outDir": "lib",
     "lib": ["es2017", "esnext.asynciterable"],
     "removeComments": true,
-    "noImplicitAny": true,
+    "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "strictNullChecks": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
     "allowJs": true,
     "allowUnreachableCode": true
   },

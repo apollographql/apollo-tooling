@@ -1,10 +1,4 @@
-import { CompilationContext } from '../compilation';
-import {
-  join,
-  block,
-  wrap,
-  indent
-} from '../utilities/printing';
+import { LegacyCompilerContext } from '../compiler/legacyIR';
 
 import {
   GraphQLString,
@@ -15,7 +9,6 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
-  GraphQLEnumType,
   GraphQLType
 } from 'graphql';
 
@@ -27,7 +20,7 @@ const builtInScalarMap = {
   [GraphQLID.name]: 'string',
 }
 
-export function typeNameFromGraphQLType(context: CompilationContext, type: GraphQLType, bareTypeName?: string | null, nullable = true): string {
+export function typeNameFromGraphQLType(context: LegacyCompilerContext, type: GraphQLType, bareTypeName?: string | null, nullable = true): string {
   if (type instanceof GraphQLNonNull) {
     return typeNameFromGraphQLType(context, type.ofType, bareTypeName, false)
   }

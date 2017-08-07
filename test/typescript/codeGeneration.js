@@ -20,7 +20,7 @@ const miscSchema = loadSchema(require.resolve('../misc/schema.json'));
 
 import CodeGenerator from '../../src/utilities/CodeGenerator';
 
-import { compileToIR } from '../../src/compilation';
+import { compileToLegacyIR } from '../../src/compiler/legacyIR';
 
 describe('TypeScript code generation', function() {
   let generator;
@@ -39,7 +39,7 @@ describe('TypeScript code generation', function() {
 
     compileFromSource = (source) => {
       const document = parse(source);
-      const context = compileToIR(schema, document, {
+      const context = compileToLegacyIR(schema, document, {
         mergeInFieldsFromFragmentSpreads: true,
         addTypename: true
       });

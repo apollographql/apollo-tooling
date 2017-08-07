@@ -1,9 +1,8 @@
 import * as fs from 'fs';
 
-import { ToolError, logError } from './errors'
 import { loadSchema,  loadAndMergeQueryDocuments } from './loading'
 import { validateQueryDocument } from './validation'
-import { compileToIR } from './compilation'
+import { compileToLegacyIR } from './compiler/legacyIR'
 import serializeToJSON from './serializeToJSON'
 import { generateSource as generateSwiftSource } from './swift'
 import { generateSource as generateTypescriptSource } from './typescript'
@@ -30,7 +29,7 @@ export default function generate(
     options.addTypename = true;
   }
 
-  const context = compileToIR(schema, document, options);
+  const context = compileToLegacyIR(schema, document, options);
 
   let output = '';
   switch (target) {
@@ -45,7 +44,7 @@ export default function generate(
       output = generateFlowSource(context);
       break;
     case 'swift':
-      output = generateSwiftSource(context, options);
+      output = generateSwiftSource(context);
       break;
     case 'scala':
       output = generateScalaSource(context, options);

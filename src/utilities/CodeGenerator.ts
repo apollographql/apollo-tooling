@@ -1,17 +1,11 @@
-import {CompilationContext} from '../compilation';
-import {
-  join,
-  wrap,
-} from './printing';
-
-export default class CodeGenerator {
+export default class CodeGenerator<Context = any> {
   private scopeStack: any[] = [];
   private indentWidth = 2;
   private indentLevel = 0;
   public output = '';
   private startOfIndentLevel = false;
 
-  constructor(public context: CompilationContext) {
+  constructor(public context: Context) {
 
   }
 
