@@ -134,6 +134,9 @@ type Starship {
   name: String!
   # Length of the starship, along the longest axis
   length(unit: LengthUnit = METER): Float
+}
+#validate "extend type" works
+extend type Starship {
   coordinates: [[Float!]!]
 }
 union SearchResult = Human | Droid | Starship
