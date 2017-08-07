@@ -188,6 +188,15 @@ yargs
       if (schemaPaths.length === 1 && glob.hasMagic(schemaPaths[0])) {
         schemaPaths = glob.sync(schemaPaths[0]);
       }
+      
+      schemaPaths = schemaPaths
+        .map(schemaPath => path.resolve(schemaPath))
+        // Sort to normalize different glob expansions between different terminals.
+        .sort();
+
+      if (schemaPaths.length == 0) {
+        throw new ToolError( "Verify --schema argument. Unable to locate valid path.")
+      }
 
       const options = {
         passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '',
