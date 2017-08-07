@@ -29,7 +29,7 @@ const schema = loadSchema(require.resolve('../starwars/schema.json'));
 
 import CodeGenerator from '../../src/utilities/CodeGenerator';
 
-import { compileToIR } from '../../src/compilation';
+import { compileToLegacyIR } from '../../src/compiler/legacyIR';
 
 describe('Swift code generation', function() {
   let generator;
@@ -52,7 +52,7 @@ describe('Swift code generation', function() {
 
     compileFromSource = (source, options = { generateOperationIds: false }) => {
       const document = parse(source);
-      let context = compileToIR(schema, document);
+      let context = compileToLegacyIR(schema, document);
       options.generateOperationIds && Object.assign(context.options, { generateOperationIds: true, operationIdsMap: {} });
       generator.context = context;
       return context;

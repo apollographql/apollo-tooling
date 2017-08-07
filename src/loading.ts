@@ -1,6 +1,4 @@
-import * as path from 'path'
 import * as fs from 'fs'
-import * as mkdirp from 'mkdirp'
 
 import {
   buildClientSchema,
@@ -11,7 +9,7 @@ import {
   GraphQLSchema
 } from 'graphql';
 
-import { ToolError, logError } from './errors'
+import { ToolError } from './errors'
 
 export function loadSchema(schemaPath: string): GraphQLSchema {
   if (!fs.existsSync(schemaPath)) {

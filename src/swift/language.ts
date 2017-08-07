@@ -101,7 +101,7 @@ export interface Protocol {
 
 export function protocolDeclaration(
   generator: CodeGenerator,
-  { protocolName, adoptedProtocols, properties }: Protocol,
+  { protocolName, adoptedProtocols }: Protocol,
   closure: Function
 ) {
   generator.printNewlineIfNeeded();

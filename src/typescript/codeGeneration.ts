@@ -1,15 +1,12 @@
-import { CompiledInlineFragment, CompiledFragment, Field, CompiledOperation, CompilationContext } from '../compilation';
+import { LegacyCompilerContext, LegacyInlineFragment, LegacyFragment, LegacyField, LegacyOperation } from '../compiler/legacyIR';
 import {
   GraphQLError,
   getNamedType,
   isCompositeType,
   isAbstractType,
-  isEqualType,
-  GraphQLScalarType,
   GraphQLEnumType,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLID,
   GraphQLInputObjectType,
   GraphQLType,
   GraphQLUnionType,
@@ -17,13 +14,8 @@ import {
   GraphQLObjectType
 } from 'graphql'
 
-import { isTypeProperSuperTypeOf } from '../utilities/graphql';
-
-import * as Inflector from 'inflected';
-
 import {
-  join,
-  wrap,
+  wrap
 } from '../utilities/printing';
 
 import CodeGenerator from '../utilities/CodeGenerator';
@@ -39,8 +31,8 @@ import {
   typeNameFromGraphQLType,
 } from './types';
 
-export function generateSource(context: CompilationContext) {
-  const generator = new CodeGenerator(context);
+export function generateSource(context: LegacyCompilerContext) {
+  const generator = new CodeGenerator<LegacyCompilerContext>(context);
 
   generator.printOnNewline('/* tslint:disable */');
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
@@ -123,11 +115,8 @@ export function interfaceVariablesDeclarationForOperation(
   {
     operationName,
     operationType,
-    variables,
-    fields,
-    fragmentsReferenced,
-    source,
-  }: CompiledOperation
+    variables
+  }: LegacyOperation
 ) {
   if (!variables || variables.length < 1) {
     return;
@@ -158,10 +147,8 @@ function getObjectTypeName(type: GraphQLType): string {
   return `"${type.name}"`;
 }
 
-function updateTypeNameField(rootField: Field): Field {
-
+function updateTypeNameField(rootField: LegacyField): LegacyField {
   const fields = rootField.fields && rootField.fields.map(field => {
-    const type = field.type;
     if (field.fieldName === '__typename') {
       const objectTypeName = getObjectTypeName(rootField.type);
       return {
@@ -180,7 +167,7 @@ function updateTypeNameField(rootField: Field): Field {
   return {
     ...rootField,
     fields,
-  } as Field;
+  } as LegacyField;
 }
 
 export function interfaceDeclarationForOperation(
@@ -188,12 +175,8 @@ export function interfaceDeclarationForOperation(
   {
     operationName,
     operationType,
-    variables,
-    fields,
-    fragmentSpreads,
-    fragmentsReferenced,
-    source,
-  }: CompiledOperation
+    fields
+  }: LegacyOperation
 ) {
   const interfaceName = interfaceNameFromOperation({ operationName, operationType });
   fields = fields.map(field => updateTypeNameField(field));
@@ -207,15 +190,13 @@ export function interfaceDeclarationForOperation(
 
 export function interfaceDeclarationForFragment(
   generator: CodeGenerator,
-  fragment: CompiledFragment
+  fragment: LegacyFragment
 ) {
   const {
     fragmentName,
     typeCondition,
     fields,
-    inlineFragments,
-    fragmentSpreads,
-    source,
+    inlineFragments
   } = fragment;
 
   const interfaceName = `${fragmentName}Fragment`;
@@ -273,26 +254,26 @@ export function interfaceDeclarationForFragment(
   });
 }
 
-export function propertiesFromFields(context: CompilationContext, fields: {
+export function propertiesFromFields(context: LegacyCompilerContext, fields: {
   name?: string,
   type: GraphQLType,
   responseName?: string,
   description?: string,
   fragmentSpreads?: any,
-  inlineFragments?: CompiledInlineFragment[],
+  inlineFragments?: LegacyInlineFragment[],
   fieldName?: string
 }[]) {
   return fields.map(field => propertyFromField(context, field));
 }
 
-export function propertyFromField(context: CompilationContext, field: {
+export function propertyFromField(context: LegacyCompilerContext, field: {
   name?: string,
   type: GraphQLType,
   fields?: any[],
   responseName?: string,
   description?: string,
   fragmentSpreads?: any,
-  inlineFragments?: CompiledInlineFragment[],
+  inlineFragments?: LegacyInlineFragment[],
   fieldName?: string
 }): Property {
   let { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
@@ -404,7 +385,7 @@ export function propertyDeclarations(generator: CodeGenerator, properties: Prope
  * do not have inline fragments. This currently can happen and the IR does give us
  * a set of fields per type condition unless fragments are used within the selection set.
  */
-function getPossibleTypeNames(generator: CodeGenerator, property: Property) {
+function getPossibleTypeNames(generator: CodeGenerator<LegacyCompilerContext>, property: Property) {
   const type = getNamedType(property.fieldType || property.type!);
 
   if (type instanceof GraphQLUnionType || type instanceof GraphQLInterfaceType) {

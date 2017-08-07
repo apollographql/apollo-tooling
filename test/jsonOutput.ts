@@ -1,9 +1,9 @@
-import { parse } from "graphql";
-import { compileToIR, CompilerOptions } from "../src/compilation";
-import serializeToJSON from "../src/serializeToJSON";
+import { parse } from 'graphql';
+import { compileToLegacyIR, CompilerOptions } from '../src/compiler/legacyIR';
+import serializeToJSON from '../src/serializeToJSON';
 
-import { loadSchema } from "../src/loading";
-const schema = loadSchema(require.resolve("./starwars/schema.json"));
+import { loadSchema } from '../src/loading';
+const schema = loadSchema(require.resolve('./starwars/schema.json'));
 
 function compileFromSource(
   source,
@@ -13,10 +13,10 @@ function compileFromSource(
   }
 ) {
   const document = parse(source);
-  return compileToIR(schema, document, options);
+  return compileToLegacyIR(schema, document, options);
 }
 
-describe("JSON output", function() {
+describe('JSON output', function() {
   test(`should generate JSON output for a query with an enum variable`, function() {
     const context = compileFromSource(`
       query HeroName($episode: Episode) {

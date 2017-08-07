@@ -1,6 +1,7 @@
 import { camelCase, pascalCase } from 'change-case';
 import * as Inflector from 'inflected';
 
+import { isMetaFieldName } from '../utilities/graphql';
 import { join } from '../utilities/printing';
 
 import { escapeIdentifierIfNeeded } from './language';
@@ -70,6 +71,3 @@ export function propertyFromFragmentSpread(context, fragmentSpread) {
   return { propertyName, typeName, fragment, isComposite: true };
 }
 
-function isMetaFieldName(name) {
-  return name.startsWith('__');
-}
