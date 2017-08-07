@@ -237,6 +237,149 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 }"
 `;
 
+exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with an inline fragment 1`] = `
+"public final class HeroQuery: GraphQLQuery {
+  public static let operationString =
+    \\"query Hero {\\" +
+    \\"  hero {\\" +
+    \\"    name\\" +
+    \\"    ... on Droid {\\" +
+    \\"      primaryFunction\\" +
+    \\"    }\\" +
+    \\"  }\\" +
+    \\"}\\"
+
+  public init() {
+  }
+
+  public struct Data: GraphQLSelectionSet, Equatable {
+    public static let possibleTypes = [\\"Query\\"]
+
+    public static let selections: [GraphQLSelection] = [
+      GraphQLField(\\"hero\\", type: .object(Hero.self)),
+    ]
+
+    public var snapshot: Snapshot
+
+    public init(snapshot: Snapshot) {
+      self.snapshot = snapshot
+    }
+
+    public init(hero: Hero? = nil) {
+      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero])
+    }
+
+    public var hero: Hero? {
+      get {
+        return (snapshot[\\"hero\\"]! as! Snapshot?).flatMap { Hero(snapshot: $0) }
+      }
+      set {
+        snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
+      }
+    }
+
+    public struct Hero: GraphQLSelectionSet, Equatable {
+      public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+      public static let selections: [GraphQLSelection] = [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        GraphQLFragmentSpread(AsDroid.self),
+      ]
+
+      public var snapshot: Snapshot
+
+      public init(snapshot: Snapshot) {
+        self.snapshot = snapshot
+      }
+
+      public static func makeHuman(name: String) -> Hero {
+        return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+      }
+
+      public static func makeDroid(name: String, primaryFunction: String? = nil) -> Hero {
+        return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
+      }
+
+      /// The name of the character
+      public var name: String {
+        get {
+          return snapshot[\\"name\\"]! as! String
+        }
+        set {
+          snapshot.updateValue(newValue, forKey: \\"name\\")
+        }
+      }
+
+      public var asDroid: AsDroid? {
+        get {
+          if !AsDroid.possibleTypes.contains(__typename) { return nil }
+          return AsDroid(snapshot: snapshot)
+        }
+        set {
+          guard let newValue = newValue else { return }
+          snapshot = newValue.snapshot
+        }
+      }
+
+      public struct AsDroid: GraphQLFragment, Equatable {
+        public static let possibleTypes = [\\"Droid\\"]
+
+        public static let selections: [GraphQLSelection] = [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+          GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
+        ]
+
+        public var snapshot: Snapshot
+
+        public init(snapshot: Snapshot) {
+          self.snapshot = snapshot
+        }
+
+        public init(name: String, primaryFunction: String? = nil) {
+          self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
+        }
+
+        /// What others call this droid
+        public var name: String {
+          get {
+            return snapshot[\\"name\\"]! as! String
+          }
+          set {
+            snapshot.updateValue(newValue, forKey: \\"name\\")
+          }
+        }
+
+        /// This droid's primary function
+        public var primaryFunction: String? {
+          get {
+            return snapshot[\\"primaryFunction\\"]! as! String?
+          }
+          set {
+            snapshot.updateValue(newValue, forKey: \\"primaryFunction\\")
+          }
+        }
+
+        public static func ==(lhs: AsDroid, rhs: AsDroid) -> Bool {
+          return
+            lhs.name == rhs.name &&
+            lhs.primaryFunction == rhs.primaryFunction
+        }
+      }
+
+      public static func ==(lhs: Hero, rhs: Hero) -> Bool {
+        return
+          lhs.name == rhs.name
+      }
+    }
+
+    public static func ==(lhs: Data, rhs: Data) -> Bool {
+      return
+        lhs.hero == rhs.hero
+    }
+  }
+}"
+`;
+
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with conditional fragment spreads 1`] = `
 "public final class HeroQuery: GraphQLQuery {
   public static let operationString =

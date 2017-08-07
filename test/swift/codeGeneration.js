@@ -47,7 +47,7 @@ describe('Swift code generation', function() {
         typesUsed: {},
         options: { mergeInFieldsFromFragmentSpreads: true },
       }
-      generator = new CodeGenerator(context);  
+      generator = new CodeGenerator(context);
     };
 
     compileFromSource = (source, options = { generateOperationIds: false }) => {
@@ -112,6 +112,23 @@ describe('Swift code generation', function() {
       classDeclarationForOperation(generator, operations['Hero'], Object.values(fragments));
       expect(generator.output).toMatchSnapshot();
     });
+
+    test(`should generate a class declaration for a query with an inline fragment`, function() {
+      const { operations, fragments } = compileFromSource(`
+        query Hero {
+          hero {
+            name
+            ... on Droid {
+              primaryFunction
+            }
+          }
+        }
+      `)
+
+      classDeclarationForOperation(generator, operations['Hero'], Object.values(fragments));
+
+      expect(generator.output).toMatchSnapshot();
+    })
 
     test(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, function() {
       const { operations, fragments } = compileFromSource(`
