@@ -1,13 +1,8 @@
-import {CompiledInlineFragment} from '../compilation';
-import {
-  join,
-  wrap,
-} from '../utilities/printing';
+import { LegacyInlineFragment } from '../compiler/legacyIR';
 
 import { propertyDeclarations } from './codeGeneration';
 import { typeNameFromGraphQLType } from './types';
 
-import { pascalCase } from 'change-case';
 import CodeGenerator from "../utilities/CodeGenerator";
 import { GraphQLType } from "graphql";
 
@@ -21,7 +16,7 @@ export interface Property {
   isComposite?: boolean,
   isNullable?: boolean,
   fields?: any[],
-  inlineFragments?: CompiledInlineFragment[],
+  inlineFragments?: LegacyInlineFragment[],
   fragmentSpreads?: any,
   isInput?: boolean,
   isArray?: boolean,
@@ -55,8 +50,7 @@ export function propertyDeclaration(generator: CodeGenerator, {
   isInput,
   isArray,
   isNullable,
-  isArrayElementNullable,
-  fragmentSpreads
+  isArrayElementNullable
 }: Property, closure?: () => void) {
   const name = fieldName || propertyName;
 
@@ -107,7 +101,7 @@ export function propertyDeclaration(generator: CodeGenerator, {
 
 export function propertySetsDeclaration(generator: CodeGenerator, property: Property, propertySets: Property[][], standalone = false) {
   const {
-    description, fieldName, propertyName, typeName,
+    description, fieldName, propertyName,
     isNullable, isArray, isArrayElementNullable,
   } = property;
   const name = fieldName || propertyName;

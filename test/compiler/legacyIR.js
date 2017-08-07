@@ -9,18 +9,18 @@ import {
   GraphQLNonNull
 } from 'graphql';
 
-import { loadSchema } from '../src/loading'
+import { loadSchema } from '../../src/loading'
 
-import { compileToIR } from '../src/compilation'
-import { serializeAST } from '../src/serializeToJSON'
+import { compileToLegacyIR } from '../../src/compiler/legacyIR'
+import { serializeAST } from '../../src/serializeToJSON'
 
 function withStringifiedTypes(ir) {
   return JSON.parse(serializeAST(ir));
 }
 
-const schema = loadSchema(require.resolve('./starwars/schema.json'));
+const schema = loadSchema(require.resolve('../starwars/schema.json'));
 
-describe('Compiling query documents', () => {
+describe('Compiling query documents to the legacy IR', () => {
   test(`should include variables defined in operations`, () => {
     const document = parse(`
       query HeroName($episode: Episode) {
@@ -45,7 +45,7 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = withStringifiedTypes(compileToIR(schema, document));
+    const { operations } = withStringifiedTypes(compileToLegacyIR(schema, document));
 
     expect(operations['HeroName'].variables).toEqual(
       [
@@ -91,7 +91,7 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { typesUsed } = withStringifiedTypes(compileToIR(schema, document));
+    const { typesUsed } = withStringifiedTypes(compileToLegacyIR(schema, document));
 
     expect(typesUsed).toEqual(['Episode', 'ReviewInput', 'ColorInput']);
   });
@@ -110,13 +110,13 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { typesUsed } = withStringifiedTypes(compileToIR(schema, document));
+    const { typesUsed } = withStringifiedTypes(compileToLegacyIR(schema, document));
 
     expect(typesUsed).toEqual(['Episode']);
   });
 
   test(`should keep track of types used in fields of input objects`, () => {
-    const bookstore_schema = loadSchema(require.resolve('./bookstore/schema.json'));
+    const bookstore_schema = loadSchema(require.resolve('../bookstore/schema.json'));
     const document = parse(`
       query ListBooks {
         books {
@@ -143,7 +143,7 @@ describe('Compiling query documents', () => {
       }
     `)
 
-    const { typesUsed } = withStringifiedTypes(compileToIR(bookstore_schema, document));
+    const { typesUsed } = withStringifiedTypes(compileToLegacyIR(bookstore_schema, document));
 
     expect(typesUsed).toContain('IdInput');
     expect(typesUsed).toContain('WrittenByInput');
@@ -161,7 +161,7 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].fieldName).toBe("hero");
   });
@@ -175,13 +175,69 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].args)
       .toEqual([{ name: "episode", value: "EMPIRE" }]);
   });
 
-  test(`should include isOptional if a field has skip or include directives`, () => {
+  test(`should include isConditional if a field has skip or include directives with variables`, () => {
+    const document = parse(`
+      query HeroNameConditionalInclusion($includeName: Boolean!) {
+        hero {
+          name @include(if: $includeName)
+        }
+      }
+
+      query HeroNameConditionalExclusion($skipName: Boolean!) {
+        hero {
+          name @skip(if: $skipName)
+        }
+      }
+    `);
+
+    const { operations } = compileToLegacyIR(schema, document);
+
+    expect(operations['HeroNameConditionalInclusion'].fields[0].fields[0]).toMatchObject({
+      fieldName: 'name',
+      isConditional: true
+    });
+
+    expect(operations['HeroNameConditionalExclusion'].fields[0].fields[0]).toMatchObject({
+      fieldName: 'name',
+      isConditional: true
+    });
+  });
+
+  test(`should not include isConditional if a field has skip or include directives with a boolean literal that always passes`, () => {
+    const document = parse(`
+      query HeroNameConditionalInclusion {
+        hero {
+          name @include(if: true)
+        }
+      }
+
+      query HeroNameConditionalExclusion {
+        hero {
+          name @skip(if: false)
+        }
+      }
+    `);
+
+    const { operations } = compileToLegacyIR(schema, document);
+
+    expect(operations['HeroNameConditionalInclusion'].fields[0].fields[0]).toMatchObject({
+      fieldName: 'name',
+      isConditional: false
+    });
+
+    expect(operations['HeroNameConditionalExclusion'].fields[0].fields[0]).toMatchObject({
+      fieldName: 'name',
+      isConditional: false
+    });
+  });
+
+  test(`should not include field if it has skip or include directives with a boolean literal that always fails`, () => {
     const document = parse(`
       query HeroNameConditionalInclusion {
         hero {
@@ -196,7 +252,32 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
+
+    expect(operations['HeroNameConditionalInclusion'].fields[0].fields).toHaveLength(0);
+    expect(operations['HeroNameConditionalExclusion'].fields[0].fields).toHaveLength(0);
+  });
+
+    test(`should include isConditional if a field in inside an inline fragment with skip or include directives with variables`, () => {
+    const document = parse(`
+      query HeroNameConditionalInclusion($includeName: Boolean!) {
+        hero {
+          ... @include(if: $includeName) {
+            name
+          }
+        }
+      }
+
+      query HeroNameConditionalExclusion($skipName: Boolean!) {
+        hero {
+          ... @skip(if: $skipName) {
+            name
+          }
+        }
+      }
+    `);
+
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroNameConditionalInclusion'].fields[0].fields[0]).toMatchObject({
       fieldName: 'name',
@@ -207,6 +288,44 @@ describe('Compiling query documents', () => {
       fieldName: 'name',
       isConditional: true
     });
+  });
+
+  test(`should include isConditional if a field in inside a fragment spread with skip or include directives with variables`, () => {
+    const document = parse(`
+      query HeroNameConditionalInclusion($includeName: Boolean!) {
+        hero {
+          ...HeroName @include(if: $includeName)
+        }
+      }
+
+      query HeroNameConditionalExclusion($skipName: Boolean!) {
+        hero {
+          ...HeroName @skip(if: $skipName)
+        }
+      }
+
+      fragment HeroName on Character {
+        name
+      }
+    `);
+
+    const { operations } = compileToLegacyIR(schema, document);
+
+    expect(operations['HeroNameConditionalInclusion'].fields[0].fields[0]).toMatchObject({
+      fieldName: 'name',
+      isConditional: true
+    });
+
+    expect(operations['HeroNameConditionalExclusion'].fields[0].fields[0]).toMatchObject({
+      fieldName: 'name',
+      isConditional: true
+    });
+
+    expect(operations['HeroNameConditionalInclusion'].fragmentsReferenced).toEqual(['HeroName']);
+    expect(operations['HeroNameConditionalInclusion'].fields[0].fragmentSpreads).toEqual(['HeroName']);
+
+    expect(operations['HeroNameConditionalExclusion'].fragmentsReferenced).toEqual(['HeroName']);
+    expect(operations['HeroNameConditionalExclusion'].fields[0].fragmentSpreads).toEqual(['HeroName']);
   });
 
   test(`should recursively flatten inline fragments with type conditions that match the parent type`, () => {
@@ -226,7 +345,7 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['id', 'name', 'appearsIn']);
@@ -252,7 +371,7 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations, fragments } = compileToIR(schema, document);
+    const { operations, fragments } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['id', 'name', 'appearsIn']);
@@ -264,7 +383,7 @@ describe('Compiling query documents', () => {
       .toEqual(['appearsIn']);
 
     expect(operations['Hero'].fragmentsReferenced).toEqual(['HeroDetails', 'MoreHeroDetails']);
-    expect(operations['Hero'].fields[0].fragmentSpreads).toEqual(['HeroDetails', 'MoreHeroDetails']);
+    expect(operations['Hero'].fields[0].fragmentSpreads).toEqual(['HeroDetails']);
     expect(fragments['HeroDetails'].fragmentSpreads).toEqual(['MoreHeroDetails']);
   });
 
@@ -288,7 +407,7 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations, fragments } = compileToIR(schema, document);
+    const { operations, fragments } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroAndFriends'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['name', 'id', 'appearsIn', 'friends']);
@@ -317,17 +436,19 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['name']);
 
-    expect(operations['Hero'].fields[0].inlineFragments[0].typeCondition.toString()).toEqual('Droid');
-    expect(operations['Hero'].fields[0].inlineFragments[0].fields.map(field => field.fieldName))
+      return;
+
+    expect(operations['Hero'].fields[0].inlineFragments["Droid"].typeCondition.toString()).toEqual('Droid');
+    expect(operations['Hero'].fields[0].inlineFragments["Droid"].fields.map(field => field.fieldName))
         .toEqual(['name', 'primaryFunction']);
 
-    expect(operations['Hero'].fields[0].inlineFragments[1].typeCondition.toString()).toEqual('Human');
-    expect(operations['Hero'].fields[0].inlineFragments[1].fields.map(field => field.fieldName))
+    expect(operations['Hero'].fields[0].inlineFragments["Human"].typeCondition.toString()).toEqual('Human');
+    expect(operations['Hero'].fields[0].inlineFragments["Human"].fields.map(field => field.fieldName))
         .toEqual(['name', 'height']);
   });
 
@@ -350,17 +471,17 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations, fragments } = compileToIR(schema, document);
+    const { operations, fragments } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['name']);
 
-    expect(operations['Hero'].fields[0].inlineFragments[0].typeCondition.toString()).toEqual('Droid');
-    expect(operations['Hero'].fields[0].inlineFragments[0].fields.map(field => field.fieldName))
+    expect(operations['Hero'].fields[0].inlineFragments["Droid"].typeCondition.toString()).toEqual('Droid');
+    expect(operations['Hero'].fields[0].inlineFragments["Droid"].fields.map(field => field.fieldName))
         .toEqual(['name', 'primaryFunction']);
 
-    expect(operations['Hero'].fields[0].inlineFragments[1].typeCondition.toString()).toEqual('Human');
-    expect(operations['Hero'].fields[0].inlineFragments[1].fields.map(field => field.fieldName))
+    expect(operations['Hero'].fields[0].inlineFragments['Human'].typeCondition.toString()).toEqual('Human');
+    expect(operations['Hero'].fields[0].inlineFragments['Human'].fields.map(field => field.fieldName))
         .toEqual(['name', 'height']);
 
     expect(operations['Hero'].fragmentsReferenced).toEqual(['DroidDetails', 'HumanDetails']);
@@ -381,7 +502,7 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].inlineFragments).toEqual([]);
   });
@@ -405,17 +526,17 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations, fragments } = compileToIR(schema, document);
+    const { operations, fragments } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['name']);
 
-    expect(operations['Hero'].fields[0].inlineFragments[0].typeCondition.toString()).toEqual('Droid');
-    expect(operations['Hero'].fields[0].inlineFragments[0].fields.map(field => field.fieldName))
+    expect(operations['Hero'].fields[0].inlineFragments['Droid'].typeCondition.toString()).toEqual('Droid');
+    expect(operations['Hero'].fields[0].inlineFragments['Droid'].fields.map(field => field.fieldName))
         .toEqual(['name', 'primaryFunction']);
 
-    expect(operations['Hero'].fields[0].inlineFragments[1].typeCondition.toString()).toEqual('Human');
-    expect(operations['Hero'].fields[0].inlineFragments[1].fields.map(field => field.fieldName))
+    expect(operations['Hero'].fields[0].inlineFragments['Human'].typeCondition.toString()).toEqual('Human');
+    expect(operations['Hero'].fields[0].inlineFragments['Human'].fields.map(field => field.fieldName))
         .toEqual(['name', 'height']);
 
     expect(operations['Hero'].fragmentsReferenced).toEqual(['HeroDetails']);
@@ -435,12 +556,12 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].fields.map(field => field.fieldName))
       .toEqual([]);
-    expect(operations['HeroName'].fields[0].inlineFragments[0].typeCondition.toString()).toEqual('Droid');
-    expect(operations['HeroName'].fields[0].inlineFragments[0].fields.map(field => field.fieldName))
+    expect(operations['HeroName'].fields[0].inlineFragments['Droid'].typeCondition.toString()).toEqual('Droid');
+    expect(operations['HeroName'].fields[0].inlineFragments['Droid'].fields.map(field => field.fieldName))
       .toEqual(['name']);
   });
 
@@ -457,12 +578,12 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].fields.map(field => field.fieldName))
       .toEqual([]);
-    expect(operations['HeroName'].fields[0].inlineFragments[0].typeCondition.toString()).toEqual('Droid');
-    expect(operations['HeroName'].fields[0].inlineFragments[0].fields.map(field => field.fieldName))
+    expect(operations['HeroName'].fields[0].inlineFragments['Droid'].typeCondition.toString()).toEqual('Droid');
+    expect(operations['HeroName'].fields[0].inlineFragments['Droid'].fields.map(field => field.fieldName))
       .toEqual(['name']);
   });
 
@@ -481,14 +602,14 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].fields.map(field => field.fieldName))
       .toEqual([]);
-    expect(operations['HeroName'].fields[0].inlineFragments[0].typeCondition.toString()).toEqual('Droid');
-    expect(operations['HeroName'].fields[0].inlineFragments[0].fields.map(field => field.fieldName))
+    expect(operations['HeroName'].fields[0].inlineFragments["Droid"].typeCondition.toString()).toEqual('Droid');
+    expect(operations['HeroName'].fields[0].inlineFragments["Droid"].fields.map(field => field.fieldName))
       .toEqual(['name']);
-    expect(operations['HeroName'].fields[0].inlineFragments[0].fragmentSpreads).toEqual(['CharacterName']);
+    // expect(operations['HeroName'].fields[0].inlineFragments["Droid"].fragmentSpreads).toEqual(['CharacterName']);
 
     expect(operations['HeroName'].fragmentsReferenced).toEqual(['CharacterName']);
     expect(operations['HeroName'].fields[0].fragmentSpreads).toEqual([]);
@@ -509,18 +630,16 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].fields.map(field => field.fieldName))
       .toEqual([]);
-    expect(operations['HeroName'].fields[0].inlineFragments[0].typeCondition.toString()).toEqual('Droid');
-    expect(operations['HeroName'].fields[0].inlineFragments[0].fields.map(field => field.fieldName))
+    expect(operations['HeroName'].fields[0].inlineFragments["Droid"].typeCondition.toString()).toEqual('Droid');
+    expect(operations['HeroName'].fields[0].inlineFragments["Droid"].fields.map(field => field.fieldName))
       .toEqual(['name']);
-    expect(operations['HeroName'].fields[0].inlineFragments[0].fragmentSpreads).toEqual(['DroidName']);
-
+    expect(operations['HeroName'].fields[0].inlineFragments["Droid"].fragmentSpreads).toEqual(['DroidName']);
     expect(operations['HeroName'].fragmentsReferenced).toEqual(['DroidName']);
-    // FIXME
-    // expect(operations['HeroName'].fields[0].fragmentSpreads).toEqual([]);
+    expect(operations['HeroName'].fields[0].fragmentSpreads).toEqual(['DroidName']);
   });
 
   test(`should ignore inline fragment when the type condition does not overlap with the currently effective type`, () => {
@@ -544,7 +663,7 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HumanAndDroid'].fields.map(field => field.fieldName))
       .toEqual(['human', 'droid']);
@@ -581,7 +700,7 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HumanAndDroid'].fields.map(field => field.fieldName))
       .toEqual(['human', 'droid']);
@@ -610,21 +729,42 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['Search'].fields[0].fields.map(field => field.fieldName))
       .toEqual([]);
 
-    expect(operations['Search'].fields[0].inlineFragments[0].typeCondition.toString()).toEqual('Droid');
-    expect(operations['Search'].fields[0].inlineFragments[0].fields.map(field => field.fieldName))
+    expect(operations['Search'].fields[0].inlineFragments["Droid"].typeCondition.toString()).toEqual('Droid');
+    expect(operations['Search'].fields[0].inlineFragments["Droid"].fields.map(field => field.fieldName))
       .toEqual(['name', 'primaryFunction']);
 
-    expect(operations['Search'].fields[0].inlineFragments[1].typeCondition.toString()).toEqual('Human');
-    expect(operations['Search'].fields[0].inlineFragments[1].fields.map(field => field.fieldName))
+    expect(operations['Search'].fields[0].inlineFragments["Human"].typeCondition.toString()).toEqual('Human');
+    expect(operations['Search'].fields[0].inlineFragments["Human"].fields.map(field => field.fieldName))
       .toEqual(['name', 'height']);
   });
 
-  xtest(`should keep correct field ordering even if field has been visited before for other type condition`, () => {
+  test(`should keep correct field ordering even if fragment is visited multiple times`, () => {
+    const document = parse(`
+      query Hero {
+        hero {
+          ...HeroName
+          appearsIn
+          ...HeroName
+        }
+      }
+
+      fragment HeroName on Character {
+        name
+      }
+    `);
+
+    const { operations } = compileToLegacyIR(schema, document);
+
+    expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
+      .toEqual(['name', 'appearsIn']);
+  });
+
+  test(`should keep correct field ordering even if field has been visited before for other type condition`, () => {
     const document = parse(`
       fragment HeroDetails on Character {
         ... on Human {
@@ -638,10 +778,10 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { fragments } = compileToIR(schema, document);
+    const { fragments } = compileToLegacyIR(schema, document);
 
-    expect(fragments['HeroDetails'].inlineFragments[1].typeCondition.toString()).toEqual('Droid');
-    expect(fragments['HeroDetails'].inlineFragments[1].fields.map(field => field.fieldName))
+    expect(fragments['HeroDetails'].inlineFragments['Droid'].typeCondition.toString()).toEqual('Droid');
+    expect(fragments['HeroDetails'].inlineFragments['Droid'].fields.map(field => field.fieldName))
       .toEqual(['name', 'appearsIn']);
   });
 
@@ -661,7 +801,7 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails']);
   });
@@ -685,9 +825,9 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
-    expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroName', 'HeroDetails']);
+    expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails', 'HeroName']);
   });
 
   test(`should keep track of fragments referenced in a subselection nested in an inline fragment`, () => {
@@ -708,7 +848,7 @@ describe('Compiling query documents', () => {
       }
     `);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails']);
   });
@@ -723,7 +863,7 @@ describe('Compiling query documents', () => {
     `
     const document = parse(source);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].source).toBe(source);
   });
@@ -736,7 +876,7 @@ describe('Compiling query documents', () => {
     `
     const document = parse(source);
 
-    const { fragments } = compileToIR(schema, document);
+    const { fragments } = compileToLegacyIR(schema, document);
 
     expect(fragments['HeroDetails'].source).toBe(source);
   });
@@ -751,7 +891,7 @@ describe('Compiling query documents', () => {
     `
     const document = parse(source);
 
-    const { operations } = compileToIR(schema, document, { addTypename: true });
+    const { operations } = compileToLegacyIR(schema, document, { addTypename: true });
 
     expect(operations['HeroName'].source).toBe(stripIndent`
       query HeroName {
@@ -771,7 +911,7 @@ describe('Compiling query documents', () => {
     `
     const document = parse(source);
 
-    const { fragments } = compileToIR(schema, document, { addTypename: true });
+    const { fragments } = compileToLegacyIR(schema, document, { addTypename: true });
 
     expect(fragments['HeroDetails'].source).toBe(stripIndent`
       fragment HeroDetails on Character {
@@ -791,7 +931,7 @@ describe('Compiling query documents', () => {
     `
     const document = parse(source);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].operationType).toBe('query');
   });
@@ -807,7 +947,7 @@ describe('Compiling query documents', () => {
     `
     const document = parse(source);
 
-    const { operations } = compileToIR(schema, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['CreateReview'].operationType).toBe('mutation');
   });

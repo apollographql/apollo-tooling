@@ -4,7 +4,6 @@ import {
   Kind,
   TypeInfo,
   isEqualType,
-  isTypeSubTypeOf,
   isAbstractType,
   SchemaMetaFieldDef,
   TypeMetaFieldDef,
@@ -13,7 +12,6 @@ import {
   GraphQLObjectType,
   GraphQLInterfaceType,
   GraphQLUnionType,
-  GraphQLEnumType,
   GraphQLString,
   GraphQLInt,
   GraphQLFloat,
@@ -27,8 +25,6 @@ import {
   SelectionSetNode,
   Location,
   ValueNode,
-  IntValueNode,
-  FloatValueNode,
   OperationDefinitionNode,
   FieldNode,
   GraphQLField,
@@ -38,6 +34,10 @@ const builtInScalarTypes = new Set([GraphQLString, GraphQLInt, GraphQLFloat, Gra
 
 export function isBuiltInScalarType(type: GraphQLScalarType) {
   return builtInScalarTypes.has(type);
+}
+
+export function isMetaFieldName(name: string) {
+  return name.startsWith('__');
 }
 
 const typenameField = { kind: Kind.FIELD, name: { kind: Kind.NAME, value: '__typename' } };
@@ -75,7 +75,7 @@ export function filePathForNode(node: ASTNode): string | undefined {
   return (name === "GraphQL") ? undefined : name;
 }
 
-export function valueFromValueNode(valueNode: ValueNode): any {
+export function valueFromValueNode(valueNode: ValueNode): any | { kind: 'Variable', variableName: string } {
   switch (valueNode.kind) {
     case 'IntValue':
     case 'FloatValue':

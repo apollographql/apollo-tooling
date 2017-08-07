@@ -1,4 +1,4 @@
-import { Argument } from '../compilation';
+import { Argument } from '../compiler/legacyIR';
 
 import CodeGenerator from '../utilities/CodeGenerator';
 

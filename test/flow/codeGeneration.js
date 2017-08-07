@@ -18,7 +18,7 @@ const miscSchema = loadSchema(require.resolve('../misc/schema.json'));
 
 import CodeGenerator from '../../src/utilities/CodeGenerator';
 
-import { compileToIR } from '../../src/compilation';
+import { compileToLegacyIR } from '../../src/compiler/legacyIR';
 
 function setup(schema) {
   const context = {
@@ -32,7 +32,7 @@ function setup(schema) {
 
   const compileFromSource = (source) => {
     const document = parse(source);
-    const context = compileToIR(schema, document, { mergeInFieldsFromFragmentSpreads: true, addTypename: true } );
+    const context = compileToLegacyIR(schema, document, { mergeInFieldsFromFragmentSpreads: true, addTypename: true } );
     generator.context = context;
     return context;
   };

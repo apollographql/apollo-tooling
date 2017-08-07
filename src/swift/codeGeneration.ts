@@ -3,25 +3,20 @@ import {
   GraphQLType,
   getNamedType,
   isCompositeType,
-  isAbstractType,
-  isEqualType,
-  GraphQLScalarType,
   GraphQLEnumType,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLID,
   GraphQLCompositeType,
   GraphQLInputObjectType
 } from 'graphql';
 
 import {
-  CompilationContext,
-  CompilerOptions,
-  CompiledOperation,
-  CompiledFragment,
-  Field,
-  CompiledInlineFragment
-} from '../compilation';
+  LegacyCompilerContext,
+  LegacyOperation,
+  LegacyFragment,
+  LegacyField,
+  LegacyInlineFragment
+} from '../compiler/legacyIR';
 
 import { isTypeProperSuperTypeOf } from '../utilities/graphql';
 
@@ -52,11 +47,11 @@ import {
   propertyFromFragmentSpread
 } from './naming';
 
-import { escapedString, multilineString, dictionaryLiteralForFieldArguments } from './values';
+import { multilineString, dictionaryLiteralForFieldArguments } from './values';
 
 import { possibleTypesForType, typeNameFromGraphQLType, fieldTypeEnum } from './types';
 
-export function generateSource(context: CompilationContext, options: CompilerOptions) {
+export function generateSource(context: LegacyCompilerContext) {
   const generator = new CodeGenerator(context);
 
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
@@ -80,7 +75,7 @@ export function generateSource(context: CompilationContext, options: CompilerOpt
   return generator.output;
 }
 
-export function classDeclarationForOperation(generator: CodeGenerator, operation: CompiledOperation) {
+export function classDeclarationForOperation(generator: CodeGenerator, operation: LegacyOperation) {
   const {
     operationName,
     operationType,
@@ -91,8 +86,6 @@ export function classDeclarationForOperation(generator: CodeGenerator, operation
     fragmentSpreads,
     fragmentsReferenced,
     source,
-    sourceWithFragments,
-    operationId
   } = operation;
 
   let className;
@@ -183,7 +176,7 @@ export function classDeclarationForOperation(generator: CodeGenerator, operation
 
 export function structDeclarationForFragment(
   generator: CodeGenerator,
-  { fragmentName, typeCondition, fields, inlineFragments, fragmentSpreads, source }: CompiledFragment
+  { fragmentName, typeCondition, fields, inlineFragments, fragmentSpreads, source }: LegacyFragment
 ) {
   const structName = structNameForFragmentName(fragmentName);
 
@@ -221,8 +214,8 @@ export function structDeclarationForSelectionSet(
     structName: string;
     adoptedProtocols?: string[];
     parentType: GraphQLCompositeType;
-    fields: Field[];
-    inlineFragments?: CompiledInlineFragment[];
+    fields: LegacyField[];
+    inlineFragments?: LegacyInlineFragment[];
     fragmentSpreads?: string[];
   },
   beforeClosure?: Function
@@ -370,7 +363,7 @@ export function structDeclarationForSelectionSet(
             typeName: 'Snapshot'
           });
           fragmentSpreads.forEach(fragmentSpread => {
-            const { propertyName, bareTypeName, typeName, fragment } = propertyFromFragmentSpread(
+            const { propertyName, typeName, fragment } = propertyFromFragmentSpread(
               generator.context,
               fragmentSpread
             );
@@ -424,7 +417,7 @@ export function structDeclarationForSelectionSet(
 
 function operationIdentifier(
   generator: CodeGenerator,
-  { operationName, sourceWithFragments, operationId }: CompiledOperation
+  { operationId }: LegacyOperation
 ) {
   if (!generator.context.options.generateOperationIds) {
     return;
@@ -434,8 +427,8 @@ function operationIdentifier(
   generator.printOnNewline(`public static let operationIdentifier: String? = "${operationId}"`);
 }
 
-function propertyDeclarationForField(generator: CodeGenerator, field: Field) {
-  const { kind, propertyName, typeName, type, isConditional, description, isDeprecated, deprecationReason } = propertyFromField(
+function propertyDeclarationForField(generator: CodeGenerator, field: LegacyField) {
+  const { propertyName, typeName, type, isConditional, description, isDeprecated, deprecationReason } = propertyFromField(
     generator.context,
     field
   );
@@ -504,14 +497,12 @@ function propertyDeclarationForField(generator: CodeGenerator, field: Field) {
 
 function propertyDeclarationForInlineFragment(
   generator: CodeGenerator,
-  inlineFragment: CompiledInlineFragment
+  inlineFragment: LegacyInlineFragment
 ) {
-  const { kind, propertyName, typeName, type, isConditional, description } = propertyFromInlineFragment(
+  const { propertyName, typeName, description } = propertyFromInlineFragment(
     generator.context,
     inlineFragment
   );
-  const namedType = getNamedType(type);
-
   generator.printNewlineIfNeeded();
   comment(generator, description);
   generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
@@ -532,7 +523,7 @@ function propertyDeclarationForInlineFragment(
 }
 
 function mapExpressionForType(
-  context: CompilationContext,
+  context: LegacyCompilerContext,
   type: GraphQLType,
   expression: string,
   prefix = ''
@@ -589,8 +580,8 @@ function parametersForProperties(generator: CodeGenerator, properties: Property[
 
 export function selectionSetInitialization(
   generator: CodeGenerator,
-  fields: Field[],
-  inlineFragments?: CompiledInlineFragment[],
+  fields: LegacyField[],
+  inlineFragments?: LegacyInlineFragment[],
   fragmentSpreads?: string[],
 ) {
   generator.print('[');
@@ -679,7 +670,7 @@ function structDeclarationForInputObjectType(generator: CodeGenerator, type: Gra
     generator.print('(');
     generator.print(
       join(
-        properties.map(({ propertyName, type, typeName, isOptional }) =>
+        properties.map(({ propertyName, typeName, isOptional }) =>
           join([`${propertyName}: ${typeName}`, isOptional && ' = nil'])
         ),
         ', '
