@@ -115,12 +115,12 @@ yargs
       target: {
         demand: false,
         describe: 'Code generation target language',
-        choices: ['swift', 'json', 'ts', 'typescript', 'flow'],
+        choices: ['swift', 'scala', 'json', 'ts', 'typescript', 'flow'],
         default: 'swift'
       },
       namespace: {
         demand: false,
-        describe: 'Optional namespace for generated types [currently Swift-only]',
+        describe: 'Optional namespace for generated types [currently Swift and Scala-only]',
         type: 'string'
       },
       "passthrough-custom-scalars": {

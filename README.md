@@ -4,9 +4,9 @@
 
 This is a tool to generate API code or type annotations based on a GraphQL schema and query documents.
 
-It currently generates Swift code, TypeScript annotations and Flow annotations, we hope to add support for other targets in the future.
+It currently generates Swift code, TypeScript annotations, Flow annotations, and Scala code, we hope to add support for other targets in the future.
 
-See [Apollo iOS](https://github.com/apollographql/apollo-ios) for details on the mapping from GraphQL results to Swift types, as well as runtime support for executing queries and mutations.
+See [Apollo iOS](https://github.com/apollographql/apollo-ios) for details on the mapping from GraphQL results to Swift types, as well as runtime support for executing queries and mutations. For Scala, see [React Apollo Scala.js](https://github.com/apollographql/react-apollo-scalajs) for details on how to use generated Scala code in a Scala.js app with Apollo Client.
 
 ## Usage
 
@@ -44,13 +44,15 @@ This tool will generate Swift code by default from a set of query definitions in
 apollo-codegen generate **/*.graphql --schema schema.json --output API.swift
 ```
 
-You can also generate type annotations for TypeScript or Flow using the `--target` option:
+You can also generate type annotations for TypeScript, Flow, or Scala using the `--target` option:
 
 ```sh
 # TypeScript
 apollo-codegen generate **/*.graphql --schema schema.json --target typescript --output schema.ts
 # Flow
 apollo-codegen generate **/*.graphql --schema schema.json --target flow --output schema.flow.js
+# Scala
+apollo-codegen generate **/*.graphql --schema schema.json --target scala --output schema.scala
 ```
 
 #### `gql` template support
@@ -63,7 +65,7 @@ The tag name is configurable using the CLI `--tag-name` option.
 
 When using `apollo-codegen` with Typescript or Flow, make sure to add the `__typename` introspection field to every selection set within your graphql operations.
 
-If you're using a client like `apollo-client` that does this automatically for your GraphQL operations, pass in the -`-addTypename` option to `apollo-codegen` to make sure the generated Typescript and Flow types have the `__typename` field as well. This is required to ensure proper type generation support for `GraphQLUnionType` and `GraphQLInterfaceType` fields. 
+If you're using a client like `apollo-client` that does this automatically for your GraphQL operations, pass in the -`-addTypename` option to `apollo-codegen` to make sure the generated Typescript and Flow types have the `__typename` field as well. This is required to ensure proper type generation support for `GraphQLUnionType` and `GraphQLInterfaceType` fields.
 
 ### Why is the __typename field required?
 
@@ -98,11 +100,11 @@ Given this query:
 query Characters {
   characters(episode: NEW_HOPE) {
     name
-    
+
     ... on Human {
       homePlanet
     }
-    
+
     ... on Droid {
       primaryFunction
     }
