@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Scala code generation: Basic language constructs should handle multi-line descriptions 1`] = `
+"/**
+ * A hero
+ */
+case class Hero() {
+  /**
+   * A multiline comment
+   * on the hero's name.
+   */
+  val name: String = {
+  }
+  /**
+   * A multiline comment
+   * on the hero's age.
+   */
+  val age: String = {
+  }
+}"
+`;

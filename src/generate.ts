@@ -8,8 +8,9 @@ import serializeToJSON from './serializeToJSON'
 import { generateSource as generateSwiftSource } from './swift'
 import { generateSource as generateTypescriptSource } from './typescript'
 import { generateSource as generateFlowSource } from './flow'
+import { generateSource as generateScalaSource } from './scala'
 
-type TargetType = 'json' | 'swift' | 'ts' | 'typescript' | 'flow';
+type TargetType = 'json' | 'swift' | 'ts' | 'typescript' | 'flow' | 'scala';
 
 export default function generate(
   inputPaths: string[],
@@ -46,6 +47,8 @@ export default function generate(
     case 'swift':
       output = generateSwiftSource(context, options);
       break;
+    case 'scala':
+      output = generateScalaSource(context, options);
   }
 
   if (outputPath) {
