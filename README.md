@@ -137,7 +137,7 @@ function CharacterFigures({ characters }: CharactersQuery) {
       case "Human":
         return <HumanFigure homePlanet={character.homePlanet} name={character.name} />
       case "Droid":
-        return <DroidFigure primaryFunction={character.homePlanet} name={character.name} />
+        return <DroidFigure primaryFunction={character.primaryFunction} name={character.name} />
     }
   });
 }
