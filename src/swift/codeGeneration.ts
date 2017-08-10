@@ -740,8 +740,13 @@ function equtableDeclarationForFields(generator: CodeGenerator, fields: Field[])
         generator.printIndent()
       }
 
-      const { propertyName } = propertyFromField(generator.context,field);
-      generator.print(`lhs.${propertyName} == rhs.${propertyName}`)
+      const properties = propertyFromField(generator.context, field);
+      
+      if (properties.isList && properties.isOptional) {
+        generator.print(`lhs.${properties.propertyName} ?? [] == rhs.${properties.propertyName} ?? []`)
+      } else {
+        generator.print(`lhs.${properties.propertyName} == rhs.${properties.propertyName}`)
+      }
 
       if (idx != fields.length - 1) {
         generator.print(' &&')
