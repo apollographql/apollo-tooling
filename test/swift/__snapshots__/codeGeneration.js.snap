@@ -1103,7 +1103,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   public static func ==(lhs: HeroDetails, rhs: HeroDetails) -> Bool {
     return
       lhs.name == rhs.name &&
-      lhs.friends == rhs.friends
+      lhs.friends ?? [] == rhs.friends ?? []
   }
 }"
 `;
@@ -1272,7 +1272,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 
   public static func ==(lhs: Hero, rhs: Hero) -> Bool {
     return
-      lhs.friends == rhs.friends
+      lhs.friends ?? [] == rhs.friends ?? []
   }
 }"
 `;
