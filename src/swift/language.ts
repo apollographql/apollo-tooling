@@ -95,7 +95,7 @@ export function propertyDeclarations(generator: CodeGenerator, properties: Prope
 
 export interface Protocol {
   protocolName: string;
-  adoptedProtocols: string;
+  adoptedProtocols: string[];
   properties: Property[];
 }
 

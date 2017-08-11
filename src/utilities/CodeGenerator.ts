@@ -1,21 +1,21 @@
+import {CompilationContext} from '../compilation';
 import {
   join,
   wrap,
 } from './printing';
 
 export default class CodeGenerator {
-  constructor(context) {
-    this.context = context;
-    
-    this.scopeStack = [];
+  private scopeStack: any[] = [];
+  private indentWidth = 2;
+  private indentLevel = 0;
+  public output = '';
+  private startOfIndentLevel = false;
 
-    this.indentWidth = 2;
-    this.indentLevel = 0;
+  constructor(public context: CompilationContext) {
 
-    this.output = '';
   }
 
-  pushScope(scope) {
+  pushScope(scope: any) {
     this.scopeStack.push(scope);
   }
 
@@ -23,7 +23,7 @@ export default class CodeGenerator {
     return this.scopeStack.pop();
   }
 
-  print(maybeString) {
+  print(maybeString?: string) {
     if (maybeString) {
       this.output += maybeString;
     }
@@ -42,7 +42,7 @@ export default class CodeGenerator {
     }
   }
 
-  printOnNewline(maybeString) {
+  printOnNewline(maybeString?: string) {
     if (maybeString) {
       this.printNewline();
       this.printIndent();
@@ -55,7 +55,7 @@ export default class CodeGenerator {
     this.output += indentation;
   }
 
-  withIndent(closure) {
+  withIndent(closure: Function) {
     if (!closure) return;
 
     this.indentLevel++;
@@ -64,7 +64,7 @@ export default class CodeGenerator {
     this.indentLevel--;
   }
 
-  withinBlock(closure, open = ' {', close = '}') {
+  withinBlock(closure: Function, open = ' {', close = '}') {
     this.print(open);
     this.withIndent(closure);
     this.printOnNewline(close);
