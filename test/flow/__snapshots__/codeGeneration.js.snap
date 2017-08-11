@@ -4,11 +4,15 @@ exports[`Flow code generation #generateSource() should annotate custom scalars a
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
+/* GraphQL Operation: CustomScalar */
+
 export type CustomScalarQuery = {|
-  misc: ? {|
-    __typename: \\"OddType\\",
-    date: ?any,
-  |},
+  misc: ? CustomScalarQuery_misc,
+|};
+
+export type CustomScalarQuery_misc = {|
+  __typename: \\"OddType\\",
+  date: ?any,
 |};"
 `;
 
@@ -16,209 +20,261 @@ exports[`Flow code generation #generateSource() should generate correct typedefs
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
+
 // The episodes in the Star Wars trilogy
 export type Episode =
   \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
   \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
   \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
+/* GraphQL Operation: HeroAndFriendsNames */
 
 export type HeroAndFriendsNamesQueryVariables = {|
   episode?: ?Episode,
 |};
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
-      // The name of the character
-      name: string,
-      // The friends of the character, or an empty list if they have none
-      friends: ?Array< ?( {
-          __typename: \\"Human\\",
-          // The name of the character
-          name: string,
-        } | {
-          __typename: \\"Droid\\",
-          // The name of the character
-          name: string,
-        }
-      ) >,
-    } | {
-      __typename: \\"Droid\\",
-      // The name of the character
-      name: string,
-      // The friends of the character, or an empty list if they have none
-      friends: ?Array< ?( {
-          __typename: \\"Human\\",
-          // The name of the character
-          name: string,
-        } | {
-          __typename: \\"Droid\\",
-          // The name of the character
-          name: string,
-        }
-      ) >,
-    }
-  ),
+  hero: ?(HeroAndFriendsNamesQuery_hero_Human | HeroAndFriendsNamesQuery_hero_Droid),
 |};
 
-export type FriendFragment = ( {
-      __typename: \\"Human\\",
-      // The name of the character
-      name: string,
-    } | {
-      __typename: \\"Droid\\",
-      // The name of the character
-      name: string,
-    }
-  );
+export type HeroAndFriendsNamesQuery_hero_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< ?(HeroAndFriendsNamesQuery_hero_Droid_friends_Human | HeroAndFriendsNamesQuery_hero_Droid_friends_Droid) >,
+|};
 
-export type PersonFragment = ( {
-      __typename: \\"Human\\",
-      // The name of the character
-      name: string,
-    } | {
-      __typename: \\"Droid\\",
-      // The name of the character
-      name: string,
-    }
-  );"
+export type HeroAndFriendsNamesQuery_hero_Droid_friends_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Droid_friends_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< ?(HeroAndFriendsNamesQuery_hero_Human_friends_Human | HeroAndFriendsNamesQuery_hero_Human_friends_Droid) >,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Human_friends_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Human_friends_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+|};
+/* GraphQL Fragment: Friend */
+
+export type FriendFragment = (FriendFragment__Human | FriendFragment__Droid);
+export type FriendFragment__Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type FriendFragment__Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+|};
+/* GraphQL Fragment: Person */
+
+export type PersonFragment = (PersonFragment__Human | PersonFragment__Droid);
+export type PersonFragment__Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type PersonFragment__Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+|};"
 `;
 
 exports[`Flow code generation #generateSource() should generate correct typedefs with a single custom fragment 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
+
 // The episodes in the Star Wars trilogy
 export type Episode =
   \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
   \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
   \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
+/* GraphQL Operation: HeroAndFriendsNames */
 
 export type HeroAndFriendsNamesQueryVariables = {|
   episode?: ?Episode,
 |};
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
-      // The name of the character
-      name: string,
-      // The friends of the character, or an empty list if they have none
-      friends: ?Array< ?( {
-          __typename: \\"Human\\",
-          // The name of the character
-          name: string,
-        } | {
-          __typename: \\"Droid\\",
-          // The name of the character
-          name: string,
-        }
-      ) >,
-    } | {
-      __typename: \\"Droid\\",
-      // The name of the character
-      name: string,
-      // The friends of the character, or an empty list if they have none
-      friends: ?Array< ?( {
-          __typename: \\"Human\\",
-          // The name of the character
-          name: string,
-        } | {
-          __typename: \\"Droid\\",
-          // The name of the character
-          name: string,
-        }
-      ) >,
-    }
-  ),
+  hero: ?(HeroAndFriendsNamesQuery_hero_Human | HeroAndFriendsNamesQuery_hero_Droid),
 |};
 
-export type FriendFragment = ( {
-      __typename: \\"Human\\",
-      // The name of the character
-      name: string,
-    } | {
-      __typename: \\"Droid\\",
-      // The name of the character
-      name: string,
-    }
-  );"
+export type HeroAndFriendsNamesQuery_hero_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< ?(HeroAndFriendsNamesQuery_hero_Droid_friends_Human | HeroAndFriendsNamesQuery_hero_Droid_friends_Droid) >,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Droid_friends_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Droid_friends_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< ?(HeroAndFriendsNamesQuery_hero_Human_friends_Human | HeroAndFriendsNamesQuery_hero_Human_friends_Droid) >,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Human_friends_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Human_friends_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+|};
+/* GraphQL Fragment: Friend */
+
+export type FriendFragment = (FriendFragment__Human | FriendFragment__Droid);
+export type FriendFragment__Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type FriendFragment__Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+|};"
 `;
 
 exports[`Flow code generation #generateSource() should generate fragmented query operations 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
+/* GraphQL Operation: HeroAndFriendsNames */
+
 export type HeroAndFriendsNamesQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
-      // The name of the character
-      name: string,
-      // The friends of the character, or an empty list if they have none
-      friends: ?Array< ?( {
-          __typename: \\"Human\\",
-          // The name of the character
-          name: string,
-        } | {
-          __typename: \\"Droid\\",
-          // The name of the character
-          name: string,
-        }
-      ) >,
-    } | {
-      __typename: \\"Droid\\",
-      // The name of the character
-      name: string,
-      // The friends of the character, or an empty list if they have none
-      friends: ?Array< ?( {
-          __typename: \\"Human\\",
-          // The name of the character
-          name: string,
-        } | {
-          __typename: \\"Droid\\",
-          // The name of the character
-          name: string,
-        }
-      ) >,
-    }
-  ),
+  hero: ?(HeroAndFriendsNamesQuery_hero_Human | HeroAndFriendsNamesQuery_hero_Droid),
 |};
 
-export type heroFriendsFragment = ( {
-      __typename: \\"Human\\",
-      // The friends of the character, or an empty list if they have none
-      friends: ?Array< ?( {
-          __typename: \\"Human\\",
-          // The name of the character
-          name: string,
-        } | {
-          __typename: \\"Droid\\",
-          // The name of the character
-          name: string,
-        }
-      ) >,
-    } | {
-      __typename: \\"Droid\\",
-      // The friends of the character, or an empty list if they have none
-      friends: ?Array< ?( {
-          __typename: \\"Human\\",
-          // The name of the character
-          name: string,
-        } | {
-          __typename: \\"Droid\\",
-          // The name of the character
-          name: string,
-        }
-      ) >,
-    }
-  );"
+export type HeroAndFriendsNamesQuery_hero_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< ?(HeroAndFriendsNamesQuery_hero_Droid_friends_Human | HeroAndFriendsNamesQuery_hero_Droid_friends_Droid) >,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Droid_friends_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Droid_friends_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< ?(HeroAndFriendsNamesQuery_hero_Human_friends_Human | HeroAndFriendsNamesQuery_hero_Human_friends_Droid) >,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Human_friends_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Human_friends_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+|};
+/* GraphQL Fragment: heroFriends */
+
+export type heroFriendsFragment = (heroFriendsFragment__Human | heroFriendsFragment__Droid);
+export type heroFriendsFragment__Droid = {|
+  __typename: \\"Droid\\",
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< ?(heroFriendsFragment__Droid_friends_Human | heroFriendsFragment__Droid_friends_Droid) >,
+|};
+
+export type heroFriendsFragment__Droid_friends_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type heroFriendsFragment__Droid_friends_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+|};
+
+export type heroFriendsFragment__Human = {|
+  __typename: \\"Human\\",
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< ?(heroFriendsFragment__Human_friends_Human | heroFriendsFragment__Human_friends_Droid) >,
+|};
+
+export type heroFriendsFragment__Human_friends_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type heroFriendsFragment__Human_friends_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+|};"
 `;
 
 exports[`Flow code generation #generateSource() should generate mutation operations with complex input types 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
+
 
 // The episodes in the Star Wars trilogy
 export type Episode =
@@ -241,6 +297,7 @@ export type ColorInput = {|
   green: number,
   blue: number,
 |};
+/* GraphQL Operation: ReviewMovie */
 
 export type ReviewMovieMutationVariables = {|
   episode?: ?Episode,
@@ -248,13 +305,15 @@ export type ReviewMovieMutationVariables = {|
 |};
 
 export type ReviewMovieMutation = {|
-  createReview: ? {|
-    __typename: \\"Review\\",
-    // The number of stars this review gave, 1-5
-    stars: number,
-    // Comment about the movie
-    commentary: ?string,
-  |},
+  createReview: ? ReviewMovieMutation_createReview,
+|};
+
+export type ReviewMovieMutation_createReview = {|
+  __typename: \\"Review\\",
+  // The number of stars this review gave, 1-5
+  stars: number,
+  // Comment about the movie
+  commentary: ?string,
 |};"
 `;
 
@@ -262,38 +321,47 @@ exports[`Flow code generation #generateSource() should generate query operations
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
+/* GraphQL Operation: HeroAndDetails */
+
 export type HeroAndDetailsQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
-      // What this human calls themselves
-      name: string,
-      // Height in the preferred unit, default is meters
-      height: ?number,
-    } | {
-      __typename: \\"Droid\\",
-      // What others call this droid
-      name: string,
-      // This droid's primary function
-      primaryFunction: ?string,
-    }
-  ),
+  hero: ?(HeroAndDetailsQuery_hero_Human | HeroAndDetailsQuery_hero_Droid),
 |};
 
-export type HeroDetailsFragment = ( {
-      __typename: \\"Human\\",
-      // Height in the preferred unit, default is meters
-      height: ?number,
-    } | {
-      __typename: \\"Droid\\",
-      // This droid's primary function
-      primaryFunction: ?string,
-    }
-  );"
+export type HeroAndDetailsQuery_hero_Droid = {|
+  __typename: \\"Droid\\",
+  // What others call this droid
+  name: string,
+  // This droid's primary function
+  primaryFunction: ?string,
+|};
+
+export type HeroAndDetailsQuery_hero_Human = {|
+  __typename: \\"Human\\",
+  // What this human calls themselves
+  name: string,
+  // Height in the preferred unit, default is meters
+  height: ?number,
+|};
+/* GraphQL Fragment: HeroDetails */
+
+export type HeroDetailsFragment = (HeroDetailsFragment__Human | HeroDetailsFragment__Droid);
+export type HeroDetailsFragment__Droid = {|
+  __typename: \\"Droid\\",
+  // This droid's primary function
+  primaryFunction: ?string,
+|};
+
+export type HeroDetailsFragment__Human = {|
+  __typename: \\"Human\\",
+  // Height in the preferred unit, default is meters
+  height: ?number,
+|};"
 `;
 
 exports[`Flow code generation #generateSource() should generate simple nested query operations including input variables 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
+
 
 // The episodes in the Star Wars trilogy
 export type Episode =
@@ -301,44 +369,54 @@ export type Episode =
   \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
   \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
+/* GraphQL Operation: HeroAndFriendsNames */
 
 export type HeroAndFriendsNamesQueryVariables = {|
   episode?: ?Episode,
 |};
 
 export type HeroAndFriendsNamesQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
-      // The name of the character
-      name: string,
-      // The friends of the character, or an empty list if they have none
-      friends: ?Array< ?( {
-          __typename: \\"Human\\",
-          // The name of the character
-          name: string,
-        } | {
-          __typename: \\"Droid\\",
-          // The name of the character
-          name: string,
-        }
-      ) >,
-    } | {
-      __typename: \\"Droid\\",
-      // The name of the character
-      name: string,
-      // The friends of the character, or an empty list if they have none
-      friends: ?Array< ?( {
-          __typename: \\"Human\\",
-          // The name of the character
-          name: string,
-        } | {
-          __typename: \\"Droid\\",
-          // The name of the character
-          name: string,
-        }
-      ) >,
-    }
-  ),
+  hero: ?(HeroAndFriendsNamesQuery_hero_Human | HeroAndFriendsNamesQuery_hero_Droid),
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< ?(HeroAndFriendsNamesQuery_hero_Droid_friends_Human | HeroAndFriendsNamesQuery_hero_Droid_friends_Droid) >,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Droid_friends_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Droid_friends_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
+  // The friends of the character, or an empty list if they have none
+  friends: ?Array< ?(HeroAndFriendsNamesQuery_hero_Human_friends_Human | HeroAndFriendsNamesQuery_hero_Human_friends_Droid) >,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Human_friends_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroAndFriendsNamesQuery_hero_Human_friends_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
 |};"
 `;
 
@@ -346,11 +424,15 @@ exports[`Flow code generation #generateSource() should generate simple nested wi
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
+/* GraphQL Operation: StarshipCoords */
+
 export type StarshipCoordsQuery = {|
-  starship: ? {|
-    __typename: \\"Starship\\",
-    coordinates: ?Array< Array< number > >,
-  |},
+  starship: ? StarshipCoordsQuery_starship,
+|};
+
+export type StarshipCoordsQuery_starship = {|
+  __typename: \\"Starship\\",
+  coordinates: ?Array< Array< number > >,
 |};"
 `;
 
@@ -358,17 +440,22 @@ exports[`Flow code generation #generateSource() should generate simple query ope
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
+/* GraphQL Operation: HeroName */
+
 export type HeroNameQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
-      // The name of the character
-      name: string,
-    } | {
-      __typename: \\"Droid\\",
-      // The name of the character
-      name: string,
-    }
-  ),
+  hero: ?(HeroNameQuery_hero_Human | HeroNameQuery_hero_Droid),
+|};
+
+export type HeroNameQuery_hero_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroNameQuery_hero_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
 |};"
 `;
 
@@ -376,28 +463,33 @@ exports[`Flow code generation #generateSource() should generate simple query ope
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
+
 // The episodes in the Star Wars trilogy
 export type Episode =
   \\"NEWHOPE\\" | // Star Wars Episode IV: A New Hope, released in 1977.
   \\"EMPIRE\\" | // Star Wars Episode V: The Empire Strikes Back, released in 1980.
   \\"JEDI\\"; // Star Wars Episode VI: Return of the Jedi, released in 1983.
 
+/* GraphQL Operation: HeroName */
 
 export type HeroNameQueryVariables = {|
   episode?: ?Episode,
 |};
 
 export type HeroNameQuery = {|
-  hero: ?( {
-      __typename: \\"Human\\",
-      // The name of the character
-      name: string,
-    } | {
-      __typename: \\"Droid\\",
-      // The name of the character
-      name: string,
-    }
-  ),
+  hero: ?(HeroNameQuery_hero_Human | HeroNameQuery_hero_Droid),
+|};
+
+export type HeroNameQuery_hero_Droid = {|
+  __typename: \\"Droid\\",
+  // The name of the character
+  name: string,
+|};
+
+export type HeroNameQuery_hero_Human = {|
+  __typename: \\"Human\\",
+  // The name of the character
+  name: string,
 |};"
 `;
 
@@ -405,17 +497,22 @@ exports[`Flow code generation #generateSource() should handle interfaces at root
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
+/* GraphQL Operation: CustomScalar */
+
 export type CustomScalarQuery = {|
-  interfaceTest: ?( {
-      __typename: \\"ImplA\\",
-      prop: string,
-      propA: string,
-    } | {
-      __typename: \\"ImplB\\",
-      prop: string,
-      propB: ?number,
-    }
-  ),
+  interfaceTest: ?(CustomScalarQuery_interfaceTest_ImplA | CustomScalarQuery_interfaceTest_ImplB),
+|};
+
+export type CustomScalarQuery_interfaceTest_ImplB = {|
+  __typename: \\"ImplB\\",
+  prop: string,
+  propB: ?number,
+|};
+
+export type CustomScalarQuery_interfaceTest_ImplA = {|
+  __typename: \\"ImplA\\",
+  prop: string,
+  propA: string,
 |};"
 `;
 
@@ -423,13 +520,17 @@ exports[`Flow code generation #generateSource() should handle multi-line comment
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
+/* GraphQL Operation: CustomScalar */
+
 export type CustomScalarQuery = {|
-  commentTest: ? {|
-    __typename: \\"CommentTest\\",
-    // This is a multi-line
-    // comment.
-    multiLine: ?string,
-  |},
+  commentTest: ? CustomScalarQuery_commentTest,
+|};
+
+export type CustomScalarQuery_commentTest = {|
+  __typename: \\"CommentTest\\",
+  // This is a multi-line
+  // comment.
+  multiLine: ?string,
 |};"
 `;
 
@@ -437,12 +538,16 @@ exports[`Flow code generation #generateSource() should handle single line commen
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
+/* GraphQL Operation: CustomScalar */
+
 export type CustomScalarQuery = {|
-  commentTest: ? {|
-    __typename: \\"CommentTest\\",
-    // This is a single-line comment
-    singleLine: ?string,
-  |},
+  commentTest: ? CustomScalarQuery_commentTest,
+|};
+
+export type CustomScalarQuery_commentTest = {|
+  __typename: \\"CommentTest\\",
+  // This is a single-line comment
+  singleLine: ?string,
 |};"
 `;
 
@@ -450,14 +555,19 @@ exports[`Flow code generation #generateSource() should handle unions at root 1`]
 "/* @flow */
 //  This file was automatically generated and should not be edited.
 
+/* GraphQL Operation: CustomScalar */
+
 export type CustomScalarQuery = {|
-  unionTest: ?( {
-      __typename: \\"PartialA\\",
-      prop: string,
-    } | {
-      __typename: \\"PartialB\\",
-      prop: string,
-    }
-  ),
+  unionTest: ?(CustomScalarQuery_unionTest_PartialA | CustomScalarQuery_unionTest_PartialB),
+|};
+
+export type CustomScalarQuery_unionTest_PartialB = {|
+  __typename: \\"PartialB\\",
+  prop: string,
+|};
+
+export type CustomScalarQuery_unionTest_PartialA = {|
+  __typename: \\"PartialA\\",
+  prop: string,
 |};"
 `;

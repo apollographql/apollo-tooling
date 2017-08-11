@@ -8,6 +8,33 @@ import { typeNameFromGraphQLType } from './types';
 
 import { pascalCase } from 'change-case';
 
+function typeNameFromScopeStack(generator, name) {
+  const scopeNames = generator.scopeStack
+    .map((scope) => {
+      return scope.typeName
+    });
+
+  const fullTypeName = [...scopeNames].join('_');
+
+  return fullTypeName;
+}
+
+/**
+ * Used to grab the type condition of a propertySet. Requires
+ * having __typename fields to exist for a property set.
+ * @throws Will throw an error if __typename field is not found
+ * within the property set.
+ */
+function getPropertySetTypeCondition(propertySet) {
+  const typenameField = propertySet.find(property => property.fieldName === '__typename');
+
+  if (!typenameField) {
+    throw new Error(`__typename field is required to generate types for nested properties that are of GraphQLUnionType or GraphQLInterfaceType`);
+  }
+
+  return typenameField.typeName.replace(/\"/g, '');
+}
+
 export function typeDeclaration(generator, { interfaceName, noBrackets }, closure) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
@@ -63,9 +90,16 @@ export function propertyDeclaration(generator, {
     }
 
     generator.pushScope({ typeName: name });
-
-    generator.withinBlock(closure, open, close);
-
+    const fullName = typeNameFromScopeStack(generator, name);
+    generator.print(' ' + fullName);
+    // generator.withinBlock(closure, open, close);
+    generator.queueBlock(() => {
+      typeDeclaration(generator, {
+        interfaceName: fullName
+      }, () => {
+        closure()
+      })
+    })
     generator.popScope();
 
     if (isArray) {
@@ -110,18 +144,27 @@ export function propertySetsDeclaration(generator, property, propertySets, stand
     }
   }
 
+  const fullName = typeNameFromScopeStack(generator, name);
   generator.pushScope({ typeName: name });
 
   generator.withinBlock(() => {
     propertySets.forEach((propertySet, index, propertySets) => {
-      generator.withinBlock(() => {
-        propertyDeclarations(generator, propertySet);
+      generator.pushScope({ typeName: getPropertySetTypeCondition(propertySet) });
+      const fullName = typeNameFromScopeStack(generator, name);
+      generator.print(fullName)
+      generator.queueBlock(() => {
+        typeDeclaration(generator, {
+          interfaceName: fullName
+        }, () => {
+          propertyDeclarations(generator, propertySet);
+        });
       });
+      generator.popScope();
       if (index !== propertySets.length - 1) {
-        generator.print(' |');
+        generator.print(' | ');
       }
     })
-  }, '(', ')');
+  }, '(', ')', false);
 
   generator.popScope();
 
