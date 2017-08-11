@@ -4,7 +4,7 @@
  * Given maybeArray, print an empty string if it is null or empty, otherwise
  * print all items together separated by separator if provided
  */
-export function join(maybeArray, separator) {
+export function join(maybeArray: any[], separator?: string) {
   return maybeArray ? maybeArray.filter(x => x).join(separator || '') : '';
 }
 
@@ -12,7 +12,7 @@ export function join(maybeArray, separator) {
  * Given array, print each item on its own line, wrapped in an
  * indented "{ }" block.
  */
-export function block(array) {
+export function block(array: any[]) {
   return array && array.length !== 0 ?
     indent('{\n' + join(array, '\n')) + '\n}' :
     '{}';
@@ -22,12 +22,12 @@ export function block(array) {
  * If maybeString is not null or empty, then wrap with start and end, otherwise
  * print an empty string.
  */
-export function wrap(start, maybeString, end) {
+export function wrap(start: string, maybeString?: string, end?: string) {
   return maybeString ?
     start + maybeString + (end || '') :
     '';
 }
 
-export function indent(maybeString) {
+export function indent(maybeString?: string) {
   return maybeString && maybeString.replace(/\n/g, '\n  ');
 }
