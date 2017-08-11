@@ -426,7 +426,7 @@ function operationIdentifier(
   generator: CodeGenerator,
   { operationName, sourceWithFragments, operationId }: CompiledOperation
 ) {
-  if (!generator.context.generateOperationIds) {
+  if (!generator.context.options.generateOperationIds) {
     return;
   }
 
