@@ -1,3 +1,4 @@
+import {CompiledInlineFragment} from '../compilation';
 import {
   join,
   wrap,
@@ -7,11 +8,34 @@ import { propertyDeclarations } from './codeGeneration';
 import { typeNameFromGraphQLType } from './types';
 
 import { pascalCase } from 'change-case';
+import CodeGenerator from "../utilities/CodeGenerator";
+import { GraphQLType } from "graphql";
 
-export function interfaceDeclaration(generator, { interfaceName, noBrackets }, closure) {
+export interface Property {
+  fieldName?: string,
+  fieldType?: GraphQLType,
+  propertyName?: string,
+  type?: GraphQLType,
+  description?: string,
+  typeName?: string,
+  isComposite?: boolean,
+  isNullable?: boolean,
+  fields?: any[],
+  inlineFragments?: CompiledInlineFragment[],
+  fragmentSpreads?: any,
+  isInput?: boolean,
+  isArray?: boolean,
+  isArrayElementNullable?: boolean | null,
+}
+
+export function interfaceDeclaration(generator: CodeGenerator, {
+  interfaceName,
+  noBrackets
+}: { interfaceName: string, noBrackets?: boolean },
+  closure: () => void) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
-  generator.print(`export type ${ interfaceName } = `);
+  generator.print(`export type ${interfaceName} = `);
   generator.pushScope({ typeName: interfaceName });
   if (noBrackets) {
     generator.withinBlock(closure, '', '');
@@ -22,7 +46,7 @@ export function interfaceDeclaration(generator, { interfaceName, noBrackets }, c
   generator.print(';');
 }
 
-export function propertyDeclaration(generator, {
+export function propertyDeclaration(generator: CodeGenerator, {
   fieldName,
   type,
   propertyName,
@@ -33,7 +57,7 @@ export function propertyDeclaration(generator, {
   isNullable,
   isArrayElementNullable,
   fragmentSpreads
-}, closure) {
+}: Property, closure?: () => void) {
   const name = fieldName || propertyName;
 
   if (description) {
@@ -76,13 +100,13 @@ export function propertyDeclaration(generator, {
     if (isInput && isNullable) {
       generator.print('?')
     }
-    generator.print(`: ${typeName || typeNameFromGraphQLType(generator.context, type)}`);
+    generator.print(`: ${typeName || type && typeNameFromGraphQLType(generator.context, type)}`);
   }
   generator.print(',');
 }
 
-export function propertySetsDeclaration(generator, property, propertySets, standalone = false) {
-  const { 
+export function propertySetsDeclaration(generator: CodeGenerator, property: Property, propertySets: Property[][], standalone = false) {
+  const {
     description, fieldName, propertyName, typeName,
     isNullable, isArray, isArrayElementNullable,
   } = property;

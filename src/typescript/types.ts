@@ -1,3 +1,4 @@
+import { CompilationContext } from '../compilation';
 import {
   join,
   block,
@@ -14,7 +15,8 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
-  GraphQLEnumType
+  GraphQLEnumType,
+  GraphQLType
 } from 'graphql';
 
 const builtInScalarMap = {
@@ -25,7 +27,7 @@ const builtInScalarMap = {
   [GraphQLID.name]: 'string',
 }
 
-export function typeNameFromGraphQLType(context, type, bareTypeName, nullable = true) {
+export function typeNameFromGraphQLType(context: CompilationContext, type: GraphQLType, bareTypeName?: string | null, nullable = true): string {
   if (type instanceof GraphQLNonNull) {
     return typeNameFromGraphQLType(context, type.ofType, bareTypeName, false)
   }
@@ -34,7 +36,7 @@ export function typeNameFromGraphQLType(context, type, bareTypeName, nullable = 
   if (type instanceof GraphQLList) {
     typeName = `Array< ${typeNameFromGraphQLType(context, type.ofType, bareTypeName, true)} >`;
   } else if (type instanceof GraphQLScalarType) {
-    typeName = builtInScalarMap[type.name] || (context.options.passthroughCustomScalars ? context.options.customScalarsPrefix + type.name: builtInScalarMap[GraphQLString.name]);
+    typeName = builtInScalarMap[type.name] || (context.options.passthroughCustomScalars ? context.options.customScalarsPrefix + type.name : builtInScalarMap[GraphQLString.name]);
   } else {
     typeName = bareTypeName || type.name;
   }

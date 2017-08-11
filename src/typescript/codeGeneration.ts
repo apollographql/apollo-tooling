@@ -1,3 +1,4 @@
+import { CompiledInlineFragment, CompiledFragment, Field, CompiledOperation, CompilationContext } from '../compilation';
 import {
   GraphQLError,
   getNamedType,
@@ -9,10 +10,14 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLID,
-  GraphQLInputObjectType
+  GraphQLInputObjectType,
+  GraphQLType,
+  GraphQLUnionType,
+  GraphQLInterfaceType,
+  GraphQLObjectType
 } from 'graphql'
 
-import  { isTypeProperSuperTypeOf } from '../utilities/graphql';
+import { isTypeProperSuperTypeOf } from '../utilities/graphql';
 
 import * as Inflector from 'inflected';
 
@@ -26,22 +31,23 @@ import CodeGenerator from '../utilities/CodeGenerator';
 import {
   interfaceDeclaration,
   propertyDeclaration,
-  propertySetsDeclaration
+  propertySetsDeclaration,
+  Property
 } from './language';
 
 import {
   typeNameFromGraphQLType,
 } from './types';
 
-export function generateSource(context) {
+export function generateSource(context: CompilationContext) {
   const generator = new CodeGenerator(context);
 
   generator.printOnNewline('/* tslint:disable */');
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
 
-  typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
+  context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
-  ));
+  );
   Object.values(context.operations).forEach(operation => {
     interfaceVariablesDeclarationForOperation(generator, operation);
     interfaceDeclarationForOperation(generator, operation);
@@ -56,7 +62,7 @@ export function generateSource(context) {
   return generator.output;
 }
 
-export function typeDeclarationForGraphQLType(generator, type) {
+export function typeDeclarationForGraphQLType(generator: CodeGenerator, type: GraphQLType) {
   if (type instanceof GraphQLEnumType) {
     enumerationDeclaration(generator, type);
   } else if (type instanceof GraphQLInputObjectType) {
@@ -64,7 +70,7 @@ export function typeDeclarationForGraphQLType(generator, type) {
   }
 }
 
-function enumerationDeclaration(generator, type) {
+function enumerationDeclaration(generator: CodeGenerator, type: GraphQLEnumType) {
   const { name, description } = type;
   const values = type.getValues();
 
@@ -78,14 +84,14 @@ function enumerationDeclaration(generator, type) {
   generator.printOnNewline(`export type ${name} =`);
   const nValues = values.length;
   values.forEach((value, i) =>
-    generator.printOnNewline(`  "${value.value}"${i === nValues-1 ? ';' : ' |'}${wrap(' // ', value.description)}`)
+    generator.printOnNewline(`  "${value.value}"${i === nValues - 1 ? ';' : ' |'}${wrap(' // ', value.description)}`)
   );
   generator.printNewline();
 }
 
 function structDeclarationForInputObjectType(
-  generator,
-  type
+  generator: CodeGenerator,
+  type: GraphQLInputObjectType
 ) {
   const interfaceName = type.name;
   interfaceDeclaration(generator, {
@@ -96,7 +102,7 @@ function structDeclarationForInputObjectType(
   });
 }
 
-function interfaceNameFromOperation({operationName, operationType}) {
+function interfaceNameFromOperation({ operationName, operationType }: { operationName: string, operationType: string }) {
   switch (operationType) {
     case 'query':
       return `${operationName}Query`;
@@ -113,7 +119,7 @@ function interfaceNameFromOperation({operationName, operationType}) {
 }
 
 export function interfaceVariablesDeclarationForOperation(
-  generator,
+  generator: CodeGenerator,
   {
     operationName,
     operationType,
@@ -121,12 +127,12 @@ export function interfaceVariablesDeclarationForOperation(
     fields,
     fragmentsReferenced,
     source,
-  }
+  }: CompiledOperation
 ) {
   if (!variables || variables.length < 1) {
-    return null;
+    return;
   }
-  const interfaceName = `${interfaceNameFromOperation({operationName, operationType})}Variables`;
+  const interfaceName = `${interfaceNameFromOperation({ operationName, operationType })}Variables`;
 
   interfaceDeclaration(generator, {
     interfaceName,
@@ -136,8 +142,49 @@ export function interfaceVariablesDeclarationForOperation(
   });
 }
 
+function getObjectTypeName(type: GraphQLType): string {
+  if (type instanceof GraphQLList) {
+    return getObjectTypeName(type.ofType);
+  }
+  if (type instanceof GraphQLNonNull) {
+    return getObjectTypeName(type.ofType);
+  }
+  if (type instanceof GraphQLObjectType) {
+    return `"${type.name}"`;
+  }
+  if (type instanceof GraphQLUnionType) {
+    return type.getTypes().map(type => getObjectTypeName(type)).join(" | ");
+  }
+  return `"${type.name}"`;
+}
+
+function updateTypeNameField(rootField: Field): Field {
+
+  const fields = rootField.fields && rootField.fields.map(field => {
+    const type = field.type;
+    if (field.fieldName === '__typename') {
+      const objectTypeName = getObjectTypeName(rootField.type);
+      return {
+        ...field,
+        typeName: objectTypeName,
+        type: { name: objectTypeName },
+      };
+    }
+
+    if (field.fields) {
+      return updateTypeNameField(field);
+    }
+
+    return field;
+  });
+  return {
+    ...rootField,
+    fields,
+  } as Field;
+}
+
 export function interfaceDeclarationForOperation(
-  generator,
+  generator: CodeGenerator,
   {
     operationName,
     operationType,
@@ -146,25 +193,10 @@ export function interfaceDeclarationForOperation(
     fragmentSpreads,
     fragmentsReferenced,
     source,
-  }
+  }: CompiledOperation
 ) {
-  const interfaceName = interfaceNameFromOperation({operationName, operationType});
-  fields = fields.map(rootField => {
-    const fields = rootField.fields.map(field => {
-      if (field.fieldName === '__typename') {
-        return {
-          ...field,
-          typeName: `"${rootField.type.name}"`,
-          type: { name: `"${rootField.type.name}"` },
-        };
-      }
-      return field;
-    });
-    return {
-      ...rootField,
-      fields,
-    };
-  });
+  const interfaceName = interfaceNameFromOperation({ operationName, operationType });
+  fields = fields.map(field => updateTypeNameField(field));
   const properties = propertiesFromFields(generator.context, fields);
   interfaceDeclaration(generator, {
     interfaceName,
@@ -174,8 +206,8 @@ export function interfaceDeclarationForOperation(
 }
 
 export function interfaceDeclarationForFragment(
-  generator,
-  fragment
+  generator: CodeGenerator,
+  fragment: CompiledFragment
 ) {
   const {
     fragmentName,
@@ -199,7 +231,7 @@ export function interfaceDeclarationForFragment(
           // from both inline fragments and fragment spreads.
           // TODO: Rename inlineFragments in the IR.
           const inlineFragment = inlineFragments.find(inlineFragment => {
-            return inlineFragment.typeCondition.toString() == type
+            return inlineFragment.typeCondition.toString() == type.toString()
           });
 
           if (inlineFragment) {
@@ -208,28 +240,28 @@ export function interfaceDeclarationForFragment(
                 return {
                   ...field,
                   typeName: `"${inlineFragment.typeCondition}"`,
-                  type: { name: `"${inlineFragment.typeCondition}"` }
+                  type: { name: `"${inlineFragment.typeCondition}"` } as GraphQLType
                 }
               } else {
                 return field;
               }
             });
 
-            return propertiesFromFields(generator, fields);
+            return propertiesFromFields(generator.context, fields);
           } else {
             const fragmentFields = fields.map(field => {
               if (field.fieldName === '__typename') {
                 return {
                   ...field,
                   typeName: `"${type}"`,
-                  type: { name: `"${type}"` }
+                  type: { name: `"${type}"` } as GraphQLType
                 }
               } else {
                 return field;
               }
             });
 
-            return propertiesFromFields(generator, fragmentFields);
+            return propertiesFromFields(generator.context, fragmentFields);
           }
         });
 
@@ -241,11 +273,28 @@ export function interfaceDeclarationForFragment(
   });
 }
 
-export function propertiesFromFields(context, fields) {
+export function propertiesFromFields(context: CompilationContext, fields: {
+  name?: string,
+  type: GraphQLType,
+  responseName?: string,
+  description?: string,
+  fragmentSpreads?: any,
+  inlineFragments?: CompiledInlineFragment[],
+  fieldName?: string
+}[]) {
   return fields.map(field => propertyFromField(context, field));
 }
 
-export function propertyFromField(context, field) {
+export function propertyFromField(context: CompilationContext, field: {
+  name?: string,
+  type: GraphQLType,
+  fields?: any[],
+  responseName?: string,
+  description?: string,
+  fragmentSpreads?: any,
+  inlineFragments?: CompiledInlineFragment[],
+  fieldName?: string
+}): Property {
   let { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
   fieldName = fieldName || field.responseName;
 
@@ -274,7 +323,10 @@ export function propertyFromField(context, field) {
 
     return {
       ...property,
-      typeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments, fieldType,
+      typeName,
+      fields: field.fields,
+      isComposite: true,
+      fragmentSpreads, inlineFragments, fieldType,
       isArray, isNullable, isArrayElementNullable,
     };
   } else {
@@ -288,14 +340,14 @@ export function propertyFromField(context, field) {
   }
 }
 
-export function propertyDeclarations(generator, properties, isInput = false) {
+export function propertyDeclarations(generator: CodeGenerator, properties: Property[], isInput = false) {
 
   if (!properties) return;
   properties.forEach(property => {
-    if (isAbstractType(getNamedType(property.type || property.fieldType))) {
+    if (isAbstractType(getNamedType(property.type || property.fieldType!))) {
       const propertySets = getPossibleTypeNames(generator, property)
         .map(type => {
-          const inlineFragment = property.inlineFragments.find(inlineFragment => {
+          const inlineFragment = property.inlineFragments && property.inlineFragments.find(inlineFragment => {
             return inlineFragment.typeCondition.toString() == type
           });
 
@@ -305,7 +357,7 @@ export function propertyDeclarations(generator, properties, isInput = false) {
                 return {
                   ...field,
                   typeName: `"${inlineFragment.typeCondition}"`,
-                  type: { name: `"${inlineFragment.typeCondition}"` }
+                  type: { name: `"${inlineFragment.typeCondition}"` } as GraphQLType
                 }
               } else {
                 return field;
@@ -314,19 +366,19 @@ export function propertyDeclarations(generator, properties, isInput = false) {
 
             return propertiesFromFields(generator.context, fields);
           } else {
-            const fields = property.fields.map(field => {
+            const fields = property.fields!.map(field => {
               if (field.fieldName === '__typename') {
                 return {
                   ...field,
                   typeName: `"${type}"`,
-                  type: { name: `"${type}"` }
+                  type: { name: `"${type}"` } as GraphQLType
                 }
               } else {
                 return field;
               }
             });
 
-            return propertiesFromFields(generator, fields);
+            return propertiesFromFields(generator.context, fields);
           }
         });
 
@@ -337,11 +389,11 @@ export function propertyDeclarations(generator, properties, isInput = false) {
         || property.fragmentSpreads && property.fragmentSpreads.length > 0
       ) {
         propertyDeclaration(generator, property, () => {
-          const properties = propertiesFromFields(generator.context, property.fields);
+          const properties = propertiesFromFields(generator.context, property.fields!);
           propertyDeclarations(generator, properties, isInput);
         });
       } else {
-        propertyDeclaration(generator, {...property, isInput});
+        propertyDeclaration(generator, { ...property, isInput });
       }
     }
   });
@@ -352,6 +404,12 @@ export function propertyDeclarations(generator, properties, isInput = false) {
  * do not have inline fragments. This currently can happen and the IR does give us
  * a set of fields per type condition unless fragments are used within the selection set.
  */
-function getPossibleTypeNames(generator, property) {
-  return generator.context.schema.getPossibleTypes(getNamedType(property.fieldType || property.type)).map(type => type.name);
+function getPossibleTypeNames(generator: CodeGenerator, property: Property) {
+  const type = getNamedType(property.fieldType || property.type!);
+
+  if (type instanceof GraphQLUnionType || type instanceof GraphQLInterfaceType) {
+    return generator.context.schema.getPossibleTypes(type).map(type => type.name);
+  }
+
+  return [];
 }
