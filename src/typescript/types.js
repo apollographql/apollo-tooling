@@ -5,8 +5,6 @@ import {
   indent
 } from '../utilities/printing';
 
-import { camelCase } from 'change-case';
-
 import {
   GraphQLString,
   GraphQLInt,
