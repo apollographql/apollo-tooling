@@ -47,13 +47,13 @@ describe('Swift code generation', function() {
         typesUsed: {},
         options: { mergeInFieldsFromFragmentSpreads: true },
       }
-      generator = new CodeGenerator(context);  
+      generator = new CodeGenerator(context);
     };
 
     compileFromSource = (source, options = { generateOperationIds: false }) => {
       const document = parse(source);
       let context = compileToIR(schema, document);
-      options.generateOperationIds && Object.assign(context, { generateOperationIds: true, operationIdsMap: {} });
+      options.generateOperationIds && Object.assign(context.options, { generateOperationIds: true, operationIdsMap: {} });
       generator.context = context;
       return context;
     };
