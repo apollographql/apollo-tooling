@@ -312,7 +312,7 @@ export function propertyDeclarations(generator, properties, isInput = false) {
               }
             });
 
-            return propertiesFromFields(generator, fields);
+            return propertiesFromFields(generator.context, fields);
           } else {
             const fields = property.fields.map(field => {
               if (field.fieldName === '__typename') {

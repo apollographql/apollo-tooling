@@ -5,8 +5,6 @@ import {
   indent
 } from '../utilities/printing';
 
-import { camelCase } from 'change-case';
-
 import {
   GraphQLString,
   GraphQLInt,
@@ -36,7 +34,7 @@ export function typeNameFromGraphQLType(context, type, bareTypeName, nullable = 
   if (type instanceof GraphQLList) {
     typeName = `Array< ${typeNameFromGraphQLType(context, type.ofType, bareTypeName, true)} >`;
   } else if (type instanceof GraphQLScalarType) {
-    typeName = builtInScalarMap[type.name] || (context.passthroughCustomScalars ? context.customScalarsPrefix + type.name: builtInScalarMap[GraphQLString.name]);
+    typeName = builtInScalarMap[type.name] || (context.options.passthroughCustomScalars ? context.options.customScalarsPrefix + type.name: builtInScalarMap[GraphQLString.name]);
   } else {
     typeName = bareTypeName || type.name;
   }
