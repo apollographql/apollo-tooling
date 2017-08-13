@@ -1,18 +1,15 @@
-import { SelectionSet, Selection, Fragment } from '../';
+import { CompilerContext, SelectionSet, Selection } from '../';
 
 export function mergeInFragmentSpreads(
-  selectionSet: SelectionSet,
-  fragments: { [fragmentName: string]: Fragment }
+  context: CompilerContext,
+  selectionSet: SelectionSet
 ): SelectionSet {
   const selections: Selection[] = [];
 
   for (const selection of selectionSet.selections) {
     switch (selection.kind) {
       case 'FragmentSpread':
-        const fragment = fragments[selection.fragmentName];
-        if (!fragment) {
-          throw new Error(`Cannot find fragment "${selection.fragmentName}"`);
-        }
+        const fragment = context.fragmentNamed(selection.fragmentName);
 
         // Compute the intersection.
         const possibleTypes = fragment.selectionSet.possibleTypes.filter(type =>
@@ -23,11 +20,11 @@ export function mergeInFragmentSpreads(
           kind: 'TypeCondition',
           type: fragment.type,
           selectionSet: mergeInFragmentSpreads(
+            context,
             {
               possibleTypes,
               selections: fragment.selectionSet.selections
-            },
-            fragments
+            }
           )
         });
         break;
@@ -35,7 +32,7 @@ export function mergeInFragmentSpreads(
       case 'BooleanCondition':
         selections.push({
           ...selection,
-          selectionSet: mergeInFragmentSpreads(selection.selectionSet, fragments)
+          selectionSet: mergeInFragmentSpreads(context, selection.selectionSet)
         });
         break;
       default:

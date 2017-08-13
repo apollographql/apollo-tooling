@@ -8,7 +8,7 @@ import { collectFragmentsReferenced } from './visitors/collectFragmentsReference
 import { TypeCase } from './flattenIR';
 
 import '../utilities/array';
-import { computeOperationId } from './visitors/computeOperationId';
+import { generateOperationId } from './visitors/generateOperationId';
 
 export interface CompilerOptions {
   addTypename?: boolean;
@@ -103,9 +103,9 @@ class LegacyIRTransformer {
 
     for (const [operationName, operation] of Object.entries(this.context.operations)) {
       const { filePath, operationType, rootType, variables, source, selectionSet } = operation;
-      const fragmentsReferenced = Array.from(collectFragmentsReferenced(selectionSet, this.context.fragments));
+      const fragmentsReferenced = collectFragmentsReferenced(this.context, selectionSet);
 
-      const { sourceWithFragments, operationId } = computeOperationId(operation, fragmentsReferenced, this.context.fragments);
+      const { sourceWithFragments, operationId } = generateOperationId(this.context, operation, fragmentsReferenced);
 
       operations[operationName] = {
         filePath,
@@ -115,7 +115,7 @@ class LegacyIRTransformer {
         variables,
         source,
         ...this.transformSelectionSetToLegacyIR(selectionSet),
-        fragmentsReferenced,
+        fragmentsReferenced: Array.from(fragmentsReferenced),
         sourceWithFragments,
         operationId
       };
@@ -146,7 +146,7 @@ class LegacyIRTransformer {
 
   transformSelectionSetToLegacyIR(selectionSet: SelectionSet) {
     const typeCase = new TypeCase(
-      this.options.mergeInFieldsFromFragmentSpreads ? mergeInFragmentSpreads(selectionSet, this.context.fragments) : selectionSet
+      this.options.mergeInFieldsFromFragmentSpreads ? mergeInFragmentSpreads(this.context, selectionSet) : selectionSet
     );
 
     const fields: LegacyField[] = this.transformFieldsToLegacyIR(typeCase.default.fields);

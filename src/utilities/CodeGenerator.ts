@@ -1,20 +1,25 @@
-export default class CodeGenerator<Context = any> {
-  private scopeStack: any[] = [];
+export default class CodeGenerator<Context = any, Scope = any> {
+  private scopeStack: Scope[] = [];
   private indentWidth = 2;
   private indentLevel = 0;
-  public output = '';
   private startOfIndentLevel = false;
 
-  constructor(public context: Context) {
+  public output = '';
 
-  }
+  constructor(public context: Context) {}
 
-  pushScope(scope: any) {
+  pushScope(scope: Scope) {
     this.scopeStack.push(scope);
   }
 
   popScope() {
     return this.scopeStack.pop();
+  }
+
+  get scope(): Scope {
+    if (this.scopeStack.length < 1) throw Error('No active scope');
+
+    return this.scopeStack[this.scopeStack.length - 1];
   }
 
   print(maybeString?: string) {

@@ -14,9 +14,7 @@ export class Record {
   }
 
   addField(field: Field, isConditional: boolean) {
-    const responseKey = field.alias || field.name;
-
-    const existingField = this.fieldMap.get(responseKey);
+    const existingField = this.fieldMap.get(field.responseKey);
     if (existingField) {
       existingField.isConditional = existingField.isConditional && isConditional;
 
@@ -24,7 +22,16 @@ export class Record {
         existingField.selectionSet.selections.push(...field.selectionSet.selections);
       }
     } else {
-      this.fieldMap.set(responseKey, { ...field, isConditional });
+      // this.fieldMap.set(responseKey, { ...field, isConditional });
+      // Make sure to deep clone selections to avoid modifying the original field
+      // TODO: Should we use an object freezing / immutability solution?
+      const clonedField = {
+        ...field,
+        selectionSet: field.selectionSet
+          ? { ...field.selectionSet, selections: [...field.selectionSet.selections] }
+          : undefined
+      };
+      this.fieldMap.set(field.responseKey, { ...clonedField, isConditional });
     }
   }
 }
@@ -86,7 +93,7 @@ export class TypeCase {
   private recordsFor(possibleTypes: GraphQLObjectType[]): Record[] {
     const records = possibleTypes
       .map(type => this.recordsByType.get(type))
-      .filter(record => record) as Record[];
+      .filter(x => x) as Record[];
 
     const isRecordDisjoint = records.map(record => {
       return record.possibleTypes.every(type => possibleTypes.includes(type));
@@ -94,7 +101,7 @@ export class TypeCase {
 
     // If the records for the passed in possible types are already disjoint with other possible types, there
     // is no need to split them.
-    if (isRecordDisjoint.every(boolean => boolean)) {
+    if (isRecordDisjoint.every(x => x)) {
       return records;
     }
 
