@@ -22,6 +22,7 @@
     "node": ">=6.0"
   },
   "devDependencies": {
+    "@types/common-tags": "^1.2.5",
     "@types/glob": "^5.0.30",
     "@types/graphql": "^0.10.2",
     "@types/inflected": "^1.1.29",
@@ -52,6 +53,7 @@
         "skipBabel": true
       }
     },
+    "testEnvironment": "node",
     "setupFiles": [
       "<rootDir>/src/polyfills.js"
     ],

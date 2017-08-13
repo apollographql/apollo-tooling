@@ -2,75 +2,22 @@ import CodeGenerator from '../utilities/CodeGenerator';
 
 import { join, wrap } from '../utilities/printing';
 
-export function comment(generator: CodeGenerator, comment: string | undefined) {
-  comment &&
-    comment.split('\n').forEach(line => {
-      generator.printOnNewline(`/// ${line.trim()}`);
-    });
-}
-
-export function deprecation(generator: CodeGenerator, isDeprecated: boolean | undefined, deprecationReason: string | undefined) {
-  if (isDeprecated !== undefined && isDeprecated) {
-    deprecationReason = (deprecationReason !== undefined && deprecationReason.length > 0) ? deprecationReason : ""
-    generator.printOnNewline(`@available(*, deprecated, message: "${deprecationReason}")`)
-  }
-}
-
-export function namespaceDeclaration(
-  generator: CodeGenerator,
-  namespace: string | undefined,
-  closure: Function
-) {
-  if (namespace) {
-    generator.printNewlineIfNeeded();
-    generator.printOnNewline(`/// ${namespace} namespace`);
-    generator.printOnNewline(`public enum ${namespace}`);
-    generator.pushScope({ typeName: namespace });
-    generator.withinBlock(closure);
-    generator.popScope();
-  } else {
-    closure();
-  }
-}
-
 export interface Class {
   className: string;
   modifiers: string[];
   superClass?: string;
-  adoptedProtocols: string[];
-}
-
-export function classDeclaration(
-  generator: CodeGenerator,
-  { className, modifiers, superClass, adoptedProtocols = [] }: Class,
-  closure: Function
-) {
-  generator.printNewlineIfNeeded();
-  generator.printOnNewline(wrap('', join(modifiers, ' '), ' ') + `class ${className}`);
-  generator.print(wrap(': ', join([superClass, ...adoptedProtocols], ', ')));
-  generator.pushScope({ typeName: className });
-  generator.withinBlock(closure);
-  generator.popScope();
+  adoptedProtocols?: string[];
 }
 
 export interface Struct {
   structName: string;
-  description?: string;
   adoptedProtocols?: string[];
+  description?: string;
 }
 
-export function structDeclaration(
-  generator: CodeGenerator,
-  { structName, description, adoptedProtocols = [] }: Struct,
-  closure: Function
-) {
-  generator.printNewlineIfNeeded();
-  comment(generator, description);
-  generator.printOnNewline(`public struct ${structName}`);
-  generator.print(wrap(': ', join(adoptedProtocols, ', ')));
-  generator.pushScope({ typeName: structName });
-  generator.withinBlock(closure);
-  generator.popScope();
+export interface Protocol {
+  protocolName: string;
+  adoptedProtocols?: string[];
 }
 
 export interface Property {
@@ -80,45 +27,8 @@ export interface Property {
   description?: string;
 }
 
-export function propertyDeclaration(
-  generator: CodeGenerator,
-  { propertyName, typeName, description }: Property
-) {
-  comment(generator, description);
-  generator.printOnNewline(`public var ${propertyName}: ${typeName}`);
-}
-
-export function propertyDeclarations(generator: CodeGenerator, properties: Property[]) {
-  if (!properties) return;
-  properties.forEach(property => propertyDeclaration(generator, property));
-}
-
-export interface Protocol {
-  protocolName: string;
-  adoptedProtocols: string[];
-  properties: Property[];
-}
-
-export function protocolDeclaration(
-  generator: CodeGenerator,
-  { protocolName, adoptedProtocols }: Protocol,
-  closure: Function
-) {
-  generator.printNewlineIfNeeded();
-  generator.printOnNewline(`public protocol ${protocolName}`);
-  generator.print(wrap(': ', join(adoptedProtocols, ', ')));
-  generator.pushScope({ typeName: protocolName });
-  generator.withinBlock(closure);
-  generator.popScope();
-}
-
-export function protocolPropertyDeclaration(generator: CodeGenerator, { propertyName, typeName }: Property) {
-  generator.printOnNewline(`var ${propertyName}: ${typeName} { get }`);
-}
-
-export function protocolPropertyDeclarations(generator: CodeGenerator, properties: Property[]) {
-  if (!properties) return;
-  properties.forEach(property => protocolPropertyDeclaration(generator, property));
+export function escapedString(string: string) {
+  return string.replace(/"/g, '\\"');
 }
 
 // prettier-ignore
@@ -139,5 +49,88 @@ export function escapeIdentifierIfNeeded(identifier: string) {
     return '`' + identifier + '`';
   } else {
     return identifier;
+  }
+}
+
+export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: string }> {
+  constructor(context: Context) {
+    super(context);
+  }
+
+  multilineString(string: string) {
+    const lines = string.split('\n');
+    lines.forEach((line, index) => {
+      const isLastLine = index != lines.length - 1;
+      this.printOnNewline(`"${escapedString(line)}"` + (isLastLine ? ' +' : ''));
+    });
+  }
+
+  comment(comment?: string) {
+    comment &&
+      comment.split('\n').forEach(line => {
+        this.printOnNewline(`/// ${line.trim()}`);
+      });
+  }
+
+  namespaceDeclaration(namespace: string | undefined, closure: Function) {
+    if (namespace) {
+      this.printNewlineIfNeeded();
+      this.printOnNewline(`/// ${namespace} namespace`);
+      this.printOnNewline(`public enum ${namespace}`);
+      this.pushScope({ typeName: namespace });
+      this.withinBlock(closure);
+      this.popScope();
+    } else {
+      if (closure) {
+        closure();
+      }
+    }
+  }
+
+  classDeclaration({ className, modifiers, superClass, adoptedProtocols = [] }: Class, closure: Function) {
+    this.printNewlineIfNeeded();
+    this.printOnNewline(wrap('', join(modifiers, ' '), ' ') + `class ${className}`);
+    this.print(wrap(': ', join([superClass, ...adoptedProtocols], ', ')));
+    this.pushScope({ typeName: className });
+    this.withinBlock(closure);
+    this.popScope();
+  }
+
+  structDeclaration({ structName, description, adoptedProtocols = [] }: Struct, closure: Function) {
+    this.printNewlineIfNeeded();
+    this.comment(description);
+    this.printOnNewline(`public struct ${structName}`);
+    this.print(wrap(': ', join(adoptedProtocols, ', ')));
+    this.pushScope({ typeName: structName });
+    this.withinBlock(closure);
+    this.popScope();
+  }
+
+  propertyDeclaration({ propertyName, typeName, description }: Property) {
+    this.comment(description);
+    this.printOnNewline(`public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`);
+  }
+
+  propertyDeclarations(properties: Property[]) {
+    if (!properties) return;
+    properties.forEach(property => this.propertyDeclaration(property));
+  }
+
+  protocolDeclaration({ protocolName, adoptedProtocols }: Protocol, closure: Function) {
+    this.printNewlineIfNeeded();
+    this.printOnNewline(`public protocol ${protocolName}`);
+    this.print(wrap(': ', join(adoptedProtocols, ', ')));
+    this.pushScope({ typeName: protocolName });
+    this.withinBlock(closure);
+    this.popScope();
+  }
+
+  protocolPropertyDeclaration({ propertyName, typeName }: Property) {
+    this.printOnNewline(`var ${propertyName}: ${typeName} { get }`);
+  }
+
+  protocolPropertyDeclarations(properties: Property[]) {
+    if (!properties) return;
+    properties.forEach(property => this.protocolPropertyDeclaration(property));
   }
 }

@@ -41,12 +41,22 @@ export interface CompilerOptions {
   generateOperationIds?: boolean;
 }
 
-export interface CompilerContext {
-  schema: GraphQLSchema;
-  typesUsed: GraphQLType[];
-  operations: { [operationName: string]: Operation };
-  fragments: { [fragmentName: string]: Fragment };
-  options: CompilerOptions;
+export class CompilerContext {
+  constructor(
+    public schema: GraphQLSchema,
+    public typesUsed: GraphQLType[],
+    public operations: { [operationName: string]: Operation },
+    public fragments: { [fragmentName: string]: Fragment },
+    public options: CompilerOptions
+  ) {}
+
+  fragmentNamed(fragmentName: string): Fragment {
+    const fragment = this.fragments[fragmentName];
+    if (!fragment) {
+      throw new Error(`Cannot find fragment "${fragmentName}"`);
+    }
+    return fragment;
+  }
 }
 
 function argumentsFromAST(args: ArgumentNode[]): Argument[] {
@@ -93,6 +103,7 @@ export type Selection = Field | TypeCondition | BooleanCondition | FragmentSprea
 
 export interface Field {
   kind: 'Field';
+  responseKey: string;
   name: string;
   alias?: string;
   args?: Argument[];
@@ -120,6 +131,7 @@ export interface BooleanCondition {
 export interface FragmentSpread {
   kind: 'FragmentSpread';
   fragmentName: string;
+  isConditional?: boolean;
 }
 
 export function compileToIR(
@@ -151,7 +163,7 @@ export function compileToIR(
 
   const typesUsed = compiler.typesUsed;
 
-  return { schema, typesUsed, operations, fragments, options };
+  return new CompilerContext(schema, typesUsed, operations, fragments, options);
 }
 
 class Compiler {
@@ -250,7 +262,7 @@ class Compiler {
             possibleTypes
           )
         )
-        .filter(selection => selection) as Selection[]
+        .filter(x => x) as Selection[]
     };
   }
 
@@ -284,8 +296,11 @@ class Compiler {
 
         const { description, isDeprecated, deprecationReason } = fieldDef;
 
+        const responseKey = alias || name;
+
         let field: Field = {
           kind: 'Field',
+          responseKey,
           name,
           alias,
           args,
@@ -380,7 +395,7 @@ function wrapInBooleanConditionsIfNeeded(
         case 'Variable':
           selection = {
             kind: 'BooleanCondition',
-            variableName: 'bla',
+            variableName: value.name.value,
             inverted: directiveName === 'skip',
             selectionSet: {
               possibleTypes,
