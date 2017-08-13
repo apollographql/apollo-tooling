@@ -1,12 +1,11 @@
-import { parse, buildSchema, isType } from 'graphql';
+import { parse, buildSchema } from 'graphql';
 
 import { compileToIR, CompilerOptions, SelectionSet, Field } from '../../src/compiler';
 
 import { TypeCase, Record } from '../../src/compiler/flattenIR';
 
-import { mergeInFragmentSpreads } from '../../src/compiler/visitors/mergeInFragmentSpreads';
-
 import { loadSchema } from '../../src/loading';
+import { mergeInFragmentSpreads } from "../../src/compiler/visitors/mergeInFragmentSpreads";
 const schema = loadSchema(require.resolve('../starwars/schema.json'));
 
 const animalSchema = buildSchema(`
@@ -45,7 +44,7 @@ const animalSchema = buildSchema(`
   }
 `);
 
-function compileFromSource(source, options: CompilerOptions = {}) {
+function compileFromSource(source: string, options: CompilerOptions = {}) {
   const document = parse(source);
   return compileToIR(schema, document, options);
 }
@@ -141,8 +140,9 @@ describe('TypeCase', () => {
       }
     `);
 
-    const heroField = context.operations['Hero'].selectionSet.selections[0] as Field;
-    const typeCase = new TypeCase(heroField.selectionSet);
+    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
+      .selectionSet as SelectionSet;
+    const typeCase = new TypeCase(selectionSet);
 
     expect(typeCase.records).toHaveLength(1);
     expect(typeCase).toContainRecordMatching(['Human', 'Droid'], ['id', 'name', 'appearsIn']);
@@ -168,8 +168,9 @@ describe('TypeCase', () => {
       }
     `);
 
-    const heroField = context.operations['Hero'].selectionSet.selections[0] as Field;
-    const typeCase = new TypeCase(mergeInFragmentSpreads(heroField.selectionSet, context.fragments));
+    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
+      .selectionSet as SelectionSet;
+    const typeCase = new TypeCase(mergeInFragmentSpreads(context, selectionSet));
 
     expect(typeCase.records).toHaveLength(1);
     expect(typeCase).toContainRecordMatching(['Human', 'Droid'], ['id', 'name', 'appearsIn']);
@@ -207,8 +208,9 @@ describe('TypeCase', () => {
     `)
     );
 
-    const heroesField = context.operations['Hero'].selectionSet.selections[0] as Field;
-    const typeCase = new TypeCase(heroesField.selectionSet);
+    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
+      .selectionSet as SelectionSet;
+    const typeCase = new TypeCase(selectionSet);
 
     expect(typeCase.records).toHaveLength(1);
     expect(typeCase).toContainRecordMatching(['Human', 'Droid'], ['name']);
@@ -230,8 +232,9 @@ describe('TypeCase', () => {
       }
     `);
 
-    const heroField = context.operations['Hero'].selectionSet.selections[0] as Field;
-    const typeCase = new TypeCase(heroField.selectionSet);
+    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
+      .selectionSet as SelectionSet;
+    const typeCase = new TypeCase(selectionSet);
 
     expect(typeCase.records).toHaveLength(2);
     expect(typeCase).toContainRecordMatching(['Droid'], ['name', 'primaryFunction', 'appearsIn']);
@@ -253,8 +256,9 @@ describe('TypeCase', () => {
       }
     `);
 
-    const heroField = context.operations['Hero'].selectionSet.selections[0] as Field;
-    const typeCase = new TypeCase(heroField.selectionSet);
+    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
+      .selectionSet as SelectionSet;
+    const typeCase = new TypeCase(selectionSet);
 
     expect(typeCase.records).toHaveLength(2);
     expect(typeCase).toContainRecordMatching(['Droid'], ['name', 'primaryFunction', 'appearsIn']);
@@ -274,8 +278,9 @@ describe('TypeCase', () => {
       }
     `);
 
-    const heroField = context.operations['Hero'].selectionSet.selections[0] as Field;
-    const typeCase = new TypeCase(heroField.selectionSet);
+    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
+      .selectionSet as SelectionSet;
+    const typeCase = new TypeCase(selectionSet);
 
     expect(typeCase.records).toHaveLength(2);
     expect(typeCase).toContainRecordMatching(['Droid'], ['name']);
@@ -295,8 +300,9 @@ describe('TypeCase', () => {
       }
     `);
 
-    const heroField = context.operations['Hero'].selectionSet.selections[0] as Field;
-    const typeCase = new TypeCase(heroField.selectionSet);
+    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
+      .selectionSet as SelectionSet;
+    const typeCase = new TypeCase(selectionSet);
 
     expect(typeCase.records).toHaveLength(2);
     expect(typeCase).toContainRecordMatching(['Droid'], ['name']);
@@ -320,8 +326,9 @@ describe('TypeCase', () => {
     `)
     );
 
-    const animalField = context.operations['Animal'].selectionSet.selections[0] as Field;
-    const typeCase = new TypeCase(animalField.selectionSet);
+    const selectionSet = (context.operations['Animal'].selectionSet.selections[0] as Field)
+      .selectionSet as SelectionSet;
+    const typeCase = new TypeCase(selectionSet);
 
     expect(typeCase.records).toHaveLength(3);
     expect(typeCase).toContainRecordMatching(['Cat', 'Bird'], ['name', 'bodyTemperature']);
@@ -352,8 +359,9 @@ describe('TypeCase', () => {
     `)
     );
 
-    const field = context.operations['Animal'].selectionSet.selections[0] as Field;
-    const typeCase = new TypeCase(field.selectionSet);
+    const selectionSet = (context.operations['Animal'].selectionSet.selections[0] as Field)
+      .selectionSet as SelectionSet;
+    const typeCase = new TypeCase(selectionSet);
 
     expect(typeCase.records).toHaveLength(3);
     expect(typeCase).toContainRecordMatching(['Cat', 'Bird'], ['name', 'bodyTemperature']);
@@ -378,8 +386,9 @@ describe('TypeCase', () => {
     `)
     );
 
-    const field = context.operations['Animal'].selectionSet.selections[0] as Field;
-    const typeCase = new TypeCase(field.selectionSet);
+    const selectionSet = (context.operations['Animal'].selectionSet.selections[0] as Field)
+      .selectionSet as SelectionSet;
+    const typeCase = new TypeCase(selectionSet);
 
     expect(typeCase.records).toHaveLength(1);
     expect(typeCase).toContainRecordMatching(['Cat', 'Bird'], ['name', 'bodyTemperature']);

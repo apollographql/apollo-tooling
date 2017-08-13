@@ -4,7 +4,7 @@
  * Given maybeArray, print an empty string if it is null or empty, otherwise
  * print all items together separated by separator if provided
  */
-export function join(maybeArray: any[], separator?: string) {
+export function join(maybeArray?: any[], separator?: string) {
   return maybeArray ? maybeArray.filter(x => x).join(separator || '') : '';
 }
 

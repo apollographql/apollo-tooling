@@ -28,7 +28,13 @@ import {
   OperationDefinitionNode,
   FieldNode,
   GraphQLField,
+  GraphQLList,
+  GraphQLNonNull
 } from 'graphql';
+
+export function isList(type: GraphQLType): boolean {
+  return type instanceof GraphQLList || (type instanceof GraphQLNonNull && type.ofType instanceof GraphQLList);
+}
 
 const builtInScalarTypes = new Set([GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID]);
 
