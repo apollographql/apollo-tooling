@@ -22,7 +22,6 @@ export class Record {
         existingField.selectionSet.selections.push(...field.selectionSet.selections);
       }
     } else {
-      // this.fieldMap.set(responseKey, { ...field, isConditional });
       // Make sure to deep clone selections to avoid modifying the original field
       // TODO: Should we use an object freezing / immutability solution?
       const clonedField = {

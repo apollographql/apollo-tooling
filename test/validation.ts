@@ -1,18 +1,20 @@
-import { readFileSync } from 'fs';
 import * as path from 'path';
 
 import { loadSchema, loadAndMergeQueryDocuments } from '../src/loading';
 
 import { validateQueryDocument } from '../src/validation';
 
-const schema = loadSchema(require.resolve('./starwars/schema.json'));
+const schema = loadSchema(require.resolve('./fixtures/starwars/schema.json'));
 
 describe('Validation', () => {
+  function loadQueryDocument(filename: string) {
+    return loadAndMergeQueryDocuments([
+      path.join(__dirname, './fixtures/starwars', filename),
+    ]);
+  }
+
   test(`should throw an error for AnonymousQuery.graphql`, () => {
-    const inputPaths = [
-      path.join(__dirname, './starwars/AnonymousQuery.graphql'),
-    ];
-    const document = loadAndMergeQueryDocuments(inputPaths);
+    const document = loadQueryDocument('AnonymousQuery.graphql');
 
     expect(
       () => validateQueryDocument(schema, document)
@@ -22,10 +24,7 @@ describe('Validation', () => {
   });
 
   test(`should throw an error for ExplicitTypename.graphql for the Swift target`, () => {
-    const inputPaths = [
-      path.join(__dirname, './starwars/ExplicitTypename.graphql'),
-    ];
-    const document = loadAndMergeQueryDocuments(inputPaths);
+    const document = loadQueryDocument('ExplicitTypename.graphql');
 
     expect(
       () => validateQueryDocument(schema, document, 'swift')
@@ -35,10 +34,7 @@ describe('Validation', () => {
   });
 
   test(`should throw an error for TypenameAlias.graphql`, () => {
-    const inputPaths = [
-      path.join(__dirname, './starwars/TypenameAlias.graphql'),
-    ];
-    const document = loadAndMergeQueryDocuments(inputPaths);
+    const document = loadQueryDocument('TypenameAlias.graphql');
 
     expect(
       () => validateQueryDocument(schema, document)

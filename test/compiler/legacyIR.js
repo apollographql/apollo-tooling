@@ -18,7 +18,7 @@ function withStringifiedTypes(ir) {
   return JSON.parse(serializeAST(ir));
 }
 
-const schema = loadSchema(require.resolve('../starwars/schema.json'));
+const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
 
 describe('Compiling query documents to the legacy IR', () => {
   test(`should include variables defined in operations`, () => {
@@ -116,37 +116,18 @@ describe('Compiling query documents to the legacy IR', () => {
   });
 
   test(`should keep track of types used in fields of input objects`, () => {
-    const bookstore_schema = loadSchema(require.resolve('../bookstore/schema.json'));
     const document = parse(`
-      query ListBooks {
-        books {
-          id name writtenBy { author { id name } }
+      mutation FieldArgumentsWithInputObjects($review: ReviewInput!) {
+        createReview(episode: JEDI, review: $review) {
+          commentary
         }
       }
+      `);
 
-      mutation CreateBook($book: BookInput!) {
-        createBook(book: $book) {
-          id, name, writtenBy { author { id name } }
-        }
-      }
+    const { typesUsed } = withStringifiedTypes(compileToLegacyIR(schema, document));
 
-      query ListPublishers {
-        publishers {
-          id name
-        }
-      }
-
-      query ListAuthors($publishedBy: PublishedByInput!) {
-        authors(publishedBy: $publishedBy) {
-          id name publishedBy { publisher { id name } }
-        }
-      }
-    `)
-
-    const { typesUsed } = withStringifiedTypes(compileToLegacyIR(bookstore_schema, document));
-
-    expect(typesUsed).toContain('IdInput');
-    expect(typesUsed).toContain('WrittenByInput');
+    expect(typesUsed).toContain('ReviewInput');
+    expect(typesUsed).toContain('ColorInput');
   });
 
   test(`should include the original field name for an aliased field`, () => {

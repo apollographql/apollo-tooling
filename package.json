@@ -48,11 +48,6 @@
     "yargs": "^8.0.2"
   },
   "jest": {
-    "globals": {
-      "ts-jest": {
-        "skipBabel": true
-      }
-    },
     "testEnvironment": "node",
     "setupFiles": [
       "<rootDir>/src/polyfills.js"
@@ -64,7 +59,7 @@
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/lib/",
-      "<rootDir>/test/starwars/",
+      "<rootDir>/test/fixtures/",
       "<rootDir>/test/preprocessor.js"
     ],
     "transform": {

@@ -6,7 +6,7 @@ import { TypeCase, Record } from '../../src/compiler/flattenIR';
 
 import { loadSchema } from '../../src/loading';
 import { mergeInFragmentSpreads } from "../../src/compiler/visitors/mergeInFragmentSpreads";
-const schema = loadSchema(require.resolve('../starwars/schema.json'));
+const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
 
 const animalSchema = buildSchema(`
   type Query {

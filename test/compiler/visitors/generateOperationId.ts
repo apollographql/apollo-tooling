@@ -4,7 +4,7 @@ import { CompilerOptions, compileToIR } from '../../../src/compiler';
 import { generateOperationId } from '../../../src/compiler/visitors/generateOperationId';
 import { stripIndent } from 'common-tags';
 
-const schema = loadSchema(require.resolve('../../starwars/schema.json'));
+const schema = loadSchema(require.resolve('../../fixtures/starwars/schema.json'));
 
 function compileFromSource(source: string, options: CompilerOptions = {}) {
   const document = parse(source);

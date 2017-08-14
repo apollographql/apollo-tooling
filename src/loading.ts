@@ -40,7 +40,7 @@ function extractDocumentFromJavascript(content: string, tagName: string = 'gql')
   return doc.length ? doc : null;
 }
 
-export function loadAndMergeQueryDocuments(inputPaths: string[], tagName: string): DocumentNode {
+export function loadAndMergeQueryDocuments(inputPaths: string[], tagName: string = 'gql'): DocumentNode {
   const sources = inputPaths.map(inputPath => {
     const body = fs.readFileSync(inputPath, 'utf8');
     if (!body) {
