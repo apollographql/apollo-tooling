@@ -15,8 +15,8 @@ import {
 } from '../../src/typescript/codeGeneration';
 
 import { loadSchema } from '../../src/loading';
-const swapiSchema = loadSchema(require.resolve('../starwars/schema.json'));
-const miscSchema = loadSchema(require.resolve('../misc/schema.json'));
+const starWarsSchema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
+const miscSchema = loadSchema(require.resolve('../fixtures/misc/schema.json'));
 
 import CodeGenerator from '../../src/utilities/CodeGenerator';
 
@@ -56,7 +56,7 @@ describe('TypeScript code generation', function() {
 
   describe('#generateSource()', function() {
     test(`should generate simple query operations`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroName {
           hero {
@@ -70,7 +70,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate simple query operations including input variables`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
@@ -84,7 +84,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate simple nested query operations including input variables`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroAndFriendsNames($episode: Episode) {
           hero(episode: $episode) {
@@ -101,7 +101,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate simple nested with required elements in lists`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query StarshipCoords {
           starship {
@@ -115,7 +115,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate fragmented query operations`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroAndFriendsNames {
           hero {
@@ -136,7 +136,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate query operations with inline fragments`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroAndDetails {
           hero {
@@ -160,7 +160,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate mutation operations with complex input types`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
           createReview(episode: $episode, review: $review) {
@@ -175,7 +175,7 @@ describe('TypeScript code generation', function() {
     });
 
     test(`should generate correct list with custom fragment`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         fragment Friend on Character {
           name

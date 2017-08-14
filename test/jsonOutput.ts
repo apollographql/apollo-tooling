@@ -3,10 +3,10 @@ import { compileToLegacyIR, CompilerOptions } from '../src/compiler/legacyIR';
 import serializeToJSON from '../src/serializeToJSON';
 
 import { loadSchema } from '../src/loading';
-const schema = loadSchema(require.resolve('./starwars/schema.json'));
+const schema = loadSchema(require.resolve('./fixtures/starwars/schema.json'));
 
 function compileFromSource(
-  source,
+  source: string,
   options: CompilerOptions = {
     mergeInFieldsFromFragmentSpreads: false,
     addTypename: true

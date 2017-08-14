@@ -13,8 +13,8 @@ import {
 } from '../../src/flow/codeGeneration';
 
 import { loadSchema } from '../../src/loading';
-const swapiSchema = loadSchema(require.resolve('../starwars/schema.json'));
-const miscSchema = loadSchema(require.resolve('../misc/schema.json'));
+const starWarsSchema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
+const miscSchema = loadSchema(require.resolve('../fixtures/misc/schema.json'));
 
 import CodeGenerator from '../../src/utilities/CodeGenerator';
 
@@ -47,7 +47,7 @@ function setup(schema) {
 describe('Flow code generation', function() {
   describe('#generateSource()', function() {
     test(`should generate simple query operations`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroName {
           hero {
@@ -61,7 +61,7 @@ describe('Flow code generation', function() {
     });
 
     test(`should generate simple query operations including input variables`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
@@ -75,7 +75,7 @@ describe('Flow code generation', function() {
     });
 
     test(`should generate simple nested query operations including input variables`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroAndFriendsNames($episode: Episode) {
           hero(episode: $episode) {
@@ -92,7 +92,7 @@ describe('Flow code generation', function() {
     });
 
     test(`should generate simple nested with required elements in lists`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query StarshipCoords {
           starship {
@@ -106,7 +106,7 @@ describe('Flow code generation', function() {
     });
 
     test(`should generate fragmented query operations`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroAndFriendsNames {
           hero {
@@ -127,7 +127,7 @@ describe('Flow code generation', function() {
     });
 
     test(`should generate query operations with inline fragments`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroAndDetails {
           hero {
@@ -151,7 +151,7 @@ describe('Flow code generation', function() {
     });
 
     test(`should generate mutation operations with complex input types`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
           createReview(episode: $episode, review: $review) {
@@ -166,7 +166,7 @@ describe('Flow code generation', function() {
     });
 
     test(`should generate correct typedefs with a single custom fragment`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         fragment Friend on Character {
           name
@@ -187,7 +187,7 @@ describe('Flow code generation', function() {
     });
 
     test(`should generate correct typedefs with a multiple custom fragments`, function() {
-      const { compileFromSource } = setup(swapiSchema);
+      const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         fragment Friend on Character {
           name
