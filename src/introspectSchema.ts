@@ -5,12 +5,12 @@ import { introspectionQuery } from 'graphql/utilities';
 
 import { ToolError } from './errors'
 
-export async function introspect(schemaContents) {
+export async function introspect(schemaContents: string) {
   const schema = buildASTSchema(parse(schemaContents));
   return await graphql(schema, introspectionQuery);
 }
 
-export default async function introspectSchema(schemaPath, outputPath) {
+export default async function introspectSchema(schemaPath: string, outputPath: string) {
   if (!fs.existsSync(schemaPath)) {
     throw new ToolError(`Cannot find GraphQL schema file: ${schemaPath}`);
   }

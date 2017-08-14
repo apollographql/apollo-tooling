@@ -1,5 +1,5 @@
-import { readFileSync } from 'fs'
-import { join } from 'path'
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 import { introspect } from '../src/introspectSchema';
 
@@ -12,4 +12,4 @@ describe('Introspecting GraphQL schema documents', () => {
 
     expect(JSON.stringify(schema, null, 2)).toEqual(expected);
   });
-})
+});
