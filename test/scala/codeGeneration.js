@@ -24,7 +24,7 @@ import {
 } from '../../src/scala/values';
 
 import { loadSchema } from '../../src/loading';
-const schema = loadSchema(require.resolve('../starwars/schema.json'));
+const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
 
 import CodeGenerator from '../../src/utilities/CodeGenerator';
 
@@ -45,7 +45,7 @@ describe('Scala code generation', function() {
         fragments: {},
         typesUsed: {}
       }
-      generator = new CodeGenerator(context);  
+      generator = new CodeGenerator(context);
     };
 
     compileFromSource = (source, options = { generateOperationIds: false }) => {

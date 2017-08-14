@@ -12,7 +12,7 @@ import {
 } from 'graphql';
 
 import { loadSchema } from '../../src/loading'
-const schema = loadSchema(require.resolve('../starwars/schema.json'));
+const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
 
 import CodeGenerator from '../../src/utilities/CodeGenerator';
 
