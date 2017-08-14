@@ -4,7 +4,7 @@ import { buildClientSchema, printSchema } from 'graphql';
 
 import { ToolError } from './errors'
 
-export default async function printSchemaFromIntrospectionResult(schemaPath, outputPath) {
+export default async function printSchemaFromIntrospectionResult(schemaPath: string, outputPath: string) {
   if (!fs.existsSync(schemaPath)) {
     throw new ToolError(`Cannot find GraphQL schema file: ${schemaPath}`);
   }
