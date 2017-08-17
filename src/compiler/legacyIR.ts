@@ -70,11 +70,17 @@ export interface LegacyField {
   type: GraphQLType;
   description?: string;
   isConditional?: boolean;
+  conditions?: BooleanCondition[];
   isDeprecated?: boolean;
   deprecationReason?: string;
   fields?: LegacyField[];
   fragmentSpreads?: string[];
   inlineFragments?: LegacyInlineFragment[];
+}
+
+export interface BooleanCondition {
+  variableName: string;
+  inverted: boolean;
 }
 
 export interface Argument {
@@ -105,7 +111,11 @@ class LegacyIRTransformer {
       const { filePath, operationType, rootType, variables, source, selectionSet } = operation;
       const fragmentsReferenced = collectFragmentsReferenced(this.context, selectionSet);
 
-      const { sourceWithFragments, operationId } = generateOperationId(this.context, operation, fragmentsReferenced);
+      const { sourceWithFragments, operationId } = generateOperationId(
+        this.context,
+        operation,
+        fragmentsReferenced
+      );
 
       operations[operationName] = {
         filePath,
@@ -146,7 +156,9 @@ class LegacyIRTransformer {
 
   transformSelectionSetToLegacyIR(selectionSet: SelectionSet) {
     const typeCase = new TypeCase(
-      this.options.mergeInFieldsFromFragmentSpreads ? mergeInFragmentSpreads(this.context, selectionSet) : selectionSet
+      this.options.mergeInFieldsFromFragmentSpreads
+        ? mergeInFragmentSpreads(this.context, selectionSet)
+        : selectionSet
     );
 
     const fields: LegacyField[] = this.transformFieldsToLegacyIR(typeCase.default.fields);
@@ -192,12 +204,22 @@ class LegacyIRTransformer {
   transformFieldsToLegacyIR(fields: Field[]) {
     return fields.map(field => {
       const { args, type, isConditional, description, isDeprecated, deprecationReason, selectionSet } = field;
+      const conditions = (field.conditions && field.conditions.length > 0)
+        ? field.conditions.map(({ kind, variableName, inverted }) => {
+            return {
+              kind,
+              variableName,
+              inverted
+            };
+          })
+        : undefined;
       return {
         responseName: field.alias || field.name,
         fieldName: field.name,
         type,
         args,
         isConditional,
+        conditions,
         description,
         isDeprecated,
         deprecationReason,
