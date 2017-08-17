@@ -2,7 +2,13 @@ import { inspect } from 'util';
 
 import { GraphQLObjectType } from 'graphql';
 
-import { SelectionSet, Field } from './';
+import { SelectionSet, Field, BooleanCondition } from './';
+
+declare module './' {
+  interface Field {
+    conditions?: BooleanCondition[];
+  }
+}
 
 export type FieldMap = Map<string, Field>;
 
@@ -13,10 +19,13 @@ export class Record {
     return Array.from(this.fieldMap.values());
   }
 
-  addField(field: Field, isConditional: boolean) {
+  addField(field: Field, conditions: BooleanCondition[]) {
     const existingField = this.fieldMap.get(field.responseKey);
     if (existingField) {
-      existingField.isConditional = existingField.isConditional && isConditional;
+      if (conditions.length > 0) {
+        existingField.conditions = [...(existingField.conditions || []), ...conditions];
+        existingField.isConditional = true;
+      }
 
       if (field.selectionSet && existingField.selectionSet) {
         existingField.selectionSet.selections.push(...field.selectionSet.selections);
@@ -30,7 +39,8 @@ export class Record {
           ? { ...field.selectionSet, selections: [...field.selectionSet.selections] }
           : undefined
       };
-      this.fieldMap.set(field.responseKey, { ...clonedField, isConditional });
+      clonedField.isConditional = conditions.length > 0;
+      this.fieldMap.set(field.responseKey, { ...clonedField, conditions });
     }
   }
 }
@@ -62,25 +72,25 @@ export class TypeCase {
     this.replaceFieldsWithObjectTypeSpecificDescriptionsIfAvailable();
   }
 
-  private visitSelectionSet(selectionSet: SelectionSet, isConditional: boolean = false) {
+  private visitSelectionSet(selectionSet: SelectionSet, conditions: BooleanCondition[] = []) {
     for (const selection of selectionSet.selections) {
       switch (selection.kind) {
         case 'Field':
           // Add the field to all records that represent the possible types of the selection set.
           for (const record of this.recordsFor(selectionSet.possibleTypes)) {
-            record.addField(selection, isConditional);
+            record.addField(selection, conditions);
           }
 
           // Also add the field to the default record as long as the selection set matches all possible types.
           if (this.default.possibleTypes.every(type => selectionSet.possibleTypes.includes(type))) {
-            this.default.addField(selection, isConditional);
+            this.default.addField(selection, conditions);
           }
           break;
         case 'TypeCondition':
-          this.visitSelectionSet(selection.selectionSet, isConditional);
+          this.visitSelectionSet(selection.selectionSet, conditions);
           break;
         case 'BooleanCondition':
-          this.visitSelectionSet(selection.selectionSet, true);
+          this.visitSelectionSet(selection.selectionSet, [selection, ...conditions]);
           break;
       }
     }
