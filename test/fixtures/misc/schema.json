@@ -200,11 +200,46 @@
               },
               "isDeprecated": false,
               "deprecationReason": null
+            },
+            {
+              "name": "enumCommentTest",
+              "description": "",
+              "args": [],
+              "type": {
+                "kind": "ENUM",
+                "name": "EnumCommentTestCase",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
             }
           ],
           "inputFields": null,
           "interfaces": [],
           "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "ENUM",
+          "name": "EnumCommentTestCase",
+          "description": "",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": [
+            {
+              "name": "first",
+              "description": "This is a single-line comment",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "second",
+              "description": "This is a multi-line\ncomment.",
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
           "possibleTypes": null
         },
         {

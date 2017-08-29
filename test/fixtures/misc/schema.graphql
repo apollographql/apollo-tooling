@@ -21,6 +21,15 @@ type CommentTest {
   # This is a multi-line
   # comment.
   multiLine: String
+  enumCommentTest: EnumCommentTestCase
+}
+
+enum EnumCommentTestCase {
+  # This is a single-line comment
+  first
+  # This is a multi-line
+  # comment.
+  second
 }
 
 interface InterfaceTestCase {
@@ -54,5 +63,3 @@ type Query {
   unionTest: UnionTestCase
   scalarTest: Boolean!
 }
-
-

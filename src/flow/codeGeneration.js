@@ -73,9 +73,19 @@ function enumerationDeclaration(generator, type) {
   }
   generator.printOnNewline(`export type ${name} =`);
   const nValues = values.length;
-  values.forEach((value, i) =>
-    generator.printOnNewline(`  "${value.value}"${i === nValues-1 ? ';' : ' |'}${wrap(' // ', value.description)}`)
-  );
+  values.forEach((value, i) => {
+    if (!value.description || value.description.indexOf('\n') === -1) {
+      generator.printOnNewline(`  "${value.value}"${i === nValues - 1 ? ';' : ' |'}${wrap(' // ', value.description)}`)
+    } else {
+      if (value.description) {
+        value.description.split('\n')
+          .forEach(line => {
+            generator.printOnNewline(`  // ${line.trim()}`);
+          })
+      }
+      generator.printOnNewline(`  "${value.value}"${i === nValues - 1 ? ';' : ' |'}`)
+    }
+  });
   generator.printNewline();
 }
 
