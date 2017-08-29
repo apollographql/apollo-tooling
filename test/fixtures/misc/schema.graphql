@@ -52,6 +52,7 @@ type Query {
   commentTest: CommentTest
   interfaceTest: InterfaceTestCase
   unionTest: UnionTestCase
+  scalarTest: Boolean!
 }
 
 
