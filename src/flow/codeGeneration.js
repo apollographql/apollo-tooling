@@ -146,7 +146,7 @@ export function typeDeclarationForOperation(
 ) {
   const interfaceName = interfaceNameFromOperation({operationName, operationType});
   fields = fields.map(rootField => {
-    const fields = rootField.fields.map(field => {
+    const fields = rootField.fields && rootField.fields.map(field => {
       if (field.fieldName === '__typename') {
         return {
           ...field,

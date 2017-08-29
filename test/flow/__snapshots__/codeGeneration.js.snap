@@ -433,6 +433,15 @@ export type CustomScalarQuery = {|
 |};"
 `;
 
+exports[`Flow code generation #generateSource() should handle scalars at root 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type RootScalarQuery = {|
+  scalarTest: boolean,
+|};"
+`;
+
 exports[`Flow code generation #generateSource() should handle single line comments 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
