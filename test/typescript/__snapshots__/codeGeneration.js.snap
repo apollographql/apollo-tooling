@@ -332,6 +332,27 @@ export type HeroNameQuery = {
 "
 `;
 
+exports[`TypeScript code generation #generateSource() should handle comments in enums 1`] = `
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
+
+export type EnumCommentTestCase =
+  \\"first\\" | // This is a single-line comment
+  // This is a multi-line
+  // comment.
+  \\"second\\";
+
+
+export type CustomScalarQuery = {
+  commentTest:  {
+    __typename: \\"CommentTest\\",
+    enumCommentTest: EnumCommentTestCase | null,
+  } | null,
+};
+/* tslint:enable */
+"
+`;
+
 exports[`TypeScript code generation #generateSource() should handle interfaces at root 1`] = `
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.

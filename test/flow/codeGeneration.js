@@ -254,6 +254,20 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
+    test('should handle comments in enums', () => {
+      const { compileFromSource } = setup(miscSchema);
+      const context = compileFromSource(`
+        query CustomScalar {
+          commentTest {
+            enumCommentTest
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
     test('should handle interfaces at root', () => {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
