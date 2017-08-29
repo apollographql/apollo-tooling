@@ -401,6 +401,25 @@ export type HeroNameQuery = {|
 |};"
 `;
 
+exports[`Flow code generation #generateSource() should handle comments in enums 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type EnumCommentTestCase =
+  \\"first\\" | // This is a single-line comment
+  // This is a multi-line
+  // comment.
+  \\"second\\";
+
+
+export type CustomScalarQuery = {|
+  commentTest: ? {|
+    __typename: \\"CommentTest\\",
+    enumCommentTest: ?EnumCommentTestCase,
+  |},
+|};"
+`;
+
 exports[`Flow code generation #generateSource() should handle interfaces at root 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
