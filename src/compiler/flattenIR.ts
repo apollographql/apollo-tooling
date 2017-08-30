@@ -4,6 +4,8 @@ import { GraphQLObjectType } from 'graphql';
 
 import { SelectionSet, Field, BooleanCondition } from './';
 
+// This is a temporary workaround to keep track of conditions on fields in the flattened IR.
+// It is only added here because we want to expose it to the Android target, which relies on the legacy IR.
 declare module './' {
   interface Field {
     conditions?: BooleanCondition[];
