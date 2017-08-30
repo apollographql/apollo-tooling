@@ -9,6 +9,11 @@ import {
   GraphQLSchema
 } from 'graphql';
 
+import {
+  getGraphQLProjectConfig,
+  ConfigNotFoundError
+} from 'graphql-config'
+
 import { ToolError } from './errors'
 
 export function loadSchema(schemaPath: string): GraphQLSchema {
@@ -21,6 +26,25 @@ export function loadSchema(schemaPath: string): GraphQLSchema {
     throw new ToolError('GraphQL schema file should contain a valid GraphQL introspection query result');
   }
   return buildClientSchema((schemaData.data) ? schemaData.data : schemaData);
+}
+
+export function loadSchemaFromConfig(projectName: string): GraphQLSchema {
+  try {
+    const config = getGraphQLProjectConfig('.', projectName);
+    return config.getSchema();
+  } catch (e) {
+    if (!(e instanceof ConfigNotFoundError)) {
+      throw e;
+    }
+  }
+
+  const defaultSchemaPath = 'schema.json';
+
+  if (fs.existsSync(defaultSchemaPath)) {
+    return loadSchema('schema.json');
+  }
+
+  throw new ToolError(`No GraphQL schema specified. There must either be a .graphqlconfig or a ${defaultSchemaPath} file present, or you must use the --schema option.`);
 }
 
 function extractDocumentFromJavascript(content: string, tagName: string = 'gql'): string | null {
