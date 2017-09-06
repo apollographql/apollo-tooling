@@ -536,16 +536,6 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             this.print('),');
             break;
           }
-          case 'TypeCondition': {
-            const structName = this.helpers.structNameForTypeCondition(selection.type);
-            this.printOnNewline(`GraphQLFragmentSpread(${structName}.self),`);
-            break;
-          }
-          case 'FragmentSpread': {
-            const structName = this.helpers.structNameForFragmentName(selection.fragmentName);
-            this.printOnNewline(`GraphQLFragmentSpread(${structName}.self),`);
-            break;
-          }
           case 'BooleanCondition':
             this.printOnNewline(`GraphQLBooleanCondition(`);
             this.print(
@@ -561,6 +551,29 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             this.selectionSetInitialization(selection.selectionSet);
             this.print('),');
             break;
+          case 'TypeCondition': {
+            this.printOnNewline(`GraphQLTypeCondition(`);
+            this.print(
+              join(
+                [
+                  `possibleTypes: [${join(
+                    selection.selectionSet.possibleTypes.map(type => `"${type.name}"`),
+                    ', '
+                  )}]`,
+                  'selections: '
+                ],
+                ', '
+              )
+            );
+            this.selectionSetInitialization(selection.selectionSet);
+            this.print('),');
+            break;
+          }
+          case 'FragmentSpread': {
+            const structName = this.helpers.structNameForFragmentName(selection.fragmentName);
+            this.printOnNewline(`GraphQLFragmentSpread(${structName}.self),`);
+            break;
+          }
         }
       }
     });
