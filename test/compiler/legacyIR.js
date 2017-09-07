@@ -21,7 +21,7 @@ function withStringifiedTypes(ir) {
 const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
 
 describe('Compiling query documents to the legacy IR', () => {
-  test(`should include variables defined in operations`, () => {
+  it(`should include variables defined in operations`, () => {
     const document = parse(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -67,7 +67,7 @@ describe('Compiling query documents to the legacy IR', () => {
     );
   });
 
-  test(`should keep track of enums and input object types used in variables`, () => {
+  it(`should keep track of enums and input object types used in variables`, () => {
     const document = parse(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -96,7 +96,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(typesUsed).toEqual(['Episode', 'ReviewInput', 'ColorInput']);
   });
 
-  test(`should keep track of enums used in fields`, () => {
+  it(`should keep track of enums used in fields`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -115,7 +115,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(typesUsed).toEqual(['Episode']);
   });
 
-  test(`should keep track of types used in fields of input objects`, () => {
+  it(`should keep track of types used in fields of input objects`, () => {
     const document = parse(`
       mutation FieldArgumentsWithInputObjects($review: ReviewInput!) {
         createReview(episode: JEDI, review: $review) {
@@ -130,7 +130,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(typesUsed).toContain('ColorInput');
   });
 
-  test(`should include the original field name for an aliased field`, () => {
+  it(`should include the original field name for an aliased field`, () => {
     const document = parse(`
       query HeroName {
         r2: hero {
@@ -147,7 +147,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HeroName'].fields[0].fieldName).toBe("hero");
   });
 
-  test(`should include field arguments`, () => {
+  it(`should include field arguments`, () => {
     const document = parse(`
       query HeroName {
         hero(episode: EMPIRE) {
@@ -162,7 +162,7 @@ describe('Compiling query documents to the legacy IR', () => {
       .toEqual([{ name: "episode", value: "EMPIRE" }]);
   });
 
-  test(`should include isConditional if a field has skip or include directives with variables`, () => {
+  it(`should include isConditional if a field has skip or include directives with variables`, () => {
     const document = parse(`
       query HeroNameConditionalInclusion($includeName: Boolean!) {
         hero {
@@ -190,7 +190,7 @@ describe('Compiling query documents to the legacy IR', () => {
     });
   });
 
-  test(`should not include isConditional if a field has skip or include directives with a boolean literal that always passes`, () => {
+  it(`should not include isConditional if a field has skip or include directives with a boolean literal that always passes`, () => {
     const document = parse(`
       query HeroNameConditionalInclusion {
         hero {
@@ -218,7 +218,7 @@ describe('Compiling query documents to the legacy IR', () => {
     });
   });
 
-  test(`should not include field if it has skip or include directives with a boolean literal that always fails`, () => {
+  it(`should not include field if it has skip or include directives with a boolean literal that always fails`, () => {
     const document = parse(`
       query HeroNameConditionalInclusion {
         hero {
@@ -239,7 +239,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HeroNameConditionalExclusion'].fields[0].fields).toHaveLength(0);
   });
 
-    test(`should include isConditional if a field in inside an inline fragment with skip or include directives with variables`, () => {
+    it(`should include isConditional if a field in inside an inline fragment with skip or include directives with variables`, () => {
     const document = parse(`
       query HeroNameConditionalInclusion($includeName: Boolean!) {
         hero {
@@ -271,7 +271,7 @@ describe('Compiling query documents to the legacy IR', () => {
     });
   });
 
-  test(`should include isConditional if a field in inside a fragment spread with skip or include directives with variables`, () => {
+  it(`should include isConditional if a field in inside a fragment spread with skip or include directives with variables`, () => {
     const document = parse(`
       query HeroNameConditionalInclusion($includeName: Boolean!) {
         hero {
@@ -309,7 +309,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HeroNameConditionalExclusion'].fields[0].fragmentSpreads).toEqual(['HeroName']);
   });
 
-  test(`should recursively flatten inline fragments with type conditions that match the parent type`, () => {
+  it(`should recursively flatten inline fragments with type conditions that match the parent type`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -332,7 +332,7 @@ describe('Compiling query documents to the legacy IR', () => {
       .toEqual(['id', 'name', 'appearsIn']);
   });
 
-  test(`should recursively include fragment spreads with type conditions that match the parent type`, () => {
+  it(`should recursively include fragment spreads with type conditions that match the parent type`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -368,7 +368,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(fragments['HeroDetails'].fragmentSpreads).toEqual(['MoreHeroDetails']);
   });
 
-  test(`should include fragment spreads from subselections`, () => {
+  it(`should include fragment spreads from subselections`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
@@ -402,7 +402,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HeroAndFriends'].fields[0].fragmentSpreads).toEqual(['HeroDetails']);
   });
 
-  test(`should include type conditions with merged fields for inline fragments`, () => {
+  it(`should include type conditions with merged fields for inline fragments`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -433,7 +433,7 @@ describe('Compiling query documents to the legacy IR', () => {
         .toEqual(['name', 'height']);
   });
 
-  test(`should include fragment spreads with type conditions`, () => {
+  it(`should include fragment spreads with type conditions`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -469,7 +469,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['Hero'].fields[0].fragmentSpreads).toEqual(['DroidDetails', 'HumanDetails']);
   });
 
-  test(`should not include type conditions for fragment spreads with type conditions that match the parent type`, () => {
+  it(`should not include type conditions for fragment spreads with type conditions that match the parent type`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -488,7 +488,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['Hero'].fields[0].inlineFragments).toEqual([]);
   });
 
-  test(`should include type conditions for inline fragments in fragments`, () => {
+  it(`should include type conditions for inline fragments in fragments`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -524,7 +524,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['Hero'].fields[0].fragmentSpreads).toEqual(['HeroDetails']);
   });
 
-  test(`should inherit type condition when nesting an inline fragment in an inline fragment with a more specific type condition`, () => {
+  it(`should inherit type condition when nesting an inline fragment in an inline fragment with a more specific type condition`, () => {
     const document = parse(`
       query HeroName {
         hero {
@@ -546,7 +546,7 @@ describe('Compiling query documents to the legacy IR', () => {
       .toEqual(['name']);
   });
 
-  test(`should not inherit type condition when nesting an inline fragment in an inline fragment with a less specific type condition`, () => {
+  it(`should not inherit type condition when nesting an inline fragment in an inline fragment with a less specific type condition`, () => {
     const document = parse(`
       query HeroName {
         hero {
@@ -568,7 +568,7 @@ describe('Compiling query documents to the legacy IR', () => {
       .toEqual(['name']);
   });
 
-  test(`should inherit type condition when nesting a fragment spread in an inline fragment with a more specific type condition`, () => {
+  it(`should inherit type condition when nesting a fragment spread in an inline fragment with a more specific type condition`, () => {
     const document = parse(`
       query HeroName {
         hero {
@@ -596,7 +596,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HeroName'].fields[0].fragmentSpreads).toEqual([]);
   });
 
-  test(`should not inherit type condition when nesting a fragment spread in an inline fragment with a less specific type condition`, () => {
+  it(`should not inherit type condition when nesting a fragment spread in an inline fragment with a less specific type condition`, () => {
     const document = parse(`
       query HeroName {
         hero {
@@ -623,7 +623,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HeroName'].fields[0].fragmentSpreads).toEqual(['DroidName']);
   });
 
-  test(`should ignore inline fragment when the type condition does not overlap with the currently effective type`, () => {
+  it(`should ignore inline fragment when the type condition does not overlap with the currently effective type`, () => {
     const document = parse(`
       fragment CharacterDetails on Character {
         ... on Droid {
@@ -656,7 +656,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HumanAndDroid'].fields[1].inlineFragments).toEqual([]);
   });
 
-  test(`should ignore fragment spread when the type condition does not overlap with the currently effective type`, () => {
+  it(`should ignore fragment spread when the type condition does not overlap with the currently effective type`, () => {
     const document = parse(`
       fragment DroidPrimaryFunction on Droid {
         primaryFunction
@@ -693,7 +693,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HumanAndDroid'].fields[1].inlineFragments).toEqual([]);
   });
 
-  test(`should include type conditions for inline fragments on a union type`, () => {
+  it(`should include type conditions for inline fragments on a union type`, () => {
     const document = parse(`
       query Search {
         search(text: "an") {
@@ -724,7 +724,7 @@ describe('Compiling query documents to the legacy IR', () => {
       .toEqual(['name', 'height']);
   });
 
-  test(`should keep correct field ordering even if fragment is visited multiple times`, () => {
+  it(`should keep correct field ordering even if fragment is visited multiple times`, () => {
     const document = parse(`
       query Hero {
         hero {
@@ -745,7 +745,7 @@ describe('Compiling query documents to the legacy IR', () => {
       .toEqual(['name', 'appearsIn']);
   });
 
-  test(`should keep correct field ordering even if field has been visited before for other type condition`, () => {
+  it(`should keep correct field ordering even if field has been visited before for other type condition`, () => {
     const document = parse(`
       fragment HeroDetails on Character {
         ... on Human {
@@ -766,7 +766,7 @@ describe('Compiling query documents to the legacy IR', () => {
       .toEqual(['name', 'appearsIn']);
   });
 
-  test(`should keep track of fragments referenced in a subselection`, () => {
+  it(`should keep track of fragments referenced in a subselection`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
@@ -787,7 +787,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails']);
   });
 
-  test(`should keep track of fragments referenced in a fragment within a subselection`, () => {
+  it(`should keep track of fragments referenced in a fragment within a subselection`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
@@ -811,7 +811,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails', 'HeroName']);
   });
 
-  test(`should keep track of fragments referenced in a subselection nested in an inline fragment`, () => {
+  it(`should keep track of fragments referenced in a subselection nested in an inline fragment`, () => {
     const document = parse(`
       query HeroAndFriends {
         hero {
@@ -834,7 +834,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails']);
   });
 
-  test(`should include the source of operations`, () => {
+  it(`should include the source of operations`, () => {
     const source = stripIndent`
       query HeroName {
         hero {
@@ -849,7 +849,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HeroName'].source).toBe(source);
   });
 
-  test(`should include the source of fragments`, () => {
+  it(`should include the source of fragments`, () => {
     const source = stripIndent`
       fragment HeroDetails on Character {
         name
@@ -862,7 +862,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(fragments['HeroDetails'].source).toBe(source);
   });
 
-  test(`should include the source of operations with __typename added when addTypename is true`, () => {
+  it(`should include the source of operations with __typename added when addTypename is true`, () => {
     const source = stripIndent`
       query HeroName {
         hero {
@@ -884,7 +884,7 @@ describe('Compiling query documents to the legacy IR', () => {
     `);
   });
 
-  test(`should include the source of fragments with __typename added when addTypename is true`, () => {
+  it(`should include the source of fragments with __typename added when addTypename is true`, () => {
     const source = stripIndent`
       fragment HeroDetails on Character {
         name
@@ -902,7 +902,7 @@ describe('Compiling query documents to the legacy IR', () => {
     `);
   });
 
-  test(`should include the operationType for a query`, () => {
+  it(`should include the operationType for a query`, () => {
     const source = stripIndent`
       query HeroName {
         hero {
@@ -917,7 +917,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HeroName'].operationType).toBe('query');
   });
 
-  test(`should include the operationType for a mutation`, () => {
+  it(`should include the operationType for a mutation`, () => {
     const source = stripIndent`
       mutation CreateReview {
         createReview {

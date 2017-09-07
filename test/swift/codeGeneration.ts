@@ -21,7 +21,7 @@ describe('Swift code generation', () => {
     generator = new SwiftAPIGenerator({});
   });
 
-  function compileFromSource(
+  function compile(
     source: string,
     options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }
   ): CompilerContext {
@@ -32,8 +32,8 @@ describe('Swift code generation', () => {
   }
 
   describe('#classDeclarationForOperation()', () => {
-    test(`should generate a class declaration for a query with variables`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a class declaration for a query with variables`, () => {
+      const { operations } = compile(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
             name
@@ -46,8 +46,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a class declaration for a query with fragment spreads`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a class declaration for a query with fragment spreads`, () => {
+      const { operations } = compile(`
         query Hero {
           hero {
             ...HeroDetails
@@ -64,8 +64,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a class declaration for a query with conditional fragment spreads`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a class declaration for a query with conditional fragment spreads`, () => {
+      const { operations } = compile(`
         query Hero {
           hero {
             ...DroidDetails
@@ -82,8 +82,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, () => {
+      const { operations } = compile(`
         query Hero {
           hero {
             ... on Droid {
@@ -102,8 +102,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a class declaration for a mutation with variables`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a class declaration for a mutation with variables`, () => {
+      const { operations } = compile(`
         mutation CreateReview($episode: Episode) {
           createReview(episode: $episode, review: { stars: 5, commentary: "Wow!" }) {
             stars
@@ -117,8 +117,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a class declaration with an operationIdentifier property when generateOperationIds is specified`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a class declaration with an operationIdentifier property when generateOperationIds is specified`, () => {
+      const { operations } = compile(`
         query Hero {
           hero {
             ...HeroDetails
@@ -136,13 +136,13 @@ describe('Swift code generation', () => {
   });
 
   describe('#initializerDeclarationForProperties()', () => {
-    test(`should generate initializer for a property`, () => {
+    it(`should generate initializer for a property`, () => {
       generator.initializerDeclarationForProperties([{ propertyName: 'episode', typeName: 'Episode' }]);
 
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate initializer for an optional property`, () => {
+    it(`should generate initializer for an optional property`, () => {
       generator.initializerDeclarationForProperties([
         { propertyName: 'episode', typeName: 'Episode?', isOptional: true }
       ]);
@@ -150,7 +150,7 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate initializer for multiple properties`, () => {
+    it(`should generate initializer for multiple properties`, () => {
       generator.initializerDeclarationForProperties([
         { propertyName: 'episode', typeName: 'Episode?', isOptional: true },
         { propertyName: 'scene', typeName: 'String?', isOptional: true }
@@ -161,8 +161,8 @@ describe('Swift code generation', () => {
   });
 
   describe('#structDeclarationForFragment()', () => {
-    test(`should generate a struct declaration for a fragment with an abstract type condition`, () => {
-      const { fragments } = compileFromSource(`
+    it(`should generate a struct declaration for a fragment with an abstract type condition`, () => {
+      const { fragments } = compile(`
         fragment HeroDetails on Character {
           name
           appearsIn
@@ -174,8 +174,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a struct declaration for a fragment with a concrete type condition`, () => {
-      const { fragments } = compileFromSource(`
+    it(`should generate a struct declaration for a fragment with a concrete type condition`, () => {
+      const { fragments } = compile(`
         fragment DroidDetails on Droid {
           name
           primaryFunction
@@ -187,8 +187,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a struct declaration for a fragment with a subselection`, () => {
-      const { fragments } = compileFromSource(`
+    it(`should generate a struct declaration for a fragment with a subselection`, () => {
+      const { fragments } = compile(`
         fragment HeroDetails on Character {
           name
           friends {
@@ -202,8 +202,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a struct declaration for a fragment that includes a fragment spread`, () => {
-      const { fragments } = compileFromSource(`
+    it(`should generate a struct declaration for a fragment that includes a fragment spread`, () => {
+      const { fragments } = compile(`
         fragment HeroDetails on Character {
           name
           ...MoreHeroDetails
@@ -221,8 +221,8 @@ describe('Swift code generation', () => {
   });
 
   describe('#structDeclarationForSelectionSet()', () => {
-    test(`should generate a struct declaration for a selection set`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a struct declaration for a selection set`, () => {
+      const { operations } = compile(`
         query Hero {
           hero {
             name
@@ -238,8 +238,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should escape reserved keywords in a struct declaration for a selection set`, () => {
-      const { operations } = compileFromSource(`
+    it(`should escape reserved keywords in a struct declaration for a selection set`, () => {
+      const { operations } = compile(`
         query Hero {
           hero {
             private: name
@@ -255,8 +255,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a nested struct declaration for a selection set with subselections`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a nested struct declaration for a selection set with subselections`, () => {
+      const { operations } = compile(`
         query Hero {
           hero {
             friends {
@@ -274,8 +274,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a struct declaration for a selection set with a fragment spread that matches the parent type`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a struct declaration for a selection set with a fragment spread that matches the parent type`, () => {
+      const { operations } = compile(`
         query Hero {
           hero {
             name
@@ -296,8 +296,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a struct declaration for a selection set with a fragment spread with a more specific type condition`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a struct declaration for a selection set with a fragment spread with a more specific type condition`, () => {
+      const { operations } = compile(`
         query Hero {
           hero {
             name
@@ -318,8 +318,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a struct declaration for a selection set with an inline fragment`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a struct declaration for a selection set with an inline fragment`, () => {
+      const { operations } = compile(`
         query Hero {
           hero {
             name
@@ -338,8 +338,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a struct declaration for a fragment spread nested in an inline fragment`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a struct declaration for a fragment spread nested in an inline fragment`, () => {
+      const { operations } = compile(`
         query Hero {
           hero {
             name
@@ -362,8 +362,8 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a struct declaration for a selection set with a conditional field`, () => {
-      const { operations } = compileFromSource(`
+    it(`should generate a struct declaration for a selection set with a conditional field`, () => {
+      const { operations } = compile(`
         query Hero($includeName: Boolean!) {
           hero {
             name @include(if: $includeName)
@@ -381,13 +381,13 @@ describe('Swift code generation', () => {
   });
 
   describe('#typeDeclarationForGraphQLType()', () => {
-    test('should generate an enum declaration for a GraphQLEnumType', () => {
+    it('should generate an enum declaration for a GraphQLEnumType', () => {
       generator.typeDeclarationForGraphQLType(schema.getType('Episode'));
 
       expect(generator.output).toMatchSnapshot();
     });
 
-    test('should escape identifiers in cases of enum declaration for a GraphQLEnumType', () => {
+    it('should escape identifiers in cases of enum declaration for a GraphQLEnumType', () => {
       const albumPrivaciesEnum = new GraphQLEnumType({
         name: 'AlbumPrivacies',
         values: { PUBLIC: { value: 'PUBLIC' }, PRIVATE: { value: 'PRIVATE' } }
@@ -398,7 +398,7 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test('should generate a struct declaration for a GraphQLInputObjectType', () => {
+    it('should generate a struct declaration for a GraphQLInputObjectType', () => {
       generator.typeDeclarationForGraphQLType(schema.getType('ReviewInput'));
 
       expect(generator.output).toMatchSnapshot();
@@ -406,8 +406,8 @@ describe('Swift code generation', () => {
   });
 
   describe('#dictionaryLiteralForFieldArguments()', () => {
-    test('should include expressions for input objects with variables', () => {
-      const { operations } = compileFromSource(`
+    it('should include expressions for input objects with variables', () => {
+      const { operations } = compile(`
         mutation FieldArgumentsWithInputObjects($commentary: String!, $red: Int!) {
           createReview(episode: JEDI, review: { stars: 2, commentary: $commentary, favorite_color: { red: $red, blue: 100, green: 50 } }) {
             commentary

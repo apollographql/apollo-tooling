@@ -265,13 +265,13 @@ exports[`Flow code generation #generateSource() should generate query operations
 export type HeroAndDetailsQuery = {|
   hero: ?( {
       __typename: \\"Human\\",
-      // What this human calls themselves
+      // The name of the character
       name: string,
       // Height in the preferred unit, default is meters
       height: ?number,
     } | {
       __typename: \\"Droid\\",
-      // What others call this droid
+      // The name of the character
       name: string,
       // This droid's primary function
       primaryFunction: ?string,

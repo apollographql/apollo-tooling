@@ -11,7 +11,7 @@ describe('Swift code generation: Basic language constructs', () => {
     generator = new SwiftGenerator({});
   });
 
-  test(`should generate a class declaration`, () => {
+  it(`should generate a class declaration`, () => {
     generator.classDeclaration({ className: 'Hero', modifiers: ['public', 'final'] }, () => {
       generator.propertyDeclaration({ propertyName: 'name', typeName: 'String' });
       generator.propertyDeclaration({ propertyName: 'age', typeName: 'Int' });
@@ -25,7 +25,7 @@ describe('Swift code generation: Basic language constructs', () => {
     `);
   });
 
-  test(`should generate a struct declaration`, () => {
+  it(`should generate a struct declaration`, () => {
     generator.structDeclaration({ structName: 'Hero' }, () => {
       generator.propertyDeclaration({ propertyName: 'name', typeName: 'String' });
       generator.propertyDeclaration({ propertyName: 'age', typeName: 'Int' });
@@ -39,7 +39,7 @@ describe('Swift code generation: Basic language constructs', () => {
     `);
   });
 
-  test(`should generate nested struct declarations`, () => {
+  it(`should generate nested struct declarations`, () => {
     generator.structDeclaration({ structName: 'Hero' }, () => {
       generator.propertyDeclaration({ propertyName: 'name', typeName: 'String' });
       generator.propertyDeclaration({ propertyName: 'friends', typeName: '[Friend]' });
@@ -61,7 +61,7 @@ describe('Swift code generation: Basic language constructs', () => {
     `);
   });
 
-  test(`should generate a protocol declaration`, () => {
+  it(`should generate a protocol declaration`, () => {
     generator.protocolDeclaration({ protocolName: 'HeroDetails', adoptedProtocols: ['HasName'] }, () => {
       generator.protocolPropertyDeclaration({ propertyName: 'name', typeName: 'String' });
       generator.protocolPropertyDeclaration({ propertyName: 'age', typeName: 'Int' });
@@ -75,7 +75,7 @@ describe('Swift code generation: Basic language constructs', () => {
     `);
   });
 
-  test(`should handle multi-line descriptions`, () => {
+  it(`should handle multi-line descriptions`, () => {
     generator.structDeclaration({ structName: 'Hero', description: 'A hero' }, () => {
       generator.propertyDeclaration({ propertyName: 'name', typeName: 'String', description: `A multiline comment \n on the hero's name.` });
       generator.propertyDeclaration({ propertyName: 'age', typeName: 'String', description: `A multiline comment \n on the hero's age.` });
