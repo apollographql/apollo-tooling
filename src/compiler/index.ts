@@ -263,7 +263,7 @@ class Compiler {
           )
         )
         .filter(x => x) as Selection[]
-    };
+      };
   }
 
   compileSelection(

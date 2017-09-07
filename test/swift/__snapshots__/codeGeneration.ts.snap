@@ -24,7 +24,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     public static let possibleTypes = [\\"Mutation\\"]
 
     public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"createReview\\", arguments: [\\"episode\\": Variable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\"]], type: .object(CreateReview.self)),
+      GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\"]], type: .object(CreateReview.selections)),
     ]
 
     public var snapshot: Snapshot
@@ -39,7 +39,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var createReview: CreateReview? {
       get {
-        return (snapshot[\\"createReview\\"]! as! Snapshot?).flatMap { CreateReview(snapshot: $0) }
+        return (snapshot[\\"createReview\\"] as! Snapshot?).flatMap { CreateReview(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"createReview\\")
@@ -77,7 +77,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       /// Comment about the movie
       public var commentary: String? {
         get {
-          return snapshot[\\"commentary\\"]! as! String?
+          return snapshot[\\"commentary\\"] as? String
         }
         set {
           snapshot.updateValue(newValue, forKey: \\"commentary\\")
@@ -108,7 +108,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     public static let possibleTypes = [\\"Query\\"]
 
     public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"hero\\", type: .object(Hero.self)),
+      GraphQLField(\\"hero\\", type: .object(Hero.selections)),
     ]
 
     public var snapshot: Snapshot
@@ -123,7 +123,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"]! as! Snapshot?).flatMap { Hero(snapshot: $0) }
+        return (snapshot[\\"hero\\"] as! Snapshot?).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
@@ -134,7 +134,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [GraphQLSelection] = [
-        GraphQLFragmentSpread(AsDroid.self),
+        GraphQLTypeCase(
+          variants: [\\"Droid\\": AsDroid.selections],
+          default: [
+          ]
+        )
       ]
 
       public var snapshot: Snapshot
@@ -162,11 +166,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         }
       }
 
-      public struct AsDroid: GraphQLFragment {
+      public struct AsDroid: GraphQLSelectionSet {
         public static let possibleTypes = [\\"Droid\\"]
 
         public static let selections: [GraphQLSelection] = [
-          GraphQLFragmentSpread(HeroDetails.self),
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
         ]
 
         public var snapshot: Snapshot
@@ -179,35 +183,13 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
         }
 
-        /// What others call this droid
+        /// The name of the character
         public var name: String {
           get {
             return snapshot[\\"name\\"]! as! String
           }
           set {
             snapshot.updateValue(newValue, forKey: \\"name\\")
-          }
-        }
-
-        public var fragments: Fragments {
-          get {
-            return Fragments(snapshot: snapshot)
-          }
-          set {
-            snapshot = newValue.snapshot
-          }
-        }
-
-        public struct Fragments {
-          public var snapshot: Snapshot
-
-          public var heroDetails: HeroDetails {
-            get {
-              return HeroDetails(snapshot: snapshot)
-            }
-            set {
-              snapshot = newValue.snapshot
-            }
           }
         }
       }
@@ -234,7 +216,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     public static let possibleTypes = [\\"Query\\"]
 
     public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"hero\\", type: .object(Hero.self)),
+      GraphQLField(\\"hero\\", type: .object(Hero.selections)),
     ]
 
     public var snapshot: Snapshot
@@ -249,7 +231,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"]! as! Snapshot?).flatMap { Hero(snapshot: $0) }
+        return (snapshot[\\"hero\\"] as! Snapshot?).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
@@ -260,7 +242,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [GraphQLSelection] = [
-        GraphQLFragmentSpread(DroidDetails.self),
+        GraphQLTypeCase(
+          variants: [\\"Droid\\": AsDroid.selections],
+          default: [
+          ]
+        )
       ]
 
       public var snapshot: Snapshot
@@ -277,26 +263,41 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"primaryFunction\\": primaryFunction])
       }
 
-      public var fragments: Fragments {
+      public var asDroid: AsDroid? {
         get {
-          return Fragments(snapshot: snapshot)
+          if !AsDroid.possibleTypes.contains(__typename) { return nil }
+          return AsDroid(snapshot: snapshot)
         }
         set {
+          guard let newValue = newValue else { return }
           snapshot = newValue.snapshot
         }
       }
 
-      public struct Fragments {
+      public struct AsDroid: GraphQLSelectionSet {
+        public static let possibleTypes = [\\"Droid\\"]
+
+        public static let selections: [GraphQLSelection] = [
+          GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
+        ]
+
         public var snapshot: Snapshot
 
-        public var droidDetails: DroidDetails? {
+        public init(snapshot: Snapshot) {
+          self.snapshot = snapshot
+        }
+
+        public init(primaryFunction: String? = nil) {
+          self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"primaryFunction\\": primaryFunction])
+        }
+
+        /// This droid's primary function
+        public var primaryFunction: String? {
           get {
-            if !DroidDetails.possibleTypes.contains(snapshot[\\"__typename\\"]! as! String) { return nil }
-            return DroidDetails(snapshot: snapshot)
+            return snapshot[\\"primaryFunction\\"] as? String
           }
           set {
-            guard let newValue = newValue else { return }
-            snapshot = newValue.snapshot
+            snapshot.updateValue(newValue, forKey: \\"primaryFunction\\")
           }
         }
       }
@@ -323,7 +324,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     public static let possibleTypes = [\\"Query\\"]
 
     public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"hero\\", type: .object(Hero.self)),
+      GraphQLField(\\"hero\\", type: .object(Hero.selections)),
     ]
 
     public var snapshot: Snapshot
@@ -338,7 +339,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"]! as! Snapshot?).flatMap { Hero(snapshot: $0) }
+        return (snapshot[\\"hero\\"] as! Snapshot?).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
@@ -349,7 +350,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [GraphQLSelection] = [
-        GraphQLFragmentSpread(HeroDetails.self),
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
       ]
 
       public var snapshot: Snapshot
@@ -373,28 +374,6 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         }
         set {
           snapshot.updateValue(newValue, forKey: \\"name\\")
-        }
-      }
-
-      public var fragments: Fragments {
-        get {
-          return Fragments(snapshot: snapshot)
-        }
-        set {
-          snapshot = newValue.snapshot
-        }
-      }
-
-      public struct Fragments {
-        public var snapshot: Snapshot
-
-        public var heroDetails: HeroDetails {
-          get {
-            return HeroDetails(snapshot: snapshot)
-          }
-          set {
-            snapshot = newValue.snapshot
-          }
         }
       }
     }
@@ -425,7 +404,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     public static let possibleTypes = [\\"Query\\"]
 
     public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"hero\\", arguments: [\\"episode\\": Variable(\\"episode\\")], type: .object(Hero.self)),
+      GraphQLField(\\"hero\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\")], type: .object(Hero.selections)),
     ]
 
     public var snapshot: Snapshot
@@ -440,7 +419,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"]! as! Snapshot?).flatMap { Hero(snapshot: $0) }
+        return (snapshot[\\"hero\\"] as! Snapshot?).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
@@ -502,7 +481,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     public static let possibleTypes = [\\"Query\\"]
 
     public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"hero\\", type: .object(Hero.self)),
+      GraphQLField(\\"hero\\", type: .object(Hero.selections)),
     ]
 
     public var snapshot: Snapshot
@@ -517,7 +496,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"]! as! Snapshot?).flatMap { Hero(snapshot: $0) }
+        return (snapshot[\\"hero\\"] as! Snapshot?).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
@@ -537,22 +516,12 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         self.snapshot = snapshot
       }
 
-      public static func makeHuman(name: String) -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+      public static func makeHuman() -> Hero {
+        return Hero(snapshot: [\\"__typename\\": \\"Human\\"])
       }
 
-      public static func makeDroid(name: String) -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
-      }
-
-      /// The name of the character
-      public var name: String {
-        get {
-          return snapshot[\\"name\\"]! as! String
-        }
-        set {
-          snapshot.updateValue(newValue, forKey: \\"name\\")
-        }
+      public static func makeDroid() -> Hero {
+        return Hero(snapshot: [\\"__typename\\": \\"Droid\\"])
       }
 
       public var fragments: Fragments {
@@ -612,7 +581,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
   public static let selections: [GraphQLSelection] = [
     GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    GraphQLFragmentSpread(MoreHeroDetails.self),
+    GraphQLField(\\"appearsIn\\", type: .nonNull(.list(.scalar(Episode.self)))),
   ]
 
   public var snapshot: Snapshot
@@ -646,28 +615,6 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
     }
     set {
       snapshot.updateValue(newValue, forKey: \\"appearsIn\\")
-    }
-  }
-
-  public var fragments: Fragments {
-    get {
-      return Fragments(snapshot: snapshot)
-    }
-    set {
-      snapshot = newValue.snapshot
-    }
-  }
-
-  public struct Fragments {
-    public var snapshot: Snapshot
-
-    public var moreHeroDetails: MoreHeroDetails {
-      get {
-        return MoreHeroDetails(snapshot: snapshot)
-      }
-      set {
-        snapshot = newValue.snapshot
-      }
     }
   }
 }"
@@ -711,7 +658,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   /// This droid's primary function
   public var primaryFunction: String? {
     get {
-      return snapshot[\\"primaryFunction\\"]! as! String?
+      return snapshot[\\"primaryFunction\\"] as? String
     }
     set {
       snapshot.updateValue(newValue, forKey: \\"primaryFunction\\")
@@ -734,7 +681,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
   public static let selections: [GraphQLSelection] = [
     GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    GraphQLField(\\"friends\\", type: .list(.object(Friend.self))),
+    GraphQLField(\\"friends\\", type: .list(.object(Friend.selections))),
   ]
 
   public var snapshot: Snapshot
@@ -764,7 +711,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   /// The friends of the character, or an empty list if they have none
   public var friends: [Friend?]? {
     get {
-      return (snapshot[\\"friends\\"]! as! [Snapshot?]?).flatMap { $0.map { $0.flatMap { Friend(snapshot: $0) } } }
+      return (snapshot[\\"friends\\"] as? [Snapshot?]).flatMap { $0.map { $0.flatMap { Friend(snapshot: $0) } } }
     }
     set {
       snapshot.updateValue(newValue.flatMap { $0.map { $0.flatMap { $0.snapshot } } }, forKey: \\"friends\\")
@@ -895,7 +842,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"friends\\", type: .list(.object(Friend.self))),
+    GraphQLField(\\"friends\\", type: .list(.object(Friend.selections))),
   ]
 
   public var snapshot: Snapshot
@@ -915,7 +862,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   /// The friends of the character, or an empty list if they have none
   public var friends: [Friend?]? {
     get {
-      return (snapshot[\\"friends\\"]! as! [Snapshot?]?).flatMap { $0.map { $0.flatMap { Friend(snapshot: $0) } } }
+      return (snapshot[\\"friends\\"] as? [Snapshot?]).flatMap { $0.map { $0.flatMap { Friend(snapshot: $0) } } }
     }
     set {
       snapshot.updateValue(newValue.flatMap { $0.map { $0.flatMap { $0.snapshot } } }, forKey: \\"friends\\")
@@ -961,8 +908,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    GraphQLFragmentSpread(AsDroid.self),
+    GraphQLTypeCase(
+      variants: [\\"Droid\\": AsDroid.selections],
+      default: [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]
+    )
   ]
 
   public var snapshot: Snapshot
@@ -1000,11 +951,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     }
   }
 
-  public struct AsDroid: GraphQLFragment {
+  public struct AsDroid: GraphQLSelectionSet {
     public static let possibleTypes = [\\"Droid\\"]
 
     public static let selections: [GraphQLSelection] = [
-      GraphQLFragmentSpread(HeroDetails.self),
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
     ]
 
     public var snapshot: Snapshot
@@ -1017,35 +969,13 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
     }
 
-    /// What others call this droid
+    /// The name of the character
     public var name: String {
       get {
         return snapshot[\\"name\\"]! as! String
       }
       set {
         snapshot.updateValue(newValue, forKey: \\"name\\")
-      }
-    }
-
-    public var fragments: Fragments {
-      get {
-        return Fragments(snapshot: snapshot)
-      }
-      set {
-        snapshot = newValue.snapshot
-      }
-    }
-
-    public struct Fragments {
-      public var snapshot: Snapshot
-
-      public var heroDetails: HeroDetails {
-        get {
-          return HeroDetails(snapshot: snapshot)
-        }
-        set {
-          snapshot = newValue.snapshot
-        }
       }
     }
   }
@@ -1113,7 +1043,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   /// The name of the character
   public var name: String? {
     get {
-      return snapshot[\\"name\\"]! as! String?
+      return snapshot[\\"name\\"] as? String
     }
     set {
       snapshot.updateValue(newValue, forKey: \\"name\\")
@@ -1128,7 +1058,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 
   public static let selections: [GraphQLSelection] = [
     GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    GraphQLFragmentSpread(HeroDetails.self),
+    GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
   ]
 
   public var snapshot: Snapshot
@@ -1152,28 +1082,6 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     }
     set {
       snapshot.updateValue(newValue, forKey: \\"name\\")
-    }
-  }
-
-  public var fragments: Fragments {
-    get {
-      return Fragments(snapshot: snapshot)
-    }
-    set {
-      snapshot = newValue.snapshot
-    }
-  }
-
-  public struct Fragments {
-    public var snapshot: Snapshot
-
-    public var heroDetails: HeroDetails {
-      get {
-        return HeroDetails(snapshot: snapshot)
-      }
-      set {
-        snapshot = newValue.snapshot
-      }
     }
   }
 }"
@@ -1184,8 +1092,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    GraphQLFragmentSpread(DroidDetails.self),
+    GraphQLTypeCase(
+      variants: [\\"Droid\\": AsDroid.selections],
+      default: [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]
+    )
   ]
 
   public var snapshot: Snapshot
@@ -1212,26 +1124,42 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     }
   }
 
-  public var fragments: Fragments {
+  public var asDroid: AsDroid? {
     get {
-      return Fragments(snapshot: snapshot)
+      if !AsDroid.possibleTypes.contains(__typename) { return nil }
+      return AsDroid(snapshot: snapshot)
     }
     set {
+      guard let newValue = newValue else { return }
       snapshot = newValue.snapshot
     }
   }
 
-  public struct Fragments {
+  public struct AsDroid: GraphQLSelectionSet {
+    public static let possibleTypes = [\\"Droid\\"]
+
+    public static let selections: [GraphQLSelection] = [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+    ]
+
     public var snapshot: Snapshot
 
-    public var droidDetails: DroidDetails? {
+    public init(snapshot: Snapshot) {
+      self.snapshot = snapshot
+    }
+
+    public init(name: String) {
+      self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+    }
+
+    /// The name of the character
+    public var name: String {
       get {
-        if !DroidDetails.possibleTypes.contains(snapshot[\\"__typename\\"]! as! String) { return nil }
-        return DroidDetails(snapshot: snapshot)
+        return snapshot[\\"name\\"]! as! String
       }
       set {
-        guard let newValue = newValue else { return }
-        snapshot = newValue.snapshot
+        snapshot.updateValue(newValue, forKey: \\"name\\")
       }
     }
   }
@@ -1243,8 +1171,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
   public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    GraphQLFragmentSpread(AsDroid.self),
+    GraphQLTypeCase(
+      variants: [\\"Droid\\": AsDroid.selections],
+      default: [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]
+    )
   ]
 
   public var snapshot: Snapshot
@@ -1282,10 +1214,11 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     }
   }
 
-  public struct AsDroid: GraphQLFragment {
+  public struct AsDroid: GraphQLSelectionSet {
     public static let possibleTypes = [\\"Droid\\"]
 
     public static let selections: [GraphQLSelection] = [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
       GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
     ]
 
@@ -1295,14 +1228,24 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       self.snapshot = snapshot
     }
 
-    public init(primaryFunction: String? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"primaryFunction\\": primaryFunction])
+    public init(name: String, primaryFunction: String? = nil) {
+      self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
+    }
+
+    /// The name of the character
+    public var name: String {
+      get {
+        return snapshot[\\"name\\"]! as! String
+      }
+      set {
+        snapshot.updateValue(newValue, forKey: \\"name\\")
+      }
     }
 
     /// This droid's primary function
     public var primaryFunction: String? {
       get {
-        return snapshot[\\"primaryFunction\\"]! as! String?
+        return snapshot[\\"primaryFunction\\"] as? String
       }
       set {
         snapshot.updateValue(newValue, forKey: \\"primaryFunction\\")

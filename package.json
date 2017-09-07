@@ -52,6 +52,7 @@
     "setupFiles": [
       "<rootDir>/src/polyfills.js"
     ],
+    "setupTestFrameworkScriptFile": "<rootDir>/test/test-utils/matchers.ts",
     "testMatch": [
       "**/test/**/*.(js|ts)",
       "**/test/*.(js|ts)"
@@ -60,10 +61,10 @@
       "<rootDir>/node_modules/",
       "<rootDir>/lib/",
       "<rootDir>/test/fixtures/",
-      "<rootDir>/test/preprocessor.js"
+      "<rootDir>/test/test-utils"
     ],
     "transform": {
-      ".(js|ts)": "<rootDir>/test/preprocessor.js"
+      ".(js|ts)": "<rootDir>/test/test-utils/preprocessor.js"
     },
     "moduleFileExtensions": [
       "ts",
