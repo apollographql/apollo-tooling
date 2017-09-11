@@ -420,7 +420,7 @@ describe('Swift code generation', () => {
       const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(fieldArguments);
 
       expect(dictionaryLiteral).toBe(
-        '["episode": "JEDI", "review": ["stars": 2, "commentary": Variable("commentary"), "favorite_color": ["red": Variable("red"), "blue": 100, "green": 50]]]'
+        '["episode": "JEDI", "review": ["stars": 2, "commentary": GraphQLVariable("commentary"), "favorite_color": ["red": GraphQLVariable("red"), "blue": 100, "green": 50]]]'
       );
     });
   });
