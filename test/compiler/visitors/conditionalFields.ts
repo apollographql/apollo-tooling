@@ -16,12 +16,9 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
-    expect(collectAndMergeFields(typeCase.default)[0].isConditional).toBeFalsy();
-
-    expect(typeCase.variants).toHaveLength(0);
+    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['name']);
+    expect(collectAndMergeFields(selectionSet)[0].isConditional).toBeFalsy();
   });
 
   it('should mark a field as conditional when it has a @skip directive', () => {
@@ -35,14 +32,11 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
-    expect(collectAndMergeFields(typeCase.default)[0].isConditional).toBeTruthy();
+    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['name']);
+    expect(collectAndMergeFields(selectionSet)[0].isConditional).toBeTruthy();
 
-    expect(typeCase.default.selections[0]).toMatchObject({ variableName: 'skipName' });
-
-    expect(typeCase.variants).toHaveLength(0);
+    expect(selectionSet.selections[0]).toMatchObject({ variableName: 'skipName' });
   });
 
   it('should not mark a field as conditional when it has a @skip directive that is always false', () => {
@@ -56,12 +50,9 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
-    expect(collectAndMergeFields(typeCase.default)[0].isConditional).toBeFalsy();
-
-    expect(typeCase.variants).toHaveLength(0);
+    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['name']);
+    expect(collectAndMergeFields(selectionSet)[0].isConditional).toBeFalsy();
   });
 
   it('should not include a field when it has a @skip directive that is always true', () => {
@@ -75,11 +66,8 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], []);
-
-    expect(typeCase.variants).toHaveLength(0);
+    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], []);
   });
 
   it('should mark a field as conditional when it has a @include directive', () => {
@@ -93,14 +81,11 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
-    expect(collectAndMergeFields(typeCase.default)[0].isConditional).toBeTruthy();
+    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['name']);
+    expect(collectAndMergeFields(selectionSet)[0].isConditional).toBeTruthy();
 
-    expect(typeCase.default.selections[0]).toMatchObject({ variableName: 'includeName' });
-
-    expect(typeCase.variants).toHaveLength(0);
+    expect(selectionSet.selections[0]).toMatchObject({ variableName: 'includeName' });
   });
 
   it('should not mark a field as conditional when it has a @include directive that is always true', () => {
@@ -114,12 +99,9 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
-    expect(collectAndMergeFields(typeCase.default)[0].isConditional).toBeFalsy();
-
-    expect(typeCase.variants).toHaveLength(0);
+    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['name']);
+    expect(collectAndMergeFields(selectionSet)[0].isConditional).toBeFalsy();
   });
 
   it('should not include a field when it has a @include directive that is always false', () => {
@@ -133,11 +115,8 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], []);
-
-    expect(typeCase.variants).toHaveLength(0);
+    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], []);
   });
 
   it('should mark a field as conditional when it has both a @skip and an @include directive', () => {
@@ -151,17 +130,14 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
-    expect(collectAndMergeFields(typeCase.default)[0].isConditional).toBeTruthy();
+    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['name']);
+    expect(collectAndMergeFields(selectionSet)[0].isConditional).toBeTruthy();
 
-    expect(typeCase.default.selections[0]).toMatchObject({ variableName: 'skipName' });
-    expect((typeCase.default.selections[0] as BooleanCondition).selectionSet.selections[0]).toMatchObject({
-      variableName: 'includeName'
+    expect(selectionSet.selections[0]).toMatchObject({ variableName: 'includeName' });
+    expect((selectionSet.selections[0] as BooleanCondition).selectionSet.selections[0]).toMatchObject({
+      variableName: 'skipName'
     });
-
-    expect(typeCase.variants).toHaveLength(0);
   });
 
   it('should mark a field as conditional when it is included twice, once with a @skip and once with an @include directive', () => {
@@ -176,15 +152,12 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
-    expect(collectAndMergeFields(typeCase.default)[0].isConditional).toBeTruthy();
+    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['name']);
+    expect(collectAndMergeFields(selectionSet)[0].isConditional).toBeTruthy();
 
-    expect(typeCase.default.selections[0]).toMatchObject({ variableName: 'skipName' });
-    expect(typeCase.default.selections[1]).toMatchObject({ variableName: 'includeName' });
-
-    expect(typeCase.variants).toHaveLength(0);
+    expect(selectionSet.selections[0]).toMatchObject({ variableName: 'skipName' });
+    expect(selectionSet.selections[1]).toMatchObject({ variableName: 'includeName' });
   });
 
   it('should not include a field when when it has both a @skip directive and an @include directive that is always false', () => {
@@ -198,11 +171,8 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], []);
-
-    expect(typeCase.variants).toHaveLength(0);
+    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], []);
   });
 
   it('should not mark a field as conditional when it is included twice, once with and once without an @include directive', () => {
@@ -217,12 +187,9 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
-    expect(collectAndMergeFields(typeCase.default)[0].isConditional).toBeFalsy();
-
-    expect(typeCase.variants).toHaveLength(0);
+    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['name']);
+    expect(collectAndMergeFields(selectionSet)[0].isConditional).toBeFalsy();
   });
 
   it('should not mark a field as conditional when it is included twice, once with an @include directive that is always false and once without', () => {
@@ -237,12 +204,9 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
-    expect(collectAndMergeFields(typeCase.default)[0].isConditional).toBeFalsy();
-
-    expect(typeCase.variants).toHaveLength(0);
+    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['name']);
+    expect(collectAndMergeFields(selectionSet)[0].isConditional).toBeFalsy();
   });
 
   it('should not mark a field as conditional in a variant when it is included without a directive in an inline fragment', () => {
