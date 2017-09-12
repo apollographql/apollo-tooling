@@ -96,7 +96,7 @@ describe('TypeCase', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(mergeInFragmentSpreads(context, selectionSet));
+    const typeCase = new TypeCase(mergeInFragmentSpreads(selectionSet, context.fragments));
 
     expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['id', 'name', 'appearsIn']);
 

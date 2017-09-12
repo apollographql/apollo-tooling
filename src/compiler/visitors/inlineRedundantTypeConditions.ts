@@ -1,6 +1,6 @@
-import { CompilerContext, SelectionSet, Selection } from '../';
+import { SelectionSet, Selection } from '../';
 
-export function inlineRedundantTypeConditions(context: CompilerContext, selectionSet: SelectionSet): SelectionSet {
+export function inlineRedundantTypeConditions(selectionSet: SelectionSet): SelectionSet {
   const selections: Selection[] = [];
 
   for (const selection of selectionSet.selections) {
@@ -8,7 +8,7 @@ export function inlineRedundantTypeConditions(context: CompilerContext, selectio
       selection.kind === 'TypeCondition' &&
       selectionSet.possibleTypes.every(type => selection.selectionSet.possibleTypes.includes(type))
     ) {
-      selections.push(...inlineRedundantTypeConditions(context, selection.selectionSet).selections);
+      selections.push(...inlineRedundantTypeConditions(selection.selectionSet).selections);
     } else {
       selections.push(selection);
     }

@@ -103,10 +103,13 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           });
         }
 
-        const fragmentsReferenced = collectFragmentsReferenced(this.context, operation.selectionSet);
+        const fragmentsReferenced = collectFragmentsReferenced(
+          operation.selectionSet,
+          this.context.fragments
+        );
 
         if (this.context.options.generateOperationIds) {
-          const { operationId } = generateOperationId(this.context, operation, fragmentsReferenced);
+          const { operationId } = generateOperationId(operation, this.context.fragments, fragmentsReferenced);
           this.printNewlineIfNeeded();
           this.printOnNewline(`public static let operationIdentifier: String? = "${operationId}"`);
         }
@@ -192,9 +195,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     },
     beforeClosure?: Function
   ) {
-    selectionSet = inlineRedundantTypeConditions(this.context, selectionSet);
+    selectionSet = inlineRedundantTypeConditions(selectionSet);
     if (this.context.options.mergeInFieldsFromFragmentSpreads) {
-      selectionSet = mergeInFragmentSpreads(this.context, selectionSet);
+      selectionSet = mergeInFragmentSpreads(selectionSet, this.context.fragments);
     }
     const typeCase = new TypeCase(selectionSet);
 
@@ -229,7 +232,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
       this.initializersForTypeCase(typeCase);
 
-      const fields = collectAndMergeFields(typeCase.default).map(field => this.helpers.propertyFromField(field as Field));
+      const fields = collectAndMergeFields(typeCase.default).map(field =>
+        this.helpers.propertyFromField(field as Field)
+      );
 
       const variants = typeCase.variants.map(this.helpers.propertyFromVariant, this.helpers);
 
@@ -237,7 +242,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       const fragmentSpreads = (selectionSet.selections.filter(
         (selection): selection is FragmentSpread => selection.kind === 'FragmentSpread'
       ) as FragmentSpread[]).map(fragmentSpread => {
-        const fragment = this.context.fragmentNamed(fragmentSpread.fragmentName);
+        const fragment = this.context.fragments[fragmentSpread.fragmentName];
+        if (!fragment) {
+          throw new Error(`Cannot find fragment "${fragmentSpread.fragmentName}"`);
+        }
+
         const isConditional = selectionSet.possibleTypes.some(
           type => !fragment.selectionSet.possibleTypes.includes(type)
         );
@@ -417,11 +426,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         if (isList(type)) {
           this.printOnNewline('get');
           this.withinBlock(() => {
-            const snapshotTypeName = this.helpers.typeNameFromGraphQLType(
-              type,
-              'Snapshot',
-              false
-            );
+            const snapshotTypeName = this.helpers.typeNameFromGraphQLType(type, 'Snapshot', false);
             let getter;
             if (isOptional) {
               getter = `return (snapshot["${responseKey}"] as? ${snapshotTypeName})`;
@@ -444,9 +449,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                 `return (snapshot["${responseKey}"] as! Snapshot?).flatMap { ${structName}(snapshot: $0) }`
               );
             } else {
-              this.printOnNewline(
-                `return ${structName}(snapshot: snapshot["${responseKey}"]! as! Snapshot)`
-              );
+              this.printOnNewline(`return ${structName}(snapshot: snapshot["${responseKey}"]! as! Snapshot)`);
             }
           });
           this.printOnNewline('set');
