@@ -59,7 +59,7 @@ export class TypeCase {
           this.visitSelectionSet(selection.selectionSet, conditions);
           break;
         case 'BooleanCondition':
-          this.visitSelectionSet(selection.selectionSet, [selection, ...conditions]);
+          this.visitSelectionSet(selection.selectionSet, [...conditions, selection]);
           break;
       }
     }
