@@ -109,11 +109,11 @@ class LegacyIRTransformer {
 
     for (const [operationName, operation] of Object.entries(this.context.operations)) {
       const { filePath, operationType, rootType, variables, source, selectionSet } = operation;
-      const fragmentsReferenced = collectFragmentsReferenced(this.context, selectionSet);
+      const fragmentsReferenced = collectFragmentsReferenced(selectionSet, this.context.fragments);
 
       const { sourceWithFragments, operationId } = generateOperationId(
-        this.context,
         operation,
+        this.context.fragments,
         fragmentsReferenced
       );
 
@@ -157,7 +157,7 @@ class LegacyIRTransformer {
   transformSelectionSetToLegacyIR(selectionSet: SelectionSet) {
     const typeCase = new TypeCase(
       this.options.mergeInFieldsFromFragmentSpreads
-        ? mergeInFragmentSpreads(this.context, selectionSet)
+        ? mergeInFragmentSpreads(selectionSet, this.context.fragments)
         : selectionSet
     );
 

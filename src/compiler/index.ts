@@ -41,22 +41,12 @@ export interface CompilerOptions {
   generateOperationIds?: boolean;
 }
 
-export class CompilerContext {
-  constructor(
-    public schema: GraphQLSchema,
-    public typesUsed: GraphQLType[],
-    public operations: { [operationName: string]: Operation },
-    public fragments: { [fragmentName: string]: Fragment },
-    public options: CompilerOptions
-  ) {}
-
-  fragmentNamed(fragmentName: string): Fragment {
-    const fragment = this.fragments[fragmentName];
-    if (!fragment) {
-      throw new Error(`Cannot find fragment "${fragmentName}"`);
-    }
-    return fragment;
-  }
+export interface CompilerContext {
+  schema: GraphQLSchema;
+  typesUsed: GraphQLType[];
+  operations: { [operationName: string]: Operation };
+  fragments: { [fragmentName: string]: Fragment };
+  options: CompilerOptions;
 }
 
 function argumentsFromAST(args: ArgumentNode[]): Argument[] {
@@ -163,7 +153,7 @@ export function compileToIR(
 
   const typesUsed = compiler.typesUsed;
 
-  return new CompilerContext(schema, typesUsed, operations, fragments, options);
+  return { schema, typesUsed, operations, fragments, options };
 }
 
 class Compiler {

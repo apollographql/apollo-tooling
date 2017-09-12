@@ -16,7 +16,7 @@ describe(`generateOperationId()`, () => {
       }
     `);
 
-    const { operationId: id1 } = generateOperationId(context1, context1.operations['Hero']);
+    const { operationId: id1 } = generateOperationId(context1.operations['Hero'], context1.fragments);
 
     const context2 = compile(`
       query Hero {
@@ -29,7 +29,7 @@ describe(`generateOperationId()`, () => {
       }
     `);
 
-    const { operationId: id2 } = generateOperationId(context2, context2.operations['Hero']);
+    const { operationId: id2 } = generateOperationId(context2.operations['Hero'], context2.fragments);
 
     expect(id1).not.toBe(id2);
   });
@@ -43,7 +43,7 @@ describe(`generateOperationId()`, () => {
       }
     `);
 
-    const { operationId: id1 } = generateOperationId(context1, context1.operations['HeroName']);
+    const { operationId: id1 } = generateOperationId(context1.operations['HeroName'], context1.fragments);
 
     const context2 = compile(`
       # Profound comment
@@ -51,7 +51,7 @@ describe(`generateOperationId()`, () => {
       # Deeply meaningful comment
     `);
 
-    const { operationId: id2 } = generateOperationId(context2, context2.operations['HeroName']);
+    const { operationId: id2 } = generateOperationId(context2.operations['HeroName'], context2.fragments);
 
     expect(id1).toBe(id2);
   });
@@ -72,7 +72,7 @@ describe(`generateOperationId()`, () => {
       }
     `);
 
-    const { operationId: id1 } = generateOperationId(context1, context1.operations['Hero']);
+    const { operationId: id1 } = generateOperationId(context1.operations['Hero'], context1.fragments);
 
     const context2 = compile(`
       query Hero {
@@ -89,7 +89,7 @@ describe(`generateOperationId()`, () => {
       }
     `);
 
-    const { operationId: id2 } = generateOperationId(context2, context2.operations['Hero']);
+    const { operationId: id2 } = generateOperationId(context2.operations['Hero'], context2.fragments);
 
     expect(id1).toBe(id2);
   });
@@ -110,7 +110,7 @@ describe(`generateOperationId()`, () => {
       }
     `);
 
-    const { sourceWithFragments } = generateOperationId(context, context.operations['Hero']);
+    const { sourceWithFragments } = generateOperationId(context.operations['Hero'], context.fragments);
 
     expect(sourceWithFragments).toBe(stripIndent`
       query Hero {
