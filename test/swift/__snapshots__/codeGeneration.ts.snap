@@ -263,6 +263,30 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"primaryFunction\\": primaryFunction])
       }
 
+      public var fragments: Fragments {
+        get {
+          return Fragments(snapshot: snapshot)
+        }
+        set {
+          snapshot = newValue.snapshot
+        }
+      }
+
+      public struct Fragments {
+        public var snapshot: Snapshot
+
+        public var droidDetails: DroidDetails? {
+          get {
+            if !DroidDetails.possibleTypes.contains(snapshot[\\"__typename\\"]! as! String) { return nil }
+            return DroidDetails(snapshot: snapshot)
+          }
+          set {
+            guard let newValue = newValue else { return }
+            snapshot = newValue.snapshot
+          }
+        }
+      }
+
       public var asDroid: AsDroid? {
         get {
           if !AsDroid.possibleTypes.contains(__typename) { return nil }
@@ -374,6 +398,28 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         }
         set {
           snapshot.updateValue(newValue, forKey: \\"name\\")
+        }
+      }
+
+      public var fragments: Fragments {
+        get {
+          return Fragments(snapshot: snapshot)
+        }
+        set {
+          snapshot = newValue.snapshot
+        }
+      }
+
+      public struct Fragments {
+        public var snapshot: Snapshot
+
+        public var heroDetails: HeroDetails {
+          get {
+            return HeroDetails(snapshot: snapshot)
+          }
+          set {
+            snapshot = newValue.snapshot
+          }
         }
       }
     }
@@ -507,7 +553,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
       public static let selections: [GraphQLSelection] = [
-        GraphQLFragmentSpread(HeroDetails.self),
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
       ]
 
       public var snapshot: Snapshot
@@ -516,12 +562,22 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         self.snapshot = snapshot
       }
 
-      public static func makeHuman() -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Human\\"])
+      public static func makeHuman(name: String) -> Hero {
+        return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
       }
 
-      public static func makeDroid() -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Droid\\"])
+      public static func makeDroid(name: String) -> Hero {
+        return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+      }
+
+      /// The name of the character
+      public var name: String {
+        get {
+          return snapshot[\\"name\\"]! as! String
+        }
+        set {
+          snapshot.updateValue(newValue, forKey: \\"name\\")
+        }
       }
 
       public var fragments: Fragments {
@@ -615,6 +671,28 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
     }
     set {
       snapshot.updateValue(newValue, forKey: \\"appearsIn\\")
+    }
+  }
+
+  public var fragments: Fragments {
+    get {
+      return Fragments(snapshot: snapshot)
+    }
+    set {
+      snapshot = newValue.snapshot
+    }
+  }
+
+  public struct Fragments {
+    public var snapshot: Snapshot
+
+    public var moreHeroDetails: MoreHeroDetails {
+      get {
+        return MoreHeroDetails(snapshot: snapshot)
+      }
+      set {
+        snapshot = newValue.snapshot
+      }
     }
   }
 }"
@@ -1084,6 +1162,28 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       snapshot.updateValue(newValue, forKey: \\"name\\")
     }
   }
+
+  public var fragments: Fragments {
+    get {
+      return Fragments(snapshot: snapshot)
+    }
+    set {
+      snapshot = newValue.snapshot
+    }
+  }
+
+  public struct Fragments {
+    public var snapshot: Snapshot
+
+    public var heroDetails: HeroDetails {
+      get {
+        return HeroDetails(snapshot: snapshot)
+      }
+      set {
+        snapshot = newValue.snapshot
+      }
+    }
+  }
 }"
 `;
 
@@ -1121,6 +1221,30 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     }
     set {
       snapshot.updateValue(newValue, forKey: \\"name\\")
+    }
+  }
+
+  public var fragments: Fragments {
+    get {
+      return Fragments(snapshot: snapshot)
+    }
+    set {
+      snapshot = newValue.snapshot
+    }
+  }
+
+  public struct Fragments {
+    public var snapshot: Snapshot
+
+    public var droidDetails: DroidDetails? {
+      get {
+        if !DroidDetails.possibleTypes.contains(snapshot[\\"__typename\\"]! as! String) { return nil }
+        return DroidDetails(snapshot: snapshot)
+      }
+      set {
+        guard let newValue = newValue else { return }
+        snapshot = newValue.snapshot
+      }
     }
   }
 

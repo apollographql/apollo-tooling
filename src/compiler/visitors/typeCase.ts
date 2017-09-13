@@ -2,30 +2,45 @@ import { inspect } from 'util';
 
 import { GraphQLObjectType } from 'graphql';
 
-import { SelectionSet, BooleanCondition } from '../';
+import { SelectionSet, Selection, FragmentSpread, BooleanCondition } from '../';
 import { collectAndMergeFields, wrapInBooleanConditionsIfNeeded } from './collectAndMergeFields';
 
-export class TypeCase {
-  default: SelectionSet;
-  private variantsByType: Map<GraphQLObjectType, SelectionSet>;
+export class Variant implements SelectionSet {
+  constructor(
+    public possibleTypes: GraphQLObjectType[],
+    public selections: Selection[] = [],
+    public fragmentSpreads: FragmentSpread[] = []
+  ) {}
 
-  get variants(): SelectionSet[] {
+  inspect() {
+    return `${inspect(this.possibleTypes)} -> ${inspect(
+      collectAndMergeFields(this, false).map(field => field.responseKey)
+    )}\n`;
+  }
+}
+
+export class TypeCase {
+  default: Variant;
+  private variantsByType: Map<GraphQLObjectType, Variant>;
+
+  get variants(): Variant[] {
     // Unique the variants before returning them.
     return Array.from(new Set(this.variantsByType.values()));
   }
 
-  get remainder(): SelectionSet | undefined {
+  get remainder(): Variant | undefined {
     if (this.default.possibleTypes.some(type => !this.variantsByType.has(type))) {
-      return {
-        possibleTypes: this.default.possibleTypes.filter(type => !this.variantsByType.has(type)),
-        selections: this.default.selections
-      };
+      return new Variant(
+        this.default.possibleTypes.filter(type => !this.variantsByType.has(type)),
+        this.default.selections,
+        this.default.fragmentSpreads
+      );
     } else {
       return undefined;
     }
   }
 
-  get exhaustiveVariants(): SelectionSet[] {
+  get exhaustiveVariants(): Variant[] {
     const remainder = this.remainder;
     if (remainder) {
       return [...this.variants, remainder];
@@ -34,32 +49,56 @@ export class TypeCase {
     }
   }
 
-  constructor(selectionSet: SelectionSet) {
+  constructor(selectionSet: SelectionSet, private mergeInFragmentSpreads: boolean = true) {
     // We start out with a single default variant that represents all possible types of the selection set.
-    this.default = { possibleTypes: selectionSet.possibleTypes, selections: [] };
+    this.default = new Variant(selectionSet.possibleTypes);
 
     this.variantsByType = new Map();
 
-    this.visitSelectionSet(selectionSet);
+    this.visitSelectionSet(selectionSet.selections, selectionSet.possibleTypes);
   }
 
-  private visitSelectionSet(selectionSet: SelectionSet, conditions: BooleanCondition[] = []) {
-    for (const selection of selectionSet.selections) {
+  private visitSelectionSet(
+    selections: Selection[],
+    possibleTypes: GraphQLObjectType[],
+    conditions: BooleanCondition[] = []
+  ) {
+    if (possibleTypes.length < 1) return;
+
+    for (const selection of selections) {
       switch (selection.kind) {
         case 'Field':
-        case 'FragmentSpread':
-          // Add the field to all variants that include the possible types of the selection set.
-          for (const variant of this.variantsFor(selectionSet.possibleTypes)) {
+          // Add the field to all variants for the currently possible types.
+          for (const variant of this.variantsFor(possibleTypes)) {
             variant.selections.push(...wrapInBooleanConditionsIfNeeded([selection], conditions));
           }
           break;
+        case 'FragmentSpread':
+          // Add the fragment spread to all variants variants for the currently possible types.
+          for (const variant of this.variantsFor(possibleTypes)) {
+            variant.fragmentSpreads.push(selection);
+
+            if (!this.mergeInFragmentSpreads) {
+              variant.selections.push(...wrapInBooleanConditionsIfNeeded([selection], conditions));
+            }
+          }
+          if (this.mergeInFragmentSpreads) {
+            this.visitSelectionSet(
+              selection.selectionSet.selections,
+              possibleTypes.filter(type => selection.selectionSet.possibleTypes.includes(type)),
+              conditions
+            );
+          }
+          break;
         case 'TypeCondition':
-          if (!selection.selectionSet.possibleTypes.some(type => selectionSet.possibleTypes.includes(type)))
-            continue;
-          this.visitSelectionSet(selection.selectionSet, conditions);
+          this.visitSelectionSet(
+            selection.selectionSet.selections,
+            possibleTypes.filter(type => selection.selectionSet.possibleTypes.includes(type)),
+            conditions
+          );
           break;
         case 'BooleanCondition':
-          this.visitSelectionSet(selection.selectionSet, [...conditions, selection]);
+          this.visitSelectionSet(selection.selectionSet.selections, possibleTypes, [...conditions, selection]);
           break;
       }
     }
@@ -68,8 +107,8 @@ export class TypeCase {
   // Returns records representing a set of possible types, making sure they are disjoint with other possible types.
   // That may involve refining the existing partition (https://en.wikipedia.org/wiki/Partition_refinement)
   // with the passed in set of possible types.
-  private variantsFor(possibleTypes: GraphQLObjectType[]): SelectionSet[] {
-    const variants: SelectionSet[] = [];
+  private variantsFor(possibleTypes: GraphQLObjectType[]): Variant[] {
+    const variants: Variant[] = [];
 
     const matchesDefault = this.default.possibleTypes.every(type => possibleTypes.includes(type));
 
@@ -82,7 +121,7 @@ export class TypeCase {
     // This means the original record will be modified to represent the set theoretical difference between
     // the original set of possible types and the refinement set, and the split record will represent the
     // intersection.
-    const splits: Map<SelectionSet, SelectionSet> = new Map();
+    const splits: Map<Variant, Variant> = new Map();
 
     for (const type of possibleTypes) {
       let original = this.variantsByType.get(type);
@@ -94,7 +133,7 @@ export class TypeCase {
 
       let split = splits.get(original);
       if (!split) {
-        split = { possibleTypes: [], selections: [...original.selections] };
+        split = new Variant([], [...original.selections], [...original.fragmentSpreads]);
         splits.set(original, split);
         variants.push(split);
       }
@@ -113,15 +152,8 @@ export class TypeCase {
   inspect() {
     return (
       `TypeCase\n` +
-      `  default -> ${inspect(collectAndMergeFields(this.default).map(field => field.responseKey))}\n` +
-      this.variants
-        .map(
-          variant =>
-            `  ${inspect(variant.possibleTypes)} -> ${inspect(
-              collectAndMergeFields(variant).map(field => field.responseKey)
-            )}\n`
-        )
-        .join('')
+      `  default -> ${inspect(this.default)}\n` +
+      this.variants.map(variant => `  ${inspect(variant)}\n`).join('')
     );
   }
 }
