@@ -247,6 +247,7 @@ class LegacyIRTransformer {
       }
     }
 
-    return fragmentSpreads;
+    // Unique the fragment spreads before returning them.
+    return Array.from(new Set(fragmentSpreads));
   }
 }
