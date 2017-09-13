@@ -2,7 +2,6 @@ import { GraphQLSchema, GraphQLType, GraphQLObjectType, GraphQLCompositeType, Do
 
 import { compileToIR, CompilerContext, SelectionSet, Field, FragmentSpread } from './';
 
-import { mergeInFragmentSpreads } from './visitors/mergeInFragmentSpreads';
 import { collectFragmentsReferenced } from './visitors/collectFragmentsReferenced';
 import { generateOperationId } from './visitors/generateOperationId';
 import { TypeCase } from './visitors/typeCase';
@@ -155,11 +154,7 @@ class LegacyIRTransformer {
   }
 
   transformSelectionSetToLegacyIR(selectionSet: SelectionSet) {
-    const typeCase = new TypeCase(
-      this.options.mergeInFieldsFromFragmentSpreads
-        ? mergeInFragmentSpreads(selectionSet, this.context.fragments)
-        : selectionSet
-    );
+    const typeCase = new TypeCase(selectionSet, this.options.mergeInFieldsFromFragmentSpreads);
 
     const fields: LegacyField[] = this.transformFieldsToLegacyIR(collectAndMergeFields(typeCase.default));
 

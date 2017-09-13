@@ -2,7 +2,6 @@ import { buildSchema } from 'graphql';
 import { compile } from '../../test-utils/helpers';
 
 import { SelectionSet, Field } from '../../../src/compiler';
-import { mergeInFragmentSpreads } from '../../../src/compiler/visitors/mergeInFragmentSpreads';
 import { TypeCase } from '../../../src/compiler/visitors/typeCase';
 
 export const animalSchema = buildSchema(`
@@ -96,7 +95,7 @@ describe('TypeCase', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(mergeInFragmentSpreads(selectionSet, context.fragments));
+    const typeCase = new TypeCase(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['id', 'name', 'appearsIn']);
 

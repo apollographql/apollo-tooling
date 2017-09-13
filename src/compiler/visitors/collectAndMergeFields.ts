@@ -1,4 +1,5 @@
 import { SelectionSet, Selection, Field, BooleanCondition } from '../';
+import { GraphQLObjectType } from 'graphql';
 
 // This is a temporary workaround to keep track of conditions on fields in the fields themselves.
 // It is only added here because we want to expose it to the Android target, which relies on the legacy IR.
@@ -8,11 +9,20 @@ declare module '../' {
   }
 }
 
-export function collectAndMergeFields(selectionSet: SelectionSet): Field[] {
+export function collectAndMergeFields(
+  selectionSet: SelectionSet,
+  mergeInFragmentSpreads: Boolean = true
+): Field[] {
   const fieldMap: Map<string, Field> = new Map();
 
-  function visitSelectionSet(selectionSet: SelectionSet, conditions: BooleanCondition[] = []) {
-    for (const selection of selectionSet.selections) {
+  function visitSelectionSet(
+    selections: Selection[],
+    possibleTypes: GraphQLObjectType[],
+    conditions: BooleanCondition[] = []
+  ) {
+    if (possibleTypes.length < 1) return;
+
+    for (const selection of selections) {
       switch (selection.kind) {
         case 'Field':
           const field = selection;
@@ -52,14 +62,27 @@ export function collectAndMergeFields(selectionSet: SelectionSet): Field[] {
             fieldMap.set(field.responseKey, { ...clonedField, conditions });
           }
           break;
+        case 'FragmentSpread':
+        case 'TypeCondition':
+          if (selection.kind === 'FragmentSpread' && !mergeInFragmentSpreads) continue;
+
+          // Only merge fragment spreads and type conditions if they match all possible types.
+          if (!possibleTypes.every(type => selection.selectionSet.possibleTypes.includes(type))) continue;
+
+          visitSelectionSet(
+            selection.selectionSet.selections,
+            possibleTypes,
+            conditions
+          );
+          break;
         case 'BooleanCondition':
-          visitSelectionSet(selection.selectionSet, [...conditions, selection]);
+          visitSelectionSet(selection.selectionSet.selections, possibleTypes, [...conditions, selection]);
           break;
       }
     }
   }
 
-  visitSelectionSet(selectionSet);
+  visitSelectionSet(selectionSet.selections, selectionSet.possibleTypes);
 
   // Replace field descriptions with type-specific descriptions if possible
   if (selectionSet.possibleTypes.length == 1) {

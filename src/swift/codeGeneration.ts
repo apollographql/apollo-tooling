@@ -9,7 +9,7 @@ import {
   GraphQLInputObjectType
 } from 'graphql';
 
-import { CompilerContext, Operation, Fragment, SelectionSet, Field, FragmentSpread } from '../compiler';
+import { CompilerContext, Operation, Fragment, SelectionSet, Field } from '../compiler';
 
 import { TypeCase } from '../compiler/visitors/typeCase';
 
@@ -20,9 +20,7 @@ import { Helpers } from './helpers';
 import { isList } from '../utilities/graphql';
 
 import { collectFragmentsReferenced } from '../compiler/visitors/collectFragmentsReferenced';
-import { mergeInFragmentSpreads } from '../compiler/visitors/mergeInFragmentSpreads';
 import { generateOperationId } from '../compiler/visitors/generateOperationId';
-import { inlineRedundantTypeConditions } from '../compiler/visitors/inlineRedundantTypeConditions';
 import { collectAndMergeFields } from '../compiler/visitors/collectAndMergeFields';
 
 import '../utilities/array';
@@ -195,22 +193,16 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     },
     beforeClosure?: Function
   ) {
-    selectionSet = inlineRedundantTypeConditions(selectionSet);
-    if (this.context.options.mergeInFieldsFromFragmentSpreads) {
-      selectionSet = mergeInFragmentSpreads(selectionSet, this.context.fragments);
-    }
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = new TypeCase(selectionSet, this.context.options.mergeInFieldsFromFragmentSpreads);
 
     this.structDeclaration({ structName, adoptedProtocols }, () => {
       if (beforeClosure) {
         beforeClosure();
       }
 
-      const possibleTypes = selectionSet.possibleTypes;
-
       this.printNewlineIfNeeded();
       this.printOnNewline('public static let possibleTypes = [');
-      this.print(join(possibleTypes.map(type => `"${type.name}"`), ', '));
+      this.print(join(selectionSet.possibleTypes.map(type => `"${type.name}"`), ', '));
       this.print(']');
 
       this.printNewlineIfNeeded();
@@ -232,30 +224,22 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
       this.initializersForTypeCase(typeCase);
 
-      const fields = collectAndMergeFields(typeCase.default).map(field =>
-        this.helpers.propertyFromField(field as Field)
-      );
+      const fields = collectAndMergeFields(
+        typeCase.default,
+        this.context.options.mergeInFieldsFromFragmentSpreads
+      ).map(field => this.helpers.propertyFromField(field as Field));
 
       const variants = typeCase.variants.map(this.helpers.propertyFromVariant, this.helpers);
 
-      // FIXME: Remove cast to FragmentSpread[] when proper typings for filter() land in TypeScript
-      const fragmentSpreads = (selectionSet.selections.filter(
-        (selection): selection is FragmentSpread => selection.kind === 'FragmentSpread'
-      ) as FragmentSpread[]).map(fragmentSpread => {
-        const fragment = this.context.fragments[fragmentSpread.fragmentName];
-        if (!fragment) {
-          throw new Error(`Cannot find fragment "${fragmentSpread.fragmentName}"`);
-        }
-
+      const fragmentSpreads = typeCase.default.fragmentSpreads.map(fragmentSpread => {
         const isConditional = selectionSet.possibleTypes.some(
-          type => !fragment.selectionSet.possibleTypes.includes(type)
+          type => !fragmentSpread.selectionSet.possibleTypes.includes(type)
         );
+
         return this.helpers.propertyFromFragmentSpread(fragmentSpread, isConditional);
       });
 
       fields.forEach(this.propertyDeclarationForField, this);
-
-      variants.forEach(this.propertyDeclarationForVariant, this);
 
       if (fragmentSpreads.length > 0) {
         this.printNewlineIfNeeded();
@@ -270,16 +254,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             this.printOnNewline(`snapshot = newValue.snapshot`);
           });
         });
-      }
 
-      for (const variant of variants) {
-        this.structDeclarationForSelectionSet({
-          structName: variant.structName,
-          selectionSet: variant.selectionSet
-        });
-      }
-
-      if (fragmentSpreads.length > 0) {
         this.structDeclaration(
           {
             structName: 'Fragments'
@@ -320,6 +295,15 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         );
       }
 
+      for (const variant of variants) {
+        this.propertyDeclarationForVariant(variant);
+
+        this.structDeclarationForSelectionSet({
+          structName: variant.structName,
+          selectionSet: variant.selectionSet
+        });
+      }
+
       for (const field of fields) {
         if (isCompositeType(getNamedType(field.type)) && field.selectionSet) {
           this.structDeclarationForSelectionSet({
@@ -334,8 +318,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
   initializersForTypeCase(typeCase: TypeCase) {
     const variants = typeCase.variants;
 
-    const propertiesForFields = (fields: Field[], namespace?: string): (Field & Property)[] => {
-      return fields
+    const propertiesForSelectionSet = (
+      selectionSet: SelectionSet,
+      namespace?: string
+    ): (Field & Property)[] => {
+      return collectAndMergeFields(selectionSet, true)
         .filter(field => field.name != '__typename')
         .map(field => this.helpers.propertyFromField(field, namespace));
     };
@@ -344,7 +331,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       this.printNewlineIfNeeded();
       this.printOnNewline(`public init`);
 
-      const properties = propertiesForFields(collectAndMergeFields(typeCase.default));
+      const properties = propertiesForSelectionSet(typeCase.default);
 
       this.parametersForProperties(properties);
 
@@ -373,9 +360,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         const structName = this.scope.typeName;
 
         for (const possibleType of variant.possibleTypes) {
-          // FIXME: Make sure there is a struct for possibleType
-          const properties = propertiesForFields(
-            collectAndMergeFields(variant),
+          const properties = propertiesForSelectionSet(
+            {
+              possibleTypes: [possibleType],
+              selections: variant.selections
+            },
             variant === remainder ? undefined : this.helpers.structNameForVariant(variant)
           );
 
