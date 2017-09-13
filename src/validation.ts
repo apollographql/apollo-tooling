@@ -24,7 +24,7 @@ export function validateQueryDocument(schema: GraphQLSchema, document: DocumentN
     NoAnonymousQueries,
     NoTypenameAlias,
     ...(target === 'swift' ? [NoExplicitTypename] : []),
-    ...specifiedRules.filter(rule => specifiedRulesToBeRemoved.includes(rule))
+    ...specifiedRules.filter(rule => !specifiedRulesToBeRemoved.includes(rule))
   ];
 
   const validationErrors = validate(schema, document, rules);
