@@ -164,7 +164,7 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 			\\"operationType\\": \\"query\\",
 			\\"rootType\\": \\"Query\\",
 			\\"variables\\": [],
-			\\"source\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    name\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\",
+			\\"source\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    id\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\",
 			\\"fields\\": [
 				{
 					\\"responseName\\": \\"hero\\",
@@ -181,11 +181,11 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 							\\"isConditional\\": false
 						},
 						{
-							\\"responseName\\": \\"name\\",
-							\\"fieldName\\": \\"name\\",
-							\\"type\\": \\"String!\\",
+							\\"responseName\\": \\"id\\",
+							\\"fieldName\\": \\"id\\",
+							\\"type\\": \\"ID!\\",
 							\\"isConditional\\": false,
-							\\"description\\": \\"The name of the character\\",
+							\\"description\\": \\"The ID of the character\\",
 							\\"isDeprecated\\": false,
 							\\"deprecationReason\\": null
 						}
@@ -201,8 +201,8 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 			\\"fragmentsReferenced\\": [
 				\\"CharacterDetails\\"
 			],
-			\\"sourceWithFragments\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    name\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\\\nfragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    __typename\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    __typename\\\\n    height\\\\n  }\\\\n}\\",
-			\\"operationId\\": \\"80a82e211f4ec9d2286a726d560f31680d376245a791413a92af68077df308a6\\"
+			\\"sourceWithFragments\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    id\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\\\nfragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    __typename\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    __typename\\\\n    height\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"8382c257b6468c99d5f57b35465ec8b2f8ad6cba4ea6f7dbf4040894787c8e02\\"
 		}
 	],
 	\\"fragments\\": [

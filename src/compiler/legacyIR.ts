@@ -156,10 +156,10 @@ class LegacyIRTransformer {
   transformSelectionSetToLegacyIR(selectionSet: SelectionSet) {
     const typeCase = new TypeCase(selectionSet, this.options.mergeInFieldsFromFragmentSpreads);
 
-    const fields: LegacyField[] = this.transformFieldsToLegacyIR(collectAndMergeFields(typeCase.default));
+    const fields: LegacyField[] = this.transformFieldsToLegacyIR(collectAndMergeFields(typeCase.default, false));
 
     const inlineFragments: LegacyInlineFragment[] = typeCase.variants.flatMap(variant => {
-      const fields = this.transformFieldsToLegacyIR(collectAndMergeFields(variant));
+      const fields = this.transformFieldsToLegacyIR(collectAndMergeFields(variant, false));
 
       if (
         // Filter out records that represent the same possible types as the default record.

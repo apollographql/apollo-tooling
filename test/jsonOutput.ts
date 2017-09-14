@@ -52,7 +52,7 @@ describe('JSON output', function() {
     const context = compileFromSource(`
       query HeroAndDetails {
         hero {
-          name
+          id
           ...CharacterDetails
         }
       }
