@@ -52,6 +52,10 @@ export function escapeIdentifierIfNeeded(identifier: string) {
   }
 }
 
+export function escapeQuotesIfNeeded(string: string) {
+  return string.replace('"', '\"');
+}
+
 export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: string }> {
   constructor(context: Context) {
     super(context);
@@ -70,6 +74,13 @@ export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: 
       comment.split('\n').forEach(line => {
         this.printOnNewline(`/// ${line.trim()}`);
       });
+  }
+
+  deprecationAttributes(isDeprecated: boolean | undefined, deprecationReason: string | undefined) {
+    if (isDeprecated !== undefined && isDeprecated) {
+      deprecationReason = (deprecationReason !== undefined && deprecationReason.length > 0) ? deprecationReason : ""
+      this.printOnNewline(`@available(*, deprecated, message: "${escapeQuotesIfNeeded(deprecationReason)}")`)
+    }
   }
 
   namespaceDeclaration(namespace: string | undefined, closure: Function) {
