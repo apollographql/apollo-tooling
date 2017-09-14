@@ -10,11 +10,6 @@ import {
   OperationDefinitionNode
 } from 'graphql';
 
-// FIXME: Submit a PR to add this to @types/graphql
-declare module 'graphql' {
-  export function NoUnusedFragmentsRule(context: ValidationContext): any
-}
-
 import { ToolError, logError } from './errors';
 
 export function validateQueryDocument(schema: GraphQLSchema, document: DocumentNode) {
