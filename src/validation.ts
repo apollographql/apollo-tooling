@@ -1,7 +1,7 @@
 import {
   validate,
   specifiedRules,
-  NoUnusedFragments,
+  NoUnusedFragmentsRule,
   GraphQLError,
   FieldNode,
   ValidationContext,
@@ -12,13 +12,14 @@ import {
 
 // FIXME: Submit a PR to add this to @types/graphql
 declare module 'graphql' {
-  export function NoUnusedFragments(context: ValidationContext): any
+  export function NoUnusedFragmentsRule(context: ValidationContext): any
 }
 
 import { ToolError, logError } from './errors';
 
 export function validateQueryDocument(schema: GraphQLSchema, document: DocumentNode, target: string) {
   const specifiedRulesToBeRemoved = [NoUnusedFragments];
+  const specifiedRulesToBeRemoved = [NoUnusedFragmentsRule];
 
   const rules = [
     NoAnonymousQueries,
