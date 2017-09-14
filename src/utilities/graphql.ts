@@ -1,8 +1,6 @@
 import {
   visit,
-  visitWithTypeInfo,
   Kind,
-  TypeInfo,
   isEqualType,
   isAbstractType,
   SchemaMetaFieldDef,
@@ -22,10 +20,10 @@ import {
   GraphQLType,
   GraphQLScalarType,
   ASTNode,
-  SelectionSetNode,
   Location,
   ValueNode,
   OperationDefinitionNode,
+  SelectionSetNode,
   FieldNode,
   GraphQLField,
   GraphQLList,
@@ -48,28 +46,35 @@ export function isMetaFieldName(name: string) {
 
 const typenameField = { kind: Kind.FIELD, name: { kind: Kind.NAME, value: '__typename' } };
 
-export function withTypenameFieldAddedWhereNeeded(schema: GraphQLSchema, ast: ASTNode) {
-  function isOperationRootType(type: GraphQLType) {
-    return type === schema.getQueryType() ||
-      type === schema.getMutationType() ||
-      type === schema.getSubscriptionType();
-  }
+export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
+  return visit(ast, {
+    enter: {
+      SelectionSet(node: SelectionSetNode) {
+        return {
+          ...node,
+          selections: node.selections.filter(
+            selection => !(selection.kind === 'Field' && (selection as FieldNode).name.value === '__typename')
+          )
+        };
+      }
+    },
+    leave(node: ASTNode) {
+      if (!(node.kind === 'Field' || node.kind === 'FragmentDefinition')) return undefined;
+      if (!node.selectionSet) return undefined;
 
-  const typeInfo = new TypeInfo(schema);
-
-  return visit(ast, visitWithTypeInfo(typeInfo, {
-    leave: {
-      SelectionSet: (node: SelectionSetNode) => {
-        const parentType = typeInfo.getParentType();
-
-        if (!isOperationRootType(parentType)) {
-          return { ...node, selections: [typenameField, ...node.selections] };
-        } else {
-          return undefined;
-        }
+      if (true) {
+        return {
+          ...node,
+          selectionSet: {
+            ...node.selectionSet,
+            selections: [typenameField, ...node.selectionSet.selections]
+          }
+        };
+      } else {
+        return undefined;
       }
     }
-  }));
+  });
 }
 
 export function sourceAt(location: Location) {

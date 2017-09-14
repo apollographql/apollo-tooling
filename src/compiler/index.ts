@@ -131,7 +131,7 @@ export function compileToIR(
   options: CompilerOptions = {}
 ): CompilerContext {
   if (options.addTypename) {
-    document = withTypenameFieldAddedWhereNeeded(schema, document);
+    document = withTypenameFieldAddedWhereNeeded(document);
   }
 
   const compiler = new Compiler(schema, options);
