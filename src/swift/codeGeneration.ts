@@ -408,6 +408,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printNewlineIfNeeded();
 
     this.comment(field.description);
+    this.deprecationAttributes(field.isDeprecated, field.deprecationReason);
 
     this.printOnNewline(`public var ${propertyName}: ${typeName}`);
     this.withinBlock(() => {
@@ -631,6 +632,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.withinBlock(() => {
       values.forEach(value => {
         this.comment(value.description);
+        this.deprecationAttributes(value.isDeprecated, value.deprecationReason)
         this.printOnNewline(
           `case ${escapeIdentifierIfNeeded(this.helpers.enumCaseName(value.name))} = "${value.value}"`
         );
