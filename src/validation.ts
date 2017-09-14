@@ -17,14 +17,12 @@ declare module 'graphql' {
 
 import { ToolError, logError } from './errors';
 
-export function validateQueryDocument(schema: GraphQLSchema, document: DocumentNode, target: string) {
-  const specifiedRulesToBeRemoved = [NoUnusedFragments];
+export function validateQueryDocument(schema: GraphQLSchema, document: DocumentNode) {
   const specifiedRulesToBeRemoved = [NoUnusedFragmentsRule];
 
   const rules = [
     NoAnonymousQueries,
     NoTypenameAlias,
-    ...(target === 'swift' ? [NoExplicitTypename] : []),
     ...specifiedRules.filter(rule => !specifiedRulesToBeRemoved.includes(rule))
   ];
 
@@ -44,22 +42,6 @@ export function NoAnonymousQueries(context: ValidationContext) {
         context.reportError(new GraphQLError('Apollo does not support anonymous operations', [node]));
       }
       return false;
-    }
-  };
-}
-
-export function NoExplicitTypename(context: ValidationContext) {
-  return {
-    Field(node: FieldNode) {
-      const fieldName = node.name.value;
-      if (fieldName == '__typename') {
-        context.reportError(
-          new GraphQLError(
-            'Apollo inserts __typename automatically when needed, please do not include it explicitly',
-            [node]
-          )
-        );
-      }
     }
   };
 }

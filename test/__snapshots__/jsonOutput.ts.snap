@@ -201,8 +201,8 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 			\\"fragmentsReferenced\\": [
 				\\"CharacterDetails\\"
 			],
-			\\"sourceWithFragments\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    id\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\\\nfragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    __typename\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    __typename\\\\n    height\\\\n  }\\\\n}\\",
-			\\"operationId\\": \\"8382c257b6468c99d5f57b35465ec8b2f8ad6cba4ea6f7dbf4040894787c8e02\\"
+			\\"sourceWithFragments\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    id\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\\\nfragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    height\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"9ea2d583a2bcf98ddcedc95a807e34011ff3c0f66fabaf01fa0169e4a4159121\\"
 		}
 	],
 	\\"fragments\\": [
@@ -214,7 +214,7 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 			],
 			\\"fragmentName\\": \\"CharacterDetails\\",
 			\\"filePath\\": \\"GraphQL request\\",
-			\\"source\\": \\"fragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    __typename\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    __typename\\\\n    height\\\\n  }\\\\n}\\",
+			\\"source\\": \\"fragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    height\\\\n  }\\\\n}\\",
 			\\"fields\\": [
 				{
 					\\"responseName\\": \\"__typename\\",

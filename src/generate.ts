@@ -24,7 +24,7 @@ export default function generate(
 
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
 
-  validateQueryDocument(schema, document, target);
+  validateQueryDocument(schema, document);
 
   let output;
 
