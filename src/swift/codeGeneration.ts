@@ -342,10 +342,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             join(
               [
                 `"__typename": "${typeCase.default.possibleTypes[0]}"`,
-                ...properties.map(
-                  ({ responseKey, propertyName }) =>
-                    `"${responseKey}": ${escapeIdentifierIfNeeded(propertyName)}`
-                )
+                ...properties.map(this.propertyAssignmentForField, this)
               ],
               ', '
             ) || ':',
@@ -382,10 +379,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                 join(
                   [
                     `"__typename": "${possibleType}"`,
-                    ...properties.map(
-                      ({ responseKey, propertyName }) =>
-                        `"${responseKey}": ${escapeIdentifierIfNeeded(propertyName)}`
-                    )
+                    ...properties.map(this.propertyAssignmentForField, this)
                   ],
                   ', '
                 ) || ':',
@@ -396,6 +390,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         }
       }
     }
+  }
+
+  propertyAssignmentForField(field: Field & Property) {
+    const { responseKey, propertyName, type } = field;
+    const valueExpression = isCompositeType(getNamedType(type))
+      ? this.helpers.mapExpressionForType(type, `$0.snapshot`, escapeIdentifierIfNeeded(propertyName))
+      : escapeIdentifierIfNeeded(propertyName);
+    return `"${responseKey}": ${valueExpression}`;
   }
 
   propertyDeclarationForField(field: Field & Property) {

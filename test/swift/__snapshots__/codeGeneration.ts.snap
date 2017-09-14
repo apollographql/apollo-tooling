@@ -34,7 +34,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     }
 
     public init(createReview: CreateReview? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Mutation\\", \\"createReview\\": createReview])
+      self.init(snapshot: [\\"__typename\\": \\"Mutation\\", \\"createReview\\": createReview.flatMap { $0.snapshot }])
     }
 
     public var createReview: CreateReview? {
@@ -118,7 +118,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero])
+      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { $0.snapshot }])
     }
 
     public var hero: Hero? {
@@ -226,7 +226,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero])
+      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { $0.snapshot }])
     }
 
     public var hero: Hero? {
@@ -358,7 +358,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero])
+      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { $0.snapshot }])
     }
 
     public var hero: Hero? {
@@ -460,7 +460,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero])
+      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { $0.snapshot }])
     }
 
     public var hero: Hero? {
@@ -537,7 +537,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero])
+      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { $0.snapshot }])
     }
 
     public var hero: Hero? {
@@ -769,11 +769,11 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   }
 
   public static func makeHuman(name: String, friends: [Friend?]? = nil) -> HeroDetails {
-    return HeroDetails(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"friends\\": friends])
+    return HeroDetails(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"friends\\": friends.flatMap { $0.map { $0.flatMap { $0.snapshot } } }])
   }
 
   public static func makeDroid(name: String, friends: [Friend?]? = nil) -> HeroDetails {
-    return HeroDetails(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"friends\\": friends])
+    return HeroDetails(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"friends\\": friends.flatMap { $0.map { $0.flatMap { $0.snapshot } } }])
   }
 
   /// The name of the character
@@ -930,11 +930,11 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   }
 
   public static func makeHuman(friends: [Friend?]? = nil) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"friends\\": friends])
+    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"friends\\": friends.flatMap { $0.map { $0.flatMap { $0.snapshot } } }])
   }
 
   public static func makeDroid(friends: [Friend?]? = nil) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"friends\\": friends])
+    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"friends\\": friends.flatMap { $0.map { $0.flatMap { $0.snapshot } } }])
   }
 
   /// The friends of the character, or an empty list if they have none
