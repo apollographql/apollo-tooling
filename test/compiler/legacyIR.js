@@ -485,6 +485,8 @@ describe('Compiling query documents to the legacy IR', () => {
 
     const { operations } = compileToLegacyIR(schema, document);
 
+    expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
+    .toEqual(['name']);
     expect(operations['Hero'].fields[0].inlineFragments).toEqual([]);
   });
 
@@ -590,7 +592,7 @@ describe('Compiling query documents to the legacy IR', () => {
     expect(operations['HeroName'].fields[0].inlineFragments["Droid"].typeCondition.toString()).toEqual('Droid');
     expect(operations['HeroName'].fields[0].inlineFragments["Droid"].fields.map(field => field.fieldName))
       .toEqual(['name']);
-    // expect(operations['HeroName'].fields[0].inlineFragments["Droid"].fragmentSpreads).toEqual(['CharacterName']);
+    expect(operations['HeroName'].fields[0].inlineFragments["Droid"].fragmentSpreads).toEqual(['CharacterName']);
 
     expect(operations['HeroName'].fragmentsReferenced).toEqual(['CharacterName']);
     expect(operations['HeroName'].fields[0].fragmentSpreads).toEqual([]);
@@ -832,6 +834,108 @@ describe('Compiling query documents to the legacy IR', () => {
     const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails']);
+  });
+
+  describe("with mergeInFieldsFromFragmentSpreads set to false", () => {
+    it(`should not morge fields from recursively included fragment spreads with type conditions that match the parent type`, () => {
+      const document = parse(`
+        query Hero {
+          hero {
+            id
+            ...HeroDetails
+          }
+        }
+
+        fragment HeroDetails on Character {
+          name
+          ...MoreHeroDetails
+          id
+        }
+
+        fragment MoreHeroDetails on Character {
+          appearsIn
+        }
+      `);
+
+      const { operations, fragments } = compileToLegacyIR(schema, document, { mergeInFieldsFromFragmentSpreads: false });
+
+      expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
+        .toEqual(['id']);
+
+      expect(fragments['HeroDetails'].fields.map(field => field.fieldName))
+        .toEqual(['name', 'id']);
+
+      expect(fragments['MoreHeroDetails'].fields.map(field => field.fieldName))
+        .toEqual(['appearsIn']);
+
+      expect(operations['Hero'].fragmentsReferenced).toEqual(['HeroDetails', 'MoreHeroDetails']);
+      expect(operations['Hero'].fields[0].fragmentSpreads).toEqual(['HeroDetails']);
+      expect(fragments['HeroDetails'].fragmentSpreads).toEqual(['MoreHeroDetails']);
+    });
+
+    it(`should not merge fields from fragment spreads from subselections`, () => {
+      const document = parse(`
+        query HeroAndFriends {
+          hero {
+            ...HeroDetails
+            appearsIn
+            id
+            friends {
+              id
+              ...HeroDetails
+            }
+          }
+        }
+
+        fragment HeroDetails on Character {
+          name
+          id
+        }
+      `);
+
+      const { operations, fragments } = compileToLegacyIR(schema, document, { mergeInFieldsFromFragmentSpreads: false });
+
+      expect(operations['HeroAndFriends'].fields[0].fields.map(field => field.fieldName))
+        .toEqual(['appearsIn', 'id','friends']);
+      expect(operations['HeroAndFriends'].fields[0].fields[2].fields.map(field => field.fieldName))
+        .toEqual(['id']);
+
+      expect(fragments['HeroDetails'].fields.map(field => field.fieldName))
+        .toEqual(['name', 'id']);
+
+      expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails']);
+      expect(operations['HeroAndFriends'].fields[0].fragmentSpreads).toEqual(['HeroDetails']);
+    });
+
+    it(`should not merge fields from fragment spreads with type conditions`, () => {
+      const document = parse(`
+        query Hero {
+          hero {
+            name
+            ...DroidDetails
+            ...HumanDetails
+          }
+        }
+
+        fragment DroidDetails on Droid {
+          primaryFunction
+        }
+
+        fragment HumanDetails on Human {
+          height
+        }
+      `);
+
+      const { operations, fragments } = compileToLegacyIR(schema, document, { mergeInFieldsFromFragmentSpreads: false });
+
+      expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
+        .toEqual(['name']);
+
+      expect(operations['Hero'].fields[0].inlineFragment).toBeUndefined();
+
+      expect(operations['Hero'].fragmentsReferenced).toEqual(['DroidDetails', 'HumanDetails']);
+      expect(operations['Hero'].fields[0].fragmentSpreads).toEqual(['DroidDetails', 'HumanDetails']);
+    });
   });
 
   it(`should include the source of operations`, () => {
