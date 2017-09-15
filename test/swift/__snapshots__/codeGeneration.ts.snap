@@ -268,7 +268,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           return Fragments(snapshot: snapshot)
         }
         set {
-          snapshot = newValue.snapshot
+          snapshot += newValue.snapshot
         }
       }
 
@@ -282,7 +282,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           }
           set {
             guard let newValue = newValue else { return }
-            snapshot = newValue.snapshot
+            snapshot += newValue.snapshot
           }
         }
       }
@@ -406,7 +406,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           return Fragments(snapshot: snapshot)
         }
         set {
-          snapshot = newValue.snapshot
+          snapshot += newValue.snapshot
         }
       }
 
@@ -418,7 +418,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
             return HeroDetails(snapshot: snapshot)
           }
           set {
-            snapshot = newValue.snapshot
+            snapshot += newValue.snapshot
           }
         }
       }
@@ -585,7 +585,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           return Fragments(snapshot: snapshot)
         }
         set {
-          snapshot = newValue.snapshot
+          snapshot += newValue.snapshot
         }
       }
 
@@ -597,7 +597,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
             return HeroDetails(snapshot: snapshot)
           }
           set {
-            snapshot = newValue.snapshot
+            snapshot += newValue.snapshot
           }
         }
       }
@@ -679,7 +679,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
       return Fragments(snapshot: snapshot)
     }
     set {
-      snapshot = newValue.snapshot
+      snapshot += newValue.snapshot
     }
   }
 
@@ -691,7 +691,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
         return MoreHeroDetails(snapshot: snapshot)
       }
       set {
-        snapshot = newValue.snapshot
+        snapshot += newValue.snapshot
       }
     }
   }
@@ -1168,7 +1168,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       return Fragments(snapshot: snapshot)
     }
     set {
-      snapshot = newValue.snapshot
+      snapshot += newValue.snapshot
     }
   }
 
@@ -1180,7 +1180,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
         return HeroDetails(snapshot: snapshot)
       }
       set {
-        snapshot = newValue.snapshot
+        snapshot += newValue.snapshot
       }
     }
   }
@@ -1229,7 +1229,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       return Fragments(snapshot: snapshot)
     }
     set {
-      snapshot = newValue.snapshot
+      snapshot += newValue.snapshot
     }
   }
 
@@ -1243,7 +1243,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       }
       set {
         guard let newValue = newValue else { return }
-        snapshot = newValue.snapshot
+        snapshot += newValue.snapshot
       }
     }
   }
