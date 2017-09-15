@@ -1,4 +1,4 @@
-import { parse, GraphQLEnumType } from 'graphql';
+import { parse, GraphQLNonNull, GraphQLString, GraphQLEnumType, GraphQLList } from 'graphql';
 
 import { loadSchema } from '../../src/loading';
 const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
@@ -118,7 +118,8 @@ describe('Swift code generation', () => {
     });
 
     it(`should generate a class declaration with an operationIdentifier property when generateOperationIds is specified`, () => {
-      const { operations } = compile(`
+      const { operations } = compile(
+        `
         query Hero {
           hero {
             ...HeroDetails
@@ -127,7 +128,9 @@ describe('Swift code generation', () => {
         fragment HeroDetails on Character {
           name
         }
-      `, { generateOperationIds: true} );
+      `,
+        { generateOperationIds: true }
+      );
 
       generator.classDeclarationForOperation(operations['Hero']);
 
@@ -157,6 +160,128 @@ describe('Swift code generation', () => {
       ]);
 
       expect(generator.output).toMatchSnapshot();
+    });
+  });
+
+  describe('#propertyAssignmentForField()', () => {
+    it('should generate expression for nullable scalar', () => {
+      expect(
+        generator.propertyAssignmentForField({
+          responseKey: 'response_key',
+          propertyName: 'propertyName',
+          type: GraphQLString
+        })
+      ).toBe('"response_key": propertyName');
+    });
+
+    it('should generate expression for non-null scalar', () => {
+      expect(
+        generator.propertyAssignmentForField({
+          responseKey: 'response_key',
+          propertyName: 'propertyName',
+          type: new GraphQLNonNull(GraphQLString)
+        })
+      ).toBe('"response_key": propertyName');
+    });
+
+    it('should generate expression for nullable list of nullable scalars', () => {
+      expect(
+        generator.propertyAssignmentForField({
+          responseKey: 'response_key',
+          propertyName: 'propertyName',
+          type: new GraphQLList(GraphQLString)
+        })
+      ).toBe('"response_key": propertyName');
+    });
+
+    it('should generate expression for nullable list of non-null scalars', () => {
+      expect(
+        generator.propertyAssignmentForField({
+          responseKey: 'response_key',
+          propertyName: 'propertyName',
+          type: new GraphQLList(new GraphQLNonNull(GraphQLString))
+        })
+      ).toBe('"response_key": propertyName');
+    });
+
+    it('should generate expression for non-null list of nullable scalars', () => {
+      expect(
+        generator.propertyAssignmentForField({
+          responseKey: 'response_key',
+          propertyName: 'propertyName',
+          type: new GraphQLNonNull(new GraphQLList(GraphQLString))
+        })
+      ).toBe('"response_key": propertyName');
+    });
+
+    it('should generate expression for non-null list of non-null scalars', () => {
+      expect(
+        generator.propertyAssignmentForField({
+          responseKey: 'response_key',
+          propertyName: 'propertyName',
+          type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString)))
+        })
+      ).toBe('"response_key": propertyName');
+    });
+
+    it('should generate expression for nullable composite', () => {
+      expect(
+        generator.propertyAssignmentForField({
+          responseKey: 'response_key',
+          propertyName: 'propertyName',
+          type: schema.getType('Droid')
+        })
+      ).toBe('"response_key": propertyName.flatMap { $0.snapshot }');
+    });
+
+    it('should generate expression for non-null composite', () => {
+      expect(
+        generator.propertyAssignmentForField({
+          responseKey: 'response_key',
+          propertyName: 'propertyName',
+          type: new GraphQLNonNull(schema.getType('Droid'))
+        })
+      ).toBe('"response_key": propertyName.snapshot');
+    });
+
+    it('should generate expression for nullable list of nullable composites', () => {
+      expect(
+        generator.propertyAssignmentForField({
+          responseKey: 'response_key',
+          propertyName: 'propertyName',
+          type: new GraphQLList(schema.getType('Droid'))
+        })
+      ).toBe('"response_key": propertyName.flatMap { $0.map { $0.flatMap { $0.snapshot } } }');
+    });
+
+    it('should generate expression for nullable list of non-null composites', () => {
+      expect(
+        generator.propertyAssignmentForField({
+          responseKey: 'response_key',
+          propertyName: 'propertyName',
+          type: new GraphQLList(new GraphQLNonNull(schema.getType('Droid')))
+        })
+      ).toBe('"response_key": propertyName.flatMap { $0.map { $0.snapshot } }');
+    });
+
+    it('should generate expression for non-null list of nullable composites', () => {
+      expect(
+        generator.propertyAssignmentForField({
+          responseKey: 'response_key',
+          propertyName: 'propertyName',
+          type: new GraphQLNonNull(new GraphQLList(schema.getType('Droid')))
+        })
+      ).toBe('"response_key": propertyName.map { $0.flatMap { $0.snapshot } }');
+    });
+
+    it('should generate expression for non-null list of non-null composites', () => {
+      expect(
+        generator.propertyAssignmentForField({
+          responseKey: 'response_key',
+          propertyName: 'propertyName',
+          type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(schema.getType('Droid')))
+        })
+      ).toBe('"response_key": propertyName.map { $0.snapshot }');
     });
   });
 
