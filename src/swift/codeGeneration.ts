@@ -392,10 +392,10 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     }
   }
 
-  propertyAssignmentForField(field: Field & Property) {
+  propertyAssignmentForField(field: { responseKey: string, propertyName: string, type: GraphQLType }) {
     const { responseKey, propertyName, type } = field;
     const valueExpression = isCompositeType(getNamedType(type))
-      ? this.helpers.mapExpressionForType(type, `$0.snapshot`, escapeIdentifierIfNeeded(propertyName))
+      ? this.helpers.mapExpressionForType(type, (identifier) => `${identifier}.snapshot`, escapeIdentifierIfNeeded(propertyName))
       : escapeIdentifierIfNeeded(propertyName);
     return `"${responseKey}": ${valueExpression}`;
   }
@@ -425,12 +425,12 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             } else {
               getter = `return (snapshot["${responseKey}"] as! ${snapshotTypeName})`;
             }
-            getter += this.helpers.mapExpressionForType(type, `${structName}(snapshot: $0)`);
+            getter += this.helpers.mapExpressionForType(type, (identifier) => `${structName}(snapshot: ${identifier})`);
             this.printOnNewline(getter);
           });
           this.printOnNewline('set');
           this.withinBlock(() => {
-            let newValueExpression = 'newValue' + this.helpers.mapExpressionForType(type, `$0.snapshot`);
+            let newValueExpression = this.helpers.mapExpressionForType(type, (identifier) => `${identifier}.snapshot`, 'newValue');
             this.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${responseKey}")`);
           });
         } else {

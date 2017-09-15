@@ -200,7 +200,7 @@ export class Helpers {
     );
   }
 
-  mapExpressionForType(type: GraphQLType, expression: string, prefix = ''): string {
+  mapExpressionForType(type: GraphQLType, expression: (identifier: string) => string, identifier = ''): string {
     let isOptional;
     if (type instanceof GraphQLNonNull) {
       isOptional = false;
@@ -211,14 +211,14 @@ export class Helpers {
 
     if (type instanceof GraphQLList) {
       if (isOptional) {
-        return `${prefix}.flatMap { $0.map { ${this.mapExpressionForType(type.ofType, expression, '$0')} } }`;
+        return `${identifier}.flatMap { $0.map { ${this.mapExpressionForType(type.ofType, expression, '$0')} } }`;
       } else {
-        return `${prefix}.map { ${this.mapExpressionForType(type.ofType, expression, '$0')} }`;
+        return `${identifier}.map { ${this.mapExpressionForType(type.ofType, expression, '$0')} }`;
       }
     } else if (isOptional) {
-      return `${prefix}.flatMap { ${expression} }`;
+      return `${identifier}.flatMap { ${expression('$0')} }`;
     } else {
-      return expression;
+      return expression(identifier);
     }
   }
 }
