@@ -251,7 +251,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           });
           this.printOnNewline('set');
           this.withinBlock(() => {
-            this.printOnNewline(`snapshot = newValue.snapshot`);
+            this.printOnNewline(`snapshot += newValue.snapshot`);
           });
         });
 
@@ -284,9 +284,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                 this.withinBlock(() => {
                   if (isConditional) {
                     this.printOnNewline(`guard let newValue = newValue else { return }`);
-                    this.printOnNewline(`snapshot = newValue.snapshot`);
+                    this.printOnNewline(`snapshot += newValue.snapshot`);
                   } else {
-                    this.printOnNewline(`snapshot = newValue.snapshot`);
+                    this.printOnNewline(`snapshot += newValue.snapshot`);
                   }
                 });
               });
