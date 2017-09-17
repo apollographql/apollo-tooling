@@ -186,13 +186,13 @@ exports[`TypeScript code generation #generateSource() should generate query oper
 export type HeroAndDetailsQuery = {
   hero: ( {
       __typename: \\"Human\\",
-      // The name of the character
+      // What this human calls themselves
       name: string,
       // Height in the preferred unit, default is meters
       height: number | null,
     } | {
       __typename: \\"Droid\\",
-      // The name of the character
+      // What others call this droid
       name: string,
       // This droid's primary function
       primaryFunction: string | null,
