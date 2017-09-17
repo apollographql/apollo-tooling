@@ -4,7 +4,7 @@ import { compileToIR, CompilerContext, SelectionSet, Field, FragmentSpread } fro
 
 import { collectFragmentsReferenced } from './visitors/collectFragmentsReferenced';
 import { generateOperationId } from './visitors/generateOperationId';
-import { TypeCase } from './visitors/typeCase';
+import { typeCaseForSelectionSet } from './visitors/typeCase';
 import { collectAndMergeFields } from './visitors/collectAndMergeFields';
 
 import '../utilities/array';
@@ -154,7 +154,7 @@ class LegacyIRTransformer {
   }
 
   transformSelectionSetToLegacyIR(selectionSet: SelectionSet) {
-    const typeCase = new TypeCase(selectionSet, this.options.mergeInFieldsFromFragmentSpreads);
+    const typeCase = typeCaseForSelectionSet(selectionSet, this.options.mergeInFieldsFromFragmentSpreads);
 
     const fields: LegacyField[] = this.transformFieldsToLegacyIR(collectAndMergeFields(typeCase.default, false));
 
