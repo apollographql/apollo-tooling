@@ -251,7 +251,7 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 							\\"fieldName\\": \\"name\\",
 							\\"type\\": \\"String!\\",
 							\\"isConditional\\": false,
-							\\"description\\": \\"The name of the character\\",
+							\\"description\\": \\"What others call this droid\\",
 							\\"isDeprecated\\": false,
 							\\"deprecationReason\\": null
 						},
@@ -284,7 +284,7 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 							\\"fieldName\\": \\"name\\",
 							\\"type\\": \\"String!\\",
 							\\"isConditional\\": false,
-							\\"description\\": \\"The name of the character\\",
+							\\"description\\": \\"What this human calls themselves\\",
 							\\"isDeprecated\\": false,
 							\\"deprecationReason\\": null
 						},

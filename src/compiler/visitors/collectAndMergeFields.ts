@@ -13,7 +13,7 @@ export function collectAndMergeFields(
   selectionSet: SelectionSet,
   mergeInFragmentSpreads: Boolean = true
 ): Field[] {
-  const fieldMap: Map<string, Field> = new Map();
+  const groupedFields: Map<string, Field[]> = new Map();
 
   function visitSelectionSet(
     selections: Selection[],
@@ -25,42 +25,24 @@ export function collectAndMergeFields(
     for (const selection of selections) {
       switch (selection.kind) {
         case 'Field':
-          const field = selection;
-          const existingField = fieldMap.get(field.responseKey);
-          if (existingField) {
-            existingField.isConditional = existingField.isConditional && conditions.length > 0;
-
-            // FIXME: This is strictly taken incorrect, because the conditions should be ORed
-            // These conditions are only used in Android target however,
-            // and there is now way to express this in the legacy IR.
-            if (existingField.conditions && conditions.length > 0) {
-              existingField.conditions = [...existingField.conditions, ...conditions];
-            }
-
-            if (field.selectionSet && existingField.selectionSet) {
-              existingField.selectionSet.selections.push(
-                ...wrapInBooleanConditionsIfNeeded(field.selectionSet.selections, conditions)
-              );
-            }
-          } else {
-            // Make sure to deep clone selections to avoid modifying the original field
-            // TODO: Should we use an object freezing / immutability solution?
-            const clonedField = {
-              ...field,
-              selectionSet: field.selectionSet
-                ? {
-                    possibleTypes: field.selectionSet.possibleTypes,
-                    selections: [
-                      ...wrapInBooleanConditionsIfNeeded(field.selectionSet.selections, conditions)
-                    ]
-                  }
-                : undefined
-            };
-
-            clonedField.isConditional = conditions.length > 0;
-
-            fieldMap.set(field.responseKey, { ...clonedField, conditions });
+          let groupForResponseKey = groupedFields.get(selection.responseKey);
+          if (!groupForResponseKey) {
+            groupForResponseKey = [];
+            groupedFields.set(selection.responseKey, groupForResponseKey);
           }
+          // Make sure to deep clone selections to avoid modifying the original field
+          // TODO: Should we use an object freezing / immutability solution?
+          groupForResponseKey.push({
+            ...selection,
+            isConditional: conditions.length > 0,
+            conditions,
+            selectionSet: selection.selectionSet
+              ? {
+                  possibleTypes: selection.selectionSet.possibleTypes,
+                  selections: [...selection.selectionSet.selections]
+                }
+              : undefined
+          });
           break;
         case 'FragmentSpread':
         case 'TypeCondition':
@@ -69,11 +51,7 @@ export function collectAndMergeFields(
           // Only merge fragment spreads and type conditions if they match all possible types.
           if (!possibleTypes.every(type => selection.selectionSet.possibleTypes.includes(type))) continue;
 
-          visitSelectionSet(
-            selection.selectionSet.selections,
-            possibleTypes,
-            conditions
-          );
+          visitSelectionSet(selection.selectionSet.selections, possibleTypes, conditions);
           break;
         case 'BooleanCondition':
           visitSelectionSet(selection.selectionSet.selections, possibleTypes, [...conditions, selection]);
@@ -84,21 +62,56 @@ export function collectAndMergeFields(
 
   visitSelectionSet(selectionSet.selections, selectionSet.possibleTypes);
 
+  // Merge selection sets
+
+  const fields = Array.from(groupedFields.values()).map(fields => {
+    const isFieldIncludedUnconditionally = fields.some(field => !field.isConditional);
+
+    return fields
+      .map(field => {
+        if (isFieldIncludedUnconditionally && field.isConditional && field.selectionSet) {
+          field.selectionSet.selections = wrapInBooleanConditionsIfNeeded(
+            field.selectionSet.selections,
+            field.conditions
+          );
+        }
+        return field;
+      })
+      .reduce((field, otherField) => {
+        field.isConditional = field.isConditional && otherField.isConditional;
+
+        // FIXME: This is strictly taken incorrect, because the conditions should be ORed
+        // These conditions are only used in Android target however,
+        // and there is now way to express this in the legacy IR.
+        if (field.conditions && otherField.conditions) {
+          field.conditions = [...field.conditions, ...otherField.conditions];
+        } else {
+          field.conditions = undefined;
+        }
+
+        if (field.selectionSet && otherField.selectionSet) {
+          field.selectionSet.selections.push(...otherField.selectionSet.selections);
+        }
+
+        return field;
+      });
+  });
+
   // Replace field descriptions with type-specific descriptions if possible
   if (selectionSet.possibleTypes.length == 1) {
     const type = selectionSet.possibleTypes[0];
     const fieldDefMap = type.getFields();
 
-    for (const [responseKey, field] of fieldMap) {
+    for (const field of fields) {
       const fieldDef = fieldDefMap[field.name];
 
       if (fieldDef && fieldDef.description) {
-        fieldMap.set(responseKey, { ...field, description: fieldDef.description });
+        field.description = fieldDef.description;
       }
     }
   }
 
-  return Array.from(fieldMap.values());
+  return fields;
 }
 
 export function wrapInBooleanConditionsIfNeeded(

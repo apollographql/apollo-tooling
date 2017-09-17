@@ -257,7 +257,7 @@ describe('@skip/@include directives', () => {
     expect(collectAndMergeFields(typeCase.variants[0])[0].isConditional).toBeFalsy();
   });
 
-  it('should mark a field as conditional when it has an @include directive on the parent selection set', () => {
+  it('should not mark a field as conditional when the parent selection set is included conditionally', () => {
     const context = compile(`
       query Hero($includeFriends: Boolean!) {
         hero {
@@ -268,15 +268,38 @@ describe('@skip/@include directives', () => {
       }
     `);
 
-    const selectionSet = collectAndMergeFields(collectAndMergeFields(
-      context.operations['Hero'].selectionSet
-    )[0].selectionSet as SelectionSet)[0].selectionSet as SelectionSet;
+    const heroField = context.operations['Hero'].selectionSet.selections[0];
+    const friendsField = collectAndMergeFields(heroField.selectionSet as SelectionSet)[0];
 
-    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['name']);
-    expect(collectAndMergeFields(selectionSet)[0].isConditional).toBeTruthy();
+    expect(friendsField.isConditional).toBeTruthy();
+    expect(friendsField.selectionSet as SelectionSet).toMatchSelectionSet(['Human', 'Droid'], ['name']);
+    expect(collectAndMergeFields(friendsField.selectionSet as SelectionSet)[0].isConditional).toBeFalsy();
   });
 
-  it('should mark a field as conditional when it has an @include directive on the parent selection set and the parent field has been seen before', () => {
+  it('should mark a field as conditional when the parent selection set is first included conditionally and then the parent field is also included unconditionally', () => {
+    const context = compile(`
+      query Hero($includeFriends: Boolean!) {
+        hero {
+          friends @include(if: $includeFriends) {
+            name
+          }
+          friends {
+            id
+          }
+        }
+      }
+    `);
+
+    const heroField = context.operations['Hero'].selectionSet.selections[0];
+    const friendsField = collectAndMergeFields(heroField.selectionSet as SelectionSet)[0];
+
+    expect(friendsField.isConditional).toBeFalsy();
+    expect(friendsField.selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['name', 'id']);
+    expect(collectAndMergeFields(friendsField.selectionSet as SelectionSet)[0].isConditional).toBeTruthy();
+    expect(collectAndMergeFields(friendsField.selectionSet as SelectionSet)[1].isConditional).toBeFalsy();
+  });
+
+  it('should mark a field as conditional when the parent selection set is first included unconditionally and then the parent field is also included conditionally', () => {
     const context = compile(`
       query Hero($includeFriends: Boolean!) {
         hero {
@@ -290,11 +313,12 @@ describe('@skip/@include directives', () => {
       }
     `);
 
-    const selectionSet = collectAndMergeFields(collectAndMergeFields(
-      context.operations['Hero'].selectionSet
-    )[0].selectionSet as SelectionSet)[0].selectionSet as SelectionSet;
+    const heroField = context.operations['Hero'].selectionSet.selections[0];
+    const friendsField = collectAndMergeFields(heroField.selectionSet as SelectionSet)[0];
 
-    expect(selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['id', 'name']);
-    expect(collectAndMergeFields(selectionSet)[1].isConditional).toBeTruthy();
+    expect(friendsField.isConditional).toBeFalsy();
+    expect(friendsField.selectionSet).toMatchSelectionSet(['Human', 'Droid'], ['id', 'name']);
+    expect(collectAndMergeFields(friendsField.selectionSet as SelectionSet)[0].isConditional).toBeFalsy();
+    expect(collectAndMergeFields(friendsField.selectionSet as SelectionSet)[1].isConditional).toBeTruthy();
   });
 });

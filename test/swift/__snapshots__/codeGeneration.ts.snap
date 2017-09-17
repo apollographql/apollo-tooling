@@ -183,7 +183,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
         }
 
-        /// The name of the character
+        /// What others call this droid
         public var name: String {
           get {
             return snapshot[\\"name\\"]! as! String
@@ -1047,7 +1047,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
     }
 
-    /// The name of the character
+    /// What others call this droid
     public var name: String {
       get {
         return snapshot[\\"name\\"]! as! String
@@ -1277,7 +1277,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
     }
 
-    /// The name of the character
+    /// What others call this droid
     public var name: String {
       get {
         return snapshot[\\"name\\"]! as! String
@@ -1356,7 +1356,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
     }
 
-    /// The name of the character
+    /// What others call this droid
     public var name: String {
       get {
         return snapshot[\\"name\\"]! as! String
