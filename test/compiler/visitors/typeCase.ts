@@ -2,7 +2,7 @@ import { buildSchema } from 'graphql';
 import { compile } from '../../test-utils/helpers';
 
 import { SelectionSet, Field } from '../../../src/compiler';
-import { TypeCase } from '../../../src/compiler/visitors/typeCase';
+import { typeCaseForSelectionSet } from '../../../src/compiler/visitors/typeCase';
 
 export const animalSchema = buildSchema(`
   type Query {
@@ -60,7 +60,7 @@ describe('TypeCase', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['id', 'name', 'appearsIn']);
 
@@ -95,7 +95,7 @@ describe('TypeCase', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['id', 'name', 'appearsIn']);
 
@@ -142,7 +142,7 @@ describe('TypeCase', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
 
@@ -170,7 +170,7 @@ describe('TypeCase', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name', 'appearsIn']);
 
@@ -209,7 +209,7 @@ describe('TypeCase', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
 
@@ -242,7 +242,7 @@ describe('TypeCase', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], []);
 
@@ -269,7 +269,7 @@ describe('TypeCase', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], []);
 
@@ -300,7 +300,7 @@ describe('TypeCase', () => {
 
     const selectionSet = (context.operations['Animal'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Cat', 'Bird', 'Fish', 'Crocodile'], []);
 
@@ -342,7 +342,7 @@ describe('TypeCase', () => {
 
     const selectionSet = (context.operations['Animal'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Cat', 'Bird', 'Fish', 'Crocodile'], []);
 
@@ -378,7 +378,7 @@ describe('TypeCase', () => {
 
     const selectionSet = (context.operations['Animal'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Cat', 'Bird'], ['name', 'bodyTemperature']);
     expect(typeCase.variants).toHaveLength(0);

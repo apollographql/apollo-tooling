@@ -11,14 +11,13 @@ import {
 
 import { CompilerContext, Operation, Fragment, SelectionSet, Field } from '../compiler';
 
-import { TypeCase } from '../compiler/visitors/typeCase';
-
 import { join, wrap } from '../utilities/printing';
 
 import { SwiftGenerator, Property, escapeIdentifierIfNeeded, Struct } from './language';
 import { Helpers } from './helpers';
 import { isList } from '../utilities/graphql';
 
+import { typeCaseForSelectionSet, TypeCase } from '../compiler/visitors/typeCase';
 import { collectFragmentsReferenced } from '../compiler/visitors/collectFragmentsReferenced';
 import { generateOperationId } from '../compiler/visitors/generateOperationId';
 import { collectAndMergeFields } from '../compiler/visitors/collectAndMergeFields';
@@ -193,7 +192,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     },
     beforeClosure?: Function
   ) {
-    const typeCase = new TypeCase(selectionSet, this.context.options.mergeInFieldsFromFragmentSpreads);
+    const typeCase = typeCaseForSelectionSet(selectionSet, this.context.options.mergeInFieldsFromFragmentSpreads);
 
     this.structDeclaration({ structName, adoptedProtocols }, () => {
       if (beforeClosure) {

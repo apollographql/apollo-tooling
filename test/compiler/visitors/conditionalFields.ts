@@ -1,6 +1,6 @@
 import { SelectionSet, Field, BooleanCondition } from '../../../src/compiler';
 import { collectAndMergeFields } from '../../../src/compiler/visitors/collectAndMergeFields';
-import { TypeCase } from '../../../src/compiler/visitors/typeCase';
+import { typeCaseForSelectionSet } from '../../../src/compiler/visitors/typeCase';
 
 import { compile } from '../../test-utils/helpers';
 
@@ -223,7 +223,7 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
     expect(collectAndMergeFields(typeCase.default)[0].isConditional).toBeTruthy();
@@ -247,7 +247,7 @@ describe('@skip/@include directives', () => {
 
     const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
       .selectionSet as SelectionSet;
-    const typeCase = new TypeCase(selectionSet);
+    const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
     expect(collectAndMergeFields(typeCase.default)[0].isConditional).toBeFalsy();
