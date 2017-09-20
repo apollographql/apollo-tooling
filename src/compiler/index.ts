@@ -41,22 +41,12 @@ export interface CompilerOptions {
   generateOperationIds?: boolean;
 }
 
-export class CompilerContext {
-  constructor(
-    public schema: GraphQLSchema,
-    public typesUsed: GraphQLType[],
-    public operations: { [operationName: string]: Operation },
-    public fragments: { [fragmentName: string]: Fragment },
-    public options: CompilerOptions
-  ) {}
-
-  fragmentNamed(fragmentName: string): Fragment {
-    const fragment = this.fragments[fragmentName];
-    if (!fragment) {
-      throw new Error(`Cannot find fragment "${fragmentName}"`);
-    }
-    return fragment;
-  }
+export interface CompilerContext {
+  schema: GraphQLSchema;
+  typesUsed: GraphQLType[];
+  operations: { [operationName: string]: Operation };
+  fragments: { [fragmentName: string]: Fragment };
+  options: CompilerOptions;
 }
 
 function argumentsFromAST(args: ArgumentNode[]): Argument[] {
@@ -132,6 +122,7 @@ export interface FragmentSpread {
   kind: 'FragmentSpread';
   fragmentName: string;
   isConditional?: boolean;
+  selectionSet: SelectionSet;
 }
 
 export function compileToIR(
@@ -140,7 +131,7 @@ export function compileToIR(
   options: CompilerOptions = {}
 ): CompilerContext {
   if (options.addTypename) {
-    document = withTypenameFieldAddedWhereNeeded(schema, document);
+    document = withTypenameFieldAddedWhereNeeded(document);
   }
 
   const compiler = new Compiler(schema, options);
@@ -161,15 +152,38 @@ export function compileToIR(
     }
   }
 
+  for (const fragmentSpread of compiler.unresolvedFragmentSpreads) {
+    const fragment = fragments[fragmentSpread.fragmentName];
+    if (!fragment) {
+      throw new Error(`Cannot find fragment "${fragmentSpread.fragmentName}"`);
+    }
+
+    // Compute the intersection between the possiblew types of the fragment spread and the fragment.
+    const possibleTypes = fragment.selectionSet.possibleTypes.filter(type =>
+      fragmentSpread.selectionSet.possibleTypes.includes(type)
+    );
+
+    fragmentSpread.isConditional = fragment.selectionSet.possibleTypes.some(type =>
+      !fragmentSpread.selectionSet.possibleTypes.includes(type)
+    );
+
+    fragmentSpread.selectionSet = {
+      possibleTypes,
+      selections: fragment.selectionSet.selections
+    }
+  }
+
   const typesUsed = compiler.typesUsed;
 
-  return new CompilerContext(schema, typesUsed, operations, fragments, options);
+  return { schema, typesUsed, operations, fragments, options };
 }
 
 class Compiler {
   options: CompilerOptions;
   schema: GraphQLSchema;
   typesUsedSet: Set<GraphQLType>;
+
+  unresolvedFragmentSpreads: FragmentSpread[] = [];
 
   constructor(schema: GraphQLSchema, options: CompilerOptions) {
     this.schema = schema;
@@ -325,7 +339,6 @@ class Compiler {
           );
         }
         return field;
-        break;
       }
       case Kind.INLINE_FRAGMENT: {
         const typeNode = selectionNode.typeCondition;
@@ -342,18 +355,22 @@ class Compiler {
             possibleTypesForTypeCondition
           )
         };
-        break;
       }
       case Kind.FRAGMENT_SPREAD: {
         const fragmentName = selectionNode.name.value;
         if (visitedFragments.has(fragmentName)) return null;
         visitedFragments.add(fragmentName);
 
-        return {
+        const fragmentSpread: FragmentSpread = {
           kind: 'FragmentSpread',
-          fragmentName
+          fragmentName,
+          selectionSet: {
+            possibleTypes,
+            selections: []
+          }
         };
-        break;
+        this.unresolvedFragmentSpreads.push(fragmentSpread);
+        return fragmentSpread;
       }
     }
   }

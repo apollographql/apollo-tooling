@@ -19,31 +19,31 @@ describe('Swift code generation: Types', () => {
   });
 
   describe('#typeNameFromGraphQLType()', () => {
-    test('should return String? for GraphQLString', () => {
+    it('should return String? for GraphQLString', () => {
       expect(helpers.typeNameFromGraphQLType(GraphQLString)).toBe('String?');
     });
 
-    test('should return String for GraphQLNonNull(GraphQLString)', () => {
+    it('should return String for GraphQLNonNull(GraphQLString)', () => {
       expect(helpers.typeNameFromGraphQLType(new GraphQLNonNull(GraphQLString))).toBe('String');
     });
 
-    test('should return [String?]? for GraphQLList(GraphQLString)', () => {
+    it('should return [String?]? for GraphQLList(GraphQLString)', () => {
       expect(helpers.typeNameFromGraphQLType(new GraphQLList(GraphQLString))).toBe('[String?]?');
     });
 
-    test('should return [String?] for GraphQLNonNull(GraphQLList(GraphQLString))', () => {
+    it('should return [String?] for GraphQLNonNull(GraphQLList(GraphQLString))', () => {
       expect(helpers.typeNameFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLString)))).toBe(
         '[String?]'
       );
     });
 
-    test('should return [String]? for GraphQLList(GraphQLNonNull(GraphQLString))', () => {
+    it('should return [String]? for GraphQLList(GraphQLNonNull(GraphQLString))', () => {
       expect(helpers.typeNameFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLString)))).toBe(
         '[String]?'
       );
     });
 
-    test('should return [String] for GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))', () => {
+    it('should return [String] for GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))', () => {
       expect(
         helpers.typeNameFromGraphQLType(
           new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString)))
@@ -51,35 +51,35 @@ describe('Swift code generation: Types', () => {
       ).toBe('[String]');
     });
 
-    test('should return [[String?]?]? for GraphQLList(GraphQLList(GraphQLString))', () => {
+    it('should return [[String?]?]? for GraphQLList(GraphQLList(GraphQLString))', () => {
       expect(helpers.typeNameFromGraphQLType(new GraphQLList(new GraphQLList(GraphQLString)))).toBe(
         '[[String?]?]?'
       );
     });
 
-    test('should return [[String?]]? for GraphQLList(GraphQLNonNull(GraphQLList(GraphQLString)))', () => {
+    it('should return [[String?]]? for GraphQLList(GraphQLNonNull(GraphQLList(GraphQLString)))', () => {
       expect(
         helpers.typeNameFromGraphQLType(new GraphQLList(new GraphQLNonNull(new GraphQLList(GraphQLString))))
       ).toBe('[[String?]]?');
     });
 
-    test('should return Int? for GraphQLInt', () => {
+    it('should return Int? for GraphQLInt', () => {
       expect(helpers.typeNameFromGraphQLType(GraphQLInt)).toBe('Int?');
     });
 
-    test('should return Double? for GraphQLFloat', () => {
+    it('should return Double? for GraphQLFloat', () => {
       expect(helpers.typeNameFromGraphQLType(GraphQLFloat)).toBe('Double?');
     });
 
-    test('should return Bool? for GraphQLBoolean', () => {
+    it('should return Bool? for GraphQLBoolean', () => {
       expect(helpers.typeNameFromGraphQLType(GraphQLBoolean)).toBe('Bool?');
     });
 
-    test('should return GraphQLID? for GraphQLID', () => {
+    it('should return GraphQLID? for GraphQLID', () => {
       expect(helpers.typeNameFromGraphQLType(GraphQLID)).toBe('GraphQLID?');
     });
 
-    test('should return String? for a custom scalar type', () => {
+    it('should return String? for a custom scalar type', () => {
       expect(
         helpers.typeNameFromGraphQLType(
           new GraphQLScalarType({ name: 'CustomScalarType', serialize: String })
@@ -87,7 +87,7 @@ describe('Swift code generation: Types', () => {
       ).toBe('String?');
     });
 
-    test('should return a passed through custom scalar type with the passthroughCustomScalars option', () => {
+    it('should return a passed through custom scalar type with the passthroughCustomScalars option', () => {
       helpers.options.passthroughCustomScalars = true;
       helpers.options.customScalarsPrefix = '';
 
@@ -98,7 +98,7 @@ describe('Swift code generation: Types', () => {
       ).toBe('CustomScalarType?');
     });
 
-    test('should return a passed through custom scalar type with a prefix with the customScalarsPrefix option', () => {
+    it('should return a passed through custom scalar type with a prefix with the customScalarsPrefix option', () => {
       helpers.options.passthroughCustomScalars = true;
       helpers.options.customScalarsPrefix = 'My';
 

@@ -9,17 +9,7 @@ import {
   GraphQLInputObjectType
 } from 'graphql';
 
-import {
-  CompilerContext,
-  Operation,
-  Fragment,
-  SelectionSet,
-  Field,
-  TypeCondition,
-  FragmentSpread
-} from '../compiler';
-
-import { TypeCase } from '../compiler/flattenIR';
+import { CompilerContext, Operation, Fragment, SelectionSet, Field } from '../compiler';
 
 import { join, wrap } from '../utilities/printing';
 
@@ -27,10 +17,12 @@ import { SwiftGenerator, Property, escapeIdentifierIfNeeded, Struct } from './la
 import { Helpers } from './helpers';
 import { isList } from '../utilities/graphql';
 
+import { typeCaseForSelectionSet, TypeCase } from '../compiler/visitors/typeCase';
 import { collectFragmentsReferenced } from '../compiler/visitors/collectFragmentsReferenced';
-import { mergeInFragmentSpreads } from '../compiler/visitors/mergeInFragmentSpreads';
 import { generateOperationId } from '../compiler/visitors/generateOperationId';
-import { inlineRedundantTypeConditions } from '../compiler/visitors/inlineRedundantTypeConditions';
+import { collectAndMergeFields } from '../compiler/visitors/collectAndMergeFields';
+
+import '../utilities/array';
 
 export interface Options {
   namespace?: string;
@@ -108,10 +100,13 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           });
         }
 
-        const fragmentsReferenced = collectFragmentsReferenced(this.context, operation.selectionSet);
+        const fragmentsReferenced = collectFragmentsReferenced(
+          operation.selectionSet,
+          this.context.fragments
+        );
 
         if (this.context.options.generateOperationIds) {
-          const { operationId } = generateOperationId(this.context, operation, fragmentsReferenced);
+          const { operationId } = generateOperationId(operation, this.context.fragments, fragmentsReferenced);
           this.printNewlineIfNeeded();
           this.printOnNewline(`public static let operationIdentifier: String? = "${operationId}"`);
         }
@@ -197,21 +192,21 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     },
     beforeClosure?: Function
   ) {
+    const typeCase = typeCaseForSelectionSet(selectionSet, this.context.options.mergeInFieldsFromFragmentSpreads);
+
     this.structDeclaration({ structName, adoptedProtocols }, () => {
       if (beforeClosure) {
         beforeClosure();
       }
 
-      const possibleTypes = selectionSet.possibleTypes;
-
       this.printNewlineIfNeeded();
       this.printOnNewline('public static let possibleTypes = [');
-      this.print(join(possibleTypes.map(type => `"${type.name}"`), ', '));
+      this.print(join(selectionSet.possibleTypes.map(type => `"${type.name}"`), ', '));
       this.print(']');
 
       this.printNewlineIfNeeded();
       this.printOnNewline('public static let selections: [GraphQLSelection] = ');
-      this.selectionSetInitialization(selectionSet);
+      this.typeCaseInitialization(typeCase);
 
       this.printNewlineIfNeeded();
 
@@ -226,32 +221,24 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.printOnNewline(`self.snapshot = snapshot`);
       });
 
-      const typeCase = new TypeCase(
-        inlineRedundantTypeConditions(this.context, mergeInFragmentSpreads(this.context, selectionSet))
-      );
-
       this.initializersForTypeCase(typeCase);
 
-      const fields = typeCase.default.fields.map(field => this.helpers.propertyFromField(field as Field));
+      const fields = collectAndMergeFields(
+        typeCase.default,
+        this.context.options.mergeInFieldsFromFragmentSpreads
+      ).map(field => this.helpers.propertyFromField(field as Field));
 
-      const typeConditions = selectionSet.selections
-        .filter((selection): selection is TypeCondition => selection.kind === 'TypeCondition')
-        .map(this.helpers.propertyFromTypeCondition, this.helpers);
+      const variants = typeCase.variants.map(this.helpers.propertyFromVariant, this.helpers);
 
-      // FIXME: Remove cast to FragmentSpread[] when proper typings for filter() land in TypeScript
-      const fragmentSpreads = (selectionSet.selections.filter(
-        (selection): selection is FragmentSpread => selection.kind === 'FragmentSpread'
-      ) as FragmentSpread[]).map(fragmentSpread => {
-        const fragment = this.context.fragmentNamed(fragmentSpread.fragmentName);
+      const fragmentSpreads = typeCase.default.fragmentSpreads.map(fragmentSpread => {
         const isConditional = selectionSet.possibleTypes.some(
-          type => !fragment.selectionSet.possibleTypes.includes(type)
+          type => !fragmentSpread.selectionSet.possibleTypes.includes(type)
         );
+
         return this.helpers.propertyFromFragmentSpread(fragmentSpread, isConditional);
       });
 
       fields.forEach(this.propertyDeclarationForField, this);
-
-      typeConditions.forEach(this.propertyDeclarationForTypeCondition, this);
 
       if (fragmentSpreads.length > 0) {
         this.printNewlineIfNeeded();
@@ -263,20 +250,10 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           });
           this.printOnNewline('set');
           this.withinBlock(() => {
-            this.printOnNewline(`snapshot = newValue.snapshot`);
+            this.printOnNewline(`snapshot += newValue.snapshot`);
           });
         });
-      }
 
-      for (const typeCondition of typeConditions) {
-        this.structDeclarationForSelectionSet({
-          structName: typeCondition.structName,
-          adoptedProtocols: ['GraphQLFragment'],
-          selectionSet: typeCondition.selectionSet
-        });
-      }
-
-      if (fragmentSpreads.length > 0) {
         this.structDeclaration(
           {
             structName: 'Fragments'
@@ -306,15 +283,24 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                 this.withinBlock(() => {
                   if (isConditional) {
                     this.printOnNewline(`guard let newValue = newValue else { return }`);
-                    this.printOnNewline(`snapshot = newValue.snapshot`);
+                    this.printOnNewline(`snapshot += newValue.snapshot`);
                   } else {
-                    this.printOnNewline(`snapshot = newValue.snapshot`);
+                    this.printOnNewline(`snapshot += newValue.snapshot`);
                   }
                 });
               });
             }
           }
         );
+      }
+
+      for (const variant of variants) {
+        this.propertyDeclarationForVariant(variant);
+
+        this.structDeclarationForSelectionSet({
+          structName: variant.structName,
+          selectionSet: variant.selectionSet
+        });
       }
 
       for (const field of fields) {
@@ -329,19 +315,22 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
   }
 
   initializersForTypeCase(typeCase: TypeCase) {
-    const records = typeCase.records;
+    const variants = typeCase.variants;
 
-    const propertiesForFields = (fields: Field[], namespace?: string): (Field & Property)[] => {
-      return fields
+    const propertiesForSelectionSet = (
+      selectionSet: SelectionSet,
+      namespace?: string
+    ): (Field & Property)[] => {
+      return collectAndMergeFields(selectionSet, true)
         .filter(field => field.name != '__typename')
         .map(field => this.helpers.propertyFromField(field, namespace));
     };
 
-    if (records.length == 1 && records[0].possibleTypes.length == 1) {
+    if (variants.length == 0 && typeCase.default.possibleTypes.length == 1) {
       this.printNewlineIfNeeded();
       this.printOnNewline(`public init`);
 
-      const properties = propertiesForFields(records[0].fields);
+      const properties = propertiesForSelectionSet(typeCase.default);
 
       this.parametersForProperties(properties);
 
@@ -351,11 +340,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             `self.init(snapshot: [`,
             join(
               [
-                `"__typename": "${records[0].possibleTypes[0]}"`,
-                ...properties.map(
-                  ({ responseKey, propertyName }) =>
-                    `"${responseKey}": ${escapeIdentifierIfNeeded(propertyName)}`
-                )
+                `"__typename": "${typeCase.default.possibleTypes[0]}"`,
+                ...properties.map(this.propertyAssignmentForField, this)
               ],
               ', '
             ) || ':',
@@ -364,14 +350,18 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         );
       });
     } else {
-      for (const record of records) {
+      const remainder = typeCase.remainder;
+
+      for (const variant of remainder ? [remainder, ...variants] : variants) {
         const structName = this.scope.typeName;
 
-        for (const possibleType of record.possibleTypes) {
-          // FIXME: Make sure there is a struct for possibleType
-          const properties = propertiesForFields(
-            record.fields,
-            records.length > 1 ? this.helpers.structNameForTypeCondition(possibleType) : undefined
+        for (const possibleType of variant.possibleTypes) {
+          const properties = propertiesForSelectionSet(
+            {
+              possibleTypes: [possibleType],
+              selections: variant.selections
+            },
+            variant === remainder ? undefined : this.helpers.structNameForVariant(variant)
           );
 
           this.printNewlineIfNeeded();
@@ -388,10 +378,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                 join(
                   [
                     `"__typename": "${possibleType}"`,
-                    ...properties.map(
-                      ({ responseKey, propertyName }) =>
-                        `"${responseKey}": ${escapeIdentifierIfNeeded(propertyName)}`
-                    )
+                    ...properties.map(this.propertyAssignmentForField, this)
                   ],
                   ', '
                 ) || ':',
@@ -404,6 +391,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     }
   }
 
+  propertyAssignmentForField(field: { responseKey: string, propertyName: string, type: GraphQLType }) {
+    const { responseKey, propertyName, type } = field;
+    const valueExpression = isCompositeType(getNamedType(type))
+      ? this.helpers.mapExpressionForType(type, (identifier) => `${identifier}.snapshot`, escapeIdentifierIfNeeded(propertyName))
+      : escapeIdentifierIfNeeded(propertyName);
+    return `"${responseKey}": ${valueExpression}`;
+  }
+
   propertyDeclarationForField(field: Field & Property) {
     const { responseKey, propertyName, typeName, type, isOptional } = field;
 
@@ -412,6 +407,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printNewlineIfNeeded();
 
     this.comment(field.description);
+    this.deprecationAttributes(field.isDeprecated, field.deprecationReason);
 
     this.printOnNewline(`public var ${propertyName}: ${typeName}`);
     this.withinBlock(() => {
@@ -421,14 +417,19 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         if (isList(type)) {
           this.printOnNewline('get');
           this.withinBlock(() => {
-            const snapshotTypeName = this.helpers.typeNameFromGraphQLType(type, 'Snapshot', isOptional);
-            let getter = `return (snapshot["${responseKey}"]! as! ${snapshotTypeName})`;
-            getter += this.helpers.mapExpressionForType(type, `${structName}(snapshot: $0)`);
+            const snapshotTypeName = this.helpers.typeNameFromGraphQLType(type, 'Snapshot', false);
+            let getter;
+            if (isOptional) {
+              getter = `return (snapshot["${responseKey}"] as? ${snapshotTypeName})`;
+            } else {
+              getter = `return (snapshot["${responseKey}"] as! ${snapshotTypeName})`;
+            }
+            getter += this.helpers.mapExpressionForType(type, (identifier) => `${structName}(snapshot: ${identifier})`);
             this.printOnNewline(getter);
           });
           this.printOnNewline('set');
           this.withinBlock(() => {
-            let newValueExpression = 'newValue' + this.helpers.mapExpressionForType(type, `$0.snapshot`);
+            let newValueExpression = this.helpers.mapExpressionForType(type, (identifier) => `${identifier}.snapshot`, 'newValue');
             this.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${responseKey}")`);
           });
         } else {
@@ -436,7 +437,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.withinBlock(() => {
             if (isOptional) {
               this.printOnNewline(
-                `return (snapshot["${responseKey}"]! as! Snapshot?).flatMap { ${structName}(snapshot: $0) }`
+                `return (snapshot["${responseKey}"] as! Snapshot?).flatMap { ${structName}(snapshot: $0) }`
               );
             } else {
               this.printOnNewline(`return ${structName}(snapshot: snapshot["${responseKey}"]! as! Snapshot)`);
@@ -456,7 +457,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       } else {
         this.printOnNewline('get');
         this.withinBlock(() => {
-          this.printOnNewline(`return snapshot["${responseKey}"]! as! ${typeName}`);
+          if (isOptional) {
+            this.printOnNewline(`return snapshot["${responseKey}"] as? ${typeName.slice(0, -1)}`);
+          } else {
+            this.printOnNewline(`return snapshot["${responseKey}"]! as! ${typeName}`);
+          }
         });
         this.printOnNewline('set');
         this.withinBlock(() => {
@@ -466,8 +471,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     });
   }
 
-  propertyDeclarationForTypeCondition(typeCondition: TypeCondition & Property & Struct) {
-    const { propertyName, typeName, structName } = typeCondition;
+  propertyDeclarationForVariant(variant: Property & Struct) {
+    const { propertyName, typeName, structName } = variant;
 
     this.printNewlineIfNeeded();
     this.printOnNewline(`public var ${propertyName}: ${typeName}`);
@@ -509,6 +514,34 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.print(')');
   }
 
+  typeCaseInitialization(typeCase: TypeCase) {
+    if (typeCase.variants.length < 1) {
+      this.selectionSetInitialization(typeCase.default);
+      return;
+    }
+
+    this.print('[');
+    this.withIndent(() => {
+      this.printOnNewline(`GraphQLTypeCase(`);
+      this.withIndent(() => {
+        this.printOnNewline(`variants: [`);
+        this.print(
+          typeCase.variants
+            .flatMap(variant => {
+              const structName = this.helpers.structNameForVariant(variant);
+              return variant.possibleTypes.map(type => `"${type}": ${structName}.selections`);
+            })
+            .join(', ')
+        );
+        this.print('],');
+        this.printOnNewline(`default: `);
+        this.selectionSetInitialization(typeCase.default);
+      });
+      this.printOnNewline(')');
+    });
+    this.printOnNewline(']');
+  }
+
   selectionSetInitialization(selectionSet: SelectionSet) {
     this.print('[');
     this.withIndent(() => {
@@ -536,16 +569,6 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             this.print('),');
             break;
           }
-          case 'TypeCondition': {
-            const structName = this.helpers.structNameForTypeCondition(selection.type);
-            this.printOnNewline(`GraphQLFragmentSpread(${structName}.self),`);
-            break;
-          }
-          case 'FragmentSpread': {
-            const structName = this.helpers.structNameForFragmentName(selection.fragmentName);
-            this.printOnNewline(`GraphQLFragmentSpread(${structName}.self),`);
-            break;
-          }
           case 'BooleanCondition':
             this.printOnNewline(`GraphQLBooleanCondition(`);
             this.print(
@@ -561,6 +584,29 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             this.selectionSetInitialization(selection.selectionSet);
             this.print('),');
             break;
+          case 'TypeCondition': {
+            this.printOnNewline(`GraphQLTypeCondition(`);
+            this.print(
+              join(
+                [
+                  `possibleTypes: [${join(
+                    selection.selectionSet.possibleTypes.map(type => `"${type.name}"`),
+                    ', '
+                  )}]`,
+                  'selections: '
+                ],
+                ', '
+              )
+            );
+            this.selectionSetInitialization(selection.selectionSet);
+            this.print('),');
+            break;
+          }
+          case 'FragmentSpread': {
+            const structName = this.helpers.structNameForFragmentName(selection.fragmentName);
+            this.printOnNewline(`GraphQLFragmentSpread(${structName}.self),`);
+            break;
+          }
         }
       }
     });
@@ -585,6 +631,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.withinBlock(() => {
       values.forEach(value => {
         this.comment(value.description);
+        this.deprecationAttributes(value.isDeprecated, value.deprecationReason)
         this.printOnNewline(
           `case ${escapeIdentifierIfNeeded(this.helpers.enumCaseName(value.name))} = "${value.value}"`
         );

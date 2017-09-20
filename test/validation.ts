@@ -23,16 +23,6 @@ describe('Validation', () => {
     );
   });
 
-  test(`should throw an error for ExplicitTypename.graphql for the Swift target`, () => {
-    const document = loadQueryDocument('ExplicitTypename.graphql');
-
-    expect(
-      () => validateQueryDocument(schema, document, 'swift')
-    ).toThrow(
-      'Validation of GraphQL query document failed'
-    );
-  });
-
   test(`should throw an error for TypenameAlias.graphql`, () => {
     const document = loadQueryDocument('TypenameAlias.graphql');
 

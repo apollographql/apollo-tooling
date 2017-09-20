@@ -12,7 +12,6 @@ import {
   isCompositeType,
   getNamedType,
   GraphQLInputField,
-  GraphQLCompositeType
 } from 'graphql';
 
 import { camelCase, pascalCase } from 'change-case';
@@ -21,9 +20,7 @@ import { join, wrap } from '../utilities/printing';
 
 import { Property, Struct } from './language';
 
-import { Field, TypeCondition, FragmentSpread } from '../compiler';
-
-import { CompilerOptions, Argument } from '../compiler';
+import { CompilerOptions, SelectionSet, Field, FragmentSpread, Argument } from '../compiler';
 import { isMetaFieldName } from "../utilities/graphql";
 
 const builtInScalarMap = {
@@ -77,7 +74,7 @@ export class Helpers {
     } else if (type instanceof GraphQLEnumType) {
       return `.scalar(${type.name}.self)`;
     } else if (isCompositeType(type)) {
-      return `.object(${structName}.self)`;
+      return `.object(${structName}.selections)`;
     } else {
       throw new Error(`Unknown field type: ${type}`);
     }
@@ -101,8 +98,8 @@ export class Helpers {
     return pascalCase(fragmentName);
   }
 
-  structNameForTypeCondition(type: GraphQLCompositeType) {
-    return 'As' + pascalCase(type.name);
+  structNameForVariant(variant: SelectionSet) {
+    return 'As' + variant.possibleTypes.map(type => pascalCase(type.name)).join('Or');
   }
 
   // Properties
@@ -137,14 +134,15 @@ export class Helpers {
     });
   }
 
-  propertyFromTypeCondition(typeCondition: TypeCondition): TypeCondition & Property & Struct {
-    const structName = this.structNameForTypeCondition(typeCondition.type);
+  propertyFromVariant(variant: SelectionSet): { selectionSet: SelectionSet } & Property & Struct {
+    const structName = this.structNameForVariant(variant);
 
-    return Object.assign({}, typeCondition, {
+    return {
       propertyName: camelCase(structName),
       typeName: structName + '?',
-      structName
-    });
+      structName,
+      selectionSet: variant
+    };
   }
 
   propertyFromFragmentSpread(fragmentSpread: FragmentSpread, isConditional: boolean): FragmentSpread & Property & Struct {
@@ -171,7 +169,7 @@ export class Helpers {
   dictionaryLiteralForFieldArguments(args: Argument[]) {
     function expressionFromValue(value: any): string {
       if (value.kind === 'Variable') {
-        return `Variable("${value.variableName}")`;
+        return `GraphQLVariable("${value.variableName}")`;
       } else if (Array.isArray(value)) {
         return wrap('[', join(value.map(expressionFromValue), ', '), ']');
       } else if (typeof value === 'object') {
@@ -202,7 +200,7 @@ export class Helpers {
     );
   }
 
-  mapExpressionForType(type: GraphQLType, expression: string, prefix = ''): string {
+  mapExpressionForType(type: GraphQLType, expression: (identifier: string) => string, identifier = ''): string {
     let isOptional;
     if (type instanceof GraphQLNonNull) {
       isOptional = false;
@@ -213,14 +211,14 @@ export class Helpers {
 
     if (type instanceof GraphQLList) {
       if (isOptional) {
-        return `${prefix}.flatMap { $0.map { ${this.mapExpressionForType(type.ofType, expression, '$0')} } }`;
+        return `${identifier}.flatMap { $0.map { ${this.mapExpressionForType(type.ofType, expression, '$0')} } }`;
       } else {
-        return `${prefix}.map { ${this.mapExpressionForType(type.ofType, expression, '$0')} }`;
+        return `${identifier}.map { ${this.mapExpressionForType(type.ofType, expression, '$0')} }`;
       }
     } else if (isOptional) {
-      return `${prefix}.flatMap { ${expression} }`;
+      return `${identifier}.flatMap { ${expression('$0')} }`;
     } else {
-      return expression;
+      return expression(identifier);
     }
   }
 }

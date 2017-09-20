@@ -1,6 +1,6 @@
 {
   "name": "apollo-codegen",
-  "version": "0.17.0-alpha.1",
+  "version": "0.17.0-alpha.5",
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
@@ -9,7 +9,7 @@
     "compile": "tsc",
     "watch": "tsc -w",
     "prepublish": "npm run clean && npm run compile",
-    "test": "jest",
+    "test": "./node_modules/.bin/jest",
     "test:smoke": "rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
   },
   "repository": {
@@ -24,7 +24,7 @@
   "devDependencies": {
     "@types/common-tags": "^1.2.5",
     "@types/glob": "^5.0.30",
-    "@types/graphql": "^0.10.2",
+    "@types/graphql": "^0.11.3",
     "@types/inflected": "^1.1.29",
     "@types/jest": "^20.0.6",
     "@types/mkdirp": "^0.5.0",
@@ -32,15 +32,16 @@
     "@types/yargs": "^8.0.2",
     "ansi-regex": "^3.0.0",
     "common-tags": "^1.4.0",
-    "jest": "^20.0.4",
-    "jest-matcher-utils": "^20.0.3",
-    "typescript": "^2.4.2"
+    "jest": "^21.1.0",
+    "jest-matcher-utils": "^21.1.0",
+    "typescript": "^2.5.2"
   },
   "dependencies": {
     "change-case": "^3.0.1",
     "core-js": "^2.5.0",
     "glob": "^7.1.2",
-    "graphql": "^0.10.5",
+    "graphql-config": "^1.0.5",
+    "graphql": "^0.11.3",
     "graphql-config": "^1.0.5",
     "inflected": "^2.0.2",
     "mkdirp": "^0.5.1",
@@ -53,6 +54,7 @@
     "setupFiles": [
       "<rootDir>/src/polyfills.js"
     ],
+    "setupTestFrameworkScriptFile": "<rootDir>/test/test-utils/matchers.ts",
     "testMatch": [
       "**/test/**/*.(js|ts)",
       "**/test/*.(js|ts)"
@@ -61,10 +63,10 @@
       "<rootDir>/node_modules/",
       "<rootDir>/lib/",
       "<rootDir>/test/fixtures/",
-      "<rootDir>/test/preprocessor.js"
+      "<rootDir>/test/test-utils"
     ],
     "transform": {
-      ".(js|ts)": "<rootDir>/test/preprocessor.js"
+      ".(js|ts)": "<rootDir>/test/test-utils/preprocessor.js"
     },
     "moduleFileExtensions": [
       "ts",

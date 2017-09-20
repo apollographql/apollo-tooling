@@ -164,7 +164,7 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 			\\"operationType\\": \\"query\\",
 			\\"rootType\\": \\"Query\\",
 			\\"variables\\": [],
-			\\"source\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    name\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\",
+			\\"source\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    id\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\",
 			\\"fields\\": [
 				{
 					\\"responseName\\": \\"hero\\",
@@ -181,11 +181,11 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 							\\"isConditional\\": false
 						},
 						{
-							\\"responseName\\": \\"name\\",
-							\\"fieldName\\": \\"name\\",
-							\\"type\\": \\"String!\\",
+							\\"responseName\\": \\"id\\",
+							\\"fieldName\\": \\"id\\",
+							\\"type\\": \\"ID!\\",
 							\\"isConditional\\": false,
-							\\"description\\": \\"The name of the character\\",
+							\\"description\\": \\"The ID of the character\\",
 							\\"isDeprecated\\": false,
 							\\"deprecationReason\\": null
 						}
@@ -201,8 +201,8 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 			\\"fragmentsReferenced\\": [
 				\\"CharacterDetails\\"
 			],
-			\\"sourceWithFragments\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    name\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\\\nfragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    __typename\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    __typename\\\\n    height\\\\n  }\\\\n}\\",
-			\\"operationId\\": \\"80a82e211f4ec9d2286a726d560f31680d376245a791413a92af68077df308a6\\"
+			\\"sourceWithFragments\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    id\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\\\nfragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    height\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"9ea2d583a2bcf98ddcedc95a807e34011ff3c0f66fabaf01fa0169e4a4159121\\"
 		}
 	],
 	\\"fragments\\": [
@@ -214,7 +214,7 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 			],
 			\\"fragmentName\\": \\"CharacterDetails\\",
 			\\"filePath\\": \\"GraphQL request\\",
-			\\"source\\": \\"fragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    __typename\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    __typename\\\\n    height\\\\n  }\\\\n}\\",
+			\\"source\\": \\"fragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    height\\\\n  }\\\\n}\\",
 			\\"fields\\": [
 				{
 					\\"responseName\\": \\"__typename\\",
@@ -234,39 +234,6 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 			],
 			\\"fragmentSpreads\\": [],
 			\\"inlineFragments\\": [
-				{
-					\\"typeCondition\\": \\"Human\\",
-					\\"possibleTypes\\": [
-						\\"Human\\"
-					],
-					\\"fields\\": [
-						{
-							\\"responseName\\": \\"__typename\\",
-							\\"fieldName\\": \\"__typename\\",
-							\\"type\\": \\"String!\\",
-							\\"isConditional\\": false
-						},
-						{
-							\\"responseName\\": \\"name\\",
-							\\"fieldName\\": \\"name\\",
-							\\"type\\": \\"String!\\",
-							\\"isConditional\\": false,
-							\\"description\\": \\"What this human calls themselves\\",
-							\\"isDeprecated\\": false,
-							\\"deprecationReason\\": null
-						},
-						{
-							\\"responseName\\": \\"height\\",
-							\\"fieldName\\": \\"height\\",
-							\\"type\\": \\"Float\\",
-							\\"isConditional\\": false,
-							\\"description\\": \\"Height in the preferred unit, default is meters\\",
-							\\"isDeprecated\\": false,
-							\\"deprecationReason\\": null
-						}
-					],
-					\\"fragmentSpreads\\": []
-				},
 				{
 					\\"typeCondition\\": \\"Droid\\",
 					\\"possibleTypes\\": [
@@ -294,6 +261,39 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 							\\"type\\": \\"String\\",
 							\\"isConditional\\": false,
 							\\"description\\": \\"This droid's primary function\\",
+							\\"isDeprecated\\": false,
+							\\"deprecationReason\\": null
+						}
+					],
+					\\"fragmentSpreads\\": []
+				},
+				{
+					\\"typeCondition\\": \\"Human\\",
+					\\"possibleTypes\\": [
+						\\"Human\\"
+					],
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false
+						},
+						{
+							\\"responseName\\": \\"name\\",
+							\\"fieldName\\": \\"name\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false,
+							\\"description\\": \\"What this human calls themselves\\",
+							\\"isDeprecated\\": false,
+							\\"deprecationReason\\": null
+						},
+						{
+							\\"responseName\\": \\"height\\",
+							\\"fieldName\\": \\"height\\",
+							\\"type\\": \\"Float\\",
+							\\"isConditional\\": false,
+							\\"description\\": \\"Height in the preferred unit, default is meters\\",
 							\\"isDeprecated\\": false,
 							\\"deprecationReason\\": null
 						}
