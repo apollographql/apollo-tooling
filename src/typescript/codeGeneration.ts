@@ -258,7 +258,19 @@ export function interfaceDeclarationForFragment(
 
       propertySetsDeclaration(generator, fragment, propertySets, true);
     } else {
-      const properties = propertiesFromFields(generator.context, fields)
+      const fragmentFields = fields.map(field => {
+        if (field.fieldName === '__typename') {
+          return {
+            ...field,
+            typeName: `"${fragment.typeCondition}"`,
+            type: { name: `"${fragment.typeCondition}"` } as GraphQLType
+          }
+        } else {
+          return field;
+        }
+      });
+
+      const properties = propertiesFromFields(generator.context, fragmentFields)
       propertyDeclarations(generator, properties);
     }
   });
