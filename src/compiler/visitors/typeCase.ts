@@ -33,6 +33,13 @@ export function typeCaseForSelectionSet(
         }
         break;
       case 'FragmentSpread':
+        if (
+          typeCase.default.fragmentSpreads.some(
+            fragmentSpread => fragmentSpread.fragmentName === selection.fragmentName
+          )
+        )
+          continue;
+
         for (const variant of typeCase.disjointVariantsFor(selectionSet.possibleTypes)) {
           variant.fragmentSpreads.push(selection);
           if (!mergeInFragmentSpreads) {
