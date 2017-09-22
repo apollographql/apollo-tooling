@@ -1,6 +1,6 @@
 {
   "name": "apollo-codegen",
-  "version": "0.17.0-alpha.5",
+  "version": "0.17.0-alpha.6",
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
