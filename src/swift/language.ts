@@ -28,7 +28,7 @@ export interface Property {
 }
 
 export function escapedString(string: string) {
-  return string.replace(/"/g, '\\"');
+  return string.replace(/"/g, '\\"').replace(/\n/g, '\\n');
 }
 
 // prettier-ignore
@@ -52,21 +52,13 @@ export function escapeIdentifierIfNeeded(identifier: string) {
   }
 }
 
-export function escapeQuotesIfNeeded(string: string) {
-  return string.replace('"', '\"');
-}
-
 export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: string }> {
   constructor(context: Context) {
     super(context);
   }
 
   multilineString(string: string) {
-    const lines = string.split('\n');
-    lines.forEach((line, index) => {
-      const isLastLine = index != lines.length - 1;
-      this.printOnNewline(`"${escapedString(line)}"` + (isLastLine ? ' +' : ''));
-    });
+    this.printOnNewline(`"${escapedString(string)}"`);
   }
 
   comment(comment?: string) {
@@ -79,7 +71,7 @@ export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: 
   deprecationAttributes(isDeprecated: boolean | undefined, deprecationReason: string | undefined) {
     if (isDeprecated !== undefined && isDeprecated) {
       deprecationReason = (deprecationReason !== undefined && deprecationReason.length > 0) ? deprecationReason : ""
-      this.printOnNewline(`@available(*, deprecated, message: "${escapeQuotesIfNeeded(deprecationReason)}")`)
+      this.printOnNewline(`@available(*, deprecated, message: "${escapedString(deprecationReason)}")`)
     }
   }
 
