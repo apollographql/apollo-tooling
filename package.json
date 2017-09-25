@@ -34,6 +34,7 @@
     "common-tags": "^1.4.0",
     "jest": "^21.1.0",
     "jest-matcher-utils": "^21.1.0",
+    "ts-jest": "^21.0.1",
     "typescript": "^2.5.2"
   },
   "dependencies": {
@@ -64,7 +65,7 @@
       "<rootDir>/test/test-utils"
     ],
     "transform": {
-      ".(js|ts)": "<rootDir>/test/test-utils/preprocessor.js"
+      "^.+\\.(ts|js)x?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "moduleFileExtensions": [
       "ts",
