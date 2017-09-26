@@ -73,11 +73,10 @@ function enumerationDeclaration(generator: CodeGenerator, type: GraphQLEnumType)
         generator.printOnNewline(`// ${line.trim()}`);
       })
   }
-  generator.printOnNewline(`export type ${name} =`);
-  const nValues = values.length;
-  values.forEach((value, i) => {
+  generator.printOnNewline(`export enum ${name} {`);
+  values.forEach((value) => {
     if (!value.description || value.description.indexOf('\n') === -1) {
-      generator.printOnNewline(`  "${value.value}"${i === nValues - 1 ? ';' : ' |'}${wrap(' // ', value.description)}`)
+      generator.printOnNewline(`  ${value.value} = "${value.value}",${wrap(' // ', value.description)}`)
     } else {
       if (value.description) {
         value.description.split('\n')
@@ -85,9 +84,10 @@ function enumerationDeclaration(generator: CodeGenerator, type: GraphQLEnumType)
             generator.printOnNewline(`  // ${line.trim()}`);
           })
       }
-      generator.printOnNewline(`  "${value.value}"${i === nValues - 1 ? ';' : ' |'}`)
+      generator.printOnNewline(`  ${value.value} = "${value.value}",`)
     }
   });
+  generator.printOnNewline(`}`);
   generator.printNewline();
 }
 
