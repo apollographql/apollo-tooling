@@ -42,48 +42,48 @@ export function typeCaseForSelectionSet(
 
         for (const variant of typeCase.disjointVariantsFor(selectionSet.possibleTypes)) {
           variant.fragmentSpreads.push(selection);
+
           if (!mergeInFragmentSpreads) {
             variant.selections.push(selection);
           }
         }
         if (mergeInFragmentSpreads) {
-          for (const { possibleTypes, selections } of typeCaseForSelectionSet({
-            possibleTypes: selectionSet.possibleTypes.filter(type =>
-              selection.selectionSet.possibleTypes.includes(type)
-            ),
-            selections: selection.selectionSet.selections
-          }).defaultAndVariants) {
-            if (selections.length < 1) continue;
-            for (const variant of typeCase.disjointVariantsFor(possibleTypes)) {
-              variant.selections.push(...selections);
-            }
-          }
+          typeCase.merge(
+            typeCaseForSelectionSet(
+              {
+                possibleTypes: selectionSet.possibleTypes.filter(type =>
+                  selection.selectionSet.possibleTypes.includes(type)
+                ),
+                selections: selection.selectionSet.selections
+              },
+              mergeInFragmentSpreads
+            )
+          );
         }
         break;
       case 'TypeCondition':
-        for (const { possibleTypes, selections } of typeCaseForSelectionSet({
-          possibleTypes: selectionSet.possibleTypes.filter(type =>
-            selection.selectionSet.possibleTypes.includes(type)
-          ),
-          selections: selection.selectionSet.selections
-        }).defaultAndVariants) {
-          if (selections.length < 1) continue;
-          for (const variant of typeCase.disjointVariantsFor(possibleTypes)) {
-            variant.selections.push(...selections);
-          }
-        }
+        typeCase.merge(
+          typeCaseForSelectionSet(
+            {
+              possibleTypes: selectionSet.possibleTypes.filter(type =>
+                selection.selectionSet.possibleTypes.includes(type)
+              ),
+              selections: selection.selectionSet.selections
+            },
+            mergeInFragmentSpreads
+          )
+        );
         break;
       case 'BooleanCondition':
-        for (const { possibleTypes, selections } of typeCaseForSelectionSet(selection.selectionSet)
-          .defaultAndVariants) {
-          for (const variant of typeCase.disjointVariantsFor(possibleTypes)) {
-            if (selections.length < 1) continue;
-            variant.selections.push({
+        typeCase.merge(
+          typeCaseForSelectionSet(selection.selectionSet, mergeInFragmentSpreads),
+          selectionSet => [
+            {
               ...selection,
-              selectionSet: { possibleTypes: variant.possibleTypes, selections }
-            });
-          }
-        }
+              selectionSet
+            }
+          ]
+        );
         break;
     }
   }
@@ -175,6 +175,21 @@ export class TypeCase {
     }
 
     return variants;
+  }
+
+  merge(otherTypeCase: TypeCase, transform?: (selectionSet: SelectionSet) => Selection[]) {
+    for (const otherVariant of otherTypeCase.defaultAndVariants) {
+      if (otherVariant.selections.length < 1) continue;
+      for (const variant of this.disjointVariantsFor(otherVariant.possibleTypes)) {
+        if (otherVariant.fragmentSpreads.length > 0) {
+          // Union of variant.fragmentSpreads and otherVariant.fragmentSpreads
+          variant.fragmentSpreads = [...variant.fragmentSpreads, ...otherVariant.fragmentSpreads].filter(
+            (a, index, array) => array.findIndex(b => b.fragmentName == a.fragmentName) == index
+          );
+        }
+        variant.selections.push(...(transform ? transform(otherVariant) : otherVariant.selections));
+      }
+    }
   }
 
   inspect() {
