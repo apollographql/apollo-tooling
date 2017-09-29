@@ -168,10 +168,24 @@ export class Helpers {
     });
   }
 
-  propertiesForSelectionSet(selectionSet: SelectionSet, namespace?: string): (Field & Property)[] {
-    return collectAndMergeFields(selectionSet, true)
-      .filter(field => field.name != '__typename')
+  propertiesForSelectionSet(
+    selectionSet: SelectionSet,
+    namespace?: string
+  ): (Field & Property)[] | undefined {
+    const properties = collectAndMergeFields(selectionSet, true)
+      .filter(field => field.name !== '__typename')
       .map(field => this.propertyFromField(field, namespace));
+
+    // If we're not merging in fields from fragment spreads, there is no guarantee there will a generated
+    // type for a composite field, so to avoid compiler errors we skip the initializer for now.
+    if (
+      selectionSet.selections.some(selection => selection.kind === 'FragmentSpread') &&
+      properties.some(property => isCompositeType(getNamedType(property.type)))
+    ) {
+      return undefined;
+    }
+
+    return properties;
   }
 
   // Expressions
