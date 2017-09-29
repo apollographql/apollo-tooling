@@ -181,6 +181,28 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
             snapshot.updateValue(newValue, forKey: \\"name\\")
           }
         }
+
+        public var fragments: Fragments {
+          get {
+            return Fragments(snapshot: snapshot)
+          }
+          set {
+            snapshot += newValue.snapshot
+          }
+        }
+
+        public struct Fragments {
+          public var snapshot: Snapshot
+
+          public var heroDetails: HeroDetails {
+            get {
+              return HeroDetails(snapshot: snapshot)
+            }
+            set {
+              snapshot += newValue.snapshot
+            }
+          }
+        }
       }
     }
   }
@@ -307,6 +329,28 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           }
           set {
             snapshot.updateValue(newValue, forKey: \\"primaryFunction\\")
+          }
+        }
+
+        public var fragments: Fragments {
+          get {
+            return Fragments(snapshot: snapshot)
+          }
+          set {
+            snapshot += newValue.snapshot
+          }
+        }
+
+        public struct Fragments {
+          public var snapshot: Snapshot
+
+          public var droidDetails: DroidDetails {
+            get {
+              return DroidDetails(snapshot: snapshot)
+            }
+            set {
+              snapshot += newValue.snapshot
+            }
           }
         }
       }
@@ -1015,6 +1059,28 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
         snapshot.updateValue(newValue, forKey: \\"name\\")
       }
     }
+
+    public var fragments: Fragments {
+      get {
+        return Fragments(snapshot: snapshot)
+      }
+      set {
+        snapshot += newValue.snapshot
+      }
+    }
+
+    public struct Fragments {
+      public var snapshot: Snapshot
+
+      public var heroDetails: HeroDetails {
+        get {
+          return HeroDetails(snapshot: snapshot)
+        }
+        set {
+          snapshot += newValue.snapshot
+        }
+      }
+    }
   }
 }"
 `;
@@ -1243,6 +1309,28 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       }
       set {
         snapshot.updateValue(newValue, forKey: \\"name\\")
+      }
+    }
+
+    public var fragments: Fragments {
+      get {
+        return Fragments(snapshot: snapshot)
+      }
+      set {
+        snapshot += newValue.snapshot
+      }
+    }
+
+    public struct Fragments {
+      public var snapshot: Snapshot
+
+      public var droidDetails: DroidDetails {
+        get {
+          return DroidDetails(snapshot: snapshot)
+        }
+        set {
+          snapshot += newValue.snapshot
+        }
       }
     }
   }
