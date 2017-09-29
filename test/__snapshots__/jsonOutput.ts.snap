@@ -476,3 +476,134 @@ exports[`JSON output should generate JSON output for a query with an enum variab
 	]
 }"
 `;
+
+exports[`JSON output should generate JSON output for an input object type with default field values 1`] = `
+"{
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"GraphQL request\\",
+			\\"operationName\\": \\"QueryWithComplexInput\\",
+			\\"operationType\\": \\"query\\",
+			\\"rootType\\": \\"Query\\",
+			\\"variables\\": [
+				{
+					\\"name\\": \\"input\\",
+					\\"type\\": \\"ComplexInput\\"
+				}
+			],
+			\\"source\\": \\"query QueryWithComplexInput($input: ComplexInput) {\\\\n  someField(input: $input)\\\\n}\\",
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"someField\\",
+					\\"fieldName\\": \\"someField\\",
+					\\"type\\": \\"String!\\",
+					\\"args\\": [
+						{
+							\\"name\\": \\"input\\",
+							\\"value\\": {
+								\\"kind\\": \\"Variable\\",
+								\\"variableName\\": \\"input\\"
+							}
+						}
+					],
+					\\"isConditional\\": false,
+					\\"isDeprecated\\": false
+				}
+			],
+			\\"fragmentSpreads\\": [],
+			\\"inlineFragments\\": [],
+			\\"fragmentsReferenced\\": [],
+			\\"sourceWithFragments\\": \\"query QueryWithComplexInput($input: ComplexInput) {\\\\n  someField(input: $input)\\\\n}\\",
+			\\"operationId\\": \\"55e208ec5def01b99b65c64b666d06e95558a6e455c52eb5c2307c4775afb805\\"
+		}
+	],
+	\\"fragments\\": [],
+	\\"typesUsed\\": [
+		{
+			\\"kind\\": \\"InputObjectType\\",
+			\\"name\\": \\"ComplexInput\\",
+			\\"description\\": \\"\\",
+			\\"fields\\": [
+				{
+					\\"name\\": \\"string\\",
+					\\"type\\": \\"String\\",
+					\\"description\\": \\"\\",
+					\\"defaultValue\\": \\"Hello\\"
+				},
+				{
+					\\"name\\": \\"customScalar\\",
+					\\"type\\": \\"Date\\",
+					\\"description\\": \\"\\",
+					\\"defaultValue\\": false
+				},
+				{
+					\\"name\\": \\"listOfString\\",
+					\\"type\\": \\"[String]\\",
+					\\"description\\": \\"\\",
+					\\"defaultValue\\": [
+						\\"test1\\",
+						\\"test2\\",
+						\\"test3\\"
+					]
+				},
+				{
+					\\"name\\": \\"listOfInt\\",
+					\\"type\\": \\"[Int]\\",
+					\\"description\\": \\"\\",
+					\\"defaultValue\\": [
+						1,
+						2,
+						3
+					]
+				},
+				{
+					\\"name\\": \\"listOfEnums\\",
+					\\"type\\": \\"[Episode]\\",
+					\\"description\\": \\"\\",
+					\\"defaultValue\\": [
+						\\"JEDI\\",
+						\\"EMPIRE\\"
+					]
+				},
+				{
+					\\"name\\": \\"listOfCustomScalar\\",
+					\\"type\\": \\"[Date]\\",
+					\\"description\\": \\"\\",
+					\\"defaultValue\\": [
+						false,
+						false,
+						false
+					]
+				}
+			]
+		},
+		{
+			\\"kind\\": \\"ScalarType\\",
+			\\"name\\": \\"Date\\",
+			\\"description\\": \\"\\"
+		},
+		{
+			\\"kind\\": \\"EnumType\\",
+			\\"name\\": \\"Episode\\",
+			\\"description\\": \\"\\",
+			\\"values\\": [
+				{
+					\\"name\\": \\"NEWHOPE\\",
+					\\"description\\": \\"\\",
+					\\"isDeprecated\\": false
+				},
+				{
+					\\"name\\": \\"EMPIRE\\",
+					\\"description\\": \\"\\",
+					\\"isDeprecated\\": false
+				},
+				{
+					\\"name\\": \\"JEDI\\",
+					\\"description\\": \\"\\",
+					\\"isDeprecated\\": false
+				}
+			]
+		}
+	]
+}"
+`;
