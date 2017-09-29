@@ -15,7 +15,7 @@ export class Variant implements SelectionSet {
   inspect() {
     return `${inspect(this.possibleTypes)} -> ${inspect(
       collectAndMergeFields(this, false).map(field => field.responseKey)
-    )}\n`;
+    )} ${inspect(this.fragmentSpreads.map(fragmentSpread => fragmentSpread.fragmentName))}\n`;
   }
 }
 
