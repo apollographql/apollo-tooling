@@ -1,11 +1,14 @@
 import {
   isType,
+  GraphQLType,
   GraphQLScalarType,
   GraphQLEnumType,
   GraphQLInputObjectType,
 } from 'graphql';
 
-export default function serializeToJSON(context) {
+import { LegacyCompilerContext } from './compiler/legacyIR';
+
+export default function serializeToJSON(context: LegacyCompilerContext) {
   return serializeAST({
     operations: Object.values(context.operations),
     fragments: Object.values(context.fragments),
@@ -13,8 +16,8 @@ export default function serializeToJSON(context) {
   }, '\t');
 }
 
-export function serializeAST(ast, space) {
-  return JSON.stringify(ast, function(key, value) {
+export function serializeAST(ast: any, space?: string) {
+  return JSON.stringify(ast, function(_, value) {
     if (isType(value)) {
       return String(value);
     } else {
@@ -23,17 +26,19 @@ export function serializeAST(ast, space) {
   }, space);
 }
 
-function serializeType(type) {
+function serializeType(type: GraphQLType) {
   if (type instanceof GraphQLEnumType) {
     return serializeEnumType(type);
   } else if (type instanceof GraphQLInputObjectType) {
     return serializeInputObjectType(type);
   } else if (type instanceof GraphQLScalarType) {
     return serializeScalarType(type);
+  } else {
+    throw new Error(`Unexpected GraphQL type: ${type}`);
   }
 }
 
-function serializeEnumType(type) {
+function serializeEnumType(type: GraphQLEnumType) {
   const { name, description } = type;
   const values = type.getValues();
 
@@ -52,7 +57,7 @@ function serializeEnumType(type) {
   }
 }
 
-function serializeInputObjectType(type) {
+function serializeInputObjectType(type: GraphQLInputObjectType) {
   const { name, description } = type;
   const fields = Object.values(type.getFields());
 
@@ -60,11 +65,16 @@ function serializeInputObjectType(type) {
     kind: 'InputObjectType',
     name,
     description,
-    fields
+    fields: fields.map(field => ({
+      name: field.name,
+      type: String(field.type),
+      description: field.description,
+      defaultValue: field.defaultValue
+    }))
   }
 }
 
-function serializeScalarType(type) {
+function serializeScalarType(type: GraphQLScalarType) {
   const { name, description } = type;
 
   return {
