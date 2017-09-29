@@ -129,7 +129,7 @@ describe('Swift code generation', () => {
           name
         }
       `,
-        { generateOperationIds: true }
+        { generateOperationIds: true, mergeInFieldsFromFragmentSpreads: true }
       );
 
       generator.classDeclarationForOperation(operations['Hero']);

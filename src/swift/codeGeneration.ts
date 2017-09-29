@@ -375,10 +375,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
   initializersForVariant(variant: Variant, namespace?: string, useInitializerIfPossible: boolean = true) {
     if (useInitializerIfPossible && variant.possibleTypes.length == 1) {
+      const properties = this.helpers.propertiesForSelectionSet(variant);
+      if (!properties) return;
+
       this.printNewlineIfNeeded();
       this.printOnNewline(`public init`);
-
-      const properties = this.helpers.propertiesForSelectionSet(variant);
 
       this.parametersForProperties(properties);
 
@@ -408,6 +409,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           },
           namespace
         );
+
+        if (!properties) continue;
 
         this.printNewlineIfNeeded();
         this.printOnNewline(`public static func make${possibleType}`);
