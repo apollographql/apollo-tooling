@@ -8,6 +8,19 @@ It currently generates Swift code, TypeScript annotations, Flow annotations, and
 
 See [Apollo iOS](https://github.com/apollographql/apollo-ios) for details on the mapping from GraphQL results to Swift types, as well as runtime support for executing queries and mutations. For Scala, see [React Apollo Scala.js](https://github.com/apollographql/react-apollo-scalajs) for details on how to use generated Scala code in a Scala.js app with Apollo Client.
 
+     
+
+## New to GraphQL?
+N.b. this repo does not generate Type Models from Schema.     
+It generates QueryModels from GraphQL queries. See here for queries    
+http://graphql.org/learn/queries/     
+     
+**Type models vs. query models**     
+https://dev-blog.apollodata.com/mapping-graphql-types-to-swift-aa85e5693db4     
+     
+     
+     
+     
 ## Usage
 
 If you want to experiment with the tool, you can install the `apollo-codegen` command globally:
@@ -142,6 +155,20 @@ function CharacterFigures({ characters }: CharactersQuery) {
   });
 }
 ```
+
+
+## Starwars example 
+```javascript
+git clone https://github.com/apollographql/apollo-codegen
+
+cd test/fixtures/starwars
+rm ExplicitTypename.graphql
+rm AnonymousQuery.graphql
+rm TypenameAlias.graphql
+
+apollo-codegen generate test/fixtures/starwars/*.graphql --schema test/fixtures/starwars/schema.json --output starwars.swift
+```
+
 
 ## Contributing
 
