@@ -1,3 +1,6 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import {
   GraphQLError,
   GraphQLType,
@@ -23,6 +26,7 @@ import { generateOperationId } from '../compiler/visitors/generateOperationId';
 import { collectAndMergeFields } from '../compiler/visitors/collectAndMergeFields';
 
 import '../utilities/array';
+import { GeneratedFile } from '../utilities/CodeGenerator';
 
 export interface Options {
   namespace?: string;
@@ -30,26 +34,74 @@ export interface Options {
   customScalarsPrefix?: string;
 }
 
-export function generateSource(context: CompilerContext) {
+export function generateSource(
+  context: CompilerContext,
+  outputPath: string,
+  only?: string
+): { [fileName: string]: GeneratedFile } {
   const generator = new SwiftAPIGenerator(context);
 
-  generator.fileHeader();
+  if (fs.statSync(outputPath).isDirectory()) {
+    generator.withinFile(`Types.graphql.swift`, () => {
+      generator.fileHeader();
 
-  generator.namespaceDeclaration(context.options.namespace, () => {
-    context.typesUsed.forEach(type => {
-      generator.typeDeclarationForGraphQLType(type);
+      generator.namespaceDeclaration(context.options.namespace, () => {
+        context.typesUsed.forEach(type => {
+          generator.typeDeclarationForGraphQLType(type);
+        });
+      });
     });
 
+    const inputFilePaths = new Set<string>();
+
     Object.values(context.operations).forEach(operation => {
-      generator.classDeclarationForOperation(operation);
+      inputFilePaths.add(operation.filePath);
     });
 
     Object.values(context.fragments).forEach(fragment => {
-      generator.structDeclarationForFragment(fragment);
+      inputFilePaths.add(fragment.filePath);
     });
-  });
 
-  return generator.output;
+    for (const inputFilePath of inputFilePaths) {
+      if (only && inputFilePath !== only) continue;
+
+      generator.withinFile(`${path.basename(inputFilePath)}.swift`, () => {
+        generator.fileHeader();
+
+        generator.namespaceExtensionDeclaration(context.options.namespace, () => {
+          Object.values(context.operations).forEach(operation => {
+            if (operation.filePath === inputFilePath) {
+              generator.classDeclarationForOperation(operation);
+            }
+          });
+
+          Object.values(context.fragments).forEach(fragment => {
+            if (fragment.filePath === inputFilePath) {
+              generator.structDeclarationForFragment(fragment);
+            }
+          });
+        });
+      });
+    }
+  } else {
+    generator.fileHeader();
+
+    generator.namespaceDeclaration(context.options.namespace, () => {
+      context.typesUsed.forEach(type => {
+        generator.typeDeclarationForGraphQLType(type);
+      });
+
+      Object.values(context.operations).forEach(operation => {
+        generator.classDeclarationForOperation(operation);
+      });
+
+      Object.values(context.fragments).forEach(fragment => {
+        generator.structDeclarationForFragment(fragment);
+      });
+    });
+  }
+
+  return generator.generatedFiles;
 }
 
 export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {

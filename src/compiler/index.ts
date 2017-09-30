@@ -65,14 +65,14 @@ export interface Operation {
     name: string;
     type: GraphQLType;
   }[];
-  filePath?: string;
+  filePath: string;
   source: string;
   rootType: GraphQLObjectType;
   selectionSet: SelectionSet;
 }
 
 export interface Fragment {
-  filePath?: string;
+  filePath: string;
   fragmentName: string;
   source: string;
   type: GraphQLCompositeType;

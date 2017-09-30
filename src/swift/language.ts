@@ -90,6 +90,21 @@ export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: 
     }
   }
 
+  namespaceExtensionDeclaration(namespace: string | undefined, closure: Function) {
+    if (namespace) {
+      this.printNewlineIfNeeded();
+      this.printOnNewline(`/// ${namespace} namespace`);
+      this.printOnNewline(`public extension ${namespace}`);
+      this.pushScope({ typeName: namespace });
+      this.withinBlock(closure);
+      this.popScope();
+    } else {
+      if (closure) {
+        closure();
+      }
+    }
+  }
+
   classDeclaration({ className, modifiers, superClass, adoptedProtocols = [] }: Class, closure: Function) {
     this.printNewlineIfNeeded();
     this.printOnNewline(wrap('', join(modifiers, ' '), ' ') + `class ${className}`);
