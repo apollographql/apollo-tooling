@@ -1,10 +1,12 @@
 import * as fs from 'fs';
+import * as path from 'path';
 
 import { loadSchema, loadAndMergeQueryDocuments } from './loading';
 import { validateQueryDocument } from './validation';
 import { compileToIR } from './compiler';
 import { compileToLegacyIR } from './compiler/legacyIR';
 import serializeToJSON from './serializeToJSON';
+import { GeneratedFile } from './utilities/CodeGenerator'
 import { generateSource as generateSwiftSource } from './swift';
 import { generateSource as generateTypescriptSource } from './typescript';
 import { generateSource as generateFlowSource } from './flow';
@@ -16,6 +18,7 @@ export default function generate(
   inputPaths: string[],
   schemaPath: string,
   outputPath: string,
+  only: string,
   target: TargetType,
   tagName: string,
   options: any
@@ -26,16 +29,16 @@ export default function generate(
 
   validateQueryDocument(schema, document);
 
-  let output;
-
   if (target === 'swift') {
     options.addTypename = true;
     const context = compileToIR(schema, document, options);
-    output = generateSwiftSource(context);
+    const generatedFiles = generateSwiftSource(context, outputPath, only);
+    writeGeneratedFiles(generatedFiles, outputPath);
     if (options.generateOperationIds) {
       writeOperationIdsMap(context);
     }
   } else {
+    let output;
     const context = compileToLegacyIR(schema, document, options);
     switch (target) {
       case 'json':
@@ -51,12 +54,21 @@ export default function generate(
       case 'scala':
         output = generateScalaSource(context, options);
     }
-  }
 
-  if (outputPath) {
-    fs.writeFileSync(outputPath, output);
-  } else {
-    console.log(output);
+    if (outputPath) {
+      fs.writeFileSync(outputPath, output);
+    } else {
+      console.log(output);
+    }
+  }
+}
+
+function writeGeneratedFiles(generatedFiles: { [fileName: string]: GeneratedFile }, outputDirectory: string) {
+  if (!fs.existsSync(outputDirectory)) {
+    fs.mkdirSync(outputDirectory);
+  }
+  for (const [fileName, generatedFile] of Object.entries(generatedFiles)) {
+    fs.writeFileSync(path.join(outputDirectory, fileName), generatedFile.output);
   }
 }
 

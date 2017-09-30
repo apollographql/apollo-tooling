@@ -81,9 +81,12 @@ export function sourceAt(location: Location) {
   return location.source.body.slice(location.start, location.end);
 }
 
-export function filePathForNode(node: ASTNode): string | undefined {
+export function filePathForNode(node: ASTNode): string  {
   const name = node.loc && node.loc.source && node.loc.source.name;
-  return (name === "GraphQL") ? undefined : name;
+  if (!name || name === "GraphQL") {
+    throw new Error("Node does not seem to have a file path");
+  }
+  return name;
 }
 
 export function valueFromValueNode(valueNode: ValueNode): any | { kind: 'Variable', variableName: string } {
