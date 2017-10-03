@@ -267,18 +267,11 @@ export function propertyFromField(context, field) {
   if (isCompositeType(namedType)) {
     const typeName = typeNameFromGraphQLType(context, fieldType);
     let isArray = false;
-    let isArrayElementNullable = null;
-    if (fieldType instanceof GraphQLList) {
-      isArray = true;
-      isArrayElementNullable = !(fieldType.ofType instanceof GraphQLNonNull);
-    } else if (fieldType instanceof GraphQLNonNull && fieldType.ofType instanceof GraphQLList) {
-      isArray = true;
-      isArrayElementNullable = !(fieldType.ofType.ofType instanceof GraphQLNonNull);
-    }
+    if (fieldType instanceof GraphQLList) isArray = true;
     return {
       ...property,
       typeName, fields: field.fields, isComposite: true, fragmentSpreads, inlineFragments, fieldType,
-      isArray, isNullable, isArrayElementNullable,
+      isArray, isNullable,
     };
   } else {
     if (field.fieldName === '__typename') {

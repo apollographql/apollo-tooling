@@ -85,7 +85,7 @@ export function propertyDeclaration(generator, {
 export function propertySetsDeclaration(generator, property, propertySets, standalone = false) {
   const {
     description, fieldName, propertyName, typeName,
-    isNullable, isArray, isArrayElementNullable
+    isNullable, isArray,
   } = property;
   const name = fieldName || propertyName;
 
@@ -105,9 +105,6 @@ export function propertySetsDeclaration(generator, property, propertySets, stand
 
   if (isArray) {
     generator.print('Array< ');
-    if (isArrayElementNullable) {
-      generator.print('?');
-    }
   }
 
   generator.pushScope({ typeName: name });
