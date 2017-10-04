@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as path from 'path';
 
 import {
@@ -26,7 +25,6 @@ import { generateOperationId } from '../compiler/visitors/generateOperationId';
 import { collectAndMergeFields } from '../compiler/visitors/collectAndMergeFields';
 
 import '../utilities/array';
-import { GeneratedFile } from '../utilities/CodeGenerator';
 
 export interface Options {
   namespace?: string;
@@ -36,12 +34,12 @@ export interface Options {
 
 export function generateSource(
   context: CompilerContext,
-  outputPath: string,
+  outputIndividualFiles: boolean,
   only?: string
-): { [fileName: string]: GeneratedFile } {
+): SwiftAPIGenerator {
   const generator = new SwiftAPIGenerator(context);
 
-  if (fs.statSync(outputPath).isDirectory()) {
+  if (outputIndividualFiles) {
     generator.withinFile(`Types.graphql.swift`, () => {
       generator.fileHeader();
 
@@ -101,7 +99,7 @@ export function generateSource(
     });
   }
 
-  return generator.generatedFiles;
+  return generator;
 }
 
 export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {

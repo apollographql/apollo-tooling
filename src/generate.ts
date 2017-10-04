@@ -32,8 +32,17 @@ export default function generate(
   if (target === 'swift') {
     options.addTypename = true;
     const context = compileToIR(schema, document, options);
-    const generatedFiles = generateSwiftSource(context, outputPath, only);
-    writeGeneratedFiles(generatedFiles, outputPath);
+
+    const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
+
+    const generator = generateSwiftSource(context, outputIndividualFiles, only);
+
+    if (outputIndividualFiles) {
+      writeGeneratedFiles(generator.generatedFiles, outputPath);
+    } else {
+      fs.writeFileSync(outputPath, generator.output);
+    }
+
     if (options.generateOperationIds) {
       writeOperationIdsMap(context);
     }
