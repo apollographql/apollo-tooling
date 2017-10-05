@@ -542,7 +542,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.withinBlock(() => {
             if (isOptional) {
               this.printOnNewline(
-                `return (snapshot["${responseKey}"] as! Snapshot?).flatMap { ${structName}(snapshot: $0) }`
+                `return (snapshot["${responseKey}"] as? Snapshot).flatMap { ${structName}(snapshot: $0) }`
               );
             } else {
               this.printOnNewline(`return ${structName}(snapshot: snapshot["${responseKey}"]! as! Snapshot)`);
