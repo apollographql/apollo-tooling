@@ -34,7 +34,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var createReview: CreateReview? {
       get {
-        return (snapshot[\\"createReview\\"] as! Snapshot?).flatMap { CreateReview(snapshot: $0) }
+        return (snapshot[\\"createReview\\"] as? Snapshot).flatMap { CreateReview(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"createReview\\")
@@ -112,7 +112,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"] as! Snapshot?).flatMap { Hero(snapshot: $0) }
+        return (snapshot[\\"hero\\"] as? Snapshot).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
@@ -238,7 +238,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"] as! Snapshot?).flatMap { Hero(snapshot: $0) }
+        return (snapshot[\\"hero\\"] as? Snapshot).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
@@ -388,7 +388,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"] as! Snapshot?).flatMap { Hero(snapshot: $0) }
+        return (snapshot[\\"hero\\"] as? Snapshot).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
@@ -486,7 +486,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"] as! Snapshot?).flatMap { Hero(snapshot: $0) }
+        return (snapshot[\\"hero\\"] as? Snapshot).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
@@ -559,7 +559,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"] as! Snapshot?).flatMap { Hero(snapshot: $0) }
+        return (snapshot[\\"hero\\"] as? Snapshot).flatMap { Hero(snapshot: $0) }
       }
       set {
         snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
