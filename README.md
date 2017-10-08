@@ -18,7 +18,7 @@ npm install -g apollo-codegen
 
 ### `introspect-schema`
 
-The purpose of this command is to convert a graphql schema in text format to JSON introspection dump format. The input schema can be fetched from a remote graphql server or from a local file. The resulting json introspection dump file is needed as input to the [generate](#generate) command.
+The purpose of this command is to create a JSON introspection dump file for a given graphql schema. The input schema can be fetched from a remote graphql server or from a local file. The resulting JSON introspection dump file is needed as input to the [generate](#generate) command.
 
 To download a GraphQL schema by sending an introspection query to a server:
 
