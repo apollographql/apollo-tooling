@@ -1,19 +1,16 @@
-import { parse } from 'graphql';
-import { compileToLegacyIR, CompilerOptions } from '../src/compiler/legacyIR';
+import { GraphQLSchema, buildSchema, parse } from 'graphql';
+import { compileToLegacyIR } from '../src/compiler/legacyIR';
 import serializeToJSON from '../src/serializeToJSON';
 
 import { loadSchema } from '../src/loading';
-const schema = loadSchema(require.resolve('./fixtures/starwars/schema.json'));
+const starWarsSchema = loadSchema(require.resolve('./fixtures/starwars/schema.json'));
 
-function compileFromSource(
-  source: string,
-  options: CompilerOptions = {
+function compileFromSource(source: string, schema: GraphQLSchema = starWarsSchema) {
+  const document = parse(source);
+  return compileToLegacyIR(schema, document, {
     mergeInFieldsFromFragmentSpreads: false,
     addTypename: true
-  }
-) {
-  const document = parse(source);
-  return compileToLegacyIR(schema, document, options);
+  });
 }
 
 describe('JSON output', function() {
@@ -82,6 +79,44 @@ describe('JSON output', function() {
         }
       }
     `);
+
+    const output = serializeToJSON(context);
+
+    expect(output).toMatchSnapshot();
+  });
+
+  test.only(`should generate JSON output for an input object type with default field values`, function() {
+    const schema = buildSchema(`
+      type Query {
+        someField(input: ComplexInput!): String!
+      }
+
+      input ComplexInput {
+        string: String = "Hello"
+        customScalar: Date = "2017-04-16"
+        listOfString: [String] = ["test1", "test2", "test3"]
+        listOfInt: [Int] = [1, 2, 3]
+        listOfEnums: [Episode] = [JEDI, EMPIRE]
+        listOfCustomScalar: [Date] = ["2017-04-16", "2017-04-17", "2017-04-18"]
+      }
+
+      scalar Date
+
+      enum Episode {
+        NEWHOPE
+        EMPIRE
+        JEDI
+      }
+    `);
+
+    const context = compileFromSource(
+      `
+      query QueryWithComplexInput($input: ComplexInput) {
+        someField(input: $input)
+      }
+      `,
+      schema
+    );
 
     const output = serializeToJSON(context);
 

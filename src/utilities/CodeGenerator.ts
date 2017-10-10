@@ -1,12 +1,10 @@
-export default class CodeGenerator<Context = any, Scope = any> {
-  private scopeStack: Scope[] = [];
-  private indentWidth = 2;
-  private indentLevel = 0;
-  private startOfIndentLevel = false;
+export class GeneratedFile<Scope = any> {
+  scopeStack: Scope[] = [];
+  indentWidth = 2;
+  indentLevel = 0;
+  startOfIndentLevel = false;
 
   public output = '';
-
-  constructor(public context: Context) {}
 
   pushScope(scope: Scope) {
     this.scopeStack.push(scope);
@@ -17,14 +15,14 @@ export default class CodeGenerator<Context = any, Scope = any> {
   }
 
   get scope(): Scope {
-    if (this.scopeStack.length < 1) throw Error('No active scope');
+    if (this.scopeStack.length < 1) throw new Error('No active scope');
 
     return this.scopeStack[this.scopeStack.length - 1];
   }
 
-  print(maybeString?: string) {
-    if (maybeString) {
-      this.output += maybeString;
+  print(string?: string) {
+    if (string) {
+      this.output += string;
     }
   }
 
@@ -41,11 +39,11 @@ export default class CodeGenerator<Context = any, Scope = any> {
     }
   }
 
-  printOnNewline(maybeString?: string) {
-    if (maybeString) {
+  printOnNewline(string?: string) {
+    if (string) {
       this.printNewline();
       this.printIndent();
-      this.print(maybeString);
+      this.print(string);
     }
   }
 
@@ -67,5 +65,70 @@ export default class CodeGenerator<Context = any, Scope = any> {
     this.print(open);
     this.withIndent(closure);
     this.printOnNewline(close);
+  }
+}
+
+export default class CodeGenerator<Context = any, Scope = any> {
+  generatedFiles: { [fileName: string]: GeneratedFile<Scope> } = {};
+  currentFile: GeneratedFile<Scope>;
+
+  constructor(public context: Context) {
+    this.currentFile = new GeneratedFile();
+  }
+
+  withinFile(fileName: string, closure: Function) {
+    let file = this.generatedFiles[fileName];
+    if (!file) {
+      file = new GeneratedFile();
+      this.generatedFiles[fileName] = file;
+    }
+    const oldCurrentFile = this.currentFile;
+    this.currentFile = file;
+    closure();
+    this.currentFile = oldCurrentFile;
+  }
+
+  get output(): string {
+    return this.currentFile.output;
+  }
+
+  pushScope(scope: Scope) {
+    this.currentFile.pushScope(scope);
+  }
+
+  popScope() {
+    this.currentFile.popScope();
+  }
+
+  get scope(): Scope {
+    return this.currentFile.scope;
+  }
+
+  print(string?: string) {
+    this.currentFile.print(string);
+  }
+
+  printNewline() {
+    this.currentFile.printNewline();
+  }
+
+  printNewlineIfNeeded() {
+    this.currentFile.printNewlineIfNeeded();
+  }
+
+  printOnNewline(string?: string) {
+    this.currentFile.printOnNewline(string);
+  }
+
+  printIndent() {
+    this.currentFile.printIndent();
+  }
+
+  withIndent(closure: Function) {
+    this.currentFile.withIndent(closure);
+  }
+
+  withinBlock(closure: Function, open = ' {', close = '}') {
+    this.currentFile.withinBlock(closure, open, close);
   }
 }

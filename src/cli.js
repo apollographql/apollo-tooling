@@ -117,6 +117,11 @@ yargs
         choices: ['swift', 'scala', 'json', 'ts', 'typescript', 'flow'],
         default: 'swift'
       },
+      only: {
+        describe: 'Parse all input files, but only output generated code for the specified file [Swift only]',
+        normalize: true,
+        coerce: path.resolve,
+      },
       namespace: {
         demand: false,
         describe: 'Optional namespace for generated types [currently Swift and Scala-only]',
@@ -183,7 +188,7 @@ yargs
         mergeInFieldsFromFragmentSpreads: argv["merge-in-fields-from-fragment-spreads"]
       };
 
-      generate(inputPaths, argv.schema, argv.output, argv.target, argv.tagName, argv.projectName, options);
+      generate(inputPaths, argv.schema, argv.output, argv.only, argv.target, argv.tagName, argv.projectName, options);
     },
   )
   .fail(function(message, error) {

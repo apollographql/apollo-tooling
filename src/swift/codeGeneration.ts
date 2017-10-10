@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import {
   GraphQLError,
   GraphQLType,
@@ -17,7 +19,7 @@ import { SwiftGenerator, Property, escapeIdentifierIfNeeded, Struct } from './la
 import { Helpers } from './helpers';
 import { isList } from '../utilities/graphql';
 
-import { typeCaseForSelectionSet, TypeCase } from '../compiler/visitors/typeCase';
+import { typeCaseForSelectionSet, TypeCase, Variant } from '../compiler/visitors/typeCase';
 import { collectFragmentsReferenced } from '../compiler/visitors/collectFragmentsReferenced';
 import { generateOperationId } from '../compiler/visitors/generateOperationId';
 import { collectAndMergeFields } from '../compiler/visitors/collectAndMergeFields';
@@ -30,26 +32,74 @@ export interface Options {
   customScalarsPrefix?: string;
 }
 
-export function generateSource(context: CompilerContext) {
+export function generateSource(
+  context: CompilerContext,
+  outputIndividualFiles: boolean,
+  only?: string
+): SwiftAPIGenerator {
   const generator = new SwiftAPIGenerator(context);
 
-  generator.fileHeader();
+  if (outputIndividualFiles) {
+    generator.withinFile(`Types.graphql.swift`, () => {
+      generator.fileHeader();
 
-  generator.namespaceDeclaration(context.options.namespace, () => {
-    context.typesUsed.forEach(type => {
-      generator.typeDeclarationForGraphQLType(type);
+      generator.namespaceDeclaration(context.options.namespace, () => {
+        context.typesUsed.forEach(type => {
+          generator.typeDeclarationForGraphQLType(type);
+        });
+      });
     });
 
+    const inputFilePaths = new Set<string>();
+
     Object.values(context.operations).forEach(operation => {
-      generator.classDeclarationForOperation(operation);
+      inputFilePaths.add(operation.filePath);
     });
 
     Object.values(context.fragments).forEach(fragment => {
-      generator.structDeclarationForFragment(fragment);
+      inputFilePaths.add(fragment.filePath);
     });
-  });
 
-  return generator.output;
+    for (const inputFilePath of inputFilePaths) {
+      if (only && inputFilePath !== only) continue;
+
+      generator.withinFile(`${path.basename(inputFilePath)}.swift`, () => {
+        generator.fileHeader();
+
+        generator.namespaceExtensionDeclaration(context.options.namespace, () => {
+          Object.values(context.operations).forEach(operation => {
+            if (operation.filePath === inputFilePath) {
+              generator.classDeclarationForOperation(operation);
+            }
+          });
+
+          Object.values(context.fragments).forEach(fragment => {
+            if (fragment.filePath === inputFilePath) {
+              generator.structDeclarationForFragment(fragment);
+            }
+          });
+        });
+      });
+    }
+  } else {
+    generator.fileHeader();
+
+    generator.namespaceDeclaration(context.options.namespace, () => {
+      context.typesUsed.forEach(type => {
+        generator.typeDeclarationForGraphQLType(type);
+      });
+
+      Object.values(context.operations).forEach(operation => {
+        generator.classDeclarationForOperation(operation);
+      });
+
+      Object.values(context.fragments).forEach(fragment => {
+        generator.structDeclarationForFragment(fragment);
+      });
+    });
+  }
+
+  return generator;
 }
 
 export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
@@ -190,23 +240,68 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       adoptedProtocols?: string[];
       selectionSet: SelectionSet;
     },
-    beforeClosure?: Function
+    before?: Function
   ) {
-    const typeCase = typeCaseForSelectionSet(selectionSet, this.context.options.mergeInFieldsFromFragmentSpreads);
+    const typeCase = typeCaseForSelectionSet(
+      selectionSet,
+      this.context.options.mergeInFieldsFromFragmentSpreads
+    );
 
+    this.structDeclarationForVariant(
+      {
+        structName,
+        adoptedProtocols,
+        variant: typeCase.default,
+        typeCase
+      },
+      before,
+      () => {
+        const variants = typeCase.variants.map(this.helpers.propertyFromVariant, this.helpers);
+
+        for (const variant of variants) {
+          this.propertyDeclarationForVariant(variant);
+
+          this.structDeclarationForVariant({
+            structName: variant.structName,
+            variant
+          });
+        }
+      }
+    );
+  }
+
+  structDeclarationForVariant(
+    {
+      structName,
+      adoptedProtocols = ['GraphQLSelectionSet'],
+      variant,
+      typeCase
+    }: {
+      structName: string;
+      adoptedProtocols?: string[];
+      variant: Variant;
+      typeCase?: TypeCase;
+    },
+    before?: Function,
+    after?: Function
+  ) {
     this.structDeclaration({ structName, adoptedProtocols }, () => {
-      if (beforeClosure) {
-        beforeClosure();
+      if (before) {
+        before();
       }
 
       this.printNewlineIfNeeded();
       this.printOnNewline('public static let possibleTypes = [');
-      this.print(join(selectionSet.possibleTypes.map(type => `"${type.name}"`), ', '));
+      this.print(join(variant.possibleTypes.map(type => `"${type.name}"`), ', '));
       this.print(']');
 
       this.printNewlineIfNeeded();
       this.printOnNewline('public static let selections: [GraphQLSelection] = ');
-      this.typeCaseInitialization(typeCase);
+      if (typeCase) {
+        this.typeCaseInitialization(typeCase);
+      } else {
+        this.selectionSetInitialization(variant);
+      }
 
       this.printNewlineIfNeeded();
 
@@ -221,17 +316,19 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.printOnNewline(`self.snapshot = snapshot`);
       });
 
-      this.initializersForTypeCase(typeCase);
+      if (typeCase) {
+        this.initializersForTypeCase(typeCase);
+      } else {
+        this.initializersForVariant(variant);
+      }
 
       const fields = collectAndMergeFields(
-        typeCase.default,
+        variant,
         this.context.options.mergeInFieldsFromFragmentSpreads
       ).map(field => this.helpers.propertyFromField(field as Field));
 
-      const variants = typeCase.variants.map(this.helpers.propertyFromVariant, this.helpers);
-
-      const fragmentSpreads = typeCase.default.fragmentSpreads.map(fragmentSpread => {
-        const isConditional = selectionSet.possibleTypes.some(
+      const fragmentSpreads = variant.fragmentSpreads.map(fragmentSpread => {
+        const isConditional = variant.possibleTypes.some(
           type => !fragmentSpread.selectionSet.possibleTypes.includes(type)
         );
 
@@ -294,15 +391,6 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         );
       }
 
-      for (const variant of variants) {
-        this.propertyDeclarationForVariant(variant);
-
-        this.structDeclarationForSelectionSet({
-          structName: variant.structName,
-          selectionSet: variant.selectionSet
-        });
-      }
-
       for (const field of fields) {
         if (isCompositeType(getNamedType(field.type)) && field.selectionSet) {
           this.structDeclarationForSelectionSet({
@@ -311,26 +399,37 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           });
         }
       }
+
+      if (after) {
+        after();
+      }
     });
   }
 
   initializersForTypeCase(typeCase: TypeCase) {
     const variants = typeCase.variants;
 
-    const propertiesForSelectionSet = (
-      selectionSet: SelectionSet,
-      namespace?: string
-    ): (Field & Property)[] => {
-      return collectAndMergeFields(selectionSet, true)
-        .filter(field => field.name != '__typename')
-        .map(field => this.helpers.propertyFromField(field, namespace));
-    };
+    if (variants.length == 0) {
+      this.initializersForVariant(typeCase.default);
+    } else {
+      const remainder = typeCase.remainder;
+      for (const variant of remainder ? [remainder, ...variants] : variants) {
+        this.initializersForVariant(
+          variant,
+          variant === remainder ? undefined : this.helpers.structNameForVariant(variant),
+          false
+        );
+      }
+    }
+  }
 
-    if (variants.length == 0 && typeCase.default.possibleTypes.length == 1) {
+  initializersForVariant(variant: Variant, namespace?: string, useInitializerIfPossible: boolean = true) {
+    if (useInitializerIfPossible && variant.possibleTypes.length == 1) {
+      const properties = this.helpers.propertiesForSelectionSet(variant);
+      if (!properties) return;
+
       this.printNewlineIfNeeded();
       this.printOnNewline(`public init`);
-
-      const properties = propertiesForSelectionSet(typeCase.default);
 
       this.parametersForProperties(properties);
 
@@ -340,7 +439,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             `self.init(snapshot: [`,
             join(
               [
-                `"__typename": "${typeCase.default.possibleTypes[0]}"`,
+                `"__typename": "${variant.possibleTypes[0]}"`,
                 ...properties.map(this.propertyAssignmentForField, this)
               ],
               ', '
@@ -350,51 +449,50 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         );
       });
     } else {
-      const remainder = typeCase.remainder;
+      const structName = this.scope.typeName;
 
-      for (const variant of remainder ? [remainder, ...variants] : variants) {
-        const structName = this.scope.typeName;
+      for (const possibleType of variant.possibleTypes) {
+        const properties = this.helpers.propertiesForSelectionSet(
+          {
+            possibleTypes: [possibleType],
+            selections: variant.selections
+          },
+          namespace
+        );
 
-        for (const possibleType of variant.possibleTypes) {
-          const properties = propertiesForSelectionSet(
-            {
-              possibleTypes: [possibleType],
-              selections: variant.selections
-            },
-            variant === remainder ? undefined : this.helpers.structNameForVariant(variant)
+        if (!properties) continue;
+
+        this.printNewlineIfNeeded();
+        this.printOnNewline(`public static func make${possibleType}`);
+
+        this.parametersForProperties(properties);
+
+        this.print(` -> ${structName}`);
+
+        this.withinBlock(() => {
+          this.printOnNewline(
+            wrap(
+              `return ${structName}(snapshot: [`,
+              join(
+                [`"__typename": "${possibleType}"`, ...properties.map(this.propertyAssignmentForField, this)],
+                ', '
+              ) || ':',
+              `])`
+            )
           );
-
-          this.printNewlineIfNeeded();
-          this.printOnNewline(`public static func make${possibleType}`);
-
-          this.parametersForProperties(properties);
-
-          this.print(` -> ${structName}`);
-
-          this.withinBlock(() => {
-            this.printOnNewline(
-              wrap(
-                `return ${structName}(snapshot: [`,
-                join(
-                  [
-                    `"__typename": "${possibleType}"`,
-                    ...properties.map(this.propertyAssignmentForField, this)
-                  ],
-                  ', '
-                ) || ':',
-                `])`
-              )
-            );
-          });
-        }
+        });
       }
     }
   }
 
-  propertyAssignmentForField(field: { responseKey: string, propertyName: string, type: GraphQLType }) {
+  propertyAssignmentForField(field: { responseKey: string; propertyName: string; type: GraphQLType }) {
     const { responseKey, propertyName, type } = field;
     const valueExpression = isCompositeType(getNamedType(type))
-      ? this.helpers.mapExpressionForType(type, (identifier) => `${identifier}.snapshot`, escapeIdentifierIfNeeded(propertyName))
+      ? this.helpers.mapExpressionForType(
+          type,
+          identifier => `${identifier}.snapshot`,
+          escapeIdentifierIfNeeded(propertyName)
+        )
       : escapeIdentifierIfNeeded(propertyName);
     return `"${responseKey}": ${valueExpression}`;
   }
@@ -424,12 +522,19 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             } else {
               getter = `return (snapshot["${responseKey}"] as! ${snapshotTypeName})`;
             }
-            getter += this.helpers.mapExpressionForType(type, (identifier) => `${structName}(snapshot: ${identifier})`);
+            getter += this.helpers.mapExpressionForType(
+              type,
+              identifier => `${structName}(snapshot: ${identifier})`
+            );
             this.printOnNewline(getter);
           });
           this.printOnNewline('set');
           this.withinBlock(() => {
-            let newValueExpression = this.helpers.mapExpressionForType(type, (identifier) => `${identifier}.snapshot`, 'newValue');
+            let newValueExpression = this.helpers.mapExpressionForType(
+              type,
+              identifier => `${identifier}.snapshot`,
+              'newValue'
+            );
             this.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${responseKey}")`);
           });
         } else {
@@ -437,7 +542,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.withinBlock(() => {
             if (isOptional) {
               this.printOnNewline(
-                `return (snapshot["${responseKey}"] as! Snapshot?).flatMap { ${structName}(snapshot: $0) }`
+                `return (snapshot["${responseKey}"] as? Snapshot).flatMap { ${structName}(snapshot: $0) }`
               );
             } else {
               this.printOnNewline(`return ${structName}(snapshot: snapshot["${responseKey}"]! as! Snapshot)`);
@@ -631,7 +736,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.withinBlock(() => {
       values.forEach(value => {
         this.comment(value.description);
-        this.deprecationAttributes(value.isDeprecated, value.deprecationReason)
+        this.deprecationAttributes(value.isDeprecated, value.deprecationReason);
         this.printOnNewline(
           `case ${escapeIdentifierIfNeeded(this.helpers.enumCaseName(value.name))} = "${value.value}"`
         );

@@ -11,7 +11,7 @@ import {
   GraphQLEnumType,
   isCompositeType,
   getNamedType,
-  GraphQLInputField,
+  GraphQLInputField
 } from 'graphql';
 
 import { camelCase, pascalCase } from 'change-case';
@@ -21,7 +21,9 @@ import { join, wrap } from '../utilities/printing';
 import { Property, Struct } from './language';
 
 import { CompilerOptions, SelectionSet, Field, FragmentSpread, Argument } from '../compiler';
-import { isMetaFieldName } from "../utilities/graphql";
+import { isMetaFieldName } from '../utilities/graphql';
+import { Variant } from '../compiler/visitors/typeCase';
+import { collectAndMergeFields } from '../compiler/visitors/collectAndMergeFields';
 
 const builtInScalarMap = {
   [GraphQLString.name]: 'String',
@@ -134,18 +136,20 @@ export class Helpers {
     });
   }
 
-  propertyFromVariant(variant: SelectionSet): { selectionSet: SelectionSet } & Property & Struct {
+  propertyFromVariant(variant: Variant): Variant & Property & Struct {
     const structName = this.structNameForVariant(variant);
 
-    return {
+    return Object.assign(variant, {
       propertyName: camelCase(structName),
       typeName: structName + '?',
-      structName,
-      selectionSet: variant
-    };
+      structName
+    });
   }
 
-  propertyFromFragmentSpread(fragmentSpread: FragmentSpread, isConditional: boolean): FragmentSpread & Property & Struct {
+  propertyFromFragmentSpread(
+    fragmentSpread: FragmentSpread,
+    isConditional: boolean
+  ): FragmentSpread & Property & Struct {
     const structName = this.structNameForFragmentName(fragmentSpread.fragmentName);
 
     return Object.assign({}, fragmentSpread, {
@@ -162,6 +166,26 @@ export class Helpers {
       typeName: this.typeNameFromGraphQLType(field.type),
       isOptional: !(field.type instanceof GraphQLNonNull)
     });
+  }
+
+  propertiesForSelectionSet(
+    selectionSet: SelectionSet,
+    namespace?: string
+  ): (Field & Property)[] | undefined {
+    const properties = collectAndMergeFields(selectionSet, true)
+      .filter(field => field.name !== '__typename')
+      .map(field => this.propertyFromField(field, namespace));
+
+    // If we're not merging in fields from fragment spreads, there is no guarantee there will a generated
+    // type for a composite field, so to avoid compiler errors we skip the initializer for now.
+    if (
+      selectionSet.selections.some(selection => selection.kind === 'FragmentSpread') &&
+      properties.some(property => isCompositeType(getNamedType(property.type)))
+    ) {
+      return undefined;
+    }
+
+    return properties;
   }
 
   // Expressions
@@ -200,7 +224,11 @@ export class Helpers {
     );
   }
 
-  mapExpressionForType(type: GraphQLType, expression: (identifier: string) => string, identifier = ''): string {
+  mapExpressionForType(
+    type: GraphQLType,
+    expression: (identifier: string) => string,
+    identifier = ''
+  ): string {
     let isOptional;
     if (type instanceof GraphQLNonNull) {
       isOptional = false;
@@ -211,7 +239,11 @@ export class Helpers {
 
     if (type instanceof GraphQLList) {
       if (isOptional) {
-        return `${identifier}.flatMap { $0.map { ${this.mapExpressionForType(type.ofType, expression, '$0')} } }`;
+        return `${identifier}.flatMap { $0.map { ${this.mapExpressionForType(
+          type.ofType,
+          expression,
+          '$0'
+        )} } }`;
       } else {
         return `${identifier}.map { ${this.mapExpressionForType(type.ofType, expression, '$0')} }`;
       }

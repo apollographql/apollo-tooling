@@ -1,6 +1,6 @@
 {
   "name": "apollo-codegen",
-  "version": "0.17.0-alpha.5",
+  "version": "0.17.0-alpha.13",
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
@@ -32,8 +32,9 @@
     "@types/yargs": "^8.0.2",
     "ansi-regex": "^3.0.0",
     "common-tags": "^1.4.0",
-    "jest": "^21.1.0",
+    "jest": "^21.2.1",
     "jest-matcher-utils": "^21.1.0",
+    "ts-jest": "^21.0.1",
     "typescript": "^2.5.2"
   },
   "dependencies": {
@@ -66,7 +67,7 @@
       "<rootDir>/test/test-utils"
     ],
     "transform": {
-      ".(js|ts)": "<rootDir>/test/test-utils/preprocessor.js"
+      "^.+\\.(ts|js)x?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "moduleFileExtensions": [
       "ts",
