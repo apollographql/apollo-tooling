@@ -18,6 +18,8 @@ npm install -g apollo-codegen
 
 ### `introspect-schema`
 
+The purpose of this command is to create a JSON introspection dump file for a given graphql schema. The input schema can be fetched from a remote graphql server or from a local file. The resulting JSON introspection dump file is needed as input to the [generate](#generate) command.
+
 To download a GraphQL schema by sending an introspection query to a server:
 
 ```sh
@@ -38,6 +40,8 @@ apollo-codegen introspect-schema schema.graphql --output schema.json
 
 ### `generate`
 
+The purpose of this command is to generate types for query and mutation operations made against the schema (it will not generate types for the schema itself).
+
 This tool will generate Swift code by default from a set of query definitions in `.graphql` files:
 
 ```sh
@@ -48,11 +52,11 @@ You can also generate type annotations for TypeScript, Flow, or Scala using the 
 
 ```sh
 # TypeScript
-apollo-codegen generate **/*.graphql --schema schema.json --target typescript --output schema.ts
+apollo-codegen generate **/*.graphql --schema schema.json --target typescript --output operation-result-types.ts
 # Flow
-apollo-codegen generate **/*.graphql --schema schema.json --target flow --output schema.flow.js
+apollo-codegen generate **/*.graphql --schema schema.json --target flow --output operation-result-types.flow.js
 # Scala
-apollo-codegen generate **/*.graphql --schema schema.json --target scala --output schema.scala
+apollo-codegen generate **/*.graphql --schema schema.json --target scala --output operation-result-types.scala
 ```
 
 #### `gql` template support
