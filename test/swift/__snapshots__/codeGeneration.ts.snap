@@ -1427,12 +1427,10 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 `;
 
 exports[`Swift code generation #typeDeclarationForGraphQLType() should escape identifiers in cases of enum declaration for a GraphQLEnumType 1`] = `
-"public enum AlbumPrivacies: String {
+"public enum AlbumPrivacies: String, Apollo.JSONDecodable, Apollo.JSONEncodable {
   case \`public\` = \\"PUBLIC\\"
   case \`private\` = \\"PRIVATE\\"
-}
-
-extension AlbumPrivacies: Apollo.JSONDecodable, Apollo.JSONEncodable {}"
+}"
 `;
 
 exports[`Swift code generation #typeDeclarationForGraphQLType() should generate a struct declaration for a GraphQLInputObjectType 1`] = `
@@ -1478,14 +1476,12 @@ public struct ReviewInput: GraphQLMapConvertible {
 
 exports[`Swift code generation #typeDeclarationForGraphQLType() should generate an enum declaration for a GraphQLEnumType 1`] = `
 "/// The episodes in the Star Wars trilogy
-public enum Episode: String {
+public enum Episode: String, Apollo.JSONDecodable, Apollo.JSONEncodable {
   /// Star Wars Episode IV: A New Hope, released in 1977.
   case newhope = \\"NEWHOPE\\"
   /// Star Wars Episode V: The Empire Strikes Back, released in 1980.
   case empire = \\"EMPIRE\\"
   /// Star Wars Episode VI: Return of the Jedi, released in 1983.
   case jedi = \\"JEDI\\"
-}
-
-extension Episode: Apollo.JSONDecodable, Apollo.JSONEncodable {}"
+}"
 `;
