@@ -5,7 +5,7 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "lib",
-    "lib": ["es2017", "esnext.asynciterable"],
+    "lib": ["es2017", "esnext.asynciterable", "dom"],
     "removeComments": true,
     "strict": true,
     "noImplicitReturns": true,

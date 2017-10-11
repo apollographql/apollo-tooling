@@ -61,6 +61,12 @@ If the source file for generation is a javascript or typescript file, the codege
 
 The tag name is configurable using the CLI `--tag-name` option.
 
+#### [.graphqlconfig](https://github.com/graphcool/graphql-config) support
+
+Instead of using the `--schema` option to point out you GraphQL schema, you can specify it in a `.graphqlconfig` file.
+
+In case you specify multiple schemas in your `.graphqlconfig` file, choose which one to pick by using the `--project-name` option.
+
 ## Typescript and Flow
 
 When using `apollo-codegen` with Typescript or Flow, make sure to add the `__typename` introspection field to every selection set within your graphql operations.
