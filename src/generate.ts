@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { loadSchema, loadAndMergeQueryDocuments } from './loading';
+import { loadSchema, loadSchemaFromConfig, loadAndMergeQueryDocuments } from './loading';
 import { validateQueryDocument } from './validation';
 import { compileToIR } from './compiler';
 import { compileToLegacyIR } from './compiler/legacyIR';
@@ -21,9 +21,12 @@ export default function generate(
   only: string,
   target: TargetType,
   tagName: string,
+  projectName: string,
   options: any
 ) {
-  const schema = loadSchema(schemaPath);
+  const schema = schemaPath == null
+    ? loadSchemaFromConfig(projectName)
+    : loadSchema(schemaPath);
 
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
 
