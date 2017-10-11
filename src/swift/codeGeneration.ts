@@ -732,7 +732,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
     this.printNewlineIfNeeded();
     this.comment(description);
-    this.printOnNewline(`public enum ${name}: String`);
+    this.printOnNewline(`public enum ${name}: String, Apollo.JSONDecodable, Apollo.JSONEncodable`);
     this.withinBlock(() => {
       values.forEach(value => {
         this.comment(value.description);
@@ -742,8 +742,6 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         );
       });
     });
-    this.printNewline();
-    this.printOnNewline(`extension ${name}: Apollo.JSONDecodable, Apollo.JSONEncodable {}`);
   }
 
   structDeclarationForInputObjectType(type: GraphQLInputObjectType) {
