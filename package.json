@@ -1,6 +1,6 @@
 {
   "name": "apollo-codegen",
-  "version": "0.17.0-alpha.13",
+  "version": "0.17.0-alpha.14",
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
@@ -43,7 +43,6 @@
     "glob": "^7.1.2",
     "graphql-config": "^1.0.5",
     "graphql": "^0.11.3",
-    "graphql-config": "^1.0.5",
     "inflected": "^2.0.2",
     "mkdirp": "^0.5.1",
     "node-fetch": "^1.7.2",
