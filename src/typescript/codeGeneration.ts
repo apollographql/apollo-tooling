@@ -48,7 +48,6 @@ export function generateSource(context: LegacyCompilerContext) {
     interfaceDeclarationForFragment(generator, operation)
   );
 
-  generator.printOnNewline('/* tslint:enable */');
   generator.printNewline();
 
   return generator.output;
