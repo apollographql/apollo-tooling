@@ -275,5 +275,43 @@ describe('TypeScript code generation', function() {
       const source = generateSource(context);
       expect(source).toMatchSnapshot();
     });
+
+    test('should have __typename value matching fragment type on generic type', () => {
+      const { compileFromSource } = setup(starWarsSchema);
+      const context = compileFromSource(`
+        query HeroName {
+          hero {
+            ...HeroWithName
+          }
+        }
+
+        fragment HeroWithName on Character {
+          __typename
+          name
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test('should have __typename value matching fragment type on specific type', () => {
+      const { compileFromSource } = setup(starWarsSchema);
+      const context = compileFromSource(`
+        query DroidName {
+          droid {
+            ...DroidWithName
+          }
+        }
+
+        fragment DroidWithName on Droid {
+          __typename
+          name
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
   });
 });
