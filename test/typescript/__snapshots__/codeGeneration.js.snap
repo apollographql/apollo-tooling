@@ -426,3 +426,55 @@ export type CustomScalarQuery = {
 /* tslint:enable */
 "
 `;
+
+exports[`TypeScript code generation #generateSource() should have __typename value matching fragment type on generic type 1`] = `
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
+
+export type HeroNameQuery = {
+  hero: ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  ) | null,
+};
+
+export type HeroWithNameFragment = ( {
+      __typename: \\"Human\\",
+      // The name of the character
+      name: string,
+    } | {
+      __typename: \\"Droid\\",
+      // The name of the character
+      name: string,
+    }
+  );
+/* tslint:enable */
+"
+`;
+
+exports[`TypeScript code generation #generateSource() should have __typename value matching fragment type on specific type 1`] = `
+"/* tslint:disable */
+//  This file was automatically generated and should not be edited.
+
+export type DroidNameQuery = {
+  droid:  {
+    __typename: \\"Droid\\",
+    // What others call this droid
+    name: string,
+  } | null,
+};
+
+export type DroidWithNameFragment = {
+  __typename: \\"Droid\\",
+  // What others call this droid
+  name: string,
+};
+/* tslint:enable */
+"
+`;
