@@ -61,7 +61,6 @@ export type FriendFragment = ( {
       name: string,
     }
   );
-/* tslint:enable */
 "
 `;
 
@@ -132,7 +131,6 @@ export type heroFriendsFragment = ( {
       ) | null > | null,
     }
   );
-/* tslint:enable */
 "
 `;
 
@@ -177,7 +175,6 @@ export type ReviewMovieMutation = {
     commentary: string | null,
   } | null,
 };
-/* tslint:enable */
 "
 `;
 
@@ -212,7 +209,6 @@ export type HeroDetailsFragment = ( {
       primaryFunction: string | null,
     }
   );
-/* tslint:enable */
 "
 `;
 
@@ -266,7 +262,6 @@ export type HeroAndFriendsNamesQuery = {
     }
   ) | null,
 };
-/* tslint:enable */
 "
 `;
 
@@ -280,7 +275,6 @@ export type StarshipCoordsQuery = {
     coordinates: Array< Array< number > > | null,
   } | null,
 };
-/* tslint:enable */
 "
 `;
 
@@ -300,7 +294,6 @@ export type HeroNameQuery = {
     }
   ) | null,
 };
-/* tslint:enable */
 "
 `;
 
@@ -332,7 +325,6 @@ export type HeroNameQuery = {
     }
   ) | null,
 };
-/* tslint:enable */
 "
 `;
 
@@ -354,7 +346,6 @@ export type CustomScalarQuery = {
     enumCommentTest: EnumCommentTestCase | null,
   } | null,
 };
-/* tslint:enable */
 "
 `;
 
@@ -374,7 +365,6 @@ export type CustomScalarQuery = {
     }
   ) | null,
 };
-/* tslint:enable */
 "
 `;
 
@@ -390,7 +380,6 @@ export type CustomScalarQuery = {
     multiLine: string | null,
   } | null,
 };
-/* tslint:enable */
 "
 `;
 
@@ -405,7 +394,6 @@ export type CustomScalarQuery = {
     singleLine: string | null,
   } | null,
 };
-/* tslint:enable */
 "
 `;
 
@@ -423,7 +411,6 @@ export type CustomScalarQuery = {
     }
   ) | null,
 };
-/* tslint:enable */
 "
 `;
 
@@ -454,7 +441,6 @@ export type HeroWithNameFragment = ( {
       name: string,
     }
   );
-/* tslint:enable */
 "
 `;
 
@@ -475,6 +461,5 @@ export type DroidWithNameFragment = {
   // What others call this droid
   name: string,
 };
-/* tslint:enable */
 "
 `;
