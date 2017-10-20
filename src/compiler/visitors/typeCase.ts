@@ -2,7 +2,7 @@ import { inspect } from 'util';
 
 import { GraphQLObjectType } from 'graphql';
 
-import { SelectionSet, Selection, FragmentSpread } from '../';
+import { SelectionSet, Selection, Field, FragmentSpread } from '../';
 import { collectAndMergeFields } from './collectAndMergeFields';
 
 export class Variant implements SelectionSet {
@@ -11,6 +11,10 @@ export class Variant implements SelectionSet {
     public selections: Selection[] = [],
     public fragmentSpreads: FragmentSpread[] = []
   ) {}
+
+  get fields(): Field[] {
+    return collectAndMergeFields(this);
+  }
 
   inspect() {
     return `${inspect(this.possibleTypes)} -> ${inspect(
