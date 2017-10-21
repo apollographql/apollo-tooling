@@ -91,6 +91,20 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
+    test(`should generate array query operations`, function() {
+      const { compileFromSource } = setup(starWarsSchema);
+      const context = compileFromSource(`
+        query ReviewsStars {
+          reviews {
+            stars
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
     test(`should generate simple nested with required elements in lists`, function() {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
