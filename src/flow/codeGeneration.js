@@ -9,7 +9,9 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLID,
-  GraphQLInputObjectType
+  GraphQLInputObjectType,
+  GraphQLObjectType,
+  GraphQLUnionType
 } from 'graphql'
 
 import  { isTypeProperSuperTypeOf } from '../utilities/graphql';
@@ -142,6 +144,22 @@ export function interfaceVariablesDeclarationForOperation(
   });
 }
 
+function getObjectTypeName(type) {
+  if (type instanceof GraphQLList) {
+    return getObjectTypeName(type.ofType);
+  }
+  if (type instanceof GraphQLNonNull) {
+    return getObjectTypeName(type.ofType);
+  }
+  if (type instanceof GraphQLObjectType) {
+    return `"${type.name}"`;
+  }
+  if (type instanceof GraphQLUnionType) {
+    return type.getTypes().map(type => getObjectTypeName(type)).join(" | ");
+  }
+  return `"${type.name}"`;
+}
+
 export function typeDeclarationForOperation(
   generator,
   {
@@ -158,10 +176,11 @@ export function typeDeclarationForOperation(
   fields = fields.map(rootField => {
     const fields = rootField.fields && rootField.fields.map(field => {
       if (field.fieldName === '__typename') {
+        const objectTypeName = getObjectTypeName(rootField.type);
         return {
           ...field,
-          typeName: `"${rootField.type.name}"`,
-          type: { name: `"${rootField.type.name}"` },
+          typeName: objectTypeName,
+          type: { name: objectTypeName },
         };
       }
       return field;

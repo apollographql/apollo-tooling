@@ -18,7 +18,7 @@ exports[`Flow code generation #generateSource() should generate array query oper
 
 export type ReviewsStarsQuery = {|
   reviews: ? Array<? {|
-    __typename: \\"undefined\\",
+    __typename: \\"Review\\",
     // The number of stars this review gave, 1-5
     stars: number,
   |} >,
