@@ -12,6 +12,19 @@ export type CustomScalarQuery = {|
 |};"
 `;
 
+exports[`Flow code generation #generateSource() should generate array query operations 1`] = `
+"/* @flow */
+//  This file was automatically generated and should not be edited.
+
+export type ReviewsStarsQuery = {|
+  reviews: ? Array<? {|
+    __typename: \\"Review\\",
+    // The number of stars this review gave, 1-5
+    stars: number,
+  |} >,
+|};"
+`;
+
 exports[`Flow code generation #generateSource() should generate correct typedefs with a multiple custom fragments 1`] = `
 "/* @flow */
 //  This file was automatically generated and should not be edited.
