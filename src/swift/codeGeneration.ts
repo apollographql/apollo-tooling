@@ -193,7 +193,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             this.printOnNewline(
               wrap(
                 `return [`,
-                join(properties.map(({ name, propertyName }) => `"${name}": ${propertyName}`), ', ') || ':',
+                join(properties.map(({ name, propertyName }) => `"${name}": ${escapeIdentifierIfNeeded(propertyName)}`), ', ') || ':',
                 `]`
               )
             );
@@ -507,7 +507,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.comment(field.description);
     this.deprecationAttributes(field.isDeprecated, field.deprecationReason);
 
-    this.printOnNewline(`public var ${propertyName}: ${typeName}`);
+    this.printOnNewline(`public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`);
     this.withinBlock(() => {
       if (isCompositeType(unmodifiedFieldType)) {
         const structName = escapeIdentifierIfNeeded(this.helpers.structNameForPropertyName(propertyName));
@@ -580,7 +580,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     const { propertyName, typeName, structName } = variant;
 
     this.printNewlineIfNeeded();
-    this.printOnNewline(`public var ${propertyName}: ${typeName}`);
+    this.printOnNewline(`public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`);
     this.withinBlock(() => {
       this.printOnNewline('get');
       this.withinBlock(() => {
@@ -601,7 +601,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
     this.withinBlock(() => {
       properties.forEach(({ propertyName }) => {
-        this.printOnNewline(`self.${propertyName} = ${propertyName}`);
+        this.printOnNewline(`self.${propertyName} = ${escapeIdentifierIfNeeded(propertyName)}`);
       });
     });
   }
@@ -766,7 +766,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       this.print(
         join(
           properties.map(({ propertyName, typeName, isOptional }) =>
-            join([`${propertyName}: ${typeName}`, isOptional && ' = nil'])
+            join([`${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`, isOptional && ' = nil'])
           ),
           ', '
         )
@@ -777,7 +777,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.printOnNewline(
           wrap(
             `graphQLMap = [`,
-            join(properties.map(({ name, propertyName }) => `"${name}": ${propertyName}`), ', ') || ':',
+            join(properties.map(({ name, propertyName }) => `"${name}": ${escapeIdentifierIfNeeded(propertyName)}`), ', ') || ':',
             `]`
           )
         );
@@ -786,7 +786,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       for (const { propertyName, typeName, description } of properties) {
         this.printNewlineIfNeeded();
         this.comment(description);
-        this.printOnNewline(`public var ${propertyName}: ${typeName}`);
+        this.printOnNewline(`public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`);
         this.withinBlock(() => {
           this.printOnNewline('get');
           this.withinBlock(() => {

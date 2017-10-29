@@ -907,7 +907,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
   }
 
   /// The name of the character
-  public var private: String {
+  public var \`private\`: String {
     get {
       return snapshot[\\"private\\"]! as! String
     }
