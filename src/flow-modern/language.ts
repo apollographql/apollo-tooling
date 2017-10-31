@@ -1,6 +1,6 @@
 import * as t from 'babel-types';
 
-class FlowGenerator {
+export default class FlowGenerator {
   enumerationDeclaration(type: GraphQLType) {
     const { name, description } = type;
     const values = type.getValues();
@@ -13,7 +13,7 @@ class FlowGenerator {
 
     const typeAlias = t.exportNamedDeclaration(
       t.typeAlias(
-        t.identifier('EPISODE'),
+        t.identifier(name),
         undefined,
         t.unionTypeAnnotation(unionValues)
       ),

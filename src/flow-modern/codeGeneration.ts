@@ -49,22 +49,20 @@ import Printer from './printer';
 import FlowGenerator from './language';
 
 export function generateSource(context: CompilerContext) {
-  const generator = new FlowGenerator(context);
-
-  generator.fileHeader();
+  const generator = new FlowAPIGenerator(context);
 
   context.typesUsed.forEach(type => {
     generator.typeDeclarationForGraphQLType(type);
   });
 
-  // Object.values(context.operations).forEach(operation => {
-  //   // generator.typeVariablesDeclarationForOperation(operation);
-  //   generator.typeDeclarationForOperation(operation);
-  // });
+  Object.values(context.operations).forEach(operation => {
+    // generator.typeVariablesDeclarationForOperation(operation);
+    // generator.typeDeclarationForOperation(operation);
+  });
 
-  // Object.values(context.fragments).forEach(fragment => {
-  //   // console.log('Fragment', fragment);
-  // });
+  Object.values(context.fragments).forEach(fragment => {
+    // console.log('Fragment', fragment);
+  });
 
   return generator.output;
 }
@@ -79,13 +77,15 @@ export class FlowAPIGenerator extends FlowGenerator {
   printer: Printer
 
   constructor(context: CompilerContext) {
+    super(context);
+
     this.context = context;
     this.printer = new Printer();
   }
 
   typeDeclarationForGraphQLType(type: GraphQLType) {
     if (type instanceof GraphQLEnumType) {
-      this.enumerationDeclaration(type);
+      this.printer.enqueue(this.enumerationDeclaration(type));
     } else if (type instanceof GraphQLInputObjectType) {
       this.structDeclarationForInputObjectType(type);
     }

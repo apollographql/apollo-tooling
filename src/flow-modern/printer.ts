@@ -5,12 +5,12 @@ import generate from 'babel-generator';
 type Printable = t.Node | string;
 
 export default class Printer {
-  private printQueue: Printable[]
+  private printQueue: Printable[] = []
 
   public print(printable: Printable) {
     return this.printQueue.reduce(
       (document: string, printable: Printable) => {
-        if (typeof 'printable' === 'string') {
+        if (typeof printable === 'string') {
           return document + printable;
         } else {
           return document + generate(printable as t.Node).code;
@@ -21,6 +21,6 @@ export default class Printer {
   }
 
   public enqueue(printable: Printable) {
-    this.printQueue.push(printable);
+    return this.printQueue.push(printable);
   }
 }
