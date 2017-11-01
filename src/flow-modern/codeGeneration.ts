@@ -48,21 +48,30 @@ import * as t from 'babel-types';
 import Printer from './printer';
 import FlowGenerator from './language';
 
-export function generateSource(context: CompilerContext) {
+export function generateSource(
+  context: CompilerContext,
+  outputIndividualFiles: boolean,
+  only?: string,
+) {
   const generator = new FlowAPIGenerator(context);
 
-  context.typesUsed.forEach(type => {
-    generator.typeDeclarationForGraphQLType(type);
-  });
+  if (outputIndividualFiles) {
+    // TODO
+  }
+  else{
+    context.typesUsed.forEach(type => {
+      generator.typeDeclarationForGraphQLType(type);
+    });
 
-  Object.values(context.operations).forEach(operation => {
-    // generator.typeVariablesDeclarationForOperation(operation);
-    // generator.typeDeclarationForOperation(operation);
-  });
+    Object.values(context.operations).forEach(operation => {
+      // generator.typeVariablesDeclarationForOperation(operation);
+      // generator.typeDeclarationForOperation(operation);
+    });
 
-  Object.values(context.fragments).forEach(fragment => {
-    // console.log('Fragment', fragment);
-  });
+    Object.values(context.fragments).forEach(fragment => {
+      // console.log('Fragment', fragment);
+    });
+  }
 
   return generator.output;
 }
@@ -81,6 +90,8 @@ export class FlowAPIGenerator extends FlowGenerator {
 
     this.context = context;
     this.printer = new Printer();
+    this.printer.enqueue(fileHeader);
+    this.printer.enqueue('\n\n');
   }
 
   typeDeclarationForGraphQLType(type: GraphQLType) {
