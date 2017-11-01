@@ -29,6 +29,7 @@ export function typeAnnotationFromGraphQLType(type: GraphQLType, {
   }
 
   if (type instanceof GraphQLList) {
+    // TODO
   }
 
   const bareTypeAnnotation = builtInScalarMap[type.name];

@@ -58,33 +58,32 @@ export function generateSource(
   if (outputIndividualFiles) {
     // TODO
   } else{
+    generator.fileHeader();
 
-  generator.fileHeader();
+    context.typesUsed
+      .filter(type => type instanceof GraphQLEnumType)
+      .forEach((enumType: GraphQLEnumType) => {
+        generator.typeAliasForEnumType(enumType);
+      });
 
-  context.typesUsed
-    .filter(type => type instanceof GraphQLEnumType)
-    .forEach((enumType: GraphQLEnumType) => {
-      generator.typeAliasForEnumType(enumType);
+    context.typesUsed
+      .filter(type => type instanceof GraphQLInputObjectType)
+      .forEach((enumType: GraphQLInputObjectType) => {
+        generator.typeAliasForInputObjectType(enumType);
+      });
+
+    Object.values(context.operations).forEach(operation => {
+      // generator.typeVariablesDeclarationForOperation(operation);
+      // generator.typeDeclarationForOperation(operation);
     });
 
-  context.typesUsed
-    .filter(type => type instanceof GraphQLInputObjectType)
-    .forEach((enumType: GraphQLInputObjectType) => {
-      generator.typeAliasForInputObjectType(enumType);
+    Object.values(context.fragments).forEach(fragment => {
+      // console.log('Fragment', fragment);
     });
-
-  Object.values(context.operations).forEach(operation => {
-    // generator.typeVariablesDeclarationForOperation(operation);
-    // generator.typeDeclarationForOperation(operation);
-  });
-
-  Object.values(context.fragments).forEach(fragment => {
-    // console.log('Fragment', fragment);
-  });
+  }
 
   return generator.output;
 }
-
 
 export class FlowAPIGenerator extends FlowGenerator {
   context: CompilerContext
