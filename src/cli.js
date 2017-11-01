@@ -143,6 +143,11 @@ yargs
         describe: "For non-swift targets, always add the __typename GraphQL introspection type when generating target types",
         default: false
       },
+      "unsealed-objects": {
+        demand: false,
+        describe: "Generate unsealed object typed [Flow only]",
+        default: false
+      },
       "tag-name": {
         demand: false,
         describe: "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
@@ -182,6 +187,7 @@ yargs
         passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '',
         customScalarsPrefix: argv["custom-scalars-prefix"] || '',
         addTypename: argv["add-typename"],
+        unsealedObjects: argv["unsealed-objects"],
         namespace: argv.namespace,
         operationIdsPath: argv["operation-ids-path"],
         generateOperationIds: !!argv["operation-ids-path"],

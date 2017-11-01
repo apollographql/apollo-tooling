@@ -16,7 +16,10 @@ export function typeDeclaration(generator, { interfaceName, noBrackets }, closur
   if (noBrackets) {
     generator.withinBlock(closure, '', '');
   } else {
-    generator.withinBlock(closure, '{|', '|}');
+    const { unsealedObjects } = generator.context.options;
+    const open = unsealedObjects ? '{' : '{|';
+    const close = unsealedObjects ? '}' : '|}';
+    generator.withinBlock(closure, open, close);
   }
   generator.popScope();
   generator.print(';');
@@ -33,7 +36,10 @@ export function propertyDeclaration(generator, {
   isArrayElementNullable,
   fragmentSpreads,
   isInput
-}, closure, open = ' {|', close = '|}') {
+}, closure, open_, close_) {
+  const { unsealedObjects } = generator.context.options;
+  const open = open_ || (unsealedObjects ? ' {' : ' {|');
+  const close = close_ || (unsealedObjects ? '}' : '|}');
   const name = fieldName || propertyName;
 
   if (description) {
