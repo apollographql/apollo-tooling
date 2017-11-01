@@ -10,9 +10,10 @@ import { GeneratedFile } from './utilities/CodeGenerator'
 import { generateSource as generateSwiftSource } from './swift';
 import { generateSource as generateTypescriptSource } from './typescript';
 import { generateSource as generateFlowSource } from './flow';
+import { generateSource as generateFlowModernSource } from './flow-modern';
 import { generateSource as generateScalaSource } from './scala';
 
-type TargetType = 'json' | 'swift' | 'ts' | 'typescript' | 'flow' | 'scala';
+type TargetType = 'json' | 'swift' | 'ts' | 'typescript' | 'flow' | 'scala' | 'flow-modern';
 
 export default function generate(
   inputPaths: string[],
@@ -49,7 +50,16 @@ export default function generate(
     if (options.generateOperationIds) {
       writeOperationIdsMap(context);
     }
-  } else {
+  }
+  else if (target === 'flow-modern') {
+
+    const context = compileToIR(schema, document, options);
+    const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
+
+    const output = generateFlowModernSource(context, outputIndividualFiles, only);
+
+  }
+  else {
     let output;
     const context = compileToLegacyIR(schema, document, options);
     switch (target) {

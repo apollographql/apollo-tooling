@@ -48,8 +48,16 @@ import * as t from 'babel-types';
 import Printer from './printer';
 import FlowGenerator from './language';
 
-export function generateSource(context: CompilerContext) {
+export function generateSource(
+  context: CompilerContext,
+  outputIndividualFiles: boolean,
+  only?: string,
+) {
   const generator = new FlowAPIGenerator(context);
+
+  if (outputIndividualFiles) {
+    // TODO
+  } else{
 
   generator.fileHeader();
 
