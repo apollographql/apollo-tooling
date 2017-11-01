@@ -23,7 +23,6 @@ function compile(
 }
 
 describe('Flow codeGeneration', () => {
-
   test('simple hero query', () => {
     const context = compile(`
       query HeroName($episode: Episode) {
@@ -34,6 +33,20 @@ describe('Flow codeGeneration', () => {
     `);
     const output = generateSource(context);
 
+    console.log(output);
+  });
+
+  test.only(`should generate mutation operations with complex input types`, function() {
+    const context = compile(`
+      mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
+        createReview(episode: $episode, review: $review) {
+          stars
+          commentary
+        }
+      }
+    `);
+
+    const output = generateSource(context);
     console.log(output);
   });
 });

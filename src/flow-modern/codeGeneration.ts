@@ -51,9 +51,19 @@ import FlowGenerator from './language';
 export function generateSource(context: CompilerContext) {
   const generator = new FlowAPIGenerator(context);
 
-  context.typesUsed.forEach(type => {
-    generator.typeDeclarationForGraphQLType(type);
-  });
+  generator.fileHeader();
+
+  context.typesUsed
+    .filter(type => type instanceof GraphQLEnumType)
+    .forEach((enumType: GraphQLEnumType) => {
+      generator.typeAliasForEnumType(enumType);
+    });
+
+  context.typesUsed
+    .filter(type => type instanceof GraphQLInputObjectType)
+    .forEach((enumType: GraphQLInputObjectType) => {
+      generator.typeAliasForInputObjectType(enumType);
+    });
 
   Object.values(context.operations).forEach(operation => {
     // generator.typeVariablesDeclarationForOperation(operation);
@@ -67,28 +77,33 @@ export function generateSource(context: CompilerContext) {
   return generator.output;
 }
 
-const fileHeader = stripIndent`
-  /* @flow */
-  // This file was automatically generated and should not be edited.
-`;
 
 export class FlowAPIGenerator extends FlowGenerator {
   context: CompilerContext
   printer: Printer
 
   constructor(context: CompilerContext) {
-    super(context);
+    super();
 
     this.context = context;
     this.printer = new Printer();
   }
 
-  typeDeclarationForGraphQLType(type: GraphQLType) {
-    if (type instanceof GraphQLEnumType) {
-      this.printer.enqueue(this.enumerationDeclaration(type));
-    } else if (type instanceof GraphQLInputObjectType) {
-      this.structDeclarationForInputObjectType(type);
-    }
+  fileHeader() {
+    this.printer.enqueue(
+      stripIndent`
+        /* @flow */
+        // This file was automatically generated and should not be edited.
+      `
+    );
+  }
+
+  public typeAliasForEnumType(enumType: GraphQLEnumType) {
+    this.printer.enqueue(this.enumerationDeclaration(enumType));
+  }
+
+  public typeAliasForInputObjectType(inputObjectType: GraphQLInputObjectType) {
+    this.printer.enqueue(this.inputObjectDeclaration(inputObjectType));
   }
 
   public get output() {

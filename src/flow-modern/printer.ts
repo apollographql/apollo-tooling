@@ -7,7 +7,7 @@ type Printable = t.Node | string;
 export default class Printer {
   private printQueue: Printable[] = []
 
-  public print(printable: Printable) {
+  public print() {
     return this.printQueue.reduce(
       (document: string, printable: Printable) => {
         if (typeof printable === 'string') {
@@ -21,6 +21,8 @@ export default class Printer {
   }
 
   public enqueue(printable: Printable) {
-    return this.printQueue.push(printable);
+    this.printQueue.push(printable);
+    this.printQueue.push('\n');
+    this.printQueue.push('\n');
   }
 }

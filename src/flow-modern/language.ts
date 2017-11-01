@@ -1,13 +1,18 @@
+import {
+  GraphQLEnumType,
+  GraphQLInputObjectType,
+} from 'graphql';
+
 import * as t from 'babel-types';
 
 export default class FlowGenerator {
-  enumerationDeclaration(type: GraphQLType) {
+  public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
-    const values = type.getValues();
-
-    const unionValues = values.map(v => {
+    const unionValues = type.getValues().map(({ value }) => {
       const type = t.stringLiteralTypeAnnotation();
-      type.value = v.value;
+      // $ts-ignore - definition is incomplete
+      type.value = value;
+
       return type;
     });
 
@@ -21,9 +26,37 @@ export default class FlowGenerator {
     );
 
     typeAlias.leadingComments = [{
+      // $ts-ignore
       type: 'CommentLine',
       value: ` ${description}`
     }];
+
+    return typeAlias;
+  }
+
+  public inputObjectDeclaration(type: GraphQLInputObjectType) {
+    const { name, description } = type;
+    const typeAlias = t.exportNamedDeclaration(
+      t.typeAlias(
+        t.identifier(name),
+        undefined,
+        t.objectTypeAnnotation(
+          Object.keys(type.getFields()).map((fieldName) => {
+            return t.objectTypeProperty(
+              t.identifier(fieldName),
+              t.anyTypeAnnotation()
+            );
+          })
+        )
+      ),
+      []
+    );
+
+    typeAlias.leadingComments = [{
+      // $ts-ignore
+      type: 'CommentLine',
+      value: ` ${description}`
+    }]
 
     return typeAlias;
   }
