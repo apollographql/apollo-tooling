@@ -77,6 +77,28 @@ describe('Flow codeGeneration', () => {
     `);
 
     const output = generateSource(context);
+    console.log(output);
+    expect(output).toMatchSnapshot();
+  });
+
+  test('fragment with fragment spreads', () => {
+    const context = compile(`
+      fragment simpleFragment on Character {
+        name
+      }
+
+      fragment anotherFragment on Character {
+        id
+        ...simpleFragment
+
+        ... on Human {
+          appearsIn
+        }
+      }
+    `);
+
+    const output = generateSource(context);
+    expect(true).toBeFalsy();
     expect(output).toMatchSnapshot();
   });
 
@@ -135,6 +157,38 @@ describe('Flow codeGeneration', () => {
       }
     `);
     const output = generateSource(context);
+    expect(output).toMatchSnapshot();
+  });
+
+  test('inline fragment on type conditions', () => {
+    const context = compile(`
+      query HeroName($episode: Episode) {
+        hero(episode: $episode) {
+          name
+          id
+
+          ... on Human {
+            homePlanet
+            friends {
+              name
+            }
+          }
+
+          ... on Droid {
+            appearsIn
+            friends {
+              id
+            }
+          }
+        }
+      }
+    `);
+
+    // TODO: This is broken, we need to make sure
+    // that if selection set parents have type conditions
+    // that the names include the type condition.
+    const output = generateSource(context);
+    expect(true).toBeFalsy();
     expect(output).toMatchSnapshot();
   });
 

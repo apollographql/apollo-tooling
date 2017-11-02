@@ -51,6 +51,11 @@ export function generateSource(
 
   if (outputIndividualFiles) {
     // TODO
+    // 1. Sort by directory
+    // 2. MakeOrConfirmExistence __generated__ folder
+    // 3. Delete existing files
+    // 4. Regenerate one file per fragment + operation by name
+    // 5. Maybe types used in a separate file?
   } else{
     generator.fileHeader();
 
