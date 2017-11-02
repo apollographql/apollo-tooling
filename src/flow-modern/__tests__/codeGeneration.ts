@@ -77,11 +77,10 @@ describe('Flow codeGeneration', () => {
     `);
 
     const output = generateSource(context);
-    console.log(output);
     expect(output).toMatchSnapshot();
   });
 
-  test('fragment with fragment spreads', () => {
+  test('fragment with fragment spreads with inline fragment', () => {
     const context = compile(`
       fragment simpleFragment on Character {
         name
@@ -98,7 +97,6 @@ describe('Flow codeGeneration', () => {
     `);
 
     const output = generateSource(context);
-    expect(true).toBeFalsy();
     expect(output).toMatchSnapshot();
   });
 
@@ -160,7 +158,7 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('inline fragment on type conditions', () => {
+  test('inline fragment on type conditions with differing inner fields', () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -184,11 +182,7 @@ describe('Flow codeGeneration', () => {
       }
     `);
 
-    // TODO: This is broken, we need to make sure
-    // that if selection set parents have type conditions
-    // that the names include the type condition.
     const output = generateSource(context);
-    expect(true).toBeFalsy();
     expect(output).toMatchSnapshot();
   });
 

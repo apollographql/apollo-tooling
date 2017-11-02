@@ -120,6 +120,14 @@ export default class FlowGenerator {
     )
   }
 
+  public typeAliasGenericUnion(name: string, members: t.TypeAnnotation[]) {
+    return t.typeAlias(
+      t.identifier(name),
+      undefined,
+      t.unionTypeAnnotation(members)
+    );
+  }
+
   public exportDeclaration(node: t.Node) {
     return t.exportNamedDeclaration(node, []);
   }

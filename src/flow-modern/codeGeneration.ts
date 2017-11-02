@@ -28,9 +28,9 @@ import {
   Variant
 } from '../compiler/visitors/typeCase';
 
-// import {
-//   collectFragmentsReferenced
-// } from '../compiler/visitors/collectFragmentsReferenced';
+import {
+  collectFragmentsReferenced
+} from '../compiler/visitors/collectFragmentsReferenced';
 
 import {
   collectAndMergeFields
@@ -55,7 +55,6 @@ export function generateSource(
     // 2. MakeOrConfirmExistence __generated__ folder
     // 3. Delete existing files
     // 4. Regenerate one file per fragment + operation by name
-    // 5. Maybe types used in a separate file?
   } else{
     generator.fileHeader();
 
@@ -162,14 +161,49 @@ export class FlowAPIGenerator extends FlowGenerator {
 
     const variants = this.getVariantsForSelectionSet(selectionSet);
 
-    const variant = variants[0];
-    const properties = this.getPropertiesForVariant(variant);
+    if (variants.length === 1) {
+      const properties = this.getPropertiesForVariant(variants[0]);
 
-    const exportedTypeAlias = this.exportDeclaration(
-      this.typeAliasObject(fragmentName, properties)
-    );
+      const name = this.annotationFromScopeStack(this.scopeStack).id.name;
+      const exportedTypeAlias = this.exportDeclaration(
+        this.typeAliasObject(
+          name,
+          properties
+        )
+      );
 
-    this.printer.enqueue(exportedTypeAlias);
+      this.printer.enqueue(exportedTypeAlias);
+    } else {
+      const unionMembers: t.TypeAnnotation[] = [];
+      variants.forEach(variant => {
+        this.scopeStackPush(variant.possibleTypes[0]);
+        const properties = this.getPropertiesForVariant(variant);
+
+        const name = this.annotationFromScopeStack(this.scopeStack).id.name;
+        const exportedTypeAlias = this.exportDeclaration(
+          this.typeAliasObject(
+            name,
+            properties
+          )
+        );
+
+        this.printer.enqueue(exportedTypeAlias);
+
+        unionMembers.push(this.annotationFromScopeStack(this.scopeStack));
+
+        this.scopeStackPop();
+      });
+
+      this.printer.enqueue(
+        this.exportDeclaration(
+          this.typeAliasGenericUnion(
+            this.annotationFromScopeStack(this.scopeStack).id.name,
+            unionMembers
+          )
+        )
+      );
+    }
+
     this.scopeStackPop();
   }
 
@@ -223,11 +257,17 @@ export class FlowAPIGenerator extends FlowGenerator {
       const variant = variants[0];
       const properties = this.getPropertiesForVariant(variant);
       exportedTypeAlias = this.exportDeclaration(
-        this.typeAliasObject(genericAnnotation.id.name, properties)
+        this.typeAliasObject(
+          this.annotationFromScopeStack(this.scopeStack).id.name,
+          properties
+        )
       );
     } else {
       const propertySets = variants.map(variant => {
-        return this.getPropertiesForVariant(variant);
+        this.scopeStackPush(variant.possibleTypes[0])
+        const properties = this.getPropertiesForVariant(variant);
+        this.scopeStackPop();
+        return properties;
       })
 
       exportedTypeAlias = this.exportDeclaration(

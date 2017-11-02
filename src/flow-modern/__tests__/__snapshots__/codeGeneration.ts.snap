@@ -13,7 +13,7 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type HeroName_hero_friends = {|
+export type HeroName_hero_Human_friends = {|
   __typename: \\"Human\\",
   name: string, // What this human calls themselves
 |} | {|
@@ -23,15 +23,15 @@ export type HeroName_hero_friends = {|
 
 export type HeroName_hero = {|
   __typename: \\"Human\\",
-  name: string,                   // What this human calls themselves
-  id: string,                     // The ID of the human
-  homePlanet: ?string,            // The home planet of the human, or null if unknown
-  friends: HeroName_hero_friends, // This human's friends, or an empty list if they have none
+  name: string,                         // What this human calls themselves
+  id: string,                           // The ID of the human
+  homePlanet: ?string,                  // The home planet of the human, or null if unknown
+  friends: HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
 |} | {|
   __typename: \\"Droid\\",
-  name: string,                   // What others call this droid
-  id: string,                     // The ID of the droid
-  appearsIn: (?Episode)[],        // The movies this droid appears in
+  name: string,                         // What others call this droid
+  id: string,                           // The ID of the droid
+  appearsIn: (?Episode)[],              // The movies this droid appears in
 |};
 
 export type HeroName = {|
@@ -92,6 +92,44 @@ export type anotherFragment = {|
 |};"
 `;
 
+exports[`Flow codeGeneration fragment with fragment spreads with inline fragment 1`] = `
+"
+
+/* @flow */
+// This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+
+// ====================================================
+// GraphQL fragment: simpleFragment
+// ====================================================
+
+export type simpleFragment = {|
+  __typename: \\"Human\\" | \\"Droid\\",
+  name: string, // The name of the character
+|};
+
+// ====================================================
+// GraphQL fragment: anotherFragment
+// ====================================================
+
+export type anotherFragment_Droid = {|
+  __typename: \\"Droid\\",
+  id: string,   // The ID of the droid
+  name: string, // What others call this droid
+|};
+
+export type anotherFragment_Human = {|
+  __typename: \\"Human\\",
+  id: string,              // The ID of the human
+  name: string,            // What this human calls themselves
+  appearsIn: (?Episode)[], // The movies this human appears in
+|};
+
+export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;"
+`;
+
 exports[`Flow codeGeneration inline fragment 1`] = `
 "
 
@@ -129,22 +167,64 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type HeroName_hero_friends = {|
+export type HeroName_hero_Human_friends = {|
   __typename: \\"Human\\" | \\"Droid\\",
   name: string, // The name of the character
 |};
 
 export type HeroName_hero = {|
   __typename: \\"Human\\",
-  name: string,                   // What this human calls themselves
-  id: string,                     // The ID of the human
-  homePlanet: ?string,            // The home planet of the human, or null if unknown
-  friends: HeroName_hero_friends, // This human's friends, or an empty list if they have none
+  name: string,                         // What this human calls themselves
+  id: string,                           // The ID of the human
+  homePlanet: ?string,                  // The home planet of the human, or null if unknown
+  friends: HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
 |} | {|
   __typename: \\"Droid\\",
-  name: string,                   // What others call this droid
-  id: string,                     // The ID of the droid
-  appearsIn: (?Episode)[],        // The movies this droid appears in
+  name: string,                         // What others call this droid
+  id: string,                           // The ID of the droid
+  appearsIn: (?Episode)[],              // The movies this droid appears in
+|};
+
+export type HeroName = {|
+  hero: HeroName_hero
+|};"
+`;
+
+exports[`Flow codeGeneration inline fragment on type conditions with differing inner fields 1`] = `
+"
+
+/* @flow */
+// This file was automatically generated and should not be edited.
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+
+// ====================================================
+// GraphQL query operation: HeroName
+// ====================================================
+
+export type HeroName_hero_Human_friends = {|
+  __typename: \\"Human\\" | \\"Droid\\",
+  name: string, // The name of the character
+|};
+
+export type HeroName_hero_Droid_friends = {|
+  __typename: \\"Human\\" | \\"Droid\\",
+  id: string, // The ID of the character
+|};
+
+export type HeroName_hero = {|
+  __typename: \\"Human\\",
+  name: string,                         // What this human calls themselves
+  id: string,                           // The ID of the human
+  homePlanet: ?string,                  // The home planet of the human, or null if unknown
+  friends: HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+|} | {|
+  __typename: \\"Droid\\",
+  name: string,                         // What others call this droid
+  id: string,                           // The ID of the droid
+  appearsIn: (?Episode)[],              // The movies this droid appears in
+  friends: HeroName_hero_Droid_friends, // This droid's friends, or an empty list if they have none
 |};
 
 export type HeroName = {|
