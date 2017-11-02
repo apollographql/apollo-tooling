@@ -65,11 +65,21 @@ export default class FlowGenerator {
     return typeAlias;
   }
 
-  public objectTypeAnnotation(fields: ObjectProperty[]) {
+  public objectTypeAnnotation(fields: ObjectProperty[], isInputObject: boolean = false) {
     return t.objectTypeAnnotation(
       fields.map(({name, annotation}) => {
+        if (annotation.type instanceof t.NullableTypeAnnotation) {
+          t.identifier(name + '?')
+        }
+
         return t.objectTypeProperty(
-          t.identifier(name),
+          t.identifier(
+            // Nullable fields on input objects do not have to be defined
+            // as well, so allow these fields to be "undefined"
+            annotation.type === "NullableTypeAnnotation"
+              ? name + '?'
+              : name
+          ),
           annotation
         );
       })

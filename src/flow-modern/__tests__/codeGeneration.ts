@@ -95,7 +95,7 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test(`should generate mutation operations with complex input types`, function() {
+  test.only(`should generate mutation operations with complex input types`, function() {
     const context = compile(`
       mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
         createReview(episode: $episode, review: $review) {
@@ -106,6 +106,7 @@ describe('Flow codeGeneration', () => {
     `);
 
     const output = generateSource(context);
+    console.log(output);
     expect(output).toMatchSnapshot();
   });
 });
