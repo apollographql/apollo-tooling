@@ -3,7 +3,14 @@ import {
   GraphQLInputObjectType,
 } from 'graphql';
 
+import { typeAnnotationFromGraphQLType } from './helpers';
+
 import * as t from 'babel-types';
+
+type ObjectProperty = {
+  name: string,
+  annotation: t.TypeAnnotation
+}
 
 export default class FlowGenerator {
   public enumerationDeclaration(type: GraphQLEnumType) {
@@ -34,23 +41,20 @@ export default class FlowGenerator {
     return typeAlias;
   }
 
-  public inputObjectDeclaration(type: GraphQLInputObjectType) {
-    const { name, description } = type;
-    const typeAlias = t.exportNamedDeclaration(
-      t.typeAlias(
-        t.identifier(name),
-        undefined,
-        t.objectTypeAnnotation(
-          Object.keys(type.getFields()).map((fieldName) => {
-            return t.objectTypeProperty(
-              t.identifier(fieldName),
-              t.anyTypeAnnotation()
-            );
-          })
-        )
-      ),
-      []
-    );
+  public inputObjectDeclaration(inputObjectType: GraphQLInputObjectType) {
+    const { name, description } = inputObjectType;
+
+    const fieldMap = inputObjectType.getFields();
+    const fields: ObjectProperty[] = Object.keys(inputObjectType.getFields())
+      .map((fieldName: string) => {
+        const field = fieldMap[fieldName];
+        return {
+          name: fieldName,
+          annotation: typeAnnotationFromGraphQLType(field.type)
+        }
+      });
+
+    const typeAlias = this.typeAliasObject(name, fields);
 
     typeAlias.leadingComments = [{
       // $ts-ignore
@@ -59,5 +63,31 @@ export default class FlowGenerator {
     }]
 
     return typeAlias;
+  }
+
+  public objectTypeAnnotation(fields: ObjectProperty[]) {
+    return t.objectTypeAnnotation(
+      fields.map(({name, annotation}) => {
+        return t.objectTypeProperty(
+          t.identifier(name),
+          annotation
+        );
+      })
+    )
+  }
+
+  public typeAliasObject(name: string, fields: ObjectProperty[]) {
+    return t.typeAlias(
+      t.identifier(name),
+      undefined,
+      this.objectTypeAnnotation(fields)
+    );
+  }
+
+  public typeAliasObjectUnion(name: string, members: ObjectProperty[][]) {
+  }
+
+  public exportDeclaration(node: t.Node) {
+    return t.exportNamedDeclaration(node, []);
   }
 }

@@ -24,11 +24,8 @@ import {
 } from '../compiler';
 
 import {
+  typeCaseForSelectionSet,
   Variant
-} from '../compiler/visitors/typeCase.ts';
-
-import {
-  typeCaseForSelectionSet
 } from '../compiler/visitors/typeCase';
 
 import { stripIndent } from 'common-tags';
@@ -50,7 +47,7 @@ import FlowGenerator from './language';
 
 export function generateSource(
   context: CompilerContext,
-  outputIndividualFiles: boolean,
+  outputIndividualFiles?: boolean = false,
   only?: string,
 ) {
   const generator = new FlowAPIGenerator(context);
@@ -74,7 +71,7 @@ export function generateSource(
 
     Object.values(context.operations).forEach(operation => {
       // generator.typeVariablesDeclarationForOperation(operation);
-      // generator.typeDeclarationForOperation(operation);
+      generator.typeAliasForOperation(operation);
     });
 
     Object.values(context.fragments).forEach(fragment => {
@@ -111,6 +108,42 @@ export class FlowAPIGenerator extends FlowGenerator {
 
   public typeAliasForInputObjectType(inputObjectType: GraphQLInputObjectType) {
     this.printer.enqueue(this.inputObjectDeclaration(inputObjectType));
+  }
+
+  public typeAliasForOperation(operation: Operation) {
+    const {
+      operationType,
+      operationName,
+      variables,
+      selectionSet
+    } = operation;
+
+    const typeCase = this.getTypeCasesForSelectionSet(selectionSet);
+    const variants = typeCase.exhaustiveVariants;
+
+    let exportedTypeAlias;
+    if (variants.length === 1) {
+      console.log('Single variant for', operationName);
+      exportedTypeAlias = this.exportDeclaration(
+        this.typeAliasObject(operationName, [])
+      );
+    } else {
+      console.log('Multiple variants for', operationName);
+      console.log(this.typeAliasObjectUnion(operationName, []));
+    }
+
+    const operationTypeAlias = exportedTypeAlias;
+    this.printer.enqueue(operationTypeAlias);
+  }
+
+  private getTypeCasesForSelectionSet(selectionSet: SelectionSet) {
+    return typeCaseForSelectionSet(
+      selectionSet,
+      this.context.options.mergeInFieldsFromFragmentSpreads
+    );
+  }
+
+  private getFieldsForVariant(variant: Variant): ObjectProperty[] {
   }
 
   public get output() {
