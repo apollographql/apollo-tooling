@@ -36,8 +36,7 @@ describe('Flow codeGeneration', () => {
       }
     `);
     const output = generateSource(context);
-
-    console.log(`\n\n\n${output}\n\n\n`);
+    expect(output).toMatchSnapshot();
   });
 
   test('inline fragments', () => {
@@ -61,11 +60,10 @@ describe('Flow codeGeneration', () => {
       }
     `);
     const output = generateSource(context);
-
-    console.log(`\n\n\n${output}\n\n\n`);
+    expect(output).toMatchSnapshot();
   });
 
-  test.only('fragment spreads', () => {
+  test('fragment spreads', () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -94,8 +92,7 @@ describe('Flow codeGeneration', () => {
       }
     `);
     const output = generateSource(context);
-
-    console.log(`\n\n\n${output}\n\n\n`);
+    expect(output).toMatchSnapshot();
   });
 
   test(`should generate mutation operations with complex input types`, function() {
@@ -109,6 +106,6 @@ describe('Flow codeGeneration', () => {
     `);
 
     const output = generateSource(context);
-    console.log(output);
+    expect(output).toMatchSnapshot();
   });
 });
