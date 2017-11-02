@@ -12,22 +12,22 @@ type ObjectProperty = {
   annotation: t.TypeAnnotation
 }
 
-export default class FlowGenerator {
+export default class TypescriptGenerator {
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
-    const unionValues = type.getValues().map(({ value }) => {
-      const type = t.stringLiteralTypeAnnotation();
-      // $ts-ignore - definition is incomplete
-      type.value = value;
+    const enumMembers = type.getValues().map(({ value }) => {
+      const type = t.tSEnumMember(
+        t.identifier(value),
+        t.stringLiteral(value)
+      );
 
       return type;
     });
 
     const typeAlias = t.exportNamedDeclaration(
-      t.typeAlias(
+      t.tSEnumDeclaration(
         t.identifier(name),
-        undefined,
-        t.unionTypeAnnotation(unionValues)
+        enumMembers
       ),
       []
     );

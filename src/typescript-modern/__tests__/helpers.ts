@@ -12,7 +12,7 @@ import * as t from 'babel-types';
 
 import { typeAnnotationFromGraphQLType } from '../helpers';
 
-describe('Flow typeAnnotationFromGraphQLType', () => {
+describe('Typescript typeAnnotationFromGraphQLType', () => {
   test('String', () => {
     expect(typeAnnotationFromGraphQLType(GraphQLString))
       .toMatchObject(

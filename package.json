@@ -38,10 +38,11 @@
     "typescript": "^2.5.2"
   },
   "dependencies": {
+    "@babel/generator": "^7.0.0-beta.4",
+    "@babel/types": "^7.0.0-beta.4",
     "@types/babel-generator": "^6.25.0",
     "@types/babylon": "^6.16.2",
     "babel-generator": "^6.26.0",
-    "babel-types": "^6.26.0",
     "babylon": "^6.18.0",
     "change-case": "^3.0.1",
     "core-js": "^2.5.0",

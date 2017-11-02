@@ -96,7 +96,7 @@ export class FlowAPIGenerator extends FlowGenerator {
   fileHeader() {
     this.printer.enqueue(
       stripIndent`
-        /* @flow */
+        /* tslint:disable */
         // This file was automatically generated and should not be edited.
       `
     );
