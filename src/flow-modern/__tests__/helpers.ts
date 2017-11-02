@@ -4,7 +4,8 @@ import {
   GraphQLFloat,
   GraphQLBoolean,
   GraphQLID,
-  GraphQLNonNull
+  GraphQLNonNull,
+  GraphQLList,
 } from 'graphql';
 
 import * as t from 'babel-types';
@@ -89,32 +90,279 @@ describe('typeAnnotationFromGraphQLType', () => {
 
   // TODO: Test GenericTypeAnnotation
 
-  test('[String]')
-  test('[Int]')
-  test('[Float]')
-  test('[Boolean]')
-  test('[ID]')
+  test('[String]', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLList(GraphQLString))
+    ).toMatchObject(
+        t.nullableTypeAnnotation(
+          t.arrayTypeAnnotation(
+            t.nullableTypeAnnotation(
+              t.stringTypeAnnotation()
+            )
+          )
+        )
+      )
+  });
 
-  test('[String]!')
-  test('[Int]!')
-  test('[Float]!')
-  test('[Boolean]!')
-  test('[ID]!')
+  test('[Int]', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLList(GraphQLInt))
+    ).toMatchObject(
+        t.nullableTypeAnnotation(
+          t.arrayTypeAnnotation(
+            t.nullableTypeAnnotation(
+              t.numberTypeAnnotation()
+            )
+          )
+        )
+      )
+  });
 
-  test('[String!]')
-  test('[Int!]')
-  test('[Float!]')
-  test('[Boolean!]')
-  test('[ID!]')
+  test('[Float]', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLList(GraphQLFloat))
+    ).toMatchObject(
+        t.nullableTypeAnnotation(
+          t.arrayTypeAnnotation(
+            t.nullableTypeAnnotation(
+              t.numberTypeAnnotation()
+            )
+          )
+        )
+      )
+  });
 
-  test('[String!]!')
-  test('[Int!]!')
-  test('[Float!]!')
-  test('[Boolean!]!')
-  test('[ID!]!')
+  test('[Boolean]', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLList(GraphQLBoolean))
+    ).toMatchObject(
+        t.nullableTypeAnnotation(
+          t.arrayTypeAnnotation(
+            t.nullableTypeAnnotation(
+              t.booleanTypeAnnotation()
+            )
+          )
+        )
+      )
+  });
 
-  test('[[String]]')
-  test('[[String]]!')
+  test('[ID]', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLList(GraphQLID))
+    ).toMatchObject(
+        t.nullableTypeAnnotation(
+          t.arrayTypeAnnotation(
+            t.nullableTypeAnnotation(
+              t.stringTypeAnnotation()
+            )
+          )
+        )
+      )
+  })
+
+  test('[String]!', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLString)))
+    ).toMatchObject(
+        t.arrayTypeAnnotation(
+          t.nullableTypeAnnotation(
+            t.stringTypeAnnotation()
+          )
+        )
+      )
+  });
+
+  test('[Int]!', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLInt)))
+    ).toMatchObject(
+        t.arrayTypeAnnotation(
+          t.nullableTypeAnnotation(
+            t.numberTypeAnnotation()
+          )
+        )
+      )
+  });
+  test('[Float]!', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLFloat)))
+    ).toMatchObject(
+        t.arrayTypeAnnotation(
+          t.nullableTypeAnnotation(
+            t.numberTypeAnnotation()
+          )
+        )
+      )
+  });
+
+  test('[Boolean]!', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLBoolean)))
+    ).toMatchObject(
+        t.arrayTypeAnnotation(
+          t.nullableTypeAnnotation(
+            t.booleanTypeAnnotation()
+          )
+        )
+      )
+  });
+
+  test('[ID]!', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLID)))
+    ).toMatchObject(
+        t.arrayTypeAnnotation(
+          t.nullableTypeAnnotation(
+            t.stringTypeAnnotation()
+          )
+        )
+      )
+  });
+
+  test('[String!]', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLString)))
+    ).toMatchObject(
+      t.nullableTypeAnnotation(
+          t.arrayTypeAnnotation(
+            t.stringTypeAnnotation()
+          )
+        )
+      )
+  });
+
+  test('[Int!]', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLList(new GraphQLNonNull((GraphQLInt))))
+    ).toMatchObject(
+      t.nullableTypeAnnotation(
+          t.arrayTypeAnnotation(
+            t.numberTypeAnnotation()
+          )
+        )
+      )
+  })
+
+  test('[Float!]', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLFloat)))
+    ).toMatchObject(
+        t.nullableTypeAnnotation(
+          t.arrayTypeAnnotation(
+            t.numberTypeAnnotation()
+          )
+        )
+      )
+  });
+
+  test('[Boolean!]', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLBoolean)))
+    ).toMatchObject(
+        t.nullableTypeAnnotation(
+          t.arrayTypeAnnotation(
+            t.booleanTypeAnnotation()
+          )
+        )
+      )
+  });
+
+  test('[ID!]', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLID)))
+    ).toMatchObject(
+        t.nullableTypeAnnotation(
+          t.arrayTypeAnnotation(
+            t.stringTypeAnnotation()
+          )
+        )
+      )
+  });
+
+  test('[String!]!', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))))
+    ).toMatchObject(
+        t.arrayTypeAnnotation(
+          t.stringTypeAnnotation()
+        )
+      )
+  });
+
+  test('[Int!]!', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLInt))))
+    ).toMatchObject(
+        t.arrayTypeAnnotation(
+          t.numberTypeAnnotation()
+        )
+      )
+  });
+
+  test('[Float!]!', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLFloat))))
+    ).toMatchObject(
+        t.arrayTypeAnnotation(
+          t.numberTypeAnnotation()
+        )
+      )
+  });
+
+  test('[Boolean!]!', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLBoolean))))
+    ).toMatchObject(
+        t.arrayTypeAnnotation(
+          t.booleanTypeAnnotation()
+        )
+      )
+  });
+
+  test('[ID!]!', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLID))))
+    ).toMatchObject(
+        t.arrayTypeAnnotation(
+          t.stringTypeAnnotation()
+        )
+      )
+  });
+
+  test('[[String]]', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLList(new GraphQLList(GraphQLString)))
+    ).toMatchObject(
+        t.nullableTypeAnnotation(
+          t.arrayTypeAnnotation(
+            t.nullableTypeAnnotation(
+              t.arrayTypeAnnotation(
+                t.nullableTypeAnnotation(
+                  t.stringTypeAnnotation()
+                )
+              )
+            )
+          )
+        )
+      )
+  });
+
+  test('[[String]]!', () => {
+    expect(
+      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLList(GraphQLString))))
+    ).toMatchObject(
+        t.arrayTypeAnnotation(
+          t.nullableTypeAnnotation(
+            t.arrayTypeAnnotation(
+              t.nullableTypeAnnotation(
+                t.stringTypeAnnotation()
+              )
+            )
+          )
+        )
+      )
+  });
+
   // TODO: Add more list test cases
 
 });
