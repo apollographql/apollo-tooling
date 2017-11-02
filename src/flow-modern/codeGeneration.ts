@@ -48,13 +48,34 @@ export function generateSource(
   only?: string,
 ) {
   const generator = new FlowAPIGenerator(context);
-
   if (outputIndividualFiles) {
     // TODO
     // 1. Sort by directory
     // 2. MakeOrConfirmExistence __generated__ folder
     // 3. Delete existing files
     // 4. Regenerate one file per fragment + operation by name
+
+    // 5. Maybe types used in a separate file?
+
+    const directoryNameToOperations: { [key: string]: Array<Operation> } = {};
+    const directoryNameToFragments: { [key: string]: Array<Fragment> } = {};
+
+    Object.values(context.operations).forEach(operation => {
+      if (directoryNameToOperations[operation.filePath]) {
+        directoryNameToOperations[operation.filePath].push(operation);
+      } else {
+        directoryNameToOperations[operation.filePath] = [operation];
+      }
+    });
+
+    Object.values(context.fragments).forEach(fragment => {
+      if (directoryNameToFragments[fragment.filePath]) {
+        directoryNameToFragments[fragment.filePath].push(fragment);
+      } else {
+        directoryNameToFragments[fragment.filePath] = [fragment];
+      }
+    });
+
   } else{
     generator.fileHeader();
 

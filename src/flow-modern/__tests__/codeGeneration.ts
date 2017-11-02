@@ -26,7 +26,7 @@ function compile(
 }
 
 describe('Flow codeGeneration', () => {
-  test('simple hero query', () => {
+  test.only('simple hero query', () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -35,6 +35,9 @@ describe('Flow codeGeneration', () => {
         }
       }
     `);
+    context.operations["HeroName"].filePath = '/some/file/path';
+
+    console.log(context);
     const output = generateSource(context);
     expect(output).toMatchSnapshot();
   });
