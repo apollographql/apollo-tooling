@@ -85,7 +85,7 @@ export default class FlowGenerator {
         );
 
         if (description) {
-          objectTypeProperty.leadingComments = [{
+          objectTypeProperty.trailingComments = [{
             type: 'CommentLine',
             value: ` ${description}`
           }]

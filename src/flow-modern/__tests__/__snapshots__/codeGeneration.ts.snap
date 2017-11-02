@@ -15,32 +15,23 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 
 export type HeroName_hero_friends = {|
   __typename: \\"Human\\",
-  // What this human calls themselves
-  name: string,
+  name: string, // What this human calls themselves
 |} | {|
   __typename: \\"Droid\\",
-  // The ID of the droid
-  id: string,
+  id: string,   // The ID of the droid
 |};
 
 export type HeroName_hero = {|
   __typename: \\"Human\\",
-  // What this human calls themselves
-  name: string,
-  // The ID of the human
-  id: string,
-  // The home planet of the human, or null if unknown
-  homePlanet: ?string,
-  // This human's friends, or an empty list if they have none
-  friends: HeroName_hero_friends,
+  name: string,                   // What this human calls themselves
+  id: string,                     // The ID of the human
+  homePlanet: ?string,            // The home planet of the human, or null if unknown
+  friends: HeroName_hero_friends, // This human's friends, or an empty list if they have none
 |} | {|
   __typename: \\"Droid\\",
-  // What others call this droid
-  name: string,
-  // The ID of the droid
-  id: string,
-  // The movies this droid appears in
-  appearsIn: (?Episode)[],
+  name: string,                   // What others call this droid
+  id: string,                     // The ID of the droid
+  appearsIn: (?Episode)[],        // The movies this droid appears in
 |};
 
 export type HeroName = {|
@@ -53,20 +44,16 @@ export type HeroName = {|
 
 export type humanFragment_friends = {|
   __typename: \\"Human\\",
-  // What this human calls themselves
-  name: string,
+  name: string, // What this human calls themselves
 |} | {|
   __typename: \\"Droid\\",
-  // The ID of the droid
-  id: string,
+  id: string,   // The ID of the droid
 |};
 
 export type humanFragment = {|
   __typename: \\"Human\\",
-  // The home planet of the human, or null if unknown
-  homePlanet: ?string,
-  // This human's friends, or an empty list if they have none
-  friends: humanFragment_friends,
+  homePlanet: ?string,            // The home planet of the human, or null if unknown
+  friends: humanFragment_friends, // This human's friends, or an empty list if they have none
 |};
 
 // ====================================================
@@ -75,8 +62,7 @@ export type humanFragment = {|
 
 export type droidFragment = {|
   __typename: \\"Droid\\",
-  // The movies this droid appears in
-  appearsIn: (?Episode)[],
+  appearsIn: (?Episode)[], // The movies this droid appears in
 |};"
 `;
 
@@ -92,8 +78,7 @@ exports[`Flow codeGeneration fragment with fragment spreads 1`] = `
 
 export type simpleFragment = {|
   __typename: \\"Human\\" | \\"Droid\\",
-  // The name of the character
-  name: string,
+  name: string, // The name of the character
 |};
 
 // ====================================================
@@ -102,10 +87,8 @@ export type simpleFragment = {|
 
 export type anotherFragment = {|
   __typename: \\"Human\\" | \\"Droid\\",
-  // The ID of the character
-  id: string,
-  // The name of the character
-  name: string,
+  id: string,   // The ID of the character
+  name: string, // The name of the character
 |};"
 `;
 
@@ -124,10 +107,8 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 
 export type HeroInlineFragment_hero = {|
   __typename: \\"Human\\" | \\"Droid\\",
-  // The name of the character
-  name: string,
-  // The ID of the character
-  id: string,
+  name: string, // The name of the character
+  id: string,   // The ID of the character
 |};
 
 export type HeroInlineFragment = {|
@@ -150,28 +131,20 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 
 export type HeroName_hero_friends = {|
   __typename: \\"Human\\" | \\"Droid\\",
-  // The name of the character
-  name: string,
+  name: string, // The name of the character
 |};
 
 export type HeroName_hero = {|
   __typename: \\"Human\\",
-  // What this human calls themselves
-  name: string,
-  // The ID of the human
-  id: string,
-  // The home planet of the human, or null if unknown
-  homePlanet: ?string,
-  // This human's friends, or an empty list if they have none
-  friends: HeroName_hero_friends,
+  name: string,                   // What this human calls themselves
+  id: string,                     // The ID of the human
+  homePlanet: ?string,            // The home planet of the human, or null if unknown
+  friends: HeroName_hero_friends, // This human's friends, or an empty list if they have none
 |} | {|
   __typename: \\"Droid\\",
-  // What others call this droid
-  name: string,
-  // The ID of the droid
-  id: string,
-  // The movies this droid appears in
-  appearsIn: (?Episode)[],
+  name: string,                   // What others call this droid
+  id: string,                     // The ID of the droid
+  appearsIn: (?Episode)[],        // The movies this droid appears in
 |};
 
 export type HeroName = {|
@@ -194,10 +167,8 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 
 export type HeroFragment_hero = {|
   __typename: \\"Human\\" | \\"Droid\\",
-  // The name of the character
-  name: string,
-  // The ID of the character
-  id: string,
+  name: string, // The name of the character
+  id: string,   // The ID of the character
 |};
 
 export type HeroFragment = {|
@@ -210,8 +181,7 @@ export type HeroFragment = {|
 
 export type simpleFragment = {|
   __typename: \\"Human\\" | \\"Droid\\",
-  // The name of the character
-  name: string,
+  name: string, // The name of the character
 |};"
 `;
 
@@ -227,8 +197,7 @@ exports[`Flow codeGeneration simple fragment 1`] = `
 
 export type SimpleFragment = {|
   __typename: \\"Human\\" | \\"Droid\\",
-  // The name of the character
-  name: string,
+  name: string, // The name of the character
 |};"
 `;
 
@@ -247,10 +216,8 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 
 export type HeroName_hero = {|
   __typename: \\"Human\\" | \\"Droid\\",
-  // The name of the character
-  name: string,
-  // The ID of the character
-  id: string,
+  name: string, // The name of the character
+  id: string,   // The ID of the character
 |};
 
 export type HeroName = {|
@@ -287,10 +254,8 @@ type ColorInput = {|
 
 export type ReviewMovie_createReview = {|
   __typename: \\"Review\\",
-  // The number of stars this review gave, 1-5
-  stars: number,
-  // Comment about the movie
-  commentary: ?string,
+  stars: number,       // The number of stars this review gave, 1-5
+  commentary: ?string, // Comment about the movie
 |};
 
 export type ReviewMovie = {|

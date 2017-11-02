@@ -77,7 +77,6 @@ describe('Flow codeGeneration', () => {
     `);
 
     const output = generateSource(context);
-    console.log(output);
     expect(output).toMatchSnapshot();
   });
 
