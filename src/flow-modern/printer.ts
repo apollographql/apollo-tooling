@@ -32,6 +32,12 @@ export default class Printer {
     ];
   }
 
+  public printAndClear() {
+    const output = this.print();
+    this.printQueue = [];
+    return output;
+  }
+
   /**
    * When using trailing commas on ObjectTypeProperties within
    * ObjectTypeAnnotations, we get weird behavior:

@@ -14,6 +14,7 @@ import {
   GraphQLError,
   GraphQLType
 } from 'graphql';
+import * as path from 'path';
 
 import {
   CompilerContext,
@@ -42,6 +43,35 @@ import FlowGenerator, {
 } from './language';
 import Printer from './printer';
 
+function printEnumsAndInputObjects(generator: FlowAPIGenerator, context: CompilerContext) {
+  generator.printer.enqueue(stripIndent`
+    //==============================================================
+    // START Enums and Input Objects
+    // All enums and input objects are included in every output file
+    // for now, but this will be changed soon.
+    // TODO: Link to issue to fix this.
+    //==============================================================
+  `);
+
+  context.typesUsed
+    .filter(type => type instanceof GraphQLEnumType)
+    .forEach((enumType: GraphQLEnumType) => {
+      generator.typeAliasForEnumType(enumType);
+    });
+
+  context.typesUsed
+    .filter(type => type instanceof GraphQLInputObjectType)
+    .forEach((enumType: GraphQLInputObjectType) => {
+      generator.typeAliasForInputObjectType(enumType);
+    });
+
+  generator.printer.enqueue(stripIndent`
+    //==============================================================
+    // END Enums and Input Objects
+    //==============================================================
+  `)
+}
+
 export function generateSource(
   context: CompilerContext,
   outputIndividualFiles?: boolean = false,
@@ -49,33 +79,43 @@ export function generateSource(
 ) {
   const generator = new FlowAPIGenerator(context);
   if (outputIndividualFiles) {
-    // TODO
-    // 1. Sort by directory
-    // 2. MakeOrConfirmExistence __generated__ folder
-    // 3. Delete existing files
-    // 4. Regenerate one file per fragment + operation by name
+    const generatedFiles: { [filePath: string]: string } = [];
 
-    // 5. Maybe types used in a separate file?
+    Object.values(context.operations)
+      .forEach((operation) => {
+        generator.fileHeader();
+        generator.typeAliasesForOperation(operation);
+        printEnumsAndInputObjects(generator, context);
 
-    const directoryNameToOperations: { [key: string]: Array<Operation> } = {};
-    const directoryNameToFragments: { [key: string]: Array<Fragment> } = {};
+        const output = generator.printer.printAndClear();
 
-    Object.values(context.operations).forEach(operation => {
-      if (directoryNameToOperations[operation.filePath]) {
-        directoryNameToOperations[operation.filePath].push(operation);
-      } else {
-        directoryNameToOperations[operation.filePath] = [operation];
-      }
-    });
+        const outputFilePath = path.join(
+          path.dirname(operation.filePath),
+          '__generated__',
+          `${operation.operationName}.js`
+        );
 
-    Object.values(context.fragments).forEach(fragment => {
-      if (directoryNameToFragments[fragment.filePath]) {
-        directoryNameToFragments[fragment.filePath].push(fragment);
-      } else {
-        directoryNameToFragments[fragment.filePath] = [fragment];
-      }
-    });
+        generatedFiles[outputFilePath] = output;
+      });
 
+    Object.values(context.fragments)
+      .forEach((fragment) => {
+        generator.fileHeader();
+        generator.typeAliasesForFragment(fragment);
+        printEnumsAndInputObjects(generator, context);
+
+        const output = generator.printer.printAndClear();
+
+        const outputFilePath = path.join(
+          path.dirname(fragment.filePath),
+          '__generated__',
+          `${fragment.fragmentName}.js`
+        );
+
+        generatedFiles[outputFilePath] = output;
+      });
+
+    return generatedFiles;
   } else{
     generator.fileHeader();
 
@@ -251,6 +291,12 @@ export class FlowAPIGenerator extends FlowGenerator {
       let res;
       if (field.selectionSet) {
         const genericAnnotation = this.annotationFromScopeStack(this.scopeStack);
+        if (field.type instanceof GraphQLNonNull) {
+          genericAnnotation.id.name = genericAnnotation.id.name;
+        } else {
+          genericAnnotation.id.name = '?' + genericAnnotation.id.name;
+        }
+
         res = this.handleFieldSelectionSetValue(
           genericAnnotation,
           field

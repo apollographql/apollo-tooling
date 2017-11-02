@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as rimraf from 'rimraf';
 
 import { loadSchema, loadSchemaFromConfig, loadAndMergeQueryDocuments } from './loading';
 import { validateQueryDocument } from './validation';
@@ -54,9 +55,11 @@ export default function generate(
   else if (target === 'flow-modern') {
 
     const context = compileToIR(schema, document, options);
-    const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
+    // const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
+    const outputIndividualFiles = true;
+    const generatedFiles = generateFlowModernSource(context, outputIndividualFiles, only);
 
-    const output = generateFlowModernSource(context, outputIndividualFiles, only);
+    writeGeneratedFilesForFlowOrTypescript(generatedFiles);
 
   }
   else {
@@ -91,6 +94,38 @@ function writeGeneratedFiles(generatedFiles: { [fileName: string]: GeneratedFile
   }
   for (const [fileName, generatedFile] of Object.entries(generatedFiles)) {
     fs.writeFileSync(path.join(outputDirectory, fileName), generatedFile.output);
+  }
+}
+
+function writeGeneratedFilesForFlowOrTypescript(
+  generatedFiles: { [filePath: string]: string },
+) {
+
+  // Clear all generated folders
+  Object.keys(generatedFiles)
+    .map(path.dirname)
+    .reduce((uniqueList: string[], item: string) => {
+      if (uniqueList.indexOf(item) === -1) {
+        return [...uniqueList, item];
+      } else {
+        return uniqueList;
+      }
+    }, [])
+    .forEach(path => rimraf.sync(path));
+
+  // TODO: Clean this up by merging with `writeGeneratedFiles` by creating a
+  // `GeneratedFile` interface that works for both cases.
+  for (const [filePath, generatedFile] of Object.entries(generatedFiles)) {
+    const outputDirectory = path.dirname(filePath);
+    if (outputDirectory.indexOf('__generated__') === -1) {
+      throw new Error('Received invalid outputDirectory ' + outputDirectory);
+    }
+
+    if (!fs.existsSync(outputDirectory)) {
+      fs.mkdirSync(outputDirectory);
+    }
+
+    fs.writeFileSync(filePath, generatedFile);
   }
 }
 

@@ -1,13 +1,14 @@
 import {
-  GraphQLString,
-  GraphQLInt,
-  GraphQLFloat,
   GraphQLBoolean,
+  GraphQLFloat,
+  GraphQLInt,
   GraphQLID,
-  GraphQLType,
-  GraphQLNonNull,
   GraphQLList,
+  GraphQLLong,
+  GraphQLNonNull,
   GraphQLScalarType
+  GraphQLString,
+  GraphQLType,
 } from 'graphql'
 
 import * as t from 'babel-types';
@@ -16,6 +17,9 @@ const builtInScalarMap = {
   [GraphQLString.name]: t.stringTypeAnnotation(),
   [GraphQLInt.name]: t.numberTypeAnnotation(),
   [GraphQLFloat.name]: t.numberTypeAnnotation(),
+  // TODO: Support custom scalars
+  ['Long']: t.numberTypeAnnotation(),
+  ['DataMap']: t.anyTypeAnnotation(),
   [GraphQLBoolean.name]: t.booleanTypeAnnotation(),
   [GraphQLID.name]: t.stringTypeAnnotation(),
 }

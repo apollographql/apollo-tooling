@@ -232,6 +232,237 @@ export type HeroName = {|
 |};"
 `;
 
+exports[`Flow codeGeneration multiple files 1`] = `"/some/file/__generated__/HeroName.js"`;
+
+exports[`Flow codeGeneration multiple files 2`] = `
+"
+
+// ====================================================
+// GraphQL query operation: HeroName
+// ====================================================
+
+export type HeroName_hero = {|
+  __typename: \\"Human\\" | \\"Droid\\",
+  name: string, // The name of the character
+  id: string,   // The ID of the character
+|};
+
+export type HeroName = {|
+  hero: HeroName_hero
+|};
+
+//==============================================================
+// START Enums and Input Objects
+// All enums and input objects are included in every output file
+// for now, but this will be changed soon.
+// TODO: Link to issue to fix this.
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+
+// The input object sent when someone is creating a new review
+type ReviewInput = {|
+  stars: number,
+  commentary: ?string,
+  favorite_color: ?ColorInput,
+|};
+
+// The input object sent when passing in a color
+type ColorInput = {|
+  red: number,
+  green: number,
+  blue: number,
+|};
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`Flow codeGeneration multiple files 3`] = `"/some/file/__generated__/SomeOther.js"`;
+
+exports[`Flow codeGeneration multiple files 4`] = `
+"
+
+// ====================================================
+// GraphQL query operation: SomeOther
+// ====================================================
+
+export type SomeOther_hero = {|
+  __typename: \\"Human\\" | \\"Droid\\",
+  name: string,            // The name of the character
+  appearsIn: (?Episode)[], // The movies this character appears in
+|};
+
+export type SomeOther = {|
+  hero: SomeOther_hero
+|};
+
+//==============================================================
+// START Enums and Input Objects
+// All enums and input objects are included in every output file
+// for now, but this will be changed soon.
+// TODO: Link to issue to fix this.
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+
+// The input object sent when someone is creating a new review
+type ReviewInput = {|
+  stars: number,
+  commentary: ?string,
+  favorite_color: ?ColorInput,
+|};
+
+// The input object sent when passing in a color
+type ColorInput = {|
+  red: number,
+  green: number,
+  blue: number,
+|};
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`Flow codeGeneration multiple files 5`] = `"__generated__/ReviewMovie.js"`;
+
+exports[`Flow codeGeneration multiple files 6`] = `
+"
+
+// ====================================================
+// GraphQL mutation operation: ReviewMovie
+// ====================================================
+
+export type ReviewMovie_createReview = {|
+  __typename: \\"Review\\",
+  stars: number,       // The number of stars this review gave, 1-5
+  commentary: ?string, // Comment about the movie
+|};
+
+export type ReviewMovie = {|
+  createReview: ReviewMovie_createReview
+|};
+
+//==============================================================
+// START Enums and Input Objects
+// All enums and input objects are included in every output file
+// for now, but this will be changed soon.
+// TODO: Link to issue to fix this.
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+
+// The input object sent when someone is creating a new review
+type ReviewInput = {|
+  stars: number,
+  commentary: ?string,
+  favorite_color: ?ColorInput,
+|};
+
+// The input object sent when passing in a color
+type ColorInput = {|
+  red: number,
+  green: number,
+  blue: number,
+|};
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`Flow codeGeneration multiple files 7`] = `"/some/file/__generated__/someFragment.js"`;
+
+exports[`Flow codeGeneration multiple files 8`] = `
+"
+
+// ====================================================
+// GraphQL fragment: someFragment
+// ====================================================
+
+export type someFragment = {|
+  __typename: \\"Human\\" | \\"Droid\\",
+  appearsIn: (?Episode)[], // The movies this character appears in
+|};
+
+//==============================================================
+// START Enums and Input Objects
+// All enums and input objects are included in every output file
+// for now, but this will be changed soon.
+// TODO: Link to issue to fix this.
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+
+// The input object sent when someone is creating a new review
+type ReviewInput = {|
+  stars: number,
+  commentary: ?string,
+  favorite_color: ?ColorInput,
+|};
+
+// The input object sent when passing in a color
+type ColorInput = {|
+  red: number,
+  green: number,
+  blue: number,
+|};
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`Flow codeGeneration multiple files 9`] = `"/some/file/__generated__/enums.js"`;
+
+exports[`Flow codeGeneration multiple files 10`] = `
+"
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";"
+`;
+
+exports[`Flow codeGeneration multiple files 11`] = `"__generated__/enums.js"`;
+
+exports[`Flow codeGeneration multiple files 12`] = `
+"
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";"
+`;
+
+exports[`Flow codeGeneration multiple files 13`] = `"/some/file/__generated__/inputObjects.js"`;
+
+exports[`Flow codeGeneration multiple files 14`] = `
+"
+
+// The input object sent when passing in a color
+type ColorInput = {|
+  red: number,
+  green: number,
+  blue: number,
+|};"
+`;
+
+exports[`Flow codeGeneration multiple files 15`] = `"__generated__/inputObjects.js"`;
+
+exports[`Flow codeGeneration multiple files 16`] = `
+"
+
+// The input object sent when passing in a color
+type ColorInput = {|
+  red: number,
+  green: number,
+  blue: number,
+|};"
+`;
+
 exports[`Flow codeGeneration query with fragment spreads 1`] = `
 "
 
