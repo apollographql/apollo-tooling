@@ -85,9 +85,26 @@ export default class FlowGenerator {
   }
 
   public typeAliasObjectUnion(name: string, members: ObjectProperty[][]) {
+    return t.typeAlias(
+      t.identifier(name),
+      undefined,
+      t.unionTypeAnnotation(
+        members.map(member => {
+          return this.objectTypeAnnotation(member)
+        })
+      )
+    )
   }
 
   public exportDeclaration(node: t.Node) {
     return t.exportNamedDeclaration(node, []);
+  }
+
+  public annotationFromScopeStack(scope: string[]) {
+    return t.genericTypeAnnotation(
+      t.identifier(
+        scope.join('_')
+      )
+    );
   }
 }

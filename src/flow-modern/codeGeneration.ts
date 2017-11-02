@@ -1,3 +1,7 @@
+import { parse } from 'babylon';
+import generate from 'babel-generator';
+import * as t from 'babel-types';
+import { stripIndent } from 'common-tags';
 import {
   getNamedType,
   GraphQLEnumType,
@@ -12,13 +16,10 @@ import {
   GraphQLType
 } from 'graphql';
 
-import Helpers from './helpers';
-
-import { wrap } from '../utilities/printing';
-
 import {
   CompilerContext,
   Operation,
+  Fragment,
   SelectionSet,
   Field,
 } from '../compiler';
@@ -28,8 +29,6 @@ import {
   Variant
 } from '../compiler/visitors/typeCase';
 
-import { stripIndent } from 'common-tags';
-
 // import {
 //   collectFragmentsReferenced
 // } from '../compiler/visitors/collectFragmentsReferenced';
@@ -38,12 +37,11 @@ import {
   collectAndMergeFields
 } from '../compiler/visitors/collectAndMergeFields';
 
-import { parse } from 'babylon';
-import generate from 'babel-generator';
-import * as t from 'babel-types';
-
+import { typeAnnotationFromGraphQLType } from './helpers';
+import FlowGenerator, {
+  ObjectProperty,
+} from './language';
 import Printer from './printer';
-import FlowGenerator from './language';
 
 export function generateSource(
   context: CompilerContext,
@@ -71,11 +69,12 @@ export function generateSource(
 
     Object.values(context.operations).forEach(operation => {
       // generator.typeVariablesDeclarationForOperation(operation);
-      generator.typeAliasForOperation(operation);
+      generator.typeAliasesForOperation(operation);
     });
 
     Object.values(context.fragments).forEach(fragment => {
       // console.log('Fragment', fragment);
+      generator.typeAliasesForFragment(fragment);
     });
   }
 
@@ -85,12 +84,14 @@ export function generateSource(
 export class FlowAPIGenerator extends FlowGenerator {
   context: CompilerContext
   printer: Printer
+  scopeStack: string[]
 
   constructor(context: CompilerContext) {
     super();
 
     this.context = context;
     this.printer = new Printer();
+    this.scopeStack = [];
   }
 
   fileHeader() {
@@ -110,7 +111,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     this.printer.enqueue(this.inputObjectDeclaration(inputObjectType));
   }
 
-  public typeAliasForOperation(operation: Operation) {
+  public typeAliasesForOperation(operation: Operation) {
     const {
       operationType,
       operationName,
@@ -118,22 +119,59 @@ export class FlowAPIGenerator extends FlowGenerator {
       selectionSet
     } = operation;
 
-    const typeCase = this.getTypeCasesForSelectionSet(selectionSet);
-    const variants = typeCase.exhaustiveVariants;
+    this.scopeStackPush(operationName);
 
-    let exportedTypeAlias;
-    if (variants.length === 1) {
-      console.log('Single variant for', operationName);
-      exportedTypeAlias = this.exportDeclaration(
-        this.typeAliasObject(operationName, [])
-      );
-    } else {
-      console.log('Multiple variants for', operationName);
-      console.log(this.typeAliasObjectUnion(operationName, []));
-    }
+    this.printer.enqueue(stripIndent`
+      // ====================================================
+      // GraphQL ${operationType} operation: ${operationName}
+      // ====================================================
+    `)
 
-    const operationTypeAlias = exportedTypeAlias;
-    this.printer.enqueue(operationTypeAlias);
+    // The root operation only has one variant
+    // Do we need to get exhaustive variants anyway?
+    const variants = this.getVariantsForSelectionSet(selectionSet);
+
+    const variant = variants[0];
+    const properties = this.getPropertiesForVariant(variant);
+
+    const exportedTypeAlias = this.exportDeclaration(
+      this.typeAliasObject(operationName, properties)
+    );
+
+    this.printer.enqueue(exportedTypeAlias);
+    this.scopeStackPop();
+  }
+
+  public typeAliasesForFragment(fragment: Fragment) {
+    const {
+      fragmentName,
+      type,
+      selectionSet
+    } = fragment;
+
+    this.scopeStackPush(fragmentName);
+
+    this.printer.enqueue(stripIndent`
+      // ====================================================
+      // GraphQL fragment: ${fragmentName}
+      // ====================================================
+    `);
+
+    const variants = this.getVariantsForSelectionSet(selectionSet);
+
+    const variant = variants[0];
+    const properties = this.getPropertiesForVariant(variant);
+
+    const exportedTypeAlias = this.exportDeclaration(
+      this.typeAliasObject(fragmentName, properties)
+    );
+
+    this.printer.enqueue(exportedTypeAlias);
+    this.scopeStackPop();
+  }
+
+  private getVariantsForSelectionSet(selectionSet: SelectionSet) {
+    return this.getTypeCasesForSelectionSet(selectionSet).exhaustiveVariants;
   }
 
   private getTypeCasesForSelectionSet(selectionSet: SelectionSet) {
@@ -143,10 +181,103 @@ export class FlowAPIGenerator extends FlowGenerator {
     );
   }
 
-  private getFieldsForVariant(variant: Variant): ObjectProperty[] {
+  private getPropertiesForVariant(variant: Variant): ObjectProperty[] {
+    const fields = collectAndMergeFields(
+      variant,
+      this.context.options.mergeInFieldsFromFragmentSpreads
+    );
+
+    return fields.map(field => {
+      this.scopeStackPush(field.name);
+
+      let res;
+      if (field.selectionSet) {
+        const genericAnnotation = this.annotationFromScopeStack(this.scopeStack);
+        res = this.handleFieldSelectionSetValue(
+          genericAnnotation,
+          field
+        );
+      } else {
+        res = this.handleFieldValue(
+          field,
+          variant
+        );
+      }
+
+      this.scopeStackPop();
+      return res;
+    });
+  }
+
+  private handleFieldSelectionSetValue(genericAnnotation: t.GenericTypeAnnotation, field: Field) {
+    const { selectionSet } = field;
+
+    const typeCase = this.getTypeCasesForSelectionSet(selectionSet as SelectionSet);
+    const variants = typeCase.exhaustiveVariants;
+
+    let exportedTypeAlias;
+    if (variants.length === 1) {
+      const variant = variants[0];
+      const properties = this.getPropertiesForVariant(variant);
+      exportedTypeAlias = this.exportDeclaration(
+        this.typeAliasObject(genericAnnotation.id.name, properties)
+      );
+    } else {
+      const propertySets = variants.map(variant => {
+        return this.getPropertiesForVariant(variant);
+      })
+
+      exportedTypeAlias = this.exportDeclaration(
+        this.typeAliasObjectUnion(
+          genericAnnotation.id.name,
+          propertySets
+        )
+      );
+    }
+
+    this.printer.enqueue(exportedTypeAlias);
+
+    return {
+      name: field.name,
+      annotation: genericAnnotation
+    };
+  }
+
+  private handleFieldValue(field: Field, variant: Variant) {
+    let res;
+    if (field.name === '__typename') {
+      const annotations = variant.possibleTypes
+        .map(type => {
+          const annotation = t.stringLiteralTypeAnnotation();
+          annotation.value = type.toString();
+          return annotation;
+        });
+
+      res = {
+        name: field.name,
+        annotation: t.unionTypeAnnotation(annotations)
+      };
+    } else {
+      // TODO: Double check that this works
+      res = {
+        name: field.name,
+        annotation: typeAnnotationFromGraphQLType(field.type)
+      };
+    }
+
+    return res;
   }
 
   public get output() {
     return this.printer.print();
   }
+
+  scopeStackPush(name: string) {
+    this.scopeStack.push(name);
+  }
+
+  scopeStackPop() {
+    const popped = this.scopeStack.pop()
+  }
+
 }

@@ -363,6 +363,8 @@ describe('typeAnnotationFromGraphQLType', () => {
       )
   });
 
-  // TODO: Add more list test cases
+  // TODO: Add non scalar test cases
+  test('non-scalar: Episode', () => {
+  });
 
 });

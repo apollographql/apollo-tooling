@@ -21,8 +21,11 @@ export default class Printer {
   }
 
   public enqueue(printable: Printable) {
-    this.printQueue.push(printable);
-    this.printQueue.push('\n');
-    this.printQueue.push('\n');
+    this.printQueue = [
+      ...this.printQueue,
+      '\n',
+      '\n',
+      printable
+    ];
   }
 }

@@ -16,19 +16,81 @@ import { generateSource } from '../codeGeneration';
 
 function compile(
   source: string,
-  options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }
+  options: CompilerOptions = {
+    mergeInFieldsFromFragmentSpreads: true,
+    addTypename: true
+  }
 ): CompilerContext {
   const document = parse(source);
   return compileToIR(schema, document, options);
 }
 
 describe('Flow codeGeneration', () => {
-  test.only('simple hero query', () => {
+  test('simple hero query', () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
           name
+          id
         }
+      }
+    `);
+    const output = generateSource(context);
+
+    console.log(`\n\n\n${output}\n\n\n`);
+  });
+
+  test('inline fragments', () => {
+    const context = compile(`
+      query HeroName($episode: Episode) {
+        hero(episode: $episode) {
+          name
+          id
+
+          ... on Human {
+            homePlanet
+            friends {
+              name
+            }
+          }
+
+          ... on Droid {
+            appearsIn
+          }
+        }
+      }
+    `);
+    const output = generateSource(context);
+
+    console.log(`\n\n\n${output}\n\n\n`);
+  });
+
+  test.only('fragment spreads', () => {
+    const context = compile(`
+      query HeroName($episode: Episode) {
+        hero(episode: $episode) {
+          name
+          id
+          ...humanFragment
+          ...droidFragment
+        }
+      }
+
+      fragment humanFragment on Human {
+        homePlanet
+        friends {
+          ... on Human {
+            name
+          }
+
+          ... on Droid {
+            id
+          }
+        }
+      }
+
+      fragment droidFragment on Droid {
+        appearsIn
       }
     `);
     const output = generateSource(context);

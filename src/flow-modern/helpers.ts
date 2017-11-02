@@ -6,7 +6,8 @@ import {
   GraphQLID,
   GraphQLType,
   GraphQLNonNull,
-  GraphQLList
+  GraphQLList,
+  GraphQLScalarType
 } from 'graphql'
 
 import * as t from 'babel-types';
@@ -19,30 +20,43 @@ const builtInScalarMap = {
   [GraphQLID.name]: t.stringTypeAnnotation(),
 }
 
+// $ts-ignore - all the cases are handled!
 export function typeAnnotationFromGraphQLType(type: GraphQLType, {
   nullable
 } = {
   nullable: true
 }) {
   if (type instanceof GraphQLNonNull) {
-    return typeAnnotationFromGraphQLType(type.ofType, {nullable: false});
+    return typeAnnotationFromGraphQLType(
+      type.ofType,
+      { nullable: false }
+    );
   }
 
   if (type instanceof GraphQLList) {
-    const bareTypeAnnotation = t.arrayTypeAnnotation(
+    const typeAnnotation = t.arrayTypeAnnotation(
       typeAnnotationFromGraphQLType(type.ofType)
     );
+
     if (nullable) {
-      return t.nullableTypeAnnotation(bareTypeAnnotation);
+      return t.nullableTypeAnnotation(typeAnnotation);
     } else {
-      return bareTypeAnnotation;
+      return typeAnnotation;
     }
   }
 
-  const bareTypeAnnotation = builtInScalarMap[type.name];
-  if (nullable) {
-    return t.nullableTypeAnnotation(bareTypeAnnotation);
+  let typeAnnotation;
+  if (type instanceof GraphQLScalarType) {
+    typeAnnotation = builtInScalarMap[type.name];
   } else {
-    return bareTypeAnnotation;
+    typeAnnotation = t.genericTypeAnnotation(
+      t.identifier(type.name)
+    );
+  }
+
+  if (nullable) {
+    return t.nullableTypeAnnotation(typeAnnotation);
+  } else {
+    return typeAnnotation;
   }
 }
