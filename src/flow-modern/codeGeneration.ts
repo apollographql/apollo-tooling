@@ -72,7 +72,6 @@ export function generateSource(
     });
 
     Object.values(context.fragments).forEach(fragment => {
-      // console.log('Fragment', fragment);
       generator.typeAliasesForFragment(fragment);
     });
   }
@@ -238,6 +237,7 @@ export class FlowAPIGenerator extends FlowGenerator {
 
     return {
       name: field.name,
+      description: field.description,
       annotation: genericAnnotation
     };
   }
@@ -254,12 +254,14 @@ export class FlowAPIGenerator extends FlowGenerator {
 
       res = {
         name: field.name,
+        description: field.description,
         annotation: t.unionTypeAnnotation(annotations)
       };
     } else {
       // TODO: Double check that this works
       res = {
         name: field.name,
+        description: field.description,
         annotation: typeAnnotationFromGraphQLType(field.type)
       };
     }

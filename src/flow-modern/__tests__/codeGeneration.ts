@@ -39,7 +39,83 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('inline fragments', () => {
+  test('simple mutation', () => {
+    const context = compile(`
+      mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
+        createReview(episode: $episode, review: $review) {
+          stars
+          commentary
+        }
+      }
+    `);
+
+    const output = generateSource(context);
+    expect(output).toMatchSnapshot();
+  });
+
+  test('simple fragment', () => {
+    const context = compile(`
+      fragment SimpleFragment on Character{
+        name
+      }
+    `);
+
+    const output = generateSource(context);
+    expect(output).toMatchSnapshot();
+  });
+
+  test('fragment with fragment spreads', () => {
+    const context = compile(`
+      fragment simpleFragment on Character {
+        name
+      }
+
+      fragment anotherFragment on Character {
+        id
+        ...simpleFragment
+      }
+    `);
+
+    const output = generateSource(context);
+    console.log(output);
+    expect(output).toMatchSnapshot();
+  });
+
+  test('query with fragment spreads', () => {
+    const context = compile(`
+      fragment simpleFragment on Character {
+        name
+      }
+
+      query HeroFragment($episode: Episode) {
+        hero(episode: $episode) {
+          ...simpleFragment
+          id
+        }
+      }
+    `);
+
+    const output = generateSource(context);
+    expect(output).toMatchSnapshot();
+  });
+
+  test('inline fragment', () => {
+    const context = compile(`
+      query HeroInlineFragment($episode: Episode) {
+        hero(episode: $episode) {
+          ... on Character {
+            name
+          }
+          id
+        }
+      }
+    `);
+
+    const output = generateSource(context);
+    expect(output).toMatchSnapshot();
+  })
+
+  test('inline fragment on type conditions', () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -63,7 +139,7 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('fragment spreads', () => {
+  test('fragment spreads with inline fragments', () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -92,21 +168,6 @@ describe('Flow codeGeneration', () => {
       }
     `);
     const output = generateSource(context);
-    expect(output).toMatchSnapshot();
-  });
-
-  test.only(`should generate mutation operations with complex input types`, function() {
-    const context = compile(`
-      mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
-        createReview(episode: $episode, review: $review) {
-          stars
-          commentary
-        }
-      }
-    `);
-
-    const output = generateSource(context);
-    console.log(output);
     expect(output).toMatchSnapshot();
   });
 });

@@ -9,6 +9,7 @@ import * as t from '@babel/types';
 
 type ObjectProperty = {
   name: string,
+  description?: ?string,
   annotation: t.TypeAnnotation
 }
 
@@ -66,24 +67,37 @@ export default class FlowGenerator {
   }
 
   public objectTypeAnnotation(fields: ObjectProperty[], isInputObject: boolean = false) {
-    return t.objectTypeAnnotation(
-      fields.map(({name, annotation}) => {
+    const objectTypeAnnotation = t.objectTypeAnnotation(
+      fields.map(({name, description, annotation}) => {
         if (annotation.type instanceof t.NullableTypeAnnotation) {
           t.identifier(name + '?')
         }
 
-        return t.objectTypeProperty(
+        const objectTypeProperty = t.objectTypeProperty(
           t.identifier(
             // Nullable fields on input objects do not have to be defined
             // as well, so allow these fields to be "undefined"
-            annotation.type === "NullableTypeAnnotation"
+            (isInputObject && annotation.type === "NullableTypeAnnotation")
               ? name + '?'
               : name
           ),
           annotation
         );
+
+        if (description) {
+          objectTypeProperty.leadingComments = [{
+            type: 'CommentLine',
+            value: ` ${description}`
+          }]
+        }
+
+        return objectTypeProperty;
       })
-    )
+    );
+
+    objectTypeAnnotation.exact = true;
+
+    return objectTypeAnnotation;
   }
 
   public typeAliasObject(name: string, fields: ObjectProperty[]) {
