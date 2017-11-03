@@ -286,7 +286,8 @@ export class FlowAPIGenerator extends FlowGenerator {
     );
 
     return fields.map(field => {
-      this.scopeStackPush(field.name);
+      const fieldName = field.alias !== undefined ? field.alias : field.name;
+      this.scopeStackPush(fieldName);
 
       let res;
       if (field.selectionSet) {
@@ -348,7 +349,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     this.printer.enqueue(exportedTypeAlias);
 
     return {
-      name: field.name,
+      name: field.alias ? field.alias : field.name,
       description: field.description,
       annotation: genericAnnotation
     };
@@ -365,14 +366,14 @@ export class FlowAPIGenerator extends FlowGenerator {
         });
 
       res = {
-        name: field.name,
+        name: field.alias ? field.alias : field.name,
         description: field.description,
         annotation: t.unionTypeAnnotation(annotations)
       };
     } else {
       // TODO: Double check that this works
       res = {
-        name: field.name,
+        name: field.alias ? field.alias : field.name,
         description: field.description,
         annotation: typeAnnotationFromGraphQLType(field.type)
       };

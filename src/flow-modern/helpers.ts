@@ -4,9 +4,8 @@ import {
   GraphQLInt,
   GraphQLID,
   GraphQLList,
-  GraphQLLong,
   GraphQLNonNull,
-  GraphQLScalarType
+  GraphQLScalarType,
   GraphQLString,
   GraphQLType,
 } from 'graphql'
@@ -18,8 +17,6 @@ const builtInScalarMap = {
   [GraphQLInt.name]: t.numberTypeAnnotation(),
   [GraphQLFloat.name]: t.numberTypeAnnotation(),
   // TODO: Support custom scalars
-  ['Long']: t.numberTypeAnnotation(),
-  ['DataMap']: t.anyTypeAnnotation(),
   [GraphQLBoolean.name]: t.booleanTypeAnnotation(),
   [GraphQLID.name]: t.stringTypeAnnotation(),
 }
@@ -51,7 +48,7 @@ export function typeAnnotationFromGraphQLType(type: GraphQLType, {
 
   let typeAnnotation;
   if (type instanceof GraphQLScalarType) {
-    typeAnnotation = builtInScalarMap[type.name];
+    typeAnnotation = builtInScalarMap[type.name] && t.anyTypeAnnotation();
   } else {
     typeAnnotation = t.genericTypeAnnotation(
       t.identifier(type.name)
