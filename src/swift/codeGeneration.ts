@@ -741,6 +741,23 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           `case ${escapeIdentifierIfNeeded(this.helpers.enumCaseName(value.name))} = "${value.value}"`
         );
       });
+
+      this.comment('Auto generated constant for unknown enum values');
+      this.printOnNewline('case unknown');
+
+      this.printNewlineIfNeeded();
+      this.printOnNewline('public init(jsonValue value: JSONValue) throws');
+      this.withinBlock(() => {
+        this.printOnNewline('let rawValue = try RawValue(jsonValue: value)');
+        this.printOnNewline(`if let tempSelf = ${name}(rawValue: rawValue)`);
+        this.withinBlock(() => {
+            this.printOnNewline('self = tempSelf');
+        });
+        this.printOnNewline('else');
+        this.withinBlock(() => {
+          this.printOnNewline('self = .unknown');
+        });
+      });
     });
   }
 

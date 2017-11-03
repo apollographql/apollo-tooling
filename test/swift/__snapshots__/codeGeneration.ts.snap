@@ -1430,6 +1430,18 @@ exports[`Swift code generation #typeDeclarationForGraphQLType() should escape id
 "public enum AlbumPrivacies: String, Apollo.JSONDecodable, Apollo.JSONEncodable {
   case \`public\` = \\"PUBLIC\\"
   case \`private\` = \\"PRIVATE\\"
+  /// Auto generated constant for unknown enum values
+  case unknown
+
+  public init(jsonValue value: JSONValue) throws {
+    let rawValue = try RawValue(jsonValue: value)
+    if let tempSelf = AlbumPrivacies(rawValue: rawValue) {
+      self = tempSelf
+    }
+    else {
+      self = .unknown
+    }
+  }
 }"
 `;
 
@@ -1483,5 +1495,17 @@ public enum Episode: String, Apollo.JSONDecodable, Apollo.JSONEncodable {
   case empire = \\"EMPIRE\\"
   /// Star Wars Episode VI: Return of the Jedi, released in 1983.
   case jedi = \\"JEDI\\"
+  /// Auto generated constant for unknown enum values
+  case unknown
+
+  public init(jsonValue value: JSONValue) throws {
+    let rawValue = try RawValue(jsonValue: value)
+    if let tempSelf = Episode(rawValue: rawValue) {
+      self = tempSelf
+    }
+    else {
+      self = .unknown
+    }
+  }
 }"
 `;
