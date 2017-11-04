@@ -48,7 +48,8 @@ export function typeAnnotationFromGraphQLType(type: GraphQLType, {
 
   let typeAnnotation;
   if (type instanceof GraphQLScalarType) {
-    typeAnnotation = builtInScalarMap[type.name] && t.anyTypeAnnotation();
+    const builtIn = builtInScalarMap[type.name]
+    typeAnnotation = builtIn ? builtIn : t.anyTypeAnnotation();
   } else {
     typeAnnotation = t.genericTypeAnnotation(
       t.identifier(type.name)
