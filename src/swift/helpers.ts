@@ -88,6 +88,10 @@ export class Helpers {
     return camelCase(name);
   }
 
+  enumDotCaseName(name: string) {
+    return `.${camelCase(name)}`;
+  }
+
   operationClassName(name: string) {
     return pascalCase(name);
   }

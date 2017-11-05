@@ -1427,9 +1427,37 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 `;
 
 exports[`Swift code generation #typeDeclarationForGraphQLType() should escape identifiers in cases of enum declaration for a GraphQLEnumType 1`] = `
-"public enum AlbumPrivacies: String, Apollo.JSONDecodable, Apollo.JSONEncodable {
-  case \`public\` = \\"PUBLIC\\"
-  case \`private\` = \\"PRIVATE\\"
+"public enum AlbumPrivacies: RawRepresentable, Equatable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+  public typealias RawValue = String
+  case \`public\`
+  case \`private\`
+  /// Auto generated constant for unknown enum values
+  case unknown(RawValue)
+
+  public init?(rawValue: RawValue) {
+    switch rawValue {
+      case \\"PUBLIC\\": self = .public
+      case \\"PRIVATE\\": self = .private
+      default: self = .unknown(rawValue)
+    }
+  }
+
+  public var rawValue: RawValue {
+    switch self {
+      case .public: return \\"PUBLIC\\"
+      case .private: return \\"PRIVATE\\"
+      case .unknown(let value): return value
+    }
+  }
+
+  public static func == (lhs: AlbumPrivacies, rhs: AlbumPrivacies) -> Bool {
+    switch (lhs, rhs) {
+      case (.public, .public): return true
+      case (.private, .private): return true
+      case (.unknown(let lhsValue), .unknown(let rhsValue)): return lhsValue == rhsValue
+      default: return false
+    }
+  }
 }"
 `;
 
@@ -1476,12 +1504,43 @@ public struct ReviewInput: GraphQLMapConvertible {
 
 exports[`Swift code generation #typeDeclarationForGraphQLType() should generate an enum declaration for a GraphQLEnumType 1`] = `
 "/// The episodes in the Star Wars trilogy
-public enum Episode: String, Apollo.JSONDecodable, Apollo.JSONEncodable {
+public enum Episode: RawRepresentable, Equatable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+  public typealias RawValue = String
   /// Star Wars Episode IV: A New Hope, released in 1977.
-  case newhope = \\"NEWHOPE\\"
+  case newhope
   /// Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  case empire = \\"EMPIRE\\"
+  case empire
   /// Star Wars Episode VI: Return of the Jedi, released in 1983.
-  case jedi = \\"JEDI\\"
+  case jedi
+  /// Auto generated constant for unknown enum values
+  case unknown(RawValue)
+
+  public init?(rawValue: RawValue) {
+    switch rawValue {
+      case \\"NEWHOPE\\": self = .newhope
+      case \\"EMPIRE\\": self = .empire
+      case \\"JEDI\\": self = .jedi
+      default: self = .unknown(rawValue)
+    }
+  }
+
+  public var rawValue: RawValue {
+    switch self {
+      case .newhope: return \\"NEWHOPE\\"
+      case .empire: return \\"EMPIRE\\"
+      case .jedi: return \\"JEDI\\"
+      case .unknown(let value): return value
+    }
+  }
+
+  public static func == (lhs: Episode, rhs: Episode) -> Bool {
+    switch (lhs, rhs) {
+      case (.newhope, .newhope): return true
+      case (.empire, .empire): return true
+      case (.jedi, .jedi): return true
+      case (.unknown(let lhsValue), .unknown(let rhsValue)): return lhsValue == rhsValue
+      default: return false
+    }
+  }
 }"
 `;
