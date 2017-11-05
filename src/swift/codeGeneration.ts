@@ -732,30 +732,62 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
     this.printNewlineIfNeeded();
     this.comment(description);
-    this.printOnNewline(`public enum ${name}: String, Apollo.JSONDecodable, Apollo.JSONEncodable`);
+    this.printOnNewline(`public enum ${name}: RawRepresentable, Equatable, Apollo.JSONDecodable, Apollo.JSONEncodable`);
     this.withinBlock(() => {
+      this.printOnNewline('public typealias RawValue = String')
+
       values.forEach(value => {
         this.comment(value.description);
         this.deprecationAttributes(value.isDeprecated, value.deprecationReason);
         this.printOnNewline(
-          `case ${escapeIdentifierIfNeeded(this.helpers.enumCaseName(value.name))} = "${value.value}"`
+          `case ${escapeIdentifierIfNeeded(this.helpers.enumCaseName(value.name))}`
         );
       });
-
       this.comment('Auto generated constant for unknown enum values');
-      this.printOnNewline('case unknown');
+      this.printOnNewline('case unknown(RawValue)');
 
       this.printNewlineIfNeeded();
-      this.printOnNewline('public init(jsonValue value: JSONValue) throws');
+      this.printOnNewline('public init?(rawValue: RawValue)');
       this.withinBlock(() => {
-        this.printOnNewline('let rawValue = try RawValue(jsonValue: value)');
-        this.printOnNewline(`if let tempSelf = ${name}(rawValue: rawValue)`);
+        this.printOnNewline('switch rawValue');
         this.withinBlock(() => {
-            this.printOnNewline('self = tempSelf');
+          values.forEach(value => {
+            this.printOnNewline(
+              `case "${value.value}": self = ${escapeIdentifierIfNeeded(this.helpers.enumDotCaseName(value.name))}`
+            );
+          });
+          this.printOnNewline(`default: self = .unknown(rawValue)`);
         });
-        this.printOnNewline('else');
+      });
+
+      this.printNewlineIfNeeded();
+      this.printOnNewline('public var rawValue: RawValue');
+      this.withinBlock(() => {
+        this.printOnNewline('switch self');
         this.withinBlock(() => {
-          this.printOnNewline('self = .unknown');
+          values.forEach(value => {
+            this.printOnNewline(
+              `case ${escapeIdentifierIfNeeded(this.helpers.enumDotCaseName(value.name))}: return "${value.value}"`
+            );
+          });
+          this.printOnNewline(`case .unknown(let value): return value`);
+        });
+      });
+
+      this.printNewlineIfNeeded();
+      this.printOnNewline(`public static func == (lhs: ${name}, rhs: ${name}) -> Bool`);
+      this.withinBlock(() => {
+        this.printOnNewline('switch (lhs, rhs)');
+        this.withinBlock(() => {
+          values.forEach(value => {
+            const enumDotCaseName = escapeIdentifierIfNeeded(this.helpers.enumDotCaseName(value.name));
+            const tuple = `(${enumDotCaseName}, ${enumDotCaseName})`
+            this.printOnNewline(
+              `case ${tuple}: return true`
+            );
+          });
+          this.printOnNewline(`case (.unknown(let lhsValue), .unknown(let rhsValue)): return lhsValue == rhsValue`);
+          this.printOnNewline(`default: return false`);
         });
       });
     });
