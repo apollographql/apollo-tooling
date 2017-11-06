@@ -117,7 +117,7 @@ export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: 
   structDeclaration({ structName, description, adoptedProtocols = [] }: Struct, closure: Function) {
     this.printNewlineIfNeeded();
     this.comment(description);
-    this.printOnNewline(`public struct ${structName}`);
+    this.printOnNewline(`public struct ${escapeIdentifierIfNeeded(structName)}`);
     this.print(wrap(': ', join(adoptedProtocols, ', ')));
     this.pushScope({ typeName: structName });
     this.withinBlock(closure);
