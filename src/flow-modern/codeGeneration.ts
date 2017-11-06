@@ -44,7 +44,7 @@ import FlowGenerator, {
 import Printer from './printer';
 
 function printEnumsAndInputObjects(generator: FlowAPIGenerator, context: CompilerContext) {
-  generator.printer.enqueue(stripIndent`
+  generator.printOnNewline(stripIndent`
     //==============================================================
     // START Enums and Input Objects
     // All enums and input objects are included in every output file
@@ -65,7 +65,7 @@ function printEnumsAndInputObjects(generator: FlowAPIGenerator, context: Compile
       generator.typeAliasForInputObjectType(enumType);
     });
 
-  generator.printer.enqueue(stripIndent`
+  generator.printOnNewline(stripIndent`
     //==============================================================
     // END Enums and Input Objects
     //==============================================================
@@ -79,43 +79,71 @@ export function generateSource(
 ) {
   const generator = new FlowAPIGenerator(context);
   if (outputIndividualFiles) {
-    const generatedFiles: { [filePath: string]: string } = [];
+    // const generatedFiles: { [filePath: string]: string } = {};
 
     Object.values(context.operations)
       .forEach((operation) => {
-        generator.fileHeader();
-        generator.typeAliasesForOperation(operation);
-        printEnumsAndInputObjects(generator, context);
-
-        const output = generator.printer.printAndClear();
-
         const outputFilePath = path.join(
           path.dirname(operation.filePath),
           '__generated__',
           `${operation.operationName}.js`
         );
-
-        generatedFiles[outputFilePath] = output;
+        generator.withinFile(outputFilePath, () => {
+          generator.fileHeader();
+          generator.typeAliasesForOperation(operation);
+          printEnumsAndInputObjects(generator, context);
+        });
       });
 
     Object.values(context.fragments)
       .forEach((fragment) => {
-        generator.fileHeader();
-        generator.typeAliasesForFragment(fragment);
-        printEnumsAndInputObjects(generator, context);
-
-        const output = generator.printer.printAndClear();
-
         const outputFilePath = path.join(
           path.dirname(fragment.filePath),
           '__generated__',
           `${fragment.fragmentName}.js`
         );
-
-        generatedFiles[outputFilePath] = output;
+        generator.withinFile(outputFilePath, () => {
+          generator.fileHeader();
+          generator.typeAliasesForFragment(fragment);
+          printEnumsAndInputObjects(generator, context);
+        })
       });
 
-    return generatedFiles;
+    // Object.values(context.operations)
+    //   .forEach((operation) => {
+    //     generator.fileHeader();
+    //     generator.typeAliasesForOperation(operation);
+    //     printEnumsAndInputObjects(generator, context);
+
+    //     const output = generator.printer.printAndClear();
+
+    //     const outputFilePath = path.join(
+    //       path.dirname(operation.filePath),
+    //       '__generated__',
+    //       `${operation.operationName}.js`
+    //     );
+
+    //     generatedFiles[outputFilePath] = output;
+    //   });
+
+    // Object.values(context.fragments)
+    //   .forEach((fragment) => {
+    //     generator.fileHeader();
+    //     generator.typeAliasesForFragment(fragment);
+    //     printEnumsAndInputObjects(generator, context);
+
+    //     const output = generator.printer.printAndClear();
+
+    //     const outputFilePath = path.join(
+    //       path.dirname(fragment.filePath),
+    //       '__generated__',
+    //       `${fragment.fragmentName}.js`
+    //     );
+
+    //     generatedFiles[outputFilePath] = output;
+    //   });
+
+    return generator;
   } else{
     generator.fileHeader();
 
@@ -141,16 +169,16 @@ export function generateSource(
     });
   }
 
-  return generator.output;
+  return generator;
 }
 
-export class FlowAPIGenerator extends FlowGenerator {
+export class FlowAPIGenerator extends FlowGenerator<CompilerContext> {
   context: CompilerContext
   printer: Printer
   scopeStack: string[]
 
   constructor(context: CompilerContext) {
-    super();
+    super(context);
 
     this.context = context;
     this.printer = new Printer();
@@ -158,7 +186,7 @@ export class FlowAPIGenerator extends FlowGenerator {
   }
 
   fileHeader() {
-    this.printer.enqueue(
+    this.print(
       stripIndent`
         /* @flow */
         // This file was automatically generated and should not be edited.
@@ -167,11 +195,11 @@ export class FlowAPIGenerator extends FlowGenerator {
   }
 
   public typeAliasForEnumType(enumType: GraphQLEnumType) {
-    this.printer.enqueue(this.enumerationDeclaration(enumType));
+    this.printOnNewline(this.enumerationDeclaration(enumType));
   }
 
   public typeAliasForInputObjectType(inputObjectType: GraphQLInputObjectType) {
-    this.printer.enqueue(this.inputObjectDeclaration(inputObjectType));
+    this.printOnNewline(this.inputObjectDeclaration(inputObjectType));
   }
 
   public typeAliasesForOperation(operation: Operation) {
@@ -184,7 +212,7 @@ export class FlowAPIGenerator extends FlowGenerator {
 
     this.scopeStackPush(operationName);
 
-    this.printer.enqueue(stripIndent`
+    this.printOnNewline(stripIndent`
       // ====================================================
       // GraphQL ${operationType} operation: ${operationName}
       // ====================================================
@@ -200,8 +228,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     const exportedTypeAlias = this.exportDeclaration(
       this.typeAliasObject(operationName, properties)
     );
-
-    this.printer.enqueue(exportedTypeAlias);
+    this.printOnNewline(exportedTypeAlias);
     this.scopeStackPop();
   }
 
@@ -214,7 +241,7 @@ export class FlowAPIGenerator extends FlowGenerator {
 
     this.scopeStackPush(fragmentName);
 
-    this.printer.enqueue(stripIndent`
+    this.printOnNewline(stripIndent`
       // ====================================================
       // GraphQL fragment: ${fragmentName}
       // ====================================================
@@ -233,7 +260,7 @@ export class FlowAPIGenerator extends FlowGenerator {
         )
       );
 
-      this.printer.enqueue(exportedTypeAlias);
+      this.printOnNewline(exportedTypeAlias);
     } else {
       const unionMembers: t.TypeAnnotation[] = [];
       variants.forEach(variant => {
@@ -248,14 +275,14 @@ export class FlowAPIGenerator extends FlowGenerator {
           )
         );
 
-        this.printer.enqueue(exportedTypeAlias);
+        this.printOnNewline(exportedTypeAlias);
 
         unionMembers.push(this.annotationFromScopeStack(this.scopeStack));
 
         this.scopeStackPop();
       });
 
-      this.printer.enqueue(
+      this.printOnNewline(
         this.exportDeclaration(
           this.typeAliasGenericUnion(
             this.annotationFromScopeStack(this.scopeStack).id.name,
@@ -346,7 +373,7 @@ export class FlowAPIGenerator extends FlowGenerator {
       );
     }
 
-    this.printer.enqueue(exportedTypeAlias);
+    this.printOnNewline(exportedTypeAlias);
 
     return {
       name: field.alias ? field.alias : field.name,
@@ -393,5 +420,6 @@ export class FlowAPIGenerator extends FlowGenerator {
   scopeStackPop() {
     const popped = this.scopeStack.pop()
   }
+
 
 }

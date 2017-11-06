@@ -44,7 +44,7 @@ function setup(schema) {
   return { generator, compileFromSource, addFragment };
 }
 
-describe('Flow code generation', function() {
+describe.skip('Flow code generation', function() {
   describe('#generateSource()', function() {
     test(`should generate simple query operations`, function() {
       const { compileFromSource } = setup(starWarsSchema);

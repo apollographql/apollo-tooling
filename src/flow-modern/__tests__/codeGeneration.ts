@@ -26,7 +26,7 @@ function compile(
 }
 
 describe('Flow codeGeneration', () => {
-  test('multiple files', () => {
+  test.only('multiple files', () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -56,13 +56,19 @@ describe('Flow codeGeneration', () => {
     context.operations["HeroName"].filePath = '/some/file/ComponentA.js';
     context.operations["SomeOther"].filePath = '/some/file/ComponentB.js';
     context.fragments['someFragment'].filePath = '/some/file/ComponentB.js';
-    const output = generateSource(context, true);
-    expect(output).toBeInstanceOf(Object);
-    Object.keys(output)
-      .forEach((filePath) => {
-        expect(filePath).toMatchSnapshot();
-        expect(output[filePath]).toMatchSnapshot();
-      });
+    context.operations["HeroName"].filePath = '/some/file/ComponentA.js';
+    const generator = generateSource(context, true);
+    for (const [fileName, generatedFile] of Object.entries(generator.generatedFiles)) {
+      expect(fileName).toMatchSnapshot();
+      expect(generatedFile.output).toMatchSnapshot();
+    }
+    //expect(output).toBeInstanceOf(Object);
+
+    // Object.keys(output)
+    //   .forEach((filePath) => {
+    //     expect(filePath).toMatchSnapshot();
+    //     expect(output[filePath]).toMatchSnapshot();
+    //   });
   });
 
   test('simple hero query', () => {

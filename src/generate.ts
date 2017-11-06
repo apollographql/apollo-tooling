@@ -52,14 +52,15 @@ export default function generate(
       writeOperationIdsMap(context);
     }
   }
+
   else if (target === 'flow-modern') {
 
     const context = compileToIR(schema, document, options);
     // const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
     const outputIndividualFiles = true;
-    const generatedFiles = generateFlowModernSource(context, outputIndividualFiles, only);
+    const generator = generateFlowModernSource(context, outputIndividualFiles, only);
 
-    writeGeneratedFilesForFlowOrTypescript(generatedFiles);
+    writeGeneratedFiles(generator.generatedFiles, outputPath);
 
   }
   else {

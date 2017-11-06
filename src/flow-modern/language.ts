@@ -3,6 +3,8 @@ import {
   GraphQLInputObjectType,
 } from 'graphql';
 
+import CodeGenerator from './CodeGenerator';
+
 import { typeAnnotationFromGraphQLType } from './helpers';
 
 import * as t from '@babel/types';
@@ -13,7 +15,11 @@ type ObjectProperty = {
   annotation: t.TypeAnnotation
 }
 
-export default class FlowGenerator {
+export default class FlowGenerator<Context> extends CodeGenerator<Context, { typeName: string }>{
+  constructor(context: Context) {
+    super(context);
+  }
+
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
     const unionValues = type.getValues().map(({ value }) => {
