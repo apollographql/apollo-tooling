@@ -39,6 +39,20 @@ describe('Swift code generation: Basic language constructs', () => {
     `);
   });
 
+  it(`should generate an escaped struct declaration`, () => {
+    generator.structDeclaration({ structName: 'Type' }, () => {
+      generator.propertyDeclaration({ propertyName: 'name', typeName: 'String' });
+      generator.propertyDeclaration({ propertyName: 'yearOfBirth', typeName: 'Int' });
+    });
+
+    expect(generator.output).toBe(stripIndent`
+      public struct \`Type\` {
+        public var name: String
+        public var yearOfBirth: Int
+      }
+    `);
+  });
+
   it(`should generate nested struct declarations`, () => {
     generator.structDeclaration({ structName: 'Hero' }, () => {
       generator.propertyDeclaration({ propertyName: 'name', typeName: 'String' });
