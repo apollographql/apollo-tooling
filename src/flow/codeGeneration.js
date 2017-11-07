@@ -370,7 +370,19 @@ export function propertyDeclarations(generator, properties, isInput) {
         || property.fragmentSpreads && property.fragmentSpreads.length > 0
       ) {
         propertyDeclaration(generator, property, () => {
-          const properties = propertiesFromFields(generator.context, property.fields);
+          const fields = property.fields.map(field => {
+            if (field.fieldName === '__typename') {
+              const objectTypeName = getObjectTypeName(property.fieldType || property.type);
+              return {
+                ...field,
+                typeName: objectTypeName,
+                type: { name: objectTypeName }
+              }
+            } else {
+              return field;
+            }
+          });
+          const properties = propertiesFromFields(generator.context, fields);
           propertyDeclarations(generator, properties, isInput);
         });
       } else {
