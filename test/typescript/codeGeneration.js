@@ -313,5 +313,31 @@ describe('TypeScript code generation', function() {
       const source = generateSource(context);
       expect(source).toMatchSnapshot();
     });
+    
+    test('should have __typename value in nested property', () => {
+      const { compileFromSource } = setup(starWarsSchema);
+      const context = compileFromSource(`
+        query HeroName {
+          hero {
+            friendsConnection {
+              edges {
+                node {
+                  name
+                  
+                }
+              }
+            }
+            ... on Human {
+              starships {
+                name
+              }
+            }
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
   });
 });
