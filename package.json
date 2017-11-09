@@ -50,6 +50,7 @@
     "graphql": "^0.11.3",
     "graphql-config": "^1.0.5",
     "inflected": "^2.0.2",
+    "jest-cli": "^21.2.1",
     "mkdirp": "^0.5.1",
     "node-fetch": "^1.7.2",
     "rimraf": "^2.6.2",
