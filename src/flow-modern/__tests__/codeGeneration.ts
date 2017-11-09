@@ -1,4 +1,4 @@
-import { parse, GraphQLNonNull, GraphQLString, GraphQLEnumType, GraphQLList } from 'graphql';
+import { parse } from 'graphql';
 
 import { loadSchema } from '../../loading';
 const schema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
@@ -7,9 +7,6 @@ import {
   compileToIR,
   CompilerOptions,
   CompilerContext,
-  SelectionSet,
-  Field,
-  Argument
 } from '../../compiler';
 
 import { generateSource } from '../codeGeneration';
@@ -56,7 +53,7 @@ describe('Flow codeGeneration', () => {
     context.operations["HeroName"].filePath = '/some/file/ComponentA.js';
     context.operations["SomeOther"].filePath = '/some/file/ComponentB.js';
     context.fragments['someFragment'].filePath = '/some/file/ComponentB.js';
-    const output = generateSource(context, true);
+    const output = generateSource(context);
     expect(output).toBeInstanceOf(Object);
     Object.keys(output)
       .forEach((filePath) => {

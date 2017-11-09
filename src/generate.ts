@@ -56,11 +56,13 @@ export default function generate(
 
     const context = compileToIR(schema, document, options);
     // const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
-    const outputIndividualFiles = true;
-    const generatedFiles = generateFlowModernSource(context, outputIndividualFiles, only);
+    // const outputIndividualFiles = true;
+    const generatedFiles = generateFlowModernSource(
+      context,
+      // outputIndividualFiles
+    );
 
     writeGeneratedFilesForFlowOrTypescript(generatedFiles);
-
   }
   else {
     let output;

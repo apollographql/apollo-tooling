@@ -1,18 +1,9 @@
-import { parse } from 'babylon';
 import * as t from '@babel/types';
 import { stripIndent } from 'common-tags';
 import {
-  getNamedType,
   GraphQLEnumType,
-  GraphQLField,
   GraphQLInputObjectType,
-  GraphQLInputField,
-  GraphQLList,
-  GraphQLObjectType,
   GraphQLNonNull,
-  isCompositeType,
-  GraphQLError,
-  GraphQLType
 } from 'graphql';
 import * as path from 'path';
 
@@ -30,17 +21,11 @@ import {
 } from '../compiler/visitors/typeCase';
 
 import {
-  collectFragmentsReferenced
-} from '../compiler/visitors/collectFragmentsReferenced';
-
-import {
   collectAndMergeFields
 } from '../compiler/visitors/collectAndMergeFields';
 
 import { typeAnnotationFromGraphQLType } from './helpers';
-import FlowGenerator, {
-  ObjectProperty,
-} from './language';
+import FlowGenerator, { ObjectProperty, } from './language';
 import Printer from './printer';
 
 function printEnumsAndInputObjects(generator: FlowAPIGenerator, context: CompilerContext) {
@@ -54,15 +39,15 @@ function printEnumsAndInputObjects(generator: FlowAPIGenerator, context: Compile
   `);
 
   context.typesUsed
-    .filter(type => type instanceof GraphQLEnumType)
-    .forEach((enumType: GraphQLEnumType) => {
-      generator.typeAliasForEnumType(enumType);
+    .filter(type => (type instanceof GraphQLEnumType))
+    .forEach((enumType) => {
+      generator.typeAliasForEnumType(enumType as GraphQLEnumType);
     });
 
   context.typesUsed
     .filter(type => type instanceof GraphQLInputObjectType)
-    .forEach((enumType: GraphQLInputObjectType) => {
-      generator.typeAliasForInputObjectType(enumType);
+    .forEach((inputObjectType) => {
+      generator.typeAliasForInputObjectType(inputObjectType as GraphQLInputObjectType);
     });
 
   generator.printer.enqueue(stripIndent`
@@ -74,12 +59,11 @@ function printEnumsAndInputObjects(generator: FlowAPIGenerator, context: Compile
 
 export function generateSource(
   context: CompilerContext,
-  outputIndividualFiles?: boolean = false,
-  only?: string,
+  // outputIndividualFiles: boolean = false,
 ) {
   const generator = new FlowAPIGenerator(context);
-  if (outputIndividualFiles) {
-    const generatedFiles: { [filePath: string]: string } = [];
+  // if (outputIndividualFiles) {
+    const generatedFiles: { [filePath: string]: string } = {};
 
     Object.values(context.operations)
       .forEach((operation) => {
@@ -116,32 +100,32 @@ export function generateSource(
       });
 
     return generatedFiles;
-  } else{
-    generator.fileHeader();
+  // } else{
+  //   generator.fileHeader();
 
-    context.typesUsed
-      .filter(type => type instanceof GraphQLEnumType)
-      .forEach((enumType: GraphQLEnumType) => {
-        generator.typeAliasForEnumType(enumType);
-      });
+  //   context.typesUsed
+  //     .filter(type => type instanceof GraphQLEnumType)
+  //     .forEach((enumType) => {
+  //       generator.typeAliasForEnumType(enumType as GraphQLEnumType);
+  //     });
 
-    context.typesUsed
-      .filter(type => type instanceof GraphQLInputObjectType)
-      .forEach((enumType: GraphQLInputObjectType) => {
-        generator.typeAliasForInputObjectType(enumType);
-      });
+  //   context.typesUsed
+  //     .filter(type => type instanceof GraphQLInputObjectType)
+  //     .forEach((inputObjectType) => {
+  //       generator.typeAliasForInputObjectType(inputObjectType as GraphQLInputObjectType);
+  //     });
 
-    Object.values(context.operations).forEach(operation => {
-      // generator.typeVariablesDeclarationForOperation(operation);
-      generator.typeAliasesForOperation(operation);
-    });
+  //   Object.values(context.operations).forEach(operation => {
+  //     // generator.typeVariablesDeclarationForOperation(operation);
+  //     generator.typeAliasesForOperation(operation);
+  //   });
 
-    Object.values(context.fragments).forEach(fragment => {
-      generator.typeAliasesForFragment(fragment);
-    });
-  }
+  //   Object.values(context.fragments).forEach(fragment => {
+  //     generator.typeAliasesForFragment(fragment);
+  //   });
+  // }
 
-  return generator.output;
+  // return generator.output;
 }
 
 export class FlowAPIGenerator extends FlowGenerator {
@@ -178,7 +162,6 @@ export class FlowAPIGenerator extends FlowGenerator {
     const {
       operationType,
       operationName,
-      variables,
       selectionSet
     } = operation;
 
@@ -208,7 +191,6 @@ export class FlowAPIGenerator extends FlowGenerator {
   public typeAliasesForFragment(fragment: Fragment) {
     const {
       fragmentName,
-      type,
       selectionSet
     } = fragment;
 
@@ -235,9 +217,9 @@ export class FlowAPIGenerator extends FlowGenerator {
 
       this.printer.enqueue(exportedTypeAlias);
     } else {
-      const unionMembers: t.TypeAnnotation[] = [];
+      const unionMembers: t.FlowTypeAnnotation[] = [];
       variants.forEach(variant => {
-        this.scopeStackPush(variant.possibleTypes[0]);
+        this.scopeStackPush(variant.possibleTypes[0].toString());
         const properties = this.getPropertiesForVariant(variant);
 
         const name = this.annotationFromScopeStack(this.scopeStack).id.name;
@@ -332,7 +314,7 @@ export class FlowAPIGenerator extends FlowGenerator {
       );
     } else {
       const propertySets = variants.map(variant => {
-        this.scopeStackPush(variant.possibleTypes[0])
+        this.scopeStackPush(variant.possibleTypes[0].toString())
         const properties = this.getPropertiesForVariant(variant);
         this.scopeStackPop();
         return properties;
@@ -382,7 +364,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     return res;
   }
 
-  public get output() {
+  public get output(): string {
     return this.printer.print();
   }
 
@@ -392,6 +374,7 @@ export class FlowAPIGenerator extends FlowGenerator {
 
   scopeStackPop() {
     const popped = this.scopeStack.pop()
+    return popped;
   }
 
 }

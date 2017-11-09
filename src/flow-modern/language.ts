@@ -7,10 +7,10 @@ import { typeAnnotationFromGraphQLType } from './helpers';
 
 import * as t from '@babel/types';
 
-type ObjectProperty = {
+export type ObjectProperty = {
   name: string,
-  description?: ?string,
-  annotation: t.TypeAnnotation
+  description?: string | null | undefined,
+  annotation: t.FlowTypeAnnotation
 }
 
 export default class FlowGenerator {
@@ -18,7 +18,6 @@ export default class FlowGenerator {
     const { name, description } = type;
     const unionValues = type.getValues().map(({ value }) => {
       const type = t.stringLiteralTypeAnnotation();
-      // $ts-ignore - definition is incomplete
       type.value = value;
 
       return type;
@@ -34,10 +33,9 @@ export default class FlowGenerator {
     );
 
     typeAlias.leadingComments = [{
-      // $ts-ignore
       type: 'CommentLine',
       value: ` ${description}`
-    }];
+    } as t.CommentLine];
 
     return typeAlias;
   }
@@ -58,10 +56,9 @@ export default class FlowGenerator {
     const typeAlias = this.typeAliasObject(name, fields);
 
     typeAlias.leadingComments = [{
-      // $ts-ignore
       type: 'CommentLine',
       value: ` ${description}`
-    }]
+    } as t.CommentLine]
 
     return typeAlias;
   }
@@ -69,7 +66,7 @@ export default class FlowGenerator {
   public objectTypeAnnotation(fields: ObjectProperty[], isInputObject: boolean = false) {
     const objectTypeAnnotation = t.objectTypeAnnotation(
       fields.map(({name, description, annotation}) => {
-        if (annotation.type instanceof t.NullableTypeAnnotation) {
+        if (annotation.type === "NullableTypeAnnotation") {
           t.identifier(name + '?')
         }
 
@@ -88,14 +85,15 @@ export default class FlowGenerator {
           objectTypeProperty.trailingComments = [{
             type: 'CommentLine',
             value: ` ${description}`
-          }]
+          } as t.CommentLine]
         }
 
         return objectTypeProperty;
       })
     );
 
-    objectTypeAnnotation.exact = true;
+    // TODO: Make this togglable
+    // objectTypeAnnotation.exact = true;
 
     return objectTypeAnnotation;
   }
@@ -120,7 +118,7 @@ export default class FlowGenerator {
     )
   }
 
-  public typeAliasGenericUnion(name: string, members: t.TypeAnnotation[]) {
+  public typeAliasGenericUnion(name: string, members: t.FlowTypeAnnotation[]) {
     return t.typeAlias(
       t.identifier(name),
       undefined,
@@ -128,8 +126,8 @@ export default class FlowGenerator {
     );
   }
 
-  public exportDeclaration(node: t.Node) {
-    return t.exportNamedDeclaration(node, []);
+  public exportDeclaration(declaration: t.Declaration) {
+    return t.exportNamedDeclaration(declaration, []);
   }
 
   public annotationFromScopeStack(scope: string[]) {

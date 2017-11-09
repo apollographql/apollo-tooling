@@ -1,5 +1,4 @@
 import * as t from '@babel/types';
-import { parse } from 'babylon';
 import generate from '@babel/generator';
 
 import { stripIndent } from 'common-tags';
@@ -9,18 +8,19 @@ type Printable = t.Node | string;
 export default class Printer {
   private printQueue: Printable[] = []
 
-  public print() {
-    return this.printQueue.reduce(
-      (document: string, printable: Printable) => {
-        if (typeof printable === 'string') {
-          return document + printable;
-        } else {
-          const documentPart = generate(printable as t.Node).code;
-          return document + this.fixCommas(documentPart);
-        }
-      },
-      ''
-    );
+  public print(): string {
+    return this.printQueue
+      .reduce(
+        (document: string, printable) => {
+          if (typeof printable === 'string') {
+            return document + printable;
+          } else {
+            const documentPart = generate(printable).code;
+            return document + this.fixCommas(documentPart);
+          }
+        },
+        ''
+      ) as string;
   }
 
   public enqueue(printable: Printable) {
@@ -91,7 +91,7 @@ export default class Printer {
       currentLine++;
     }
 
-    return newDocumentParts.reduce((memo, part) => {
+    return newDocumentParts.reduce((memo: string[], part) => {
       const {
         main,
         comment
