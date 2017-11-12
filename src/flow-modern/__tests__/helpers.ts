@@ -6,11 +6,16 @@ import {
   GraphQLID,
   GraphQLNonNull,
   GraphQLList,
+  GraphQLScalarType,
 } from 'graphql';
 
 import * as t from 'babel-types';
 
-import { typeAnnotationFromGraphQLType } from '../helpers';
+import { createTypeAnnotationFromGraphQLTypeFunction } from '../helpers';
+
+const typeAnnotationFromGraphQLType = createTypeAnnotationFromGraphQLTypeFunction({
+  passthroughCustomScalars: false
+});
 
 describe('Flow typeAnnotationFromGraphQLType', () => {
   test('String', () => {
@@ -363,8 +368,47 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
       )
   });
 
-  // TODO: Add non scalar test cases
-  test('non-scalar: Episode', () => {
+  test('Custom Scalar', () => {
+    const OddType = new GraphQLScalarType({
+      name: 'Odd',
+      serialize(value) {
+        return value % 2 === 1 ? value : null
+      }
+    });
+
+    expect(
+      typeAnnotationFromGraphQLType(OddType)
+    ).toMatchObject(
+      t.nullableTypeAnnotation(
+        t.genericTypeAnnotation(t.identifier('Odd'))
+      )
+    )
+  });
+});
+
+describe('passthrough custom scalars', () => {
+  let getTypeAnnotation: Function;
+
+  beforeAll(() => {
+    getTypeAnnotation = createTypeAnnotationFromGraphQLTypeFunction({
+      passthroughCustomScalars: true
+    });
   });
 
+  test('Custom Scalar', () => {
+    const OddType = new GraphQLScalarType({
+      name: 'Odd',
+      serialize(value) {
+        return value % 2 === 1 ? value : null
+      }
+    });
+
+    expect(
+      getTypeAnnotation(OddType)
+    ).toMatchObject(
+      t.nullableTypeAnnotation(
+        t.anyTypeAnnotation()
+      )
+    )
+  });
 });
