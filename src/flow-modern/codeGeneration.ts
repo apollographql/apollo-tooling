@@ -24,7 +24,6 @@ import {
   collectAndMergeFields
 } from '../compiler/visitors/collectAndMergeFields';
 
-import { typeAnnotationFromGraphQLType } from './helpers';
 import FlowGenerator, { ObjectProperty, } from './language';
 import Printer from './printer';
 
@@ -59,73 +58,45 @@ function printEnumsAndInputObjects(generator: FlowAPIGenerator, context: Compile
 
 export function generateSource(
   context: CompilerContext,
-  // outputIndividualFiles: boolean = false,
 ) {
   const generator = new FlowAPIGenerator(context);
-  // if (outputIndividualFiles) {
-    const generatedFiles: { [filePath: string]: string } = {};
+  const generatedFiles: { [filePath: string]: string } = {};
 
-    Object.values(context.operations)
-      .forEach((operation) => {
-        generator.fileHeader();
-        generator.typeAliasesForOperation(operation);
-        printEnumsAndInputObjects(generator, context);
+  Object.values(context.operations)
+    .forEach((operation) => {
+      generator.fileHeader();
+      generator.typeAliasesForOperation(operation);
+      printEnumsAndInputObjects(generator, context);
 
-        const output = generator.printer.printAndClear();
+      const output = generator.printer.printAndClear();
 
-        const outputFilePath = path.join(
-          path.dirname(operation.filePath),
-          '__generated__',
-          `${operation.operationName}.js`
-        );
+      const outputFilePath = path.join(
+        path.dirname(operation.filePath),
+        '__generated__',
+        `${operation.operationName}.js`
+      );
 
-        generatedFiles[outputFilePath] = output;
-      });
+      generatedFiles[outputFilePath] = output;
+    });
 
-    Object.values(context.fragments)
-      .forEach((fragment) => {
-        generator.fileHeader();
-        generator.typeAliasesForFragment(fragment);
-        printEnumsAndInputObjects(generator, context);
+  Object.values(context.fragments)
+    .forEach((fragment) => {
+      generator.fileHeader();
+      generator.typeAliasesForFragment(fragment);
+      printEnumsAndInputObjects(generator, context);
 
-        const output = generator.printer.printAndClear();
+      const output = generator.printer.printAndClear();
 
-        const outputFilePath = path.join(
-          path.dirname(fragment.filePath),
-          '__generated__',
-          `${fragment.fragmentName}.js`
-        );
+      const outputFilePath = path.join(
+        path.dirname(fragment.filePath),
+        '__generated__',
+        `${fragment.fragmentName}.js`
+      );
 
-        generatedFiles[outputFilePath] = output;
-      });
+      generatedFiles[outputFilePath] = output;
+    });
 
-    return generatedFiles;
-  // } else{
-  //   generator.fileHeader();
-
-  //   context.typesUsed
-  //     .filter(type => type instanceof GraphQLEnumType)
-  //     .forEach((enumType) => {
-  //       generator.typeAliasForEnumType(enumType as GraphQLEnumType);
-  //     });
-
-  //   context.typesUsed
-  //     .filter(type => type instanceof GraphQLInputObjectType)
-  //     .forEach((inputObjectType) => {
-  //       generator.typeAliasForInputObjectType(inputObjectType as GraphQLInputObjectType);
-  //     });
-
-  //   Object.values(context.operations).forEach(operation => {
-  //     // generator.typeVariablesDeclarationForOperation(operation);
-  //     generator.typeAliasesForOperation(operation);
-  //   });
-
-  //   Object.values(context.fragments).forEach(fragment => {
-  //     generator.typeAliasesForFragment(fragment);
-  //   });
-  // }
-
-  // return generator.output;
+  return generatedFiles;
 }
 
 export class FlowAPIGenerator extends FlowGenerator {
@@ -134,7 +105,7 @@ export class FlowAPIGenerator extends FlowGenerator {
   scopeStack: string[]
 
   constructor(context: CompilerContext) {
-    super();
+    super(context.options);
 
     this.context = context;
     this.printer = new Printer();
@@ -357,7 +328,7 @@ export class FlowAPIGenerator extends FlowGenerator {
       res = {
         name: field.alias ? field.alias : field.name,
         description: field.description,
-        annotation: typeAnnotationFromGraphQLType(field.type)
+        annotation: this.typeAnnotationFromGraphQLType(field.type)
       };
     }
 

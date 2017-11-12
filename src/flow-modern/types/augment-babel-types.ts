@@ -7,4 +7,8 @@ declare module 'babel-types' {
   interface StringLiteralTypeAnnotation {
     value: string
   }
+
+  interface ObjectTypeAnnotation {
+    exact: boolean
+  }
 }

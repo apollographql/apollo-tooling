@@ -3,7 +3,11 @@ import {
   GraphQLInputObjectType,
 } from 'graphql';
 
-import { typeAnnotationFromGraphQLType } from './helpers';
+import {
+  CompilerOptions
+} from '../compiler';
+
+import { createTypeAnnotationFromGraphQLTypeFunction } from './helpers';
 
 import * as t from '@babel/types';
 
@@ -13,7 +17,20 @@ export type ObjectProperty = {
   annotation: t.FlowTypeAnnotation
 }
 
+export interface FlowCompilerOptions extends CompilerOptions {
+  useFlowExactObjects: boolean
+}
+
 export default class FlowGenerator {
+  options: FlowCompilerOptions
+  typeAnnotationFromGraphQLType: Function
+
+  constructor(compilerOptions: FlowCompilerOptions) {
+    this.options = compilerOptions;
+
+    this.typeAnnotationFromGraphQLType = createTypeAnnotationFromGraphQLTypeFunction(compilerOptions);
+  }
+
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
     const unionValues = type.getValues().map(({ value }) => {
@@ -49,7 +66,7 @@ export default class FlowGenerator {
         const field = fieldMap[fieldName];
         return {
           name: fieldName,
-          annotation: typeAnnotationFromGraphQLType(field.type)
+          annotation: this.typeAnnotationFromGraphQLType(field.type)
         }
       });
 
@@ -92,8 +109,9 @@ export default class FlowGenerator {
       })
     );
 
-    // TODO: Make this togglable
-    // objectTypeAnnotation.exact = true;
+    if (this.options.useFlowExactObjects) {
+      objectTypeAnnotation.exact = true;
+    }
 
     return objectTypeAnnotation;
   }
