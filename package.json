@@ -8,8 +8,9 @@
     "clean": "rm -rf lib",
     "compile": "tsc",
     "watch": "tsc -w",
+    "prepublish": "npm run clean && npm run compile",
     "test": "./node_modules/.bin/jest",
-    "test:smoke": "rm -rf node_modules && npm install --prod && ./node_modules/.bin/tsc && node ./lib/cli.js && echo 'Smoke Test Passed'"
+    "test:smoke": "npm install && npm run compile && rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
   },
   "repository": {
     "type": "git",
@@ -30,7 +31,6 @@
     "@types/node-fetch": "^1.6.7",
     "@types/yargs": "^8.0.2",
     "ansi-regex": "^3.0.0",
-    "common-tags": "^1.4.0",
     "jest": "^21.2.1",
     "jest-matcher-utils": "^21.1.0",
     "ts-jest": "^21.0.1",
@@ -45,6 +45,7 @@
     "babel-generator": "^6.26.0",
     "babylon": "^6.18.0",
     "change-case": "^3.0.1",
+    "common-tags": "^1.4.0",
     "core-js": "^2.5.0",
     "glob": "^7.1.2",
     "graphql": "^0.11.3",
