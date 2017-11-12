@@ -80,7 +80,7 @@ export function generateSource(
       generator.typeAliasesForOperation(operation);
       printEnumsAndInputObjects(generator, context);
 
-      const output = new FlowGeneratedFile(generator.printer.printAndClear());
+      const output = generator.printer.printAndClear();
 
       const outputFilePath = path.join(
         path.dirname(operation.filePath),
@@ -88,7 +88,7 @@ export function generateSource(
         `${operation.operationName}.js`
       );
 
-      generatedFiles[outputFilePath] = output;
+      generatedFiles[outputFilePath] = new FlowGeneratedFile(output);
     });
 
   Object.values(context.fragments)
@@ -97,7 +97,7 @@ export function generateSource(
       generator.typeAliasesForFragment(fragment);
       printEnumsAndInputObjects(generator, context);
 
-      const output = new FlowGeneratedFile(generator.printer.printAndClear());
+      const output = generator.printer.printAndClear();
 
       const outputFilePath = path.join(
         path.dirname(fragment.filePath),
@@ -105,7 +105,7 @@ export function generateSource(
         `${fragment.fragmentName}.js`
       );
 
-      generatedFiles[outputFilePath] = output;
+      generatedFiles[outputFilePath] = new FlowGeneratedFile(output);
     });
 
   return generatedFiles;

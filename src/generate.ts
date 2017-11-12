@@ -115,17 +115,7 @@ function writeGeneratedFiles(
 ) {
   // Clear all generated stuff to make sure there isn't anything
   // unnecessary lying around.
-  Object.keys(generatedFiles)
-    .map(path.dirname)
-    .reduce((uniqueList: string[], item: string) => {
-      if (uniqueList.indexOf(item) === -1) {
-        return [...uniqueList, item];
-      } else {
-        return uniqueList;
-      }
-    }, [])
-    .forEach(path => rimraf.sync(path));
-
+  rimraf.sync(outputDirectory);
   // Remake the output directory
   fs.mkdirSync(outputDirectory);
 
