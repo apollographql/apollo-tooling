@@ -9,7 +9,7 @@
     "compile": "tsc",
     "watch": "tsc -w",
     "test": "./node_modules/.bin/jest",
-    "test:smoke": "rm -rf node_modules && npm install --prod && tsc && node ./lib/cli.js && echo 'Smoke Test Passed'"
+    "test:smoke": "rm -rf node_modules && npm install --prod && ./node_modules/.bin/tsc && node ./lib/cli.js && echo 'Smoke Test Passed'"
   },
   "repository": {
     "type": "git",
