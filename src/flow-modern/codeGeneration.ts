@@ -24,8 +24,20 @@ import {
   collectAndMergeFields
 } from '../compiler/visitors/collectAndMergeFields';
 
-import FlowGenerator, { ObjectProperty, } from './language';
+import { BasicGeneratedFile } from '../utilities/CodeGenerator';
+import FlowGenerator, { ObjectProperty, FlowCompilerOptions, } from './language';
 import Printer from './printer';
+
+class FlowGeneratedFile implements BasicGeneratedFile {
+  fileContents: string;
+
+  constructor(fileContents: string) {
+    this.fileContents = fileContents;
+  }
+  get output() {
+    return this.fileContents
+  }
+}
 
 function printEnumsAndInputObjects(generator: FlowAPIGenerator, context: CompilerContext) {
   generator.printer.enqueue(stripIndent`
@@ -60,7 +72,7 @@ export function generateSource(
   context: CompilerContext,
 ) {
   const generator = new FlowAPIGenerator(context);
-  const generatedFiles: { [filePath: string]: string } = {};
+  const generatedFiles: { [filePath: string]: FlowGeneratedFile } = {};
 
   Object.values(context.operations)
     .forEach((operation) => {
@@ -68,7 +80,7 @@ export function generateSource(
       generator.typeAliasesForOperation(operation);
       printEnumsAndInputObjects(generator, context);
 
-      const output = generator.printer.printAndClear();
+      const output = new FlowGeneratedFile(generator.printer.printAndClear());
 
       const outputFilePath = path.join(
         path.dirname(operation.filePath),
@@ -85,7 +97,7 @@ export function generateSource(
       generator.typeAliasesForFragment(fragment);
       printEnumsAndInputObjects(generator, context);
 
-      const output = generator.printer.printAndClear();
+      const output = new FlowGeneratedFile(generator.printer.printAndClear());
 
       const outputFilePath = path.join(
         path.dirname(fragment.filePath),
@@ -105,7 +117,7 @@ export class FlowAPIGenerator extends FlowGenerator {
   scopeStack: string[]
 
   constructor(context: CompilerContext) {
-    super(context.options);
+    super(context.options as FlowCompilerOptions);
 
     this.context = context;
     this.printer = new Printer();

@@ -7,7 +7,7 @@ import { validateQueryDocument } from './validation';
 import { compileToIR } from './compiler';
 import { compileToLegacyIR } from './compiler/legacyIR';
 import serializeToJSON from './serializeToJSON';
-import { GeneratedFile } from './utilities/CodeGenerator'
+import { BasicGeneratedFile } from './utilities/CodeGenerator'
 import { generateSource as generateSwiftSource } from './swift';
 import { generateSource as generateTypescriptSource } from './typescript';
 import { generateSource as generateFlowSource } from './flow';
@@ -53,16 +53,35 @@ export default function generate(
     }
   }
   else if (target === 'flow-modern') {
-
     const context = compileToIR(schema, document, options);
-    // const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
-    // const outputIndividualFiles = true;
-    const generatedFiles = generateFlowModernSource(
-      context,
-      // outputIndividualFiles
-    );
+    const generatedFiles = generateFlowModernSource(context);
 
-    writeGeneratedFilesForFlowOrTypescript(generatedFiles);
+    // Group by output directory
+    const filesByOutputDirectory: {
+      [outputDirectory: string]: {
+        [fileName: string]: BasicGeneratedFile
+      }
+    } = {};
+
+    Object.keys(generatedFiles)
+      .forEach((filePath: string) => {
+        const outputDirectory = path.dirname(filePath);
+        if (!filesByOutputDirectory[outputDirectory]) {
+          filesByOutputDirectory[outputDirectory] = {
+            [path.basename(filePath)]: generatedFiles[filePath]
+          };
+        } else {
+          filesByOutputDirectory[outputDirectory][path.basename(filePath)] = generatedFiles[filePath];
+        }
+      })
+
+    Object.keys(filesByOutputDirectory)
+      .forEach((outputDirectory) => {
+        writeGeneratedFiles(
+          filesByOutputDirectory[outputDirectory],
+          outputDirectory
+        );
+      });
   }
   else {
     let output;
@@ -90,20 +109,12 @@ export default function generate(
   }
 }
 
-function writeGeneratedFiles(generatedFiles: { [fileName: string]: GeneratedFile }, outputDirectory: string) {
-  if (!fs.existsSync(outputDirectory)) {
-    fs.mkdirSync(outputDirectory);
-  }
-  for (const [fileName, generatedFile] of Object.entries(generatedFiles)) {
-    fs.writeFileSync(path.join(outputDirectory, fileName), generatedFile.output);
-  }
-}
-
-function writeGeneratedFilesForFlowOrTypescript(
-  generatedFiles: { [filePath: string]: string },
+function writeGeneratedFiles(
+  generatedFiles: { [fileName: string]: BasicGeneratedFile },
+  outputDirectory: string
 ) {
-
-  // Clear all generated folders
+  // Clear all generated stuff to make sure there isn't anything
+  // unnecessary lying around.
   Object.keys(generatedFiles)
     .map(path.dirname)
     .reduce((uniqueList: string[], item: string) => {
@@ -115,19 +126,11 @@ function writeGeneratedFilesForFlowOrTypescript(
     }, [])
     .forEach(path => rimraf.sync(path));
 
-  // TODO: Clean this up by merging with `writeGeneratedFiles` by creating a
-  // `GeneratedFile` interface that works for both cases.
-  for (const [filePath, generatedFile] of Object.entries(generatedFiles)) {
-    const outputDirectory = path.dirname(filePath);
-    if (outputDirectory.indexOf('__generated__') === -1) {
-      throw new Error('Received invalid outputDirectory ' + outputDirectory);
-    }
+  // Remake the output directory
+  fs.mkdirSync(outputDirectory);
 
-    if (!fs.existsSync(outputDirectory)) {
-      fs.mkdirSync(outputDirectory);
-    }
-
-    fs.writeFileSync(filePath, generatedFile);
+  for (const [fileName, generatedFile] of Object.entries(generatedFiles)) {
+    fs.writeFileSync(path.join(outputDirectory, fileName), generatedFile.output);
   }
 }
 

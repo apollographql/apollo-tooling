@@ -2,7 +2,8 @@
 
 exports[`Flow codeGeneration fragment spreads with inline fragments 1`] = `
 Object {
-  "__generated__/HeroName.js": "
+  "__generated__/HeroName.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -49,7 +50,9 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "__generated__/droidFragment.js": "
+  },
+  "__generated__/droidFragment.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -76,7 +79,9 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "__generated__/humanFragment.js": "
+  },
+  "__generated__/humanFragment.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -112,12 +117,14 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
+  },
 }
 `;
 
 exports[`Flow codeGeneration fragment with fragment spreads 1`] = `
 Object {
-  "__generated__/anotherFragment.js": "
+  "__generated__/anotherFragment.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -142,7 +149,9 @@ export type anotherFragment = {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "__generated__/simpleFragment.js": "
+  },
+  "__generated__/simpleFragment.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -166,12 +175,14 @@ export type simpleFragment = {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
+  },
 }
 `;
 
 exports[`Flow codeGeneration fragment with fragment spreads with inline fragment 1`] = `
 Object {
-  "__generated__/anotherFragment.js": "
+  "__generated__/anotherFragment.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -208,7 +219,9 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "__generated__/simpleFragment.js": "
+  },
+  "__generated__/simpleFragment.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -235,12 +248,14 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
+  },
 }
 `;
 
 exports[`Flow codeGeneration inline fragment 1`] = `
 Object {
-  "__generated__/HeroInlineFragment.js": "
+  "__generated__/HeroInlineFragment.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -272,12 +287,14 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
+  },
 }
 `;
 
 exports[`Flow codeGeneration inline fragment on type conditions 1`] = `
 Object {
-  "__generated__/HeroName.js": "
+  "__generated__/HeroName.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -321,12 +338,14 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
+  },
 }
 `;
 
 exports[`Flow codeGeneration inline fragment on type conditions with differing inner fields 1`] = `
 Object {
-  "__generated__/HeroName.js": "
+  "__generated__/HeroName.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -376,13 +395,15 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
+  },
 }
 `;
 
 exports[`Flow codeGeneration multiple files 1`] = `"/some/file/__generated__/HeroName.js"`;
 
 exports[`Flow codeGeneration multiple files 2`] = `
-"
+FlowGeneratedFile {
+  "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -427,13 +448,15 @@ type ColorInput = {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================",
+}
 `;
 
 exports[`Flow codeGeneration multiple files 3`] = `"/some/file/__generated__/SomeOther.js"`;
 
 exports[`Flow codeGeneration multiple files 4`] = `
-"
+FlowGeneratedFile {
+  "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -478,13 +501,15 @@ type ColorInput = {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================",
+}
 `;
 
 exports[`Flow codeGeneration multiple files 5`] = `"__generated__/ReviewMovie.js"`;
 
 exports[`Flow codeGeneration multiple files 6`] = `
-"
+FlowGeneratedFile {
+  "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -529,13 +554,15 @@ type ColorInput = {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================",
+}
 `;
 
 exports[`Flow codeGeneration multiple files 7`] = `"/some/file/__generated__/someFragment.js"`;
 
 exports[`Flow codeGeneration multiple files 8`] = `
-"
+FlowGeneratedFile {
+  "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -575,12 +602,14 @@ type ColorInput = {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================",
+}
 `;
 
 exports[`Flow codeGeneration query with fragment spreads 1`] = `
 Object {
-  "__generated__/HeroFragment.js": "
+  "__generated__/HeroFragment.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -612,7 +641,9 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "__generated__/simpleFragment.js": "
+  },
+  "__generated__/simpleFragment.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -639,12 +670,14 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
+  },
 }
 `;
 
 exports[`Flow codeGeneration simple fragment 1`] = `
 Object {
-  "__generated__/SimpleFragment.js": "
+  "__generated__/SimpleFragment.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -668,12 +701,14 @@ export type SimpleFragment = {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
+  },
 }
 `;
 
 exports[`Flow codeGeneration simple hero query 1`] = `
 Object {
-  "__generated__/HeroName.js": "
+  "__generated__/HeroName.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -705,12 +740,14 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
+  },
 }
 `;
 
 exports[`Flow codeGeneration simple mutation 1`] = `
 Object {
-  "__generated__/ReviewMovie.js": "
+  "__generated__/ReviewMovie.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 // This file was automatically generated and should not be edited.
@@ -756,5 +793,6 @@ type ColorInput = {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
+  },
 }
 `;
