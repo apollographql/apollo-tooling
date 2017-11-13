@@ -1,4 +1,9 @@
-export class GeneratedFile<Scope = any> {
+export interface BasicGeneratedFile {
+  output: string
+}
+
+
+export class GeneratedFile<Scope = any> implements BasicGeneratedFile {
   scopeStack: Scope[] = [];
   indentWidth = 2;
   indentLevel = 0;

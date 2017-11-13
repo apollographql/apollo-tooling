@@ -10,7 +10,7 @@
     "watch": "tsc -w",
     "prepublish": "npm run clean && npm run compile",
     "test": "./node_modules/.bin/jest",
-    "test:smoke": "rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
+    "test:smoke": "npm install && npm run compile && rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
   },
   "repository": {
     "type": "git",
@@ -31,21 +31,30 @@
     "@types/node-fetch": "^1.6.7",
     "@types/yargs": "^8.0.2",
     "ansi-regex": "^3.0.0",
-    "common-tags": "^1.4.0",
     "jest": "^21.2.1",
     "jest-matcher-utils": "^21.1.0",
     "ts-jest": "^21.0.1",
     "typescript": "^2.5.2"
   },
   "dependencies": {
+    "@babel/generator": "^7.0.0-beta.4",
+    "@babel/types": "^7.0.0-beta.4",
+    "@types/babel-generator": "^6.25.0",
+    "@types/babylon": "^6.16.2",
+    "@types/rimraf": "^2.0.2",
+    "babel-generator": "^6.26.0",
+    "babylon": "^6.18.0",
     "change-case": "^3.0.1",
+    "common-tags": "^1.4.0",
     "core-js": "^2.5.0",
     "glob": "^7.1.2",
-    "graphql-config": "^1.0.5",
     "graphql": "^0.11.3",
+    "graphql-config": "^1.0.5",
     "inflected": "^2.0.2",
+    "jest-cli": "^21.2.1",
     "mkdirp": "^0.5.1",
     "node-fetch": "^1.7.2",
+    "rimraf": "^2.6.2",
     "source-map-support": "^0.4.15",
     "yargs": "^8.0.2"
   },
@@ -57,7 +66,8 @@
     "setupTestFrameworkScriptFile": "<rootDir>/test/test-utils/matchers.ts",
     "testMatch": [
       "**/test/**/*.(js|ts)",
-      "**/test/*.(js|ts)"
+      "**/test/*.(js|ts)",
+      "**/__tests__/*.(js|ts)"
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",

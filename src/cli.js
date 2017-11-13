@@ -114,7 +114,7 @@ yargs
       target: {
         demand: false,
         describe: 'Code generation target language',
-        choices: ['swift', 'scala', 'json', 'ts', 'typescript', 'flow'],
+        choices: ['swift', 'scala', 'json', 'ts', 'typescript', 'flow', 'flow-modern'],
         default: 'swift'
       },
       only: {
@@ -142,6 +142,12 @@ yargs
         demand: false,
         describe: "For non-swift targets, always add the __typename GraphQL introspection type when generating target types",
         default: false
+      },
+      "use-flow-exact-objects": {
+        demand: false,
+        describe: "Use Flow exact objects for generated types [flow-modern only]",
+        default: false,
+        type: 'boolean'
       },
       "tag-name": {
         demand: false,
@@ -185,7 +191,8 @@ yargs
         namespace: argv.namespace,
         operationIdsPath: argv["operation-ids-path"],
         generateOperationIds: !!argv["operation-ids-path"],
-        mergeInFieldsFromFragmentSpreads: argv["merge-in-fields-from-fragment-spreads"]
+        mergeInFieldsFromFragmentSpreads: argv["merge-in-fields-from-fragment-spreads"],
+        useFlowExactObjects: argv['use-flow-exact-objects']
       };
 
       generate(inputPaths, argv.schema, argv.output, argv.only, argv.target, argv.tagName, argv.projectName, options);
