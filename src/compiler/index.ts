@@ -59,6 +59,7 @@ function argumentsFromAST(args: ArgumentNode[]): Argument[] {
 }
 
 export interface Operation {
+  operationId?: string;
   operationName: string;
   operationType: string;
   variables: {
