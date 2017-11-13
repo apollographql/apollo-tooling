@@ -1,18 +1,20 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as rimraf from 'rimraf';
 
 import { loadSchema, loadSchemaFromConfig, loadAndMergeQueryDocuments } from './loading';
 import { validateQueryDocument } from './validation';
 import { compileToIR } from './compiler';
 import { compileToLegacyIR } from './compiler/legacyIR';
 import serializeToJSON from './serializeToJSON';
-import { GeneratedFile } from './utilities/CodeGenerator'
+import { BasicGeneratedFile } from './utilities/CodeGenerator'
 import { generateSource as generateSwiftSource } from './swift';
 import { generateSource as generateTypescriptSource } from './typescript';
 import { generateSource as generateFlowSource } from './flow';
+import { generateSource as generateFlowModernSource } from './flow-modern';
 import { generateSource as generateScalaSource } from './scala';
 
-type TargetType = 'json' | 'swift' | 'ts' | 'typescript' | 'flow' | 'scala';
+type TargetType = 'json' | 'swift' | 'ts' | 'typescript' | 'flow' | 'scala' | 'flow-modern';
 
 export default function generate(
   inputPaths: string[],
@@ -49,7 +51,39 @@ export default function generate(
     if (options.generateOperationIds) {
       writeOperationIdsMap(context);
     }
-  } else {
+  }
+  else if (target === 'flow-modern') {
+    const context = compileToIR(schema, document, options);
+    const generatedFiles = generateFlowModernSource(context);
+
+    // Group by output directory
+    const filesByOutputDirectory: {
+      [outputDirectory: string]: {
+        [fileName: string]: BasicGeneratedFile
+      }
+    } = {};
+
+    Object.keys(generatedFiles)
+      .forEach((filePath: string) => {
+        const outputDirectory = path.dirname(filePath);
+        if (!filesByOutputDirectory[outputDirectory]) {
+          filesByOutputDirectory[outputDirectory] = {
+            [path.basename(filePath)]: generatedFiles[filePath]
+          };
+        } else {
+          filesByOutputDirectory[outputDirectory][path.basename(filePath)] = generatedFiles[filePath];
+        }
+      })
+
+    Object.keys(filesByOutputDirectory)
+      .forEach((outputDirectory) => {
+        writeGeneratedFiles(
+          filesByOutputDirectory[outputDirectory],
+          outputDirectory
+        );
+      });
+  }
+  else {
     let output;
     const context = compileToLegacyIR(schema, document, options);
     switch (target) {
@@ -75,10 +109,16 @@ export default function generate(
   }
 }
 
-function writeGeneratedFiles(generatedFiles: { [fileName: string]: GeneratedFile }, outputDirectory: string) {
-  if (!fs.existsSync(outputDirectory)) {
-    fs.mkdirSync(outputDirectory);
-  }
+function writeGeneratedFiles(
+  generatedFiles: { [fileName: string]: BasicGeneratedFile },
+  outputDirectory: string
+) {
+  // Clear all generated stuff to make sure there isn't anything
+  // unnecessary lying around.
+  rimraf.sync(outputDirectory);
+  // Remake the output directory
+  fs.mkdirSync(outputDirectory);
+
   for (const [fileName, generatedFile] of Object.entries(generatedFiles)) {
     fs.writeFileSync(path.join(outputDirectory, fileName), generatedFile.output);
   }
