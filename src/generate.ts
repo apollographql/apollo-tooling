@@ -137,5 +137,5 @@ function writeOperationIdsMap(context: any) {
       source: operation.sourceWithFragments
     };
   });
-  fs.writeFileSync(context.operationIdsPath, JSON.stringify(operationIdsMap, null, 2));
+  fs.writeFileSync(context.options.operationIdsPath, JSON.stringify(operationIdsMap, null, 2));
 }
