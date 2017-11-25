@@ -19,12 +19,4 @@ declare module 'babel-types' {
   type TSType = {
     // TODO: Complete this, or wait for babel-types in DefinitelyTyped to get updated.
   }
-
-  /*
-    AnyTypeAnnotation | ArrayTypeAnnotation | BooleanTypeAnnotation
-      | BooleanLiteralTypeAnnotation | FunctionTypeAnnotation | GenericTypeAnnotation | IntersectionTypeAnnotation
-      | MixedTypeAnnotation | NullableTypeAnnotation | NumericLiteralTypeAnnotation | NumberTypeAnnotation
-      | StringLiteralTypeAnnotation | StringTypeAnnotation | ThisTypeAnnotation | TupleTypeAnnotation
-      | TypeofTypeAnnotation | TypeAnnotation | ObjectTypeAnnotation | UnionTypeAnnotation | VoidTypeAnnotation;
-  */
 }
