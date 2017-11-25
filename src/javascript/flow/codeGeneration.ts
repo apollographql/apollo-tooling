@@ -13,18 +13,18 @@ import {
   Fragment,
   SelectionSet,
   Field,
-} from '../compiler';
+} from '../../compiler';
 
 import {
   typeCaseForSelectionSet,
   Variant
-} from '../compiler/visitors/typeCase';
+} from '../../compiler/visitors/typeCase';
 
 import {
   collectAndMergeFields
-} from '../compiler/visitors/collectAndMergeFields';
+} from '../../compiler/visitors/collectAndMergeFields';
 
-import { BasicGeneratedFile } from '../utilities/CodeGenerator';
+import { BasicGeneratedFile } from '../../utilities/CodeGenerator';
 import FlowGenerator, { ObjectProperty, FlowCompilerOptions, } from './language';
 import Printer from './printer';
 
@@ -127,7 +127,7 @@ export class FlowAPIGenerator extends FlowGenerator {
   fileHeader() {
     this.printer.enqueue(
       stripIndent`
-        /* @flow */
+        /* tslint:disable */
         // This file was automatically generated and should not be edited.
       `
     );

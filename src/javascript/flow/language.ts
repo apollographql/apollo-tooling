@@ -5,7 +5,7 @@ import {
 
 import {
   CompilerOptions
-} from '../compiler';
+} from '../../compiler';
 
 import { createTypeAnnotationFromGraphQLTypeFunction } from './helpers';
 
@@ -83,9 +83,6 @@ export default class FlowGenerator {
   public objectTypeAnnotation(fields: ObjectProperty[], isInputObject: boolean = false) {
     const objectTypeAnnotation = t.objectTypeAnnotation(
       fields.map(({name, description, annotation}) => {
-        if (annotation.type === "NullableTypeAnnotation") {
-          t.identifier(name + '?')
-        }
 
         const objectTypeProperty = t.objectTypeProperty(
           t.identifier(

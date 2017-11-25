@@ -11,10 +11,11 @@ import { BasicGeneratedFile } from './utilities/CodeGenerator'
 import { generateSource as generateSwiftSource } from './swift';
 import { generateSource as generateTypescriptSource } from './typescript';
 import { generateSource as generateFlowSource } from './flow';
-import { generateSource as generateFlowModernSource } from './flow-modern';
+import { generateSource as generateFlowModernSource } from './javascript/flow';
+import { generateSource as generateTypescriptModernSource } from './javascript/typescript';
 import { generateSource as generateScalaSource } from './scala';
 
-type TargetType = 'json' | 'swift' | 'ts' | 'typescript' | 'flow' | 'scala' | 'flow-modern';
+type TargetType = 'json' | 'swift' | 'ts' | 'typescript' | 'flow' | 'scala' | 'flow-modern' | 'typescript-modern';
 
 export default function generate(
   inputPaths: string[],
@@ -52,9 +53,11 @@ export default function generate(
       writeOperationIdsMap(context);
     }
   }
-  else if (target === 'flow-modern') {
+  else if (target === 'flow-modern' || target === 'typescript-modern') {
     const context = compileToIR(schema, document, options);
-    const generatedFiles = generateFlowModernSource(context);
+    const generatedFiles = target === 'flow-modern'
+      ? generateFlowModernSource(context)
+      : generateTypescriptModernSource(context) ;
 
     // Group by output directory
     const filesByOutputDirectory: {

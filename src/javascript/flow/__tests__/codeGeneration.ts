@@ -1,13 +1,13 @@
 import { parse } from 'graphql';
 
-import { loadSchema } from '../../loading';
-const schema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
+import { loadSchema } from '../../../loading';
+const schema = loadSchema(require.resolve('../../../../test/fixtures/starwars/schema.json'));
 
 import {
   compileToIR,
   CompilerOptions,
   CompilerContext,
-} from '../../compiler';
+} from '../../../compiler';
 
 import { generateSource } from '../codeGeneration';
 
