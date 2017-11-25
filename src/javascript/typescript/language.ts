@@ -93,7 +93,7 @@ export default class TypescriptGenerator {
               : name
           ),
           annotation.type === "NullableTypeAnnotation"
-            ? this.makeNullableAnnotation(annotation)
+            ? this.makeNullableAnnotation(annotation.typeAnnotation)
             : annotation
         );
 

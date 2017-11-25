@@ -24,7 +24,7 @@ export type HeroName_hero = {
   __typename: \\"Human\\",
   name: string,                                            // What this human calls themselves
   id: string,                                              // The ID of the human
-  homePlanet: ?string | undefined | null,                  // The home planet of the human, or null if unknown
+  homePlanet: string | undefined | null,                   // The home planet of the human, or null if unknown
   friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
@@ -108,7 +108,7 @@ export type humanFragment_friends = {
 
 export type humanFragment = {
   __typename: \\"Human\\",
-  homePlanet: ?string | undefined | null,            // The home planet of the human, or null if unknown
+  homePlanet: string | undefined | null,             // The home planet of the human, or null if unknown
   friends: humanFragment_friends | undefined | null, // This human's friends, or an empty list if they have none
 };
 
@@ -336,7 +336,7 @@ export type HeroName_hero = {
   __typename: \\"Human\\",
   name: string,                                            // What this human calls themselves
   id: string,                                              // The ID of the human
-  homePlanet: ?string | undefined | null,                  // The home planet of the human, or null if unknown
+  homePlanet: string | undefined | null,                   // The home planet of the human, or null if unknown
   friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
@@ -396,7 +396,7 @@ export type HeroName_hero = {
   __typename: \\"Human\\",
   name: string,                                            // What this human calls themselves
   id: string,                                              // The ID of the human
-  homePlanet: ?string | undefined | null,                  // The home planet of the human, or null if unknown
+  homePlanet: string | undefined | null,                   // The home planet of the human, or null if unknown
   friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
@@ -471,8 +471,8 @@ export enum Episode {
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string | undefined | null,
-  favorite_color: ?ColorInput | undefined | null,
+  commentary: string | undefined | null,
+  favorite_color: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
@@ -528,8 +528,8 @@ export enum Episode {
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string | undefined | null,
-  favorite_color: ?ColorInput | undefined | null,
+  commentary: string | undefined | null,
+  favorite_color: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
@@ -560,8 +560,8 @@ TypescriptGeneratedFile {
 
 export type ReviewMovie_createReview = {
   __typename: \\"Review\\",
-  stars: number,                          // The number of stars this review gave, 1-5
-  commentary: ?string | undefined | null, // Comment about the movie
+  stars: number,                         // The number of stars this review gave, 1-5
+  commentary: string | undefined | null, // Comment about the movie
 };
 
 export type ReviewMovie = {
@@ -585,8 +585,8 @@ export enum Episode {
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string | undefined | null,
-  favorite_color: ?ColorInput | undefined | null,
+  commentary: string | undefined | null,
+  favorite_color: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
@@ -637,8 +637,8 @@ export enum Episode {
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string | undefined | null,
-  favorite_color: ?ColorInput | undefined | null,
+  commentary: string | undefined | null,
+  favorite_color: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
@@ -818,8 +818,8 @@ Object {
 
 export type ReviewMovie_createReview = {
   __typename: \\"Review\\",
-  stars: number,                          // The number of stars this review gave, 1-5
-  commentary: ?string | undefined | null, // Comment about the movie
+  stars: number,                         // The number of stars this review gave, 1-5
+  commentary: string | undefined | null, // Comment about the movie
 };
 
 export type ReviewMovie = {
@@ -843,8 +843,8 @@ export enum Episode {
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string | undefined | null,
-  favorite_color: ?ColorInput | undefined | null,
+  commentary: string | undefined | null,
+  favorite_color: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
