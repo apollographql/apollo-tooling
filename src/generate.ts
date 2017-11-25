@@ -15,7 +15,9 @@ import { generateSource as generateFlowModernSource } from './javascript/flow';
 import { generateSource as generateTypescriptModernSource } from './javascript/typescript';
 import { generateSource as generateScalaSource } from './scala';
 
-type TargetType = 'json' | 'swift' | 'ts' | 'typescript' | 'flow' | 'scala' | 'flow-modern' | 'typescript-modern';
+type TargetType = 'json' | 'swift' | 'ts' | 'typescript'
+  | 'flow' | 'scala' | 'flow-modern' | 'typescript-modern'
+  | 'ts-modern';
 
 export default function generate(
   inputPaths: string[],
