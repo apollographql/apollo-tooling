@@ -53,7 +53,7 @@ export default function generate(
       writeOperationIdsMap(context);
     }
   }
-  else if (target === 'flow-modern' || target === 'typescript-modern') {
+  else if (target === 'flow-modern' || target === 'typescript-modern' || target === 'ts-modern') {
     const context = compileToIR(schema, document, options);
     const generatedFiles = target === 'flow-modern'
       ? generateFlowModernSource(context)
