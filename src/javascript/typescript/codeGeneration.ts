@@ -257,11 +257,6 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       let res;
       if (field.selectionSet) {
         const genericAnnotation = this.annotationFromScopeStack(this.scopeStack);
-        if (field.type instanceof GraphQLNonNull) {
-          genericAnnotation.id.name = genericAnnotation.id.name;
-        } else {
-          genericAnnotation.id.name = '?' + genericAnnotation.id.name;
-        }
 
         res = this.handleFieldSelectionSetValue(
           genericAnnotation,
@@ -279,7 +274,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     });
   }
 
-  private handleFieldSelectionSetValue(genericAnnotation: t.GenericTypeAnnotation, field: Field) {
+  private handleFieldSelectionSetValue(generatedTypeAnnotation: t.GenericTypeAnnotation, field: Field) {
     const { selectionSet } = field;
 
     const typeCase = this.getTypeCasesForSelectionSet(selectionSet as SelectionSet);
@@ -305,7 +300,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
 
       exportedTypeAlias = this.exportDeclaration(
         this.typeAliasObjectUnion(
-          genericAnnotation.id.name,
+           generatedTypeAnnotation.id.name,
           propertySets
         )
       );
@@ -313,10 +308,13 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
 
     this.printer.enqueue(exportedTypeAlias);
 
+
     return {
       name: field.alias ? field.alias : field.name,
       description: field.description,
-      annotation: genericAnnotation
+      annotation: field.type instanceof GraphQLNonNull
+        ? generatedTypeAnnotation
+        : this.makeNullableAnnotation(generatedTypeAnnotation)
     };
   }
 

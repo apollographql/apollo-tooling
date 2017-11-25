@@ -93,13 +93,7 @@ export default class TypescriptGenerator {
               : name
           ),
           annotation.type === "NullableTypeAnnotation"
-            ? t.unionTypeAnnotation([
-              annotation,
-              // @ts-ignore
-              t.tSUndefinedKeyword(),
-              // @ts-ignore
-              t.tSNullKeyword()
-            ])
+            ? this.makeNullableAnnotation(annotation)
             : annotation
         );
 
@@ -155,5 +149,15 @@ export default class TypescriptGenerator {
         scope.join('_')
       )
     );
+  }
+
+  public makeNullableAnnotation(annotation: t.FlowTypeAnnotation) {
+    return t.unionTypeAnnotation([
+      annotation,
+      // @ts-ignore
+      t.tSUndefinedKeyword(),
+      // @ts-ignore
+      t.tSNullKeyword()
+    ])
   }
 }

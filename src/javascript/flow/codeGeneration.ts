@@ -256,15 +256,9 @@ export class FlowAPIGenerator extends FlowGenerator {
 
       let res;
       if (field.selectionSet) {
-        const genericAnnotation = this.annotationFromScopeStack(this.scopeStack);
-        if (field.type instanceof GraphQLNonNull) {
-          genericAnnotation.id.name = genericAnnotation.id.name;
-        } else {
-          genericAnnotation.id.name = '?' + genericAnnotation.id.name;
-        }
-
+        const generatedTypeName = this.annotationFromScopeStack(this.scopeStack);
         res = this.handleFieldSelectionSetValue(
-          genericAnnotation,
+          generatedTypeName,
           field
         );
       } else {
@@ -279,8 +273,15 @@ export class FlowAPIGenerator extends FlowGenerator {
     });
   }
 
-  private handleFieldSelectionSetValue(genericAnnotation: t.GenericTypeAnnotation, field: Field) {
+  private handleFieldSelectionSetValue(
+    generatedTypeName: t.GenericTypeAnnotation,
+    field: Field,
+  ) {
     const { selectionSet } = field;
+
+    const selectionValueGeneratedTypeName = field.type instanceof GraphQLNonNull
+      ? generatedTypeName.id.name
+      : '?' + generatedTypeName.id.name;
 
     const typeCase = this.getTypeCasesForSelectionSet(selectionSet as SelectionSet);
     const variants = typeCase.exhaustiveVariants;
@@ -305,7 +306,7 @@ export class FlowAPIGenerator extends FlowGenerator {
 
       exportedTypeAlias = this.exportDeclaration(
         this.typeAliasObjectUnion(
-          genericAnnotation.id.name,
+          generatedTypeName.id.name,
           propertySets
         )
       );
@@ -316,7 +317,9 @@ export class FlowAPIGenerator extends FlowGenerator {
     return {
       name: field.alias ? field.alias : field.name,
       description: field.description,
-      annotation: genericAnnotation
+      annotation: t.genericTypeAnnotation(
+        t.identifier(selectionValueGeneratedTypeName)
+      )
     };
   }
 

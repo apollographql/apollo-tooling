@@ -12,7 +12,7 @@ Object {
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type ?HeroName_hero_Human_friends = {
+export type HeroName_hero_Human_friends = {
   __typename: \\"Human\\",
   name: string, // What this human calls themselves
 } | {
@@ -20,21 +20,21 @@ export type ?HeroName_hero_Human_friends = {
   id: string,   // The ID of the droid
 };
 
-export type ?HeroName_hero = {
+export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                           // What this human calls themselves
-  id: string,                             // The ID of the human
-  homePlanet: ?string | undefined | null, // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends,  // This human's friends, or an empty list if they have none
+  name: string,                                            // What this human calls themselves
+  id: string,                                              // The ID of the human
+  homePlanet: ?string | undefined | null,                  // The home planet of the human, or null if unknown
+  friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                           // What others call this droid
-  id: string,                             // The ID of the droid
-  appearsIn: (?Episode)[],                // The movies this droid appears in
+  name: string,                                            // What others call this droid
+  id: string,                                              // The ID of the droid
+  appearsIn: (?Episode)[],                                 // The movies this droid appears in
 };
 
 export type HeroName = {
-  hero: ?HeroName_hero
+  hero: HeroName_hero | undefined | null
 };
 
 //==============================================================
@@ -98,7 +98,7 @@ export enum Episode {
 // GraphQL fragment: humanFragment
 // ====================================================
 
-export type ?humanFragment_friends = {
+export type humanFragment_friends = {
   __typename: \\"Human\\",
   name: string, // What this human calls themselves
 } | {
@@ -108,8 +108,8 @@ export type ?humanFragment_friends = {
 
 export type humanFragment = {
   __typename: \\"Human\\",
-  homePlanet: ?string | undefined | null, // The home planet of the human, or null if unknown
-  friends: ?humanFragment_friends,        // This human's friends, or an empty list if they have none
+  homePlanet: ?string | undefined | null,            // The home planet of the human, or null if unknown
+  friends: humanFragment_friends | undefined | null, // This human's friends, or an empty list if they have none
 };
 
 //==============================================================
@@ -291,7 +291,7 @@ export type HeroInlineFragment_hero = {
 };
 
 export type HeroInlineFragment = {
-  hero: ?HeroInlineFragment_hero
+  hero: HeroInlineFragment_hero | undefined | null
 };
 
 //==============================================================
@@ -332,21 +332,21 @@ export type HeroName_hero_Human_friends = {
   name: string, // The name of the character
 };
 
-export type ?HeroName_hero = {
+export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                           // What this human calls themselves
-  id: string,                             // The ID of the human
-  homePlanet: ?string | undefined | null, // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends,  // This human's friends, or an empty list if they have none
+  name: string,                                            // What this human calls themselves
+  id: string,                                              // The ID of the human
+  homePlanet: ?string | undefined | null,                  // The home planet of the human, or null if unknown
+  friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                           // What others call this droid
-  id: string,                             // The ID of the droid
-  appearsIn: (?Episode)[],                // The movies this droid appears in
+  name: string,                                            // What others call this droid
+  id: string,                                              // The ID of the droid
+  appearsIn: (?Episode)[],                                 // The movies this droid appears in
 };
 
 export type HeroName = {
-  hero: ?HeroName_hero
+  hero: HeroName_hero | undefined | null
 };
 
 //==============================================================
@@ -392,22 +392,22 @@ export type HeroName_hero_Droid_friends = {
   id: string, // The ID of the character
 };
 
-export type ?HeroName_hero = {
+export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                           // What this human calls themselves
-  id: string,                             // The ID of the human
-  homePlanet: ?string | undefined | null, // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends,  // This human's friends, or an empty list if they have none
+  name: string,                                            // What this human calls themselves
+  id: string,                                              // The ID of the human
+  homePlanet: ?string | undefined | null,                  // The home planet of the human, or null if unknown
+  friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                           // What others call this droid
-  id: string,                             // The ID of the droid
-  appearsIn: (?Episode)[],                // The movies this droid appears in
-  friends: ?HeroName_hero_Droid_friends,  // This droid's friends, or an empty list if they have none
+  name: string,                                            // What others call this droid
+  id: string,                                              // The ID of the droid
+  appearsIn: (?Episode)[],                                 // The movies this droid appears in
+  friends: HeroName_hero_Droid_friends | undefined | null, // This droid's friends, or an empty list if they have none
 };
 
 export type HeroName = {
-  hero: ?HeroName_hero
+  hero: HeroName_hero | undefined | null
 };
 
 //==============================================================
@@ -451,7 +451,7 @@ export type HeroName_hero = {
 };
 
 export type HeroName = {
-  hero: ?HeroName_hero
+  hero: HeroName_hero | undefined | null
 };
 
 //==============================================================
@@ -508,7 +508,7 @@ export type SomeOther_hero = {
 };
 
 export type SomeOther = {
-  hero: ?SomeOther_hero
+  hero: SomeOther_hero | undefined | null
 };
 
 //==============================================================
@@ -565,7 +565,7 @@ export type ReviewMovie_createReview = {
 };
 
 export type ReviewMovie = {
-  createReview: ?ReviewMovie_createReview
+  createReview: ReviewMovie_createReview | undefined | null
 };
 
 //==============================================================
@@ -673,7 +673,7 @@ export type HeroFragment_hero = {
 };
 
 export type HeroFragment = {
-  hero: ?HeroFragment_hero
+  hero: HeroFragment_hero | undefined | null
 };
 
 //==============================================================
@@ -780,7 +780,7 @@ export type HeroName_hero = {
 };
 
 export type HeroName = {
-  hero: ?HeroName_hero
+  hero: HeroName_hero | undefined | null
 };
 
 //==============================================================
@@ -823,7 +823,7 @@ export type ReviewMovie_createReview = {
 };
 
 export type ReviewMovie = {
-  createReview: ?ReviewMovie_createReview
+  createReview: ReviewMovie_createReview | undefined | null
 };
 
 //==============================================================
