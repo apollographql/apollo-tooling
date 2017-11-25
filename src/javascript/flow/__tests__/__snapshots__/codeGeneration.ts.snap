@@ -5,7 +5,7 @@ Object {
   "__generated__/HeroName.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -54,7 +54,7 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
   "__generated__/droidFragment.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -83,7 +83,7 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
   "__generated__/humanFragment.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -126,7 +126,7 @@ Object {
   "__generated__/anotherFragment.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -153,7 +153,7 @@ export type anotherFragment = {
   "__generated__/simpleFragment.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -184,7 +184,7 @@ Object {
   "__generated__/anotherFragment.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -223,7 +223,7 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
   "__generated__/simpleFragment.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -257,7 +257,7 @@ Object {
   "__generated__/HeroInlineFragment.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -296,7 +296,7 @@ Object {
   "__generated__/HeroName.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -347,7 +347,7 @@ Object {
   "__generated__/HeroName.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -405,7 +405,7 @@ exports[`Flow codeGeneration multiple files 2`] = `
 FlowGeneratedFile {
   "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -458,7 +458,7 @@ exports[`Flow codeGeneration multiple files 4`] = `
 FlowGeneratedFile {
   "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -511,7 +511,7 @@ exports[`Flow codeGeneration multiple files 6`] = `
 FlowGeneratedFile {
   "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -564,7 +564,7 @@ exports[`Flow codeGeneration multiple files 8`] = `
 FlowGeneratedFile {
   "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -611,7 +611,7 @@ Object {
   "__generated__/HeroFragment.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -645,7 +645,7 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
   "__generated__/simpleFragment.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -679,7 +679,7 @@ Object {
   "__generated__/SimpleFragment.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -710,7 +710,7 @@ Object {
   "__generated__/HeroName.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -749,7 +749,7 @@ Object {
   "__generated__/ReviewMovie.js": FlowGeneratedFile {
     "fileContents": "
 
-/* tslint:disable */
+/* @flow */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
