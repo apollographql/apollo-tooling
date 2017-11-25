@@ -28,7 +28,7 @@ import { BasicGeneratedFile } from '../../utilities/CodeGenerator';
 import TypescriptGenerator, { ObjectProperty, TypescriptCompilerOptions, } from './language';
 import Printer from './printer';
 
-class FlowGeneratedFile implements BasicGeneratedFile {
+class TypescriptGeneratedFile implements BasicGeneratedFile {
   fileContents: string;
 
   constructor(fileContents: string) {
@@ -72,7 +72,7 @@ export function generateSource(
   context: CompilerContext,
 ) {
   const generator = new TypescriptAPIGenerator(context);
-  const generatedFiles: { [filePath: string]: FlowGeneratedFile } = {};
+  const generatedFiles: { [filePath: string]: TypescriptGeneratedFile } = {};
 
   Object.values(context.operations)
     .forEach((operation) => {
@@ -88,7 +88,7 @@ export function generateSource(
         `${operation.operationName}.js`
       );
 
-      generatedFiles[outputFilePath] = new FlowGeneratedFile(output);
+      generatedFiles[outputFilePath] = new TypescriptGeneratedFile(output);
     });
 
   Object.values(context.fragments)
@@ -105,7 +105,7 @@ export function generateSource(
         `${fragment.fragmentName}.js`
       );
 
-      generatedFiles[outputFilePath] = new FlowGeneratedFile(output);
+      generatedFiles[outputFilePath] = new TypescriptGeneratedFile(output);
     });
 
   return generatedFiles;
