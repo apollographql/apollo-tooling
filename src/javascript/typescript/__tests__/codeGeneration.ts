@@ -76,7 +76,7 @@ describe('Typescript codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('simple mutation', () => {
+  test.only('simple mutation', () => {
     const context = compile(`
       mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
         createReview(episode: $episode, review: $review) {

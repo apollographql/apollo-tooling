@@ -843,8 +843,8 @@ export enum Episode {
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: string | undefined | null,
-  favorite_color: ColorInput | undefined | null,
+  commentary?: string | undefined | null,
+  favorite_color?: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
