@@ -435,8 +435,8 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string,
-  favorite_color: ?ColorInput,
+  commentary?: ?string,
+  favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
@@ -488,8 +488,8 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string,
-  favorite_color: ?ColorInput,
+  commentary?: ?string,
+  favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
@@ -541,8 +541,8 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string,
-  favorite_color: ?ColorInput,
+  commentary?: ?string,
+  favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
@@ -589,8 +589,8 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string,
-  favorite_color: ?ColorInput,
+  commentary?: ?string,
+  favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
@@ -779,8 +779,8 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string,
-  favorite_color: ?ColorInput,
+  commentary?: ?string,
+  favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color

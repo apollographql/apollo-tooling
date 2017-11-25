@@ -70,7 +70,9 @@ export default class FlowGenerator {
         }
       });
 
-    const typeAlias = this.typeAliasObject(name, fields);
+    const typeAlias = this.typeAliasObject(name, fields, {
+      keyInheritsNullability: true
+    });
 
     typeAlias.leadingComments = [{
       type: 'CommentLine',
@@ -80,7 +82,11 @@ export default class FlowGenerator {
     return typeAlias;
   }
 
-  public objectTypeAnnotation(fields: ObjectProperty[], isInputObject: boolean = false) {
+  public objectTypeAnnotation(fields: ObjectProperty[], {
+    keyInheritsNullability = false
+  } : {
+    keyInheritsNullability?: boolean
+  } = {}) {
     const objectTypeAnnotation = t.objectTypeAnnotation(
       fields.map(({name, description, annotation}) => {
 
@@ -88,7 +94,7 @@ export default class FlowGenerator {
           t.identifier(
             // Nullable fields on input objects do not have to be defined
             // as well, so allow these fields to be "undefined"
-            (isInputObject && annotation.type === "NullableTypeAnnotation")
+            (keyInheritsNullability && annotation.type === "NullableTypeAnnotation")
               ? name + '?'
               : name
           ),
@@ -113,11 +119,17 @@ export default class FlowGenerator {
     return objectTypeAnnotation;
   }
 
-  public typeAliasObject(name: string, fields: ObjectProperty[]) {
+  public typeAliasObject(name: string, fields: ObjectProperty[], {
+    keyInheritsNullability = false
+  }: {
+    keyInheritsNullability?: boolean
+  } = {}) {
     return t.typeAlias(
       t.identifier(name),
       undefined,
-      this.objectTypeAnnotation(fields)
+      this.objectTypeAnnotation(fields, {
+        keyInheritsNullability
+      })
     );
   }
 
