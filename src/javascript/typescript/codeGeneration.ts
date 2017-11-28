@@ -13,22 +13,22 @@ import {
   Fragment,
   SelectionSet,
   Field,
-} from '../compiler';
+} from '../../compiler';
 
 import {
   typeCaseForSelectionSet,
   Variant
-} from '../compiler/visitors/typeCase';
+} from '../../compiler/visitors/typeCase';
 
 import {
   collectAndMergeFields
-} from '../compiler/visitors/collectAndMergeFields';
+} from '../../compiler/visitors/collectAndMergeFields';
 
-import { BasicGeneratedFile } from '../utilities/CodeGenerator';
-import FlowGenerator, { ObjectProperty, FlowCompilerOptions, } from './language';
+import { BasicGeneratedFile } from '../../utilities/CodeGenerator';
+import TypescriptGenerator, { ObjectProperty, TypescriptCompilerOptions, } from './language';
 import Printer from './printer';
 
-class FlowGeneratedFile implements BasicGeneratedFile {
+class TypescriptGeneratedFile implements BasicGeneratedFile {
   fileContents: string;
 
   constructor(fileContents: string) {
@@ -39,7 +39,7 @@ class FlowGeneratedFile implements BasicGeneratedFile {
   }
 }
 
-function printEnumsAndInputObjects(generator: FlowAPIGenerator, context: CompilerContext) {
+function printEnumsAndInputObjects(generator: TypescriptAPIGenerator, context: CompilerContext) {
   generator.printer.enqueue(stripIndent`
     //==============================================================
     // START Enums and Input Objects
@@ -71,8 +71,8 @@ function printEnumsAndInputObjects(generator: FlowAPIGenerator, context: Compile
 export function generateSource(
   context: CompilerContext,
 ) {
-  const generator = new FlowAPIGenerator(context);
-  const generatedFiles: { [filePath: string]: FlowGeneratedFile } = {};
+  const generator = new TypescriptAPIGenerator(context);
+  const generatedFiles: { [filePath: string]: TypescriptGeneratedFile } = {};
 
   Object.values(context.operations)
     .forEach((operation) => {
@@ -88,7 +88,7 @@ export function generateSource(
         `${operation.operationName}.js`
       );
 
-      generatedFiles[outputFilePath] = new FlowGeneratedFile(output);
+      generatedFiles[outputFilePath] = new TypescriptGeneratedFile(output);
     });
 
   Object.values(context.fragments)
@@ -105,19 +105,19 @@ export function generateSource(
         `${fragment.fragmentName}.js`
       );
 
-      generatedFiles[outputFilePath] = new FlowGeneratedFile(output);
+      generatedFiles[outputFilePath] = new TypescriptGeneratedFile(output);
     });
 
   return generatedFiles;
 }
 
-export class FlowAPIGenerator extends FlowGenerator {
+export class TypescriptAPIGenerator extends TypescriptGenerator {
   context: CompilerContext
   printer: Printer
   scopeStack: string[]
 
   constructor(context: CompilerContext) {
-    super(context.options as FlowCompilerOptions);
+    super(context.options as TypescriptCompilerOptions);
 
     this.context = context;
     this.printer = new Printer();
@@ -127,7 +127,7 @@ export class FlowAPIGenerator extends FlowGenerator {
   fileHeader() {
     this.printer.enqueue(
       stripIndent`
-        /* @flow */
+        /* tslint:disable */
         // This file was automatically generated and should not be edited.
       `
     );
@@ -257,11 +257,6 @@ export class FlowAPIGenerator extends FlowGenerator {
       let res;
       if (field.selectionSet) {
         const genericAnnotation = this.annotationFromScopeStack(this.scopeStack);
-        if (field.type instanceof GraphQLNonNull) {
-          genericAnnotation.id.name = genericAnnotation.id.name;
-        } else {
-          genericAnnotation.id.name = '?' + genericAnnotation.id.name;
-        }
 
         res = this.handleFieldSelectionSetValue(
           genericAnnotation,
@@ -279,7 +274,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     });
   }
 
-  private handleFieldSelectionSetValue(genericAnnotation: t.GenericTypeAnnotation, field: Field) {
+  private handleFieldSelectionSetValue(generatedTypeAnnotation: t.GenericTypeAnnotation, field: Field) {
     const { selectionSet } = field;
 
     const typeCase = this.getTypeCasesForSelectionSet(selectionSet as SelectionSet);
@@ -305,7 +300,7 @@ export class FlowAPIGenerator extends FlowGenerator {
 
       exportedTypeAlias = this.exportDeclaration(
         this.typeAliasObjectUnion(
-          genericAnnotation.id.name,
+           generatedTypeAnnotation.id.name,
           propertySets
         )
       );
@@ -313,10 +308,13 @@ export class FlowAPIGenerator extends FlowGenerator {
 
     this.printer.enqueue(exportedTypeAlias);
 
+
     return {
       name: field.alias ? field.alias : field.name,
       description: field.description,
-      annotation: genericAnnotation
+      annotation: field.type instanceof GraphQLNonNull
+        ? generatedTypeAnnotation
+        : this.makeNullableAnnotation(generatedTypeAnnotation)
     };
   }
 
