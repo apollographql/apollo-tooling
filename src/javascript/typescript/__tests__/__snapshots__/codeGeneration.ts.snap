@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Flow codeGeneration fragment spreads with inline fragments 1`] = `
+exports[`Typescript codeGeneration fragment spreads with inline fragments 1`] = `
 Object {
-  "__generated__/HeroName.js": FlowGeneratedFile {
+  "__generated__/HeroName.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type ?HeroName_hero_Human_friends = {
+export type HeroName_hero_Human_friends = {
   __typename: \\"Human\\",
   name: string, // What this human calls themselves
 } | {
@@ -20,21 +20,21 @@ export type ?HeroName_hero_Human_friends = {
   id: string,   // The ID of the droid
 };
 
-export type ?HeroName_hero = {
+export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                          // What this human calls themselves
-  id: string,                            // The ID of the human
-  homePlanet: ?string,                   // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+  name: string,                                            // What this human calls themselves
+  id: string,                                              // The ID of the human
+  homePlanet: string | undefined | null,                   // The home planet of the human, or null if unknown
+  friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                          // What others call this droid
-  id: string,                            // The ID of the droid
-  appearsIn: (?Episode)[],               // The movies this droid appears in
+  name: string,                                            // What others call this droid
+  id: string,                                              // The ID of the droid
+  appearsIn: (?Episode)[],                                 // The movies this droid appears in
 };
 
 export type HeroName = {
-  hero: ?HeroName_hero
+  hero: HeroName_hero | undefined | null
 };
 
 //==============================================================
@@ -45,16 +45,20 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/droidFragment.js": FlowGeneratedFile {
+  "__generated__/droidFragment.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -74,23 +78,27 @@ export type droidFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/humanFragment.js": FlowGeneratedFile {
+  "__generated__/humanFragment.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
 // GraphQL fragment: humanFragment
 // ====================================================
 
-export type ?humanFragment_friends = {
+export type humanFragment_friends = {
   __typename: \\"Human\\",
   name: string, // What this human calls themselves
 } | {
@@ -100,8 +108,8 @@ export type ?humanFragment_friends = {
 
 export type humanFragment = {
   __typename: \\"Human\\",
-  homePlanet: ?string,             // The home planet of the human, or null if unknown
-  friends: ?humanFragment_friends, // This human's friends, or an empty list if they have none
+  homePlanet: string | undefined | null,             // The home planet of the human, or null if unknown
+  friends: humanFragment_friends | undefined | null, // This human's friends, or an empty list if they have none
 };
 
 //==============================================================
@@ -112,7 +120,11 @@ export type humanFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -121,12 +133,12 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 }
 `;
 
-exports[`Flow codeGeneration fragment with fragment spreads 1`] = `
+exports[`Typescript codeGeneration fragment with fragment spreads 1`] = `
 Object {
-  "__generated__/anotherFragment.js": FlowGeneratedFile {
+  "__generated__/anotherFragment.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -150,10 +162,10 @@ export type anotherFragment = {
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/simpleFragment.js": FlowGeneratedFile {
+  "__generated__/simpleFragment.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -179,12 +191,12 @@ export type simpleFragment = {
 }
 `;
 
-exports[`Flow codeGeneration fragment with fragment spreads with inline fragment 1`] = `
+exports[`Typescript codeGeneration fragment with fragment spreads with inline fragment 1`] = `
 Object {
-  "__generated__/anotherFragment.js": FlowGeneratedFile {
+  "__generated__/anotherFragment.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -214,16 +226,20 @@ export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/simpleFragment.js": FlowGeneratedFile {
+  "__generated__/simpleFragment.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -243,7 +259,11 @@ export type simpleFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -252,12 +272,12 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 }
 `;
 
-exports[`Flow codeGeneration inline fragment 1`] = `
+exports[`Typescript codeGeneration inline fragment 1`] = `
 Object {
-  "__generated__/HeroInlineFragment.js": FlowGeneratedFile {
+  "__generated__/HeroInlineFragment.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -271,7 +291,7 @@ export type HeroInlineFragment_hero = {
 };
 
 export type HeroInlineFragment = {
-  hero: ?HeroInlineFragment_hero
+  hero: HeroInlineFragment_hero | undefined | null
 };
 
 //==============================================================
@@ -282,7 +302,11 @@ export type HeroInlineFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -291,12 +315,12 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 }
 `;
 
-exports[`Flow codeGeneration inline fragment on type conditions 1`] = `
+exports[`Typescript codeGeneration inline fragment on type conditions 1`] = `
 Object {
-  "__generated__/HeroName.js": FlowGeneratedFile {
+  "__generated__/HeroName.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -308,21 +332,21 @@ export type HeroName_hero_Human_friends = {
   name: string, // The name of the character
 };
 
-export type ?HeroName_hero = {
+export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                          // What this human calls themselves
-  id: string,                            // The ID of the human
-  homePlanet: ?string,                   // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+  name: string,                                            // What this human calls themselves
+  id: string,                                              // The ID of the human
+  homePlanet: string | undefined | null,                   // The home planet of the human, or null if unknown
+  friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                          // What others call this droid
-  id: string,                            // The ID of the droid
-  appearsIn: (?Episode)[],               // The movies this droid appears in
+  name: string,                                            // What others call this droid
+  id: string,                                              // The ID of the droid
+  appearsIn: (?Episode)[],                                 // The movies this droid appears in
 };
 
 export type HeroName = {
-  hero: ?HeroName_hero
+  hero: HeroName_hero | undefined | null
 };
 
 //==============================================================
@@ -333,7 +357,11 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -342,12 +370,12 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 }
 `;
 
-exports[`Flow codeGeneration inline fragment on type conditions with differing inner fields 1`] = `
+exports[`Typescript codeGeneration inline fragment on type conditions with differing inner fields 1`] = `
 Object {
-  "__generated__/HeroName.js": FlowGeneratedFile {
+  "__generated__/HeroName.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -364,22 +392,22 @@ export type HeroName_hero_Droid_friends = {
   id: string, // The ID of the character
 };
 
-export type ?HeroName_hero = {
+export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                          // What this human calls themselves
-  id: string,                            // The ID of the human
-  homePlanet: ?string,                   // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+  name: string,                                            // What this human calls themselves
+  id: string,                                              // The ID of the human
+  homePlanet: string | undefined | null,                   // The home planet of the human, or null if unknown
+  friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                          // What others call this droid
-  id: string,                            // The ID of the droid
-  appearsIn: (?Episode)[],               // The movies this droid appears in
-  friends: ?HeroName_hero_Droid_friends, // This droid's friends, or an empty list if they have none
+  name: string,                                            // What others call this droid
+  id: string,                                              // The ID of the droid
+  appearsIn: (?Episode)[],                                 // The movies this droid appears in
+  friends: HeroName_hero_Droid_friends | undefined | null, // This droid's friends, or an empty list if they have none
 };
 
 export type HeroName = {
-  hero: ?HeroName_hero
+  hero: HeroName_hero | undefined | null
 };
 
 //==============================================================
@@ -390,7 +418,11 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -399,13 +431,13 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 }
 `;
 
-exports[`Flow codeGeneration multiple files 1`] = `"/some/file/__generated__/HeroName.js"`;
+exports[`Typescript codeGeneration multiple files 1`] = `"/some/file/__generated__/HeroName.js"`;
 
-exports[`Flow codeGeneration multiple files 2`] = `
-FlowGeneratedFile {
+exports[`Typescript codeGeneration multiple files 2`] = `
+TypescriptGeneratedFile {
   "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -419,7 +451,7 @@ export type HeroName_hero = {
 };
 
 export type HeroName = {
-  hero: ?HeroName_hero
+  hero: HeroName_hero | undefined | null
 };
 
 //==============================================================
@@ -430,13 +462,17 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string,
-  favorite_color: ?ColorInput,
+  commentary: string | undefined | null,
+  favorite_color: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
@@ -452,13 +488,13 @@ type ColorInput = {
 }
 `;
 
-exports[`Flow codeGeneration multiple files 3`] = `"/some/file/__generated__/SomeOther.js"`;
+exports[`Typescript codeGeneration multiple files 3`] = `"/some/file/__generated__/SomeOther.js"`;
 
-exports[`Flow codeGeneration multiple files 4`] = `
-FlowGeneratedFile {
+exports[`Typescript codeGeneration multiple files 4`] = `
+TypescriptGeneratedFile {
   "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -472,7 +508,7 @@ export type SomeOther_hero = {
 };
 
 export type SomeOther = {
-  hero: ?SomeOther_hero
+  hero: SomeOther_hero | undefined | null
 };
 
 //==============================================================
@@ -483,13 +519,17 @@ export type SomeOther = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string,
-  favorite_color: ?ColorInput,
+  commentary: string | undefined | null,
+  favorite_color: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
@@ -505,13 +545,13 @@ type ColorInput = {
 }
 `;
 
-exports[`Flow codeGeneration multiple files 5`] = `"__generated__/ReviewMovie.js"`;
+exports[`Typescript codeGeneration multiple files 5`] = `"__generated__/ReviewMovie.js"`;
 
-exports[`Flow codeGeneration multiple files 6`] = `
-FlowGeneratedFile {
+exports[`Typescript codeGeneration multiple files 6`] = `
+TypescriptGeneratedFile {
   "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -520,12 +560,12 @@ FlowGeneratedFile {
 
 export type ReviewMovie_createReview = {
   __typename: \\"Review\\",
-  stars: number,       // The number of stars this review gave, 1-5
-  commentary: ?string, // Comment about the movie
+  stars: number,                         // The number of stars this review gave, 1-5
+  commentary: string | undefined | null, // Comment about the movie
 };
 
 export type ReviewMovie = {
-  createReview: ?ReviewMovie_createReview
+  createReview: ReviewMovie_createReview | undefined | null
 };
 
 //==============================================================
@@ -536,13 +576,17 @@ export type ReviewMovie = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string,
-  favorite_color: ?ColorInput,
+  commentary: string | undefined | null,
+  favorite_color: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
@@ -558,13 +602,13 @@ type ColorInput = {
 }
 `;
 
-exports[`Flow codeGeneration multiple files 7`] = `"/some/file/__generated__/someFragment.js"`;
+exports[`Typescript codeGeneration multiple files 7`] = `"/some/file/__generated__/someFragment.js"`;
 
-exports[`Flow codeGeneration multiple files 8`] = `
-FlowGeneratedFile {
+exports[`Typescript codeGeneration multiple files 8`] = `
+TypescriptGeneratedFile {
   "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -584,13 +628,17 @@ export type someFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string,
-  favorite_color: ?ColorInput,
+  commentary: string | undefined | null,
+  favorite_color: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
@@ -606,12 +654,12 @@ type ColorInput = {
 }
 `;
 
-exports[`Flow codeGeneration query with fragment spreads 1`] = `
+exports[`Typescript codeGeneration query with fragment spreads 1`] = `
 Object {
-  "__generated__/HeroFragment.js": FlowGeneratedFile {
+  "__generated__/HeroFragment.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -625,7 +673,7 @@ export type HeroFragment_hero = {
 };
 
 export type HeroFragment = {
-  hero: ?HeroFragment_hero
+  hero: HeroFragment_hero | undefined | null
 };
 
 //==============================================================
@@ -636,16 +684,20 @@ export type HeroFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/simpleFragment.js": FlowGeneratedFile {
+  "__generated__/simpleFragment.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -665,7 +717,11 @@ export type simpleFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -674,12 +730,12 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 }
 `;
 
-exports[`Flow codeGeneration simple fragment 1`] = `
+exports[`Typescript codeGeneration simple fragment 1`] = `
 Object {
-  "__generated__/SimpleFragment.js": FlowGeneratedFile {
+  "__generated__/SimpleFragment.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -705,12 +761,12 @@ export type SimpleFragment = {
 }
 `;
 
-exports[`Flow codeGeneration simple hero query 1`] = `
+exports[`Typescript codeGeneration simple hero query 1`] = `
 Object {
-  "__generated__/HeroName.js": FlowGeneratedFile {
+  "__generated__/HeroName.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -724,7 +780,7 @@ export type HeroName_hero = {
 };
 
 export type HeroName = {
-  hero: ?HeroName_hero
+  hero: HeroName_hero | undefined | null
 };
 
 //==============================================================
@@ -735,7 +791,11 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -744,12 +804,12 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 }
 `;
 
-exports[`Flow codeGeneration simple mutation 1`] = `
+exports[`Typescript codeGeneration simple mutation 1`] = `
 Object {
-  "__generated__/ReviewMovie.js": FlowGeneratedFile {
+  "__generated__/ReviewMovie.js": TypescriptGeneratedFile {
     "fileContents": "
 
-/* @flow */
+/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -758,12 +818,12 @@ Object {
 
 export type ReviewMovie_createReview = {
   __typename: \\"Review\\",
-  stars: number,       // The number of stars this review gave, 1-5
-  commentary: ?string, // Comment about the movie
+  stars: number,                         // The number of stars this review gave, 1-5
+  commentary: string | undefined | null, // Comment about the movie
 };
 
 export type ReviewMovie = {
-  createReview: ?ReviewMovie_createReview
+  createReview: ReviewMovie_createReview | undefined | null
 };
 
 //==============================================================
@@ -774,13 +834,17 @@ export type ReviewMovie = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export enum Episode {
+  NEWHOPE = \\"NEWHOPE\\",
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+}
 
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: ?string,
-  favorite_color: ?ColorInput,
+  commentary?: string | undefined | null,
+  favorite_color?: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color

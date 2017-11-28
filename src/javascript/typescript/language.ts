@@ -5,7 +5,7 @@ import {
 
 import {
   CompilerOptions
-} from '../compiler';
+} from '../../compiler';
 
 import { createTypeAnnotationFromGraphQLTypeFunction } from './helpers';
 
@@ -17,15 +17,15 @@ export type ObjectProperty = {
   annotation: t.FlowTypeAnnotation
 }
 
-export interface FlowCompilerOptions extends CompilerOptions {
-  useFlowExactObjects: boolean
+export interface TypescriptCompilerOptions extends CompilerOptions {
+  // Leaving this open for Typescript only compiler options
 }
 
-export default class FlowGenerator {
-  options: FlowCompilerOptions
+export default class TypescriptGenerator {
+  options: TypescriptCompilerOptions
   typeAnnotationFromGraphQLType: Function
 
-  constructor(compilerOptions: FlowCompilerOptions) {
+  constructor(compilerOptions: TypescriptCompilerOptions) {
     this.options = compilerOptions;
 
     this.typeAnnotationFromGraphQLType = createTypeAnnotationFromGraphQLTypeFunction(compilerOptions);
@@ -33,18 +33,19 @@ export default class FlowGenerator {
 
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
-    const unionValues = type.getValues().map(({ value }) => {
-      const type = t.stringLiteralTypeAnnotation();
-      type.value = value;
-
-      return type;
+    const enumMembers = type.getValues().map(({ value }) => {
+      // @ts-ignore
+      return t.tSEnumMember(
+        t.identifier(value),
+        t.stringLiteral(value)
+      );
     });
 
     const typeAlias = t.exportNamedDeclaration(
-      t.typeAlias(
+      // @ts-ignore
+      t.tSEnumDeclaration(
         t.identifier(name),
-        undefined,
-        t.unionTypeAnnotation(unionValues)
+        enumMembers
       ),
       []
     );
@@ -70,7 +71,9 @@ export default class FlowGenerator {
         }
       });
 
-    const typeAlias = this.typeAliasObject(name, fields);
+    const typeAlias = this.typeAliasObject(name, fields, {
+      keyInheritsNullability: true
+    });
 
     typeAlias.leadingComments = [{
       type: 'CommentLine',
@@ -80,22 +83,24 @@ export default class FlowGenerator {
     return typeAlias;
   }
 
-  public objectTypeAnnotation(fields: ObjectProperty[], isInputObject: boolean = false) {
+  public objectTypeAnnotation(fields: ObjectProperty[], {
+    keyInheritsNullability = false
+  } : {
+    keyInheritsNullability?: boolean
+  } = {}) {
     const objectTypeAnnotation = t.objectTypeAnnotation(
       fields.map(({name, description, annotation}) => {
-        if (annotation.type === "NullableTypeAnnotation") {
-          t.identifier(name + '?')
-        }
-
         const objectTypeProperty = t.objectTypeProperty(
           t.identifier(
             // Nullable fields on input objects do not have to be defined
             // as well, so allow these fields to be "undefined"
-            (isInputObject && annotation.type === "NullableTypeAnnotation")
+            (keyInheritsNullability && annotation.type === "NullableTypeAnnotation")
               ? name + '?'
               : name
           ),
-          annotation
+          annotation.type === "NullableTypeAnnotation"
+            ? this.makeNullableAnnotation(annotation.typeAnnotation)
+            : annotation
         );
 
         if (description) {
@@ -109,18 +114,20 @@ export default class FlowGenerator {
       })
     );
 
-    if (this.options.useFlowExactObjects) {
-      objectTypeAnnotation.exact = true;
-    }
-
     return objectTypeAnnotation;
   }
 
-  public typeAliasObject(name: string, fields: ObjectProperty[]) {
+  public typeAliasObject(name: string, fields: ObjectProperty[], {
+    keyInheritsNullability = false
+  }: {
+    keyInheritsNullability?: boolean
+  } = {}) {
     return t.typeAlias(
       t.identifier(name),
       undefined,
-      this.objectTypeAnnotation(fields)
+      this.objectTypeAnnotation(fields, {
+        keyInheritsNullability
+      })
     );
   }
 
@@ -154,5 +161,15 @@ export default class FlowGenerator {
         scope.join('_')
       )
     );
+  }
+
+  public makeNullableAnnotation(annotation: t.FlowTypeAnnotation) {
+    return t.unionTypeAnnotation([
+      annotation,
+      // @ts-ignore
+      t.tSUndefinedKeyword(),
+      // @ts-ignore
+      t.tSNullKeyword()
+    ])
   }
 }

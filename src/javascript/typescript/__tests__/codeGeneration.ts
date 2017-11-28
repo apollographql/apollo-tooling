@@ -1,13 +1,13 @@
 import { parse } from 'graphql';
 
-import { loadSchema } from '../../loading';
-const schema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
+import { loadSchema } from '../../../loading';
+const schema = loadSchema(require.resolve('../../../../test/fixtures/starwars/schema.json'));
 
 import {
   compileToIR,
   CompilerOptions,
   CompilerContext,
-} from '../../compiler';
+} from '../../../compiler';
 
 import { generateSource } from '../codeGeneration';
 
@@ -22,7 +22,7 @@ function compile(
   return compileToIR(schema, document, options);
 }
 
-describe('Flow codeGeneration', () => {
+describe('Typescript codeGeneration', () => {
   test('multiple files', () => {
     const context = compile(`
       query HeroName($episode: Episode) {
@@ -76,7 +76,7 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('simple mutation', () => {
+  test.only('simple mutation', () => {
     const context = compile(`
       mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
         createReview(episode: $episode, review: $review) {
