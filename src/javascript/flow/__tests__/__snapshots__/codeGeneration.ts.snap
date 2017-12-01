@@ -252,6 +252,41 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 }
 `;
 
+exports[`Flow codeGeneration handles multiline graphql comments 1`] = `
+Object {
+  "__generated__/CustomScalar.js": FlowGeneratedFile {
+    "fileContents": "
+
+/* @flow */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: CustomScalar
+// ====================================================
+
+export type CustomScalar_commentTest = {
+  __typename: \\"CommentTest\\",
+  multiLine: ?string, // This is a multi-line comment.
+};
+
+export type CustomScalar = {
+  commentTest: ?CustomScalar_commentTest
+};
+
+//==============================================================
+// START Enums and Input Objects
+// All enums and input objects are included in every output file
+// for now, but this will be changed soon.
+// TODO: Link to issue to fix this.
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  },
+}
+`;
+
 exports[`Flow codeGeneration inline fragment 1`] = `
 Object {
   "__generated__/HeroInlineFragment.js": FlowGeneratedFile {
