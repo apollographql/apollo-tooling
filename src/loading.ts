@@ -10,8 +10,6 @@ import {
   GraphQLSchema
 } from 'graphql';
 
-import * as babel from '@babel/core';
-
 import {
   getGraphQLProjectConfig,
   ConfigNotFoundError
