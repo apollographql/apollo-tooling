@@ -50,10 +50,12 @@ export default class TypescriptGenerator {
       []
     );
 
-    typeAlias.leadingComments = [{
-      type: 'CommentLine',
-      value: ` ${description.replace('\n', ' ')}`
-    } as t.CommentLine];
+    if (description) {
+      typeAlias.leadingComments = [{
+        type: 'CommentLine',
+        value: ` ${description.replace('\n', ' ')}`
+      } as t.CommentLine];
+    }
 
     return typeAlias;
   }
