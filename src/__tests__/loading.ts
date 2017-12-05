@@ -48,9 +48,15 @@ describe('extractDocumentFromJavascript', () => {
     expect(extractDocumentFromJavascript(contents))
       .toBeNull();
   });
+
+  test('invalid gql', () => {
+    const contents = fs.readFileSync(path.join(__dirname, '__fixtures__', 'invalid.js')).toString();
+    expect(extractDocumentFromJavascript(contents))
+      .toBeNull();
+  });
 });
 
-describe.skip('Validation', () => {
+describe('Validation', () => {
   test(`should extract gql snippet from javascript file`, () => {
     const inputPaths = [
       path.join(__dirname, '../../test/fixtures/starwars/gqlQueries.js'),

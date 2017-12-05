@@ -1,4 +1,5 @@
 import * as fs from 'fs'
+import { stripIndents } from 'common-tags'
 
 import {
   buildClientSchema,
@@ -49,37 +50,53 @@ export function loadSchemaFromConfig(projectName: string): GraphQLSchema {
   throw new ToolError(`No GraphQL schema specified. There must either be a .graphqlconfig or a ${defaultSchemaPath} file present, or you must use the --schema option.`);
 }
 
-export function extractDocumentFromJavascript(content: string, options: {
-  tagName?: string,
-  inputPath?: string
-}): string | null {
-  const tagName = options.tagName || 'gql';
-  const inputPath = options.inputPath;
+function maybeCommentedOut(content: string) {
+  return (content.indexOf('/*') > -1 && content.indexOf('*/') > -1) ||
+    content.split('//').length > 1;
+}
 
-  const contentWithoutComments = babel.transform(content, {
-    comments: false
-  }).code;
+function filterValidDocuments(documents: string[]) {
+  return documents.filter(document => {
+    const source = new Source(document);
+    try {
+      parse(source);
+      return true;
+    } catch (e) {
+      if (!maybeCommentedOut(document)) {
+        console.warn(
+          stripIndents`
+            Failed to parse:
 
-  let targetContent: string;
-  // This is undefined is the document cannot successfully be transformed (parse error);
-  if (contentWithoutComments === undefined) {
-    console.warn('Could not successfully parse: ${inputPath}. Is there a syntax error? Type definitions for operations in this file may be missing.')
-    targetContent = content;
-  } else {
-    targetContent = contentWithoutComments;
-  }
+            ${document.trim().split('\n')[0]}...
+          `
+        );
+      }
+
+      return false;
+    }
+  });
+}
+
+export function extractDocumentFromJavascript(
+  content: string,
+  options: {
+    tagName?: string,
+  } = {}
+): string | null {
+  let tagName = options.tagName || 'gql';
 
   const re = new RegExp(tagName + '\s*`([^`]*)`', 'g');
-  let match
-  const matches = []
+  let match;
+  let matches = [];
 
-  while(match = re.exec(targetContent)) {
+  while(match = re.exec(content)) {
     const doc = match[1]
       .replace(/\${[^}]*}/g, '')
 
     matches.push(doc)
   }
 
+  matches = filterValidDocuments(matches);
   const doc = matches.join('\n')
   return doc.length ? doc : null;
 }
@@ -94,7 +111,7 @@ export function loadAndMergeQueryDocuments(inputPaths: string[], tagName: string
     if (inputPath.endsWith('.jsx') || inputPath.endsWith('.js')
       || inputPath.endsWith('.tsx') || inputPath.endsWith('.ts')
     ) {
-      const doc = extractDocumentFromJavascript(inputPath, body.toString(), tagName);
+      const doc = extractDocumentFromJavascript(body.toString(), { tagName });
       return doc ? new Source(doc, inputPath) : null;
     }
 
