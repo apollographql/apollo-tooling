@@ -52,7 +52,7 @@ export default class TypescriptGenerator {
 
     typeAlias.leadingComments = [{
       type: 'CommentLine',
-      value: ` ${description}`
+      value: ` ${description.replace('\n', ' ')}`
     } as t.CommentLine];
 
     return typeAlias;
@@ -106,7 +106,7 @@ export default class TypescriptGenerator {
         if (description) {
           objectTypeProperty.trailingComments = [{
             type: 'CommentLine',
-            value: ` ${description}`
+            value: ` ${description.replace('\n', ' ')}`
           } as t.CommentLine]
         }
 

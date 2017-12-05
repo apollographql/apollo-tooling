@@ -272,6 +272,41 @@ export enum Episode {
 }
 `;
 
+exports[`Typescript codeGeneration handles multiline graphql comments 1`] = `
+Object {
+  "__generated__/CustomScalar.js": TypescriptGeneratedFile {
+    "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: CustomScalar
+// ====================================================
+
+export type CustomScalar_commentTest = {
+  __typename: \\"CommentTest\\",
+  multiLine: string | undefined | null, // This is a multi-line comment.
+};
+
+export type CustomScalar = {
+  commentTest: CustomScalar_commentTest | undefined | null
+};
+
+//==============================================================
+// START Enums and Input Objects
+// All enums and input objects are included in every output file
+// for now, but this will be changed soon.
+// TODO: Link to issue to fix this.
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  },
+}
+`;
+
 exports[`Typescript codeGeneration inline fragment 1`] = `
 Object {
   "__generated__/HeroInlineFragment.js": TypescriptGeneratedFile {
@@ -471,8 +506,8 @@ export enum Episode {
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: string | undefined | null,
-  favorite_color: ColorInput | undefined | null,
+  commentary?: string | undefined | null,
+  favorite_color?: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
@@ -528,8 +563,8 @@ export enum Episode {
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: string | undefined | null,
-  favorite_color: ColorInput | undefined | null,
+  commentary?: string | undefined | null,
+  favorite_color?: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
@@ -585,8 +620,8 @@ export enum Episode {
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: string | undefined | null,
-  favorite_color: ColorInput | undefined | null,
+  commentary?: string | undefined | null,
+  favorite_color?: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
@@ -637,8 +672,8 @@ export enum Episode {
 // The input object sent when someone is creating a new review
 type ReviewInput = {
   stars: number,
-  commentary: string | undefined | null,
-  favorite_color: ColorInput | undefined | null,
+  commentary?: string | undefined | null,
+  favorite_color?: ColorInput | undefined | null,
 };
 
 // The input object sent when passing in a color
