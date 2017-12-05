@@ -10,3 +10,7 @@ declare module '@babel/generator' {
   import Generator from 'babel-generator';
   export default Generator;
 }
+
+declare module '@babel/core' {
+  export * from 'babel-core';
+}

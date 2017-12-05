@@ -9,6 +9,8 @@ import {
   GraphQLSchema
 } from 'graphql';
 
+import * as babel from '@babel/core';
+
 import {
   getGraphQLProjectConfig,
   ConfigNotFoundError
@@ -47,13 +49,20 @@ export function loadSchemaFromConfig(projectName: string): GraphQLSchema {
   throw new ToolError(`No GraphQL schema specified. There must either be a .graphqlconfig or a ${defaultSchemaPath} file present, or you must use the --schema option.`);
 }
 
-function extractDocumentFromJavascript(content: string, tagName: string = 'gql'): string | null {
-  const re = new RegExp(tagName + '\\s*`([^`/]*)`', 'g');
+export function extractDocumentFromJavascript(content: string, tagName: string = 'gql'): string | null {
+  const contentWithoutComments = babel.transform(content, {
+    comments: false
+  }).code;
 
+  if (contentWithoutComments === undefined) {
+    return null;
+  }
+
+  const re = new RegExp(tagName + '\s*`([^`]*)`', 'g');
   let match
   const matches = []
 
-  while(match = re.exec(content)) {
+  while(match = re.exec(contentWithoutComments)) {
     const doc = match[1]
       .replace(/\${[^}]*}/g, '')
 
