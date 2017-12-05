@@ -7,7 +7,7 @@ import {
   loadAndMergeQueryDocuments
 } from '../loading';
 
-// Test source files are located within __fixtures__
+// Test example javascript source files are located within __fixtures__
 describe('extractDocumentFromJavascript', () => {
   test('normal queries', () => {
     const contents = fs.readFileSync(path.join(__dirname, '__fixtures__', 'normal.js')).toString();
