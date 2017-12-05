@@ -74,10 +74,12 @@ export default class FlowGenerator {
       keyInheritsNullability: true
     });
 
-    typeAlias.leadingComments = [{
-      type: 'CommentLine',
-      value: ` ${description}`
-    } as t.CommentLine]
+    if (description) {
+      typeAlias.leadingComments = [{
+        type: 'CommentLine',
+        value: ` ${description.replace('\n', ' ')}`
+      } as t.CommentLine]
+    }
 
     return typeAlias;
   }
@@ -104,7 +106,7 @@ export default class FlowGenerator {
         if (description) {
           objectTypeProperty.trailingComments = [{
             type: 'CommentLine',
-            value: ` ${description}`
+            value: ` ${description.replace('\n', ' ')}`
           } as t.CommentLine]
         }
 
