@@ -1,4 +1,5 @@
 import * as fs from 'fs'
+import { stripIndents } from 'common-tags'
 
 import {
   buildClientSchema,
@@ -47,11 +48,44 @@ export function loadSchemaFromConfig(projectName: string): GraphQLSchema {
   throw new ToolError(`No GraphQL schema specified. There must either be a .graphqlconfig or a ${defaultSchemaPath} file present, or you must use the --schema option.`);
 }
 
-function extractDocumentFromJavascript(content: string, tagName: string = 'gql'): string | null {
-  const re = new RegExp(tagName + '\\s*`([^`/]*)`', 'g');
+function maybeCommentedOut(content: string) {
+  return (content.indexOf('/*') > -1 && content.indexOf('*/') > -1) ||
+    content.split('//').length > 1;
+}
 
-  let match
-  const matches = []
+function filterValidDocuments(documents: string[]) {
+  return documents.filter(document => {
+    const source = new Source(document);
+    try {
+      parse(source);
+      return true;
+    } catch (e) {
+      if (!maybeCommentedOut(document)) {
+        console.warn(
+          stripIndents`
+            Failed to parse:
+
+            ${document.trim().split('\n')[0]}...
+          `
+        );
+      }
+
+      return false;
+    }
+  });
+}
+
+export function extractDocumentFromJavascript(
+  content: string,
+  options: {
+    tagName?: string,
+  } = {}
+): string | null {
+  let tagName = options.tagName || 'gql';
+
+  const re = new RegExp(tagName + '\s*`([^`]*)`', 'g');
+  let match;
+  let matches = [];
 
   while(match = re.exec(content)) {
     const doc = match[1]
@@ -60,6 +94,7 @@ function extractDocumentFromJavascript(content: string, tagName: string = 'gql')
     matches.push(doc)
   }
 
+  matches = filterValidDocuments(matches);
   const doc = matches.join('\n')
   return doc.length ? doc : null;
 }
@@ -74,7 +109,7 @@ export function loadAndMergeQueryDocuments(inputPaths: string[], tagName: string
     if (inputPath.endsWith('.jsx') || inputPath.endsWith('.js')
       || inputPath.endsWith('.tsx') || inputPath.endsWith('.ts')
     ) {
-      const doc = extractDocumentFromJavascript(body.toString(), tagName);
+      const doc = extractDocumentFromJavascript(body.toString(), { tagName });
       return doc ? new Source(doc, inputPath) : null;
     }
 
