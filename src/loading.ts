@@ -49,20 +49,31 @@ export function loadSchemaFromConfig(projectName: string): GraphQLSchema {
   throw new ToolError(`No GraphQL schema specified. There must either be a .graphqlconfig or a ${defaultSchemaPath} file present, or you must use the --schema option.`);
 }
 
-export function extractDocumentFromJavascript(content: string, tagName: string = 'gql'): string | null {
+export function extractDocumentFromJavascript(content: string, options: {
+  tagName?: string,
+  inputPath?: string
+}): string | null {
+  const tagName = options.tagName || 'gql';
+  const inputPath = options.inputPath;
+
   const contentWithoutComments = babel.transform(content, {
     comments: false
   }).code;
 
+  let targetContent: string;
+  // This is undefined is the document cannot successfully be transformed (parse error);
   if (contentWithoutComments === undefined) {
-    return null;
+    console.warn('Could not successfully parse: ${inputPath}. Is there a syntax error? Type definitions for operations in this file may be missing.')
+    targetContent = content;
+  } else {
+    targetContent = contentWithoutComments;
   }
 
   const re = new RegExp(tagName + '\s*`([^`]*)`', 'g');
   let match
   const matches = []
 
-  while(match = re.exec(contentWithoutComments)) {
+  while(match = re.exec(targetContent)) {
     const doc = match[1]
       .replace(/\${[^}]*}/g, '')
 
@@ -83,7 +94,7 @@ export function loadAndMergeQueryDocuments(inputPaths: string[], tagName: string
     if (inputPath.endsWith('.jsx') || inputPath.endsWith('.js')
       || inputPath.endsWith('.tsx') || inputPath.endsWith('.ts')
     ) {
-      const doc = extractDocumentFromJavascript(body.toString(), tagName);
+      const doc = extractDocumentFromJavascript(inputPath, body.toString(), tagName);
       return doc ? new Source(doc, inputPath) : null;
     }
 
