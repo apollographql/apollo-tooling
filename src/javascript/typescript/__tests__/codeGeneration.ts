@@ -76,7 +76,7 @@ describe('Typescript codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test.only('simple mutation', () => {
+  test('simple mutation', () => {
     const context = compile(`
       mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
         createReview(episode: $episode, review: $review) {
@@ -252,6 +252,27 @@ describe('Typescript codeGeneration', () => {
       }
     `);
     const output = generateSource(context);
+    expect(output).toMatchSnapshot();
+  });
+
+  test('handles multiline graphql comments', () => {
+    const miscSchema = loadSchema(require.resolve('../../../../test/fixtures/misc/schema.json'));
+
+    const document = parse(`
+      query CustomScalar {
+        commentTest {
+          multiLine
+        }
+      }
+    `);
+
+    const output = generateSource(
+      compileToIR(miscSchema, document, {
+        mergeInFieldsFromFragmentSpreads: true,
+        addTypename: true
+      })
+    );
+
     expect(output).toMatchSnapshot();
   });
 });
