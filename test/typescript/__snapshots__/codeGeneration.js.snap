@@ -12,11 +12,11 @@ export enum Episode {
 }
 
 
-export type HeroAndFriendsNamesQueryVariables = {
+export interface HeroAndFriendsNamesQueryVariables {
   episode?: Episode | null,
 };
 
-export type HeroAndFriendsNamesQuery = {
+export interface HeroAndFriendsNamesQuery {
   hero: ( {
       __typename: \\"Human\\",
       // The name of the character
@@ -68,7 +68,7 @@ exports[`TypeScript code generation #generateSource() should generate fragmented
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export type HeroAndFriendsNamesQuery = {
+export interface HeroAndFriendsNamesQuery {
   hero: ( {
       __typename: \\"Human\\",
       // The name of the character
@@ -146,7 +146,7 @@ export enum Episode {
 }
 
 
-export type ReviewInput = {
+export interface ReviewInput {
   // 0-5 stars
   stars: number,
   // Comment about the movie, optional
@@ -155,18 +155,18 @@ export type ReviewInput = {
   favorite_color?: ColorInput | null,
 };
 
-export type ColorInput = {
+export interface ColorInput {
   red: number,
   green: number,
   blue: number,
 };
 
-export type ReviewMovieMutationVariables = {
+export interface ReviewMovieMutationVariables {
   episode?: Episode | null,
   review?: ReviewInput | null,
 };
 
-export type ReviewMovieMutation = {
+export interface ReviewMovieMutation {
   createReview:  {
     __typename: \\"Review\\",
     // The number of stars this review gave, 1-5
@@ -182,7 +182,7 @@ exports[`TypeScript code generation #generateSource() should generate query oper
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export type HeroAndDetailsQuery = {
+export interface HeroAndDetailsQuery {
   hero: ( {
       __typename: \\"Human\\",
       // What this human calls themselves
@@ -224,11 +224,11 @@ export enum Episode {
 }
 
 
-export type HeroAndFriendsNamesQueryVariables = {
+export interface HeroAndFriendsNamesQueryVariables {
   episode?: Episode | null,
 };
 
-export type HeroAndFriendsNamesQuery = {
+export interface HeroAndFriendsNamesQuery {
   hero: ( {
       __typename: \\"Human\\",
       // The name of the character
@@ -269,7 +269,7 @@ exports[`TypeScript code generation #generateSource() should generate simple nes
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export type StarshipCoordsQuery = {
+export interface StarshipCoordsQuery {
   starship:  {
     __typename: \\"Starship\\",
     coordinates: Array< Array< number > > | null,
@@ -282,7 +282,7 @@ exports[`TypeScript code generation #generateSource() should generate simple que
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export type HeroNameQuery = {
+export interface HeroNameQuery {
   hero: ( {
       __typename: \\"Human\\",
       // The name of the character
@@ -309,11 +309,11 @@ export enum Episode {
 }
 
 
-export type HeroNameQueryVariables = {
+export interface HeroNameQueryVariables {
   episode?: Episode | null,
 };
 
-export type HeroNameQuery = {
+export interface HeroNameQuery {
   hero: ( {
       __typename: \\"Human\\",
       // The name of the character
@@ -340,7 +340,7 @@ export enum EnumCommentTestCase {
 }
 
 
-export type CustomScalarQuery = {
+export interface CustomScalarQuery {
   commentTest:  {
     __typename: \\"CommentTest\\",
     enumCommentTest: EnumCommentTestCase | null,
@@ -353,7 +353,7 @@ exports[`TypeScript code generation #generateSource() should handle interfaces a
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export type CustomScalarQuery = {
+export interface CustomScalarQuery {
   interfaceTest: ( {
       __typename: \\"ImplA\\",
       prop: string,
@@ -372,7 +372,7 @@ exports[`TypeScript code generation #generateSource() should handle multi-line c
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export type CustomScalarQuery = {
+export interface CustomScalarQuery {
   commentTest:  {
     __typename: \\"CommentTest\\",
     // This is a multi-line
@@ -387,7 +387,7 @@ exports[`TypeScript code generation #generateSource() should handle single line 
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export type CustomScalarQuery = {
+export interface CustomScalarQuery {
   commentTest:  {
     __typename: \\"CommentTest\\",
     // This is a single-line comment
@@ -401,7 +401,7 @@ exports[`TypeScript code generation #generateSource() should handle unions at ro
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export type CustomScalarQuery = {
+export interface CustomScalarQuery {
   unionTest: ( {
       __typename: \\"PartialA\\",
       prop: string,
@@ -418,7 +418,7 @@ exports[`TypeScript code generation #generateSource() should have __typename val
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export type HeroNameQuery = {
+export interface HeroNameQuery {
   hero: ( {
       __typename: \\"Human\\",
       // The name of the character
@@ -448,7 +448,7 @@ exports[`TypeScript code generation #generateSource() should have __typename val
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export type DroidNameQuery = {
+export interface DroidNameQuery {
   droid:  {
     __typename: \\"Droid\\",
     // What others call this droid
@@ -456,7 +456,7 @@ export type DroidNameQuery = {
   } | null,
 };
 
-export type DroidWithNameFragment = {
+export interface DroidWithNameFragment {
   __typename: \\"Droid\\",
   // What others call this droid
   name: string,
