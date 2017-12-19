@@ -11,6 +11,9 @@ cache:
   directories:
     - $HOME/.npm
 
+before_install:
+  - npm install -g npm@5
+
 install:
   - npm install
 
