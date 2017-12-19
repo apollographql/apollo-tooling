@@ -8,7 +8,7 @@
     "clean": "rm -rf lib",
     "compile": "tsc",
     "watch": "tsc -w",
-    "prepublish": "npm run clean && npm run compile",
+    "prepare": "npm run clean && npm run compile",
     "test": "./node_modules/.bin/jest",
     "test:smoke": "npm install && npm run compile && rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
   },
@@ -19,7 +19,8 @@
   "author": "Martijn Walraven <martijn@martijnwalraven.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=6.0"
+    "node": ">=6.0",
+    "npm": ">=4.0"
   },
   "devDependencies": {
     "@types/common-tags": "^1.2.5",
