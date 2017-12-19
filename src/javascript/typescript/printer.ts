@@ -107,6 +107,7 @@ export default class Printer {
           line = `${main}${' '.repeat(spacesBetween)} // ${comment.trim()}`
         } else {
           line = main;
+        }
 
         return [
           ...memo,
