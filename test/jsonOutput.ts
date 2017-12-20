@@ -85,7 +85,7 @@ describe('JSON output', function() {
     expect(output).toMatchSnapshot();
   });
 
-  test.only(`should generate JSON output for an input object type with default field values`, function() {
+  test(`should generate JSON output for an input object type with default field values`, function() {
     const schema = buildSchema(`
       type Query {
         someField(input: ComplexInput!): String!
