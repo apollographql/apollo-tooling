@@ -122,4 +122,34 @@ describe('JSON output', function() {
 
     expect(output).toMatchSnapshot();
   });
+
+  test(`should generate JSON output for a subscription`, function() {
+    const schema = buildSchema(`
+      type Comment {
+        id: Int!
+        content: String!
+        repoName: String!
+      }
+
+      type Subscription {
+        commentAdded(repoFullName: String!): Comment
+      }
+    `);
+
+    const context = compileFromSource(
+      `
+      subscription CommentAdded($repoFullName: ID!) {
+        commentAdded(repoFullName: $repoFullName) {
+          id
+          content
+        }
+      }
+      `,
+      schema
+    );
+
+    const output = serializeToJSON(context);
+
+    expect(output).toMatchSnapshot();
+  });
 });

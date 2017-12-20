@@ -477,6 +477,74 @@ exports[`JSON output should generate JSON output for a query with an enum variab
 }"
 `;
 
+exports[`JSON output should generate JSON output for a subscription 1`] = `
+"{
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"GraphQL request\\",
+			\\"operationName\\": \\"CommentAdded\\",
+			\\"operationType\\": \\"subscription\\",
+			\\"rootType\\": \\"Subscription\\",
+			\\"variables\\": [
+				{
+					\\"name\\": \\"repoFullName\\"
+				}
+			],
+			\\"source\\": \\"subscription CommentAdded($repoFullName: ID!) {\\\\n  commentAdded(repoFullName: $repoFullName) {\\\\n    __typename\\\\n    id\\\\n    content\\\\n  }\\\\n}\\",
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"commentAdded\\",
+					\\"fieldName\\": \\"commentAdded\\",
+					\\"type\\": \\"Comment\\",
+					\\"args\\": [
+						{
+							\\"name\\": \\"repoFullName\\",
+							\\"value\\": {
+								\\"kind\\": \\"Variable\\",
+								\\"variableName\\": \\"repoFullName\\"
+							}
+						}
+					],
+					\\"isConditional\\": false,
+					\\"isDeprecated\\": false,
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false
+						},
+						{
+							\\"responseName\\": \\"id\\",
+							\\"fieldName\\": \\"id\\",
+							\\"type\\": \\"Int!\\",
+							\\"isConditional\\": false,
+							\\"isDeprecated\\": false
+						},
+						{
+							\\"responseName\\": \\"content\\",
+							\\"fieldName\\": \\"content\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false,
+							\\"isDeprecated\\": false
+						}
+					],
+					\\"fragmentSpreads\\": [],
+					\\"inlineFragments\\": []
+				}
+			],
+			\\"fragmentSpreads\\": [],
+			\\"inlineFragments\\": [],
+			\\"fragmentsReferenced\\": [],
+			\\"sourceWithFragments\\": \\"subscription CommentAdded($repoFullName: ID!) {\\\\n  commentAdded(repoFullName: $repoFullName) {\\\\n    __typename\\\\n    id\\\\n    content\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"fe7d22048b5ff774a68cad58c35b4c12b938c07cc2b81f570a527a29d0788abd\\"
+		}
+	],
+	\\"fragments\\": [],
+	\\"typesUsed\\": []
+}"
+`;
+
 exports[`JSON output should generate JSON output for an input object type with default field values 1`] = `
 "{
 	\\"operations\\": [
