@@ -114,18 +114,18 @@ exports[`JSON output should generate JSON output for a mutation with an enum and
 			\\"fields\\": [
 				{
 					\\"name\\": \\"stars\\",
-					\\"description\\": \\"0-5 stars\\",
-					\\"type\\": \\"Int!\\"
+					\\"type\\": \\"Int!\\",
+					\\"description\\": \\"0-5 stars\\"
 				},
 				{
 					\\"name\\": \\"commentary\\",
-					\\"description\\": \\"Comment about the movie, optional\\",
-					\\"type\\": \\"String\\"
+					\\"type\\": \\"String\\",
+					\\"description\\": \\"Comment about the movie, optional\\"
 				},
 				{
 					\\"name\\": \\"favorite_color\\",
-					\\"description\\": \\"Favorite color, optional\\",
-					\\"type\\": \\"ColorInput\\"
+					\\"type\\": \\"ColorInput\\",
+					\\"description\\": \\"Favorite color, optional\\"
 				}
 			]
 		},
@@ -136,18 +136,18 @@ exports[`JSON output should generate JSON output for a mutation with an enum and
 			\\"fields\\": [
 				{
 					\\"name\\": \\"red\\",
-					\\"description\\": \\"\\",
-					\\"type\\": \\"Int!\\"
+					\\"type\\": \\"Int!\\",
+					\\"description\\": \\"\\"
 				},
 				{
 					\\"name\\": \\"green\\",
-					\\"description\\": \\"\\",
-					\\"type\\": \\"Int!\\"
+					\\"type\\": \\"Int!\\",
+					\\"description\\": \\"\\"
 				},
 				{
 					\\"name\\": \\"blue\\",
-					\\"description\\": \\"\\",
-					\\"type\\": \\"Int!\\"
+					\\"type\\": \\"Int!\\",
+					\\"description\\": \\"\\"
 				}
 			]
 		}
