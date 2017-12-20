@@ -6,15 +6,11 @@ import {
   SchemaMetaFieldDef,
   TypeMetaFieldDef,
   TypeNameMetaFieldDef,
+  GraphQLNamedType,
   GraphQLCompositeType,
   GraphQLObjectType,
   GraphQLInterfaceType,
   GraphQLUnionType,
-  GraphQLString,
-  GraphQLInt,
-  GraphQLFloat,
-  GraphQLBoolean,
-  GraphQLID,
   GraphQLError,
   GraphQLSchema,
   GraphQLType,
@@ -27,17 +23,28 @@ import {
   FieldNode,
   GraphQLField,
   GraphQLList,
-  GraphQLNonNull
+  GraphQLNonNull,
+  DocumentNode
 } from 'graphql';
+
+declare module "graphql" {
+  function isNamedType(type: GraphQLType): type is GraphQLNamedType;
+  const specifiedScalarTypes: GraphQLScalarType[];
+  function isSpecifiedScalarType(type: GraphQLType): boolean;
+  const introspectionTypes: GraphQLNamedType[];
+  function isIntrospectionType(type: GraphQLType): boolean;
+  function validateSchema(schema: GraphQLSchema): GraphQLError[];
+}
+
+declare module "graphql/utilities/buildASTSchema" {
+  function buildASTSchema(
+    ast: DocumentNode,
+    options?: { assumeValid?: boolean, commentDescriptions?: boolean },
+  ): GraphQLSchema;
+}
 
 export function isList(type: GraphQLType): boolean {
   return type instanceof GraphQLList || (type instanceof GraphQLNonNull && type.ofType instanceof GraphQLList);
-}
-
-const builtInScalarTypes = new Set([GraphQLString, GraphQLInt, GraphQLFloat, GraphQLBoolean, GraphQLID]);
-
-export function isBuiltInScalarType(type: GraphQLScalarType) {
-  return builtInScalarTypes.has(type);
 }
 
 export function isMetaFieldName(name: string) {

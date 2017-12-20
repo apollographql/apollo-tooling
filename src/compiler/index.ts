@@ -19,7 +19,8 @@ import {
   FragmentDefinitionNode,
   SelectionSetNode,
   SelectionNode,
-  ArgumentNode
+  ArgumentNode,
+  isSpecifiedScalarType
 } from 'graphql';
 
 import {
@@ -28,7 +29,6 @@ import {
   valueFromValueNode,
   filePathForNode,
   withTypenameFieldAddedWhereNeeded,
-  isBuiltInScalarType,
   isMetaFieldName
 } from '../utilities/graphql';
 
@@ -199,7 +199,7 @@ class Compiler {
     if (
       type instanceof GraphQLEnumType ||
       type instanceof GraphQLInputObjectType ||
-      (type instanceof GraphQLScalarType && !isBuiltInScalarType(type))
+      (type instanceof GraphQLScalarType && !isSpecifiedScalarType(type))
     ) {
       this.typesUsedSet.add(type);
     }

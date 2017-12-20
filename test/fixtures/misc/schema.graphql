@@ -16,19 +16,23 @@ type OddType {
 
 # This is a type to test comments
 type CommentTest {
-  # This is a single-line comment
+  "This is a single-line comment"
   singleLine: String
-  # This is a multi-line
-  # comment.
+  """
+  This is a multi-line
+  comment.
+  """
   multiLine: String
   enumCommentTest: EnumCommentTestCase
 }
 
 enum EnumCommentTestCase {
-  # This is a single-line comment
+  "This is a single-line comment"
   first
-  # This is a multi-line
-  # comment.
+  """
+  This is a multi-line
+  comment.
+  """
   second
 }
 

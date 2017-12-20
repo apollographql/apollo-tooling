@@ -47,7 +47,7 @@
     "common-tags": "^1.5.1",
     "core-js": "^2.5.3",
     "glob": "^7.1.2",
-    "graphql": "^0.11.7",
+    "graphql": "^0.12.3",
     "graphql-config": "^1.1.1",
     "inflected": "^2.0.3",
     "mkdirp": "^0.5.1",
