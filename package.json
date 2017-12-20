@@ -23,6 +23,10 @@
     "npm": ">=5.0"
   },
   "devDependencies": {
+    "@babel/types": "^7.0.0-beta.35",
+    "@types/babel-generator": "^6.25.1",
+    "@types/babel-types": "^7.0.0",
+    "@types/babylon": "^6.16.2",
     "@types/common-tags": "^1.4.0",
     "@types/glob": "^5.0.34",
     "@types/graphql": "^0.11.7",
@@ -30,10 +34,8 @@
     "@types/jest": "^21.1.8",
     "@types/mkdirp": "^0.5.2",
     "@types/node-fetch": "^1.6.7",
-    "@types/yargs": "^10.0.0",
-    "@types/babel-generator": "^6.25.1",
-    "@types/babylon": "^6.16.2",
     "@types/rimraf": "^2.0.2",
+    "@types/yargs": "^10.0.0",
     "ansi-regex": "^3.0.0",
     "jest": "^22.0.3",
     "jest-matcher-utils": "^22.0.3",
@@ -42,7 +44,6 @@
   },
   "dependencies": {
     "@babel/generator": "^7.0.0-beta.35",
-    "@babel/types": "^7.0.0-beta.35",
     "change-case": "^3.0.1",
     "common-tags": "^1.5.1",
     "core-js": "^2.5.3",
