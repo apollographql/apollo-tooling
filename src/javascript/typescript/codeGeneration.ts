@@ -85,7 +85,7 @@ export function generateSource(
       const outputFilePath = path.join(
         path.dirname(operation.filePath),
         '__generated__',
-        `${operation.operationName}.js`
+        `${operation.operationName}.ts`
       );
 
       generatedFiles[outputFilePath] = new TypescriptGeneratedFile(output);
