@@ -1,20 +1,21 @@
 import {
   GraphQLEnumType,
   GraphQLInputObjectType,
+  GraphQLType
 } from 'graphql';
 
 import {
   CompilerOptions
 } from '../../compiler';
 
-import { createTypeAnnotationFromGraphQLTypeFunction } from './helpers';
+import { createTypeFromGraphQLTypeFunction } from './helpers';
 
 import * as t from '@babel/types';
 
 export type ObjectProperty = {
   name: string,
   description?: string | null | undefined,
-  annotation: t.FlowTypeAnnotation
+  type: t.TSType
 }
 
 export interface TypescriptCompilerOptions extends CompilerOptions {
@@ -23,27 +24,25 @@ export interface TypescriptCompilerOptions extends CompilerOptions {
 
 export default class TypescriptGenerator {
   options: TypescriptCompilerOptions
-  typeAnnotationFromGraphQLType: Function
+  typeFromGraphQLType: (graphQLType: GraphQLType) => t.TSType
 
   constructor(compilerOptions: TypescriptCompilerOptions) {
     this.options = compilerOptions;
 
-    this.typeAnnotationFromGraphQLType = createTypeAnnotationFromGraphQLTypeFunction(compilerOptions);
+    this.typeFromGraphQLType = createTypeFromGraphQLTypeFunction(compilerOptions);
   }
 
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
     const enumMembers = type.getValues().map(({ value }) => {
-      // @ts-ignore
-      return t.tSEnumMember(
+      return t.TSEnumMember(
         t.identifier(value),
         t.stringLiteral(value)
       );
     });
 
     const typeAlias = t.exportNamedDeclaration(
-      // @ts-ignore
-      t.tSEnumDeclaration(
+      t.TSEnumDeclaration(
         t.identifier(name),
         enumMembers
       ),
@@ -69,87 +68,88 @@ export default class TypescriptGenerator {
         const field = fieldMap[fieldName];
         return {
           name: fieldName,
-          annotation: this.typeAnnotationFromGraphQLType(field.type)
+          type: this.typeFromGraphQLType(field.type)
         }
       });
 
-    const typeAlias = this.typeAliasObject(name, fields, {
+    const inputType = this.interface(name, fields, {
       keyInheritsNullability: true
     });
 
-    typeAlias.leadingComments = [{
+    inputType.leadingComments = [{
       type: 'CommentLine',
       value: ` ${description}`
     } as t.CommentLine]
 
-    return typeAlias;
+    return inputType;
   }
 
-  public objectTypeAnnotation(fields: ObjectProperty[], {
+  public typesForProperties(fields: ObjectProperty[], {
     keyInheritsNullability = false
   } : {
     keyInheritsNullability?: boolean
   } = {}) {
-    const objectTypeAnnotation = t.objectTypeAnnotation(
-      fields.map(({name, description, annotation}) => {
-        const objectTypeProperty = t.objectTypeProperty(
-          t.identifier(
-            // Nullable fields on input objects do not have to be defined
-            // as well, so allow these fields to be "undefined"
-            (keyInheritsNullability && annotation.type === "NullableTypeAnnotation")
-              ? name + '?'
-              : name
-          ),
-          annotation.type === "NullableTypeAnnotation"
-            ? this.makeNullableAnnotation(annotation.typeAnnotation)
-            : annotation
-        );
 
-        if (description) {
-          objectTypeProperty.trailingComments = [{
-            type: 'CommentLine',
-            value: ` ${description.replace('\n', ' ')}`
-          } as t.CommentLine]
-        }
+    return fields.map(({name, description, type}) => {
+      const propertySignatureType = t.TSPropertySignature(
+        t.identifier(
+          // Nullable fields on input objects do not have to be defined
+          // as well, so allow these fields to be "undefined"
+          (keyInheritsNullability && this.isNullableType(type))
+            ? name + '?'
+            : name
+        ),
+        t.TSTypeAnnotation(type)
+      );
 
-        return objectTypeProperty;
-      })
-    );
+      if (description) {
+        propertySignatureType.trailingComments = [{
+          type: 'CommentLine',
+          value: ` ${description.replace('\n', ' ')}`
+        } as t.CommentLine]
+      }
 
-    return objectTypeAnnotation;
+      return propertySignatureType;
+    });
   }
 
-  public typeAliasObject(name: string, fields: ObjectProperty[], {
+  public interface(name: string, fields: ObjectProperty[], {
     keyInheritsNullability = false
   }: {
     keyInheritsNullability?: boolean
   } = {}) {
-    return t.typeAlias(
+
+    return t.TSInterfaceDeclaration(
       t.identifier(name),
       undefined,
-      this.objectTypeAnnotation(fields, {
-        keyInheritsNullability
-      })
+      undefined,
+      t.TSInterfaceBody(
+        this.typesForProperties(fields, {
+          keyInheritsNullability
+        })
+      )
     );
   }
 
   public typeAliasObjectUnion(name: string, members: ObjectProperty[][]) {
-    return t.typeAlias(
+    return t.TSTypeAliasDeclaration(
       t.identifier(name),
       undefined,
-      t.unionTypeAnnotation(
+      t.TSUnionType(
         members.map(member => {
-          return this.objectTypeAnnotation(member)
+          return t.TSTypeLiteral(this.typesForProperties(member))
         })
       )
     )
   }
 
-  public typeAliasGenericUnion(name: string, members: t.FlowTypeAnnotation[]) {
-    return t.typeAlias(
+  public typeAliasGenericUnion(name: string, members: t.TSType[]) {
+    return t.TSTypeAliasDeclaration(
       t.identifier(name),
       undefined,
-      t.unionTypeAnnotation(members)
+      t.TSUnionType(
+        members
+      )
     );
   }
 
@@ -157,21 +157,19 @@ export default class TypescriptGenerator {
     return t.exportNamedDeclaration(declaration, []);
   }
 
-  public annotationFromScopeStack(scope: string[]) {
-    return t.genericTypeAnnotation(
-      t.identifier(
-        scope.join('_')
-      )
-    );
+  public nameFromScopeStack(scope: string[]) {
+    return scope.join('_');
   }
 
-  public makeNullableAnnotation(annotation: t.FlowTypeAnnotation) {
-    return t.unionTypeAnnotation([
-      annotation,
-      // @ts-ignore
-      t.tSUndefinedKeyword(),
-      // @ts-ignore
-      t.tSNullKeyword()
+  public makeNullableType(type: t.TSType) {
+    return t.TSUnionType([
+      type,
+      // t.TSUndefinedKeyword(),
+      t.TSNullKeyword()
     ])
+  }
+
+  public isNullableType(type: t.TSType) {
+    return t.isTSUnionType(type) && t.isTSNullKeyword(type.types[1]);
   }
 }

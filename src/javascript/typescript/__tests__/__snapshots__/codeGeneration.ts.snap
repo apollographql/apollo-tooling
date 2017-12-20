@@ -13,29 +13,29 @@ Object {
 // ====================================================
 
 export type HeroName_hero_Human_friends = {
-  __typename: \\"Human\\",
-  name: string, // What this human calls themselves
+  __typename: \\"Human\\";
+  name: string;  // What this human calls themselves
 } | {
-  __typename: \\"Droid\\",
-  id: string,   // The ID of the droid
+  __typename: \\"Droid\\";
+  id: string;    // The ID of the droid
 };
 
 export type HeroName_hero = {
-  __typename: \\"Human\\",
-  name: string,                                            // What this human calls themselves
-  id: string,                                              // The ID of the human
-  homePlanet: string | undefined | null,                   // The home planet of the human, or null if unknown
-  friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
+  __typename: \\"Human\\";
+  name: string;                                 // What this human calls themselves
+  id: string;                                   // The ID of the human
+  homePlanet: string | null;                    // The home planet of the human, or null if unknown
+  friends: HeroName_hero_Human_friends | null;  // This human's friends, or an empty list if they have none
 } | {
-  __typename: \\"Droid\\",
-  name: string,                                            // What others call this droid
-  id: string,                                              // The ID of the droid
-  appearsIn: (?Episode)[],                                 // The movies this droid appears in
+  __typename: \\"Droid\\";
+  name: string;                                 // What others call this droid
+  id: string;                                   // The ID of the droid
+  appearsIn: (Episode | null)[];                // The movies this droid appears in
 };
 
-export type HeroName = {
-  hero: HeroName_hero | undefined | null
-};
+export interface HeroName {
+  hero: HeroName_hero | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -65,10 +65,10 @@ export enum Episode {
 // GraphQL fragment: droidFragment
 // ====================================================
 
-export type droidFragment = {
-  __typename: \\"Droid\\",
-  appearsIn: (?Episode)[], // The movies this droid appears in
-};
+export interface droidFragment {
+  __typename: \\"Droid\\";
+  appearsIn: (Episode | null)[];  // The movies this droid appears in
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -99,18 +99,18 @@ export enum Episode {
 // ====================================================
 
 export type humanFragment_friends = {
-  __typename: \\"Human\\",
-  name: string, // What this human calls themselves
+  __typename: \\"Human\\";
+  name: string;  // What this human calls themselves
 } | {
-  __typename: \\"Droid\\",
-  id: string,   // The ID of the droid
+  __typename: \\"Droid\\";
+  id: string;    // The ID of the droid
 };
 
-export type humanFragment = {
-  __typename: \\"Human\\",
-  homePlanet: string | undefined | null,             // The home planet of the human, or null if unknown
-  friends: humanFragment_friends | undefined | null, // This human's friends, or an empty list if they have none
-};
+export interface humanFragment {
+  __typename: \\"Human\\";
+  homePlanet: string | null;              // The home planet of the human, or null if unknown
+  friends: humanFragment_friends | null;  // This human's friends, or an empty list if they have none
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -145,11 +145,11 @@ Object {
 // GraphQL fragment: anotherFragment
 // ====================================================
 
-export type anotherFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  id: string,   // The ID of the character
-  name: string, // The name of the character
-};
+export interface anotherFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  id: string;    // The ID of the character
+  name: string;  // The name of the character
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -172,10 +172,10 @@ export type anotherFragment = {
 // GraphQL fragment: simpleFragment
 // ====================================================
 
-export type simpleFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-};
+export interface simpleFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -203,18 +203,18 @@ Object {
 // GraphQL fragment: anotherFragment
 // ====================================================
 
-export type anotherFragment_Droid = {
-  __typename: \\"Droid\\",
-  id: string,   // The ID of the droid
-  name: string, // What others call this droid
-};
+export interface anotherFragment_Droid {
+  __typename: \\"Droid\\";
+  id: string;    // The ID of the droid
+  name: string;  // What others call this droid
+}
 
-export type anotherFragment_Human = {
-  __typename: \\"Human\\",
-  id: string,              // The ID of the human
-  name: string,            // What this human calls themselves
-  appearsIn: (?Episode)[], // The movies this human appears in
-};
+export interface anotherFragment_Human {
+  __typename: \\"Human\\";
+  id: string;                     // The ID of the human
+  name: string;                   // What this human calls themselves
+  appearsIn: (Episode | null)[];  // The movies this human appears in
+}
 
 export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
 
@@ -246,10 +246,10 @@ export enum Episode {
 // GraphQL fragment: simpleFragment
 // ====================================================
 
-export type simpleFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-};
+export interface simpleFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -284,14 +284,14 @@ Object {
 // GraphQL query operation: CustomScalar
 // ====================================================
 
-export type CustomScalar_commentTest = {
-  __typename: \\"CommentTest\\",
-  multiLine: string | undefined | null, // This is a multi-line comment.
-};
+export interface CustomScalar_commentTest {
+  __typename: \\"CommentTest\\";
+  multiLine: string | null;  // This is a multi-line comment.
+}
 
-export type CustomScalar = {
-  commentTest: CustomScalar_commentTest | undefined | null
-};
+export interface CustomScalar {
+  commentTest: CustomScalar_commentTest | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -319,15 +319,15 @@ Object {
 // GraphQL query operation: HeroInlineFragment
 // ====================================================
 
-export type HeroInlineFragment_hero = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-  id: string,   // The ID of the character
-};
+export interface HeroInlineFragment_hero {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+  id: string;    // The ID of the character
+}
 
-export type HeroInlineFragment = {
-  hero: HeroInlineFragment_hero | undefined | null
-};
+export interface HeroInlineFragment {
+  hero: HeroInlineFragment_hero | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -362,27 +362,27 @@ Object {
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type HeroName_hero_Human_friends = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-};
+export interface HeroName_hero_Human_friends {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}
 
 export type HeroName_hero = {
-  __typename: \\"Human\\",
-  name: string,                                            // What this human calls themselves
-  id: string,                                              // The ID of the human
-  homePlanet: string | undefined | null,                   // The home planet of the human, or null if unknown
-  friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
+  __typename: \\"Human\\";
+  name: string;                                 // What this human calls themselves
+  id: string;                                   // The ID of the human
+  homePlanet: string | null;                    // The home planet of the human, or null if unknown
+  friends: HeroName_hero_Human_friends | null;  // This human's friends, or an empty list if they have none
 } | {
-  __typename: \\"Droid\\",
-  name: string,                                            // What others call this droid
-  id: string,                                              // The ID of the droid
-  appearsIn: (?Episode)[],                                 // The movies this droid appears in
+  __typename: \\"Droid\\";
+  name: string;                                 // What others call this droid
+  id: string;                                   // The ID of the droid
+  appearsIn: (Episode | null)[];                // The movies this droid appears in
 };
 
-export type HeroName = {
-  hero: HeroName_hero | undefined | null
-};
+export interface HeroName {
+  hero: HeroName_hero | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -417,33 +417,33 @@ Object {
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type HeroName_hero_Human_friends = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-};
+export interface HeroName_hero_Human_friends {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}
 
-export type HeroName_hero_Droid_friends = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  id: string, // The ID of the character
-};
+export interface HeroName_hero_Droid_friends {
+  __typename: \\"Human\\" | \\"Droid\\";
+  id: string;  // The ID of the character
+}
 
 export type HeroName_hero = {
-  __typename: \\"Human\\",
-  name: string,                                            // What this human calls themselves
-  id: string,                                              // The ID of the human
-  homePlanet: string | undefined | null,                   // The home planet of the human, or null if unknown
-  friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
+  __typename: \\"Human\\";
+  name: string;                                 // What this human calls themselves
+  id: string;                                   // The ID of the human
+  homePlanet: string | null;                    // The home planet of the human, or null if unknown
+  friends: HeroName_hero_Human_friends | null;  // This human's friends, or an empty list if they have none
 } | {
-  __typename: \\"Droid\\",
-  name: string,                                            // What others call this droid
-  id: string,                                              // The ID of the droid
-  appearsIn: (?Episode)[],                                 // The movies this droid appears in
-  friends: HeroName_hero_Droid_friends | undefined | null, // This droid's friends, or an empty list if they have none
+  __typename: \\"Droid\\";
+  name: string;                                 // What others call this droid
+  id: string;                                   // The ID of the droid
+  appearsIn: (Episode | null)[];                // The movies this droid appears in
+  friends: HeroName_hero_Droid_friends | null;  // This droid's friends, or an empty list if they have none
 };
 
-export type HeroName = {
-  hero: HeroName_hero | undefined | null
-};
+export interface HeroName {
+  hero: HeroName_hero | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -479,15 +479,15 @@ TypescriptGeneratedFile {
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type HeroName_hero = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-  id: string,   // The ID of the character
-};
+export interface HeroName_hero {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+  id: string;    // The ID of the character
+}
 
-export type HeroName = {
-  hero: HeroName_hero | undefined | null
-};
+export interface HeroName {
+  hero: HeroName_hero | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -504,18 +504,18 @@ export enum Episode {
 }
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
-  stars: number,
-  commentary?: string | undefined | null,
-  favorite_color?: ColorInput | undefined | null,
-};
+interface ReviewInput {
+  stars: number;
+  commentary?: string | null;
+  favorite_color?: ColorInput | null;
+}
 
 // The input object sent when passing in a color
-type ColorInput = {
-  red: number,
-  green: number,
-  blue: number,
-};
+interface ColorInput {
+  red: number;
+  green: number;
+  blue: number;
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -536,15 +536,15 @@ TypescriptGeneratedFile {
 // GraphQL query operation: SomeOther
 // ====================================================
 
-export type SomeOther_hero = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string,            // The name of the character
-  appearsIn: (?Episode)[], // The movies this character appears in
-};
+export interface SomeOther_hero {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;                   // The name of the character
+  appearsIn: (Episode | null)[];  // The movies this character appears in
+}
 
-export type SomeOther = {
-  hero: SomeOther_hero | undefined | null
-};
+export interface SomeOther {
+  hero: SomeOther_hero | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -561,18 +561,18 @@ export enum Episode {
 }
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
-  stars: number,
-  commentary?: string | undefined | null,
-  favorite_color?: ColorInput | undefined | null,
-};
+interface ReviewInput {
+  stars: number;
+  commentary?: string | null;
+  favorite_color?: ColorInput | null;
+}
 
 // The input object sent when passing in a color
-type ColorInput = {
-  red: number,
-  green: number,
-  blue: number,
-};
+interface ColorInput {
+  red: number;
+  green: number;
+  blue: number;
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -593,15 +593,15 @@ TypescriptGeneratedFile {
 // GraphQL mutation operation: ReviewMovie
 // ====================================================
 
-export type ReviewMovie_createReview = {
-  __typename: \\"Review\\",
-  stars: number,                         // The number of stars this review gave, 1-5
-  commentary: string | undefined | null, // Comment about the movie
-};
+export interface ReviewMovie_createReview {
+  __typename: \\"Review\\";
+  stars: number;              // The number of stars this review gave, 1-5
+  commentary: string | null;  // Comment about the movie
+}
 
-export type ReviewMovie = {
-  createReview: ReviewMovie_createReview | undefined | null
-};
+export interface ReviewMovie {
+  createReview: ReviewMovie_createReview | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -618,18 +618,18 @@ export enum Episode {
 }
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
-  stars: number,
-  commentary?: string | undefined | null,
-  favorite_color?: ColorInput | undefined | null,
-};
+interface ReviewInput {
+  stars: number;
+  commentary?: string | null;
+  favorite_color?: ColorInput | null;
+}
 
 // The input object sent when passing in a color
-type ColorInput = {
-  red: number,
-  green: number,
-  blue: number,
-};
+interface ColorInput {
+  red: number;
+  green: number;
+  blue: number;
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -650,10 +650,10 @@ TypescriptGeneratedFile {
 // GraphQL fragment: someFragment
 // ====================================================
 
-export type someFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  appearsIn: (?Episode)[], // The movies this character appears in
-};
+export interface someFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  appearsIn: (Episode | null)[];  // The movies this character appears in
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -670,18 +670,18 @@ export enum Episode {
 }
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
-  stars: number,
-  commentary?: string | undefined | null,
-  favorite_color?: ColorInput | undefined | null,
-};
+interface ReviewInput {
+  stars: number;
+  commentary?: string | null;
+  favorite_color?: ColorInput | null;
+}
 
 // The input object sent when passing in a color
-type ColorInput = {
-  red: number,
-  green: number,
-  blue: number,
-};
+interface ColorInput {
+  red: number;
+  green: number;
+  blue: number;
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -701,15 +701,15 @@ Object {
 // GraphQL query operation: HeroFragment
 // ====================================================
 
-export type HeroFragment_hero = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-  id: string,   // The ID of the character
-};
+export interface HeroFragment_hero {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+  id: string;    // The ID of the character
+}
 
-export type HeroFragment = {
-  hero: HeroFragment_hero | undefined | null
-};
+export interface HeroFragment {
+  hero: HeroFragment_hero | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -739,10 +739,10 @@ export enum Episode {
 // GraphQL fragment: simpleFragment
 // ====================================================
 
-export type simpleFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-};
+export interface simpleFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -777,10 +777,10 @@ Object {
 // GraphQL fragment: SimpleFragment
 // ====================================================
 
-export type SimpleFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-};
+export interface SimpleFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -808,15 +808,15 @@ Object {
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type HeroName_hero = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-  id: string,   // The ID of the character
-};
+export interface HeroName_hero {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+  id: string;    // The ID of the character
+}
 
-export type HeroName = {
-  hero: HeroName_hero | undefined | null
-};
+export interface HeroName {
+  hero: HeroName_hero | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -851,15 +851,15 @@ Object {
 // GraphQL mutation operation: ReviewMovie
 // ====================================================
 
-export type ReviewMovie_createReview = {
-  __typename: \\"Review\\",
-  stars: number,                         // The number of stars this review gave, 1-5
-  commentary: string | undefined | null, // Comment about the movie
-};
+export interface ReviewMovie_createReview {
+  __typename: \\"Review\\";
+  stars: number;              // The number of stars this review gave, 1-5
+  commentary: string | null;  // Comment about the movie
+}
 
-export type ReviewMovie = {
-  createReview: ReviewMovie_createReview | undefined | null
-};
+export interface ReviewMovie {
+  createReview: ReviewMovie_createReview | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -876,18 +876,18 @@ export enum Episode {
 }
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
-  stars: number,
-  commentary?: string | undefined | null,
-  favorite_color?: ColorInput | undefined | null,
-};
+interface ReviewInput {
+  stars: number;
+  commentary?: string | null;
+  favorite_color?: ColorInput | null;
+}
 
 // The input object sent when passing in a color
-type ColorInput = {
-  red: number,
-  green: number,
-  blue: number,
-};
+interface ColorInput {
+  red: number;
+  green: number;
+  blue: number;
+}
 
 //==============================================================
 // END Enums and Input Objects

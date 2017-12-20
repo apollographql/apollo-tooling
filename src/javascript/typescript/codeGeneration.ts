@@ -77,7 +77,7 @@ export function generateSource(
   Object.values(context.operations)
     .forEach((operation) => {
       generator.fileHeader();
-      generator.typeAliasesForOperation(operation);
+      generator.interfacesForOperation(operation);
       printEnumsAndInputObjects(generator, context);
 
       const output = generator.printer.printAndClear();
@@ -94,7 +94,7 @@ export function generateSource(
   Object.values(context.fragments)
     .forEach((fragment) => {
       generator.fileHeader();
-      generator.typeAliasesForFragment(fragment);
+      generator.typesForFragment(fragment);
       printEnumsAndInputObjects(generator, context);
 
       const output = generator.printer.printAndClear();
@@ -141,7 +141,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     this.printer.enqueue(this.inputObjectDeclaration(inputObjectType));
   }
 
-  public typeAliasesForOperation(operation: Operation) {
+  public interfacesForOperation(operation: Operation) {
     const {
       operationType,
       operationName,
@@ -164,14 +164,14 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     const properties = this.getPropertiesForVariant(variant);
 
     const exportedTypeAlias = this.exportDeclaration(
-      this.typeAliasObject(operationName, properties)
+      this.interface(operationName, properties)
     );
 
     this.printer.enqueue(exportedTypeAlias);
     this.scopeStackPop();
   }
 
-  public typeAliasesForFragment(fragment: Fragment) {
+  public typesForFragment(fragment: Fragment) {
     const {
       fragmentName,
       selectionSet
@@ -190,9 +190,9 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     if (variants.length === 1) {
       const properties = this.getPropertiesForVariant(variants[0]);
 
-      const name = this.annotationFromScopeStack(this.scopeStack).id.name;
+      const name = this.nameFromScopeStack(this.scopeStack);
       const exportedTypeAlias = this.exportDeclaration(
-        this.typeAliasObject(
+        this.interface(
           name,
           properties
         )
@@ -200,14 +200,14 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
 
       this.printer.enqueue(exportedTypeAlias);
     } else {
-      const unionMembers: t.FlowTypeAnnotation[] = [];
+      const unionMembers: t.Identifier[] = [];
       variants.forEach(variant => {
         this.scopeStackPush(variant.possibleTypes[0].toString());
         const properties = this.getPropertiesForVariant(variant);
 
-        const name = this.annotationFromScopeStack(this.scopeStack).id.name;
+        const name = this.nameFromScopeStack(this.scopeStack);
         const exportedTypeAlias = this.exportDeclaration(
-          this.typeAliasObject(
+          this.interface(
             name,
             properties
           )
@@ -215,7 +215,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
 
         this.printer.enqueue(exportedTypeAlias);
 
-        unionMembers.push(this.annotationFromScopeStack(this.scopeStack));
+        unionMembers.push(t.identifier(this.nameFromScopeStack(this.scopeStack)));
 
         this.scopeStackPop();
       });
@@ -223,8 +223,8 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       this.printer.enqueue(
         this.exportDeclaration(
           this.typeAliasGenericUnion(
-            this.annotationFromScopeStack(this.scopeStack).id.name,
-            unionMembers
+            this.nameFromScopeStack(this.scopeStack),
+            unionMembers.map((id) => t.TSTypeReference(id))
           )
         )
       );
@@ -254,12 +254,10 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       const fieldName = field.alias !== undefined ? field.alias : field.name;
       this.scopeStackPush(fieldName);
 
-      let res;
+      let res: ObjectProperty;
       if (field.selectionSet) {
-        const genericAnnotation = this.annotationFromScopeStack(this.scopeStack);
-
         res = this.handleFieldSelectionSetValue(
-          genericAnnotation,
+          t.identifier(this.nameFromScopeStack(this.scopeStack)),
           field
         );
       } else {
@@ -274,7 +272,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     });
   }
 
-  private handleFieldSelectionSetValue(generatedTypeAnnotation: t.GenericTypeAnnotation, field: Field) {
+  private handleFieldSelectionSetValue(generatedIdentifier: t.Identifier, field: Field): ObjectProperty {
     const { selectionSet } = field;
 
     const typeCase = this.getTypeCasesForSelectionSet(selectionSet as SelectionSet);
@@ -285,8 +283,8 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       const variant = variants[0];
       const properties = this.getPropertiesForVariant(variant);
       exportedTypeAlias = this.exportDeclaration(
-        this.typeAliasObject(
-          this.annotationFromScopeStack(this.scopeStack).id.name,
+        this.interface(
+          this.nameFromScopeStack(this.scopeStack),
           properties
         )
       );
@@ -300,7 +298,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
 
       exportedTypeAlias = this.exportDeclaration(
         this.typeAliasObjectUnion(
-           generatedTypeAnnotation.id.name,
+           generatedIdentifier.name,
           propertySets
         )
       );
@@ -312,33 +310,31 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     return {
       name: field.alias ? field.alias : field.name,
       description: field.description,
-      annotation: field.type instanceof GraphQLNonNull
-        ? generatedTypeAnnotation
-        : this.makeNullableAnnotation(generatedTypeAnnotation)
+      type: field.type instanceof GraphQLNonNull
+        ? t.TSTypeReference(generatedIdentifier)
+        : this.makeNullableType(t.TSTypeReference(generatedIdentifier))
     };
   }
 
-  private handleFieldValue(field: Field, variant: Variant) {
-    let res;
+  private handleFieldValue(field: Field, variant: Variant): ObjectProperty {
+    let res: ObjectProperty;
     if (field.name === '__typename') {
-      const annotations = variant.possibleTypes
+      const types = variant.possibleTypes
         .map(type => {
-          const annotation = t.stringLiteralTypeAnnotation();
-          annotation.value = type.toString();
-          return annotation;
+          return t.TSLiteralType(t.stringLiteral(type.toString()));
         });
 
       res = {
         name: field.alias ? field.alias : field.name,
         description: field.description,
-        annotation: t.unionTypeAnnotation(annotations)
+        type: t.TSUnionType(types)
       };
     } else {
       // TODO: Double check that this works
       res = {
         name: field.alias ? field.alias : field.name,
         description: field.description,
-        annotation: this.typeAnnotationFromGraphQLType(field.type)
+        type: this.typeFromGraphQLType(field.type)
       };
     }
 
