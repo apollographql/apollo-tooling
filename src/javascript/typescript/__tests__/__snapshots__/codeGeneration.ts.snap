@@ -22,15 +22,15 @@ export type HeroName_hero_Human_friends = {
 
 export type HeroName_hero = {
   __typename: \\"Human\\";
-  name: string;                                 // What this human calls themselves
-  id: string;                                   // The ID of the human
-  homePlanet: string | null;                    // The home planet of the human, or null if unknown
-  friends: HeroName_hero_Human_friends | null;  // This human's friends, or an empty list if they have none
+  name: string;                                            // What this human calls themselves
+  id: string;                                              // The ID of the human
+  homePlanet: string | null;                               // The home planet of the human, or null if unknown
+  friends: (HeroName_hero_Human_friends | null)[] | null;  // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\";
-  name: string;                                 // What others call this droid
-  id: string;                                   // The ID of the droid
-  appearsIn: (Episode | null)[];                // The movies this droid appears in
+  name: string;                                            // What others call this droid
+  id: string;                                              // The ID of the droid
+  appearsIn: (Episode | null)[];                           // The movies this droid appears in
 };
 
 export interface HeroName {
@@ -108,8 +108,8 @@ export type humanFragment_friends = {
 
 export interface humanFragment {
   __typename: \\"Human\\";
-  homePlanet: string | null;              // The home planet of the human, or null if unknown
-  friends: humanFragment_friends | null;  // This human's friends, or an empty list if they have none
+  homePlanet: string | null;                         // The home planet of the human, or null if unknown
+  friends: (humanFragment_friends | null)[] | null;  // This human's friends, or an empty list if they have none
 }
 
 //==============================================================
@@ -369,15 +369,15 @@ export interface HeroName_hero_Human_friends {
 
 export type HeroName_hero = {
   __typename: \\"Human\\";
-  name: string;                                 // What this human calls themselves
-  id: string;                                   // The ID of the human
-  homePlanet: string | null;                    // The home planet of the human, or null if unknown
-  friends: HeroName_hero_Human_friends | null;  // This human's friends, or an empty list if they have none
+  name: string;                                            // What this human calls themselves
+  id: string;                                              // The ID of the human
+  homePlanet: string | null;                               // The home planet of the human, or null if unknown
+  friends: (HeroName_hero_Human_friends | null)[] | null;  // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\";
-  name: string;                                 // What others call this droid
-  id: string;                                   // The ID of the droid
-  appearsIn: (Episode | null)[];                // The movies this droid appears in
+  name: string;                                            // What others call this droid
+  id: string;                                              // The ID of the droid
+  appearsIn: (Episode | null)[];                           // The movies this droid appears in
 };
 
 export interface HeroName {
@@ -429,16 +429,16 @@ export interface HeroName_hero_Droid_friends {
 
 export type HeroName_hero = {
   __typename: \\"Human\\";
-  name: string;                                 // What this human calls themselves
-  id: string;                                   // The ID of the human
-  homePlanet: string | null;                    // The home planet of the human, or null if unknown
-  friends: HeroName_hero_Human_friends | null;  // This human's friends, or an empty list if they have none
+  name: string;                                            // What this human calls themselves
+  id: string;                                              // The ID of the human
+  homePlanet: string | null;                               // The home planet of the human, or null if unknown
+  friends: (HeroName_hero_Human_friends | null)[] | null;  // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\";
-  name: string;                                 // What others call this droid
-  id: string;                                   // The ID of the droid
-  appearsIn: (Episode | null)[];                // The movies this droid appears in
-  friends: HeroName_hero_Droid_friends | null;  // This droid's friends, or an empty list if they have none
+  name: string;                                            // What others call this droid
+  id: string;                                              // The ID of the droid
+  appearsIn: (Episode | null)[];                           // The movies this droid appears in
+  friends: (HeroName_hero_Droid_friends | null)[] | null;  // This droid's friends, or an empty list if they have none
 };
 
 export interface HeroName {

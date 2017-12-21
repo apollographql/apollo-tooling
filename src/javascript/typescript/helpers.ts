@@ -22,23 +22,31 @@ const builtInScalarMap = {
   [GraphQLID.name]: t.TSStringKeyword(),
 }
 
+export interface TypeFromGraphQLTypeOptions {
+  replaceObjectTypeIdentifierWith?: t.Identifier;
+}
+
 export function createTypeFromGraphQLTypeFunction(
   compilerOptions: CompilerOptions
-) {
+): (graphQLType: GraphQLType, options?: TypeFromGraphQLTypeOptions) => t.TSType {
   return function typeFromGraphQLType(graphQLType: GraphQLType, {
-    nullable
+    nullable = true,
+    replaceObjectTypeIdentifierWith
+  }: {
+    nullable?: boolean;
+    replaceObjectTypeIdentifierWith?: t.Identifier
   } = {
     nullable: true
   }): t.TSType {
     if (graphQLType instanceof GraphQLNonNull) {
       return typeFromGraphQLType(
         graphQLType.ofType,
-        { nullable: false }
+        { nullable: false, replaceObjectTypeIdentifierWith }
       );
     }
 
     if (graphQLType instanceof GraphQLList) {
-      const elementType = typeFromGraphQLType(graphQLType.ofType);
+      const elementType = typeFromGraphQLType(graphQLType.ofType, { replaceObjectTypeIdentifierWith, nullable: true });
       const type = t.TSArrayType(
         t.isTSUnionType(elementType) ? t.TSParenthesizedType(elementType) : elementType
       );
@@ -65,7 +73,7 @@ export function createTypeFromGraphQLTypeFunction(
       }
     } else {
       type = t.TSTypeReference(
-        t.identifier(graphQLType.name)
+        replaceObjectTypeIdentifierWith ? replaceObjectTypeIdentifierWith : t.identifier(graphQLType.name)
       );
     }
 

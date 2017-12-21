@@ -8,7 +8,7 @@ import {
   CompilerOptions
 } from '../../compiler';
 
-import { createTypeFromGraphQLTypeFunction } from './helpers';
+import { createTypeFromGraphQLTypeFunction, TypeFromGraphQLTypeOptions } from './helpers';
 
 import * as t from '@babel/types';
 
@@ -24,7 +24,7 @@ export interface TypescriptCompilerOptions extends CompilerOptions {
 
 export default class TypescriptGenerator {
   options: TypescriptCompilerOptions
-  typeFromGraphQLType: (graphQLType: GraphQLType) => t.TSType
+  typeFromGraphQLType: (graphQLType: GraphQLType, options?: TypeFromGraphQLTypeOptions) => t.TSType
 
   constructor(compilerOptions: TypescriptCompilerOptions) {
     this.options = compilerOptions;

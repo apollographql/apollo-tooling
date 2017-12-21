@@ -22,7 +22,7 @@ function compile(
   return compileToIR(schema, document, options);
 }
 
-describe('Typescript codeGeneration', () => {
+describe.only('Typescript codeGeneration', () => {
   test('multiple files', () => {
     const context = compile(`
       query HeroName($episode: Episode) {

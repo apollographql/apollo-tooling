@@ -3,7 +3,6 @@ import { stripIndent } from 'common-tags';
 import {
   GraphQLEnumType,
   GraphQLInputObjectType,
-  GraphQLNonNull,
 } from 'graphql';
 import * as path from 'path';
 
@@ -176,7 +175,6 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       fragmentName,
       selectionSet
     } = fragment;
-
     this.scopeStackPush(fragmentName);
 
     this.printer.enqueue(stripIndent`
@@ -249,7 +247,6 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       variant,
       this.context.options.mergeInFieldsFromFragmentSpreads
     );
-
     return fields.map(field => {
       const fieldName = field.alias !== undefined ? field.alias : field.name;
       this.scopeStackPush(fieldName);
@@ -306,13 +303,12 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
 
     this.printer.enqueue(exportedTypeAlias);
 
-
     return {
       name: field.alias ? field.alias : field.name,
       description: field.description,
-      type: field.type instanceof GraphQLNonNull
-        ? t.TSTypeReference(generatedIdentifier)
-        : this.makeNullableType(t.TSTypeReference(generatedIdentifier))
+      type: this.typeFromGraphQLType(field.type, {
+        replaceObjectTypeIdentifierWith: generatedIdentifier
+      })
     };
   }
 
