@@ -74,13 +74,6 @@ export default class FlowGenerator {
       keyInheritsNullability: true
     });
 
-    if (description) {
-      typeAlias.leadingComments = [{
-        type: 'CommentLine',
-        value: ` ${description.replace('\n', ' ')}`
-      } as t.CommentLine]
-    }
-
     return typeAlias;
   }
 
@@ -155,8 +148,17 @@ export default class FlowGenerator {
     );
   }
 
-  public exportDeclaration(declaration: t.Declaration) {
-    return t.exportNamedDeclaration(declaration, []);
+  public exportDeclaration(declaration: t.Declaration, options: { comments?: string } = {}) {
+    const exportedDeclaration = t.exportNamedDeclaration(declaration, []);
+
+    if(options.comments) {
+      exportedDeclaration.leadingComments = [{
+        type: 'CommentLine',
+        value: options.comments,
+      } as t.CommentLine];
+    }
+
+    return exportedDeclaration;
   }
 
   public annotationFromScopeStack(scope: string[]) {
