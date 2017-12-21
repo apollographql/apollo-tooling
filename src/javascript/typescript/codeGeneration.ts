@@ -102,7 +102,7 @@ export function generateSource(
       const outputFilePath = path.join(
         path.dirname(fragment.filePath),
         '__generated__',
-        `${fragment.fragmentName}.js`
+        `${fragment.fragmentName}.ts`
       );
 
       generatedFiles[outputFilePath] = new TypescriptGeneratedFile(output);

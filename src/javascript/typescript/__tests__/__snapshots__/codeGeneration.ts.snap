@@ -55,7 +55,7 @@ export enum Episode {
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/droidFragment.js": TypescriptGeneratedFile {
+  "__generated__/droidFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -88,7 +88,7 @@ export enum Episode {
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/humanFragment.js": TypescriptGeneratedFile {
+  "__generated__/humanFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -135,7 +135,7 @@ export enum Episode {
 
 exports[`Typescript codeGeneration fragment with fragment spreads 1`] = `
 Object {
-  "__generated__/anotherFragment.js": TypescriptGeneratedFile {
+  "__generated__/anotherFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -162,7 +162,7 @@ export interface anotherFragment {
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/simpleFragment.js": TypescriptGeneratedFile {
+  "__generated__/simpleFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -193,7 +193,7 @@ export interface simpleFragment {
 
 exports[`Typescript codeGeneration fragment with fragment spreads with inline fragment 1`] = `
 Object {
-  "__generated__/anotherFragment.js": TypescriptGeneratedFile {
+  "__generated__/anotherFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -236,7 +236,7 @@ export enum Episode {
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/simpleFragment.js": TypescriptGeneratedFile {
+  "__generated__/simpleFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -637,7 +637,7 @@ interface ColorInput {
 }
 `;
 
-exports[`Typescript codeGeneration multiple files 7`] = `"/some/file/__generated__/someFragment.js"`;
+exports[`Typescript codeGeneration multiple files 7`] = `"/some/file/__generated__/someFragment.ts"`;
 
 exports[`Typescript codeGeneration multiple files 8`] = `
 TypescriptGeneratedFile {
@@ -729,7 +729,7 @@ export enum Episode {
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/simpleFragment.js": TypescriptGeneratedFile {
+  "__generated__/simpleFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -767,7 +767,7 @@ export enum Episode {
 
 exports[`Typescript codeGeneration simple fragment 1`] = `
 Object {
-  "__generated__/SimpleFragment.js": TypescriptGeneratedFile {
+  "__generated__/SimpleFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
