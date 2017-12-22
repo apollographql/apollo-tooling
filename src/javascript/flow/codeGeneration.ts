@@ -138,7 +138,16 @@ export class FlowAPIGenerator extends FlowGenerator {
   }
 
   public typeAliasForInputObjectType(inputObjectType: GraphQLInputObjectType) {
-    this.printer.enqueue(this.inputObjectDeclaration(inputObjectType));
+    const typeAlias = this.inputObjectDeclaration(inputObjectType);
+
+    const { description } = inputObjectType;
+    const exportDeclarationOptions = description
+      ? { comments: ` ${description.replace('\n', ' ')}` }
+      : {};
+
+    const exportedTypeAlias = this.exportDeclaration(typeAlias, exportDeclarationOptions);
+    this.printer.enqueue(exportedTypeAlias);
+
   }
 
   public typeAliasesForOperation(operation: Operation) {

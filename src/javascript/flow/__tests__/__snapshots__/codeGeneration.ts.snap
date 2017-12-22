@@ -468,14 +468,14 @@ export type HeroName = {
 export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
@@ -521,14 +521,14 @@ export type SomeOther = {
 export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
@@ -574,14 +574,14 @@ export type ReviewMovie = {
 export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
@@ -622,14 +622,14 @@ export type someFragment = {
 export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
@@ -812,14 +812,14 @@ export type ReviewMovie = {
 export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
