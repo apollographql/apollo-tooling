@@ -8,6 +8,11 @@ import {
   CompilerOptions
 } from '../../compiler';
 
+
+import {
+  sortEnumValues
+} from '../../utilities/graphql';
+
 import { createTypeFromGraphQLTypeFunction, TypeFromGraphQLTypeOptions } from './helpers';
 
 import * as t from '@babel/types';
@@ -34,7 +39,7 @@ export default class TypescriptGenerator {
 
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
-    const enumMembers = type.getValues().map(({ value }) => {
+    const enumMembers = sortEnumValues(type.getValues()).map(({ value }) => {
       return t.TSEnumMember(
         t.identifier(value),
         t.stringLiteral(value)

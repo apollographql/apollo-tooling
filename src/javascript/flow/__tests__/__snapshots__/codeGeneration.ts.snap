@@ -45,7 +45,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -74,7 +74,7 @@ export type droidFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -112,7 +112,7 @@ export type humanFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -214,7 +214,7 @@ export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -243,7 +243,7 @@ export type simpleFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -317,7 +317,7 @@ export type HeroInlineFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -368,7 +368,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -425,7 +425,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -465,7 +465,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
 export type ReviewInput = {
@@ -518,7 +518,7 @@ export type SomeOther = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
 export type ReviewInput = {
@@ -571,7 +571,7 @@ export type ReviewMovie = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
 export type ReviewInput = {
@@ -619,7 +619,7 @@ export type someFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
 export type ReviewInput = {
@@ -671,7 +671,7 @@ export type HeroFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -700,7 +700,7 @@ export type simpleFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -770,7 +770,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -809,7 +809,7 @@ export type ReviewMovie = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
 export type ReviewInput = {

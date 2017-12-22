@@ -43,6 +43,10 @@ declare module "graphql/utilities/buildASTSchema" {
   ): GraphQLSchema;
 }
 
+export function sortEnumValues(values: GraphQLEnumValue[]): GraphQLEnumValue[] {
+  return values.sort((a, b) => a.value < b.value ? -1 : a.value > b.value ? 1 : 0);
+}
+
 export function isList(type: GraphQLType): boolean {
   return type instanceof GraphQLList || (type instanceof GraphQLNonNull && type.ofType instanceof GraphQLList);
 }
