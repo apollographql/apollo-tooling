@@ -58,7 +58,7 @@ export default class FlowGenerator {
   }
 
   public inputObjectDeclaration(inputObjectType: GraphQLInputObjectType) {
-    const { name, description } = inputObjectType;
+    const { name } = inputObjectType;
 
     const fieldMap = inputObjectType.getFields();
     const fields: ObjectProperty[] = Object.keys(inputObjectType.getFields())
