@@ -1,8 +1,6 @@
 import * as t from '@babel/types';
 import generate from '@babel/generator';
 
-import { stripIndent } from 'common-tags';
-
 type Printable = t.Node | string;
 
 export default class Printer {
@@ -16,11 +14,11 @@ export default class Printer {
             return document + printable;
           } else {
             const documentPart = generate(printable).code;
-            return document + this.fixCommas(documentPart);
+            return document + this.indentComments(documentPart);
           }
         },
         ''
-      ) as string;
+      );
   }
 
   public enqueue(printable: Printable) {
@@ -38,55 +36,33 @@ export default class Printer {
     return output;
   }
 
-  /**
-   * When using trailing commas on ObjectTypeProperties within
-   * ObjectTypeAnnotations, we get weird behavior:
-   * ```
-   * {
-   *   homePlanet: ?string // description
-   *   ,
-   *   friends: any  // description
-   * }
-   * ```
-   * when we want
-   * ```
-   * {
-   *   homePlanet: ?string, // description
-   *   friends: any         // description
-   * }
-   * ```
-   */
-  private fixCommas(documentPart: string) {
+  private indentComments(documentPart: string) {
     const lines = documentPart
       .split('\n')
       .filter(Boolean);  // filter out lines that have no content
 
     let currentLine = 0;
-    let nextLine;
     const newDocumentParts = [];
     // Keep track of what column comments should start on
     // to keep things aligned
     let maxCommentColumn = 0;
 
     while (currentLine !== lines.length) {
-      nextLine = currentLine + 1;
-      const strippedNextLine = stripIndent`${lines[nextLine]}`;
-      if (strippedNextLine.length === 1 && strippedNextLine[0] === ',') {
-        const currentLineContents = lines[currentLine];
-        const commentColumn = currentLineContents.indexOf('//');
+      const currentLineContents = lines[currentLine];
+      const commentColumn = currentLineContents.indexOf('//');
+      if (commentColumn > 0) {
         if (maxCommentColumn < commentColumn) {
           maxCommentColumn = commentColumn;
         }
 
         const [contents, comment] = currentLineContents.split('//');
         newDocumentParts.push({
-          main: contents.replace(/\s+$/g, '') + ',',
-          comment: comment ? comment.trim(): null
+          main: contents.replace(/\s+$/g, ''),
+          comment: comment ? comment.trim() : null
         });
-        currentLine++;
       } else {
         newDocumentParts.push({
-          main: lines[currentLine],
+          main: currentLineContents,
           comment: null
         });
       }

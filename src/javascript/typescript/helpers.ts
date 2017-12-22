@@ -15,64 +15,72 @@ import * as t from '@babel/types';
 import { CompilerOptions } from '../../compiler';
 
 const builtInScalarMap = {
-  [GraphQLString.name]: t.stringTypeAnnotation(),
-  [GraphQLInt.name]: t.numberTypeAnnotation(),
-  [GraphQLFloat.name]: t.numberTypeAnnotation(),
-  [GraphQLBoolean.name]: t.booleanTypeAnnotation(),
-  [GraphQLID.name]: t.stringTypeAnnotation(),
+  [GraphQLString.name]: t.TSStringKeyword(),
+  [GraphQLInt.name]: t.TSNumberKeyword(),
+  [GraphQLFloat.name]: t.TSNumberKeyword(),
+  [GraphQLBoolean.name]: t.TSBooleanKeyword(),
+  [GraphQLID.name]: t.TSStringKeyword(),
 }
 
-export function createTypeAnnotationFromGraphQLTypeFunction(
+export interface TypeFromGraphQLTypeOptions {
+  replaceObjectTypeIdentifierWith?: t.Identifier;
+}
+
+export function createTypeFromGraphQLTypeFunction(
   compilerOptions: CompilerOptions
-): Function {
-  return function typeAnnotationFromGraphQLType(type: GraphQLType, {
-    nullable
+): (graphQLType: GraphQLType, options?: TypeFromGraphQLTypeOptions) => t.TSType {
+  return function typeFromGraphQLType(graphQLType: GraphQLType, {
+    nullable = true,
+    replaceObjectTypeIdentifierWith
+  }: {
+    nullable?: boolean;
+    replaceObjectTypeIdentifierWith?: t.Identifier
   } = {
     nullable: true
-  }): t.FlowTypeAnnotation {
-    if (type instanceof GraphQLNonNull) {
-      return typeAnnotationFromGraphQLType(
-        type.ofType,
-        { nullable: false }
+  }): t.TSType {
+    if (graphQLType instanceof GraphQLNonNull) {
+      return typeFromGraphQLType(
+        graphQLType.ofType,
+        { nullable: false, replaceObjectTypeIdentifierWith }
       );
     }
 
-    if (type instanceof GraphQLList) {
-      const typeAnnotation = t.arrayTypeAnnotation(
-        typeAnnotationFromGraphQLType(type.ofType)
+    if (graphQLType instanceof GraphQLList) {
+      const elementType = typeFromGraphQLType(graphQLType.ofType, { replaceObjectTypeIdentifierWith, nullable: true });
+      const type = t.TSArrayType(
+        t.isTSUnionType(elementType) ? t.TSParenthesizedType(elementType) : elementType
       );
-
       if (nullable) {
-        return t.nullableTypeAnnotation(typeAnnotation);
+        return t.TSUnionType([type, t.TSNullKeyword()]);
       } else {
-        return typeAnnotation;
+        return type;
       }
     }
 
-    let typeAnnotation;
-    if (type instanceof GraphQLScalarType) {
-      const builtIn = builtInScalarMap[type.name]
+    let type: t.TSType;
+    if (graphQLType instanceof GraphQLScalarType) {
+      const builtIn = builtInScalarMap[graphQLType.name]
       if (builtIn) {
-        typeAnnotation = builtIn;
+        type = builtIn;
       } else {
         if (compilerOptions.passthroughCustomScalars) {
-          typeAnnotation = t.anyTypeAnnotation();
+          type = t.TSAnyKeyword();
         } else {
-          typeAnnotation = t.genericTypeAnnotation(
-            t.identifier(type.name)
+          type = t.TSTypeReference(
+            t.identifier(graphQLType.name)
           );
         }
       }
     } else {
-      typeAnnotation = t.genericTypeAnnotation(
-        t.identifier(type.name)
+      type = t.TSTypeReference(
+        replaceObjectTypeIdentifierWith ? replaceObjectTypeIdentifierWith : t.identifier(graphQLType.name)
       );
     }
 
     if (nullable) {
-      return t.nullableTypeAnnotation(typeAnnotation);
+      return t.TSUnionType([type, t.TSNullKeyword()]);
     } else {
-      return typeAnnotation;
+      return type;
     }
   }
 }
