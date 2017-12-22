@@ -30,7 +30,12 @@ export function interfaceDeclaration(generator: CodeGenerator, {
   closure: () => void) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
-  generator.print(`export type ${interfaceName} = `);
+  if (noBrackets) {
+    generator.print(`export type ${interfaceName} = `);
+  } else {
+    // simple types are exposed with a more user friendly `interface`
+    generator.print(`export interface ${interfaceName} `);
+  }
   generator.pushScope({ typeName: interfaceName });
   if (noBrackets) {
     generator.withinBlock(closure, '', '');

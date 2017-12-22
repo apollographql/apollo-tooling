@@ -10,7 +10,7 @@ import {
   GraphQLType,
 } from 'graphql'
 
-import * as t from 'babel-types';
+import * as t from '@babel/types';
 
 import { CompilerOptions } from '../../compiler';
 

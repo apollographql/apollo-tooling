@@ -114,18 +114,18 @@ exports[`JSON output should generate JSON output for a mutation with an enum and
 			\\"fields\\": [
 				{
 					\\"name\\": \\"stars\\",
-					\\"description\\": \\"0-5 stars\\",
-					\\"type\\": \\"Int!\\"
+					\\"type\\": \\"Int!\\",
+					\\"description\\": \\"0-5 stars\\"
 				},
 				{
 					\\"name\\": \\"commentary\\",
-					\\"description\\": \\"Comment about the movie, optional\\",
-					\\"type\\": \\"String\\"
+					\\"type\\": \\"String\\",
+					\\"description\\": \\"Comment about the movie, optional\\"
 				},
 				{
 					\\"name\\": \\"favorite_color\\",
-					\\"description\\": \\"Favorite color, optional\\",
-					\\"type\\": \\"ColorInput\\"
+					\\"type\\": \\"ColorInput\\",
+					\\"description\\": \\"Favorite color, optional\\"
 				}
 			]
 		},
@@ -136,18 +136,18 @@ exports[`JSON output should generate JSON output for a mutation with an enum and
 			\\"fields\\": [
 				{
 					\\"name\\": \\"red\\",
-					\\"description\\": \\"\\",
-					\\"type\\": \\"Int!\\"
+					\\"type\\": \\"Int!\\",
+					\\"description\\": \\"\\"
 				},
 				{
 					\\"name\\": \\"green\\",
-					\\"description\\": \\"\\",
-					\\"type\\": \\"Int!\\"
+					\\"type\\": \\"Int!\\",
+					\\"description\\": \\"\\"
 				},
 				{
 					\\"name\\": \\"blue\\",
-					\\"description\\": \\"\\",
-					\\"type\\": \\"Int!\\"
+					\\"type\\": \\"Int!\\",
+					\\"description\\": \\"\\"
 				}
 			]
 		}
@@ -477,6 +477,74 @@ exports[`JSON output should generate JSON output for a query with an enum variab
 }"
 `;
 
+exports[`JSON output should generate JSON output for a subscription 1`] = `
+"{
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"GraphQL request\\",
+			\\"operationName\\": \\"CommentAdded\\",
+			\\"operationType\\": \\"subscription\\",
+			\\"rootType\\": \\"Subscription\\",
+			\\"variables\\": [
+				{
+					\\"name\\": \\"repoFullName\\"
+				}
+			],
+			\\"source\\": \\"subscription CommentAdded($repoFullName: ID!) {\\\\n  commentAdded(repoFullName: $repoFullName) {\\\\n    __typename\\\\n    id\\\\n    content\\\\n  }\\\\n}\\",
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"commentAdded\\",
+					\\"fieldName\\": \\"commentAdded\\",
+					\\"type\\": \\"Comment\\",
+					\\"args\\": [
+						{
+							\\"name\\": \\"repoFullName\\",
+							\\"value\\": {
+								\\"kind\\": \\"Variable\\",
+								\\"variableName\\": \\"repoFullName\\"
+							}
+						}
+					],
+					\\"isConditional\\": false,
+					\\"isDeprecated\\": false,
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false
+						},
+						{
+							\\"responseName\\": \\"id\\",
+							\\"fieldName\\": \\"id\\",
+							\\"type\\": \\"Int!\\",
+							\\"isConditional\\": false,
+							\\"isDeprecated\\": false
+						},
+						{
+							\\"responseName\\": \\"content\\",
+							\\"fieldName\\": \\"content\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false,
+							\\"isDeprecated\\": false
+						}
+					],
+					\\"fragmentSpreads\\": [],
+					\\"inlineFragments\\": []
+				}
+			],
+			\\"fragmentSpreads\\": [],
+			\\"inlineFragments\\": [],
+			\\"fragmentsReferenced\\": [],
+			\\"sourceWithFragments\\": \\"subscription CommentAdded($repoFullName: ID!) {\\\\n  commentAdded(repoFullName: $repoFullName) {\\\\n    __typename\\\\n    id\\\\n    content\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"fe7d22048b5ff774a68cad58c35b4c12b938c07cc2b81f570a527a29d0788abd\\"
+		}
+	],
+	\\"fragments\\": [],
+	\\"typesUsed\\": []
+}"
+`;
+
 exports[`JSON output should generate JSON output for an input object type with default field values 1`] = `
 "{
 	\\"operations\\": [
@@ -522,24 +590,20 @@ exports[`JSON output should generate JSON output for an input object type with d
 		{
 			\\"kind\\": \\"InputObjectType\\",
 			\\"name\\": \\"ComplexInput\\",
-			\\"description\\": \\"\\",
 			\\"fields\\": [
 				{
 					\\"name\\": \\"string\\",
 					\\"type\\": \\"String\\",
-					\\"description\\": \\"\\",
 					\\"defaultValue\\": \\"Hello\\"
 				},
 				{
 					\\"name\\": \\"customScalar\\",
 					\\"type\\": \\"Date\\",
-					\\"description\\": \\"\\",
-					\\"defaultValue\\": false
+					\\"defaultValue\\": \\"2017-04-16\\"
 				},
 				{
 					\\"name\\": \\"listOfString\\",
 					\\"type\\": \\"[String]\\",
-					\\"description\\": \\"\\",
 					\\"defaultValue\\": [
 						\\"test1\\",
 						\\"test2\\",
@@ -549,7 +613,6 @@ exports[`JSON output should generate JSON output for an input object type with d
 				{
 					\\"name\\": \\"listOfInt\\",
 					\\"type\\": \\"[Int]\\",
-					\\"description\\": \\"\\",
 					\\"defaultValue\\": [
 						1,
 						2,
@@ -559,7 +622,6 @@ exports[`JSON output should generate JSON output for an input object type with d
 				{
 					\\"name\\": \\"listOfEnums\\",
 					\\"type\\": \\"[Episode]\\",
-					\\"description\\": \\"\\",
 					\\"defaultValue\\": [
 						\\"JEDI\\",
 						\\"EMPIRE\\"
@@ -568,38 +630,32 @@ exports[`JSON output should generate JSON output for an input object type with d
 				{
 					\\"name\\": \\"listOfCustomScalar\\",
 					\\"type\\": \\"[Date]\\",
-					\\"description\\": \\"\\",
 					\\"defaultValue\\": [
-						false,
-						false,
-						false
+						\\"2017-04-16\\",
+						\\"2017-04-17\\",
+						\\"2017-04-18\\"
 					]
 				}
 			]
 		},
 		{
 			\\"kind\\": \\"ScalarType\\",
-			\\"name\\": \\"Date\\",
-			\\"description\\": \\"\\"
+			\\"name\\": \\"Date\\"
 		},
 		{
 			\\"kind\\": \\"EnumType\\",
 			\\"name\\": \\"Episode\\",
-			\\"description\\": \\"\\",
 			\\"values\\": [
 				{
 					\\"name\\": \\"NEWHOPE\\",
-					\\"description\\": \\"\\",
 					\\"isDeprecated\\": false
 				},
 				{
 					\\"name\\": \\"EMPIRE\\",
-					\\"description\\": \\"\\",
 					\\"isDeprecated\\": false
 				},
 				{
 					\\"name\\": \\"JEDI\\",
-					\\"description\\": \\"\\",
 					\\"isDeprecated\\": false
 				}
 			]

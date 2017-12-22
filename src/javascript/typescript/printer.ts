@@ -57,7 +57,10 @@ export default class Printer {
    * ```
    */
   private fixCommas(documentPart: string) {
-    const lines = documentPart.split('\n');
+    const lines = documentPart
+      .split('\n')
+      .filter(Boolean);  // filter out lines that have no content
+
     let currentLine = 0;
     let nextLine;
     const newDocumentParts = [];
@@ -91,24 +94,26 @@ export default class Printer {
       currentLine++;
     }
 
-    return newDocumentParts.reduce((memo: string[], part) => {
-      const {
-        main,
-        comment
-      } = part;
+    return newDocumentParts
+      .reduce((memo: string[], part) => {
+        const {
+          main,
+          comment
+        } = part;
 
-      let line;
-      if (comment !== null) {
-        const spacesBetween = maxCommentColumn - main.length;
-        line = `${main}${' '.repeat(spacesBetween)} // ${comment}`
-      } else {
-        line = main;
-      }
+        let line;
+        if (comment !== null) {
+          const spacesBetween = maxCommentColumn - main.length;
+          line = `${main}${' '.repeat(spacesBetween)} // ${comment.trim()}`
+        } else {
+          line = main;
+        }
 
-      return [
-        ...memo,
-        line
-      ];
-    }, []).join('\n');
+        return [
+          ...memo,
+          line
+        ];
+      }, [])
+      .join('\n');
   }
 }

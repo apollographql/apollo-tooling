@@ -2,7 +2,7 @@
 
 exports[`Typescript codeGeneration fragment spreads with inline fragments 1`] = `
 Object {
-  "__generated__/HeroName.js": TypescriptGeneratedFile {
+  "__generated__/HeroName.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -274,7 +274,7 @@ export enum Episode {
 
 exports[`Typescript codeGeneration handles multiline graphql comments 1`] = `
 Object {
-  "__generated__/CustomScalar.js": TypescriptGeneratedFile {
+  "__generated__/CustomScalar.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -309,7 +309,7 @@ export type CustomScalar = {
 
 exports[`Typescript codeGeneration inline fragment 1`] = `
 Object {
-  "__generated__/HeroInlineFragment.js": TypescriptGeneratedFile {
+  "__generated__/HeroInlineFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -352,7 +352,7 @@ export enum Episode {
 
 exports[`Typescript codeGeneration inline fragment on type conditions 1`] = `
 Object {
-  "__generated__/HeroName.js": TypescriptGeneratedFile {
+  "__generated__/HeroName.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -407,7 +407,7 @@ export enum Episode {
 
 exports[`Typescript codeGeneration inline fragment on type conditions with differing inner fields 1`] = `
 Object {
-  "__generated__/HeroName.js": TypescriptGeneratedFile {
+  "__generated__/HeroName.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -466,7 +466,7 @@ export enum Episode {
 }
 `;
 
-exports[`Typescript codeGeneration multiple files 1`] = `"/some/file/__generated__/HeroName.js"`;
+exports[`Typescript codeGeneration multiple files 1`] = `"/some/file/__generated__/HeroName.ts"`;
 
 exports[`Typescript codeGeneration multiple files 2`] = `
 TypescriptGeneratedFile {
@@ -523,7 +523,7 @@ type ColorInput = {
 }
 `;
 
-exports[`Typescript codeGeneration multiple files 3`] = `"/some/file/__generated__/SomeOther.js"`;
+exports[`Typescript codeGeneration multiple files 3`] = `"/some/file/__generated__/SomeOther.ts"`;
 
 exports[`Typescript codeGeneration multiple files 4`] = `
 TypescriptGeneratedFile {
@@ -580,7 +580,7 @@ type ColorInput = {
 }
 `;
 
-exports[`Typescript codeGeneration multiple files 5`] = `"__generated__/ReviewMovie.js"`;
+exports[`Typescript codeGeneration multiple files 5`] = `"__generated__/ReviewMovie.ts"`;
 
 exports[`Typescript codeGeneration multiple files 6`] = `
 TypescriptGeneratedFile {
@@ -691,7 +691,7 @@ type ColorInput = {
 
 exports[`Typescript codeGeneration query with fragment spreads 1`] = `
 Object {
-  "__generated__/HeroFragment.js": TypescriptGeneratedFile {
+  "__generated__/HeroFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -798,7 +798,7 @@ export type SimpleFragment = {
 
 exports[`Typescript codeGeneration simple hero query 1`] = `
 Object {
-  "__generated__/HeroName.js": TypescriptGeneratedFile {
+  "__generated__/HeroName.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -841,7 +841,7 @@ export enum Episode {
 
 exports[`Typescript codeGeneration simple mutation 1`] = `
 Object {
-  "__generated__/ReviewMovie.js": TypescriptGeneratedFile {
+  "__generated__/ReviewMovie.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
