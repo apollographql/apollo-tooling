@@ -12,26 +12,34 @@ Object {
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type HeroName_hero_Human_friends = {
+export interface HeroName_hero_Human_friends_Human {
   __typename: \\"Human\\";
   name: string;  // What this human calls themselves
-} | {
-  __typename: \\"Droid\\";
-  id: string;    // The ID of the droid
-};
+}
 
-export type HeroName_hero = {
+export interface HeroName_hero_Human_friends_Droid {
+  __typename: \\"Droid\\";
+  id: string;  // The ID of the droid
+}
+
+export type HeroName_hero_Human_friends = HeroName_hero_Human_friends_Human | HeroName_hero_Human_friends_Droid;
+
+export interface HeroName_hero_Human {
   __typename: \\"Human\\";
   name: string;                                            // What this human calls themselves
   id: string;                                              // The ID of the human
   homePlanet: string | null;                               // The home planet of the human, or null if unknown
   friends: (HeroName_hero_Human_friends | null)[] | null;  // This human's friends, or an empty list if they have none
-} | {
+}
+
+export interface HeroName_hero_Droid {
   __typename: \\"Droid\\";
-  name: string;                                            // What others call this droid
-  id: string;                                              // The ID of the droid
-  appearsIn: (Episode | null)[];                           // The movies this droid appears in
-};
+  name: string;                   // What others call this droid
+  id: string;                     // The ID of the droid
+  appearsIn: (Episode | null)[];  // The movies this droid appears in
+}
+
+export type HeroName_hero = HeroName_hero_Human | HeroName_hero_Droid;
 
 export interface HeroName {
   hero: HeroName_hero | null;
@@ -98,13 +106,17 @@ export enum Episode {
 // GraphQL fragment: humanFragment
 // ====================================================
 
-export type humanFragment_friends = {
+export interface humanFragment_friends_Human {
   __typename: \\"Human\\";
   name: string;  // What this human calls themselves
-} | {
+}
+
+export interface humanFragment_friends_Droid {
   __typename: \\"Droid\\";
-  id: string;    // The ID of the droid
-};
+  id: string;  // The ID of the droid
+}
+
+export type humanFragment_friends = humanFragment_friends_Human | humanFragment_friends_Droid;
 
 export interface humanFragment {
   __typename: \\"Human\\";
@@ -367,18 +379,22 @@ export interface HeroName_hero_Human_friends {
   name: string;  // The name of the character
 }
 
-export type HeroName_hero = {
+export interface HeroName_hero_Human {
   __typename: \\"Human\\";
   name: string;                                            // What this human calls themselves
   id: string;                                              // The ID of the human
   homePlanet: string | null;                               // The home planet of the human, or null if unknown
   friends: (HeroName_hero_Human_friends | null)[] | null;  // This human's friends, or an empty list if they have none
-} | {
+}
+
+export interface HeroName_hero_Droid {
   __typename: \\"Droid\\";
-  name: string;                                            // What others call this droid
-  id: string;                                              // The ID of the droid
-  appearsIn: (Episode | null)[];                           // The movies this droid appears in
-};
+  name: string;                   // What others call this droid
+  id: string;                     // The ID of the droid
+  appearsIn: (Episode | null)[];  // The movies this droid appears in
+}
+
+export type HeroName_hero = HeroName_hero_Human | HeroName_hero_Droid;
 
 export interface HeroName {
   hero: HeroName_hero | null;
@@ -422,24 +438,28 @@ export interface HeroName_hero_Human_friends {
   name: string;  // The name of the character
 }
 
-export interface HeroName_hero_Droid_friends {
-  __typename: \\"Human\\" | \\"Droid\\";
-  id: string;  // The ID of the character
-}
-
-export type HeroName_hero = {
+export interface HeroName_hero_Human {
   __typename: \\"Human\\";
   name: string;                                            // What this human calls themselves
   id: string;                                              // The ID of the human
   homePlanet: string | null;                               // The home planet of the human, or null if unknown
   friends: (HeroName_hero_Human_friends | null)[] | null;  // This human's friends, or an empty list if they have none
-} | {
+}
+
+export interface HeroName_hero_Droid_friends {
+  __typename: \\"Human\\" | \\"Droid\\";
+  id: string;  // The ID of the character
+}
+
+export interface HeroName_hero_Droid {
   __typename: \\"Droid\\";
   name: string;                                            // What others call this droid
   id: string;                                              // The ID of the droid
   appearsIn: (Episode | null)[];                           // The movies this droid appears in
   friends: (HeroName_hero_Droid_friends | null)[] | null;  // This droid's friends, or an empty list if they have none
-};
+}
+
+export type HeroName_hero = HeroName_hero_Human | HeroName_hero_Droid;
 
 export interface HeroName {
   hero: HeroName_hero | null;

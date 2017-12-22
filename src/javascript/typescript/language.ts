@@ -131,18 +131,6 @@ export default class TypescriptGenerator {
     );
   }
 
-  public typeAliasObjectUnion(name: string, members: ObjectProperty[][]) {
-    return t.TSTypeAliasDeclaration(
-      t.identifier(name),
-      undefined,
-      t.TSUnionType(
-        members.map(member => {
-          return t.TSTypeLiteral(this.typesForProperties(member))
-        })
-      )
-    )
-  }
-
   public typeAliasGenericUnion(name: string, members: t.TSType[]) {
     return t.TSTypeAliasDeclaration(
       t.identifier(name),
@@ -164,12 +152,11 @@ export default class TypescriptGenerator {
   public makeNullableType(type: t.TSType) {
     return t.TSUnionType([
       type,
-      // t.TSUndefinedKeyword(),
       t.TSNullKeyword()
     ])
   }
 
   public isNullableType(type: t.TSType) {
-    return t.isTSUnionType(type) && t.isTSNullKeyword(type.types[1]);
+    return t.isTSUnionType(type) && type.types.some(type => t.isTSNullKeyword(type));
   }
 }

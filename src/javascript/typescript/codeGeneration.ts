@@ -93,7 +93,7 @@ export function generateSource(
   Object.values(context.fragments)
     .forEach((fragment) => {
       generator.fileHeader();
-      generator.typesForFragment(fragment);
+      generator.interfacesForFragment(fragment);
       printEnumsAndInputObjects(generator, context);
 
       const output = generator.printer.printAndClear();
@@ -170,7 +170,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     this.scopeStackPop();
   }
 
-  public typesForFragment(fragment: Fragment) {
+  public interfacesForFragment(fragment: Fragment) {
     const {
       fragmentName,
       selectionSet
@@ -286,17 +286,26 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
         )
       );
     } else {
-      const propertySets = variants.map(variant => {
+      const identifiers = variants.map(variant => {
         this.scopeStackPush(variant.possibleTypes[0].toString())
         const properties = this.getPropertiesForVariant(variant);
+        const identifierName = this.nameFromScopeStack(this.scopeStack);
+
+        this.printer.enqueue(this.exportDeclaration(
+          this.interface(
+            identifierName,
+            properties
+          )
+        ));
+
         this.scopeStackPop();
-        return properties;
-      })
+        return t.identifier(identifierName);
+      });
 
       exportedTypeAlias = this.exportDeclaration(
-        this.typeAliasObjectUnion(
-           generatedIdentifier.name,
-          propertySets
+        this.typeAliasGenericUnion(
+          generatedIdentifier.name,
+          identifiers.map(i => t.TSTypeReference(i))
         )
       );
     }
