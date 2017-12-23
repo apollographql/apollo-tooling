@@ -22,25 +22,41 @@ const builtInScalarMap = {
   [GraphQLID.name]: t.stringTypeAnnotation(),
 }
 
+export interface TypeAnnotationFromGraphQLTypeOptions {
+  replaceObjectTypeIdentifierWith?: t.Identifier;
+}
+
+type createTypeAnnotationFromGraphQLTypeFn = (
+  graphQLType: GraphQLType,
+  options?: TypeAnnotationFromGraphQLTypeOptions
+) => t.FlowTypeAnnotation;
+
 export function createTypeAnnotationFromGraphQLTypeFunction(
   compilerOptions: CompilerOptions
-): Function {
-  return function typeAnnotationFromGraphQLType(type: GraphQLType, {
-    nullable
+): createTypeAnnotationFromGraphQLTypeFn {
+  return function typeAnnotationFromGraphQLType(graphQLType: GraphQLType, {
+    nullable = true,
+    replaceObjectTypeIdentifierWith
+  }: {
+    nullable?: boolean;
+    replaceObjectTypeIdentifierWith?: t.Identifier
   } = {
     nullable: true
   }): t.FlowTypeAnnotation {
-    if (type instanceof GraphQLNonNull) {
+    if (graphQLType instanceof GraphQLNonNull) {
       return typeAnnotationFromGraphQLType(
-        type.ofType,
-        { nullable: false }
+        graphQLType.ofType,
+        { nullable: false, replaceObjectTypeIdentifierWith }
       );
     }
 
-    if (type instanceof GraphQLList) {
-      const typeAnnotation = t.arrayTypeAnnotation(
-        typeAnnotationFromGraphQLType(type.ofType)
-      );
+    if (graphQLType instanceof GraphQLList) {
+      const elementType = typeAnnotationFromGraphQLType(graphQLType.ofType, {
+        replaceObjectTypeIdentifierWith,
+        nullable: true
+      });
+
+      const typeAnnotation = t.arrayTypeAnnotation(elementType);
 
       if (nullable) {
         return t.nullableTypeAnnotation(typeAnnotation);
@@ -49,9 +65,9 @@ export function createTypeAnnotationFromGraphQLTypeFunction(
       }
     }
 
-    let typeAnnotation;
-    if (type instanceof GraphQLScalarType) {
-      const builtIn = builtInScalarMap[type.name]
+    let typeAnnotation: t.FlowTypeAnnotation;
+    if (graphQLType instanceof GraphQLScalarType) {
+      const builtIn = builtInScalarMap[graphQLType.name]
       if (builtIn) {
         typeAnnotation = builtIn;
       } else {
@@ -59,13 +75,13 @@ export function createTypeAnnotationFromGraphQLTypeFunction(
           typeAnnotation = t.anyTypeAnnotation();
         } else {
           typeAnnotation = t.genericTypeAnnotation(
-            t.identifier(type.name)
+            t.identifier(graphQLType.name)
           );
         }
       }
     } else {
       typeAnnotation = t.genericTypeAnnotation(
-        t.identifier(type.name)
+        replaceObjectTypeIdentifierWith ? replaceObjectTypeIdentifierWith : t.identifier(graphQLType.name)
       );
     }
 

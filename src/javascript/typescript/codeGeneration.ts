@@ -15,6 +15,10 @@ import {
 } from '../../compiler';
 
 import {
+  getTypeNameFromFieldName
+} from '../naming';
+
+import {
   typeCaseForSelectionSet,
   Variant
 } from '../../compiler/visitors/typeCase';
@@ -147,7 +151,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       selectionSet
     } = operation;
 
-    this.scopeStackPush(operationName);
+    this.scopeStackPushTypeName(operationName);
 
     this.printer.enqueue(stripIndent`
       // ====================================================
@@ -175,7 +179,8 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       fragmentName,
       selectionSet
     } = fragment;
-    this.scopeStackPush(fragmentName);
+
+    this.scopeStackPushTypeName(fragmentName);
 
     this.printer.enqueue(stripIndent`
       // ====================================================
@@ -200,7 +205,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     } else {
       const unionMembers: t.Identifier[] = [];
       variants.forEach(variant => {
-        this.scopeStackPush(variant.possibleTypes[0].toString());
+        this.scopeStackPushTypeName(variant.possibleTypes[0].toString());
         const properties = this.getPropertiesForVariant(variant);
 
         const name = this.nameFromScopeStack(this.scopeStack);
@@ -249,7 +254,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     );
     return fields.map(field => {
       const fieldName = field.alias !== undefined ? field.alias : field.name;
-      this.scopeStackPush(fieldName);
+      this.scopeStackPushFieldName(fieldName);
 
       let res: ObjectProperty;
       if (field.selectionSet) {
@@ -287,7 +292,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       );
     } else {
       const identifiers = variants.map(variant => {
-        this.scopeStackPush(variant.possibleTypes[0].toString())
+        this.scopeStackPushTypeName(variant.possibleTypes[0].toString())
         const properties = this.getPropertiesForVariant(variant);
         const identifierName = this.nameFromScopeStack(this.scopeStack);
 
@@ -311,9 +316,10 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     }
 
     this.printer.enqueue(exportedTypeAlias);
+    const fieldName = field.alias ? field.alias : field.name;
 
     return {
-      name: field.alias ? field.alias : field.name,
+      name: fieldName,
       description: field.description,
       type: this.typeFromGraphQLType(field.type, {
         replaceObjectTypeIdentifierWith: generatedIdentifier
@@ -350,8 +356,12 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     return this.printer.print();
   }
 
-  scopeStackPush(name: string) {
+  scopeStackPushTypeName(name: string) {
     this.scopeStack.push(name);
+  }
+
+  scopeStackPushFieldName(name: string) {
+    this.scopeStack.push(getTypeNameFromFieldName(name));
   }
 
   scopeStackPop() {

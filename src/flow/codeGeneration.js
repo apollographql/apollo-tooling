@@ -16,8 +16,6 @@ import {
 
 import  { isTypeProperSuperTypeOf } from '../utilities/graphql';
 
-import * as Inflector from 'inflected';
-
 import {
   join,
   wrap,

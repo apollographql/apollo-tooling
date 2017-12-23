@@ -13,6 +13,8 @@ import {
 import * as t from '@babel/types';
 
 import { CompilerOptions } from '../../compiler';
+import * as Inflector from 'inflected';
+import { createTypeFromGraphQLTypeFn } from '../flow/helpers';
 
 const builtInScalarMap = {
   [GraphQLString.name]: t.TSStringKeyword(),
@@ -26,9 +28,14 @@ export interface TypeFromGraphQLTypeOptions {
   replaceObjectTypeIdentifierWith?: t.Identifier;
 }
 
+type createTypeFromGraphQLTypeFn = (
+  graphQLType: GraphQLType,
+  options?: TypeFromGraphQLTypeOptions
+) => t.TSType;
+
 export function createTypeFromGraphQLTypeFunction(
   compilerOptions: CompilerOptions
-): (graphQLType: GraphQLType, options?: TypeFromGraphQLTypeOptions) => t.TSType {
+): createTypeFromGraphQLTypeFn {
   return function typeFromGraphQLType(graphQLType: GraphQLType, {
     nullable = true,
     replaceObjectTypeIdentifierWith

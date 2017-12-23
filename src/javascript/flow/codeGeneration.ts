@@ -16,6 +16,10 @@ import {
 } from '../../compiler';
 
 import {
+  getTypeNameFromFieldName
+} from '../naming';
+
+import {
   typeCaseForSelectionSet,
   Variant
 } from '../../compiler/visitors/typeCase';
@@ -157,7 +161,7 @@ export class FlowAPIGenerator extends FlowGenerator {
       selectionSet
     } = operation;
 
-    this.scopeStackPush(operationName);
+    this.scopeStackPushTypeName(operationName);
 
     this.printer.enqueue(stripIndent`
       // ====================================================
@@ -186,7 +190,7 @@ export class FlowAPIGenerator extends FlowGenerator {
       selectionSet
     } = fragment;
 
-    this.scopeStackPush(fragmentName);
+    this.scopeStackPushTypeName(fragmentName);
 
     this.printer.enqueue(stripIndent`
       // ====================================================
@@ -211,7 +215,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     } else {
       const unionMembers: t.FlowTypeAnnotation[] = [];
       variants.forEach(variant => {
-        this.scopeStackPush(variant.possibleTypes[0].toString());
+        this.scopeStackPushTypeName(variant.possibleTypes[0].toString());
         const properties = this.getPropertiesForVariant(variant);
 
         const name = this.annotationFromScopeStack(this.scopeStack).id.name;
@@ -261,7 +265,7 @@ export class FlowAPIGenerator extends FlowGenerator {
 
     return fields.map(field => {
       const fieldName = field.alias !== undefined ? field.alias : field.name;
-      this.scopeStackPush(fieldName);
+      this.scopeStackPushFieldName(fieldName);
 
       let res;
       if (field.selectionSet) {
@@ -288,10 +292,6 @@ export class FlowAPIGenerator extends FlowGenerator {
   ) {
     const { selectionSet } = field;
 
-    const selectionValueGeneratedTypeName = field.type instanceof GraphQLNonNull
-      ? generatedTypeName.id.name
-      : '?' + generatedTypeName.id.name;
-
     const typeCase = this.getTypeCasesForSelectionSet(selectionSet as SelectionSet);
     const variants = typeCase.exhaustiveVariants;
 
@@ -307,7 +307,7 @@ export class FlowAPIGenerator extends FlowGenerator {
       );
     } else {
       const propertySets = variants.map(variant => {
-        this.scopeStackPush(variant.possibleTypes[0].toString())
+        this.scopeStackPushTypeName(variant.possibleTypes[0].toString())
         const properties = this.getPropertiesForVariant(variant);
         this.scopeStackPop();
         return properties;
@@ -326,9 +326,9 @@ export class FlowAPIGenerator extends FlowGenerator {
     return {
       name: field.alias ? field.alias : field.name,
       description: field.description,
-      annotation: t.genericTypeAnnotation(
-        t.identifier(selectionValueGeneratedTypeName)
-      )
+      annotation: this.typeAnnotationFromGraphQLType(field.type, {
+        replaceObjectTypeIdentifierWith: t.identifier(generatedTypeName.id.name)
+      })
     };
   }
 
@@ -363,8 +363,12 @@ export class FlowAPIGenerator extends FlowGenerator {
     return this.printer.print();
   }
 
-  scopeStackPush(name: string) {
+  scopeStackPushTypeName(name: string) {
     this.scopeStack.push(name);
+  }
+
+  scopeStackPushFieldName(name: string) {
+    this.scopeStack.push(getTypeNameFromFieldName(name));
   }
 
   scopeStackPop() {
