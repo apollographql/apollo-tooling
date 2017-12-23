@@ -13,8 +13,6 @@ import {
 import * as t from '@babel/types';
 
 import { CompilerOptions } from '../../compiler';
-import * as Inflector from 'inflected';
-import { createTypeFromGraphQLTypeFn } from '../flow/helpers';
 
 const builtInScalarMap = {
   [GraphQLString.name]: t.TSStringKeyword(),
