@@ -11,6 +11,7 @@ import {
   GraphQLObjectType,
   GraphQLInterfaceType,
   GraphQLUnionType,
+  GraphQLEnumValue,
   GraphQLError,
   GraphQLSchema,
   GraphQLType,

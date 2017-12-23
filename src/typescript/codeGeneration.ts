@@ -83,7 +83,7 @@ function enumerationDeclaration(generator: CodeGenerator, type: GraphQLEnumType)
     } else {
       if (value.description) {
         value.description.split('\n')
-          .forEach(line => {
+          .forEach((line: string) => {
             generator.printOnNewline(`  // ${line.trim()}`);
           })
       }
