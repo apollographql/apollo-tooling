@@ -3,7 +3,6 @@ import { stripIndent } from 'common-tags';
 import {
   GraphQLEnumType,
   GraphQLInputObjectType,
-  GraphQLNonNull,
 } from 'graphql';
 import * as path from 'path';
 
