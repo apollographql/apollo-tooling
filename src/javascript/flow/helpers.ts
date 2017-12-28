@@ -27,8 +27,9 @@ export function createTypeAnnotationFromGraphQLTypeFunction(
 ): Function {
   function nonNullableTypeAnnotationFromGraphQLType(type: GraphQLType, typeName?: string): t.FlowTypeAnnotation {
     if (type instanceof GraphQLList) {
-      return t.arrayTypeAnnotation(
-        typeAnnotationFromGraphQLType(type.ofType, typeName)
+      return t.genericTypeAnnotation(
+        t.identifier('Array'),
+        t.typeParameterInstantiation([typeAnnotationFromGraphQLType(type.ofType, typeName)]),
       );
     } else if (type instanceof GraphQLScalarType) {
       const builtIn = builtInScalarMap[typeName || type.name]
