@@ -22,7 +22,8 @@ export type ObjectProperty = {
 }
 
 export interface FlowCompilerOptions extends CompilerOptions {
-  useFlowExactObjects: boolean
+  useFlowExactObjects: boolean;
+  useFlowReadOnlyTypes: boolean;
 }
 
 export default class FlowGenerator {
@@ -96,6 +97,9 @@ export default class FlowGenerator {
         // Nullable fields on input objects do not have to be defined
         // as well, so allow these fields to be "undefined"
         objectTypeProperty.optional = keyInheritsNullability && annotation.type === "NullableTypeAnnotation";
+        if (this.options.useFlowReadOnlyTypes) {
+          objectTypeProperty.variance = {kind: 'plus'};
+        }
 
         if (description) {
           objectTypeProperty.trailingComments = [{

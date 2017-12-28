@@ -14,7 +14,8 @@ import * as t from 'babel-types';
 import { createTypeAnnotationFromGraphQLTypeFunction } from '../helpers';
 
 const typeAnnotationFromGraphQLType = createTypeAnnotationFromGraphQLTypeFunction({
-  passthroughCustomScalars: false
+  passthroughCustomScalars: false,
+  useFlowReadOnlyTypes: false,
 });
 
 describe('Flow typeAnnotationFromGraphQLType', () => {
@@ -463,7 +464,8 @@ describe('passthrough custom scalars', () => {
 
   beforeAll(() => {
     getTypeAnnotation = createTypeAnnotationFromGraphQLTypeFunction({
-      passthroughCustomScalars: true
+      passthroughCustomScalars: true,
+      useFlowReadOnlyTypes: false,
     });
   });
 

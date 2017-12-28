@@ -22,13 +22,19 @@ const builtInScalarMap = {
   [GraphQLID.name]: t.stringTypeAnnotation(),
 }
 
+export interface FlowCompilerOptions extends CompilerOptions {
+  useFlowReadOnlyTypes: boolean;
+}
+
 export function createTypeAnnotationFromGraphQLTypeFunction(
-  compilerOptions: CompilerOptions
+  compilerOptions: FlowCompilerOptions
 ): Function {
+  const arrayType = compilerOptions.useFlowReadOnlyTypes ? '$ReadOnlyArray' : 'Array';
+
   function nonNullableTypeAnnotationFromGraphQLType(type: GraphQLType, typeName?: string): t.FlowTypeAnnotation {
     if (type instanceof GraphQLList) {
       return t.genericTypeAnnotation(
-        t.identifier('Array'),
+        t.identifier(arrayType),
         t.typeParameterInstantiation([typeAnnotationFromGraphQLType(type.ofType, typeName)]),
       );
     } else if (type instanceof GraphQLScalarType) {
