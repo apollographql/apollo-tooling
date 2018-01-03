@@ -154,6 +154,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     const {
       operationType,
       operationName,
+      variables,
       selectionSet
     } = operation;
 
@@ -178,6 +179,19 @@ export class FlowAPIGenerator extends FlowGenerator {
 
     this.printer.enqueue(exportedTypeAlias);
     this.scopeStackPop();
+
+    // Generate the variables interface if the operation has any variables
+    if (variables.length > 0) {
+      const interfaceName = operationName + 'Variables';
+      this.scopeStackPush(interfaceName);
+      this.printer.enqueue(this.exportDeclaration(
+        this.typeAliasObject(interfaceName, variables.map((variable) => ({
+          name: variable.name,
+          annotation: this.typeAnnotationFromGraphQLType(variable.type)
+        })), { keyInheritsNullability: true })
+      ));
+      this.scopeStackPop();
+    }
   }
 
   public typeAliasesForFragment(fragment: Fragment) {

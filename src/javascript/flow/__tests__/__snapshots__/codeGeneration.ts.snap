@@ -37,6 +37,10 @@ export type HeroName = {
   hero: ?HeroName_hero
 };
 
+export type HeroNameVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -309,6 +313,10 @@ export type HeroInlineFragment = {
   hero: ?HeroInlineFragment_hero
 };
 
+export type HeroInlineFragmentVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -358,6 +366,10 @@ export type HeroName_hero = {
 
 export type HeroName = {
   hero: ?HeroName_hero
+};
+
+export type HeroNameVariables = {
+  episode?: ?Episode
 };
 
 //==============================================================
@@ -417,6 +429,10 @@ export type HeroName = {
   hero: ?HeroName_hero
 };
 
+export type HeroNameVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -455,6 +471,10 @@ export type HeroName_hero = {
 
 export type HeroName = {
   hero: ?HeroName_hero
+};
+
+export type HeroNameVariables = {
+  episode?: ?Episode
 };
 
 //==============================================================
@@ -510,6 +530,10 @@ export type SomeOther = {
   hero: ?SomeOther_hero
 };
 
+export type SomeOtherVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -561,6 +585,11 @@ export type ReviewMovie_createReview = {
 
 export type ReviewMovie = {
   createReview: ?ReviewMovie_createReview
+};
+
+export type ReviewMovieVariables = {
+  episode?: ?Episode,
+  review?: ?ReviewInput,
 };
 
 //==============================================================
@@ -663,6 +692,10 @@ export type HeroFragment = {
   hero: ?HeroFragment_hero
 };
 
+export type HeroFragmentVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -762,6 +795,10 @@ export type HeroName = {
   hero: ?HeroName_hero
 };
 
+export type HeroNameVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -799,6 +836,11 @@ export type ReviewMovie_createReview = {
 
 export type ReviewMovie = {
   createReview: ?ReviewMovie_createReview
+};
+
+export type ReviewMovieVariables = {
+  episode?: ?Episode,
+  review?: ?ReviewInput,
 };
 
 //==============================================================
