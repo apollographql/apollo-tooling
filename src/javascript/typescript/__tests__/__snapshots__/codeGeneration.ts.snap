@@ -45,6 +45,10 @@ export interface HeroName {
   hero: HeroName_hero | null;
 }
 
+export interface HeroNameVariables {
+  episode?: Episode | null;
+}
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -341,6 +345,10 @@ export interface HeroInlineFragment {
   hero: HeroInlineFragment_hero | null;
 }
 
+export interface HeroInlineFragmentVariables {
+  episode?: Episode | null;
+}
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -398,6 +406,10 @@ export type HeroName_hero = HeroName_hero_Human | HeroName_hero_Droid;
 
 export interface HeroName {
   hero: HeroName_hero | null;
+}
+
+export interface HeroNameVariables {
+  episode?: Episode | null;
 }
 
 //==============================================================
@@ -465,6 +477,10 @@ export interface HeroName {
   hero: HeroName_hero | null;
 }
 
+export interface HeroNameVariables {
+  episode?: Episode | null;
+}
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -507,6 +523,10 @@ export interface HeroName_hero {
 
 export interface HeroName {
   hero: HeroName_hero | null;
+}
+
+export interface HeroNameVariables {
+  episode?: Episode | null;
 }
 
 //==============================================================
@@ -566,6 +586,10 @@ export interface SomeOther {
   hero: SomeOther_hero | null;
 }
 
+export interface SomeOtherVariables {
+  episode?: Episode | null;
+}
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -621,6 +645,11 @@ export interface ReviewMovie_createReview {
 
 export interface ReviewMovie {
   createReview: ReviewMovie_createReview | null;
+}
+
+export interface ReviewMovieVariables {
+  episode?: Episode | null;
+  review?: ReviewInput | null;
 }
 
 //==============================================================
@@ -731,6 +760,10 @@ export interface HeroFragment {
   hero: HeroFragment_hero | null;
 }
 
+export interface HeroFragmentVariables {
+  episode?: Episode | null;
+}
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -838,6 +871,10 @@ export interface HeroName {
   hero: HeroName_hero | null;
 }
 
+export interface HeroNameVariables {
+  episode?: Episode | null;
+}
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -879,6 +916,11 @@ export interface ReviewMovie_createReview {
 
 export interface ReviewMovie {
   createReview: ReviewMovie_createReview | null;
+}
+
+export interface ReviewMovieVariables {
+  episode?: Episode | null;
+  review?: ReviewInput | null;
 }
 
 //==============================================================

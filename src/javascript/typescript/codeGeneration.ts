@@ -144,6 +144,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     const {
       operationType,
       operationName,
+      variables,
       selectionSet
     } = operation;
 
@@ -168,6 +169,19 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
 
     this.printer.enqueue(exportedTypeAlias);
     this.scopeStackPop();
+
+    // Generate the variables interface if the operation has any variables
+    if (variables.length > 0) {
+      const interfaceName = operationName + 'Variables';
+      this.scopeStackPush(interfaceName);
+      this.printer.enqueue(this.exportDeclaration(
+        this.interface(interfaceName, variables.map((variable) => ({
+          name: variable.name,
+          type: this.typeFromGraphQLType(variable.type)
+        })), { keyInheritsNullability: true })
+      ));
+      this.scopeStackPop();
+    }
   }
 
   public interfacesForFragment(fragment: Fragment) {
