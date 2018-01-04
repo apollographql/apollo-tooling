@@ -286,6 +286,8 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
   private handleFieldSelectionSetValue(generatedIdentifier: t.Identifier, field: Field): ObjectProperty {
     const { selectionSet } = field;
 
+    const type = this.typeFromGraphQLType(field.type, generatedIdentifier.name);
+
     const typeCase = this.getTypeCasesForSelectionSet(selectionSet as SelectionSet);
     const variants = typeCase.exhaustiveVariants;
 
@@ -329,9 +331,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     return {
       name: field.alias ? field.alias : field.name,
       description: field.description,
-      type: this.typeFromGraphQLType(field.type, {
-        replaceObjectTypeIdentifierWith: generatedIdentifier
-      })
+      type
     };
   }
 

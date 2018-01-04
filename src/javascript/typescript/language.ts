@@ -13,7 +13,7 @@ import {
   sortEnumValues
 } from '../../utilities/graphql';
 
-import { createTypeFromGraphQLTypeFunction, TypeFromGraphQLTypeOptions } from './helpers';
+import { createTypeFromGraphQLTypeFunction,  } from './helpers';
 
 import * as t from '@babel/types';
 
@@ -29,7 +29,7 @@ export interface TypescriptCompilerOptions extends CompilerOptions {
 
 export default class TypescriptGenerator {
   options: TypescriptCompilerOptions
-  typeFromGraphQLType: (graphQLType: GraphQLType, options?: TypeFromGraphQLTypeOptions) => t.TSType
+  typeFromGraphQLType: Function
 
   constructor(compilerOptions: TypescriptCompilerOptions) {
     this.options = compilerOptions;
@@ -97,15 +97,12 @@ export default class TypescriptGenerator {
 
     return fields.map(({name, description, type}) => {
       const propertySignatureType = t.TSPropertySignature(
-        t.identifier(
-          // Nullable fields on input objects do not have to be defined
-          // as well, so allow these fields to be "undefined"
-          (keyInheritsNullability && this.isNullableType(type))
-            ? name + '?'
-            : name
-        ),
+        t.identifier(name),
         t.TSTypeAnnotation(type)
       );
+
+      // TODO: Check if this works
+      propertySignatureType.optional = keyInheritsNullability && this.isNullableType(type);
 
       if (description) {
         propertySignatureType.trailingComments = [{
