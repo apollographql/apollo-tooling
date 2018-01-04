@@ -3,7 +3,6 @@ import { stripIndent } from 'common-tags';
 import {
   GraphQLEnumType,
   GraphQLInputObjectType,
-  GraphQLNonNull,
 } from 'graphql';
 import * as path from 'path';
 
@@ -302,9 +301,7 @@ export class FlowAPIGenerator extends FlowGenerator {
   ) {
     const { selectionSet } = field;
 
-    const selectionValueGeneratedTypeName = field.type instanceof GraphQLNonNull
-      ? generatedTypeName.id.name
-      : '?' + generatedTypeName.id.name;
+    const annotation = this.typeAnnotationFromGraphQLType(field.type, generatedTypeName.id.name);
 
     const typeCase = this.getTypeCasesForSelectionSet(selectionSet as SelectionSet);
     const variants = typeCase.exhaustiveVariants;
@@ -340,9 +337,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     return {
       name: field.alias ? field.alias : field.name,
       description: field.description,
-      annotation: t.genericTypeAnnotation(
-        t.identifier(selectionValueGeneratedTypeName)
-      )
+      annotation: annotation,
     };
   }
 

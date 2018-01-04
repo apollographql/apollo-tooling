@@ -22,15 +22,15 @@ export type HeroName_hero_Human_friends = {
 
 export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                          // What this human calls themselves
-  id: string,                            // The ID of the human
-  homePlanet: ?string,                   // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+  name: string,                               // What this human calls themselves
+  id: string,                                 // The ID of the human
+  homePlanet: ?string,                        // The home planet of the human, or null if unknown
+  friends: ?(?HeroName_hero_Human_friends)[], // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                          // What others call this droid
-  id: string,                            // The ID of the droid
-  appearsIn: (?Episode)[],               // The movies this droid appears in
+  name: string,                               // What others call this droid
+  id: string,                                 // The ID of the droid
+  appearsIn: (?Episode)[],                    // The movies this droid appears in
 };
 
 export type HeroName = {
@@ -104,8 +104,8 @@ export type humanFragment_friends = {
 
 export type humanFragment = {
   __typename: \\"Human\\",
-  homePlanet: ?string,             // The home planet of the human, or null if unknown
-  friends: ?humanFragment_friends, // This human's friends, or an empty list if they have none
+  homePlanet: ?string,                  // The home planet of the human, or null if unknown
+  friends: ?(?humanFragment_friends)[], // This human's friends, or an empty list if they have none
 };
 
 //==============================================================
@@ -353,15 +353,15 @@ export type HeroName_hero_Human_friends = {
 
 export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                          // What this human calls themselves
-  id: string,                            // The ID of the human
-  homePlanet: ?string,                   // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+  name: string,                               // What this human calls themselves
+  id: string,                                 // The ID of the human
+  homePlanet: ?string,                        // The home planet of the human, or null if unknown
+  friends: ?(?HeroName_hero_Human_friends)[], // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                          // What others call this droid
-  id: string,                            // The ID of the droid
-  appearsIn: (?Episode)[],               // The movies this droid appears in
+  name: string,                               // What others call this droid
+  id: string,                                 // The ID of the droid
+  appearsIn: (?Episode)[],                    // The movies this droid appears in
 };
 
 export type HeroName = {
@@ -413,16 +413,16 @@ export type HeroName_hero_Droid_friends = {
 
 export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                          // What this human calls themselves
-  id: string,                            // The ID of the human
-  homePlanet: ?string,                   // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+  name: string,                               // What this human calls themselves
+  id: string,                                 // The ID of the human
+  homePlanet: ?string,                        // The home planet of the human, or null if unknown
+  friends: ?(?HeroName_hero_Human_friends)[], // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                          // What others call this droid
-  id: string,                            // The ID of the droid
-  appearsIn: (?Episode)[],               // The movies this droid appears in
-  friends: ?HeroName_hero_Droid_friends, // This droid's friends, or an empty list if they have none
+  name: string,                               // What others call this droid
+  id: string,                                 // The ID of the droid
+  appearsIn: (?Episode)[],                    // The movies this droid appears in
+  friends: ?(?HeroName_hero_Droid_friends)[], // This droid's friends, or an empty list if they have none
 };
 
 export type HeroName = {

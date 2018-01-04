@@ -9,6 +9,10 @@ declare module 'babel-types' {
   }
 
   interface ObjectTypeAnnotation {
-    exact: boolean
+    exact: boolean;
+  }
+
+  interface ObjectTypeProperty {
+    optional: boolean;
   }
 }

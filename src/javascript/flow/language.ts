@@ -88,17 +88,14 @@ export default class FlowGenerator {
   } = {}) {
     const objectTypeAnnotation = t.objectTypeAnnotation(
       fields.map(({name, description, annotation}) => {
-
         const objectTypeProperty = t.objectTypeProperty(
-          t.identifier(
-            // Nullable fields on input objects do not have to be defined
-            // as well, so allow these fields to be "undefined"
-            (keyInheritsNullability && annotation.type === "NullableTypeAnnotation")
-              ? name + '?'
-              : name
-          ),
+          t.identifier(name),
           annotation
         );
+
+        // Nullable fields on input objects do not have to be defined
+        // as well, so allow these fields to be "undefined"
+        objectTypeProperty.optional = keyInheritsNullability && annotation.type === "NullableTypeAnnotation";
 
         if (description) {
           objectTypeProperty.trailingComments = [{
