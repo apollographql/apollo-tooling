@@ -1,7 +1,6 @@
 import {
   GraphQLEnumType,
-  GraphQLInputObjectType,
-  GraphQLType
+  GraphQLInputObjectType
 } from 'graphql';
 
 import {
