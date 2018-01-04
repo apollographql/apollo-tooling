@@ -23,6 +23,10 @@ import {
   wrap,
 } from '../utilities/printing';
 
+import {
+  sortEnumValues
+} from '../utilities/graphql';
+
 import CodeGenerator from '../utilities/CodeGenerator';
 
 import {
@@ -76,7 +80,7 @@ function enumerationDeclaration(generator, type) {
   }
   generator.printOnNewline(`export type ${name} =`);
   const nValues = values.length;
-  values.forEach((value, i) => {
+  sortEnumValues(values).forEach((value, i) => {
     if (!value.description || value.description.indexOf('\n') === -1) {
       generator.printOnNewline(`  "${value.value}"${i === nValues - 1 ? ';' : ' |'}${wrap(' // ', value.description)}`)
     } else {

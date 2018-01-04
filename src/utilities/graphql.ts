@@ -11,6 +11,7 @@ import {
   GraphQLObjectType,
   GraphQLInterfaceType,
   GraphQLUnionType,
+  GraphQLEnumValue,
   GraphQLError,
   GraphQLSchema,
   GraphQLType,
@@ -41,6 +42,10 @@ declare module "graphql/utilities/buildASTSchema" {
     ast: DocumentNode,
     options?: { assumeValid?: boolean, commentDescriptions?: boolean },
   ): GraphQLSchema;
+}
+
+export function sortEnumValues(values: GraphQLEnumValue[]): GraphQLEnumValue[] {
+  return values.sort((a, b) => a.value < b.value ? -1 : a.value > b.value ? 1 : 0);
 }
 
 export function isList(type: GraphQLType): boolean {

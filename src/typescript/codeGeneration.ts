@@ -18,6 +18,10 @@ import {
   wrap
 } from '../utilities/printing';
 
+import {
+  sortEnumValues
+} from '../utilities/graphql';
+
 import CodeGenerator from '../utilities/CodeGenerator';
 
 import {
@@ -73,13 +77,13 @@ function enumerationDeclaration(generator: CodeGenerator, type: GraphQLEnumType)
       })
   }
   generator.printOnNewline(`export enum ${name} {`);
-  values.sort((a, b) => a.value < b.value ? -1 : a.value > b.value ? 1 : 0).forEach((value) => {
+  sortEnumValues(values).forEach((value) => {
     if (!value.description || value.description.indexOf('\n') === -1) {
       generator.printOnNewline(`  ${value.value} = "${value.value}",${wrap(' // ', value.description)}`)
     } else {
       if (value.description) {
         value.description.split('\n')
-          .forEach(line => {
+          .forEach((line: string) => {
             generator.printOnNewline(`  // ${line.trim()}`);
           })
       }

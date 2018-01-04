@@ -7,6 +7,10 @@ import {
   CompilerOptions
 } from '../../compiler';
 
+import {
+  sortEnumValues
+} from '../../utilities/graphql';
+
 import { createTypeAnnotationFromGraphQLTypeFunction } from './helpers';
 
 import * as t from '@babel/types';
@@ -33,7 +37,7 @@ export default class FlowGenerator {
 
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
-    const unionValues = type.getValues().map(({ value }) => {
+    const unionValues = sortEnumValues(type.getValues()).map(({ value }) => {
       const type = t.stringLiteralTypeAnnotation();
       type.value = value;
 

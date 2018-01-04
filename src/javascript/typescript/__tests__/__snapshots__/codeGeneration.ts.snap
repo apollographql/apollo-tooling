@@ -58,9 +58,9 @@ export interface HeroNameVariables {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -91,9 +91,9 @@ export interface droidFragment {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -137,9 +137,9 @@ export interface humanFragment {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -243,9 +243,9 @@ export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -276,9 +276,9 @@ export interface simpleFragment {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -358,9 +358,9 @@ export interface HeroInlineFragmentVariables {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -421,9 +421,9 @@ export interface HeroNameVariables {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -490,9 +490,9 @@ export interface HeroNameVariables {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -538,9 +538,9 @@ export interface HeroNameVariables {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 // The input object sent when someone is creating a new review
@@ -599,9 +599,9 @@ export interface SomeOtherVariables {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 // The input object sent when someone is creating a new review
@@ -661,9 +661,9 @@ export interface ReviewMovieVariables {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 // The input object sent when someone is creating a new review
@@ -713,9 +713,9 @@ export interface someFragment {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 // The input object sent when someone is creating a new review
@@ -773,9 +773,9 @@ export interface HeroFragmentVariables {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -806,9 +806,9 @@ export interface simpleFragment {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -884,9 +884,9 @@ export interface HeroNameVariables {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -932,9 +932,9 @@ export interface ReviewMovieVariables {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 // The input object sent when someone is creating a new review
