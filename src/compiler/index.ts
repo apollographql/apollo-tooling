@@ -34,6 +34,7 @@ import {
 
 export interface CompilerOptions {
   addTypename?: boolean;
+  alwaysGenerateOperationVariables?: boolean;
   mergeInFieldsFromFragmentSpreads?: boolean;
   passthroughCustomScalars?: boolean;
   customScalarsPrefix?: string;

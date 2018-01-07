@@ -131,7 +131,7 @@ export function interfaceVariablesDeclarationForOperation(
     variables
   }: LegacyOperation
 ) {
-  if (!variables || variables.length < 1) {
+  if (!(generator.context.options.alwaysGenerateOperationVariables || variables.length > 0)) {
     return;
   }
   const interfaceName = `${interfaceNameFromOperation({ operationName, operationType })}Variables`;

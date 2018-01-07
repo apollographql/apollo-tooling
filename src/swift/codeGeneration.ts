@@ -177,7 +177,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         this.printNewlineIfNeeded();
 
-        if (variables && variables.length > 0) {
+        if (this.context.options.alwaysGenerateOperationVariables || variables.length > 0) {
           const properties = variables.map(({ name, type }) => {
             const typeName = this.helpers.typeNameFromGraphQLType(type);
             const isOptional = !(

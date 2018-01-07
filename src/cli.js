@@ -127,6 +127,11 @@ yargs
         describe: 'Optional namespace for generated types [currently Swift and Scala-only]',
         type: 'string'
       },
+      "always-generate-variables": {
+        demand: false,
+        describe: "Always generate operation variables type declarations, even if there are no variables",
+        default: false
+      },
       "passthrough-custom-scalars": {
         demand: false,
         describe: "Don't attempt to map custom scalars [temporary option]",
@@ -188,6 +193,7 @@ yargs
         passthroughCustomScalars: argv["passthrough-custom-scalars"] || argv["custom-scalars-prefix"] !== '',
         customScalarsPrefix: argv["custom-scalars-prefix"] || '',
         addTypename: argv["add-typename"],
+        alwaysGenerateOperationVariables: argve['always-generate-variables'],
         namespace: argv.namespace,
         operationIdsPath: argv["operation-ids-path"],
         generateOperationIds: !!argv["operation-ids-path"],

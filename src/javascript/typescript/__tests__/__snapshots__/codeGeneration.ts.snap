@@ -309,6 +309,8 @@ export interface CustomScalar {
   commentTest: CustomScalar_commentTest | null;
 }
 
+export interface CustomScalarVariables {}
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file

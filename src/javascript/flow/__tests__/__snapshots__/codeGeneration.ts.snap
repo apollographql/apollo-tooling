@@ -277,6 +277,8 @@ export type CustomScalar = {
   commentTest: ?CustomScalar_commentTest
 };
 
+export type CustomScalarVariables = {};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file

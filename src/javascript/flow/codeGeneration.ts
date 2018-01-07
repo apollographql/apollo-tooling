@@ -180,7 +180,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     this.scopeStackPop();
 
     // Generate the variables interface if the operation has any variables
-    if (variables.length > 0) {
+    if (this.context.options.alwaysGenerateOperationVariables || variables.length > 0) {
       const interfaceName = operationName + 'Variables';
       this.scopeStackPush(interfaceName);
       this.printer.enqueue(this.exportDeclaration(

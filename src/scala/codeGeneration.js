@@ -140,7 +140,7 @@ export function classDeclarationForOperation(
 
     generator.printNewlineIfNeeded();
 
-    if (variables && variables.length > 0) {
+    if (generator.context.options.alwaysGenerateOperationVariables || variables.length > 0) {
       const properties = variables.map(({ name, type }) => {
         const propertyName = escapeIdentifierIfNeeded(name);
         const typeName = typeNameFromGraphQLType(generator.context, type);

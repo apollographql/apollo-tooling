@@ -15,7 +15,8 @@ function compile(
   source: string,
   options: CompilerOptions = {
     mergeInFieldsFromFragmentSpreads: true,
-    addTypename: true
+    addTypename: true,
+    alwaysGenerateOperationVariables: true,
   }
 ): CompilerContext {
   const document = parse(source);
@@ -269,7 +270,8 @@ describe('Flow codeGeneration', () => {
     const output = generateSource(
       compileToIR(miscSchema, document, {
         mergeInFieldsFromFragmentSpreads: true,
-        addTypename: true
+        addTypename: true,
+        alwaysGenerateOperationVariables: true,
       })
     );
 
