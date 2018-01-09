@@ -127,6 +127,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     this.printer.enqueue(
       stripIndent`
         /* @flow */
+        /* eslint-disable */
         // This file was automatically generated and should not be edited.
       `
     );
