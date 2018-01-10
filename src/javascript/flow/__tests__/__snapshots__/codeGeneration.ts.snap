@@ -22,19 +22,23 @@ export type HeroName_hero_Human_friends = {
 
 export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                          // What this human calls themselves
-  id: string,                            // The ID of the human
-  homePlanet: ?string,                   // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+  name: string,                               // What this human calls themselves
+  id: string,                                 // The ID of the human
+  homePlanet: ?string,                        // The home planet of the human, or null if unknown
+  friends: ?(?HeroName_hero_Human_friends)[], // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                          // What others call this droid
-  id: string,                            // The ID of the droid
-  appearsIn: (?Episode)[],               // The movies this droid appears in
+  name: string,                               // What others call this droid
+  id: string,                                 // The ID of the droid
+  appearsIn: (?Episode)[],                    // The movies this droid appears in
 };
 
 export type HeroName = {
   hero: ?HeroName_hero
+};
+
+export type HeroNameVariables = {
+  episode?: ?Episode
 };
 
 //==============================================================
@@ -45,7 +49,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -74,7 +78,7 @@ export type droidFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -100,8 +104,8 @@ export type humanFragment_friends = {
 
 export type humanFragment = {
   __typename: \\"Human\\",
-  homePlanet: ?string,             // The home planet of the human, or null if unknown
-  friends: ?humanFragment_friends, // This human's friends, or an empty list if they have none
+  homePlanet: ?string,                  // The home planet of the human, or null if unknown
+  friends: ?(?humanFragment_friends)[], // This human's friends, or an empty list if they have none
 };
 
 //==============================================================
@@ -112,7 +116,7 @@ export type humanFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -214,7 +218,7 @@ export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -243,7 +247,7 @@ export type simpleFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -309,6 +313,10 @@ export type HeroInlineFragment = {
   hero: ?HeroInlineFragment_hero
 };
 
+export type HeroInlineFragmentVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -317,7 +325,7 @@ export type HeroInlineFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -345,19 +353,23 @@ export type HeroName_hero_Human_friends = {
 
 export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                          // What this human calls themselves
-  id: string,                            // The ID of the human
-  homePlanet: ?string,                   // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+  name: string,                               // What this human calls themselves
+  id: string,                                 // The ID of the human
+  homePlanet: ?string,                        // The home planet of the human, or null if unknown
+  friends: ?(?HeroName_hero_Human_friends)[], // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                          // What others call this droid
-  id: string,                            // The ID of the droid
-  appearsIn: (?Episode)[],               // The movies this droid appears in
+  name: string,                               // What others call this droid
+  id: string,                                 // The ID of the droid
+  appearsIn: (?Episode)[],                    // The movies this droid appears in
 };
 
 export type HeroName = {
   hero: ?HeroName_hero
+};
+
+export type HeroNameVariables = {
+  episode?: ?Episode
 };
 
 //==============================================================
@@ -368,7 +380,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -401,20 +413,24 @@ export type HeroName_hero_Droid_friends = {
 
 export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                          // What this human calls themselves
-  id: string,                            // The ID of the human
-  homePlanet: ?string,                   // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+  name: string,                               // What this human calls themselves
+  id: string,                                 // The ID of the human
+  homePlanet: ?string,                        // The home planet of the human, or null if unknown
+  friends: ?(?HeroName_hero_Human_friends)[], // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                          // What others call this droid
-  id: string,                            // The ID of the droid
-  appearsIn: (?Episode)[],               // The movies this droid appears in
-  friends: ?HeroName_hero_Droid_friends, // This droid's friends, or an empty list if they have none
+  name: string,                               // What others call this droid
+  id: string,                                 // The ID of the droid
+  appearsIn: (?Episode)[],                    // The movies this droid appears in
+  friends: ?(?HeroName_hero_Droid_friends)[], // This droid's friends, or an empty list if they have none
 };
 
 export type HeroName = {
   hero: ?HeroName_hero
+};
+
+export type HeroNameVariables = {
+  episode?: ?Episode
 };
 
 //==============================================================
@@ -425,7 +441,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -457,6 +473,10 @@ export type HeroName = {
   hero: ?HeroName_hero
 };
 
+export type HeroNameVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -465,17 +485,17 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
@@ -510,6 +530,10 @@ export type SomeOther = {
   hero: ?SomeOther_hero
 };
 
+export type SomeOtherVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -518,17 +542,17 @@ export type SomeOther = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
@@ -563,6 +587,11 @@ export type ReviewMovie = {
   createReview: ?ReviewMovie_createReview
 };
 
+export type ReviewMovieVariables = {
+  episode?: ?Episode,
+  review?: ?ReviewInput,
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -571,17 +600,17 @@ export type ReviewMovie = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
@@ -619,17 +648,17 @@ export type someFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
@@ -663,6 +692,10 @@ export type HeroFragment = {
   hero: ?HeroFragment_hero
 };
 
+export type HeroFragmentVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -671,7 +704,7 @@ export type HeroFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -700,7 +733,7 @@ export type simpleFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -762,6 +795,10 @@ export type HeroName = {
   hero: ?HeroName_hero
 };
 
+export type HeroNameVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -770,7 +807,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -801,6 +838,11 @@ export type ReviewMovie = {
   createReview: ?ReviewMovie_createReview
 };
 
+export type ReviewMovieVariables = {
+  episode?: ?Episode,
+  review?: ?ReviewInput,
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -809,17 +851,17 @@ export type ReviewMovie = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,

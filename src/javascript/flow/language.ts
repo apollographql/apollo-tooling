@@ -7,6 +7,10 @@ import {
   CompilerOptions
 } from '../../compiler';
 
+import {
+  sortEnumValues
+} from '../../utilities/graphql';
+
 import { createTypeAnnotationFromGraphQLTypeFunction } from './helpers';
 
 import * as t from '@babel/types';
@@ -33,7 +37,7 @@ export default class FlowGenerator {
 
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
-    const unionValues = type.getValues().map(({ value }) => {
+    const unionValues = sortEnumValues(type.getValues()).map(({ value }) => {
       const type = t.stringLiteralTypeAnnotation();
       type.value = value;
 
@@ -58,7 +62,7 @@ export default class FlowGenerator {
   }
 
   public inputObjectDeclaration(inputObjectType: GraphQLInputObjectType) {
-    const { name, description } = inputObjectType;
+    const { name } = inputObjectType;
 
     const fieldMap = inputObjectType.getFields();
     const fields: ObjectProperty[] = Object.keys(inputObjectType.getFields())
@@ -74,13 +78,6 @@ export default class FlowGenerator {
       keyInheritsNullability: true
     });
 
-    if (description) {
-      typeAlias.leadingComments = [{
-        type: 'CommentLine',
-        value: ` ${description.replace('\n', ' ')}`
-      } as t.CommentLine]
-    }
-
     return typeAlias;
   }
 
@@ -91,17 +88,14 @@ export default class FlowGenerator {
   } = {}) {
     const objectTypeAnnotation = t.objectTypeAnnotation(
       fields.map(({name, description, annotation}) => {
-
         const objectTypeProperty = t.objectTypeProperty(
-          t.identifier(
-            // Nullable fields on input objects do not have to be defined
-            // as well, so allow these fields to be "undefined"
-            (keyInheritsNullability && annotation.type === "NullableTypeAnnotation")
-              ? name + '?'
-              : name
-          ),
+          t.identifier(name),
           annotation
         );
+
+        // Nullable fields on input objects do not have to be defined
+        // as well, so allow these fields to be "undefined"
+        objectTypeProperty.optional = keyInheritsNullability && annotation.type === "NullableTypeAnnotation";
 
         if (description) {
           objectTypeProperty.trailingComments = [{
@@ -155,8 +149,17 @@ export default class FlowGenerator {
     );
   }
 
-  public exportDeclaration(declaration: t.Declaration) {
-    return t.exportNamedDeclaration(declaration, []);
+  public exportDeclaration(declaration: t.Declaration, options: { comments?: string } = {}) {
+    const exportedDeclaration = t.exportNamedDeclaration(declaration, []);
+
+    if(options.comments) {
+      exportedDeclaration.leadingComments = [{
+        type: 'CommentLine',
+        value: options.comments,
+      } as t.CommentLine];
+    }
+
+    return exportedDeclaration;
   }
 
   public annotationFromScopeStack(scope: string[]) {

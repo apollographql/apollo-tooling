@@ -9,100 +9,109 @@ import {
   GraphQLScalarType,
 } from 'graphql';
 
-import * as t from 'babel-types';
+import * as t from '@babel/types';
 
-import { createTypeAnnotationFromGraphQLTypeFunction } from '../helpers';
+import { createTypeFromGraphQLTypeFunction } from '../helpers';
 
-const typeAnnotationFromGraphQLType = createTypeAnnotationFromGraphQLTypeFunction({
+const typeFromGraphQLType = createTypeFromGraphQLTypeFunction({
   passthroughCustomScalars: false
 });
 
-describe('Flow typeAnnotationFromGraphQLType', () => {
+function nullableType(type: t.TSType) {
+  return t.TSUnionType([
+    type,
+    t.TSNullKeyword()
+  ])
+}
+
+describe('Typescript typeAnnotationFromGraphQLType', () => {
   test('String', () => {
-    expect(typeAnnotationFromGraphQLType(GraphQLString))
+    expect(typeFromGraphQLType(GraphQLString))
       .toMatchObject(
-        t.nullableTypeAnnotation(
-          t.stringTypeAnnotation()
+        nullableType(
+          t.TSStringKeyword()
         )
       );
   });
 
   test('Int', () => {
-    expect(typeAnnotationFromGraphQLType(GraphQLInt))
+    expect(typeFromGraphQLType(GraphQLInt))
       .toMatchObject(
-        t.nullableTypeAnnotation(
-          t.numberTypeAnnotation()
+        nullableType(
+          t.TSNumberKeyword()
         )
       );
   });
 
   test('Float', () => {
-    expect(typeAnnotationFromGraphQLType(GraphQLFloat))
+    expect(typeFromGraphQLType(GraphQLFloat))
       .toMatchObject(
-        t.nullableTypeAnnotation(
-          t.numberTypeAnnotation()
+        nullableType(
+          t.TSNumberKeyword()
         )
       );
   });
 
   test('Boolean', () => {
-    expect(typeAnnotationFromGraphQLType(GraphQLBoolean))
+    expect(typeFromGraphQLType(GraphQLBoolean))
       .toMatchObject(
-        t.nullableTypeAnnotation(
-          t.booleanTypeAnnotation()
+        nullableType(
+          t.TSBooleanKeyword()
         )
       );
   });
 
   test('ID', () => {
-    expect(typeAnnotationFromGraphQLType(GraphQLID))
+    expect(typeFromGraphQLType(GraphQLID))
       .toMatchObject(
-        t.nullableTypeAnnotation(
-          t.stringTypeAnnotation()
+        nullableType(
+          t.TSStringKeyword()
         )
       );
   });
 
   test('String!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(GraphQLString))
-    ).toMatchObject(t.stringTypeAnnotation());
+      typeFromGraphQLType(new GraphQLNonNull(GraphQLString))
+    ).toMatchObject(t.TSStringKeyword());
   });
 
   test('Int!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(GraphQLInt))
-    ).toMatchObject(t.numberTypeAnnotation());
+      typeFromGraphQLType(new GraphQLNonNull(GraphQLInt))
+    ).toMatchObject(t.TSNumberKeyword());
   });
 
   test('Float!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(GraphQLFloat))
-    ).toMatchObject(t.numberTypeAnnotation());
+      typeFromGraphQLType(new GraphQLNonNull(GraphQLFloat))
+    ).toMatchObject(t.TSNumberKeyword());
   });
 
   test('Boolean!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(GraphQLBoolean))
-    ).toMatchObject(t.booleanTypeAnnotation());
+      typeFromGraphQLType(new GraphQLNonNull(GraphQLBoolean))
+    ).toMatchObject(t.TSBooleanKeyword());
   });
 
   test('ID!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(GraphQLID))
-    ).toMatchObject(t.stringTypeAnnotation());
+      typeFromGraphQLType(new GraphQLNonNull(GraphQLID))
+    ).toMatchObject(t.TSStringKeyword());
   });
 
   // TODO: Test GenericTypeAnnotation
 
   test('[String]', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLList(GraphQLString))
+      typeFromGraphQLType(new GraphQLList(GraphQLString))
     ).toMatchObject(
-        t.nullableTypeAnnotation(
-          t.arrayTypeAnnotation(
-            t.nullableTypeAnnotation(
-              t.stringTypeAnnotation()
+        nullableType(
+          t.TSArrayType(
+            t.TSParenthesizedType(
+              nullableType(
+                t.TSStringKeyword()
+              )
             )
           )
         )
@@ -111,12 +120,14 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[Int]', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLList(GraphQLInt))
+      typeFromGraphQLType(new GraphQLList(GraphQLInt))
     ).toMatchObject(
-        t.nullableTypeAnnotation(
-          t.arrayTypeAnnotation(
-            t.nullableTypeAnnotation(
-              t.numberTypeAnnotation()
+        nullableType(
+          t.TSArrayType(
+            t.TSParenthesizedType(
+              nullableType(
+                t.TSNumberKeyword()
+              )
             )
           )
         )
@@ -125,12 +136,14 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[Float]', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLList(GraphQLFloat))
+      typeFromGraphQLType(new GraphQLList(GraphQLFloat))
     ).toMatchObject(
-        t.nullableTypeAnnotation(
-          t.arrayTypeAnnotation(
-            t.nullableTypeAnnotation(
-              t.numberTypeAnnotation()
+        nullableType(
+          t.TSArrayType(
+            t.TSParenthesizedType(
+              nullableType(
+                t.TSNumberKeyword()
+              )
             )
           )
         )
@@ -139,12 +152,14 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[Boolean]', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLList(GraphQLBoolean))
+      typeFromGraphQLType(new GraphQLList(GraphQLBoolean))
     ).toMatchObject(
-        t.nullableTypeAnnotation(
-          t.arrayTypeAnnotation(
-            t.nullableTypeAnnotation(
-              t.booleanTypeAnnotation()
+        nullableType(
+          t.TSArrayType(
+            t.TSParenthesizedType(
+              nullableType(
+                t.TSBooleanKeyword()
+              )
             )
           )
         )
@@ -153,12 +168,14 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[ID]', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLList(GraphQLID))
+      typeFromGraphQLType(new GraphQLList(GraphQLID))
     ).toMatchObject(
-        t.nullableTypeAnnotation(
-          t.arrayTypeAnnotation(
-            t.nullableTypeAnnotation(
-              t.stringTypeAnnotation()
+        nullableType(
+          t.TSArrayType(
+            t.TSParenthesizedType(
+              nullableType(
+                t.TSStringKeyword()
+              )
             )
           )
         )
@@ -167,11 +184,13 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[String]!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLString)))
+      typeFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLString)))
     ).toMatchObject(
-        t.arrayTypeAnnotation(
-          t.nullableTypeAnnotation(
-            t.stringTypeAnnotation()
+        t.TSArrayType(
+          t.TSParenthesizedType(
+            nullableType(
+              t.TSStringKeyword()
+            )
           )
         )
       )
@@ -179,22 +198,26 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[Int]!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLInt)))
+      typeFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLInt)))
     ).toMatchObject(
-        t.arrayTypeAnnotation(
-          t.nullableTypeAnnotation(
-            t.numberTypeAnnotation()
+        t.TSArrayType(
+          t.TSParenthesizedType(
+            nullableType(
+              t.TSNumberKeyword()
+            )
           )
         )
       )
   });
   test('[Float]!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLFloat)))
+      typeFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLFloat)))
     ).toMatchObject(
-        t.arrayTypeAnnotation(
-          t.nullableTypeAnnotation(
-            t.numberTypeAnnotation()
+        t.TSArrayType(
+          t.TSParenthesizedType(
+            nullableType(
+              t.TSNumberKeyword()
+            )
           )
         )
       )
@@ -202,11 +225,13 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[Boolean]!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLBoolean)))
+      typeFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLBoolean)))
     ).toMatchObject(
-        t.arrayTypeAnnotation(
-          t.nullableTypeAnnotation(
-            t.booleanTypeAnnotation()
+        t.TSArrayType(
+          t.TSParenthesizedType(
+            nullableType(
+              t.TSBooleanKeyword()
+            )
           )
         )
       )
@@ -214,11 +239,13 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[ID]!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLID)))
+      typeFromGraphQLType(new GraphQLNonNull(new GraphQLList(GraphQLID)))
     ).toMatchObject(
-        t.arrayTypeAnnotation(
-          t.nullableTypeAnnotation(
-            t.stringTypeAnnotation()
+        t.TSArrayType(
+          t.TSParenthesizedType(
+            nullableType(
+              t.TSStringKeyword()
+            )
           )
         )
       )
@@ -226,11 +253,11 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[String!]', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLString)))
+      typeFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLString)))
     ).toMatchObject(
-      t.nullableTypeAnnotation(
-          t.arrayTypeAnnotation(
-            t.stringTypeAnnotation()
+      nullableType(
+          t.TSArrayType(
+            t.TSStringKeyword()
           )
         )
       )
@@ -238,11 +265,11 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[Int!]', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLList(new GraphQLNonNull((GraphQLInt))))
+      typeFromGraphQLType(new GraphQLList(new GraphQLNonNull((GraphQLInt))))
     ).toMatchObject(
-      t.nullableTypeAnnotation(
-          t.arrayTypeAnnotation(
-            t.numberTypeAnnotation()
+      nullableType(
+          t.TSArrayType(
+            t.TSNumberKeyword()
           )
         )
       )
@@ -250,11 +277,11 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[Float!]', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLFloat)))
+      typeFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLFloat)))
     ).toMatchObject(
-        t.nullableTypeAnnotation(
-          t.arrayTypeAnnotation(
-            t.numberTypeAnnotation()
+        nullableType(
+          t.TSArrayType(
+            t.TSNumberKeyword()
           )
         )
       )
@@ -262,11 +289,11 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[Boolean!]', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLBoolean)))
+      typeFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLBoolean)))
     ).toMatchObject(
-        t.nullableTypeAnnotation(
-          t.arrayTypeAnnotation(
-            t.booleanTypeAnnotation()
+        nullableType(
+          t.TSArrayType(
+            t.TSBooleanKeyword()
           )
         )
       )
@@ -274,11 +301,11 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[ID!]', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLID)))
+      typeFromGraphQLType(new GraphQLList(new GraphQLNonNull(GraphQLID)))
     ).toMatchObject(
-        t.nullableTypeAnnotation(
-          t.arrayTypeAnnotation(
-            t.stringTypeAnnotation()
+        nullableType(
+          t.TSArrayType(
+            t.TSStringKeyword()
           )
         )
       )
@@ -286,64 +313,68 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[String!]!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))))
+      typeFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString))))
     ).toMatchObject(
-        t.arrayTypeAnnotation(
-          t.stringTypeAnnotation()
+        t.TSArrayType(
+          t.TSStringKeyword()
         )
       )
   });
 
   test('[Int!]!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLInt))))
+      typeFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLInt))))
     ).toMatchObject(
-        t.arrayTypeAnnotation(
-          t.numberTypeAnnotation()
+        t.TSArrayType(
+          t.TSNumberKeyword()
         )
       )
   });
 
   test('[Float!]!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLFloat))))
+      typeFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLFloat))))
     ).toMatchObject(
-        t.arrayTypeAnnotation(
-          t.numberTypeAnnotation()
+        t.TSArrayType(
+          t.TSNumberKeyword()
         )
       )
   });
 
   test('[Boolean!]!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLBoolean))))
+      typeFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLBoolean))))
     ).toMatchObject(
-        t.arrayTypeAnnotation(
-          t.booleanTypeAnnotation()
+        t.TSArrayType(
+          t.TSBooleanKeyword()
         )
       )
   });
 
   test('[ID!]!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLID))))
+      typeFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLID))))
     ).toMatchObject(
-        t.arrayTypeAnnotation(
-          t.stringTypeAnnotation()
+        t.TSArrayType(
+          t.TSStringKeyword()
         )
       )
   });
 
   test('[[String]]', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLList(new GraphQLList(GraphQLString)))
+      typeFromGraphQLType(new GraphQLList(new GraphQLList(GraphQLString)))
     ).toMatchObject(
-        t.nullableTypeAnnotation(
-          t.arrayTypeAnnotation(
-            t.nullableTypeAnnotation(
-              t.arrayTypeAnnotation(
-                t.nullableTypeAnnotation(
-                  t.stringTypeAnnotation()
+        nullableType(
+          t.TSArrayType(
+            t.TSParenthesizedType(
+              nullableType(
+                t.TSArrayType(
+                  t.TSParenthesizedType(
+                    nullableType(
+                      t.TSStringKeyword()
+                    )
+                  )
                 )
               )
             )
@@ -354,13 +385,17 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
 
   test('[[String]]!', () => {
     expect(
-      typeAnnotationFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLList(GraphQLString))))
+      typeFromGraphQLType(new GraphQLNonNull(new GraphQLList(new GraphQLList(GraphQLString))))
     ).toMatchObject(
-        t.arrayTypeAnnotation(
-          t.nullableTypeAnnotation(
-            t.arrayTypeAnnotation(
-              t.nullableTypeAnnotation(
-                t.stringTypeAnnotation()
+        t.TSArrayType(
+          t.TSParenthesizedType(
+            nullableType(
+              t.TSArrayType(
+                t.TSParenthesizedType(
+                  nullableType(
+                    t.TSStringKeyword()
+                  )
+                )
               )
             )
           )
@@ -377,10 +412,10 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
     });
 
     expect(
-      typeAnnotationFromGraphQLType(OddType)
+      typeFromGraphQLType(OddType)
     ).toMatchObject(
-      t.nullableTypeAnnotation(
-        t.genericTypeAnnotation(t.identifier('Odd'))
+      nullableType(
+        t.TSTypeReference(t.identifier('Odd'))
       )
     )
   });
@@ -390,7 +425,7 @@ describe('passthrough custom scalars', () => {
   let getTypeAnnotation: Function;
 
   beforeAll(() => {
-    getTypeAnnotation = createTypeAnnotationFromGraphQLTypeFunction({
+    getTypeAnnotation = createTypeFromGraphQLTypeFunction({
       passthroughCustomScalars: true
     });
   });
@@ -406,8 +441,8 @@ describe('passthrough custom scalars', () => {
     expect(
       getTypeAnnotation(OddType)
     ).toMatchObject(
-      t.nullableTypeAnnotation(
-        t.anyTypeAnnotation()
+      nullableType(
+        t.TSAnyKeyword()
       )
     )
   });

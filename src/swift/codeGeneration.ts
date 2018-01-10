@@ -132,6 +132,10 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         className = `${this.helpers.operationClassName(operationName)}Mutation`;
         protocol = 'GraphQLMutation';
         break;
+      case 'subscription':
+        className = `${this.helpers.operationClassName(operationName)}Subscription`;
+        protocol = 'GraphQLSubscription';
+        break;
       default:
         throw new GraphQLError(`Unsupported operation type "${operationType}"`);
     }

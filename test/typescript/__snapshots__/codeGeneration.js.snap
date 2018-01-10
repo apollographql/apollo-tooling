@@ -6,9 +6,9 @@ exports[`TypeScript code generation #generateSource() should generate correct li
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\", // Star Wars Episode IV: A New Hope, released in 1977.
   EMPIRE = \\"EMPIRE\\", // Star Wars Episode V: The Empire Strikes Back, released in 1980.
   JEDI = \\"JEDI\\", // Star Wars Episode VI: Return of the Jedi, released in 1983.
+  NEWHOPE = \\"NEWHOPE\\", // Star Wars Episode IV: A New Hope, released in 1977.
 }
 
 
@@ -140,9 +140,9 @@ exports[`TypeScript code generation #generateSource() should generate mutation o
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\", // Star Wars Episode IV: A New Hope, released in 1977.
   EMPIRE = \\"EMPIRE\\", // Star Wars Episode V: The Empire Strikes Back, released in 1980.
   JEDI = \\"JEDI\\", // Star Wars Episode VI: Return of the Jedi, released in 1983.
+  NEWHOPE = \\"NEWHOPE\\", // Star Wars Episode IV: A New Hope, released in 1977.
 }
 
 
@@ -218,9 +218,9 @@ exports[`TypeScript code generation #generateSource() should generate simple nes
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\", // Star Wars Episode IV: A New Hope, released in 1977.
   EMPIRE = \\"EMPIRE\\", // Star Wars Episode V: The Empire Strikes Back, released in 1980.
   JEDI = \\"JEDI\\", // Star Wars Episode VI: Return of the Jedi, released in 1983.
+  NEWHOPE = \\"NEWHOPE\\", // Star Wars Episode IV: A New Hope, released in 1977.
 }
 
 
@@ -303,9 +303,9 @@ exports[`TypeScript code generation #generateSource() should generate simple que
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\", // Star Wars Episode IV: A New Hope, released in 1977.
   EMPIRE = \\"EMPIRE\\", // Star Wars Episode V: The Empire Strikes Back, released in 1980.
   JEDI = \\"JEDI\\", // Star Wars Episode VI: Return of the Jedi, released in 1983.
+  NEWHOPE = \\"NEWHOPE\\", // Star Wars Episode IV: A New Hope, released in 1977.
 }
 
 
