@@ -32,4 +32,9 @@ describe('Validation', () => {
       'Validation of GraphQL query document failed'
     );
   });
+
+  test(`shouldn't throw an error for an unknown directive`, () => {
+    const document = loadQueryDocument('UnknownDirective.graphql');
+
+    validateQueryDocument(schema, document);
 });
