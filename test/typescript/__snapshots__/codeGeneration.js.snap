@@ -418,7 +418,7 @@ exports[`TypeScript code generation #generateSource() should have __typename val
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-export type HeroNameQuery = {
+export interface HeroNameQuery {
   hero: ( {
       __typename: \\"Human\\",
       // The friends of the human exposed as a connection with edges
