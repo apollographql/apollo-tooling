@@ -24,7 +24,7 @@ const builtInScalarMap = {
 
 export function createTypeFromGraphQLTypeFunction(
   compilerOptions: CompilerOptions
-): Function {
+): (graphQLType: GraphQLType, typeName?: string) => t.TSType {
   function nonNullableTypeFromGraphQLType(graphQLType: GraphQLType, typeName?: string): t.TSType {
     if (graphQLType instanceof GraphQLList) {
       const elementType = typeFromGraphQLType(graphQLType.ofType, typeName);
