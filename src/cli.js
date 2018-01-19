@@ -39,7 +39,9 @@ yargs
         coerce: (arg) => {
           let additionalHeaders = {};
           for (const header of arg) {
-            const [name, value] = header.split(/\s*:\s*/);
+            const separator = header.indexOf(":");
+            const name = header.substring(0, separator).trim();
+            const value = header.substring(separator + 1).trim();
             if (!(name && value)) {
               throw new ToolError('Headers should be specified as "Name: Value"');
             }
