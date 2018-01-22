@@ -22,65 +22,40 @@ const builtInScalarMap = {
   [GraphQLID.name]: t.TSStringKeyword(),
 }
 
-export interface TypeFromGraphQLTypeOptions {
-  replaceObjectTypeIdentifierWith?: t.Identifier;
-}
-
 export function createTypeFromGraphQLTypeFunction(
   compilerOptions: CompilerOptions
-): (graphQLType: GraphQLType, options?: TypeFromGraphQLTypeOptions) => t.TSType {
-  return function typeFromGraphQLType(graphQLType: GraphQLType, {
-    nullable = true,
-    replaceObjectTypeIdentifierWith
-  }: {
-    nullable?: boolean;
-    replaceObjectTypeIdentifierWith?: t.Identifier
-  } = {
-    nullable: true
-  }): t.TSType {
-    if (graphQLType instanceof GraphQLNonNull) {
-      return typeFromGraphQLType(
-        graphQLType.ofType,
-        { nullable: false, replaceObjectTypeIdentifierWith }
-      );
-    }
-
+): (graphQLType: GraphQLType, typeName?: string) => t.TSType {
+  function nonNullableTypeFromGraphQLType(graphQLType: GraphQLType, typeName?: string): t.TSType {
     if (graphQLType instanceof GraphQLList) {
-      const elementType = typeFromGraphQLType(graphQLType.ofType, { replaceObjectTypeIdentifierWith, nullable: true });
-      const type = t.TSArrayType(
+      const elementType = typeFromGraphQLType(graphQLType.ofType, typeName);
+      return t.TSArrayType(
         t.isTSUnionType(elementType) ? t.TSParenthesizedType(elementType) : elementType
       );
-      if (nullable) {
-        return t.TSUnionType([type, t.TSNullKeyword()]);
+    } else if (graphQLType instanceof GraphQLScalarType) {
+      const builtIn = builtInScalarMap[typeName || graphQLType.name]
+      if (builtIn != null) {
+        return builtIn;
+      } else if (compilerOptions.passthroughCustomScalars) {
+        return t.TSAnyKeyword();
       } else {
-        return type;
+        return t.TSTypeReference(t.identifier(graphQLType.name));
       }
-    }
-
-    let type: t.TSType;
-    if (graphQLType instanceof GraphQLScalarType) {
-      const builtIn = builtInScalarMap[graphQLType.name]
-      if (builtIn) {
-        type = builtIn;
-      } else {
-        if (compilerOptions.passthroughCustomScalars) {
-          type = t.TSAnyKeyword();
-        } else {
-          type = t.TSTypeReference(
-            t.identifier(graphQLType.name)
-          );
-        }
-      }
+    } else if (graphQLType instanceof GraphQLNonNull) {
+      // This won't happen; but for TypeScript completeness:
+      return typeFromGraphQLType(graphQLType.ofType, typeName);
     } else {
-      type = t.TSTypeReference(
-        replaceObjectTypeIdentifierWith ? replaceObjectTypeIdentifierWith : t.identifier(graphQLType.name)
-      );
-    }
-
-    if (nullable) {
-      return t.TSUnionType([type, t.TSNullKeyword()]);
-    } else {
-      return type;
+      return t.TSTypeReference(t.identifier(typeName || graphQLType.name));
     }
   }
+
+  function typeFromGraphQLType(graphQLType: GraphQLType, typeName?: string): t.TSType {
+    if (graphQLType instanceof GraphQLNonNull) {
+      return nonNullableTypeFromGraphQLType(graphQLType.ofType, typeName);
+    } else {
+      const type = nonNullableTypeFromGraphQLType(graphQLType, typeName);
+      return t.TSUnionType([type, t.TSNullKeyword()]);
+    }
+  }
+
+  return typeFromGraphQLType;
 }
