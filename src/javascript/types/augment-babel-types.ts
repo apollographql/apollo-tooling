@@ -13,6 +13,7 @@ declare module 'babel-types' {
   }
 
   interface ObjectTypeProperty {
+    variance?: {kind: 'plus' | 'minus'};
     optional: boolean;
   }
 }

@@ -151,6 +151,12 @@ yargs
         default: false,
         type: 'boolean'
       },
+      "use-flow-read-only-types": {
+        demand: false,
+        describe: "Use Flow read only types for generated types [flow-modern only]",
+        default: false,
+        type: 'boolean'
+      },
       "tag-name": {
         demand: false,
         describe: "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
@@ -194,7 +200,8 @@ yargs
         operationIdsPath: argv["operation-ids-path"],
         generateOperationIds: !!argv["operation-ids-path"],
         mergeInFieldsFromFragmentSpreads: argv["merge-in-fields-from-fragment-spreads"],
-        useFlowExactObjects: argv['use-flow-exact-objects']
+        useFlowExactObjects: argv['use-flow-exact-objects'],
+        useFlowReadOnlyTypes: argv['use-flow-read-only-types'],
       };
 
       generate(inputPaths, argv.schema, argv.output, argv.only, argv.target, argv.tagName, argv.projectName, options);
