@@ -131,6 +131,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -184,6 +185,7 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -213,6 +215,7 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -256,6 +259,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -283,6 +287,7 @@ export type anotherFragment = {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -314,6 +319,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -353,6 +359,7 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -387,6 +394,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -422,6 +430,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -465,6 +474,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -520,6 +530,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -582,6 +593,7 @@ FlowGeneratedFile {
   "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -639,6 +651,7 @@ FlowGeneratedFile {
   "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -696,6 +709,7 @@ FlowGeneratedFile {
   "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -754,6 +768,7 @@ FlowGeneratedFile {
   "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -801,6 +816,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -839,6 +855,7 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -873,6 +890,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -904,6 +922,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -947,6 +966,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
