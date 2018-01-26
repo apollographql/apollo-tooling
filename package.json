@@ -23,7 +23,7 @@
     "npm": ">=5.0"
   },
   "devDependencies": {
-    "@babel/types": "^7.0.0-beta.35",
+    "@babel/types": "7.0.0-beta.38",
     "@types/babel-generator": "^6.25.1",
     "@types/babel-types": "^7.0.0",
     "@types/babylon": "^6.16.2",
@@ -42,7 +42,7 @@
     "typescript": "^2.6.2"
   },
   "dependencies": {
-    "@babel/generator": "^7.0.0-beta.35",
+    "@babel/generator": "7.0.0-beta.38",
     "change-case": "^3.0.1",
     "common-tags": "^1.5.1",
     "core-js": "^2.5.3",
