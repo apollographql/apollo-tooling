@@ -2,6 +2,7 @@ import {
   validate,
   specifiedRules,
   NoUnusedFragmentsRule,
+  KnownDirectivesRule,
   GraphQLError,
   FieldNode,
   ValidationContext,
@@ -13,7 +14,7 @@ import {
 import { ToolError, logError } from './errors';
 
 export function validateQueryDocument(schema: GraphQLSchema, document: DocumentNode) {
-  const specifiedRulesToBeRemoved = [NoUnusedFragmentsRule];
+  const specifiedRulesToBeRemoved = [NoUnusedFragmentsRule, KnownDirectivesRule];
 
   const rules = [
     NoAnonymousQueries,
