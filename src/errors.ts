@@ -28,7 +28,7 @@ export function logError(error: Error) {
       logErrorMessage(error.message, fileName);
     }
   } else {
-    console.log(error.stack);
+    console.error(error.stack);
   }
 }
 
@@ -37,17 +37,17 @@ export function logErrorMessage(message: string, fileName?: string, lineNumber?:
     if (fileName && lineNumber) {
       // Prefixing error output with file name, line and 'error: ',
       // so Xcode will associate it with the right file and display the error inline
-      console.log(`${fileName}:${lineNumber}: error: ${message}`);
+      console.error(`${fileName}:${lineNumber}: error: ${message}`);
     } else {
       // Prefixing error output with 'error: ', so Xcode will display it as an error
-      console.log(`error: ${message}`);
+      console.error(`error: ${message}`);
     }
   } else {
     if (fileName) {
       const truncatedFileName = '/' + fileName.split(path.sep).slice(-4).join(path.sep);
-      console.log(`...${truncatedFileName}: ${message}`);
+      console.error(`...${truncatedFileName}: ${message}`);
     } else {
-      console.log(`error: ${message}`);
+      console.error(`error: ${message}`);
     }
   }
 }
