@@ -6,7 +6,7 @@ import { introspectionQuery } from 'graphql/utilities';
 import { ToolError } from './errors'
 
 export async function introspect(schemaContents: string) {
-  const schema = buildASTSchema(parse(schemaContents));
+  const schema = buildASTSchema(parse(schemaContents), { commentDescriptions: true });
   return await graphql(schema, introspectionQuery);
 }
 

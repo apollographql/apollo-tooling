@@ -3,7 +3,6 @@ import { stripIndent } from 'common-tags';
 import {
   GraphQLEnumType,
   GraphQLInputObjectType,
-  GraphQLNonNull,
 } from 'graphql';
 import * as path from 'path';
 
@@ -128,6 +127,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     this.printer.enqueue(
       stripIndent`
         /* @flow */
+        /* eslint-disable */
         // This file was automatically generated and should not be edited.
       `
     );
@@ -138,13 +138,23 @@ export class FlowAPIGenerator extends FlowGenerator {
   }
 
   public typeAliasForInputObjectType(inputObjectType: GraphQLInputObjectType) {
-    this.printer.enqueue(this.inputObjectDeclaration(inputObjectType));
+    const typeAlias = this.inputObjectDeclaration(inputObjectType);
+
+    const { description } = inputObjectType;
+    const exportDeclarationOptions = description
+      ? { comments: ` ${description.replace('\n', ' ')}` }
+      : {};
+
+    const exportedTypeAlias = this.exportDeclaration(typeAlias, exportDeclarationOptions);
+    this.printer.enqueue(exportedTypeAlias);
+
   }
 
   public typeAliasesForOperation(operation: Operation) {
     const {
       operationType,
       operationName,
+      variables,
       selectionSet
     } = operation;
 
@@ -169,6 +179,19 @@ export class FlowAPIGenerator extends FlowGenerator {
 
     this.printer.enqueue(exportedTypeAlias);
     this.scopeStackPop();
+
+    // Generate the variables interface if the operation has any variables
+    if (variables.length > 0) {
+      const interfaceName = operationName + 'Variables';
+      this.scopeStackPush(interfaceName);
+      this.printer.enqueue(this.exportDeclaration(
+        this.typeAliasObject(interfaceName, variables.map((variable) => ({
+          name: variable.name,
+          annotation: this.typeAnnotationFromGraphQLType(variable.type)
+        })), { keyInheritsNullability: true })
+      ));
+      this.scopeStackPop();
+    }
   }
 
   public typeAliasesForFragment(fragment: Fragment) {
@@ -279,9 +302,7 @@ export class FlowAPIGenerator extends FlowGenerator {
   ) {
     const { selectionSet } = field;
 
-    const selectionValueGeneratedTypeName = field.type instanceof GraphQLNonNull
-      ? generatedTypeName.id.name
-      : '?' + generatedTypeName.id.name;
+    const annotation = this.typeAnnotationFromGraphQLType(field.type, generatedTypeName.id.name);
 
     const typeCase = this.getTypeCasesForSelectionSet(selectionSet as SelectionSet);
     const variants = typeCase.exhaustiveVariants;
@@ -317,9 +338,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     return {
       name: field.alias ? field.alias : field.name,
       description: field.description,
-      annotation: t.genericTypeAnnotation(
-        t.identifier(selectionValueGeneratedTypeName)
-      )
+      annotation: annotation,
     };
   }
 

@@ -18,6 +18,10 @@ import {
   wrap
 } from '../utilities/printing';
 
+import {
+  sortEnumValues
+} from '../utilities/graphql';
+
 import CodeGenerator from '../utilities/CodeGenerator';
 
 import {
@@ -73,13 +77,13 @@ function enumerationDeclaration(generator: CodeGenerator, type: GraphQLEnumType)
       })
   }
   generator.printOnNewline(`export enum ${name} {`);
-  values.forEach((value) => {
+  sortEnumValues(values).forEach((value) => {
     if (!value.description || value.description.indexOf('\n') === -1) {
       generator.printOnNewline(`  ${value.value} = "${value.value}",${wrap(' // ', value.description)}`)
     } else {
       if (value.description) {
         value.description.split('\n')
-          .forEach(line => {
+          .forEach((line: string) => {
             generator.printOnNewline(`  // ${line.trim()}`);
           })
       }
@@ -391,7 +395,19 @@ export function propertyDeclarations(generator: CodeGenerator, properties: Prope
         || property.fragmentSpreads && property.fragmentSpreads.length > 0
       ) {
         propertyDeclaration(generator, property, () => {
-          const properties = propertiesFromFields(generator.context, property.fields!);
+          const fields = property.fields!.map(field => {
+            if (field.fieldName === '__typename') {
+              const objectTypeName = getObjectTypeName(property.fieldType || property.type!);
+              return {
+                ...field,
+                typeName: objectTypeName,
+                type: { name: objectTypeName }
+              }
+            } else {
+              return field;
+            }
+          });
+          const properties = propertiesFromFields(generator.context, fields);
           propertyDeclarations(generator, properties, isInput);
         });
       } else {

@@ -2,7 +2,7 @@
 
 exports[`Typescript codeGeneration fragment spreads with inline fragments 1`] = `
 Object {
-  "__generated__/HeroName.js": TypescriptGeneratedFile {
+  "__generated__/HeroName.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -12,30 +12,42 @@ Object {
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type HeroName_hero_Human_friends = {
-  __typename: \\"Human\\",
-  name: string, // What this human calls themselves
-} | {
-  __typename: \\"Droid\\",
-  id: string,   // The ID of the droid
-};
+export interface HeroName_hero_Human_friends_Human {
+  __typename: \\"Human\\";
+  name: string;  // What this human calls themselves
+}
 
-export type HeroName_hero = {
-  __typename: \\"Human\\",
-  name: string,                                            // What this human calls themselves
-  id: string,                                              // The ID of the human
-  homePlanet: string | undefined | null,                   // The home planet of the human, or null if unknown
-  friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
-} | {
-  __typename: \\"Droid\\",
-  name: string,                                            // What others call this droid
-  id: string,                                              // The ID of the droid
-  appearsIn: (?Episode)[],                                 // The movies this droid appears in
-};
+export interface HeroName_hero_Human_friends_Droid {
+  __typename: \\"Droid\\";
+  id: string;  // The ID of the droid
+}
 
-export type HeroName = {
-  hero: HeroName_hero | undefined | null
-};
+export type HeroName_hero_Human_friends = HeroName_hero_Human_friends_Human | HeroName_hero_Human_friends_Droid;
+
+export interface HeroName_hero_Human {
+  __typename: \\"Human\\";
+  name: string;                                            // What this human calls themselves
+  id: string;                                              // The ID of the human
+  homePlanet: string | null;                               // The home planet of the human, or null if unknown
+  friends: (HeroName_hero_Human_friends | null)[] | null;  // This human's friends, or an empty list if they have none
+}
+
+export interface HeroName_hero_Droid {
+  __typename: \\"Droid\\";
+  name: string;                   // What others call this droid
+  id: string;                     // The ID of the droid
+  appearsIn: (Episode | null)[];  // The movies this droid appears in
+}
+
+export type HeroName_hero = HeroName_hero_Human | HeroName_hero_Droid;
+
+export interface HeroName {
+  hero: HeroName_hero | null;
+}
+
+export interface HeroNameVariables {
+  episode?: Episode | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -46,16 +58,16 @@ export type HeroName = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/droidFragment.js": TypescriptGeneratedFile {
+  "__generated__/droidFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -65,10 +77,10 @@ export enum Episode {
 // GraphQL fragment: droidFragment
 // ====================================================
 
-export type droidFragment = {
-  __typename: \\"Droid\\",
-  appearsIn: (?Episode)[], // The movies this droid appears in
-};
+export interface droidFragment {
+  __typename: \\"Droid\\";
+  appearsIn: (Episode | null)[];  // The movies this droid appears in
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -79,16 +91,16 @@ export type droidFragment = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/humanFragment.js": TypescriptGeneratedFile {
+  "__generated__/humanFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -98,19 +110,23 @@ export enum Episode {
 // GraphQL fragment: humanFragment
 // ====================================================
 
-export type humanFragment_friends = {
-  __typename: \\"Human\\",
-  name: string, // What this human calls themselves
-} | {
-  __typename: \\"Droid\\",
-  id: string,   // The ID of the droid
-};
+export interface humanFragment_friends_Human {
+  __typename: \\"Human\\";
+  name: string;  // What this human calls themselves
+}
 
-export type humanFragment = {
-  __typename: \\"Human\\",
-  homePlanet: string | undefined | null,             // The home planet of the human, or null if unknown
-  friends: humanFragment_friends | undefined | null, // This human's friends, or an empty list if they have none
-};
+export interface humanFragment_friends_Droid {
+  __typename: \\"Droid\\";
+  id: string;  // The ID of the droid
+}
+
+export type humanFragment_friends = humanFragment_friends_Human | humanFragment_friends_Droid;
+
+export interface humanFragment {
+  __typename: \\"Human\\";
+  homePlanet: string | null;                         // The home planet of the human, or null if unknown
+  friends: (humanFragment_friends | null)[] | null;  // This human's friends, or an empty list if they have none
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -121,9 +137,9 @@ export type humanFragment = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -135,7 +151,7 @@ export enum Episode {
 
 exports[`Typescript codeGeneration fragment with fragment spreads 1`] = `
 Object {
-  "__generated__/anotherFragment.js": TypescriptGeneratedFile {
+  "__generated__/anotherFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -145,11 +161,11 @@ Object {
 // GraphQL fragment: anotherFragment
 // ====================================================
 
-export type anotherFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  id: string,   // The ID of the character
-  name: string, // The name of the character
-};
+export interface anotherFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  id: string;    // The ID of the character
+  name: string;  // The name of the character
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -162,7 +178,7 @@ export type anotherFragment = {
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/simpleFragment.js": TypescriptGeneratedFile {
+  "__generated__/simpleFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -172,10 +188,10 @@ export type anotherFragment = {
 // GraphQL fragment: simpleFragment
 // ====================================================
 
-export type simpleFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-};
+export interface simpleFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -193,7 +209,7 @@ export type simpleFragment = {
 
 exports[`Typescript codeGeneration fragment with fragment spreads with inline fragment 1`] = `
 Object {
-  "__generated__/anotherFragment.js": TypescriptGeneratedFile {
+  "__generated__/anotherFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -203,18 +219,18 @@ Object {
 // GraphQL fragment: anotherFragment
 // ====================================================
 
-export type anotherFragment_Droid = {
-  __typename: \\"Droid\\",
-  id: string,   // The ID of the droid
-  name: string, // What others call this droid
-};
+export interface anotherFragment_Droid {
+  __typename: \\"Droid\\";
+  id: string;    // The ID of the droid
+  name: string;  // What others call this droid
+}
 
-export type anotherFragment_Human = {
-  __typename: \\"Human\\",
-  id: string,              // The ID of the human
-  name: string,            // What this human calls themselves
-  appearsIn: (?Episode)[], // The movies this human appears in
-};
+export interface anotherFragment_Human {
+  __typename: \\"Human\\";
+  id: string;                     // The ID of the human
+  name: string;                   // What this human calls themselves
+  appearsIn: (Episode | null)[];  // The movies this human appears in
+}
 
 export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
 
@@ -227,16 +243,16 @@ export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/simpleFragment.js": TypescriptGeneratedFile {
+  "__generated__/simpleFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -246,10 +262,10 @@ export enum Episode {
 // GraphQL fragment: simpleFragment
 // ====================================================
 
-export type simpleFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-};
+export interface simpleFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -260,9 +276,9 @@ export type simpleFragment = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -274,7 +290,7 @@ export enum Episode {
 
 exports[`Typescript codeGeneration handles multiline graphql comments 1`] = `
 Object {
-  "__generated__/CustomScalar.js": TypescriptGeneratedFile {
+  "__generated__/CustomScalar.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -284,14 +300,14 @@ Object {
 // GraphQL query operation: CustomScalar
 // ====================================================
 
-export type CustomScalar_commentTest = {
-  __typename: \\"CommentTest\\",
-  multiLine: string | undefined | null, // This is a multi-line comment.
-};
+export interface CustomScalar_commentTest {
+  __typename: \\"CommentTest\\";
+  multiLine: string | null;  // This is a multi-line comment.
+}
 
-export type CustomScalar = {
-  commentTest: CustomScalar_commentTest | undefined | null
-};
+export interface CustomScalar {
+  commentTest: CustomScalar_commentTest | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -309,7 +325,7 @@ export type CustomScalar = {
 
 exports[`Typescript codeGeneration inline fragment 1`] = `
 Object {
-  "__generated__/HeroInlineFragment.js": TypescriptGeneratedFile {
+  "__generated__/HeroInlineFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -319,15 +335,19 @@ Object {
 // GraphQL query operation: HeroInlineFragment
 // ====================================================
 
-export type HeroInlineFragment_hero = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-  id: string,   // The ID of the character
-};
+export interface HeroInlineFragment_hero {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+  id: string;    // The ID of the character
+}
 
-export type HeroInlineFragment = {
-  hero: HeroInlineFragment_hero | undefined | null
-};
+export interface HeroInlineFragment {
+  hero: HeroInlineFragment_hero | null;
+}
+
+export interface HeroInlineFragmentVariables {
+  episode?: Episode | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -338,9 +358,9 @@ export type HeroInlineFragment = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -352,7 +372,7 @@ export enum Episode {
 
 exports[`Typescript codeGeneration inline fragment on type conditions 1`] = `
 Object {
-  "__generated__/HeroName.js": TypescriptGeneratedFile {
+  "__generated__/HeroName.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -362,27 +382,35 @@ Object {
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type HeroName_hero_Human_friends = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-};
+export interface HeroName_hero_Human_friends {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}
 
-export type HeroName_hero = {
-  __typename: \\"Human\\",
-  name: string,                                            // What this human calls themselves
-  id: string,                                              // The ID of the human
-  homePlanet: string | undefined | null,                   // The home planet of the human, or null if unknown
-  friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
-} | {
-  __typename: \\"Droid\\",
-  name: string,                                            // What others call this droid
-  id: string,                                              // The ID of the droid
-  appearsIn: (?Episode)[],                                 // The movies this droid appears in
-};
+export interface HeroName_hero_Human {
+  __typename: \\"Human\\";
+  name: string;                                            // What this human calls themselves
+  id: string;                                              // The ID of the human
+  homePlanet: string | null;                               // The home planet of the human, or null if unknown
+  friends: (HeroName_hero_Human_friends | null)[] | null;  // This human's friends, or an empty list if they have none
+}
 
-export type HeroName = {
-  hero: HeroName_hero | undefined | null
-};
+export interface HeroName_hero_Droid {
+  __typename: \\"Droid\\";
+  name: string;                   // What others call this droid
+  id: string;                     // The ID of the droid
+  appearsIn: (Episode | null)[];  // The movies this droid appears in
+}
+
+export type HeroName_hero = HeroName_hero_Human | HeroName_hero_Droid;
+
+export interface HeroName {
+  hero: HeroName_hero | null;
+}
+
+export interface HeroNameVariables {
+  episode?: Episode | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -393,9 +421,9 @@ export type HeroName = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -407,7 +435,7 @@ export enum Episode {
 
 exports[`Typescript codeGeneration inline fragment on type conditions with differing inner fields 1`] = `
 Object {
-  "__generated__/HeroName.js": TypescriptGeneratedFile {
+  "__generated__/HeroName.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -417,33 +445,41 @@ Object {
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type HeroName_hero_Human_friends = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-};
+export interface HeroName_hero_Human_friends {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}
 
-export type HeroName_hero_Droid_friends = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  id: string, // The ID of the character
-};
+export interface HeroName_hero_Human {
+  __typename: \\"Human\\";
+  name: string;                                            // What this human calls themselves
+  id: string;                                              // The ID of the human
+  homePlanet: string | null;                               // The home planet of the human, or null if unknown
+  friends: (HeroName_hero_Human_friends | null)[] | null;  // This human's friends, or an empty list if they have none
+}
 
-export type HeroName_hero = {
-  __typename: \\"Human\\",
-  name: string,                                            // What this human calls themselves
-  id: string,                                              // The ID of the human
-  homePlanet: string | undefined | null,                   // The home planet of the human, or null if unknown
-  friends: HeroName_hero_Human_friends | undefined | null, // This human's friends, or an empty list if they have none
-} | {
-  __typename: \\"Droid\\",
-  name: string,                                            // What others call this droid
-  id: string,                                              // The ID of the droid
-  appearsIn: (?Episode)[],                                 // The movies this droid appears in
-  friends: HeroName_hero_Droid_friends | undefined | null, // This droid's friends, or an empty list if they have none
-};
+export interface HeroName_hero_Droid_friends {
+  __typename: \\"Human\\" | \\"Droid\\";
+  id: string;  // The ID of the character
+}
 
-export type HeroName = {
-  hero: HeroName_hero | undefined | null
-};
+export interface HeroName_hero_Droid {
+  __typename: \\"Droid\\";
+  name: string;                                            // What others call this droid
+  id: string;                                              // The ID of the droid
+  appearsIn: (Episode | null)[];                           // The movies this droid appears in
+  friends: (HeroName_hero_Droid_friends | null)[] | null;  // This droid's friends, or an empty list if they have none
+}
+
+export type HeroName_hero = HeroName_hero_Human | HeroName_hero_Droid;
+
+export interface HeroName {
+  hero: HeroName_hero | null;
+}
+
+export interface HeroNameVariables {
+  episode?: Episode | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -454,9 +490,9 @@ export type HeroName = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -466,7 +502,7 @@ export enum Episode {
 }
 `;
 
-exports[`Typescript codeGeneration multiple files 1`] = `"/some/file/__generated__/HeroName.js"`;
+exports[`Typescript codeGeneration multiple files 1`] = `"/some/file/__generated__/HeroName.ts"`;
 
 exports[`Typescript codeGeneration multiple files 2`] = `
 TypescriptGeneratedFile {
@@ -479,15 +515,19 @@ TypescriptGeneratedFile {
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type HeroName_hero = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-  id: string,   // The ID of the character
-};
+export interface HeroName_hero {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+  id: string;    // The ID of the character
+}
 
-export type HeroName = {
-  hero: HeroName_hero | undefined | null
-};
+export interface HeroName {
+  hero: HeroName_hero | null;
+}
+
+export interface HeroNameVariables {
+  episode?: Episode | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -498,24 +538,24 @@ export type HeroName = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
-  stars: number,
-  commentary?: string | undefined | null,
-  favorite_color?: ColorInput | undefined | null,
-};
+interface ReviewInput {
+  stars: number;
+  commentary?: string | null;
+  favorite_color?: ColorInput | null;
+}
 
 // The input object sent when passing in a color
-type ColorInput = {
-  red: number,
-  green: number,
-  blue: number,
-};
+interface ColorInput {
+  red: number;
+  green: number;
+  blue: number;
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -523,7 +563,7 @@ type ColorInput = {
 }
 `;
 
-exports[`Typescript codeGeneration multiple files 3`] = `"/some/file/__generated__/SomeOther.js"`;
+exports[`Typescript codeGeneration multiple files 3`] = `"/some/file/__generated__/SomeOther.ts"`;
 
 exports[`Typescript codeGeneration multiple files 4`] = `
 TypescriptGeneratedFile {
@@ -536,15 +576,19 @@ TypescriptGeneratedFile {
 // GraphQL query operation: SomeOther
 // ====================================================
 
-export type SomeOther_hero = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string,            // The name of the character
-  appearsIn: (?Episode)[], // The movies this character appears in
-};
+export interface SomeOther_hero {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;                   // The name of the character
+  appearsIn: (Episode | null)[];  // The movies this character appears in
+}
 
-export type SomeOther = {
-  hero: SomeOther_hero | undefined | null
-};
+export interface SomeOther {
+  hero: SomeOther_hero | null;
+}
+
+export interface SomeOtherVariables {
+  episode?: Episode | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -555,24 +599,24 @@ export type SomeOther = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
-  stars: number,
-  commentary?: string | undefined | null,
-  favorite_color?: ColorInput | undefined | null,
-};
+interface ReviewInput {
+  stars: number;
+  commentary?: string | null;
+  favorite_color?: ColorInput | null;
+}
 
 // The input object sent when passing in a color
-type ColorInput = {
-  red: number,
-  green: number,
-  blue: number,
-};
+interface ColorInput {
+  red: number;
+  green: number;
+  blue: number;
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -580,7 +624,7 @@ type ColorInput = {
 }
 `;
 
-exports[`Typescript codeGeneration multiple files 5`] = `"__generated__/ReviewMovie.js"`;
+exports[`Typescript codeGeneration multiple files 5`] = `"__generated__/ReviewMovie.ts"`;
 
 exports[`Typescript codeGeneration multiple files 6`] = `
 TypescriptGeneratedFile {
@@ -593,15 +637,20 @@ TypescriptGeneratedFile {
 // GraphQL mutation operation: ReviewMovie
 // ====================================================
 
-export type ReviewMovie_createReview = {
-  __typename: \\"Review\\",
-  stars: number,                         // The number of stars this review gave, 1-5
-  commentary: string | undefined | null, // Comment about the movie
-};
+export interface ReviewMovie_createReview {
+  __typename: \\"Review\\";
+  stars: number;              // The number of stars this review gave, 1-5
+  commentary: string | null;  // Comment about the movie
+}
 
-export type ReviewMovie = {
-  createReview: ReviewMovie_createReview | undefined | null
-};
+export interface ReviewMovie {
+  createReview: ReviewMovie_createReview | null;
+}
+
+export interface ReviewMovieVariables {
+  episode?: Episode | null;
+  review?: ReviewInput | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -612,24 +661,24 @@ export type ReviewMovie = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
-  stars: number,
-  commentary?: string | undefined | null,
-  favorite_color?: ColorInput | undefined | null,
-};
+interface ReviewInput {
+  stars: number;
+  commentary?: string | null;
+  favorite_color?: ColorInput | null;
+}
 
 // The input object sent when passing in a color
-type ColorInput = {
-  red: number,
-  green: number,
-  blue: number,
-};
+interface ColorInput {
+  red: number;
+  green: number;
+  blue: number;
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -637,7 +686,7 @@ type ColorInput = {
 }
 `;
 
-exports[`Typescript codeGeneration multiple files 7`] = `"/some/file/__generated__/someFragment.js"`;
+exports[`Typescript codeGeneration multiple files 7`] = `"/some/file/__generated__/someFragment.ts"`;
 
 exports[`Typescript codeGeneration multiple files 8`] = `
 TypescriptGeneratedFile {
@@ -650,10 +699,10 @@ TypescriptGeneratedFile {
 // GraphQL fragment: someFragment
 // ====================================================
 
-export type someFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  appearsIn: (?Episode)[], // The movies this character appears in
-};
+export interface someFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  appearsIn: (Episode | null)[];  // The movies this character appears in
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -664,24 +713,24 @@ export type someFragment = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
-  stars: number,
-  commentary?: string | undefined | null,
-  favorite_color?: ColorInput | undefined | null,
-};
+interface ReviewInput {
+  stars: number;
+  commentary?: string | null;
+  favorite_color?: ColorInput | null;
+}
 
 // The input object sent when passing in a color
-type ColorInput = {
-  red: number,
-  green: number,
-  blue: number,
-};
+interface ColorInput {
+  red: number;
+  green: number;
+  blue: number;
+}
 
 //==============================================================
 // END Enums and Input Objects
@@ -691,7 +740,7 @@ type ColorInput = {
 
 exports[`Typescript codeGeneration query with fragment spreads 1`] = `
 Object {
-  "__generated__/HeroFragment.js": TypescriptGeneratedFile {
+  "__generated__/HeroFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -701,15 +750,19 @@ Object {
 // GraphQL query operation: HeroFragment
 // ====================================================
 
-export type HeroFragment_hero = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-  id: string,   // The ID of the character
-};
+export interface HeroFragment_hero {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+  id: string;    // The ID of the character
+}
 
-export type HeroFragment = {
-  hero: HeroFragment_hero | undefined | null
-};
+export interface HeroFragment {
+  hero: HeroFragment_hero | null;
+}
+
+export interface HeroFragmentVariables {
+  episode?: Episode | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -720,16 +773,16 @@ export type HeroFragment = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
   },
-  "__generated__/simpleFragment.js": TypescriptGeneratedFile {
+  "__generated__/simpleFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -739,10 +792,10 @@ export enum Episode {
 // GraphQL fragment: simpleFragment
 // ====================================================
 
-export type simpleFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-};
+export interface simpleFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -753,9 +806,9 @@ export type simpleFragment = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -767,7 +820,7 @@ export enum Episode {
 
 exports[`Typescript codeGeneration simple fragment 1`] = `
 Object {
-  "__generated__/SimpleFragment.js": TypescriptGeneratedFile {
+  "__generated__/SimpleFragment.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -777,10 +830,10 @@ Object {
 // GraphQL fragment: SimpleFragment
 // ====================================================
 
-export type SimpleFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-};
+export interface SimpleFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -798,7 +851,7 @@ export type SimpleFragment = {
 
 exports[`Typescript codeGeneration simple hero query 1`] = `
 Object {
-  "__generated__/HeroName.js": TypescriptGeneratedFile {
+  "__generated__/HeroName.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -808,15 +861,19 @@ Object {
 // GraphQL query operation: HeroName
 // ====================================================
 
-export type HeroName_hero = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-  id: string,   // The ID of the character
-};
+export interface HeroName_hero {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+  id: string;    // The ID of the character
+}
 
-export type HeroName = {
-  hero: HeroName_hero | undefined | null
-};
+export interface HeroName {
+  hero: HeroName_hero | null;
+}
+
+export interface HeroNameVariables {
+  episode?: Episode | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -827,9 +884,9 @@ export type HeroName = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 //==============================================================
@@ -841,7 +898,7 @@ export enum Episode {
 
 exports[`Typescript codeGeneration simple mutation 1`] = `
 Object {
-  "__generated__/ReviewMovie.js": TypescriptGeneratedFile {
+  "__generated__/ReviewMovie.ts": TypescriptGeneratedFile {
     "fileContents": "
 
 /* tslint:disable */
@@ -851,15 +908,20 @@ Object {
 // GraphQL mutation operation: ReviewMovie
 // ====================================================
 
-export type ReviewMovie_createReview = {
-  __typename: \\"Review\\",
-  stars: number,                         // The number of stars this review gave, 1-5
-  commentary: string | undefined | null, // Comment about the movie
-};
+export interface ReviewMovie_createReview {
+  __typename: \\"Review\\";
+  stars: number;              // The number of stars this review gave, 1-5
+  commentary: string | null;  // Comment about the movie
+}
 
-export type ReviewMovie = {
-  createReview: ReviewMovie_createReview | undefined | null
-};
+export interface ReviewMovie {
+  createReview: ReviewMovie_createReview | null;
+}
+
+export interface ReviewMovieVariables {
+  episode?: Episode | null;
+  review?: ReviewInput | null;
+}
 
 //==============================================================
 // START Enums and Input Objects
@@ -870,24 +932,24 @@ export type ReviewMovie = {
 
 // The episodes in the Star Wars trilogy
 export enum Episode {
-  NEWHOPE = \\"NEWHOPE\\",
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
-  stars: number,
-  commentary?: string | undefined | null,
-  favorite_color?: ColorInput | undefined | null,
-};
+interface ReviewInput {
+  stars: number;
+  commentary?: string | null;
+  favorite_color?: ColorInput | null;
+}
 
 // The input object sent when passing in a color
-type ColorInput = {
-  red: number,
-  green: number,
-  blue: number,
-};
+interface ColorInput {
+  red: number;
+  green: number;
+  blue: number;
+}
 
 //==============================================================
 // END Enums and Input Objects

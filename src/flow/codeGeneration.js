@@ -23,6 +23,10 @@ import {
   wrap,
 } from '../utilities/printing';
 
+import {
+  sortEnumValues
+} from '../utilities/graphql';
+
 import CodeGenerator from '../utilities/CodeGenerator';
 
 import {
@@ -76,7 +80,7 @@ function enumerationDeclaration(generator, type) {
   }
   generator.printOnNewline(`export type ${name} =`);
   const nValues = values.length;
-  values.forEach((value, i) => {
+  sortEnumValues(values).forEach((value, i) => {
     if (!value.description || value.description.indexOf('\n') === -1) {
       generator.printOnNewline(`  "${value.value}"${i === nValues - 1 ? ';' : ' |'}${wrap(' // ', value.description)}`)
     } else {
@@ -370,7 +374,19 @@ export function propertyDeclarations(generator, properties, isInput) {
         || property.fragmentSpreads && property.fragmentSpreads.length > 0
       ) {
         propertyDeclaration(generator, property, () => {
-          const properties = propertiesFromFields(generator.context, property.fields);
+          const fields = property.fields.map(field => {
+            if (field.fieldName === '__typename') {
+              const objectTypeName = getObjectTypeName(property.fieldType || property.type);
+              return {
+                ...field,
+                typeName: objectTypeName,
+                type: { name: objectTypeName }
+              }
+            } else {
+              return field;
+            }
+          });
+          const properties = propertiesFromFields(generator.context, fields);
           propertyDeclarations(generator, properties, isInput);
         });
       } else {

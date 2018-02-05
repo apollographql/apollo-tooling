@@ -10,7 +10,7 @@ import {
   GraphQLType,
 } from 'graphql'
 
-import * as t from 'babel-types';
+import * as t from '@babel/types';
 
 import { CompilerOptions } from '../../compiler';
 
@@ -22,57 +22,45 @@ const builtInScalarMap = {
   [GraphQLID.name]: t.stringTypeAnnotation(),
 }
 
+export interface FlowCompilerOptions extends CompilerOptions {
+  useFlowReadOnlyTypes: boolean;
+}
+
 export function createTypeAnnotationFromGraphQLTypeFunction(
-  compilerOptions: CompilerOptions
+  compilerOptions: FlowCompilerOptions
 ): Function {
-  return function typeAnnotationFromGraphQLType(type: GraphQLType, {
-    nullable
-  } = {
-    nullable: true
-  }): t.FlowTypeAnnotation {
-    if (type instanceof GraphQLNonNull) {
-      return typeAnnotationFromGraphQLType(
-        type.ofType,
-        { nullable: false }
-      );
-    }
+  const arrayType = compilerOptions.useFlowReadOnlyTypes ? '$ReadOnlyArray' : 'Array';
 
+  function nonNullableTypeAnnotationFromGraphQLType(type: GraphQLType, typeName?: string): t.FlowTypeAnnotation {
     if (type instanceof GraphQLList) {
-      const typeAnnotation = t.arrayTypeAnnotation(
-        typeAnnotationFromGraphQLType(type.ofType)
+      return t.genericTypeAnnotation(
+        t.identifier(arrayType),
+        t.typeParameterInstantiation([typeAnnotationFromGraphQLType(type.ofType, typeName)]),
       );
-
-      if (nullable) {
-        return t.nullableTypeAnnotation(typeAnnotation);
+    } else if (type instanceof GraphQLScalarType) {
+      const builtIn = builtInScalarMap[typeName || type.name]
+      if (builtIn != null) {
+        return builtIn;
+      } else if (compilerOptions.passthroughCustomScalars) {
+        return t.anyTypeAnnotation();
       } else {
-        return typeAnnotation;
+        return t.genericTypeAnnotation(t.identifier(typeName || type.name));
       }
-    }
-
-    let typeAnnotation;
-    if (type instanceof GraphQLScalarType) {
-      const builtIn = builtInScalarMap[type.name]
-      if (builtIn) {
-        typeAnnotation = builtIn;
-      } else {
-        if (compilerOptions.passthroughCustomScalars) {
-          typeAnnotation = t.anyTypeAnnotation();
-        } else {
-          typeAnnotation = t.genericTypeAnnotation(
-            t.identifier(type.name)
-          );
-        }
-      }
+    } else if (type instanceof GraphQLNonNull) {
+      // This won't happen; but for TypeScript completeness:
+      return typeAnnotationFromGraphQLType(type.ofType, typeName);
     } else {
-      typeAnnotation = t.genericTypeAnnotation(
-        t.identifier(type.name)
-      );
-    }
-
-    if (nullable) {
-      return t.nullableTypeAnnotation(typeAnnotation);
-    } else {
-      return typeAnnotation;
+      return t.genericTypeAnnotation(t.identifier(typeName || type.name));
     }
   }
+
+  function typeAnnotationFromGraphQLType(type: GraphQLType, typeName?: string): t.FlowTypeAnnotation {
+    if (type instanceof GraphQLNonNull) {
+      return nonNullableTypeAnnotationFromGraphQLType(type.ofType, typeName);
+    } else {
+      return t.nullableTypeAnnotation(nonNullableTypeAnnotationFromGraphQLType(type, typeName));
+    }
+  }
+
+  return typeAnnotationFromGraphQLType;
 }

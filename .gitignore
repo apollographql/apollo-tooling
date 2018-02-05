@@ -9,3 +9,5 @@ lib
 !.vscode/extensions.json
 
 .DS_Store
+
+yarn.lock

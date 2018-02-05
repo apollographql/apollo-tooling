@@ -1,11 +1,137 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Flow codeGeneration covariant properties with $ReadOnlyArray 1`] = `
+Object {
+  "__generated__/HeroName.js": FlowGeneratedFile {
+    "fileContents": "
+
+/* @flow */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: HeroName
+// ====================================================
+
+export type HeroName_hero_Human_friends = {|
+  +__typename: \\"Human\\",
+  +name: string, // What this human calls themselves
+|} | {|
+  +__typename: \\"Droid\\",
+  +id: string,   // The ID of the droid
+|};
+
+export type HeroName_hero = {|
+  +__typename: \\"Human\\",
+  +name: string,                                           // What this human calls themselves
+  +id: string,                                             // The ID of the human
+  +homePlanet: ?string,                                    // The home planet of the human, or null if unknown
+  +friends: ?$ReadOnlyArray<?HeroName_hero_Human_friends>, // This human's friends, or an empty list if they have none
+|} | {|
+  +__typename: \\"Droid\\",
+  +name: string,                                           // What others call this droid
+  +id: string,                                             // The ID of the droid
+  +appearsIn: $ReadOnlyArray<?Episode>,                    // The movies this droid appears in
+|};
+
+export type HeroName = {|
+  +hero: ?HeroName_hero
+|};
+
+export type HeroNameVariables = {|
+  +episode?: ?Episode
+|};
+
+//==============================================================
+// START Enums and Input Objects
+// All enums and input objects are included in every output file
+// for now, but this will be changed soon.
+// TODO: Link to issue to fix this.
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  },
+  "__generated__/droidFragment.js": FlowGeneratedFile {
+    "fileContents": "
+
+/* @flow */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: droidFragment
+// ====================================================
+
+export type droidFragment = {|
+  +__typename: \\"Droid\\",
+  +appearsIn: $ReadOnlyArray<?Episode>, // The movies this droid appears in
+|};
+
+//==============================================================
+// START Enums and Input Objects
+// All enums and input objects are included in every output file
+// for now, but this will be changed soon.
+// TODO: Link to issue to fix this.
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  },
+  "__generated__/humanFragment.js": FlowGeneratedFile {
+    "fileContents": "
+
+/* @flow */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: humanFragment
+// ====================================================
+
+export type humanFragment_friends = {|
+  +__typename: \\"Human\\",
+  +name: string, // What this human calls themselves
+|} | {|
+  +__typename: \\"Droid\\",
+  +id: string,   // The ID of the droid
+|};
+
+export type humanFragment = {|
+  +__typename: \\"Human\\",
+  +homePlanet: ?string,                              // The home planet of the human, or null if unknown
+  +friends: ?$ReadOnlyArray<?humanFragment_friends>, // This human's friends, or an empty list if they have none
+|};
+
+//==============================================================
+// START Enums and Input Objects
+// All enums and input objects are included in every output file
+// for now, but this will be changed soon.
+// TODO: Link to issue to fix this.
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  },
+}
+`;
+
 exports[`Flow codeGeneration fragment spreads with inline fragments 1`] = `
 Object {
   "__generated__/HeroName.js": FlowGeneratedFile {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -22,19 +148,23 @@ export type HeroName_hero_Human_friends = {
 
 export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                          // What this human calls themselves
-  id: string,                            // The ID of the human
-  homePlanet: ?string,                   // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+  name: string,                                  // What this human calls themselves
+  id: string,                                    // The ID of the human
+  homePlanet: ?string,                           // The home planet of the human, or null if unknown
+  friends: ?Array<?HeroName_hero_Human_friends>, // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                          // What others call this droid
-  id: string,                            // The ID of the droid
-  appearsIn: (?Episode)[],               // The movies this droid appears in
+  name: string,                                  // What others call this droid
+  id: string,                                    // The ID of the droid
+  appearsIn: Array<?Episode>,                    // The movies this droid appears in
 };
 
 export type HeroName = {
   hero: ?HeroName_hero
+};
+
+export type HeroNameVariables = {
+  episode?: ?Episode
 };
 
 //==============================================================
@@ -45,7 +175,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -55,6 +185,7 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -63,7 +194,7 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
 
 export type droidFragment = {
   __typename: \\"Droid\\",
-  appearsIn: (?Episode)[], // The movies this droid appears in
+  appearsIn: Array<?Episode>, // The movies this droid appears in
 };
 
 //==============================================================
@@ -74,7 +205,7 @@ export type droidFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -84,6 +215,7 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -100,8 +232,8 @@ export type humanFragment_friends = {
 
 export type humanFragment = {
   __typename: \\"Human\\",
-  homePlanet: ?string,             // The home planet of the human, or null if unknown
-  friends: ?humanFragment_friends, // This human's friends, or an empty list if they have none
+  homePlanet: ?string,                     // The home planet of the human, or null if unknown
+  friends: ?Array<?humanFragment_friends>, // This human's friends, or an empty list if they have none
 };
 
 //==============================================================
@@ -112,7 +244,7 @@ export type humanFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -127,6 +259,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -154,6 +287,7 @@ export type anotherFragment = {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -185,6 +319,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -199,9 +334,9 @@ export type anotherFragment_Droid = {
 
 export type anotherFragment_Human = {
   __typename: \\"Human\\",
-  id: string,              // The ID of the human
-  name: string,            // What this human calls themselves
-  appearsIn: (?Episode)[], // The movies this human appears in
+  id: string,                 // The ID of the human
+  name: string,               // What this human calls themselves
+  appearsIn: Array<?Episode>, // The movies this human appears in
 };
 
 export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
@@ -214,7 +349,7 @@ export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -224,6 +359,7 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -243,7 +379,7 @@ export type simpleFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -258,6 +394,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -293,6 +430,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -309,6 +447,10 @@ export type HeroInlineFragment = {
   hero: ?HeroInlineFragment_hero
 };
 
+export type HeroInlineFragmentVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -317,7 +459,7 @@ export type HeroInlineFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -332,6 +474,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -345,19 +488,23 @@ export type HeroName_hero_Human_friends = {
 
 export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                          // What this human calls themselves
-  id: string,                            // The ID of the human
-  homePlanet: ?string,                   // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+  name: string,                                  // What this human calls themselves
+  id: string,                                    // The ID of the human
+  homePlanet: ?string,                           // The home planet of the human, or null if unknown
+  friends: ?Array<?HeroName_hero_Human_friends>, // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                          // What others call this droid
-  id: string,                            // The ID of the droid
-  appearsIn: (?Episode)[],               // The movies this droid appears in
+  name: string,                                  // What others call this droid
+  id: string,                                    // The ID of the droid
+  appearsIn: Array<?Episode>,                    // The movies this droid appears in
 };
 
 export type HeroName = {
   hero: ?HeroName_hero
+};
+
+export type HeroNameVariables = {
+  episode?: ?Episode
 };
 
 //==============================================================
@@ -368,7 +515,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -383,6 +530,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -401,20 +549,24 @@ export type HeroName_hero_Droid_friends = {
 
 export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                          // What this human calls themselves
-  id: string,                            // The ID of the human
-  homePlanet: ?string,                   // The home planet of the human, or null if unknown
-  friends: ?HeroName_hero_Human_friends, // This human's friends, or an empty list if they have none
+  name: string,                                  // What this human calls themselves
+  id: string,                                    // The ID of the human
+  homePlanet: ?string,                           // The home planet of the human, or null if unknown
+  friends: ?Array<?HeroName_hero_Human_friends>, // This human's friends, or an empty list if they have none
 } | {
   __typename: \\"Droid\\",
-  name: string,                          // What others call this droid
-  id: string,                            // The ID of the droid
-  appearsIn: (?Episode)[],               // The movies this droid appears in
-  friends: ?HeroName_hero_Droid_friends, // This droid's friends, or an empty list if they have none
+  name: string,                                  // What others call this droid
+  id: string,                                    // The ID of the droid
+  appearsIn: Array<?Episode>,                    // The movies this droid appears in
+  friends: ?Array<?HeroName_hero_Droid_friends>, // This droid's friends, or an empty list if they have none
 };
 
 export type HeroName = {
   hero: ?HeroName_hero
+};
+
+export type HeroNameVariables = {
+  episode?: ?Episode
 };
 
 //==============================================================
@@ -425,7 +577,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -441,6 +593,7 @@ FlowGeneratedFile {
   "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -457,6 +610,10 @@ export type HeroName = {
   hero: ?HeroName_hero
 };
 
+export type HeroNameVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -465,17 +622,17 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
@@ -494,6 +651,7 @@ FlowGeneratedFile {
   "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -502,12 +660,16 @@ FlowGeneratedFile {
 
 export type SomeOther_hero = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string,            // The name of the character
-  appearsIn: (?Episode)[], // The movies this character appears in
+  name: string,               // The name of the character
+  appearsIn: Array<?Episode>, // The movies this character appears in
 };
 
 export type SomeOther = {
   hero: ?SomeOther_hero
+};
+
+export type SomeOtherVariables = {
+  episode?: ?Episode
 };
 
 //==============================================================
@@ -518,17 +680,17 @@ export type SomeOther = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
@@ -547,6 +709,7 @@ FlowGeneratedFile {
   "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -563,6 +726,11 @@ export type ReviewMovie = {
   createReview: ?ReviewMovie_createReview
 };
 
+export type ReviewMovieVariables = {
+  episode?: ?Episode,
+  review?: ?ReviewInput,
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -571,17 +739,17 @@ export type ReviewMovie = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
@@ -600,6 +768,7 @@ FlowGeneratedFile {
   "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -608,7 +777,7 @@ FlowGeneratedFile {
 
 export type someFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
-  appearsIn: (?Episode)[], // The movies this character appears in
+  appearsIn: Array<?Episode>, // The movies this character appears in
 };
 
 //==============================================================
@@ -619,17 +788,17 @@ export type someFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,
@@ -647,6 +816,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -663,6 +833,10 @@ export type HeroFragment = {
   hero: ?HeroFragment_hero
 };
 
+export type HeroFragmentVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -671,7 +845,7 @@ export type HeroFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -681,6 +855,7 @@ export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -700,7 +875,7 @@ export type simpleFragment = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -715,6 +890,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -746,6 +922,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -762,6 +939,10 @@ export type HeroName = {
   hero: ?HeroName_hero
 };
 
+export type HeroNameVariables = {
+  episode?: ?Episode
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -770,7 +951,7 @@ export type HeroName = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -785,6 +966,7 @@ Object {
     "fileContents": "
 
 /* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -801,6 +983,11 @@ export type ReviewMovie = {
   createReview: ?ReviewMovie_createReview
 };
 
+export type ReviewMovieVariables = {
+  episode?: ?Episode,
+  review?: ?ReviewInput,
+};
+
 //==============================================================
 // START Enums and Input Objects
 // All enums and input objects are included in every output file
@@ -809,17 +996,17 @@ export type ReviewMovie = {
 //==============================================================
 
 // The episodes in the Star Wars trilogy
-export type Episode = \\"NEWHOPE\\" | \\"EMPIRE\\" | \\"JEDI\\";
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-type ReviewInput = {
+export type ReviewInput = {
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 };
 
 // The input object sent when passing in a color
-type ColorInput = {
+export type ColorInput = {
   red: number,
   green: number,
   blue: number,

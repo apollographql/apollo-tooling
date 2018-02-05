@@ -10,69 +10,52 @@ import {
   GraphQLType,
 } from 'graphql'
 
-import * as t from 'babel-types';
+import * as t from '@babel/types';
 
 import { CompilerOptions } from '../../compiler';
 
 const builtInScalarMap = {
-  [GraphQLString.name]: t.stringTypeAnnotation(),
-  [GraphQLInt.name]: t.numberTypeAnnotation(),
-  [GraphQLFloat.name]: t.numberTypeAnnotation(),
-  [GraphQLBoolean.name]: t.booleanTypeAnnotation(),
-  [GraphQLID.name]: t.stringTypeAnnotation(),
+  [GraphQLString.name]: t.TSStringKeyword(),
+  [GraphQLInt.name]: t.TSNumberKeyword(),
+  [GraphQLFloat.name]: t.TSNumberKeyword(),
+  [GraphQLBoolean.name]: t.TSBooleanKeyword(),
+  [GraphQLID.name]: t.TSStringKeyword(),
 }
 
-export function createTypeAnnotationFromGraphQLTypeFunction(
+export function createTypeFromGraphQLTypeFunction(
   compilerOptions: CompilerOptions
-): Function {
-  return function typeAnnotationFromGraphQLType(type: GraphQLType, {
-    nullable
-  } = {
-    nullable: true
-  }): t.FlowTypeAnnotation {
-    if (type instanceof GraphQLNonNull) {
-      return typeAnnotationFromGraphQLType(
-        type.ofType,
-        { nullable: false }
+): (graphQLType: GraphQLType, typeName?: string) => t.TSType {
+  function nonNullableTypeFromGraphQLType(graphQLType: GraphQLType, typeName?: string): t.TSType {
+    if (graphQLType instanceof GraphQLList) {
+      const elementType = typeFromGraphQLType(graphQLType.ofType, typeName);
+      return t.TSArrayType(
+        t.isTSUnionType(elementType) ? t.TSParenthesizedType(elementType) : elementType
       );
-    }
-
-    if (type instanceof GraphQLList) {
-      const typeAnnotation = t.arrayTypeAnnotation(
-        typeAnnotationFromGraphQLType(type.ofType)
-      );
-
-      if (nullable) {
-        return t.nullableTypeAnnotation(typeAnnotation);
+    } else if (graphQLType instanceof GraphQLScalarType) {
+      const builtIn = builtInScalarMap[typeName || graphQLType.name]
+      if (builtIn != null) {
+        return builtIn;
+      } else if (compilerOptions.passthroughCustomScalars) {
+        return t.TSAnyKeyword();
       } else {
-        return typeAnnotation;
+        return t.TSTypeReference(t.identifier(graphQLType.name));
       }
-    }
-
-    let typeAnnotation;
-    if (type instanceof GraphQLScalarType) {
-      const builtIn = builtInScalarMap[type.name]
-      if (builtIn) {
-        typeAnnotation = builtIn;
-      } else {
-        if (compilerOptions.passthroughCustomScalars) {
-          typeAnnotation = t.anyTypeAnnotation();
-        } else {
-          typeAnnotation = t.genericTypeAnnotation(
-            t.identifier(type.name)
-          );
-        }
-      }
+    } else if (graphQLType instanceof GraphQLNonNull) {
+      // This won't happen; but for TypeScript completeness:
+      return typeFromGraphQLType(graphQLType.ofType, typeName);
     } else {
-      typeAnnotation = t.genericTypeAnnotation(
-        t.identifier(type.name)
-      );
-    }
-
-    if (nullable) {
-      return t.nullableTypeAnnotation(typeAnnotation);
-    } else {
-      return typeAnnotation;
+      return t.TSTypeReference(t.identifier(typeName || graphQLType.name));
     }
   }
+
+  function typeFromGraphQLType(graphQLType: GraphQLType, typeName?: string): t.TSType {
+    if (graphQLType instanceof GraphQLNonNull) {
+      return nonNullableTypeFromGraphQLType(graphQLType.ofType, typeName);
+    } else {
+      const type = nonNullableTypeFromGraphQLType(graphQLType, typeName);
+      return t.TSUnionType([type, t.TSNullKeyword()]);
+    }
+  }
+
+  return typeFromGraphQLType;
 }

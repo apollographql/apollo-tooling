@@ -9,14 +9,11 @@ declare module 'babel-types' {
   }
 
   interface ObjectTypeAnnotation {
-    exact: boolean
+    exact: boolean;
   }
 
-  type TSTypeAnnotation = {
-    typeAnnotaton: TSType
-  }
-
-  type TSType = {
-    // TODO: Complete this, or wait for babel-types in DefinitelyTyped to get updated.
+  interface ObjectTypeProperty {
+    variance?: {kind: 'plus' | 'minus'};
+    optional: boolean;
   }
 }
