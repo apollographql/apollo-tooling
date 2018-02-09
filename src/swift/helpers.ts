@@ -38,7 +38,7 @@ export class Helpers {
 
   // Types
 
-  typeNameFromGraphQLType(type: GraphQLType, unmodifiedTypeName?: string, isOptional?: boolean): string {
+  typeNameFromGraphQLType(type: GraphQLType, unmodifiedTypeName?: string, isOptional?: boolean, isSingular: boolean = false): string {
     if (type instanceof GraphQLNonNull) {
       return this.typeNameFromGraphQLType(type.ofType, unmodifiedTypeName, false);
     } else if (isOptional === undefined) {
@@ -47,7 +47,11 @@ export class Helpers {
 
     let typeName;
     if (type instanceof GraphQLList) {
-      typeName = '[' + this.typeNameFromGraphQLType(type.ofType, unmodifiedTypeName) + ']';
+      if (isSingular) {
+      	typeName = this.typeNameFromGraphQLType(type.ofType, unmodifiedTypeName);
+      } else {
+      	typeName = '[' + this.typeNameFromGraphQLType(type.ofType, unmodifiedTypeName) + ']';
+      }
     } else if (type instanceof GraphQLScalarType) {
       typeName = this.typeNameForScalarType(type);
     } else {
@@ -175,7 +179,7 @@ export class Helpers {
   propertiesForSelectionSet(
     selectionSet: SelectionSet,
     namespace?: string
-  ): (Field & Property)[] | undefined {
+  ): (Field & Property & Struct)[] | undefined {
     const properties = collectAndMergeFields(selectionSet, true)
       .filter(field => field.name !== '__typename')
       .map(field => this.propertyFromField(field, namespace));
@@ -231,7 +235,8 @@ export class Helpers {
   mapExpressionForType(
     type: GraphQLType,
     expression: (identifier: string) => string,
-    identifier = ''
+    identifier: string = '',
+    subtypeName: string
   ): string {
     let isOptional;
     if (type instanceof GraphQLNonNull) {
@@ -240,19 +245,25 @@ export class Helpers {
     } else {
       isOptional = true;
     }
-
     if (type instanceof GraphQLList) {
       if (isOptional) {
-        return `${identifier}.flatMap { $0.map { ${this.mapExpressionForType(
+        const prologue = subtypeName === undefined ? '' : `(i: ${subtypeName}) in `
+        const subidentifier = subtypeName === undefined ? '$0' : 'i'
+        return `${identifier}?.map({ ${prologue}${this.mapExpressionForType(
           type.ofType,
           expression,
-          '$0'
-        )} } }`;
+          subidentifier,
+          this.typeNameFromGraphQLType(type.ofType, undefined, false, true)
+        )} })`;
       } else {
-        return `${identifier}.map { ${this.mapExpressionForType(type.ofType, expression, '$0')} }`;
+        const prologue = subtypeName === undefined ? '' : `(j: ${subtypeName}) in `
+        const subidentifier = subtypeName === undefined ? '$0' : 'j'
+        return `${identifier}.map { ${prologue}${this.mapExpressionForType(type.ofType, expression, subidentifier, this.typeNameFromGraphQLType(type, undefined, false, true))} }`;
       }
     } else if (isOptional) {
-      return `${identifier}.flatMap { ${expression('$0')} }`;
+      const prologue = subtypeName === undefined ? '' : `(j: ${subtypeName}) in `
+      const subidentifier = subtypeName === undefined ? '$0' : 'j'
+      return `${identifier}.flatMap { ${prologue}${expression(subidentifier)} }`;
     } else {
       return expression(identifier);
     }

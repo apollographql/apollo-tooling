@@ -490,13 +490,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     }
   }
 
-  propertyAssignmentForField(field: { responseKey: string; propertyName: string; type: GraphQLType }) {
-    const { responseKey, propertyName, type } = field;
+  propertyAssignmentForField(field: Field & Property & Struct) {
+    const { responseKey, propertyName, type, structName } = field;
     const valueExpression = isCompositeType(getNamedType(type))
       ? this.helpers.mapExpressionForType(
           type,
           identifier => `${identifier}.snapshot`,
-          escapeIdentifierIfNeeded(propertyName)
+          escapeIdentifierIfNeeded(propertyName),
+          structName
         )
       : escapeIdentifierIfNeeded(propertyName);
     return `"${responseKey}": ${valueExpression}`;
@@ -521,15 +522,17 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.printOnNewline('get');
           this.withinBlock(() => {
             const snapshotTypeName = this.helpers.typeNameFromGraphQLType(type, 'Snapshot', false);
-            let getter;
+            let identifier;
             if (isOptional) {
-              getter = `return (snapshot["${responseKey}"] as? ${snapshotTypeName})`;
+              identifier = `(snapshot["${responseKey}"] as? ${snapshotTypeName})`;
             } else {
-              getter = `return (snapshot["${responseKey}"] as! ${snapshotTypeName})`;
+              identifier = `(snapshot["${responseKey}"] as! ${snapshotTypeName})`;
             }
-            getter += this.helpers.mapExpressionForType(
+            let getter = 'return ' + this.helpers.mapExpressionForType(
               type,
-              identifier => `${structName}(snapshot: ${identifier})`
+              identifier => `${structName}(snapshot: ${identifier})`,
+							identifier,
+							'Snapshot'
             );
             this.printOnNewline(getter);
           });
@@ -538,7 +541,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             let newValueExpression = this.helpers.mapExpressionForType(
               type,
               identifier => `${identifier}.snapshot`,
-              'newValue'
+              'newValue',
+              structName
             );
             this.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${responseKey}")`);
           });
