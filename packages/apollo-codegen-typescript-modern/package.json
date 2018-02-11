@@ -1,0 +1,8 @@
+{
+  "name": "apollo-codegen-typescript-modern",
+  "version": "0.18.3",
+  "description": "",
+  "main": "index.js",
+  "author": "Lewis Chung",
+  "license": "MIT"
+}

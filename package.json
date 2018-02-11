@@ -1,6 +1,5 @@
 {
-  "name": "apollo-codegen",
-  "version": "0.18.3",
+  "private": true,
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
@@ -38,6 +37,7 @@
     "ansi-regex": "^3.0.0",
     "jest": "^22.0.3",
     "jest-matcher-utils": "^22.0.3",
+    "lerna": "^2.8.0",
     "ts-jest": "^22.0.0",
     "typescript": "^2.6.2"
   },

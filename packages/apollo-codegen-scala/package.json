@@ -1,0 +1,8 @@
+{
+  "name": "apollo-codegen-scala",
+  "version": "0.18.3",
+  "description": "",
+  "main": "index.js",
+  "author": "Shadaj Laddad",
+  "license": "MIT"
+}
