@@ -12,12 +12,12 @@ import {
   GraphQLInputObjectType
 } from 'graphql'
 
-import  { isTypeProperSuperTypeOf } from '../utilities/graphql'
+import  { isTypeProperSuperTypeOf } from 'apollo-codegen-utilities/graphql'
 
 import {
   join,
   wrap,
-} from '../utilities/printing';
+} from 'apollo-codegen-utilities/printing';
 
 import {
   packageDeclaration,
@@ -52,7 +52,7 @@ import {
   typeNameFromGraphQLType,
 } from './types';
 
-import CodeGenerator from '../utilities/CodeGenerator';
+import CodeGenerator from 'apollo-codegen-utilities/CodeGenerator';
 
 export function generateSource(context, options) {
   const generator = new CodeGenerator(context);

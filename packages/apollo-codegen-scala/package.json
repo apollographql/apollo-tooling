@@ -4,5 +4,12 @@
   "description": "",
   "main": "index.js",
   "author": "Shadaj Laddad",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "apollo-codegen-compiler": "^0.18.3",
+    "change-case": "^3.0.1",
+    "common-tags": "^1.5.1",
+    "graphql": "^0.12.3",
+    "inflected": "^2.0.3"
+  }
 }

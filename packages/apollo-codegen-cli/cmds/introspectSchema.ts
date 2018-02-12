@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import { buildASTSchema, graphql, parse } from 'graphql';
 import { introspectionQuery } from 'graphql/utilities';
 
-import { ToolError } from './errors'
+import { ToolError } from '../helpers/errors'
 
 export async function introspect(schemaContents: string) {
   const schema = buildASTSchema(parse(schemaContents), { commentDescriptions: true });

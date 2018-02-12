@@ -4,5 +4,11 @@
   "description": "",
   "main": "index.js",
   "author": "Lewis Chung",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "apollo-codegen-compiler": "^0.18.3",
+    "@babel/generator": "^7.0.0-beta.35",
+    "common-tags": "^1.5.1",
+    "graphql": "^0.12.3"
+  }
 }

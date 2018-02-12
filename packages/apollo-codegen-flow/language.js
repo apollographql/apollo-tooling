@@ -1,7 +1,7 @@
 import {
   join,
   wrap,
-} from '../utilities/printing';
+} from 'apollo-codegen-utilities/printing';
 
 import { propertyDeclarations } from './codeGeneration';
 import { typeNameFromGraphQLType } from './types';

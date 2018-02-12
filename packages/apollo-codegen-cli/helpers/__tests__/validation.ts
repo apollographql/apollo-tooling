@@ -1,8 +1,8 @@
 import * as path from 'path';
 
-import { loadSchema, loadAndMergeQueryDocuments } from '../src/loading';
+import { loadSchema, loadAndMergeQueryDocuments } from '../loading';
 
-import { validateQueryDocument } from '../src/validation';
+import { validateQueryDocument } from '../validation';
 
 const schema = loadSchema(require.resolve('./fixtures/starwars/schema.json'));
 
@@ -37,4 +37,5 @@ describe('Validation', () => {
     const document = loadQueryDocument('UnknownDirective.graphql');
 
     validateQueryDocument(schema, document);
+  });
 });

@@ -1,4 +1,4 @@
-import { LegacyCompilerContext } from '../compiler/legacyIR';
+import { LegacyCompilerContext } from 'apollo-codegen-compiler/legacyIR';
 
 import {
   GraphQLString,

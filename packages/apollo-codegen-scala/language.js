@@ -1,7 +1,7 @@
 import {
   join,
   wrap,
-} from '../utilities/printing';
+} from 'apollo-codegen-utilities/printing';
 
 export function comment(generator, comment) {
   const split = comment ? comment.split('\n') : [];

@@ -4,5 +4,10 @@
   "description": "",
   "main": "index.js",
   "author": "",
-  "license": "ISC"
+  "license": "MIT",
+  "dependencies": {
+    "common-tags": "^1.5.1",
+    "graphql": "^0.12.3"
+  }
+
 }

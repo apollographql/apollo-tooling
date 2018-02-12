@@ -7,7 +7,7 @@ import { generateOperationId } from './visitors/generateOperationId';
 import { typeCaseForSelectionSet } from './visitors/typeCase';
 import { collectAndMergeFields } from './visitors/collectAndMergeFields';
 
-import '../utilities/array';
+import 'apollo-codegen-utilities/array';
 
 export interface CompilerOptions {
   addTypename?: boolean;

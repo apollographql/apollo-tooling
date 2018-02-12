@@ -14,20 +14,20 @@ import {
   GraphQLUnionType
 } from 'graphql'
 
-import  { isTypeProperSuperTypeOf } from '../utilities/graphql';
+import  { isTypeProperSuperTypeOf } from 'apollo-codegen-utilities/graphql';
 
 import * as Inflector from 'inflected';
 
 import {
   join,
   wrap,
-} from '../utilities/printing';
+} from 'apollo-codegen-utilities/printing';
 
 import {
   sortEnumValues
-} from '../utilities/graphql';
+} from 'apollo-codegen-utilities/graphql';
 
-import CodeGenerator from '../utilities/CodeGenerator';
+import CodeGenerator from 'apollo-codegen-utilities/CodeGenerator';
 
 import {
   typeDeclaration,

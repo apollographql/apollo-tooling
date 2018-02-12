@@ -1,6 +1,6 @@
-import { SelectionSet, Field, BooleanCondition } from '../../../src/compiler';
-import { collectAndMergeFields } from '../../../src/compiler/visitors/collectAndMergeFields';
-import { typeCaseForSelectionSet } from '../../../src/compiler/visitors/typeCase';
+import { SelectionSet, Field, BooleanCondition } from 'apollo-codegen-compiler';
+import { collectAndMergeFields } from 'apollo-codegen-compiler/visitors/collectAndMergeFields';
+import { typeCaseForSelectionSet } from 'apollo-codegen-compiler/visitors/typeCase';
 
 import { compile } from '../../test-utils/helpers';
 

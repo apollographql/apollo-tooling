@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-import { introspect } from '../src/introspectSchema';
+import { introspect } from '../introspectSchema';
 
 describe('Introspecting GraphQL schema documents', () => {
   test(`should generate valid introspection JSON file`, async () => {

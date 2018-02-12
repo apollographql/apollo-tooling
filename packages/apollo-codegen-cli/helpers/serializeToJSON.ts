@@ -6,7 +6,7 @@ import {
   GraphQLInputObjectType,
 } from 'graphql';
 
-import { LegacyCompilerContext } from './compiler/legacyIR';
+import { LegacyCompilerContext } from 'apollo-codegen-compiler/legacyIR';
 
 export default function serializeToJSON(context: LegacyCompilerContext) {
   return serializeAST({

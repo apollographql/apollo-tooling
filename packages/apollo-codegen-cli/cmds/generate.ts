@@ -2,18 +2,18 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as rimraf from 'rimraf';
 
-import { loadSchema, loadSchemaFromConfig, loadAndMergeQueryDocuments } from './loading';
-import { validateQueryDocument } from './validation';
-import { compileToIR } from './compiler';
-import { compileToLegacyIR } from './compiler/legacyIR';
-import serializeToJSON from './serializeToJSON';
-import { BasicGeneratedFile } from './utilities/CodeGenerator'
-import { generateSource as generateSwiftSource } from './swift';
-import { generateSource as generateTypescriptSource } from './typescript';
-import { generateSource as generateFlowSource } from './flow';
-import { generateSource as generateFlowModernSource } from './javascript/flow';
-import { generateSource as generateTypescriptModernSource } from './javascript/typescript';
-import { generateSource as generateScalaSource } from './scala';
+import { compileToIR } from 'apollo-codegen-compiler';
+import { compileToLegacyIR } from 'apollo-codegen-compiler/legacyIR';
+import { loadSchema, loadSchemaFromConfig, loadAndMergeQueryDocuments } from '../helpers/loading';
+import serializeToJSON from '../helpers/serializeToJSON';
+import { validateQueryDocument } from '../helpers/validation';
+import { BasicGeneratedFile } from 'apollo-codegen-utilities/CodeGenerator'
+import { generateSource as generateSwiftSource } from 'apollo-codegen-swift';
+import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript';
+import { generateSource as generateFlowSource } from 'apollo-codegen-flow';
+import { generateSource as generateFlowModernSource } from 'apollo-codegen-flow-modern';
+import { generateSource as generateTypescriptModernSource } from 'apollo-codegen-typescript-modern';
+import { generateSource as generateScalaSource } from 'apollo-codegen-scala';
 
 type TargetType = 'json' | 'swift' | 'ts' | 'typescript'
   | 'flow' | 'scala' | 'flow-modern' | 'typescript-modern'

@@ -18,9 +18,9 @@ import { loadSchema } from '../../src/loading';
 const starWarsSchema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
 const miscSchema = loadSchema(require.resolve('../fixtures/misc/schema.json'));
 
-import CodeGenerator from '../../src/utilities/CodeGenerator';
+import CodeGenerator from 'apollo-codegen-utilities/CodeGenerator';
 
-import { compileToLegacyIR } from '../../src/compiler/legacyIR';
+import { compileToLegacyIR } from 'apollo-codegen-compiler/legacyIR';
 
 describe('TypeScript code generation', function() {
   let generator;
@@ -313,7 +313,7 @@ describe('TypeScript code generation', function() {
       const source = generateSource(context);
       expect(source).toMatchSnapshot();
     });
-    
+
     test('should have __typename value in nested property', () => {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
@@ -323,7 +323,7 @@ describe('TypeScript code generation', function() {
               edges {
                 node {
                   name
-                  
+
                 }
               }
             }

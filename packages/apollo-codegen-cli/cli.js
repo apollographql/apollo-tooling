@@ -8,11 +8,8 @@ import * as yargs from 'yargs';
 import { downloadSchema, introspectSchema, printSchema, generate } from '.';
 import { ToolError, logError } from './errors'
 
-import 'source-map-support/register'
-
 // Make sure unhandled errors in async code are propagated correctly
 process.on('unhandledRejection', (error) => { throw error });
-
 process.on('uncaughtException', handleError);
 
 function handleError(error) {

@@ -12,7 +12,7 @@ import {
 
 import * as t from '@babel/types';
 
-import { CompilerOptions } from '../../compiler';
+import { CompilerOptions } from 'apollo-codegen-compiler';
 
 const builtInScalarMap = {
   [GraphQLString.name]: t.TSStringKeyword(),

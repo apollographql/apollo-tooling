@@ -12,18 +12,18 @@ import {
   Fragment,
   SelectionSet,
   Field,
-} from '../../compiler';
+} from 'apollo-codegen-compiler';
 
 import {
   typeCaseForSelectionSet,
   Variant
-} from '../../compiler/visitors/typeCase';
+} from 'apollo-codegen-compiler/visitors/typeCase';
 
 import {
   collectAndMergeFields
-} from '../../compiler/visitors/collectAndMergeFields';
+} from 'apollo-codegen-compiler/visitors/collectAndMergeFields';
 
-import { BasicGeneratedFile } from '../../utilities/CodeGenerator';
+import { BasicGeneratedFile } from 'apollo-codegen-utilities/CodeGenerator';
 import TypescriptGenerator, { ObjectProperty, TypescriptCompilerOptions, } from './language';
 import Printer from './printer';
 

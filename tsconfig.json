@@ -13,9 +13,7 @@
     "noUnusedParameters": true,
     "noUnusedLocals": true,
     "allowJs": true,
-    "allowUnreachableCode": true
+    "allowUnreachableCode": true,
+    "baseUrl": "./packages",
   },
-  "include" : [
-    "src/**/*"
-  ]
 }

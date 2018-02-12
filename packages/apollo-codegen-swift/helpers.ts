@@ -16,14 +16,14 @@ import {
 
 import { camelCase, pascalCase } from 'change-case';
 import * as Inflector from 'inflected';
-import { join, wrap } from '../utilities/printing';
+import { join, wrap } from 'apollo-codegen-utilities/printing';
 
 import { Property, Struct } from './language';
 
-import { CompilerOptions, SelectionSet, Field, FragmentSpread, Argument } from '../compiler';
-import { isMetaFieldName } from '../utilities/graphql';
-import { Variant } from '../compiler/visitors/typeCase';
-import { collectAndMergeFields } from '../compiler/visitors/collectAndMergeFields';
+import { CompilerOptions, SelectionSet, Field, FragmentSpread, Argument } from 'apollo-codegen-compiler';
+import { isMetaFieldName } from 'apollo-codegen-utilities/graphql';
+import { Variant } from 'apollo-codegen-compiler/visitors/typeCase';
+import { collectAndMergeFields } from 'apollo-codegen-compiler/visitors/collectAndMergeFields';
 
 const builtInScalarMap = {
   [GraphQLString.name]: 'String',

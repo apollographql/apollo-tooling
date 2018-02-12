@@ -6,7 +6,7 @@ const schema = loadSchema(require.resolve('../../../../test/fixtures/starwars/sc
 import {
   compileToIR,
   CompilerContext,
-} from '../../../compiler';
+} from 'apollo-codegen-compiler';
 
 import { generateSource } from '../codeGeneration';
 import { FlowCompilerOptions } from '../language';

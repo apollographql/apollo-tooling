@@ -2,7 +2,7 @@ import * as fs from 'fs';
 
 import { buildClientSchema, printSchema } from 'graphql';
 
-import { ToolError } from './errors'
+import { ToolError } from '../helpers/errors'
 
 export default async function printSchemaFromIntrospectionResult(schemaPath: string, outputPath: string) {
   if (!fs.existsSync(schemaPath)) {

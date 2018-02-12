@@ -11,7 +11,7 @@ import {
 
 import { loadSchema } from '../../src/loading'
 
-import { compileToLegacyIR } from '../../src/compiler/legacyIR'
+import { compileToLegacyIR } from 'apollo-codegen-compiler/legacyIR'
 import { serializeAST } from '../../src/serializeToJSON'
 
 function withStringifiedTypes(ir) {

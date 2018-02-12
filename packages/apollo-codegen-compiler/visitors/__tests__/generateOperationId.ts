@@ -1,4 +1,4 @@
-import { generateOperationId } from '../../../src/compiler/visitors/generateOperationId';
+import { generateOperationId } from 'apollo-codegen-compiler/visitors/generateOperationId';
 import { stripIndent } from 'common-tags';
 
 import { compile } from '../../test-utils/helpers';

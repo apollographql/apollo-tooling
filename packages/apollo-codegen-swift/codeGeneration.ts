@@ -11,20 +11,20 @@ import {
   GraphQLInputObjectType
 } from 'graphql';
 
-import { CompilerContext, Operation, Fragment, SelectionSet, Field } from '../compiler';
+import { CompilerContext, Operation, Fragment, SelectionSet, Field } from 'apollo-codegen-compiler';
 
-import { join, wrap } from '../utilities/printing';
+import { join, wrap } from 'apollo-codegen-utilities/printing';
 
 import { SwiftGenerator, Property, escapeIdentifierIfNeeded, Struct } from './language';
 import { Helpers } from './helpers';
-import { isList } from '../utilities/graphql';
+import { isList } from 'apollo-codegen-utilities/graphql';
 
-import { typeCaseForSelectionSet, TypeCase, Variant } from '../compiler/visitors/typeCase';
-import { collectFragmentsReferenced } from '../compiler/visitors/collectFragmentsReferenced';
-import { generateOperationId } from '../compiler/visitors/generateOperationId';
-import { collectAndMergeFields } from '../compiler/visitors/collectAndMergeFields';
+import { typeCaseForSelectionSet, TypeCase, Variant } from 'apollo-codegen-compiler/visitors/typeCase';
+import { collectFragmentsReferenced } from 'apollo-codegen-compiler/visitors/collectFragmentsReferenced';
+import { generateOperationId } from 'apollo-codegen-compiler/visitors/generateOperationId';
+import { collectAndMergeFields } from 'apollo-codegen-compiler/visitors/collectAndMergeFields';
 
-import '../utilities/array';
+import 'apollo-codegen-utilities/array';
 
 export interface Options {
   namespace?: string;

@@ -30,7 +30,7 @@ import {
   filePathForNode,
   withTypenameFieldAddedWhereNeeded,
   isMetaFieldName
-} from '../utilities/graphql';
+} from 'apollo-codegen-utilities/graphql';
 
 export interface CompilerOptions {
   addTypename?: boolean;

@@ -3,7 +3,7 @@ import {
   block,
   wrap,
   indent
-} from '../utilities/printing';
+} from 'apollo-codegen-utilities/printing';
 
 import { camelCase } from 'change-case';
 

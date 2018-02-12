@@ -3,7 +3,7 @@ import * as Inflector from 'inflected';
 
 import {
   join
-} from '../utilities/printing';
+} from 'apollo-codegen-utilities/printing';
 
 import {
   escapeIdentifierIfNeeded

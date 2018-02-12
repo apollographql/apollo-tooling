@@ -7,7 +7,7 @@ import {
   compileToIR,
   CompilerOptions,
   CompilerContext,
-} from '../../../compiler';
+} from 'apollo-codegen-compiler';
 
 import { generateSource } from '../codeGeneration';
 

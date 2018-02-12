@@ -1,7 +1,7 @@
 import {
   join,
   wrap,
-} from '../utilities/printing';
+} from 'apollo-codegen-utilities/printing';
 
 export function escapedString(string) {
   return string.replace(/"/g, '\\"');
