@@ -33,7 +33,7 @@ export default async function downloadSchema(url: string, outputPath: string, ad
     throw new ToolError(`Error while fetching introspection query result: ${error.message}`);
   }
 
-  if (result.errors) {
+  if (result.errors && result.errors.length > 0) {
     throw new ToolError(`Errors in introspection query result: ${result.errors}`);
   }
 
