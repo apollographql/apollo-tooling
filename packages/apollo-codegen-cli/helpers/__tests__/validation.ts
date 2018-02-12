@@ -9,7 +9,7 @@ const schema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars
 describe('Validation', () => {
   function loadQueryDocument(filename: string) {
     return loadAndMergeQueryDocuments([
-      require.resolve(path.join('apollo-codegen-testfixtures/starwars/', filename))
+      require.resolve(path.join('apollo-codegen-test-fixtures/starwars/', filename))
     ]);
   }
 

@@ -5,7 +5,6 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "lib": ["es2017", "esnext.asynciterable", "dom"],
-    "outDir": "lib",
     "removeComments": true,
     "strict": true,
     "noImplicitReturns": true,

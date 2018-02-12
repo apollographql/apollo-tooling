@@ -6,6 +6,7 @@
   "author": "Martin Wjalraven",
   "license": "MIT",
   "dependencies": {
+    "common-tags": "^1.7.2",
     "graphql-config": "^1.2.1"
   }
 }

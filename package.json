@@ -27,7 +27,7 @@
     "jest": "^22.0.3",
     "jest-matcher-utils": "^22.0.3",
     "lerna": "^2.8.0",
-    "ts-jest": "^22.0.0",
+    "ts-jest": "^22.0.4",
     "typescript": "^2.6.2"
   },
   "npmClient": "yarn",
@@ -37,19 +37,24 @@
     "setupFiles": [
       "<rootDir>/misc/polyfills.js"
     ],
+    "moduleNameMapper": {
+      "^apollo-codegen-(.*)$": "<rootDir>/packages/apollo-codegen-$1"
+    },
     "setupTestFrameworkScriptFile": "<rootDir>/misc/test-utils/matchers.ts",
-    "transformIgnorePatterns": [
-      "<rootDir>/node_modules/",
-      "<rootDir>/packages/apollo-codegen-*/node_modules/"
-    ],
     "testMatch": ["**/__tests__/*.(js|ts)"],
     "transform": {
       "^.+\\.(ts|js)x?$": "ts-jest"
     },
-    "projects": ["<rootDir>/packages/*"],
+    "projects": ["<rootDir>/packages/.*"],
     "moduleFileExtensions": [
       "ts",
       "js"
-    ]
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfigFile": "tsconfig.json",
+        "skipBabel": true
+      }
+    }
   }
 }

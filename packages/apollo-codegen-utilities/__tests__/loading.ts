@@ -4,7 +4,6 @@ import * as path from 'path';
 
 import {
   extractDocumentFromJavascript,
-  loadAndMergeQueryDocuments
 } from '../loading';
 
 // Test example javascript source files are located within __fixtures__
@@ -59,7 +58,7 @@ describe('extractDocumentFromJavascript', () => {
 describe('Validation', () => {
   test(`should extract gql snippet from javascript file`, () => {
     const inputPaths = [
-      require.resolve('apollo-codegen-testfixtures/starwars/gqlQueries.js')
+      require.resolve('apollo-codegen-test-fixtures/starwars/gqlQueries.js')
     ];
 
     const document = loadAndMergeQueryDocuments(inputPaths);
