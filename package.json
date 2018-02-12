@@ -32,6 +32,7 @@
   },
   "npmClient": "yarn",
   "useWorkspaces": true,
+  "workspaces": ["packages/*"],
   "jest": {
     "testEnvironment": "node",
     "setupFiles": [
