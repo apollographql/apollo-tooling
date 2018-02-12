@@ -4,8 +4,8 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "lib",
     "lib": ["es2017", "esnext.asynciterable", "dom"],
+    "outDir": "lib",
     "removeComments": true,
     "strict": true,
     "noImplicitReturns": true,
@@ -14,6 +14,13 @@
     "noUnusedLocals": true,
     "allowJs": true,
     "allowUnreachableCode": true,
-    "baseUrl": "./packages",
+    "baseUrl": "packages/",
+    "sourceRoot": "packages/",
   },
+  "include" : [
+    "packages/**/*",
+    "lib/**/*",
+    "misc/**/*",
+    "types/**/*"
+  ]
 }
