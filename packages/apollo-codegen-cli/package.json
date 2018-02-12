@@ -29,5 +29,8 @@
     "node-fetch": "^1.7.3",
     "rimraf": "^2.6.2",
     "yargs": "^10.0.3"
+  },
+  "devDependencies": {
+    "apollo-codegen-test-fixtures": "^1.0.0"
   }
 }

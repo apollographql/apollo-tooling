@@ -1,7 +1,7 @@
 import { parse } from 'graphql';
 
 import { loadSchema } from '../../../loading';
-const schema = loadSchema(require.resolve('../../../../test/fixtures/starwars/schema.json'));
+const schema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars/schema.json'));
 
 import {
   compileToIR,
@@ -295,7 +295,7 @@ describe('Flow codeGeneration', () => {
   });
 
   test('handles multiline graphql comments', () => {
-    const miscSchema = loadSchema(require.resolve('../../../../test/fixtures/misc/schema.json'));
+    const miscSchema = loadSchema(require.resolve('apollo-codegen-test-fixtures/misc/schema.json'));
 
     const document = parse(`
       query CustomScalar {

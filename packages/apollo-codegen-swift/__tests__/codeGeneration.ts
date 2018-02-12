@@ -1,7 +1,7 @@
 import { parse, GraphQLNonNull, GraphQLString, GraphQLEnumType, GraphQLList } from 'graphql';
 
 import { loadSchema } from '../../src/loading';
-const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
+const schema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars/schema.json'));
 
 import {
   compileToIR,
@@ -12,7 +12,7 @@ import {
   Argument
 } from 'apollo-codegen-compiler';
 
-import { SwiftAPIGenerator } from '../../src/swift/codeGeneration';
+import { SwiftAPIGenerator } from '../codeGeneration';
 
 describe('Swift code generation', () => {
   let generator: SwiftAPIGenerator;

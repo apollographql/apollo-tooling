@@ -4,12 +4,12 @@ import { loadSchema, loadAndMergeQueryDocuments } from '../loading';
 
 import { validateQueryDocument } from '../validation';
 
-const schema = loadSchema(require.resolve('./fixtures/starwars/schema.json'));
+const schema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars/schema.json'));
 
 describe('Validation', () => {
   function loadQueryDocument(filename: string) {
     return loadAndMergeQueryDocuments([
-      path.join(__dirname, './fixtures/starwars', filename),
+      require.resolve(path.join('apollo-codegen-testfixtures/starwars/', filename))
     ]);
   }
 

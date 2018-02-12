@@ -18,7 +18,7 @@ function withStringifiedTypes(ir) {
   return JSON.parse(serializeAST(ir));
 }
 
-const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
+const schema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars/schema.json'));
 
 describe('Compiling query documents to the legacy IR', () => {
   it(`should include variables defined in operations`, () => {

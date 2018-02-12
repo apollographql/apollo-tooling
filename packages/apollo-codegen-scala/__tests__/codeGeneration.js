@@ -24,7 +24,7 @@ import {
 } from '../../src/scala/values';
 
 import { loadSchema } from '../../src/loading';
-const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
+const schema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars/schema.json'));
 
 import CodeGenerator from 'apollo-codegen-utilities/CodeGenerator';
 

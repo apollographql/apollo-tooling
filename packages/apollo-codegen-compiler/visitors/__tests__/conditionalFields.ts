@@ -2,7 +2,7 @@ import { SelectionSet, Field, BooleanCondition } from 'apollo-codegen-compiler';
 import { collectAndMergeFields } from 'apollo-codegen-compiler/visitors/collectAndMergeFields';
 import { typeCaseForSelectionSet } from 'apollo-codegen-compiler/visitors/typeCase';
 
-import { compile } from '../../test-utils/helpers';
+import { compile } from './utils/helpers';
 
 describe('@skip/@include directives', () => {
   it('should not mark a field as conditional when it has a no directives', () => {

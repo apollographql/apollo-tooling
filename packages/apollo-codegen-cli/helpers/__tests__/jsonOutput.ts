@@ -3,7 +3,7 @@ import { compileToLegacyIR } from 'apollo-codegen-compiler/legacyIR';
 import serializeToJSON from '../serializeToJSON';
 
 import { loadSchema } from '../loading';
-const starWarsSchema = loadSchema(require.resolve('./fixtures/starwars/schema.json'));
+const starWarsSchema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars/schema.json'));
 
 function compileFromSource(source: string, schema: GraphQLSchema = starWarsSchema) {
   const document = parse(source);

@@ -43,12 +43,6 @@
       "**/test/*.(js|ts)",
       "**/__tests__/*.(js|ts)"
     ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/node_modules/",
-      "<rootDir>/lib/",
-      "<rootDir>/test/fixtures/",
-      "<rootDir>/test/test-utils"
-    ],
     "transform": {
       "^.+\\.(ts|js)x?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },

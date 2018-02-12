@@ -10,7 +10,7 @@ import {
   GraphQLSchema
 } from 'graphql';
 
-import {
+import s
   getGraphQLProjectConfig,
   ConfigNotFoundError
 } from 'graphql-config'

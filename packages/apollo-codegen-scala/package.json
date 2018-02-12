@@ -11,5 +11,8 @@
     "common-tags": "^1.5.1",
     "graphql": "^0.12.3",
     "inflected": "^2.0.3"
+  },
+  "devDependencies": {
+    "apollo-codegen-test-fixtures": "^1.0.0"
   }
 }

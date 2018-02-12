@@ -6,9 +6,12 @@
   "author": "Lewis Chung",
   "license": "MIT",
   "dependencies": {
-    "apollo-codegen-compiler": "^0.18.3",
     "@babel/generator": "^7.0.0-beta.35",
+    "apollo-codegen-compiler": "^0.18.3",
     "common-tags": "^1.5.1",
     "graphql": "^0.12.3"
+  },
+  "devDependencies": {
+    "apollo-codegen-test-fixtures": "^1.0.0"
   }
 }

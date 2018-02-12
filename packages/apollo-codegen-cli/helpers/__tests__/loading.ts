@@ -59,7 +59,7 @@ describe('extractDocumentFromJavascript', () => {
 describe('Validation', () => {
   test(`should extract gql snippet from javascript file`, () => {
     const inputPaths = [
-      path.join(__dirname, '../../test/fixtures/starwars/gqlQueries.js'),
+      require.resolve('apollo-codegen-testfixtures/starwars/gqlQueries.js')
     ];
 
     const document = loadAndMergeQueryDocuments(inputPaths);
