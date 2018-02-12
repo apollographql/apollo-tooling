@@ -4,6 +4,7 @@ import * as path from 'path';
 
 import {
   extractDocumentFromJavascript,
+  loadAndMergeQueryDocuments
 } from '../loading';
 
 // Test example javascript source files are located within __fixtures__

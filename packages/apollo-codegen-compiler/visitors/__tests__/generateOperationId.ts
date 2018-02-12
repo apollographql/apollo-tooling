@@ -1,7 +1,7 @@
 import { generateOperationId } from 'apollo-codegen-compiler/visitors/generateOperationId';
 import { stripIndent } from 'common-tags';
 
-import { compile } from './utils/helpers';
+import { compile } from '../../../../misc/test-utils/helpers';
 
 describe(`generateOperationId()`, () => {
   it(`should generate different operation IDs for different operations`, () => {

@@ -1,5 +1,5 @@
 import { buildSchema } from 'graphql';
-import { compile } from './utils/helpers';
+import { compile } from '../../../../misc/test-utils/helpers';
 
 import { SelectionSet, Field } from 'apollo-codegen-compiler';
 import { typeCaseForSelectionSet } from 'apollo-codegen-compiler/visitors/typeCase';

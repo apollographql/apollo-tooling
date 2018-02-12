@@ -17,13 +17,13 @@ import {
   caseClassDeclarationForFragment,
   caseClassDeclarationForSelectionSet,
   typeDeclarationForGraphQLType,
-} from '../../src/scala/codeGeneration';
+} from '../codeGeneration';
 
 import {
   dictionaryLiteralForFieldArguments,
-} from '../../src/scala/values';
+} from '../values';
 
-import { loadSchema } from '../../src/loading';
+import { loadSchema } from 'apollo-codegen-utilities/loading';
 const schema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars/schema.json'));
 
 import CodeGenerator from 'apollo-codegen-utilities/CodeGenerator';

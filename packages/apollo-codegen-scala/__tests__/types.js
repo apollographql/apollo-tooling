@@ -11,12 +11,12 @@ import {
   GraphQLScalarType,
 } from 'graphql';
 
-import { loadSchema } from '../../src/loading'
+import { loadSchema } from 'apollo-codegen-utilities/loading'
 const schema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars/schema.json'));
 
 import CodeGenerator from 'apollo-codegen-utilities/CodeGenerator';
 
-import { typeNameFromGraphQLType } from '../../src/scala/types'
+import { typeNameFromGraphQLType } from '..//types'
 
 describe('Scala code generation: Types', function() {
   describe('#typeNameFromGraphQLType()', function() {

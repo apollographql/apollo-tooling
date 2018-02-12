@@ -9,10 +9,10 @@ import {
   GraphQLNonNull
 } from 'graphql';
 
-import { loadSchema } from '../../src/loading'
+import { loadSchema } from 'apollo-codegen-utilities/loading'
 
 import { compileToLegacyIR } from 'apollo-codegen-compiler/legacyIR'
-import { serializeAST } from '../../src/serializeToJSON'
+import { serializeAST } from 'apollo-codegen-cli/helpers/serializeToJSON'
 
 function withStringifiedTypes(ir) {
   return JSON.parse(serializeAST(ir));

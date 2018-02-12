@@ -12,9 +12,9 @@ import {
 
 import {
   generateSource
-} from '../../src/typescript/codeGeneration';
+} from '../codeGeneration';
 
-import { loadSchema } from '../../src/loading';
+import { loadSchema } from 'apollo-codegen-utilities/loading';
 const starWarsSchema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars/schema.json'));
 const miscSchema = loadSchema(require.resolve('apollo-codegen-test-fixtures/misc/schema.json'));
 
