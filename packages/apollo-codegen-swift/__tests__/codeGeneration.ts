@@ -1,6 +1,6 @@
 import { parse, GraphQLNonNull, GraphQLString, GraphQLEnumType, GraphQLList } from 'graphql';
 
-import { loadSchema } from '../../src/loading';
+import { loadSchema } from 'apollo-codegen-utilities/loading';
 const schema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars/schema.json'));
 
 import {

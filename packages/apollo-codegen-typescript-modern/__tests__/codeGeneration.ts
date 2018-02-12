@@ -1,6 +1,6 @@
 import { parse } from 'graphql';
 
-import { loadSchema } from '../../../loading';
+import { loadSchema } from 'apollo-codegen-utilities/loading';
 const schema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars/schema.json'));
 
 import {

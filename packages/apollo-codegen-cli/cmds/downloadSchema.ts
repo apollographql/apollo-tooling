@@ -8,7 +8,7 @@ import {
   introspectionQuery,
 } from 'graphql/utilities';
 
-import { ToolError } from '../helpers/errors'
+import { ToolError } from 'apollo-codegen-utilities/errors'
 
 const defaultHeaders = {
   'Accept': 'application/json',

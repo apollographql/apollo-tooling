@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as rimraf from 'rimraf';
 
-import { compileToIR } from 'apollo-codegen-compiler';
+import { CompilerContext, compileToIR } from 'apollo-codegen-compiler';
 import { compileToLegacyIR } from 'apollo-codegen-compiler/legacyIR';
-import { loadSchema, loadSchemaFromConfig, loadAndMergeQueryDocuments } from '../helpers/loading';
+import { loadSchema, loadSchemaFromConfig, loadAndMergeQueryDocuments } from 'apollo-codegen-utilities/loading';
 import serializeToJSON from '../helpers/serializeToJSON';
 import { validateQueryDocument } from '../helpers/validation';
 import { BasicGeneratedFile } from 'apollo-codegen-utilities/CodeGenerator'
@@ -134,13 +134,22 @@ interface OperationIdsMap {
   source: string;
 }
 
-function writeOperationIdsMap(context: any) {
+function writeOperationIdsMap(context: CompilerContext) {
   let operationIdsMap: { [id: string]: OperationIdsMap } = {};
   Object.values(context.operations).forEach(operation => {
-    operationIdsMap[operation.operationId] = {
-      name: operation.operationName,
-      source: operation.sourceWithFragments
-    };
+    if (operation.operationId) {
+      operationIdsMap[operation.operationId] = {
+        name: operation.operationName,
+        source: operation.sourceWithFragments
+      };
+    } else {
+      console.warn(`Operation ${operation.operationName} does not have an operation id.`);
+    }
   });
-  fs.writeFileSync(context.options.operationIdsPath, JSON.stringify(operationIdsMap, null, 2));
+
+  if (context.options.operationIdsPath) {
+    fs.writeFileSync(context.options.operationIdsPath, JSON.stringify(operationIdsMap, null, 2));
+  } else {
+    console.warn(`Missing operation ids path.`);
+  }
 }

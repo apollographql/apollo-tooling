@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-import { loadSchema, loadAndMergeQueryDocuments } from '../loading';
+import { loadSchema, loadAndMergeQueryDocuments } from 'apollo-codegen-utilities/loading';
 
 import { validateQueryDocument } from '../validation';
 

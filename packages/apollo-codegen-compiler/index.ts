@@ -39,6 +39,7 @@ export interface CompilerOptions {
   customScalarsPrefix?: string;
   namespace?: string;
   generateOperationIds?: boolean;
+  operationIdsPath?: string;
 }
 
 export interface CompilerContext {
@@ -70,6 +71,7 @@ export interface Operation {
   source: string;
   rootType: GraphQLObjectType;
   selectionSet: SelectionSet;
+  sourceWithFragments: string;
 }
 
 export interface Fragment {

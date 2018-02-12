@@ -4,5 +4,8 @@
   "description": "",
   "main": "index.js",
   "author": "Martin Wjalraven",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "graphql-config": "^1.2.1"
+  }
 }

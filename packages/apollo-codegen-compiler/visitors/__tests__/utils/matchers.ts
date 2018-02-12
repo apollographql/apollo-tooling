@@ -1,6 +1,5 @@
-import { collectAndMergeFields } from '../../src/compiler/visitors/collectAndMergeFields';
-
-import { SelectionSet } from '../../src/compiler';
+import { collectAndMergeFields } from 'apollo-codegen-compiler/visitors/collectAndMergeFields';
+import { SelectionSet } from 'apollo-codegen-compiler';
 
 declare global {
   namespace jest {

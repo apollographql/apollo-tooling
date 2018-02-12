@@ -1,6 +1,6 @@
 import { parse, GraphQLSchema } from 'graphql';
-import { compileToIR, CompilerOptions, } from '../../src/compiler';
-import { loadSchema } from '../../src/loading';
+import { compileToIR, CompilerOptions, } from 'apollo-codegen-compiler';
+import { loadSchema } from 'apollo-codegen-utilities/loading';
 
 export const starWarsSchema = loadSchema(require.resolve('apollo-codegen-test-fixtures/starwars/schema.json'));
 

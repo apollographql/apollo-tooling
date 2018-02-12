@@ -2,7 +2,7 @@ import * as fs from 'fs';
 
 import { buildClientSchema, printSchema } from 'graphql';
 
-import { ToolError } from '../helpers/errors'
+import { ToolError } from 'apollo-codegen-utilities/errors'
 
 export default async function printSchemaFromIntrospectionResult(schemaPath: string, outputPath: string) {
   if (!fs.existsSync(schemaPath)) {

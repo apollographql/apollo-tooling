@@ -1,6 +1,4 @@
 import { readFileSync } from 'fs';
-import { join } from 'path';
-
 import { introspect } from '../introspectSchema';
 
 describe('Introspecting GraphQL schema documents', () => {
