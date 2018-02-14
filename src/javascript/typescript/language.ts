@@ -54,9 +54,10 @@ export default class TypescriptGenerator {
     );
 
     if (description) {
+      const value = description.replace(new RegExp('\n', 'g'), ' ').trim();
       typeAlias.leadingComments = [{
         type: 'CommentLine',
-        value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
+        value: ` ${value}`
       } as t.CommentLine];
     }
 
