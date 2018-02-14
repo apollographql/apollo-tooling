@@ -12,3 +12,10 @@ Object.defineProperty(Array.prototype, 'flatMap', {
   },
   enumerable: false
 });
+
+export function maybePush<T = any>(list: T[], item: T) {
+  if (!list.includes(item)) {
+    list.push(item);
+  }
+  return list;
+};

@@ -543,20 +543,6 @@ export enum Episode {
   NEWHOPE = \\"NEWHOPE\\",
 }
 
-// The input object sent when someone is creating a new review
-interface ReviewInput {
-  stars: number;
-  commentary?: string | null;
-  favorite_color?: ColorInput | null;
-}
-
-// The input object sent when passing in a color
-interface ColorInput {
-  red: number;
-  green: number;
-  blue: number;
-}
-
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
@@ -602,20 +588,6 @@ export enum Episode {
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
   NEWHOPE = \\"NEWHOPE\\",
-}
-
-// The input object sent when someone is creating a new review
-interface ReviewInput {
-  stars: number;
-  commentary?: string | null;
-  favorite_color?: ColorInput | null;
-}
-
-// The input object sent when passing in a color
-interface ColorInput {
-  red: number;
-  green: number;
-  blue: number;
 }
 
 //==============================================================
@@ -716,20 +688,6 @@ export enum Episode {
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
   NEWHOPE = \\"NEWHOPE\\",
-}
-
-// The input object sent when someone is creating a new review
-interface ReviewInput {
-  stars: number;
-  commentary?: string | null;
-  favorite_color?: ColorInput | null;
-}
-
-// The input object sent when passing in a color
-interface ColorInput {
-  red: number;
-  green: number;
-  blue: number;
 }
 
 //==============================================================
