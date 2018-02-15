@@ -26,7 +26,7 @@ import {
 import { BasicGeneratedFile } from '../../utilities/CodeGenerator';
 import TypescriptGenerator, { ObjectProperty, TypescriptCompilerOptions, } from './language';
 import Printer from './printer';
-import { GraphQLType, isType } from 'graphql/type/definition';
+import { GraphQLType } from 'graphql/type/definition';
 import { FragmentSpread } from '../../compiler';
 import { GraphQLNonNull } from 'graphql';
 import { GraphQLOutputType } from 'graphql';
@@ -105,7 +105,7 @@ export function generateSource(
       generator.fileHeader();
       generator.interfacesForFragment(fragment);
 
-      const typesUsed = generator.getTypesUsedForFragment(fragment, context);
+      const typesUsed = generator.getTypesUsedForOperation(fragment, context);
       printEnumsAndInputObjects(generator, typesUsed);
 
       const output = generator.printer.printAndClear();
@@ -257,22 +257,16 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     this.scopeStackPop();
   }
 
-  public getTypesUsedForOperation(operation: Operation, context: CompilerContext) {
-    const operationTypesUsed = operation.variables
-      .map(({ type }) => type)
-      .reduce(this.reduceTypesUsed, [])
-      .filter((type) => isType(type))
-    ;
+  public getTypesUsedForOperation(doc: Operation | Fragment, context: CompilerContext) {
+    let docTypesUsed: GraphQLType[] = [];
 
-    return context.typesUsed
-      .filter((type) => {
-        return operationTypesUsed.find((typeUsed) => type === typeUsed);
-      });
-  }
+    if (doc.hasOwnProperty('operationName')) {
+      const operation = doc as Operation;
+      docTypesUsed = operation.variables.map(({ type }) => type);
+    }
 
-  public getTypesUsedForFragment(fragment: Fragment, context: CompilerContext) {
-    const reduceTypesForFragment = (
-      fragmentSpread: Fragment | FragmentSpread,
+    const reduceTypesForDocument = (
+      nestDoc: Operation | Fragment | FragmentSpread,
       acc: GraphQLType[]
     ) => {
       const {
@@ -280,7 +274,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
           possibleTypes,
           selections,
         },
-      } = fragmentSpread;
+      } = nestDoc;
 
       acc = possibleTypes.reduce(maybePush, acc);
 
@@ -292,7 +286,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
               selectionAcc = maybePush(selectionAcc, selection.type);
               break;
             case 'FragmentSpread':
-              selectionAcc = reduceTypesForFragment(selection, selectionAcc);
+              selectionAcc = reduceTypesForDocument(selection, selectionAcc);
               break;
             default:
               break;
@@ -304,12 +298,12 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       return acc;
     }
 
-    const fragmentTypesUsed = reduceTypesForFragment(fragment, [])
+    docTypesUsed = reduceTypesForDocument(doc, docTypesUsed)
       .reduce(this.reduceTypesUsed, []);
 
     return context.typesUsed
       .filter((type) => {
-        return fragmentTypesUsed.find((typeUsed) => type === typeUsed);
+        return docTypesUsed.find((typeUsed) => type === typeUsed);
       });
   }
 
