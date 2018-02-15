@@ -1,0 +1,15 @@
+{
+  "name": "apollo-codegen-compiler",
+  "version": "0.18.3",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "common-tags": "^1.5.1",
+    "graphql": "^0.12.3"
+  },
+  "devDependencies": {
+    "apollo-codegen-test-fixtures": "^1.0.0"
+  }
+}

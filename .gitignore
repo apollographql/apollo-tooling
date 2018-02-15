@@ -11,3 +11,9 @@ lib
 .DS_Store
 
 yarn.lock
+
+# Lerna
+lerna*.log
+
+# Yarn
+yarn*.log

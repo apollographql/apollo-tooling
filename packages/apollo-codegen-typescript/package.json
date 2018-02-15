@@ -1,0 +1,15 @@
+{
+  "name": "apollo-codegen-typescript",
+  "version": "0.18.3",
+  "description": "",
+  "main": "index.js",
+  "author": "Lewis Chung",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-codegen-compiler": "^0.18.3",
+    "graphql": "^0.12.3"
+  },
+  "devDependencies": {
+    "apollo-codegen-test-fixtures": "^1.0.0"
+  }
+}

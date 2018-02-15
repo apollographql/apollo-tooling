@@ -4,18 +4,18 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "lib",
     "lib": ["es2017", "esnext.asynciterable", "dom"],
     "removeComments": true,
     "strict": true,
+    "outDir": "lib",
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
     "allowJs": true,
-    "allowUnreachableCode": true
+    "allowUnreachableCode": true,
+    "baseUrl": "packages/",
+    "sourceRoot": "packages/"
   },
-  "include" : [
-    "src/**/*"
-  ]
+  "include": ["packages/**/*", "misc/**/*", "types/**/*"]
 }
