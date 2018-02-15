@@ -4,10 +4,14 @@ import * as rimraf from 'rimraf';
 
 import { CompilerContext, compileToIR } from 'apollo-codegen-compiler';
 import { compileToLegacyIR } from 'apollo-codegen-compiler/legacyIR';
-import { loadSchema, loadSchemaFromConfig, loadAndMergeQueryDocuments } from 'apollo-codegen-utilities/loading';
+import {
+  loadSchema,
+  loadSchemaFromConfig,
+  loadAndMergeQueryDocuments
+} from 'apollo-codegen-utilities/loading';
 import serializeToJSON from '../helpers/serializeToJSON';
 import { validateQueryDocument } from '../helpers/validation';
-import { BasicGeneratedFile } from 'apollo-codegen-utilities/CodeGenerator'
+import { BasicGeneratedFile } from 'apollo-codegen-utilities/CodeGenerator';
 import { generateSource as generateSwiftSource } from 'apollo-codegen-swift';
 import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript';
 import { generateSource as generateFlowSource } from 'apollo-codegen-flow';
@@ -15,8 +19,15 @@ import { generateSource as generateFlowModernSource } from 'apollo-codegen-flow-
 import { generateSource as generateTypescriptModernSource } from 'apollo-codegen-typescript-modern';
 import { generateSource as generateScalaSource } from 'apollo-codegen-scala';
 
-type TargetType = 'json' | 'swift' | 'ts' | 'typescript'
-  | 'flow' | 'scala' | 'flow-modern' | 'typescript-modern'
+type TargetType =
+  | 'json'
+  | 'swift'
+  | 'ts'
+  | 'typescript'
+  | 'flow'
+  | 'scala'
+  | 'flow-modern'
+  | 'typescript-modern'
   | 'ts-modern';
 
 export default function generate(
@@ -29,9 +40,7 @@ export default function generate(
   projectName: string,
   options: any
 ) {
-  const schema = schemaPath == null
-    ? loadSchemaFromConfig(projectName)
-    : loadSchema(schemaPath);
+  const schema = schemaPath == null ? loadSchemaFromConfig(projectName) : loadSchema(schemaPath);
 
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
 
@@ -54,41 +63,33 @@ export default function generate(
     if (options.generateOperationIds) {
       writeOperationIdsMap(context);
     }
-  }
-  else if (target === 'flow-modern' || target === 'typescript-modern' || target === 'ts-modern') {
+  } else if (target === 'flow-modern' || target === 'typescript-modern' || target === 'ts-modern') {
     const context = compileToIR(schema, document, options);
-    const generatedFiles = target === 'flow-modern'
-      ? generateFlowModernSource(context)
-      : generateTypescriptModernSource(context) ;
+    const generatedFiles =
+      target === 'flow-modern' ? generateFlowModernSource(context) : generateTypescriptModernSource(context);
 
     // Group by output directory
     const filesByOutputDirectory: {
       [outputDirectory: string]: {
-        [fileName: string]: BasicGeneratedFile
-      }
+        [fileName: string]: BasicGeneratedFile;
+      };
     } = {};
 
-    Object.keys(generatedFiles)
-      .forEach((filePath: string) => {
-        const outputDirectory = path.dirname(filePath);
-        if (!filesByOutputDirectory[outputDirectory]) {
-          filesByOutputDirectory[outputDirectory] = {
-            [path.basename(filePath)]: generatedFiles[filePath]
-          };
-        } else {
-          filesByOutputDirectory[outputDirectory][path.basename(filePath)] = generatedFiles[filePath];
-        }
-      })
+    Object.keys(generatedFiles).forEach((filePath: string) => {
+      const outputDirectory = path.dirname(filePath);
+      if (!filesByOutputDirectory[outputDirectory]) {
+        filesByOutputDirectory[outputDirectory] = {
+          [path.basename(filePath)]: generatedFiles[filePath]
+        };
+      } else {
+        filesByOutputDirectory[outputDirectory][path.basename(filePath)] = generatedFiles[filePath];
+      }
+    });
 
-    Object.keys(filesByOutputDirectory)
-      .forEach((outputDirectory) => {
-        writeGeneratedFiles(
-          filesByOutputDirectory[outputDirectory],
-          outputDirectory
-        );
-      });
-  }
-  else {
+    Object.keys(filesByOutputDirectory).forEach(outputDirectory => {
+      writeGeneratedFiles(filesByOutputDirectory[outputDirectory], outputDirectory);
+    });
+  } else {
     let output;
     const context = compileToLegacyIR(schema, document, options);
     switch (target) {
@@ -136,16 +137,18 @@ interface OperationIdsMap {
 
 function writeOperationIdsMap(context: CompilerContext) {
   let operationIdsMap: { [id: string]: OperationIdsMap } = {};
-  Object.values(context.operations).forEach(operation => {
-    if (operation.operationId) {
-      operationIdsMap[operation.operationId] = {
-        name: operation.operationName,
-        source: operation.sourceWithFragments
-      };
-    } else {
-      console.warn(`Operation ${operation.operationName} does not have an operation id.`);
-    }
-  });
+  Object.keys(context.operations)
+    .map(k => context.operations[k])
+    .forEach(operation => {
+      if (operation.operationId) {
+        operationIdsMap[operation.operationId] = {
+          name: operation.operationName,
+          source: operation.sourceWithFragments
+        };
+      } else {
+        console.warn(`Operation ${operation.operationName} does not have an operation id.`);
+      }
+    });
 
   if (context.options.operationIdsPath) {
     fs.writeFileSync(context.options.operationIdsPath, JSON.stringify(operationIdsMap, null, 2));
