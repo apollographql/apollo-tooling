@@ -198,7 +198,12 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             this.printOnNewline(
               wrap(
                 `return [`,
-                join(properties.map(({ name, propertyName }) => `"${name}": ${escapeIdentifierIfNeeded(propertyName)}`), ', ') || ':',
+                join(
+                  properties.map(
+                    ({ name, propertyName }) => `"${name}": ${escapeIdentifierIfNeeded(propertyName)}`
+                  ),
+                  ', '
+                ) || ':',
                 `]`
               )
             );
@@ -528,12 +533,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             } else {
               identifier = `(snapshot["${responseKey}"] as! ${snapshotTypeName})`;
             }
-            let getter = 'return ' + this.helpers.mapExpressionForType(
-              type,
-              identifier => `${structName}(snapshot: ${identifier})`,
-							identifier,
-							'Snapshot'
-            );
+            let getter =
+              'return ' +
+              this.helpers.mapExpressionForType(
+                type,
+                identifier => `${structName}(snapshot: ${identifier})`,
+                identifier,
+                'Snapshot'
+              );
             this.printOnNewline(getter);
           });
           this.printOnNewline('set');
@@ -741,16 +748,16 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
     this.printNewlineIfNeeded();
     this.comment(description);
-    this.printOnNewline(`public enum ${name}: RawRepresentable, Equatable, Apollo.JSONDecodable, Apollo.JSONEncodable`);
+    this.printOnNewline(
+      `public enum ${name}: RawRepresentable, Equatable, Apollo.JSONDecodable, Apollo.JSONEncodable`
+    );
     this.withinBlock(() => {
-      this.printOnNewline('public typealias RawValue = String')
+      this.printOnNewline('public typealias RawValue = String');
 
       values.forEach(value => {
         this.comment(value.description);
         this.deprecationAttributes(value.isDeprecated, value.deprecationReason);
-        this.printOnNewline(
-          `case ${escapeIdentifierIfNeeded(this.helpers.enumCaseName(value.name))}`
-        );
+        this.printOnNewline(`case ${escapeIdentifierIfNeeded(this.helpers.enumCaseName(value.name))}`);
       });
       this.comment('Auto generated constant for unknown enum values');
       this.printOnNewline('case unknown(RawValue)');
@@ -762,7 +769,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.withinBlock(() => {
           values.forEach(value => {
             this.printOnNewline(
-              `case "${value.value}": self = ${escapeIdentifierIfNeeded(this.helpers.enumDotCaseName(value.name))}`
+              `case "${value.value}": self = ${escapeIdentifierIfNeeded(
+                this.helpers.enumDotCaseName(value.name)
+              )}`
             );
           });
           this.printOnNewline(`default: self = .unknown(rawValue)`);
@@ -776,7 +785,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.withinBlock(() => {
           values.forEach(value => {
             this.printOnNewline(
-              `case ${escapeIdentifierIfNeeded(this.helpers.enumDotCaseName(value.name))}: return "${value.value}"`
+              `case ${escapeIdentifierIfNeeded(this.helpers.enumDotCaseName(value.name))}: return "${
+                value.value
+              }"`
             );
           });
           this.printOnNewline(`case .unknown(let value): return value`);
@@ -790,12 +801,12 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.withinBlock(() => {
           values.forEach(value => {
             const enumDotCaseName = escapeIdentifierIfNeeded(this.helpers.enumDotCaseName(value.name));
-            const tuple = `(${enumDotCaseName}, ${enumDotCaseName})`
-            this.printOnNewline(
-              `case ${tuple}: return true`
-            );
+            const tuple = `(${enumDotCaseName}, ${enumDotCaseName})`;
+            this.printOnNewline(`case ${tuple}: return true`);
           });
-          this.printOnNewline(`case (.unknown(let lhsValue), .unknown(let rhsValue)): return lhsValue == rhsValue`);
+          this.printOnNewline(
+            `case (.unknown(let lhsValue), .unknown(let rhsValue)): return lhsValue == rhsValue`
+          );
           this.printOnNewline(`default: return false`);
         });
       });
@@ -835,7 +846,12 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.printOnNewline(
           wrap(
             `graphQLMap = [`,
-            join(properties.map(({ name, propertyName }) => `"${name}": ${escapeIdentifierIfNeeded(propertyName)}`), ', ') || ':',
+            join(
+              properties.map(
+                ({ name, propertyName }) => `"${name}": ${escapeIdentifierIfNeeded(propertyName)}`
+              ),
+              ', '
+            ) || ':',
             `]`
           )
         );

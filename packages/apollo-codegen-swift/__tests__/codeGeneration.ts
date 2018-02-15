@@ -168,6 +168,7 @@ describe('Swift code generation', () => {
   describe('#propertyAssignmentForField()', () => {
     it('should generate expression for nullable scalar', () => {
       expect(
+        // @ts-ignore
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -178,6 +179,7 @@ describe('Swift code generation', () => {
 
     it('should generate expression for non-null scalar', () => {
       expect(
+        // @ts-ignore
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -188,6 +190,7 @@ describe('Swift code generation', () => {
 
     it('should generate expression for nullable list of nullable scalars', () => {
       expect(
+        // @ts-ignore
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -198,6 +201,7 @@ describe('Swift code generation', () => {
 
     it('should generate expression for nullable list of non-null scalars', () => {
       expect(
+        // @ts-ignore
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -208,6 +212,7 @@ describe('Swift code generation', () => {
 
     it('should generate expression for non-null list of nullable scalars', () => {
       expect(
+        // @ts-ignore
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -218,6 +223,7 @@ describe('Swift code generation', () => {
 
     it('should generate expression for non-null list of non-null scalars', () => {
       expect(
+        // @ts-ignore
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -228,6 +234,7 @@ describe('Swift code generation', () => {
 
     it('should generate expression for nullable composite', () => {
       expect(
+        // @ts-ignore
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -238,6 +245,7 @@ describe('Swift code generation', () => {
 
     it('should generate expression for non-null composite', () => {
       expect(
+        // @ts-ignore
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -248,6 +256,7 @@ describe('Swift code generation', () => {
 
     it('should generate expression for nullable list of nullable composites', () => {
       expect(
+        // @ts-ignore
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -258,6 +267,7 @@ describe('Swift code generation', () => {
 
     it('should generate expression for nullable list of non-null composites', () => {
       expect(
+        // @ts-ignore
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -268,6 +278,7 @@ describe('Swift code generation', () => {
 
     it('should generate expression for non-null list of nullable composites', () => {
       expect(
+        // @ts-ignore
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -278,6 +289,7 @@ describe('Swift code generation', () => {
 
     it('should generate expression for non-null list of non-null composites', () => {
       expect(
+        // @ts-ignore
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
