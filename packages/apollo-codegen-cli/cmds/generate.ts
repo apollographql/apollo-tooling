@@ -139,14 +139,16 @@ function writeOperationIdsMap(context: CompilerContext) {
   let operationIdsMap: { [id: string]: OperationIdsMap } = {};
   Object.keys(context.operations)
     .map(k => context.operations[k])
-    .forEach(operation => {
-      if (operation.operationId) {
-        operationIdsMap[operation.operationId] = {
-          name: operation.operationName,
-          source: operation.sourceWithFragments
+    .forEach(({ operationId, operationName, sourceWithFragments, source }) => {
+      if (operationId) {
+        operationIdsMap[operationId] = {
+          name: operationName,
+          // TODO: reconcile sourceWithFragments || source to just one thing. It's possible
+          // that we don't need both.
+          source: sourceWithFragments || source
         };
       } else {
-        console.warn(`Operation ${operation.operationName} does not have an operation id.`);
+        console.warn(`Operation ${operationName} does not have an operation id.`);
       }
     });
 

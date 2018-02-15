@@ -71,7 +71,7 @@ export interface Operation {
   source: string;
   rootType: GraphQLObjectType;
   selectionSet: SelectionSet;
-  sourceWithFragments: string;
+  sourceWithFragments?: string;
 }
 
 export interface Fragment {
@@ -166,14 +166,14 @@ export function compileToIR(
       fragmentSpread.selectionSet.possibleTypes.includes(type)
     );
 
-    fragmentSpread.isConditional = fragment.selectionSet.possibleTypes.some(type =>
-      !fragmentSpread.selectionSet.possibleTypes.includes(type)
+    fragmentSpread.isConditional = fragment.selectionSet.possibleTypes.some(
+      type => !fragmentSpread.selectionSet.possibleTypes.includes(type)
     );
 
     fragmentSpread.selectionSet = {
       possibleTypes,
       selections: fragment.selectionSet.selections
-    }
+    };
   }
 
   const typesUsed = compiler.typesUsed;
@@ -345,7 +345,7 @@ class Compiler {
       }
       case Kind.INLINE_FRAGMENT: {
         const typeNode = selectionNode.typeCondition;
-        const type = typeNode ? typeFromAST(this.schema, typeNode) as GraphQLCompositeType : parentType;
+        const type = typeNode ? (typeFromAST(this.schema, typeNode) as GraphQLCompositeType) : parentType;
         const possibleTypesForTypeCondition = this.possibleTypesForType(type).filter(type =>
           possibleTypes.includes(type)
         );
