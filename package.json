@@ -43,6 +43,7 @@
     },
     "setupTestFrameworkScriptFile": "<rootDir>/misc/test-utils/matchers.ts",
     "testMatch": ["**/__tests__/*.(js|ts)"],
+    "testPathIgnorePatterns": ["/node_modules/, /lib/"],
     "transform": {
       "^.+\\.(ts|js)x?$": "ts-jest"
     },

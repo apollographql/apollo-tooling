@@ -17,6 +17,12 @@ import { SwiftAPIGenerator } from '../codeGeneration';
 describe('Swift code generation', () => {
   let generator: SwiftAPIGenerator;
 
+  beforeEach(() => {
+    // @ts-ignore -- even though we want the actual input object to be typed in the normal workflow
+    // it's not strictly required for the purpose of tests.
+    generator = new SwiftAPIGenerator({});
+  });
+
   function compile(
     source: string,
     options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }
@@ -29,7 +35,7 @@ describe('Swift code generation', () => {
 
   describe('#classDeclarationForOperation()', () => {
     it(`should generate a class declaration for a query with variables`, () => {
-      const context = compile(`
+      const { operations } = compile(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
             name
@@ -37,14 +43,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator = new SwiftAPIGenerator(context);
-      generator.classDeclarationForOperation(context.operations['HeroName']);
+      generator.classDeclarationForOperation(operations['HeroName']);
 
       expect(generator.output).toMatchSnapshot();
     });
 
     it(`should generate a class declaration for a query with fragment spreads`, () => {
-      const context = compile(`
+      const { operations } = compile(`
         query Hero {
           hero {
             ...HeroDetails
@@ -56,14 +61,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator = new SwiftAPIGenerator(context);
-      generator.classDeclarationForOperation(context.operations['Hero']);
+      generator.classDeclarationForOperation(operations['Hero']);
 
       expect(generator.output).toMatchSnapshot();
     });
 
     it(`should generate a class declaration for a query with conditional fragment spreads`, () => {
-      const context = compile(`
+      const { operations } = compile(`
         query Hero {
           hero {
             ...DroidDetails
@@ -75,14 +79,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator = new SwiftAPIGenerator(context);
-      generator.classDeclarationForOperation(context.operations['Hero']);
+      generator.classDeclarationForOperation(operations['Hero']);
 
       expect(generator.output).toMatchSnapshot();
     });
 
     it(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, () => {
-      const context = compile(`
+      const { operations } = compile(`
         query Hero {
           hero {
             ... on Droid {
@@ -96,14 +99,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator = new SwiftAPIGenerator(context);
-      generator.classDeclarationForOperation(context.operations['Hero']);
+      generator.classDeclarationForOperation(operations['Hero']);
 
       expect(generator.output).toMatchSnapshot();
     });
 
     it(`should generate a class declaration for a mutation with variables`, () => {
-      const context = compile(`
+      const { operations } = compile(`
         mutation CreateReview($episode: Episode) {
           createReview(episode: $episode, review: { stars: 5, commentary: "Wow!" }) {
             stars
@@ -112,14 +114,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator = new SwiftAPIGenerator(context);
-      generator.classDeclarationForOperation(context.operations['CreateReview']);
+      generator.classDeclarationForOperation(operations['CreateReview']);
 
       expect(generator.output).toMatchSnapshot();
     });
 
     it(`should generate a class declaration with an operationIdentifier property when generateOperationIds is specified`, () => {
-      const context = compile(
+      const { operations } = compile(
         `
         query Hero {
           hero {
@@ -133,8 +134,7 @@ describe('Swift code generation', () => {
         { generateOperationIds: true, mergeInFieldsFromFragmentSpreads: true }
       );
 
-      generator = new SwiftAPIGenerator(context);
-      generator.classDeclarationForOperation(context.operations['Hero']);
+      generator.classDeclarationForOperation(operations['Hero']);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -168,7 +168,6 @@ describe('Swift code generation', () => {
   describe('#propertyAssignmentForField()', () => {
     it('should generate expression for nullable scalar', () => {
       expect(
-        // @ts-ignore - this will get fixed once we stop using type intersections
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -179,7 +178,6 @@ describe('Swift code generation', () => {
 
     it('should generate expression for non-null scalar', () => {
       expect(
-        // @ts-ignore - this will get fixed once we stop using type intersections
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -190,7 +188,6 @@ describe('Swift code generation', () => {
 
     it('should generate expression for nullable list of nullable scalars', () => {
       expect(
-        // @ts-ignore - this will get fixed once we stop using type intersections
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -201,7 +198,6 @@ describe('Swift code generation', () => {
 
     it('should generate expression for nullable list of non-null scalars', () => {
       expect(
-        // @ts-ignore - this will get fixed once we stop using type intersections
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -212,7 +208,6 @@ describe('Swift code generation', () => {
 
     it('should generate expression for non-null list of nullable scalars', () => {
       expect(
-        // @ts-ignore - this will get fixed once we stop using type intersections
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -223,7 +218,6 @@ describe('Swift code generation', () => {
 
     it('should generate expression for non-null list of non-null scalars', () => {
       expect(
-        // @ts-ignore - this will get fixed once we stop using type intersections
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -234,7 +228,6 @@ describe('Swift code generation', () => {
 
     it('should generate expression for nullable composite', () => {
       expect(
-        // @ts-ignore - this will get fixed once we stop using type intersections
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -245,7 +238,6 @@ describe('Swift code generation', () => {
 
     it('should generate expression for non-null composite', () => {
       expect(
-        // @ts-ignore - this will get fixed once we stop using type intersections
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -256,7 +248,6 @@ describe('Swift code generation', () => {
 
     it('should generate expression for nullable list of nullable composites', () => {
       expect(
-        // @ts-ignore - this will get fixed once we stop using type intersections
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -267,7 +258,6 @@ describe('Swift code generation', () => {
 
     it('should generate expression for nullable list of non-null composites', () => {
       expect(
-        // @ts-ignore - this will get fixed once we stop using type intersections
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -278,7 +268,6 @@ describe('Swift code generation', () => {
 
     it('should generate expression for non-null list of nullable composites', () => {
       expect(
-        // @ts-ignore - this will get fixed once we stop using type intersections
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
@@ -289,7 +278,6 @@ describe('Swift code generation', () => {
 
     it('should generate expression for non-null list of non-null composites', () => {
       expect(
-        // @ts-ignore - this will get fixed once we stop using type intersections
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
