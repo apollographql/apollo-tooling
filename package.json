@@ -6,7 +6,7 @@
   "bin": "./lib/cli.js",
   "scripts": {
     "clean": "rm -rf lib",
-    "compile": "tsc",
+    "compile": "tsc && chmod +x ./lib/cli.js",
     "watch": "tsc -w",
     "prepare": "npm run clean && npm run compile",
     "test": "./node_modules/.bin/jest",
