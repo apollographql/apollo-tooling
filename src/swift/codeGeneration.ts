@@ -495,7 +495,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     const valueExpression = isCompositeType(getNamedType(type))
       ? this.helpers.mapExpressionForType(
           type,
-          identifier => `${identifier}.snapshot`,
+          expression => `${expression}.snapshot`,
           escapeIdentifierIfNeeded(propertyName),
           structName
         )
@@ -522,25 +522,24 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.printOnNewline('get');
           this.withinBlock(() => {
             const snapshotTypeName = this.helpers.typeNameFromGraphQLType(type, 'Snapshot', false);
-            let identifier;
+            let expression;
             if (isOptional) {
-              identifier = `(snapshot["${responseKey}"] as? ${snapshotTypeName})`;
+              expression = `(snapshot["${responseKey}"] as? ${snapshotTypeName})`;
             } else {
-              identifier = `(snapshot["${responseKey}"] as! ${snapshotTypeName})`;
+              expression = `(snapshot["${responseKey}"] as! ${snapshotTypeName})`;
             }
-            let getter = 'return ' + this.helpers.mapExpressionForType(
+            this.printOnNewline(`return ${this.helpers.mapExpressionForType(
               type,
-              identifier => `${structName}(snapshot: ${identifier})`,
-							identifier,
-							'Snapshot'
-            );
-            this.printOnNewline(getter);
+              expression => `${structName}(snapshot: ${expression})`,
+              expression,
+              'Snapshot'
+            )}`);
           });
           this.printOnNewline('set');
           this.withinBlock(() => {
             let newValueExpression = this.helpers.mapExpressionForType(
               type,
-              identifier => `${identifier}.snapshot`,
+              expression => `${expression}.snapshot`,
               'newValue',
               structName
             );

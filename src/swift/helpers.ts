@@ -38,7 +38,7 @@ export class Helpers {
 
   // Types
 
-  typeNameFromGraphQLType(type: GraphQLType, unmodifiedTypeName?: string, isOptional?: boolean, isSingular: boolean = false): string {
+  typeNameFromGraphQLType(type: GraphQLType, unmodifiedTypeName?: string, isOptional?: boolean): string {
     if (type instanceof GraphQLNonNull) {
       return this.typeNameFromGraphQLType(type.ofType, unmodifiedTypeName, false);
     } else if (isOptional === undefined) {
@@ -47,11 +47,7 @@ export class Helpers {
 
     let typeName;
     if (type instanceof GraphQLList) {
-      if (isSingular) {
-      	typeName = this.typeNameFromGraphQLType(type.ofType, unmodifiedTypeName);
-      } else {
-      	typeName = '[' + this.typeNameFromGraphQLType(type.ofType, unmodifiedTypeName) + ']';
-      }
+      typeName = '[' + this.typeNameFromGraphQLType(type.ofType, unmodifiedTypeName) + ']';
     } else if (type instanceof GraphQLScalarType) {
       typeName = this.typeNameForScalarType(type);
     } else {
@@ -234,6 +230,50 @@ export class Helpers {
 
   mapExpressionForType(
     type: GraphQLType,
+    makeExpression: (expression: string) => string,
+    expression: string,
+    structName: string
+  ): string {
+    let isOptional;
+    if (type instanceof GraphQLNonNull) {
+      isOptional = false;
+      type = type.ofType;
+    } else {
+      isOptional = true;
+    }
+
+    if (type instanceof GraphQLList) {
+      if (isOptional) {
+        return `${expression}.flatMap { ${makeClosureSignature(
+          this.typeNameFromGraphQLType(type, structName, false)
+        )} value.map { ${this.mapExpressionForType(
+          type.ofType,
+          makeExpression,
+          `${makeClosureSignature(this.typeNameFromGraphQLType(type.ofType, structName))} value`,
+          structName
+        )} } }`;
+      } else {
+        return `${expression}.map { ${makeClosureSignature(
+          this.typeNameFromGraphQLType(type, structName)
+        )} ${this.mapExpressionForType(type, makeExpression, 'value', structName)} }`;
+      }
+    } else if (isOptional) {
+      return `${expression}.flatMap { ${makeClosureSignature(
+        this.typeNameFromGraphQLType(type, structName, false)
+      )} ${makeExpression('value')} }`;
+    } else {
+      return makeExpression(expression);
+    }
+  }
+}
+
+function makeClosureSignature(typeName: string) {
+  return `(value: ${typeName}) in`;
+}
+
+/*
+  mapExpressionForType2(
+    type: GraphQLType,
     expression: (identifier: string) => string,
     identifier: string = '',
     subtypeName: string
@@ -269,3 +309,4 @@ export class Helpers {
     }
   }
 }
+*/
