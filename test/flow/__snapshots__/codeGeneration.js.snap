@@ -432,7 +432,8 @@ exports[`Flow code generation #generateSource() should handle comments in enums 
 
 export type EnumCommentTestCase =
   \\"first\\" | // This is a single-line comment
-  // This is a multi-line
+  // This is a
+  // multi-line
   // comment.
   \\"second\\";
 
@@ -472,7 +473,8 @@ exports[`Flow code generation #generateSource() should handle multi-line comment
 export type CustomScalarQuery = {|
   commentTest: ? {|
     __typename: \\"CommentTest\\",
-    // This is a multi-line
+    // This is a
+    // multi-line
     // comment.
     multiLine: ?string,
   |},

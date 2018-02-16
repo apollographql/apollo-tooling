@@ -191,7 +191,7 @@
             },
             {
               "name": "multiLine",
-              "description": "This is a multi-line\ncomment.",
+              "description": "This is a\nmulti-line\ncomment.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -235,7 +235,7 @@
             },
             {
               "name": "second",
-              "description": "This is a multi-line\ncomment.",
+              "description": "This is a\nmulti-line\ncomment.",
               "isDeprecated": false,
               "deprecationReason": null
             }
