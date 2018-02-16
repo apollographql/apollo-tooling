@@ -490,11 +490,12 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     }
   }
 
-  propertyAssignmentForField(field: { responseKey: string; propertyName: string; type: GraphQLType, structName?: string }) {
-    const { responseKey, propertyName, type, structName } = field;
+  propertyAssignmentForField(field: { responseKey: string; propertyName: string; type: GraphQLType, isConditional?: boolean, structName?: string }) {
+    const { responseKey, propertyName, type, isConditional, structName } = field;
     const valueExpression = isCompositeType(getNamedType(type))
       ? this.helpers.mapExpressionForType(
           type,
+          isConditional,
           expression => `${expression}.snapshot`,
           escapeIdentifierIfNeeded(propertyName),
           structName
@@ -504,7 +505,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
   }
 
   propertyDeclarationForField(field: Field & Property) {
-    const { responseKey, propertyName, typeName, type, isOptional } = field;
+    const { responseKey, propertyName, typeName, type, isOptional, isConditional } = field;
 
     const unmodifiedFieldType = getNamedType(type);
 
@@ -530,6 +531,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             }
             this.printOnNewline(`return ${this.helpers.mapExpressionForType(
               type,
+              isConditional,
               expression => `${structName}(snapshot: ${expression})`,
               expression,
               'Snapshot'
@@ -539,6 +541,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.withinBlock(() => {
             let newValueExpression = this.helpers.mapExpressionForType(
               type,
+              isConditional,
               expression => `${expression}.snapshot`,
               'newValue',
               structName

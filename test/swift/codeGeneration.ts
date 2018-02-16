@@ -271,7 +271,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: new GraphQLNonNull(new GraphQLList(schema.getType('Droid')))
         })
-      ).toBe('"response_key": propertyName.map { (value: [Droid?]?) in value.flatMap { (value: [Droid?]) in value.map { (value: Droid?) in value.flatMap { (value: Droid) in value.snapshot } } } }');
+      ).toBe('"response_key": propertyName.map { (value: Droid?) in value.flatMap { (value: Droid) in value.snapshot } }');
     });
 
     it('should generate expression for non-null list of non-null composites', () => {
@@ -281,7 +281,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(schema.getType('Droid')))
         })
-      ).toBe('"response_key": propertyName.map { (value: [Droid]?) in value.flatMap { (value: [Droid]) in value.map { (value: Droid) in value.snapshot } } }');
+      ).toBe('"response_key": propertyName.map { (value: Droid) in value.snapshot }');
     });
   });
 

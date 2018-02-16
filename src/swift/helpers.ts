@@ -230,13 +230,14 @@ export class Helpers {
 
   mapExpressionForType(
     type: GraphQLType,
+    isConditional: boolean = false,
     makeExpression: (expression: string) => string,
     expression: string,
     structName?: string
   ): string {
     let isOptional;
     if (type instanceof GraphQLNonNull) {
-      isOptional = false;
+      isOptional = !!isConditional;
       type = type.ofType;
     } else {
       isOptional = true;
@@ -248,14 +249,15 @@ export class Helpers {
           this.typeNameFromGraphQLType(type, structName, false)
         )} value.map { ${this.mapExpressionForType(
           type.ofType,
+          undefined,
           makeExpression,
           `${makeClosureSignature(this.typeNameFromGraphQLType(type.ofType, structName))} value`,
           structName
         )} } }`;
       } else {
         return `${expression}.map { ${makeClosureSignature(
-          this.typeNameFromGraphQLType(type, structName)
-        )} ${this.mapExpressionForType(type, makeExpression, 'value', structName)} }`;
+          this.typeNameFromGraphQLType(type.ofType, structName)
+        )} ${this.mapExpressionForType(type.ofType, undefined, makeExpression, 'value', structName)} }`;
       }
     } else if (isOptional) {
       return `${expression}.flatMap { ${makeClosureSignature(
@@ -271,42 +273,3 @@ function makeClosureSignature(typeName: string) {
   return `(value: ${typeName}) in`;
 }
 
-/*
-  mapExpressionForType2(
-    type: GraphQLType,
-    expression: (identifier: string) => string,
-    identifier: string = '',
-    subtypeName: string
-  ): string {
-    let isOptional;
-    if (type instanceof GraphQLNonNull) {
-      isOptional = false;
-      type = type.ofType;
-    } else {
-      isOptional = true;
-    }
-    if (type instanceof GraphQLList) {
-      if (isOptional) {
-        const prologue = subtypeName === undefined ? '' : `(i: ${subtypeName}) in `
-        const subidentifier = subtypeName === undefined ? '$0' : 'i'
-        return `${identifier}?.map({ ${prologue}${this.mapExpressionForType(
-          type.ofType,
-          expression,
-          subidentifier,
-          this.typeNameFromGraphQLType(type.ofType, undefined, false, true)
-        )} })`;
-      } else {
-        const prologue = subtypeName === undefined ? '' : `(j: ${subtypeName}) in `
-        const subidentifier = subtypeName === undefined ? '$0' : 'j'
-        return `${identifier}.map { ${prologue}${this.mapExpressionForType(type.ofType, expression, subidentifier, this.typeNameFromGraphQLType(type, undefined, false, true))} }`;
-      }
-    } else if (isOptional) {
-      const prologue = subtypeName === undefined ? '' : `(j: ${subtypeName}) in `
-      const subidentifier = subtypeName === undefined ? '$0' : 'j'
-      return `${identifier}.flatMap { ${prologue}${expression(subidentifier)} }`;
-    } else {
-      return expression(identifier);
-    }
-  }
-}
-*/
