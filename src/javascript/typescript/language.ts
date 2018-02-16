@@ -56,7 +56,7 @@ export default class TypescriptGenerator {
     if (description) {
       typeAlias.leadingComments = [{
         type: 'CommentLine',
-        value: ` ${description.replace('\n', ' ')}`
+        value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
       } as t.CommentLine];
     }
 
@@ -106,7 +106,7 @@ export default class TypescriptGenerator {
       if (description) {
         propertySignatureType.trailingComments = [{
           type: 'CommentLine',
-          value: ` ${description.replace('\n', ' ')}`
+          value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
         } as t.CommentLine]
       }
 

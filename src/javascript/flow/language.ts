@@ -104,7 +104,7 @@ export default class FlowGenerator {
         if (description) {
           objectTypeProperty.trailingComments = [{
             type: 'CommentLine',
-            value: ` ${description.replace('\n', ' ')}`
+            value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
           } as t.CommentLine]
         }
 
