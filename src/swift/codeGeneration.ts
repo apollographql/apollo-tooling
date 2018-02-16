@@ -490,7 +490,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     }
   }
 
-  propertyAssignmentForField(field: Field & Property & Struct) {
+  propertyAssignmentForField(field: { responseKey: string; propertyName: string; type: GraphQLType, structName?: string }) {
     const { responseKey, propertyName, type, structName } = field;
     const valueExpression = isCompositeType(getNamedType(type))
       ? this.helpers.mapExpressionForType(

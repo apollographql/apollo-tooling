@@ -231,7 +231,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: schema.getType('Droid')
         })
-      ).toBe('"response_key": propertyName.flatMap { $0.snapshot }');
+      ).toBe('"response_key": propertyName.flatMap { (value: Droid) in value.snapshot }');
     });
 
     it('should generate expression for non-null composite', () => {
@@ -251,7 +251,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: new GraphQLList(schema.getType('Droid'))
         })
-      ).toBe('"response_key": propertyName?.map({ $0.flatMap { (j: Droid) in j.snapshot } })');
+      ).toBe('"response_key": propertyName.flatMap { (value: [Droid?]) in value.map { (value: Droid?) in value.flatMap { (value: Droid) in value.snapshot } } }');
     });
 
     it('should generate expression for nullable list of non-null composites', () => {
@@ -261,7 +261,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: new GraphQLList(new GraphQLNonNull(schema.getType('Droid')))
         })
-      ).toBe('"response_key": propertyName?.map({ $0.snapshot })');
+      ).toBe('"response_key": propertyName.flatMap { (value: [Droid]) in value.map { (value: Droid) in value.snapshot } }');
     });
 
     it('should generate expression for non-null list of nullable composites', () => {
@@ -271,7 +271,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: new GraphQLNonNull(new GraphQLList(schema.getType('Droid')))
         })
-      ).toBe('"response_key": propertyName.map { $0.flatMap { (j: Droid?) in j.snapshot } }');
+      ).toBe('"response_key": propertyName.map { (value: [Droid?]?) in value.flatMap { (value: [Droid?]) in value.map { (value: Droid?) in value.flatMap { (value: Droid) in value.snapshot } } } }');
     });
 
     it('should generate expression for non-null list of non-null composites', () => {
@@ -281,7 +281,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(schema.getType('Droid')))
         })
-      ).toBe('"response_key": propertyName.map { $0.snapshot }');
+      ).toBe('"response_key": propertyName.map { (value: [Droid]?) in value.flatMap { (value: [Droid]) in value.map { (value: Droid) in value.snapshot } } }');
     });
   });
 

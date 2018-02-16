@@ -232,7 +232,7 @@ export class Helpers {
     type: GraphQLType,
     makeExpression: (expression: string) => string,
     expression: string,
-    structName: string
+    structName?: string
   ): string {
     let isOptional;
     if (type instanceof GraphQLNonNull) {
