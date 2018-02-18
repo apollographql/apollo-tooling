@@ -20,4 +20,3 @@ install:
 
 script:
   - yarn test
-  - yarn run test:smoke
