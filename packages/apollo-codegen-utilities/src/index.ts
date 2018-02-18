@@ -1,3 +1,4 @@
+export * from './polyfills';
 export * from './array';
 export * from './CodeGenerator';
 export * from './errors';
