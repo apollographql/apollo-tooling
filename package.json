@@ -2,8 +2,8 @@
   "private": true,
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
   "scripts": {
-    "bootstrap": "lerna bootstrap",
-    "postbootstrap": "npm run build",
+    "bootstrap": "yarn install && lerna bootstrap",
+    "postbootstrap": "yarn run build",
     "build": "lerna run build",
     "test": "lerna run test"
   },
@@ -24,7 +24,7 @@
     "ansi-regex": "^3.0.0",
     "jest": "^22.0.3",
     "jest-matcher-utils": "^22.0.3",
-    "lerna": "^2.8.0",
+    "lerna": "^2.9.0",
     "ts-jest": "^22.0.4",
     "typescript": "^2.6.2",
     "rimraf": "^2.6.2"
