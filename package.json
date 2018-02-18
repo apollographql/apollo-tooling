@@ -1,14 +1,11 @@
 {
   "private": true,
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
-  "main": "./lib/index.js",
   "scripts": {
-    "clean": "rm -rf lib",
-    "compile": "tsc",
-    "watch": "tsc -w",
-    "prepare": "npm run clean && npm run compile",
-    "test": "./node_modules/.bin/jest",
-    "test:smoke": "npm install && npm run compile && rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
+    "bootstrap": "lerna bootstrap",
+    "prepare": "npm run build",
+    "build": "lerna run build",
+    "test": "lerna run test"
   },
   "devDependencies": {
     "@babel/types": "^7.0.0-beta.35",
@@ -17,46 +14,22 @@
     "@types/babylon": "^6.16.2",
     "@types/common-tags": "^1.4.0",
     "@types/glob": "^5.0.34",
-    "@types/graphql": "^0.11.7",
+    "@types/graphql": "^0.12.4",
     "@types/inflected": "^1.1.29",
-    "@types/jest": "^21.1.8",
+    "@types/jest": "^22.1.3",
+    "@types/node": "^9.4.0",
     "@types/node-fetch": "^1.6.7",
     "@types/rimraf": "^2.0.2",
-    "@types/yargs": "^10.0.0",
+    "@types/yargs": "^11.0.0",
     "ansi-regex": "^3.0.0",
     "jest": "^22.0.3",
     "jest-matcher-utils": "^22.0.3",
     "lerna": "^2.8.0",
     "ts-jest": "^22.0.4",
-    "typescript": "^2.6.2"
+    "typescript": "^2.6.2",
+    "rimraf": "^2.6.2"
   },
   "npmClient": "yarn",
   "useWorkspaces": true,
-  "workspaces": ["packages/*"],
-  "jest": {
-    "testEnvironment": "node",
-    "setupFiles": [
-      "<rootDir>/misc/polyfills.js"
-    ],
-    "moduleNameMapper": {
-      "^apollo-codegen-(.*)$": "<rootDir>/packages/apollo-codegen-$1"
-    },
-    "setupTestFrameworkScriptFile": "<rootDir>/misc/test-utils/matchers.ts",
-    "testMatch": ["**/__tests__/*.(js|ts)"],
-    "testPathIgnorePatterns": ["/node_modules/, /lib/"],
-    "transform": {
-      "^.+\\.(ts|js)x?$": "ts-jest"
-    },
-    "projects": ["<rootDir>/packages/.*"],
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfigFile": "tsconfig.json",
-        "skipBabel": true
-      }
-    }
-  }
+  "workspaces": ["packages/*"]
 }

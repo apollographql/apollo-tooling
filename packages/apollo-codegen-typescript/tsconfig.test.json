@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "module": "commonjs",
+    "rootDir": "src",
+    "outDir": "lib",
+    "allowJs": true,
+    "declaration": false
+  },
+  "include": ["src/**/*"]
+}

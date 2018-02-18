@@ -2,8 +2,9 @@
   "name": "apollo-codegen",
   "version": "0.18.3",
   "description": "",
-  "main": "index.js",
-  "bin": "./lib/cli.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "bin": "lib/cli.js",
   "author": "Martijn Walraven <martijn@martijnwalraven.com>",
   "license": "MIT",
   "repository": {
@@ -14,6 +15,14 @@
     "node": ">=6.0",
     "npm": ">=5.0"
   },
+  "scripts": {
+    "prepare": "npm run clean && npm run build",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rimraf lib/*",
+    "test": "jest --config ../../scripts/jest/config.js --rootDir .",
+    "test:smoke":
+      "npm install && npm run compile && rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
+  },
   "dependencies": {
     "apollo-codegen-flow": "^0.18.3",
     "apollo-codegen-flow-modern": "^0.18.3",
@@ -21,16 +30,21 @@
     "apollo-codegen-swift": "^0.18.3",
     "apollo-codegen-typescript": "^0.18.3",
     "apollo-codegen-typescript-modern": "^0.18.3",
-    "common-tags": "^1.5.1",
+    "common-tags": "^1.7.2",
     "core-js": "^2.5.3",
     "glob": "^7.1.2",
-    "graphql": "^0.12.3",
-    "graphql-config": "^1.1.1",
-    "node-fetch": "^1.7.3",
+    "graphql": "^0.13.1",
+    "graphql-config": "^2.0.0",
+    "node-fetch": "^2.0.0",
     "rimraf": "^2.6.2",
-    "yargs": "^10.0.3"
+    "yargs": "^11.0.0"
   },
   "devDependencies": {
-    "apollo-codegen-test-fixtures": "^1.0.0"
+    "apollo-codegen-test-fixtures": "^1.0.0",
+    "jest": "^22.3.0",
+    "jest-matcher-utils": "^22.2.0",
+    "ts-jest": "^22.0.4",
+    "typescript": "^2.7.2",
+    "rimraf": "^2.6.2"
   }
 }

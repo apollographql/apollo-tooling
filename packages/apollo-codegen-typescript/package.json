@@ -2,14 +2,25 @@
   "name": "apollo-codegen-typescript",
   "version": "0.18.3",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "author": "Lewis Chung",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rimraf lib/*",
+    "test": "jest --config ../../scripts/jest/config.js --rootDir ."
+  },
   "dependencies": {
     "apollo-codegen-compiler": "^0.18.3",
-    "graphql": "^0.12.3"
+    "graphql": "^0.13.1"
   },
   "devDependencies": {
-    "apollo-codegen-test-fixtures": "^1.0.0"
+    "apollo-codegen-test-fixtures": "^1.0.0",
+    "jest": "^22.3.0",
+    "jest-matcher-utils": "^22.2.0",
+    "ts-jest": "^22.0.4",
+    "typescript": "^2.7.2",
+    "rimraf": "^2.6.2"
   }
 }

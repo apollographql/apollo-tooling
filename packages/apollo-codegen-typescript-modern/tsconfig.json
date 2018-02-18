@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig",
+  "include": ["src/**/*"],
+  "files": ["../../types/babel7.d.ts", "../../types/augment-babel-types.d.ts"]
+}

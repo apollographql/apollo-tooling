@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "declaration": true,
+    "lib": ["es2017", "esnext.asynciterable", "dom"],
+    "removeComments": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "allowUnreachableCode": true
+  },
+  "exclude": ["**/node_modules/**/*", "**/__tests__/**/*", "**/lib/**/*"],
+  "files": ["types/babel7.d.ts", "types/augment-babel-types.d.ts"]
+}

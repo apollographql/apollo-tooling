@@ -1,21 +1,9 @@
 {
+  "extends": "./tsconfig.base",
   "compilerOptions": {
-    "target": "es2015",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "lib": ["es2017", "esnext.asynciterable", "dom"],
-    "removeComments": true,
-    "strict": true,
-    "outDir": "lib",
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedParameters": true,
-    "noUnusedLocals": true,
-    "allowJs": true,
-    "allowUnreachableCode": true,
-    "baseUrl": "packages/",
-    "sourceRoot": "packages/"
-  },
-  "include": ["packages/**/*", "misc/**/*", "types/**/*"]
+    "baseUrl": "./packages",
+    "paths": {
+      "*": ["./*/src", "*"]
+    }
+  }
 }
