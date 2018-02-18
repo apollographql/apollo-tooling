@@ -3,7 +3,7 @@
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "prepare": "npm run build",
+    "postbootstrap": "npm run build",
     "build": "lerna run build",
     "test": "lerna run test"
   },

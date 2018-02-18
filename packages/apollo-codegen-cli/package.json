@@ -16,12 +16,12 @@
     "npm": ">=5.0"
   },
   "scripts": {
-    "prepare": "npm run clean && npm run build",
+    "prepare": "yarn run clean && yarn run build",
     "build": "tsc -p tsconfig.build.json",
     "clean": "rimraf lib/*",
     "test": "jest --config ../../scripts/jest/config.js --rootDir .",
     "test:smoke":
-      "npm install && npm run compile && rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
+      "npm install && yarn run compile && rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
   },
   "dependencies": {
     "apollo-codegen-flow": "^0.18.3",

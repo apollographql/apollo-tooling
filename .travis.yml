@@ -12,12 +12,12 @@ cache:
     - $HOME/.npm
 
 before_install:
-  - npm install -g npm@5
-  - npm --version
+  - npm install -g yarn
+  - yarn --version
 
 install:
-  - npm install
+  - yarn bootstrap
 
 script:
-  - npm test
-  - npm run test:smoke
+  - yarn test
+  - yarn run test:smoke

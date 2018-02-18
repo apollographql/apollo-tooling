@@ -7,7 +7,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "prepare": "npm run clean && npm run build",
+    "prepare": "yarn run clean && yarn run build",
     "build": "tsc --p tsconfig.build.json",
     "clean": "rimraf lib/*",
     "test": "jest --config ../../scripts/jest/config.js --rootDir ."
