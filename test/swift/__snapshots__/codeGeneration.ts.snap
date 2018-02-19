@@ -29,7 +29,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     }
 
     public init(createReview: CreateReview? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Mutation\\", \\"createReview\\": createReview.flatMap { (value: CreateReview) in value.snapshot }])
+      self.init(snapshot: [\\"__typename\\": \\"Mutation\\", \\"createReview\\": createReview.flatMap { (value: CreateReview) -> Snapshot in value.snapshot }])
     }
 
     public var createReview: CreateReview? {
@@ -107,7 +107,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) in value.snapshot }])
+      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> Snapshot in value.snapshot }])
     }
 
     public var hero: Hero? {
@@ -233,7 +233,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) in value.snapshot }])
+      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> Snapshot in value.snapshot }])
     }
 
     public var hero: Hero? {
@@ -383,7 +383,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) in value.snapshot }])
+      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> Snapshot in value.snapshot }])
     }
 
     public var hero: Hero? {
@@ -481,7 +481,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) in value.snapshot }])
+      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> Snapshot in value.snapshot }])
     }
 
     public var hero: Hero? {
@@ -554,7 +554,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) in value.snapshot }])
+      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> Snapshot in value.snapshot }])
     }
 
     public var hero: Hero? {
@@ -775,11 +775,11 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   }
 
   public static func makeHuman(name: String, friends: [Friend?]? = nil) -> HeroDetails {
-    return HeroDetails(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"friends\\": friends.flatMap { (value: [Friend?]) in value.map { (value: Friend?) in value.flatMap { (value: Friend) in value.snapshot } } }])
+    return HeroDetails(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"friends\\": friends.flatMap { (value: [Friend?]) -> [Snapshot?] in value.map { (value: Friend?) -> Snapshot? in value.flatMap { (value: Friend) -> Snapshot in value.snapshot } } }])
   }
 
   public static func makeDroid(name: String, friends: [Friend?]? = nil) -> HeroDetails {
-    return HeroDetails(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"friends\\": friends.flatMap { (value: [Friend?]) in value.map { (value: Friend?) in value.flatMap { (value: Friend) in value.snapshot } } }])
+    return HeroDetails(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"friends\\": friends.flatMap { (value: [Friend?]) -> [Snapshot?] in value.map { (value: Friend?) -> Snapshot? in value.flatMap { (value: Friend) -> Snapshot in value.snapshot } } }])
   }
 
   /// The name of the character
@@ -795,10 +795,10 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   /// The friends of the character, or an empty list if they have none
   public var friends: [Friend?]? {
     get {
-      return (snapshot[\\"friends\\"] as? [Snapshot?]).flatMap { (value: [Snapshot?]) in value.map { (value: Snapshot?) in value.flatMap { (value: Snapshot) in Friend(snapshot: value) } } }
+      return (snapshot[\\"friends\\"] as? [Snapshot?]).flatMap { (value: [Snapshot?]) -> [Friend?] in value.map { (value: Snapshot?) -> Friend? in value.flatMap { (value: Snapshot) -> Friend in Friend(snapshot: value) } } }
     }
     set {
-      snapshot.updateValue(newValue.flatMap { (value: [Friend?]) in value.map { (value: Friend?) in value.flatMap { (value: Friend) in value.snapshot } } }, forKey: \\"friends\\")
+      snapshot.updateValue(newValue.flatMap { (value: [Friend?]) -> [Snapshot?] in value.map { (value: Friend?) -> Snapshot? in value.flatMap { (value: Friend) -> Snapshot in value.snapshot } } }, forKey: \\"friends\\")
     }
   }
 
@@ -933,20 +933,20 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   }
 
   public static func makeHuman(friends: [Friend?]? = nil) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"friends\\": friends.flatMap { (value: [Friend?]) in value.map { (value: Friend?) in value.flatMap { (value: Friend) in value.snapshot } } }])
+    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"friends\\": friends.flatMap { (value: [Friend?]) -> [Snapshot?] in value.map { (value: Friend?) -> Snapshot? in value.flatMap { (value: Friend) -> Snapshot in value.snapshot } } }])
   }
 
   public static func makeDroid(friends: [Friend?]? = nil) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"friends\\": friends.flatMap { (value: [Friend?]) in value.map { (value: Friend?) in value.flatMap { (value: Friend) in value.snapshot } } }])
+    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"friends\\": friends.flatMap { (value: [Friend?]) -> [Snapshot?] in value.map { (value: Friend?) -> Snapshot? in value.flatMap { (value: Friend) -> Snapshot in value.snapshot } } }])
   }
 
   /// The friends of the character, or an empty list if they have none
   public var friends: [Friend?]? {
     get {
-      return (snapshot[\\"friends\\"] as? [Snapshot?]).flatMap { (value: [Snapshot?]) in value.map { (value: Snapshot?) in value.flatMap { (value: Snapshot) in Friend(snapshot: value) } } }
+      return (snapshot[\\"friends\\"] as? [Snapshot?]).flatMap { (value: [Snapshot?]) -> [Friend?] in value.map { (value: Snapshot?) -> Friend? in value.flatMap { (value: Snapshot) -> Friend in Friend(snapshot: value) } } }
     }
     set {
-      snapshot.updateValue(newValue.flatMap { (value: [Friend?]) in value.map { (value: Friend?) in value.flatMap { (value: Friend) in value.snapshot } } }, forKey: \\"friends\\")
+      snapshot.updateValue(newValue.flatMap { (value: [Friend?]) -> [Snapshot?] in value.map { (value: Friend?) -> Snapshot? in value.flatMap { (value: Friend) -> Snapshot in value.snapshot } } }, forKey: \\"friends\\")
     }
   }
 

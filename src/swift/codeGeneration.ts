@@ -498,7 +498,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           isConditional,
           expression => `${expression}.snapshot`,
           escapeIdentifierIfNeeded(propertyName),
-          structName
+          structName!,
+          'Snapshot'
         )
       : escapeIdentifierIfNeeded(propertyName);
     return `"${responseKey}": ${valueExpression}`;
@@ -534,7 +535,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
               isConditional,
               expression => `${structName}(snapshot: ${expression})`,
               expression,
-              'Snapshot'
+              'Snapshot',
+              structName
             )}`);
           });
           this.printOnNewline('set');
@@ -544,7 +546,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
               isConditional,
               expression => `${expression}.snapshot`,
               'newValue',
-              structName
+              structName,
+              'Snapshot'
             );
             this.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${responseKey}")`);
           });

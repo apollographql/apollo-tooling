@@ -233,7 +233,8 @@ export class Helpers {
     isConditional: boolean = false,
     makeExpression: (expression: string) => string,
     expression: string,
-    structName?: string
+    inputTypeName: string,
+    outputTypeName: string
   ): string {
     let isOptional;
     if (type instanceof GraphQLNonNull) {
@@ -246,22 +247,36 @@ export class Helpers {
     if (type instanceof GraphQLList) {
       if (isOptional) {
         return `${expression}.flatMap { ${makeClosureSignature(
-          this.typeNameFromGraphQLType(type, structName, false)
+          this.typeNameFromGraphQLType(type, inputTypeName, false),
+          this.typeNameFromGraphQLType(type, outputTypeName, false)
         )} value.map { ${this.mapExpressionForType(
           type.ofType,
           undefined,
           makeExpression,
-          `${makeClosureSignature(this.typeNameFromGraphQLType(type.ofType, structName))} value`,
-          structName
+          `${makeClosureSignature(
+            this.typeNameFromGraphQLType(type.ofType, inputTypeName),
+            this.typeNameFromGraphQLType(type.ofType, outputTypeName)
+          )} value`,
+          inputTypeName,
+          outputTypeName
         )} } }`;
       } else {
         return `${expression}.map { ${makeClosureSignature(
-          this.typeNameFromGraphQLType(type.ofType, structName)
-        )} ${this.mapExpressionForType(type.ofType, undefined, makeExpression, 'value', structName)} }`;
+          this.typeNameFromGraphQLType(type.ofType, inputTypeName),
+          this.typeNameFromGraphQLType(type.ofType, outputTypeName)
+        )} ${this.mapExpressionForType(
+          type.ofType,
+          undefined,
+          makeExpression,
+          'value',
+          inputTypeName,
+          outputTypeName
+        )} }`;
       }
     } else if (isOptional) {
       return `${expression}.flatMap { ${makeClosureSignature(
-        this.typeNameFromGraphQLType(type, structName, false)
+        this.typeNameFromGraphQLType(type, inputTypeName, false),
+        this.typeNameFromGraphQLType(type, outputTypeName, false)
       )} ${makeExpression('value')} }`;
     } else {
       return makeExpression(expression);
@@ -269,7 +284,12 @@ export class Helpers {
   }
 }
 
-function makeClosureSignature(typeName: string) {
-  return `(value: ${typeName}) in`;
-}
+function makeClosureSignature(parameterTypeName: string, returnTypeName?: string) {
+  let closureSignature = `(value: ${parameterTypeName})`;
 
+  if (returnTypeName) {
+    closureSignature += ` -> ${returnTypeName}`;
+  }
+  closureSignature += ' in';
+  return closureSignature;
+}
