@@ -3,8 +3,13 @@ import * as fs from 'fs';
 import { buildClientSchema, printSchema } from 'graphql';
 
 import { ToolError } from './errors'
+import { PrinterOptions } from 'graphql/utilities/schemaPrinter';
 
-export default async function printSchemaFromIntrospectionResult(schemaPath: string, outputPath: string) {
+export default async function printSchemaFromIntrospectionResult(
+  schemaPath: string,
+  outputPath: string,
+  options?: PrinterOptions
+) {
   if (!fs.existsSync(schemaPath)) {
     throw new ToolError(`Cannot find GraphQL schema file: ${schemaPath}`);
   }
@@ -16,7 +21,7 @@ export default async function printSchemaFromIntrospectionResult(schemaPath: str
   }
 
   const schema = buildClientSchema(schemaJSON.data);
-  const schemaIDL = printSchema(schema);
+  const schemaIDL = printSchema(schema, options);
 
   if (outputPath) {
     fs.writeFileSync(outputPath, schemaIDL);
