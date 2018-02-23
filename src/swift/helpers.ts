@@ -245,27 +245,28 @@ export class Helpers {
     }
 
     if (type instanceof GraphQLList) {
+      const elementType = type.ofType;
       if (isOptional) {
         return `${expression}.flatMap { ${makeClosureSignature(
           this.typeNameFromGraphQLType(type, inputTypeName, false),
           this.typeNameFromGraphQLType(type, outputTypeName, false)
-        )} value.map { ${this.mapExpressionForType(
-          type.ofType,
+        )} value.map { ${makeClosureSignature(
+          this.typeNameFromGraphQLType(elementType, inputTypeName),
+          this.typeNameFromGraphQLType(elementType, outputTypeName)
+        )} ${this.mapExpressionForType(
+          elementType,
           undefined,
           makeExpression,
-          `${makeClosureSignature(
-            this.typeNameFromGraphQLType(type.ofType, inputTypeName),
-            this.typeNameFromGraphQLType(type.ofType, outputTypeName)
-          )} value`,
+          'value',
           inputTypeName,
           outputTypeName
         )} } }`;
       } else {
         return `${expression}.map { ${makeClosureSignature(
-          this.typeNameFromGraphQLType(type.ofType, inputTypeName),
-          this.typeNameFromGraphQLType(type.ofType, outputTypeName)
+          this.typeNameFromGraphQLType(elementType, inputTypeName),
+          this.typeNameFromGraphQLType(elementType, outputTypeName)
         )} ${this.mapExpressionForType(
-          type.ofType,
+          elementType,
           undefined,
           makeExpression,
           'value',
