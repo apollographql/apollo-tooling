@@ -1432,13 +1432,13 @@ exports[`Swift code generation #typeDeclarationForGraphQLType() should escape id
   case \`public\`
   case \`private\`
   /// Auto generated constant for unknown enum values
-  case unknown(RawValue)
+  case __unknown(RawValue)
 
   public init?(rawValue: RawValue) {
     switch rawValue {
       case \\"PUBLIC\\": self = .public
       case \\"PRIVATE\\": self = .private
-      default: self = .unknown(rawValue)
+      default: self = .__unknown(rawValue)
     }
   }
 
@@ -1446,7 +1446,7 @@ exports[`Swift code generation #typeDeclarationForGraphQLType() should escape id
     switch self {
       case .public: return \\"PUBLIC\\"
       case .private: return \\"PRIVATE\\"
-      case .unknown(let value): return value
+      case .__unknown(let value): return value
     }
   }
 
@@ -1454,7 +1454,7 @@ exports[`Swift code generation #typeDeclarationForGraphQLType() should escape id
     switch (lhs, rhs) {
       case (.public, .public): return true
       case (.private, .private): return true
-      case (.unknown(let lhsValue), .unknown(let rhsValue)): return lhsValue == rhsValue
+      case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
       default: return false
     }
   }
@@ -1513,14 +1513,14 @@ public enum Episode: RawRepresentable, Equatable, Apollo.JSONDecodable, Apollo.J
   /// Star Wars Episode VI: Return of the Jedi, released in 1983.
   case jedi
   /// Auto generated constant for unknown enum values
-  case unknown(RawValue)
+  case __unknown(RawValue)
 
   public init?(rawValue: RawValue) {
     switch rawValue {
       case \\"NEWHOPE\\": self = .newhope
       case \\"EMPIRE\\": self = .empire
       case \\"JEDI\\": self = .jedi
-      default: self = .unknown(rawValue)
+      default: self = .__unknown(rawValue)
     }
   }
 
@@ -1529,7 +1529,7 @@ public enum Episode: RawRepresentable, Equatable, Apollo.JSONDecodable, Apollo.J
       case .newhope: return \\"NEWHOPE\\"
       case .empire: return \\"EMPIRE\\"
       case .jedi: return \\"JEDI\\"
-      case .unknown(let value): return value
+      case .__unknown(let value): return value
     }
   }
 
@@ -1538,7 +1538,7 @@ public enum Episode: RawRepresentable, Equatable, Apollo.JSONDecodable, Apollo.J
       case (.newhope, .newhope): return true
       case (.empire, .empire): return true
       case (.jedi, .jedi): return true
-      case (.unknown(let lhsValue), .unknown(let rhsValue)): return lhsValue == rhsValue
+      case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
       default: return false
     }
   }
