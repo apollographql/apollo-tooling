@@ -2,7 +2,7 @@
 
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a mutation with variables 1`] = `
 "public final class CreateReviewMutation: GraphQLMutation {
-  public static let operationString =
+  public let operationDefinition =
     \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"Wow!\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
 
   public var episode: Episode?
@@ -22,22 +22,22 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\"]], type: .object(CreateReview.selections)),
     ]
 
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
 
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
     }
 
     public init(createReview: CreateReview? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Mutation\\", \\"createReview\\": createReview.flatMap { (value: CreateReview) -> Snapshot in value.snapshot }])
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Mutation\\", \\"createReview\\": createReview.flatMap { (value: CreateReview) -> ResultMap in value.resultMap }])
     }
 
     public var createReview: CreateReview? {
       get {
-        return (snapshot[\\"createReview\\"] as? Snapshot).flatMap { CreateReview(snapshot: $0) }
+        return (resultMap[\\"createReview\\"] as? ResultMap).flatMap { CreateReview(unsafeResultMap: $0) }
       }
       set {
-        snapshot.updateValue(newValue?.snapshot, forKey: \\"createReview\\")
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"createReview\\")
       }
     }
 
@@ -49,33 +49,33 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         GraphQLField(\\"commentary\\", type: .scalar(String.self)),
       ]
 
-      public var snapshot: Snapshot
+      public private(set) var resultMap: ResultMap
 
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
       }
 
       public init(stars: Int, commentary: String? = nil) {
-        self.init(snapshot: [\\"__typename\\": \\"Review\\", \\"stars\\": stars, \\"commentary\\": commentary])
+        self.init(unsafeResultMap: [\\"__typename\\": \\"Review\\", \\"stars\\": stars, \\"commentary\\": commentary])
       }
 
       /// The number of stars this review gave, 1-5
       public var stars: Int {
         get {
-          return snapshot[\\"stars\\"]! as! Int
+          return resultMap[\\"stars\\"]! as! Int
         }
         set {
-          snapshot.updateValue(newValue, forKey: \\"stars\\")
+          resultMap.updateValue(newValue, forKey: \\"stars\\")
         }
       }
 
       /// Comment about the movie
       public var commentary: String? {
         get {
-          return snapshot[\\"commentary\\"] as? String
+          return resultMap[\\"commentary\\"] as? String
         }
         set {
-          snapshot.updateValue(newValue, forKey: \\"commentary\\")
+          resultMap.updateValue(newValue, forKey: \\"commentary\\")
         }
       }
     }
@@ -85,10 +85,10 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with a fragment spread nested in an inline fragment 1`] = `
 "public final class HeroQuery: GraphQLQuery {
-  public static let operationString =
+  public let operationDefinition =
     \\"query Hero {\\\\n  hero {\\\\n    ... on Droid {\\\\n      ...HeroDetails\\\\n    }\\\\n  }\\\\n}\\"
 
-  public static var requestString: String { return operationString.appending(HeroDetails.fragmentString) }
+  public var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
 
   public init() {
   }
@@ -100,22 +100,22 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       GraphQLField(\\"hero\\", type: .object(Hero.selections)),
     ]
 
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
 
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> Snapshot in value.snapshot }])
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> ResultMap in value.resultMap }])
     }
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"] as? Snapshot).flatMap { Hero(snapshot: $0) }
+        return (resultMap[\\"hero\\"] as? ResultMap).flatMap { Hero(unsafeResultMap: $0) }
       }
       set {
-        snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"hero\\")
       }
     }
 
@@ -130,28 +130,28 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         )
       ]
 
-      public var snapshot: Snapshot
+      public private(set) var resultMap: ResultMap
 
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
       }
 
       public static func makeHuman() -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Human\\"])
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\"])
       }
 
       public static func makeDroid(name: String) -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
       }
 
       public var asDroid: AsDroid? {
         get {
           if !AsDroid.possibleTypes.contains(__typename) { return nil }
-          return AsDroid(snapshot: snapshot)
+          return AsDroid(unsafeResultMap: resultMap)
         }
         set {
           guard let newValue = newValue else { return }
-          snapshot = newValue.snapshot
+          resultMap = newValue.resultMap
         }
       }
 
@@ -162,44 +162,48 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
         ]
 
-        public var snapshot: Snapshot
+        public private(set) var resultMap: ResultMap
 
-        public init(snapshot: Snapshot) {
-          self.snapshot = snapshot
+        public init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
         }
 
         public init(name: String) {
-          self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+          self.init(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
         }
 
         /// What others call this droid
         public var name: String {
           get {
-            return snapshot[\\"name\\"]! as! String
+            return resultMap[\\"name\\"]! as! String
           }
           set {
-            snapshot.updateValue(newValue, forKey: \\"name\\")
+            resultMap.updateValue(newValue, forKey: \\"name\\")
           }
         }
 
         public var fragments: Fragments {
           get {
-            return Fragments(snapshot: snapshot)
+            return Fragments(unsafeResultMap: resultMap)
           }
           set {
-            snapshot += newValue.snapshot
+            resultMap += newValue.resultMap
           }
         }
 
         public struct Fragments {
-          public var snapshot: Snapshot
+          public private(set) var resultMap: ResultMap
+
+          public init(unsafeResultMap: ResultMap) {
+            self.resultMap = unsafeResultMap
+          }
 
           public var heroDetails: HeroDetails {
             get {
-              return HeroDetails(snapshot: snapshot)
+              return HeroDetails(unsafeResultMap: resultMap)
             }
             set {
-              snapshot += newValue.snapshot
+              resultMap += newValue.resultMap
             }
           }
         }
@@ -211,10 +215,10 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with conditional fragment spreads 1`] = `
 "public final class HeroQuery: GraphQLQuery {
-  public static let operationString =
+  public let operationDefinition =
     \\"query Hero {\\\\n  hero {\\\\n    ...DroidDetails\\\\n  }\\\\n}\\"
 
-  public static var requestString: String { return operationString.appending(DroidDetails.fragmentString) }
+  public var queryDocument: String { return operationDefinition.appending(DroidDetails.fragmentDefinition) }
 
   public init() {
   }
@@ -226,22 +230,22 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       GraphQLField(\\"hero\\", type: .object(Hero.selections)),
     ]
 
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
 
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> Snapshot in value.snapshot }])
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> ResultMap in value.resultMap }])
     }
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"] as? Snapshot).flatMap { Hero(snapshot: $0) }
+        return (resultMap[\\"hero\\"] as? ResultMap).flatMap { Hero(unsafeResultMap: $0) }
       }
       set {
-        snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"hero\\")
       }
     }
 
@@ -256,40 +260,44 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         )
       ]
 
-      public var snapshot: Snapshot
+      public private(set) var resultMap: ResultMap
 
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
       }
 
       public static func makeHuman() -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Human\\"])
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\"])
       }
 
       public static func makeDroid(primaryFunction: String? = nil) -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"primaryFunction\\": primaryFunction])
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"primaryFunction\\": primaryFunction])
       }
 
       public var fragments: Fragments {
         get {
-          return Fragments(snapshot: snapshot)
+          return Fragments(unsafeResultMap: resultMap)
         }
         set {
-          snapshot += newValue.snapshot
+          resultMap += newValue.resultMap
         }
       }
 
       public struct Fragments {
-        public var snapshot: Snapshot
+        public private(set) var resultMap: ResultMap
+
+        public init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
 
         public var droidDetails: DroidDetails? {
           get {
-            if !DroidDetails.possibleTypes.contains(snapshot[\\"__typename\\"]! as! String) { return nil }
-            return DroidDetails(snapshot: snapshot)
+            if !DroidDetails.possibleTypes.contains(resultMap[\\"__typename\\"]! as! String) { return nil }
+            return DroidDetails(unsafeResultMap: resultMap)
           }
           set {
             guard let newValue = newValue else { return }
-            snapshot += newValue.snapshot
+            resultMap += newValue.resultMap
           }
         }
       }
@@ -297,11 +305,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       public var asDroid: AsDroid? {
         get {
           if !AsDroid.possibleTypes.contains(__typename) { return nil }
-          return AsDroid(snapshot: snapshot)
+          return AsDroid(unsafeResultMap: resultMap)
         }
         set {
           guard let newValue = newValue else { return }
-          snapshot = newValue.snapshot
+          resultMap = newValue.resultMap
         }
       }
 
@@ -312,44 +320,48 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
         ]
 
-        public var snapshot: Snapshot
+        public private(set) var resultMap: ResultMap
 
-        public init(snapshot: Snapshot) {
-          self.snapshot = snapshot
+        public init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
         }
 
         public init(primaryFunction: String? = nil) {
-          self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"primaryFunction\\": primaryFunction])
+          self.init(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"primaryFunction\\": primaryFunction])
         }
 
         /// This droid's primary function
         public var primaryFunction: String? {
           get {
-            return snapshot[\\"primaryFunction\\"] as? String
+            return resultMap[\\"primaryFunction\\"] as? String
           }
           set {
-            snapshot.updateValue(newValue, forKey: \\"primaryFunction\\")
+            resultMap.updateValue(newValue, forKey: \\"primaryFunction\\")
           }
         }
 
         public var fragments: Fragments {
           get {
-            return Fragments(snapshot: snapshot)
+            return Fragments(unsafeResultMap: resultMap)
           }
           set {
-            snapshot += newValue.snapshot
+            resultMap += newValue.resultMap
           }
         }
 
         public struct Fragments {
-          public var snapshot: Snapshot
+          public private(set) var resultMap: ResultMap
+
+          public init(unsafeResultMap: ResultMap) {
+            self.resultMap = unsafeResultMap
+          }
 
           public var droidDetails: DroidDetails {
             get {
-              return DroidDetails(snapshot: snapshot)
+              return DroidDetails(unsafeResultMap: resultMap)
             }
             set {
-              snapshot += newValue.snapshot
+              resultMap += newValue.resultMap
             }
           }
         }
@@ -361,10 +373,10 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with fragment spreads 1`] = `
 "public final class HeroQuery: GraphQLQuery {
-  public static let operationString =
+  public let operationDefinition =
     \\"query Hero {\\\\n  hero {\\\\n    ...HeroDetails\\\\n  }\\\\n}\\"
 
-  public static var requestString: String { return operationString.appending(HeroDetails.fragmentString) }
+  public var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
 
   public init() {
   }
@@ -376,22 +388,22 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       GraphQLField(\\"hero\\", type: .object(Hero.selections)),
     ]
 
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
 
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> Snapshot in value.snapshot }])
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> ResultMap in value.resultMap }])
     }
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"] as? Snapshot).flatMap { Hero(snapshot: $0) }
+        return (resultMap[\\"hero\\"] as? ResultMap).flatMap { Hero(unsafeResultMap: $0) }
       }
       set {
-        snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"hero\\")
       }
     }
 
@@ -402,48 +414,52 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
       ]
 
-      public var snapshot: Snapshot
+      public private(set) var resultMap: ResultMap
 
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
       }
 
       public static func makeHuman(name: String) -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
       }
 
       public static func makeDroid(name: String) -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
       }
 
       /// The name of the character
       public var name: String {
         get {
-          return snapshot[\\"name\\"]! as! String
+          return resultMap[\\"name\\"]! as! String
         }
         set {
-          snapshot.updateValue(newValue, forKey: \\"name\\")
+          resultMap.updateValue(newValue, forKey: \\"name\\")
         }
       }
 
       public var fragments: Fragments {
         get {
-          return Fragments(snapshot: snapshot)
+          return Fragments(unsafeResultMap: resultMap)
         }
         set {
-          snapshot += newValue.snapshot
+          resultMap += newValue.resultMap
         }
       }
 
       public struct Fragments {
-        public var snapshot: Snapshot
+        public private(set) var resultMap: ResultMap
+
+        public init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
 
         public var heroDetails: HeroDetails {
           get {
-            return HeroDetails(snapshot: snapshot)
+            return HeroDetails(unsafeResultMap: resultMap)
           }
           set {
-            snapshot += newValue.snapshot
+            resultMap += newValue.resultMap
           }
         }
       }
@@ -454,7 +470,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with variables 1`] = `
 "public final class HeroNameQuery: GraphQLQuery {
-  public static let operationString =
+  public let operationDefinition =
     \\"query HeroName($episode: Episode) {\\\\n  hero(episode: $episode) {\\\\n    name\\\\n  }\\\\n}\\"
 
   public var episode: Episode?
@@ -474,22 +490,22 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       GraphQLField(\\"hero\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\")], type: .object(Hero.selections)),
     ]
 
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
 
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> Snapshot in value.snapshot }])
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> ResultMap in value.resultMap }])
     }
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"] as? Snapshot).flatMap { Hero(snapshot: $0) }
+        return (resultMap[\\"hero\\"] as? ResultMap).flatMap { Hero(unsafeResultMap: $0) }
       }
       set {
-        snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"hero\\")
       }
     }
 
@@ -500,27 +516,27 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
       ]
 
-      public var snapshot: Snapshot
+      public private(set) var resultMap: ResultMap
 
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
       }
 
       public static func makeHuman(name: String) -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
       }
 
       public static func makeDroid(name: String) -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
       }
 
       /// The name of the character
       public var name: String {
         get {
-          return snapshot[\\"name\\"]! as! String
+          return resultMap[\\"name\\"]! as! String
         }
         set {
-          snapshot.updateValue(newValue, forKey: \\"name\\")
+          resultMap.updateValue(newValue, forKey: \\"name\\")
         }
       }
     }
@@ -530,12 +546,12 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration with an operationIdentifier property when generateOperationIds is specified 1`] = `
 "public final class HeroQuery: GraphQLQuery {
-  public static let operationString =
+  public let operationDefinition =
     \\"query Hero {\\\\n  hero {\\\\n    ...HeroDetails\\\\n  }\\\\n}\\"
 
-  public static let operationIdentifier: String? = \\"90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4\\"
+  public let operationIdentifier: String? = \\"90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4\\"
 
-  public static var requestString: String { return operationString.appending(HeroDetails.fragmentString) }
+  public var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
 
   public init() {
   }
@@ -547,22 +563,22 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       GraphQLField(\\"hero\\", type: .object(Hero.selections)),
     ]
 
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
 
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
     }
 
     public init(hero: Hero? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> Snapshot in value.snapshot }])
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> ResultMap in value.resultMap }])
     }
 
     public var hero: Hero? {
       get {
-        return (snapshot[\\"hero\\"] as? Snapshot).flatMap { Hero(snapshot: $0) }
+        return (resultMap[\\"hero\\"] as? ResultMap).flatMap { Hero(unsafeResultMap: $0) }
       }
       set {
-        snapshot.updateValue(newValue?.snapshot, forKey: \\"hero\\")
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"hero\\")
       }
     }
 
@@ -573,48 +589,52 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
         GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
       ]
 
-      public var snapshot: Snapshot
+      public private(set) var resultMap: ResultMap
 
-      public init(snapshot: Snapshot) {
-        self.snapshot = snapshot
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
       }
 
       public static func makeHuman(name: String) -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
       }
 
       public static func makeDroid(name: String) -> Hero {
-        return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
       }
 
       /// The name of the character
       public var name: String {
         get {
-          return snapshot[\\"name\\"]! as! String
+          return resultMap[\\"name\\"]! as! String
         }
         set {
-          snapshot.updateValue(newValue, forKey: \\"name\\")
+          resultMap.updateValue(newValue, forKey: \\"name\\")
         }
       }
 
       public var fragments: Fragments {
         get {
-          return Fragments(snapshot: snapshot)
+          return Fragments(unsafeResultMap: resultMap)
         }
         set {
-          snapshot += newValue.snapshot
+          resultMap += newValue.resultMap
         }
       }
 
       public struct Fragments {
-        public var snapshot: Snapshot
+        public private(set) var resultMap: ResultMap
+
+        public init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
 
         public var heroDetails: HeroDetails {
           get {
-            return HeroDetails(snapshot: snapshot)
+            return HeroDetails(unsafeResultMap: resultMap)
           }
           set {
-            snapshot += newValue.snapshot
+            resultMap += newValue.resultMap
           }
         }
       }
@@ -644,7 +664,7 @@ exports[`Swift code generation #initializerDeclarationForProperties() should gen
 
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment that includes a fragment spread 1`] = `
 "public struct HeroDetails: GraphQLFragment {
-  public static let fragmentString =
+  public static let fragmentDefinition =
     \\"fragment HeroDetails on Character {\\\\n  name\\\\n  ...MoreHeroDetails\\\\n}\\"
 
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
@@ -654,58 +674,62 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
     GraphQLField(\\"appearsIn\\", type: .nonNull(.list(.scalar(Episode.self)))),
   ]
 
-  public var snapshot: Snapshot
+  public private(set) var resultMap: ResultMap
 
-  public init(snapshot: Snapshot) {
-    self.snapshot = snapshot
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
   }
 
   public static func makeHuman(name: String, appearsIn: [Episode?]) -> HeroDetails {
-    return HeroDetails(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
+    return HeroDetails(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
   }
 
   public static func makeDroid(name: String, appearsIn: [Episode?]) -> HeroDetails {
-    return HeroDetails(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
+    return HeroDetails(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
   }
 
   /// The name of the character
   public var name: String {
     get {
-      return snapshot[\\"name\\"]! as! String
+      return resultMap[\\"name\\"]! as! String
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"name\\")
+      resultMap.updateValue(newValue, forKey: \\"name\\")
     }
   }
 
   /// The movies this character appears in
   public var appearsIn: [Episode?] {
     get {
-      return snapshot[\\"appearsIn\\"]! as! [Episode?]
+      return resultMap[\\"appearsIn\\"]! as! [Episode?]
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"appearsIn\\")
+      resultMap.updateValue(newValue, forKey: \\"appearsIn\\")
     }
   }
 
   public var fragments: Fragments {
     get {
-      return Fragments(snapshot: snapshot)
+      return Fragments(unsafeResultMap: resultMap)
     }
     set {
-      snapshot += newValue.snapshot
+      resultMap += newValue.resultMap
     }
   }
 
   public struct Fragments {
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
 
     public var moreHeroDetails: MoreHeroDetails {
       get {
-        return MoreHeroDetails(snapshot: snapshot)
+        return MoreHeroDetails(unsafeResultMap: resultMap)
       }
       set {
-        snapshot += newValue.snapshot
+        resultMap += newValue.resultMap
       }
     }
   }
@@ -714,7 +738,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a concrete type condition 1`] = `
 "public struct DroidDetails: GraphQLFragment {
-  public static let fragmentString =
+  public static let fragmentDefinition =
     \\"fragment DroidDetails on Droid {\\\\n  name\\\\n  primaryFunction\\\\n}\\"
 
   public static let possibleTypes = [\\"Droid\\"]
@@ -724,33 +748,33 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
     GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
   ]
 
-  public var snapshot: Snapshot
+  public private(set) var resultMap: ResultMap
 
-  public init(snapshot: Snapshot) {
-    self.snapshot = snapshot
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
   }
 
   public init(name: String, primaryFunction: String? = nil) {
-    self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
+    self.init(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
   }
 
   /// What others call this droid
   public var name: String {
     get {
-      return snapshot[\\"name\\"]! as! String
+      return resultMap[\\"name\\"]! as! String
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"name\\")
+      resultMap.updateValue(newValue, forKey: \\"name\\")
     }
   }
 
   /// This droid's primary function
   public var primaryFunction: String? {
     get {
-      return snapshot[\\"primaryFunction\\"] as? String
+      return resultMap[\\"primaryFunction\\"] as? String
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"primaryFunction\\")
+      resultMap.updateValue(newValue, forKey: \\"primaryFunction\\")
     }
   }
 }"
@@ -758,7 +782,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a subselection 1`] = `
 "public struct HeroDetails: GraphQLFragment {
-  public static let fragmentString =
+  public static let fragmentDefinition =
     \\"fragment HeroDetails on Character {\\\\n  name\\\\n  friends {\\\\n    name\\\\n  }\\\\n}\\"
 
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
@@ -768,37 +792,37 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
     GraphQLField(\\"friends\\", type: .list(.object(Friend.selections))),
   ]
 
-  public var snapshot: Snapshot
+  public private(set) var resultMap: ResultMap
 
-  public init(snapshot: Snapshot) {
-    self.snapshot = snapshot
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
   }
 
   public static func makeHuman(name: String, friends: [Friend?]? = nil) -> HeroDetails {
-    return HeroDetails(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"friends\\": friends.flatMap { (value: [Friend?]) -> [Snapshot?] in value.map { (value: Friend?) -> Snapshot? in value.flatMap { (value: Friend) -> Snapshot in value.snapshot } } }])
+    return HeroDetails(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"friends\\": friends.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }])
   }
 
   public static func makeDroid(name: String, friends: [Friend?]? = nil) -> HeroDetails {
-    return HeroDetails(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"friends\\": friends.flatMap { (value: [Friend?]) -> [Snapshot?] in value.map { (value: Friend?) -> Snapshot? in value.flatMap { (value: Friend) -> Snapshot in value.snapshot } } }])
+    return HeroDetails(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"friends\\": friends.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }])
   }
 
   /// The name of the character
   public var name: String {
     get {
-      return snapshot[\\"name\\"]! as! String
+      return resultMap[\\"name\\"]! as! String
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"name\\")
+      resultMap.updateValue(newValue, forKey: \\"name\\")
     }
   }
 
   /// The friends of the character, or an empty list if they have none
   public var friends: [Friend?]? {
     get {
-      return (snapshot[\\"friends\\"] as? [Snapshot?]).flatMap { (value: [Snapshot?]) -> [Friend?] in value.map { (value: Snapshot?) -> Friend? in value.flatMap { (value: Snapshot) -> Friend in Friend(snapshot: value) } } }
+      return (resultMap[\\"friends\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [Friend?] in value.map { (value: ResultMap?) -> Friend? in value.flatMap { (value: ResultMap) -> Friend in Friend(unsafeResultMap: value) } } }
     }
     set {
-      snapshot.updateValue(newValue.flatMap { (value: [Friend?]) -> [Snapshot?] in value.map { (value: Friend?) -> Snapshot? in value.flatMap { (value: Friend) -> Snapshot in value.snapshot } } }, forKey: \\"friends\\")
+      resultMap.updateValue(newValue.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }, forKey: \\"friends\\")
     }
   }
 
@@ -809,27 +833,27 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
       GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
     ]
 
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
 
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
     }
 
     public static func makeHuman(name: String) -> Friend {
-      return Friend(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+      return Friend(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
     }
 
     public static func makeDroid(name: String) -> Friend {
-      return Friend(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+      return Friend(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
     }
 
     /// The name of the character
     public var name: String {
       get {
-        return snapshot[\\"name\\"]! as! String
+        return resultMap[\\"name\\"]! as! String
       }
       set {
-        snapshot.updateValue(newValue, forKey: \\"name\\")
+        resultMap.updateValue(newValue, forKey: \\"name\\")
       }
     }
   }
@@ -838,7 +862,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with an abstract type condition 1`] = `
 "public struct HeroDetails: GraphQLFragment {
-  public static let fragmentString =
+  public static let fragmentDefinition =
     \\"fragment HeroDetails on Character {\\\\n  name\\\\n  appearsIn\\\\n}\\"
 
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
@@ -848,37 +872,37 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
     GraphQLField(\\"appearsIn\\", type: .nonNull(.list(.scalar(Episode.self)))),
   ]
 
-  public var snapshot: Snapshot
+  public private(set) var resultMap: ResultMap
 
-  public init(snapshot: Snapshot) {
-    self.snapshot = snapshot
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
   }
 
   public static func makeHuman(name: String, appearsIn: [Episode?]) -> HeroDetails {
-    return HeroDetails(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
+    return HeroDetails(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
   }
 
   public static func makeDroid(name: String, appearsIn: [Episode?]) -> HeroDetails {
-    return HeroDetails(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
+    return HeroDetails(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
   }
 
   /// The name of the character
   public var name: String {
     get {
-      return snapshot[\\"name\\"]! as! String
+      return resultMap[\\"name\\"]! as! String
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"name\\")
+      resultMap.updateValue(newValue, forKey: \\"name\\")
     }
   }
 
   /// The movies this character appears in
   public var appearsIn: [Episode?] {
     get {
-      return snapshot[\\"appearsIn\\"]! as! [Episode?]
+      return resultMap[\\"appearsIn\\"]! as! [Episode?]
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"appearsIn\\")
+      resultMap.updateValue(newValue, forKey: \\"appearsIn\\")
     }
   }
 }"
@@ -892,27 +916,27 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
     GraphQLField(\\"name\\", alias: \\"private\\", type: .nonNull(.scalar(String.self))),
   ]
 
-  public var snapshot: Snapshot
+  public private(set) var resultMap: ResultMap
 
-  public init(snapshot: Snapshot) {
-    self.snapshot = snapshot
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
   }
 
   public static func makeHuman(\`private\`: String) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"private\\": \`private\`])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"private\\": \`private\`])
   }
 
   public static func makeDroid(\`private\`: String) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"private\\": \`private\`])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"private\\": \`private\`])
   }
 
   /// The name of the character
   public var \`private\`: String {
     get {
-      return snapshot[\\"private\\"]! as! String
+      return resultMap[\\"private\\"]! as! String
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"private\\")
+      resultMap.updateValue(newValue, forKey: \\"private\\")
     }
   }
 }"
@@ -926,27 +950,27 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     GraphQLField(\\"friends\\", type: .list(.object(Friend.selections))),
   ]
 
-  public var snapshot: Snapshot
+  public private(set) var resultMap: ResultMap
 
-  public init(snapshot: Snapshot) {
-    self.snapshot = snapshot
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
   }
 
   public static func makeHuman(friends: [Friend?]? = nil) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"friends\\": friends.flatMap { (value: [Friend?]) -> [Snapshot?] in value.map { (value: Friend?) -> Snapshot? in value.flatMap { (value: Friend) -> Snapshot in value.snapshot } } }])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"friends\\": friends.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }])
   }
 
   public static func makeDroid(friends: [Friend?]? = nil) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"friends\\": friends.flatMap { (value: [Friend?]) -> [Snapshot?] in value.map { (value: Friend?) -> Snapshot? in value.flatMap { (value: Friend) -> Snapshot in value.snapshot } } }])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"friends\\": friends.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }])
   }
 
   /// The friends of the character, or an empty list if they have none
   public var friends: [Friend?]? {
     get {
-      return (snapshot[\\"friends\\"] as? [Snapshot?]).flatMap { (value: [Snapshot?]) -> [Friend?] in value.map { (value: Snapshot?) -> Friend? in value.flatMap { (value: Snapshot) -> Friend in Friend(snapshot: value) } } }
+      return (resultMap[\\"friends\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [Friend?] in value.map { (value: ResultMap?) -> Friend? in value.flatMap { (value: ResultMap) -> Friend in Friend(unsafeResultMap: value) } } }
     }
     set {
-      snapshot.updateValue(newValue.flatMap { (value: [Friend?]) -> [Snapshot?] in value.map { (value: Friend?) -> Snapshot? in value.flatMap { (value: Friend) -> Snapshot in value.snapshot } } }, forKey: \\"friends\\")
+      resultMap.updateValue(newValue.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }, forKey: \\"friends\\")
     }
   }
 
@@ -957,27 +981,27 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
     ]
 
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
 
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
     }
 
     public static func makeHuman(name: String) -> Friend {
-      return Friend(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+      return Friend(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
     }
 
     public static func makeDroid(name: String) -> Friend {
-      return Friend(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+      return Friend(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
     }
 
     /// The name of the character
     public var name: String {
       get {
-        return snapshot[\\"name\\"]! as! String
+        return resultMap[\\"name\\"]! as! String
       }
       set {
-        snapshot.updateValue(newValue, forKey: \\"name\\")
+        resultMap.updateValue(newValue, forKey: \\"name\\")
       }
     }
   }
@@ -997,38 +1021,38 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     )
   ]
 
-  public var snapshot: Snapshot
+  public private(set) var resultMap: ResultMap
 
-  public init(snapshot: Snapshot) {
-    self.snapshot = snapshot
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
   }
 
   public static func makeHuman(name: String) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
   }
 
   public static func makeDroid(name: String) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
   }
 
   /// The name of the character
   public var name: String {
     get {
-      return snapshot[\\"name\\"]! as! String
+      return resultMap[\\"name\\"]! as! String
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"name\\")
+      resultMap.updateValue(newValue, forKey: \\"name\\")
     }
   }
 
   public var asDroid: AsDroid? {
     get {
       if !AsDroid.possibleTypes.contains(__typename) { return nil }
-      return AsDroid(snapshot: snapshot)
+      return AsDroid(unsafeResultMap: resultMap)
     }
     set {
       guard let newValue = newValue else { return }
-      snapshot = newValue.snapshot
+      resultMap = newValue.resultMap
     }
   }
 
@@ -1040,44 +1064,48 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
     ]
 
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
 
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
     }
 
     public init(name: String) {
-      self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
     }
 
     /// What others call this droid
     public var name: String {
       get {
-        return snapshot[\\"name\\"]! as! String
+        return resultMap[\\"name\\"]! as! String
       }
       set {
-        snapshot.updateValue(newValue, forKey: \\"name\\")
+        resultMap.updateValue(newValue, forKey: \\"name\\")
       }
     }
 
     public var fragments: Fragments {
       get {
-        return Fragments(snapshot: snapshot)
+        return Fragments(unsafeResultMap: resultMap)
       }
       set {
-        snapshot += newValue.snapshot
+        resultMap += newValue.resultMap
       }
     }
 
     public struct Fragments {
-      public var snapshot: Snapshot
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
 
       public var heroDetails: HeroDetails {
         get {
-          return HeroDetails(snapshot: snapshot)
+          return HeroDetails(unsafeResultMap: resultMap)
         }
         set {
-          snapshot += newValue.snapshot
+          resultMap += newValue.resultMap
         }
       }
     }
@@ -1093,27 +1121,27 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
   ]
 
-  public var snapshot: Snapshot
+  public private(set) var resultMap: ResultMap
 
-  public init(snapshot: Snapshot) {
-    self.snapshot = snapshot
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
   }
 
   public static func makeHuman(name: String) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
   }
 
   public static func makeDroid(name: String) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
   }
 
   /// The name of the character
   public var name: String {
     get {
-      return snapshot[\\"name\\"]! as! String
+      return resultMap[\\"name\\"]! as! String
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"name\\")
+      resultMap.updateValue(newValue, forKey: \\"name\\")
     }
   }
 }"
@@ -1129,27 +1157,27 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     ]),
   ]
 
-  public var snapshot: Snapshot
+  public private(set) var resultMap: ResultMap
 
-  public init(snapshot: Snapshot) {
-    self.snapshot = snapshot
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
   }
 
   public static func makeHuman(name: String? = nil) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
   }
 
   public static func makeDroid(name: String? = nil) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
   }
 
   /// The name of the character
   public var name: String? {
     get {
-      return snapshot[\\"name\\"] as? String
+      return resultMap[\\"name\\"] as? String
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"name\\")
+      resultMap.updateValue(newValue, forKey: \\"name\\")
     }
   }
 }"
@@ -1164,48 +1192,52 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
   ]
 
-  public var snapshot: Snapshot
+  public private(set) var resultMap: ResultMap
 
-  public init(snapshot: Snapshot) {
-    self.snapshot = snapshot
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
   }
 
   public static func makeHuman(name: String) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
   }
 
   public static func makeDroid(name: String) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
   }
 
   /// The name of the character
   public var name: String {
     get {
-      return snapshot[\\"name\\"]! as! String
+      return resultMap[\\"name\\"]! as! String
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"name\\")
+      resultMap.updateValue(newValue, forKey: \\"name\\")
     }
   }
 
   public var fragments: Fragments {
     get {
-      return Fragments(snapshot: snapshot)
+      return Fragments(unsafeResultMap: resultMap)
     }
     set {
-      snapshot += newValue.snapshot
+      resultMap += newValue.resultMap
     }
   }
 
   public struct Fragments {
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
 
     public var heroDetails: HeroDetails {
       get {
-        return HeroDetails(snapshot: snapshot)
+        return HeroDetails(unsafeResultMap: resultMap)
       }
       set {
-        snapshot += newValue.snapshot
+        resultMap += newValue.resultMap
       }
     }
   }
@@ -1225,50 +1257,54 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     )
   ]
 
-  public var snapshot: Snapshot
+  public private(set) var resultMap: ResultMap
 
-  public init(snapshot: Snapshot) {
-    self.snapshot = snapshot
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
   }
 
   public static func makeHuman(name: String) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
   }
 
   public static func makeDroid(name: String) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
   }
 
   /// The name of the character
   public var name: String {
     get {
-      return snapshot[\\"name\\"]! as! String
+      return resultMap[\\"name\\"]! as! String
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"name\\")
+      resultMap.updateValue(newValue, forKey: \\"name\\")
     }
   }
 
   public var fragments: Fragments {
     get {
-      return Fragments(snapshot: snapshot)
+      return Fragments(unsafeResultMap: resultMap)
     }
     set {
-      snapshot += newValue.snapshot
+      resultMap += newValue.resultMap
     }
   }
 
   public struct Fragments {
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
 
     public var droidDetails: DroidDetails? {
       get {
-        if !DroidDetails.possibleTypes.contains(snapshot[\\"__typename\\"]! as! String) { return nil }
-        return DroidDetails(snapshot: snapshot)
+        if !DroidDetails.possibleTypes.contains(resultMap[\\"__typename\\"]! as! String) { return nil }
+        return DroidDetails(unsafeResultMap: resultMap)
       }
       set {
         guard let newValue = newValue else { return }
-        snapshot += newValue.snapshot
+        resultMap += newValue.resultMap
       }
     }
   }
@@ -1276,11 +1312,11 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   public var asDroid: AsDroid? {
     get {
       if !AsDroid.possibleTypes.contains(__typename) { return nil }
-      return AsDroid(snapshot: snapshot)
+      return AsDroid(unsafeResultMap: resultMap)
     }
     set {
       guard let newValue = newValue else { return }
-      snapshot = newValue.snapshot
+      resultMap = newValue.resultMap
     }
   }
 
@@ -1292,44 +1328,48 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
     ]
 
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
 
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
     }
 
     public init(name: String) {
-      self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
     }
 
     /// What others call this droid
     public var name: String {
       get {
-        return snapshot[\\"name\\"]! as! String
+        return resultMap[\\"name\\"]! as! String
       }
       set {
-        snapshot.updateValue(newValue, forKey: \\"name\\")
+        resultMap.updateValue(newValue, forKey: \\"name\\")
       }
     }
 
     public var fragments: Fragments {
       get {
-        return Fragments(snapshot: snapshot)
+        return Fragments(unsafeResultMap: resultMap)
       }
       set {
-        snapshot += newValue.snapshot
+        resultMap += newValue.resultMap
       }
     }
 
     public struct Fragments {
-      public var snapshot: Snapshot
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
 
       public var droidDetails: DroidDetails {
         get {
-          return DroidDetails(snapshot: snapshot)
+          return DroidDetails(unsafeResultMap: resultMap)
         }
         set {
-          snapshot += newValue.snapshot
+          resultMap += newValue.resultMap
         }
       }
     }
@@ -1350,38 +1390,38 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
     )
   ]
 
-  public var snapshot: Snapshot
+  public private(set) var resultMap: ResultMap
 
-  public init(snapshot: Snapshot) {
-    self.snapshot = snapshot
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
   }
 
   public static func makeHuman(name: String) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
   }
 
   public static func makeDroid(name: String, primaryFunction: String? = nil) -> Hero {
-    return Hero(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
   }
 
   /// The name of the character
   public var name: String {
     get {
-      return snapshot[\\"name\\"]! as! String
+      return resultMap[\\"name\\"]! as! String
     }
     set {
-      snapshot.updateValue(newValue, forKey: \\"name\\")
+      resultMap.updateValue(newValue, forKey: \\"name\\")
     }
   }
 
   public var asDroid: AsDroid? {
     get {
       if !AsDroid.possibleTypes.contains(__typename) { return nil }
-      return AsDroid(snapshot: snapshot)
+      return AsDroid(unsafeResultMap: resultMap)
     }
     set {
       guard let newValue = newValue else { return }
-      snapshot = newValue.snapshot
+      resultMap = newValue.resultMap
     }
   }
 
@@ -1393,33 +1433,33 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
       GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
     ]
 
-    public var snapshot: Snapshot
+    public private(set) var resultMap: ResultMap
 
-    public init(snapshot: Snapshot) {
-      self.snapshot = snapshot
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
     }
 
     public init(name: String, primaryFunction: String? = nil) {
-      self.init(snapshot: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
     }
 
     /// What others call this droid
     public var name: String {
       get {
-        return snapshot[\\"name\\"]! as! String
+        return resultMap[\\"name\\"]! as! String
       }
       set {
-        snapshot.updateValue(newValue, forKey: \\"name\\")
+        resultMap.updateValue(newValue, forKey: \\"name\\")
       }
     }
 
     /// This droid's primary function
     public var primaryFunction: String? {
       get {
-        return snapshot[\\"primaryFunction\\"] as? String
+        return resultMap[\\"primaryFunction\\"] as? String
       }
       set {
-        snapshot.updateValue(newValue, forKey: \\"primaryFunction\\")
+        resultMap.updateValue(newValue, forKey: \\"primaryFunction\\")
       }
     }
   }

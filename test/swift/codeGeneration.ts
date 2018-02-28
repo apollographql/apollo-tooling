@@ -231,7 +231,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: schema.getType('Droid')
         })
-      ).toBe('"response_key": propertyName.flatMap { (value: Droid) -> Snapshot in value.snapshot }');
+      ).toBe('"response_key": propertyName.flatMap { (value: Droid) -> ResultMap in value.resultMap }');
     });
 
     it('should generate expression for non-null composite', () => {
@@ -241,7 +241,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: new GraphQLNonNull(schema.getType('Droid'))
         })
-      ).toBe('"response_key": propertyName.snapshot');
+      ).toBe('"response_key": propertyName.resultMap');
     });
 
     it('should generate expression for nullable list of nullable composites', () => {
@@ -251,7 +251,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: new GraphQLList(schema.getType('Droid'))
         })
-      ).toBe('"response_key": propertyName.flatMap { (value: [Droid?]) -> [Snapshot?] in value.map { (value: Droid?) -> Snapshot? in value.flatMap { (value: Droid) -> Snapshot in value.snapshot } } }');
+      ).toBe('"response_key": propertyName.flatMap { (value: [Droid?]) -> [ResultMap?] in value.map { (value: Droid?) -> ResultMap? in value.flatMap { (value: Droid) -> ResultMap in value.resultMap } } }');
     });
 
     it('should generate expression for nullable list of non-null composites', () => {
@@ -261,7 +261,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: new GraphQLList(new GraphQLNonNull(schema.getType('Droid')))
         })
-      ).toBe('"response_key": propertyName.flatMap { (value: [Droid]) -> [Snapshot] in value.map { (value: Droid) -> Snapshot in value.snapshot } }');
+      ).toBe('"response_key": propertyName.flatMap { (value: [Droid]) -> [ResultMap] in value.map { (value: Droid) -> ResultMap in value.resultMap } }');
     });
 
     it('should generate expression for non-null list of nullable composites', () => {
@@ -271,7 +271,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: new GraphQLNonNull(new GraphQLList(schema.getType('Droid')))
         })
-      ).toBe('"response_key": propertyName.map { (value: Droid?) -> Snapshot? in value.flatMap { (value: Droid) -> Snapshot in value.snapshot } }');
+      ).toBe('"response_key": propertyName.map { (value: Droid?) -> ResultMap? in value.flatMap { (value: Droid) -> ResultMap in value.resultMap } }');
     });
 
     it('should generate expression for non-null list of non-null composites', () => {
@@ -281,7 +281,7 @@ describe('Swift code generation', () => {
           propertyName: 'propertyName',
           type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(schema.getType('Droid')))
         })
-      ).toBe('"response_key": propertyName.map { (value: Droid) -> Snapshot in value.snapshot }');
+      ).toBe('"response_key": propertyName.map { (value: Droid) -> ResultMap in value.resultMap }');
     });
   });
 

@@ -310,15 +310,12 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
       this.printNewlineIfNeeded();
 
-      this.propertyDeclaration({
-        propertyName: 'snapshot',
-        typeName: 'Snapshot'
-      });
+      this.printOnNewline(`public private(set) var resultMap: ResultMap`);
 
       this.printNewlineIfNeeded();
-      this.printOnNewline('public init(snapshot: Snapshot)');
+      this.printOnNewline('public init(unsafeResultMap: ResultMap)');
       this.withinBlock(() => {
-        this.printOnNewline(`self.snapshot = snapshot`);
+        this.printOnNewline(`self.resultMap = unsafeResultMap`);
       });
 
       if (typeCase) {
@@ -348,11 +345,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.withinBlock(() => {
           this.printOnNewline('get');
           this.withinBlock(() => {
-            this.printOnNewline(`return Fragments(snapshot: snapshot)`);
+            this.printOnNewline(`return Fragments(unsafeResultMap: resultMap)`);
           });
           this.printOnNewline('set');
           this.withinBlock(() => {
-            this.printOnNewline(`snapshot += newValue.snapshot`);
+            this.printOnNewline(`resultMap += newValue.resultMap`);
           });
         });
 
@@ -361,9 +358,12 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             structName: 'Fragments'
           },
           () => {
-            this.propertyDeclaration({
-              propertyName: 'snapshot',
-              typeName: 'Snapshot'
+            this.printOnNewline(`public private(set) var resultMap: ResultMap`);
+
+            this.printNewlineIfNeeded();
+            this.printOnNewline('public init(unsafeResultMap: ResultMap)');
+            this.withinBlock(() => {
+              this.printOnNewline(`self.resultMap = unsafeResultMap`);
             });
 
             for (const fragmentSpread of fragmentSpreads) {
@@ -376,18 +376,18 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                 this.withinBlock(() => {
                   if (isConditional) {
                     this.printOnNewline(
-                      `if !${structName}.possibleTypes.contains(snapshot["__typename"]! as! String) { return nil }`
+                      `if !${structName}.possibleTypes.contains(resultMap["__typename"]! as! String) { return nil }`
                     );
                   }
-                  this.printOnNewline(`return ${structName}(snapshot: snapshot)`);
+                  this.printOnNewline(`return ${structName}(unsafeResultMap: resultMap)`);
                 });
                 this.printOnNewline('set');
                 this.withinBlock(() => {
                   if (isConditional) {
                     this.printOnNewline(`guard let newValue = newValue else { return }`);
-                    this.printOnNewline(`snapshot += newValue.snapshot`);
+                    this.printOnNewline(`resultMap += newValue.resultMap`);
                   } else {
-                    this.printOnNewline(`snapshot += newValue.snapshot`);
+                    this.printOnNewline(`resultMap += newValue.resultMap`);
                   }
                 });
               });
@@ -441,7 +441,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       this.withinBlock(() => {
         this.printOnNewline(
           wrap(
-            `self.init(snapshot: [`,
+            `self.init(unsafeResultMap: [`,
             join(
               [
                 `"__typename": "${variant.possibleTypes[0]}"`,
@@ -477,7 +477,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.withinBlock(() => {
           this.printOnNewline(
             wrap(
-              `return ${structName}(snapshot: [`,
+              `return ${structName}(unsafeResultMap: [`,
               join(
                 [`"__typename": "${possibleType}"`, ...properties.map(this.propertyAssignmentForField, this)],
                 ', '
@@ -496,10 +496,10 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       ? this.helpers.mapExpressionForType(
           type,
           isConditional,
-          expression => `${expression}.snapshot`,
+          expression => `${expression}.resultMap`,
           escapeIdentifierIfNeeded(propertyName),
           structName!,
-          'Snapshot'
+          'ResultMap'
         )
       : escapeIdentifierIfNeeded(propertyName);
     return `"${responseKey}": ${valueExpression}`;
@@ -523,19 +523,19 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         if (isList(type)) {
           this.printOnNewline('get');
           this.withinBlock(() => {
-            const snapshotTypeName = this.helpers.typeNameFromGraphQLType(type, 'Snapshot', false);
+            const resultMapTypeName = this.helpers.typeNameFromGraphQLType(type, 'ResultMap', false);
             let expression;
             if (isOptional) {
-              expression = `(snapshot["${responseKey}"] as? ${snapshotTypeName})`;
+              expression = `(resultMap["${responseKey}"] as? ${resultMapTypeName})`;
             } else {
-              expression = `(snapshot["${responseKey}"] as! ${snapshotTypeName})`;
+              expression = `(resultMap["${responseKey}"] as! ${resultMapTypeName})`;
             }
             this.printOnNewline(`return ${this.helpers.mapExpressionForType(
               type,
               isConditional,
-              expression => `${structName}(snapshot: ${expression})`,
+              expression => `${structName}(unsafeResultMap: ${expression})`,
               expression,
-              'Snapshot',
+              'ResultMap',
               structName
             )}`);
           });
@@ -544,47 +544,47 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             let newValueExpression = this.helpers.mapExpressionForType(
               type,
               isConditional,
-              expression => `${expression}.snapshot`,
+              expression => `${expression}.resultMap`,
               'newValue',
               structName,
-              'Snapshot'
+              'ResultMap'
             );
-            this.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${responseKey}")`);
+            this.printOnNewline(`resultMap.updateValue(${newValueExpression}, forKey: "${responseKey}")`);
           });
         } else {
           this.printOnNewline('get');
           this.withinBlock(() => {
             if (isOptional) {
               this.printOnNewline(
-                `return (snapshot["${responseKey}"] as? Snapshot).flatMap { ${structName}(snapshot: $0) }`
+                `return (resultMap["${responseKey}"] as? ResultMap).flatMap { ${structName}(unsafeResultMap: $0) }`
               );
             } else {
-              this.printOnNewline(`return ${structName}(snapshot: snapshot["${responseKey}"]! as! Snapshot)`);
+              this.printOnNewline(`return ${structName}(unsafeResultMap: resultMap["${responseKey}"]! as! ResultMap)`);
             }
           });
           this.printOnNewline('set');
           this.withinBlock(() => {
             let newValueExpression;
             if (isOptional) {
-              newValueExpression = 'newValue?.snapshot';
+              newValueExpression = 'newValue?.resultMap';
             } else {
-              newValueExpression = 'newValue.snapshot';
+              newValueExpression = 'newValue.resultMap';
             }
-            this.printOnNewline(`snapshot.updateValue(${newValueExpression}, forKey: "${responseKey}")`);
+            this.printOnNewline(`resultMap.updateValue(${newValueExpression}, forKey: "${responseKey}")`);
           });
         }
       } else {
         this.printOnNewline('get');
         this.withinBlock(() => {
           if (isOptional) {
-            this.printOnNewline(`return snapshot["${responseKey}"] as? ${typeName.slice(0, -1)}`);
+            this.printOnNewline(`return resultMap["${responseKey}"] as? ${typeName.slice(0, -1)}`);
           } else {
-            this.printOnNewline(`return snapshot["${responseKey}"]! as! ${typeName}`);
+            this.printOnNewline(`return resultMap["${responseKey}"]! as! ${typeName}`);
           }
         });
         this.printOnNewline('set');
         this.withinBlock(() => {
-          this.printOnNewline(`snapshot.updateValue(newValue, forKey: "${responseKey}")`);
+          this.printOnNewline(`resultMap.updateValue(newValue, forKey: "${responseKey}")`);
         });
       }
     });
@@ -599,12 +599,12 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       this.printOnNewline('get');
       this.withinBlock(() => {
         this.printOnNewline(`if !${structName}.possibleTypes.contains(__typename) { return nil }`);
-        this.printOnNewline(`return ${structName}(snapshot: snapshot)`);
+        this.printOnNewline(`return ${structName}(unsafeResultMap: resultMap)`);
       });
       this.printOnNewline('set');
       this.withinBlock(() => {
         this.printOnNewline(`guard let newValue = newValue else { return }`);
-        this.printOnNewline(`snapshot = newValue.snapshot`);
+        this.printOnNewline(`resultMap = newValue.resultMap`);
       });
     });
   }
