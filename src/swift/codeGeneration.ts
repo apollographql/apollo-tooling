@@ -148,7 +148,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       },
       () => {
         if (source) {
-          this.printOnNewline('public static let operationString =');
+          this.printOnNewline('public let operationDefinition =');
           this.withIndent(() => {
             this.multilineString(source);
           });
@@ -163,14 +163,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           const { operationId } = generateOperationId(operation, this.context.fragments, fragmentsReferenced);
           operation.operationId = operationId;
           this.printNewlineIfNeeded();
-          this.printOnNewline(`public static let operationIdentifier: String? = "${operationId}"`);
+          this.printOnNewline(`public let operationIdentifier: String? = "${operationId}"`);
         }
 
         if (fragmentsReferenced.size > 0) {
           this.printNewlineIfNeeded();
-          this.printOnNewline('public static var requestString: String { return operationString');
+          this.printOnNewline('public var queryDocument: String { return operationDefinition');
           fragmentsReferenced.forEach(fragmentName => {
-            this.print(`.appending(${this.helpers.structNameForFragmentName(fragmentName)}.fragmentString)`);
+            this.print(`.appending(${this.helpers.structNameForFragmentName(fragmentName)}.fragmentDefinition)`);
           });
           this.print(' }');
         }
@@ -226,7 +226,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       },
       () => {
         if (source) {
-          this.printOnNewline('public static let fragmentString =');
+          this.printOnNewline('public static let fragmentDefinition =');
           this.withIndent(() => {
             this.multilineString(source);
           });
