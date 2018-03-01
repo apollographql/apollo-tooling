@@ -22,12 +22,12 @@ export const animalSchema = buildSchema(`
     bodyTemperature: Int!
   }
 
-  type Cat implements Pet, WarmBlooded {
+  type Cat implements Pet & WarmBlooded {
     name: String!
     bodyTemperature: Int!
   }
 
-  type Bird implements Pet, WarmBlooded {
+  type Bird implements Pet & WarmBlooded {
     name: String!
     bodyTemperature: Int!
   }
