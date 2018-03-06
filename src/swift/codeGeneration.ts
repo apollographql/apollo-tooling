@@ -846,18 +846,18 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         );
       });
 
-      for (const { propertyName, typeName, description } of properties) {
+      for (const { name, propertyName, typeName, description } of properties) {
         this.printNewlineIfNeeded();
         this.comment(description);
         this.printOnNewline(`public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`);
         this.withinBlock(() => {
           this.printOnNewline('get');
           this.withinBlock(() => {
-            this.printOnNewline(`return graphQLMap["${propertyName}"] as! ${typeName}`);
+            this.printOnNewline(`return graphQLMap["${name}"] as! ${typeName}`);
           });
           this.printOnNewline('set');
           this.withinBlock(() => {
-            this.printOnNewline(`graphQLMap.updateValue(newValue, forKey: "${propertyName}")`);
+            this.printOnNewline(`graphQLMap.updateValue(newValue, forKey: "${name}")`);
           });
         });
       }
