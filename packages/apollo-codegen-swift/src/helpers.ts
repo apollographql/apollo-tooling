@@ -27,7 +27,10 @@ import {
   FragmentSpread,
   Argument
 } from "apollo-codegen-core/lib/compiler";
-import { isMetaFieldName } from "apollo-codegen-core/lib/utilities/graphql";
+import {
+  isList,
+  isMetaFieldName
+} from "apollo-codegen-core/lib/utilities/graphql";
 import { Variant } from "apollo-codegen-core/lib/compiler/visitors/typeCase";
 import { collectAndMergeFields } from "apollo-codegen-core/lib/compiler/visitors/collectAndMergeFields";
 
@@ -113,8 +116,11 @@ export class Helpers {
     return pascalCase(name);
   }
 
-  structNameForPropertyName(propertyName: string) {
-    return pascalCase(Inflector.singularize(propertyName));
+  structNameForPropertyName(propertyName: string, type: GraphQLType) {
+    if (isList(type)) {
+      propertyName = Inflector.singularize(propertyName);
+    }
+    return pascalCase(propertyName);
   }
 
   structNameForFragmentName(fragmentName: string) {
@@ -134,17 +140,16 @@ export class Helpers {
     namespace?: string
   ): Field & Property & Struct {
     const { responseKey, isConditional } = field;
+    let type = field.type;
 
     const propertyName = isMetaFieldName(responseKey)
       ? responseKey
       : camelCase(responseKey);
 
     const structName = join(
-      [namespace, this.structNameForPropertyName(responseKey)],
+      [namespace, this.structNameForPropertyName(responseKey, type)],
       "."
     );
-
-    let type = field.type;
 
     if (isConditional && type instanceof GraphQLNonNull) {
       type = type.ofType;

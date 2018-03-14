@@ -86,6 +86,17 @@
           },
           "isDeprecated": false,
           "deprecationReason": null
+        }, {
+          "name": "singularlyDetailed",
+          "description": null,
+          "args": [],
+          "type": {
+            "kind": "OBJECT",
+            "name": "SingularlyDetailedType",
+            "ofType": null
+          },
+          "isDeprecated": false,
+          "deprecationReason": null
         }],
         "inputFields": null,
         "interfaces": [],
@@ -388,6 +399,86 @@
                 "name": "EnumCommentTestCase",
                 "ofType": null
               }
+            }
+          },
+          "isDeprecated": false,
+          "deprecationReason": null
+        }],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      }, {
+        "kind": "OBJECT",
+        "name": "SingularlyDetailedType",
+        "description": null,
+        "fields": [{
+          "name": "details",
+          "description": null,
+          "args": [],
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "OBJECT",
+              "name": "SingularDetails",
+              "ofType": null
+            }
+          },
+          "isDeprecated": false,
+          "deprecationReason": null
+        }],
+        "inputFields": null,
+        "interfaces": [{
+          "kind": "INTERFACE",
+          "name": "SingularlyDetailed",
+          "ofType": null
+        }],
+        "enumValues": null,
+        "possibleTypes": null
+      }, {
+        "kind": "INTERFACE",
+        "name": "SingularlyDetailed",
+        "description": null,
+        "fields": [{
+          "name": "details",
+          "description": null,
+          "args": [],
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "OBJECT",
+              "name": "SingularDetails",
+              "ofType": null
+            }
+          },
+          "isDeprecated": false,
+          "deprecationReason": null
+        }],
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": [{
+          "kind": "OBJECT",
+          "name": "SingularlyDetailedType",
+          "ofType": null
+        }]
+      }, {
+        "kind": "OBJECT",
+        "name": "SingularDetails",
+        "description": null,
+        "fields": [{
+          "name": "details",
+          "description": null,
+          "args": [],
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             }
           },
           "isDeprecated": false,

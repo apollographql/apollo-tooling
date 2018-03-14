@@ -73,6 +73,17 @@ input Duplicate {
 
 union UnionTestCase = PartialA | PartialB
 
+type SingularDetails {
+  details: String!
+}
+
+interface SingularlyDetailed {
+  details: SingularDetails!
+}
+type SingularlyDetailedType implements SingularlyDetailed {
+  details: SingularDetails!
+}
+
 type Query {
   misc: OddType
   commentTest: CommentTest
@@ -80,6 +91,7 @@ type Query {
   unionTest: UnionTestCase
   scalarTest: Boolean!
   nesting: Nesting!
+  singularlyDetailed: SingularlyDetailedType
 }
 
 type Mutation {

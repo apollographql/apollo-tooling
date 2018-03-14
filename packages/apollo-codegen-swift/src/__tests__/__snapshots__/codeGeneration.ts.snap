@@ -1466,6 +1466,62 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 }"
 `;
 
+exports[`Swift code generation #structDeclarationForSelectionSet() should not singularize non-list properties 1`] = `
+"public struct SingularDetails: GraphQLSelectionSet {
+  public static let possibleTypes = [\\"SingularlyDetailedType\\"]
+
+  public static let selections: [GraphQLSelection] = [
+    GraphQLField(\\"details\\", type: .nonNull(.object(Details.selections))),
+  ]
+
+  public private(set) var resultMap: ResultMap
+
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  public init(details: Details) {
+    self.init(unsafeResultMap: [\\"__typename\\": \\"SingularlyDetailedType\\", \\"details\\": details.resultMap])
+  }
+
+  public var details: Details {
+    get {
+      return Details(unsafeResultMap: resultMap[\\"details\\"]! as! ResultMap)
+    }
+    set {
+      resultMap.updateValue(newValue.resultMap, forKey: \\"details\\")
+    }
+  }
+
+  public struct Details: GraphQLSelectionSet {
+    public static let possibleTypes = [\\"SingularDetails\\"]
+
+    public static let selections: [GraphQLSelection] = [
+      GraphQLField(\\"details\\", type: .nonNull(.scalar(String.self))),
+    ]
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(details: String) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"SingularDetails\\", \\"details\\": details])
+    }
+
+    public var details: String {
+      get {
+        return resultMap[\\"details\\"]! as! String
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"details\\")
+      }
+    }
+  }
+}"
+`;
+
 exports[`Swift code generation #typeDeclarationForGraphQLType() should escape identifiers in cases of enum declaration for a GraphQLEnumType 1`] = `
 "public enum AlbumPrivacies: RawRepresentable, Equatable, Hashable, Apollo.JSONDecodable, Apollo.JSONEncodable {
   public typealias RawValue = String
