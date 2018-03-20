@@ -14,7 +14,7 @@ export enum Episode {
 
 export interface HeroAndFriendsNamesQueryVariables {
   episode?: Episode | null,
-};
+}
 
 export interface HeroAndFriendsNamesQuery {
   hero: ( {
@@ -49,7 +49,7 @@ export interface HeroAndFriendsNamesQuery {
       ) | null > | null,
     }
   ) | null,
-};
+}
 
 export type FriendFragment = ( {
       __typename: \\"Human\\",
@@ -101,7 +101,7 @@ export interface HeroAndFriendsNamesQuery {
       ) | null > | null,
     }
   ) | null,
-};
+}
 
 export type heroFriendsFragment = ( {
       __typename: \\"Human\\",
@@ -153,18 +153,18 @@ export interface ReviewInput {
   commentary?: string | null,
   // Favorite color, optional
   favorite_color?: ColorInput | null,
-};
+}
 
 export interface ColorInput {
   red: number,
   green: number,
   blue: number,
-};
+}
 
 export interface ReviewMovieMutationVariables {
   episode?: Episode | null,
   review?: ReviewInput | null,
-};
+}
 
 export interface ReviewMovieMutation {
   createReview:  {
@@ -174,7 +174,7 @@ export interface ReviewMovieMutation {
     // Comment about the movie
     commentary: string | null,
   } | null,
-};
+}
 "
 `;
 
@@ -197,7 +197,7 @@ export interface HeroAndDetailsQuery {
       primaryFunction: string | null,
     }
   ) | null,
-};
+}
 
 export type HeroDetailsFragment = ( {
       __typename: \\"Human\\",
@@ -226,7 +226,7 @@ export enum Episode {
 
 export interface HeroAndFriendsNamesQueryVariables {
   episode?: Episode | null,
-};
+}
 
 export interface HeroAndFriendsNamesQuery {
   hero: ( {
@@ -261,7 +261,7 @@ export interface HeroAndFriendsNamesQuery {
       ) | null > | null,
     }
   ) | null,
-};
+}
 "
 `;
 
@@ -274,7 +274,7 @@ export interface StarshipCoordsQuery {
     __typename: \\"Starship\\",
     coordinates: Array< Array< number > > | null,
   } | null,
-};
+}
 "
 `;
 
@@ -293,7 +293,7 @@ export interface HeroNameQuery {
       name: string,
     }
   ) | null,
-};
+}
 "
 `;
 
@@ -311,7 +311,7 @@ export enum Episode {
 
 export interface HeroNameQueryVariables {
   episode?: Episode | null,
-};
+}
 
 export interface HeroNameQuery {
   hero: ( {
@@ -324,7 +324,7 @@ export interface HeroNameQuery {
       name: string,
     }
   ) | null,
-};
+}
 "
 `;
 
@@ -346,7 +346,7 @@ export interface CustomScalarQuery {
     __typename: \\"CommentTest\\",
     enumCommentTest: EnumCommentTestCase | null,
   } | null,
-};
+}
 "
 `;
 
@@ -365,7 +365,7 @@ export interface CustomScalarQuery {
       propB: number | null,
     }
   ) | null,
-};
+}
 "
 `;
 
@@ -381,7 +381,7 @@ export interface CustomScalarQuery {
     // comment.
     multiLine: string | null,
   } | null,
-};
+}
 "
 `;
 
@@ -395,7 +395,7 @@ export interface CustomScalarQuery {
     // This is a single-line comment
     singleLine: string | null,
   } | null,
-};
+}
 "
 `;
 
@@ -412,7 +412,7 @@ export interface CustomScalarQuery {
       prop: string,
     }
   ) | null,
-};
+}
 "
 `;
 
@@ -471,7 +471,7 @@ export interface HeroNameQuery {
       },
     }
   ) | null,
-};
+}
 "
 `;
 
@@ -490,7 +490,7 @@ export interface HeroNameQuery {
       name: string,
     }
   ) | null,
-};
+}
 
 export type HeroWithNameFragment = ( {
       __typename: \\"Human\\",
@@ -515,12 +515,12 @@ export interface DroidNameQuery {
     // What others call this droid
     name: string,
   } | null,
-};
+}
 
 export interface DroidWithNameFragment {
   __typename: \\"Droid\\",
   // What others call this droid
   name: string,
-};
+}
 "
 `;

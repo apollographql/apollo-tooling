@@ -43,7 +43,9 @@ export function interfaceDeclaration(generator: CodeGenerator, {
     generator.withinBlock(closure, '{', '}');
   }
   generator.popScope();
-  generator.print(';');
+  if (noBrackets) {
+    generator.print(';');
+  }
 }
 
 export function propertyDeclaration(generator: CodeGenerator, {
