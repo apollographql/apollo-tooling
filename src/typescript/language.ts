@@ -1,6 +1,6 @@
 import { LegacyInlineFragment } from '../compiler/legacyIR';
 
-import { propertyDeclarations } from './codeGeneration';
+import { propertyDeclarations, printDocComment } from './codeGeneration';
 import { typeNameFromGraphQLType } from './types';
 
 import CodeGenerator from "../utilities/CodeGenerator";
@@ -59,12 +59,7 @@ export function propertyDeclaration(generator: CodeGenerator, {
 }: Property, closure?: () => void) {
   const name = fieldName || propertyName;
 
-  if (description) {
-    description.split('\n')
-      .forEach(line => {
-        generator.printOnNewline(`// ${line.trim()}`);
-      })
-  }
+  printDocComment(generator, description);
 
   if (closure) {
     generator.printOnNewline(name);
@@ -111,12 +106,7 @@ export function propertySetsDeclaration(generator: CodeGenerator, property: Prop
   } = property;
   const name = fieldName || propertyName;
 
-  if (description) {
-    description.split('\n')
-      .forEach(line => {
-        generator.printOnNewline(`// ${line.trim()}`);
-      })
-  }
+  printDocComment(generator, description);
 
   if (!standalone) {
     generator.printOnNewline(`${name}: `);
