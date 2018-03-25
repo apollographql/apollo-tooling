@@ -41,7 +41,7 @@ export function caseClassNameForInlineFragment(inlineFragment) {
   return 'As' + pascalCase(String(inlineFragment.typeCondition));
 }
 
-export function propertyFromField(context, field, namespace) {
+export function propertyFromField(context, field, namespace, parentCaseClassName) {
   const name = field.name || field.responseName;
   const unescapedPropertyName = isMetaFieldName(name) ? name : camelCase(name)
   const propertyName = escapeIdentifierIfNeeded(unescapedPropertyName);
@@ -54,6 +54,7 @@ export function propertyFromField(context, field, namespace) {
   if (isCompositeType(bareType)) {
     const bareTypeName = join([
       namespace,
+      parentCaseClassName,
       escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)))
     ], '.');
     const typeName = typeNameFromGraphQLType(context, type, bareTypeName, isOptional);

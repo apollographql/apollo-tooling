@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Scala code generation #caseClassDeclarationForFragment() should generate a caseClass declaration for a fragment that includes a fragment spread 1`] = `
-"case class HeroDetails(name: String, appearsIn: Seq[Option[String]]) extends me.shadaj.slinky.core.WithRaw {
+"case class HeroDetails(name: String, appearsIn: Seq[Option[String]]) extends slinky.readwrite.WithRaw {
 }
 
 object HeroDetails {
@@ -30,11 +30,19 @@ object DroidDetails {
 `;
 
 exports[`Scala code generation #caseClassDeclarationForFragment() should generate a caseClass declaration for a fragment with a subselection 1`] = `
-"case class HeroDetails(name: String, friends: Option[Seq[Option[Friend]]]) extends me.shadaj.slinky.core.WithRaw {
+"case class HeroDetails(name: String, friends: Option[Seq[Option[HeroDetails.Friend]]]) extends slinky.readwrite.WithRaw {
 }
 
 object HeroDetails {
   val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+
+
+  case class Friend(name: String) extends slinky.readwrite.WithRaw {
+  }
+
+  object Friend {
+    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  }
   val fragmentString =
     \\"fragment HeroDetails on Character {\\" +
     \\"  name\\" +
@@ -42,19 +50,11 @@ object HeroDetails {
     \\"    name\\" +
     \\"  }\\" +
     \\"}\\"
-}
-
-
-case class Friend(name: String) extends me.shadaj.slinky.core.WithRaw {
-}
-
-object Friend {
-  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
 }"
 `;
 
 exports[`Scala code generation #caseClassDeclarationForFragment() should generate a caseClass declaration for a fragment with an abstract type condition 1`] = `
-"case class HeroDetails(name: String, appearsIn: Seq[Option[String]]) extends me.shadaj.slinky.core.WithRaw {
+"case class HeroDetails(name: String, appearsIn: Seq[Option[String]]) extends slinky.readwrite.WithRaw {
 }
 
 object HeroDetails {
@@ -68,7 +68,7 @@ object HeroDetails {
 `;
 
 exports[`Scala code generation #caseClassDeclarationForSelectionSet() should escape reserved keywords in a caseClass declaration for a selection set 1`] = `
-"case class Hero(private: Option[String]) extends me.shadaj.slinky.core.WithRaw {
+"case class Hero(private: Option[String]) extends slinky.readwrite.WithRaw {
 }
 
 object Hero {
@@ -77,9 +77,9 @@ object Hero {
 `;
 
 exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a fragment spread nested in an inline fragment 1`] = `
-"case class Hero() extends me.shadaj.slinky.core.WithRaw {
+"case class Hero() extends slinky.readwrite.WithRaw {
   def asDroid: Option[AsDroid] = {
-    if (AsDroid.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[me.shadaj.slinky.core.Reader[AsDroid]].read(this.raw)) else None
+    if (AsDroid.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[AsDroid]].read(this.raw)) else None
   }
 }
 
@@ -98,7 +98,7 @@ object Hero {
 `;
 
 exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a selection set 1`] = `
-"case class Hero(name: Option[String]) extends me.shadaj.slinky.core.WithRaw {
+"case class Hero(name: Option[String]) extends slinky.readwrite.WithRaw {
 }
 
 object Hero {
@@ -107,7 +107,7 @@ object Hero {
 `;
 
 exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a selection set with a fragment spread that matches the parent type 1`] = `
-"case class Hero(name: Option[String]) extends me.shadaj.slinky.core.WithRaw {
+"case class Hero(name: Option[String]) extends slinky.readwrite.WithRaw {
 }
 
 object Hero {
@@ -117,9 +117,9 @@ object Hero {
 `;
 
 exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a selection set with a fragment spread with a more specific type condition 1`] = `
-"case class Hero(name: Option[String]) extends me.shadaj.slinky.core.WithRaw {
+"case class Hero(name: Option[String]) extends slinky.readwrite.WithRaw {
   def asDroidDetails: Option[DroidDetails] = {
-    if (DroidDetails.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[me.shadaj.slinky.core.Reader[DroidDetails]].read(this.raw)) else None
+    if (DroidDetails.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[DroidDetails]].read(this.raw)) else None
   }
 }
 
@@ -129,9 +129,9 @@ object Hero {
 `;
 
 exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a selection set with an inline fragment 1`] = `
-"case class Hero(name: String) extends me.shadaj.slinky.core.WithRaw {
+"case class Hero(name: String) extends slinky.readwrite.WithRaw {
   def asDroid: Option[AsDroid] = {
-    if (AsDroid.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[me.shadaj.slinky.core.Reader[AsDroid]].read(this.raw)) else None
+    if (AsDroid.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[AsDroid]].read(this.raw)) else None
   }
 }
 
@@ -149,19 +149,19 @@ object Hero {
 `;
 
 exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a nested caseClass declaration for a selection set with subselections 1`] = `
-"case class Hero(friends: Option[Seq[Option[Friend]]]) extends me.shadaj.slinky.core.WithRaw {
+"case class Hero(friends: Option[Seq[Option[Hero.Friend]]]) extends slinky.readwrite.WithRaw {
 }
 
 object Hero {
   val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-}
 
 
-case class Friend(name: Option[String]) extends me.shadaj.slinky.core.WithRaw {
-}
+  case class Friend(name: Option[String]) extends slinky.readwrite.WithRaw {
+  }
 
-object Friend {
-  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  object Friend {
+    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  }
 }"
 `;
 
@@ -180,18 +180,18 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   case class Variables(episode: Option[String]) {
   }
 
-  case class Data(createReview: Option[CreateReview]) {
+  case class Data(createReview: Option[Data.CreateReview]) {
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Mutation\\")
-  }
 
-  case class CreateReview(stars: Int, commentary: Option[String]) {
-  }
+    case class CreateReview(stars: Int, commentary: Option[String]) {
+    }
 
-  object CreateReview {
-    val possibleTypes = scala.collection.Set(\\"Review\\")
+    object CreateReview {
+      val possibleTypes = scala.collection.Set(\\"Review\\")
+    }
   }
 }"
 `;
@@ -212,31 +212,31 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
   type Variables = Unit
 
-  case class Data(hero: Option[Hero]) {
+  case class Data(hero: Option[Data.Hero]) {
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Query\\")
-  }
 
 
-  case class Hero() extends me.shadaj.slinky.core.WithRaw {
-    def asDroid: Option[AsDroid] = {
-      if (AsDroid.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[me.shadaj.slinky.core.Reader[AsDroid]].read(this.raw)) else None
+    case class Hero() extends slinky.readwrite.WithRaw {
+      def asDroid: Option[AsDroid] = {
+        if (AsDroid.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[AsDroid]].read(this.raw)) else None
+      }
     }
-  }
 
-  case class AsDroid(name: String) {
-  }
+    case class AsDroid(name: String) {
+    }
 
-  object AsDroid {
-    val possibleTypes = scala.collection.Set(\\"Droid\\")
-    implicit def toHero(a: AsDroid): Hero = Hero()
-    implicit def toHeroDetails(a: AsDroid): HeroDetails = HeroDetails(a.name)
-  }
+    object AsDroid {
+      val possibleTypes = scala.collection.Set(\\"Droid\\")
+      implicit def toHero(a: AsDroid): Hero = Hero()
+      implicit def toHeroDetails(a: AsDroid): HeroDetails = HeroDetails(a.name)
+    }
 
-  object Hero {
-    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+    object Hero {
+      val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+    }
   }
 }"
 `;
@@ -255,34 +255,34 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
   type Variables = Unit
 
-  case class Data(hero: Option[Hero]) {
+  case class Data(hero: Option[Data.Hero]) {
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Query\\")
-  }
 
 
-  case class Hero() extends me.shadaj.slinky.core.WithRaw {
-    def asDroid: Option[AsDroid] = {
-      if (AsDroid.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[me.shadaj.slinky.core.Reader[AsDroid]].read(this.raw)) else None
+    case class Hero() extends slinky.readwrite.WithRaw {
+      def asDroid: Option[AsDroid] = {
+        if (AsDroid.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[AsDroid]].read(this.raw)) else None
+      }
+      def asDroidDetails: Option[DroidDetails] = {
+        if (DroidDetails.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[DroidDetails]].read(this.raw)) else None
+      }
     }
-    def asDroidDetails: Option[DroidDetails] = {
-      if (DroidDetails.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[me.shadaj.slinky.core.Reader[DroidDetails]].read(this.raw)) else None
+
+    case class AsDroid(primaryFunction: Option[String]) {
     }
-  }
 
-  case class AsDroid(primaryFunction: Option[String]) {
-  }
+    object AsDroid {
+      val possibleTypes = scala.collection.Set(\\"Droid\\")
+      implicit def toHero(a: AsDroid): Hero = Hero()
+      implicit def toDroidDetails(a: AsDroid): DroidDetails = DroidDetails(a.primaryFunction)
+    }
 
-  object AsDroid {
-    val possibleTypes = scala.collection.Set(\\"Droid\\")
-    implicit def toHero(a: AsDroid): Hero = Hero()
-    implicit def toDroidDetails(a: AsDroid): DroidDetails = DroidDetails(a.primaryFunction)
-  }
-
-  object Hero {
-    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+    object Hero {
+      val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+    }
   }
 }"
 `;
@@ -301,20 +301,20 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
   type Variables = Unit
 
-  case class Data(hero: Option[Hero]) {
+  case class Data(hero: Option[Data.Hero]) {
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Query\\")
-  }
 
 
-  case class Hero(name: String) extends me.shadaj.slinky.core.WithRaw {
-  }
+    case class Hero(name: String) extends slinky.readwrite.WithRaw {
+    }
 
-  object Hero {
-    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-    implicit def toHeroDetails(a: Hero): HeroDetails = HeroDetails(a.name)
+    object Hero {
+      val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+      implicit def toHeroDetails(a: Hero): HeroDetails = HeroDetails(a.name)
+    }
   }
 }"
 `;
@@ -333,19 +333,19 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   case class Variables(episode: Option[String]) {
   }
 
-  case class Data(hero: Option[Hero]) {
+  case class Data(hero: Option[Data.Hero]) {
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Query\\")
-  }
 
 
-  case class Hero(name: String) extends me.shadaj.slinky.core.WithRaw {
-  }
+    case class Hero(name: String) extends slinky.readwrite.WithRaw {
+    }
 
-  object Hero {
-    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+    object Hero {
+      val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+    }
   }
 }"
 `;
@@ -366,20 +366,20 @@ exports[`Scala code generation #classDeclarationForOperation() when generateOper
 
   type Variables = Unit
 
-  case class Data(hero: Option[Hero]) {
+  case class Data(hero: Option[Data.Hero]) {
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Query\\")
-  }
 
 
-  case class Hero(name: String) extends me.shadaj.slinky.core.WithRaw {
-  }
+    case class Hero(name: String) extends slinky.readwrite.WithRaw {
+    }
 
-  object Hero {
-    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-    implicit def toHeroDetails(a: Hero): HeroDetails = HeroDetails(a.name)
+    object Hero {
+      val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+      implicit def toHeroDetails(a: Hero): HeroDetails = HeroDetails(a.name)
+    }
   }
 }"
 `;

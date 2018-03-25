@@ -60,7 +60,7 @@ export function generateSource(context, options) {
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
   generator.printNewline();
 
-  if (context.namespace) {
+  if (context.options.namespace) {
     packageDeclaration(generator, context.namespace);
   }
 
@@ -215,11 +215,9 @@ export function caseClassDeclarationForSelectionSet(
 ) {
   const possibleTypes = parentType ? possibleTypesForType(generator.context, parentType) : null;
 
-  let properties;
-
   if (!possibleTypes || possibleTypes.length == 1) {
-    properties = fields
-      .map(field => propertyFromField(generator.context, field))
+    const properties = fields
+      .map(field => propertyFromField(generator.context, field, caseClassName))
       .filter(field => field.propertyName != "__typename");
 
     caseClassDeclaration(generator, { caseClassName, params: properties.map(p => {
@@ -231,7 +229,7 @@ export function caseClassDeclarationForSelectionSet(
   } else {
     generator.printNewlineIfNeeded();
     const properties = fields
-      .map(field => propertyFromField(generator.context, field))
+      .map(field => propertyFromField(generator.context, field, caseClassName))
       .filter(field => field.propertyName != "__typename");
 
     caseClassDeclaration(generator, { caseClassName, params: properties.map(p => {
@@ -239,14 +237,14 @@ export function caseClassDeclarationForSelectionSet(
         name: p.responseName,
         type: p.typeName,
       };
-    }), superclass: 'me.shadaj.slinky.core.WithRaw'}, () => {
+    }), superclass: 'slinky.readwrite.WithRaw'}, () => {
       if (inlineFragments && inlineFragments.length > 0) {
         inlineFragments.forEach((inlineFragment) => {
           const fragClass = caseClassNameForInlineFragment(inlineFragment);
           generator.printOnNewline(`def as${inlineFragment.typeCondition}`);
           generator.print(`: Option[${fragClass}] =`);
           generator.withinBlock(() => {
-            generator.printOnNewline(`if (${fragClass}.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[me.shadaj.slinky.core.Reader[${fragClass}]].read(this.raw)) else None`);
+            generator.printOnNewline(`if (${fragClass}.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[${fragClass}]].read(this.raw)) else None`);
           });
         });
       }
@@ -259,7 +257,7 @@ export function caseClassDeclarationForSelectionSet(
             generator.printOnNewline(`def as${s}`);
             generator.print(`: Option[${s}] =`);
             generator.withinBlock(() => {
-              generator.printOnNewline(`if (${s}.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[me.shadaj.slinky.core.Reader[${s}]].read(this.raw)) else None`);
+              generator.printOnNewline(`if (${s}.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[${s}]].read(this.raw)) else None`);
             });
           }
         })
@@ -309,22 +307,22 @@ export function caseClassDeclarationForSelectionSet(
       })
     }
 
+    fields.filter(field => isCompositeType(getNamedType(field.type))).forEach(field => {
+      caseClassDeclarationForSelectionSet(
+        generator,
+        {
+          caseClassName: caseClassNameForPropertyName(field.responseName),
+          parentType: getNamedType(field.type),
+          fields: field.fields,
+          inlineFragments: field.inlineFragments,
+          fragmentSpreads: field.fragmentSpreads
+        }
+      );
+    });
+
     if (objectClosure) {
       objectClosure();
     }
-  });
-
-  fields.filter(field => isCompositeType(getNamedType(field.type))).forEach(field => {
-    caseClassDeclarationForSelectionSet(
-      generator,
-      {
-        caseClassName: caseClassNameForPropertyName(field.responseName),
-        parentType: getNamedType(field.type),
-        fields: field.fields,
-        inlineFragments: field.inlineFragments,
-        fragmentSpreads: field.fragmentSpreads
-      }
-    );
   });
 }
 
