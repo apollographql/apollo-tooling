@@ -816,7 +816,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
     properties.forEach(property => {
       if (property.isOptional) {
-        property.typeName = `Optional<${property.typeName}>`;
+        property.typeName = `Swift.Optional<${property.typeName}>`;
       }
     });
 
