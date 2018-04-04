@@ -159,7 +159,7 @@ describe('Compiling query documents to the legacy IR', () => {
     const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].args)
-      .toEqual([{ name: "episode", value: "EMPIRE" }]);
+      .toEqual([{ name: "episode", value: "EMPIRE", type: schema.getType("Episode") }]);
   });
 
   it(`should include isConditional if a field has skip or include directives with variables`, () => {

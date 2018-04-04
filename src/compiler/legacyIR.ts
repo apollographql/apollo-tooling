@@ -1,4 +1,11 @@
-import { GraphQLSchema, GraphQLType, GraphQLObjectType, GraphQLCompositeType, DocumentNode } from 'graphql';
+import {
+  GraphQLSchema,
+  GraphQLType,
+  GraphQLObjectType,
+  GraphQLCompositeType,
+  GraphQLInputType,
+  DocumentNode
+} from 'graphql';
 
 import { compileToIR, CompilerContext, SelectionSet, Field, FragmentSpread } from './';
 
@@ -85,6 +92,7 @@ export interface BooleanCondition {
 export interface Argument {
   name: string;
   value: any;
+  type?: GraphQLInputType;
 }
 
 export function compileToLegacyIR(
@@ -156,7 +164,9 @@ class LegacyIRTransformer {
   transformSelectionSetToLegacyIR(selectionSet: SelectionSet) {
     const typeCase = typeCaseForSelectionSet(selectionSet, this.options.mergeInFieldsFromFragmentSpreads);
 
-    const fields: LegacyField[] = this.transformFieldsToLegacyIR(collectAndMergeFields(typeCase.default, false));
+    const fields: LegacyField[] = this.transformFieldsToLegacyIR(
+      collectAndMergeFields(typeCase.default, false)
+    );
 
     const inlineFragments: LegacyInlineFragment[] = typeCase.variants.flatMap(variant => {
       const fields = this.transformFieldsToLegacyIR(collectAndMergeFields(variant, false));
@@ -220,7 +230,7 @@ class LegacyIRTransformer {
         description,
         isDeprecated,
         deprecationReason,
-        ...selectionSet ? this.transformSelectionSetToLegacyIR(selectionSet) : {}
+        ...(selectionSet ? this.transformSelectionSetToLegacyIR(selectionSet) : {})
       } as LegacyField;
     });
   }

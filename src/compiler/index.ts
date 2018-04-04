@@ -6,6 +6,7 @@ import {
   Kind,
   isCompositeType,
   GraphQLOutputType,
+  GraphQLInputType,
   GraphQLScalarType,
   GraphQLEnumType,
   GraphQLInputObjectType,
@@ -19,7 +20,6 @@ import {
   FragmentDefinitionNode,
   SelectionSetNode,
   SelectionNode,
-  ArgumentNode,
   isSpecifiedScalarType
 } from 'graphql';
 
@@ -47,15 +47,6 @@ export interface CompilerContext {
   operations: { [operationName: string]: Operation };
   fragments: { [fragmentName: string]: Fragment };
   options: CompilerOptions;
-}
-
-function argumentsFromAST(args: ArgumentNode[]): Argument[] {
-  return (
-    args &&
-    args.map(arg => {
-      return { name: arg.name.value, value: valueFromValueNode(arg.value) };
-    })
-  );
 }
 
 export interface Operation {
@@ -88,6 +79,7 @@ export interface SelectionSet {
 export interface Argument {
   name: string;
   value: any;
+  type?: GraphQLInputType;
 }
 
 export type Selection = Field | TypeCondition | BooleanCondition | FragmentSpread;
@@ -164,14 +156,14 @@ export function compileToIR(
       fragmentSpread.selectionSet.possibleTypes.includes(type)
     );
 
-    fragmentSpread.isConditional = fragment.selectionSet.possibleTypes.some(type =>
-      !fragmentSpread.selectionSet.possibleTypes.includes(type)
+    fragmentSpread.isConditional = fragment.selectionSet.possibleTypes.some(
+      type => !fragmentSpread.selectionSet.possibleTypes.includes(type)
     );
 
     fragmentSpread.selectionSet = {
       possibleTypes,
       selections: fragment.selectionSet.selections
-    }
+    };
   }
 
   const typesUsed = compiler.typesUsed;
@@ -292,11 +284,6 @@ class Compiler {
         const name = selectionNode.name.value;
         const alias = selectionNode.alias ? selectionNode.alias.value : undefined;
 
-        const args =
-          selectionNode.arguments && selectionNode.arguments.length > 0
-            ? argumentsFromAST(selectionNode.arguments)
-            : undefined;
-
         const fieldDef = getFieldDef(this.schema, parentType, selectionNode);
         if (!fieldDef) {
           throw new GraphQLError(`Cannot query field "${name}" on type "${String(parentType)}"`, [
@@ -312,6 +299,19 @@ class Compiler {
         const { description, isDeprecated, deprecationReason } = fieldDef;
 
         const responseKey = alias || name;
+
+        const args =
+          selectionNode.arguments && selectionNode.arguments.length > 0
+            ? selectionNode.arguments.map(arg => {
+                const name = arg.name.value;
+                const argDef = fieldDef.args.find(argDef => argDef.name === arg.name.value);
+                return {
+                  name,
+                  value: valueFromValueNode(arg.value),
+                  type: (argDef && argDef.type) || undefined
+                };
+              })
+            : undefined;
 
         let field: Field = {
           kind: 'Field',
@@ -343,7 +343,7 @@ class Compiler {
       }
       case Kind.INLINE_FRAGMENT: {
         const typeNode = selectionNode.typeCondition;
-        const type = typeNode ? typeFromAST(this.schema, typeNode) as GraphQLCompositeType : parentType;
+        const type = typeNode ? (typeFromAST(this.schema, typeNode) as GraphQLCompositeType) : parentType;
         const possibleTypesForTypeCondition = this.possibleTypesForType(type).filter(type =>
           possibleTypes.includes(type)
         );

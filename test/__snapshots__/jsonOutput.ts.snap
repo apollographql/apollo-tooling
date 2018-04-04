@@ -30,14 +30,16 @@ exports[`JSON output should generate JSON output for a mutation with an enum and
 							\\"value\\": {
 								\\"kind\\": \\"Variable\\",
 								\\"variableName\\": \\"episode\\"
-							}
+							},
+							\\"type\\": \\"Episode\\"
 						},
 						{
 							\\"name\\": \\"review\\",
 							\\"value\\": {
 								\\"kind\\": \\"Variable\\",
 								\\"variableName\\": \\"review\\"
-							}
+							},
+							\\"type\\": \\"ReviewInput!\\"
 						}
 					],
 					\\"isConditional\\": false,
@@ -412,7 +414,8 @@ exports[`JSON output should generate JSON output for a query with an enum variab
 							\\"value\\": {
 								\\"kind\\": \\"Variable\\",
 								\\"variableName\\": \\"episode\\"
-							}
+							},
+							\\"type\\": \\"Episode\\"
 						}
 					],
 					\\"isConditional\\": false,
@@ -502,7 +505,8 @@ exports[`JSON output should generate JSON output for a subscription 1`] = `
 							\\"value\\": {
 								\\"kind\\": \\"Variable\\",
 								\\"variableName\\": \\"repoFullName\\"
-							}
+							},
+							\\"type\\": \\"String!\\"
 						}
 					],
 					\\"isConditional\\": false,
@@ -571,7 +575,8 @@ exports[`JSON output should generate JSON output for an input object type with d
 							\\"value\\": {
 								\\"kind\\": \\"Variable\\",
 								\\"variableName\\": \\"input\\"
-							}
+							},
+							\\"type\\": \\"ComplexInput!\\"
 						}
 					],
 					\\"isConditional\\": false,
