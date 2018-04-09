@@ -137,7 +137,17 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
   }
 
   public typeAliasForInputObjectType(inputObjectType: GraphQLInputObjectType) {
-    this.printer.enqueue(this.inputObjectDeclaration(inputObjectType));
+    const typeAlias = this.inputObjectDeclaration(inputObjectType);
+
+    const { description } = inputObjectType;
+    const exportDeclarationOptions = description
+      ? { comments: ` ${description.replace('\n', ' ')}` }
+      : {};
+
+    delete typeAlias.leadingComments
+    const exportedTypeAlias = this.exportDeclaration(typeAlias, exportDeclarationOptions);
+    this.printer.enqueue(exportedTypeAlias);
+
   }
 
   public interfacesForOperation(operation: Operation) {
