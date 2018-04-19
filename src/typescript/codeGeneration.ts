@@ -26,6 +26,7 @@ import CodeGenerator from '../utilities/CodeGenerator';
 
 import {
   interfaceDeclaration,
+  functionDeclaration,
   propertyDeclaration,
   propertySetsDeclaration,
   Property
@@ -41,12 +42,19 @@ export function generateSource(context: LegacyCompilerContext) {
   generator.printOnNewline('/* tslint:disable */');
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
 
+  generator.printOnNewline(`import gql from 'graphql-tag';`);
+  generator.printOnNewline(`import { Observable } from 'rxjs/Observable';`);
+  generator.printOnNewline(`import { ApolloQueryResult } from 'apollo-client';`);
+  generator.printOnNewline(`import { Apollo } from 'apollo-angular';`);
+  generator.printOnNewline(`import { FetchResult } from 'apollo-link';`);
+
   context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
   );
   Object.values(context.operations).forEach(operation => {
     interfaceVariablesDeclarationForOperation(generator, operation);
     interfaceDeclarationForOperation(generator, operation);
+    functionDeclarationForOperation(generator, operation);
   });
   Object.values(context.fragments).forEach(operation =>
     interfaceDeclarationForFragment(generator, operation)
@@ -198,6 +206,33 @@ export function interfaceDeclarationForOperation(
     interfaceName,
   }, () => {
     propertyDeclarations(generator, properties);
+  });
+}
+
+export function functionDeclarationForOperation(
+  generator: CodeGenerator,
+  {
+    operationName,
+    operationType,
+    variables,
+    sourceWithFragments,
+    source
+  }: LegacyOperation
+) {
+  var params: Property[] = [{ fieldName: "apollo", typeName: "Apollo" }]
+  const interfaceName = interfaceNameFromOperation({ operationName, operationType });
+
+  if (variables && variables.length > 0) {
+    params.push({ fieldName: "variables", typeName: interfaceName + 'Variables' });
+  }
+
+  functionDeclaration(generator, {
+    operationName,
+    operationType,
+    interfaceName,
+    sourceWithFragments: sourceWithFragments || source,
+    parameters: (gen) => propertyDeclarations(gen, params),
+    hasVariables: params.length > 1,
   });
 }
 

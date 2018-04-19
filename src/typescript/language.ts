@@ -46,6 +46,37 @@ export function interfaceDeclaration(generator: CodeGenerator, {
   generator.print(';');
 }
 
+export function functionDeclaration(generator: CodeGenerator, {
+  parameters,
+  operationName,
+  operationType,
+  interfaceName,
+  sourceWithFragments,
+  hasVariables,
+}: {
+    operationName: string,
+    operationType: string,
+    interfaceName: string,
+    sourceWithFragments: string,
+    parameters: (g: CodeGenerator) => void,
+    hasVariables: boolean,
+  }) {
+  generator.printNewlineIfNeeded();
+  generator.printNewline();
+  const methodName = ({ query: 'query', subscription: 'subscribe', mutation: 'mutate' } as any)[operationType];
+  const resultType = ({ query: 'ApolloQueryResult', mutation: 'FetchResult' } as any)[operationType];
+  generator.print(`export function ${operationName}(`)
+  parameters(generator);
+  generator.printNewline();
+  generator.print(`): Observable<${resultType}<${interfaceName}>> {`);
+  generator.printNewline();
+  generator.print(`  const ${operationType} = gql\`${sourceWithFragments}\`;`);
+  generator.printNewline();
+  console.log(parameters);
+  generator.print(`  return apollo.${methodName}<${interfaceName}>({ ${operationType}${hasVariables ? ", variables" : ""} });
+} `);
+}
+
 export function propertyDeclaration(generator: CodeGenerator, {
   fieldName,
   type,
