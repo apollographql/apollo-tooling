@@ -48,7 +48,7 @@
     "core-js": "^2.5.3",
     "glob": "^7.1.2",
     "graphql": "^0.13.1",
-    "graphql-config": "^1.1.1",
+    "graphql-config": "^2.0.1",
     "inflected": "^2.0.3",
     "node-fetch": "^1.7.3",
     "rimraf": "^2.6.2",
