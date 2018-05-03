@@ -165,6 +165,61 @@ object Hero {
 }"
 `;
 
+exports[`Scala code generation #classDeclarationForOperation() should emit a package declaration when the namespace option is specified 1`] = `
+"//  This file was automatically generated and should not be edited.
+
+
+package hello.world
+
+/**
+ * The episodes in the Star Wars trilogy
+ */
+object Episode {
+  /**
+   * Star Wars Episode IV: A New Hope, released in 1977.
+   */
+  val newhope = \\"NEWHOPE\\"
+  /**
+   * Star Wars Episode V: The Empire Strikes Back, released in 1980.
+   */
+  val empire = \\"EMPIRE\\"
+  /**
+   * Star Wars Episode VI: Return of the Jedi, released in 1983.
+   */
+  val jedi = \\"JEDI\\"
+}
+
+
+object HeroNameQuery extends com.apollographql.scalajs.GraphQLQuery {
+  val operationString =
+    \\"query HeroName($episode: Episode) {\\" +
+    \\"  hero(episode: $episode) {\\" +
+    \\"    name\\" +
+    \\"  }\\" +
+    \\"}\\"
+  val operation = com.apollographql.scalajs.gql(operationString)
+
+
+  case class Variables(episode: Option[String]) {
+  }
+
+  case class Data(hero: Option[Data.Hero]) {
+  }
+
+  object Data {
+    val possibleTypes = scala.collection.Set(\\"Query\\")
+
+
+    case class Hero(name: String) extends slinky.readwrite.WithRaw {
+    }
+
+    object Hero {
+      val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+    }
+  }
+}"
+`;
+
 exports[`Scala code generation #classDeclarationForOperation() should generate a class declaration for a mutation with variables 1`] = `
 "object CreateReviewMutation extends com.apollographql.scalajs.GraphQLMutation {
   val operationString =

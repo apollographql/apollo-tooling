@@ -13,6 +13,7 @@ import {
 } from 'graphql';
 
 import {
+  generateSource,
   classDeclarationForOperation,
   caseClassDeclarationForFragment,
   caseClassDeclarationForSelectionSet,
@@ -48,6 +49,7 @@ describe('Scala code generation', function() {
       const document = parse(source);
       let context = compileToLegacyIR(schema, document);
       options.generateOperationIds && Object.assign(context.options, { generateOperationIds: true, operationIdsMap: {} });
+      options.namespace && Object.assign(context.options, { namespace: options.namespace });
       generator.context = context;
       return context;
     };
@@ -60,6 +62,18 @@ describe('Scala code generation', function() {
   });
 
   describe('#classDeclarationForOperation()', function() {
+    test(`should emit a package declaration when the namespace option is specified`, function() {
+      const context = compileFromSource(`
+        query HeroName($episode: Episode) {
+          hero(episode: $episode) {
+            name
+          }
+        }
+      `, { namespace: "hello.world" });
+
+      expect(generateSource(context)).toMatchSnapshot();
+    });
+
     test(`should generate a class declaration for a query with variables`, function() {
       const { operations, fragments } = compileFromSource(`
         query HeroName($episode: Episode) {
