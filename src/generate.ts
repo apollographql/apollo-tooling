@@ -103,7 +103,7 @@ export default function generate(
         output = generateFlowSource(context);
         break;
       case 'scala':
-        output = generateScalaSource(context, options);
+        output = generateScalaSource(context);
     }
 
     if (outputPath) {
