@@ -66,8 +66,8 @@ export function caseClassDeclaration(
   }
 
   const paramsSection = (params || []).map(v => {
-    v.name + ": " + v.type + (v.defaultValue ? ` = ${v.defaultValue}` : "")
-  }).join(', ')
+    return v.name + ": " + v.type + (v.defaultValue ? ` = ${v.defaultValue}` : "");
+  }).join(', ');
 
   generator.printOnNewline(`case class ${caseClassName}(${paramsSection})` + (superclass ? ` extends ${superclass}` : ''));
   generator.pushScope({ typeName: caseClassName });
