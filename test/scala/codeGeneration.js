@@ -61,7 +61,7 @@ describe('Scala code generation', function() {
     resetGenerator();
   });
 
-  describe('#classDeclarationForOperation()', function() {
+  describe('#generateSource()', function() {
     test(`should emit a package declaration when the namespace option is specified`, function() {
       const context = compileFromSource(`
         query HeroName($episode: Episode) {
@@ -73,7 +73,9 @@ describe('Scala code generation', function() {
 
       expect(generateSource(context)).toMatchSnapshot();
     });
+  });
 
+  describe('#classDeclarationForOperation()', function() {
     test(`should generate a class declaration for a query with variables`, function() {
       const { operations, fragments } = compileFromSource(`
         query HeroName($episode: Episode) {
