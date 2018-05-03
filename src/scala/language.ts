@@ -53,8 +53,9 @@ export function caseClassDeclaration(
     superclass?: string,
     params?: {
       name: string,
-      type: string
-    }[]
+      type: string,
+      defaultValue?: string
+    }[],
   },
   closure?: () => void
 ) {
@@ -64,7 +65,11 @@ export function caseClassDeclaration(
     comment(generator, description);
   }
 
-  generator.printOnNewline(`case class ${caseClassName}(${(params || []).map(v => v.name + ": " + v.type).join(', ')})` + (superclass ? ` extends ${superclass}` : ''));
+  const paramsSection = (params || []).map(v => {
+    v.name + ": " + v.type + (v.defaultValue ? ` = ${v.defaultValue}` : "")
+  }).join(', ')
+
+  generator.printOnNewline(`case class ${caseClassName}(${paramsSection})` + (superclass ? ` extends ${superclass}` : ''));
   generator.pushScope({ typeName: caseClassName });
   if (closure) {
     generator.withinBlock(closure);

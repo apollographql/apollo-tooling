@@ -58,10 +58,10 @@ export function propertyFromInputField(context: LegacyCompilerContext, field: Gr
       parentCaseClassName,
       escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)))
     ], '.');
-    const typeName = typeNameFromGraphQLType(context, type, bareTypeName, isOptional);
+    const typeName = typeNameFromGraphQLType(context, type, bareTypeName, isOptional, true);
     return { ...field, propertyName, typeName, isOptional, isList };
   } else {
-    const typeName = typeNameFromGraphQLType(context, type, undefined, isOptional);
+    const typeName = typeNameFromGraphQLType(context, type, undefined, isOptional, true);
     return { ...field, propertyName, typeName, isOptional, isList };
   }
 }

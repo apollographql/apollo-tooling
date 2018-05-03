@@ -29,7 +29,7 @@ export function possibleTypesForType(context: LegacyCompilerContext, type: Graph
   }
 }
 
-export function typeNameFromGraphQLType(context: LegacyCompilerContext, type: GraphQLType, bareTypeName?: string, isOptional?: boolean): string {
+export function typeNameFromGraphQLType(context: LegacyCompilerContext, type: GraphQLType, bareTypeName?: string, isOptional?: boolean, isInputObject?: boolean): string {
   if (type instanceof GraphQLNonNull) {
     return typeNameFromGraphQLType(context, type.ofType, bareTypeName, isOptional || false)
   } else if (isOptional === undefined) {
@@ -47,7 +47,7 @@ export function typeNameFromGraphQLType(context: LegacyCompilerContext, type: Gr
     typeName = bareTypeName || type.name;
   }
 
-  return isOptional ? `Option[${typeName}]` : typeName;
+  return isOptional ? (isInputObject ? `scala.scalajs.js.UndefOr[${typeName}]` : `Option[${typeName}]`) : typeName;
 }
 
 function typeNameForScalarType(context: LegacyCompilerContext, type: GraphQLScalarType): string {

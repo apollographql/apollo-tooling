@@ -368,7 +368,8 @@ function caseClassDeclarationForInputObjectType(generator: CodeGenerator<LegacyC
   caseClassDeclaration(generator, { caseClassName, description, params: properties.map(p => {
     return {
       name: p.propertyName,
-      type: p.typeName
+      type: p.typeName,
+      defaultValue: p.isOptional ? "scala.scalajs.js.undefined" : ""
     };
   })}, () => {});
 }
