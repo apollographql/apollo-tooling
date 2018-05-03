@@ -466,7 +466,7 @@ exports[`Scala code generation #typeDeclarationForGraphQLType() should generate 
 "/**
  * The input object sent when someone is creating a new review
  */
-case class ReviewInput(stars: Int, commentary: Option[String], favoriteColor: Option[ColorInput]) {
+case class ReviewInput(stars: Int, commentary: scala.scalajs.js.UndefOr[String] = scala.scalajs.js.undefined, favoriteColor: scala.scalajs.js.UndefOr[ColorInput] = scala.scalajs.js.undefined) {
 }"
 `;
 
