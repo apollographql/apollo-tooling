@@ -42,9 +42,9 @@ export function createTypeAnnotationFromGraphQLTypeFunction(
       if (builtIn != null) {
         return builtIn;
       } else if (compilerOptions.passthroughCustomScalars) {
-        return t.anyTypeAnnotation();
+        return t.genericTypeAnnotation(t.identifier((compilerOptions.customScalarsPrefix || '') + (typeName || type.name)));
       } else {
-        return t.genericTypeAnnotation(t.identifier(typeName || type.name));
+        return t.anyTypeAnnotation();
       }
     } else if (type instanceof GraphQLNonNull) {
       // This won't happen; but for TypeScript completeness:
