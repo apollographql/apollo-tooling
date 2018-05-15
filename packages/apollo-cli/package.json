@@ -10,18 +10,32 @@
   "dependencies": {
     "@oclif/command": "^1.4.21",
     "@oclif/config": "^1.6.17",
-    "@oclif/plugin-help": "^1.2.10"
+    "@oclif/plugin-help": "^1.2.10",
+    "apollo-cache-inmemory": "^1.2.1",
+    "apollo-client": "^2.3.1",
+    "apollo-link": "^1.2.2",
+    "apollo-link-http": "^1.5.4",
+    "cli-ux": "^4.3.0",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.9.2",
+    "listr": "^0.14.1",
+    "node-fetch": "^2.1.2"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.4.2",
     "@types/chai": "^4.1.2",
+    "@types/graphql": "^0.13.1",
     "@types/mocha": "^5.0.0",
     "@types/node": "^9.6.11",
     "globby": "^8.0.1",
+    "husky": "^0.14.3",
+    "prettier": "^1.12.1",
+    "pretty-quick": "^1.4.1",
     "ts-node": "^5.0.1",
     "tslib": "^1.9.0",
     "typescript": "^2.8.3"
   },
+  "precommit": "pretty-quick --staged",
   "engines": {
     "node": ">=8.0.0"
   },
