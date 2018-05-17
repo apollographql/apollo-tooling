@@ -2,19 +2,21 @@ import { Command, flags } from "@oclif/command";
 import cli from "cli-ux";
 import * as Listr from "listr";
 import { createHttpLink } from "apollo-link-http";
+import * as NodeGit from "nodegit";
+import * as parseRemote from "parse-github-url";
 import {
   introspectionQuery,
   findBreakingChanges,
   findDangerousChanges,
   buildClientSchema,
-  IntrospectionSchema
+  IntrospectionSchema,
 } from "graphql";
 import { toPromise, execute } from "apollo-link";
 import fetch from "node-fetch";
 import gql from "graphql-tag";
 
-import { SCHEMA_QUERY } from "../../utils/operations/schema";
-import { getIdFromKey, engineLink } from "../../utils/engine";
+import { VALIDATE_SCHEMA } from "../../utils/operations/validateSchema";
+import { engineLink } from "../../utils/engine";
 
 export default class SchemaValidate extends Command {
   static description = "Validate a schema against previous registered schema";
@@ -24,13 +26,13 @@ export default class SchemaValidate extends Command {
     // flag with a value (-n, --name=VALUE)
     service: flags.string({
       char: "s",
-      description: "API_KEY for the Engine service"
+      description: "API_KEY for the Engine service",
     }),
     tag: flags.string({
       char: "t",
       description: "The tagged version of the schema to validate against",
-      default: "current"
-    })
+      default: "current",
+    }),
   };
 
   static args = [{ name: "file" }];
@@ -44,92 +46,89 @@ export default class SchemaValidate extends Command {
       );
       return;
     }
-    const variables = { id: getIdFromKey(service), tag: flags.tag };
 
     const tasks = new Listr([
       {
-        title: "Fetching Schemas",
-        task: () =>
-          new Listr(
-            [
+        title: "Fetching local schema",
+        task: async ctx => {
+          ctx.schema = await toPromise(
+            execute(
+              createHttpLink({
+                uri: "https://different-actress.glitch.me/",
+                fetch,
+              }),
               {
-                title: `Fetching ${variables.tag} from Engine`,
-                task: async ctx => {
-                  ctx.current = await toPromise(
-                    execute(engineLink, {
-                      query: SCHEMA_QUERY,
-                      variables,
-                      context: {
-                        headers: { ["x-api-key"]: flags.service }
-                      }
-                    })
-                  )
-                    .then(({ data, errors }) => {
-                      this.log(errors);
-                      // XXX better end user error message
-                      if (errors) throw new Error(errors);
-
-                      if (!data.service || !data.service.schema)
-                        throw new Error(
-                          `No schema found for tag "${
-                            variables.tag
-                          }" under service "${variables.id}"`
-                        );
-
-                      return buildClientSchema(data.service.schema);
-                    })
-                    .catch(e => this.error(e.message));
-                }
-              },
-              {
-                title: "Fetching local schema",
-                task: async ctx => {
-                  ctx.next = await toPromise(
-                    execute(
-                      createHttpLink({
-                        uri: "https://different-actress.glitch.me/",
-                        fetch
-                      }),
-                      {
-                        query: gql(introspectionQuery)
-                      }
-                    )
-                  ).then(({ data }) => buildClientSchema(data)); // XXX get from server or file?
-                }
+                query: gql(introspectionQuery),
               }
-            ],
-            { concurrent: true }
+            )
+          ).then(({ data }) => data); // XXX get from server or file?
+        },
+      },
+      {
+        title: "Validating Schema",
+        task: async ctx => {
+          // XXX pull from CI which is way eaiser and more reliable
+          const repo = await NodeGit.Repository.open(process.cwd());
+          const [commit, remote] = await Promise.all([
+            repo.getHeadCommit(),
+            repo.getRemote("origin"),
+          ]);
+          const { owner, name } = parseRemote(remote.url());
+          const git = {
+            sha: commit.sha(),
+            owner,
+            repo: name,
+          };
+
+          const variables = {
+            schema: ctx.schema.__schema,
+            tag: flags.tag,
+            git,
+          };
+
+          ctx.changes = await toPromise(
+            execute(engineLink, {
+              query: VALIDATE_SCHEMA,
+              variables,
+              context: {
+                headers: { ["x-api-key"]: service },
+              },
+            })
           )
+            .then(({ data, errors }) => {
+              console.log(errors);
+              // XXX better end user error message
+              if (errors) throw new Error(errors);
+              if (!data.validateSchema.success)
+                throw new Error(data.validateSchema.message);
+
+              return data.validateSchema.validations;
+            })
+            .catch(e => {
+              console.log(e);
+              this.error(e.message);
+            });
+        },
       },
-      {
-        title: "Finding breaking changes",
-        task: ctx => {
-          ctx.breaking = findBreakingChanges(ctx.current, ctx.next);
-        }
-      },
-      {
-        title: "Finding dangerous changes",
-        task: ctx => {
-          ctx.dangerous = findDangerousChanges(ctx.current, ctx.next);
-        }
-      }
     ]);
 
     await tasks
       .run()
-      .then(({ breaking, dangerous }) => {
+      .then(({ changes }) => {
+        const breaking = changes.filter(({ type }) => type === "BREAKING");
+        const dangerous = changes.filter(({ type }) => type === "DANGEROUS");
         if (breaking.length)
           this.error(
             "Found breaking changes:\n" +
               breaking
-                .map(({ type, description }) => `${type}: ${description}`)
+                .map(({ code, description }) => `${code}: ${description}`)
                 .join("\n")
           );
         if (dangerous.length)
           this.warn(
             "Found potentially dangerous changes:\n" +
               dangerous
-                .map(({ type, description }) => `${type}: ${description}`)
+                .map(({ code, description }) => `${code}: ${description}`)
                 .join("\n")
           );
         if (!breaking.length && !dangerous.length) {

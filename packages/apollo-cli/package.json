@@ -19,7 +19,9 @@
     "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
     "listr": "^0.14.1",
-    "node-fetch": "^2.1.2"
+    "node-fetch": "^2.1.2",
+    "nodegit": "^0.22.0",
+    "parse-github-url": "^1.0.2"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.4.2",

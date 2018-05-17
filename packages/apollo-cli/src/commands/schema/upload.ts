@@ -6,7 +6,7 @@ import {
   introspectionQuery,
   findBreakingChanges,
   buildClientSchema,
-  IntrospectionSchema
+  IntrospectionSchema,
 } from "graphql";
 import { toPromise, execute } from "apollo-link";
 import fetch from "node-fetch";
@@ -23,13 +23,13 @@ export default class SchemaUpload extends Command {
     // flag with a value (-n, --name=VALUE)
     service: flags.string({
       char: "s",
-      description: "API_KEY for the Engine service"
+      description: "API_KEY for the Engine service",
     }),
     tag: flags.string({
       char: "t",
       description: "The tag for this version of the schema",
-      default: "current"
-    })
+      default: "current",
+    }),
   };
 
   async run() {
@@ -50,10 +50,10 @@ export default class SchemaUpload extends Command {
             execute(
               createHttpLink({
                 uri: "https://different-actress.glitch.me/",
-                fetch
+                fetch,
               }),
               {
-                query: gql(introspectionQuery)
+                query: gql(introspectionQuery),
               }
             )
           )
@@ -66,7 +66,7 @@ export default class SchemaUpload extends Command {
               this.error(e);
               this.exit();
             }); // XXX get from server or file?
-        }
+        },
       },
       {
         title: `Uploading ${flags.tag} to Engine`,
@@ -78,8 +78,8 @@ export default class SchemaUpload extends Command {
               query: UPLOAD_SCHEMA,
               variables,
               context: {
-                headers: { ["x-api-key"]: service }
-              }
+                headers: { ["x-api-key"]: service },
+              },
             })
           )
             .then(({ data, errors }) => {
@@ -88,20 +88,21 @@ export default class SchemaUpload extends Command {
               return data.uploadSchema;
             })
             .catch(e => this.error(e.message));
-        }
-      }
+        },
+      },
     ]);
 
     tasks.run().then(({ current }) => {
       if (!current) return;
 
       this.log(`Schema successfully uploaded to Engine!`);
-      cli.url(
-        "View in Engine",
-        `https://engine.apollographql.com/service/${getIdFromKey(
-          service
-        )}?tab=overview&schema=${current.hash}`
-      );
+      this.log(`Schema version: ${current.hash}`);
+      // cli.url(
+      //   "View in Engine",
+      //   `https://engine.apollographql.com/service/${getIdFromKey(
+      //     service
+      //   )}?tab=overview&schema=${current.hash}`
+      // );
     });
   }
 }
