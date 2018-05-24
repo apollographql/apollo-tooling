@@ -18,21 +18,30 @@
     "cli-ux": "^4.3.0",
     "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
+    "heroku-cli-util": "^8.0.9",
     "listr": "^0.14.1",
     "node-fetch": "^2.1.2",
     "nodegit": "^0.22.0",
     "parse-github-url": "^1.0.2"
   },
   "devDependencies": {
+    "@fancy-test/nock": "^0.1.1",
     "@oclif/dev-cli": "^1.4.2",
+    "@oclif/test": "^1.0.6",
     "@types/chai": "^4.1.2",
     "@types/graphql": "^0.13.1",
+    "@types/jest": "^22.2.3",
     "@types/mocha": "^5.0.0",
+    "@types/nock": "^9.1.3",
     "@types/node": "^9.6.11",
+    "chai": "^4.1.2",
     "globby": "^8.0.1",
     "husky": "^0.14.3",
+    "jest": "^22.4.4",
+    "nock": "^9.2.6",
     "prettier": "^1.12.1",
     "pretty-quick": "^1.4.1",
+    "ts-jest": "^22.4.6",
     "ts-node": "^5.0.1",
     "tslib": "^1.9.0",
     "typescript": "^2.8.3"
@@ -58,6 +67,21 @@
     "plugins": [
       "@oclif/plugin-help"
     ]
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "testEnvironment": "node"
   },
   "repository": "apollographql/apollo-cli",
   "scripts": {
