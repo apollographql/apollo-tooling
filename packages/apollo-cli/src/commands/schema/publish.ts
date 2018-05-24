@@ -17,12 +17,6 @@ export default class SchemaPublish extends Command {
       char: "s",
       description: "ENGINE_API_KEY for the Engine service",
     }),
-    // XXX turn on custom tags when supported in engine
-    // tag: flags.string({
-    //   char: "t",
-    //   description: "The tag for this version of the schema",
-    //   default: "current",
-    // }),
     header: flags.string({
       multiple: true,
       parse: header => {

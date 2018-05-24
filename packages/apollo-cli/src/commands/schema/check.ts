@@ -1,41 +1,41 @@
 import { Command, flags } from "@oclif/command";
+import { table, styledJSON } from "heroku-cli-util";
 import cli from "cli-ux";
 import * as Listr from "listr";
-import { createHttpLink } from "apollo-link-http";
-import * as NodeGit from "nodegit";
-import * as parseRemote from "parse-github-url";
-import {
-  introspectionQuery,
-  findBreakingChanges,
-  findDangerousChanges,
-  buildClientSchema,
-  IntrospectionSchema,
-} from "graphql";
+
 import { toPromise, execute } from "apollo-link";
-import fetch from "node-fetch";
-import gql from "graphql-tag";
 
 import { VALIDATE_SCHEMA } from "../../operations/validateSchema";
 import { engineLink, getIdFromKey } from "../../engine";
+import { fetchSchema } from "../../fetch-schema";
 
 export default class SchemaCheck extends Command {
   static description = "Check a schema against previous registered schema";
 
   static flags = {
     help: flags.help({ char: "h" }),
-    // flag with a value (-n, --name=VALUE)
     service: flags.string({
       char: "s",
-      description: "API_KEY for the Engine service",
+      description: "ENGINE_API_KEY for the Engine service",
     }),
-    tag: flags.string({
-      char: "t",
-      description: "The tagged version of the schema to compare against",
-      default: "current",
+    header: flags.string({
+      multiple: true,
+      parse: header => {
+        const [key, value] = header.split(":");
+        return { [key.trim()]: value.trim() };
+      },
+      description:
+        "Additional headers to send to server for introspectionQuery",
     }),
-    schema: flags.string({
-      description: "The location of the schema or introspection query result",
+    endpoint: flags.string({
+      char: "e",
+      description:
+        "The location of the server to from which to fetch the schema",
       default: "http://localhost:4000/graphql", // apollo-server 2.0 default address
+    }),
+    json: flags.boolean({
+      description: "output result as json",
+      default: false,
     }),
   };
 
@@ -53,11 +53,7 @@ export default class SchemaCheck extends Command {
       {
         title: "Fetching local schema",
         task: async ctx => {
-          ctx.schema = await toPromise(
-            execute(createHttpLink({ uri: flags.schema, fetch }), {
-              query: gql(introspectionQuery),
-            })
-          ).then(({ data }) => data); // XXX get from server or file?
+          ctx.schema = await fetchSchema(flags);
         },
       },
       {
@@ -78,8 +74,10 @@ export default class SchemaCheck extends Command {
 
           const variables = {
             id: getIdFromKey(service),
-            schema: ctx.schema.__schema,
-            tag: flags.tag,
+            schema: ctx.schema,
+            // XXX hardcoded for now
+            tag: "current",
+            // tag: flags.tag,
             // git,
           };
 
@@ -93,45 +91,25 @@ export default class SchemaCheck extends Command {
             })
           )
             .then(({ data, errors }) => {
-              console.log(errors);
-              console.log(data);
               // XXX better end user error message
               if (errors) throw new Error(errors);
-
-              return data.service.schema.checkSchema;
+              return data.service.schema.checkSchema.changes;
             })
-            .catch(e => {
-              console.log(e);
-              this.error(e.message);
-            });
+            .catch(e => this.error(e.message));
         },
       },
     ]);
 
-    await tasks
-      .run()
-      .then(({ changes }) => {
-        console.log(changes);
-        // const breaking = changes.filter(({ type }) => type === "BREAKING");
-        // const dangerous = changes.filter(({ type }) => type === "DANGEROUS");
-        // if (breaking.length)
-        //   this.error(
-        //     "Found breaking changes:\n" +
-        //       breaking
-        //         .map(({ code, description }) => `${code}: ${description}`)
-        //         .join("\n")
-        //   );
-        // if (dangerous.length)
-        //   this.warn(
-        //     "Found potentially dangerous changes:\n" +
-        //       dangerous
-        //         .map(({ code, description }) => `${code}: ${description}`)
-        //         .join("\n")
-        //   );
-        // if (!breaking.length && !dangerous.length) {
-        //   this.log("No breaking or dangerous changes in this version!");
-        // }
-      })
-      .catch(this.error);
+    return tasks.run().then(({ changes }) => {
+      if (flags.json) return styledJSON({ changes });
+      if (changes.length === 0) {
+        return this.log("No changes present between schemas");
+      }
+      return table(changes, [
+        { key: "type" },
+        { key: "code" },
+        { key: "description" },
+      ]);
+    });
   }
 }
