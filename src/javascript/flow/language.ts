@@ -76,7 +76,8 @@ export default class FlowGenerator {
       });
 
     const typeAlias = this.typeAliasObject(name, fields, {
-      keyInheritsNullability: true
+      keyInheritsNullability: true,
+      exact: true
     });
 
     return typeAlias;
@@ -120,16 +121,25 @@ export default class FlowGenerator {
   }
 
   public typeAliasObject(name: string, fields: ObjectProperty[], {
-    keyInheritsNullability = false
+    keyInheritsNullability = false,
+    exact = false
   }: {
-    keyInheritsNullability?: boolean
+    keyInheritsNullability?: boolean,
+    exact?: boolean
   } = {}) {
+
+    const objectTypeAnnotation = this.objectTypeAnnotation(fields, {
+      keyInheritsNullability
+    })
+
+    if (exact) {
+      objectTypeAnnotation.exact = true;
+    }
+
     return t.typeAlias(
       t.identifier(name),
       undefined,
-      this.objectTypeAnnotation(fields, {
-        keyInheritsNullability
-      })
+      objectTypeAnnotation
     );
   }
 

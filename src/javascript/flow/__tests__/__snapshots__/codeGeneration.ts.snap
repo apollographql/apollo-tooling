@@ -628,18 +628,18 @@ export type HeroNameVariables = {
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-export type ReviewInput = {
+export type ReviewInput = {|
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
-};
+|};
 
 // The input object sent when passing in a color
-export type ColorInput = {
+export type ColorInput = {|
   red: number,
   green: number,
   blue: number,
-};
+|};
 
 //==============================================================
 // END Enums and Input Objects
@@ -686,18 +686,18 @@ export type SomeOtherVariables = {
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-export type ReviewInput = {
+export type ReviewInput = {|
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
-};
+|};
 
 // The input object sent when passing in a color
-export type ColorInput = {
+export type ColorInput = {|
   red: number,
   green: number,
   blue: number,
-};
+|};
 
 //==============================================================
 // END Enums and Input Objects
@@ -745,18 +745,18 @@ export type ReviewMovieVariables = {
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-export type ReviewInput = {
+export type ReviewInput = {|
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
-};
+|};
 
 // The input object sent when passing in a color
-export type ColorInput = {
+export type ColorInput = {|
   red: number,
   green: number,
   blue: number,
-};
+|};
 
 //==============================================================
 // END Enums and Input Objects
@@ -794,18 +794,18 @@ export type someFragment = {
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-export type ReviewInput = {
+export type ReviewInput = {|
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
-};
+|};
 
 // The input object sent when passing in a color
-export type ColorInput = {
+export type ColorInput = {|
   red: number,
   green: number,
   blue: number,
-};
+|};
 
 //==============================================================
 // END Enums and Input Objects
@@ -1002,18 +1002,18 @@ export type ReviewMovieVariables = {
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 // The input object sent when someone is creating a new review
-export type ReviewInput = {
+export type ReviewInput = {|
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
-};
+|};
 
 // The input object sent when passing in a color
-export type ColorInput = {
+export type ColorInput = {|
   red: number,
   green: number,
   blue: number,
-};
+|};
 
 //==============================================================
 // END Enums and Input Objects
