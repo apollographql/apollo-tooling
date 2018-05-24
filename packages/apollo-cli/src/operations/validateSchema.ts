@@ -11,7 +11,6 @@ export const VALIDATE_SCHEMA = gql`
     service(id: $id) {
       schema(hash: $hash, tag: $tag) {
         checkSchema(schema: $schema, gitContext: $gitContext) {
-          sdl
           changes {
             type
             code

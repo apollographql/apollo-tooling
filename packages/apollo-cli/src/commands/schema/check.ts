@@ -8,6 +8,7 @@ import { toPromise, execute } from "apollo-link";
 import { VALIDATE_SCHEMA } from "../../operations/validateSchema";
 import { engineLink, getIdFromKey } from "../../engine";
 import { fetchSchema } from "../../fetch-schema";
+import { gitInfo } from "../../git";
 
 export default class SchemaCheck extends Command {
   static description = "Check a schema against previous registered schema";
@@ -59,26 +60,14 @@ export default class SchemaCheck extends Command {
       {
         title: "Checking Schema",
         task: async ctx => {
-          // XXX pull from CI which is way eaiser and more reliable
-          // const repo = await NodeGit.Repository.open(process.cwd());
-          // const [commit, remote] = await Promise.all([
-          //   repo.getHeadCommit(),
-          //   repo.getRemote("origin"),
-          // ]);
-          // const { owner, name } = parseRemote(remote.url());
-          // const git = {
-          //   sha: commit.sha(),
-          //   owner,
-          //   repo: name,
-          // };
+          const gitContext = await gitInfo();
 
           const variables = {
             id: getIdFromKey(service),
             schema: ctx.schema,
             // XXX hardcoded for now
             tag: "current",
-            // tag: flags.tag,
-            // git,
+            gitContext,
           };
 
           ctx.changes = await toPromise(

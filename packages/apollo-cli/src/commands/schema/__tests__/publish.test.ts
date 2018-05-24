@@ -47,7 +47,7 @@ const engineSuccess = (
     });
 };
 
-describe("happy paths", () => {
+describe("successful uploads", () => {
   test
     .nock("http://localhost:4000", localSuccess)
     .nock(ENGINE_URI, engineSuccess())
@@ -137,7 +137,7 @@ describe("happy paths", () => {
     });
 });
 
-describe("service authentication", () => {
+describe("error handling", () => {
   test
     .command(["schema:publish"])
     .catch(err => expect(err.message).toMatch(/No service passed/))

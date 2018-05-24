@@ -7,6 +7,7 @@ import { toPromise, execute } from "apollo-link";
 import { UPLOAD_SCHEMA } from "../../operations/uploadSchema";
 import { getIdFromKey, engineLink } from "../../engine";
 import { fetchSchema } from "../../fetch-schema";
+import { gitInfo } from "../../git";
 
 export default class SchemaPublish extends Command {
   static description = "Publish a schema to Engine";
@@ -61,7 +62,9 @@ export default class SchemaPublish extends Command {
       {
         title: `Publishing schema as tag: ${flags.tag} to Engine`,
         task: async ctx => {
-          const variables = { schema: ctx.schema, tag: flags.tag };
+          const gitContext = await gitInfo();
+          const variables = { schema: ctx.schema, tag: flags.tag, gitContext };
+
           ctx.current = await toPromise(
             execute(engineLink, {
               query: UPLOAD_SCHEMA,

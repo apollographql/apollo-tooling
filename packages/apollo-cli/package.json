@@ -11,18 +11,17 @@
     "@oclif/command": "^1.4.21",
     "@oclif/config": "^1.6.17",
     "@oclif/plugin-help": "^1.2.10",
-    "apollo-cache-inmemory": "^1.2.1",
-    "apollo-client": "^2.3.1",
     "apollo-link": "^1.2.2",
     "apollo-link-http": "^1.5.4",
     "cli-ux": "^4.3.0",
+    "env-ci": "^2.1.0",
+    "git-parse": "^1.0.3",
+    "git-rev-sync": "^1.12.0",
     "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
     "heroku-cli-util": "^8.0.9",
     "listr": "^0.14.1",
-    "node-fetch": "^2.1.2",
-    "nodegit": "^0.22.0",
-    "parse-github-url": "^1.0.2"
+    "node-fetch": "^2.1.2"
   },
   "devDependencies": {
     "@fancy-test/nock": "^0.1.1",
