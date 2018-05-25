@@ -1,0 +1,76 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fields shows notice for additions 1`] = `
+"input AddedInput { 
+  
+  # Warning
+  firstName: String!
+
+  # Notice
+  lastName: String
+
+}
+
+type User { 
+  
+  # Notice
+  firstName: String!
+
+}
+
+enum AddedEnum { 
+  
+  # Notice
+  TWO
+
+}
+
+interface AddedInterface { 
+  
+  # Notice
+  firstName(arg: String): String
+
+}
+
+"
+`;
+
+exports[`shows added types 1`] = `
+"type AddedType { 
+  id: ID!
+}
+
+enum AddedEnum { 
+  ONE
+}
+
+input AddedInput { 
+  id: ID!
+}
+
+scalar AddedScalar
+
+interface AddedInterface { 
+  id: ID!
+}
+
+union AddedUnion = User
+
+"
+`;
+
+exports[`shows removed types 1`] = `
+"type RemovedType { }
+
+enum RemovedEnum { }
+
+input RemovedInput { }
+
+scalar RemovedScalar
+
+interface RemovedInterface { }
+
+union RemovedUnion = User
+
+"
+`;

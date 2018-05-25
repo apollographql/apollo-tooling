@@ -22,7 +22,7 @@ export default class SchemaPublish extends Command {
       multiple: true,
       parse: header => {
         const [key, value] = header.split(":");
-        return { [key.trim()]: value.trim() };
+        return JSON.stringify({ [key.trim()]: value.trim() });
       },
       description:
         "Additional headers to send to server for introspectionQuery",
@@ -35,14 +35,13 @@ export default class SchemaPublish extends Command {
     }),
     json: flags.boolean({
       description: "output successful publish result as json",
-      default: false,
     }),
   };
 
   async run() {
     const { flags } = this.parse(SchemaPublish);
     // hardcoded to current until service / schema / tag is settled
-    flags.tag = "current";
+    const tag = "current";
 
     const service = process.env.ENGINE_API_KEY || flags.service;
     if (!service) {
@@ -52,18 +51,22 @@ export default class SchemaPublish extends Command {
       return;
     }
 
+    const header = Array.isArray(flags.header) ? flags.header : [flags.header];
     const tasks = new Listr([
       {
         title: "Fetching current schema",
         task: async ctx => {
-          ctx.schema = await fetchSchema(flags).catch(this.error);
+          ctx.schema = await fetchSchema({
+            endpoint: flags.endpoint,
+            header: header.filter(x => !!x).map(x => JSON.parse(x)),
+          }).catch(this.error);
         },
       },
       {
         title: `Publishing ${getIdFromKey(service)} to Engine`,
         task: async ctx => {
           const gitContext = await gitInfo();
-          const variables = { schema: ctx.schema, tag: flags.tag, gitContext };
+          const variables = { schema: ctx.schema, tag, gitContext };
 
           ctx.current = await toPromise(
             execute(engineLink, {
@@ -76,8 +79,11 @@ export default class SchemaPublish extends Command {
           )
             .then(async ({ data, errors }) => {
               // XXX better end user error message
-              if (errors) throw new Error(errors);
-              return data.uploadSchema;
+              if (errors)
+                throw new Error(
+                  errors.map(({ message }) => message).join("\n")
+                );
+              return data!.uploadSchema;
             })
             .catch(e => this.error(e.message));
         },
@@ -97,7 +103,11 @@ export default class SchemaPublish extends Command {
       this.log("\n");
       table([result], {
         columns: [
-          { key: "hash", label: "id", format: hash => hash.slice(0, 6) },
+          {
+            key: "hash",
+            label: "id",
+            format: (hash: string) => hash.slice(0, 6),
+          },
           { key: "service", label: "schema" },
           { key: "tag" },
         ],

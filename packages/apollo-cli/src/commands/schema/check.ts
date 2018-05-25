@@ -23,7 +23,7 @@ export default class SchemaCheck extends Command {
       multiple: true,
       parse: header => {
         const [key, value] = header.split(":");
-        return { [key.trim()]: value.trim() };
+        return JSON.stringify({ [key.trim()]: value.trim() });
       },
       description:
         "Additional headers to send to server for introspectionQuery",
@@ -36,7 +36,6 @@ export default class SchemaCheck extends Command {
     }),
     json: flags.boolean({
       description: "output result as json",
-      default: false,
     }),
   };
 
@@ -50,11 +49,15 @@ export default class SchemaCheck extends Command {
       return;
     }
 
+    const header = Array.isArray(flags.header) ? flags.header : [flags.header];
     const tasks = new Listr([
       {
         title: "Fetching local schema",
         task: async ctx => {
-          ctx.schema = await fetchSchema(flags);
+          ctx.schema = await fetchSchema({
+            endpoint: flags.endpoint,
+            header: header.filter(x => Boolean(x)).map(x => JSON.parse(x)),
+          });
         },
       },
       {
@@ -81,8 +84,11 @@ export default class SchemaCheck extends Command {
           )
             .then(({ data, errors }) => {
               // XXX better end user error message
-              if (errors) throw new Error(errors);
-              return data.service.schema.checkSchema.changes;
+              if (errors)
+                throw new Error(
+                  errors.map(({ message }) => message).join("\n")
+                );
+              return data!.service.schema.checkSchema.changes;
             })
             .catch(e => this.error(e.message));
         },

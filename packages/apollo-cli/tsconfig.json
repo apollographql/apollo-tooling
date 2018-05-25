@@ -9,10 +9,20 @@
     "rootDirs": [
       "./src"
     ],
+    "lib": ["dom", "es6", "esnext.asynciterable"],
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "./@types/*"
+      ]
+    }
   },
   "include": [
     "./src/**/*"
+  ],
+  "exclude": [
+    "./**/__tests__/**/*"
   ]
 }

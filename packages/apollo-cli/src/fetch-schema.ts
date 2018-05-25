@@ -1,16 +1,19 @@
 import * as fs from "fs";
 import * as path from "path";
 import fetch from "node-fetch";
+import gql from "graphql-tag";
 import {
+  ExecutionResult,
   buildSchema,
   execute as graphql,
-  parse,
   introspectionQuery,
 } from "graphql";
 import { execute, toPromise } from "apollo-link";
 import { createHttpLink } from "apollo-link-http";
 
-const fromFile = ({ endpoint }) => {
+const introspection = gql(introspectionQuery);
+
+const fromFile = async ({ endpoint }: { endpoint: string }) => {
   try {
     const result = fs.readFileSync(endpoint, {
       encoding: "utf-8",
@@ -22,29 +25,40 @@ const fromFile = ({ endpoint }) => {
 
     if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
       const schema = buildSchema(result);
-      const localSchema = graphql(schema, parse(introspectionQuery));
-      return localSchema.data.__schema;
+      const localSchema = await graphql(schema, introspection);
+      if (!localSchema || localSchema.errors)
+        throw new Error(
+          localSchema.errors!.map(({ message }) => message).join("\n")
+        );
+      return localSchema.data!.__schema;
     }
   } catch (e) {
-    throw new Error(`Unable to read file ${flags.endpoint}. ${e.message}`);
+    throw new Error(`Unable to read file ${endpoint}. ${e.message}`);
   }
 };
 
-export const fetchSchema = async ({ endpoint, header }) => {
+export interface FetchParams {
+  endpoint: string | undefined;
+  header?: Object[];
+}
+
+export const fetchSchema = async ({ endpoint, header }: FetchParams) => {
+  if (!endpoint) throw new Error("No endpoint provided when fetching schema");
   if (fs.existsSync(endpoint)) return fromFile({ endpoint });
 
-  // XXX handle errors in finding schema
   const headers = header
     ? header.reduce((current, next) => ({ ...current, ...next }), {})
     : {};
 
   return toPromise(
-    execute(createHttpLink({ uri: endpoint, fetch }), {
-      query: parse(introspectionQuery),
+    // XXX node-fetch isn't compatiable typescript wise here?
+    execute(createHttpLink({ uri: endpoint, fetch } as any), {
+      query: introspection,
       context: { headers },
     })
-  ).then(({ data, errors }) => {
-    if (errors) throw new Error(errors);
-    return data.__schema;
+  ).then(({ data, errors }: any) => {
+    if (errors)
+      throw new Error(errors.map(({ message }: Error) => message).join("\n"));
+    return data!.__schema;
   });
 };
