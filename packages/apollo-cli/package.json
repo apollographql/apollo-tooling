@@ -87,7 +87,7 @@
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "tsc -p . --noEmit",
     "prepack": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme",
-    "test": "echo NO TESTS",
+    "test": "jest",
     "version": "oclif-dev readme && git add README.md"
   },
   "types": "lib/index.d.ts"

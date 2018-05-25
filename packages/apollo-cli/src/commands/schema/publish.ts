@@ -60,7 +60,7 @@ export default class SchemaPublish extends Command {
         },
       },
       {
-        title: `Publishing schema as tag: ${flags.tag} to Engine`,
+        title: `Publishing ${getIdFromKey(service)} to Engine`,
         task: async ctx => {
           const gitContext = await gitInfo();
           const variables = { schema: ctx.schema, tag: flags.tag, gitContext };
@@ -94,13 +94,15 @@ export default class SchemaPublish extends Command {
       };
 
       if (flags.json) return styledJSON(result);
-      return table([result], {
+      this.log("\n");
+      table([result], {
         columns: [
-          { key: "service" },
-          { key: "hash", format: hash => hash.slice(0, 6) },
+          { key: "hash", label: "id", format: hash => hash.slice(0, 6) },
+          { key: "service", label: "schema" },
           { key: "tag" },
         ],
       });
+      this.log("\n");
     });
   }
 }

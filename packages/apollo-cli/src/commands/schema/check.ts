@@ -58,7 +58,7 @@ export default class SchemaCheck extends Command {
         },
       },
       {
-        title: "Checking Schema",
+        title: "Checking schema for changes",
         task: async ctx => {
           const gitContext = await gitInfo();
 
@@ -92,13 +92,15 @@ export default class SchemaCheck extends Command {
     return tasks.run().then(({ changes }) => {
       if (flags.json) return styledJSON({ changes });
       if (changes.length === 0) {
-        return this.log("No changes present between schemas");
+        return this.log("\nNo changes present between schemas\n");
       }
-      return table(changes, [
+      this.log("\n");
+      table(changes, [
         { key: "type" },
         { key: "code" },
         { key: "description" },
       ]);
+      this.log("\n");
     });
   }
 }
