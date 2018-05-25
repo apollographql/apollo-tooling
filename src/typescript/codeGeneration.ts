@@ -28,6 +28,7 @@ import {
   interfaceDeclaration,
   propertyDeclaration,
   propertySetsDeclaration,
+  codeGenerationDeclaration,
   Property
 } from './language';
 
@@ -35,11 +36,20 @@ import {
   typeNameFromGraphQLType,
 } from './types';
 
-export function generateSource(context: LegacyCompilerContext) {
+export function generateSource(context: LegacyCompilerContext, tagName: string) {
   const generator = new CodeGenerator<LegacyCompilerContext>(context);
 
   generator.printOnNewline('/* tslint:disable */');
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
+
+  const {codeGenerationModule} = context.options;
+  if (codeGenerationModule) {
+    generator.printOnNewline('');
+    generator.printOnNewline(`import codeGenerationModule from "${codeGenerationModule}"`);
+    if (tagName) {
+      generator.printOnNewline(`import ${tagName} from "graphql-tag";`);
+    }
+  }
 
   context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
@@ -47,6 +57,9 @@ export function generateSource(context: LegacyCompilerContext) {
   Object.values(context.operations).forEach(operation => {
     interfaceVariablesDeclarationForOperation(generator, operation);
     interfaceDeclarationForOperation(generator, operation);
+    if (codeGenerationModule) {
+      codeGenerationDeclarationForOperation(generator, tagName, operation);
+    }
   });
   Object.values(context.fragments).forEach(operation =>
     interfaceDeclarationForFragment(generator, operation)
@@ -199,6 +212,20 @@ export function interfaceDeclarationForOperation(
   }, () => {
     propertyDeclarations(generator, properties);
   });
+}
+
+export function codeGenerationDeclarationForOperation(
+  generator: CodeGenerator,
+  tagName: string,
+  {
+    operationName,
+    operationType,
+    variables,
+    source,
+  }: LegacyOperation
+) {
+  const interfaceName = interfaceNameFromOperation({ operationName, operationType });
+  codeGenerationDeclaration(generator, {interfaceName, tagName, operationType, variables, source});
 }
 
 export function interfaceDeclarationForFragment(

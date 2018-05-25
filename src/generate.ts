@@ -97,7 +97,7 @@ export default function generate(
         break;
       case 'ts':
       case 'typescript':
-        output = generateTypescriptSource(context);
+        output = generateTypescriptSource(context, tagName);
         break;
       case 'flow':
         output = generateFlowSource(context);

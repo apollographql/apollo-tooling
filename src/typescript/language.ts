@@ -46,6 +46,32 @@ export function interfaceDeclaration(generator: CodeGenerator, {
   generator.print(';');
 }
 
+export function codeGenerationDeclaration(generator: CodeGenerator, {
+  interfaceName,
+  tagName,
+  operationType,
+  variables,
+  source,
+}: { interfaceName: string; tagName: string; operationType: string; variables: any[], source: string; }) {
+  generator.printNewlineIfNeeded();
+  generator.printNewline();
+
+
+  generator.print(`export const do${interfaceName} = codeGenerationModule<`);
+  generator.print(`${interfaceName}`);
+  if (variables && variables.length) {
+    generator.print(`, ${interfaceName}Variables`);
+  } else {
+    generator.print(`, null`);
+  }
+  generator.print(`, {operationType: "${operationType}"}`);
+
+  generator.print(`>(`);
+  generator.printOnNewline(`${tagName}\`${source}\`,`);
+  generator.printOnNewline(`{operationType: "${operationType}"}`);
+  generator.printOnNewline(`);`);
+}
+
 export function propertyDeclaration(generator: CodeGenerator, {
   fieldName,
   type,
