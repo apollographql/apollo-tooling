@@ -23,9 +23,9 @@ export enum TypeKind {
 }
 
 export enum ChangeType {
-  BREAKING,
-  WARNING,
-  NOTICE,
+  FAILURE = "FAILURE",
+  WARNING = "WARNING",
+  NOTICE = "NOTICE",
 }
 
 export type DiffType = TypeDefinitionNode & { change?: Change };

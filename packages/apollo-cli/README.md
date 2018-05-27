@@ -17,11 +17,11 @@ CLI for the Apollo platform of tooling
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g apollo-cli
+$ npm install -g @apollographql/cli
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo-cli/0.0.0 linux-x64 node-v9.4.0
+@apollographql/cli/1.0.0-canary.0 linux-x64 node-v9.4.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -30,30 +30,12 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [apollo hello [FILE]](#apollo-hello-file)
-* [apollo help [COMMAND]](#apollo-help-command)
+* [`apollo help [COMMAND]`](#apollo-help-command)
+* [`apollo schema [FILE]`](#apollo-schema-file)
+* [`apollo schema:check`](#apollo-schemacheck)
+* [`apollo schema:publish`](#apollo-schemapublish)
 
-## apollo hello [FILE]
-
-describe the command here
-
-```
-USAGE
-  $ apollo hello [FILE]
-
-OPTIONS
-  -f, --force
-  -h, --help       show CLI help
-  -n, --name=name  name to print
-
-EXAMPLE
-  $ apollo hello
-  hello world from ./src/hello.ts!
-```
-
-_See code: [src/commands/hello.ts](https://github.com/apollographql/apollo-cli/blob/v0.0.0/src/commands/hello.ts)_
-
-## apollo help [COMMAND]
+## `apollo help [COMMAND]`
 
 display help for apollo
 
@@ -68,5 +50,67 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v1.2.10/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v1.2.11/src/commands/help.ts)_
+
+## `apollo schema [FILE]`
+
+describe the command here
+
+```
+USAGE
+  $ apollo schema [FILE]
+
+OPTIONS
+  -f, --force
+  -h, --help       show CLI help
+  -n, --name=name  name to print
+```
+
+_See code: [src/commands/schema.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.0-canary.0/src/commands/schema.ts)_
+
+## `apollo schema:check`
+
+Check a schema against previous registered schema
+
+```
+USAGE
+  $ apollo schema:check
+
+OPTIONS
+  -e, --endpoint=endpoint  [default: http://localhost:4000/graphql] The location of the server to from which to fetch
+                           the schema
+
+  -h, --help               show CLI help
+
+  -s, --service=service    ENGINE_API_KEY for the Engine service
+
+  --header=header          Additional headers to send to server for introspectionQuery
+
+  --json                   output result as json
+```
+
+_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.0-canary.0/src/commands/schema/check.ts)_
+
+## `apollo schema:publish`
+
+Publish a schema to Engine
+
+```
+USAGE
+  $ apollo schema:publish
+
+OPTIONS
+  -e, --endpoint=endpoint  [default: http://localhost:4000/graphql] The location of the server to from which to fetch
+                           the schema
+
+  -h, --help               show CLI help
+
+  -s, --service=service    ENGINE_API_KEY for the Engine service
+
+  --header=header          Additional headers to send to server for introspectionQuery
+
+  --json                   output successful publish result as json
+```
+
+_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.0-canary.0/src/commands/schema/publish.ts)_
 <!-- commandsstop -->

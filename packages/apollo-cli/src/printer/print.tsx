@@ -19,7 +19,7 @@ import {
   InputObjectTypeDefinitionNode,
   InterfaceTypeDefinitionNode,
   EnumTypeDefinitionNode,
-  UnionTypeDefinitionNode
+  UnionTypeDefinitionNode,
 } from "graphql";
 
 import {
@@ -28,7 +28,7 @@ import {
   TypeKind,
   DiffType,
   DiffField,
-  DiffEnum
+  DiffEnum,
 } from "./ast";
 
 import { diffSchemas } from "./diff";
@@ -117,8 +117,8 @@ const Type: React.SFC<{ change: Change }> = ({ change }) => {
 
       const values = t.values as DiffEnum[];
 
-      const breaking = values.filter(
-        ({ change }) => change && change.change === ChangeType.BREAKING
+      const failure = values.filter(
+        ({ change }) => change && change.change === ChangeType.FAILURE
       );
       const warning = values.filter(
         ({ change }) => change && change.change === ChangeType.WARNING
@@ -140,7 +140,7 @@ const Type: React.SFC<{ change: Change }> = ({ change }) => {
           ) : (
             <>
               {"\n  "}
-              <Values name="Breaking" values={breaking} />
+              <Values name="failure" values={failure} />
               <Values name="Warning" values={warning} />
               <Values name="Notice" values={notice} />
               {"\n"}
@@ -160,8 +160,8 @@ const Type: React.SFC<{ change: Change }> = ({ change }) => {
 
       const fields = t.fields as DiffField[];
 
-      const breaking = fields.filter(
-        ({ change }) => change && change.change === ChangeType.BREAKING
+      const failure = fields.filter(
+        ({ change }) => change && change.change === ChangeType.FAILURE
       );
       const warning = fields.filter(
         ({ change }) => change && change.change === ChangeType.WARNING
@@ -183,7 +183,7 @@ const Type: React.SFC<{ change: Change }> = ({ change }) => {
           ) : (
             <>
               {"\n  "}
-              <Fields name="Breaking" fields={breaking} />
+              <Fields name="Failure" fields={failure} />
               <Fields name="Warning" fields={warning} />
               <Fields name="Notice" fields={notice} />
               {"\n"}
@@ -203,17 +203,13 @@ const Header: React.SFC<{ name: string }> = ({ name }) => (
 );
 
 const Schema: React.SFC<{ changes: Change[] }> = ({ changes }) => {
-  const breaking = changes.filter(
-    ({ change }) => change === ChangeType.BREAKING
-  );
+  const failure = changes.filter(({ change }) => change === ChangeType.FAILURE);
 
   const warning = uniqBy(
     changes.filter(
       ({ change, type }) =>
         change === ChangeType.WARNING &&
-        !breaking.find(x =>
-          Boolean(type && x.type && x.type.name === type.name)
-        )
+        !failure.find(x => Boolean(type && x.type && x.type.name === type.name))
     ),
     "type"
   );
@@ -221,7 +217,7 @@ const Schema: React.SFC<{ changes: Change[] }> = ({ changes }) => {
   const notice = changes.filter(
     ({ change, type }) =>
       change === ChangeType.NOTICE &&
-      !breaking.find(x =>
+      !failure.find(x =>
         Boolean(type && x.type && x.type.name === type.name)
       ) &&
       !warning.find(x => Boolean(type && x.type && x.type.name === type.name))
@@ -229,9 +225,9 @@ const Schema: React.SFC<{ changes: Change[] }> = ({ changes }) => {
 
   return (
     <>
-      {breaking.length > 0 && (
+      {failure.length > 0 && (
         <>
-          {breaking.map((change, i) => (
+          {failure.map((change, i) => (
             <React.Fragment key={i}>
               <Type change={change} key={i} />
               {"\n"}
