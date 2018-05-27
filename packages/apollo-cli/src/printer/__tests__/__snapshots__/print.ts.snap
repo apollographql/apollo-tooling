@@ -35,7 +35,40 @@ interface AddedInterface {
 "
 `;
 
-exports[`shows added types 1`] = `
+exports[`fields shows warning for removals 1`] = `
+"type User { 
+  
+  # Warning
+  firstName: String!
+
+}
+
+enum AddedEnum { 
+  
+  # Warning
+  TWO
+
+}
+
+input AddedInput { 
+  
+  # Warning
+  firstName: String!
+  lastName: String
+
+}
+
+interface AddedInterface { 
+  
+  # Warning
+  firstName(arg: String): String
+
+}
+
+"
+`;
+
+exports[`types shows added types 1`] = `
 "type AddedType { 
   id: ID!
 }
@@ -59,7 +92,7 @@ union AddedUnion = User
 "
 `;
 
-exports[`shows removed types 1`] = `
+exports[`types shows removed types 1`] = `
 "type RemovedType { }
 
 enum RemovedEnum { }

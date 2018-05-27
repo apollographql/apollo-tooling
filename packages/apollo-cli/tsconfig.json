@@ -1,28 +1,21 @@
 {
   "compilerOptions": {
     "declaration": true,
+    "jsx": "react",
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "module": "commonjs",
     "outDir": "./lib",
     "pretty": true,
-    "rootDirs": [
-      "./src"
-    ],
+    "rootDirs": ["./src"],
     "lib": ["dom", "es6", "esnext.asynciterable"],
     "strict": true,
     "target": "es2017",
     "baseUrl": ".",
     "paths": {
-      "*": [
-        "./@types/*"
-      ]
+      "*": ["./@types/*"]
     }
   },
-  "include": [
-    "./src/**/*"
-  ],
-  "exclude": [
-    "./**/__tests__/**/*"
-  ]
+  "include": ["./src/**/*"],
+  "exclude": ["./**/__tests__/**/*"]
 }

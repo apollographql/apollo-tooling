@@ -1,6 +1,6 @@
 import {
   GraphQLSchema,
-  TypeMap,
+  GraphQLNamedType,
   GraphQLObjectType,
   GraphQLType,
   astFromValue,
@@ -12,94 +12,102 @@ import {
   isInputObjectType,
   isListType,
   isNonNullType,
+  InputObjectTypeDefinitionNode,
+  ObjectTypeDefinitionNode,
+  EnumTypeDefinitionNode,
+  UnionTypeDefinitionNode
 } from "graphql";
-import { __ChangeType, __TypeKind } from "./ast";
 
-const getKind = type => {
+import {
+  TypeMap,
+  ChangeType,
+  TypeKind,
+  Change,
+  DiffTypeMap,
+  DiffType,
+  DiffField,
+  DiffInputValue,
+  DiffEnum
+} from "./ast";
+
+const getKind = (type: GraphQLNamedType) => {
   if (isScalarType(type)) {
-    return __TypeKind.SCALAR;
+    return TypeKind.SCALAR;
   } else if (isObjectType(type)) {
-    return __TypeKind.OBJECT;
+    return TypeKind.OBJECT;
   } else if (isInterfaceType(type)) {
-    return __TypeKind.INTERFACE;
+    return TypeKind.INTERFACE;
   } else if (isUnionType(type)) {
-    return __TypeKind.UNION;
+    return TypeKind.UNION;
   } else if (isEnumType(type)) {
-    return __TypeKind.ENUM;
+    return TypeKind.ENUM;
   } else if (isInputObjectType(type)) {
-    return __TypeKind.INPUT_OBJECT;
+    return TypeKind.INPUT_OBJECT;
   } else if (isListType(type)) {
-    return __TypeKind.LIST;
+    return TypeKind.LIST;
   } else if (isNonNullType(type)) {
-    return __TypeKind.NON_NULL;
+    return TypeKind.NON_NULL;
   }
   throw new Error("Unknown kind of type: " + type);
 };
 
 // we use error throwing for control flow here
-const diffTypesLeft = (type, current, next, diff) => {
+const diffTypesLeft = (
+  type: GraphQLNamedType,
+  current: TypeMap,
+  next: TypeMap,
+  changes: Change[]
+) => {
   // if we have removed this type we can early exit since thats the
   // most critical information
-  if (!next[type]) {
+  if (!next[type.name]) {
     const change = {
-      change: __ChangeType.WARNING,
+      change: ChangeType.WARNING,
       code: "TYPE_REMOVED",
-      message: `${type} removed`,
-      type,
+      description: `${type} removed`,
+      type: type.astNode
     };
-    diff.changes.push(change);
-    diff.types[type] = type.astNode;
-    throw true;
-  }
-};
+    changes.push(change);
 
-const diffLeft = (current, next, diff) => {
-  // current => next
-  Object.keys(current).forEach(typeName => {
-    const type = current[typeName];
-    try {
-      diffTypesLeft(type, current, next, diff);
-    } catch (r) {}
-  });
-};
-
-const diffTypesRight = (type, current, next, diff) => {
-  // if we have a new type we can early exit since thats the
-  // most critical information
-  const oldType = current[type];
-  if (!oldType) {
-    const change = {
-      change: __ChangeType.NOTICE,
-      code: "TYPE_ADDED",
-      message: `${type} added`,
-      type,
-    };
-    diff.changes.push(change);
-    diff.types[type].changes = [change];
+    // XXX what happens if we don't have an astNode?
+    if (!type.astNode) return;
     throw true;
   }
 };
 
 // within this can we assume no parent type change?
-const diffFieldsRight = (oldType, newType, diff) => {
+const diffFieldsLeft = (
+  oldType: GraphQLNamedType,
+  newType: GraphQLNamedType,
+  changes: Change[]
+) => {
+  /* ENUM */
   if (isEnumType(oldType) && isEnumType(newType)) {
-    const valuesInOldEnum = Object.create(null);
-    oldType.getValues().forEach(value => {
-      valuesInOldEnum[value.name] = true;
-    });
+    const valuesInNewEnum = Object.create(null);
     newType.getValues().forEach(value => {
-      if (!valuesInOldEnum[value.name]) {
+      valuesInNewEnum[value.name] = true;
+    });
+    oldType.getValues().forEach(value => {
+      if (!valuesInNewEnum[value.name]) {
         const change = {
-          change: __ChangeType.NOTICE,
-          code: "ENUM_VALUE_ADDED",
-          description: `${value.name} was added to enum type ${newType}.`,
-          type: newType,
+          change: ChangeType.WARNING,
+          code: "ENUM_VALUE_REMOVED",
+          description: `${value.name} was removed from enum type ${newType}.`,
+          type: newType.astNode
         };
-        diff.changes.push(change);
-        const valueDef = diff.types[newType].values.find(
+        changes.push(change);
+        const t = change.type as EnumTypeDefinitionNode;
+        if (!t || !Array.isArray(t.values)) return;
+
+        const valueDef = t.values.find(
           ({ name }) => name.value === value.name
-        );
-        valueDef.change = change;
+        ) as DiffEnum;
+
+        if (!valueDef) {
+          t.values.push({ ...value.astNode, change });
+        } else {
+          valueDef.change = change;
+        }
       }
     });
   }
@@ -110,21 +118,142 @@ const diffFieldsRight = (oldType, newType, diff) => {
       (isObjectType(newType) || isInterfaceType(newType)))
   ) {
     const oldTypeFieldsDef = oldType.getFields();
+    // XXX this could be an input object or regular object
+    const newTypeFieldsDef = (newType as GraphQLObjectType).getFields();
+    Object.keys(oldTypeFieldsDef).forEach(fieldName => {
+      // Check if the field is missing on the type in the new schema.
+      if (!(fieldName in newTypeFieldsDef)) {
+        const change = {
+          change: ChangeType.WARNING,
+          code: "FIELD_REMOVED",
+          description: `${newType}.${fieldName} was removed`,
+          type: newType.astNode
+        };
+        changes.push(change);
+        const t = change.type as ObjectTypeDefinitionNode;
+        if (!t || !Array.isArray(t.fields)) return;
+
+        const fieldDef = t.fields.find(
+          ({ name }) => name.value === fieldName
+        ) as DiffField;
+
+        if (!fieldDef) {
+          t.fields.push({ ...oldTypeFieldsDef[fieldName].astNode, change });
+        } else {
+          fieldDef.change = change;
+        }
+      }
+    });
+  }
+
+  /* InputObjects */
+  if (isInputObjectType(oldType) && isInputObjectType(newType)) {
+    const oldTypeFieldsDef = oldType.getFields();
     const newTypeFieldsDef = newType.getFields();
+    Object.keys(oldTypeFieldsDef).forEach(fieldName => {
+      if (!(fieldName in newTypeFieldsDef)) {
+        const change = {
+          change: ChangeType.WARNING,
+          code: "INPUT_FIELD_REMOVED",
+          description: `${newType}.${fieldName} was removed`,
+          type: newType.astNode
+        };
+
+        changes.push(change);
+
+        const t = change.type as InputObjectTypeDefinitionNode;
+        if (!t || !Array.isArray(t.fields)) return;
+
+        const fieldDef = t.fields.find(
+          ({ name }) => name.value === fieldName
+        ) as DiffField;
+        if (!fieldDef) {
+          t.fields.push({ ...oldTypeFieldsDef[fieldName].astNode, change });
+        } else {
+          fieldDef.change = change;
+        }
+      }
+    });
+  }
+};
+
+const diffTypesRight = (
+  type: GraphQLNamedType,
+  current: TypeMap,
+  next: TypeMap,
+  changes: Change[]
+) => {
+  // if we have a new type we can early exit since thats the
+  // most critical information
+  const oldType = current[type.name];
+  if (!oldType) {
+    const change = {
+      change: ChangeType.NOTICE,
+      code: "TYPE_ADDED",
+      description: `${type} added`,
+      type: type.astNode
+    };
+    changes.push(change);
+    // change.type.change = change;
+    throw true;
+  }
+};
+
+// within this can we assume no parent type change?
+const diffFieldsRight = (
+  oldType: GraphQLNamedType,
+  newType: GraphQLNamedType,
+  changes: Change[]
+) => {
+  /* ENUM */
+  if (isEnumType(oldType) && isEnumType(newType)) {
+    const valuesInOldEnum = Object.create(null);
+    oldType.getValues().forEach(value => {
+      valuesInOldEnum[value.name] = true;
+    });
+    newType.getValues().forEach(value => {
+      if (!valuesInOldEnum[value.name]) {
+        const change = {
+          change: ChangeType.NOTICE,
+          code: "ENUM_VALUE_ADDED",
+          description: `${value.name} was added to enum type ${newType}.`,
+          type: newType.astNode
+        };
+        changes.push(change);
+        const t = change.type as EnumTypeDefinitionNode;
+        if (!t || !Array.isArray(t.values)) return;
+        const valueDef = t.values.find(
+          ({ name }) => name.value === value.name
+        ) as DiffEnum;
+        if (valueDef) valueDef.change = change;
+      }
+    });
+  }
+  /* FIELDS */
+  if (
+    isObjectType(oldType) ||
+    (isInterfaceType(oldType) &&
+      (isObjectType(newType) || isInterfaceType(newType)))
+  ) {
+    const oldTypeFieldsDef = oldType.getFields();
+    // XXX this could be GraphQLObjectType or GraphQLInterfaceType
+    const newTypeFieldsDef = (newType as GraphQLObjectType).getFields();
     Object.keys(newTypeFieldsDef).forEach(fieldName => {
       // Check if the field is missing on the type in the old schema.
       if (!(fieldName in oldTypeFieldsDef)) {
         const change = {
-          change: __ChangeType.NOTICE,
+          change: ChangeType.NOTICE,
           code: "FIELD_ADDED",
           description: `${newType}.${fieldName} was added`,
-          type: newType,
+          type: newType.astNode
         };
-        diff.changes.push(change);
-        const fieldDef = diff.types[newType].fields.find(
+        changes.push(change);
+        const t = change.type as ObjectTypeDefinitionNode;
+        if (!t || !Array.isArray(t.fields)) return;
+        const fieldDef = t.fields.find(
           ({ name }) => name.value === fieldName
-        );
-        fieldDef.change = change;
+        ) as DiffField;
+        if (fieldDef) fieldDef.change = change;
         return;
       }
     });
@@ -140,60 +269,72 @@ const diffFieldsRight = (oldType, newType, diff) => {
 
         if (isNonNullType(newTypeFieldsDef[fieldName].type)) {
           change = {
-            change: __ChangeType.WARNING,
+            change: ChangeType.WARNING,
             code: "NON_NULL_INPUT_FIELD_ADDED",
             description:
               `A non-null field ${fieldName} on ` +
               `input type ${newType.name} was added.`,
-            type: newType,
+            type: newType.astNode
           };
         } else {
           change = {
-            change: __ChangeType.NOTICE,
+            change: ChangeType.NOTICE,
             code: "NULLABLE_INPUT_FIELD_ADDED",
             description:
               `A nullable field ${fieldName} on ` +
               `input type ${newType.name} was added.`,
-            type: newType,
+            type: newType.astNode
           };
         }
 
-        diff.changes.push(change);
+        changes.push(change);
 
-        const fieldDef = diff.types[newType].fields.find(
-          ({ name }) => name.value === fieldName
-        );
-        fieldDef.change = change;
+        const t = change.type as InputObjectTypeDefinitionNode;
+        // XXX fields can be undefined here?
+        const fieldDef = Boolean(t && Array.isArray(t.fields))
+          ? t.fields!.find(({ name }) => name.value === fieldName)
+          : undefined;
+        if (fieldDef) (fieldDef as DiffInputValue).change = change;
       }
     });
   }
 };
 
-const diffRight = (next, current, diff) => {
-  Object.keys(next).forEach(typeName => {
+const diffLeft = (current: TypeMap, next: TypeMap, changes: Change[]) => {
+  // current => next
+  Object.keys(current).forEach(typeName => {
+    const oldType = current[typeName];
     const newType = next[typeName];
-    diff.types[typeName] = newType.astNode;
     try {
-      diffTypesRight(newType, current, next, diff);
-      diffFieldsRight(current[typeName], newType, diff);
+      diffTypesLeft(oldType, current, next, changes);
+      diffFieldsLeft(current[typeName], newType, changes);
     } catch (r) {
-      if (r instanceof Error) {
-        throw new Error(r);
-      }
-      return;
+      if (r instanceof Error) throw r;
     }
   });
 };
 
-export const diffSchemas = (current: TypeMap, next: TypeMap) => {
+const diffRight = (next: TypeMap, current: TypeMap, changes: Change[]) => {
+  Object.keys(next).forEach(typeName => {
+    const newType = next[typeName];
+    // XXX what happens if we don't have an astNode?
+    if (!newType.astNode) return;
+
+    try {
+      diffTypesRight(newType, current, next, changes);
+      diffFieldsRight(current[typeName], newType, changes);
+    } catch (r) {
+      if (r instanceof Error) throw r;
+    }
+  });
+};
+
+export const diffSchemas = (current: TypeMap, next: TypeMap): Change[] => {
   // sink for types and changes
-  const diff = {
-    types: {},
-    changes: [],
-  };
+  const changes: Change[] = [];
 
-  diffLeft(current, next, diff);
-  diffRight(next, current, diff);
+  diffRight(next, current, changes);
+  diffLeft(current, next, changes);
 
-  return diff;
+  return changes;
 };

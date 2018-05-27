@@ -1,53 +1,17 @@
-export enum __DirectiveLocation {
-  QUERY,
-  MUTATION,
-  SUBSCRIPTION,
-  FIELD,
-  FRAGMENT_DEFINITION,
-  FRAGMENT_SPREAD,
-  INLINE_FRAGMENT,
-  SCHEMA,
-  SCALAR,
-  OBJECT,
-  FIELD_DEFINITION,
-  ARGUMENT_DEFINITION,
-  INTERFACE,
-  UNION,
-  ENUM,
-  ENUM_VALUE,
-  INPUT_OBJECT,
-  INPUT_FIELD_DEFINITION,
-}
+import {
+  TypeNode,
+  GraphQLNamedType,
+  GraphQLField,
+  ASTKindToNode,
+  TypeDefinitionNode,
+  FieldDefinitionNode,
+  EnumValueDefinitionNode,
+  InputValueDefinitionNode
+} from "graphql";
 
-export interface __Directive {
-  name: String;
-  locations: __DirectiveLocation[];
-  args: __InputValue[];
-  changes: __Change[];
-}
+type Maybe<T> = null | undefined | T;
 
-export interface __InputValue {
-  name: String;
-  type: __Type;
-  defaultValue: String;
-  changes: __Change[];
-}
-
-export interface __EnumValue {
-  name: String;
-  isDeprecated: Boolean;
-  changes: __Change[];
-}
-
-export interface __Field {
-  name: String;
-  args: __InputValue[];
-  type: __Type;
-  isDeprecated: Boolean;
-  changes: __Change[];
-}
-
-export enum __TypeKind {
+export enum TypeKind {
   SCALAR = "ScalarTypeDefinition",
   OBJECT = "ObjectTypeDefinition",
   INTERFACE = "InterfaceTypeDefinition",
@@ -55,37 +19,31 @@ export enum __TypeKind {
   ENUM = "EnumTypeDefinition",
   INPUT_OBJECT = "InputObjectTypeDefinition",
   LIST = "ListTypeDefinition",
-  NON_NULL = "NonNullTypeDefinition",
+  NON_NULL = "NonNullTypeDefinition"
 }
 
-export enum __ChangeType {
+export enum ChangeType {
   BREAKING,
   WARNING,
-  NOTICE,
+  NOTICE
 }
 
-export interface __Change {
-  change: __ChangeType;
+export type DiffType = TypeDefinitionNode & { change?: Change };
+export type DiffField = FieldDefinitionNode & { change?: Change };
+export type DiffInputValue = InputValueDefinitionNode & { change?: Change };
+export type DiffEnum = EnumValueDefinitionNode & { change?: Change };
+
+export interface Change {
+  change: ChangeType;
   code: String;
-  message: String;
-  type?: __TypeKind;
+  description: String;
+  type?: Maybe<DiffType>;
 }
 
-export interface __Type {
-  kind: __TypeKind;
-  name: String;
-  fields: __Field[];
-  interfaces?: __Type[];
-  enumValues?: __EnumValue[];
-  inputFields?: __InputValue[];
-  changes: __Change[];
+export interface DiffTypeMap {
+  [key: string]: DiffType;
 }
 
-export interface __Schema {
-  query: __Type;
-  mutation?: __Type;
-  subscription?: __Type;
-  types: __Type[];
-  directives: __Directive[];
-  changes: __Change[];
+export interface TypeMap {
+  [key: string]: GraphQLNamedType;
 }

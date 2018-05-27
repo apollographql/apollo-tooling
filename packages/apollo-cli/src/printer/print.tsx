@@ -1,42 +1,84 @@
+import { uniqBy } from "lodash";
 import * as React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { print } from "graphql";
+import {
+  print,
+  GraphQLSchema,
+  GraphQLEnumValue,
+  GraphQLFieldMap,
+  GraphQLField,
+  GraphQLInputObjectType,
+  GraphQLInterfaceType,
+  GraphQLObjectType,
+  GraphQLScalarType,
+  GraphQLUnionType,
+  ASTKindToNode,
+  FieldDefinitionNode,
+  EnumValueDefinitionNode,
+  ObjectTypeDefinitionNode,
+  InputObjectTypeDefinitionNode,
+  InterfaceTypeDefinitionNode,
+  EnumTypeDefinitionNode,
+  UnionTypeDefinitionNode
+} from "graphql";
 
-import { __ChangeType, __TypeKind } from "./ast";
+import {
+  ChangeType,
+  Change,
+  TypeKind,
+  DiffType,
+  DiffField,
+  DiffEnum
+} from "./ast";
+
 import { diffSchemas } from "./diff";
 
-const Field = ({ field }) => print(field);
-const Value = ({ value }) => print(value);
+const Field: React.SFC<{ field: FieldDefinitionNode }> = ({ field }) => (
+  <>{print(field)}</>
+);
+const Value: React.SFC<{ value: EnumValueDefinitionNode }> = ({ value }) => (
+  <>{print(value)}</>
+);
 
-const nameFromKind = kind => {
+const nameFromKind = (kind: string) => {
   switch (kind) {
-    case __TypeKind.ENUM:
+    case TypeKind.ENUM:
       return "enum";
-    case __TypeKind.OBJECT:
+    case TypeKind.OBJECT:
       return "type";
-    case __TypeKind.INPUT_OBJECT:
+    case TypeKind.INPUT_OBJECT:
       return "input";
-    case __TypeKind.SCALAR:
+    case TypeKind.SCALAR:
       return "scalar";
-    case __TypeKind.INTERFACE:
+    case TypeKind.INTERFACE:
       return "interface";
-    case __TypeKind.UNION:
+    case TypeKind.UNION:
       return "union";
   }
 };
-const Fields = ({ name, fields }) =>
+const Fields: React.SFC<{
+  name: string;
+  fields: FieldDefinitionNode[];
+}> = ({ name, fields }) =>
   fields.length > 0 ? (
     <>
       {"\n"}
       {"  "}
       <Header name={name} />
-      {"  "}
-      {fields.map((field, i) => <Field field={field} key={i} />)}
-      {"\n"}
+      {fields.map((field, i) => (
+        <React.Fragment key={i}>
+          {"  "}
+          <Field field={field} key={i} />
+          {"\n"}
+        </React.Fragment>
+      ))}
     </>
   ) : null;
 
-const Values = ({ name, values }) =>
+const Values: React.SFC<{
+  name: string;
+  values: EnumValueDefinitionNode[];
+}> = ({ name, values }) =>
   values.length > 0 ? (
     <>
       {"\n"}
@@ -48,32 +90,41 @@ const Values = ({ name, values }) =>
     </>
   ) : null;
 
-const Type = ({ type, change }: { type: __Type; change: __ChangeType }) => {
+const Type: React.SFC<{ change: Change }> = ({ change }) => {
+  const type = change.type;
+  if (!type) return null;
   const typeName = nameFromKind(type.kind);
   switch (type.kind) {
-    case __TypeKind.UNION:
+    case TypeKind.UNION:
+      const t = change.type as UnionTypeDefinitionNode;
+      if (!t.types) return null;
+      const types = t.types.map(({ name }) => name.value);
       return (
         <>
-          {typeName} {type.name.value} = {change.type.getTypes().join(", ")}
+          {typeName} {type.name.value} = {types.join(", ")}
           {"\n"}
         </>
       );
-    case __TypeKind.SCALAR:
+    case TypeKind.SCALAR:
       return (
         <>
           {typeName} {type.name.value}
           {"\n"}
         </>
       );
-    case __TypeKind.ENUM: {
-      const breaking = type.values.filter(
-        ({ change }) => change && change.change === __ChangeType.BREAKING
+    case TypeKind.ENUM: {
+      const t = type as EnumTypeDefinitionNode;
+
+      const values = t.values as DiffEnum[];
+
+      const breaking = values.filter(
+        ({ change }) => change && change.change === ChangeType.BREAKING
       );
-      const warning = type.values.filter(
-        ({ change }) => change && change.change === __ChangeType.WARNING
+      const warning = values.filter(
+        ({ change }) => change && change.change === ChangeType.WARNING
       );
-      const notice = type.values.filter(
-        ({ change }) => change && change.change === __ChangeType.NOTICE
+      const notice = values.filter(
+        ({ change }) => change && change.change === ChangeType.NOTICE
       );
       return (
         <>
@@ -83,7 +134,7 @@ const Type = ({ type, change }: { type: __Type; change: __ChangeType }) => {
           "TYPE_ADDED" ? (
             <>
               {"\n  "}
-              {type.values.map((value, i) => <Value value={value} key={i} />)}
+              {values.map((value, i) => <Value value={value} key={i} />)}
               {"\n"}
             </>
           ) : (
@@ -99,28 +150,34 @@ const Type = ({ type, change }: { type: __Type; change: __ChangeType }) => {
         </>
       );
     }
-    case __TypeKind.INTERFACE:
-    case __TypeKind.OBJECT:
-    case __TypeKind.INPUT_OBJECT:
-    default: {
-      const breaking = type.fields.filter(
-        ({ change }) => change && change.change === __ChangeType.BREAKING
+    case TypeKind.INTERFACE:
+    case TypeKind.OBJECT:
+    case TypeKind.INPUT_OBJECT: {
+      const t = type as
+        | ObjectTypeDefinitionNode
+        | InterfaceTypeDefinitionNode
+        | InputObjectTypeDefinitionNode;
+
+      const fields = t.fields as DiffField[];
+
+      const breaking = fields.filter(
+        ({ change }) => change && change.change === ChangeType.BREAKING
       );
-      const warning = type.fields.filter(
-        ({ change }) => change && change.change === __ChangeType.WARNING
+      const warning = fields.filter(
+        ({ change }) => change && change.change === ChangeType.WARNING
       );
-      const notice = type.fields.filter(
-        ({ change }) => change && change.change === __ChangeType.NOTICE
+      const notice = fields.filter(
+        ({ change }) => change && change.change === ChangeType.NOTICE
       );
       return (
         <>
-          {typeName} {type.name.value}
+          {typeName} {t.name.value}
           {" { "}
           {change.code === "TYPE_REMOVED" ? null : change.code ===
           "TYPE_ADDED" ? (
             <>
               {"\n  "}
-              {type.fields.map((field, i) => <Field field={field} key={i} />)}
+              {fields.map((field, i) => <Field field={field} key={i} />)}
               {"\n"}
             </>
           ) : (
@@ -136,31 +193,38 @@ const Type = ({ type, change }: { type: __Type; change: __ChangeType }) => {
         </>
       );
     }
+    default:
+      return null;
   }
 };
 
-const findType = (change: __ChangeType, diff: __Schema) =>
-  diff.types[change.type.name];
+const Header: React.SFC<{ name: string }> = ({ name }) => (
+  <>{"# " + name + "\n"}</>
+);
 
-const Header = ({ name }) => "# " + name + "\n";
-const Schema = ({ diff }: { diff: __Schema }) => {
-  const breaking = diff.changes.filter(
-    ({ change }) => change === __ChangeType.BREAKING
+const Schema: React.SFC<{ changes: Change[] }> = ({ changes }) => {
+  const breaking = changes.filter(
+    ({ change }) => change === ChangeType.BREAKING
   );
 
-  // warnings can't share any types with breaking
-  const warning = diff.changes.filter(
-    ({ change, type }) =>
-      change === __ChangeType.WARNING &&
-      !Boolean(breaking.find(x => x.type.name === type.name))
+  const warning = uniqBy(
+    changes.filter(
+      ({ change, type }) =>
+        change === ChangeType.WARNING &&
+        !breaking.find(x =>
+          Boolean(type && x.type && x.type.name === type.name)
+        )
+    ),
+    "type"
   );
 
-  // notice can't share any types with warnings or breaking
-  const notice = diff.changes.filter(
+  const notice = changes.filter(
     ({ change, type }) =>
-      change === __ChangeType.NOTICE &&
-      !Boolean(breaking.find(x => x.type.name === type.name)) &&
-      !Boolean(warning.find(x => x.type.name === type.name))
+      change === ChangeType.NOTICE &&
+      !breaking.find(x =>
+        Boolean(type && x.type && x.type.name === type.name)
+      ) &&
+      !warning.find(x => Boolean(type && x.type && x.type.name === type.name))
   );
 
   return (
@@ -169,7 +233,7 @@ const Schema = ({ diff }: { diff: __Schema }) => {
         <>
           {breaking.map((change, i) => (
             <React.Fragment key={i}>
-              <Type type={findType(change, diff)} change={change} key={i} />
+              <Type change={change} key={i} />
               {"\n"}
             </React.Fragment>
           ))}
@@ -179,7 +243,7 @@ const Schema = ({ diff }: { diff: __Schema }) => {
         <>
           {warning.map((change, i) => (
             <React.Fragment key={i}>
-              <Type type={findType(change, diff)} change={change} key={i} />
+              <Type change={change} key={i} />
               {"\n"}
             </React.Fragment>
           ))}
@@ -189,7 +253,7 @@ const Schema = ({ diff }: { diff: __Schema }) => {
         <>
           {notice.map((change, i) => (
             <React.Fragment key={i}>
-              <Type type={findType(change, diff)} change={change} key={i} />
+              <Type change={change} key={i} />
               {"\n"}
             </React.Fragment>
           ))}
@@ -199,11 +263,16 @@ const Schema = ({ diff }: { diff: __Schema }) => {
   );
 };
 
-// shorthand for diff + print
-export const printWithChanges = (current, next) => {
+export const printChanges = (changes: Change[]) =>
+  renderToStaticMarkup(<Schema changes={changes} />);
+
+export const printFromSchemas = (
+  current: GraphQLSchema,
+  next: GraphQLSchema
+) => {
   const currentTypeMap = current.getTypeMap();
   const newTypeMap = next.getTypeMap();
 
-  const diff = diffSchemas(currentTypeMap, newTypeMap);
-  return renderToStaticMarkup(<Schema diff={diff} />);
+  const changes = diffSchemas(currentTypeMap, newTypeMap);
+  return renderToStaticMarkup(<Schema changes={changes} />);
 };
