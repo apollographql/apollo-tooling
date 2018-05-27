@@ -1,7 +1,7 @@
 {
   "name": "apollo",
-  "description": "CLI for the Apollo platform",
-  "version": "0.0.1",
+  "description": "CLI for apollographql",
+  "version": "1.0.0-canary.0",
   "author": "opensource@apollographql.com",
   "bin": {
     "apollo": "./bin/run"
