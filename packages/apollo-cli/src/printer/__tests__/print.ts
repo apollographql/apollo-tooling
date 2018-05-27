@@ -1,11 +1,26 @@
+import * as fs from "fs";
+import * as path from "path";
 import { buildSchema, parse } from "graphql";
 const gql = String.raw;
 
-import { printFromSchemas } from "../print";
+import { printFromSchemas, printChanges } from "../print";
+import { diffSchemas } from "../diff";
+
+const initial = fs.readFileSync(
+  path.join(
+    __dirname,
+    "../../commands/schema/__tests__/fixtures/schema.graphql"
+  ),
+  { encoding: "utf8" }
+);
+const change = fs.readFileSync(
+  path.join(__dirname, "../../commands/schema/__tests__/fixtures/next.graphql"),
+  { encoding: "utf8" }
+);
 
 const schemas = (sd1, sd2) => ({
   current: buildSchema(sd1),
-  next: buildSchema(sd2)
+  next: buildSchema(sd2),
 });
 
 describe("types", () => {
@@ -52,7 +67,6 @@ describe("types", () => {
         type User {
           id: ID!
         }
-
       `,
       gql`
         type User {
@@ -64,7 +78,7 @@ describe("types", () => {
     expect(sdl).toMatchSnapshot();
   });
 
-  it("shows added types", () => {
+  fit("shows added types", () => {
     const { current, next } = schemas(
       gql`
         type User {
@@ -95,7 +109,6 @@ describe("types", () => {
         type User {
           id: ID!
         }
-
       `
     );
     const sdl = printFromSchemas(current, next);
@@ -126,7 +139,6 @@ describe("fields", () => {
           id: ID!
           firstName(arg: String): String
         }
-
       `,
       gql`
         type User {
@@ -144,7 +156,6 @@ describe("fields", () => {
         interface AddedInterface {
           id: ID!
         }
-
       `
     );
     const sdl = printFromSchemas(current, next);
@@ -169,7 +180,6 @@ describe("fields", () => {
         interface AddedInterface {
           id: ID!
         }
-
       `,
       gql`
         type User {
@@ -192,10 +202,19 @@ describe("fields", () => {
           id: ID!
           firstName(arg: String): String
         }
-
       `
     );
     const sdl = printFromSchemas(current, next);
+    expect(sdl).toMatchSnapshot();
+  });
+});
+
+describe("integration", () => {
+  // XXX make this change complex
+  it("reports changes for a complex scenario", () => {
+    const { current, next } = schemas(initial, change);
+    const changes = diffSchemas(current.getTypeMap(), next.getTypeMap());
+    const sdl = printChanges(changes);
     expect(sdl).toMatchSnapshot();
   });
 });

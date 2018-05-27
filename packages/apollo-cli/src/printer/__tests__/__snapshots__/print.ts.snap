@@ -68,23 +68,57 @@ interface AddedInterface {
 "
 `;
 
+exports[`integration reports changes for a complex scenario 1`] = `
+"type Query { 
+  
+  # Warning
+  hello: String!
+
+  # Notice
+  me: User
+
+}
+
+type User { 
+  
+  # Notice
+  id: ID!
+  firstName: String
+
+}
+
+"
+`;
+
 exports[`types shows added types 1`] = `
 "type AddedType { 
+  
+  # Notice
   id: ID!
+
 }
 
 enum AddedEnum { 
+  
+  # Notice
   ONE
+
 }
 
 input AddedInput { 
+  
+  # Notice
   id: ID!
+
 }
 
 scalar AddedScalar
 
 interface AddedInterface { 
+  
+  # Notice
   id: ID!
+
 }
 
 union AddedUnion = User

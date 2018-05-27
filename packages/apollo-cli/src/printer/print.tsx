@@ -134,13 +134,13 @@ const Type: React.SFC<{ change: Change }> = ({ change }) => {
           "TYPE_ADDED" ? (
             <>
               {"\n  "}
-              {values.map((value, i) => <Value value={value} key={i} />)}
+              <Values name="Notice" values={values} />
               {"\n"}
             </>
           ) : (
             <>
               {"\n  "}
-              <Values name="failure" values={failure} />
+              <Values name="Failure" values={failure} />
               <Values name="Warning" values={warning} />
               <Values name="Notice" values={notice} />
               {"\n"}
@@ -177,7 +177,7 @@ const Type: React.SFC<{ change: Change }> = ({ change }) => {
           "TYPE_ADDED" ? (
             <>
               {"\n  "}
-              {fields.map((field, i) => <Field field={field} key={i} />)}
+              <Fields name="Notice" fields={fields} />
               {"\n"}
             </>
           ) : (
