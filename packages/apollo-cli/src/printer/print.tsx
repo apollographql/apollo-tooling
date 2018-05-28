@@ -33,6 +33,8 @@ import {
 
 import { diffSchemas } from "./diff";
 
+import { f, w, n } from "./emoji";
+
 const Field: React.SFC<{ field: FieldDefinitionNode }> = ({ field }) => (
   <>{print(field)}</>
 );
@@ -134,15 +136,15 @@ const Type: React.SFC<{ change: Change }> = ({ change }) => {
           "TYPE_ADDED" ? (
             <>
               {"\n  "}
-              <Values name="Notice" values={values} />
+              <Values name={`${n} Notice ${n}`} values={values} />
               {"\n"}
             </>
           ) : (
             <>
               {"\n  "}
-              <Values name="Failure" values={failure} />
-              <Values name="Warning" values={warning} />
-              <Values name="Notice" values={notice} />
+              <Values name={`${f} Failure ${f}`} values={failure} />
+              <Values name={`${w} Warning ${w}`} values={warning} />
+              <Values name={`${n} Notice ${n}`} values={notice} />
               {"\n"}
             </>
           )}
@@ -177,15 +179,15 @@ const Type: React.SFC<{ change: Change }> = ({ change }) => {
           "TYPE_ADDED" ? (
             <>
               {"\n  "}
-              <Fields name="Notice" fields={fields} />
+              <Fields name={`${n} Notice ${n}`} fields={fields} />
               {"\n"}
             </>
           ) : (
             <>
               {"\n  "}
-              <Fields name="Failure" fields={failure} />
-              <Fields name="Warning" fields={warning} />
-              <Fields name="Notice" fields={notice} />
+              <Fields name={`${f} Failure ${f}`} fields={failure} />
+              <Fields name={`${w} Warning ${w}`} fields={warning} />
+              <Fields name={`${n} Notice ${n}`} fields={notice} />
               {"\n"}
             </>
           )}

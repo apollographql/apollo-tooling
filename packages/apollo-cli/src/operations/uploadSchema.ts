@@ -2,18 +2,21 @@ import gql from "graphql-tag";
 
 export const UPLOAD_SCHEMA = gql`
   mutation UploadSchema(
+    $id: ID!
     $schema: IntrospectionSchemaInput!
-    $tag: String
+    $tag: String!
     $gitContext: GitContextInput
   ) {
-    uploadSchema(schema: $schema, tag: $tag, gitContext: $gitContext) {
-      code
-      message
-      success
-      tag {
-        tag
-        schema {
-          hash
+    service(id: $id) {
+      uploadSchema(schema: $schema, tag: $tag, gitContext: $gitContext) {
+        code
+        message
+        success
+        tag {
+          tag
+          schema {
+            hash
+          }
         }
       }
     }

@@ -78,7 +78,7 @@ describe("types", () => {
     expect(sdl).toMatchSnapshot();
   });
 
-  fit("shows added types", () => {
+  it("shows added types", () => {
     const { current, next } = schemas(
       gql`
         type User {

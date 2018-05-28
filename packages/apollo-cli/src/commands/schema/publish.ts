@@ -66,7 +66,12 @@ export default class SchemaPublish extends Command {
         title: `Publishing ${getIdFromKey(service)} to Engine`,
         task: async ctx => {
           const gitContext = await gitInfo();
-          const variables = { schema: ctx.schema, tag, gitContext };
+          const variables = {
+            schema: ctx.schema,
+            tag,
+            gitContext,
+            id: getIdFromKey(service),
+          };
 
           ctx.current = await toPromise(
             execute(engineLink, {
@@ -83,7 +88,7 @@ export default class SchemaPublish extends Command {
                 throw new Error(
                   errors.map(({ message }) => message).join("\n")
                 );
-              return data!.uploadSchema;
+              return data!.service.uploadSchema;
             })
             .catch(e => this.error(e.message));
         },

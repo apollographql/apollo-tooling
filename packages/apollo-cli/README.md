@@ -21,7 +21,7 @@ $ npm install -g @apollographql/cli
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-@apollographql/cli/1.0.0-canary.1 linux-x64 node-v9.4.0
+@apollographql/cli/1.0.0-canary.3 linux-x64 node-v9.4.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -66,7 +66,7 @@ OPTIONS
   -n, --name=name  name to print
 ```
 
-_See code: [src/commands/schema.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.0-canary.1/src/commands/schema.ts)_
+_See code: [src/commands/schema.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.0-canary.3/src/commands/schema.ts)_
 
 ## `apollo schema:check`
 
@@ -89,7 +89,7 @@ OPTIONS
   --json                   output result as json
 ```
 
-_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.0-canary.1/src/commands/schema/check.ts)_
+_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.0-canary.3/src/commands/schema/check.ts)_
 
 ## `apollo schema:publish`
 
@@ -112,5 +112,5 @@ OPTIONS
   --json                   output successful publish result as json
 ```
 
-_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.0-canary.1/src/commands/schema/publish.ts)_
+_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.0-canary.3/src/commands/schema/publish.ts)_
 <!-- commandsstop -->

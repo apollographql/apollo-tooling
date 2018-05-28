@@ -35,8 +35,8 @@ export type DiffEnum = EnumValueDefinitionNode & { change?: Change };
 
 export interface Change {
   change: ChangeType;
-  code: String;
-  description: String;
+  code: string;
+  description: string;
   type?: Maybe<DiffType>;
 }
 
