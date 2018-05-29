@@ -1,5 +1,5 @@
 {
-  "name": "@apollographql/cli",
+  "name": "apollo",
   "description": "CLI for apollographql",
   "version": "1.0.0-canary.4",
   "author": "opensource@apollographql.com",
