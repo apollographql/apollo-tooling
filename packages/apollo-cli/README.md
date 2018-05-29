@@ -17,11 +17,11 @@ CLI for the Apollo platform of tooling
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g @apollographql/cli
+$ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-@apollographql/cli/1.0.0-canary.4 linux-x64 node-v9.4.0
+apollo/1.0.0-canary.4 linux-x64 node-v9.4.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
