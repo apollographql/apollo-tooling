@@ -544,14 +544,14 @@ export enum Episode {
 }
 
 // The input object sent when someone is creating a new review
-interface ReviewInput {
+export interface ReviewInput {
   stars: number;
   commentary?: string | null;
   favorite_color?: ColorInput | null;
 }
 
 // The input object sent when passing in a color
-interface ColorInput {
+export interface ColorInput {
   red: number;
   green: number;
   blue: number;
@@ -605,14 +605,14 @@ export enum Episode {
 }
 
 // The input object sent when someone is creating a new review
-interface ReviewInput {
+export interface ReviewInput {
   stars: number;
   commentary?: string | null;
   favorite_color?: ColorInput | null;
 }
 
 // The input object sent when passing in a color
-interface ColorInput {
+export interface ColorInput {
   red: number;
   green: number;
   blue: number;
@@ -667,14 +667,14 @@ export enum Episode {
 }
 
 // The input object sent when someone is creating a new review
-interface ReviewInput {
+export interface ReviewInput {
   stars: number;
   commentary?: string | null;
   favorite_color?: ColorInput | null;
 }
 
 // The input object sent when passing in a color
-interface ColorInput {
+export interface ColorInput {
   red: number;
   green: number;
   blue: number;
@@ -719,14 +719,14 @@ export enum Episode {
 }
 
 // The input object sent when someone is creating a new review
-interface ReviewInput {
+export interface ReviewInput {
   stars: number;
   commentary?: string | null;
   favorite_color?: ColorInput | null;
 }
 
 // The input object sent when passing in a color
-interface ColorInput {
+export interface ColorInput {
   red: number;
   green: number;
   blue: number;
@@ -938,14 +938,14 @@ export enum Episode {
 }
 
 // The input object sent when someone is creating a new review
-interface ReviewInput {
+export interface ReviewInput {
   stars: number;
   commentary?: string | null;
   favorite_color?: ColorInput | null;
 }
 
 // The input object sent when passing in a color
-interface ColorInput {
+export interface ColorInput {
   red: number;
   green: number;
   blue: number;
