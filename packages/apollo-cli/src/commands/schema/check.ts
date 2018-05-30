@@ -12,6 +12,13 @@ import { fetchSchema } from "../../fetch-schema";
 import { gitInfo } from "../../git";
 import { ChangeType } from "../../printer/ast";
 
+// how its brought down from schema
+interface Change {
+  type: ChangeType;
+  code: string;
+  description: string;
+}
+
 export default class SchemaCheck extends Command {
   static description = "Check a schema against previous registered schema";
 
@@ -103,7 +110,7 @@ export default class SchemaCheck extends Command {
 
     return tasks.run().then(async ({ changes }) => {
       const failures = changes.filter(
-        ({ type }) => type === ChangeType.FAILURE
+        ({ type }: Change) => type === ChangeType.FAILURE
       );
       const exit = failures.length > 0 ? 1 : 0;
       if (flags.json) {
@@ -129,8 +136,8 @@ export default class SchemaCheck extends Command {
   }
 }
 
-const format = change => {
-  let color = x => x;
+const format = (change: Change) => {
+  let color = (x: string): string => x;
   if (change.type === ChangeType.FAILURE) {
     color = chalk.red;
   }
@@ -145,7 +152,7 @@ const format = change => {
   };
 };
 
-const sorter = (a, b) => {
+const sorter = (a: Change, b: Change) => {
   if (a.type === b.type) return 0;
   if (b.type === ChangeType.FAILURE) return 1;
   if (b.type === ChangeType.WARNING) return 1;
