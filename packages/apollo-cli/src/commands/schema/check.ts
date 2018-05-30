@@ -101,8 +101,16 @@ export default class SchemaCheck extends Command {
       },
     ]);
 
-    return tasks.run().then(({ changes }) => {
-      if (flags.json) return styledJSON({ changes });
+    return tasks.run().then(async ({ changes }) => {
+      const failures = changes.filter(
+        ({ type }) => type === ChangeType.FAILURE
+      );
+      const exit = failures.length > 0 ? 1 : 0;
+      if (flags.json) {
+        await styledJSON({ changes });
+        // exit with failing status if we have failures
+        this.exit(exit);
+      }
       if (changes.length === 0) {
         return this.log("\nNo changes present between schemas\n");
       }
@@ -115,6 +123,8 @@ export default class SchemaCheck extends Command {
         ],
       });
       this.log("\n");
+      // exit with failing status if we have failures
+      this.exit(exit);
     });
   }
 }

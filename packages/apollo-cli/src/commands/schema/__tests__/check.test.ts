@@ -89,6 +89,7 @@ describe("successful checks", () => {
     .env({ ENGINE_API_KEY })
     .stdout()
     .command(["schema:check"])
+    .exit(1)
     .it("compares against the latest uploaded schema", () => {
       expect(stdout).toContain("FAILURE");
       expect(stdout).toContain("NOTICE");
@@ -114,6 +115,7 @@ describe("successful checks", () => {
     .nock(ENGINE_URI, engineSuccess())
     .env({ ENGINE_API_KEY })
     .command(["schema:check", "-e=https://staging.example.com/graphql"])
+    .exit(1)
     .it("compares against a schema from a custom remote", () => {
       expect(stdout).toContain("FAILURE");
       expect(stdout).toContain("NOTICE");
@@ -141,6 +143,7 @@ describe("successful checks", () => {
       "--header=Authorization: 1234",
       "--header=Hello: World",
     ])
+    .exit(1)
     .it(
       "calls engine with a schema from a custom remote with custom headers",
       () => {
@@ -158,6 +161,7 @@ describe("successful checks", () => {
       "schema:check",
       `-e=${path.resolve(__dirname, "./fixtures/introspection-result.json")}`,
     ])
+    .exit(1)
     .it(
       "calls engine with a schema from an introspection result on the filesystem",
       () => {
@@ -175,6 +179,7 @@ describe("successful checks", () => {
       "schema:check",
       `-e=${path.resolve(__dirname, "./fixtures/schema.graphql")}`,
     ])
+    .exit(1)
     .it(
       "calls engine with a schema from a schema file on the filesystem",
       () => {
@@ -190,6 +195,7 @@ describe("successful checks", () => {
     .env({ ENGINE_API_KEY })
     .stdout()
     .command(["schema:check", "--json"])
+    .exit(1)
     .it("allows formatting success as json", () => {
       expect(stdout).toContain('"type": "FAILURE"');
     });
