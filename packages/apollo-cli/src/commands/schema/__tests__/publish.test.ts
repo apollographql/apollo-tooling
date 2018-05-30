@@ -40,6 +40,7 @@ const engineSuccess = (
       operationName: "UploadSchema",
       variables: {
         schema,
+        id: "test",
         tag: tag || "current",
         gitContext: {
           commit: /.+/i,
@@ -51,8 +52,10 @@ const engineSuccess = (
     })
     .reply(200, {
       data: {
-        uploadSchema: {
-          tag: { tag: tag || "current", schema: { hash: "12345" } },
+        service: {
+          uploadSchema: {
+            tag: { tag: tag || "current", schema: { hash: "12345" } },
+          },
         },
       },
     });

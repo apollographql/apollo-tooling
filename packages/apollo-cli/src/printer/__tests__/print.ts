@@ -23,6 +23,24 @@ const schemas = (sd1, sd2) => ({
   next: buildSchema(sd2),
 });
 
+const compare = (name, sd1, sd2, debug = false) => {
+  it(name, () => {
+    const { current, next } = schemas(sd1, sd2);
+    const sdl = printFromSchemas(current, next);
+    if (debug) console.log("DEBUG\n" + sdl);
+    if (!debug) expect(sdl).toMatchSnapshot();
+  });
+};
+
+const fcompare = (name, sd1, sd2, debug = true) => {
+  fit(name, () => {
+    const { current, next } = schemas(sd1, sd2);
+    const sdl = printFromSchemas(current, next);
+    if (debug) console.log("DEBUG\n" + sdl);
+    if (!debug) expect(sdl).toMatchSnapshot();
+  });
+};
+
 describe("types", () => {
   it("renders nothing for no changes", () => {
     const { current, next } = schemas(
@@ -41,173 +59,510 @@ describe("types", () => {
     expect(sdl).toBeFalsy();
   });
 
-  it("shows removed types", () => {
-    const { current, next } = schemas(
-      gql`
-        type RemovedType {
-          id: ID!
-        }
+  compare(
+    "shows removed types",
+    gql`
+      type RemovedType {
+        id: ID!
+      }
 
-        enum RemovedEnum {
-          ONE
-        }
+      enum RemovedEnum {
+        ONE
+      }
 
-        input RemovedInput {
-          id: ID!
-        }
+      input RemovedInput {
+        id: ID!
+      }
 
-        scalar RemovedScalar
+      scalar RemovedScalar
 
-        interface RemovedInterface {
-          id: ID!
-        }
+      interface RemovedInterface {
+        id: ID!
+      }
 
-        union RemovedUnion = User
+      union RemovedUnion = User
 
-        type User {
-          id: ID!
-        }
-      `,
-      gql`
-        type User {
-          id: ID!
-        }
-      `
-    );
-    const sdl = printFromSchemas(current, next);
-    expect(sdl).toMatchSnapshot();
-  });
+      type User {
+        id: ID!
+      }
+    `,
+    gql`
+      type User {
+        id: ID!
+      }
+    `
+  );
 
-  it("shows added types", () => {
-    const { current, next } = schemas(
-      gql`
-        type User {
-          id: ID!
-        }
-      `,
-      gql`
-        type AddedType {
-          id: ID!
-        }
+  compare(
+    "shows added types",
+    gql`
+      type User {
+        id: ID!
+      }
+    `,
+    gql`
+      type AddedType {
+        id: ID!
+      }
 
-        enum AddedEnum {
-          ONE
-        }
+      enum AddedEnum {
+        ONE
+      }
 
-        input AddedInput {
-          id: ID!
-        }
+      input AddedInput {
+        id: ID!
+      }
 
-        scalar AddedScalar
+      scalar AddedScalar
 
-        interface AddedInterface {
-          id: ID!
-        }
+      interface AddedInterface {
+        id: ID!
+      }
 
-        union AddedUnion = User
+      union AddedUnion = User
 
-        type User {
-          id: ID!
-        }
-      `
-    );
-    const sdl = printFromSchemas(current, next);
-    expect(sdl).toMatchSnapshot();
-  });
+      type User {
+        id: ID!
+      }
+    `
+  );
 });
 describe("fields", () => {
-  it("shows warning for removals", () => {
-    const { current, next } = schemas(
-      gql`
-        type User {
-          id: ID!
-          firstName: String!
-        }
+  compare(
+    "shows warning for removals",
+    gql`
+      type User {
+        id: ID!
+        firstName: String!
+      }
 
-        enum AddedEnum {
-          ONE
-          TWO
-        }
+      enum AddedEnum {
+        ONE
+        TWO
+      }
 
-        input AddedInput {
-          id: ID!
-          firstName: String!
-          lastName: String
-        }
+      input AddedInput {
+        id: ID!
+        firstName: String!
+        lastName: String
+      }
 
-        interface AddedInterface {
-          id: ID!
-          firstName(arg: String): String
-        }
-      `,
-      gql`
-        type User {
-          id: ID!
-        }
+      interface AddedInterface {
+        id: ID!
+        firstName(arg: String): String
+      }
+    `,
+    gql`
+      type User {
+        id: ID!
+      }
 
-        enum AddedEnum {
-          ONE
-        }
+      enum AddedEnum {
+        ONE
+      }
 
-        input AddedInput {
-          id: ID!
-        }
+      input AddedInput {
+        id: ID!
+      }
 
-        interface AddedInterface {
-          id: ID!
-        }
-      `
-    );
-    const sdl = printFromSchemas(current, next);
+      interface AddedInterface {
+        id: ID!
+      }
+    `
+  );
+  compare(
+    "shows notice for additions",
+    gql`
+      type User {
+        id: ID!
+      }
 
-    expect(sdl).toMatchSnapshot();
-  });
-  it("shows notice for additions", () => {
-    const { current, next } = schemas(
-      gql`
-        type User {
-          id: ID!
-        }
+      enum AddedEnum {
+        ONE
+      }
 
-        enum AddedEnum {
-          ONE
-        }
+      input AddedInput {
+        id: ID!
+      }
 
-        input AddedInput {
-          id: ID!
-        }
+      interface AddedInterface {
+        id: ID!
+      }
+    `,
+    gql`
+      type User {
+        id: ID!
+        firstName: String!
+      }
 
-        interface AddedInterface {
-          id: ID!
-        }
-      `,
-      gql`
-        type User {
-          id: ID!
-          firstName: String!
-        }
+      enum AddedEnum {
+        ONE
+        TWO
+      }
 
-        enum AddedEnum {
-          ONE
-          TWO
-        }
+      input AddedInput {
+        id: ID!
+        firstName: String!
+        lastName: String
+      }
 
-        input AddedInput {
-          id: ID!
-          firstName: String!
-          lastName: String
-        }
-
-        interface AddedInterface {
-          id: ID!
-          firstName(arg: String): String
-        }
-      `
-    );
-    const sdl = printFromSchemas(current, next);
-    expect(sdl).toMatchSnapshot();
-  });
+      interface AddedInterface {
+        id: ID!
+        firstName(arg: String): String
+      }
+    `
+  );
 });
+
+describe("arguments", () => {
+  compare(
+    "shows removed arguments",
+    gql`
+      type Query {
+        hello(name: String): String
+      }
+
+      interface Node {
+        id(id: ID!): String
+      }
+    `,
+    gql`
+      type Query {
+        hello: String
+      }
+
+      interface Node {
+        id: String
+      }
+    `
+  );
+  compare(
+    "shows added arguments",
+    gql`
+      type Query {
+        hello: String
+      }
+
+      interface Node {
+        id: String
+      }
+    `,
+    gql`
+      type Query {
+        hello(name: String): String
+      }
+
+      interface Node {
+        id(id: ID!): String
+      }
+    `
+  );
+});
+
+describe("interfaces", () => {
+  compare(
+    "reports removal of interface implementations",
+    gql`
+      type Query {
+        user(id: ID!): User
+      }
+
+      interface Node {
+        id: ID!
+      }
+
+      type User implements Node {
+        id: ID!
+      }
+    `,
+    gql`
+      type Query {
+        user(id: ID!): User
+      }
+
+      interface Node {
+        id: ID!
+      }
+
+      type User {
+        id: ID!
+      }
+    `
+  );
+  compare(
+    "reports removal multiple of interface implementations",
+    gql`
+      type Query {
+        user(id: ID!): User
+      }
+
+      interface Node {
+        id: ID!
+      }
+
+      interface Person {
+        id: ID!
+      }
+
+      type User implements Node & Person {
+        id: ID!
+      }
+    `,
+    gql`
+      type Query {
+        user(id: ID!): User
+      }
+
+      interface Node {
+        id: ID!
+      }
+
+      interface Person {
+        id: ID!
+      }
+
+      type User implements Node {
+        id: ID!
+      }
+    `
+  );
+  compare(
+    "reports additiong of interface to object",
+    gql`
+      type Query {
+        user(id: ID!): User
+      }
+
+      interface Node {
+        id: ID!
+      }
+
+      type User {
+        id: ID!
+      }
+    `,
+    gql`
+      type Query {
+        user(id: ID!): User
+      }
+
+      interface Node {
+        id: ID!
+      }
+
+      type User implements Node {
+        id: ID!
+      }
+    `
+  );
+
+  compare(
+    "reports adding multiple interface implementations",
+    gql`
+      type Query {
+        user(id: ID!): User
+      }
+
+      interface Node {
+        id: ID!
+      }
+
+      interface Person {
+        id: ID!
+      }
+
+      type User implements Node {
+        id: ID!
+      }
+    `,
+    gql`
+      type Query {
+        user(id: ID!): User
+      }
+
+      interface Node {
+        id: ID!
+      }
+
+      interface Person {
+        id: ID!
+      }
+
+      type User implements Node & Person {
+        id: ID!
+      }
+    `
+  );
+});
+
+describe("unions", () => {
+  compare(
+    "type removed from union",
+    gql`
+      type User {
+        id: ID!
+      }
+
+      type Person {
+        firstName: String
+      }
+
+      union Client = User | Person
+    `,
+    gql`
+      type User {
+        id: ID!
+      }
+
+      type Person {
+        firstName: String
+      }
+
+      union Client = User
+    `
+  );
+  compare(
+    "type added from union",
+    gql`
+      type User {
+        id: ID!
+      }
+
+      type Person {
+        firstName: String
+      }
+
+      union Client = User
+    `,
+    gql`
+      type User {
+        id: ID!
+      }
+
+      type Person {
+        firstName: String
+      }
+
+      union Client = User | Person
+    `
+  );
+});
+
+describe("kind changes", () => {
+  compare(
+    "type changed kind",
+    gql`
+      type Query {
+        hello: String
+      }
+
+      interface ChangeType {
+        id: ID!
+      }
+    `,
+    gql`
+      type Query {
+        hello: String
+      }
+
+      type ChangeType {
+        id: ID!
+      }
+    `
+  );
+  compare(
+    "field changed kind",
+    gql`
+      type Query {
+        hello: String
+      }
+
+      input Hello {
+        hello: String
+      }
+    `,
+    gql`
+      type Query {
+        hello: ID!
+      }
+
+      input Hello {
+        hello: String!
+      }
+    `
+  );
+  compare(
+    "arg changed kind",
+    gql`
+      type Query {
+        hello(id: ID): String
+        defaultVal(id: String = "1"): String
+      }
+    `,
+    gql`
+      type Query {
+        hello(id: String): String
+        defaultVal(id: String = "2"): String
+      }
+    `
+  );
+});
+
+describe("deprecation changes", () => {
+  compare(
+    "deprecation additions",
+    gql`
+      type Query {
+        deprecated: String
+        deprecatedWithReason: String @deprecated(reason: "Give up")
+      }
+
+      enum SoLong {
+        TWO
+        ONE @deprecated(reason: "There can only be one highlander")
+      }
+    `,
+    gql`
+      type Query {
+        deprecated: String @deprecated
+        deprecatedWithReason: String
+          @deprecated(reason: "Use field testcase instead")
+      }
+
+      enum SoLong {
+        TWO @deprecated
+        ONE @deprecated(reason: "One is the loneliest number")
+      }
+    `
+  );
+  compare(
+    "deprecation removals",
+    gql`
+      type Query {
+        deprecated: String @deprecated
+      }
+
+      enum SoLong {
+        TWO @deprecated
+      }
+    `,
+    gql`
+      type Query {
+        deprecated: String
+      }
+
+      enum SoLong {
+        TWO
+      }
+    `
+  );
+});
+
+// // Post Apollo Day goals
+// DIRECTIVE_REMOVED,
+// DIRECTIVE_LOCATION_REMOVED,
+// DIRECTIVE_ARG_REMOVED,
+// NON_NULL_DIRECTIVE_ARG_ADDED,
 
 describe("integration", () => {
   // XXX make this change complex

@@ -88,13 +88,12 @@ export default class SchemaCheck extends Command {
                 throw new Error(
                   errors.map(({ message }) => message).join("\n")
                 );
-              console.log(data, errors)
-              if (!data!.service) throw new Error(`No schema found for ${variables.id}`)
+              if (!data!.service)
+                throw new Error(`No schema found for ${variables.id}`);
               return data!.service.schema.checkSchema.changes;
             })
             .catch(e => {
-              console.log(e)
-              this.error(e.message)
+              this.error(e.message);
             });
         },
       },

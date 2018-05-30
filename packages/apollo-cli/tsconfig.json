@@ -8,7 +8,7 @@
     "outDir": "./lib",
     "pretty": true,
     "rootDirs": ["./src"],
-    "lib": ["dom", "es6", "esnext.asynciterable"],
+    "lib": ["dom", "es7", "esnext.asynciterable"],
     "strict": true,
     "target": "es2017",
     "baseUrl": ".",

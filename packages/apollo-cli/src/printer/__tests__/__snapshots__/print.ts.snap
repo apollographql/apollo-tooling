@@ -1,5 +1,84 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`arguments shows added arguments 1`] = `
+"type Query { 
+  
+  # ✔️ Notice ✔️
+  hello(name: String): String
+
+}
+
+interface Node { 
+  
+  # ✔️ Notice ✔️
+  id(id: ID!): String
+
+}
+
+"
+`;
+
+exports[`arguments shows removed arguments 1`] = `
+"type Query { 
+  
+  # ⚡ Warning ⚡
+  hello: String
+
+}
+
+interface Node { 
+  
+  # ⚡ Warning ⚡
+  id: String
+
+}
+
+
+"
+`;
+
+exports[`deprecation changes deprecation additions 1`] = `
+"type Query { 
+  
+  # ⚡ Warning ⚡
+  deprecated: String @deprecated
+
+  # ✔️ Notice ✔️
+  deprecatedWithReason: String @deprecated(reason: \\"Use field testcase instead\\")
+
+}
+
+enum SoLong { 
+  
+  # ⚡ Warning ⚡
+  TWO @deprecated
+
+  # ✔️ Notice ✔️
+  ONE @deprecated(reason: \\"One is the loneliest number\\")
+
+}
+
+"
+`;
+
+exports[`deprecation changes deprecation removals 1`] = `
+"type Query { 
+  
+  # ✔️ Notice ✔️
+  deprecated: String
+
+}
+
+enum SoLong { 
+  
+  # ✔️ Notice ✔️
+  TWO
+
+}
+
+"
+`;
+
 exports[`fields shows notice for additions 1`] = `
 "input AddedInput { 
   
@@ -90,6 +169,67 @@ type User {
 "
 `;
 
+exports[`interfaces reports adding multiple interface implementations 1`] = `
+"type User implements Node & Person { }
+
+"
+`;
+
+exports[`interfaces reports additiong of interface to object 1`] = `
+"type User implements Node { }
+
+"
+`;
+
+exports[`interfaces reports removal multiple of interface implementations 1`] = `
+"type User implements Node { }
+
+"
+`;
+
+exports[`interfaces reports removal of interface implementations 1`] = `
+"type User { }
+
+"
+`;
+
+exports[`kind changes arg changed kind 1`] = `
+"type Query { 
+  
+  # ⚡ Warning ⚡
+  hello(id: String): String
+  defaultVal(id: String = \\"2\\"): String
+
+}
+
+
+"
+`;
+
+exports[`kind changes field changed kind 1`] = `
+"type Query { 
+  
+  # ⚡ Warning ⚡
+  hello: ID!
+
+}
+
+input Hello { 
+  
+  # ⚡ Warning ⚡
+  hello: String!
+
+}
+
+"
+`;
+
+exports[`kind changes type changed kind 1`] = `
+"type ChangeType { }
+
+"
+`;
+
 exports[`types shows added types 1`] = `
 "type AddedType { 
   
@@ -138,6 +278,18 @@ scalar RemovedScalar
 interface RemovedInterface { }
 
 union RemovedUnion = User
+
+"
+`;
+
+exports[`unions type added from union 1`] = `
+"union Client = User | Person
+
+"
+`;
+
+exports[`unions type removed from union 1`] = `
+"union Client = User
 
 "
 `;

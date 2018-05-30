@@ -30,6 +30,7 @@ import {
   DiffField,
   DiffEnum,
 } from "./ast";
+import * as decode from "decode-html";
 
 import { diffSchemas } from "./diff";
 
@@ -86,12 +87,17 @@ const Values: React.SFC<{
       {"\n"}
       {"  "}
       <Header name={name} />
-      {"  "}
-      {values.map((value, i) => <Value value={value} key={i} />)}
-      {"\n"}
+      {values.map((value, i) => (
+        <React.Fragment key={i}>
+          {"  "}
+          <Value value={value} key={i} />
+          {"\n"}
+        </React.Fragment>
+      ))}
     </>
   ) : null;
 
+const removals = ["TYPE_REMOVED"];
 const Type: React.SFC<{ change: Change }> = ({ change }) => {
   const type = change.type;
   if (!type) return null;
@@ -103,7 +109,7 @@ const Type: React.SFC<{ change: Change }> = ({ change }) => {
       const types = t.types.map(({ name }) => name.value);
       return (
         <>
-          {typeName} {type.name.value} = {types.join(", ")}
+          {typeName} {type.name.value} = {types.join(" | ")}
           {"\n"}
         </>
       );
@@ -128,11 +134,12 @@ const Type: React.SFC<{ change: Change }> = ({ change }) => {
       const notice = values.filter(
         ({ change }) => change && change.change === ChangeType.NOTICE
       );
+
       return (
         <>
           {typeName} {type.name.value}
           {" { "}
-          {change.code === "TYPE_REMOVED" ? null : change.code ===
+          {removals.includes(change.code) ? null : change.code ===
           "TYPE_ADDED" ? (
             <>
               {"\n  "}
@@ -160,26 +167,43 @@ const Type: React.SFC<{ change: Change }> = ({ change }) => {
         | InterfaceTypeDefinitionNode
         | InputObjectTypeDefinitionNode;
 
-      const fields = t.fields as DiffField[];
+      const fields: DiffField[] = t.fields
+        ? (t as ObjectTypeDefinitionNode).fields!.filter(
+            ({ change }: DiffField) => change
+          )
+        : [];
 
       const failure = fields.filter(
-        ({ change }) => change && change.change === ChangeType.FAILURE
+        ({ change }) => change!.change === ChangeType.FAILURE
       );
       const warning = fields.filter(
-        ({ change }) => change && change.change === ChangeType.WARNING
+        ({ change }) => change!.change === ChangeType.WARNING
       );
       const notice = fields.filter(
-        ({ change }) => change && change.change === ChangeType.NOTICE
+        ({ change }) => change!.change === ChangeType.NOTICE
       );
+      const interfaces = (t as ObjectTypeDefinitionNode).interfaces
+        ? (t as ObjectTypeDefinitionNode).interfaces!
+        : [];
+      const implementedInterfaces = interfaces.length
+        ? " implements " +
+          interfaces.map(({ name }: any) => name.value).join(" & ")
+        : "";
+
       return (
         <>
           {typeName} {t.name.value}
+          {implementedInterfaces}
           {" { "}
-          {change.code === "TYPE_REMOVED" ? null : change.code ===
-          "TYPE_ADDED" ? (
+          {removals.includes(change.code) ||
+          (change.code !== "TYPE_ADDED" &&
+            fields.length === 0) ? null : change.code === "TYPE_ADDED" ? (
             <>
               {"\n  "}
-              <Fields name={`${n} Notice ${n}`} fields={fields} />
+              <Fields
+                name={`${n} Notice ${n}`}
+                fields={t.fields as DiffField[]}
+              />
               {"\n"}
             </>
           ) : (
@@ -272,5 +296,6 @@ export const printFromSchemas = (
   const newTypeMap = next.getTypeMap();
 
   const changes = diffSchemas(currentTypeMap, newTypeMap);
-  return renderToStaticMarkup(<Schema changes={changes} />);
+  // replace SSR santiaztion with pretty print
+  return decode(renderToStaticMarkup(<Schema changes={changes} />));
 };
