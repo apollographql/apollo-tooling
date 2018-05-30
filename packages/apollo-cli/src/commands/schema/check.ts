@@ -1,5 +1,6 @@
 import { Command, flags } from "@oclif/command";
-import { table, styledJSON } from "heroku-cli-util";
+import chalk from "chalk";
+import { color, table, styledJSON } from "heroku-cli-util";
 import cli from "cli-ux";
 import * as Listr from "listr";
 
@@ -9,6 +10,7 @@ import { VALIDATE_SCHEMA } from "../../operations/validateSchema";
 import { engineLink, getIdFromKey } from "../../engine";
 import { fetchSchema } from "../../fetch-schema";
 import { gitInfo } from "../../git";
+import { ChangeType } from "../../printer/ast";
 
 export default class SchemaCheck extends Command {
   static description = "Check a schema against previous registered schema";
@@ -105,12 +107,38 @@ export default class SchemaCheck extends Command {
         return this.log("\nNo changes present between schemas\n");
       }
       this.log("\n");
-      table(changes, [
-        { key: "type" },
-        { key: "code" },
-        { key: "description" },
-      ]);
+      table(changes.sort(sorter).map(format), {
+        columns: [
+          { key: "type", label: "Change" },
+          { key: "code", label: "Code" },
+          { key: "description", label: "Description" },
+        ],
+      });
       this.log("\n");
     });
   }
 }
+
+const format = change => {
+  let color = x => x;
+  if (change.type === ChangeType.FAILURE) {
+    color = chalk.red;
+  }
+  if (change.type === ChangeType.WARNING) {
+    color = chalk.yellow;
+  }
+
+  return {
+    type: color(change.type),
+    code: color(change.code),
+    description: color(change.description),
+  };
+};
+
+const sorter = (a, b) => {
+  if (a.type === b.type) return 0;
+  if (b.type === ChangeType.FAILURE) return 1;
+  if (b.type === ChangeType.WARNING) return 1;
+  if (b.type === ChangeType.NOTICE) return -1;
+  return 0;
+};

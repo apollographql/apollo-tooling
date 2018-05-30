@@ -55,19 +55,19 @@ const engineSuccess = ({ schema, tag, results } = {}) => nock => {
             checkSchema: {
               changes: results || [
                 {
+                  type: "NOTICE",
+                  code: "DEPRECATION_ADDED",
+                  description: "Field `User.lastName` was deprecated",
+                },
+                {
                   type: "WARNING",
                   code: "FIELD_REMOVED",
                   description: "Field `User.firstName` removed",
                 },
                 {
-                  type: "BREAKING",
+                  type: "FAILURE",
                   code: "ARG_CHANGE_TYPE",
                   description: "Argument id on `Query.user` changed to ID!",
-                },
-                {
-                  type: "NOTICE",
-                  code: "DEPRECATION_ADDED",
-                  description: "Field `User.lastName` was deprecated",
                 },
                 {
                   type: "NOTICE",
@@ -90,7 +90,7 @@ describe("successful checks", () => {
     .stdout()
     .command(["schema:check"])
     .it("compares against the latest uploaded schema", () => {
-      expect(stdout).toContain("BREAKING");
+      expect(stdout).toContain("FAILURE");
       expect(stdout).toContain("NOTICE");
       expect(stdout).toContain("WARNING");
     });
@@ -115,7 +115,7 @@ describe("successful checks", () => {
     .env({ ENGINE_API_KEY })
     .command(["schema:check", "-e=https://staging.example.com/graphql"])
     .it("compares against a schema from a custom remote", () => {
-      expect(stdout).toContain("BREAKING");
+      expect(stdout).toContain("FAILURE");
       expect(stdout).toContain("NOTICE");
       expect(stdout).toContain("WARNING");
     });
@@ -144,7 +144,7 @@ describe("successful checks", () => {
     .it(
       "calls engine with a schema from a custom remote with custom headers",
       () => {
-        expect(stdout).toContain("BREAKING");
+        expect(stdout).toContain("FAILURE");
         expect(stdout).toContain("NOTICE");
         expect(stdout).toContain("WARNING");
       }
@@ -161,7 +161,7 @@ describe("successful checks", () => {
     .it(
       "calls engine with a schema from an introspection result on the filesystem",
       () => {
-        expect(stdout).toContain("BREAKING");
+        expect(stdout).toContain("FAILURE");
         expect(stdout).toContain("NOTICE");
         expect(stdout).toContain("WARNING");
       }
@@ -178,7 +178,7 @@ describe("successful checks", () => {
     .it(
       "calls engine with a schema from a schema file on the filesystem",
       () => {
-        expect(stdout).toContain("BREAKING");
+        expect(stdout).toContain("FAILURE");
         expect(stdout).toContain("NOTICE");
         expect(stdout).toContain("WARNING");
       }
@@ -191,7 +191,7 @@ describe("successful checks", () => {
     .stdout()
     .command(["schema:check", "--json"])
     .it("allows formatting success as json", () => {
-      expect(stdout).toContain('"type": "BREAKING"');
+      expect(stdout).toContain('"type": "FAILURE"');
     });
 });
 
