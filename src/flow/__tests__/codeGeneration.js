@@ -10,15 +10,15 @@ import {
 
 import {
   generateSource
-} from '../../src/flow/codeGeneration';
+} from '../../flow/codeGeneration';
 
-import { loadSchema } from '../../src/loading';
-const starWarsSchema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
-const miscSchema = loadSchema(require.resolve('../fixtures/misc/schema.json'));
+import { loadSchema } from '../../loading';
+const starWarsSchema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
+const miscSchema = loadSchema(require.resolve('../../../test/fixtures/misc/schema.json'));
 
-import CodeGenerator from '../../src/utilities/CodeGenerator';
+import CodeGenerator from '../../utilities/CodeGenerator';
 
-import { compileToLegacyIR } from '../../src/compiler/legacyIR';
+import { compileToLegacyIR } from '../../compiler/legacyIR';
 
 function setup(schema) {
   const context = {
@@ -332,7 +332,7 @@ describe('Flow code generation', function() {
       const source = generateSource(context);
       expect(source).toMatchSnapshot();
     });
-    
+
     test('should have __typename value matching fragment type on generic type', () => {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
@@ -370,7 +370,7 @@ describe('Flow code generation', function() {
       const source = generateSource(context);
       expect(source).toMatchSnapshot();
     });
-    
+
     test('should have __typename value in nested property', () => {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
@@ -380,7 +380,7 @@ describe('Flow code generation', function() {
               edges {
                 node {
                   name
-                  
+
                 }
               }
             }
