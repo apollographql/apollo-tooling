@@ -1,7 +1,7 @@
 import { generateOperationId } from '../generateOperationId';
 import { stripIndent } from 'common-tags';
 
-import { compile } from '../../../../test/test-utils/helpers';
+import { compile } from './test-utils/helpers';
 
 describe(`generateOperationId()`, () => {
   it(`should generate different operation IDs for different operations`, () => {

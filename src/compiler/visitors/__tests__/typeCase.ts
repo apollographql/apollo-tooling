@@ -1,5 +1,5 @@
 import { buildSchema } from 'graphql';
-import { compile } from '../../../../test/test-utils/helpers';
+import { compile } from './test-utils/helpers';
 
 import { SelectionSet, Field } from '../..';
 import { typeCaseForSelectionSet } from '../typeCase';
