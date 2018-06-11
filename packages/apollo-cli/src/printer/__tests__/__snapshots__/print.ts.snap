@@ -148,21 +148,21 @@ type User {
 `;
 
 exports[`integration reports changes for a complex scenario 1`] = `
-"type Query { 
+"type User { 
+  
+  # ✔️ Notice ✔️
+  id: ID!
+  firstName: String
+
+}
+
+type Query { 
   
   # ⚡ Warning ⚡
   hello: String!
 
   # ✔️ Notice ✔️
   me: User
-
-}
-
-type User { 
-  
-  # ✔️ Notice ✔️
-  id: ID!
-  firstName: String
 
 }
 
