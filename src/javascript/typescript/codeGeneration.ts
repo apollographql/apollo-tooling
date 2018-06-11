@@ -26,6 +26,10 @@ import {
 import { BasicGeneratedFile } from '../../utilities/CodeGenerator';
 import TypescriptGenerator, { ObjectProperty, TypescriptCompilerOptions, } from './language';
 import Printer from './printer';
+import { GraphQLType } from 'graphql/type/definition';
+import { FragmentSpread } from '../../compiler';
+import { GraphQLNonNull, GraphQLOutputType, getNullableType, GraphQLList, GraphQLObjectType } from 'graphql';
+import { maybePush } from '../../utilities/array';
 
 class TypescriptGeneratedFile implements BasicGeneratedFile {
   fileContents: string;
@@ -38,7 +42,7 @@ class TypescriptGeneratedFile implements BasicGeneratedFile {
   }
 }
 
-function printEnumsAndInputObjects(generator: TypescriptAPIGenerator, context: CompilerContext) {
+function printEnumsAndInputObjects(generator: TypescriptAPIGenerator, typesUsed: GraphQLType[]) {
   generator.printer.enqueue(stripIndent`
     //==============================================================
     // START Enums and Input Objects
@@ -48,13 +52,13 @@ function printEnumsAndInputObjects(generator: TypescriptAPIGenerator, context: C
     //==============================================================
   `);
 
-  context.typesUsed
+  typesUsed
     .filter(type => (type instanceof GraphQLEnumType))
     .forEach((enumType) => {
       generator.typeAliasForEnumType(enumType as GraphQLEnumType);
     });
 
-  context.typesUsed
+  typesUsed
     .filter(type => type instanceof GraphQLInputObjectType)
     .forEach((inputObjectType) => {
       generator.typeAliasForInputObjectType(inputObjectType as GraphQLInputObjectType);
@@ -77,7 +81,9 @@ export function generateSource(
     .forEach((operation) => {
       generator.fileHeader();
       generator.interfacesForOperation(operation);
-      printEnumsAndInputObjects(generator, context);
+
+      const typesUsed = generator.getTypesUsedForOperation(operation, context);
+      printEnumsAndInputObjects(generator, typesUsed);
 
       const output = generator.printer.printAndClear();
 
@@ -94,7 +100,9 @@ export function generateSource(
     .forEach((fragment) => {
       generator.fileHeader();
       generator.interfacesForFragment(fragment);
-      printEnumsAndInputObjects(generator, context);
+
+      const typesUsed = generator.getTypesUsedForOperation(fragment, context);
+      printEnumsAndInputObjects(generator, typesUsed);
 
       const output = generator.printer.printAndClear();
 
@@ -243,6 +251,85 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     }
 
     this.scopeStackPop();
+  }
+
+  public getTypesUsedForOperation(doc: Operation | Fragment, context: CompilerContext) {
+    let docTypesUsed: GraphQLType[] = [];
+
+    if (doc.hasOwnProperty('operationName')) {
+      const operation = doc as Operation;
+      docTypesUsed = operation.variables.map(({ type }) => type);
+    }
+
+    const reduceTypesForDocument = (
+      nestDoc: Operation | Fragment | FragmentSpread,
+      acc: GraphQLType[]
+    ) => {
+      const {
+        selectionSet: {
+          possibleTypes,
+          selections,
+        },
+      } = nestDoc;
+
+      acc = possibleTypes.reduce(maybePush, acc);
+
+      acc = selections
+        .reduce((selectionAcc, selection) => {
+          switch (selection.kind) {
+            case 'Field':
+            case 'TypeCondition':
+              selectionAcc = maybePush(selectionAcc, selection.type);
+              break;
+            case 'FragmentSpread':
+              selectionAcc = reduceTypesForDocument(selection, selectionAcc);
+              break;
+            default:
+              break;
+          }
+
+          return selectionAcc;
+        }, acc);
+
+      return acc;
+    }
+
+    docTypesUsed = reduceTypesForDocument(doc, docTypesUsed)
+      .reduce(this.reduceTypesUsed, []);
+
+    return context.typesUsed
+      .filter((type) => {
+        return docTypesUsed.find((typeUsed) => type === typeUsed);
+      });
+  }
+
+  private reduceTypesUsed = (
+    acc: (GraphQLType | GraphQLOutputType)[],
+    type: GraphQLType
+  ) =>{
+    if (type instanceof GraphQLNonNull) {
+      type = getNullableType(type);
+    }
+
+    if (type instanceof GraphQLList) {
+      type = type.ofType
+    }
+
+    if (
+      type instanceof GraphQLInputObjectType
+      || type instanceof GraphQLObjectType
+    ) {
+      acc = maybePush(acc, type);
+      const fields = type.getFields();
+      acc = Object.keys(fields)
+        .map((key) => fields[key] && fields[key].type)
+        .reduce(this.reduceTypesUsed, acc);
+      ;
+    } else {
+      acc = maybePush(acc, type);
+    }
+
+    return acc;
   }
 
   private getVariantsForSelectionSet(selectionSet: SelectionSet) {
