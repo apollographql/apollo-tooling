@@ -54,9 +54,10 @@ export default class TypescriptGenerator {
     );
 
     if (description) {
+      const value = description.replace(new RegExp('\n', 'g'), ' ').trim();
       typeAlias.leadingComments = [{
         type: 'CommentLine',
-        value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
+        value: ` ${value}`
       } as t.CommentLine];
     }
 
@@ -76,9 +77,12 @@ export default class TypescriptGenerator {
         }
       });
 
-    const inputType = this.interface(name, fields, {
-      keyInheritsNullability: true
-    });
+    const inputType = t.exportNamedDeclaration(
+      this.interface(name, fields, {
+        keyInheritsNullability: true
+      }),
+      []
+    );
 
     inputType.leadingComments = [{
       type: 'CommentLine',
