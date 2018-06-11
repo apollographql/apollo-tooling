@@ -11,7 +11,7 @@ import {
 
 import { loadSchema } from '../../loading'
 
-import { compileToLegacyIR } from '../../compiler/legacyIR'
+import { compileToLegacyIR } from '../legacyIR'
 import { serializeAST } from '../../serializeToJSON'
 
 function withStringifiedTypes(ir) {

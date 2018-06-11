@@ -16,7 +16,7 @@ const schema = loadSchema(require.resolve('../../../test/fixtures/starwars/schem
 
 import CodeGenerator from '../../utilities/CodeGenerator';
 
-import { typeNameFromGraphQLType } from '../../scala/types'
+import { typeNameFromGraphQLType } from '../types'
 
 describe('Scala code generation: Types', function() {
   describe('#typeNameFromGraphQLType()', function() {

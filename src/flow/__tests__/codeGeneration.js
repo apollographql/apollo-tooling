@@ -10,7 +10,7 @@ import {
 
 import {
   generateSource
-} from '../../flow/codeGeneration';
+} from '../codeGeneration';
 
 import { loadSchema } from '../../loading';
 const starWarsSchema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));

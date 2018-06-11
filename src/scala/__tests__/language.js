@@ -6,7 +6,7 @@ import {
   objectDeclaration,
   caseClassDeclaration,
   propertyDeclaration,
-} from '../../scala/language';
+} from '../language';
 
 describe('Scala code generation: Basic language constructs', function() {
   let generator;

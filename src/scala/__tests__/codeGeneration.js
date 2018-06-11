@@ -18,7 +18,7 @@ import {
   caseClassDeclarationForFragment,
   caseClassDeclarationForSelectionSet,
   typeDeclarationForGraphQLType,
-} from '../../scala/codeGeneration';
+} from '../codeGeneration';
 
 import { loadSchema } from '../../loading';
 const schema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));

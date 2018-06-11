@@ -12,7 +12,7 @@ import {
   Argument
 } from '../../compiler';
 
-import { SwiftAPIGenerator } from '../../swift/codeGeneration';
+import { SwiftAPIGenerator } from '../codeGeneration';
 
 describe('Swift code generation', () => {
   let generator: SwiftAPIGenerator;

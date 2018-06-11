@@ -10,9 +10,7 @@ import {
   GraphQLNonNull
 } from 'graphql';
 
-import {
-  generateSource
-} from '../../typescript/codeGeneration';
+import { generateSource } from '../codeGeneration';
 
 import { loadSchema } from '../../loading';
 const starWarsSchema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
