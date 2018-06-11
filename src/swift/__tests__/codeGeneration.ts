@@ -279,7 +279,7 @@ describe('Swift code generation', () => {
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
-          type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(schema.getType('Droid')))
+          type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(schema.getType('Droid'))))
         })
       ).toBe('"response_key": propertyName.map { (value: Droid) -> ResultMap in value.resultMap }');
     });
