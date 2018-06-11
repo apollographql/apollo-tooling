@@ -1,7 +1,7 @@
 import { parse, GraphQLNonNull, GraphQLString, GraphQLEnumType, GraphQLList } from 'graphql';
 
-import { loadSchema } from '../../src/loading';
-const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
+import { loadSchema } from '../../loading';
+const schema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
 
 import {
   compileToIR,
@@ -10,9 +10,9 @@ import {
   SelectionSet,
   Field,
   Argument
-} from '../../src/compiler';
+} from '../../compiler';
 
-import { SwiftAPIGenerator } from '../../src/swift/codeGeneration';
+import { SwiftAPIGenerator } from '../../swift/codeGeneration';
 
 describe('Swift code generation', () => {
   let generator: SwiftAPIGenerator;
