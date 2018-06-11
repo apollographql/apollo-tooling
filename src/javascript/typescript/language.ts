@@ -76,9 +76,9 @@ export default class TypescriptGenerator {
         }
       });
 
-    const inputType = this.interface(name, fields, {
+    const inputType = t.exportNamedDeclaration(this.interface(name, fields, {
       keyInheritsNullability: true
-    });
+    }), []);
 
     inputType.leadingComments = [{
       type: 'CommentLine',
