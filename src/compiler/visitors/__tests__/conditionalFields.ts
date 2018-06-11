@@ -1,8 +1,8 @@
-import { SelectionSet, Field, BooleanCondition } from '../../../src/compiler';
-import { collectAndMergeFields } from '../../../src/compiler/visitors/collectAndMergeFields';
-import { typeCaseForSelectionSet } from '../../../src/compiler/visitors/typeCase';
+import { SelectionSet, Field, BooleanCondition } from '../..';
+import { collectAndMergeFields } from '../collectAndMergeFields';
+import { typeCaseForSelectionSet } from '../typeCase';
 
-import { compile } from '../../test-utils/helpers';
+import { compile } from '../../../../test/test-utils/helpers';
 
 describe('@skip/@include directives', () => {
   it('should not mark a field as conditional when it has a no directives', () => {

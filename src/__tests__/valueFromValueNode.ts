@@ -1,6 +1,6 @@
 import { parseValue } from 'graphql';
 
-import { valueFromValueNode } from '../src/utilities/graphql';
+import { valueFromValueNode } from '../utilities/graphql';
 
 describe('#valueFromValueNode', () => {
   test(`should return a number for an IntValue`, () => {

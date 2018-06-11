@@ -9,16 +9,16 @@ import {
   GraphQLNonNull
 } from 'graphql';
 
-import { loadSchema } from '../../src/loading'
+import { loadSchema } from '../../loading'
 
-import { compileToLegacyIR } from '../../src/compiler/legacyIR'
-import { serializeAST } from '../../src/serializeToJSON'
+import { compileToLegacyIR } from '../../compiler/legacyIR'
+import { serializeAST } from '../../serializeToJSON'
 
 function withStringifiedTypes(ir) {
   return JSON.parse(serializeAST(ir));
 }
 
-const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
+const schema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
 
 describe('Compiling query documents to the legacy IR', () => {
   it(`should include variables defined in operations`, () => {
