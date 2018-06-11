@@ -2,13 +2,8 @@ import {
   GraphQLError,
   getNamedType,
   isCompositeType,
-  isAbstractType,
-  isEqualType,
-  GraphQLScalarType,
   GraphQLEnumType,
-  GraphQLList,
   GraphQLNonNull,
-  GraphQLID,
   GraphQLInputObjectType
 } from 'graphql'
 
@@ -16,15 +11,12 @@ import  { isTypeProperSuperTypeOf } from '../utilities/graphql'
 
 import {
   join,
-  wrap,
 } from '../utilities/printing';
 
 import {
   packageDeclaration,
   objectDeclaration,
   caseClassDeclaration,
-  propertyDeclaration,
-  propertyDeclarations,
   escapeIdentifierIfNeeded,
   comment
 } from './language';
@@ -35,16 +27,12 @@ import {
   caseClassNameForInlineFragment,
   operationClassName,
   enumCaseName,
-  propertiesFromSelectionSet,
-  propertyFromField,
-  propertyFromInlineFragment,
-  propertyFromFragmentSpread
+  propertyFromLegacyField,
+  propertyFromInputField,
 } from './naming';
 
 import {
-  escapedString,
   multilineString,
-  dictionaryLiteralForFieldArguments,
 } from './values';
 
 import {
@@ -53,15 +41,19 @@ import {
 } from './types';
 
 import CodeGenerator from '../utilities/CodeGenerator';
+import { LegacyCompilerContext, LegacyOperation, LegacyFragment, LegacyField, LegacyInlineFragment } from '../compiler/legacyIR';
+import { GraphQLType } from 'graphql';
+import { Property } from './language';
+import { GraphQLCompositeType } from 'graphql';
 
-export function generateSource(context, options) {
+export function generateSource(context: LegacyCompilerContext) {
   const generator = new CodeGenerator(context);
 
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
   generator.printNewline();
 
-  if (context.namespace) {
-    packageDeclaration(generator, context.namespace);
+  if (context.options.namespace) {
+    packageDeclaration(generator, context.options.namespace);
   }
 
   context.typesUsed.forEach(type => {
@@ -80,7 +72,7 @@ export function generateSource(context, options) {
 }
 
 export function classDeclarationForOperation(
-  generator,
+  generator: CodeGenerator<LegacyCompilerContext, any>,
   {
     operationName,
     operationType,
@@ -91,9 +83,8 @@ export function classDeclarationForOperation(
     fragmentSpreads,
     fragmentsReferenced,
     source,
-    sourceWithFragments,
     operationId
-  }
+  }: LegacyOperation
 ) {
   let objectName;
   let protocol;
@@ -113,8 +104,7 @@ export function classDeclarationForOperation(
 
   objectDeclaration(generator, {
     objectName,
-    modifiers: [],
-    superclass: protocol
+    superclass: protocol,
   }, () => {
     if (source) {
       generator.printOnNewline('val operationString =');
@@ -123,7 +113,9 @@ export function classDeclarationForOperation(
       });
     }
 
-    operationIdentifier(generator, { operationName, sourceWithFragments, operationId });
+    if (operationId) {
+      operationIdentifier(generator, operationId);
+    }
 
     if (fragmentsReferenced && fragmentsReferenced.length > 0) {
       generator.printNewlineIfNeeded();
@@ -144,7 +136,7 @@ export function classDeclarationForOperation(
       const properties = variables.map(({ name, type }) => {
         const propertyName = escapeIdentifierIfNeeded(name);
         const typeName = typeNameFromGraphQLType(generator.context, type);
-        const isOptional = !(type instanceof GraphQLNonNull || type.ofType instanceof GraphQLNonNull);
+        const isOptional = !(type instanceof GraphQLNonNull || type instanceof GraphQLNonNull);
         return { name, propertyName, type, typeName, isOptional };
       });
 
@@ -172,7 +164,7 @@ export function classDeclarationForOperation(
 }
 
 export function caseClassDeclarationForFragment(
-  generator,
+  generator: CodeGenerator<LegacyCompilerContext, any>,
   {
     fragmentName,
     typeCondition,
@@ -180,7 +172,7 @@ export function caseClassDeclarationForFragment(
     inlineFragments,
     fragmentSpreads,
     source
-  }
+  }: LegacyFragment
 ) {
   const caseClassName = caseClassNameForFragmentName(fragmentName);
 
@@ -190,7 +182,7 @@ export function caseClassDeclarationForFragment(
     fields,
     inlineFragments,
     fragmentSpreads
-  }, () => {}, () => {
+  }, () => {
     if (source) {
       generator.printOnNewline('val fragmentString =');
       generator.withIndent(() => {
@@ -201,7 +193,7 @@ export function caseClassDeclarationForFragment(
 }
 
 export function caseClassDeclarationForSelectionSet(
-  generator,
+  generator: CodeGenerator<LegacyCompilerContext, any>,
   {
     caseClassName,
     parentType,
@@ -209,17 +201,24 @@ export function caseClassDeclarationForSelectionSet(
     inlineFragments,
     fragmentSpreads,
     viewableAs
+  }: {
+    caseClassName: string,
+    parentType: GraphQLCompositeType,
+    fields: LegacyField[],
+    inlineFragments?: LegacyInlineFragment[],
+    fragmentSpreads?: string[],
+    viewableAs?: {
+      caseClassName: string,
+      properties: (LegacyField & Property)[]
+    }
   },
-  beforeClosure,
-  objectClosure,
+  objectClosure?: () => void,
 ) {
   const possibleTypes = parentType ? possibleTypesForType(generator.context, parentType) : null;
 
-  let properties;
-
   if (!possibleTypes || possibleTypes.length == 1) {
-    properties = fields
-      .map(field => propertyFromField(generator.context, field))
+    const properties = fields
+      .map(field => propertyFromLegacyField(generator.context, field, caseClassName))
       .filter(field => field.propertyName != "__typename");
 
     caseClassDeclaration(generator, { caseClassName, params: properties.map(p => {
@@ -231,7 +230,7 @@ export function caseClassDeclarationForSelectionSet(
   } else {
     generator.printNewlineIfNeeded();
     const properties = fields
-      .map(field => propertyFromField(generator.context, field))
+      .map(field => propertyFromLegacyField(generator.context, field, caseClassName))
       .filter(field => field.propertyName != "__typename");
 
     caseClassDeclaration(generator, { caseClassName, params: properties.map(p => {
@@ -239,14 +238,14 @@ export function caseClassDeclarationForSelectionSet(
         name: p.responseName,
         type: p.typeName,
       };
-    }), superclass: 'me.shadaj.slinky.core.WithRaw'}, () => {
+    }), superclass: 'slinky.readwrite.WithRaw'}, () => {
       if (inlineFragments && inlineFragments.length > 0) {
         inlineFragments.forEach((inlineFragment) => {
           const fragClass = caseClassNameForInlineFragment(inlineFragment);
           generator.printOnNewline(`def as${inlineFragment.typeCondition}`);
           generator.print(`: Option[${fragClass}] =`);
           generator.withinBlock(() => {
-            generator.printOnNewline(`if (${fragClass}.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[me.shadaj.slinky.core.Reader[${fragClass}]].read(this.raw)) else None`);
+            generator.printOnNewline(`if (${fragClass}.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[${fragClass}]].read(this.raw)) else None`);
           });
         });
       }
@@ -259,7 +258,7 @@ export function caseClassDeclarationForSelectionSet(
             generator.printOnNewline(`def as${s}`);
             generator.print(`: Option[${s}] =`);
             generator.withinBlock(() => {
-              generator.printOnNewline(`if (${s}.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[me.shadaj.slinky.core.Reader[${s}]].read(this.raw)) else None`);
+              generator.printOnNewline(`if (${s}.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[${s}]].read(this.raw)) else None`);
             });
           }
         })
@@ -275,7 +274,7 @@ export function caseClassDeclarationForSelectionSet(
             caseClassName: caseClassNameForInlineFragment(inlineFragment),
             parentType: inlineFragment.typeCondition,
             fields: inlineFragment.fields,
-            inlineFragments: inlineFragment.inlineFragments,
+            // inlineFragments: inlineFragment.inlineFragments,
             fragmentSpreads: inlineFragment.fragmentSpreads,
             viewableAs: {
               caseClassName,
@@ -309,27 +308,27 @@ export function caseClassDeclarationForSelectionSet(
       })
     }
 
+    fields.filter(field => isCompositeType(getNamedType(field.type))).forEach(field => {
+      caseClassDeclarationForSelectionSet(
+        generator,
+        {
+          caseClassName: caseClassNameForPropertyName(field.responseName),
+          parentType: getNamedType(field.type) as GraphQLCompositeType,
+          fields: field.fields || [],
+          inlineFragments: field.inlineFragments,
+          fragmentSpreads: field.fragmentSpreads
+        }
+      );
+    });
+
     if (objectClosure) {
       objectClosure();
     }
   });
-
-  fields.filter(field => isCompositeType(getNamedType(field.type))).forEach(field => {
-    caseClassDeclarationForSelectionSet(
-      generator,
-      {
-        caseClassName: caseClassNameForPropertyName(field.responseName),
-        parentType: getNamedType(field.type),
-        fields: field.fields,
-        inlineFragments: field.inlineFragments,
-        fragmentSpreads: field.fragmentSpreads
-      }
-    );
-  });
 }
 
-function operationIdentifier(generator,  { operationName, sourceWithFragments, operationId }) {
-  if (!generator.context.generateOperationIds) {
+function operationIdentifier(generator: CodeGenerator<LegacyCompilerContext, any>, operationId: string) {
+  if (!generator.context.options.generateOperationIds) {
     return
   }
 
@@ -337,7 +336,7 @@ function operationIdentifier(generator,  { operationName, sourceWithFragments, o
   generator.printOnNewline(`val operationIdentifier: String = "${operationId}"`);
 }
 
-export function typeDeclarationForGraphQLType(generator, type) {
+export function typeDeclarationForGraphQLType(generator: CodeGenerator<LegacyCompilerContext, any>, type: GraphQLType) {
   if (type instanceof GraphQLEnumType) {
     enumerationDeclaration(generator, type);
   } else if (type instanceof GraphQLInputObjectType) {
@@ -345,7 +344,7 @@ export function typeDeclarationForGraphQLType(generator, type) {
   }
 }
 
-function enumerationDeclaration(generator, type) {
+function enumerationDeclaration(generator: CodeGenerator<LegacyCompilerContext, any>, type: GraphQLEnumType) {
   const { name, description } = type;
   const values = type.getValues();
 
@@ -361,15 +360,16 @@ function enumerationDeclaration(generator, type) {
   generator.printNewline();
 }
 
-function caseClassDeclarationForInputObjectType(generator, type) {
+function caseClassDeclarationForInputObjectType(generator: CodeGenerator<LegacyCompilerContext, any>, type: GraphQLInputObjectType) {
   const { name: caseClassName, description } = type;
   const fields = Object.values(type.getFields());
-  const properties = fields.map(field => propertyFromField(generator.context, field));
+  const properties = fields.map(field => propertyFromInputField(generator.context, field, generator.context.options.namespace));
 
   caseClassDeclaration(generator, { caseClassName, description, params: properties.map(p => {
     return {
       name: p.propertyName,
-      type: p.typeName
+      type: p.typeName,
+      defaultValue: p.isOptional ? "scala.scalajs.js.undefined" : ""
     };
   })}, () => {});
 }

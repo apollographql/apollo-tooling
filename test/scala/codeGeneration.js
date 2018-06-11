@@ -13,15 +13,12 @@ import {
 } from 'graphql';
 
 import {
+  generateSource,
   classDeclarationForOperation,
   caseClassDeclarationForFragment,
   caseClassDeclarationForSelectionSet,
   typeDeclarationForGraphQLType,
 } from '../../src/scala/codeGeneration';
-
-import {
-  dictionaryLiteralForFieldArguments,
-} from '../../src/scala/values';
 
 import { loadSchema } from '../../src/loading';
 const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
@@ -51,7 +48,8 @@ describe('Scala code generation', function() {
     compileFromSource = (source, options = { generateOperationIds: false }) => {
       const document = parse(source);
       let context = compileToLegacyIR(schema, document);
-      options.generateOperationIds && Object.assign(context, { generateOperationIds: true, operationIdsMap: {} });
+      options.generateOperationIds && Object.assign(context.options, { generateOperationIds: true, operationIdsMap: {} });
+      options.namespace && Object.assign(context.options, { namespace: options.namespace });
       generator.context = context;
       return context;
     };
@@ -61,6 +59,20 @@ describe('Scala code generation', function() {
     };
 
     resetGenerator();
+  });
+
+  describe('#generateSource()', function() {
+    test(`should emit a package declaration when the namespace option is specified`, function() {
+      const context = compileFromSource(`
+        query HeroName($episode: Episode) {
+          hero(episode: $episode) {
+            name
+          }
+        }
+      `, { namespace: "hello.world" });
+
+      expect(generateSource(context)).toMatchSnapshot();
+    });
   });
 
   describe('#classDeclarationForOperation()', function() {
@@ -504,26 +516,9 @@ describe('Scala code generation', function() {
     });
   });
 
-  describe('#dictionaryLiteralForFieldArguments()', function() {
-    test('should include expressions for input objects with variables', function() {
-      const { operations } = compileFromSource(`
-        mutation FieldArgumentsWithInputObjects($commentary: String!, $red: Int!) {
-          createReview(episode: JEDI, review: { stars: 2, commentary: $commentary, favorite_color: { red: $red, blue: 100, green: 50 } }) {
-            commentary
-          }
-        }
-      `);
-
-      const fieldArguments = operations['FieldArgumentsWithInputObjects'].fields[0].args;
-      const dictionaryLiteral = dictionaryLiteralForFieldArguments(fieldArguments);
-
-      expect(dictionaryLiteral).toBe('["episode": "JEDI", "review": ["stars": 2, "commentary": Variable("commentary"), "favorite_color": ["red": Variable("red"), "blue": 100, "green": 50]]]');
-    });
-  });
-
   describe('#typeDeclarationForGraphQLType()', function() {
     test('should generate an enum declaration for a GraphQLEnumType', function() {
-      const generator = new CodeGenerator();
+      const generator = new CodeGenerator({options: {}});
 
       typeDeclarationForGraphQLType(generator, schema.getType('Episode'));
 
@@ -531,7 +526,7 @@ describe('Scala code generation', function() {
     });
 
     test('should escape identifiers in cases of enum declaration for a GraphQLEnumType', function() {
-      const generator = new CodeGenerator();
+      const generator = new CodeGenerator({options: {}});
 
       const albumPrivaciesEnum = new GraphQLEnumType({
         name: 'AlbumPrivacies',
@@ -544,7 +539,7 @@ describe('Scala code generation', function() {
     });
 
     test('should generate a caseClass declaration for a GraphQLInputObjectType', function() {
-      const generator = new CodeGenerator();
+      const generator = new CodeGenerator({options: {}});
 
       typeDeclarationForGraphQLType(generator, schema.getType('ReviewInput'));
 
