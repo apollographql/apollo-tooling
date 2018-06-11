@@ -147,7 +147,7 @@ const getKind = (type: GraphQLNamedType) => {
   throw new Error("Unknown kind of type: " + type);
 };
 
-const m = (text: string): string => "`" + text + "`";
+const m = (text: any): string => "`" + text + "`";
 
 // we use error throwing for control flow here
 const diffTypesLeft = (
