@@ -15,10 +15,6 @@ import {
 } from 'graphql'
 
 import {
-  wrap
-} from '../utilities/printing';
-
-import {
   sortEnumValues
 } from '../utilities/graphql';
 
@@ -70,25 +66,11 @@ function enumerationDeclaration(generator: CodeGenerator, type: GraphQLEnumType)
   const values = type.getValues();
 
   generator.printNewlineIfNeeded();
-  if (description) {
-    description.split('\n')
-      .forEach(line => {
-        generator.printOnNewline(`// ${line.trim()}`);
-      })
-  }
+  printDocComment(generator, description);
   generator.printOnNewline(`export enum ${name} {`);
   sortEnumValues(values).forEach((value) => {
-    if (!value.description || value.description.indexOf('\n') === -1) {
-      generator.printOnNewline(`  ${value.value} = "${value.value}",${wrap(' // ', value.description)}`)
-    } else {
-      if (value.description) {
-        value.description.split('\n')
-          .forEach((line: string) => {
-            generator.printOnNewline(`  // ${line.trim()}`);
-          })
-      }
-      generator.printOnNewline(`  ${value.value} = "${value.value}",`)
-    }
+    printDocComment(generator, value.description, 1);
+    generator.printOnNewline(`  ${value.value} = "${value.value}",`)
   });
   generator.printOnNewline(`}`);
   generator.printNewline();
@@ -430,4 +412,19 @@ function getPossibleTypeNames(generator: CodeGenerator<LegacyCompilerContext>, p
   }
 
   return [];
+}
+
+export function printDocComment(generator: CodeGenerator, description?: string, depth: number = 0): void {
+  if (!description) {
+    return;
+  }
+
+  const leadingSpace = ' '.repeat(2 * depth);
+
+  generator.printOnNewline(`${leadingSpace}/**`);
+  description.split('\n')
+    .forEach(line => {
+      generator.printOnNewline(`${leadingSpace} * ${line.trim()}`);
+    });
+  generator.printOnNewline(`${leadingSpace} */`);
 }

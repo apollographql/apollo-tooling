@@ -4,11 +4,22 @@ exports[`TypeScript code generation #generateSource() should generate correct li
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
-  EMPIRE = \\"EMPIRE\\", // Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  JEDI = \\"JEDI\\", // Star Wars Episode VI: Return of the Jedi, released in 1983.
-  NEWHOPE = \\"NEWHOPE\\", // Star Wars Episode IV: A New Hope, released in 1977.
+  /**
+   * Star Wars Episode V: The Empire Strikes Back, released in 1980.
+   */
+  EMPIRE = \\"EMPIRE\\",
+  /**
+   * Star Wars Episode VI: Return of the Jedi, released in 1983.
+   */
+  JEDI = \\"JEDI\\",
+  /**
+   * Star Wars Episode IV: A New Hope, released in 1977.
+   */
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 
@@ -19,31 +30,47 @@ export interface HeroAndFriendsNamesQueryVariables {
 export interface HeroAndFriendsNamesQuery {
   hero: ( {
       __typename: \\"Human\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
-      // The friends of the character, or an empty list if they have none
+      /**
+       * The friends of the character, or an empty list if they have none
+       */
       friends:  Array<( {
           __typename: \\"Human\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         } | {
           __typename: \\"Droid\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         }
       ) | null > | null,
     } | {
       __typename: \\"Droid\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
-      // The friends of the character, or an empty list if they have none
+      /**
+       * The friends of the character, or an empty list if they have none
+       */
       friends:  Array<( {
           __typename: \\"Human\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         } | {
           __typename: \\"Droid\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         }
       ) | null > | null,
@@ -53,11 +80,15 @@ export interface HeroAndFriendsNamesQuery {
 
 export type FriendFragment = ( {
       __typename: \\"Human\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
     } | {
       __typename: \\"Droid\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
     }
   );
@@ -71,31 +102,47 @@ exports[`TypeScript code generation #generateSource() should generate fragmented
 export interface HeroAndFriendsNamesQuery {
   hero: ( {
       __typename: \\"Human\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
-      // The friends of the character, or an empty list if they have none
+      /**
+       * The friends of the character, or an empty list if they have none
+       */
       friends:  Array<( {
           __typename: \\"Human\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         } | {
           __typename: \\"Droid\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         }
       ) | null > | null,
     } | {
       __typename: \\"Droid\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
-      // The friends of the character, or an empty list if they have none
+      /**
+       * The friends of the character, or an empty list if they have none
+       */
       friends:  Array<( {
           __typename: \\"Human\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         } | {
           __typename: \\"Droid\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         }
       ) | null > | null,
@@ -105,27 +152,39 @@ export interface HeroAndFriendsNamesQuery {
 
 export type heroFriendsFragment = ( {
       __typename: \\"Human\\",
-      // The friends of the character, or an empty list if they have none
+      /**
+       * The friends of the character, or an empty list if they have none
+       */
       friends:  Array<( {
           __typename: \\"Human\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         } | {
           __typename: \\"Droid\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         }
       ) | null > | null,
     } | {
       __typename: \\"Droid\\",
-      // The friends of the character, or an empty list if they have none
+      /**
+       * The friends of the character, or an empty list if they have none
+       */
       friends:  Array<( {
           __typename: \\"Human\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         } | {
           __typename: \\"Droid\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         }
       ) | null > | null,
@@ -138,20 +197,37 @@ exports[`TypeScript code generation #generateSource() should generate mutation o
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
-  EMPIRE = \\"EMPIRE\\", // Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  JEDI = \\"JEDI\\", // Star Wars Episode VI: Return of the Jedi, released in 1983.
-  NEWHOPE = \\"NEWHOPE\\", // Star Wars Episode IV: A New Hope, released in 1977.
+  /**
+   * Star Wars Episode V: The Empire Strikes Back, released in 1980.
+   */
+  EMPIRE = \\"EMPIRE\\",
+  /**
+   * Star Wars Episode VI: Return of the Jedi, released in 1983.
+   */
+  JEDI = \\"JEDI\\",
+  /**
+   * Star Wars Episode IV: A New Hope, released in 1977.
+   */
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 
 export interface ReviewInput {
-  // 0-5 stars
+  /**
+   * 0-5 stars
+   */
   stars: number,
-  // Comment about the movie, optional
+  /**
+   * Comment about the movie, optional
+   */
   commentary?: string | null,
-  // Favorite color, optional
+  /**
+   * Favorite color, optional
+   */
   favorite_color?: ColorInput | null,
 };
 
@@ -169,9 +245,13 @@ export interface ReviewMovieMutationVariables {
 export interface ReviewMovieMutation {
   createReview:  {
     __typename: \\"Review\\",
-    // The number of stars this review gave, 1-5
+    /**
+     * The number of stars this review gave, 1-5
+     */
     stars: number,
-    // Comment about the movie
+    /**
+     * Comment about the movie
+     */
     commentary: string | null,
   } | null,
 };
@@ -185,15 +265,23 @@ exports[`TypeScript code generation #generateSource() should generate query oper
 export interface HeroAndDetailsQuery {
   hero: ( {
       __typename: \\"Human\\",
-      // What this human calls themselves
+      /**
+       * What this human calls themselves
+       */
       name: string,
-      // Height in the preferred unit, default is meters
+      /**
+       * Height in the preferred unit, default is meters
+       */
       height: number | null,
     } | {
       __typename: \\"Droid\\",
-      // What others call this droid
+      /**
+       * What others call this droid
+       */
       name: string,
-      // This droid's primary function
+      /**
+       * This droid's primary function
+       */
       primaryFunction: string | null,
     }
   ) | null,
@@ -201,11 +289,15 @@ export interface HeroAndDetailsQuery {
 
 export type HeroDetailsFragment = ( {
       __typename: \\"Human\\",
-      // Height in the preferred unit, default is meters
+      /**
+       * Height in the preferred unit, default is meters
+       */
       height: number | null,
     } | {
       __typename: \\"Droid\\",
-      // This droid's primary function
+      /**
+       * This droid's primary function
+       */
       primaryFunction: string | null,
     }
   );
@@ -216,11 +308,22 @@ exports[`TypeScript code generation #generateSource() should generate simple nes
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
-  EMPIRE = \\"EMPIRE\\", // Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  JEDI = \\"JEDI\\", // Star Wars Episode VI: Return of the Jedi, released in 1983.
-  NEWHOPE = \\"NEWHOPE\\", // Star Wars Episode IV: A New Hope, released in 1977.
+  /**
+   * Star Wars Episode V: The Empire Strikes Back, released in 1980.
+   */
+  EMPIRE = \\"EMPIRE\\",
+  /**
+   * Star Wars Episode VI: Return of the Jedi, released in 1983.
+   */
+  JEDI = \\"JEDI\\",
+  /**
+   * Star Wars Episode IV: A New Hope, released in 1977.
+   */
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 
@@ -231,31 +334,47 @@ export interface HeroAndFriendsNamesQueryVariables {
 export interface HeroAndFriendsNamesQuery {
   hero: ( {
       __typename: \\"Human\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
-      // The friends of the character, or an empty list if they have none
+      /**
+       * The friends of the character, or an empty list if they have none
+       */
       friends:  Array<( {
           __typename: \\"Human\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         } | {
           __typename: \\"Droid\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         }
       ) | null > | null,
     } | {
       __typename: \\"Droid\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
-      // The friends of the character, or an empty list if they have none
+      /**
+       * The friends of the character, or an empty list if they have none
+       */
       friends:  Array<( {
           __typename: \\"Human\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         } | {
           __typename: \\"Droid\\",
-          // The name of the character
+          /**
+           * The name of the character
+           */
           name: string,
         }
       ) | null > | null,
@@ -285,11 +404,15 @@ exports[`TypeScript code generation #generateSource() should generate simple que
 export interface HeroNameQuery {
   hero: ( {
       __typename: \\"Human\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
     } | {
       __typename: \\"Droid\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
     }
   ) | null,
@@ -301,11 +424,22 @@ exports[`TypeScript code generation #generateSource() should generate simple que
 "/* tslint:disable */
 //  This file was automatically generated and should not be edited.
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
-  EMPIRE = \\"EMPIRE\\", // Star Wars Episode V: The Empire Strikes Back, released in 1980.
-  JEDI = \\"JEDI\\", // Star Wars Episode VI: Return of the Jedi, released in 1983.
-  NEWHOPE = \\"NEWHOPE\\", // Star Wars Episode IV: A New Hope, released in 1977.
+  /**
+   * Star Wars Episode V: The Empire Strikes Back, released in 1980.
+   */
+  EMPIRE = \\"EMPIRE\\",
+  /**
+   * Star Wars Episode VI: Return of the Jedi, released in 1983.
+   */
+  JEDI = \\"JEDI\\",
+  /**
+   * Star Wars Episode IV: A New Hope, released in 1977.
+   */
+  NEWHOPE = \\"NEWHOPE\\",
 }
 
 
@@ -316,11 +450,15 @@ export interface HeroNameQueryVariables {
 export interface HeroNameQuery {
   hero: ( {
       __typename: \\"Human\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
     } | {
       __typename: \\"Droid\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
     }
   ) | null,
@@ -333,10 +471,15 @@ exports[`TypeScript code generation #generateSource() should handle comments in 
 //  This file was automatically generated and should not be edited.
 
 export enum EnumCommentTestCase {
-  first = \\"first\\", // This is a single-line comment
-  // This is a
-  // multi-line
-  // comment.
+  /**
+   * This is a single-line comment
+   */
+  first = \\"first\\",
+  /**
+   * This is a
+   * multi-line
+   * comment.
+   */
   second = \\"second\\",
 }
 
@@ -376,9 +519,11 @@ exports[`TypeScript code generation #generateSource() should handle multi-line c
 export interface CustomScalarQuery {
   commentTest:  {
     __typename: \\"CommentTest\\",
-    // This is a
-    // multi-line
-    // comment.
+    /**
+     * This is a
+     * multi-line
+     * comment.
+     */
     multiLine: string | null,
   } | null,
 };
@@ -392,7 +537,9 @@ exports[`TypeScript code generation #generateSource() should handle single line 
 export interface CustomScalarQuery {
   commentTest:  {
     __typename: \\"CommentTest\\",
-    // This is a single-line comment
+    /**
+     * This is a single-line comment
+     */
     singleLine: string | null,
   } | null,
 };
@@ -423,47 +570,71 @@ exports[`TypeScript code generation #generateSource() should have __typename val
 export interface HeroNameQuery {
   hero: ( {
       __typename: \\"Human\\",
-      // The friends of the human exposed as a connection with edges
+      /**
+       * The friends of the human exposed as a connection with edges
+       */
       friendsConnection:  {
         __typename: \\"FriendsConnection\\",
-        // The edges for each of the character's friends.
+        /**
+         * The edges for each of the character's friends.
+         */
         edges:  Array< {
           __typename: \\"FriendsEdge\\",
-          // The character represented by this friendship edge
+          /**
+           * The character represented by this friendship edge
+           */
           node: ( {
               __typename: \\"Human\\",
-              // The name of the character
+              /**
+               * The name of the character
+               */
               name: string,
             } | {
               __typename: \\"Droid\\",
-              // The name of the character
+              /**
+               * The name of the character
+               */
               name: string,
             }
           ) | null,
         } | null > | null,
       },
-      // A list of starships this person has piloted, or an empty list if none
+      /**
+       * A list of starships this person has piloted, or an empty list if none
+       */
       starships:  Array< {
         __typename: \\"Starship\\",
-        // The name of the starship
+        /**
+         * The name of the starship
+         */
         name: string,
       } | null > | null,
     } | {
       __typename: \\"Droid\\",
-      // The friends of the character exposed as a connection with edges
+      /**
+       * The friends of the character exposed as a connection with edges
+       */
       friendsConnection:  {
         __typename: \\"FriendsConnection\\",
-        // The edges for each of the character's friends.
+        /**
+         * The edges for each of the character's friends.
+         */
         edges:  Array< {
           __typename: \\"FriendsEdge\\",
-          // The character represented by this friendship edge
+          /**
+           * The character represented by this friendship edge
+           */
           node: ( {
               __typename: \\"Human\\",
-              // The name of the character
+              /**
+               * The name of the character
+               */
               name: string,
             } | {
               __typename: \\"Droid\\",
-              // The name of the character
+              /**
+               * The name of the character
+               */
               name: string,
             }
           ) | null,
@@ -482,11 +653,15 @@ exports[`TypeScript code generation #generateSource() should have __typename val
 export interface HeroNameQuery {
   hero: ( {
       __typename: \\"Human\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
     } | {
       __typename: \\"Droid\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
     }
   ) | null,
@@ -494,11 +669,15 @@ export interface HeroNameQuery {
 
 export type HeroWithNameFragment = ( {
       __typename: \\"Human\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
     } | {
       __typename: \\"Droid\\",
-      // The name of the character
+      /**
+       * The name of the character
+       */
       name: string,
     }
   );
@@ -512,14 +691,18 @@ exports[`TypeScript code generation #generateSource() should have __typename val
 export interface DroidNameQuery {
   droid:  {
     __typename: \\"Droid\\",
-    // What others call this droid
+    /**
+     * What others call this droid
+     */
     name: string,
   } | null,
 };
 
 export interface DroidWithNameFragment {
   __typename: \\"Droid\\",
-  // What others call this droid
+  /**
+   * What others call this droid
+   */
   name: string,
 };
 "
