@@ -26,7 +26,7 @@ export default class SchemaCheck extends Command {
     help: flags.help({ char: "h" }),
     service: flags.string({
       char: "s",
-      description: "ENGINE_API_KEY for the Engine service",
+      description: "ENGINE_API_KEY for the Engine service"
     }),
     header: flags.string({
       multiple: true,
@@ -34,18 +34,21 @@ export default class SchemaCheck extends Command {
         const [key, value] = header.split(":");
         return JSON.stringify({ [key.trim()]: value.trim() });
       },
-      description:
-        "Additional headers to send to server for introspectionQuery",
+      description: "Additional headers to send to server for introspectionQuery"
     }),
     endpoint: flags.string({
       char: "e",
       description:
         "The location of the server to from which to fetch the schema",
-      default: "http://localhost:4000/graphql", // apollo-server 2.0 default address
+      default: "http://localhost:4000/graphql" // apollo-server 2.0 default address
     }),
     json: flags.boolean({
-      description: "output result as json",
+      description: "output result as json"
     }),
+    engine: flags.string({
+      description: "Reporting url for custon engine location",
+      hidden: true
+    })
   };
 
   async run() {
@@ -65,9 +68,9 @@ export default class SchemaCheck extends Command {
         task: async ctx => {
           ctx.schema = await fetchSchema({
             endpoint: flags.endpoint,
-            header: header.filter(x => Boolean(x)).map(x => JSON.parse(x)),
+            header: header.filter(x => Boolean(x)).map(x => JSON.parse(x))
           });
-        },
+        }
       },
       {
         title: "Checking schema for changes",
@@ -79,7 +82,7 @@ export default class SchemaCheck extends Command {
             schema: ctx.schema,
             // XXX hardcoded for now
             tag: "current",
-            gitContext,
+            gitContext
           };
 
           ctx.changes = await toPromise(
@@ -88,7 +91,8 @@ export default class SchemaCheck extends Command {
               variables,
               context: {
                 headers: { ["x-api-key"]: service },
-              },
+                ...(flags.engine && { uri: flags.engine })
+              }
             })
           )
             .then(({ data, errors }) => {
@@ -104,8 +108,8 @@ export default class SchemaCheck extends Command {
             .catch(e => {
               this.error(e.message);
             });
-        },
-      },
+        }
+      }
     ]);
 
     return tasks.run().then(async ({ changes }) => {
@@ -122,12 +126,12 @@ export default class SchemaCheck extends Command {
         return this.log("\nNo changes present between schemas\n");
       }
       this.log("\n");
-      table(changes.sort(sorter).map(format), {
+      table(changes.map(format), {
         columns: [
           { key: "type", label: "Change" },
           { key: "code", label: "Code" },
-          { key: "description", label: "Description" },
-        ],
+          { key: "description", label: "Description" }
+        ]
       });
       this.log("\n");
       // exit with failing status if we have failures
@@ -148,14 +152,6 @@ const format = (change: Change) => {
   return {
     type: color(change.type),
     code: color(change.code),
-    description: color(change.description),
+    description: color(change.description)
   };
-};
-
-const sorter = (a: Change, b: Change) => {
-  if (a.type === b.type) return 0;
-  if (b.type === ChangeType.FAILURE) return 1;
-  if (b.type === ChangeType.WARNING) return 1;
-  if (b.type === ChangeType.NOTICE) return -1;
-  return 0;
 };

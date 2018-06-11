@@ -19,7 +19,7 @@ import {
   InputObjectTypeDefinitionNode,
   InterfaceTypeDefinitionNode,
   EnumTypeDefinitionNode,
-  UnionTypeDefinitionNode,
+  UnionTypeDefinitionNode
 } from "graphql";
 
 import {
@@ -28,7 +28,7 @@ import {
   TypeKind,
   DiffType,
   DiffField,
-  DiffEnum,
+  DiffEnum
 } from "./ast";
 import * as decode from "decode-html";
 
@@ -229,73 +229,21 @@ const Header: React.SFC<{ name: string }> = ({ name }) => (
 );
 
 const Schema: React.SFC<{ changes: Change[] }> = ({ changes }) => {
-  const failure = changes.filter(({ change }) => change === ChangeType.FAILURE);
-
-  const warning = uniqBy(
-    changes.filter(
-      ({ change, type }) =>
-        change === ChangeType.WARNING &&
-        !failure.find(x => Boolean(type && x.type && x.type.name === type.name))
-    ),
-    "type"
-  );
-
-  const notice = changes.filter(
-    ({ change, type }) =>
-      change === ChangeType.NOTICE &&
-      !failure.find(x =>
-        Boolean(type && x.type && x.type.name === type.name)
-      ) &&
-      !warning.find(x => Boolean(type && x.type && x.type.name === type.name))
-  );
-
+  const filteredChanges = uniqBy(changes.reverse(), "type.name.value");
   return (
     <>
-      {failure.length > 0 && (
-        <>
-          {failure.map((change, i) => (
-            <React.Fragment key={i}>
-              <Type change={change} key={i} />
-              {"\n"}
-            </React.Fragment>
-          ))}
-        </>
-      )}
-      {warning.length > 0 && (
-        <>
-          {warning.map((change, i) => (
-            <React.Fragment key={i}>
-              <Type change={change} key={i} />
-              {"\n"}
-            </React.Fragment>
-          ))}
-        </>
-      )}
-      {notice.length > 0 && (
-        <>
-          {notice.map((change, i) => (
-            <React.Fragment key={i}>
-              <Type change={change} key={i} />
-              {"\n"}
-            </React.Fragment>
-          ))}
-        </>
-      )}
+      {filteredChanges.map((change, i) => (
+        <React.Fragment key={i}>
+          <Type change={change} />
+          {"\n"}
+        </React.Fragment>
+      ))}
     </>
   );
 };
 
 export const printChanges = (changes: Change[]) =>
-  renderToStaticMarkup(<Schema changes={changes} />);
+  decode(renderToStaticMarkup(<Schema changes={changes} />));
 
-export const printFromSchemas = (
-  current: GraphQLSchema,
-  next: GraphQLSchema
-) => {
-  const currentTypeMap = current.getTypeMap();
-  const newTypeMap = next.getTypeMap();
-
-  const changes = diffSchemas(currentTypeMap, newTypeMap);
-  // replace SSR santiaztion with pretty print
-  return decode(renderToStaticMarkup(<Schema changes={changes} />));
-};
+export const printFromSchemas = (current: GraphQLSchema, next: GraphQLSchema) =>
+  printChanges(diffSchemas(current.getTypeMap(), next.getTypeMap()));

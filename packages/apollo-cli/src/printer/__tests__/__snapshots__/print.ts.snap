@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`arguments shows added arguments 1`] = `
-"type Query { 
-  
-  # ✔️ Notice ✔️
-  hello(name: String): String
-
-}
-
-interface Node { 
+"interface Node { 
   
   # ✔️ Notice ✔️
   id(id: ID!): String
+
+}
+
+type Query { 
+  
+  # ✔️ Notice ✔️
+  hello(name: String): String
 
 }
 
@@ -19,13 +19,7 @@ interface Node {
 `;
 
 exports[`arguments shows removed arguments 1`] = `
-"type Query { 
-  
-  # ⚡ Warning ⚡
-  hello: String
-
-}
-
+"
 interface Node { 
   
   # ⚡ Warning ⚡
@@ -33,22 +27,18 @@ interface Node {
 
 }
 
+type Query { 
+  
+  # ⚡ Warning ⚡
+  hello: String
+
+}
 
 "
 `;
 
 exports[`deprecation changes deprecation additions 1`] = `
-"type Query { 
-  
-  # ⚡ Warning ⚡
-  deprecated: String @deprecated
-
-  # ✔️ Notice ✔️
-  deprecatedWithReason: String @deprecated(reason: \\"Use field testcase instead\\")
-
-}
-
-enum SoLong { 
+"enum SoLong { 
   
   # ⚡ Warning ⚡
   TWO @deprecated
@@ -58,21 +48,31 @@ enum SoLong {
 
 }
 
+type Query { 
+  
+  # ⚡ Warning ⚡
+  deprecated: String @deprecated
+
+  # ✔️ Notice ✔️
+  deprecatedWithReason: String @deprecated(reason: \\"Use field testcase instead\\")
+
+}
+
 "
 `;
 
 exports[`deprecation changes deprecation removals 1`] = `
-"type Query { 
-  
-  # ✔️ Notice ✔️
-  deprecated: String
-
-}
-
-enum SoLong { 
+"enum SoLong { 
   
   # ✔️ Notice ✔️
   TWO
+
+}
+
+type Query { 
+  
+  # ✔️ Notice ✔️
+  deprecated: String
 
 }
 
@@ -80,13 +80,27 @@ enum SoLong {
 `;
 
 exports[`fields shows notice for additions 1`] = `
-"input AddedInput { 
+"interface AddedInterface { 
+  
+  # ✔️ Notice ✔️
+  firstName(arg: String): String
+
+}
+
+input AddedInput { 
   
   # ⚡ Warning ⚡
   firstName: String!
 
   # ✔️ Notice ✔️
   lastName: String
+
+}
+
+enum AddedEnum { 
+  
+  # ✔️ Notice ✔️
+  TWO
 
 }
 
@@ -97,35 +111,14 @@ type User {
 
 }
 
-enum AddedEnum { 
-  
-  # ✔️ Notice ✔️
-  TWO
-
-}
-
-interface AddedInterface { 
-  
-  # ✔️ Notice ✔️
-  firstName(arg: String): String
-
-}
-
 "
 `;
 
 exports[`fields shows warning for removals 1`] = `
-"type User { 
+"interface AddedInterface { 
   
   # ⚡ Warning ⚡
-  firstName: String!
-
-}
-
-enum AddedEnum { 
-  
-  # ⚡ Warning ⚡
-  TWO
+  firstName(arg: String): String
 
 }
 
@@ -137,10 +130,17 @@ input AddedInput {
 
 }
 
-interface AddedInterface { 
+enum AddedEnum { 
   
   # ⚡ Warning ⚡
-  firstName(arg: String): String
+  TWO
+
+}
+
+type User { 
+  
+  # ⚡ Warning ⚡
+  firstName: String!
 
 }
 
@@ -194,7 +194,8 @@ exports[`interfaces reports removal of interface implementations 1`] = `
 `;
 
 exports[`kind changes arg changed kind 1`] = `
-"type Query { 
+"
+type Query { 
   
   # ⚡ Warning ⚡
   hello(id: String): String
@@ -202,22 +203,21 @@ exports[`kind changes arg changed kind 1`] = `
 
 }
 
-
 "
 `;
 
 exports[`kind changes field changed kind 1`] = `
-"type Query { 
-  
-  # ⚡ Warning ⚡
-  hello: ID!
-
-}
-
-input Hello { 
+"input Hello { 
   
   # ⚡ Warning ⚡
   hello: String!
+
+}
+
+type Query { 
+  
+  # ⚡ Warning ⚡
+  hello: ID!
 
 }
 
@@ -231,7 +231,18 @@ exports[`kind changes type changed kind 1`] = `
 `;
 
 exports[`types shows added types 1`] = `
-"type AddedType { 
+"union AddedUnion = User
+
+interface AddedInterface { 
+  
+  # ✔️ Notice ✔️
+  id: ID!
+
+}
+
+scalar AddedScalar
+
+input AddedInput { 
   
   # ✔️ Notice ✔️
   id: ID!
@@ -245,39 +256,28 @@ enum AddedEnum {
 
 }
 
-input AddedInput { 
+type AddedType { 
   
   # ✔️ Notice ✔️
   id: ID!
 
 }
-
-scalar AddedScalar
-
-interface AddedInterface { 
-  
-  # ✔️ Notice ✔️
-  id: ID!
-
-}
-
-union AddedUnion = User
 
 "
 `;
 
 exports[`types shows removed types 1`] = `
-"type RemovedType { }
-
-enum RemovedEnum { }
-
-input RemovedInput { }
-
-scalar RemovedScalar
+"union RemovedUnion = User
 
 interface RemovedInterface { }
 
-union RemovedUnion = User
+scalar RemovedScalar
+
+input RemovedInput { }
+
+enum RemovedEnum { }
+
+type RemovedType { }
 
 "
 `;
