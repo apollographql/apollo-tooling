@@ -272,6 +272,7 @@ const diffFieldsLeft = (
           code: "FIELD_REMOVED",
           description: `${m(`${newType}.${fieldName}`)} was removed`,
           type: newType.astNode,
+          field: oldTypeFieldsDef[fieldName].astNode,
         };
         changes.push(change);
         const t = change.type as ObjectTypeDefinitionNode;
@@ -311,6 +312,7 @@ const diffFieldsLeft = (
             `${m(oldFieldTypeString)} to ${m(newFieldTypeString)}.`,
           change: ChangeType.WARNING,
           type: newType.astNode,
+          field: newTypeFieldsDef[fieldName].astNode,
         };
         changes.push(change);
         const t = change.type as ObjectTypeDefinitionNode;
@@ -340,6 +342,7 @@ const diffFieldsLeft = (
               oldArgDef.name
             )} was removed`,
             type: newType.astNode,
+            field: newTypeFieldsDef[fieldName].astNode,
           };
 
           changes.push(change);
@@ -371,6 +374,7 @@ const diffFieldsLeft = (
                 `${m(oldArgDef.name)} has changed type from ` +
                 `${m(oldArgDef.type)} to ${m(newArgDef.type)}`,
               type: newType.astNode,
+              field: newTypeFieldsDef[fieldName].astNode,
             };
           } else if (
             oldArgDef.defaultValue !== undefined &&
@@ -383,6 +387,7 @@ const diffFieldsLeft = (
                 `${m(`${oldType.name}.${fieldName}`)} arg ` +
                 `${m(oldArgDef.name)} has changed defaultValue`,
               type: newType.astNode,
+              field: newTypeFieldsDef[fieldName].astNode,
             };
           }
           if (!change) return;
@@ -412,6 +417,7 @@ const diffFieldsLeft = (
           code: "INPUT_FIELD_REMOVED",
           description: `${m(`${newType}.${fieldName}`)} was removed`,
           type: newType.astNode,
+          field: oldTypeFieldsDef[fieldName].astNode,
         };
 
         changes.push(change);
@@ -452,6 +458,7 @@ const diffFieldsLeft = (
             `${m(oldFieldTypeString)} to ${m(newFieldTypeString)}.`,
           change: ChangeType.WARNING,
           type: newType.astNode,
+          field: newTypeFieldsDef[fieldName].astNode,
         };
         changes.push(change);
         const t = change.type as InputObjectTypeDefinitionNode;
@@ -635,6 +642,7 @@ const diffFieldsRight = (
           code: "FIELD_ADDED",
           description: `${m(`${newType}.${fieldName}`)} was added`,
           type: newType.astNode,
+          field: newTypeFieldsDef[fieldName].astNode,
         };
         changes.push(change);
         const t = change.type as ObjectTypeDefinitionNode;
@@ -656,6 +664,7 @@ const diffFieldsRight = (
           code: "FIELD_DEPRECATED",
           description: `${m(`${newType}.${fieldName}`)} was deprecated`,
           type: newType.astNode,
+          field: newTypeFieldsDef[fieldName].astNode,
         };
       } else if (
         oldTypeFieldsDef[fieldName].isDeprecated &&
@@ -668,6 +677,7 @@ const diffFieldsRight = (
             `${newType}.${fieldName}`
           )} is no longer deprecated`,
           type: newType.astNode,
+          field: newTypeFieldsDef[fieldName].astNode,
         };
       } else if (
         oldTypeFieldsDef[fieldName].isDeprecated &&
@@ -707,6 +717,7 @@ const diffFieldsRight = (
               newArgDef.name
             )} was added`,
             type: newType.astNode,
+            field: newTypeFieldsDef[fieldName].astNode,
           };
 
           changes.push(change);
@@ -749,6 +760,7 @@ const diffFieldsRight = (
               newType.name
             )} was added.`,
             type: newType.astNode,
+            field: newTypeFieldsDef[fieldName].astNode,
           };
         }
 

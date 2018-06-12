@@ -37,7 +37,10 @@ export interface Change {
   change: ChangeType;
   code: string;
   description: string;
+  // used for IDL generation and usage comparisions
   type?: Maybe<DiffType>;
+  // used for usage comparisions
+  field?: Maybe<DiffField | DiffInputValue>;
 }
 
 export interface DiffTypeMap {
