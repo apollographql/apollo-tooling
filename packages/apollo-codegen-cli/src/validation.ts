@@ -11,7 +11,7 @@ import {
   OperationDefinitionNode
 } from 'graphql';
 
-import { ToolError, logError } from './errors';
+import { ToolError, logError } from 'apollo-codegen-core/lib/errors';
 
 export function validateQueryDocument(schema: GraphQLSchema, document: DocumentNode) {
   const specifiedRulesToBeRemoved = [NoUnusedFragmentsRule, KnownDirectivesRule];

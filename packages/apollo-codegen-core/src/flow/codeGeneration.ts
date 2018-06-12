@@ -3,23 +3,23 @@ import {
   getNamedType,
   isCompositeType,
   isAbstractType,
-  isEqualType,
-  GraphQLScalarType,
+  // isEqualType,
+  // GraphQLScalarType,
   GraphQLEnumType,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLID,
+  // GraphQLID,
   GraphQLInputObjectType,
   GraphQLObjectType,
   GraphQLUnionType
 } from 'graphql'
 
-import  { isTypeProperSuperTypeOf } from '../utilities/graphql';
+// import  { isTypeProperSuperTypeOf } from '../utilities/graphql';
 
-import * as Inflector from 'inflected';
+// import * as Inflector from 'inflected';
 
 import {
-  join,
+  // join,
   wrap,
 } from '../utilities/printing';
 
@@ -32,22 +32,26 @@ import CodeGenerator from '../utilities/CodeGenerator';
 import {
   typeDeclaration,
   propertyDeclaration,
-  propertySetsDeclaration
+  propertySetsDeclaration,
+  Property
 } from './language';
 
 import {
   typeNameFromGraphQLType,
 } from './types';
+import { LegacyCompilerContext, LegacyOperation, LegacyFragment, LegacyField } from "../compiler/legacyIR";
+import { GraphQLType } from "graphql";
+import { GraphQLAbstractType } from "graphql";
 
-export function generateSource(context) {
+export function generateSource(context: LegacyCompilerContext) {
   const generator = new CodeGenerator(context);
 
   generator.printOnNewline('/* @flow */');
   generator.printOnNewline('/* eslint-disable */');
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
-  typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
+  context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
-  ));
+  );
   Object.values(context.operations).forEach(operation => {
     interfaceVariablesDeclarationForOperation(generator, operation);
     typeDeclarationForOperation(generator, operation);
@@ -59,7 +63,7 @@ export function generateSource(context) {
   return generator.output;
 }
 
-export function typeDeclarationForGraphQLType(generator, type) {
+export function typeDeclarationForGraphQLType(generator: CodeGenerator<LegacyCompilerContext>, type: GraphQLType) {
   if (type instanceof GraphQLEnumType) {
     enumerationDeclaration(generator, type);
   } else if (type instanceof GraphQLInputObjectType) {
@@ -67,7 +71,7 @@ export function typeDeclarationForGraphQLType(generator, type) {
   }
 }
 
-function enumerationDeclaration(generator, type) {
+function enumerationDeclaration(generator: CodeGenerator<LegacyCompilerContext>, type: GraphQLEnumType) {
   const { name, description } = type;
   const values = type.getValues();
 
@@ -97,19 +101,28 @@ function enumerationDeclaration(generator, type) {
 }
 
 function structDeclarationForInputObjectType(
-  generator,
-  type
+  generator: CodeGenerator<LegacyCompilerContext>,
+  type: GraphQLInputObjectType
 ) {
   const interfaceName = type.name;
   typeDeclaration(generator, {
     interfaceName,
   }, () => {
-    const properties = propertiesFromFields(generator.context, Object.values(type.getFields()));
+    const properties = propertiesFromFields(generator.context, Object.values(type.getFields()).map(v => {
+      return {
+        fieldName: v.name,
+        responseName: v.name,
+        ...v
+      };
+    }));
     propertyDeclarations(generator, properties, true);
   });
 }
 
-function interfaceNameFromOperation({operationName, operationType}) {
+function interfaceNameFromOperation({operationName, operationType}: {
+  operationName: string,
+  operationType: string
+}) {
   switch (operationType) {
     case 'query':
       return `${operationName}Query`;
@@ -126,30 +139,36 @@ function interfaceNameFromOperation({operationName, operationType}) {
 }
 
 export function interfaceVariablesDeclarationForOperation(
-  generator,
+  generator: CodeGenerator<LegacyCompilerContext>,
   {
     operationName,
     operationType,
     variables,
-    fields,
-    fragmentsReferenced,
-    source,
-  }
-) {
+    // fields,
+    // fragmentsReferenced,
+    // source,
+  }: LegacyOperation
+): void {
   if (!variables || variables.length < 1) {
-    return null;
+    return;
   }
   const interfaceName = `${interfaceNameFromOperation({operationName, operationType})}Variables`;
 
   typeDeclaration(generator, {
     interfaceName,
   }, () => {
-    const properties = propertiesFromFields(generator.context, variables);
+    const properties = propertiesFromFields(generator.context, variables.map(v => {
+      return {
+        fieldName: v.name,
+        responseName: v.name,
+        ...v
+      };
+    }));
     propertyDeclarations(generator, properties, true);
   });
 }
 
-function getObjectTypeName(type) {
+function getObjectTypeName(type: GraphQLType): string {
   if (type instanceof GraphQLList) {
     return getObjectTypeName(type.ofType);
   }
@@ -166,19 +185,19 @@ function getObjectTypeName(type) {
 }
 
 export function typeDeclarationForOperation(
-  generator,
+  generator: CodeGenerator<LegacyCompilerContext>,
   {
     operationName,
     operationType,
-    variables,
+    // variables,
     fields,
-    fragmentSpreads,
-    fragmentsReferenced,
-    source,
-  }
+    // fragmentSpreads,
+    // fragmentsReferenced,
+    // source,
+  }: LegacyOperation
 ) {
   const interfaceName = interfaceNameFromOperation({operationName, operationType});
-  fields = fields.map(rootField => {
+  const transformedFields = fields.map(rootField => {
     const fields = rootField.fields && rootField.fields.map(field => {
       if (field.fieldName === '__typename') {
         const objectTypeName = getObjectTypeName(rootField.type);
@@ -186,7 +205,7 @@ export function typeDeclarationForOperation(
           ...field,
           typeName: objectTypeName,
           type: { name: objectTypeName },
-        };
+        } as any as LegacyField;
       }
       return field;
     });
@@ -195,7 +214,7 @@ export function typeDeclarationForOperation(
       fields,
     };
   });
-  const properties = propertiesFromFields(generator.context, fields);
+  const properties = propertiesFromFields(generator.context, transformedFields);
   typeDeclaration(generator, {
     interfaceName,
   }, () => {
@@ -204,16 +223,16 @@ export function typeDeclarationForOperation(
 }
 
 export function typeDeclarationForFragment(
-  generator,
-  fragment
+  generator: CodeGenerator<LegacyCompilerContext>,
+  fragment: LegacyFragment
 ) {
   const {
     fragmentName,
     typeCondition,
     fields,
     inlineFragments,
-    fragmentSpreads,
-    source,
+    // fragmentSpreads,
+    // source,
   } = fragment;
 
   const interfaceName = `${fragmentName}Fragment`;
@@ -229,7 +248,7 @@ export function typeDeclarationForFragment(
           // from both inline fragments and fragment spreads.
           // TODO: Rename inlineFragments in the IR.
           const inlineFragment = inlineFragments.find(inlineFragment => {
-            return inlineFragment.typeCondition.toString() == type
+            return inlineFragment.typeCondition.toString() == type.toString()
           });
 
           if (inlineFragment) {
@@ -239,13 +258,13 @@ export function typeDeclarationForFragment(
                   ...field,
                   typeName: `"${inlineFragment.typeCondition}"`,
                   type: { name: `"${inlineFragment.typeCondition}"` }
-                }
+                } as any as LegacyField
               } else {
                 return field;
               }
             });
 
-            return propertiesFromFields(generator, fields);
+            return propertiesFromFields(generator.context, fields);
           } else {
             const fragmentFields = fields.map(field => {
               if (field.fieldName === '__typename') {
@@ -253,25 +272,25 @@ export function typeDeclarationForFragment(
                   ...field,
                   typeName: `"${type}"`,
                   type: { name: `"${type}"` }
-                }
+                } as any as LegacyField
               } else {
                 return field;
               }
             });
 
-            return propertiesFromFields(generator, fragmentFields);
+            return propertiesFromFields(generator.context, fragmentFields);
           }
         });
 
       propertySetsDeclaration(generator, fragment, propertySets, true);
     } else {
-      const fragmentFields = fields.map(field => {
+      const fragmentFields: LegacyField[] = fields.map(field => {
         if (field.fieldName === '__typename') {
           return {
             ...field,
             typeName: `"${fragment.typeCondition}"`,
             type: { name: `"${fragment.typeCondition}"` }
-          }
+          } as any as LegacyField
         } else {
           return field;
         }
@@ -282,12 +301,12 @@ export function typeDeclarationForFragment(
   });
 }
 
-export function propertiesFromFields(context, fields) {
+export function propertiesFromFields(context: LegacyCompilerContext, fields: LegacyField[]) {
   return fields.map(field => propertyFromField(context, field));
 }
 
-export function propertyFromField(context, field) {
-  let { name: fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
+export function propertyFromField(context: LegacyCompilerContext, field: LegacyField): Property {
+  let { fieldName, type: fieldType, description, fragmentSpreads, inlineFragments } = field;
   fieldName = fieldName || field.responseName;
 
   const propertyName = fieldName;
@@ -326,15 +345,15 @@ export function propertyFromField(context, field) {
   }
 }
 
-export function propertyDeclarations(generator, properties, isInput) {
+export function propertyDeclarations(generator: CodeGenerator<LegacyCompilerContext>, properties: Property[], isInput?: boolean) {
   if (!properties) return;
   properties.forEach(property => {
-    if (isAbstractType(getNamedType(property.type || property.fieldType))) {
+    if (isAbstractType(getNamedType((property.type || property.fieldType) as GraphQLType))) {
       const propertySets = getPossibleTypeNames(generator, property)
         .map(type => {
-          const inlineFragment = property.inlineFragments.find(inlineFragment => {
+          const inlineFragment = property.inlineFragments ? property.inlineFragments.find(inlineFragment => {
             return inlineFragment.typeCondition.toString() == type
-          });
+          }) : undefined;
 
           if (inlineFragment) {
             const fields = inlineFragment.fields.map(field => {
@@ -343,27 +362,27 @@ export function propertyDeclarations(generator, properties, isInput) {
                   ...field,
                   typeName: `"${inlineFragment.typeCondition}"`,
                   type: { name: `"${inlineFragment.typeCondition}"` }
-                }
+                } as any as LegacyField
               } else {
                 return field;
               }
             });
 
-            return propertiesFromFields(generator, fields);
+            return propertiesFromFields(generator.context, fields);
           } else {
-            const fields = property.fields.map(field => {
+            const fields = property.fields ? property.fields.map(field => {
               if (field.fieldName === '__typename') {
                 return {
                   ...field,
                   typeName: `"${type}"`,
                   type: { name: `"${type}"` }
-                }
+                } as any as LegacyField
               } else {
                 return field;
               }
-            });
+            }) : [];
 
-            return propertiesFromFields(generator, fields);
+            return propertiesFromFields(generator.context, fields);
           }
         });
 
@@ -374,9 +393,9 @@ export function propertyDeclarations(generator, properties, isInput) {
         || property.fragmentSpreads && property.fragmentSpreads.length > 0
       ) {
         propertyDeclaration(generator, property, () => {
-          const fields = property.fields.map(field => {
+          const fields = property.fields ? property.fields.map(field => {
             if (field.fieldName === '__typename') {
-              const objectTypeName = getObjectTypeName(property.fieldType || property.type);
+              const objectTypeName = getObjectTypeName((property.fieldType || property.type) as GraphQLType);
               return {
                 ...field,
                 typeName: objectTypeName,
@@ -385,7 +404,7 @@ export function propertyDeclarations(generator, properties, isInput) {
             } else {
               return field;
             }
-          });
+          }) : [];
           const properties = propertiesFromFields(generator.context, fields);
           propertyDeclarations(generator, properties, isInput);
         });
@@ -401,6 +420,6 @@ export function propertyDeclarations(generator, properties, isInput) {
  * do not have inline fragments. This currently can happen and the IR does give us
  * a set of fields per type condition unless fragments are used within the selection set.
  */
-function getPossibleTypeNames(generator, property) {
-  return generator.context.schema.getPossibleTypes(getNamedType(property.fieldType || property.type)).map(type => type.name);
+function getPossibleTypeNames(generator: CodeGenerator<LegacyCompilerContext>, property: Property) {
+  return generator.context.schema.getPossibleTypes(getNamedType((property.fieldType || property.type) as GraphQLType) as GraphQLAbstractType).map(type => type.name);
 }

@@ -5,8 +5,8 @@ import * as process from 'process';
 import * as path from 'path';
 import * as yargs from 'yargs';
 
-import { downloadSchema, introspectSchema, printSchema, generate } from '.';
-import { ToolError, logError } from './errors'
+import { downloadSchema, introspectSchema, printSchema, generate } from 'apollo-codegen-core';
+import { ToolError, logError } from 'apollo-codegen-core/errors'
 
 import 'source-map-support/register'
 

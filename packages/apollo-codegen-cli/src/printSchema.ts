@@ -2,7 +2,7 @@ import * as fs from 'fs';
 
 import { buildClientSchema, printSchema } from 'graphql';
 
-import { ToolError } from './errors'
+import { ToolError } from 'apollo-codegen-core/lib/errors'
 import { PrinterOptions } from 'graphql/utilities/schemaPrinter';
 
 export default async function printSchemaFromIntrospectionResult(

@@ -1,14 +1,38 @@
 import {
-  join,
-  wrap,
+  // join,
+  // wrap,
 } from '../utilities/printing';
 
 import { propertyDeclarations } from './codeGeneration';
 import { typeNameFromGraphQLType } from './types';
 
-import { pascalCase } from 'change-case';
+// import { pascalCase } from 'change-case';
+import CodeGenerator from "../utilities/CodeGenerator";
+import { LegacyCompilerContext, LegacyInlineFragment } from "../compiler/legacyIR";
+import { GraphQLType } from "graphql";
 
-export function typeDeclaration(generator, { interfaceName, noBrackets }, closure) {
+export interface Property {
+  fieldName?: string,
+  fieldType?: GraphQLType,
+  propertyName?: string,
+  type?: GraphQLType,
+  description?: string,
+  typeName?: string,
+  isComposite?: boolean,
+  isNullable?: boolean,
+  fields?: any[],
+  inlineFragments?: LegacyInlineFragment[],
+  fragmentSpreads?: any,
+  isInput?: boolean,
+  isArray?: boolean,
+  isArrayElementNullable?: boolean | null,
+}
+
+export function typeDeclaration(
+  generator: CodeGenerator<LegacyCompilerContext>,
+  { interfaceName, noBrackets }: { interfaceName: string, noBrackets?: boolean },
+  closure: Function
+) {
   generator.printNewlineIfNeeded();
   generator.printNewline();
   generator.print(`export type ${ interfaceName } = `);
@@ -22,7 +46,7 @@ export function typeDeclaration(generator, { interfaceName, noBrackets }, closur
   generator.print(';');
 }
 
-export function propertyDeclaration(generator, {
+export function propertyDeclaration(generator: CodeGenerator<LegacyCompilerContext>, {
   fieldName,
   type,
   propertyName,
@@ -31,9 +55,9 @@ export function propertyDeclaration(generator, {
   isArray,
   isNullable,
   isArrayElementNullable,
-  fragmentSpreads,
+  // fragmentSpreads,
   isInput
-}, closure, open = ' {|', close = '|}') {
+}: Property, closure?: Function, open = ' {|', close = '|}') {
   const name = fieldName || propertyName;
 
   if (description) {
@@ -77,14 +101,14 @@ export function propertyDeclaration(generator, {
     if (isInput && isNullable) {
       generator.print('?')
     }
-    generator.print(`: ${typeName || typeNameFromGraphQLType(generator.context, type)}`);
+    generator.print(`: ${typeName || typeNameFromGraphQLType(generator.context, type as GraphQLType)}`);
   }
   generator.print(',');
 }
 
-export function propertySetsDeclaration(generator, property, propertySets, standalone = false) {
+export function propertySetsDeclaration(generator: CodeGenerator<LegacyCompilerContext>, property: Property, propertySets: Property[][], standalone = false) {
   const {
-    description, fieldName, propertyName, typeName,
+    description, fieldName, propertyName,// typeName,
     isNullable, isArray, isArrayElementNullable
   } = property;
   const name = fieldName || propertyName;

@@ -1,4 +1,5 @@
-import './polyfills';
+import 'core-js/fn/object/values';
+import 'core-js/fn/object/entries';
 
 export { default as downloadSchema } from './downloadSchema';
 export { default as introspectSchema } from './introspectSchema';

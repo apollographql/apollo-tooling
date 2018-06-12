@@ -1,11 +1,11 @@
 import {
-  join,
-  block,
-  wrap,
-  indent
+  // join,
+  // block,
+  // wrap,
+  // indent
 } from '../utilities/printing';
 
-import { camelCase } from 'change-case';
+// import { camelCase } from 'change-case';
 
 import {
   GraphQLString,
@@ -16,8 +16,10 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
-  GraphQLEnumType
+  // GraphQLEnumType
 } from 'graphql';
+import { LegacyCompilerContext } from "../compiler/legacyIR";
+import { GraphQLType } from "graphql";
 
 const builtInScalarMap = {
   [GraphQLString.name]: 'string',
@@ -27,7 +29,7 @@ const builtInScalarMap = {
   [GraphQLID.name]: 'string',
 }
 
-export function typeNameFromGraphQLType(context, type, bareTypeName, nullable = true) {
+export function typeNameFromGraphQLType(context: LegacyCompilerContext, type: GraphQLType, bareTypeName?: string | null, nullable = true): string {
   if (type instanceof GraphQLNonNull) {
     return typeNameFromGraphQLType(context, type.ofType, bareTypeName, false)
   }

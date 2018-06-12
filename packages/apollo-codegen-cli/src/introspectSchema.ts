@@ -1,9 +1,16 @@
 import * as fs from 'fs';
 
-import { buildASTSchema, graphql, parse } from 'graphql';
+import { buildASTSchema, graphql, parse, DocumentNode, GraphQLSchema } from 'graphql';
 import { introspectionQuery } from 'graphql/utilities';
 
-import { ToolError } from './errors'
+import { ToolError } from 'apollo-codegen-core/lib/errors'
+
+declare module "graphql/utilities/buildASTSchema" {
+  function buildASTSchema(
+    ast: DocumentNode,
+    options?: { assumeValid?: boolean, commentDescriptions?: boolean },
+  ): GraphQLSchema;
+}
 
 export async function introspect(schemaContents: string) {
   const schema = buildASTSchema(parse(schemaContents), { commentDescriptions: true });
