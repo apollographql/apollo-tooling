@@ -131,7 +131,7 @@ yargs
       },
       "passthrough-custom-scalars": {
         demand: false,
-        describe: "Don't attempt to map custom scalars [temporary option]",
+        describe: "Use the names of custom scalars as their type name [temporary option]",
         default: false
       },
       "custom-scalars-prefix": {

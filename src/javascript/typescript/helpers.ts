@@ -36,9 +36,9 @@ export function createTypeFromGraphQLTypeFunction(
       if (builtIn != null) {
         return builtIn;
       } else if (compilerOptions.passthroughCustomScalars) {
-        return t.TSAnyKeyword();
+        return t.TSTypeReference(t.identifier((compilerOptions.customScalarsPrefix || '') + graphQLType.name));
       } else {
-        return t.TSTypeReference(t.identifier(graphQLType.name));
+        return t.TSAnyKeyword();
       }
     } else if (graphQLType instanceof GraphQLNonNull) {
       // This won't happen; but for TypeScript completeness:

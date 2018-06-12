@@ -453,7 +453,7 @@ describe('Flow typeAnnotationFromGraphQLType', () => {
       typeAnnotationFromGraphQLType(OddType)
     ).toMatchObject(
       t.nullableTypeAnnotation(
-        t.genericTypeAnnotation(t.identifier('Odd'))
+        t.anyTypeAnnotation()
       )
     )
   });
@@ -481,7 +481,36 @@ describe('passthrough custom scalars', () => {
       getTypeAnnotation(OddType)
     ).toMatchObject(
       t.nullableTypeAnnotation(
-        t.anyTypeAnnotation()
+        t.genericTypeAnnotation(t.identifier('Odd'))
+      )
+    )
+  });
+});
+
+describe('passthrough custom scalars with custom scalar prefix', () => {
+  let getTypeAnnotation: Function;
+
+  beforeAll(() => {
+    getTypeAnnotation = createTypeAnnotationFromGraphQLTypeFunction({
+      passthroughCustomScalars: true,
+      customScalarsPrefix: "Foo$",
+      useFlowReadOnlyTypes: false,
+    });
+  });
+
+  test('Custom Scalar', () => {
+    const OddType = new GraphQLScalarType({
+      name: 'Odd',
+      serialize(value) {
+        return value % 2 === 1 ? value : null
+      }
+    });
+
+    expect(
+      getTypeAnnotation(OddType)
+    ).toMatchObject(
+      t.nullableTypeAnnotation(
+        t.genericTypeAnnotation(t.identifier('Foo$Odd'))
       )
     )
   });

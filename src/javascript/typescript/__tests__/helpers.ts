@@ -415,7 +415,7 @@ describe('Typescript typeAnnotationFromGraphQLType', () => {
       typeFromGraphQLType(OddType)
     ).toMatchObject(
       nullableType(
-        t.TSTypeReference(t.identifier('Odd'))
+        t.TSAnyKeyword()
       )
     )
   });
@@ -442,8 +442,37 @@ describe('passthrough custom scalars', () => {
       getTypeAnnotation(OddType)
     ).toMatchObject(
       nullableType(
-        t.TSAnyKeyword()
+        t.TSTypeReference(t.identifier('Odd'))
       )
     )
   });
 });
+
+describe('passthrough custom scalars with custom scalar prefix', () => {
+  let getTypeAnnotation: Function;
+
+  beforeAll(() => {
+    getTypeAnnotation = createTypeFromGraphQLTypeFunction({
+      passthroughCustomScalars: true,
+      customScalarsPrefix: "Foo$",
+    });
+  });
+
+  test('Custom Scalar', () => {
+    const OddType = new GraphQLScalarType({
+      name: 'Odd',
+      serialize(value) {
+        return value % 2 === 1 ? value : null
+      }
+    });
+
+    expect(
+      getTypeAnnotation(OddType)
+    ).toMatchObject(
+      nullableType(
+        t.TSTypeReference(t.identifier('Foo$Odd'))
+      )
+    )
+  });
+});
+
