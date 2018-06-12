@@ -1,12 +1,12 @@
 import { stripIndent } from 'common-tags';
 
-import CodeGenerator from '../../src/utilities/CodeGenerator';
+import CodeGenerator from '../../utilities/CodeGenerator';
 
 import {
   objectDeclaration,
   caseClassDeclaration,
   propertyDeclaration,
-} from '../../src/scala/language';
+} from '../language';
 
 describe('Scala code generation: Basic language constructs', function() {
   let generator;

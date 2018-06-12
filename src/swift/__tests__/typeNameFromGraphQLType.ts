@@ -9,7 +9,7 @@ import {
   GraphQLScalarType
 } from 'graphql';
 
-import { Helpers } from '../../src/swift/helpers';
+import { Helpers } from '../helpers';
 
 describe('Swift code generation: Types', () => {
   let helpers: Helpers;

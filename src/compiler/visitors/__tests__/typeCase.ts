@@ -1,9 +1,9 @@
 import { buildSchema } from 'graphql';
-import { compile } from '../../test-utils/helpers';
+import { compile } from './test-utils/helpers';
 
-import { SelectionSet, Field } from '../../../src/compiler';
-import { typeCaseForSelectionSet } from '../../../src/compiler/visitors/typeCase';
-import { collectAndMergeFields } from '../../../src/compiler/visitors/collectAndMergeFields';
+import { SelectionSet, Field } from '../..';
+import { typeCaseForSelectionSet } from '../typeCase';
+import { collectAndMergeFields } from '../collectAndMergeFields';
 
 export const animalSchema = buildSchema(`
   type Query {

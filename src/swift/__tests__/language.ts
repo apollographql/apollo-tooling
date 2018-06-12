@@ -1,8 +1,6 @@
 import { stripIndent } from 'common-tags';
 
-import {
-  SwiftGenerator
-} from '../../src/swift/language';
+import { SwiftGenerator } from '../language';
 
 describe('Swift code generation: Basic language constructs', () => {
   let generator: SwiftGenerator<any>;

@@ -1,7 +1,7 @@
 import { parse, GraphQLNonNull, GraphQLString, GraphQLEnumType, GraphQLList } from 'graphql';
 
-import { loadSchema } from '../../src/loading';
-const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
+import { loadSchema } from '../../loading';
+const schema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
 
 import {
   compileToIR,
@@ -10,9 +10,9 @@ import {
   SelectionSet,
   Field,
   Argument
-} from '../../src/compiler';
+} from '../../compiler';
 
-import { SwiftAPIGenerator } from '../../src/swift/codeGeneration';
+import { SwiftAPIGenerator } from '../codeGeneration';
 
 describe('Swift code generation', () => {
   let generator: SwiftAPIGenerator;
@@ -279,7 +279,7 @@ describe('Swift code generation', () => {
         generator.propertyAssignmentForField({
           responseKey: 'response_key',
           propertyName: 'propertyName',
-          type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(schema.getType('Droid')))
+          type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(schema.getType('Droid'))))
         })
       ).toBe('"response_key": propertyName.map { (value: Droid) -> ResultMap in value.resultMap }');
     });

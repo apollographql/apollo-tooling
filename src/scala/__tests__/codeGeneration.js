@@ -18,14 +18,14 @@ import {
   caseClassDeclarationForFragment,
   caseClassDeclarationForSelectionSet,
   typeDeclarationForGraphQLType,
-} from '../../src/scala/codeGeneration';
+} from '../codeGeneration';
 
-import { loadSchema } from '../../src/loading';
-const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
+import { loadSchema } from '../../loading';
+const schema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
 
-import CodeGenerator from '../../src/utilities/CodeGenerator';
+import CodeGenerator from '../../utilities/CodeGenerator';
 
-import { compileToLegacyIR } from '../../src/compiler/legacyIR';
+import { compileToLegacyIR } from '../../compiler/legacyIR';
 
 describe('Scala code generation', function() {
   let generator;

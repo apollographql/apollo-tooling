@@ -11,12 +11,12 @@ import {
   GraphQLScalarType,
 } from 'graphql';
 
-import { loadSchema } from '../../src/loading'
-const schema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
+import { loadSchema } from '../../loading'
+const schema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
 
-import CodeGenerator from '../../src/utilities/CodeGenerator';
+import CodeGenerator from '../../utilities/CodeGenerator';
 
-import { typeNameFromGraphQLType } from '../../src/scala/types'
+import { typeNameFromGraphQLType } from '../types'
 
 describe('Scala code generation: Types', function() {
   describe('#typeNameFromGraphQLType()', function() {

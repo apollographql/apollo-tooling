@@ -1,5 +1,3 @@
-import { stripIndent } from 'common-tags';
-
 import {
   parse,
   isType,
@@ -12,48 +10,41 @@ import {
 
 import {
   generateSource
-} from '../../src/typescript/codeGeneration';
+} from '../codeGeneration';
 
-import { loadSchema } from '../../src/loading';
-const starWarsSchema = loadSchema(require.resolve('../fixtures/starwars/schema.json'));
-const miscSchema = loadSchema(require.resolve('../fixtures/misc/schema.json'));
+import { loadSchema } from '../../loading';
+const starWarsSchema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
+const miscSchema = loadSchema(require.resolve('../../../test/fixtures/misc/schema.json'));
 
-import CodeGenerator from '../../src/utilities/CodeGenerator';
+import CodeGenerator from '../../utilities/CodeGenerator';
 
-import { compileToLegacyIR } from '../../src/compiler/legacyIR';
+import { compileToLegacyIR } from '../../compiler/legacyIR';
 
-describe('TypeScript code generation', function() {
-  let generator;
-  let compileFromSource;
-  let addFragment;
-
-  function setup(schema) {
-    const context = {
-      schema: schema,
-      operations: {},
-      fragments: {},
-      typesUsed: {}
-    }
-
-    generator = new CodeGenerator(context);
-
-    compileFromSource = (source) => {
-      const document = parse(source);
-      const context = compileToLegacyIR(schema, document, {
-        mergeInFieldsFromFragmentSpreads: true,
-        addTypename: true
-      });
-      generator.context = context;
-      return context;
-    };
-
-    addFragment = (fragment) => {
-      generator.context.fragments[fragment.fragmentName] = fragment;
-    };
-
-    return { generator, compileFromSource, addFragment };
+function setup(schema) {
+  const context = {
+    schema: schema,
+    operations: {},
+    fragments: {},
+    typesUsed: {}
   }
 
+  const generator = new CodeGenerator(context);
+
+  const compileFromSource = (source) => {
+    const document = parse(source);
+    const context = compileToLegacyIR(schema, document, { mergeInFieldsFromFragmentSpreads: true, addTypename: true } );
+    generator.context = context;
+    return context;
+  };
+
+  const addFragment = (fragment) => {
+    generator.context.fragments[fragment.fragmentName] = fragment;
+  };
+
+  return { generator, compileFromSource, addFragment };
+}
+
+describe('Flow code generation', function() {
   describe('#generateSource()', function() {
     test(`should generate simple query operations`, function() {
       const { compileFromSource } = setup(starWarsSchema);
@@ -92,6 +83,20 @@ describe('TypeScript code generation', function() {
             friends {
               name
             }
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test(`should generate array query operations`, function() {
+      const { compileFromSource } = setup(starWarsSchema);
+      const context = compileFromSource(`
+        query ReviewsStars {
+          reviews {
+            stars
           }
         }
       `);
@@ -174,7 +179,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test(`should generate correct list with custom fragment`, function() {
+    test(`should generate correct typedefs with a single custom fragment`, function() {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         fragment Friend on Character {
@@ -187,6 +192,46 @@ describe('TypeScript code generation', function() {
             friends {
               ...Friend
             }
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test(`should generate correct typedefs with a multiple custom fragments`, function() {
+      const { compileFromSource } = setup(starWarsSchema);
+      const context = compileFromSource(`
+        fragment Friend on Character {
+          name
+        }
+
+        fragment Person on Character {
+          name
+        }
+
+        query HeroAndFriendsNames($episode: Episode) {
+          hero(episode: $episode) {
+            name
+            friends {
+              ...Friend
+              ...Person
+            }
+          }
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
+    test(`should annotate custom scalars as string`, function() {
+      const { compileFromSource } = setup(miscSchema);
+      const context = compileFromSource(`
+        query CustomScalar {
+          misc {
+            date
           }
         }
       `);
@@ -276,6 +321,18 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
+    test('should handle scalars at root', () => {
+      const { compileFromSource } = setup(miscSchema);
+      const context = compileFromSource(`
+        query RootScalar {
+          scalarTest
+        }
+      `);
+
+      const source = generateSource(context);
+      expect(source).toMatchSnapshot();
+    });
+
     test('should have __typename value matching fragment type on generic type', () => {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
@@ -313,7 +370,7 @@ describe('TypeScript code generation', function() {
       const source = generateSource(context);
       expect(source).toMatchSnapshot();
     });
-    
+
     test('should have __typename value in nested property', () => {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
@@ -323,7 +380,7 @@ describe('TypeScript code generation', function() {
               edges {
                 node {
                   name
-                  
+
                 }
               }
             }

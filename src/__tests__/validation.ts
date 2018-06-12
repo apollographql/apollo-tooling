@@ -1,15 +1,15 @@
 import * as path from 'path';
 
-import { loadSchema, loadAndMergeQueryDocuments } from '../src/loading';
+import { loadSchema, loadAndMergeQueryDocuments } from '../loading';
 
-import { validateQueryDocument } from '../src/validation';
+import { validateQueryDocument } from '../validation';
 
-const schema = loadSchema(require.resolve('./fixtures/starwars/schema.json'));
+const schema = loadSchema(require.resolve('../../test/fixtures/starwars/schema.json'));
 
 describe('Validation', () => {
   function loadQueryDocument(filename: string) {
     return loadAndMergeQueryDocuments([
-      path.join(__dirname, './fixtures/starwars', filename),
+      path.join(__dirname, '../../test/fixtures/starwars', filename),
     ]);
   }
 
@@ -37,4 +37,5 @@ describe('Validation', () => {
     const document = loadQueryDocument('UnknownDirective.graphql');
 
     validateQueryDocument(schema, document);
+  })
 });

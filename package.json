@@ -62,8 +62,6 @@
     ],
     "setupTestFrameworkScriptFile": "<rootDir>/test/test-utils/matchers.ts",
     "testMatch": [
-      "**/test/**/*.(js|ts)",
-      "**/test/*.(js|ts)",
       "**/__tests__/*.(js|ts)"
     ],
     "testPathIgnorePatterns": [
