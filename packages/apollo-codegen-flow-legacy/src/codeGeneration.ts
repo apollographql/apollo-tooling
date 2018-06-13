@@ -13,13 +13,13 @@ import {
 
 import {
   wrap,
-} from '../utilities/printing';
+} from 'apollo-codegen-core/lib/utilities/printing';
 
 import {
   sortEnumValues
-} from '../utilities/graphql';
+} from 'apollo-codegen-core/lib/utilities/graphql';
 
-import CodeGenerator from '../utilities/CodeGenerator';
+import CodeGenerator from 'apollo-codegen-core/lib/utilities/CodeGenerator';
 
 import {
   typeDeclaration,
@@ -31,7 +31,7 @@ import {
 import {
   typeNameFromGraphQLType,
 } from './types';
-import { LegacyCompilerContext, LegacyOperation, LegacyFragment, LegacyField } from "../compiler/legacyIR";
+import { LegacyCompilerContext, LegacyOperation, LegacyFragment, LegacyField } from "apollo-codegen-core/lib/compiler/legacyIR";
 import { GraphQLType } from "graphql";
 import { GraphQLAbstractType } from "graphql";
 
