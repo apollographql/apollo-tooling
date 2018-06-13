@@ -162,6 +162,10 @@ yargs
         describe: "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
         default: 'gql'
       },
+      "code-generation-module": {
+        demand: false,
+        describe: "Path to module for generating actual GraphQL queries [currently typescript only]",
+      },
       "project-name": {
         demand: false,
         describe: "Name of the project to use in a multi-project .graphqlconfig file",
@@ -202,6 +206,7 @@ yargs
         mergeInFieldsFromFragmentSpreads: argv["merge-in-fields-from-fragment-spreads"],
         useFlowExactObjects: argv['use-flow-exact-objects'],
         useFlowReadOnlyTypes: argv['use-flow-read-only-types'],
+        codeGenerationModule: argv['code-generation-module'],
       };
 
       generate(inputPaths, argv.schema, argv.output, argv.only, argv.target, argv.tagName, argv.projectName, options);

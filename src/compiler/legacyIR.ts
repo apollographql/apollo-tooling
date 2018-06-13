@@ -23,6 +23,7 @@ export interface CompilerOptions {
   customScalarsPrefix?: string;
   namespace?: string;
   generateOperationIds?: boolean;
+  codeGenerationModule?: string;
 }
 
 export interface LegacyCompilerContext {
