@@ -3,23 +3,15 @@ import {
   getNamedType,
   isCompositeType,
   isAbstractType,
-  // isEqualType,
-  // GraphQLScalarType,
   GraphQLEnumType,
   GraphQLList,
   GraphQLNonNull,
-  // GraphQLID,
   GraphQLInputObjectType,
   GraphQLObjectType,
   GraphQLUnionType
 } from 'graphql'
 
-// import  { isTypeProperSuperTypeOf } from '../utilities/graphql';
-
-// import * as Inflector from 'inflected';
-
 import {
-  // join,
   wrap,
 } from '../utilities/printing';
 
@@ -144,9 +136,6 @@ export function interfaceVariablesDeclarationForOperation(
     operationName,
     operationType,
     variables,
-    // fields,
-    // fragmentsReferenced,
-    // source,
   }: LegacyOperation
 ): void {
   if (!variables || variables.length < 1) {
@@ -189,11 +178,7 @@ export function typeDeclarationForOperation(
   {
     operationName,
     operationType,
-    // variables,
     fields,
-    // fragmentSpreads,
-    // fragmentsReferenced,
-    // source,
   }: LegacyOperation
 ) {
   const interfaceName = interfaceNameFromOperation({operationName, operationType});
@@ -231,8 +216,6 @@ export function typeDeclarationForFragment(
     typeCondition,
     fields,
     inlineFragments,
-    // fragmentSpreads,
-    // source,
   } = fragment;
 
   const interfaceName = `${fragmentName}Fragment`;

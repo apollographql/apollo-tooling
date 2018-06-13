@@ -46,7 +46,8 @@
     "apollo-codegen-swift": "^0.20.0",
     "apollo-codegen-scala": "^0.20.0",
     "graphql": "^0.13.1",
-    "node-fetch": "^1.7.3"
+    "node-fetch": "^1.7.3",
+    "glob": "^7.1.2"
   },
   "jest": {
     "testEnvironment": "node",
