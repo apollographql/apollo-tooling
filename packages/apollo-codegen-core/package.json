@@ -47,7 +47,7 @@
   "jest": {
     "testEnvironment": "node",
     "setupFiles": [
-      "<rootDir>/src/polyfills.js"
+      "<rootDir>/src/polyfills.ts"
     ],
     "setupTestFrameworkScriptFile": "<rootDir>/test-utils/matchers.ts",
     "testMatch": [
