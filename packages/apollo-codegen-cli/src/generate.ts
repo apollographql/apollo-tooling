@@ -8,6 +8,7 @@ import { compileToIR } from 'apollo-codegen-core/lib/compiler';
 import { compileToLegacyIR } from 'apollo-codegen-core/lib/compiler/legacyIR';
 import serializeToJSON from 'apollo-codegen-core/lib/serializeToJSON';
 import { BasicGeneratedFile } from 'apollo-codegen-core/lib/utilities/CodeGenerator'
+
 import { generateSource as generateSwiftSource } from 'apollo-codegen-swift';
 import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript-legacy';
 import { generateSource as generateFlowSource } from 'apollo-codegen-flow-legacy';
