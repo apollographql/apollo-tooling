@@ -5,12 +5,12 @@ import {
 
 import {
   CompilerOptions
-} from '../../compiler';
+} from 'apollo-codegen-core/lib/compiler';
 
 
 import {
   sortEnumValues
-} from '../../utilities/graphql';
+} from 'apollo-codegen-core/lib/utilities/graphql';
 
 import { createTypeFromGraphQLTypeFunction,  } from './helpers';
 

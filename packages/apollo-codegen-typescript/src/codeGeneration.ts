@@ -12,24 +12,24 @@ import {
   Fragment,
   SelectionSet,
   Field,
-} from '../../compiler';
+  FragmentSpread
+} from 'apollo-codegen-core/lib/compiler';
 
 import {
   typeCaseForSelectionSet,
   Variant
-} from '../../compiler/visitors/typeCase';
+} from 'apollo-codegen-core/lib/compiler/visitors/typeCase';
 
 import {
   collectAndMergeFields
-} from '../../compiler/visitors/collectAndMergeFields';
+} from 'apollo-codegen-core/lib/compiler/visitors/collectAndMergeFields';
 
-import { BasicGeneratedFile } from '../../utilities/CodeGenerator';
+import { BasicGeneratedFile } from 'apollo-codegen-core/lib/utilities/CodeGenerator';
 import TypescriptGenerator, { ObjectProperty, TypescriptCompilerOptions, } from './language';
 import Printer from './printer';
 import { GraphQLType } from 'graphql/type/definition';
-import { FragmentSpread } from '../../compiler';
 import { GraphQLNonNull, GraphQLOutputType, getNullableType, GraphQLList, GraphQLObjectType } from 'graphql';
-import { maybePush } from '../../utilities/array';
+import { maybePush } from 'apollo-codegen-core/lib/utilities/array';
 
 class TypescriptGeneratedFile implements BasicGeneratedFile {
   fileContents: string;
