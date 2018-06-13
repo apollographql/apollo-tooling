@@ -3,7 +3,7 @@ import * as Inflector from 'inflected';
 
 import {
   join
-} from '../utilities/printing';
+} from 'apollo-codegen-core/lib/utilities/printing';
 
 import {
   escapeIdentifierIfNeeded, Property
@@ -19,7 +19,7 @@ import {
   getNamedType,
   isCompositeType,
 } from 'graphql';
-import { LegacyCompilerContext, LegacyField, LegacyInlineFragment } from '../compiler/legacyIR';
+import { LegacyCompilerContext, LegacyField, LegacyInlineFragment } from 'apollo-codegen-core/lib/compiler/legacyIR';
 import { GraphQLInputField } from 'graphql';
 
 export function enumCaseName(name: string) {

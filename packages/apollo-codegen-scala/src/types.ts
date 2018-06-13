@@ -10,7 +10,7 @@ import {
   GraphQLEnumType,
   isAbstractType
 } from 'graphql';
-import { LegacyCompilerContext } from '../compiler/legacyIR';
+import { LegacyCompilerContext } from 'apollo-codegen-core/lib/compiler/legacyIR';
 import { GraphQLType } from 'graphql';
 
 const builtInScalarMap = {

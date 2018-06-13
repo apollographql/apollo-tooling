@@ -1,16 +1,14 @@
 {
-  "name": "apollo-codegen-cli",
+  "name": "apollo-codegen-scala",
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
   "version": "0.20.0",
   "main": "./lib/index.js",
-  "bin": "./lib/cli.js",
   "scripts": {
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",
-    "build": "tsc",
-    "watch": "tsc -w",
-    "test": "./node_modules/.bin/jest",
-    "test:smoke": "npm install && npm run compile && rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
+    "build": "tsc -p .",
+    "watch": "tsc -w -p .",
+    "test": "./node_modules/.bin/jest"
   },
   "repository": {
     "type": "git",
@@ -23,30 +21,17 @@
     "npm": ">=5.0"
   },
   "devDependencies": {
-    "@types/babel-generator": "^6.25.1",
-    "@types/babel-types": "^7.0.0",
-    "@types/babylon": "^6.16.2",
-    "@types/common-tags": "^1.4.0",
-    "@types/glob": "^5.0.34",
     "@types/graphql": "^0.12.4",
-    "@types/inflected": "^1.1.29",
-    "@types/jest": "^21.1.8",
-    "@types/node-fetch": "^1.6.7",
-    "@types/rimraf": "^2.0.2",
-    "@types/yargs": "^10.0.0",
     "ansi-regex": "^3.0.0",
     "jest": "^22.0.3",
     "jest-matcher-utils": "^22.0.3",
     "lerna": "^2.0.0",
     "ts-jest": "^22.0.0",
-    "typescript": "^2.6.2"
+    "typescript": "^2.6.2",
+    "graphql": "^0.13.1"
   },
   "dependencies": {
-    "apollo-codegen-core": "^0.20.0",
-    "apollo-codegen-swift": "^0.20.0",
-    "apollo-codegen-scala": "^0.20.0",
-    "graphql": "^0.13.1",
-    "node-fetch": "^1.7.3"
+    "apollo-codegen-core": "^0.20.0"
   },
   "jest": {
     "testEnvironment": "node",
@@ -68,7 +53,8 @@
     ],
     "globals": {
       "ts-jest": {
-        "skipBabel": true
+        "skipBabel": true,
+        "tsConfigFile": "tsconfig.test.json"
       }
     }
   }

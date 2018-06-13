@@ -13,7 +13,7 @@ import { generateSource as generateTypescriptSource } from 'apollo-codegen-core/
 import { generateSource as generateFlowSource } from 'apollo-codegen-core/lib/flow';
 import { generateSource as generateFlowModernSource } from 'apollo-codegen-core/lib/javascript/flow';
 import { generateSource as generateTypescriptModernSource } from 'apollo-codegen-core/lib/javascript/typescript';
-import { generateSource as generateScalaSource } from 'apollo-codegen-core/lib/scala';
+import { generateSource as generateScalaSource } from 'apollo-codegen-scala';
 
 type TargetType = 'json' | 'swift' | 'ts' | 'typescript'
   | 'flow' | 'scala' | 'flow-modern' | 'typescript-modern'

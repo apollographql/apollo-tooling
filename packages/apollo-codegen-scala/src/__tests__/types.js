@@ -1,5 +1,3 @@
-import { stripIndent } from 'common-tags'
-
 import {
   GraphQLString,
   GraphQLInt,
@@ -11,10 +9,8 @@ import {
   GraphQLScalarType,
 } from 'graphql';
 
-import { loadSchema } from '../../loading'
-const schema = loadSchema(require.resolve('../../../../common-test/fixtures/starwars/schema.json'));
-
-import CodeGenerator from '../../utilities/CodeGenerator';
+import { loadSchema } from 'apollo-codegen-core/lib/loading'
+const schema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
 
 import { typeNameFromGraphQLType } from '../types'
 

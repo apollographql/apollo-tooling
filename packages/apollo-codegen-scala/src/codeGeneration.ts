@@ -7,11 +7,11 @@ import {
   GraphQLInputObjectType
 } from 'graphql'
 
-import  { isTypeProperSuperTypeOf } from '../utilities/graphql'
+import  { isTypeProperSuperTypeOf } from 'apollo-codegen-core/lib/utilities/graphql'
 
 import {
   join,
-} from '../utilities/printing';
+} from 'apollo-codegen-core/lib/utilities/printing';
 
 import {
   packageDeclaration,
@@ -40,8 +40,8 @@ import {
   typeNameFromGraphQLType,
 } from './types';
 
-import CodeGenerator from '../utilities/CodeGenerator';
-import { LegacyCompilerContext, LegacyOperation, LegacyFragment, LegacyField, LegacyInlineFragment } from '../compiler/legacyIR';
+import CodeGenerator from 'apollo-codegen-core/lib/utilities/CodeGenerator';
+import { LegacyCompilerContext, LegacyOperation, LegacyFragment, LegacyField, LegacyInlineFragment } from 'apollo-codegen-core/lib/compiler/legacyIR';
 import { GraphQLType } from 'graphql';
 import { Property } from './language';
 import { GraphQLCompositeType } from 'graphql';

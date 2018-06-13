@@ -1,5 +1,5 @@
-import CodeGenerator from "../utilities/CodeGenerator";
-import { LegacyCompilerContext } from "../compiler/legacyIR";
+import CodeGenerator from "apollo-codegen-core/lib/utilities/CodeGenerator";
+import { LegacyCompilerContext } from "apollo-codegen-core/lib/compiler/legacyIR";
 
 export interface Property {
   propertyName: string;

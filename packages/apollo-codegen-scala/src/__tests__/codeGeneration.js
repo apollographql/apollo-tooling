@@ -1,14 +1,8 @@
-import { stripIndent } from 'common-tags';
-
 import {
   parse,
-  isType,
-  GraphQLID,
   GraphQLString,
-  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLInputObjectType,
   GraphQLEnumType
 } from 'graphql';
 
@@ -20,12 +14,12 @@ import {
   typeDeclarationForGraphQLType,
 } from '../codeGeneration';
 
-import { loadSchema } from '../../loading';
-const schema = loadSchema(require.resolve('../../../../common-test/fixtures/starwars/schema.json'));
+import { loadSchema } from 'apollo-codegen-core/lib/loading';
+const schema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
 
-import CodeGenerator from '../../utilities/CodeGenerator';
+import CodeGenerator from 'apollo-codegen-core/lib/utilities/CodeGenerator';
 
-import { compileToLegacyIR } from '../../compiler/legacyIR';
+import { compileToLegacyIR } from 'apollo-codegen-core/lib/compiler/legacyIR';
 
 describe('Scala code generation', function() {
   let generator;

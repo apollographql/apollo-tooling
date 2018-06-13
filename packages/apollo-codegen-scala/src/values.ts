@@ -1,5 +1,5 @@
-import { LegacyCompilerContext } from '../compiler/legacyIR';
-import CodeGenerator from '../utilities/CodeGenerator';
+import { LegacyCompilerContext } from 'apollo-codegen-core/lib/compiler/legacyIR';
+import CodeGenerator from 'apollo-codegen-core/lib/utilities/CodeGenerator';
 
 export function escapedString(string: string) {
   return string.replace(/"/g, '\\"');
