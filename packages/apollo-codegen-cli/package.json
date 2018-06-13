@@ -1,7 +1,7 @@
 {
   "name": "apollo-codegen-cli",
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
-  "version": "0.1.0",
+  "version": "0.20.0",
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
   "scripts": {
@@ -42,7 +42,7 @@
     "typescript": "^2.6.2"
   },
   "dependencies": {
-    "apollo-codegen-core": "^0.1.0",
+    "apollo-codegen-core": "^0.20.0",
     "graphql": "^0.13.1",
     "node-fetch": "^1.7.3"
   },

@@ -7,7 +7,7 @@
     "build": "lerna run -- build",
     "test": "lerna run -- test",
     "test:smoke": "lerna run -- test:smoke",
-    "deploy": "lerna publish -m \"chore: Publish\" --independent && cd packages/apollo-client && npm run deploy"
+    "deploy": "lerna publish -m \"chore: Publish\" && cd packages/apollo-client && npm run deploy"
   },
   "repository": {
     "type": "git",
