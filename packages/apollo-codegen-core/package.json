@@ -1,6 +1,7 @@
 {
   "name": "apollo-codegen-core",
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
+  "version": "0.1.0",
   "main": "./lib/index.js",
   "scripts": {
     "clean": "rm -rf lib",
@@ -73,7 +74,7 @@
       "<rootDir>/test/test-utils"
     ],
     "transform": {
-      "^.+\\.(ts|js)x?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      "^.+\\.(ts|js)x?$": "<rootDir>../../node_modules/ts-jest/preprocessor.js"
     },
     "moduleFileExtensions": [
       "ts",

@@ -42,7 +42,7 @@
     "typescript": "^2.6.2"
   },
   "dependencies": {
-    "apollo-codegen-core": "file:../apollo-codegen-core",
+    "apollo-codegen-core": "^0.1.0",
     "graphql": "^0.13.1",
     "node-fetch": "^1.7.3"
   },
@@ -58,7 +58,7 @@
       "<rootDir>/test/test-utils"
     ],
     "transform": {
-      "^.+\\.(ts|js)x?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      "^.+\\.(ts|js)x?$": "<rootDir>../../node_modules/ts-jest/preprocessor.js"
     },
     "moduleFileExtensions": [
       "ts",
