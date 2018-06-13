@@ -1,6 +1,6 @@
-import CodeGenerator from '../utilities/CodeGenerator';
+import CodeGenerator from 'apollo-codegen-core/lib/utilities/CodeGenerator';
 
-import { join, wrap } from '../utilities/printing';
+import { join, wrap } from 'apollo-codegen-core/lib/utilities/printing';
 
 export interface Class {
   className: string;
