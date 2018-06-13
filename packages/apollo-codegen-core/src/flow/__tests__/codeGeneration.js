@@ -13,8 +13,8 @@ import {
 } from '../codeGeneration';
 
 import { loadSchema } from '../../loading';
-const starWarsSchema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
-const miscSchema = loadSchema(require.resolve('../../../test/fixtures/misc/schema.json'));
+const starWarsSchema = loadSchema(require.resolve('../../../../common-test/fixtures/starwars/schema.json'));
+const miscSchema = loadSchema(require.resolve('../../../../common-test/fixtures/misc/schema.json'));
 
 import CodeGenerator from '../../utilities/CodeGenerator';
 

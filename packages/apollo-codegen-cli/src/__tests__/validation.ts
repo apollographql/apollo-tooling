@@ -4,12 +4,12 @@ import { loadSchema, loadAndMergeQueryDocuments } from 'apollo-codegen-core/lib/
 
 import { validateQueryDocument } from '../validation';
 
-const schema = loadSchema(require.resolve('../../test/fixtures/starwars/schema.json'));
+const schema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
 
 describe('Validation', () => {
   function loadQueryDocument(filename: string) {
     return loadAndMergeQueryDocuments([
-      path.join(__dirname, '../../test/fixtures/starwars', filename),
+      path.join(__dirname, '../../../common-test/fixtures/starwars', filename),
     ]);
   }
 

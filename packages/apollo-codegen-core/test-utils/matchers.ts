@@ -1,6 +1,6 @@
-import { collectAndMergeFields } from '../../src/compiler/visitors/collectAndMergeFields';
+import { collectAndMergeFields } from '../src/compiler/visitors/collectAndMergeFields';
 
-import { SelectionSet } from '../../src/compiler';
+import { SelectionSet } from '../src/compiler';
 
 declare global {
   namespace jest {

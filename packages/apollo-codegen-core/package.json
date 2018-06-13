@@ -37,7 +37,8 @@
     "jest-matcher-utils": "^22.0.3",
     "lerna": "^2.0.0",
     "ts-jest": "^22.0.0",
-    "typescript": "^2.6.2"
+    "typescript": "^2.6.2",
+    "graphql": "^0.13.1"
   },
   "dependencies": {
     "@babel/generator": "7.0.0-beta.38",
@@ -46,7 +47,6 @@
     "common-tags": "^1.5.1",
     "core-js": "^2.5.3",
     "glob": "^7.1.2",
-    "graphql": "^0.13.1",
     "graphql-config": "^2.0.1",
     "inflected": "^2.0.3",
     "node-fetch": "^1.7.3",
@@ -54,12 +54,15 @@
     "source-map-support": "^0.5.0",
     "yargs": "^10.0.3"
   },
+  "peerDependencies": {
+    "graphql": "^0.13.1"
+  },
   "jest": {
     "testEnvironment": "node",
     "setupFiles": [
       "<rootDir>/src/polyfills.js"
     ],
-    "setupTestFrameworkScriptFile": "<rootDir>/test/test-utils/matchers.ts",
+    "setupTestFrameworkScriptFile": "<rootDir>/test-utils/matchers.ts",
     "testMatch": [
       "**/__tests__/*.(js|ts)"
     ],

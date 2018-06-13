@@ -1,7 +1,7 @@
 import { parse, GraphQLNonNull, GraphQLString, GraphQLEnumType, GraphQLList } from 'graphql';
 
 import { loadSchema } from '../../loading';
-const schema = loadSchema(require.resolve('../../../test/fixtures/starwars/schema.json'));
+const schema = loadSchema(require.resolve('../../../../common-test/fixtures/starwars/schema.json'));
 
 import {
   compileToIR,
