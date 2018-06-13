@@ -1,4 +1,11 @@
-import { LegacyCompilerContext, LegacyInlineFragment, LegacyFragment, LegacyField, LegacyOperation } from '../compiler/legacyIR';
+import {
+  LegacyCompilerContext,
+  LegacyInlineFragment,
+  LegacyFragment,
+  LegacyField,
+  LegacyOperation
+} from 'apollo-codegen-core/lib/compiler/legacyIR';
+
 import {
   GraphQLError,
   getNamedType,
@@ -16,9 +23,9 @@ import {
 
 import {
   sortEnumValues
-} from '../utilities/graphql';
+} from 'apollo-codegen-core/lib/utilities/graphql';
 
-import CodeGenerator from '../utilities/CodeGenerator';
+import CodeGenerator from 'apollo-codegen-core/lib/utilities/CodeGenerator';
 
 import {
   interfaceDeclaration,

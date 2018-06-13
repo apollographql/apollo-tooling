@@ -1,24 +1,14 @@
-import { stripIndent } from 'common-tags';
-
-import {
-  parse,
-  isType,
-  GraphQLID,
-  GraphQLString,
-  GraphQLInt,
-  GraphQLList,
-  GraphQLNonNull
-} from 'graphql';
+import { parse } from 'graphql';
 
 import { generateSource } from '../codeGeneration';
 
-import { loadSchema } from '../../loading';
-const starWarsSchema = loadSchema(require.resolve('../../../../common-test/fixtures/starwars/schema.json'));
-const miscSchema = loadSchema(require.resolve('../../../../common-test/fixtures/misc/schema.json'));
+import { loadSchema } from 'apollo-codegen-core/lib/loading';
+const starWarsSchema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
+const miscSchema = loadSchema(require.resolve('../../../common-test/fixtures/misc/schema.json'));
 
-import CodeGenerator from '../../utilities/CodeGenerator';
+import CodeGenerator from 'apollo-codegen-core/lib/utilities/CodeGenerator';
 
-import { compileToLegacyIR } from '../../compiler/legacyIR';
+import { compileToLegacyIR } from 'apollo-codegen-core/lib/compiler/legacyIR';
 
 describe('TypeScript code generation', function() {
   let generator;

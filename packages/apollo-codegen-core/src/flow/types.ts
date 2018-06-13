@@ -1,13 +1,4 @@
 import {
-  // join,
-  // block,
-  // wrap,
-  // indent
-} from '../utilities/printing';
-
-// import { camelCase } from 'change-case';
-
-import {
   GraphQLString,
   GraphQLInt,
   GraphQLFloat,
@@ -15,8 +6,7 @@ import {
   GraphQLID,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLScalarType,
-  // GraphQLEnumType
+  GraphQLScalarType
 } from 'graphql';
 import { LegacyCompilerContext } from "../compiler/legacyIR";
 import { GraphQLType } from "graphql";

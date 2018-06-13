@@ -45,9 +45,13 @@
     "apollo-codegen-core": "^0.20.0",
     "apollo-codegen-swift": "^0.20.0",
     "apollo-codegen-scala": "^0.20.0",
+    "apollo-codegen-typescript-legacy": "^0.20.0",
     "graphql": "^0.13.1",
     "node-fetch": "^1.7.3",
-    "glob": "^7.1.2"
+    "glob": "^7.1.2",
+    "rimraf": "^2.6.2",
+    "source-map-support": "^0.5.0",
+    "yargs": "^10.0.3"
   },
   "jest": {
     "testEnvironment": "node",

@@ -1,12 +1,6 @@
-import {
-  // join,
-  // wrap,
-} from '../utilities/printing';
-
 import { propertyDeclarations } from './codeGeneration';
 import { typeNameFromGraphQLType } from './types';
 
-// import { pascalCase } from 'change-case';
 import CodeGenerator from "../utilities/CodeGenerator";
 import { LegacyCompilerContext, LegacyInlineFragment } from "../compiler/legacyIR";
 import { GraphQLType } from "graphql";
@@ -55,7 +49,6 @@ export function propertyDeclaration(generator: CodeGenerator<LegacyCompilerConte
   isArray,
   isNullable,
   isArrayElementNullable,
-  // fragmentSpreads,
   isInput
 }: Property, closure?: Function, open = ' {|', close = '|}') {
   const name = fieldName || propertyName;
