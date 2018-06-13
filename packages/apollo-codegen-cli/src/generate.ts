@@ -11,7 +11,7 @@ import { BasicGeneratedFile } from 'apollo-codegen-core/lib/utilities/CodeGenera
 import { generateSource as generateSwiftSource } from 'apollo-codegen-swift';
 import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript-legacy';
 import { generateSource as generateFlowSource } from 'apollo-codegen-flow-legacy';
-import { generateSource as generateFlowModernSource } from 'apollo-codegen-core/lib/javascript/flow';
+import { generateSource as generateFlowModernSource } from 'apollo-codegen-flow';
 import { generateSource as generateTypescriptModernSource } from 'apollo-codegen-typescript';
 import { generateSource as generateScalaSource } from 'apollo-codegen-scala';
 

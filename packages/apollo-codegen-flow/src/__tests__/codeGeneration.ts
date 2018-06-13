@@ -1,12 +1,12 @@
 import { parse } from 'graphql';
 
-import { loadSchema } from '../../../loading';
-const schema = loadSchema(require.resolve('../../../../../common-test/fixtures/starwars/schema.json'));
+import { loadSchema } from 'apollo-codegen-core/lib/loading';
+const schema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
 
 import {
   compileToIR,
   CompilerContext,
-} from '../../../compiler';
+} from 'apollo-codegen-core/lib/compiler';
 
 import { generateSource } from '../codeGeneration';
 import { FlowCompilerOptions } from '../language';
@@ -295,7 +295,7 @@ describe('Flow codeGeneration', () => {
   });
 
   test('handles multiline graphql comments', () => {
-    const miscSchema = loadSchema(require.resolve('../../../../../common-test/fixtures/misc/schema.json'));
+    const miscSchema = loadSchema(require.resolve('../../../common-test/fixtures/misc/schema.json'));
 
     const document = parse(`
       query CustomScalar {

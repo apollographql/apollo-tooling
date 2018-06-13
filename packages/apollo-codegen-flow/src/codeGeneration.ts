@@ -12,18 +12,18 @@ import {
   Fragment,
   SelectionSet,
   Field,
-} from '../../compiler';
+} from 'apollo-codegen-core/lib/compiler';
 
 import {
   typeCaseForSelectionSet,
   Variant
-} from '../../compiler/visitors/typeCase';
+} from 'apollo-codegen-core/lib/compiler/visitors/typeCase';
 
 import {
   collectAndMergeFields
-} from '../../compiler/visitors/collectAndMergeFields';
+} from 'apollo-codegen-core/lib/compiler/visitors/collectAndMergeFields';
 
-import { BasicGeneratedFile } from '../../utilities/CodeGenerator';
+import { BasicGeneratedFile } from 'apollo-codegen-core/lib/utilities/CodeGenerator';
 import FlowGenerator, { ObjectProperty, FlowCompilerOptions, } from './language';
 import Printer from './printer';
 
