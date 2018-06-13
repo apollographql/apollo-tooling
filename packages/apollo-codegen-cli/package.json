@@ -10,7 +10,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "./node_modules/.bin/jest",
-    "test:smoke": "npm install && npm run compile && rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
+    "test:smoke": "npm run build && node ./lib/cli.js && echo 'Smoke Test Passed'"
   },
   "repository": {
     "type": "git",
@@ -23,13 +23,8 @@
     "npm": ">=5.0"
   },
   "devDependencies": {
-    "@types/babel-generator": "^6.25.1",
-    "@types/babel-types": "^7.0.0",
-    "@types/babylon": "^6.16.2",
-    "@types/common-tags": "^1.4.0",
     "@types/glob": "^5.0.34",
     "@types/graphql": "^0.12.4",
-    "@types/inflected": "^1.1.29",
     "@types/jest": "^21.1.8",
     "@types/node-fetch": "^1.6.7",
     "@types/rimraf": "^2.0.2",

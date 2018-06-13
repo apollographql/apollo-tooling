@@ -6,7 +6,7 @@
     "postbootstrap": "npm run build",
     "build": "lerna run -- build",
     "test": "lerna run -- test",
-    "test:smoke": "lerna run -- test:smoke",
+    "test:smoke": "lerna run --scope apollo-codegen-cli -- test:smoke",
     "deploy": "lerna publish -m \"chore: Publish\" && cd packages/apollo-client && npm run deploy"
   },
   "repository": {

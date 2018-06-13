@@ -8,8 +8,7 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "watch": "tsc -w -p .",
-    "test": "./node_modules/.bin/jest",
-    "test:smoke": "npm install && npm run compile && rm -rf node_modules && npm install --prod && node ./lib/cli.js && echo 'Smoke Test Passed'"
+    "test": "./node_modules/.bin/jest"
   },
   "repository": {
     "type": "git",
@@ -24,7 +23,6 @@
   "devDependencies": {
     "@types/babel-generator": "^6.25.1",
     "@types/babel-types": "^7.0.0",
-    "@types/babylon": "^6.16.2",
     "@types/common-tags": "^1.4.0",
     "@types/graphql": "^0.12.4",
     "@types/jest": "^21.1.8",
