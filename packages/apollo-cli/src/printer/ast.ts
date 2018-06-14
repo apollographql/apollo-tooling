@@ -40,7 +40,11 @@ export interface Change {
   // used for IDL generation and usage comparisions
   type?: Maybe<DiffType>;
   // used for usage comparisions
-  field?: Maybe<DiffField | DiffInputValue>;
+  // even though inputValues and enumvalues aren't technically fields
+  // this makes it much easier to manage usage comparisions
+  // within the visitor function calls
+  field?: Maybe<DiffField | DiffInputValue | DiffEnum>;
+  arg?: Maybe<InputValueDefinitionNode>;
 }
 
 export interface DiffTypeMap {

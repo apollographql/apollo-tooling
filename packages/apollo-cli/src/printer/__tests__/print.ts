@@ -569,12 +569,7 @@ describe("integration", () => {
   it("reports changes for a complex scenario", () => {
     const { current, next } = schemas(initial, change);
     const changes = diffSchemas(current.getTypeMap(), next.getTypeMap());
-    const [fieldRemoved, fieldAdded, typeAdded] = changes;
     const sdl = printChanges(changes);
     expect(sdl).toMatchSnapshot();
-    expect(fieldRemoved.field.name.value).toEqual("hello");
-    expect(fieldRemoved.field).toBeDefined();
-    expect(fieldAdded.field).toBeDefined();
-    expect(typeAdded.field).toBeUndefined();
   });
 });

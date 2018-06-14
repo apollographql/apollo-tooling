@@ -238,6 +238,7 @@ const diffFieldsLeft = (
             newType
           )}.`,
           type: newType.astNode,
+          field: value.astNode,
         };
         changes.push(change);
         const t = change.type as EnumTypeDefinitionNode;
@@ -343,6 +344,7 @@ const diffFieldsLeft = (
             )} was removed`,
             type: newType.astNode,
             field: newTypeFieldsDef[fieldName].astNode,
+            arg: oldArgDef.astNode,
           };
 
           changes.push(change);
@@ -375,6 +377,7 @@ const diffFieldsLeft = (
                 `${m(oldArgDef.type)} to ${m(newArgDef.type)}`,
               type: newType.astNode,
               field: newTypeFieldsDef[fieldName].astNode,
+              arg: oldArgDef.astNode,
             };
           } else if (
             oldArgDef.defaultValue !== undefined &&
@@ -388,6 +391,7 @@ const diffFieldsLeft = (
                 `${m(oldArgDef.name)} has changed defaultValue`,
               type: newType.astNode,
               field: newTypeFieldsDef[fieldName].astNode,
+              arg: oldArgDef.astNode,
             };
           }
           if (!change) return;
@@ -572,6 +576,7 @@ const diffFieldsRight = (
           code: "ENUM_VALUE_ADDED",
           description: `${m(value.name)} was added to enum type ${m(newType)}.`,
           type: newType.astNode,
+          field: value.astNode,
         };
         changes.push(change);
         const t = change.type as EnumTypeDefinitionNode;
@@ -591,6 +596,7 @@ const diffFieldsRight = (
           code: "ENUM_DEPRECATED",
           description: `${m(`${newType}.${value.name}`)} was deprecated`,
           type: newType.astNode,
+          field: oldValue.astNode,
         };
       } else if (oldValue.isDeprecated && !value.isDeprecated) {
         change = {
@@ -600,6 +606,7 @@ const diffFieldsRight = (
             `${newType}.${value.name}`
           )} is no longer deprecated`,
           type: newType.astNode,
+          field: oldValue.astNode,
         };
       } else if (
         oldValue.isDeprecated &&
@@ -613,6 +620,7 @@ const diffFieldsRight = (
             `${newType}.${value.name}`
           )} deprecation reason changed`,
           type: newType.astNode,
+          field: oldValue.astNode,
         };
       }
       if (!change) return;
@@ -718,6 +726,7 @@ const diffFieldsRight = (
             )} was added`,
             type: newType.astNode,
             field: newTypeFieldsDef[fieldName].astNode,
+            arg: newArgDef.astNode,
           };
 
           changes.push(change);

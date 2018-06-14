@@ -166,6 +166,15 @@ type Query {
 
 }
 
+type RemovedType { }
+
+type RemovedField { 
+  
+  # ⚡ Warning ⚡
+  name: RemovedType
+
+}
+
 "
 `;
 
