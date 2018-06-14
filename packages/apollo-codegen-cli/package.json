@@ -29,7 +29,6 @@
     "@types/node-fetch": "^1.6.7",
     "@types/rimraf": "^2.0.2",
     "@types/yargs": "^10.0.0",
-    "ansi-regex": "^3.0.0",
     "jest": "^22.0.3",
     "jest-matcher-utils": "^22.0.3",
     "lerna": "^2.11.0",

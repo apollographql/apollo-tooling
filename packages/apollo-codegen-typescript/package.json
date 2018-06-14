@@ -1,6 +1,6 @@
 {
   "name": "apollo-codegen-typescript",
-  "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
+  "description": "TypeScript generator module for Apollo Codegen",
   "version": "0.20.0",
   "main": "./lib/index.js",
   "scripts": {
@@ -23,7 +23,6 @@
   "devDependencies": {
     "@types/graphql": "^0.12.4",
     "@types/inflected": "^1.1.29",
-    "ansi-regex": "^3.0.0",
     "jest": "^22.0.3",
     "jest-matcher-utils": "^22.0.3",
     "lerna": "^2.11.0",
