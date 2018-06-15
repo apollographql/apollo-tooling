@@ -5,10 +5,12 @@ import * as process from 'process';
 import * as path from 'path';
 import * as yargs from 'yargs';
 
-import { downloadSchema, introspectSchema, printSchema, generate } from 'apollo-codegen-core';
-import { ToolError, logError } from 'apollo-codegen-core/lib/errors'
+import { downloadSchema, introspectSchema, printSchema } from 'apollo-codegen-core';
+import { ToolError, logError } from 'apollo-codegen-core/lib/errors';
 
-import 'source-map-support/register'
+import generate from './generate';
+
+import 'source-map-support/register';
 
 // Make sure unhandled errors in async code are propagated correctly
 process.on('unhandledRejection', (error) => { throw error });

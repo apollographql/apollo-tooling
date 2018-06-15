@@ -58,7 +58,7 @@ export default function generate(
   }
   else if (target === 'flow-modern' || target === 'typescript-modern' || target === 'ts-modern') {
     const context = compileToIR(schema, document, options);
-    const generatedFiles = target === 'flow-modern'
+    const { generatedFiles, common } = target === 'flow-modern'
       ? generateFlowModernSource(context)
       : generateTypescriptModernSource(context) ;
 
@@ -71,8 +71,10 @@ export default function generate(
     if (outputIndividualFiles) {
       Object.keys(generatedFiles)
         .forEach((filePath: string) => {
-          outFiles[path.basename(filePath)] = generatedFiles[filePath];
-        })
+          outFiles[path.basename(filePath)] = {
+            output: generatedFiles[filePath].fileContents + common
+          }
+        });
 
       writeGeneratedFiles(
         outFiles,
@@ -81,7 +83,7 @@ export default function generate(
     } else {
       fs.writeFileSync(
         outputPath,
-        Object.values(generatedFiles).map(v => v.fileContents).join("\n")
+        Object.values(generatedFiles).map(v => v.fileContents).join("\n") + common
       );
     }
   }

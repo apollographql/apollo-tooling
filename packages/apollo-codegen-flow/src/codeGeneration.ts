@@ -41,9 +41,6 @@ function printEnumsAndInputObjects(generator: FlowAPIGenerator, context: Compile
   generator.printer.enqueue(stripIndent`
     //==============================================================
     // START Enums and Input Objects
-    // All enums and input objects are included in every output file
-    // for now, but this will be changed soon.
-    // TODO: Link to issue to fix this.
     //==============================================================
   `);
 
@@ -76,7 +73,6 @@ export function generateSource(
     .forEach((operation) => {
       generator.fileHeader();
       generator.typeAliasesForOperation(operation);
-      printEnumsAndInputObjects(generator, context);
 
       const output = generator.printer.printAndClear();
 
@@ -87,14 +83,20 @@ export function generateSource(
     .forEach((fragment) => {
       generator.fileHeader();
       generator.typeAliasesForFragment(fragment);
-      printEnumsAndInputObjects(generator, context);
 
       const output = generator.printer.printAndClear();
 
       generatedFiles[`${fragment.fragmentName}.js`] = new FlowGeneratedFile(output);
     });
 
-  return generatedFiles;
+  generator.fileHeader();
+  printEnumsAndInputObjects(generator, context);
+  const common = generator.printer.printAndClear();
+
+  return {
+    generatedFiles,
+    common
+  };
 }
 
 export class FlowAPIGenerator extends FlowGenerator {
