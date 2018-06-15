@@ -101,7 +101,7 @@ export function propertyDeclaration(generator: CodeGenerator<LegacyCompilerConte
 
 export function propertySetsDeclaration(generator: CodeGenerator<LegacyCompilerContext>, property: Property, propertySets: Property[][], standalone = false) {
   const {
-    description, fieldName, propertyName,// typeName,
+    description, fieldName, propertyName,
     isNullable, isArray, isArrayElementNullable
   } = property;
   const name = fieldName || propertyName;

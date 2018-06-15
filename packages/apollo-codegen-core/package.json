@@ -41,7 +41,7 @@
     "graphql-config": "^2.0.1"
   },
   "peerDependencies": {
-    "graphql": "^0.13.1"
+    "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0"
   },
   "jest": {
     "testEnvironment": "node",
