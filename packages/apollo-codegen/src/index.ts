@@ -1,5 +1,4 @@
-import 'core-js/fn/object/values';
-import 'core-js/fn/object/entries';
+import 'apollo-codegen-core/lib/polyfills';
 
 export { default as downloadSchema } from './downloadSchema';
 export { default as introspectSchema } from './introspectSchema';
