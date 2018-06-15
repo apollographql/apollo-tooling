@@ -17,6 +17,7 @@ before_install:
 
 install:
   - npm install
+  - npm run bootstrap
 
 script:
   - npm test

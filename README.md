@@ -157,9 +157,13 @@ function CharacterFigures({ characters }: CharactersQuery) {
 
 [![Build status](https://travis-ci.org/apollographql/apollo-codegen.svg?branch=master)](https://travis-ci.org/apollographql/apollo-codegen)
 
+This repo is composed of multiple packages managed by Lerna. The `apollo-codegen-core` package contains all the compiler APIs needed to implement support for new languages. The `apollo-codegen-cli` package contains the final CLI, which combines together the remaining `apollo-codegen-*` packages that implement language specific code generation.
+
 Running tests locally:
 
 ```
 npm install
 npm test
 ```
+
+You can also run `npm` commands within package folders after you have bootstrapped the repository (part of `npm install`).

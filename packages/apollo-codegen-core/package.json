@@ -1,0 +1,75 @@
+{
+  "name": "apollo-codegen-core",
+  "description": "Core generator APIs for Apollo Codegen",
+  "version": "0.20.0",
+  "main": "./lib/index.js",
+  "scripts": {
+    "clean": "rm -rf lib",
+    "prebuild": "npm run clean",
+    "build": "tsc -p .",
+    "watch": "tsc -w -p .",
+    "test": "./node_modules/.bin/jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "apollographql/apollo-codegen"
+  },
+  "author": "Martijn Walraven <martijn@martijnwalraven.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=6.0",
+    "npm": ">=5.0"
+  },
+  "devDependencies": {
+    "@types/babel-generator": "^6.25.1",
+    "@types/babel-types": "^7.0.0",
+    "@types/common-tags": "^1.4.0",
+    "@types/graphql": "^0.12.4",
+    "@types/jest": "^21.1.8",
+    "jest": "^22.0.3",
+    "jest-matcher-utils": "^22.0.3",
+    "lerna": "^2.11.0",
+    "ts-jest": "^22.0.0",
+    "typescript": "^2.6.2",
+    "graphql": "^0.13.1"
+  },
+  "dependencies": {
+    "@babel/generator": "7.0.0-beta.38",
+    "@babel/types": "7.0.0-beta.38",
+    "common-tags": "^1.5.1",
+    "core-js": "^2.5.3",
+    "graphql-config": "^2.0.1"
+  },
+  "peerDependencies": {
+    "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFiles": [
+      "<rootDir>/src/polyfills.ts"
+    ],
+    "setupTestFrameworkScriptFile": "<rootDir>/test-utils/matchers.ts",
+    "testMatch": [
+      "**/__tests__/*.(js|ts)"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/lib/",
+      "<rootDir>/test/fixtures/",
+      "<rootDir>/test/test-utils"
+    ],
+    "transform": {
+      "^.+\\.(ts|js)x?$": "<rootDir>../../node_modules/ts-jest/preprocessor.js"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "globals": {
+      "ts-jest": {
+        "skipBabel": true,
+        "tsConfigFile": "tsconfig.test.json"
+      }
+    }
+  }
+}
