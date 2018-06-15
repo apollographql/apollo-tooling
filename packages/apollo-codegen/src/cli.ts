@@ -5,7 +5,9 @@ import * as process from 'process';
 import * as path from 'path';
 import * as yargs from 'yargs';
 
-import { downloadSchema, introspectSchema, printSchema } from 'apollo-codegen-core';
+import downloadSchema from './downloadSchema';
+import introspectSchema from './introspectSchema';
+import printSchema from './printSchema';
 import { ToolError, logError } from 'apollo-codegen-core/lib/errors';
 
 import generate from './generate';
@@ -17,7 +19,7 @@ process.on('unhandledRejection', (error) => { throw error });
 
 process.on('uncaughtException', handleError);
 
-function handleError(error) {
+function handleError(error: Error) {
   logError(error);
   process.exit(1);
 }
@@ -39,7 +41,9 @@ yargs
         describe: 'Additional header to send to the server as part of the introspection query request',
         type: 'array',
         coerce: (arg) => {
-          let additionalHeaders = {};
+          let additionalHeaders: {
+            [key: string]: any
+          } = {};
           for (const header of arg) {
             const separator = header.indexOf(":");
             const name = header.substring(0, separator).trim();
@@ -189,7 +193,7 @@ yargs
         input = glob.sync(input[0]);
       }
 
-      const inputPaths = input
+      const inputPaths = (input as string[])
         .map(input => path.resolve(input))
         // Sort to normalize different glob expansions between different terminals.
         .sort();
