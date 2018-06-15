@@ -4,7 +4,6 @@ import {
   GraphQLEnumType,
   GraphQLInputObjectType,
 } from 'graphql';
-import * as path from 'path';
 
 import {
   CompilerContext,
@@ -87,13 +86,7 @@ export function generateSource(
 
       const output = generator.printer.printAndClear();
 
-      const outputFilePath = path.join(
-        path.dirname(operation.filePath),
-        '__generated__',
-        `${operation.operationName}.ts`
-      );
-
-      generatedFiles[outputFilePath] = new TypescriptGeneratedFile(output);
+      generatedFiles[`${operation.operationName}.ts`] = new TypescriptGeneratedFile(output);
     });
 
   Object.values(context.fragments)
@@ -106,13 +99,7 @@ export function generateSource(
 
       const output = generator.printer.printAndClear();
 
-      const outputFilePath = path.join(
-        path.dirname(fragment.filePath),
-        '__generated__',
-        `${fragment.fragmentName}.ts`
-      );
-
-      generatedFiles[outputFilePath] = new TypescriptGeneratedFile(output);
+      generatedFiles[`${fragment.fragmentName}.ts`] = new TypescriptGeneratedFile(output);
     });
 
   return generatedFiles;

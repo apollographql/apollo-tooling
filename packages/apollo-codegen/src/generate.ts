@@ -62,32 +62,28 @@ export default function generate(
       ? generateFlowModernSource(context)
       : generateTypescriptModernSource(context) ;
 
-    // Group by output directory
-    const filesByOutputDirectory: {
-      [outputDirectory: string]: {
-        [fileName: string]: BasicGeneratedFile
-      }
+    const outFiles: {
+      [fileName: string]: BasicGeneratedFile
     } = {};
 
-    Object.keys(generatedFiles)
-      .forEach((filePath: string) => {
-        const outputDirectory = path.dirname(filePath);
-        if (!filesByOutputDirectory[outputDirectory]) {
-          filesByOutputDirectory[outputDirectory] = {
-            [path.basename(filePath)]: generatedFiles[filePath]
-          };
-        } else {
-          filesByOutputDirectory[outputDirectory][path.basename(filePath)] = generatedFiles[filePath];
-        }
-      })
+    const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
 
-    Object.keys(filesByOutputDirectory)
-      .forEach((outputDirectory) => {
-        writeGeneratedFiles(
-          filesByOutputDirectory[outputDirectory],
-          outputDirectory
-        );
-      });
+    if (outputIndividualFiles) {
+      Object.keys(generatedFiles)
+        .forEach((filePath: string) => {
+          outFiles[path.basename(filePath)] = generatedFiles[filePath];
+        })
+
+      writeGeneratedFiles(
+        outFiles,
+        outputPath
+      );
+    } else {
+      fs.writeFileSync(
+        outputPath,
+        Object.values(generatedFiles).map(v => v.fileContents).join("\n")
+      );
+    }
   }
   else {
     let output;
