@@ -59,7 +59,7 @@ apollo-codegen generate **/*.graphql --schema schema.json --target flow --output
 apollo-codegen generate **/*.graphql --schema schema.json --target scala --output operation-result-types.scala
 ```
 
-For the `typescript-modern` and `flow-modern` targets, you can choose to output to a directory and Apollo Codegen will split up the types by the queries they are used in.
+For the `typescript` and `flow` targets, you can choose to output to a directory and Apollo Codegen will split up the types by the queries they are used in.
 
 #### `gql` template support
 

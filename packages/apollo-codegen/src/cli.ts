@@ -123,7 +123,7 @@ yargs
       target: {
         demand: false,
         describe: 'Code generation target language',
-        choices: ['swift', 'scala', 'json', 'ts', 'ts-modern', 'typescript', 'typescript-modern', 'flow', 'flow-modern'],
+        choices: ['swift', 'scala', 'json', 'ts-legacy', 'ts', 'typescript-legacy', 'typescript', 'flow-leagcy', 'flow'],
         default: 'swift'
       },
       only: {
@@ -154,13 +154,13 @@ yargs
       },
       "use-flow-exact-objects": {
         demand: false,
-        describe: "Use Flow exact objects for generated types [flow-modern only]",
+        describe: "Use Flow exact objects for generated types [flow only]",
         default: false,
         type: 'boolean'
       },
       "use-flow-read-only-types": {
         demand: false,
-        describe: "Use Flow read only types for generated types [flow-modern only]",
+        describe: "Use Flow read only types for generated types [flow only]",
         default: false,
         type: 'boolean'
       },
