@@ -1,7 +1,7 @@
 {
   "name": "apollo-codegen-flow",
   "description": "Flow generator module for Apollo Codegen",
-  "version": "0.20.0",
+  "version": "0.19.1",
   "main": "./lib/index.js",
   "scripts": {
     "clean": "rm -rf lib",
@@ -31,7 +31,7 @@
     "graphql": "^0.13.1"
   },
   "dependencies": {
-    "apollo-codegen-core": "^0.20.0",
+    "apollo-codegen-core": "^0.19.1",
     "inflected": "^2.0.3",
     "change-case": "^3.0.1"
   },
