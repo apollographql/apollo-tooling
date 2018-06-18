@@ -1,7 +1,7 @@
 {
   "name": "apollo-codegen",
   "description": "Generate API code or type annotations based on a GraphQL schema and query documents",
-  "version": "0.19.1",
+  "version": "0.20.0",
   "main": "./lib/index.js",
   "bin": "./lib/cli.js",
   "scripts": {
@@ -36,16 +36,16 @@
     "typescript": "^2.6.2"
   },
   "dependencies": {
-    "apollo-codegen-core": "^0.19.1",
-    "apollo-codegen-swift": "^0.19.1",
-    "apollo-codegen-scala": "^0.19.1",
-    "apollo-codegen-typescript": "^0.19.1",
-    "apollo-codegen-flow": "^0.19.1",
-    "apollo-codegen-typescript-legacy": "^0.19.1",
-    "apollo-codegen-flow-legacy": "^0.19.1",
+    "apollo-codegen-core": "^0.20.0",
+    "apollo-codegen-flow": "^0.20.0",
+    "apollo-codegen-flow-legacy": "^0.20.0",
+    "apollo-codegen-scala": "^0.20.0",
+    "apollo-codegen-swift": "^0.20.0",
+    "apollo-codegen-typescript": "^0.20.0",
+    "apollo-codegen-typescript-legacy": "^0.20.0",
+    "glob": "^7.1.2",
     "graphql": "^0.13.1",
     "node-fetch": "^1.7.3",
-    "glob": "^7.1.2",
     "rimraf": "^2.6.2",
     "source-map-support": "^0.5.0",
     "yargs": "^10.0.3"

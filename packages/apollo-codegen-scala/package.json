@@ -1,7 +1,7 @@
 {
   "name": "apollo-codegen-scala",
   "description": "Scala generator module for Apollo Codegen",
-  "version": "0.19.1",
+  "version": "0.20.0",
   "main": "./lib/index.js",
   "scripts": {
     "clean": "rm -rf lib",
@@ -23,17 +23,17 @@
   "devDependencies": {
     "@types/graphql": "^0.12.4",
     "@types/inflected": "^1.1.29",
+    "graphql": "^0.13.1",
     "jest": "^22.0.3",
     "jest-matcher-utils": "^22.0.3",
     "lerna": "^2.11.0",
     "ts-jest": "^22.0.0",
-    "typescript": "^2.6.2",
-    "graphql": "^0.13.1"
+    "typescript": "^2.6.2"
   },
   "dependencies": {
-    "apollo-codegen-core": "^0.19.1",
-    "inflected": "^2.0.3",
-    "change-case": "^3.0.1"
+    "apollo-codegen-core": "^0.20.0",
+    "change-case": "^3.0.1",
+    "inflected": "^2.0.3"
   },
   "jest": {
     "testEnvironment": "node",
