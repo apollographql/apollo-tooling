@@ -115,6 +115,7 @@ yargs
         coerce: path.resolve,
       },
       output: {
+        demand: true,
         describe: 'Output directory for the generated files',
         normalize: true,
         coerce: path.resolve,
