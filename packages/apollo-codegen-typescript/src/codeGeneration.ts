@@ -4,7 +4,6 @@ import {
   GraphQLEnumType,
   GraphQLInputObjectType,
 } from 'graphql';
-import * as path from 'path';
 
 import {
   CompilerContext,
@@ -46,9 +45,6 @@ function printEnumsAndInputObjects(generator: TypescriptAPIGenerator, typesUsed:
   generator.printer.enqueue(stripIndent`
     //==============================================================
     // START Enums and Input Objects
-    // All enums and input objects are included in every output file
-    // for now, but this will be changed soon.
-    // TODO: Link to issue to fix this.
     //==============================================================
   `);
 
@@ -82,18 +78,9 @@ export function generateSource(
       generator.fileHeader();
       generator.interfacesForOperation(operation);
 
-      const typesUsed = generator.getTypesUsedForOperation(operation, context);
-      printEnumsAndInputObjects(generator, typesUsed);
-
       const output = generator.printer.printAndClear();
 
-      const outputFilePath = path.join(
-        path.dirname(operation.filePath),
-        '__generated__',
-        `${operation.operationName}.ts`
-      );
-
-      generatedFiles[outputFilePath] = new TypescriptGeneratedFile(output);
+      generatedFiles[`${operation.operationName}.ts`] = new TypescriptGeneratedFile(output);
     });
 
   Object.values(context.fragments)
@@ -101,21 +88,19 @@ export function generateSource(
       generator.fileHeader();
       generator.interfacesForFragment(fragment);
 
-      const typesUsed = generator.getTypesUsedForOperation(fragment, context);
-      printEnumsAndInputObjects(generator, typesUsed);
-
       const output = generator.printer.printAndClear();
 
-      const outputFilePath = path.join(
-        path.dirname(fragment.filePath),
-        '__generated__',
-        `${fragment.fragmentName}.ts`
-      );
-
-      generatedFiles[outputFilePath] = new TypescriptGeneratedFile(output);
+      generatedFiles[`${fragment.fragmentName}.ts`] = new TypescriptGeneratedFile(output);
     });
 
-  return generatedFiles;
+  generator.fileHeader();
+  printEnumsAndInputObjects(generator, context.typesUsed);
+  const common = generator.printer.printAndClear();
+
+  return {
+    generatedFiles,
+    common
+  };
 }
 
 export class TypescriptAPIGenerator extends TypescriptGenerator {

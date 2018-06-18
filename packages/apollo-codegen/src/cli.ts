@@ -5,17 +5,21 @@ import * as process from 'process';
 import * as path from 'path';
 import * as yargs from 'yargs';
 
-import { downloadSchema, introspectSchema, printSchema, generate } from 'apollo-codegen-core';
-import { ToolError, logError } from 'apollo-codegen-core/lib/errors'
+import downloadSchema from './downloadSchema';
+import introspectSchema from './introspectSchema';
+import printSchema from './printSchema';
+import { ToolError, logError } from 'apollo-codegen-core/lib/errors';
 
-import 'source-map-support/register'
+import generate from './generate';
+
+import 'source-map-support/register';
 
 // Make sure unhandled errors in async code are propagated correctly
 process.on('unhandledRejection', (error) => { throw error });
 
 process.on('uncaughtException', handleError);
 
-function handleError(error) {
+function handleError(error: Error) {
   logError(error);
   process.exit(1);
 }
@@ -37,7 +41,9 @@ yargs
         describe: 'Additional header to send to the server as part of the introspection query request',
         type: 'array',
         coerce: (arg) => {
-          let additionalHeaders = {};
+          let additionalHeaders: {
+            [key: string]: any
+          } = {};
           for (const header of arg) {
             const separator = header.indexOf(":");
             const name = header.substring(0, separator).trim();
@@ -109,6 +115,7 @@ yargs
         coerce: path.resolve,
       },
       output: {
+        demand: true,
         describe: 'Output directory for the generated files',
         normalize: true,
         coerce: path.resolve,
@@ -116,7 +123,7 @@ yargs
       target: {
         demand: false,
         describe: 'Code generation target language',
-        choices: ['swift', 'scala', 'json', 'ts', 'ts-modern', 'typescript', 'typescript-modern', 'flow', 'flow-modern'],
+        choices: ['swift', 'scala', 'json', 'ts-legacy', 'ts', 'typescript-legacy', 'typescript', 'flow-leagcy', 'flow'],
         default: 'swift'
       },
       only: {
@@ -147,13 +154,13 @@ yargs
       },
       "use-flow-exact-objects": {
         demand: false,
-        describe: "Use Flow exact objects for generated types [flow-modern only]",
+        describe: "Use Flow exact objects for generated types [flow only]",
         default: false,
         type: 'boolean'
       },
       "use-flow-read-only-types": {
         demand: false,
-        describe: "Use Flow read only types for generated types [flow-modern only]",
+        describe: "Use Flow read only types for generated types [flow only]",
         default: false,
         type: 'boolean'
       },
@@ -187,7 +194,7 @@ yargs
         input = glob.sync(input[0]);
       }
 
-      const inputPaths = input
+      const inputPaths = (input as string[])
         .map(input => path.resolve(input))
         // Sort to normalize different glob expansions between different terminals.
         .sort();

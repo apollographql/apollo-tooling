@@ -10,15 +10,15 @@ import serializeToJSON from 'apollo-codegen-core/lib/serializeToJSON';
 import { BasicGeneratedFile } from 'apollo-codegen-core/lib/utilities/CodeGenerator'
 
 import { generateSource as generateSwiftSource } from 'apollo-codegen-swift';
-import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript-legacy';
-import { generateSource as generateFlowSource } from 'apollo-codegen-flow-legacy';
-import { generateSource as generateFlowModernSource } from 'apollo-codegen-flow';
-import { generateSource as generateTypescriptModernSource } from 'apollo-codegen-typescript';
+import { generateSource as generateTypescriptLegacySource } from 'apollo-codegen-typescript-legacy';
+import { generateSource as generateFlowLegacySource } from 'apollo-codegen-flow-legacy';
+import { generateSource as generateFlowSource } from 'apollo-codegen-flow';
+import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript';
 import { generateSource as generateScalaSource } from 'apollo-codegen-scala';
 
-type TargetType = 'json' | 'swift' | 'ts' | 'typescript'
-  | 'flow' | 'scala' | 'flow-modern' | 'typescript-modern'
-  | 'ts-modern';
+type TargetType = 'json' | 'swift' | 'ts-legacy' | 'typescript-legacy'
+  | 'flow-legacy' | 'scala' | 'flow' | 'typescript'
+  | 'ts';
 
 export default function generate(
   inputPaths: string[],
@@ -56,38 +56,36 @@ export default function generate(
       writeOperationIdsMap(context);
     }
   }
-  else if (target === 'flow-modern' || target === 'typescript-modern' || target === 'ts-modern') {
+  else if (target === 'flow' || target === 'typescript' || target === 'ts') {
     const context = compileToIR(schema, document, options);
-    const generatedFiles = target === 'flow-modern'
-      ? generateFlowModernSource(context)
-      : generateTypescriptModernSource(context) ;
+    const { generatedFiles, common } = target === 'flow'
+      ? generateFlowSource(context)
+      : generateTypescriptSource(context) ;
 
-    // Group by output directory
-    const filesByOutputDirectory: {
-      [outputDirectory: string]: {
-        [fileName: string]: BasicGeneratedFile
-      }
+    const outFiles: {
+      [fileName: string]: BasicGeneratedFile
     } = {};
 
-    Object.keys(generatedFiles)
-      .forEach((filePath: string) => {
-        const outputDirectory = path.dirname(filePath);
-        if (!filesByOutputDirectory[outputDirectory]) {
-          filesByOutputDirectory[outputDirectory] = {
-            [path.basename(filePath)]: generatedFiles[filePath]
-          };
-        } else {
-          filesByOutputDirectory[outputDirectory][path.basename(filePath)] = generatedFiles[filePath];
-        }
-      })
+    const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
 
-    Object.keys(filesByOutputDirectory)
-      .forEach((outputDirectory) => {
-        writeGeneratedFiles(
-          filesByOutputDirectory[outputDirectory],
-          outputDirectory
-        );
-      });
+    if (outputIndividualFiles) {
+      Object.keys(generatedFiles)
+        .forEach((filePath: string) => {
+          outFiles[path.basename(filePath)] = {
+            output: generatedFiles[filePath].fileContents + common
+          }
+        });
+
+      writeGeneratedFiles(
+        outFiles,
+        outputPath
+      );
+    } else {
+      fs.writeFileSync(
+        outputPath,
+        Object.values(generatedFiles).map(v => v.fileContents).join("\n") + common
+      );
+    }
   }
   else {
     let output;
@@ -96,12 +94,12 @@ export default function generate(
       case 'json':
         output = serializeToJSON(context);
         break;
-      case 'ts':
-      case 'typescript':
-        output = generateTypescriptSource(context);
+      case 'ts-legacy':
+      case 'typescript-legacy':
+        output = generateTypescriptLegacySource(context);
         break;
-      case 'flow':
-        output = generateFlowSource(context);
+      case 'flow-legacy':
+        output = generateFlowLegacySource(context);
         break;
       case 'scala':
         output = generateScalaSource(context);

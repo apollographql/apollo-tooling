@@ -2,8 +2,28 @@
 
 exports[`Typescript codeGeneration fragment spreads with inline fragments 1`] = `
 Object {
-  "__generated__/HeroName.ts": TypescriptGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export enum Episode {
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
+}
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "HeroName.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -47,28 +67,10 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
-}
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-  "__generated__/droidFragment.ts": TypescriptGeneratedFile {
-    "fileContents": "
+}",
+    },
+    "droidFragment.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -80,28 +82,10 @@ export enum Episode {
 export interface droidFragment {
   __typename: \\"Droid\\";
   appearsIn: (Episode | null)[];  // The movies this droid appears in
-}
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-  "__generated__/humanFragment.ts": TypescriptGeneratedFile {
-    "fileContents": "
+}",
+    },
+    "humanFragment.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -126,33 +110,29 @@ export interface humanFragment {
   __typename: \\"Human\\";
   homePlanet: string | null;                         // The home planet of the human, or null if unknown
   friends: (humanFragment_friends | null)[] | null;  // This human's friends, or an empty list if they have none
-}
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+}",
+    },
   },
 }
 `;
 
 exports[`Typescript codeGeneration fragment with fragment spreads 1`] = `
 Object {
-  "__generated__/anotherFragment.ts": TypescriptGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "anotherFragment.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -165,21 +145,10 @@ export interface anotherFragment {
   __typename: \\"Human\\" | \\"Droid\\";
   id: string;    // The ID of the character
   name: string;  // The name of the character
-}
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-  "__generated__/simpleFragment.ts": TypescriptGeneratedFile {
-    "fileContents": "
+}",
+    },
+    "simpleFragment.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -191,26 +160,36 @@ export interface anotherFragment {
 export interface simpleFragment {
   __typename: \\"Human\\" | \\"Droid\\";
   name: string;  // The name of the character
-}
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+}",
+    },
   },
 }
 `;
 
 exports[`Typescript codeGeneration fragment with fragment spreads with inline fragment 1`] = `
 Object {
-  "__generated__/anotherFragment.ts": TypescriptGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export enum Episode {
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
+}
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "anotherFragment.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -232,28 +211,10 @@ export interface anotherFragment_Human {
   appearsIn: (Episode | null)[];  // The movies this human appears in
 }
 
-export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-  "__generated__/simpleFragment.ts": TypescriptGeneratedFile {
-    "fileContents": "
+export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;",
+    },
+    "simpleFragment.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -265,33 +226,29 @@ export enum Episode {
 export interface simpleFragment {
   __typename: \\"Human\\" | \\"Droid\\";
   name: string;  // The name of the character
-}
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+}",
+    },
   },
 }
 `;
 
 exports[`Typescript codeGeneration handles multiline graphql comments 1`] = `
 Object {
-  "__generated__/CustomScalar.ts": TypescriptGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "CustomScalar.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -307,26 +264,36 @@ export interface CustomScalar_commentTest {
 
 export interface CustomScalar {
   commentTest: CustomScalar_commentTest | null;
-}
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+}",
+    },
   },
 }
 `;
 
 exports[`Typescript codeGeneration inline fragment 1`] = `
 Object {
-  "__generated__/HeroInlineFragment.ts": TypescriptGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export enum Episode {
+  EMPIRE = \\"EMPIRE\\",
+  JEDI = \\"JEDI\\",
+  NEWHOPE = \\"NEWHOPE\\",
+}
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "HeroInlineFragment.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -347,13 +314,21 @@ export interface HeroInlineFragment {
 
 export interface HeroInlineFragmentVariables {
   episode?: Episode | null;
+}",
+    },
+  },
 }
+`;
+
+exports[`Typescript codeGeneration inline fragment on type conditions 1`] = `
+Object {
+  "common": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
 
 //==============================================================
 // START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
 //==============================================================
 
 // The episodes in the Star Wars trilogy
@@ -366,14 +341,9 @@ export enum Episode {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  },
-}
-`;
-
-exports[`Typescript codeGeneration inline fragment on type conditions 1`] = `
-Object {
-  "__generated__/HeroName.ts": TypescriptGeneratedFile {
-    "fileContents": "
+  "generatedFiles": Object {
+    "HeroName.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -410,13 +380,21 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
+}",
+    },
+  },
 }
+`;
+
+exports[`Typescript codeGeneration inline fragment on type conditions with differing inner fields 1`] = `
+Object {
+  "common": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
 
 //==============================================================
 // START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
 //==============================================================
 
 // The episodes in the Star Wars trilogy
@@ -429,14 +407,9 @@ export enum Episode {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  },
-}
-`;
-
-exports[`Typescript codeGeneration inline fragment on type conditions with differing inner fields 1`] = `
-Object {
-  "__generated__/HeroName.ts": TypescriptGeneratedFile {
-    "fileContents": "
+  "generatedFiles": Object {
+    "HeroName.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -479,34 +452,18 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
-}
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+}",
+    },
   },
 }
 `;
 
-exports[`Typescript codeGeneration multiple files 1`] = `"/some/file/__generated__/HeroName.ts"`;
+exports[`Typescript codeGeneration multiple files 1`] = `"generatedFiles"`;
 
 exports[`Typescript codeGeneration multiple files 2`] = `
-TypescriptGeneratedFile {
-  "fileContents": "
+Object {
+  "HeroName.ts": TypescriptGeneratedFile {
+    "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -527,33 +484,35 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
+}",
+  },
+  "ReviewMovie.ts": TypescriptGeneratedFile {
+    "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: ReviewMovie
+// ====================================================
+
+export interface ReviewMovie_createReview {
+  __typename: \\"Review\\";
+  stars: number;              // The number of stars this review gave, 1-5
+  commentary: string | null;  // Comment about the movie
 }
 
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
+export interface ReviewMovie {
+  createReview: ReviewMovie_createReview | null;
 }
 
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-}
-`;
-
-exports[`Typescript codeGeneration multiple files 3`] = `"/some/file/__generated__/SomeOther.ts"`;
-
-exports[`Typescript codeGeneration multiple files 4`] = `
-TypescriptGeneratedFile {
-  "fileContents": "
+export interface ReviewMovieVariables {
+  episode?: Episode | null;
+  review?: ReviewInput | null;
+}",
+  },
+  "SomeOther.ts": TypescriptGeneratedFile {
+    "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -574,61 +533,36 @@ export interface SomeOther {
 
 export interface SomeOtherVariables {
   episode?: Episode | null;
-}
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-}
-`;
-
-exports[`Typescript codeGeneration multiple files 5`] = `"__generated__/ReviewMovie.ts"`;
-
-exports[`Typescript codeGeneration multiple files 6`] = `
-TypescriptGeneratedFile {
-  "fileContents": "
+}",
+  },
+  "someFragment.ts": TypescriptGeneratedFile {
+    "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: ReviewMovie
+// GraphQL fragment: someFragment
 // ====================================================
 
-export interface ReviewMovie_createReview {
-  __typename: \\"Review\\";
-  stars: number;              // The number of stars this review gave, 1-5
-  commentary: string | null;  // Comment about the movie
+export interface someFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  appearsIn: (Episode | null)[];  // The movies this character appears in
+}",
+  },
 }
+`;
 
-export interface ReviewMovie {
-  createReview: ReviewMovie_createReview | null;
-}
+exports[`Typescript codeGeneration multiple files 3`] = `"common"`;
 
-export interface ReviewMovieVariables {
-  episode?: Episode | null;
-  review?: ReviewInput | null;
-}
+exports[`Typescript codeGeneration multiple files 4`] = `
+"
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
 
 //==============================================================
 // START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
 //==============================================================
 
 // The episodes in the Star Wars trilogy
@@ -654,33 +588,18 @@ export interface ColorInput {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
-}
+//=============================================================="
 `;
 
-exports[`Typescript codeGeneration multiple files 7`] = `"/some/file/__generated__/someFragment.ts"`;
-
-exports[`Typescript codeGeneration multiple files 8`] = `
-TypescriptGeneratedFile {
-  "fileContents": "
+exports[`Typescript codeGeneration query with fragment spreads 1`] = `
+Object {
+  "common": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-// ====================================================
-// GraphQL fragment: someFragment
-// ====================================================
-
-export interface someFragment {
-  __typename: \\"Human\\" | \\"Droid\\";
-  appearsIn: (Episode | null)[];  // The movies this character appears in
-}
-
 //==============================================================
 // START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
 //==============================================================
 
 // The episodes in the Star Wars trilogy
@@ -693,13 +612,9 @@ export enum Episode {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-}
-`;
-
-exports[`Typescript codeGeneration query with fragment spreads 1`] = `
-Object {
-  "__generated__/HeroFragment.ts": TypescriptGeneratedFile {
-    "fileContents": "
+  "generatedFiles": Object {
+    "HeroFragment.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -720,28 +635,10 @@ export interface HeroFragment {
 
 export interface HeroFragmentVariables {
   episode?: Episode | null;
-}
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-  "__generated__/simpleFragment.ts": TypescriptGeneratedFile {
-    "fileContents": "
+}",
+    },
+    "simpleFragment.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -753,13 +650,55 @@ export enum Episode {
 export interface simpleFragment {
   __typename: \\"Human\\" | \\"Droid\\";
   name: string;  // The name of the character
+}",
+    },
+  },
 }
+`;
+
+exports[`Typescript codeGeneration simple fragment 1`] = `
+Object {
+  "common": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
 
 //==============================================================
 // START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "SimpleFragment.ts": TypescriptGeneratedFile {
+      "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: SimpleFragment
+// ====================================================
+
+export interface SimpleFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}",
+    },
+  },
+}
+`;
+
+exports[`Typescript codeGeneration simple hero query 1`] = `
+Object {
+  "common": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
 //==============================================================
 
 // The episodes in the Star Wars trilogy
@@ -772,45 +711,9 @@ export enum Episode {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  },
-}
-`;
-
-exports[`Typescript codeGeneration simple fragment 1`] = `
-Object {
-  "__generated__/SimpleFragment.ts": TypescriptGeneratedFile {
-    "fileContents": "
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL fragment: SimpleFragment
-// ====================================================
-
-export interface SimpleFragment {
-  __typename: \\"Human\\" | \\"Droid\\";
-  name: string;  // The name of the character
-}
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-}
-`;
-
-exports[`Typescript codeGeneration simple hero query 1`] = `
-Object {
-  "__generated__/HeroName.ts": TypescriptGeneratedFile {
-    "fileContents": "
+  "generatedFiles": Object {
+    "HeroName.ts": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -831,61 +734,21 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
-}
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+}",
+    },
   },
 }
 `;
 
 exports[`Typescript codeGeneration simple mutation 1`] = `
 Object {
-  "__generated__/ReviewMovie.ts": TypescriptGeneratedFile {
-    "fileContents": "
+  "common": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-// ====================================================
-// GraphQL mutation operation: ReviewMovie
-// ====================================================
-
-export interface ReviewMovie_createReview {
-  __typename: \\"Review\\";
-  stars: number;              // The number of stars this review gave, 1-5
-  commentary: string | null;  // Comment about the movie
-}
-
-export interface ReviewMovie {
-  createReview: ReviewMovie_createReview | null;
-}
-
-export interface ReviewMovieVariables {
-  episode?: Episode | null;
-  review?: ReviewInput | null;
-}
-
 //==============================================================
 // START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
 //==============================================================
 
 // The episodes in the Star Wars trilogy
@@ -912,6 +775,32 @@ export interface ColorInput {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
+  "generatedFiles": Object {
+    "ReviewMovie.ts": TypescriptGeneratedFile {
+      "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: ReviewMovie
+// ====================================================
+
+export interface ReviewMovie_createReview {
+  __typename: \\"Review\\";
+  stars: number;              // The number of stars this review gave, 1-5
+  commentary: string | null;  // Comment about the movie
+}
+
+export interface ReviewMovie {
+  createReview: ReviewMovie_createReview | null;
+}
+
+export interface ReviewMovieVariables {
+  episode?: Episode | null;
+  review?: ReviewInput | null;
+}",
+    },
   },
 }
 `;

@@ -2,8 +2,25 @@
 
 exports[`Flow codeGeneration covariant properties with $ReadOnlyArray 1`] = `
 Object {
-  "__generated__/HeroName.js": FlowGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "HeroName.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -40,24 +57,10 @@ export type HeroName = {|
 
 export type HeroNameVariables = {|
   +episode?: ?Episode
-|};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-  "__generated__/droidFragment.js": FlowGeneratedFile {
-    "fileContents": "
+|};",
+    },
+    "droidFragment.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -70,24 +73,10 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 export type droidFragment = {|
   +__typename: \\"Droid\\",
   +appearsIn: $ReadOnlyArray<?Episode>, // The movies this droid appears in
-|};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-  "__generated__/humanFragment.js": FlowGeneratedFile {
-    "fileContents": "
+|};",
+    },
+    "humanFragment.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -109,13 +98,22 @@ export type humanFragment = {|
   +__typename: \\"Human\\",
   +homePlanet: ?string,                              // The home planet of the human, or null if unknown
   +friends: ?$ReadOnlyArray<?humanFragment_friends>, // This human's friends, or an empty list if they have none
-|};
+|};",
+    },
+  },
+}
+`;
+
+exports[`Flow codeGeneration fragment spreads with inline fragments 1`] = `
+Object {
+  "common": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
 
 //==============================================================
 // START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
 //==============================================================
 
 // The episodes in the Star Wars trilogy
@@ -124,14 +122,9 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  },
-}
-`;
-
-exports[`Flow codeGeneration fragment spreads with inline fragments 1`] = `
-Object {
-  "__generated__/HeroName.js": FlowGeneratedFile {
-    "fileContents": "
+  "generatedFiles": Object {
+    "HeroName.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -168,24 +161,10 @@ export type HeroName = {
 
 export type HeroNameVariables = {
   episode?: ?Episode
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-  "__generated__/droidFragment.js": FlowGeneratedFile {
-    "fileContents": "
+};",
+    },
+    "droidFragment.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -198,24 +177,10 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 export type droidFragment = {
   __typename: \\"Droid\\",
   appearsIn: Array<?Episode>, // The movies this droid appears in
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-  "__generated__/humanFragment.js": FlowGeneratedFile {
-    "fileContents": "
+};",
+    },
+    "humanFragment.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -237,29 +202,30 @@ export type humanFragment = {
   __typename: \\"Human\\",
   homePlanet: ?string,                     // The home planet of the human, or null if unknown
   friends: ?Array<?humanFragment_friends>, // This human's friends, or an empty list if they have none
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+};",
+    },
   },
 }
 `;
 
 exports[`Flow codeGeneration fragment with fragment spreads 1`] = `
 Object {
-  "__generated__/anotherFragment.js": FlowGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "anotherFragment.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -273,21 +239,10 @@ export type anotherFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
   id: string,   // The ID of the character
   name: string, // The name of the character
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-  "__generated__/simpleFragment.js": FlowGeneratedFile {
-    "fileContents": "
+};",
+    },
+    "simpleFragment.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -300,26 +255,33 @@ export type anotherFragment = {
 export type simpleFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
   name: string, // The name of the character
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+};",
+    },
   },
 }
 `;
 
 exports[`Flow codeGeneration fragment with fragment spreads with inline fragment 1`] = `
 Object {
-  "__generated__/anotherFragment.js": FlowGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "anotherFragment.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -342,24 +304,10 @@ export type anotherFragment_Human = {
   appearsIn: Array<?Episode>, // The movies this human appears in
 };
 
-export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-  "__generated__/simpleFragment.js": FlowGeneratedFile {
-    "fileContents": "
+export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;",
+    },
+    "simpleFragment.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -372,29 +320,30 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 export type simpleFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
   name: string, // The name of the character
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+};",
+    },
   },
 }
 `;
 
 exports[`Flow codeGeneration handles multiline graphql comments 1`] = `
 Object {
-  "__generated__/CustomScalar.js": FlowGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "CustomScalar.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -411,26 +360,33 @@ export type CustomScalar_commentTest = {
 
 export type CustomScalar = {
   commentTest: ?CustomScalar_commentTest
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+};",
+    },
   },
 }
 `;
 
 exports[`Flow codeGeneration inline fragment 1`] = `
 Object {
-  "__generated__/HeroInlineFragment.js": FlowGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "HeroInlineFragment.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -452,13 +408,22 @@ export type HeroInlineFragment = {
 
 export type HeroInlineFragmentVariables = {
   episode?: ?Episode
-};
+};",
+    },
+  },
+}
+`;
+
+exports[`Flow codeGeneration inline fragment on type conditions 1`] = `
+Object {
+  "common": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
 
 //==============================================================
 // START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
 //==============================================================
 
 // The episodes in the Star Wars trilogy
@@ -467,14 +432,9 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  },
-}
-`;
-
-exports[`Flow codeGeneration inline fragment on type conditions 1`] = `
-Object {
-  "__generated__/HeroName.js": FlowGeneratedFile {
-    "fileContents": "
+  "generatedFiles": Object {
+    "HeroName.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -508,13 +468,22 @@ export type HeroName = {
 
 export type HeroNameVariables = {
   episode?: ?Episode
-};
+};",
+    },
+  },
+}
+`;
+
+exports[`Flow codeGeneration inline fragment on type conditions with differing inner fields 1`] = `
+Object {
+  "common": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
 
 //==============================================================
 // START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
 //==============================================================
 
 // The episodes in the Star Wars trilogy
@@ -523,14 +492,9 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  },
-}
-`;
-
-exports[`Flow codeGeneration inline fragment on type conditions with differing inner fields 1`] = `
-Object {
-  "__generated__/HeroName.js": FlowGeneratedFile {
-    "fileContents": "
+  "generatedFiles": Object {
+    "HeroName.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -570,30 +534,18 @@ export type HeroName = {
 
 export type HeroNameVariables = {
   episode?: ?Episode
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+};",
+    },
   },
 }
 `;
 
-exports[`Flow codeGeneration multiple files 1`] = `"/some/file/__generated__/HeroName.js"`;
+exports[`Flow codeGeneration multiple files 1`] = `"generatedFiles"`;
 
 exports[`Flow codeGeneration multiple files 2`] = `
-FlowGeneratedFile {
-  "fileContents": "
+Object {
+  "HeroName.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -615,43 +567,36 @@ export type HeroName = {
 
 export type HeroNameVariables = {
   episode?: ?Episode
+};",
+  },
+  "ReviewMovie.js": FlowGeneratedFile {
+    "fileContents": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: ReviewMovie
+// ====================================================
+
+export type ReviewMovie_createReview = {
+  __typename: \\"Review\\",
+  stars: number,       // The number of stars this review gave, 1-5
+  commentary: ?string, // Comment about the movie
 };
 
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
+export type ReviewMovie = {
+  createReview: ?ReviewMovie_createReview
+};
 
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-// The input object sent when someone is creating a new review
-export type ReviewInput = {|
-  stars: number,
-  commentary?: ?string,
-  favorite_color?: ?ColorInput,
-|};
-
-// The input object sent when passing in a color
-export type ColorInput = {|
-  red: number,
-  green: number,
-  blue: number,
-|};
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-}
-`;
-
-exports[`Flow codeGeneration multiple files 3`] = `"/some/file/__generated__/SomeOther.js"`;
-
-exports[`Flow codeGeneration multiple files 4`] = `
-FlowGeneratedFile {
-  "fileContents": "
+export type ReviewMovieVariables = {
+  episode?: ?Episode,
+  review?: ?ReviewInput,
+};",
+  },
+  "SomeOther.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -673,102 +618,10 @@ export type SomeOther = {
 
 export type SomeOtherVariables = {
   episode?: ?Episode
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-// The input object sent when someone is creating a new review
-export type ReviewInput = {|
-  stars: number,
-  commentary?: ?string,
-  favorite_color?: ?ColorInput,
-|};
-
-// The input object sent when passing in a color
-export type ColorInput = {|
-  red: number,
-  green: number,
-  blue: number,
-|};
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-}
-`;
-
-exports[`Flow codeGeneration multiple files 5`] = `"__generated__/ReviewMovie.js"`;
-
-exports[`Flow codeGeneration multiple files 6`] = `
-FlowGeneratedFile {
-  "fileContents": "
-
-/* @flow */
-/* eslint-disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: ReviewMovie
-// ====================================================
-
-export type ReviewMovie_createReview = {
-  __typename: \\"Review\\",
-  stars: number,       // The number of stars this review gave, 1-5
-  commentary: ?string, // Comment about the movie
-};
-
-export type ReviewMovie = {
-  createReview: ?ReviewMovie_createReview
-};
-
-export type ReviewMovieVariables = {
-  episode?: ?Episode,
-  review?: ?ReviewInput,
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-// The input object sent when someone is creating a new review
-export type ReviewInput = {|
-  stars: number,
-  commentary?: ?string,
-  favorite_color?: ?ColorInput,
-|};
-
-// The input object sent when passing in a color
-export type ColorInput = {|
-  red: number,
-  green: number,
-  blue: number,
-|};
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-}
-`;
-
-exports[`Flow codeGeneration multiple files 7`] = `"/some/file/__generated__/someFragment.js"`;
-
-exports[`Flow codeGeneration multiple files 8`] = `
-FlowGeneratedFile {
-  "fileContents": "
+};",
+  },
+  "someFragment.js": FlowGeneratedFile {
+    "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -781,13 +634,22 @@ FlowGeneratedFile {
 export type someFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
   appearsIn: Array<?Episode>, // The movies this character appears in
-};
+};",
+  },
+}
+`;
+
+exports[`Flow codeGeneration multiple files 3`] = `"common"`;
+
+exports[`Flow codeGeneration multiple files 4`] = `
+"
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
 
 //==============================================================
 // START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
 //==============================================================
 
 // The episodes in the Star Wars trilogy
@@ -809,14 +671,30 @@ export type ColorInput = {|
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
-}
+//=============================================================="
 `;
 
 exports[`Flow codeGeneration query with fragment spreads 1`] = `
 Object {
-  "__generated__/HeroFragment.js": FlowGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "HeroFragment.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -838,24 +716,10 @@ export type HeroFragment = {
 
 export type HeroFragmentVariables = {
   episode?: ?Episode
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
-  },
-  "__generated__/simpleFragment.js": FlowGeneratedFile {
-    "fileContents": "
+};",
+    },
+    "simpleFragment.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -868,29 +732,30 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 export type simpleFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
   name: string, // The name of the character
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+};",
+    },
   },
 }
 `;
 
 exports[`Flow codeGeneration simple fragment 1`] = `
 Object {
-  "__generated__/SimpleFragment.js": FlowGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "SimpleFragment.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -903,26 +768,33 @@ Object {
 export type SimpleFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
   name: string, // The name of the character
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+};",
+    },
   },
 }
 `;
 
 exports[`Flow codeGeneration simple hero query 1`] = `
 Object {
-  "__generated__/HeroName.js": FlowGeneratedFile {
-    "fileContents": "
+  "common": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+// The episodes in the Star Wars trilogy
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+  "generatedFiles": Object {
+    "HeroName.js": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -944,58 +816,22 @@ export type HeroName = {
 
 export type HeroNameVariables = {
   episode?: ?Episode
-};
-
-//==============================================================
-// START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
-//==============================================================
-
-// The episodes in the Star Wars trilogy
-export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
-
-//==============================================================
-// END Enums and Input Objects
-//==============================================================",
+};",
+    },
   },
 }
 `;
 
 exports[`Flow codeGeneration simple mutation 1`] = `
 Object {
-  "__generated__/ReviewMovie.js": FlowGeneratedFile {
-    "fileContents": "
+  "common": "
 
 /* @flow */
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-// ====================================================
-// GraphQL mutation operation: ReviewMovie
-// ====================================================
-
-export type ReviewMovie_createReview = {
-  __typename: \\"Review\\",
-  stars: number,       // The number of stars this review gave, 1-5
-  commentary: ?string, // Comment about the movie
-};
-
-export type ReviewMovie = {
-  createReview: ?ReviewMovie_createReview
-};
-
-export type ReviewMovieVariables = {
-  episode?: ?Episode,
-  review?: ?ReviewInput,
-};
-
 //==============================================================
 // START Enums and Input Objects
-// All enums and input objects are included in every output file
-// for now, but this will be changed soon.
-// TODO: Link to issue to fix this.
 //==============================================================
 
 // The episodes in the Star Wars trilogy
@@ -1018,6 +854,33 @@ export type ColorInput = {|
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
+  "generatedFiles": Object {
+    "ReviewMovie.js": FlowGeneratedFile {
+      "fileContents": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: ReviewMovie
+// ====================================================
+
+export type ReviewMovie_createReview = {
+  __typename: \\"Review\\",
+  stars: number,       // The number of stars this review gave, 1-5
+  commentary: ?string, // Comment about the movie
+};
+
+export type ReviewMovie = {
+  createReview: ?ReviewMovie_createReview
+};
+
+export type ReviewMovieVariables = {
+  episode?: ?Episode,
+  review?: ?ReviewInput,
+};",
+    },
   },
 }
 `;

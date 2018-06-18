@@ -59,6 +59,8 @@ apollo-codegen generate **/*.graphql --schema schema.json --target flow --output
 apollo-codegen generate **/*.graphql --schema schema.json --target scala --output operation-result-types.scala
 ```
 
+For the `typescript` and `flow` targets, you can choose to output to a directory and Apollo Codegen will split up the types by the queries they are used in.
+
 #### `gql` template support
 
 If the source file for generation is a javascript or typescript file, the codegen will try to extrapolate the queries inside the [gql tag](https://github.com/apollographql/graphql-tag) templates.
