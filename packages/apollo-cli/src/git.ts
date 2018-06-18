@@ -42,6 +42,11 @@ export const gitInfo = async (path?: string) => {
     authorEmail ? `<${authorEmail}>` : ""
   }`.trim();
 
-  const remoteUrl = isCi ? slug : git.remoteUrl();
+  let remoteUrl = slug;
+  if (!isCi) {
+    try {
+      remoteUrl = git.remoteUrl();
+    } catch (e) {}
+  }
   return { committer, commit, remoteUrl };
 };

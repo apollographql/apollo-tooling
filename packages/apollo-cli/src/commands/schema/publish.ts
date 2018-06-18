@@ -3,6 +3,7 @@ import cli from "cli-ux";
 import { table, styledJSON } from "heroku-cli-util";
 import * as Listr from "listr";
 import { toPromise, execute } from "apollo-link";
+import * as util from "util";
 
 import { UPLOAD_SCHEMA } from "../../operations/uploadSchema";
 import { getIdFromKey, engineLink } from "../../engine";
@@ -16,7 +17,7 @@ export default class SchemaPublish extends Command {
     help: flags.help({ char: "h" }),
     service: flags.string({
       char: "s",
-      description: "ENGINE_API_KEY for the Engine service"
+      description: "ENGINE_API_KEY for the Engine service",
     }),
     header: flags.string({
       multiple: true,
@@ -24,21 +25,22 @@ export default class SchemaPublish extends Command {
         const [key, value] = header.split(":");
         return JSON.stringify({ [key.trim()]: value.trim() });
       },
-      description: "Additional headers to send to server for introspectionQuery"
+      description:
+        "Additional headers to send to server for introspectionQuery",
     }),
     endpoint: flags.string({
       char: "e",
       description:
         "The location of the server to from which to fetch the schema",
-      default: "http://localhost:4000/graphql" // apollo-server 2.0 default address
+      default: "http://localhost:4000/graphql", // apollo-server 2.0 default address
     }),
     json: flags.boolean({
-      description: "output successful publish result as json"
+      description: "output successful publish result as json",
     }),
     engine: flags.string({
       description: "Reporting url for custon engine location",
-      hidden: true
-    })
+      hidden: true,
+    }),
   };
 
   async run() {
@@ -61,9 +63,9 @@ export default class SchemaPublish extends Command {
         task: async ctx => {
           ctx.schema = await fetchSchema({
             endpoint: flags.endpoint,
-            header: header.filter(x => !!x).map(x => JSON.parse(x))
+            header: header.filter(x => !!x).map(x => JSON.parse(x)),
           }).catch(this.error);
-        }
+        },
       },
       {
         title: `Publishing ${getIdFromKey(service)} to Engine`,
@@ -73,7 +75,7 @@ export default class SchemaPublish extends Command {
             schema: ctx.schema,
             tag,
             gitContext,
-            id: getIdFromKey(service)
+            id: getIdFromKey(service),
           };
 
           ctx.current = await toPromise(
@@ -82,8 +84,8 @@ export default class SchemaPublish extends Command {
               variables,
               context: {
                 headers: { ["x-api-key"]: service },
-                ...(flags.engine && { uri: flags.engine })
-              }
+                ...(flags.engine && { uri: flags.engine }),
+              },
             })
           )
             .then(async ({ data, errors }) => {
@@ -95,8 +97,8 @@ export default class SchemaPublish extends Command {
               return data!.service.uploadSchema;
             })
             .catch(e => this.error(e.message));
-        }
-      }
+        },
+      },
     ]);
 
     return tasks.run().then(({ current }) => {
@@ -105,7 +107,7 @@ export default class SchemaPublish extends Command {
       const result = {
         service: getIdFromKey(service),
         hash: current.tag.schema.hash,
-        tag: current.tag.tag
+        tag: current.tag.tag,
       };
 
       if (flags.json) return styledJSON(result);
@@ -118,11 +120,11 @@ export default class SchemaPublish extends Command {
           {
             key: "hash",
             label: "id",
-            format: (hash: string) => hash.slice(0, 6)
+            format: (hash: string) => hash.slice(0, 6),
           },
           { key: "service", label: "schema" },
-          { key: "tag" }
-        ]
+          { key: "tag" },
+        ],
       });
       this.log("\n");
     });
