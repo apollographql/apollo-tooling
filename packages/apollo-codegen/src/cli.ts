@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import 'apollo-codegen-core/lib/polyfills';
+
 import * as glob from 'glob';
 import * as process from 'process';
 import * as path from 'path';
