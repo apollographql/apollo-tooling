@@ -159,7 +159,7 @@ describe("successful uploads", () => {
     .env({ ENGINE_API_KEY })
     .stdout()
     .command(["schema:publish", "--json"])
-    .it("allows formatting success as json", ({ stdout }) => {
+    .it("allows formatting success as JSON", ({ stdout }) => {
       expect(uiLog).toContain('"hash": "12345"');
     });
 });

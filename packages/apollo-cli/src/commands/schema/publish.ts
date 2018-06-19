@@ -11,13 +11,13 @@ import { fetchSchema } from "../../fetch-schema";
 import { gitInfo } from "../../git";
 
 export default class SchemaPublish extends Command {
-  static description = "Publish a schema to Engine";
+  static description = "Publish a schema to Apollo Engine";
 
   static flags = {
     help: flags.help({ char: "h" }),
     service: flags.string({
       char: "s",
-      description: "ENGINE_API_KEY for the Engine service",
+      description: "The API key for the Apollo Engine service",
     }),
     header: flags.string({
       multiple: true,
@@ -30,15 +30,14 @@ export default class SchemaPublish extends Command {
     }),
     endpoint: flags.string({
       char: "e",
-      description:
-        "The location of the server to from which to fetch the schema",
+      description: "The URL of the server to fetch the schema from",
       default: "http://localhost:4000/graphql", // apollo-server 2.0 default address
     }),
     json: flags.boolean({
-      description: "output successful publish result as json",
+      description: "output successful publish result as JSON",
     }),
     engine: flags.string({
-      description: "Reporting url for custon engine location",
+      description: "Reporting URL for a custom Engine deployment",
       hidden: true,
     }),
   };
@@ -51,7 +50,7 @@ export default class SchemaPublish extends Command {
     const service = process.env.ENGINE_API_KEY || flags.service;
     if (!service) {
       this.error(
-        "No service passed when publishing schema. Please pass an Engine API key using `--service=MY_KEY` or adding ENGINE_API_KEY to the environment"
+        "No service was specified. Set an Apollo Engine API key using the `--service` flag or the `ENGINE_API_KEY` environment variable."
       );
       return;
     }
@@ -68,7 +67,7 @@ export default class SchemaPublish extends Command {
         },
       },
       {
-        title: `Publishing ${getIdFromKey(service)} to Engine`,
+        title: `Publishing ${getIdFromKey(service)} to Apollo Engine`,
         task: async ctx => {
           const gitContext = await gitInfo();
           const variables = {

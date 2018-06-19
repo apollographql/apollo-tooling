@@ -212,7 +212,7 @@ describe("successful checks", () => {
     .stdout()
     .command(["schema:check", "--json"])
     .exit(1)
-    .it("allows formatting success as json", () => {
+    .it("allows formatting success as JSON", () => {
       expect(stdout).toContain('"type": "FAILURE"');
     });
 });
@@ -221,5 +221,5 @@ describe("error handling", () => {
   test
     .command(["schema:check"])
     .catch(err => expect(err.message).toMatch(/No service passed/))
-    .it("errors with no service api key");
+    .it("errors with no service API key");
 });

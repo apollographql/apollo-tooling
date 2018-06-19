@@ -20,13 +20,14 @@ interface Change {
 }
 
 export default class SchemaCheck extends Command {
-  static description = "Check a schema against previous registered schema";
+  static description =
+    "Check a schema against the version registered in Apollo Engine.";
 
   static flags = {
     help: flags.help({ char: "h" }),
     service: flags.string({
       char: "s",
-      description: "ENGINE_API_KEY for the Engine service"
+      description: "The API key for the Apollo Engine service"
     }),
     header: flags.string({
       multiple: true,
@@ -38,15 +39,14 @@ export default class SchemaCheck extends Command {
     }),
     endpoint: flags.string({
       char: "e",
-      description:
-        "The location of the server to from which to fetch the schema",
+      description: "The URL of the server to fetch the schema from",
       default: "http://localhost:4000/graphql" // apollo-server 2.0 default address
     }),
     json: flags.boolean({
-      description: "output result as json"
+      description: "output result as JSON"
     }),
     engine: flags.string({
-      description: "Reporting url for custon engine location",
+      description: "Reporting URL for a custom Apollo Engine deployment",
       hidden: true
     })
   };
@@ -56,7 +56,7 @@ export default class SchemaCheck extends Command {
     const service = process.env.ENGINE_API_KEY || flags.service;
     if (!service) {
       this.error(
-        "No service passed when checking schema. Please pass an Engine API key using `--service=MY_KEY` or adding ENGINE_API_KEY to the environment"
+        "No service was specified. Set an Apollo Engine API key using the `--service` flag or the `ENGINE_API_KEY` environment variable."
       );
       return;
     }

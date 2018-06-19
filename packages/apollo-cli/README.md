@@ -17,7 +17,7 @@ CLI for the Apollo platform of tooling
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g apollo
+$ npm install --global apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
@@ -53,46 +53,44 @@ _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v1.2.1
 
 ## `apollo schema:check`
 
-Check a schema against previous registered schema
+Check a schema against the version registered in Apollo Engine.
 
 ```
 USAGE
   $ apollo schema:check
 
 OPTIONS
-  -e, --endpoint=endpoint  [default: http://localhost:4000/graphql] The location of the server to from which to fetch
-                           the schema
+  -e, --endpoint=endpoint  [default: http://localhost:4000/graphql] The URL of the server to fetch the schema from
 
   -h, --help               show CLI help
 
-  -s, --service=service    ENGINE_API_KEY for the Engine service
+  -s, --service=service    The API key for the Apollo Engine service
 
   --header=header          Additional headers to send to server for introspectionQuery
 
-  --json                   output result as json
+  --json                   output result as JSON
 ```
 
 _See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.0/src/commands/schema/check.ts)_
 
 ## `apollo schema:publish`
 
-Publish a schema to Engine
+Publish a schema to Apollo Engine
 
 ```
 USAGE
   $ apollo schema:publish
 
 OPTIONS
-  -e, --endpoint=endpoint  [default: http://localhost:4000/graphql] The location of the server to from which to fetch
-                           the schema
+  -e, --endpoint=endpoint  [default: http://localhost:4000/graphql] The URL of the server to fetch the schema from
 
   -h, --help               show CLI help
 
-  -s, --service=service    ENGINE_API_KEY for the Engine service
+  -s, --service=service    The API key for the Apollo Engine service
 
   --header=header          Additional headers to send to server for introspectionQuery
 
-  --json                   output successful publish result as json
+  --json                   output successful publish result as JSON
 ```
 
 _See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.0/src/commands/schema/publish.ts)_
