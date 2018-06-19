@@ -14,8 +14,10 @@ export default class SchemaPublish extends Command {
   static description = "Publish a schema to Apollo Engine";
 
   static flags = {
-    help: flags.help({ char: "h" }),
-
+    help: flags.help({
+      char: "h",
+      description: "Show command help",
+    }),
     key: flags.string({
       description: "The API key for the Apollo Engine service",
     }),
@@ -29,12 +31,11 @@ export default class SchemaPublish extends Command {
         "Additional headers to send to server for introspectionQuery",
     }),
     endpoint: flags.string({
-      char: "e",
       description: "The URL of the server to fetch the schema from",
       default: "http://localhost:4000/graphql", // apollo-server 2.0 default address
     }),
     json: flags.boolean({
-      description: "output successful publish result as JSON",
+      description: "Output successful publish result as JSON",
     }),
     engine: flags.string({
       description: "Reporting URL for a custom Engine deployment",

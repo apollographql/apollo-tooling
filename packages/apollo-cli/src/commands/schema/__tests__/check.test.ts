@@ -126,7 +126,7 @@ describe("successful checks", () => {
     .nock("https://staging.example.com", localSuccess)
     .nock(ENGINE_URI, engineSuccess())
     .env({ ENGINE_API_KEY })
-    .command(["schema:check", "-e=https://staging.example.com/graphql"])
+    .command(["schema:check", "--endpoint=https://staging.example.com/graphql"])
     .exit(1)
     .it("compares against a schema from a custom remote", () => {
       expect(stdout).toContain("FAILURE");
@@ -167,7 +167,7 @@ describe("successful checks", () => {
     .env({ ENGINE_API_KEY })
     .command([
       "schema:check",
-      "-e=https://staging.example.com/graphql",
+      "--endpoint=https://staging.example.com/graphql",
       "--header=Authorization: 1234",
       "--header=Hello: World",
     ])
@@ -187,7 +187,7 @@ describe("successful checks", () => {
     .env({ ENGINE_API_KEY })
     .command([
       "schema:check",
-      `-e=${path.resolve(__dirname, "./fixtures/introspection-result.json")}`,
+      `--endpoint=${path.resolve(__dirname, "./fixtures/introspection-result.json")}`,
     ])
     .exit(1)
     .it(
@@ -205,7 +205,7 @@ describe("successful checks", () => {
     .env({ ENGINE_API_KEY })
     .command([
       "schema:check",
-      `-e=${path.resolve(__dirname, "./fixtures/schema.graphql")}`,
+      `--endpoint=${path.resolve(__dirname, "./fixtures/schema.graphql")}`,
     ])
     .exit(1)
     .it(
