@@ -15,8 +15,8 @@ export default class SchemaPublish extends Command {
 
   static flags = {
     help: flags.help({ char: "h" }),
-    service: flags.string({
-      char: "s",
+
+    apiKey: flags.string({
       description: "The API key for the Apollo Engine service",
     }),
     header: flags.string({
@@ -47,10 +47,10 @@ export default class SchemaPublish extends Command {
     // hardcoded to current until service / schema / tag is settled
     const tag = "current";
 
-    const service = process.env.ENGINE_API_KEY || flags.service;
+    const service = process.env.ENGINE_API_KEY || flags.apiKey;
     if (!service) {
       this.error(
-        "No service was specified. Set an Apollo Engine API key using the `--service` flag or the `ENGINE_API_KEY` environment variable."
+        "No service was specified. Set an Apollo Engine API key using the `--apiKey` flag or the `ENGINE_API_KEY` environment variable."
       );
       return;
     }

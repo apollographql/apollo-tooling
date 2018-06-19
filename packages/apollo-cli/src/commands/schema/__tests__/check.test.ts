@@ -15,7 +15,7 @@ const localSchema = { __schema: { fakeSchema: true } };
 const fullSchema = execute(
   buildSchema(
     fs.readFileSync(path.resolve(__dirname, "./fixtures/schema.graphql"), {
-      encoding: "utf-8"
+      encoding: "utf-8",
     })
   ),
   gql(introspectionQuery)
@@ -26,7 +26,7 @@ const localSuccess = nock => {
     .post("/graphql", {
       query: print(gql(introspectionQuery)),
       operationName: "IntrospectionQuery",
-      variables: {}
+      variables: {},
     })
     .reply(200, { data: localSchema });
 };
@@ -43,10 +43,10 @@ const engineSuccess = ({ schema, tag, results } = {}) => nock => {
         gitContext: {
           commit: /.+/i,
           remoteUrl: "https://github.com/apollographql/apollo-cli",
-          committer: /@/i
-        }
+          committer: /@/i,
+        },
       },
-      query: print(VALIDATE_SCHEMA)
+      query: print(VALIDATE_SCHEMA),
     })
     .reply(200, {
       data: {
@@ -57,28 +57,28 @@ const engineSuccess = ({ schema, tag, results } = {}) => nock => {
                 {
                   type: "NOTICE",
                   code: "DEPRECATION_ADDED",
-                  description: "Field `User.lastName` was deprecated"
+                  description: "Field `User.lastName` was deprecated",
                 },
                 {
                   type: "WARNING",
                   code: "FIELD_REMOVED",
-                  description: "Field `User.firstName` removed"
+                  description: "Field `User.firstName` removed",
                 },
                 {
                   type: "FAILURE",
                   code: "ARG_CHANGE_TYPE",
-                  description: "Argument id on `Query.user` changed to ID!"
+                  description: "Argument id on `Query.user` changed to ID!",
                 },
                 {
                   type: "NOTICE",
                   code: "FIELD_ADDED",
-                  description: "Field `User.fullName` was added"
-                }
-              ]
-            }
-          }
-        }
-      }
+                  description: "Field `User.fullName` was added",
+                },
+              ],
+            },
+          },
+        },
+      },
     });
 };
 
@@ -91,6 +91,18 @@ describe("successful checks", () => {
     .command(["schema:check"])
     .exit(1)
     .it("compares against the latest uploaded schema", () => {
+      expect(stdout).toContain("FAILURE");
+      expect(stdout).toContain("NOTICE");
+      expect(stdout).toContain("WARNING");
+    });
+
+  test
+    .nock("http://localhost:4000", localSuccess)
+    .nock(ENGINE_URI, engineSuccess())
+    .stdout()
+    .command(["schema:check", `--apiKey=${ENGINE_API_KEY}`])
+    .exit(1)
+    .it("allows custom api key", () => {
       expect(stdout).toContain("FAILURE");
       expect(stdout).toContain("NOTICE");
       expect(stdout).toContain("WARNING");
@@ -147,7 +159,7 @@ describe("successful checks", () => {
         .post("/graphql", {
           query: print(gql(introspectionQuery)),
           operationName: "IntrospectionQuery",
-          variables: {}
+          variables: {},
         })
         .reply(200, { data: localSchema });
     })
@@ -157,7 +169,7 @@ describe("successful checks", () => {
       "schema:check",
       "-e=https://staging.example.com/graphql",
       "--header=Authorization: 1234",
-      "--header=Hello: World"
+      "--header=Hello: World",
     ])
     .exit(1)
     .it(
@@ -175,7 +187,7 @@ describe("successful checks", () => {
     .env({ ENGINE_API_KEY })
     .command([
       "schema:check",
-      `-e=${path.resolve(__dirname, "./fixtures/introspection-result.json")}`
+      `-e=${path.resolve(__dirname, "./fixtures/introspection-result.json")}`,
     ])
     .exit(1)
     .it(
@@ -193,7 +205,7 @@ describe("successful checks", () => {
     .env({ ENGINE_API_KEY })
     .command([
       "schema:check",
-      `-e=${path.resolve(__dirname, "./fixtures/schema.graphql")}`
+      `-e=${path.resolve(__dirname, "./fixtures/schema.graphql")}`,
     ])
     .exit(1)
     .it(
@@ -220,6 +232,6 @@ describe("successful checks", () => {
 describe("error handling", () => {
   test
     .command(["schema:check"])
-    .catch(err => expect(err.message).toMatch(/No service passed/))
+    .catch(err => expect(err.message).toMatch(/No service/))
     .it("errors with no service API key");
 });
