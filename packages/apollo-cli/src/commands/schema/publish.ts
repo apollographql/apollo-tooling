@@ -16,7 +16,7 @@ export default class SchemaPublish extends Command {
   static flags = {
     help: flags.help({ char: "h" }),
 
-    apiKey: flags.string({
+    key: flags.string({
       description: "The API key for the Apollo Engine service",
     }),
     header: flags.string({
@@ -47,10 +47,10 @@ export default class SchemaPublish extends Command {
     // hardcoded to current until service / schema / tag is settled
     const tag = "current";
 
-    const service = process.env.ENGINE_API_KEY || flags.apiKey;
-    if (!service) {
+    const apiKey = process.env.ENGINE_API_KEY || flags.key;
+    if (!apiKey) {
       this.error(
-        "No service was specified. Set an Apollo Engine API key using the `--apiKey` flag or the `ENGINE_API_KEY` environment variable."
+        "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
       );
       return;
     }
@@ -67,14 +67,14 @@ export default class SchemaPublish extends Command {
         },
       },
       {
-        title: `Publishing ${getIdFromKey(service)} to Apollo Engine`,
+        title: `Publishing ${getIdFromKey(apiKey)} to Apollo Engine`,
         task: async ctx => {
           const gitContext = await gitInfo();
           const variables = {
             schema: ctx.schema,
             tag,
             gitContext,
-            id: getIdFromKey(service),
+            id: getIdFromKey(apiKey),
           };
 
           ctx.current = await toPromise(
@@ -82,7 +82,7 @@ export default class SchemaPublish extends Command {
               query: UPLOAD_SCHEMA,
               variables,
               context: {
-                headers: { ["x-api-key"]: service },
+                headers: { ["x-api-key"]: apiKey },
                 ...(flags.engine && { uri: flags.engine }),
               },
             })
@@ -104,7 +104,7 @@ export default class SchemaPublish extends Command {
       // XXX error on unexpected missing schema
       if (!current) return;
       const result = {
-        service: getIdFromKey(service),
+        service: getIdFromKey(apiKey),
         hash: current.tag.schema.hash,
         tag: current.tag.tag,
       };

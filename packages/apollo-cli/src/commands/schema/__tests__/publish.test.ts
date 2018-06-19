@@ -79,7 +79,7 @@ describe("successful uploads", () => {
     .nock("http://localhost:4000", localSuccess)
     .nock(ENGINE_URI, engineSuccess())
     .stdout()
-    .command(["schema:publish", `--apiKey=${ENGINE_API_KEY}`])
+    .command(["schema:publish", `--key=${ENGINE_API_KEY}`])
     .it("allows a custom api key", () => {
       expect(uiLog).toContain("12345");
     });
@@ -176,7 +176,7 @@ describe("successful uploads", () => {
 describe("error handling", () => {
   test
     .command(["schema:publish"])
-    .catch(err => expect(err.message).toMatch(/No service/))
+    .catch(err => expect(err.message).toMatch(/No API key/))
     .it("errors with no service api key");
 
   test

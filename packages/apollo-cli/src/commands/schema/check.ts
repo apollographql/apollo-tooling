@@ -24,7 +24,7 @@ export default class SchemaCheck extends Command {
 
   static flags = {
     help: flags.help({ char: "h" }),
-    apiKey: flags.string({
+    key: flags.string({
       description: "The API key for the Apollo Engine service",
     }),
     header: flags.string({
@@ -52,10 +52,10 @@ export default class SchemaCheck extends Command {
 
   async run() {
     const { flags } = this.parse(SchemaCheck);
-    const service = process.env.ENGINE_API_KEY || flags.apiKey;
-    if (!service) {
+    const apiKey = process.env.ENGINE_API_KEY || flags.key;
+    if (!apiKey) {
       this.error(
-        "No service was specified. Set an Apollo Engine API key using the `--apiKey` flag or the `ENGINE_API_KEY` environment variable."
+        "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
       );
       return;
     }
@@ -77,7 +77,7 @@ export default class SchemaCheck extends Command {
           const gitContext = await gitInfo();
 
           const variables = {
-            id: getIdFromKey(service),
+            id: getIdFromKey(apiKey),
             schema: ctx.schema,
             // XXX hardcoded for now
             tag: "current",
@@ -89,7 +89,7 @@ export default class SchemaCheck extends Command {
               query: VALIDATE_SCHEMA,
               variables,
               context: {
-                headers: { ["x-api-key"]: service },
+                headers: { ["x-api-key"]: apiKey },
                 ...(flags.engine && { uri: flags.engine }),
               },
             })
