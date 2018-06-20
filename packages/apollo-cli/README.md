@@ -3,7 +3,7 @@ apollo-cli
 
 CLI for the Apollo platform of tooling
 
-[![Version](https://img.shields.io/npm/v/apollo-cli.svg)](https://npmjs.org/package/apollo-cli)
+[![Version](https://img.shields.io/npm/v/apollo.svg)](https://npmjs.org/package/apollo)
 [![CircleCI](https://circleci.com/gh/apollographql/apollo-cli/tree/master.svg?style=shield)](https://circleci.com/gh/apollographql/apollo-cli/tree/master)
 [![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/apollographql/apollo-cli?branch=master&svg=true)](https://ci.appveyor.com/project/apollographql/apollo-cli/branch/master)
 [![Codecov](https://codecov.io/gh/apollographql/apollo-cli/branch/master/graph/badge.svg)](https://codecov.io/gh/apollographql/apollo-cli)
