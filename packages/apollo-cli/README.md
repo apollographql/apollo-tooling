@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/1.0.3 linux-x64 node-v9.4.0
+apollo/1.0.5 linux-x64 node-v9.4.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -67,7 +67,7 @@ OPTIONS
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.3/src/commands/schema/check.ts)_
+_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.5/src/commands/schema/check.ts)_
 
 ## `apollo schema:publish`
 
@@ -85,5 +85,5 @@ OPTIONS
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.3/src/commands/schema/publish.ts)_
+_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.5/src/commands/schema/publish.ts)_
 <!-- commandsstop -->
