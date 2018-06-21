@@ -3,6 +3,7 @@ import chalk from "chalk";
 import { color, table, styledJSON } from "heroku-cli-util";
 import cli from "cli-ux";
 import * as Listr from "listr";
+import { GraphQLError } from "graphql";
 
 import { toPromise, execute } from "apollo-link";
 
@@ -107,7 +108,15 @@ export default class SchemaCheck extends Command {
               return data!.service.schema.checkSchema.changes;
             })
             .catch(e => {
-              this.error(e.message);
+              if (e.result && e.result.errors) {
+                this.error(
+                  e.result.errors
+                    .map(({ message }: GraphQLError) => message)
+                    .join("\n")
+                );
+              } else {
+                this.error(e.message);
+              }
             });
         },
       },

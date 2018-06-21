@@ -4,6 +4,7 @@ import { table, styledJSON } from "heroku-cli-util";
 import * as Listr from "listr";
 import { toPromise, execute } from "apollo-link";
 import * as util from "util";
+import { GraphQLError } from "graphql";
 
 import { UPLOAD_SCHEMA } from "../../operations/uploadSchema";
 import { getIdFromKey, engineLink } from "../../engine";
@@ -96,7 +97,17 @@ export default class SchemaPublish extends Command {
                 );
               return data!.service.uploadSchema;
             })
-            .catch(e => this.error(e.message));
+            .catch(e => {
+              if (e.result && e.result.errors) {
+                this.error(
+                  e.result.errors
+                    .map(({ message }: GraphQLError) => message)
+                    .join("\n")
+                );
+              } else {
+                this.error(e.message);
+              }
+            });
         },
       },
     ]);
