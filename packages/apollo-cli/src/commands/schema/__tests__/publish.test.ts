@@ -89,7 +89,10 @@ describe("successful uploads", () => {
     .nock("https://staging.example.com", localSuccess)
     .nock(ENGINE_URI, engineSuccess())
     .env({ ENGINE_API_KEY })
-    .command(["schema:publish", "-e=https://staging.example.com/graphql"])
+    .command([
+      "schema:publish",
+      "--endpoint=https://staging.example.com/graphql",
+    ])
     .it("calls engine with a schema from a custom remote", ({ stdout }) => {
       expect(uiLog).toContain("12345");
     });
@@ -121,7 +124,7 @@ describe("successful uploads", () => {
     .env({ ENGINE_API_KEY })
     .command([
       "schema:publish",
-      "-e=https://staging.example.com/graphql",
+      "--endpoint=https://staging.example.com/graphql",
       "--header=Authorization: 1234",
       "--header=Hello: World",
     ])
@@ -138,7 +141,10 @@ describe("successful uploads", () => {
     .env({ ENGINE_API_KEY })
     .command([
       "schema:publish",
-      `-e=${path.resolve(__dirname, "./fixtures/introspection-result.json")}`,
+      `--endpoint=${path.resolve(
+        __dirname,
+        "./fixtures/introspection-result.json"
+      )}`,
     ])
     .it(
       "calls engine with a schema from an introspection result on the filesystem",
@@ -153,7 +159,7 @@ describe("successful uploads", () => {
     .env({ ENGINE_API_KEY })
     .command([
       "schema:publish",
-      `-e=${path.resolve(__dirname, "./fixtures/schema.graphql")}`,
+      `--endpoint=${path.resolve(__dirname, "./fixtures/schema.graphql")}`,
     ])
     .it(
       "calls engine with a schema from a schema file on the filesystem",
