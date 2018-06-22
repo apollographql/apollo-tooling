@@ -576,7 +576,16 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       } else {
         this.printOnNewline('get');
         this.withinBlock(() => {
-          if (isOptional) {
+          if (type instanceof GraphQLEnumType) {
+            this.printOnNewline(`if let resultVal = snapshot["${responseKey}"] as? String`);
+            this.withinBlock(() => {
+              this.printOnNewline(`return ${typeName.slice(0, -1)}(rawValue: resultVal)`);
+            })
+            this.printOnNewline(`else`);
+            this.withinBlock(() => {
+              this.printOnNewline(`return nil`);
+            })
+          } else if (isOptional) {
             this.printOnNewline(`return snapshot["${responseKey}"] as? ${typeName.slice(0, -1)}`);
           } else {
             this.printOnNewline(`return snapshot["${responseKey}"]! as! ${typeName}`);
