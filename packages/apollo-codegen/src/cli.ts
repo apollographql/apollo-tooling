@@ -125,7 +125,7 @@ yargs
       target: {
         demand: false,
         describe: 'Code generation target language',
-        choices: ['swift', 'scala', 'json', 'ts-legacy', 'ts', 'typescript-legacy', 'typescript', 'flow-leagcy', 'flow'],
+        choices: ['swift', 'scala', 'json', 'ts-legacy', 'ts', 'typescript-legacy', 'typescript', 'flow-legacy', 'flow'],
         default: 'swift'
       },
       only: {
