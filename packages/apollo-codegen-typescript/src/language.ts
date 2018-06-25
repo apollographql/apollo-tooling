@@ -36,6 +36,14 @@ export default class TypescriptGenerator {
     this.typeFromGraphQLType = createTypeFromGraphQLTypeFunction(compilerOptions);
   }
 
+  // generating JSDoc style comments
+  private commentBlockContent(commentString: string) {
+    return '*\n' + commentString
+      .split('\n')
+      .map(line => ` * ${line}`)
+      .join('\n') + '\n ';
+  }
+
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
     const enumMembers = sortEnumValues(type.getValues()).map(({ value }) => {
@@ -55,9 +63,9 @@ export default class TypescriptGenerator {
 
     if (description) {
       typeAlias.leadingComments = [{
-        type: 'CommentLine',
-        value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
-      } as t.CommentLine];
+        type: 'CommentBlock',
+        value: this.commentBlockContent(description)
+      } as t.CommentBlock];
     }
 
     return typeAlias;
@@ -81,9 +89,9 @@ export default class TypescriptGenerator {
     }), []);
 
     inputType.leadingComments = [{
-      type: 'CommentLine',
-      value: ` ${description}`
-    } as t.CommentLine]
+      type: 'CommentBlock',
+      value: this.commentBlockContent(description)
+    } as t.CommentBlock]
 
     return inputType;
   }
@@ -104,10 +112,10 @@ export default class TypescriptGenerator {
       propertySignatureType.optional = keyInheritsNullability && this.isNullableType(type);
 
       if (description) {
-        propertySignatureType.trailingComments = [{
-          type: 'CommentLine',
-          value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
-        } as t.CommentLine]
+        propertySignatureType.leadingComments = [{
+          type: 'CommentBlock',
+          value: this.commentBlockContent(description)
+        } as t.CommentBlock]
       }
 
       return propertySignatureType;

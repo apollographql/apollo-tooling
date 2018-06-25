@@ -11,7 +11,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
@@ -34,29 +36,56 @@ export enum Episode {
 
 export interface HeroName_hero_Human_friends_Human {
   __typename: \\"Human\\";
-  name: string;  // What this human calls themselves
+  /**
+   * What this human calls themselves
+   */
+  name: string;
 }
 
 export interface HeroName_hero_Human_friends_Droid {
   __typename: \\"Droid\\";
-  id: string;  // The ID of the droid
+  /**
+   * The ID of the droid
+   */
+  id: string;
 }
 
 export type HeroName_hero_Human_friends = HeroName_hero_Human_friends_Human | HeroName_hero_Human_friends_Droid;
 
 export interface HeroName_hero_Human {
   __typename: \\"Human\\";
-  name: string;                                            // What this human calls themselves
-  id: string;                                              // The ID of the human
-  homePlanet: string | null;                               // The home planet of the human, or null if unknown
-  friends: (HeroName_hero_Human_friends | null)[] | null;  // This human's friends, or an empty list if they have none
+  /**
+   * What this human calls themselves
+   */
+  name: string;
+  /**
+   * The ID of the human
+   */
+  id: string;
+  /**
+   * The home planet of the human, or null if unknown
+   */
+  homePlanet: string | null;
+  /**
+   * This human's friends, or an empty list if they have none
+   */
+  friends: (HeroName_hero_Human_friends | null)[] | null;
 }
 
 export interface HeroName_hero_Droid {
   __typename: \\"Droid\\";
-  name: string;                   // What others call this droid
-  id: string;                     // The ID of the droid
-  appearsIn: (Episode | null)[];  // The movies this droid appears in
+  /**
+   * What others call this droid
+   */
+  name: string;
+  /**
+   * The ID of the droid
+   */
+  id: string;
+  /**
+   * The movies this droid appears in
+   */
+  appearsIn: (Episode | null)[];
 }
 
 export type HeroName_hero = HeroName_hero_Human | HeroName_hero_Droid;
@@ -81,7 +110,10 @@ export interface HeroNameVariables {
 
 export interface droidFragment {
   __typename: \\"Droid\\";
-  appearsIn: (Episode | null)[];  // The movies this droid appears in
+  /**
+   * The movies this droid appears in
+   */
+  appearsIn: (Episode | null)[];
 }",
     },
     "humanFragment.ts": TypescriptGeneratedFile {
@@ -96,20 +128,32 @@ export interface droidFragment {
 
 export interface humanFragment_friends_Human {
   __typename: \\"Human\\";
-  name: string;  // What this human calls themselves
+  /**
+   * What this human calls themselves
+   */
+  name: string;
 }
 
 export interface humanFragment_friends_Droid {
   __typename: \\"Droid\\";
-  id: string;  // The ID of the droid
+  /**
+   * The ID of the droid
+   */
+  id: string;
 }
 
 export type humanFragment_friends = humanFragment_friends_Human | humanFragment_friends_Droid;
 
 export interface humanFragment {
   __typename: \\"Human\\";
-  homePlanet: string | null;                         // The home planet of the human, or null if unknown
-  friends: (humanFragment_friends | null)[] | null;  // This human's friends, or an empty list if they have none
+  /**
+   * The home planet of the human, or null if unknown
+   */
+  homePlanet: string | null;
+  /**
+   * This human's friends, or an empty list if they have none
+   */
+  friends: (humanFragment_friends | null)[] | null;
 }",
     },
   },
@@ -143,8 +187,14 @@ Object {
 
 export interface anotherFragment {
   __typename: \\"Human\\" | \\"Droid\\";
-  id: string;    // The ID of the character
-  name: string;  // The name of the character
+  /**
+   * The ID of the character
+   */
+  id: string;
+  /**
+   * The name of the character
+   */
+  name: string;
 }",
     },
     "simpleFragment.ts": TypescriptGeneratedFile {
@@ -159,7 +209,10 @@ export interface anotherFragment {
 
 export interface simpleFragment {
   __typename: \\"Human\\" | \\"Droid\\";
-  name: string;  // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string;
 }",
     },
   },
@@ -177,7 +230,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
@@ -200,15 +255,30 @@ export enum Episode {
 
 export interface anotherFragment_Droid {
   __typename: \\"Droid\\";
-  id: string;    // The ID of the droid
-  name: string;  // What others call this droid
+  /**
+   * The ID of the droid
+   */
+  id: string;
+  /**
+   * What others call this droid
+   */
+  name: string;
 }
 
 export interface anotherFragment_Human {
   __typename: \\"Human\\";
-  id: string;                     // The ID of the human
-  name: string;                   // What this human calls themselves
-  appearsIn: (Episode | null)[];  // The movies this human appears in
+  /**
+   * The ID of the human
+   */
+  id: string;
+  /**
+   * What this human calls themselves
+   */
+  name: string;
+  /**
+   * The movies this human appears in
+   */
+  appearsIn: (Episode | null)[];
 }
 
 export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;",
@@ -225,7 +295,10 @@ export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;",
 
 export interface simpleFragment {
   __typename: \\"Human\\" | \\"Droid\\";
-  name: string;  // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string;
 }",
     },
   },
@@ -259,7 +332,12 @@ Object {
 
 export interface CustomScalar_commentTest {
   __typename: \\"CommentTest\\";
-  multiLine: string | null;  // This is a multi-line comment.
+  /**
+   * This is a
+   * multi-line
+   * comment.
+   */
+  multiLine: string | null;
 }
 
 export interface CustomScalar {
@@ -281,7 +359,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
@@ -304,8 +384,14 @@ export enum Episode {
 
 export interface HeroInlineFragment_hero {
   __typename: \\"Human\\" | \\"Droid\\";
-  name: string;  // The name of the character
-  id: string;    // The ID of the character
+  /**
+   * The name of the character
+   */
+  name: string;
+  /**
+   * The ID of the character
+   */
+  id: string;
 }
 
 export interface HeroInlineFragment {
@@ -331,7 +417,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
@@ -354,22 +442,46 @@ export enum Episode {
 
 export interface HeroName_hero_Human_friends {
   __typename: \\"Human\\" | \\"Droid\\";
-  name: string;  // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string;
 }
 
 export interface HeroName_hero_Human {
   __typename: \\"Human\\";
-  name: string;                                            // What this human calls themselves
-  id: string;                                              // The ID of the human
-  homePlanet: string | null;                               // The home planet of the human, or null if unknown
-  friends: (HeroName_hero_Human_friends | null)[] | null;  // This human's friends, or an empty list if they have none
+  /**
+   * What this human calls themselves
+   */
+  name: string;
+  /**
+   * The ID of the human
+   */
+  id: string;
+  /**
+   * The home planet of the human, or null if unknown
+   */
+  homePlanet: string | null;
+  /**
+   * This human's friends, or an empty list if they have none
+   */
+  friends: (HeroName_hero_Human_friends | null)[] | null;
 }
 
 export interface HeroName_hero_Droid {
   __typename: \\"Droid\\";
-  name: string;                   // What others call this droid
-  id: string;                     // The ID of the droid
-  appearsIn: (Episode | null)[];  // The movies this droid appears in
+  /**
+   * What others call this droid
+   */
+  name: string;
+  /**
+   * The ID of the droid
+   */
+  id: string;
+  /**
+   * The movies this droid appears in
+   */
+  appearsIn: (Episode | null)[];
 }
 
 export type HeroName_hero = HeroName_hero_Human | HeroName_hero_Droid;
@@ -397,7 +509,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
@@ -420,28 +534,58 @@ export enum Episode {
 
 export interface HeroName_hero_Human_friends {
   __typename: \\"Human\\" | \\"Droid\\";
-  name: string;  // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string;
 }
 
 export interface HeroName_hero_Human {
   __typename: \\"Human\\";
-  name: string;                                            // What this human calls themselves
-  id: string;                                              // The ID of the human
-  homePlanet: string | null;                               // The home planet of the human, or null if unknown
-  friends: (HeroName_hero_Human_friends | null)[] | null;  // This human's friends, or an empty list if they have none
+  /**
+   * What this human calls themselves
+   */
+  name: string;
+  /**
+   * The ID of the human
+   */
+  id: string;
+  /**
+   * The home planet of the human, or null if unknown
+   */
+  homePlanet: string | null;
+  /**
+   * This human's friends, or an empty list if they have none
+   */
+  friends: (HeroName_hero_Human_friends | null)[] | null;
 }
 
 export interface HeroName_hero_Droid_friends {
   __typename: \\"Human\\" | \\"Droid\\";
-  id: string;  // The ID of the character
+  /**
+   * The ID of the character
+   */
+  id: string;
 }
 
 export interface HeroName_hero_Droid {
   __typename: \\"Droid\\";
-  name: string;                                            // What others call this droid
-  id: string;                                              // The ID of the droid
-  appearsIn: (Episode | null)[];                           // The movies this droid appears in
-  friends: (HeroName_hero_Droid_friends | null)[] | null;  // This droid's friends, or an empty list if they have none
+  /**
+   * What others call this droid
+   */
+  name: string;
+  /**
+   * The ID of the droid
+   */
+  id: string;
+  /**
+   * The movies this droid appears in
+   */
+  appearsIn: (Episode | null)[];
+  /**
+   * This droid's friends, or an empty list if they have none
+   */
+  friends: (HeroName_hero_Droid_friends | null)[] | null;
 }
 
 export type HeroName_hero = HeroName_hero_Human | HeroName_hero_Droid;
@@ -474,8 +618,14 @@ Object {
 
 export interface HeroName_hero {
   __typename: \\"Human\\" | \\"Droid\\";
-  name: string;  // The name of the character
-  id: string;    // The ID of the character
+  /**
+   * The name of the character
+   */
+  name: string;
+  /**
+   * The ID of the character
+   */
+  id: string;
 }
 
 export interface HeroName {
@@ -498,8 +648,14 @@ export interface HeroNameVariables {
 
 export interface ReviewMovie_createReview {
   __typename: \\"Review\\";
-  stars: number;              // The number of stars this review gave, 1-5
-  commentary: string | null;  // Comment about the movie
+  /**
+   * The number of stars this review gave, 1-5
+   */
+  stars: number;
+  /**
+   * Comment about the movie
+   */
+  commentary: string | null;
 }
 
 export interface ReviewMovie {
@@ -523,8 +679,14 @@ export interface ReviewMovieVariables {
 
 export interface SomeOther_hero {
   __typename: \\"Human\\" | \\"Droid\\";
-  name: string;                   // The name of the character
-  appearsIn: (Episode | null)[];  // The movies this character appears in
+  /**
+   * The name of the character
+   */
+  name: string;
+  /**
+   * The movies this character appears in
+   */
+  appearsIn: (Episode | null)[];
 }
 
 export interface SomeOther {
@@ -547,7 +709,10 @@ export interface SomeOtherVariables {
 
 export interface someFragment {
   __typename: \\"Human\\" | \\"Droid\\";
-  appearsIn: (Episode | null)[];  // The movies this character appears in
+  /**
+   * The movies this character appears in
+   */
+  appearsIn: (Episode | null)[];
 }",
   },
 }
@@ -565,21 +730,27 @@ exports[`Typescript codeGeneration multiple files 4`] = `
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
   NEWHOPE = \\"NEWHOPE\\",
 }
 
-// The input object sent when someone is creating a new review
+/**
+ * The input object sent when someone is creating a new review
+ */
 export interface ReviewInput {
   stars: number;
   commentary?: string | null;
   favorite_color?: ColorInput | null;
 }
 
-// The input object sent when passing in a color
+/**
+ * The input object sent when passing in a color
+ */
 export interface ColorInput {
   red: number;
   green: number;
@@ -602,7 +773,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
@@ -625,8 +798,14 @@ export enum Episode {
 
 export interface HeroFragment_hero {
   __typename: \\"Human\\" | \\"Droid\\";
-  name: string;  // The name of the character
-  id: string;    // The ID of the character
+  /**
+   * The name of the character
+   */
+  name: string;
+  /**
+   * The ID of the character
+   */
+  id: string;
 }
 
 export interface HeroFragment {
@@ -649,7 +828,10 @@ export interface HeroFragmentVariables {
 
 export interface simpleFragment {
   __typename: \\"Human\\" | \\"Droid\\";
-  name: string;  // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string;
 }",
     },
   },
@@ -683,7 +865,10 @@ Object {
 
 export interface SimpleFragment {
   __typename: \\"Human\\" | \\"Droid\\";
-  name: string;  // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string;
 }",
     },
   },
@@ -701,7 +886,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
@@ -724,8 +911,14 @@ export enum Episode {
 
 export interface HeroName_hero {
   __typename: \\"Human\\" | \\"Droid\\";
-  name: string;  // The name of the character
-  id: string;    // The ID of the character
+  /**
+   * The name of the character
+   */
+  name: string;
+  /**
+   * The ID of the character
+   */
+  id: string;
 }
 
 export interface HeroName {
@@ -751,21 +944,27 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export enum Episode {
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
   NEWHOPE = \\"NEWHOPE\\",
 }
 
-// The input object sent when someone is creating a new review
+/**
+ * The input object sent when someone is creating a new review
+ */
 export interface ReviewInput {
   stars: number;
   commentary?: string | null;
   favorite_color?: ColorInput | null;
 }
 
-// The input object sent when passing in a color
+/**
+ * The input object sent when passing in a color
+ */
 export interface ColorInput {
   red: number;
   green: number;
@@ -788,8 +987,14 @@ export interface ColorInput {
 
 export interface ReviewMovie_createReview {
   __typename: \\"Review\\";
-  stars: number;              // The number of stars this review gave, 1-5
-  commentary: string | null;  // Comment about the movie
+  /**
+   * The number of stars this review gave, 1-5
+   */
+  stars: number;
+  /**
+   * Comment about the movie
+   */
+  commentary: string | null;
 }
 
 export interface ReviewMovie {

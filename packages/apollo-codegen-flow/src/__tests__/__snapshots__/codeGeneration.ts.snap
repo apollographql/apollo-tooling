@@ -12,7 +12,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
@@ -32,23 +34,50 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 export type HeroName_hero_Human_friends = {|
   +__typename: \\"Human\\",
-  +name: string, // What this human calls themselves
+  /**
+   * What this human calls themselves
+   */
+  +name: string,
 |} | {|
   +__typename: \\"Droid\\",
-  +id: string,   // The ID of the droid
+  /**
+   * The ID of the droid
+   */
+  +id: string,
 |};
 
 export type HeroName_hero = {|
   +__typename: \\"Human\\",
-  +name: string,                                           // What this human calls themselves
-  +id: string,                                             // The ID of the human
-  +homePlanet: ?string,                                    // The home planet of the human, or null if unknown
-  +friends: ?$ReadOnlyArray<?HeroName_hero_Human_friends>, // This human's friends, or an empty list if they have none
+  /**
+   * What this human calls themselves
+   */
+  +name: string,
+  /**
+   * The ID of the human
+   */
+  +id: string,
+  /**
+   * The home planet of the human, or null if unknown
+   */
+  +homePlanet: ?string,
+  /**
+   * This human's friends, or an empty list if they have none
+   */
+  +friends: ?$ReadOnlyArray<?HeroName_hero_Human_friends>,
 |} | {|
   +__typename: \\"Droid\\",
-  +name: string,                                           // What others call this droid
-  +id: string,                                             // The ID of the droid
-  +appearsIn: $ReadOnlyArray<?Episode>,                    // The movies this droid appears in
+  /**
+   * What others call this droid
+   */
+  +name: string,
+  /**
+   * The ID of the droid
+   */
+  +id: string,
+  /**
+   * The movies this droid appears in
+   */
+  +appearsIn: $ReadOnlyArray<?Episode>,
 |};
 
 export type HeroName = {|
@@ -72,7 +101,10 @@ export type HeroNameVariables = {|
 
 export type droidFragment = {|
   +__typename: \\"Droid\\",
-  +appearsIn: $ReadOnlyArray<?Episode>, // The movies this droid appears in
+  /**
+   * The movies this droid appears in
+   */
+  +appearsIn: $ReadOnlyArray<?Episode>,
 |};",
     },
     "humanFragment.js": FlowGeneratedFile {
@@ -88,16 +120,28 @@ export type droidFragment = {|
 
 export type humanFragment_friends = {|
   +__typename: \\"Human\\",
-  +name: string, // What this human calls themselves
+  /**
+   * What this human calls themselves
+   */
+  +name: string,
 |} | {|
   +__typename: \\"Droid\\",
-  +id: string,   // The ID of the droid
+  /**
+   * The ID of the droid
+   */
+  +id: string,
 |};
 
 export type humanFragment = {|
   +__typename: \\"Human\\",
-  +homePlanet: ?string,                              // The home planet of the human, or null if unknown
-  +friends: ?$ReadOnlyArray<?humanFragment_friends>, // This human's friends, or an empty list if they have none
+  /**
+   * The home planet of the human, or null if unknown
+   */
+  +homePlanet: ?string,
+  /**
+   * This human's friends, or an empty list if they have none
+   */
+  +friends: ?$ReadOnlyArray<?humanFragment_friends>,
 |};",
     },
   },
@@ -116,7 +160,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
@@ -136,23 +182,50 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 export type HeroName_hero_Human_friends = {
   __typename: \\"Human\\",
-  name: string, // What this human calls themselves
+  /**
+   * What this human calls themselves
+   */
+  name: string,
 } | {
   __typename: \\"Droid\\",
-  id: string,   // The ID of the droid
+  /**
+   * The ID of the droid
+   */
+  id: string,
 };
 
 export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                                  // What this human calls themselves
-  id: string,                                    // The ID of the human
-  homePlanet: ?string,                           // The home planet of the human, or null if unknown
-  friends: ?Array<?HeroName_hero_Human_friends>, // This human's friends, or an empty list if they have none
+  /**
+   * What this human calls themselves
+   */
+  name: string,
+  /**
+   * The ID of the human
+   */
+  id: string,
+  /**
+   * The home planet of the human, or null if unknown
+   */
+  homePlanet: ?string,
+  /**
+   * This human's friends, or an empty list if they have none
+   */
+  friends: ?Array<?HeroName_hero_Human_friends>,
 } | {
   __typename: \\"Droid\\",
-  name: string,                                  // What others call this droid
-  id: string,                                    // The ID of the droid
-  appearsIn: Array<?Episode>,                    // The movies this droid appears in
+  /**
+   * What others call this droid
+   */
+  name: string,
+  /**
+   * The ID of the droid
+   */
+  id: string,
+  /**
+   * The movies this droid appears in
+   */
+  appearsIn: Array<?Episode>,
 };
 
 export type HeroName = {
@@ -176,7 +249,10 @@ export type HeroNameVariables = {
 
 export type droidFragment = {
   __typename: \\"Droid\\",
-  appearsIn: Array<?Episode>, // The movies this droid appears in
+  /**
+   * The movies this droid appears in
+   */
+  appearsIn: Array<?Episode>,
 };",
     },
     "humanFragment.js": FlowGeneratedFile {
@@ -192,16 +268,28 @@ export type droidFragment = {
 
 export type humanFragment_friends = {
   __typename: \\"Human\\",
-  name: string, // What this human calls themselves
+  /**
+   * What this human calls themselves
+   */
+  name: string,
 } | {
   __typename: \\"Droid\\",
-  id: string,   // The ID of the droid
+  /**
+   * The ID of the droid
+   */
+  id: string,
 };
 
 export type humanFragment = {
   __typename: \\"Human\\",
-  homePlanet: ?string,                     // The home planet of the human, or null if unknown
-  friends: ?Array<?humanFragment_friends>, // This human's friends, or an empty list if they have none
+  /**
+   * The home planet of the human, or null if unknown
+   */
+  homePlanet: ?string,
+  /**
+   * This human's friends, or an empty list if they have none
+   */
+  friends: ?Array<?humanFragment_friends>,
 };",
     },
   },
@@ -237,8 +325,14 @@ Object {
 
 export type anotherFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
-  id: string,   // The ID of the character
-  name: string, // The name of the character
+  /**
+   * The ID of the character
+   */
+  id: string,
+  /**
+   * The name of the character
+   */
+  name: string,
 };",
     },
     "simpleFragment.js": FlowGeneratedFile {
@@ -254,7 +348,10 @@ export type anotherFragment = {
 
 export type simpleFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string,
 };",
     },
   },
@@ -273,7 +370,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
@@ -293,15 +392,30 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 export type anotherFragment_Droid = {
   __typename: \\"Droid\\",
-  id: string,   // The ID of the droid
-  name: string, // What others call this droid
+  /**
+   * The ID of the droid
+   */
+  id: string,
+  /**
+   * What others call this droid
+   */
+  name: string,
 };
 
 export type anotherFragment_Human = {
   __typename: \\"Human\\",
-  id: string,                 // The ID of the human
-  name: string,               // What this human calls themselves
-  appearsIn: Array<?Episode>, // The movies this human appears in
+  /**
+   * The ID of the human
+   */
+  id: string,
+  /**
+   * What this human calls themselves
+   */
+  name: string,
+  /**
+   * The movies this human appears in
+   */
+  appearsIn: Array<?Episode>,
 };
 
 export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;",
@@ -319,7 +433,10 @@ export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;",
 
 export type simpleFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string,
 };",
     },
   },
@@ -355,7 +472,12 @@ Object {
 
 export type CustomScalar_commentTest = {
   __typename: \\"CommentTest\\",
-  multiLine: ?string, // This is a multi-line comment.
+  /**
+   * This is a
+   * multi-line
+   * comment.
+   */
+  multiLine: ?string,
 };
 
 export type CustomScalar = {
@@ -378,7 +500,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
@@ -398,8 +522,14 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 export type HeroInlineFragment_hero = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-  id: string,   // The ID of the character
+  /**
+   * The name of the character
+   */
+  name: string,
+  /**
+   * The ID of the character
+   */
+  id: string,
 };
 
 export type HeroInlineFragment = {
@@ -426,7 +556,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
@@ -446,20 +578,44 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 export type HeroName_hero_Human_friends = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string,
 };
 
 export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                                  // What this human calls themselves
-  id: string,                                    // The ID of the human
-  homePlanet: ?string,                           // The home planet of the human, or null if unknown
-  friends: ?Array<?HeroName_hero_Human_friends>, // This human's friends, or an empty list if they have none
+  /**
+   * What this human calls themselves
+   */
+  name: string,
+  /**
+   * The ID of the human
+   */
+  id: string,
+  /**
+   * The home planet of the human, or null if unknown
+   */
+  homePlanet: ?string,
+  /**
+   * This human's friends, or an empty list if they have none
+   */
+  friends: ?Array<?HeroName_hero_Human_friends>,
 } | {
   __typename: \\"Droid\\",
-  name: string,                                  // What others call this droid
-  id: string,                                    // The ID of the droid
-  appearsIn: Array<?Episode>,                    // The movies this droid appears in
+  /**
+   * What others call this droid
+   */
+  name: string,
+  /**
+   * The ID of the droid
+   */
+  id: string,
+  /**
+   * The movies this droid appears in
+   */
+  appearsIn: Array<?Episode>,
 };
 
 export type HeroName = {
@@ -486,7 +642,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
@@ -506,26 +664,56 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 export type HeroName_hero_Human_friends = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string,
 };
 
 export type HeroName_hero_Droid_friends = {
   __typename: \\"Human\\" | \\"Droid\\",
-  id: string, // The ID of the character
+  /**
+   * The ID of the character
+   */
+  id: string,
 };
 
 export type HeroName_hero = {
   __typename: \\"Human\\",
-  name: string,                                  // What this human calls themselves
-  id: string,                                    // The ID of the human
-  homePlanet: ?string,                           // The home planet of the human, or null if unknown
-  friends: ?Array<?HeroName_hero_Human_friends>, // This human's friends, or an empty list if they have none
+  /**
+   * What this human calls themselves
+   */
+  name: string,
+  /**
+   * The ID of the human
+   */
+  id: string,
+  /**
+   * The home planet of the human, or null if unknown
+   */
+  homePlanet: ?string,
+  /**
+   * This human's friends, or an empty list if they have none
+   */
+  friends: ?Array<?HeroName_hero_Human_friends>,
 } | {
   __typename: \\"Droid\\",
-  name: string,                                  // What others call this droid
-  id: string,                                    // The ID of the droid
-  appearsIn: Array<?Episode>,                    // The movies this droid appears in
-  friends: ?Array<?HeroName_hero_Droid_friends>, // This droid's friends, or an empty list if they have none
+  /**
+   * What others call this droid
+   */
+  name: string,
+  /**
+   * The ID of the droid
+   */
+  id: string,
+  /**
+   * The movies this droid appears in
+   */
+  appearsIn: Array<?Episode>,
+  /**
+   * This droid's friends, or an empty list if they have none
+   */
+  friends: ?Array<?HeroName_hero_Droid_friends>,
 };
 
 export type HeroName = {
@@ -557,8 +745,14 @@ Object {
 
 export type HeroName_hero = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-  id: string,   // The ID of the character
+  /**
+   * The name of the character
+   */
+  name: string,
+  /**
+   * The ID of the character
+   */
+  id: string,
 };
 
 export type HeroName = {
@@ -582,8 +776,14 @@ export type HeroNameVariables = {
 
 export type ReviewMovie_createReview = {
   __typename: \\"Review\\",
-  stars: number,       // The number of stars this review gave, 1-5
-  commentary: ?string, // Comment about the movie
+  /**
+   * The number of stars this review gave, 1-5
+   */
+  stars: number,
+  /**
+   * Comment about the movie
+   */
+  commentary: ?string,
 };
 
 export type ReviewMovie = {
@@ -608,8 +808,14 @@ export type ReviewMovieVariables = {
 
 export type SomeOther_hero = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string,               // The name of the character
-  appearsIn: Array<?Episode>, // The movies this character appears in
+  /**
+   * The name of the character
+   */
+  name: string,
+  /**
+   * The movies this character appears in
+   */
+  appearsIn: Array<?Episode>,
 };
 
 export type SomeOther = {
@@ -633,7 +839,10 @@ export type SomeOtherVariables = {
 
 export type someFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
-  appearsIn: Array<?Episode>, // The movies this character appears in
+  /**
+   * The movies this character appears in
+   */
+  appearsIn: Array<?Episode>,
 };",
   },
 }
@@ -652,22 +861,28 @@ exports[`Flow codeGeneration multiple files 4`] = `
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
-// The input object sent when someone is creating a new review
 export type ReviewInput = {|
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 |};
+/**
+ *  The input object sent when someone is creating a new review
+ */
 
-// The input object sent when passing in a color
 export type ColorInput = {|
   red: number,
   green: number,
   blue: number,
 |};
+/**
+ *  The input object sent when passing in a color
+ */
 
 //==============================================================
 // END Enums and Input Objects
@@ -686,7 +901,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
@@ -706,8 +923,14 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 export type HeroFragment_hero = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-  id: string,   // The ID of the character
+  /**
+   * The name of the character
+   */
+  name: string,
+  /**
+   * The ID of the character
+   */
+  id: string,
 };
 
 export type HeroFragment = {
@@ -731,7 +954,10 @@ export type HeroFragmentVariables = {
 
 export type simpleFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string,
 };",
     },
   },
@@ -767,7 +993,10 @@ Object {
 
 export type SimpleFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string,
 };",
     },
   },
@@ -786,7 +1015,9 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
@@ -806,8 +1037,14 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 export type HeroName_hero = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
-  id: string,   // The ID of the character
+  /**
+   * The name of the character
+   */
+  name: string,
+  /**
+   * The ID of the character
+   */
+  id: string,
 };
 
 export type HeroName = {
@@ -834,22 +1071,28 @@ Object {
 // START Enums and Input Objects
 //==============================================================
 
-// The episodes in the Star Wars trilogy
+/**
+ * The episodes in the Star Wars trilogy
+ */
 export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
-// The input object sent when someone is creating a new review
 export type ReviewInput = {|
   stars: number,
   commentary?: ?string,
   favorite_color?: ?ColorInput,
 |};
+/**
+ *  The input object sent when someone is creating a new review
+ */
 
-// The input object sent when passing in a color
 export type ColorInput = {|
   red: number,
   green: number,
   blue: number,
 |};
+/**
+ *  The input object sent when passing in a color
+ */
 
 //==============================================================
 // END Enums and Input Objects
@@ -868,8 +1111,14 @@ export type ColorInput = {|
 
 export type ReviewMovie_createReview = {
   __typename: \\"Review\\",
-  stars: number,       // The number of stars this review gave, 1-5
-  commentary: ?string, // Comment about the movie
+  /**
+   * The number of stars this review gave, 1-5
+   */
+  stars: number,
+  /**
+   * Comment about the movie
+   */
+  commentary: ?string,
 };
 
 export type ReviewMovie = {

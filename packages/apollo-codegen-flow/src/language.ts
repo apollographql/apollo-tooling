@@ -36,6 +36,14 @@ export default class FlowGenerator {
     this.typeAnnotationFromGraphQLType = createTypeAnnotationFromGraphQLTypeFunction(compilerOptions);
   }
 
+  // generating JSDoc style comments
+  private commentBlockContent(commentString: string) {
+    return '*\n' + commentString
+      .split('\n')
+      .map(line => ` * ${line}`)
+      .join('\n') + '\n ';
+  }
+
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
     const unionValues = sortEnumValues(type.getValues()).map(({ value }) => {
@@ -55,9 +63,9 @@ export default class FlowGenerator {
     );
 
     typeAlias.leadingComments = [{
-      type: 'CommentLine',
-      value: ` ${description}`
-    } as t.CommentLine];
+      type: 'CommentBlock',
+      value: this.commentBlockContent(description)
+    } as t.CommentBlock];
 
     return typeAlias;
   }
@@ -103,10 +111,10 @@ export default class FlowGenerator {
         }
 
         if (description) {
-          objectTypeProperty.trailingComments = [{
-            type: 'CommentLine',
-            value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
-          } as t.CommentLine]
+          objectTypeProperty.leadingComments = [{
+            type: 'CommentBlock',
+            value: this.commentBlockContent(description)
+          } as t.CommentBlock];
         }
 
         return objectTypeProperty;
@@ -166,11 +174,11 @@ export default class FlowGenerator {
   public exportDeclaration(declaration: t.Declaration, options: { comments?: string } = {}) {
     const exportedDeclaration = t.exportNamedDeclaration(declaration, []);
 
-    if(options.comments) {
-      exportedDeclaration.leadingComments = [{
-        type: 'CommentLine',
-        value: options.comments,
-      } as t.CommentLine];
+    if (options.comments) {
+      exportedDeclaration.trailingComments = [{
+        type: 'CommentBlock',
+        value: this.commentBlockContent(options.comments)
+      } as t.CommentBlock]
     }
 
     return exportedDeclaration;
