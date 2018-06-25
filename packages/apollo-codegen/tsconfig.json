@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
-    "allowJs": true,
+    "declaration": true,
     "outDir": "lib"
   },
   "include" : [ "src/**/*" ],

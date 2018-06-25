@@ -16,7 +16,7 @@ import { generateSource as generateFlowSource } from 'apollo-codegen-flow';
 import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript';
 import { generateSource as generateScalaSource } from 'apollo-codegen-scala';
 
-type TargetType = 'json' | 'swift' | 'ts-legacy' | 'typescript-legacy'
+export type TargetType = 'json' | 'swift' | 'ts-legacy' | 'typescript-legacy'
   | 'flow-legacy' | 'scala' | 'flow' | 'typescript'
   | 'ts';
 
