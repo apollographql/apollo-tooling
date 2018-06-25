@@ -1,6 +1,7 @@
 # Changelog
 
 ## vNEXT
++ Fix crash when running on a version of Node that already supports Array.flatMap
 
 ## v0.20.1
 + Fix issue with `flow-legacy` target being unusable
