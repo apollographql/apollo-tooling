@@ -38,6 +38,6 @@ export function indent(maybeString?: string) {
 export function commentBlockContent(commentString: string) {
   return '*\n' + commentString
     .split('\n')
-    .map(line => ` * ${line}`)
+    .map(line => ` * ${line.replace('*/', '')}`)
     .join('\n') + '\n ';
 }
