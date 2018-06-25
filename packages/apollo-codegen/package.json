@@ -10,7 +10,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "./node_modules/.bin/jest",
-    "test:smoke": "npm run build && node ./lib/cli.js && echo 'Smoke Test Passed'"
+    "test:smoke": "npm run build && node ./lib/cli.js generate ../common-test/fixtures/starwars/HeroAndFriends.graphql --schema ../common-test/fixtures/starwars/schema.json --output API.swift && echo 'Smoke Test Passed' && rm API.swift"
   },
   "repository": {
     "type": "git",
