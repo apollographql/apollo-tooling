@@ -7,6 +7,8 @@ import {
   CompilerOptions
 } from 'apollo-codegen-core/lib/compiler';
 
+import { commentBlockContent } from 'apollo-codegen-core/lib/utilities/printing';
+
 import {
   sortEnumValues
 } from 'apollo-codegen-core/lib/utilities/graphql';
@@ -36,14 +38,6 @@ export default class FlowGenerator {
     this.typeAnnotationFromGraphQLType = createTypeAnnotationFromGraphQLTypeFunction(compilerOptions);
   }
 
-  // generating JSDoc style comments
-  private commentBlockContent(commentString: string) {
-    return '*\n' + commentString
-      .split('\n')
-      .map(line => ` * ${line}`)
-      .join('\n') + '\n ';
-  }
-
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
     const unionValues = sortEnumValues(type.getValues()).map(({ value }) => {
@@ -64,7 +58,7 @@ export default class FlowGenerator {
 
     typeAlias.leadingComments = [{
       type: 'CommentBlock',
-      value: this.commentBlockContent(description)
+      value: commentBlockContent(description)
     } as t.CommentBlock];
 
     return typeAlias;
@@ -113,7 +107,7 @@ export default class FlowGenerator {
         if (description) {
           objectTypeProperty.leadingComments = [{
             type: 'CommentBlock',
-            value: this.commentBlockContent(description)
+            value: commentBlockContent(description)
           } as t.CommentBlock];
         }
 
@@ -177,7 +171,7 @@ export default class FlowGenerator {
     if (options.comments) {
       exportedDeclaration.trailingComments = [{
         type: 'CommentBlock',
-        value: this.commentBlockContent(options.comments)
+        value: commentBlockContent(options.comments)
       } as t.CommentBlock]
     }
 

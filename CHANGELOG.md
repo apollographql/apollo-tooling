@@ -1,6 +1,7 @@
 # Changelog
 
 ## vNEXT
++ The TypeScript and Flow targets now use block comments to better handle multiline comments in schemas
 
 ## v0.20.1
 + Fix issue with `flow-legacy` target being unusable

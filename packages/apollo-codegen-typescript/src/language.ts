@@ -7,6 +7,7 @@ import {
   CompilerOptions
 } from 'apollo-codegen-core/lib/compiler';
 
+import { commentBlockContent } from 'apollo-codegen-core/lib/utilities/printing';
 
 import {
   sortEnumValues
@@ -36,14 +37,6 @@ export default class TypescriptGenerator {
     this.typeFromGraphQLType = createTypeFromGraphQLTypeFunction(compilerOptions);
   }
 
-  // generating JSDoc style comments
-  private commentBlockContent(commentString: string) {
-    return '*\n' + commentString
-      .split('\n')
-      .map(line => ` * ${line}`)
-      .join('\n') + '\n ';
-  }
-
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
     const enumMembers = sortEnumValues(type.getValues()).map(({ value }) => {
@@ -64,7 +57,7 @@ export default class TypescriptGenerator {
     if (description) {
       typeAlias.leadingComments = [{
         type: 'CommentBlock',
-        value: this.commentBlockContent(description)
+        value: commentBlockContent(description)
       } as t.CommentBlock];
     }
 
@@ -90,7 +83,7 @@ export default class TypescriptGenerator {
 
     inputType.leadingComments = [{
       type: 'CommentBlock',
-      value: this.commentBlockContent(description)
+      value: commentBlockContent(description)
     } as t.CommentBlock]
 
     return inputType;
@@ -114,7 +107,7 @@ export default class TypescriptGenerator {
       if (description) {
         propertySignatureType.leadingComments = [{
           type: 'CommentBlock',
-          value: this.commentBlockContent(description)
+          value: commentBlockContent(description)
         } as t.CommentBlock]
       }
 
