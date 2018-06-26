@@ -55,7 +55,7 @@ export default class SchemaDownload extends Command {
       {
         title: `Saving schema to ${args.output}`,
         task: async ctx => {
-          await promisify(fs.writeFile)(args.output, JSON.stringify({ __schema: ctx.schema }));
+          await promisify(fs.writeFile)(args.output, JSON.stringify(ctx.schema));
         },
       },
     ]);

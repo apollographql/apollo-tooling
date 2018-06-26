@@ -15,6 +15,7 @@ import { generateSource as generateFlowLegacySource } from 'apollo-codegen-flow-
 import { generateSource as generateFlowSource } from 'apollo-codegen-flow';
 import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript';
 import { generateSource as generateScalaSource } from 'apollo-codegen-scala';
+import { GraphQLSchema } from 'graphql';
 
 export type TargetType = 'json' | 'swift' | 'ts-legacy' | 'typescript-legacy'
   | 'flow-legacy' | 'scala' | 'flow' | 'typescript'
@@ -22,7 +23,7 @@ export type TargetType = 'json' | 'swift' | 'ts-legacy' | 'typescript-legacy'
 
 export default function generate(
   inputPaths: string[],
-  schemaPath: string,
+  schema: GraphQLSchema,
   outputPath: string,
   only: string,
   target: TargetType,
@@ -30,10 +31,6 @@ export default function generate(
   projectName: string,
   options: any
 ) {
-  const schema = schemaPath == null
-    ? loadSchemaFromConfig(projectName)
-    : loadSchema(schemaPath);
-
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
 
   validateQueryDocument(schema, document);

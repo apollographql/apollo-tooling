@@ -24,7 +24,7 @@
     "@types/babel-generator": "^6.25.1",
     "@types/babel-types": "^7.0.0",
     "@types/common-tags": "^1.4.0",
-    "@types/graphql": "^0.12.4",
+    "@types/graphql": "^0.13.1",
     "@types/jest": "^21.1.8",
     "graphql": "^0.13.1",
     "jest": "^22.0.3",

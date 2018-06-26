@@ -3,9 +3,15 @@ import { Command, flags } from "@oclif/command";
 import * as Listr from "listr";
 import * as path from "path";
 
-import { TargetType, default as generate } from 'apollo-codegen/lib/generate';
+import { TargetType, default as generate } from '../../generate';
+
+import { buildClientSchema } from "graphql";
 
 import * as globby from "globby";
+import { fstat } from 'fs';
+import * as fs from 'fs';
+import { promisify } from 'util';
+import { utils } from 'mocha';
 
 export default class Generate extends Command {
   static description = "Generate static types for GraphQL queries.";
@@ -86,9 +92,21 @@ export default class Generate extends Command {
         }
       },
       {
+        title: "Loading GraphQL schema",
+        task: async ctx => {
+          const schemaFileContent = await promisify(fs.readFile)(path.resolve(flags.schema as string));
+          const schemaData = JSON.parse(schemaFileContent as any as string);
+          ctx.schema = buildClientSchema(
+            (schemaData.data) ? schemaData.data : (
+              schemaData.__schema ? schemaData : { __schema: schemaData }
+            )
+          )
+        }
+      },
+      {
         title: "Generating query files",
         task: async ctx => {
-          generate(ctx.queryPaths, path.resolve(flags.schema as string), args.output as string, "", inferredTarget, "", "", {})
+          generate(ctx.queryPaths, ctx.schema, args.output as string, "", inferredTarget, "", "", {})
         },
       },
     ]);

@@ -73,10 +73,10 @@ function enumerationDeclaration(generator: CodeGenerator, type: GraphQLEnumType)
   const values = type.getValues();
 
   generator.printNewlineIfNeeded();
-  printDocComment(generator, description);
+  printDocComment(generator, description || undefined);
   generator.printOnNewline(`export enum ${name} {`);
   sortEnumValues(values).forEach((value) => {
-    printDocComment(generator, value.description, 1);
+    printDocComment(generator, value.description || undefined, 1);
     generator.printOnNewline(`  ${value.value} = "${value.value}",`)
   });
   generator.printOnNewline(`}`);
@@ -272,12 +272,14 @@ export function propertiesFromFields(context: LegacyCompilerContext, fields: {
   name?: string,
   type: GraphQLType,
   responseName?: string,
-  description?: string,
+  description?: string | undefined | null,
   fragmentSpreads?: any,
   inlineFragments?: LegacyInlineFragment[],
   fieldName?: string
 }[]) {
-  return fields.map(field => propertyFromField(context, field));
+  return fields.map(field => propertyFromField(
+    context, { ...field, description: field.description || undefined }
+  ));
 }
 
 export function propertyFromField(context: LegacyCompilerContext, field: {
