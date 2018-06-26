@@ -5,7 +5,7 @@ export const SCHEMA_QUERY = gql`
     service(id: $id) {
       schema(tag: $tag) {
         hash
-        __schema: schema {
+        __schema: introspection {
           queryType {
             name
           }
@@ -31,11 +31,11 @@ export const SCHEMA_QUERY = gql`
     }
   }
 
-  fragment IntrospectionFullType on __Type {
+  fragment IntrospectionFullType on IntrospectionType {
     kind
     name
     description
-    fields(includeDeprecated: true) {
+    fields {
       name
       description
       args {
@@ -57,14 +57,14 @@ export const SCHEMA_QUERY = gql`
       name
       description
       isDeprecated
-      deprecationReason
+      depreactionReason
     }
     possibleTypes {
       ...IntrospectionTypeRef
     }
   }
 
-  fragment IntrospectionInputValue on __InputValue {
+  fragment IntrospectionInputValue on IntrospectionInputValue {
     name
     description
     type {
@@ -73,7 +73,7 @@ export const SCHEMA_QUERY = gql`
     defaultValue
   }
 
-  fragment IntrospectionTypeRef on __Type {
+  fragment IntrospectionTypeRef on IntrospectionType {
     kind
     name
     ofType {

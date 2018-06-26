@@ -6,6 +6,11 @@ import { fetchSchema } from "../../fetch-schema";
 import * as fs from 'fs';
 import { promisify } from 'util';
 
+import { toPromise, execute } from "apollo-link";
+
+import { engineLink, getIdFromKey } from "../../engine";
+import { SCHEMA_QUERY } from "../../operations/schema";
+
 export default class SchemaDownload extends Command {
   static description = "Download the schema from your GraphQL endpoint.";
 
@@ -27,6 +32,17 @@ export default class SchemaDownload extends Command {
       description: "The URL of the server to fetch the schema from",
       default: "http://localhost:4000/graphql", // apollo-server 2.0 default address
     }),
+
+    key: flags.string({
+      description: "The API key for the Apollo Engine service",
+    }),
+    tag: flags.string({
+      description: "The tag of the registered schema to get from Apollo Engine"
+    }),
+    engine: flags.string({
+      description: "Reporting URL for a custom Apollo Engine deployment",
+      hidden: true,
+    }),
   };
 
   static args = [
@@ -42,14 +58,42 @@ export default class SchemaDownload extends Command {
     const { flags, args } = this.parse(SchemaDownload);
 
     const header = Array.isArray(flags.header) ? flags.header : [flags.header];
+
+    const apiKey = process.env.ENGINE_API_KEY || flags.key;
+    const pullFromEngine = !!apiKey;
+
     const tasks = new Listr([
       {
-        title: "Fetching local schema",
+        title: pullFromEngine ? "Loading schema from Apollo Engine" : "Fetching local schema",
         task: async ctx => {
-          ctx.schema = await fetchSchema({
-            endpoint: flags.endpoint,
-            header: header.filter(x => Boolean(x)).map(x => JSON.parse(x)),
-          });
+          if (pullFromEngine) {
+            const variables = {
+              id: getIdFromKey(apiKey as string),
+              tag: flags.tag || "current",
+            }
+
+            const engineSchema = await toPromise(
+              execute(engineLink, {
+                query: SCHEMA_QUERY,
+                variables,
+                context: {
+                  headers: { ["x-api-key"]: apiKey },
+                  ...(flags.engine && { uri: flags.engine }),
+                },
+              })
+            );
+
+            if (engineSchema.data && engineSchema.data.service.schema) {
+              ctx.schema = engineSchema.data.service.schema.__schema;
+            } else {
+              this.error("Failed to get schema from Apollo Engine");
+            }
+          } else {
+            ctx.schema = await fetchSchema({
+              endpoint: flags.endpoint,
+              header: header.filter(x => Boolean(x)).map(x => JSON.parse(x)),
+            })
+          }
         },
       },
       {

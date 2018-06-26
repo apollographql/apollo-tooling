@@ -11,6 +11,11 @@ import * as globby from "globby";
 import * as fs from 'fs';
 import { promisify } from 'util';
 
+import { toPromise, execute } from "apollo-link";
+
+import { engineLink, getIdFromKey } from "../../engine";
+import { SCHEMA_QUERY } from "../../operations/schema";
+
 export default class Generate extends Command {
   static description = "Generate static types for GraphQL queries.";
 
@@ -27,6 +32,18 @@ export default class Generate extends Command {
       description: "Path to your GraphQL schema introspection result",
       default: "schema.json",
     }),
+
+    key: flags.string({
+      description: "The API key for the Apollo Engine service",
+    }),
+    tag: flags.string({
+      description: "The tag of the registered schema to get from Apollo Engine"
+    }),
+    engine: flags.string({
+      description: "Reporting URL for a custom Apollo Engine deployment",
+      hidden: true,
+    }),
+
     target: flags.string({
       description: "Type of code generator to use (swift | typescript | flow | scala), inferred from output"
     }),
@@ -60,7 +77,7 @@ export default class Generate extends Command {
     tagName: flags.string({
       description: "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
       default: "gql"
-    })
+    }),
   };
 
   static args = [
@@ -112,6 +129,9 @@ export default class Generate extends Command {
       this.log(`\nInferred target for code generation: ${inferredTarget}\n`);
     }
 
+    const apiKey = process.env.ENGINE_API_KEY || flags.key;
+    const pullFromEngine = !!apiKey;
+
     const tasks = new Listr([
       {
         title: "Scanning for GraphQL queries",
@@ -121,21 +141,46 @@ export default class Generate extends Command {
         }
       },
       {
-        title: "Loading GraphQL schema",
+        title: pullFromEngine ? "Loading schema from Apollo Engine" : "Loading GraphQL schema",
         task: async ctx => {
-          const schemaFileContent = await promisify(fs.readFile)(path.resolve(flags.schema as string));
-          const schemaData = JSON.parse(schemaFileContent as any as string);
-          ctx.schema = buildClientSchema(
-            (schemaData.data) ? schemaData.data : (
-              schemaData.__schema ? schemaData : { __schema: schemaData }
+          if (pullFromEngine) {
+            const variables = {
+              id: getIdFromKey(apiKey as string),
+              tag: flags.tag || "current",
+            }
+
+            const engineSchema = await toPromise(
+              execute(engineLink, {
+                query: SCHEMA_QUERY,
+                variables,
+                context: {
+                  headers: { ["x-api-key"]: apiKey },
+                  ...(flags.engine && { uri: flags.engine }),
+                },
+              })
+            );
+
+            if (engineSchema.data && engineSchema.data.service.schema) {
+              ctx.schema = buildClientSchema(
+                engineSchema.data.service.schema
+              );
+            } else {
+              this.error("Failed to get schema from Apollo Engine");
+            }
+          } else {
+            const schemaFileContent = await promisify(fs.readFile)(path.resolve(flags.schema as string));
+            const schemaData = JSON.parse(schemaFileContent as any as string);
+            ctx.schema = buildClientSchema(
+              (schemaData.data) ? schemaData.data : (
+                schemaData.__schema ? schemaData : { __schema: schemaData }
+              )
             )
-          )
+          }
         }
       },
       {
         title: "Generating query files",
         task: async ctx => {
-          console.log(flags.useFlowExactObjects);
           generate(
             ctx.queryPaths,
             ctx.schema,
