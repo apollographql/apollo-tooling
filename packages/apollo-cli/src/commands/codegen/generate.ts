@@ -135,8 +135,9 @@ export default class Generate extends Command {
     const tasks = new Listr([
       {
         title: "Scanning for GraphQL queries",
-        task: async ctx => {
+        task: async (ctx, task) => {
           const paths = await globby(flags.queries ? [ flags.queries ] : []);
+          task.title = `Scanning for GraphQL queries (${paths.length} found)`;
           ctx.queryPaths = paths;
         }
       },
