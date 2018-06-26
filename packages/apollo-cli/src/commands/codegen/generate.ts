@@ -31,6 +31,30 @@ export default class Generate extends Command {
     }),
     target: flags.string({
       description: "Type of code generator to use (swift | typescript | flow | scala), inferred from output"
+    }),
+    namespace: flags.string({
+      description: "The namespace to emit generated code into."
+    }),
+    passthroughCustomScalars: flags.boolean({
+      description: "Use your own types for custom scalars"
+    }),
+    customScalarsPrefix: flags.string({
+      description: "Include a prefix when using provided types for custom scalars"
+    }),
+    addTypename: flags.boolean({
+      description: "Automatically add __typename to your queries"
+    }),
+    operationIdsPath: flags.string({
+      description: "Path to an operation id JSON map file. If specified, also stores the operation ids (hashes) as properties on operation types [currently Swift-only]"
+    }),
+    mergeInFieldsFromFragmentSpreads: flags.boolean({
+      description: "Merge fragment fields onto its enclosing type"
+    }),
+    useFlowExactObjects: flags.boolean({
+      description: "Use Flow read only types for generated types [flow only]"
+    }),
+    useFlowReadOnlyTypes: flags.boolean({
+      description: "Use Flow read only types for generated types [flow only]"
     })
   };
 
@@ -106,7 +130,18 @@ export default class Generate extends Command {
       {
         title: "Generating query files",
         task: async ctx => {
-          generate(ctx.queryPaths, ctx.schema, args.output as string, "", inferredTarget, "", "", {})
+          console.log(flags.useFlowExactObjects);
+          generate(ctx.queryPaths, ctx.schema, args.output as string, "", inferredTarget, "", "", {
+            passthroughCustomScalars: flags.passthroughCustomScalars || flags.customScalarsPrefix,
+            customScalarsPrefix: flags.customScalarsPrefix || "",
+            addTypename: flags.addTypename,
+            namespace: flags.namespace,
+            operationIdsPath: flags.operationIdsPath,
+            generateOperationIds: !!flags.operationIdsPath,
+            mergeInFieldsFromFragmentSpreads: flags.mergeInFieldsFromFragmentSpreads,
+            useFlowExactObjects: flags.useFlowExactObjects,
+            useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes
+          })
         },
       },
     ]);
