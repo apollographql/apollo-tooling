@@ -125,13 +125,14 @@ export default class CheckQueries extends Command {
             return validateResult.concat(deprecationResult);
           });
 
-          ctx.errors = errors;
-          ctx.warnings = warnings;
+          if (errors.length > 0 || warnings.length > 0) {
+            throw { errors, warnings };
+          }
         },
       },
     ]);
 
-    return tasks.run().then(({ errors, warnings }) => {
+    return tasks.run().catch(({ errors, warnings }) => {
       if (warnings.length > 0) {
         this.warn(warnings.join("\n"));
       }
