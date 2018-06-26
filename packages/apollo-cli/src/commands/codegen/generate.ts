@@ -23,19 +23,24 @@ export default class Generate extends Command {
       description: "Path to your GraphQL schema introspection result",
       default: "schema.json",
     }),
-    output: flags.string({
-      description: "Path to write the generated code to"
-    }),
     target: flags.string({
       description: "Type of code generator to use (swift | typescript | flow | scala), inferred from output"
     })
   };
 
-  async run() {
-    const { flags } = this.parse(Generate);
+  static args = [
+    {
+      name: "output",
+      description: "Path to write the generated code to",
+      required: true
+    }
+  ]
 
-    if (!flags.output) {
-      this.error("The --output argument is required to generate code");
+  async run() {
+    const { flags, args } = this.parse(Generate);
+
+    if (!args.output) {
+      this.error("The output path must be specified in the arguments");
       return;
     }
 
@@ -47,7 +52,7 @@ export default class Generate extends Command {
         this.error(`Unsupported target: ${flags.target}`);
       }
     } else {
-      switch(flags.output.split('.').reverse()[0]) {
+      switch(args.output.split('.').reverse()[0]) {
         case "swift":
           inferredTarget = "swift";
           break;
@@ -83,7 +88,7 @@ export default class Generate extends Command {
       {
         title: "Generating query files",
         task: async ctx => {
-          generate(ctx.queryPaths, path.resolve(flags.schema as string), flags.output as string, "", inferredTarget, "", "", {})
+          generate(ctx.queryPaths, path.resolve(flags.schema as string), args.output as string, "", inferredTarget, "", "", {})
         },
       },
     ]);
