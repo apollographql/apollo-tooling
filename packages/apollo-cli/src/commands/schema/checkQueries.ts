@@ -5,7 +5,7 @@ import * as path from "path";
 
 import { TargetType, default as generate } from '../../generate';
 
-import { buildClientSchema, validate } from "graphql";
+import { buildClientSchema, validate, findDeprecatedUsages, GraphQLError } from "graphql";
 
 import * as globby from "globby";
 import * as fs from 'fs';
@@ -111,22 +111,31 @@ export default class CheckQueries extends Command {
         task: async (ctx, task) => {
           const docs = loadQueryDocuments(ctx.queryPaths, flags.tagName);
 
-          let failuresCount = 0;
-          ctx.errors = docs.map((doc, i) => {
+          const errors: GraphQLError[] = [];
+          const warnings: GraphQLError[] = []
+
+          docs.forEach((doc, i) => {
             const validateResult = validate(ctx.schema, doc);
-            if (validateResult.length > 0) {
-              failuresCount += 1;
-              task.title = `Checking query compatibility with schema (${i + 1}/${docs.length}, ${failuresCount} failures detected)`;
-              return validateResult;
-            } else {
-              return undefined;
-            }
+            const deprecationResult = findDeprecatedUsages(ctx.schema, doc);
+
+            errors.push(...validateResult);
+            warnings.push(...deprecationResult);
+
+            task.title = `Checking query compatibility with schema (${i + 1}/${docs.length}, ${errors.length} errors, ${warnings.length} warnings)`;
+            return validateResult.concat(deprecationResult);
           });
+
+          ctx.errors = errors;
+          ctx.warnings = warnings;
         },
       },
     ]);
 
-    return tasks.run().then(({ errors }) => {
+    return tasks.run().then(({ errors, warnings }) => {
+      if (warnings.length > 0) {
+        this.warn(warnings.join("\n"));
+      }
+
       if (errors.length > 0) {
         this.error(errors.join("\n"));
         this.exit(1);
