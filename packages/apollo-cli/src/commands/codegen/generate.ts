@@ -205,8 +205,6 @@ export default class Generate extends Command {
       },
     ]);
 
-    return tasks.run().then(async ({ }) => {
-      this.exit(0);
-    });
+    return tasks.run();
   }
 }
