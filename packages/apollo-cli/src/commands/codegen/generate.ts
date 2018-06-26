@@ -125,8 +125,6 @@ export default class Generate extends Command {
           this.error("Could not infer target from output file type, please use --target");
           return;
       }
-
-      this.log(`\nInferred target for code generation: ${inferredTarget}\n`);
     }
 
     const apiKey = process.env.ENGINE_API_KEY || flags.key;
@@ -181,7 +179,8 @@ export default class Generate extends Command {
       },
       {
         title: "Generating query files",
-        task: async ctx => {
+        task: async (ctx, task) => {
+          task.title = `Generating query files with '${inferredTarget}' target`;
           generate(
             ctx.queryPaths,
             ctx.schema,
