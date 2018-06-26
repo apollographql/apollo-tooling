@@ -8,10 +8,8 @@ import { TargetType, default as generate } from '../../generate';
 import { buildClientSchema } from "graphql";
 
 import * as globby from "globby";
-import { fstat } from 'fs';
 import * as fs from 'fs';
 import { promisify } from 'util';
-import { utils } from 'mocha';
 
 export default class Generate extends Command {
   static description = "Generate static types for GraphQL queries.";
@@ -55,6 +53,13 @@ export default class Generate extends Command {
     }),
     useFlowReadOnlyTypes: flags.boolean({
       description: "Use Flow read only types for generated types [flow only]"
+    }),
+    only: flags.string({
+      description: "Parse all input files, but only output generated code for the specified file [Swift only]"
+    }),
+    tagName: flags.string({
+      description: "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
+      default: "gql"
     })
   };
 
@@ -131,17 +136,25 @@ export default class Generate extends Command {
         title: "Generating query files",
         task: async ctx => {
           console.log(flags.useFlowExactObjects);
-          generate(ctx.queryPaths, ctx.schema, args.output as string, "", inferredTarget, "", "", {
-            passthroughCustomScalars: flags.passthroughCustomScalars || flags.customScalarsPrefix,
-            customScalarsPrefix: flags.customScalarsPrefix || "",
-            addTypename: flags.addTypename,
-            namespace: flags.namespace,
-            operationIdsPath: flags.operationIdsPath,
-            generateOperationIds: !!flags.operationIdsPath,
-            mergeInFieldsFromFragmentSpreads: flags.mergeInFieldsFromFragmentSpreads,
-            useFlowExactObjects: flags.useFlowExactObjects,
-            useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes
-          })
+          generate(
+            ctx.queryPaths,
+            ctx.schema,
+            args.output as string,
+            flags.only ? path.resolve(flags.only) : "",
+            inferredTarget,
+            flags.tagName as string,
+            {
+              passthroughCustomScalars: flags.passthroughCustomScalars || flags.customScalarsPrefix,
+              customScalarsPrefix: flags.customScalarsPrefix || "",
+              addTypename: flags.addTypename,
+              namespace: flags.namespace,
+              operationIdsPath: flags.operationIdsPath,
+              generateOperationIds: !!flags.operationIdsPath,
+              mergeInFieldsFromFragmentSpreads: flags.mergeInFieldsFromFragmentSpreads,
+              useFlowExactObjects: flags.useFlowExactObjects,
+              useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes
+            }
+          )
         },
       },
     ]);

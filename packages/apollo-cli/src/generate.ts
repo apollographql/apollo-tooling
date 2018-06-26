@@ -28,7 +28,6 @@ export default function generate(
   only: string,
   target: TargetType,
   tagName: string,
-  projectName: string,
   options: any
 ) {
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
