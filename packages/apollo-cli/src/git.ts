@@ -5,13 +5,13 @@ import { gitToJs } from "git-parse";
 import * as git from "git-rev-sync";
 import { pickBy, identity } from "lodash";
 
-const findGitRoot = (start?: string | string[]): string => {
+const findGitRoot = (start?: string | string[]): string | void => {
   start = start || module.parent!.filename;
   if (typeof start === "string") {
     if (start[start.length - 1] !== path.sep) start += path.sep;
     start = start.split(path.sep);
   }
-  if (!start.length) throw new Error(".git/ not found in path");
+  if (!start.length) return;
   start.pop();
   const dir = start.join(path.sep);
   if (fs.existsSync(path.join(dir, ".git"))) {
@@ -30,7 +30,7 @@ export const gitInfo = async (path?: string) => {
   const { isCi, commit, slug, root } = ci();
   const gitLoc = root ? root : findGitRoot();
 
-  if (!commit) return;
+  if (!commit || !gitLoc) return;
 
   const { authorName, authorEmail } = await gitToJs(gitLoc)
     .then(
