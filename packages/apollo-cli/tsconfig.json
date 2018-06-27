@@ -8,8 +8,8 @@
     "outDir": "./lib",
     "pretty": true,
     "rootDirs": ["./src"],
-    "lib": ["dom", "es2017", "esnext.asynciterable"],
-    "target": "es5",
+    "lib": ["es2017", "esnext.asynciterable"],
+    "target": "es2017",
     "baseUrl": ".",
     "paths": {
       "*": ["./@types/*"]
