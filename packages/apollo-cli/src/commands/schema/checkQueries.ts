@@ -98,13 +98,18 @@ export default class CheckQueries extends Command {
 
     return tasks.run().catch(({ errors, warnings }) => {
       if (warnings.length > 0) {
+        this.log();
         this.warn(warnings.join("\n"));
       }
 
       if (errors.length > 0) {
-        this.error(errors.join("\n"));
+        this.log();
+        this.error("\n" + errors.join("\n") + "\n");
+        this.log();
         this.exit(1);
       }
+
+      this.log();
     });
   }
 }
