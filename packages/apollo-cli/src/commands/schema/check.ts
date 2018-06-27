@@ -13,6 +13,8 @@ import { fetchSchema } from "../../fetch-schema";
 import { gitInfo } from "../../git";
 import { ChangeType } from "../../printer/ast";
 
+import { engineFlags } from "../../engine-cli";
+
 // how its brought down from schema
 interface Change {
   type: ChangeType;
@@ -28,9 +30,7 @@ export default class SchemaCheck extends Command {
       char: "h",
       description: "Show command help",
     }),
-    key: flags.string({
-      description: "The API key for the Apollo Engine service",
-    }),
+    ...engineFlags,
     header: flags.string({
       multiple: true,
       parse: header => {
@@ -47,15 +47,11 @@ export default class SchemaCheck extends Command {
     json: flags.boolean({
       description: "Output result as JSON",
     }),
-    engine: flags.string({
-      description: "Reporting URL for a custom Apollo Engine deployment",
-      hidden: true,
-    }),
   };
 
   async run() {
     const { flags } = this.parse(SchemaCheck);
-    const apiKey = process.env.ENGINE_API_KEY || flags.key;
+    const apiKey = flags.key;
     if (!apiKey) {
       this.error(
         "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."

@@ -67,7 +67,7 @@ export function generateSource(
   context: CompilerContext,
 ) {
   const generator = new FlowAPIGenerator(context);
-  const generatedFiles: { [filePath: string]: FlowGeneratedFile } = {};
+  const generatedFiles: { sourcePath: string, fileName: string, content: FlowGeneratedFile }[] = [];
 
   Object.values(context.operations)
     .forEach((operation) => {
@@ -76,7 +76,11 @@ export function generateSource(
 
       const output = generator.printer.printAndClear();
 
-      generatedFiles[`${operation.operationName}.js`] = new FlowGeneratedFile(output);
+      generatedFiles.push({
+        sourcePath: operation.filePath,
+        fileName: `${operation.operationName}.ts`,
+        content: new FlowGeneratedFile(output)
+      });
     });
 
   Object.values(context.fragments)
@@ -86,7 +90,11 @@ export function generateSource(
 
       const output = generator.printer.printAndClear();
 
-      generatedFiles[`${fragment.fragmentName}.js`] = new FlowGeneratedFile(output);
+      generatedFiles.push({
+        sourcePath: fragment.filePath,
+        fileName: `${fragment.fragmentName}.ts`,
+        content: new FlowGeneratedFile(output)
+      });
     });
 
   generator.fileHeader();

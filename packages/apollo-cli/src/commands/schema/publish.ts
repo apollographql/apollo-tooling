@@ -11,6 +11,8 @@ import { getIdFromKey, engineLink } from "../../engine";
 import { fetchSchema } from "../../fetch-schema";
 import { gitInfo } from "../../git";
 
+import { engineFlags } from "../../engine-cli";
+
 export default class SchemaPublish extends Command {
   static description = "Publish a schema to Apollo Engine";
 
@@ -19,9 +21,7 @@ export default class SchemaPublish extends Command {
       char: "h",
       description: "Show command help",
     }),
-    key: flags.string({
-      description: "The API key for the Apollo Engine service",
-    }),
+    ...engineFlags,
     header: flags.string({
       multiple: true,
       parse: header => {
@@ -38,10 +38,6 @@ export default class SchemaPublish extends Command {
     json: flags.boolean({
       description: "Output successful publish result as JSON",
     }),
-    engine: flags.string({
-      description: "Reporting URL for a custom Engine deployment",
-      hidden: true,
-    }),
   };
 
   async run() {
@@ -49,7 +45,7 @@ export default class SchemaPublish extends Command {
     // hardcoded to current until service / schema / tag is settled
     const tag = "current";
 
-    const apiKey = process.env.ENGINE_API_KEY || flags.key;
+    const apiKey = flags.key;
     if (!apiKey) {
       this.error(
         "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."

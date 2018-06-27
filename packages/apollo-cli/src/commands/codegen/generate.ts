@@ -16,6 +16,8 @@ import { toPromise, execute } from "apollo-link";
 import { engineLink, getIdFromKey } from "../../engine";
 import { SCHEMA_QUERY } from "../../operations/schema";
 
+import { engineFlags } from "../../engine-cli";
+
 export default class Generate extends Command {
   static description = "Generate static types for GraphQL queries.";
 
@@ -33,16 +35,7 @@ export default class Generate extends Command {
       default: "schema.json",
     }),
 
-    key: flags.string({
-      description: "The API key for the Apollo Engine service",
-    }),
-    tag: flags.string({
-      description: "The tag of the registered schema to get from Apollo Engine"
-    }),
-    engine: flags.string({
-      description: "Reporting URL for a custom Apollo Engine deployment",
-      hidden: true,
-    }),
+    ...engineFlags,
 
     target: flags.string({
       description: "Type of code generator to use (swift | typescript | flow | scala), inferred from output"
@@ -84,26 +77,20 @@ export default class Generate extends Command {
     {
       name: "output",
       description: "Path to write the generated code to",
-      required: true
     }
   ]
 
   async run() {
     const { flags, args } = this.parse(Generate);
 
-    if (!args.output) {
-      this.error("The output path must be specified in the arguments");
-      return;
-    }
-
-    let inferredTarget: TargetType;
+    let inferredTarget: TargetType = "" as TargetType;
     if (flags.target) {
       if (["swift", "typescript", "flow", "scala"].includes(flags.target)) {
         inferredTarget = flags.target as TargetType;
       } else {
         this.error(`Unsupported target: ${flags.target}`);
       }
-    } else {
+    } else if (args.output) {
       switch(args.output.split('.').reverse()[0]) {
         case "swift":
           inferredTarget = "swift";
@@ -127,7 +114,12 @@ export default class Generate extends Command {
       }
     }
 
-    const apiKey = process.env.ENGINE_API_KEY || flags.key;
+    if (!args.output && inferredTarget != "typescript" && inferredTarget != "flow") {
+      this.error("The output path must be specified in the arguments for Swift and Scala");
+      return;
+    }
+
+    const apiKey = flags.key;
     const pullFromEngine = !!apiKey;
 
     const tasks = new Listr([
@@ -145,7 +137,7 @@ export default class Generate extends Command {
           if (pullFromEngine) {
             const variables = {
               id: getIdFromKey(apiKey as string),
-              tag: flags.tag || "current",
+              tag: "current",
             }
 
             const engineSchema = await toPromise(
@@ -184,10 +176,11 @@ export default class Generate extends Command {
           generate(
             ctx.queryPaths,
             ctx.schema,
-            args.output as string,
+            args.output || path.resolve("."),
             flags.only ? path.resolve(flags.only) : "",
             inferredTarget,
             flags.tagName as string,
+            !args.output,
             {
               passthroughCustomScalars: flags.passthroughCustomScalars || flags.customScalarsPrefix,
               customScalarsPrefix: flags.customScalarsPrefix || "",
