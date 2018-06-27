@@ -147,7 +147,10 @@ export type humanFragment = {|
 
 export type droidFragment = {|
   +__typename: \\"Droid\\",
-  +appearsIn: $ReadOnlyArray<?Episode>, // The movies this droid appears in
+  /**
+   * The movies this droid appears in
+   */
+  +appearsIn: $ReadOnlyArray<?Episode>,
 |};",
       },
       "fileName": "droidFragment.ts",
@@ -304,7 +307,10 @@ export type humanFragment = {
 
 export type droidFragment = {
   __typename: \\"Droid\\",
-  appearsIn: Array<?Episode>, // The movies this droid appears in
+  /**
+   * The movies this droid appears in
+   */
+  appearsIn: Array<?Episode>,
 };",
       },
       "fileName": "droidFragment.ts",
@@ -419,7 +425,10 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 export type simpleFragment = {
   __typename: \\"Human\\" | \\"Droid\\",
-  name: string, // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string,
 };",
       },
       "fileName": "simpleFragment.ts",

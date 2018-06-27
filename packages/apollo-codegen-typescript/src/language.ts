@@ -83,7 +83,7 @@ export default class TypescriptGenerator {
 
     inputType.leadingComments = [{
       type: 'CommentBlock',
-      value: commentBlockContent(description)
+      value: commentBlockContent(description || "")
     } as t.CommentBlock]
 
     return inputType;

@@ -58,7 +58,7 @@ export default class FlowGenerator {
 
     typeAlias.leadingComments = [{
       type: 'CommentBlock',
-      value: commentBlockContent(description)
+      value: commentBlockContent(description || "")
     } as t.CommentBlock];
 
     return typeAlias;

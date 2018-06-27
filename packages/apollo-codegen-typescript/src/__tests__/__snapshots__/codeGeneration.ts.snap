@@ -159,7 +159,10 @@ export interface humanFragment {
 
 export interface droidFragment {
   __typename: \\"Droid\\";
-  appearsIn: (Episode | null)[];  // The movies this droid appears in
+  /**
+   * The movies this droid appears in
+   */
+  appearsIn: (Episode | null)[];
 }",
       },
       "fileName": "droidFragment.ts",
@@ -200,7 +203,7 @@ export interface simpleFragment {
   /**
    * The name of the character
    */
-  name: string;  // The name of the character
+  name: string;
 }",
       },
       "fileName": "simpleFragment.ts",
@@ -273,7 +276,10 @@ export enum Episode {
 
 export interface simpleFragment {
   __typename: \\"Human\\" | \\"Droid\\";
-  name: string;  // The name of the character
+  /**
+   * The name of the character
+   */
+  name: string;
 }",
       },
       "fileName": "simpleFragment.ts",
