@@ -23,9 +23,10 @@ export enum Episode {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroName.ts": TypescriptGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -97,27 +98,13 @@ export interface HeroName {
 export interface HeroNameVariables {
   episode?: Episode | null;
 }",
+      },
+      "fileName": "HeroName.ts",
+      "sourcePath": "GraphQL request",
     },
-    "droidFragment.ts": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL fragment: droidFragment
-// ====================================================
-
-export interface droidFragment {
-  __typename: \\"Droid\\";
-  /**
-   * The movies this droid appears in
-   */
-  appearsIn: (Episode | null)[];
-}",
-    },
-    "humanFragment.ts": TypescriptGeneratedFile {
-      "fileContents": "
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -155,8 +142,30 @@ export interface humanFragment {
    */
   friends: (humanFragment_friends | null)[] | null;
 }",
+      },
+      "fileName": "humanFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: droidFragment
+// ====================================================
+
+export interface droidFragment {
+  __typename: \\"Droid\\";
+  appearsIn: (Episode | null)[];  // The movies this droid appears in
+}",
+      },
+      "fileName": "droidFragment.ts",
+      "sourcePath": "GraphQL request",
+    },
+  ],
 }
 `;
 
@@ -174,9 +183,32 @@ Object {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "anotherFragment.ts": TypescriptGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: simpleFragment
+// ====================================================
+
+export interface simpleFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  /**
+   * The name of the character
+   */
+  name: string;  // The name of the character
+}",
+      },
+      "fileName": "simpleFragment.ts",
+      "sourcePath": "GraphQL request",
+    },
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -196,26 +228,11 @@ export interface anotherFragment {
    */
   name: string;
 }",
+      },
+      "fileName": "anotherFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-    "simpleFragment.ts": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL fragment: simpleFragment
-// ====================================================
-
-export interface simpleFragment {
-  __typename: \\"Human\\" | \\"Droid\\";
-  /**
-   * The name of the character
-   */
-  name: string;
-}",
-    },
-  },
+  ],
 }
 `;
 
@@ -242,9 +259,29 @@ export enum Episode {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "anotherFragment.ts": TypescriptGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: simpleFragment
+// ====================================================
+
+export interface simpleFragment {
+  __typename: \\"Human\\" | \\"Droid\\";
+  name: string;  // The name of the character
+}",
+      },
+      "fileName": "simpleFragment.ts",
+      "sourcePath": "GraphQL request",
+    },
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -282,26 +319,11 @@ export interface anotherFragment_Human {
 }
 
 export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;",
+      },
+      "fileName": "anotherFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-    "simpleFragment.ts": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL fragment: simpleFragment
-// ====================================================
-
-export interface simpleFragment {
-  __typename: \\"Human\\" | \\"Droid\\";
-  /**
-   * The name of the character
-   */
-  name: string;
-}",
-    },
-  },
+  ],
 }
 `;
 
@@ -319,9 +341,10 @@ Object {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "CustomScalar.ts": TypescriptGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -343,8 +366,11 @@ export interface CustomScalar_commentTest {
 export interface CustomScalar {
   commentTest: CustomScalar_commentTest | null;
 }",
+      },
+      "fileName": "CustomScalar.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
@@ -371,9 +397,10 @@ export enum Episode {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroInlineFragment.ts": TypescriptGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -401,8 +428,11 @@ export interface HeroInlineFragment {
 export interface HeroInlineFragmentVariables {
   episode?: Episode | null;
 }",
+      },
+      "fileName": "HeroInlineFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
@@ -429,9 +459,10 @@ export enum Episode {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroName.ts": TypescriptGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -493,8 +524,11 @@ export interface HeroName {
 export interface HeroNameVariables {
   episode?: Episode | null;
 }",
+      },
+      "fileName": "HeroName.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
@@ -521,9 +555,10 @@ export enum Episode {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroName.ts": TypescriptGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -597,17 +632,21 @@ export interface HeroName {
 export interface HeroNameVariables {
   episode?: Episode | null;
 }",
+      },
+      "fileName": "HeroName.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
 exports[`Typescript codeGeneration multiple files 1`] = `"generatedFiles"`;
 
 exports[`Typescript codeGeneration multiple files 2`] = `
-Object {
-  "HeroName.ts": TypescriptGeneratedFile {
-    "fileContents": "
+Array [
+  Object {
+    "content": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -635,9 +674,47 @@ export interface HeroName {
 export interface HeroNameVariables {
   episode?: Episode | null;
 }",
+    },
+    "fileName": "HeroName.ts",
+    "sourcePath": "/some/file/ComponentA.js",
   },
-  "ReviewMovie.ts": TypescriptGeneratedFile {
-    "fileContents": "
+  Object {
+    "content": TypescriptGeneratedFile {
+      "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SomeOther
+// ====================================================
+
+export interface SomeOther_hero {
+  __typename: \\"Human\\" | \\"Droid\\";
+  /**
+   * The name of the character
+   */
+  name: string;
+  /**
+   * The movies this character appears in
+   */
+  appearsIn: (Episode | null)[];
+}
+
+export interface SomeOther {
+  hero: SomeOther_hero | null;
+}
+
+export interface SomeOtherVariables {
+  episode?: Episode | null;
+}",
+    },
+    "fileName": "SomeOther.ts",
+    "sourcePath": "/some/file/ComponentB.js",
+  },
+  Object {
+    "content": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -666,39 +743,13 @@ export interface ReviewMovieVariables {
   episode?: Episode | null;
   review?: ReviewInput | null;
 }",
+    },
+    "fileName": "ReviewMovie.ts",
+    "sourcePath": "GraphQL request",
   },
-  "SomeOther.ts": TypescriptGeneratedFile {
-    "fileContents": "
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: SomeOther
-// ====================================================
-
-export interface SomeOther_hero {
-  __typename: \\"Human\\" | \\"Droid\\";
-  /**
-   * The name of the character
-   */
-  name: string;
-  /**
-   * The movies this character appears in
-   */
-  appearsIn: (Episode | null)[];
-}
-
-export interface SomeOther {
-  hero: SomeOther_hero | null;
-}
-
-export interface SomeOtherVariables {
-  episode?: Episode | null;
-}",
-  },
-  "someFragment.ts": TypescriptGeneratedFile {
-    "fileContents": "
+  Object {
+    "content": TypescriptGeneratedFile {
+      "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -714,8 +765,11 @@ export interface someFragment {
    */
   appearsIn: (Episode | null)[];
 }",
+    },
+    "fileName": "someFragment.ts",
+    "sourcePath": "/some/file/ComponentB.js",
   },
-}
+]
 `;
 
 exports[`Typescript codeGeneration multiple files 3`] = `"common"`;
@@ -785,9 +839,10 @@ export enum Episode {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroFragment.ts": TypescriptGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -815,9 +870,13 @@ export interface HeroFragment {
 export interface HeroFragmentVariables {
   episode?: Episode | null;
 }",
+      },
+      "fileName": "HeroFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-    "simpleFragment.ts": TypescriptGeneratedFile {
-      "fileContents": "
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -833,8 +892,11 @@ export interface simpleFragment {
    */
   name: string;
 }",
+      },
+      "fileName": "simpleFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
@@ -852,9 +914,10 @@ Object {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "SimpleFragment.ts": TypescriptGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -870,8 +933,11 @@ export interface SimpleFragment {
    */
   name: string;
 }",
+      },
+      "fileName": "SimpleFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
@@ -898,9 +964,10 @@ export enum Episode {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroName.ts": TypescriptGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -928,8 +995,11 @@ export interface HeroName {
 export interface HeroNameVariables {
   episode?: Episode | null;
 }",
+      },
+      "fileName": "HeroName.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
@@ -974,9 +1044,10 @@ export interface ColorInput {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "ReviewMovie.ts": TypescriptGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": TypescriptGeneratedFile {
+        "fileContents": "
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -1005,7 +1076,10 @@ export interface ReviewMovieVariables {
   episode?: Episode | null;
   review?: ReviewInput | null;
 }",
+      },
+      "fileName": "ReviewMovie.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;

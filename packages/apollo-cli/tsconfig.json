@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "declaration": true,
+    "jsx": "react",
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "outDir": "./lib",
+    "pretty": true,
+    "rootDirs": ["./src"],
+    "lib": ["es2017", "esnext.asynciterable"],
+    "target": "es2017",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["./@types/*"]
+    },
+    "noImplicitReturns": false,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false
+  },
+  "include": ["./src/**/*"],
+  "exclude": [ "**/__tests__/*" ]
+}

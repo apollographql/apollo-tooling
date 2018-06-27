@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as rimraf from 'rimraf';
 
-import { loadSchema, loadSchemaFromConfig, loadAndMergeQueryDocuments } from 'apollo-codegen-core/lib/loading';
+import { loadAndMergeQueryDocuments } from 'apollo-codegen-core/lib/loading';
 import { validateQueryDocument } from './validation';
 import { compileToIR } from 'apollo-codegen-core/lib/compiler';
 import { compileToLegacyIR } from 'apollo-codegen-core/lib/compiler/legacyIR';
@@ -15,24 +14,23 @@ import { generateSource as generateFlowLegacySource } from 'apollo-codegen-flow-
 import { generateSource as generateFlowSource } from 'apollo-codegen-flow';
 import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript';
 import { generateSource as generateScalaSource } from 'apollo-codegen-scala';
+import { GraphQLSchema } from 'graphql';
 
-type TargetType = 'json' | 'swift' | 'ts-legacy' | 'typescript-legacy'
+export type TargetType = 'json' | 'swift' | 'ts-legacy' | 'typescript-legacy'
   | 'flow-legacy' | 'scala' | 'flow' | 'typescript'
   | 'ts';
 
 export default function generate(
   inputPaths: string[],
-  schemaPath: string,
+  schema: GraphQLSchema,
   outputPath: string,
   only: string,
   target: TargetType,
   tagName: string,
-  projectName: string,
+  nextToSources: boolean,
   options: any
-) {
-  const schema = schemaPath == null
-    ? loadSchemaFromConfig(projectName)
-    : loadSchema(schemaPath);
+): number {
+  let writtenFiles = 0;
 
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
 
@@ -48,12 +46,15 @@ export default function generate(
 
     if (outputIndividualFiles) {
       writeGeneratedFiles(generator.generatedFiles, outputPath);
+      writtenFiles += Object.keys(generator.generatedFiles).length;
     } else {
       fs.writeFileSync(outputPath, generator.output);
+      writtenFiles += 1;
     }
 
     if (options.generateOperationIds) {
       writeOperationIdsMap(context);
+      writtenFiles += 1;
     }
   }
   else if (target === 'flow' || target === 'typescript' || target === 'ts') {
@@ -69,22 +70,25 @@ export default function generate(
     const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
 
     if (outputIndividualFiles) {
-      Object.keys(generatedFiles)
-        .forEach((filePath: string) => {
-          outFiles[path.basename(filePath)] = {
-            output: generatedFiles[filePath].fileContents + common
-          }
-        });
+      generatedFiles.forEach(({sourcePath, fileName, content}) => {
+        outFiles[nextToSources ? `${path.dirname(sourcePath)}/${fileName}` : fileName] = {
+          output: content.fileContents + common
+        }
+      });
 
       writeGeneratedFiles(
         outFiles,
         outputPath
       );
+
+      writtenFiles += Object.keys(outFiles).length;
     } else {
       fs.writeFileSync(
         outputPath,
-        Object.values(generatedFiles).map(v => v.fileContents).join("\n") + common
+        generatedFiles.map(o => o.content.fileContents).join("\n") + common
       );
+
+      writtenFiles += 1;
     }
   }
   else {
@@ -107,22 +111,19 @@ export default function generate(
 
     if (outputPath) {
       fs.writeFileSync(outputPath, output);
+      writtenFiles += 1;
     } else {
       console.log(output);
     }
   }
+
+  return writtenFiles;
 }
 
 function writeGeneratedFiles(
   generatedFiles: { [fileName: string]: BasicGeneratedFile },
   outputDirectory: string
 ) {
-  // Clear all generated stuff to make sure there isn't anything
-  // unnecessary lying around.
-  rimraf.sync(outputDirectory);
-  // Remake the output directory
-  fs.mkdirSync(outputDirectory);
-
   for (const [fileName, generatedFile] of Object.entries(generatedFiles)) {
     fs.writeFileSync(path.join(outputDirectory, fileName), generatedFile.output);
   }

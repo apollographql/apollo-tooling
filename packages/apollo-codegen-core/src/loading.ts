@@ -99,7 +99,7 @@ export function extractDocumentFromJavascript(
   return doc.length ? doc : null;
 }
 
-export function loadAndMergeQueryDocuments(inputPaths: string[], tagName: string = 'gql'): DocumentNode {
+export function loadQueryDocuments(inputPaths: string[], tagName: string = 'gql'): DocumentNode[] {
   const sources = inputPaths.map(inputPath => {
     const body = fs.readFileSync(inputPath, 'utf8');
     if (!body) {
@@ -116,5 +116,10 @@ export function loadAndMergeQueryDocuments(inputPaths: string[], tagName: string
     return new Source(body, inputPath);
   }).filter(source => source);
 
-  return concatAST((sources as Source[]).map(source => parse(source)));
+  return (sources as Source[]).map(source => parse(source));
+}
+
+
+export function loadAndMergeQueryDocuments(inputPaths: string[], tagName: string = 'gql'): DocumentNode {
+  return concatAST(loadQueryDocuments(inputPaths, tagName));
 }

@@ -71,7 +71,7 @@ export function generateSource(
   context: CompilerContext,
 ) {
   const generator = new TypescriptAPIGenerator(context);
-  const generatedFiles: { [filePath: string]: TypescriptGeneratedFile } = {};
+  const generatedFiles: { sourcePath: string, fileName: string, content: TypescriptGeneratedFile }[] = [];
 
   Object.values(context.operations)
     .forEach((operation) => {
@@ -80,7 +80,11 @@ export function generateSource(
 
       const output = generator.printer.printAndClear();
 
-      generatedFiles[`${operation.operationName}.ts`] = new TypescriptGeneratedFile(output);
+      generatedFiles.push({
+        sourcePath: operation.filePath,
+        fileName: `${operation.operationName}.ts`,
+        content: new TypescriptGeneratedFile(output)
+      });
     });
 
   Object.values(context.fragments)
@@ -90,7 +94,11 @@ export function generateSource(
 
       const output = generator.printer.printAndClear();
 
-      generatedFiles[`${fragment.fragmentName}.ts`] = new TypescriptGeneratedFile(output);
+      generatedFiles.push({
+        sourcePath: fragment.filePath,
+        fileName: `${fragment.fragmentName}.ts`,
+        content: new TypescriptGeneratedFile(output)
+      });
     });
 
   generator.fileHeader();

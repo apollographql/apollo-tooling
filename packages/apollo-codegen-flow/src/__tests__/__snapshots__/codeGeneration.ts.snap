@@ -20,9 +20,10 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroName.js": FlowGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -87,28 +88,13 @@ export type HeroName = {|
 export type HeroNameVariables = {|
   +episode?: ?Episode
 |};",
+      },
+      "fileName": "HeroName.ts",
+      "sourcePath": "GraphQL request",
     },
-    "droidFragment.js": FlowGeneratedFile {
-      "fileContents": "
-
-/* @flow */
-/* eslint-disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL fragment: droidFragment
-// ====================================================
-
-export type droidFragment = {|
-  +__typename: \\"Droid\\",
-  /**
-   * The movies this droid appears in
-   */
-  +appearsIn: $ReadOnlyArray<?Episode>,
-|};",
-    },
-    "humanFragment.js": FlowGeneratedFile {
-      "fileContents": "
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -143,8 +129,31 @@ export type humanFragment = {|
    */
   +friends: ?$ReadOnlyArray<?humanFragment_friends>,
 |};",
+      },
+      "fileName": "humanFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: droidFragment
+// ====================================================
+
+export type droidFragment = {|
+  +__typename: \\"Droid\\",
+  +appearsIn: $ReadOnlyArray<?Episode>, // The movies this droid appears in
+|};",
+      },
+      "fileName": "droidFragment.ts",
+      "sourcePath": "GraphQL request",
+    },
+  ],
 }
 `;
 
@@ -168,9 +177,10 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroName.js": FlowGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -235,28 +245,13 @@ export type HeroName = {
 export type HeroNameVariables = {
   episode?: ?Episode
 };",
+      },
+      "fileName": "HeroName.ts",
+      "sourcePath": "GraphQL request",
     },
-    "droidFragment.js": FlowGeneratedFile {
-      "fileContents": "
-
-/* @flow */
-/* eslint-disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL fragment: droidFragment
-// ====================================================
-
-export type droidFragment = {
-  __typename: \\"Droid\\",
-  /**
-   * The movies this droid appears in
-   */
-  appearsIn: Array<?Episode>,
-};",
-    },
-    "humanFragment.js": FlowGeneratedFile {
-      "fileContents": "
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -291,8 +286,31 @@ export type humanFragment = {
    */
   friends: ?Array<?humanFragment_friends>,
 };",
+      },
+      "fileName": "humanFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: droidFragment
+// ====================================================
+
+export type droidFragment = {
+  __typename: \\"Droid\\",
+  appearsIn: Array<?Episode>, // The movies this droid appears in
+};",
+      },
+      "fileName": "droidFragment.ts",
+      "sourcePath": "GraphQL request",
+    },
+  ],
 }
 `;
 
@@ -311,9 +329,33 @@ Object {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "anotherFragment.js": FlowGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: simpleFragment
+// ====================================================
+
+export type simpleFragment = {
+  __typename: \\"Human\\" | \\"Droid\\",
+  /**
+   * The name of the character
+   */
+  name: string,
+};",
+      },
+      "fileName": "simpleFragment.ts",
+      "sourcePath": "GraphQL request",
+    },
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -334,27 +376,11 @@ export type anotherFragment = {
    */
   name: string,
 };",
+      },
+      "fileName": "anotherFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-    "simpleFragment.js": FlowGeneratedFile {
-      "fileContents": "
-
-/* @flow */
-/* eslint-disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL fragment: simpleFragment
-// ====================================================
-
-export type simpleFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  /**
-   * The name of the character
-   */
-  name: string,
-};",
-    },
-  },
+  ],
 }
 `;
 
@@ -378,9 +404,30 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "anotherFragment.js": FlowGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: simpleFragment
+// ====================================================
+
+export type simpleFragment = {
+  __typename: \\"Human\\" | \\"Droid\\",
+  name: string, // The name of the character
+};",
+      },
+      "fileName": "simpleFragment.ts",
+      "sourcePath": "GraphQL request",
+    },
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -419,27 +466,11 @@ export type anotherFragment_Human = {
 };
 
 export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;",
+      },
+      "fileName": "anotherFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-    "simpleFragment.js": FlowGeneratedFile {
-      "fileContents": "
-
-/* @flow */
-/* eslint-disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL fragment: simpleFragment
-// ====================================================
-
-export type simpleFragment = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  /**
-   * The name of the character
-   */
-  name: string,
-};",
-    },
-  },
+  ],
 }
 `;
 
@@ -458,9 +489,10 @@ Object {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "CustomScalar.js": FlowGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -483,8 +515,11 @@ export type CustomScalar_commentTest = {
 export type CustomScalar = {
   commentTest: ?CustomScalar_commentTest
 };",
+      },
+      "fileName": "CustomScalar.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
@@ -508,9 +543,10 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroInlineFragment.js": FlowGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -539,8 +575,11 @@ export type HeroInlineFragment = {
 export type HeroInlineFragmentVariables = {
   episode?: ?Episode
 };",
+      },
+      "fileName": "HeroInlineFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
@@ -564,9 +603,10 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroName.js": FlowGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -625,8 +665,11 @@ export type HeroName = {
 export type HeroNameVariables = {
   episode?: ?Episode
 };",
+      },
+      "fileName": "HeroName.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
@@ -650,9 +693,10 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroName.js": FlowGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -723,17 +767,21 @@ export type HeroName = {
 export type HeroNameVariables = {
   episode?: ?Episode
 };",
+      },
+      "fileName": "HeroName.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
 exports[`Flow codeGeneration multiple files 1`] = `"generatedFiles"`;
 
 exports[`Flow codeGeneration multiple files 2`] = `
-Object {
-  "HeroName.js": FlowGeneratedFile {
-    "fileContents": "
+Array [
+  Object {
+    "content": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -762,9 +810,48 @@ export type HeroName = {
 export type HeroNameVariables = {
   episode?: ?Episode
 };",
+    },
+    "fileName": "HeroName.ts",
+    "sourcePath": "/some/file/ComponentA.js",
   },
-  "ReviewMovie.js": FlowGeneratedFile {
-    "fileContents": "
+  Object {
+    "content": FlowGeneratedFile {
+      "fileContents": "
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SomeOther
+// ====================================================
+
+export type SomeOther_hero = {
+  __typename: \\"Human\\" | \\"Droid\\",
+  /**
+   * The name of the character
+   */
+  name: string,
+  /**
+   * The movies this character appears in
+   */
+  appearsIn: Array<?Episode>,
+};
+
+export type SomeOther = {
+  hero: ?SomeOther_hero
+};
+
+export type SomeOtherVariables = {
+  episode?: ?Episode
+};",
+    },
+    "fileName": "SomeOther.ts",
+    "sourcePath": "/some/file/ComponentB.js",
+  },
+  Object {
+    "content": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -794,40 +881,13 @@ export type ReviewMovieVariables = {
   episode?: ?Episode,
   review?: ?ReviewInput,
 };",
+    },
+    "fileName": "ReviewMovie.ts",
+    "sourcePath": "GraphQL request",
   },
-  "SomeOther.js": FlowGeneratedFile {
-    "fileContents": "
-
-/* @flow */
-/* eslint-disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: SomeOther
-// ====================================================
-
-export type SomeOther_hero = {
-  __typename: \\"Human\\" | \\"Droid\\",
-  /**
-   * The name of the character
-   */
-  name: string,
-  /**
-   * The movies this character appears in
-   */
-  appearsIn: Array<?Episode>,
-};
-
-export type SomeOther = {
-  hero: ?SomeOther_hero
-};
-
-export type SomeOtherVariables = {
-  episode?: ?Episode
-};",
-  },
-  "someFragment.js": FlowGeneratedFile {
-    "fileContents": "
+  Object {
+    "content": FlowGeneratedFile {
+      "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -844,8 +904,11 @@ export type someFragment = {
    */
   appearsIn: Array<?Episode>,
 };",
+    },
+    "fileName": "someFragment.ts",
+    "sourcePath": "/some/file/ComponentB.js",
   },
-}
+]
 `;
 
 exports[`Flow codeGeneration multiple files 3`] = `"common"`;
@@ -909,9 +972,10 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroFragment.js": FlowGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -940,9 +1004,13 @@ export type HeroFragment = {
 export type HeroFragmentVariables = {
   episode?: ?Episode
 };",
+      },
+      "fileName": "HeroFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-    "simpleFragment.js": FlowGeneratedFile {
-      "fileContents": "
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -959,8 +1027,11 @@ export type simpleFragment = {
    */
   name: string,
 };",
+      },
+      "fileName": "simpleFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
@@ -979,9 +1050,10 @@ Object {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "SimpleFragment.js": FlowGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -998,8 +1070,11 @@ export type SimpleFragment = {
    */
   name: string,
 };",
+      },
+      "fileName": "SimpleFragment.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
@@ -1023,9 +1098,10 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "HeroName.js": FlowGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -1054,8 +1130,11 @@ export type HeroName = {
 export type HeroNameVariables = {
   episode?: ?Episode
 };",
+      },
+      "fileName": "HeroName.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
 
@@ -1097,9 +1176,10 @@ export type ColorInput = {|
 //==============================================================
 // END Enums and Input Objects
 //==============================================================",
-  "generatedFiles": Object {
-    "ReviewMovie.js": FlowGeneratedFile {
-      "fileContents": "
+  "generatedFiles": Array [
+    Object {
+      "content": FlowGeneratedFile {
+        "fileContents": "
 
 /* @flow */
 /* eslint-disable */
@@ -1129,7 +1209,10 @@ export type ReviewMovieVariables = {
   episode?: ?Episode,
   review?: ?ReviewInput,
 };",
+      },
+      "fileName": "ReviewMovie.ts",
+      "sourcePath": "GraphQL request",
     },
-  },
+  ],
 }
 `;
