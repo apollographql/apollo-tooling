@@ -146,7 +146,7 @@ export default class Generate extends Command {
         title: "Generating query files",
         task: async (ctx, task) => {
           task.title = `Generating query files with '${inferredTarget}' target`;
-          generate(
+          const writtenFiles = generate(
             ctx.queryPaths,
             ctx.schema,
             args.output || path.resolve("."),
@@ -166,6 +166,8 @@ export default class Generate extends Command {
               useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes
             }
           )
+
+          task.title = `Generating query files with '${inferredTarget}' target - wrote ${writtenFiles} files`;
         },
       },
     ]);

@@ -29,7 +29,9 @@ export default function generate(
   tagName: string,
   nextToSources: boolean,
   options: any
-) {
+): number {
+  let writtenFiles = 0;
+
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
 
   validateQueryDocument(schema, document);
@@ -44,12 +46,15 @@ export default function generate(
 
     if (outputIndividualFiles) {
       writeGeneratedFiles(generator.generatedFiles, outputPath);
+      writtenFiles += Object.keys(generator.generatedFiles).length;
     } else {
       fs.writeFileSync(outputPath, generator.output);
+      writtenFiles += 1;
     }
 
     if (options.generateOperationIds) {
       writeOperationIdsMap(context);
+      writtenFiles += 1;
     }
   }
   else if (target === 'flow' || target === 'typescript' || target === 'ts') {
@@ -75,11 +80,15 @@ export default function generate(
         outFiles,
         outputPath
       );
+
+      writtenFiles += Object.keys(outFiles).length;
     } else {
       fs.writeFileSync(
         outputPath,
         generatedFiles.map(o => o.content.fileContents).join("\n") + common
       );
+
+      writtenFiles += 1;
     }
   }
   else {
@@ -102,10 +111,13 @@ export default function generate(
 
     if (outputPath) {
       fs.writeFileSync(outputPath, output);
+      writtenFiles += 1;
     } else {
       console.log(output);
     }
   }
+
+  return writtenFiles;
 }
 
 function writeGeneratedFiles(
