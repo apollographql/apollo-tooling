@@ -120,5 +120,10 @@
     "test": "jest",
     "version": "oclif-dev readme && git add README.md"
   },
-  "types": "lib/index.d.ts"
+  "types": "lib/index.d.ts",
+  "globals": {
+    "ts-jest": {
+      "skipBabel": true
+    }
+  }
 }

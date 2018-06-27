@@ -9,6 +9,7 @@
     "pretty": true,
     "rootDirs": ["./src"],
     "lib": ["dom", "es2017", "esnext.asynciterable"],
+    "target": "es5",
     "baseUrl": ".",
     "paths": {
       "*": ["./@types/*"]
