@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as rimraf from 'rimraf';
 
-import { loadSchema, loadSchemaFromConfig, loadAndMergeQueryDocuments } from 'apollo-codegen-core/lib/loading';
+import { loadAndMergeQueryDocuments } from 'apollo-codegen-core/lib/loading';
 import { validateQueryDocument } from './validation';
 import { compileToIR } from 'apollo-codegen-core/lib/compiler';
 import { compileToLegacyIR } from 'apollo-codegen-core/lib/compiler/legacyIR';
@@ -16,7 +15,6 @@ import { generateSource as generateFlowSource } from 'apollo-codegen-flow';
 import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript';
 import { generateSource as generateScalaSource } from 'apollo-codegen-scala';
 import { GraphQLSchema } from 'graphql';
-import { source } from 'common-tags';
 
 export type TargetType = 'json' | 'swift' | 'ts-legacy' | 'typescript-legacy'
   | 'flow-legacy' | 'scala' | 'flow' | 'typescript'

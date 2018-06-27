@@ -1,17 +1,14 @@
 import { Command, flags } from "@oclif/command";
 import * as Listr from "listr";
 
-import { fetchSchema } from "../../fetch-schema";
-
 import * as fs from 'fs';
 import { promisify } from 'util';
 
-import { toPromise, execute } from "apollo-link";
-
-import { engineLink, getIdFromKey } from "../../engine";
-import { SCHEMA_QUERY } from "../../operations/schema";
-
 import { engineFlags } from "../../engine-cli";
+
+import { loadSchemaStep } from "../../load-schema"
+
+import { fetchSchema } from "../../fetch-schema";
 
 export default class SchemaDownload extends Command {
   static description = "Download the schema from your GraphQL endpoint.";
@@ -53,42 +50,15 @@ export default class SchemaDownload extends Command {
     const header = Array.isArray(flags.header) ? flags.header : [flags.header];
 
     const apiKey = flags.key;
-    const pullFromEngine = !!apiKey;
+    const pullFromEngine = !!apiKey && !flags.endpoint;
 
-    const tasks = new Listr([
-      {
-        title: pullFromEngine ? "Loading schema from Apollo Engine" : "Fetching local schema",
-        task: async ctx => {
-          if (pullFromEngine) {
-            const variables = {
-              id: getIdFromKey(apiKey as string),
-              tag: "current",
-            }
-
-            const engineSchema = await toPromise(
-              execute(engineLink, {
-                query: SCHEMA_QUERY,
-                variables,
-                context: {
-                  headers: { ["x-api-key"]: apiKey },
-                  ...(flags.engine && { uri: flags.engine }),
-                },
-              })
-            );
-
-            if (engineSchema.data && engineSchema.data.service.schema) {
-              ctx.schema = engineSchema.data.service.schema.__schema;
-            } else {
-              this.error("Failed to get schema from Apollo Engine");
-            }
-          } else {
-            ctx.schema = await fetchSchema({
-              endpoint: flags.endpoint,
-              header: header.filter(x => Boolean(x)).map(x => JSON.parse(x)),
-            })
-          }
-        },
-      },
+    const tasks: Listr = new Listr([
+      loadSchemaStep(this, pullFromEngine, apiKey, flags.engine, "Fetching local schema", async (ctx) => {
+        ctx.schema = await fetchSchema({
+          endpoint: flags.endpoint,
+          header: header.filter(x => Boolean(x)).map(x => JSON.parse(x)),
+        })
+      }),
       {
         title: `Saving schema to ${args.output}`,
         task: async ctx => {
