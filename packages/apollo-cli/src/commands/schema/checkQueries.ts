@@ -18,6 +18,8 @@ import { SCHEMA_QUERY } from "../../operations/schema";
 
 import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
 
+import { engineFlags } from "../../engine-cli";
+
 // TODO: name this check and rename check to diff?
 export default class CheckQueries extends Command {
   static description = "Generate static types for GraphQL queries.";
@@ -36,16 +38,7 @@ export default class CheckQueries extends Command {
       default: "schema.json",
     }),
 
-    key: flags.string({
-      description: "The API key for the Apollo Engine service",
-    }),
-    tag: flags.string({
-      description: "The tag of the registered schema to get from Apollo Engine"
-    }),
-    engine: flags.string({
-      description: "Reporting URL for a custom Apollo Engine deployment",
-      hidden: true,
-    }),
+    ...engineFlags,
 
     tagName: flags.string({
       description: "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
@@ -56,7 +49,7 @@ export default class CheckQueries extends Command {
   async run() {
     const { flags } = this.parse(CheckQueries);
 
-    const apiKey = process.env.ENGINE_API_KEY || flags.key;
+    const apiKey = flags.key;
     const pullFromEngine = !!apiKey;
 
     const tasks = new Listr([
@@ -74,7 +67,7 @@ export default class CheckQueries extends Command {
           if (pullFromEngine) {
             const variables = {
               id: getIdFromKey(apiKey as string),
-              tag: flags.tag || "current",
+              tag: "current",
             }
 
             const engineSchema = await toPromise(

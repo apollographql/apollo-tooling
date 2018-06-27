@@ -16,6 +16,8 @@ import { toPromise, execute } from "apollo-link";
 import { engineLink, getIdFromKey } from "../../engine";
 import { SCHEMA_QUERY } from "../../operations/schema";
 
+import { engineFlags } from "../../engine-cli";
+
 export default class Generate extends Command {
   static description = "Generate static types for GraphQL queries.";
 
@@ -33,16 +35,7 @@ export default class Generate extends Command {
       default: "schema.json",
     }),
 
-    key: flags.string({
-      description: "The API key for the Apollo Engine service",
-    }),
-    tag: flags.string({
-      description: "The tag of the registered schema to get from Apollo Engine"
-    }),
-    engine: flags.string({
-      description: "Reporting URL for a custom Apollo Engine deployment",
-      hidden: true,
-    }),
+    ...engineFlags,
 
     target: flags.string({
       description: "Type of code generator to use (swift | typescript | flow | scala), inferred from output"
@@ -126,7 +119,7 @@ export default class Generate extends Command {
       return;
     }
 
-    const apiKey = process.env.ENGINE_API_KEY || flags.key;
+    const apiKey = flags.key;
     const pullFromEngine = !!apiKey;
 
     const tasks = new Listr([
@@ -144,7 +137,7 @@ export default class Generate extends Command {
           if (pullFromEngine) {
             const variables = {
               id: getIdFromKey(apiKey as string),
-              tag: flags.tag || "current",
+              tag: "current",
             }
 
             const engineSchema = await toPromise(

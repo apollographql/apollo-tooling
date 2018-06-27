@@ -11,6 +11,8 @@ import { toPromise, execute } from "apollo-link";
 import { engineLink, getIdFromKey } from "../../engine";
 import { SCHEMA_QUERY } from "../../operations/schema";
 
+import { engineFlags } from "../../engine-cli";
+
 export default class SchemaDownload extends Command {
   static description = "Download the schema from your GraphQL endpoint.";
 
@@ -33,16 +35,7 @@ export default class SchemaDownload extends Command {
       default: "http://localhost:4000/graphql", // apollo-server 2.0 default address
     }),
 
-    key: flags.string({
-      description: "The API key for the Apollo Engine service",
-    }),
-    tag: flags.string({
-      description: "The tag of the registered schema to get from Apollo Engine"
-    }),
-    engine: flags.string({
-      description: "Reporting URL for a custom Apollo Engine deployment",
-      hidden: true,
-    }),
+    ...engineFlags
   };
 
   static args = [
@@ -59,7 +52,7 @@ export default class SchemaDownload extends Command {
 
     const header = Array.isArray(flags.header) ? flags.header : [flags.header];
 
-    const apiKey = process.env.ENGINE_API_KEY || flags.key;
+    const apiKey = flags.key;
     const pullFromEngine = !!apiKey;
 
     const tasks = new Listr([
@@ -69,7 +62,7 @@ export default class SchemaDownload extends Command {
           if (pullFromEngine) {
             const variables = {
               id: getIdFromKey(apiKey as string),
-              tag: flags.tag || "current",
+              tag: "current",
             }
 
             const engineSchema = await toPromise(
