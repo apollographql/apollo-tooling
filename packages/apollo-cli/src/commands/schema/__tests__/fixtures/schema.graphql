@@ -1,0 +1,12 @@
+type Query {
+  hello: String!
+}
+
+type RemovedField {
+  id: ID!
+  name: RemovedType
+}
+
+type RemovedType {
+  fieldName: String
+}

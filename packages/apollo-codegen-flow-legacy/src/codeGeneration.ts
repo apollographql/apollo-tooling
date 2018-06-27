@@ -78,7 +78,7 @@ function enumerationDeclaration(generator: CodeGenerator<LegacyCompilerContext>,
   const nValues = values.length;
   sortEnumValues(values).forEach((value, i) => {
     if (!value.description || value.description.indexOf('\n') === -1) {
-      generator.printOnNewline(`  "${value.value}"${i === nValues - 1 ? ';' : ' |'}${wrap(' // ', value.description)}`)
+      generator.printOnNewline(`  "${value.value}"${i === nValues - 1 ? ';' : ' |'}${wrap(' // ', value.description || undefined)}`)
     } else {
       if (value.description) {
         value.description.split('\n')
@@ -104,7 +104,8 @@ function structDeclarationForInputObjectType(
       return {
         fieldName: v.name,
         responseName: v.name,
-        ...v
+        ...v,
+        description: v.description || undefined,
       };
     }));
     propertyDeclarations(generator, properties, true);

@@ -745,14 +745,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     const values = type.getValues();
 
     this.printNewlineIfNeeded();
-    this.comment(description);
+    this.comment(description || undefined);
     this.printOnNewline(`public enum ${name}: RawRepresentable, Equatable, Apollo.JSONDecodable, Apollo.JSONEncodable`);
     this.withinBlock(() => {
       this.printOnNewline('public typealias RawValue = String')
 
       values.forEach(value => {
-        this.comment(value.description);
-        this.deprecationAttributes(value.isDeprecated, value.deprecationReason);
+        this.comment(value.description || undefined);
+        this.deprecationAttributes(value.isDeprecated, value.deprecationReason || undefined);
         this.printOnNewline(
           `case ${escapeIdentifierIfNeeded(this.helpers.enumCaseName(value.name))}`
         );
@@ -820,7 +820,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       }
     });
 
-    this.structDeclaration({ structName, description, adoptedProtocols }, () => {
+    this.structDeclaration({ structName, description: description || undefined, adoptedProtocols }, () => {
       this.printOnNewline(`public var graphQLMap: GraphQLMap`);
 
       this.printNewlineIfNeeded();
@@ -848,7 +848,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
       for (const { name, propertyName, typeName, description } of properties) {
         this.printNewlineIfNeeded();
-        this.comment(description);
+        this.comment(description || undefined);
         this.printOnNewline(`public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`);
         this.withinBlock(() => {
           this.printOnNewline('get');

@@ -20,7 +20,9 @@ import {
   FragmentDefinitionNode,
   SelectionSetNode,
   SelectionNode,
-  isSpecifiedScalarType
+  isSpecifiedScalarType,
+  NonNullTypeNode,
+  GraphQLNonNull
 } from 'graphql';
 
 import {
@@ -217,13 +219,13 @@ class Compiler {
 
     const variables = (operationDefinition.variableDefinitions || []).map(node => {
       const name = node.variable.name.value;
-      const type = typeFromAST(this.schema, node.type);
-      this.addTypeUsed(getNamedType(type));
-      return { name, type };
+      const type = typeFromAST(this.schema, node.type as NonNullTypeNode);
+      this.addTypeUsed(getNamedType(type as GraphQLType));
+      return { name, type: type as GraphQLNonNull<any> };
     });
 
     const source = print(operationDefinition);
-    const rootType = getOperationRootType(this.schema, operationDefinition);
+    const rootType = getOperationRootType(this.schema, operationDefinition) as GraphQLObjectType;
 
     return {
       filePath,
@@ -322,7 +324,7 @@ class Compiler {
           type: fieldType,
           description: !isMetaFieldName(name) && description ? description : undefined,
           isDeprecated,
-          deprecationReason
+          deprecationReason: deprecationReason || undefined
         };
 
         if (isCompositeType(unmodifiedFieldType)) {
@@ -378,7 +380,7 @@ class Compiler {
 
   possibleTypesForType(type: GraphQLCompositeType): GraphQLObjectType[] {
     if (isAbstractType(type)) {
-      return this.schema.getPossibleTypes(type) || [];
+      return Array.from(this.schema.getPossibleTypes(type)) || [];
     } else {
       return [type];
     }

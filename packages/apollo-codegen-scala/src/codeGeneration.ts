@@ -290,7 +290,7 @@ export function caseClassDeclarationForSelectionSet(
     if (possibleTypes) {
       generator.printNewlineIfNeeded();
       generator.printOnNewline('val possibleTypes = scala.collection.Set(');
-      generator.print(join(possibleTypes.map(type => `"${String(type)}"`), ', '));
+      generator.print(join(Array.from(possibleTypes).map(type => `"${String(type)}"`), ', '));
       generator.print(')');
     }
 
@@ -349,11 +349,11 @@ function enumerationDeclaration(generator: CodeGenerator<LegacyCompilerContext, 
   const values = type.getValues();
 
   generator.printNewlineIfNeeded();
-  comment(generator, description);
+  comment(generator, description || "");
   generator.printOnNewline(`object ${name}`);
   generator.withinBlock(() => {
     values.forEach(value => {
-      comment(generator, value.description);
+      comment(generator, value.description || "");
       generator.printOnNewline(`val ${escapeIdentifierIfNeeded(enumCaseName(value.name))} = "${value.value}"`);
     });
   });
@@ -365,7 +365,7 @@ function caseClassDeclarationForInputObjectType(generator: CodeGenerator<LegacyC
   const fields = Object.values(type.getFields());
   const properties = fields.map(field => propertyFromInputField(generator.context, field, generator.context.options.namespace));
 
-  caseClassDeclaration(generator, { caseClassName, description, params: properties.map(p => {
+  caseClassDeclaration(generator, { caseClassName, description: description || undefined, params: properties.map(p => {
     return {
       name: p.propertyName,
       type: p.typeName,
