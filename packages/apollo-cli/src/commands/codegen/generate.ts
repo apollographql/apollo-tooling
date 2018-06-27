@@ -96,7 +96,7 @@ export default class Generate extends Command {
           inferredTarget = "typescript";
           break;
 
-        case "js":
+        case "js" || "jsx":
           inferredTarget = "flow";
           break;
 
