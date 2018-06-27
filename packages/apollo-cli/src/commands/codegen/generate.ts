@@ -84,26 +84,20 @@ export default class Generate extends Command {
     {
       name: "output",
       description: "Path to write the generated code to",
-      required: true
     }
   ]
 
   async run() {
     const { flags, args } = this.parse(Generate);
 
-    if (!args.output) {
-      this.error("The output path must be specified in the arguments");
-      return;
-    }
-
-    let inferredTarget: TargetType;
+    let inferredTarget: TargetType = "" as TargetType;
     if (flags.target) {
       if (["swift", "typescript", "flow", "scala"].includes(flags.target)) {
         inferredTarget = flags.target as TargetType;
       } else {
         this.error(`Unsupported target: ${flags.target}`);
       }
-    } else {
+    } else if (args.output) {
       switch(args.output.split('.').reverse()[0]) {
         case "swift":
           inferredTarget = "swift";
@@ -125,6 +119,11 @@ export default class Generate extends Command {
           this.error("Could not infer target from output file type, please use --target");
           return;
       }
+    }
+
+    if (!args.output && inferredTarget != "typescript" && inferredTarget != "flow") {
+      this.error("The output path must be specified in the arguments for Swift and Scala");
+      return;
     }
 
     const apiKey = process.env.ENGINE_API_KEY || flags.key;
@@ -184,10 +183,11 @@ export default class Generate extends Command {
           generate(
             ctx.queryPaths,
             ctx.schema,
-            args.output as string,
+            args.output || path.resolve("."),
             flags.only ? path.resolve(flags.only) : "",
             inferredTarget,
             flags.tagName as string,
+            !args.output,
             {
               passthroughCustomScalars: flags.passthroughCustomScalars || flags.customScalarsPrefix,
               customScalarsPrefix: flags.customScalarsPrefix || "",

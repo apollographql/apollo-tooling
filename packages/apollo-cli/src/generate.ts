@@ -16,6 +16,7 @@ import { generateSource as generateFlowSource } from 'apollo-codegen-flow';
 import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript';
 import { generateSource as generateScalaSource } from 'apollo-codegen-scala';
 import { GraphQLSchema } from 'graphql';
+import { source } from 'common-tags';
 
 export type TargetType = 'json' | 'swift' | 'ts-legacy' | 'typescript-legacy'
   | 'flow-legacy' | 'scala' | 'flow' | 'typescript'
@@ -28,6 +29,7 @@ export default function generate(
   only: string,
   target: TargetType,
   tagName: string,
+  nextToSources: boolean,
   options: any
 ) {
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
@@ -65,12 +67,11 @@ export default function generate(
     const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
 
     if (outputIndividualFiles) {
-      Object.keys(generatedFiles)
-        .forEach((filePath: string) => {
-          outFiles[path.basename(filePath)] = {
-            output: generatedFiles[filePath].fileContents + common
-          }
-        });
+      generatedFiles.forEach(({sourcePath, fileName, content}) => {
+        outFiles[nextToSources ? `${path.dirname(sourcePath)}/${fileName}` : fileName] = {
+          output: content.fileContents + common
+        }
+      });
 
       writeGeneratedFiles(
         outFiles,
@@ -79,7 +80,7 @@ export default function generate(
     } else {
       fs.writeFileSync(
         outputPath,
-        Object.values(generatedFiles).map(v => v.fileContents).join("\n") + common
+        generatedFiles.map(o => o.content.fileContents).join("\n") + common
       );
     }
   }
@@ -113,12 +114,6 @@ function writeGeneratedFiles(
   generatedFiles: { [fileName: string]: BasicGeneratedFile },
   outputDirectory: string
 ) {
-  // Clear all generated stuff to make sure there isn't anything
-  // unnecessary lying around.
-  rimraf.sync(outputDirectory);
-  // Remake the output directory
-  fs.mkdirSync(outputDirectory);
-
   for (const [fileName, generatedFile] of Object.entries(generatedFiles)) {
     fs.writeFileSync(path.join(outputDirectory, fileName), generatedFile.output);
   }
