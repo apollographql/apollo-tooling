@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/1.0.5 linux-x64 node-v9.4.0
+apollo/1.1.0 darwin-x64 node-v10.4.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -30,9 +30,58 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
+* [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
 * [`apollo help [COMMAND]`](#apollo-help-command)
 * [`apollo schema:check`](#apollo-schemacheck)
+* [`apollo schema:checkQueries`](#apollo-schemacheck-queries)
+* [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
 * [`apollo schema:publish`](#apollo-schemapublish)
+
+## `apollo codegen:generate [OUTPUT]`
+
+Generate static types for GraphQL queries.
+
+```
+USAGE
+  $ apollo codegen:generate [OUTPUT]
+
+ARGUMENTS
+  OUTPUT  Path to write the generated code to
+
+OPTIONS
+  -h, --help                                 Show command help
+  --addTypename                              Automatically add __typename to your queries
+  --customScalarsPrefix=customScalarsPrefix  Include a prefix when using provided types for custom scalars
+  --key=key                                  The API key for the Apollo Engine service
+  --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
+  --namespace=namespace                      The namespace to emit generated code into.
+
+  --only=only                                Parse all input files, but only output generated code for the specified
+                                             file [Swift only]
+
+  --operationIdsPath=operationIdsPath        Path to an operation id JSON map file. If specified, also stores the
+                                             operation ids (hashes) as properties on operation types [currently
+                                             Swift-only]
+
+  --passthroughCustomScalars                 Use your own types for custom scalars
+
+  --queries=queries                          [default: **/*.graphql] Path to your GraphQL queries, can include search
+                                             tokens like **
+
+  --schema=schema                            Path to your GraphQL schema introspection result
+
+  --tagName=tagName                          [default: gql] Name of the template literal tag used to identify template
+                                             literals containing GraphQL queries in Javascript/Typescript code
+
+  --target=target                            Type of code generator to use (swift | typescript | flow | scala), inferred
+                                             from output
+
+  --useFlowExactObjects                      Use Flow read only types for generated types [flow only]
+
+  --useFlowReadOnlyTypes                     Use Flow read only types for generated types [flow only]
+```
+
+_See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-cli/blob/v1.1.0/src/commands/codegen/generate.ts)_
 
 ## `apollo help [COMMAND]`
 
@@ -67,7 +116,47 @@ OPTIONS
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.5/src/commands/schema/check.ts)_
+_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.1.0/src/commands/schema/check.ts)_
+
+## `apollo schema:checkQueries`
+
+Generate static types for GraphQL queries.
+
+```
+USAGE
+  $ apollo schema:checkQueries
+
+OPTIONS
+  -h, --help         Show command help
+  --key=key          The API key for the Apollo Engine service
+  --queries=queries  [default: **/*.graphql] Path to your GraphQL queries, can include search tokens like **
+  --schema=schema    Path to your GraphQL schema introspection result
+
+  --tagName=tagName  [default: gql] Name of the template literal tag used to identify template literals containing
+                     GraphQL queries in Javascript/Typescript code
+```
+
+_See code: [src/commands/schema/checkQueries.ts](https://github.com/apollographql/apollo-cli/blob/v1.1.0/src/commands/schema/checkQueries.ts)_
+
+## `apollo schema:download OUTPUT`
+
+Download the schema from your GraphQL endpoint.
+
+```
+USAGE
+  $ apollo schema:download OUTPUT
+
+ARGUMENTS
+  OUTPUT  [default: schema.json] Path to write the introspection result to
+
+OPTIONS
+  -h, --help           Show command help
+  --endpoint=endpoint  [default: http://localhost:4000/graphql] The URL of the server to fetch the schema from
+  --header=header      Additional headers to send to server for introspectionQuery
+  --key=key            The API key for the Apollo Engine service
+```
+
+_See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-cli/blob/v1.1.0/src/commands/schema/download.ts)_
 
 ## `apollo schema:publish`
 
@@ -85,5 +174,5 @@ OPTIONS
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.0.5/src/commands/schema/publish.ts)_
+_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.1.0/src/commands/schema/publish.ts)_
 <!-- commandsstop -->
