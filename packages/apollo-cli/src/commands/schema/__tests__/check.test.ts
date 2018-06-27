@@ -42,7 +42,7 @@ const engineSuccess = ({ schema, tag, results } = {}) => nock => {
         tag: tag || "current",
         gitContext: {
           commit: /.+/i,
-          remoteUrl: "https://github.com/apollographql/apollo-cli",
+          remoteUrl: "https://github.com/apollographql/apollo-codegen",
           committer: /@/i,
         },
       },
@@ -187,7 +187,10 @@ describe("successful checks", () => {
     .env({ ENGINE_API_KEY })
     .command([
       "schema:check",
-      `--endpoint=${path.resolve(__dirname, "./fixtures/introspection-result.json")}`,
+      `--endpoint=${path.resolve(
+        __dirname,
+        "./fixtures/introspection-result.json"
+      )}`,
     ])
     .exit(1)
     .it(
