@@ -1,6 +1,7 @@
 # Changelog
 
 ## vNEXT
++ The TypeScript and Flow targets now use block comments to better handle multiline comments in schemas
 + Fix crash when running on a version of Node that already supports Array.flatMap
 
 ## v0.20.1

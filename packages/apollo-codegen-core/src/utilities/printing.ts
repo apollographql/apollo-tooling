@@ -31,3 +31,13 @@ export function wrap(start: string, maybeString?: string, end?: string) {
 export function indent(maybeString?: string) {
   return maybeString && maybeString.replace(/\n/g, '\n  ');
 }
+
+/**
+ * Generates the body of a JSDoc style comment
+ */
+export function commentBlockContent(commentString: string) {
+  return '*\n' + commentString
+    .split('\n')
+    .map(line => ` * ${line.replace('*/', '')}`)
+    .join('\n') + '\n ';
+}

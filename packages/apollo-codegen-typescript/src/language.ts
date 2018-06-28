@@ -7,6 +7,7 @@ import {
   CompilerOptions
 } from 'apollo-codegen-core/lib/compiler';
 
+import { commentBlockContent } from 'apollo-codegen-core/lib/utilities/printing';
 
 import {
   sortEnumValues
@@ -55,9 +56,9 @@ export default class TypescriptGenerator {
 
     if (description) {
       typeAlias.leadingComments = [{
-        type: 'CommentLine',
-        value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
-      } as t.CommentLine];
+        type: 'CommentBlock',
+        value: commentBlockContent(description)
+      } as t.CommentBlock];
     }
 
     return typeAlias;
@@ -81,9 +82,9 @@ export default class TypescriptGenerator {
     }), []);
 
     inputType.leadingComments = [{
-      type: 'CommentLine',
-      value: ` ${description}`
-    } as t.CommentLine]
+      type: 'CommentBlock',
+      value: commentBlockContent(description || "")
+    } as t.CommentBlock]
 
     return inputType;
   }
@@ -104,10 +105,10 @@ export default class TypescriptGenerator {
       propertySignatureType.optional = keyInheritsNullability && this.isNullableType(type);
 
       if (description) {
-        propertySignatureType.trailingComments = [{
-          type: 'CommentLine',
-          value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
-        } as t.CommentLine]
+        propertySignatureType.leadingComments = [{
+          type: 'CommentBlock',
+          value: commentBlockContent(description)
+        } as t.CommentBlock]
       }
 
       return propertySignatureType;

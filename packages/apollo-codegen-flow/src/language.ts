@@ -7,6 +7,8 @@ import {
   CompilerOptions
 } from 'apollo-codegen-core/lib/compiler';
 
+import { commentBlockContent } from 'apollo-codegen-core/lib/utilities/printing';
+
 import {
   sortEnumValues
 } from 'apollo-codegen-core/lib/utilities/graphql';
@@ -55,9 +57,9 @@ export default class FlowGenerator {
     );
 
     typeAlias.leadingComments = [{
-      type: 'CommentLine',
-      value: ` ${description}`
-    } as t.CommentLine];
+      type: 'CommentBlock',
+      value: commentBlockContent(description || "")
+    } as t.CommentBlock];
 
     return typeAlias;
   }
@@ -103,10 +105,10 @@ export default class FlowGenerator {
         }
 
         if (description) {
-          objectTypeProperty.trailingComments = [{
-            type: 'CommentLine',
-            value: ` ${description.replace(new RegExp('\n', 'g'), ' ')}`
-          } as t.CommentLine]
+          objectTypeProperty.leadingComments = [{
+            type: 'CommentBlock',
+            value: commentBlockContent(description)
+          } as t.CommentBlock];
         }
 
         return objectTypeProperty;
@@ -166,11 +168,11 @@ export default class FlowGenerator {
   public exportDeclaration(declaration: t.Declaration, options: { comments?: string } = {}) {
     const exportedDeclaration = t.exportNamedDeclaration(declaration, []);
 
-    if(options.comments) {
-      exportedDeclaration.leadingComments = [{
-        type: 'CommentLine',
-        value: options.comments,
-      } as t.CommentLine];
+    if (options.comments) {
+      exportedDeclaration.trailingComments = [{
+        type: 'CommentBlock',
+        value: commentBlockContent(options.comments)
+      } as t.CommentBlock]
     }
 
     return exportedDeclaration;
