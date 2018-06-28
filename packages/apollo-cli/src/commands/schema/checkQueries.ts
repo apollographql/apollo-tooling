@@ -50,7 +50,7 @@ export default class CheckQueries extends Command {
       {
         title: "Scanning for GraphQL queries",
         task: async (ctx, task) => {
-          const paths = await globby(flags.queries ? [ flags.queries ] : []);
+          const paths = await globby(flags.queries ? flags.queries.split('\n') : []);
           task.title = `Scanning for GraphQL queries (${paths.length} found)`;
           ctx.queryPaths = paths;
         }
