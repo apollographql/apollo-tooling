@@ -37,7 +37,7 @@ USAGE
 
 ## `apollo codegen:generate [OUTPUT]`
 
-Generate static types for GraphQL queries.
+Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.
 
 ```
 USAGE
@@ -119,7 +119,7 @@ _See code: [src/commands/schema/check.ts](https://github.com/apollographql/apoll
 
 ## `apollo schema:checkQueries`
 
-Generate static types for GraphQL queries.
+Checks your GraphQL operations for compatibility with the server. Can check against the published schema in Apollo Engine or a downloaded schema.
 
 ```
 USAGE

@@ -17,7 +17,7 @@ import { loadSchemaStep } from "../../load-schema"
 
 // TODO: name this check and rename check to diff?
 export default class CheckQueries extends Command {
-  static description = "Generate static types for GraphQL queries.";
+  static description = "Checks your GraphQL operations for compatibility with the server. Can check against the published schema in Apollo Engine or a downloaded schema.";
 
   static flags = {
     help: flags.help({

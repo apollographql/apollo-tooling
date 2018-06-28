@@ -16,7 +16,7 @@ import { loadSchemaStep } from "../../load-schema";
 import { engineFlags } from "../../engine-cli";
 
 export default class Generate extends Command {
-  static description = "Generate static types for GraphQL queries.";
+  static description = "Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.";
 
   static flags = {
     help: flags.help({
