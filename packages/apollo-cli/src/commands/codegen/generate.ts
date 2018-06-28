@@ -16,7 +16,7 @@ import { loadSchemaStep } from "../../load-schema";
 import { engineFlags } from "../../engine-cli";
 
 export default class Generate extends Command {
-  static description = "Generate static types for GraphQL queries.";
+  static description = "Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.";
 
   static flags = {
     help: flags.help({
@@ -72,7 +72,7 @@ export default class Generate extends Command {
   static args = [
     {
       name: "output",
-      description: "Path to write the generated code to",
+      description: "Path to write the generated code to. Can be a directory to generate split files (TypeScript/Flow only). Leave empty to generate types next to sources (TypeScript/Flow only)",
     }
   ]
 
