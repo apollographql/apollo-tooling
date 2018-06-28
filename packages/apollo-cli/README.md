@@ -278,7 +278,7 @@ function CharacterFigures({ characters }: CharactersQuery) {
 # Contributing
 [![Build status](https://travis-ci.org/apollographql/apollo-codegen.svg?branch=master)](https://travis-ci.org/apollographql/apollo-codegen)
 
-This repo is composed of multiple packages managed by Lerna. The `apollo-codegen-core` package contains all the compiler APIs needed to implement support for new languages. The `apollo-codegen-cli` package contains the final CLI, which combines together the remaining `apollo-codegen-*` packages that implement language specific code generation.
+This repo is composed of multiple packages managed by Lerna. The `apollo-cli` contains the core CLI commands. The `apollo-codegen-core` package contains all the compiler APIs needed to implement code generation support for new languages. The other `apollo-codegen-*` packages implement code generation support for individual languages.
 
 Running tests locally:
 
