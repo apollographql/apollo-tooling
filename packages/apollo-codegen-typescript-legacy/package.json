@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "apollographql/apollo-codegen"
+    "url": "apollographql/apollo-cli"
   },
   "author": "Martijn Walraven <martijn@martijnwalraven.com>",
   "license": "MIT",
