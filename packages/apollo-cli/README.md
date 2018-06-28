@@ -18,9 +18,8 @@ Now you can see which commands are available with `apollo -h`.
 * [Usage](#usage)
 * [Commands](#commands)
 * [Code Generation](#code-generation)
-<!-- tocstop -->
-* [Code Generation](#code-generation)
 * [Contributing](#contributing)
+<!-- tocstop -->
 
 # Usage
 <!-- usage -->
