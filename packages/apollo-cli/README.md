@@ -4,15 +4,6 @@
 
 Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
 
-## Installation
-You can install the `apollo` command globally:
-
-```sh
-npm install -g apollo
-```
-
-Now you can see which commands are available with `apollo -h`.
-
 <!-- toc -->
 * [Apollo CLI](#apollo-cli)
 * [Usage](#usage)
