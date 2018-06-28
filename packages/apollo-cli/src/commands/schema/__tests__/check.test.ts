@@ -42,7 +42,7 @@ const engineSuccess = ({ schema, tag, results } = {}) => nock => {
         tag: tag || "current",
         gitContext: {
           commit: /.+/i,
-          remoteUrl: /apollo-codegen/i,
+          remoteUrl: /apollo-cli/i,
           committer: /@/i,
         },
       },
