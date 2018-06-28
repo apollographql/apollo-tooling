@@ -72,7 +72,7 @@ export default class Generate extends Command {
   static args = [
     {
       name: "output",
-      description: "Path to write the generated code to",
+      description: "Path to write the generated code to. Can be a directory to generate split files (TypeScript/Flow only). Leave empty to generate types next to sources (TypeScript/Flow only)",
     }
   ]
 

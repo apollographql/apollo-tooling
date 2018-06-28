@@ -1,19 +1,27 @@
-apollo-cli
-==========
+# Apollo CLI
 
-CLI for the Apollo platform of tooling
+[![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg?maxAge=2592000)](https://raw.githubusercontent.com/apollographql/apollo-codegen/master/LICENSE) [![npm](https://img.shields.io/npm/v/apollo.svg)](https://www.npmjs.com/package/apollo) [![Get on Slack](https://img.shields.io/badge/slack-join-orange.svg)](http://www.apollostack.com/#slack)
 
-[![Version](https://img.shields.io/npm/v/apollo.svg)](https://npmjs.org/package/apollo)
-[![CircleCI](https://circleci.com/gh/apollographql/apollo-cli/tree/master.svg?style=shield)](https://circleci.com/gh/apollographql/apollo-cli/tree/master)
-[![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/apollographql/apollo-cli?branch=master&svg=true)](https://ci.appveyor.com/project/apollographql/apollo-cli/branch/master)
-[![Codecov](https://codecov.io/gh/apollographql/apollo-cli/branch/master/graph/badge.svg)](https://codecov.io/gh/apollographql/apollo-cli)
-[![Downloads/week](https://img.shields.io/npm/dw/apollo-cli.svg)](https://npmjs.org/package/apollo-cli)
-[![License](https://img.shields.io/npm/l/apollo-cli.svg)](https://github.com/apollographql/apollo-cli/blob/master/package.json)
+Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
+
+## Installation
+You can install the `apollo` command globally:
+
+```sh
+npm install -g apollo
+```
+
+Now you can see which commands are available with `apollo -h`.
 
 <!-- toc -->
+* [Apollo CLI](#apollo-cli)
 * [Usage](#usage)
 * [Commands](#commands)
+* [Code Generation](#code-generation)
 <!-- tocstop -->
+* [Code Generation](#code-generation)
+* [Contributing](#contributing)
+
 # Usage
 <!-- usage -->
 ```sh-session
@@ -46,7 +54,8 @@ USAGE
   $ apollo codegen:generate [OUTPUT]
 
 ARGUMENTS
-  OUTPUT  Path to write the generated code to
+  OUTPUT  Path to write the generated code to. Can be a directory to generate split files (TypeScript/Flow only). Leave
+          empty to generate types next to sources (TypeScript/Flow only)
 
 OPTIONS
   -h, --help                                 Show command help
@@ -176,3 +185,107 @@ OPTIONS
 
 _See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.1.1/src/commands/schema/publish.ts)_
 <!-- commandsstop -->
+
+# Code Generation
+## Accompanying Libraries
+See [Apollo iOS](https://github.com/apollographql/apollo-ios) for details on the mapping from GraphQL results to Swift types, as well as runtime support for executing queries and mutations. For Scala, see [React Apollo Scala.js](https://github.com/apollographql/react-apollo-scalajs) for details on how to use generated Scala code in a Scala.js app with Apollo Client.
+
+## `gql` template support
+If the source file for generation is a JavaScript or TypeScript file, the codegen will try to extrapolate the queries inside the [gql tag](https://github.com/apollographql/graphql-tag) templates.
+
+The tag name is configurable using the CLI `--tagName` option.
+
+## Typescript and Flow
+
+When using `apollo-codegen` with Typescript or Flow, make sure to add the `__typename` introspection field to every selection set within your graphql operations.
+
+If you're using a client like `apollo-client` that does this automatically for your GraphQL operations, pass in the `--addTypename` option to `apollo codegen:generate` to make sure the generated Typescript and Flow types have the `__typename` field as well. This is required to ensure proper type generation support for `GraphQLUnionType` and `GraphQLInterfaceType` fields.
+
+## Why is the __typename field required?
+Using the type information from the GraphQL schema, we can infer the possible types for fields. However, in the case of a `GraphQLUnionType` or `GraphQLInterfaceType`, there are multiple types that are possible for that field. This is best modeled using a disjoint union with the `__typename`
+as the discriminant.
+
+For example, given a schema:
+```graphql
+...
+
+interface Character {
+  name: String!
+}
+
+type Human implements Character {
+  homePlanet: String
+}
+
+type Droid implements Character {
+  primaryFunction: String
+}
+
+...
+```
+
+Whenever a field of type `Character` is encountered, it could be either a Human or Droid. Human and Droid objects
+will have a different set of fields. Within your application code, when interacting with a `Character` you'll want to make sure to handle both of these cases.
+
+Given this query:
+
+```graphql
+query Characters {
+  characters(episode: NEW_HOPE) {
+    name
+
+    ... on Human {
+      homePlanet
+    }
+
+    ... on Droid {
+      primaryFunction
+    }
+  }
+}
+```
+
+Apollo Codegen will generate a union type for Character.
+
+```javascript
+export type CharactersQuery = {
+  characters: Array<{
+    __typename: 'Human',
+    name: string,
+    homePlanet: ?string
+  } | {
+    __typename: 'Droid',
+    name: string,
+    primaryFunction: ?string
+  }>
+}
+```
+
+This type can then be used as follows to ensure that all possible types are handled:
+
+```javascript
+function CharacterFigures({ characters }: CharactersQuery) {
+  return characters.map(character => {
+    switch(character.__typename) {
+      case "Human":
+        return <HumanFigure homePlanet={character.homePlanet} name={character.name} />
+      case "Droid":
+        return <DroidFigure primaryFunction={character.primaryFunction} name={character.name} />
+    }
+  });
+}
+```
+
+# Contributing
+[![Build status](https://travis-ci.org/apollographql/apollo-codegen.svg?branch=master)](https://travis-ci.org/apollographql/apollo-codegen)
+
+This repo is composed of multiple packages managed by Lerna. The `apollo-codegen-core` package contains all the compiler APIs needed to implement support for new languages. The `apollo-codegen-cli` package contains the final CLI, which combines together the remaining `apollo-codegen-*` packages that implement language specific code generation.
+
+Running tests locally:
+
+```
+npm install
+npm test
+```
+
+You can also run `npm` commands within package folders after you have bootstrapped the repository (part of `npm install`).
