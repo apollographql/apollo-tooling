@@ -30,6 +30,8 @@ beforeEach(() => {
   vol.reset();
 })
 
+jest.setTimeout(15000);
+
 describe("successful codegen", () => {
   test
     .stdout()
