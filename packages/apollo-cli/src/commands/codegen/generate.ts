@@ -88,6 +88,10 @@ export default class Generate extends Command {
       }
     } else if (args.output) {
       switch(args.output.split('.').reverse()[0]) {
+        case "json":
+          inferredTarget = "json";
+          break;
+
         case "swift":
           inferredTarget = "swift";
           break;

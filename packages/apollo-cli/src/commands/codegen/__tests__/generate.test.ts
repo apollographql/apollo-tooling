@@ -88,6 +88,19 @@ describe("successful codegen", () => {
     .do(() => {
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
+        "queryOne.graphql": simpleQuery.toString()
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.json", "operations.json"])
+    .it("infers JSON target and writes operations", () => {
+      expect(mockFS.readFileSync("operations.json").toString()).toMatchSnapshot();
+    });
+
+  test
+    .stdout()
+    .do(() => {
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
         "directory/component.tsx": `
           gql\`
             query SimpleQuery {
