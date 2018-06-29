@@ -78,7 +78,7 @@ export function generateSource(
 
       generatedFiles.push({
         sourcePath: operation.filePath,
-        fileName: `${operation.operationName}.ts`,
+        fileName: `${operation.operationName}.js`,
         content: new FlowGeneratedFile(output)
       });
     });
@@ -92,7 +92,7 @@ export function generateSource(
 
       generatedFiles.push({
         sourcePath: fragment.filePath,
-        fileName: `${fragment.fragmentName}.ts`,
+        fileName: `${fragment.fragmentName}.js`,
         content: new FlowGeneratedFile(output)
       });
     });
