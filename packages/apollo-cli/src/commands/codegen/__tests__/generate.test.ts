@@ -26,11 +26,14 @@ const fullSchema = execute(
 
 const simpleQuery = fs.readFileSync(path.resolve(__dirname, "./fixtures/simpleQuery.graphql"));
 
+beforeEach(() => {
+  vol.reset();
+})
+
 describe("successful codegen", () => {
   test
     .stdout()
     .do(() => {
-      vol.reset();
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
         "queryOne.graphql": simpleQuery.toString()
@@ -44,7 +47,6 @@ describe("successful codegen", () => {
   test
     .stdout()
     .do(() => {
-      vol.reset();
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
         "queryOne.graphql": simpleQuery.toString()
@@ -58,7 +60,6 @@ describe("successful codegen", () => {
   test
     .stdout()
     .do(() => {
-      vol.reset();
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
         "queryOne.graphql": simpleQuery.toString()
@@ -72,7 +73,6 @@ describe("successful codegen", () => {
   test
     .stdout()
     .do(() => {
-      vol.reset();
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
         "queryOne.graphql": simpleQuery.toString()
@@ -86,7 +86,6 @@ describe("successful codegen", () => {
   test
     .stdout()
     .do(() => {
-      vol.reset();
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
         "directory/component.tsx": `
@@ -106,7 +105,6 @@ describe("successful codegen", () => {
   test
     .stdout()
     .do(() => {
-      vol.reset();
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
         "directory/component.jsx": `
