@@ -7,8 +7,8 @@ import { TargetType, default as generate } from '../../generate';
 
 import { buildClientSchema } from "graphql";
 
-import * as globby from "globby";
-import * as fs from 'fs';
+import * as fg from "glob";
+import { fs, withGlobalFS } from "apollo-codegen-core/lib/localfs";
 import { promisify } from 'util';
 
 import { loadSchemaStep } from "../../load-schema";
@@ -122,7 +122,9 @@ export default class Generate extends Command {
       {
         title: "Scanning for GraphQL queries",
         task: async (ctx, task) => {
-          const paths = await globby(flags.queries ? flags.queries.split('\n') : []);
+          const paths = withGlobalFS(() => {
+            return (flags.queries ? flags.queries.split('\n') : []).flatMap(p => fg.sync(p));
+          });
           task.title = `Scanning for GraphQL queries (${paths.length} found)`;
           ctx.queryPaths = paths;
         }

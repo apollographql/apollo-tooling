@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import { fs } from "apollo-codegen-core/lib/localfs";
 import * as path from 'path';
 
 import { loadAndMergeQueryDocuments } from 'apollo-codegen-core/lib/loading';
