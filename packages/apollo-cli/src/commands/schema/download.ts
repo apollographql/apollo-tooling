@@ -1,7 +1,7 @@
 import { Command, flags } from "@oclif/command";
 import * as Listr from "listr";
 
-import * as fs from 'fs';
+import { fs } from 'apollo-codegen-core/lib/localfs';
 import { promisify } from 'util';
 
 import { engineFlags } from "../../engine-cli";

@@ -28,13 +28,15 @@ const simpleQuery = fs.readFileSync(path.resolve(__dirname, "./fixtures/simpleQu
 
 beforeEach(() => {
   vol.reset();
+  vol.fromJSON({
+    "__blankFileSoDirectoryExists": ""
+  });
 })
 
 jest.setTimeout(15000);
 
 describe("successful codegen", () => {
   test
-    .stdout()
     .do(() => {
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
@@ -47,7 +49,6 @@ describe("successful codegen", () => {
     });
 
   test
-    .stdout()
     .do(() => {
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
@@ -60,7 +61,6 @@ describe("successful codegen", () => {
     });
 
   test
-    .stdout()
     .do(() => {
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
@@ -73,7 +73,6 @@ describe("successful codegen", () => {
     });
 
   test
-    .stdout()
     .do(() => {
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
@@ -86,7 +85,6 @@ describe("successful codegen", () => {
     });
 
   test
-    .stdout()
     .do(() => {
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
@@ -99,7 +97,6 @@ describe("successful codegen", () => {
     });
 
   test
-    .stdout()
     .do(() => {
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
@@ -118,7 +115,6 @@ describe("successful codegen", () => {
     });
 
   test
-    .stdout()
     .do(() => {
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
