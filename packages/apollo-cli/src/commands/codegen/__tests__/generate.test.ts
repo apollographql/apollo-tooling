@@ -12,14 +12,9 @@ import * as fs from "fs";
 import { test as setup } from "apollo-cli-test";
 import { introspectionQuery, print, execute, buildSchema } from "graphql";
 import gql from "graphql-tag";
-import { ENGINE_URI } from "../../../engine";
-import { VALIDATE_SCHEMA } from "../../../operations/validateSchema";
 import { fs as mockFS, vol } from "apollo-codegen-core/lib/localfs";
 
 const test = setup.do(() => mockConsole());
-const ENGINE_API_KEY = "service:test:1234";
-const hash = "12345";
-const localSchema = { __schema: { fakeSchema: true } };
 const fullSchema = execute(
   buildSchema(
     fs.readFileSync(path.resolve(__dirname, "../../schema/__tests__/fixtures/schema.graphql"), {
@@ -31,217 +26,102 @@ const fullSchema = execute(
 
 const simpleQuery = fs.readFileSync(path.resolve(__dirname, "./fixtures/simpleQuery.graphql"));
 
-const localSuccess = nock => {
-  nock
-    .post("/graphql", {
-      query: print(gql(introspectionQuery)),
-      operationName: "IntrospectionQuery",
-      variables: {},
-    })
-    .reply(200, { data: localSchema });
-};
-
-const engineSuccess = ({ schema, tag, results } = {}) => nock => {
-  nock
-    .matchHeader("x-api-key", ENGINE_API_KEY)
-    .post("/", {
-      operationName: "CheckSchema",
-      variables: {
-        id: "test",
-        schema: schema || localSchema.__schema,
-        tag: tag || "current",
-        gitContext: {
-          commit: /.+/i,
-          remoteUrl: /apollo-cli/i,
-          committer: /@/i,
-        },
-      },
-      query: print(VALIDATE_SCHEMA),
-    })
-    .reply(200, {
-      data: {
-        service: {
-          schema: {
-            checkSchema: {
-              changes: results || [
-                {
-                  type: "NOTICE",
-                  code: "DEPRECATION_ADDED",
-                  description: "Field `User.lastName` was deprecated",
-                },
-                {
-                  type: "WARNING",
-                  code: "FIELD_REMOVED",
-                  description: "Field `User.firstName` removed",
-                },
-                {
-                  type: "FAILURE",
-                  code: "ARG_CHANGE_TYPE",
-                  description: "Argument id on `Query.user` changed to ID!",
-                },
-                {
-                  type: "NOTICE",
-                  code: "FIELD_ADDED",
-                  description: "Field `User.fullName` was added",
-                },
-              ],
-            },
-          },
-        },
-      },
-    });
-};
-
-describe("successful checks", () => {
+describe("successful codegen", () => {
   test
     .stdout()
     .do(() => {
       vol.reset();
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
-        "queryOne.graphql": simpleQuery.toString(),
-        "../../../../package.json": fs.readFileSync(path.resolve(__dirname, "../../../../package.json")).toString()
+        "queryOne.graphql": simpleQuery.toString()
       });
     })
-    .command(["codegen:generate", "--schema=schema.json", "--queries=queryOne.graphql", "API.swift"])
+    .command(["codegen:generate", "--schema=schema.json", "API.swift"])
     .it("infers Swift target and writes types", () => {
       expect(mockFS.readFileSync("API.swift").toString()).toMatchSnapshot();
     });
 
-  // test
-  //   .nock("http://localhost:4000", localSuccess)
-  //   .nock(ENGINE_URI, engineSuccess())
-  //   .stdout()
-  //   .command(["schema:check", `--key=${ENGINE_API_KEY}`])
-  //   .exit(1)
-  //   .it("allows custom api key", () => {
-  //     expect(stdout).toContain("FAILURE");
-  //     expect(stdout).toContain("NOTICE");
-  //     expect(stdout).toContain("WARNING");
-  //   });
+  test
+    .stdout()
+    .do(() => {
+      vol.reset();
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
+        "queryOne.graphql": simpleQuery.toString()
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.json", "API.scala"])
+    .it("infers Scala target and writes types", () => {
+      expect(mockFS.readFileSync("API.scala").toString()).toMatchSnapshot();
+    });
 
-  // test
-  //   .nock("http://localhost:4000", localSuccess)
-  //   .nock(ENGINE_URI, engineSuccess({ results: [] }))
-  //   .env({ ENGINE_API_KEY })
-  //   .stdout()
-  //   .command(["schema:check"])
-  //   .it(
-  //     "compares against the latest uploaded schema with no change",
-  //     ({ stdout }) => {
-  //       expect(stdout).toContain("No changes");
-  //     }
-  //   );
+  test
+    .stdout()
+    .do(() => {
+      vol.reset();
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
+        "queryOne.graphql": simpleQuery.toString()
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.json", "API.ts"])
+    .it("infers TypeScript target and writes types", () => {
+      expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
+    });
 
-  // test
-  //   .stdout()
-  //   .nock("https://staging.example.com", localSuccess)
-  //   .nock(ENGINE_URI, engineSuccess())
-  //   .env({ ENGINE_API_KEY })
-  //   .command(["schema:check", "--endpoint=https://staging.example.com/graphql"])
-  //   .exit(1)
-  //   .it("compares against a schema from a custom remote", () => {
-  //     expect(stdout).toContain("FAILURE");
-  //     expect(stdout).toContain("NOTICE");
-  //     expect(stdout).toContain("WARNING");
-  //   });
+  test
+    .stdout()
+    .do(() => {
+      vol.reset();
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
+        "queryOne.graphql": simpleQuery.toString()
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.json", "API.js"])
+    .it("infers Flow target and writes types", () => {
+      expect(mockFS.readFileSync("API.js").toString()).toMatchSnapshot();
+    });
 
-  // test
-  //   .stdout()
-  //   .nock("http://localhost:4000", localSuccess)
-  //   .nock(
-  //     "https://engine.example.com",
-  //     engineSuccess({ engine: "https://engine.example.com" })
-  //   )
-  //   .env({ ENGINE_API_KEY })
-  //   .command(["schema:check", "--engine=https://engine.example.com"])
-  //   .exit(1)
-  //   .it("compares against a schema from a custom registry", std => {
-  //     expect(stdout).toContain("FAILURE");
-  //     expect(stdout).toContain("NOTICE");
-  //     expect(stdout).toContain("WARNING");
-  //   });
+  test
+    .stdout()
+    .do(() => {
+      vol.reset();
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
+        "directory/component.tsx": `
+          gql\`
+            query SimpleQuery {
+              hello
+            }
+          \`;
+        `
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.json", "--queries=**/*.tsx", "--target=typescript"])
+    .it("writes TypeScript types next to sources when no output is set", () => {
+      expect(mockFS.readFileSync("directory/SimpleQuery.ts").toString()).toMatchSnapshot();
+    });
 
-  // test
-  //   .stdout()
-  //   .nock("https://staging.example.com", nock => {
-  //     nock
-  //       .matchHeader("Authorization", "1234")
-  //       .matchHeader("Hello", "World")
-  //       .post("/graphql", {
-  //         query: print(gql(introspectionQuery)),
-  //         operationName: "IntrospectionQuery",
-  //         variables: {},
-  //       })
-  //       .reply(200, { data: localSchema });
-  //   })
-  //   .nock(ENGINE_URI, engineSuccess())
-  //   .env({ ENGINE_API_KEY })
-  //   .command([
-  //     "schema:check",
-  //     "--endpoint=https://staging.example.com/graphql",
-  //     "--header=Authorization: 1234",
-  //     "--header=Hello: World",
-  //   ])
-  //   .exit(1)
-  //   .it(
-  //     "calls engine with a schema from a custom remote with custom headers",
-  //     () => {
-  //       expect(stdout).toContain("FAILURE");
-  //       expect(stdout).toContain("NOTICE");
-  //       expect(stdout).toContain("WARNING");
-  //     }
-  //   );
-
-  // test
-  //   .stdout()
-  //   .nock(ENGINE_URI, engineSuccess())
-  //   .env({ ENGINE_API_KEY })
-  //   .command([
-  //     "schema:check",
-  //     `--endpoint=${path.resolve(
-  //       __dirname,
-  //       "./fixtures/introspection-result.json"
-  //     )}`,
-  //   ])
-  //   .exit(1)
-  //   .it(
-  //     "calls engine with a schema from an introspection result on the filesystem",
-  //     () => {
-  //       expect(stdout).toContain("FAILURE");
-  //       expect(stdout).toContain("NOTICE");
-  //       expect(stdout).toContain("WARNING");
-  //     }
-  //   );
-
-  // test
-  //   .stdout()
-  //   .nock(ENGINE_URI, engineSuccess({ schema: fullSchema.__schema }))
-  //   .env({ ENGINE_API_KEY })
-  //   .command([
-  //     "schema:check",
-  //     `--endpoint=${path.resolve(__dirname, "./fixtures/schema.graphql")}`,
-  //   ])
-  //   .exit(1)
-  //   .it(
-  //     "calls engine with a schema from a schema file on the filesystem",
-  //     () => {
-  //       expect(stdout).toContain("FAILURE");
-  //       expect(stdout).toContain("NOTICE");
-  //       expect(stdout).toContain("WARNING");
-  //     }
-  //   );
-
-  // test
-  //   .nock("http://localhost:4000", localSuccess)
-  //   .nock(ENGINE_URI, engineSuccess())
-  //   .env({ ENGINE_API_KEY })
-  //   .stdout()
-  //   .command(["schema:check", "--json"])
-  //   .exit(1)
-  //   .it("allows formatting success as JSON", () => {
-  //     expect(stdout).toContain('"type": "FAILURE"');
-  //   });
+  test
+    .stdout()
+    .do(() => {
+      vol.reset();
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
+        "directory/component.jsx": `
+          gql\`
+            query SimpleQuery {
+              hello
+            }
+          \`;
+        `
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.json", "--queries=**/*.jsx", "--target=flow"])
+    .it("writes Flow types next to sources when no output is set", () => {
+      expect(mockFS.readFileSync("directory/SimpleQuery.js").toString()).toMatchSnapshot();
+    });
 });
 
 describe("error handling", () => {
@@ -249,4 +129,9 @@ describe("error handling", () => {
     .command(["codegen:generate", "--target=foobar"])
     .catch(err => expect(err.message).toMatch(/Unsupported target: foobar/))
     .it("errors with an unsupported target");
+
+  test
+    .command(["codegen:generate", "--target=swift"])
+    .catch(err => expect(err.message).toMatch(/The output path must be specified/))
+    .it("errors when no output file is provided");
 });

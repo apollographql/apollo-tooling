@@ -1,6 +1,56 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`successful checks infers Swift target and writes types 1`] = `
+exports[`successful codegen infers Flow target and writes types 1`] = `
+"
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export type SimpleQuery = {
+  hello: string
+};
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`successful codegen infers Scala target and writes types 1`] = `
+"//  This file was automatically generated and should not be edited.
+
+
+object SimpleQueryQuery extends com.apollographql.scalajs.GraphQLQuery {
+  val operationString =
+    \\"query SimpleQuery {\\" +
+    \\"  hello\\" +
+    \\"}\\"
+  val operation = com.apollographql.scalajs.gql(operationString)
+
+  type Variables = Unit
+
+  case class Data(hello: String) {
+  }
+
+  object Data {
+    val possibleTypes = scala.collection.Set(\\"Query\\")
+  }
+}"
+`;
+
+exports[`successful codegen infers Swift target and writes types 1`] = `
 "//  This file was automatically generated and should not be edited.
 
 import Apollo
@@ -39,4 +89,84 @@ public final class SimpleQueryQuery: GraphQLQuery {
     }
   }
 }"
+`;
+
+exports[`successful codegen infers TypeScript target and writes types 1`] = `
+"
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+}
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`successful codegen writes Flow types next to sources when no output is set 1`] = `
+"
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export type SimpleQuery = {
+  hello: string
+};
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`successful codegen writes TypeScript types next to sources when no output is set 1`] = `
+"
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+}
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
 `;
