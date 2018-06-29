@@ -81,7 +81,7 @@ export default class Generate extends Command {
 
     let inferredTarget: TargetType = "" as TargetType;
     if (flags.target) {
-      if (["swift", "typescript", "flow", "scala", "typescript-legacy", "flow-legacy"].includes(flags.target)) {
+      if (["json", "swift", "typescript", "flow", "scala", "typescript-legacy", "flow-legacy"].includes(flags.target)) {
         inferredTarget = flags.target as TargetType;
       } else {
         this.error(`Unsupported target: ${flags.target}`);
