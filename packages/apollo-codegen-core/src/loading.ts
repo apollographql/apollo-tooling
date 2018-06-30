@@ -1,5 +1,5 @@
-import * as fs from 'fs'
-import { stripIndents } from 'common-tags'
+import { fs } from './localfs';
+import { stripIndents } from 'common-tags';
 
 import {
   buildClientSchema,

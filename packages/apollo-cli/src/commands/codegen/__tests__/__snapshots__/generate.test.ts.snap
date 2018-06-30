@@ -1,0 +1,203 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`successful codegen infers Flow target and writes types 1`] = `
+"
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export type SimpleQuery = {
+  hello: string
+};
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`successful codegen infers JSON target and writes operations 1`] = `
+"{
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"queryOne.graphql\\",
+			\\"operationName\\": \\"SimpleQuery\\",
+			\\"operationType\\": \\"query\\",
+			\\"rootType\\": \\"Query\\",
+			\\"variables\\": [],
+			\\"source\\": \\"query SimpleQuery {\\\\n  hello\\\\n}\\",
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"hello\\",
+					\\"fieldName\\": \\"hello\\",
+					\\"type\\": \\"String!\\",
+					\\"isConditional\\": false,
+					\\"isDeprecated\\": false
+				}
+			],
+			\\"fragmentSpreads\\": [],
+			\\"inlineFragments\\": [],
+			\\"fragmentsReferenced\\": [],
+			\\"sourceWithFragments\\": \\"query SimpleQuery {\\\\n  hello\\\\n}\\",
+			\\"operationId\\": \\"4de1e386589b0853a102a87a3f21ca25266116517e59c1e8be9442e2571f00bc\\"
+		}
+	],
+	\\"fragments\\": [],
+	\\"typesUsed\\": []
+}"
+`;
+
+exports[`successful codegen infers Scala target and writes types 1`] = `
+"//  This file was automatically generated and should not be edited.
+
+
+object SimpleQueryQuery extends com.apollographql.scalajs.GraphQLQuery {
+  val operationString =
+    \\"query SimpleQuery {\\" +
+    \\"  hello\\" +
+    \\"}\\"
+  val operation = com.apollographql.scalajs.gql(operationString)
+
+  type Variables = Unit
+
+  case class Data(hello: String) {
+  }
+
+  object Data {
+    val possibleTypes = scala.collection.Set(\\"Query\\")
+  }
+}"
+`;
+
+exports[`successful codegen infers Swift target and writes types 1`] = `
+"//  This file was automatically generated and should not be edited.
+
+import Apollo
+
+public final class SimpleQueryQuery: GraphQLQuery {
+  public let operationDefinition =
+    \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
+
+  public init() {
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes = [\\"Query\\"]
+
+    public static let selections: [GraphQLSelection] = [
+      GraphQLField(\\"hello\\", type: .nonNull(.scalar(String.self))),
+    ]
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(hello: String) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hello\\": hello])
+    }
+
+    public var hello: String {
+      get {
+        return resultMap[\\"hello\\"]! as! String
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"hello\\")
+      }
+    }
+  }
+}"
+`;
+
+exports[`successful codegen infers TypeScript target and writes types 1`] = `
+"
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+}
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`successful codegen writes Flow types next to sources when no output is set 1`] = `
+"
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export type SimpleQuery = {
+  hello: string
+};
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`successful codegen writes TypeScript types next to sources when no output is set 1`] = `
+"
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+}
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;

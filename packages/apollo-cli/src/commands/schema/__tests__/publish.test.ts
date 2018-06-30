@@ -64,6 +64,8 @@ const engineSuccess = ({ schema, tag, result } = {}) => nock => {
     );
 };
 
+jest.setTimeout(15000);
+
 describe("successful uploads", () => {
   test
     .nock("http://localhost:4000", localSuccess)
