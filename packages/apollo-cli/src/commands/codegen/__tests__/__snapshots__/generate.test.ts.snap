@@ -1,5 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`successful codegen generates operation IDs files when flag is set 1`] = `
+"{
+  \\"4de1e386589b0853a102a87a3f21ca25266116517e59c1e8be9442e2571f00bc\\": {
+    \\"name\\": \\"SimpleQuery\\",
+    \\"source\\": \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
+  }
+}"
+`;
+
 exports[`successful codegen infers Flow target and writes types 1`] = `
 "
 

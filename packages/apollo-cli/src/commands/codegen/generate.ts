@@ -55,7 +55,7 @@ export default class Generate extends Command {
       description: "Merge fragment fields onto its enclosing type"
     }),
     useFlowExactObjects: flags.boolean({
-      description: "Use Flow read only types for generated types [flow only]"
+      description: "Use Flow exact objects for generated types [flow only]"
     }),
     useFlowReadOnlyTypes: flags.boolean({
       description: "Use Flow read only types for generated types [flow only]"
@@ -161,8 +161,8 @@ export default class Generate extends Command {
             flags.tagName as string,
             !args.output,
             {
-              passthroughCustomScalars: flags.passthroughCustomScalars || flags.customScalarsPrefix,
-              customScalarsPrefix: flags.customScalarsPrefix || "",
+              passthroughCustomScalars: flags.passthroughCustomScalars || (!!flags.customScalarsPrefix),
+              customScalarsPrefix: flags.customScalarsPrefix,
               addTypename: flags.addTypename,
               namespace: flags.namespace,
               operationIdsPath: flags.operationIdsPath,

@@ -55,6 +55,18 @@ describe("successful codegen", () => {
         "queryOne.graphql": simpleQuery.toString()
       });
     })
+    .command(["codegen:generate", "--schema=schema.json", "--operationIdsPath=myOperationIDs.json", "API.swift"])
+    .it("generates operation IDs files when flag is set", () => {
+      expect(mockFS.readFileSync("myOperationIDs.json").toString()).toMatchSnapshot();
+    });
+
+  test
+    .do(() => {
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
+        "queryOne.graphql": simpleQuery.toString()
+      });
+    })
     .command(["codegen:generate", "--schema=schema.json", "API.scala"])
     .it("infers Scala target and writes types", () => {
       expect(mockFS.readFileSync("API.scala").toString()).toMatchSnapshot();

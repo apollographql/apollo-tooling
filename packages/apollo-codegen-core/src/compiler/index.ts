@@ -41,6 +41,7 @@ export interface CompilerOptions {
   customScalarsPrefix?: string;
   namespace?: string;
   generateOperationIds?: boolean;
+  operationIdsPath?: string;
 }
 
 export interface CompilerContext {

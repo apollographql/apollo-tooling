@@ -3,8 +3,8 @@ import * as path from 'path';
 
 import { loadAndMergeQueryDocuments } from 'apollo-codegen-core/lib/loading';
 import { validateQueryDocument } from './validation';
-import { compileToIR } from 'apollo-codegen-core/lib/compiler';
-import { compileToLegacyIR } from 'apollo-codegen-core/lib/compiler/legacyIR';
+import { compileToIR, CompilerContext, CompilerOptions } from 'apollo-codegen-core/lib/compiler';
+import { compileToLegacyIR, CompilerOptions as LegacyCompilerOptions } from 'apollo-codegen-core/lib/compiler/legacyIR';
 import serializeToJSON from 'apollo-codegen-core/lib/serializeToJSON';
 import { BasicGeneratedFile } from 'apollo-codegen-core/lib/utilities/CodeGenerator'
 
@@ -15,10 +15,13 @@ import { generateSource as generateFlowSource } from 'apollo-codegen-flow';
 import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript';
 import { generateSource as generateScalaSource } from 'apollo-codegen-scala';
 import { GraphQLSchema } from 'graphql';
+import { FlowCompilerOptions } from '../../apollo-codegen-flow/lib/language';
 
 export type TargetType = 'json' | 'swift' | 'ts-legacy' | 'typescript-legacy'
   | 'flow-legacy' | 'scala' | 'flow' | 'typescript'
   | 'ts';
+
+export type GenerationOptions = CompilerOptions & LegacyCompilerOptions & FlowCompilerOptions;
 
 export default function generate(
   inputPaths: string[],
@@ -28,7 +31,7 @@ export default function generate(
   target: TargetType,
   tagName: string,
   nextToSources: boolean,
-  options: any
+  options: GenerationOptions
 ): number {
   let writtenFiles = 0;
 
@@ -134,12 +137,12 @@ interface OperationIdsMap {
   source: string;
 }
 
-function writeOperationIdsMap(context: any) {
+function writeOperationIdsMap(context: CompilerContext) {
   let operationIdsMap: { [id: string]: OperationIdsMap } = {};
   Object.keys(context.operations).map(k => context.operations[k]).forEach(operation => {
-    operationIdsMap[operation.operationId] = {
+    operationIdsMap[operation.operationId!] = {
       name: operation.operationName,
-      source: operation.sourceWithFragments
+      source: operation.source
     };
   });
   fs.writeFileSync(context.options.operationIdsPath, JSON.stringify(operationIdsMap, null, 2));
