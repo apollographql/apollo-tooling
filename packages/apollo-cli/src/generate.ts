@@ -27,7 +27,7 @@ export default function generate(
   inputPaths: string[],
   schema: GraphQLSchema,
   outputPath: string,
-  only: string,
+  only: string | undefined,
   target: TargetType,
   tagName: string,
   nextToSources: boolean,

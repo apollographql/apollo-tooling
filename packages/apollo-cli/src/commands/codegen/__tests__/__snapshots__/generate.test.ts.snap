@@ -9,6 +9,53 @@ exports[`successful codegen generates operation IDs files when flag is set 1`] =
 }"
 `;
 
+exports[`successful codegen handles only flag for Swift target 1`] = `
+Object {
+  "/Users/shadaj/work/apollo-cli/packages/apollo-cli/outDirectory/Types.graphql.swift": "//  This file was automatically generated and should not be edited.
+
+import Apollo",
+  "/Users/shadaj/work/apollo-cli/packages/apollo-cli/outDirectory/__create_this_directory": "",
+  "/Users/shadaj/work/apollo-cli/packages/apollo-cli/outDirectory/queryTwo.graphql.swift": "//  This file was automatically generated and should not be edited.
+
+import Apollo
+
+public final class OtherQueryQuery: GraphQLQuery {
+  public let operationDefinition =
+    \\"query OtherQuery {\\\\n  hello\\\\n}\\"
+
+  public init() {
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes = [\\"Query\\"]
+
+    public static let selections: [GraphQLSelection] = [
+      GraphQLField(\\"hello\\", type: .nonNull(.scalar(String.self))),
+    ]
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(hello: String) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hello\\": hello])
+    }
+
+    public var hello: String {
+      get {
+        return resultMap[\\"hello\\"]! as! String
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"hello\\")
+      }
+    }
+  }
+}",
+}
+`;
+
 exports[`successful codegen infers Flow target and writes types 1`] = `
 "
 
@@ -200,6 +247,62 @@ export interface SimpleQuery {
 }
 
 /* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`successful codegen writes exact Flow types when the flag is set 1`] = `
+"
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export type SimpleQuery = {|
+  hello: string
+|};
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`successful codegen writes read-only Flow types when the flag is set 1`] = `
+"
+
+/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export type SimpleQuery = {
+  +hello: string
+};
+
+/* @flow */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================

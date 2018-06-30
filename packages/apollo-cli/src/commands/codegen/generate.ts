@@ -110,13 +110,11 @@ export default class Generate extends Command {
 
         default:
           this.error("Could not infer target from output file type, please use --target");
-          return;
       }
     }
 
     if (!args.output && inferredTarget != "typescript" && inferredTarget != "flow") {
       this.error("The output path must be specified in the arguments for Swift and Scala");
-      return;
     }
 
     const apiKey = flags.key;
@@ -156,7 +154,7 @@ export default class Generate extends Command {
             ctx.queryPaths,
             ctx.schema,
             args.output || path.resolve("."),
-            flags.only ? path.resolve(flags.only) : "",
+            flags.only,
             inferredTarget,
             flags.tagName as string,
             !args.output,

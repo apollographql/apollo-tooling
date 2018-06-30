@@ -25,6 +25,7 @@ const fullSchema = execute(
 ).data;
 
 const simpleQuery = fs.readFileSync(path.resolve(__dirname, "./fixtures/simpleQuery.graphql"));
+const otherQuery = fs.readFileSync(path.resolve(__dirname, "./fixtures/otherQuery.graphql"));
 
 beforeEach(() => {
   vol.reset();
@@ -64,6 +65,20 @@ describe("successful codegen", () => {
     .do(() => {
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
+        "queryOne.graphql": simpleQuery.toString(),
+        "queryTwo.graphql": otherQuery.toString(),
+        "outDirectory/__create_this_directory": ""
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.json", "--only=queryTwo.graphql", "--target=swift", "outDirectory"])
+    .it("handles only flag for Swift target", () => {
+      expect(vol.toJSON("outDirectory")).toMatchSnapshot();
+    });
+
+  test
+    .do(() => {
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
         "queryOne.graphql": simpleQuery.toString()
       });
     })
@@ -93,6 +108,30 @@ describe("successful codegen", () => {
     })
     .command(["codegen:generate", "--schema=schema.json", "API.js"])
     .it("infers Flow target and writes types", () => {
+      expect(mockFS.readFileSync("API.js").toString()).toMatchSnapshot();
+    });
+
+  test
+    .do(() => {
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
+        "queryOne.graphql": simpleQuery.toString()
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.json", "--useFlowExactObjects", "API.js"])
+    .it("writes exact Flow types when the flag is set", () => {
+      expect(mockFS.readFileSync("API.js").toString()).toMatchSnapshot();
+    });
+
+  test
+    .do(() => {
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
+        "queryOne.graphql": simpleQuery.toString()
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.json", "--useFlowReadOnlyTypes", "API.js"])
+    .it("writes read-only Flow types when the flag is set", () => {
       expect(mockFS.readFileSync("API.js").toString()).toMatchSnapshot();
     });
 
@@ -155,4 +194,9 @@ describe("error handling", () => {
     .command(["codegen:generate", "--target=swift"])
     .catch(err => expect(err.message).toMatch(/The output path must be specified/))
     .it("errors when no output file is provided");
+
+  test
+    .command(["codegen:generate", "output-file"])
+    .catch(err => expect(err.message).toMatch(/Could not infer target from output file type, please use --target/))
+    .it("errors when target cannot be inferred");
 });
