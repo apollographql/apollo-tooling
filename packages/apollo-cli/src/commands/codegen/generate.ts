@@ -73,7 +73,11 @@ export default class Generate extends Command {
       description:
         "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
       default: "gql"
-    })
+    }),
+    localDirectory: flags.string({
+      description:
+        "Put each generated file in a directory next to its source file (TypeScript/Flow only). Ignored if `output` is set."
+    }),
   };
 
   static args = [
@@ -189,6 +193,7 @@ export default class Generate extends Command {
         title: "Generating query files",
         task: async (ctx, task) => {
           task.title = `Generating query files with '${inferredTarget}' target`;
+
           const writtenFiles = generate(
             ctx.queryPaths,
             ctx.schema,
@@ -196,7 +201,7 @@ export default class Generate extends Command {
             flags.only ? path.resolve(flags.only) : "",
             inferredTarget,
             flags.tagName as string,
-            !args.output,
+            args.output ? false : flags.localDirectory || true,
             {
               passthroughCustomScalars:
                 flags.passthroughCustomScalars || flags.customScalarsPrefix,

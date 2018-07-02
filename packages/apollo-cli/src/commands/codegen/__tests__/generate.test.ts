@@ -149,6 +149,68 @@ describe("successful codegen", () => {
         mockFS.readFileSync("directory/SimpleQuery.js").toString()
       ).toMatchSnapshot();
     });
+
+  test
+    .do(() => {
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
+        "directory/component.tsx": `
+          gql\`
+            query SimpleQuery {
+              hello
+            }
+          \`;
+        `
+      });
+    })
+    .command([
+      "codegen:generate",
+      "--schema=schema.json",
+      "--queries=**/*.tsx",
+      "--target=typescript",
+      "--localDirectory=__generated__"
+    ])
+    .it(
+      "writes TypeScript types to a custom directory next to sources when no output is set and directory is set",
+      () => {
+        expect(
+          mockFS
+            .readFileSync("directory/__generated__/SimpleQuery.ts")
+            .toString()
+        ).toMatchSnapshot();
+      }
+    );
+
+  test
+    .do(() => {
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
+        "directory/component.jsx": `
+          gql\`
+            query SimpleQuery {
+              hello
+            }
+          \`;
+        `
+      });
+    })
+    .command([
+      "codegen:generate",
+      "--schema=schema.json",
+      "--queries=**/*.jsx",
+      "--target=flow",
+      "--localDirectory=__generated__"
+    ])
+    .it(
+      "writes Flow types to a custom directory next to sources when no output is set and directory is set",
+      () => {
+        expect(
+          mockFS
+            .readFileSync("directory/__generated__/SimpleQuery.js")
+            .toString()
+        ).toMatchSnapshot();
+      }
+    );
 });
 
 describe("error handling", () => {

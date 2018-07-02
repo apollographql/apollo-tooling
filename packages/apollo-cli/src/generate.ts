@@ -34,7 +34,7 @@ export default function generate(
   only: string,
   target: TargetType,
   tagName: string,
-  nextToSources: boolean,
+  nextToSources: boolean | string,
   options: any
 ): number {
   let writtenFiles = 0;
@@ -80,9 +80,29 @@ export default function generate(
 
     if (outputIndividualFiles) {
       generatedFiles.forEach(({ sourcePath, fileName, content }) => {
-        outFiles[
-          nextToSources ? `${path.dirname(sourcePath)}/${fileName}` : fileName
-        ] = {
+        if (nextToSources === true) {
+          outFiles[path.join(path.dirname(sourcePath), fileName)] = {
+            output: content.fileContents + common
+          };
+
+          return;
+        }
+
+        if (typeof nextToSources === "string") {
+          const dir = path.join(path.dirname(sourcePath), nextToSources);
+
+          if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+          }
+
+          outFiles[path.join(dir, fileName)] = {
+            output: content.fileContents + common
+          };
+
+          return;
+        }
+
+        outFiles[fileName] = {
           output: content.fileContents + common
         };
       });
