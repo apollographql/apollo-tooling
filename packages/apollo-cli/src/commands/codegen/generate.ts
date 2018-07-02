@@ -74,17 +74,21 @@ export default class Generate extends Command {
         "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
       default: "gql"
     }),
-    localDirectory: flags.string({
+    outputRelativeToCWD: flags.boolean({
       description:
-        "Put each generated file in a directory next to its source file (TypeScript/Flow only). Ignored if `output` is set."
-    }),
+        'By default, TypeScript/Flow will put each generated file in a directory next to its source file using the value of the "output" as the directory name. Set "outputRelativeToCWD" to put all generated files in the directory relative to the current working directory defined by "output".'
+    })
   };
 
   static args = [
     {
       name: "output",
-      description:
-        "Path to write the generated code to. Can be a directory to generate split files (TypeScript/Flow only). Leave empty to generate types next to sources (TypeScript/Flow only)"
+      description: `Directory to which generated files will be written.
+- For TypeScript/Flow generators, this specifies a directory relative to each source file by default.
+- For TypeScript/Flow generators with the "outputRelativeToCWD" flag is set, and for the Swift generator, this specifies a file or directory (absolute or relative to the current working directory) to which:
+  - a file will be written for each query (if "output" is a directory)
+  - all generated types will be written
+- For all other types, this defines a file (absolute or relative to the current working directory) to which all generated types are written.`
     }
   ];
 
@@ -149,6 +153,17 @@ export default class Generate extends Command {
       return;
     }
 
+    if (
+      !flags.outputRelativeToCWD &&
+      (inferredTarget === "typescript" || inferredTarget === "flow") &&
+      (args.output && (path.isAbsolute(args.output) || args.output.split(path.sep).length > 1))
+    ) {
+      this.error(
+        "For TypeScript and Flow generators, \"output\" must be empty or a single directory name, unless the \"outputRelativeToCWD\" flag is set."
+      );
+      return;
+    }
+
     const apiKey = flags.key;
     const pullFromEngine = !!apiKey && !flags.schema;
 
@@ -193,15 +208,14 @@ export default class Generate extends Command {
         title: "Generating query files",
         task: async (ctx, task) => {
           task.title = `Generating query files with '${inferredTarget}' target`;
-
           const writtenFiles = generate(
             ctx.queryPaths,
             ctx.schema,
-            args.output || path.resolve("."),
+            typeof args.output === "string" ? args.output : "__generated__",
             flags.only ? path.resolve(flags.only) : "",
             inferredTarget,
             flags.tagName as string,
-            args.output ? false : flags.localDirectory || true,
+            !flags.outputRelativeToCWD,
             {
               passthroughCustomScalars:
                 flags.passthroughCustomScalars || flags.customScalarsPrefix,

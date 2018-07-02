@@ -51,25 +51,80 @@ USAGE
   $ apollo codegen:generate [OUTPUT]
 
 ARGUMENTS
-  OUTPUT  Path to write the generated code to. Can be a directory to generate split files (TypeScript/Flow only). Leave empty to generate types next to sources (TypeScript/Flow only)
+  OUTPUT
+      Directory to which generated files will be written.
+      - For TypeScript/Flow generators, this specifies a directory relative
+      to each source file by default.
+      - For TypeScript/Flow generators with the "outputRelativeToCWD" flag
+      is set, and for the Swift generator, this specifies a file or
+      directory (absolute or relative to the current working directory) to
+      which:
+        - a file will be written for each query (if "output" is a
+      directory)
+        - all generated types will be written
+      - For all other types, this defines a file (absolute or relative to
+      the current working directory) to which all generated types are
+      written.
 
 OPTIONS
-  -h, --help                                 Show command help
-  --addTypename                              Automatically add __typename to your queries
-  --customScalarsPrefix=customScalarsPrefix  Include a prefix when using provided types for custom scalars
-  --key=key                                  The API key for the Apollo Engine service
-  --localDirectory=localDirectory            Put each generated file in a directory next to its source file (TypeScript/Flow only). Ignored if `output` is set.
-  --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
-  --namespace=namespace                      The namespace to emit generated code into.
-  --only=only                                Parse all input files, but only output generated code for the specified file [Swift only]
-  --operationIdsPath=operationIdsPath        Path to an operation id JSON map file. If specified, also stores the operation ids (hashes) as properties on operation types [currently Swift-only]
-  --passthroughCustomScalars                 Use your own types for custom scalars
-  --queries=queries                          [default: **/*.graphql] Path to your GraphQL queries, can include search tokens like **
-  --schema=schema                            Path to your GraphQL schema introspection result
-  --tagName=tagName                          [default: gql] Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code
-  --target=target                            Type of code generator to use (swift | typescript | flow | scala), inferred from output
-  --useFlowExactObjects                      Use Flow read only types for generated types [flow only]
-  --useFlowReadOnlyTypes                     Use Flow read only types for generated types [flow only]
+  -h, --help
+      Show command help
+
+  --addTypename
+      Automatically add __typename to your queries
+
+  --customScalarsPrefix=customScalarsPrefix
+      Include a prefix when using provided types for custom scalars
+
+  --key=key
+      The API key for the Apollo Engine service
+
+  --mergeInFieldsFromFragmentSpreads
+      Merge fragment fields onto its enclosing type
+
+  --namespace=namespace
+      The namespace to emit generated code into.
+
+  --only=only
+      Parse all input files, but only output generated code for the
+      specified file [Swift only]
+
+  --operationIdsPath=operationIdsPath
+      Path to an operation id JSON map file. If specified, also stores the
+      operation ids (hashes) as properties on operation types [currently
+      Swift-only]
+
+  --outputRelativeToCWD
+      By default, TypeScript/Flow will put each generated file in a
+      directory next to its source file using the value of the "output" as
+      the directory name. Set "outputRelativeToCWD" to put all generated
+      files in the directory relative to the current working directory
+      defined by "output".
+
+  --passthroughCustomScalars
+      Use your own types for custom scalars
+
+  --queries=queries
+      [default: **/*.graphql] Path to your GraphQL queries, can include
+      search tokens like **
+
+  --schema=schema
+      Path to your GraphQL schema introspection result
+
+  --tagName=tagName
+      [default: gql] Name of the template literal tag used to identify
+      template literals containing GraphQL queries in Javascript/Typescript
+      code
+
+  --target=target
+      Type of code generator to use (swift | typescript | flow | scala),
+      inferred from output
+
+  --useFlowExactObjects
+      Use Flow read only types for generated types [flow only]
+
+  --useFlowReadOnlyTypes
+      Use Flow read only types for generated types [flow only]
 ```
 
 _See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-cli/blob/v1.1.1/src/commands/codegen/generate.ts)_

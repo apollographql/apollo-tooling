@@ -75,21 +75,9 @@ export default function generate(
       [fileName: string]: BasicGeneratedFile;
     } = {};
 
-    const outputIndividualFiles =
-      fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
-
-    if (outputIndividualFiles) {
+    if (nextToSources) {
       generatedFiles.forEach(({ sourcePath, fileName, content }) => {
-        if (nextToSources === true) {
-          outFiles[path.join(path.dirname(sourcePath), fileName)] = {
-            output: content.fileContents + common
-          };
-
-          return;
-        }
-
-        if (typeof nextToSources === "string") {
-          const dir = path.join(path.dirname(sourcePath), nextToSources);
+          const dir = path.join(path.dirname(sourcePath), outputPath);
 
           if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
@@ -98,10 +86,15 @@ export default function generate(
           outFiles[path.join(dir, fileName)] = {
             output: content.fileContents + common
           };
+      });
 
-          return;
-        }
+      writeGeneratedFiles(outFiles, path.resolve("."));
 
+      writtenFiles += Object.keys(outFiles).length;
+    }
+
+    else if (fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory()) {
+      generatedFiles.forEach(({ sourcePath, fileName, content }) => {
         outFiles[fileName] = {
           output: content.fileContents + common
         };
@@ -110,7 +103,9 @@ export default function generate(
       writeGeneratedFiles(outFiles, outputPath);
 
       writtenFiles += Object.keys(outFiles).length;
-    } else {
+    }
+
+    else {
       fs.writeFileSync(
         outputPath,
         generatedFiles.map(o => o.content.fileContents).join("\n") + common
