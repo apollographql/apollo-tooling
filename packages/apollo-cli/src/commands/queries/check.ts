@@ -64,19 +64,20 @@ export default class CheckQueries extends Command {
           task.title = `Scanning for GraphQL queries (${
             operations.length
           } found)`;
-          ctx.operations = operations.map(print);
+          // XXX send along file information as well
+          ctx.operations = operations.map(doc => ({ document: print(doc) }));
         },
       },
       {
         title: "Checking query compatibility with schema",
         task: async (ctx, task) => {
-          // const gitContext = await gitInfo();
+          const gitContext = await gitInfo();
 
           const variables = {
             id: getIdFromKey(apiKey),
             // XXX hardcoded for now
             tag: "current",
-            // gitContext,
+            gitContext,
             operations: ctx.operations,
           };
 

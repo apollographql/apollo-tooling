@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 export const VALIDATE_OPERATIONS = gql`
   query CheckOperations(
     $id: ID!
-    $operations: [String!]!
+    $operations: [QueryDocumentInput!]!
     $hash: ID
     $tag: String
     $gitContext: GitContextInput
