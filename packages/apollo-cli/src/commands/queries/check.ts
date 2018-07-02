@@ -126,7 +126,7 @@ export default class CheckQueries extends Command {
 
     return tasks.run().then(async ({ changes }) => {
       const failures = changes.filter(
-        ({ type }: Change) => type === ChangeType.FAILURE
+        ({ type }: { type: ChangeType }) => type === ChangeType.FAILURE
       );
       const exit = failures.length > 0 ? 1 : 0;
       if (flags.json) {
