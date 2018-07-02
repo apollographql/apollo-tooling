@@ -1,40 +1,43 @@
-import 'apollo-codegen-core/lib/polyfills';
+import "apollo-codegen-core/lib/polyfills";
 import { Command, flags } from "@oclif/command";
 import * as Listr from "listr";
 import * as path from "path";
 
-import { TargetType, default as generate } from '../../generate';
+import { TargetType, default as generate } from "../../generate";
 
 import { buildClientSchema } from "graphql";
 
 import * as fg from "glob";
 import { fs, withGlobalFS } from "apollo-codegen-core/lib/localfs";
-import { promisify } from 'util';
+import { promisify } from "util";
 
 import { loadSchemaStep } from "../../load-schema";
 
 import { engineFlags } from "../../engine-cli";
 
 export default class Generate extends Command {
-  static description = "Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.";
+  static description =
+    "Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.";
 
   static flags = {
     help: flags.help({
       char: "h",
-      description: "Show command help",
+      description: "Show command help"
     }),
     queries: flags.string({
-      description: "Path to your GraphQL queries, can include search tokens like **",
-      default: "**/*.graphql",
+      description:
+        "Path to your GraphQL queries, can include search tokens like **",
+      default: "**/*.graphql"
     }),
     schema: flags.string({
-      description: "Path to your GraphQL schema introspection result",
+      description: "Path to your GraphQL schema introspection result"
     }),
 
     ...engineFlags,
 
     target: flags.string({
-      description: "Type of code generator to use (swift | typescript | flow | scala), inferred from output"
+      description:
+        "Type of code generator to use (swift | typescript | flow | scala), inferred from output"
     }),
     namespace: flags.string({
       description: "The namespace to emit generated code into."
@@ -43,13 +46,15 @@ export default class Generate extends Command {
       description: "Use your own types for custom scalars"
     }),
     customScalarsPrefix: flags.string({
-      description: "Include a prefix when using provided types for custom scalars"
+      description:
+        "Include a prefix when using provided types for custom scalars"
     }),
     addTypename: flags.boolean({
       description: "Automatically add __typename to your queries"
     }),
     operationIdsPath: flags.string({
-      description: "Path to an operation id JSON map file. If specified, also stores the operation ids (hashes) as properties on operation types [currently Swift-only]"
+      description:
+        "Path to an operation id JSON map file. If specified, also stores the operation ids (hashes) as properties on operation types [currently Swift-only]"
     }),
     mergeInFieldsFromFragmentSpreads: flags.boolean({
       description: "Merge fragment fields onto its enclosing type"
@@ -61,33 +66,46 @@ export default class Generate extends Command {
       description: "Use Flow read only types for generated types [flow only]"
     }),
     only: flags.string({
-      description: "Parse all input files, but only output generated code for the specified file [Swift only]"
+      description:
+        "Parse all input files, but only output generated code for the specified file [Swift only]"
     }),
     tagName: flags.string({
-      description: "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
+      description:
+        "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
       default: "gql"
-    }),
+    })
   };
 
   static args = [
     {
       name: "output",
-      description: "Path to write the generated code to. Can be a directory to generate split files (TypeScript/Flow only). Leave empty to generate types next to sources (TypeScript/Flow only)",
+      description:
+        "Path to write the generated code to. Can be a directory to generate split files (TypeScript/Flow only). Leave empty to generate types next to sources (TypeScript/Flow only)"
     }
-  ]
+  ];
 
   async run() {
     const { flags, args } = this.parse(Generate);
 
     let inferredTarget: TargetType = "" as TargetType;
     if (flags.target) {
-      if (["json", "swift", "typescript", "flow", "scala", "typescript-legacy", "flow-legacy"].includes(flags.target)) {
+      if (
+        [
+          "json",
+          "swift",
+          "typescript",
+          "flow",
+          "scala",
+          "typescript-legacy",
+          "flow-legacy"
+        ].includes(flags.target)
+      ) {
         inferredTarget = flags.target as TargetType;
       } else {
         this.error(`Unsupported target: ${flags.target}`);
       }
     } else if (args.output) {
-      switch(args.output.split('.').reverse()[0]) {
+      switch (args.output.split(".").reverse()[0]) {
         case "json":
           inferredTarget = "json";
           break;
@@ -109,13 +127,21 @@ export default class Generate extends Command {
           break;
 
         default:
-          this.error("Could not infer target from output file type, please use --target");
+          this.error(
+            "Could not infer target from output file type, please use --target"
+          );
           return;
       }
     }
 
-    if (!args.output && inferredTarget != "typescript" && inferredTarget != "flow") {
-      this.error("The output path must be specified in the arguments for Swift and Scala");
+    if (
+      !args.output &&
+      inferredTarget != "typescript" &&
+      inferredTarget != "flow"
+    ) {
+      this.error(
+        "The output path must be specified in the arguments for Swift and Scala"
+      );
       return;
     }
 
@@ -127,25 +153,36 @@ export default class Generate extends Command {
         title: "Scanning for GraphQL queries",
         task: async (ctx, task) => {
           const paths = withGlobalFS(() => {
-            return (flags.queries ? flags.queries.split('\n') : []).flatMap(p => fg.sync(p));
+            return (flags.queries ? flags.queries.split("\n") : []).flatMap(p =>
+              fg.sync(p)
+            );
           });
           task.title = `Scanning for GraphQL queries (${paths.length} found)`;
           ctx.queryPaths = paths;
         }
       },
-      loadSchemaStep(this, pullFromEngine, apiKey, flags.engine, "Loading GraphQL schema", async (ctx) => {
-        const schemaFileContent = await promisify(fs.readFile)(path.resolve(flags.schema as string));
-        const schemaData = JSON.parse(schemaFileContent as any as string);
-        ctx.schema = (schemaData.data) ? schemaData.data.__schema : (
-          schemaData.__schema ? schemaData.__schema : schemaData
-        );
-      }),
+      loadSchemaStep(
+        this,
+        pullFromEngine,
+        apiKey,
+        flags.engine,
+        "Loading GraphQL schema",
+        async ctx => {
+          const schemaFileContent = await promisify(fs.readFile)(
+            path.resolve(flags.schema as string)
+          );
+          const schemaData = JSON.parse((schemaFileContent as any) as string);
+          ctx.schema = schemaData.data
+            ? schemaData.data.__schema
+            : schemaData.__schema
+              ? schemaData.__schema
+              : schemaData;
+        }
+      ),
       {
         title: "Parsing GraphQL schema",
-        task: async (ctx) => {
-          ctx.schema = buildClientSchema(
-            { __schema: ctx.schema }
-          );
+        task: async ctx => {
+          ctx.schema = buildClientSchema({ __schema: ctx.schema });
         }
       },
       {
@@ -161,21 +198,23 @@ export default class Generate extends Command {
             flags.tagName as string,
             !args.output,
             {
-              passthroughCustomScalars: flags.passthroughCustomScalars || flags.customScalarsPrefix,
+              passthroughCustomScalars:
+                flags.passthroughCustomScalars || flags.customScalarsPrefix,
               customScalarsPrefix: flags.customScalarsPrefix || "",
               addTypename: flags.addTypename,
               namespace: flags.namespace,
               operationIdsPath: flags.operationIdsPath,
               generateOperationIds: !!flags.operationIdsPath,
-              mergeInFieldsFromFragmentSpreads: flags.mergeInFieldsFromFragmentSpreads,
+              mergeInFieldsFromFragmentSpreads:
+                flags.mergeInFieldsFromFragmentSpreads,
               useFlowExactObjects: flags.useFlowExactObjects,
               useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes
             }
-          )
+          );
 
           task.title = `Generating query files with '${inferredTarget}' target - wrote ${writtenFiles} files`;
-        },
-      },
+        }
+      }
     ]);
 
     return tasks.run();

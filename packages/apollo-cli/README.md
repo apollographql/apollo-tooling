@@ -5,15 +5,18 @@
 Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
 
 <!-- toc -->
-* [Apollo CLI](#apollo-cli)
-* [Usage](#usage)
-* [Commands](#commands)
-* [Code Generation](#code-generation)
-* [Contributing](#contributing)
-<!-- tocstop -->
+
+- [Apollo CLI](#apollo-cli)
+- [Usage](#usage)
+- [Commands](#commands)
+- [Code Generation](#code-generation)
+- [Contributing](#contributing)
+  <!-- tocstop -->
 
 # Usage
+
 <!-- usage -->
+
 ```sh-session
 $ npm install -g apollo
 $ apollo COMMAND
@@ -25,15 +28,19 @@ USAGE
   $ apollo COMMAND
 ...
 ```
+
 <!-- usagestop -->
+
 # Commands
+
 <!-- commands -->
-* [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
-* [`apollo help [COMMAND]`](#apollo-help-command)
-* [`apollo schema:check`](#apollo-schemacheck)
-* [`apollo schema:checkQueries`](#apollo-schemacheck-queries)
-* [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
-* [`apollo schema:publish`](#apollo-schemapublish)
+
+- [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
+- [`apollo help [COMMAND]`](#apollo-help-command)
+- [`apollo schema:check`](#apollo-schemacheck)
+- [`apollo schema:checkQueries`](#apollo-schemacheck-queries)
+- [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
+- [`apollo schema:publish`](#apollo-schemapublish)
 
 ## `apollo codegen:generate [OUTPUT]`
 
@@ -174,13 +181,17 @@ OPTIONS
 ```
 
 _See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.1.1/src/commands/schema/publish.ts)_
+
 <!-- commandsstop -->
 
 # Code Generation
+
 ## Accompanying Libraries
+
 See [Apollo iOS](https://github.com/apollographql/apollo-ios) for details on the mapping from GraphQL results to Swift types, as well as runtime support for executing queries and mutations. For Scala, see [React Apollo Scala.js](https://github.com/apollographql/react-apollo-scalajs) for details on how to use generated Scala code in a Scala.js app with Apollo Client.
 
 ## `gql` template support
+
 If the source file for generation is a JavaScript or TypeScript file, the codegen will try to extrapolate the queries inside the [gql tag](https://github.com/apollographql/graphql-tag) templates.
 
 The tag name is configurable using the CLI `--tagName` option.
@@ -191,11 +202,13 @@ When using the codegen command with Typescript or Flow, make sure to add the `__
 
 If you're using a client like `apollo-client` that does this automatically for your GraphQL operations, pass in the `--addTypename` option to `apollo codegen:generate` to make sure the generated Typescript and Flow types have the `__typename` field as well. This is required to ensure proper type generation support for `GraphQLUnionType` and `GraphQLInterfaceType` fields.
 
-## Why is the __typename field required?
+## Why is the \_\_typename field required?
+
 Using the type information from the GraphQL schema, we can infer the possible types for fields. However, in the case of a `GraphQLUnionType` or `GraphQLInterfaceType`, there are multiple types that are possible for that field. This is best modeled using a disjoint union with the `__typename`
 as the discriminant.
 
 For example, given a schema:
+
 ```graphql
 ...
 
@@ -239,16 +252,19 @@ Apollo Codegen will generate a union type for Character.
 
 ```javascript
 export type CharactersQuery = {
-  characters: Array<{
-    __typename: 'Human',
-    name: string,
-    homePlanet: ?string
-  } | {
-    __typename: 'Droid',
-    name: string,
-    primaryFunction: ?string
-  }>
-}
+  characters: Array<
+    | {
+        __typename: "Human",
+        name: string,
+        homePlanet: ?string
+      }
+    | {
+        __typename: "Droid",
+        name: string,
+        primaryFunction: ?string
+      }
+  >
+};
 ```
 
 This type can then be used as follows to ensure that all possible types are handled:
@@ -256,17 +272,28 @@ This type can then be used as follows to ensure that all possible types are hand
 ```javascript
 function CharacterFigures({ characters }: CharactersQuery) {
   return characters.map(character => {
-    switch(character.__typename) {
+    switch (character.__typename) {
       case "Human":
-        return <HumanFigure homePlanet={character.homePlanet} name={character.name} />
+        return (
+          <HumanFigure
+            homePlanet={character.homePlanet}
+            name={character.name}
+          />
+        );
       case "Droid":
-        return <DroidFigure primaryFunction={character.primaryFunction} name={character.name} />
+        return (
+          <DroidFigure
+            primaryFunction={character.primaryFunction}
+            name={character.name}
+          />
+        );
     }
   });
 }
 ```
 
 # Contributing
+
 [![Build status](https://travis-ci.org/apollographql/apollo-cli.svg?branch=master)](https://travis-ci.org/apollographql/apollo-cli)
 
 This repo is composed of multiple packages managed by Lerna. The `apollo-cli` contains the core CLI commands. The `apollo-codegen-core` package contains all the compiler APIs needed to implement code generation support for new languages. The other `apollo-codegen-*` packages implement code generation support for individual languages.
@@ -279,3 +306,7 @@ npm test
 ```
 
 You can also run `npm` commands within package folders after you have bootstrapped the repository (part of `npm install`).
+
+```
+
+```

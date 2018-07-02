@@ -1,9 +1,6 @@
-jest.mock(
-  "apollo-codegen-core/lib/localfs",
-  () => {
-    return require("../../../__mocks__/localfs");
-  }
-);
+jest.mock("apollo-codegen-core/lib/localfs", () => {
+  return require("../../../__mocks__/localfs");
+});
 
 // this is because of herkou-cli-utils hacky mocking system on their console logger
 import { stdout, mockConsole } from "heroku-cli-util";
@@ -17,21 +14,26 @@ import { fs as mockFS, vol } from "apollo-codegen-core/lib/localfs";
 const test = setup.do(() => mockConsole());
 const fullSchema = execute(
   buildSchema(
-    fs.readFileSync(path.resolve(__dirname, "../../schema/__tests__/fixtures/schema.graphql"), {
-      encoding: "utf-8",
-    })
+    fs.readFileSync(
+      path.resolve(__dirname, "../../schema/__tests__/fixtures/schema.graphql"),
+      {
+        encoding: "utf-8"
+      }
+    )
   ),
   gql(introspectionQuery)
 ).data;
 
-const simpleQuery = fs.readFileSync(path.resolve(__dirname, "./fixtures/simpleQuery.graphql"));
+const simpleQuery = fs.readFileSync(
+  path.resolve(__dirname, "./fixtures/simpleQuery.graphql")
+);
 
 beforeEach(() => {
   vol.reset();
   vol.fromJSON({
-    "__blankFileSoDirectoryExists": ""
+    __blankFileSoDirectoryExists: ""
   });
-})
+});
 
 jest.setTimeout(15000);
 
@@ -93,7 +95,9 @@ describe("successful codegen", () => {
     })
     .command(["codegen:generate", "--schema=schema.json", "operations.json"])
     .it("infers JSON target and writes operations", () => {
-      expect(mockFS.readFileSync("operations.json").toString()).toMatchSnapshot();
+      expect(
+        mockFS.readFileSync("operations.json").toString()
+      ).toMatchSnapshot();
     });
 
   test
@@ -109,9 +113,16 @@ describe("successful codegen", () => {
         `
       });
     })
-    .command(["codegen:generate", "--schema=schema.json", "--queries=**/*.tsx", "--target=typescript"])
+    .command([
+      "codegen:generate",
+      "--schema=schema.json",
+      "--queries=**/*.tsx",
+      "--target=typescript"
+    ])
     .it("writes TypeScript types next to sources when no output is set", () => {
-      expect(mockFS.readFileSync("directory/SimpleQuery.ts").toString()).toMatchSnapshot();
+      expect(
+        mockFS.readFileSync("directory/SimpleQuery.ts").toString()
+      ).toMatchSnapshot();
     });
 
   test
@@ -127,9 +138,16 @@ describe("successful codegen", () => {
         `
       });
     })
-    .command(["codegen:generate", "--schema=schema.json", "--queries=**/*.jsx", "--target=flow"])
+    .command([
+      "codegen:generate",
+      "--schema=schema.json",
+      "--queries=**/*.jsx",
+      "--target=flow"
+    ])
     .it("writes Flow types next to sources when no output is set", () => {
-      expect(mockFS.readFileSync("directory/SimpleQuery.js").toString()).toMatchSnapshot();
+      expect(
+        mockFS.readFileSync("directory/SimpleQuery.js").toString()
+      ).toMatchSnapshot();
     });
 });
 
@@ -141,6 +159,8 @@ describe("error handling", () => {
 
   test
     .command(["codegen:generate", "--target=swift"])
-    .catch(err => expect(err.message).toMatch(/The output path must be specified/))
+    .catch(err =>
+      expect(err.message).toMatch(/The output path must be specified/)
+    )
     .it("errors when no output file is provided");
 });
