@@ -22,7 +22,7 @@ import { engineLink, getIdFromKey } from "../../engine";
 import { gitInfo } from "../../git";
 import { loadSchemaStep } from "../../load-schema";
 import { VALIDATE_OPERATIONS } from "../../operations/validateOperations";
-import { ChangeType } from "../../printer/ast";
+import { ChangeType, Change } from "../../printer/ast";
 import { format } from "../schema/check";
 
 export default class CheckQueries extends Command {
@@ -38,6 +38,9 @@ export default class CheckQueries extends Command {
         "Path to your GraphQL queries, can include search tokens like **",
       default: "**/*.graphql",
     }),
+    json: flags.boolean({
+      description: "Output result as JSON",
+    }),
     ...engineFlags,
 
     tagName: flags.string({
@@ -51,7 +54,12 @@ export default class CheckQueries extends Command {
     const { flags } = this.parse(CheckQueries);
 
     const apiKey = flags.key;
-
+    if (!apiKey) {
+      this.error(
+        "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
+      );
+      return;
+    }
     const tasks: Listr = new Listr([
       {
         title: "Scanning for GraphQL queries",
