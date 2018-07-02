@@ -1,91 +1,88 @@
+import "apollo-codegen-core/lib/polyfills";
 import { Command, flags } from "@oclif/command";
-import chalk from "chalk";
 import { color, table, styledJSON } from "heroku-cli-util";
-import cli from "cli-ux";
 import * as Listr from "listr";
-import { GraphQLError } from "graphql";
-
+import * as path from "path";
 import { toPromise, execute } from "apollo-link";
+import {
+  print,
+  buildClientSchema,
+  validate,
+  findDeprecatedUsages,
+  GraphQLError,
+} from "graphql";
+import * as globby from "globby";
+import * as fs from "fs";
+import { promisify } from "util";
 
-import { VALIDATE_SCHEMA } from "../../operations/validateSchema";
-import { engineLink, getIdFromKey } from "../../engine";
-import { fetchSchema } from "../../fetch-schema";
-import { gitInfo } from "../../git";
-import { ChangeType } from "../../printer/ast";
+import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
 
 import { engineFlags } from "../../engine-cli";
+import { engineLink, getIdFromKey } from "../../engine";
+import { gitInfo } from "../../git";
+import { loadSchemaStep } from "../../load-schema";
+import { VALIDATE_OPERATIONS } from "../../operations/validateOperations";
+import { ChangeType } from "../../printer/ast";
+import { format } from "../schema/check";
 
-// how its brought down from schema
-interface Change {
-  type: ChangeType;
-  code: string;
-  description: string;
-}
-
-export default class SchemaCheck extends Command {
-  static description = "Check a schema against the version registered in Apollo Engine.";
+export default class CheckQueries extends Command {
+  static description = "Checks your GraphQL operations for compatibility with the server. Checks against the published schema in Apollo Engine.";
 
   static flags = {
     help: flags.help({
       char: "h",
       description: "Show command help",
     }),
-    ...engineFlags,
-    header: flags.string({
-      multiple: true,
-      parse: header => {
-        const [key, value] = header.split(":");
-        return JSON.stringify({ [key.trim()]: value.trim() });
-      },
+    queries: flags.string({
       description:
-        "Additional headers to send to server for introspectionQuery",
+        "Path to your GraphQL queries, can include search tokens like **",
+      default: "**/*.graphql",
     }),
-    endpoint: flags.string({
-      description: "The URL of the server to fetch the schema from",
-      default: "http://localhost:4000/graphql", // apollo-server 2.0 default address
-    }),
-    json: flags.boolean({
-      description: "Output result as JSON",
+    ...engineFlags,
+
+    tagName: flags.string({
+      description:
+        "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
+      default: "gql",
     }),
   };
 
   async run() {
-    const { flags } = this.parse(SchemaCheck);
-    const apiKey = flags.key;
-    if (!apiKey) {
-      this.error(
-        "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
-      );
-      return;
-    }
+    const { flags } = this.parse(CheckQueries);
 
-    const header = Array.isArray(flags.header) ? flags.header : [flags.header];
-    const tasks = new Listr([
+    const apiKey = flags.key;
+
+    const tasks: Listr = new Listr([
       {
-        title: "Fetching local schema",
-        task: async ctx => {
-          ctx.schema = await fetchSchema({
-            endpoint: flags.endpoint,
-            header: header.filter(x => Boolean(x)).map(x => JSON.parse(x)),
-          });
+        title: "Scanning for GraphQL queries",
+        task: async (ctx, task) => {
+          const paths = await globby(
+            flags.queries ? flags.queries.split("\n") : []
+          );
+
+          const operations = loadQueryDocuments(paths, flags.tagName);
+          task.title = `Scanning for GraphQL queries (${
+            operations.length
+          } found)`;
+          ctx.operations = operations.map(print);
         },
       },
       {
-        title: "Checking schema for changes",
-        task: async ctx => {
-          const gitContext = await gitInfo();
+        title: "Checking query compatibility with schema",
+        task: async (ctx, task) => {
+          // const gitContext = await gitInfo();
 
           const variables = {
             id: getIdFromKey(apiKey),
-            schema: ctx.schema,
             // XXX hardcoded for now
             tag: "current",
-            gitContext,
+            // gitContext,
+            operations: ctx.operations,
           };
 
           ctx.changes = await toPromise(
             execute(engineLink, {
-              query: VALIDATE_SCHEMA,
+              query: VALIDATE_OPERATIONS,
               variables,
               context: {
                 headers: { ["x-api-key"]: apiKey },
@@ -101,7 +98,7 @@ export default class SchemaCheck extends Command {
                 );
               if (!data!.service)
                 throw new Error(`No schema found for ${variables.id}`);
-              return data!.service.schema.checkSchema.changes;
+              return data!.service.schema.checkOperations;
             })
             .catch(e => {
               if (e.result && e.result.errors) {
@@ -129,7 +126,9 @@ export default class SchemaCheck extends Command {
         this.exit(exit);
       }
       if (changes.length === 0) {
-        return this.log("\nNo changes present between schemas\n");
+        return this.log(
+          "\nNo operations have issues with the current schema\n"
+        );
       }
       this.log("\n");
       table(changes.map(format), {
@@ -145,19 +144,3 @@ export default class SchemaCheck extends Command {
     });
   }
 }
-
-export const format = (change: Change) => {
-  let color = (x: string): string => x;
-  if (change.type === ChangeType.FAILURE) {
-    color = chalk.red;
-  }
-  if (change.type === ChangeType.WARNING) {
-    color = chalk.yellow;
-  }
-
-  return {
-    type: color(change.type),
-    code: color(change.code),
-    description: color(change.description),
-  };
-};
