@@ -55,7 +55,7 @@ ARGUMENTS
       Directory to which generated files will be written.
       - For TypeScript/Flow generators, this specifies a directory relative
       to each source file by default.
-      - For TypeScript/Flow generators with the "outputRelativeToCWD" flag
+      - For TypeScript/Flow generators with the "outputFlat" flag
       is set, and for the Swift generator, this specifies a file or
       directory (absolute or relative to the current working directory) to
       which:
@@ -94,10 +94,10 @@ OPTIONS
       operation ids (hashes) as properties on operation types [currently
       Swift-only]
 
-  --outputRelativeToCWD
+  --outputFlat
       By default, TypeScript/Flow will put each generated file in a
       directory next to its source file using the value of the "output" as
-      the directory name. Set "outputRelativeToCWD" to put all generated
+      the directory name. Set "outputFlat" to put all generated
       files in the directory relative to the current working directory
       defined by "output".
 

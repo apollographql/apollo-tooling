@@ -69,7 +69,7 @@ describe("successful codegen", () => {
         "queryOne.graphql": simpleQuery.toString()
       });
     })
-    .command(["codegen:generate", "--schema=schema.json", "--outputRelativeToCWD", "API.ts"])
+    .command(["codegen:generate", "--schema=schema.json", "--outputFlat", "API.ts"])
     .it("infers TypeScript target and writes types", () => {
       expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
     });
@@ -81,7 +81,7 @@ describe("successful codegen", () => {
         "queryOne.graphql": simpleQuery.toString()
       });
     })
-    .command(["codegen:generate", "--schema=schema.json", "--outputRelativeToCWD", "API.js"])
+    .command(["codegen:generate", "--schema=schema.json", "--outputFlat", "API.js"])
     .it("infers Flow target and writes types", () => {
       expect(mockFS.readFileSync("API.js").toString()).toMatchSnapshot();
     });
