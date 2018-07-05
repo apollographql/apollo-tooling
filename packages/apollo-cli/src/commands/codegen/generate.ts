@@ -212,13 +212,13 @@ export default class Generate extends Command {
             ctx.queryPaths,
             ctx.schema,
             typeof args.output === "string" ? args.output : "__generated__",
-            flags.only ? path.resolve(flags.only) : "",
+            flags.only,
             inferredTarget,
             flags.tagName as string,
             !flags.outputFlat,
             {
               passthroughCustomScalars:
-                flags.passthroughCustomScalars || flags.customScalarsPrefix,
+                flags.passthroughCustomScalars || !!flags.customScalarsPrefix,
               customScalarsPrefix: flags.customScalarsPrefix || "",
               addTypename: flags.addTypename,
               namespace: flags.namespace,

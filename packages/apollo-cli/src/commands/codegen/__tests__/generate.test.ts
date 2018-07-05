@@ -28,6 +28,10 @@ const simpleQuery = fs.readFileSync(
   path.resolve(__dirname, "./fixtures/simpleQuery.graphql")
 );
 
+const otherQuery = fs.readFileSync(
+  path.resolve(__dirname, "./fixtures/otherQuery.graphql")
+);
+
 beforeEach(() => {
   vol.reset();
   vol.fromJSON({
@@ -73,7 +77,7 @@ describe("successful codegen", () => {
     })
     .command(["codegen:generate", "--schema=schema.json", "--only=queryTwo.graphql", "--target=swift", "outDirectory"])
     .it("handles only flag for Swift target", () => {
-      expect(vol.toJSON("outDirectory")).toMatchSnapshot();
+      expect(Object.entries(vol.toJSON("outDirectory")).map(arr => [path.relative(__dirname, arr[0]), arr[1]])).toMatchSnapshot();
     });
 
   test
@@ -119,7 +123,7 @@ describe("successful codegen", () => {
         "queryOne.graphql": simpleQuery.toString()
       });
     })
-    .command(["codegen:generate", "--schema=schema.json", "--useFlowExactObjects", "API.js"])
+    .command(["codegen:generate", "--schema=schema.json", "--useFlowExactObjects", "--outputFlat", "API.js"])
     .it("writes exact Flow types when the flag is set", () => {
       expect(mockFS.readFileSync("API.js").toString()).toMatchSnapshot();
     });
@@ -131,7 +135,7 @@ describe("successful codegen", () => {
         "queryOne.graphql": simpleQuery.toString()
       });
     })
-    .command(["codegen:generate", "--schema=schema.json", "--useFlowReadOnlyTypes", "API.js"])
+    .command(["codegen:generate", "--schema=schema.json", "--useFlowReadOnlyTypes", "--outputFlat", "API.js"])
     .it("writes read-only Flow types when the flag is set", () => {
       expect(mockFS.readFileSync("API.js").toString()).toMatchSnapshot();
     });

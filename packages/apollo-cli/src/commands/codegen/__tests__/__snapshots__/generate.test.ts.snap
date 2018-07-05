@@ -10,12 +10,20 @@ exports[`successful codegen generates operation IDs files when flag is set 1`] =
 `;
 
 exports[`successful codegen handles only flag for Swift target 1`] = `
-Object {
-  "/Users/shadaj/work/apollo-cli/packages/apollo-cli/outDirectory/Types.graphql.swift": "//  This file was automatically generated and should not be edited.
+Array [
+  Array [
+    "../../../../outDirectory/__create_this_directory",
+    "",
+  ],
+  Array [
+    "../../../../outDirectory/Types.graphql.swift",
+    "//  This file was automatically generated and should not be edited.
 
 import Apollo",
-  "/Users/shadaj/work/apollo-cli/packages/apollo-cli/outDirectory/__create_this_directory": "",
-  "/Users/shadaj/work/apollo-cli/packages/apollo-cli/outDirectory/queryTwo.graphql.swift": "//  This file was automatically generated and should not be edited.
+  ],
+  Array [
+    "../../../../outDirectory/queryTwo.graphql.swift",
+    "//  This file was automatically generated and should not be edited.
 
 import Apollo
 
@@ -53,7 +61,8 @@ public final class OtherQueryQuery: GraphQLQuery {
     }
   }
 }",
-}
+  ],
+]
 `;
 
 exports[`successful codegen infers Flow target and writes types 1`] = `

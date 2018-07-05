@@ -38,7 +38,7 @@ export default function generate(
   target: TargetType,
   tagName: string,
   nextToSources: boolean | string,
-  options: any
+  options: GenerationOptions
 ): number {
   let writtenFiles = 0;
 
