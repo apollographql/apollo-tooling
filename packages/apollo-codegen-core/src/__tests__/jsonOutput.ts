@@ -5,9 +5,9 @@ import serializeToJSON from '../serializeToJSON';
 import { loadSchema } from '../loading';
 const starWarsSchema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
 
-function compileFromSource(source: string, schema: GraphQLSchema = starWarsSchema) {
+function compileFromSource(source: string, schema: GraphQLSchema = starWarsSchema, clientSchema?: GraphQLSchema) {
   const document = parse(source);
-  return compileToLegacyIR(schema, document, {
+  return compileToLegacyIR(schema, clientSchema, document, {
     mergeInFieldsFromFragmentSpreads: false,
     addTypename: true
   });
@@ -146,6 +146,65 @@ describe('JSON output', function() {
       }
       `,
       schema
+    );
+
+    const output = serializeToJSON(context);
+
+    expect(output).toMatchSnapshot();
+  });
+
+  test(`should generate JSON output for a query with a client-side schema`, function() {
+    const clientSchema = buildSchema(`
+      type Query {
+        localData: String!
+      }
+    `);
+
+    const context = compileFromSource(
+      `
+      query HeroAndFriendsNamesAndLocalData {
+        hero {
+          name
+          friends {
+            name
+          }
+        }
+
+        localData @client
+      }
+      `,
+      starWarsSchema,
+      clientSchema
+    );
+
+    const output = serializeToJSON(context);
+
+    expect(output).toMatchSnapshot();
+  });
+
+  test(`should generate JSON output for a mixed server-client schema query`, function() {
+    const clientSchema = buildSchema(`
+      type Character {
+        localData: String!
+      }
+    `);
+
+    const context = compileFromSource(
+      `
+      query HeroAndFriendsNamesAndLocalData {
+        hero {
+          name
+          friends {
+            name
+            localData @client
+          }
+
+          localData @client
+        }
+      }
+      `,
+      starWarsSchema,
+      clientSchema
     );
 
     const output = serializeToJSON(context);

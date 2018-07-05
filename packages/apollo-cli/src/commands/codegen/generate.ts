@@ -14,6 +14,7 @@ import { promisify } from "util";
 import { loadSchemaStep } from "../../load-schema";
 
 import { engineFlags } from "../../engine-cli";
+import { fromFile } from '../../fetch-schema';
 
 export default class Generate extends Command {
   static description =
@@ -31,6 +32,9 @@ export default class Generate extends Command {
     }),
     schema: flags.string({
       description: "Path to your GraphQL schema introspection result"
+    }),
+    clientSchema: flags.string({
+      description: "Path to your client-side GraphQL schema file for `apollo-link-state` (either .graphql or .json)"
     }),
 
     ...engineFlags,
@@ -177,7 +181,7 @@ export default class Generate extends Command {
             );
           });
           task.title = `Scanning for GraphQL queries (${paths.length} found)`;
-          ctx.queryPaths = paths;
+          ctx.queryPaths = paths.filter(p => path.resolve(p) != (flags.clientSchema ? path.resolve(flags.clientSchema) : undefined));
         }
       },
       loadSchemaStep(
@@ -205,12 +209,27 @@ export default class Generate extends Command {
         }
       },
       {
+        title: "Loading client-side GraphQL schema",
+        task: async (ctx, task) => {
+          if (!flags.clientSchema) {
+            task.skip("Path to client schema not provided")
+          } else {
+            ctx.clientSchema = buildClientSchema({
+              __schema: await fromFile({
+                endpoint: path.resolve(flags.clientSchema),
+              })
+            })
+          }
+        }
+      },
+      {
         title: "Generating query files",
         task: async (ctx, task) => {
           task.title = `Generating query files with '${inferredTarget}' target`;
           const writtenFiles = generate(
             ctx.queryPaths,
             ctx.schema,
+            ctx.clientSchema,
             typeof args.output === "string" ? args.output : "__generated__",
             flags.only,
             inferredTarget,

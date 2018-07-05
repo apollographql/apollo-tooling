@@ -97,10 +97,11 @@ export interface Argument {
 
 export function compileToLegacyIR(
   schema: GraphQLSchema,
+  clientSchema: GraphQLSchema | undefined,
   document: DocumentNode,
   options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }
 ): LegacyCompilerContext {
-  const context = compileToIR(schema, document, options);
+  const context = compileToIR(schema, clientSchema, document, options);
   const transformer = new LegacyIRTransformer(context, options);
   return transformer.transformIR();
 }

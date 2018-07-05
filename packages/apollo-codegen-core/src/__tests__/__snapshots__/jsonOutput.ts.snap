@@ -1,5 +1,94 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`JSON output should generate JSON output for a mixed server-client schema query 1`] = `
+"{
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"GraphQL request\\",
+			\\"operationName\\": \\"HeroAndFriendsNamesAndLocalData\\",
+			\\"operationType\\": \\"query\\",
+			\\"rootType\\": \\"Query\\",
+			\\"variables\\": [],
+			\\"source\\": \\"query HeroAndFriendsNamesAndLocalData {\\\\n  hero {\\\\n    __typename\\\\n    name\\\\n    friends {\\\\n      __typename\\\\n      name\\\\n      localData @client\\\\n    }\\\\n    localData @client\\\\n  }\\\\n}\\",
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"hero\\",
+					\\"fieldName\\": \\"hero\\",
+					\\"type\\": \\"Character\\",
+					\\"isConditional\\": false,
+					\\"isDeprecated\\": false,
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false
+						},
+						{
+							\\"responseName\\": \\"name\\",
+							\\"fieldName\\": \\"name\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false,
+							\\"description\\": \\"The name of the character\\",
+							\\"isDeprecated\\": false
+						},
+						{
+							\\"responseName\\": \\"friends\\",
+							\\"fieldName\\": \\"friends\\",
+							\\"type\\": \\"[Character]\\",
+							\\"isConditional\\": false,
+							\\"description\\": \\"The friends of the character, or an empty list if they have none\\",
+							\\"isDeprecated\\": false,
+							\\"fields\\": [
+								{
+									\\"responseName\\": \\"__typename\\",
+									\\"fieldName\\": \\"__typename\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false
+								},
+								{
+									\\"responseName\\": \\"name\\",
+									\\"fieldName\\": \\"name\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false,
+									\\"description\\": \\"The name of the character\\",
+									\\"isDeprecated\\": false
+								},
+								{
+									\\"responseName\\": \\"localData\\",
+									\\"fieldName\\": \\"localData\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false,
+									\\"isDeprecated\\": false
+								}
+							],
+							\\"fragmentSpreads\\": [],
+							\\"inlineFragments\\": []
+						},
+						{
+							\\"responseName\\": \\"localData\\",
+							\\"fieldName\\": \\"localData\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false,
+							\\"isDeprecated\\": false
+						}
+					],
+					\\"fragmentSpreads\\": [],
+					\\"inlineFragments\\": []
+				}
+			],
+			\\"fragmentSpreads\\": [],
+			\\"inlineFragments\\": [],
+			\\"fragmentsReferenced\\": [],
+			\\"sourceWithFragments\\": \\"query HeroAndFriendsNamesAndLocalData {\\\\n  hero {\\\\n    __typename\\\\n    name\\\\n    friends {\\\\n      __typename\\\\n      name\\\\n      localData @client\\\\n    }\\\\n    localData @client\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"4822b5c90fd99ccaec9dad22f6c46514fb760b986a638c4f5d712623b582f0b4\\"
+		}
+	],
+	\\"fragments\\": [],
+	\\"typesUsed\\": []
+}"
+`;
+
 exports[`JSON output should generate JSON output for a mutation with an enum and an input object variable 1`] = `
 "{
 	\\"operations\\": [
@@ -151,6 +240,88 @@ exports[`JSON output should generate JSON output for a mutation with an enum and
 			]
 		}
 	]
+}"
+`;
+
+exports[`JSON output should generate JSON output for a query with a client-side schema 1`] = `
+"{
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"GraphQL request\\",
+			\\"operationName\\": \\"HeroAndFriendsNamesAndLocalData\\",
+			\\"operationType\\": \\"query\\",
+			\\"rootType\\": \\"Query\\",
+			\\"variables\\": [],
+			\\"source\\": \\"query HeroAndFriendsNamesAndLocalData {\\\\n  hero {\\\\n    __typename\\\\n    name\\\\n    friends {\\\\n      __typename\\\\n      name\\\\n    }\\\\n  }\\\\n  localData @client\\\\n}\\",
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"hero\\",
+					\\"fieldName\\": \\"hero\\",
+					\\"type\\": \\"Character\\",
+					\\"isConditional\\": false,
+					\\"isDeprecated\\": false,
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false
+						},
+						{
+							\\"responseName\\": \\"name\\",
+							\\"fieldName\\": \\"name\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false,
+							\\"description\\": \\"The name of the character\\",
+							\\"isDeprecated\\": false
+						},
+						{
+							\\"responseName\\": \\"friends\\",
+							\\"fieldName\\": \\"friends\\",
+							\\"type\\": \\"[Character]\\",
+							\\"isConditional\\": false,
+							\\"description\\": \\"The friends of the character, or an empty list if they have none\\",
+							\\"isDeprecated\\": false,
+							\\"fields\\": [
+								{
+									\\"responseName\\": \\"__typename\\",
+									\\"fieldName\\": \\"__typename\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false
+								},
+								{
+									\\"responseName\\": \\"name\\",
+									\\"fieldName\\": \\"name\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false,
+									\\"description\\": \\"The name of the character\\",
+									\\"isDeprecated\\": false
+								}
+							],
+							\\"fragmentSpreads\\": [],
+							\\"inlineFragments\\": []
+						}
+					],
+					\\"fragmentSpreads\\": [],
+					\\"inlineFragments\\": []
+				},
+				{
+					\\"responseName\\": \\"localData\\",
+					\\"fieldName\\": \\"localData\\",
+					\\"type\\": \\"String!\\",
+					\\"isConditional\\": false,
+					\\"isDeprecated\\": false
+				}
+			],
+			\\"fragmentSpreads\\": [],
+			\\"inlineFragments\\": [],
+			\\"fragmentsReferenced\\": [],
+			\\"sourceWithFragments\\": \\"query HeroAndFriendsNamesAndLocalData {\\\\n  hero {\\\\n    __typename\\\\n    name\\\\n    friends {\\\\n      __typename\\\\n      name\\\\n    }\\\\n  }\\\\n  localData @client\\\\n}\\",
+			\\"operationId\\": \\"1ccbcf5d75c22a975437ef6bc49802cecb58c24a1cd94b6620c022029cf2ac07\\"
+		}
+	],
+	\\"fragments\\": [],
+	\\"typesUsed\\": []
 }"
 `;
 

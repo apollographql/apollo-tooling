@@ -213,6 +213,33 @@ export interface SimpleQuery {
 //=============================================================="
 `;
 
+exports[`successful codegen infers TypeScript target and writes types for query with client-side data 1`] = `
+"
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+  localState: string;
+}
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
 exports[`successful codegen writes Flow types into a __generated__ directory next to sources when no output is set 1`] = `
 "
 
