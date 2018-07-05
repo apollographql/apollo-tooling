@@ -1,25 +1,32 @@
 import { fs } from "apollo-codegen-core/lib/localfs";
-import * as path from 'path';
+import * as path from "path";
 
-import { loadAndMergeQueryDocuments } from 'apollo-codegen-core/lib/loading';
-import { validateQueryDocument } from './validation';
-import { compileToIR, CompilerContext, CompilerOptions } from 'apollo-codegen-core/lib/compiler';
-import { compileToLegacyIR, CompilerOptions as LegacyCompilerOptions } from 'apollo-codegen-core/lib/compiler/legacyIR';
-import serializeToJSON from 'apollo-codegen-core/lib/serializeToJSON';
-import { BasicGeneratedFile } from 'apollo-codegen-core/lib/utilities/CodeGenerator'
+import { loadAndMergeQueryDocuments } from "apollo-codegen-core/lib/loading";
+import { validateQueryDocument } from "./validation";
+import { compileToIR, CompilerContext, CompilerOptions } from "apollo-codegen-core/lib/compiler";
+import { compileToLegacyIR, CompilerOptions as LegacyCompilerOptions } from "apollo-codegen-core/lib/compiler/legacyIR";
+import serializeToJSON from "apollo-codegen-core/lib/serializeToJSON";
+import { BasicGeneratedFile } from "apollo-codegen-core/lib/utilities/CodeGenerator";
 
-import { generateSource as generateSwiftSource } from 'apollo-codegen-swift';
-import { generateSource as generateTypescriptLegacySource } from 'apollo-codegen-typescript-legacy';
-import { generateSource as generateFlowLegacySource } from 'apollo-codegen-flow-legacy';
-import { generateSource as generateFlowSource } from 'apollo-codegen-flow';
-import { generateSource as generateTypescriptSource } from 'apollo-codegen-typescript';
-import { generateSource as generateScalaSource } from 'apollo-codegen-scala';
-import { GraphQLSchema } from 'graphql';
+import { generateSource as generateSwiftSource } from "apollo-codegen-swift";
+import { generateSource as generateTypescriptLegacySource } from "apollo-codegen-typescript-legacy";
+import { generateSource as generateFlowLegacySource } from "apollo-codegen-flow-legacy";
+import { generateSource as generateFlowSource } from "apollo-codegen-flow";
+import { generateSource as generateTypescriptSource } from "apollo-codegen-typescript";
+import { generateSource as generateScalaSource } from "apollo-codegen-scala";
+import { GraphQLSchema } from "graphql";
 import { FlowCompilerOptions } from '../../apollo-codegen-flow/lib/language';
 
-export type TargetType = 'json' | 'swift' | 'ts-legacy' | 'typescript-legacy'
-  | 'flow-legacy' | 'scala' | 'flow' | 'typescript'
-  | 'ts';
+export type TargetType =
+  | "json"
+  | "swift"
+  | "ts-legacy"
+  | "typescript-legacy"
+  | "flow-legacy"
+  | "scala"
+  | "flow"
+  | "typescript"
+  | "ts";
 
 export type GenerationOptions = CompilerOptions & LegacyCompilerOptions & FlowCompilerOptions;
 
@@ -30,8 +37,8 @@ export default function generate(
   only: string | undefined,
   target: TargetType,
   tagName: string,
-  nextToSources: boolean,
-  options: GenerationOptions
+  nextToSources: boolean | string,
+  options: any
 ): number {
   let writtenFiles = 0;
 
@@ -39,11 +46,12 @@ export default function generate(
 
   validateQueryDocument(schema, document);
 
-  if (target === 'swift') {
+  if (target === "swift") {
     options.addTypename = true;
     const context = compileToIR(schema, document, options);
 
-    const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
+    const outputIndividualFiles =
+      fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
 
     const generator = generateSwiftSource(context, outputIndividualFiles, only);
 
@@ -59,33 +67,48 @@ export default function generate(
       writeOperationIdsMap(context);
       writtenFiles += 1;
     }
-  }
-  else if (target === 'flow' || target === 'typescript' || target === 'ts') {
+  } else if (target === "flow" || target === "typescript" || target === "ts") {
     const context = compileToIR(schema, document, options);
-    const { generatedFiles, common } = target === 'flow'
-      ? generateFlowSource(context)
-      : generateTypescriptSource(context) ;
+    const { generatedFiles, common } =
+      target === "flow"
+        ? generateFlowSource(context)
+        : generateTypescriptSource(context);
 
     const outFiles: {
-      [fileName: string]: BasicGeneratedFile
+      [fileName: string]: BasicGeneratedFile;
     } = {};
 
-    const outputIndividualFiles = fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
+    if (nextToSources) {
+      generatedFiles.forEach(({ sourcePath, fileName, content }) => {
+          const dir = path.join(path.dirname(sourcePath), outputPath);
 
-    if (outputIndividualFiles) {
-      generatedFiles.forEach(({sourcePath, fileName, content}) => {
-        outFiles[nextToSources ? `${path.dirname(sourcePath)}/${fileName}` : fileName] = {
-          output: content.fileContents + common
-        }
+          if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+          }
+
+          outFiles[path.join(dir, fileName)] = {
+            output: content.fileContents + common
+          };
       });
 
-      writeGeneratedFiles(
-        outFiles,
-        outputPath
-      );
+      writeGeneratedFiles(outFiles, path.resolve("."));
 
       writtenFiles += Object.keys(outFiles).length;
-    } else {
+    }
+
+    else if (fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory()) {
+      generatedFiles.forEach(({ sourcePath, fileName, content }) => {
+        outFiles[fileName] = {
+          output: content.fileContents + common
+        };
+      });
+
+      writeGeneratedFiles(outFiles, outputPath);
+
+      writtenFiles += Object.keys(outFiles).length;
+    }
+
+    else {
       fs.writeFileSync(
         outputPath,
         generatedFiles.map(o => o.content.fileContents).join("\n") + common
@@ -93,22 +116,21 @@ export default function generate(
 
       writtenFiles += 1;
     }
-  }
-  else {
+  } else {
     let output;
     const context = compileToLegacyIR(schema, document, options);
     switch (target) {
-      case 'json':
+      case "json":
         output = serializeToJSON(context);
         break;
-      case 'ts-legacy':
-      case 'typescript-legacy':
+      case "ts-legacy":
+      case "typescript-legacy":
         output = generateTypescriptLegacySource(context);
         break;
-      case 'flow-legacy':
+      case "flow-legacy":
         output = generateFlowLegacySource(context);
         break;
-      case 'scala':
+      case "scala":
         output = generateScalaSource(context);
     }
 
@@ -128,7 +150,10 @@ function writeGeneratedFiles(
   outputDirectory: string
 ) {
   for (const [fileName, generatedFile] of Object.entries(generatedFiles)) {
-    fs.writeFileSync(path.join(outputDirectory, fileName), generatedFile.output);
+    fs.writeFileSync(
+      path.join(outputDirectory, fileName),
+      generatedFile.output
+    );
   }
 }
 
@@ -139,11 +164,16 @@ interface OperationIdsMap {
 
 function writeOperationIdsMap(context: CompilerContext) {
   let operationIdsMap: { [id: string]: OperationIdsMap } = {};
-  Object.keys(context.operations).map(k => context.operations[k]).forEach(operation => {
-    operationIdsMap[operation.operationId!] = {
-      name: operation.operationName,
-      source: operation.source
-    };
-  });
-  fs.writeFileSync(context.options.operationIdsPath, JSON.stringify(operationIdsMap, null, 2));
+  Object.keys(context.operations)
+    .map(k => context.operations[k])
+    .forEach(operation => {
+      operationIdsMap[operation.operationId] = {
+        name: operation.operationName,
+        source: operation.source
+      };
+    });
+  fs.writeFileSync(
+    context.options.operationIdsPath,
+    JSON.stringify(operationIdsMap, null, 2)
+  );
 }
