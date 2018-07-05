@@ -28,7 +28,7 @@ export default class SchemaDownload extends Command {
         "Additional headers to send to server for introspectionQuery",
     }),
     endpoint: flags.string({
-      description: "The URL of the server to fetch the schema from",
+      description: "The URL of the server to fetch the schema from or path to ./your/local/schema.graphql",
       default: "http://localhost:4000/graphql", // apollo-server 2.0 default address
     }),
 
