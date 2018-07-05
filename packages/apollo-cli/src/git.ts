@@ -30,6 +30,7 @@ export const gitInfo = async (path?: string) => {
   const { isCi, commit, slug, root } = ci();
   const gitLoc = root ? root : findGitRoot();
 
+  console.log({ commit });
   if (!commit) return;
 
   let committer;
@@ -47,7 +48,7 @@ export const gitInfo = async (path?: string) => {
     committer = `${authorName || ""} ${
       authorEmail ? `<${authorEmail}>` : ""
     }`.trim();
-        
+
     if (!isCi) {
       try {
         remoteUrl = git.remoteUrl();
