@@ -87,10 +87,12 @@ export default class SchemaPublish extends Command {
           )
             .then(async ({ data, errors }) => {
               // XXX better end user error message
-              if (errors)
+              if (errors) {
+                console.log(errors);
                 throw new Error(
                   errors.map(({ message }) => message).join("\n")
                 );
+              }
               return data!.service.uploadSchema;
             })
             .catch(e => {

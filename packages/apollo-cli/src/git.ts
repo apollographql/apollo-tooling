@@ -47,7 +47,7 @@ export const gitInfo = async (path?: string) => {
     committer = `${authorName || ""} ${
       authorEmail ? `<${authorEmail}>` : ""
     }`.trim();
-        
+
     if (!isCi) {
       try {
         remoteUrl = git.remoteUrl();

@@ -146,7 +146,7 @@ export default class SchemaCheck extends Command {
   }
 }
 
-const format = (change: Change) => {
+export const format = (change: Change) => {
   let color = (x: string): string => x;
   if (change.type === ChangeType.FAILURE) {
     color = chalk.red;
