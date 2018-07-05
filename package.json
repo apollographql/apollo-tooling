@@ -23,6 +23,13 @@
     "lerna-changelog": "^0.8.0"
   },
   "changelog": {
-    "repo": "apollographql/apollo-cli"
+    "repo": "apollographql/apollo-cli",
+    "labels": {
+      "breaking": ":boom: Breaking Change",
+      "feature": ":rocket: Feature",
+      "bug": ":bug: Bug Fix",
+      "docs": ":memo: Documentation",
+      "internal": ":house: Internal"
+    }
   }
 }
