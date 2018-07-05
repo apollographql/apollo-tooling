@@ -150,10 +150,11 @@ ARGUMENTS
 
 OPTIONS
   -h, --help           Show command help
-  --endpoint=endpoint  [default: http://localhost:4000/graphql] The URL of the server to fetch the schema from
+  --endpoint=endpoint  [default: http://localhost:4000/graphql] The URL of the server to fetch the schema from or path to ./your/local/schema.graphql
   --header=header      Additional headers to send to server for introspectionQuery
   --key=key            The API key for the Apollo Engine service
 ```
+Note: This replaces `apollo-codegen introspect-schema`.
 
 _See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-cli/blob/v1.1.1/src/commands/schema/download.ts)_
 
