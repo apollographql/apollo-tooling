@@ -136,7 +136,7 @@ describe("successful checks", () => {
     .nock(ENGINE_URI, engineSuccess())
     .env({ ENGINE_API_KEY })
     .stdout()
-    .command(["queries:check", "--queries=./client/**"])
+    .command(["queries:check", "--queries=./client/*.graphql"])
     .exit(1)
     .it("compares against a schema from a custom directory", () => {
       expect(stdout).toContain("FAILURE");
