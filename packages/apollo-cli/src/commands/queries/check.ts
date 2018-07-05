@@ -9,10 +9,11 @@ import {
   buildClientSchema,
   validate,
   findDeprecatedUsages,
-  GraphQLError,
+  GraphQLError
 } from "graphql";
-import * as globby from "globby";
-import * as fs from "fs";
+
+import * as fg from "glob";
+import { fs, withGlobalFS } from "apollo-codegen-core/lib/localfs";
 import { promisify } from "util";
 
 import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
@@ -26,28 +27,29 @@ import { ChangeType, Change } from "../../printer/ast";
 import { format } from "../schema/check";
 
 export default class CheckQueries extends Command {
-  static description = "Checks your GraphQL operations for compatibility with the server. Checks against the published schema in Apollo Engine.";
+  static description =
+    "Checks your GraphQL operations for compatibility with the server. Checks against the published schema in Apollo Engine.";
 
   static flags = {
     help: flags.help({
       char: "h",
-      description: "Show command help",
+      description: "Show command help"
     }),
     queries: flags.string({
       description:
         "Path to your GraphQL queries, can include search tokens like **",
-      default: "**/*.graphql",
+      default: "**/*.graphql"
     }),
     json: flags.boolean({
-      description: "Output result as JSON",
+      description: "Output result as JSON"
     }),
     ...engineFlags,
 
     tagName: flags.string({
       description:
         "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
-      default: "gql",
-    }),
+      default: "gql"
+    })
   };
 
   async run() {
@@ -64,9 +66,11 @@ export default class CheckQueries extends Command {
       {
         title: "Scanning for GraphQL queries",
         task: async (ctx, task) => {
-          const paths = await globby(
-            flags.queries ? flags.queries.split("\n") : []
-          );
+          const paths = withGlobalFS(() => {
+            return (flags.queries ? flags.queries.split("\n") : []).flatMap(p =>
+              fg.sync(p)
+            );
+          });
 
           const operations = loadQueryDocuments(paths, flags.tagName);
           task.title = `Scanning for GraphQL queries (${
@@ -74,7 +78,7 @@ export default class CheckQueries extends Command {
           } found)`;
           // XXX send along file information as well
           ctx.operations = operations.map(doc => ({ document: print(doc) }));
-        },
+        }
       },
       {
         title: "Checking query compatibility with schema",
@@ -86,7 +90,7 @@ export default class CheckQueries extends Command {
             // XXX hardcoded for now
             tag: "current",
             gitContext,
-            operations: ctx.operations,
+            operations: ctx.operations
           };
 
           ctx.changes = await toPromise(
@@ -95,8 +99,8 @@ export default class CheckQueries extends Command {
               variables,
               context: {
                 headers: { ["x-api-key"]: apiKey },
-                ...(flags.engine && { uri: flags.engine }),
-              },
+                ...(flags.engine && { uri: flags.engine })
+              }
             })
           )
             .then(({ data, errors }) => {
@@ -120,8 +124,8 @@ export default class CheckQueries extends Command {
                 this.error(e.message);
               }
             });
-        },
-      },
+        }
+      }
     ]);
 
     return tasks.run().then(async ({ changes }) => {
@@ -144,8 +148,8 @@ export default class CheckQueries extends Command {
         columns: [
           { key: "type", label: "Change" },
           { key: "code", label: "Code" },
-          { key: "description", label: "Description" },
-        ],
+          { key: "description", label: "Description" }
+        ]
       });
       this.log("\n");
       // exit with failing status if we have failures
