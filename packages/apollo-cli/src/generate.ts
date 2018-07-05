@@ -167,7 +167,7 @@ function writeOperationIdsMap(context: CompilerContext) {
   Object.keys(context.operations)
     .map(k => context.operations[k])
     .forEach(operation => {
-      operationIdsMap[operation.operationId] = {
+      operationIdsMap[operation.operationId!] = {
         name: operation.operationName,
         source: operation.source
       };
