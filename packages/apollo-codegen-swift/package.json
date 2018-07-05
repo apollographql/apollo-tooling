@@ -8,7 +8,8 @@
     "prebuild": "npm run clean",
     "build": "tsc -p .",
     "watch": "tsc -w -p .",
-    "test": "./node_modules/.bin/jest"
+    "test": "./node_modules/.bin/jest",
+    "prepack": "npm run build"
   },
   "repository": {
     "type": "git",

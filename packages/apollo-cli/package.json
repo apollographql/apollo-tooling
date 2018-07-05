@@ -117,7 +117,7 @@
     "build": "tsc -p .",
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "tsc -p . --noEmit",
-    "prepack": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme",
+    "prepack": "npm run build && oclif-dev manifest && oclif-dev readme",
     "precommit": "pretty-quick --staged",
     "test": "jest",
     "version": "oclif-dev readme && git add README.md"
