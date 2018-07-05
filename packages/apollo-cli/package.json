@@ -68,7 +68,6 @@
     "memfs": "^2.9.1",
     "fs-monkey": "^0.3.3"
   },
-  "precommit": "pretty-quick --staged",
   "engines": {
     "node": ">=8.0.0"
   },
@@ -119,6 +118,7 @@
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "tsc -p . --noEmit",
     "prepack": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme",
+    "precommit": "pretty-quick --staged",
     "test": "jest",
     "version": "oclif-dev readme && git add README.md"
   },
