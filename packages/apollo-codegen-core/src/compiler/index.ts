@@ -131,7 +131,7 @@ export function compileToIR(
     document = withTypenameFieldAddedWhereNeeded(document);
   }
 
-  const compiler = new Compiler(schema, options, clientSchema);
+  const compiler = new Compiler(schema, clientSchema, options);
 
   const operations: { [operationName: string]: Operation } = Object.create(null);
   const fragments: { [fragmentName: string]: Fragment } = Object.create(null);
@@ -183,7 +183,7 @@ class Compiler {
 
   unresolvedFragmentSpreads: FragmentSpread[] = [];
 
-  constructor(schema: GraphQLSchema, options: CompilerOptions, clientSchema?: GraphQLSchema) {
+  constructor(schema: GraphQLSchema, clientSchema: GraphQLSchema | undefined, options: CompilerOptions) {
     this.schema = schema;
     this.options = options;
     this.clientSchema = clientSchema;
