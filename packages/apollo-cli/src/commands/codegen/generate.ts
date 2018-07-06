@@ -15,6 +15,7 @@ import { loadSchemaStep } from "../../load-schema";
 
 import { engineFlags } from "../../engine-cli";
 import { fromFile } from '../../fetch-schema';
+import { loadQueryDocuments } from 'apollo-codegen-core/lib/loading';
 
 export default class Generate extends Command {
   static description =
@@ -222,7 +223,16 @@ export default class Generate extends Command {
           if (!flags.clientSchema) {
             task.skip("Path to client schema not provided")
           } else {
-            const ast = parse(fs.readFileSync(path.resolve(flags.clientSchema)).toString());
+            const foundDocuments = loadQueryDocuments([path.resolve(flags.clientSchema)]);
+            if (foundDocuments.length == 0) {
+              this.error("Found no query documents, aborting");
+            }
+
+            if (foundDocuments.length > 1) {
+              this.warn("Found more than one query document, using the first one");
+            }
+
+            const ast = foundDocuments[0];
             const clientNodes: {parentType: string}[] = [];
             visit(ast, {
               enter(node, key, parent, path, ancestors) {

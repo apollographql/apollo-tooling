@@ -36,6 +36,23 @@ const clientSideSchema = fs.readFileSync(
   path.resolve(__dirname, "./fixtures/clientSideSchema.graphql")
 );
 
+const clientSideSchemaTag = `
+gql\`
+extend type Query {
+  localState: String!
+  complexLocalState: LocalType!
+}
+
+type LocalType {
+  someData: String!
+}
+
+extend type ServerField {
+  addedLocalData: String!
+}
+\`
+`;
+
 const clientSideSchemaQuery = fs.readFileSync(
   path.resolve(__dirname, "./fixtures/clientSideSchemaQuery.graphql")
 );
@@ -130,6 +147,19 @@ describe("successful codegen", () => {
     })
     .command(["codegen:generate", "--schema=schema.json", "--clientSchema=clientSideSchema.graphql", "--outputFlat", "API.ts"])
     .it("infers TypeScript target and writes types for query with client-side data", () => {
+      expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
+    });
+
+    test
+    .do(() => {
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
+        "clientSideSchemaTag.js": clientSideSchemaTag.toString(),
+        "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString()
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.json", "--clientSchema=clientSideSchemaTag.js", "--outputFlat", "API.ts"])
+    .it("infers TypeScript target and writes types for query with client-side data with schema in a JS file", () => {
       expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
     });
 
