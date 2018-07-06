@@ -5,7 +5,7 @@ import * as path from "path";
 
 import { TargetType, default as generate } from "../../generate";
 
-import { buildClientSchema } from "graphql";
+import { buildClientSchema, buildSchema } from "graphql";
 
 import * as fg from "glob";
 import { fs, withGlobalFS } from "apollo-codegen-core/lib/localfs";
@@ -191,21 +191,29 @@ export default class Generate extends Command {
         flags.engine,
         "Loading GraphQL schema",
         async ctx => {
-          const schemaFileContent = await promisify(fs.readFile)(
-            path.resolve(flags.schema as string)
-          );
-          const schemaData = JSON.parse((schemaFileContent as any) as string);
-          ctx.schema = schemaData.data
-            ? schemaData.data.__schema
-            : schemaData.__schema
-              ? schemaData.__schema
-              : schemaData;
+          if (flags.schema) {
+            const schemaFileContent = await promisify(fs.readFile)(
+              path.resolve(flags.schema as string)
+            );
+            const schemaData = JSON.parse((schemaFileContent as any) as string);
+            ctx.schema = schemaData.data
+              ? schemaData.data.__schema
+              : schemaData.__schema
+                ? schemaData.__schema
+                : schemaData;
+          } else {
+            this.log("Not loading because no path was provided (you should have a client-side schema)");
+          }
         }
       ),
       {
         title: "Parsing GraphQL schema",
         task: async ctx => {
-          ctx.schema = buildClientSchema({ __schema: ctx.schema });
+          if (ctx.schema) {
+            ctx.schema = buildClientSchema({ __schema: ctx.schema });
+          } else {
+            ctx.schema = buildSchema("type Query { _: Boolean }\ntype Mutation { _: Boolean }");
+          }
         }
       },
       {
@@ -218,7 +226,7 @@ export default class Generate extends Command {
               __schema: await fromFile({
                 endpoint: path.resolve(flags.clientSchema),
               })
-            })
+            });
           }
         }
       },

@@ -1,0 +1,6 @@
+query SimpleQuery {
+  localState @client
+  complexLocalState @client {
+    someData
+  }
+}
