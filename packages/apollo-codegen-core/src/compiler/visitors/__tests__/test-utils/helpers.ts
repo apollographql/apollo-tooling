@@ -6,5 +6,5 @@ export const starWarsSchema = loadSchema(require.resolve('../../../../../../comm
 
 export function compile(source: string, schema: GraphQLSchema = starWarsSchema, options: CompilerOptions = {}) {
   const document = parse(source);
-  return compileToIR(schema, undefined, document, options);
+  return compileToIR(schema, document, options);
 }

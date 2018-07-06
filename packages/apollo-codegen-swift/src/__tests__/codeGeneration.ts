@@ -26,7 +26,7 @@ describe('Swift code generation', () => {
     options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }
   ): CompilerContext {
     const document = parse(source);
-    const context = compileToIR(schema, undefined, document, options);
+    const context = compileToIR(schema, document, options);
     generator.context = context;
     return context;
   }

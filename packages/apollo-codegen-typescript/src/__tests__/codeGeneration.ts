@@ -19,7 +19,7 @@ function compile(
   }
 ): CompilerContext {
   const document = parse(source);
-  return compileToIR(schema, undefined, document, options);
+  return compileToIR(schema, document, options);
 }
 
 describe('Typescript codeGeneration', () => {
@@ -267,7 +267,7 @@ describe('Typescript codeGeneration', () => {
     `);
 
     const output = generateSource(
-      compileToIR(miscSchema, undefined, document, {
+      compileToIR(miscSchema, document, {
         mergeInFieldsFromFragmentSpreads: true,
         addTypename: true
       })

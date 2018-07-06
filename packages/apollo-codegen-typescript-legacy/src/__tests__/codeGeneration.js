@@ -27,7 +27,7 @@ describe('TypeScript code generation', function() {
 
     compileFromSource = (source) => {
       const document = parse(source);
-      const context = compileToLegacyIR(schema, undefined, document, {
+      const context = compileToLegacyIR(schema, document, {
         mergeInFieldsFromFragmentSpreads: true,
         addTypename: true
       });

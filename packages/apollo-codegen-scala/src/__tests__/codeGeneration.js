@@ -41,7 +41,7 @@ describe('Scala code generation', function() {
 
     compileFromSource = (source, options = { generateOperationIds: false }) => {
       const document = parse(source);
-      let context = compileToLegacyIR(schema, undefined, document);
+      let context = compileToLegacyIR(schema, document);
       options.generateOperationIds && Object.assign(context.options, { generateOperationIds: true, operationIdsMap: {} });
       options.namespace && Object.assign(context.options, { namespace: options.namespace });
       generator.context = context;

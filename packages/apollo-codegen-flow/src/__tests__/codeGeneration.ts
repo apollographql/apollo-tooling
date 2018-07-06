@@ -21,7 +21,7 @@ function compile(
   }
 ): CompilerContext {
   const document = parse(source);
-  return compileToIR(schema, undefined, document, options);
+  return compileToIR(schema, document, options);
 }
 
 describe('Flow codeGeneration', () => {
@@ -306,7 +306,7 @@ describe('Flow codeGeneration', () => {
     `);
 
     const output = generateSource(
-      compileToIR(miscSchema, undefined, document, {
+      compileToIR(miscSchema, document, {
         mergeInFieldsFromFragmentSpreads: true,
         addTypename: true
       })

@@ -45,7 +45,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = withStringifiedTypes(compileToLegacyIR(schema, undefined, document));
+    const { operations } = withStringifiedTypes(compileToLegacyIR(schema, document));
 
     expect(operations['HeroName'].variables).toEqual(
       [
@@ -91,7 +91,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { typesUsed } = withStringifiedTypes(compileToLegacyIR(schema, undefined, document));
+    const { typesUsed } = withStringifiedTypes(compileToLegacyIR(schema, document));
 
     expect(typesUsed).toEqual(['Episode', 'ReviewInput', 'ColorInput']);
   });
@@ -110,7 +110,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { typesUsed } = withStringifiedTypes(compileToLegacyIR(schema, undefined, document));
+    const { typesUsed } = withStringifiedTypes(compileToLegacyIR(schema, document));
 
     expect(typesUsed).toEqual(['Episode']);
   });
@@ -124,7 +124,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
       `);
 
-    const { typesUsed } = withStringifiedTypes(compileToLegacyIR(schema, undefined, document));
+    const { typesUsed } = withStringifiedTypes(compileToLegacyIR(schema, document));
 
     expect(typesUsed).toContain('ReviewInput');
     expect(typesUsed).toContain('ColorInput');
@@ -142,7 +142,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].fieldName).toBe("hero");
   });
@@ -156,7 +156,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].args)
       .toEqual([{ name: "episode", value: "EMPIRE", type: schema.getType("Episode") }]);
@@ -177,7 +177,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroNameConditionalInclusion'].fields[0].fields[0]).toMatchObject({
       fieldName: 'name',
@@ -205,7 +205,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroNameConditionalInclusion'].fields[0].fields[0]).toMatchObject({
       fieldName: 'name',
@@ -233,7 +233,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroNameConditionalInclusion'].fields[0].fields).toHaveLength(0);
     expect(operations['HeroNameConditionalExclusion'].fields[0].fields).toHaveLength(0);
@@ -258,7 +258,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroNameConditionalInclusion'].fields[0].fields[0]).toMatchObject({
       fieldName: 'name',
@@ -290,7 +290,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroNameConditionalInclusion'].fields[0].fields[0]).toMatchObject({
       fieldName: 'name',
@@ -326,7 +326,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['id', 'name', 'appearsIn']);
@@ -352,7 +352,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations, fragments } = compileToLegacyIR(schema, undefined, document);
+    const { operations, fragments } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['id', 'name', 'appearsIn']);
@@ -388,7 +388,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations, fragments } = compileToLegacyIR(schema, undefined, document);
+    const { operations, fragments } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroAndFriends'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['name', 'id', 'appearsIn', 'friends']);
@@ -417,7 +417,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['name']);
@@ -452,7 +452,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations, fragments } = compileToLegacyIR(schema, undefined, document);
+    const { operations, fragments } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['name']);
@@ -483,7 +483,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
     .toEqual(['name']);
@@ -509,7 +509,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations, fragments } = compileToLegacyIR(schema, undefined, document);
+    const { operations, fragments } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['name']);
@@ -539,7 +539,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].fields.map(field => field.fieldName))
       .toEqual([]);
@@ -561,7 +561,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].fields.map(field => field.fieldName))
       .toEqual([]);
@@ -585,7 +585,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].fields.map(field => field.fieldName))
       .toEqual([]);
@@ -613,7 +613,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].fields[0].fields.map(field => field.fieldName))
       .toEqual([]);
@@ -646,7 +646,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HumanAndDroid'].fields.map(field => field.fieldName))
       .toEqual(['human', 'droid']);
@@ -683,7 +683,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HumanAndDroid'].fields.map(field => field.fieldName))
       .toEqual(['human', 'droid']);
@@ -712,7 +712,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['Search'].fields[0].fields.map(field => field.fieldName))
       .toEqual([]);
@@ -741,7 +741,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
       .toEqual(['name', 'appearsIn']);
@@ -761,7 +761,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { fragments } = compileToLegacyIR(schema, undefined, document);
+    const { fragments } = compileToLegacyIR(schema, document);
 
     expect(fragments['HeroDetails'].inlineFragments['Droid'].typeCondition.toString()).toEqual('Droid');
     expect(fragments['HeroDetails'].inlineFragments['Droid'].fields.map(field => field.fieldName))
@@ -784,7 +784,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails']);
   });
@@ -808,7 +808,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails', 'HeroName']);
   });
@@ -831,7 +831,7 @@ describe('Compiling query documents to the legacy IR', () => {
       }
     `);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroAndFriends'].fragmentsReferenced).toEqual(['HeroDetails']);
   });
@@ -857,7 +857,7 @@ describe('Compiling query documents to the legacy IR', () => {
         }
       `);
 
-      const { operations, fragments } = compileToLegacyIR(schema, undefined, document, { mergeInFieldsFromFragmentSpreads: false });
+      const { operations, fragments } = compileToLegacyIR(schema, document, { mergeInFieldsFromFragmentSpreads: false });
 
       expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
         .toEqual(['id']);
@@ -893,7 +893,7 @@ describe('Compiling query documents to the legacy IR', () => {
         }
       `);
 
-      const { operations, fragments } = compileToLegacyIR(schema, undefined, document, { mergeInFieldsFromFragmentSpreads: false });
+      const { operations, fragments } = compileToLegacyIR(schema, document, { mergeInFieldsFromFragmentSpreads: false });
 
       expect(operations['HeroAndFriends'].fields[0].fields.map(field => field.fieldName))
         .toEqual(['appearsIn', 'id','friends']);
@@ -926,7 +926,7 @@ describe('Compiling query documents to the legacy IR', () => {
         }
       `);
 
-      const { operations, fragments } = compileToLegacyIR(schema, undefined, document, { mergeInFieldsFromFragmentSpreads: false });
+      const { operations, fragments } = compileToLegacyIR(schema, document, { mergeInFieldsFromFragmentSpreads: false });
 
       expect(operations['Hero'].fields[0].fields.map(field => field.fieldName))
         .toEqual(['name']);
@@ -948,7 +948,7 @@ describe('Compiling query documents to the legacy IR', () => {
     `
     const document = parse(source);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].source).toBe(source);
   });
@@ -961,7 +961,7 @@ describe('Compiling query documents to the legacy IR', () => {
     `
     const document = parse(source);
 
-    const { fragments } = compileToLegacyIR(schema, undefined, document);
+    const { fragments } = compileToLegacyIR(schema, document);
 
     expect(fragments['HeroDetails'].source).toBe(source);
   });
@@ -976,7 +976,7 @@ describe('Compiling query documents to the legacy IR', () => {
     `
     const document = parse(source);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document, { addTypename: true });
+    const { operations } = compileToLegacyIR(schema, document, { addTypename: true });
 
     expect(operations['HeroName'].source).toBe(stripIndent`
       query HeroName {
@@ -996,7 +996,7 @@ describe('Compiling query documents to the legacy IR', () => {
     `
     const document = parse(source);
 
-    const { fragments } = compileToLegacyIR(schema, undefined, document, { addTypename: true });
+    const { fragments } = compileToLegacyIR(schema, document, { addTypename: true });
 
     expect(fragments['HeroDetails'].source).toBe(stripIndent`
       fragment HeroDetails on Character {
@@ -1016,7 +1016,7 @@ describe('Compiling query documents to the legacy IR', () => {
     `
     const document = parse(source);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['HeroName'].operationType).toBe('query');
   });
@@ -1032,7 +1032,7 @@ describe('Compiling query documents to the legacy IR', () => {
     `
     const document = parse(source);
 
-    const { operations } = compileToLegacyIR(schema, undefined, document);
+    const { operations } = compileToLegacyIR(schema, document);
 
     expect(operations['CreateReview'].operationType).toBe('mutation');
   });
