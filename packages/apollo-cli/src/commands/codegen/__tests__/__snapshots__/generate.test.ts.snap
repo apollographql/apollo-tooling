@@ -223,9 +223,14 @@ exports[`successful codegen infers TypeScript target and writes types for query 
 // GraphQL query operation: SimpleQuery
 // ====================================================
 
+export interface SimpleQuery_complexLocalState {
+  someData: string;
+}
+
 export interface SimpleQuery {
   hello: string;
   localState: string;
+  complexLocalState: SimpleQuery_complexLocalState;
 }
 
 /* tslint:disable */
