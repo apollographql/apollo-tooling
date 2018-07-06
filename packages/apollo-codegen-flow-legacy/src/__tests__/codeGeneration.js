@@ -24,7 +24,7 @@ function setup(schema) {
 
   const compileFromSource = (source) => {
     const document = parse(source);
-    const context = compileToLegacyIR(schema, document, { mergeInFieldsFromFragmentSpreads: true, addTypename: true } );
+    const context = compileToLegacyIR(schema, undefined, document, { mergeInFieldsFromFragmentSpreads: true, addTypename: true } );
     generator.context = context;
     return context;
   };
