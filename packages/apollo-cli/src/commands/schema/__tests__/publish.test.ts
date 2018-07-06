@@ -64,7 +64,7 @@ const engineSuccess = ({ schema, tag, result } = {}) => nock => {
     );
 };
 
-jest.setTimeout(15000);
+jest.setTimeout(25000);
 
 describe("successful uploads", () => {
   test
