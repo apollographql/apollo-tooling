@@ -227,10 +227,16 @@ export interface SimpleQuery_complexLocalState {
   someData: string;
 }
 
+export interface SimpleQuery_serverSideField {
+  serverData: string;
+  addedLocalData: string;
+}
+
 export interface SimpleQuery {
   hello: string;
   localState: string;
   complexLocalState: SimpleQuery_complexLocalState;
+  serverSideField: SimpleQuery_serverSideField;
 }
 
 /* tslint:disable */

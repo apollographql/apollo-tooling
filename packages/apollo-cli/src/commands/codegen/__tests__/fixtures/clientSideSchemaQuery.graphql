@@ -4,4 +4,9 @@ query SimpleQuery {
   complexLocalState @client {
     someData
   }
+
+  serverSideField {
+    serverData
+    addedLocalData @client
+  }
 }

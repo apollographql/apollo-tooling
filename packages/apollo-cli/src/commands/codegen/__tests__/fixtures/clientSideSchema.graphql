@@ -6,3 +6,7 @@ type Query {
 type LocalType {
   someData: String!
 }
+
+type ServerField {
+  addedLocalData: String!
+}
