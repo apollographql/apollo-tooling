@@ -7,6 +7,7 @@ import { compileToIR, CompilerContext, CompilerOptions } from "apollo-codegen-co
 import { compileToLegacyIR, CompilerOptions as LegacyCompilerOptions } from "apollo-codegen-core/lib/compiler/legacyIR";
 import serializeToJSON from "apollo-codegen-core/lib/serializeToJSON";
 import { BasicGeneratedFile } from "apollo-codegen-core/lib/utilities/CodeGenerator";
+import { getFieldDef } from "apollo-codegen-core/lib/utilities/graphql";
 
 import { generateSource as generateSwiftSource } from "apollo-codegen-swift";
 import { generateSource as generateTypescriptLegacySource } from "apollo-codegen-typescript-legacy";
@@ -14,7 +15,7 @@ import { generateSource as generateFlowLegacySource } from "apollo-codegen-flow-
 import { generateSource as generateFlowSource } from "apollo-codegen-flow";
 import { generateSource as generateTypescriptSource } from "apollo-codegen-typescript";
 import { generateSource as generateScalaSource } from "apollo-codegen-scala";
-import { GraphQLSchema } from "graphql";
+import { GraphQLSchema, TypeInfo, GraphQLCompositeType } from "graphql";
 import { FlowCompilerOptions } from '../../apollo-codegen-flow/lib/language';
 
 export type TargetType =
@@ -45,7 +46,21 @@ export default function generate(
 
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
 
-  // validateQueryDocument(schema, document);
+  validateQueryDocument(schema, document, new TypeInfo(
+    schema,
+    (schema, parentType, fieldNode) => {
+      const isClient = (fieldNode.directives || []).some(d => d.name.value == "client");
+      const clientParentTypeOrType = isClient ?
+        clientSchema!.getType((parentType as GraphQLCompositeType).name) :
+        parentType;
+
+      return getFieldDef(
+        isClient ? clientSchema! : schema,
+        clientParentTypeOrType as GraphQLCompositeType,
+        fieldNode
+      );
+    }
+  ));
 
   if (target === "swift") {
     options.addTypename = true;
