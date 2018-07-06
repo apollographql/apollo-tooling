@@ -123,7 +123,6 @@ export interface FragmentSpread {
 
 export function compileToIR(
   schema: GraphQLSchema,
-  clientSchema: GraphQLSchema | undefined,
   document: DocumentNode,
   options: CompilerOptions = {}
 ): CompilerContext {
@@ -131,7 +130,7 @@ export function compileToIR(
     document = withTypenameFieldAddedWhereNeeded(document);
   }
 
-  const compiler = new Compiler(schema, clientSchema, options);
+  const compiler = new Compiler(schema, options);
 
   const operations: { [operationName: string]: Operation } = Object.create(null);
   const fragments: { [fragmentName: string]: Fragment } = Object.create(null);
@@ -143,7 +142,7 @@ export function compileToIR(
         operations[operation.operationName] = operation;
         break;
       case Kind.FRAGMENT_DEFINITION:
-        const fragment = compiler.compileFragment(definition);
+        const fragment = compiler.compileFragment(definition, false);
         fragments[fragment.fragmentName] = fragment;
         break;
     }
@@ -178,15 +177,13 @@ export function compileToIR(
 class Compiler {
   options: CompilerOptions;
   schema: GraphQLSchema;
-  clientSchema?: GraphQLSchema;
   typesUsedSet: Set<GraphQLType>;
 
   unresolvedFragmentSpreads: FragmentSpread[] = [];
 
-  constructor(schema: GraphQLSchema, clientSchema: GraphQLSchema | undefined, options: CompilerOptions) {
+  constructor(schema: GraphQLSchema, options: CompilerOptions) {
     this.schema = schema;
     this.options = options;
-    this.clientSchema = clientSchema;
 
     this.typesUsedSet = new Set();
   }
@@ -238,11 +235,11 @@ class Compiler {
       variables,
       source,
       rootType,
-      selectionSet: this.compileSelectionSet(operationDefinition.selectionSet, rootType)
+      selectionSet: this.compileSelectionSet(operationDefinition.selectionSet, rootType, false)
     };
   }
 
-  compileFragment(fragmentDefinition: FragmentDefinitionNode): Fragment {
+  compileFragment(fragmentDefinition: FragmentDefinitionNode, isClient: boolean): Fragment {
     const fragmentName = fragmentDefinition.name.value;
 
     const filePath = filePathForNode(fragmentDefinition);
@@ -255,13 +252,14 @@ class Compiler {
       filePath,
       source,
       type,
-      selectionSet: this.compileSelectionSet(fragmentDefinition.selectionSet, type)
+      selectionSet: this.compileSelectionSet(fragmentDefinition.selectionSet, type, isClient)
     };
   }
 
   compileSelectionSet(
     selectionSetNode: SelectionSetNode,
     parentType: GraphQLCompositeType,
+    isClient: boolean,
     possibleTypes: GraphQLObjectType[] = this.possibleTypesForType(parentType),
     visitedFragments: Set<string> = new Set()
   ): SelectionSet {
@@ -270,7 +268,7 @@ class Compiler {
       selections: selectionSetNode.selections
         .map(selectionNode =>
           wrapInBooleanConditionsIfNeeded(
-            this.compileSelection(selectionNode, parentType, possibleTypes, visitedFragments),
+            this.compileSelection(selectionNode, parentType, possibleTypes, visitedFragments, isClient),
             selectionNode,
             possibleTypes
           )
@@ -281,22 +279,32 @@ class Compiler {
 
   compileSelection(
     selectionNode: SelectionNode,
-    serverParentType: GraphQLCompositeType,
+    parentType: GraphQLCompositeType,
     possibleTypes: GraphQLObjectType[],
-    visitedFragments: Set<string>
+    visitedFragments: Set<string>,
+    isClient: boolean
   ): Selection | null {
-    const isClient = (selectionNode.directives || []).some(d => d.name.value == "client");
-    const parentOrClientSchema = isClient ? this.clientSchema! : this.schema;
-    const parentOrClientType = isClient ? this.clientSchema!.getType(serverParentType.name) as GraphQLCompositeType : serverParentType;
-
     switch (selectionNode.kind) {
       case Kind.FIELD: {
+        const fieldIsClient = (selectionNode.directives || []).some(d => d.name.value == "client");
         const name = selectionNode.name.value;
         const alias = selectionNode.alias ? selectionNode.alias.value : undefined;
 
-        const fieldDef = getFieldDef(isClient ? this.clientSchema! : this.schema, parentOrClientType, selectionNode);
+        const fieldDef = getFieldDef(this.schema, parentType, selectionNode);
         if (!fieldDef) {
-          throw new GraphQLError(`Cannot query field "${name}" on type "${String(parentOrClientType)}"`, [
+          throw new GraphQLError(`Cannot query field "${name}" on type "${String(parentType)}"`, [
+            selectionNode
+          ]);
+        }
+
+        if (fieldDef.astNode && (fieldDef.astNode as any).__client && !(isClient || fieldIsClient)) {
+          throw new GraphQLError(`Cannot query client-side field "${name}" on type "${String(parentType)}" without @client directive`, [
+            selectionNode
+          ]);
+        }
+
+        if (!(fieldDef.astNode && (fieldDef.astNode as any).__client) && (isClient || fieldIsClient)) {
+          throw new GraphQLError(`Cannot query server-side field "${name}" on type "${String(parentType)}" with @client directive`, [
             selectionNode
           ]);
         }
@@ -339,21 +347,22 @@ class Compiler {
           const selectionSetNode = selectionNode.selectionSet;
           if (!selectionSetNode) {
             throw new GraphQLError(
-              `Composite field "${name}" on type "${String(parentOrClientType)}" requires selection set`,
+              `Composite field "${name}" on type "${String(parentType)}" requires selection set`,
               [selectionNode]
             );
           }
 
           field.selectionSet = this.compileSelectionSet(
             selectionNode.selectionSet as SelectionSetNode,
-            unmodifiedFieldType
+            unmodifiedFieldType,
+            isClient || fieldIsClient
           );
         }
         return field;
       }
       case Kind.INLINE_FRAGMENT: {
         const typeNode = selectionNode.typeCondition;
-        const type = typeNode ? (typeFromAST(parentOrClientSchema, typeNode) as GraphQLCompositeType) : parentOrClientType;
+        const type = typeNode ? (typeFromAST(this.schema, typeNode) as GraphQLCompositeType) : parentType;
         const possibleTypesForTypeCondition = this.possibleTypesForType(type).filter(type =>
           possibleTypes.includes(type)
         );
@@ -363,6 +372,7 @@ class Compiler {
           selectionSet: this.compileSelectionSet(
             selectionNode.selectionSet,
             type,
+            isClient,
             possibleTypesForTypeCondition
           )
         };

@@ -40,6 +40,10 @@ const clientSideSchemaQuery = fs.readFileSync(
   path.resolve(__dirname, "./fixtures/clientSideSchemaQuery.graphql")
 );
 
+const clientSideOnlySchema = fs.readFileSync(
+  path.resolve(__dirname, "./fixtures/clientSideOnlySchema.graphql")
+);
+
 const clientSideOnlyQuery = fs.readFileSync(
   path.resolve(__dirname, "./fixtures/clientSideOnlyQuery.graphql")
 );
@@ -132,11 +136,11 @@ describe("successful codegen", () => {
   test
     .do(() => {
       vol.fromJSON({
-        "clientSideSchema.graphql": clientSideSchema.toString(),
+        "clientSideOnlySchema.graphql": clientSideOnlySchema.toString(),
         "clientSideOnlyQuery.graphql": clientSideOnlyQuery.toString()
       });
     })
-    .command(["codegen:generate", "--clientSchema=clientSideSchema.graphql", "--outputFlat", "API.ts"])
+    .command(["codegen:generate", "--clientSchema=clientSideOnlySchema.graphql", "--outputFlat", "API.ts"])
     .it("infers TypeScript target and writes types for query with only client-side data", () => {
       expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
     });

@@ -5,7 +5,7 @@ import * as path from "path";
 
 import { TargetType, default as generate } from "../../generate";
 
-import { buildClientSchema, buildSchema } from "graphql";
+import { buildClientSchema, buildSchema, parse, visit, GraphQLCompositeType, extendSchema, buildASTSchema } from "graphql";
 
 import * as fg from "glob";
 import { fs, withGlobalFS } from "apollo-codegen-core/lib/localfs";
@@ -208,11 +208,11 @@ export default class Generate extends Command {
       ),
       {
         title: "Parsing GraphQL schema",
-        task: async ctx => {
+        task: async (ctx, task) => {
           if (ctx.schema) {
             ctx.schema = buildClientSchema({ __schema: ctx.schema });
           } else {
-            ctx.schema = buildSchema("type Query { _: Boolean }\ntype Mutation { _: Boolean }");
+            task.skip("No server-side schema provided")
           }
         }
       },
@@ -222,11 +222,21 @@ export default class Generate extends Command {
           if (!flags.clientSchema) {
             task.skip("Path to client schema not provided")
           } else {
-            ctx.clientSchema = buildClientSchema({
-              __schema: await fromFile({
-                endpoint: path.resolve(flags.clientSchema),
-              })
+            const ast = parse(fs.readFileSync(path.resolve(flags.clientSchema)).toString());
+            const clientNodes: {parentType: string}[] = [];
+            visit(ast, {
+              enter(node, key, parent, path, ancestors) {
+                if (node.kind == "FieldDefinition") {
+                  (node as any).__client = true;
+                }
+              }
             });
+
+            if (ctx.schema) {
+              ctx.schema = extendSchema(ctx.schema, ast);
+            } else {
+              ctx.schema = buildASTSchema(ast);
+            }
           }
         }
       },
@@ -237,7 +247,6 @@ export default class Generate extends Command {
           const writtenFiles = generate(
             ctx.queryPaths,
             ctx.schema,
-            ctx.clientSchema,
             typeof args.output === "string" ? args.output : "__generated__",
             flags.only,
             inferredTarget,

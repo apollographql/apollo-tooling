@@ -34,7 +34,6 @@ export type GenerationOptions = CompilerOptions & LegacyCompilerOptions & FlowCo
 export default function generate(
   inputPaths: string[],
   schema: GraphQLSchema,
-  clientSchema: GraphQLSchema | undefined,
   outputPath: string,
   only: string | undefined,
   target: TargetType,
@@ -46,25 +45,11 @@ export default function generate(
 
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
 
-  validateQueryDocument(schema, document, new TypeInfo(
-    schema,
-    (schema, parentType, fieldNode) => {
-      const isClient = (fieldNode.directives || []).some(d => d.name.value == "client");
-      const clientParentTypeOrType = isClient ?
-        clientSchema!.getType((parentType as GraphQLCompositeType).name) :
-        parentType;
-
-      return getFieldDef(
-        isClient ? clientSchema! : schema,
-        clientParentTypeOrType as GraphQLCompositeType,
-        fieldNode
-      );
-    }
-  ));
+  validateQueryDocument(schema, document);
 
   if (target === "swift") {
     options.addTypename = true;
-    const context = compileToIR(schema, clientSchema, document, options);
+    const context = compileToIR(schema, document, options);
 
     const outputIndividualFiles =
       fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
@@ -84,7 +69,7 @@ export default function generate(
       writtenFiles += 1;
     }
   } else if (target === "flow" || target === "typescript" || target === "ts") {
-    const context = compileToIR(schema, clientSchema, document, options);
+    const context = compileToIR(schema, document, options);
     const { generatedFiles, common } =
       target === "flow"
         ? generateFlowSource(context)
@@ -134,7 +119,7 @@ export default function generate(
     }
   } else {
     let output;
-    const context = compileToLegacyIR(schema, clientSchema, document, options);
+    const context = compileToLegacyIR(schema, document, options);
     switch (target) {
       case "json":
         output = serializeToJSON(context);
