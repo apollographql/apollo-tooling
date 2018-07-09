@@ -3,7 +3,6 @@ import * as path from "path";
 import fetch from "node-fetch";
 import gql from "graphql-tag";
 import {
-  ExecutionResult,
   buildSchema,
   execute as graphql,
   introspectionQuery,

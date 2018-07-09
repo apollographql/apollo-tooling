@@ -26,7 +26,7 @@ export interface Commit {
   authorEmail: string | null;
 }
 
-export const gitInfo = async (path?: string) => {
+export const gitInfo = async () => {
   const { isCi, commit, slug, root } = ci();
   const gitLoc = root ? root : findGitRoot();
 

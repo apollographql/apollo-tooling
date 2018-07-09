@@ -1,9 +1,7 @@
 import { Command, flags } from "@oclif/command";
-import cli from "cli-ux";
 import { table, styledJSON } from "heroku-cli-util";
 import * as Listr from "listr";
 import { toPromise, execute } from "apollo-link";
-import * as util from "util";
 import { GraphQLError } from "graphql";
 
 import { UPLOAD_SCHEMA } from "../../operations/uploadSchema";

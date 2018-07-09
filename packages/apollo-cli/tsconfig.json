@@ -13,10 +13,7 @@
     "baseUrl": ".",
     "paths": {
       "*": ["./@types/*"]
-    },
-    "noImplicitReturns": false,
-    "noUnusedParameters": false,
-    "noUnusedLocals": false
+    }
   },
   "include": ["./src/**/*"],
   "exclude": [ "**/__tests__/*", "**/__mocks__/*" ]

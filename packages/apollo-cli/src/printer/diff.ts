@@ -1,9 +1,7 @@
 import {
-  GraphQLSchema,
   GraphQLNamedType,
   GraphQLObjectType,
   GraphQLType,
-  astFromValue,
   isScalarType,
   isObjectType,
   isInterfaceType,
@@ -16,16 +14,12 @@ import {
   InputObjectTypeDefinitionNode,
   ObjectTypeDefinitionNode,
   EnumTypeDefinitionNode,
-  UnionTypeDefinitionNode,
 } from "graphql";
 
 import {
   TypeMap,
   ChangeType,
-  TypeKind,
   Change,
-  DiffTypeMap,
-  DiffType,
   DiffField,
   DiffInputValue,
   DiffEnum,
@@ -126,33 +120,11 @@ function typeKindName(type: GraphQLNamedType): string {
   throw new TypeError("Unknown type " + type!.constructor.name);
 }
 
-const getKind = (type: GraphQLNamedType) => {
-  if (isScalarType(type)) {
-    return TypeKind.SCALAR;
-  } else if (isObjectType(type)) {
-    return TypeKind.OBJECT;
-  } else if (isInterfaceType(type)) {
-    return TypeKind.INTERFACE;
-  } else if (isUnionType(type)) {
-    return TypeKind.UNION;
-  } else if (isEnumType(type)) {
-    return TypeKind.ENUM;
-  } else if (isInputObjectType(type)) {
-    return TypeKind.INPUT_OBJECT;
-  } else if (isListType(type)) {
-    return TypeKind.LIST;
-  } else if (isNonNullType(type)) {
-    return TypeKind.NON_NULL;
-  }
-  throw new Error("Unknown kind of type: " + type);
-};
-
 const m = (text: any): string => "`" + text + "`";
 
 // we use error throwing for control flow here
 const diffTypesLeft = (
   type: GraphQLNamedType,
-  current: TypeMap,
   next: TypeMap,
   changes: Change[]
 ) => {
@@ -485,7 +457,6 @@ const diffFieldsLeft = (
 const diffTypesRight = (
   type: GraphQLNamedType,
   current: TypeMap,
-  next: TypeMap,
   changes: Change[]
 ) => {
   // if we have a new type we can early exit since thats the
@@ -794,7 +765,7 @@ const diffLeft = (current: TypeMap, next: TypeMap, changes: Change[]) => {
     const oldType = current[typeName];
     const newType = next[typeName];
     try {
-      diffTypesLeft(oldType, current, next, changes);
+      diffTypesLeft(oldType, next, changes);
       diffFieldsLeft(current[typeName], newType, changes);
     } catch (r) {
       if (r instanceof Error) throw r;
@@ -809,7 +780,7 @@ const diffRight = (next: TypeMap, current: TypeMap, changes: Change[]) => {
     if (!newType.astNode) return;
 
     try {
-      diffTypesRight(newType, current, next, changes);
+      diffTypesRight(newType, current, changes);
       diffFieldsRight(current[typeName], newType, changes);
     } catch (r) {
       if (r instanceof Error) throw r;

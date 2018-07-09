@@ -4,15 +4,6 @@ import { renderToStaticMarkup } from "react-dom/server";
 import {
   print,
   GraphQLSchema,
-  GraphQLEnumValue,
-  GraphQLFieldMap,
-  GraphQLField,
-  GraphQLInputObjectType,
-  GraphQLInterfaceType,
-  GraphQLObjectType,
-  GraphQLScalarType,
-  GraphQLUnionType,
-  ASTKindToNode,
   FieldDefinitionNode,
   EnumValueDefinitionNode,
   ObjectTypeDefinitionNode,
@@ -26,7 +17,6 @@ import {
   ChangeType,
   Change,
   TypeKind,
-  DiffType,
   DiffField,
   DiffEnum
 } from "./ast";
@@ -57,6 +47,8 @@ const nameFromKind = (kind: string) => {
       return "interface";
     case TypeKind.UNION:
       return "union";
+    default:
+      return null;
   }
 };
 const Fields: React.SFC<{

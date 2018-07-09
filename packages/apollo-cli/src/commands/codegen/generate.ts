@@ -5,11 +5,10 @@ import * as path from "path";
 
 import { TargetType, default as generate } from "../../generate";
 
-import { buildClientSchema, buildSchema, parse, visit, GraphQLCompositeType, extendSchema, buildASTSchema } from "graphql";
+import { buildClientSchema, visit, extendSchema, buildASTSchema } from "graphql";
 
 import * as fg from "glob";
-import { fs, withGlobalFS } from "apollo-codegen-core/lib/localfs";
-import { promisify } from "util";
+import { withGlobalFS } from "apollo-codegen-core/lib/localfs";
 
 import { loadSchemaStep } from "../../load-schema";
 
@@ -235,9 +234,8 @@ export default class Generate extends Command {
             }
 
             const ast = foundDocuments[0];
-            const clientNodes: {parentType: string}[] = [];
             visit(ast, {
-              enter(node, key, parent, path, ancestors) {
+              enter(node) {
                 if (node.kind == "FieldDefinition") {
                   (node as any).__client = true;
                 }

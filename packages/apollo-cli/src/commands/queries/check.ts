@@ -1,29 +1,23 @@
 import "apollo-codegen-core/lib/polyfills";
 import { Command, flags } from "@oclif/command";
-import { color, table, styledJSON } from "heroku-cli-util";
+import { table, styledJSON } from "heroku-cli-util";
 import * as Listr from "listr";
-import * as path from "path";
 import { toPromise, execute } from "apollo-link";
 import {
   print,
-  buildClientSchema,
-  validate,
-  findDeprecatedUsages,
   GraphQLError
 } from "graphql";
 
 import * as fg from "glob";
-import { fs, withGlobalFS } from "apollo-codegen-core/lib/localfs";
-import { promisify } from "util";
+import { withGlobalFS } from "apollo-codegen-core/lib/localfs";
 
 import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
 
 import { engineFlags } from "../../engine-cli";
 import { engineLink, getIdFromKey } from "../../engine";
 import { gitInfo } from "../../git";
-import { loadSchemaStep } from "../../load-schema";
 import { VALIDATE_OPERATIONS } from "../../operations/validateOperations";
-import { ChangeType, Change } from "../../printer/ast";
+import { ChangeType } from "../../printer/ast";
 import { format } from "../schema/check";
 
 export default class CheckQueries extends Command {
@@ -82,7 +76,7 @@ export default class CheckQueries extends Command {
       },
       {
         title: "Checking query compatibility with schema",
-        task: async (ctx, task) => {
+        task: async (ctx) => {
           const gitContext = await gitInfo();
 
           const variables = {
