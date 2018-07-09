@@ -17,7 +17,6 @@ import { fetchSchema } from '../../fetch-schema';
 import { loadQueryDocuments } from 'apollo-codegen-core/lib/loading';
 
 import { Gaze } from "gaze";
-import { eventNames } from 'cluster';
 
 const waitForKey = async () => {
   console.log("Press any key to stop.");
@@ -299,11 +298,11 @@ export default class Generate extends Command {
     ]);
 
     if (flags.watch) {
-      await tasks.run().catch((r) => {});
+      await tasks.run().catch(() => {});
       const watcher = new Gaze(flags.queries!);
       watcher.on("all", () => {
         console.log("\nChange detected, generating types...")
-        tasks.run().catch((r) => {});
+        tasks.run().catch(() => {});
       });
       await waitForKey();
       watcher.close();
