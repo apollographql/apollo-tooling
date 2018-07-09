@@ -37,6 +37,28 @@ const clientSideSchema = fs.readFileSync(
   path.resolve(__dirname, "./fixtures/clientSideSchema.graphql")
 );
 
+const serverSideSchemaTag = `
+gql\`
+type Query {
+  hello: String!
+  serverSideField: ServerField!
+}
+
+type ServerField {
+  serverData: String!
+}
+
+type RemovedField {
+  id: ID!
+  name: RemovedType
+}
+
+type RemovedType {
+  fieldName: String
+}
+\`
+`;
+
 const clientSideSchemaTag = `
 gql\`
 extend type Query {
@@ -97,6 +119,30 @@ describe("successful codegen", () => {
     })
     .command(["codegen:generate", "--schema=schema.graphql", "API.swift"])
     .it("infers Swift target and writes types when schema is a GraphQL file", () => {
+      expect(mockFS.readFileSync("API.swift").toString()).toMatchSnapshot();
+    });
+
+  test
+    .do(() => {
+      vol.fromJSON({
+        "schema.js": serverSideSchemaTag,
+        "queryOne.graphql": simpleQuery.toString()
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.js", "API.swift"])
+    .it("infers Swift target and writes types when schema is a JS file", () => {
+      expect(mockFS.readFileSync("API.swift").toString()).toMatchSnapshot();
+    });
+
+  test
+    .do(() => {
+      vol.fromJSON({
+        "schema.ts": serverSideSchemaTag,
+        "queryOne.graphql": simpleQuery.toString()
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.ts", "API.swift"])
+    .it("infers Swift target and writes types when schema is a TS file", () => {
       expect(mockFS.readFileSync("API.swift").toString()).toMatchSnapshot();
     });
 
