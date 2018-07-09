@@ -76,7 +76,7 @@ export default class CheckQueries extends Command {
       },
       {
         title: "Checking query compatibility with schema",
-        task: async (ctx, task) => {
+        task: async (ctx) => {
           const gitContext = await gitInfo();
 
           const variables = {

@@ -125,7 +125,6 @@ const m = (text: any): string => "`" + text + "`";
 // we use error throwing for control flow here
 const diffTypesLeft = (
   type: GraphQLNamedType,
-  current: TypeMap,
   next: TypeMap,
   changes: Change[]
 ) => {
@@ -458,7 +457,6 @@ const diffFieldsLeft = (
 const diffTypesRight = (
   type: GraphQLNamedType,
   current: TypeMap,
-  next: TypeMap,
   changes: Change[]
 ) => {
   // if we have a new type we can early exit since thats the
@@ -767,7 +765,7 @@ const diffLeft = (current: TypeMap, next: TypeMap, changes: Change[]) => {
     const oldType = current[typeName];
     const newType = next[typeName];
     try {
-      diffTypesLeft(oldType, current, next, changes);
+      diffTypesLeft(oldType, next, changes);
       diffFieldsLeft(current[typeName], newType, changes);
     } catch (r) {
       if (r instanceof Error) throw r;
@@ -782,7 +780,7 @@ const diffRight = (next: TypeMap, current: TypeMap, changes: Change[]) => {
     if (!newType.astNode) return;
 
     try {
-      diffTypesRight(newType, current, next, changes);
+      diffTypesRight(newType, current, changes);
       diffFieldsRight(current[typeName], newType, changes);
     } catch (r) {
       if (r instanceof Error) throw r;

@@ -14,8 +14,7 @@
     "paths": {
       "*": ["./@types/*"]
     },
-    "noImplicitReturns": false,
-    "noUnusedParameters": false
+    "noImplicitReturns": false
   },
   "include": ["./src/**/*"],
   "exclude": [ "**/__tests__/*", "**/__mocks__/*" ]

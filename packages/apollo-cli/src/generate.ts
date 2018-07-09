@@ -97,7 +97,7 @@ export default function generate(
     }
 
     else if (fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory()) {
-      generatedFiles.forEach(({ sourcePath, fileName, content }) => {
+      generatedFiles.forEach(({ fileName, content }) => {
         outFiles[fileName] = {
           output: content.fileContents + common
         };

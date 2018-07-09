@@ -235,7 +235,7 @@ export default class Generate extends Command {
 
             const ast = foundDocuments[0];
             visit(ast, {
-              enter(node, key, parent, path, ancestors) {
+              enter(node) {
                 if (node.kind == "FieldDefinition") {
                   (node as any).__client = true;
                 }
