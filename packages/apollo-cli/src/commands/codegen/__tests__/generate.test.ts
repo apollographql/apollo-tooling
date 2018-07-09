@@ -61,18 +61,7 @@ type RemovedType {
 
 const clientSideSchemaTag = `
 gql\`
-extend type Query {
-  localState: String!
-  complexLocalState: LocalType!
-}
-
-type LocalType {
-  someData: String!
-}
-
-extend type ServerField {
-  addedLocalData: String!
-}
+${clientSideSchema}
 \`
 `;
 

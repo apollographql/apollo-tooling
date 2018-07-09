@@ -1,6 +1,7 @@
 extend type Query {
   localState: String!
   complexLocalState: LocalType!
+  localServerModel: ServerField!
 }
 
 type LocalType {
