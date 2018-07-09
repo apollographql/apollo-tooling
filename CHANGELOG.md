@@ -1,6 +1,18 @@
 # Changelog
 ## vNEXT
 
+## v1.3.0
+#### :rocket: Feature
+* `apollo-cli`, `apollo-codegen-core`
+  * [#480](https://github.com/apollographql/apollo-cli/pull/480) Initial support for client-side schemas ([@shadaj](https://github.com/shadaj))
+
+#### :house: Internal
+* `apollo-cli`, `apollo-codegen-core`, `apollo-codegen-flow-legacy`, `apollo-codegen-flow`, `apollo-codegen-scala`, `apollo-codegen-swift`, `apollo-codegen-typescript-legacy`, `apollo-codegen-typescript`
+  * [#479](https://github.com/apollographql/apollo-cli/pull/479) Run `build` before publishing to prevent uploading stale code ([@shadaj](https://github.com/shadaj))
+
+#### Committers: 1
+- Shadaj Laddad ([@shadaj](https://github.com/shadaj))
+
 ## v1.2.0
 #### :rocket: Feature
 * `apollo-cli`
