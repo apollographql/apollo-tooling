@@ -32,10 +32,10 @@ export default class Generate extends Command {
       default: "**/*.graphql"
     }),
     schema: flags.string({
-      description: "Path to your GraphQL schema (either .graphql or .json)"
+      description: "Path to your GraphQL schema (.graphql, .json, .js, .ts)"
     }),
     clientSchema: flags.string({
-      description: "Path to your client-side GraphQL schema file for `apollo-link-state` (either .graphql or .json)"
+      description: "Path to your client-side GraphQL schema file for `apollo-link-state` (.graphql, .json, .js, .ts)"
     }),
 
     ...engineFlags,
