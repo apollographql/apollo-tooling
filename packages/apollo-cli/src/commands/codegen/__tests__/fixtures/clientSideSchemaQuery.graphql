@@ -9,4 +9,8 @@ query SimpleQuery {
     serverData
     addedLocalData @client
   }
+
+  localServerModel @client {
+    serverData # this is actually stored in the client though
+  }
 }
