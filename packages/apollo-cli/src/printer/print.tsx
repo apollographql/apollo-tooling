@@ -47,6 +47,8 @@ const nameFromKind = (kind: string) => {
       return "interface";
     case TypeKind.UNION:
       return "union";
+    default:
+      return null;
   }
 };
 const Fields: React.SFC<{
