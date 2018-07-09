@@ -11,7 +11,19 @@ import {
 import { execute, toPromise } from "apollo-link";
 import { createHttpLink } from "apollo-link-http";
 
+import { extractDocumentFromJavascript } from "apollo-codegen-core/lib/loading";
+
 const introspection = gql(introspectionQuery);
+
+const loadSchemaFromString = async (schemaSource: string) => {
+  const schema = buildSchema(schemaSource);
+  const localSchema = await graphql(schema, introspection);
+  if (!localSchema || localSchema.errors)
+    throw new Error(
+      localSchema.errors!.map(({ message }) => message).join("\n")
+    );
+  return localSchema.data!.__schema;
+}
 
 export const fromFile = async ({ endpoint }: { endpoint: string }) => {
   try {
@@ -28,13 +40,11 @@ export const fromFile = async ({ endpoint }: { endpoint: string }) => {
     };
 
     if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
-      const schema = buildSchema(result);
-      const localSchema = await graphql(schema, introspection);
-      if (!localSchema || localSchema.errors)
-        throw new Error(
-          localSchema.errors!.map(({ message }) => message).join("\n")
-        );
-      return localSchema.data!.__schema;
+      return await loadSchemaFromString(result);
+    }
+
+    if (ext === ".ts" || ext === ".tsx" || ext === ".js" || ext === ".jsx") {
+      return await loadSchemaFromString(extractDocumentFromJavascript(result)!);
     }
   } catch (e) {
     throw new Error(`Unable to read file ${endpoint}. ${e.message}`);
