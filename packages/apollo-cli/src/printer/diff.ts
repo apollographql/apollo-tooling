@@ -1,9 +1,7 @@
 import {
-  GraphQLSchema,
   GraphQLNamedType,
   GraphQLObjectType,
   GraphQLType,
-  astFromValue,
   isScalarType,
   isObjectType,
   isInterfaceType,
@@ -16,16 +14,12 @@ import {
   InputObjectTypeDefinitionNode,
   ObjectTypeDefinitionNode,
   EnumTypeDefinitionNode,
-  UnionTypeDefinitionNode,
 } from "graphql";
 
 import {
   TypeMap,
   ChangeType,
-  TypeKind,
   Change,
-  DiffTypeMap,
-  DiffType,
   DiffField,
   DiffInputValue,
   DiffEnum,
@@ -125,27 +119,6 @@ function typeKindName(type: GraphQLNamedType): string {
   }
   throw new TypeError("Unknown type " + type!.constructor.name);
 }
-
-const getKind = (type: GraphQLNamedType) => {
-  if (isScalarType(type)) {
-    return TypeKind.SCALAR;
-  } else if (isObjectType(type)) {
-    return TypeKind.OBJECT;
-  } else if (isInterfaceType(type)) {
-    return TypeKind.INTERFACE;
-  } else if (isUnionType(type)) {
-    return TypeKind.UNION;
-  } else if (isEnumType(type)) {
-    return TypeKind.ENUM;
-  } else if (isInputObjectType(type)) {
-    return TypeKind.INPUT_OBJECT;
-  } else if (isListType(type)) {
-    return TypeKind.LIST;
-  } else if (isNonNullType(type)) {
-    return TypeKind.NON_NULL;
-  }
-  throw new Error("Unknown kind of type: " + type);
-};
 
 const m = (text: any): string => "`" + text + "`";
 

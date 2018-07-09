@@ -7,7 +7,6 @@ import { compileToIR, CompilerContext, CompilerOptions } from "apollo-codegen-co
 import { compileToLegacyIR, CompilerOptions as LegacyCompilerOptions } from "apollo-codegen-core/lib/compiler/legacyIR";
 import serializeToJSON from "apollo-codegen-core/lib/serializeToJSON";
 import { BasicGeneratedFile } from "apollo-codegen-core/lib/utilities/CodeGenerator";
-import { getFieldDef } from "apollo-codegen-core/lib/utilities/graphql";
 
 import { generateSource as generateSwiftSource } from "apollo-codegen-swift";
 import { generateSource as generateTypescriptLegacySource } from "apollo-codegen-typescript-legacy";
@@ -15,7 +14,7 @@ import { generateSource as generateFlowLegacySource } from "apollo-codegen-flow-
 import { generateSource as generateFlowSource } from "apollo-codegen-flow";
 import { generateSource as generateTypescriptSource } from "apollo-codegen-typescript";
 import { generateSource as generateScalaSource } from "apollo-codegen-scala";
-import { GraphQLSchema, TypeInfo, GraphQLCompositeType } from "graphql";
+import { GraphQLSchema } from "graphql";
 import { FlowCompilerOptions } from '../../apollo-codegen-flow/lib/language';
 
 export type TargetType =

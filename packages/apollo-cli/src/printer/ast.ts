@@ -1,8 +1,5 @@
 import {
-  TypeNode,
   GraphQLNamedType,
-  GraphQLField,
-  ASTKindToNode,
   TypeDefinitionNode,
   FieldDefinitionNode,
   EnumValueDefinitionNode,

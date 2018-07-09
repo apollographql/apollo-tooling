@@ -15,8 +15,7 @@
       "*": ["./@types/*"]
     },
     "noImplicitReturns": false,
-    "noUnusedParameters": false,
-    "noUnusedLocals": false
+    "noUnusedParameters": false
   },
   "include": ["./src/**/*"],
   "exclude": [ "**/__tests__/*", "**/__mocks__/*" ]

@@ -1,7 +1,6 @@
 import { Command, flags } from "@oclif/command";
 import chalk from "chalk";
-import { color, table, styledJSON } from "heroku-cli-util";
-import cli from "cli-ux";
+import { table, styledJSON } from "heroku-cli-util";
 import * as Listr from "listr";
 import { GraphQLError } from "graphql";
 

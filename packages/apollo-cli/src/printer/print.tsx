@@ -4,15 +4,6 @@ import { renderToStaticMarkup } from "react-dom/server";
 import {
   print,
   GraphQLSchema,
-  GraphQLEnumValue,
-  GraphQLFieldMap,
-  GraphQLField,
-  GraphQLInputObjectType,
-  GraphQLInterfaceType,
-  GraphQLObjectType,
-  GraphQLScalarType,
-  GraphQLUnionType,
-  ASTKindToNode,
   FieldDefinitionNode,
   EnumValueDefinitionNode,
   ObjectTypeDefinitionNode,
@@ -26,7 +17,6 @@ import {
   ChangeType,
   Change,
   TypeKind,
-  DiffType,
   DiffField,
   DiffEnum
 } from "./ast";
