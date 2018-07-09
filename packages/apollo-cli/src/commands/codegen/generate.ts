@@ -14,7 +14,7 @@ import { promisify } from "util";
 import { loadSchemaStep } from "../../load-schema";
 
 import { engineFlags } from "../../engine-cli";
-import { fromFile, fetchSchema } from '../../fetch-schema';
+import { fetchSchema } from '../../fetch-schema';
 import { loadQueryDocuments } from 'apollo-codegen-core/lib/loading';
 
 export default class Generate extends Command {
