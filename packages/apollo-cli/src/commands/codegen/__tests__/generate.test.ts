@@ -12,15 +12,16 @@ import gql from "graphql-tag";
 import { fs as mockFS, vol } from "apollo-codegen-core/lib/localfs";
 
 const test = setup.do(() => mockConsole());
+
+const graphQLSchema = fs.readFileSync(
+  path.resolve(__dirname, "../../schema/__tests__/fixtures/schema.graphql"),
+  {
+    encoding: "utf-8"
+  }
+);
+
 const fullSchema = execute(
-  buildSchema(
-    fs.readFileSync(
-      path.resolve(__dirname, "../../schema/__tests__/fixtures/schema.graphql"),
-      {
-        encoding: "utf-8"
-      }
-    )
-  ),
+  buildSchema(graphQLSchema),
   gql(introspectionQuery)
 ).data;
 
@@ -84,6 +85,18 @@ describe("successful codegen", () => {
     })
     .command(["codegen:generate", "--schema=schema.json", "API.swift"])
     .it("infers Swift target and writes types", () => {
+      expect(mockFS.readFileSync("API.swift").toString()).toMatchSnapshot();
+    });
+
+  test
+    .do(() => {
+      vol.fromJSON({
+        "schema.graphql": graphQLSchema,
+        "queryOne.graphql": simpleQuery.toString()
+      });
+    })
+    .command(["codegen:generate", "--schema=schema.graphql", "API.swift"])
+    .it("infers Swift target and writes types when schema is a GraphQL file", () => {
       expect(mockFS.readFileSync("API.swift").toString()).toMatchSnapshot();
     });
 

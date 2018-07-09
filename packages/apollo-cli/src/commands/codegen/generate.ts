@@ -14,7 +14,7 @@ import { promisify } from "util";
 import { loadSchemaStep } from "../../load-schema";
 
 import { engineFlags } from "../../engine-cli";
-import { fromFile } from '../../fetch-schema';
+import { fromFile, fetchSchema } from '../../fetch-schema';
 import { loadQueryDocuments } from 'apollo-codegen-core/lib/loading';
 
 export default class Generate extends Command {
@@ -32,7 +32,7 @@ export default class Generate extends Command {
       default: "**/*.graphql"
     }),
     schema: flags.string({
-      description: "Path to your GraphQL schema introspection result"
+      description: "Path to your GraphQL schema (either .graphql or .json)"
     }),
     clientSchema: flags.string({
       description: "Path to your client-side GraphQL schema file for `apollo-link-state` (either .graphql or .json)"
@@ -182,7 +182,15 @@ export default class Generate extends Command {
             );
           });
           task.title = `Scanning for GraphQL queries (${paths.length} found)`;
-          ctx.queryPaths = paths.filter(p => path.resolve(p) != (flags.clientSchema ? path.resolve(flags.clientSchema) : undefined));
+
+          const excludedPaths = [
+            flags.clientSchema ? path.resolve(flags.clientSchema) : undefined,
+            flags.schema ? path.resolve(flags.schema) : undefined
+          ];
+
+          ctx.queryPaths = paths.filter(p =>
+            !excludedPaths.some(v => v == path.resolve(p))
+          );
         }
       },
       loadSchemaStep(
@@ -193,15 +201,9 @@ export default class Generate extends Command {
         "Loading GraphQL schema",
         async ctx => {
           if (flags.schema) {
-            const schemaFileContent = await promisify(fs.readFile)(
-              path.resolve(flags.schema as string)
-            );
-            const schemaData = JSON.parse((schemaFileContent as any) as string);
-            ctx.schema = schemaData.data
-              ? schemaData.data.__schema
-              : schemaData.__schema
-                ? schemaData.__schema
-                : schemaData;
+            ctx.schema = await fetchSchema({
+              endpoint: flags.schema
+            });
           } else {
             this.log("Not loading because no path was provided (you should have a client-side schema)");
           }
