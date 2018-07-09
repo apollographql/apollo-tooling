@@ -16,6 +16,19 @@ import { engineFlags } from "../../engine-cli";
 import { fetchSchema } from '../../fetch-schema';
 import { loadQueryDocuments } from 'apollo-codegen-core/lib/loading';
 
+import { Gaze } from "gaze";
+import { eventNames } from 'cluster';
+
+const waitForKey = async () => {
+  console.log("Press any key to stop.");
+  process.stdin.setRawMode!(true);
+  return new Promise(resolve => process.stdin.once('data', () => {
+    (process.stdin as any).unref();
+    process.stdin.setRawMode!(false)
+    resolve();
+  }))
+};
+
 export default class Generate extends Command {
   static description =
     "Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.";
@@ -81,6 +94,9 @@ export default class Generate extends Command {
     outputFlat: flags.boolean({
       description:
         'By default, TypeScript/Flow will put each generated file in a directory next to its source file using the value of the "output" as the directory name. Set "outputFlat" to put all generated files in the directory relative to the current working directory defined by "output".'
+    }),
+    watch: flags.boolean({
+      description: "Watch the query files to auto-generate on changes."
     })
   };
 
@@ -282,6 +298,18 @@ export default class Generate extends Command {
       }
     ]);
 
-    return tasks.run();
+    if (flags.watch) {
+      await tasks.run().catch((r) => {});
+      const watcher = new Gaze(flags.queries!);
+      watcher.on("all", () => {
+        console.log("\nChange detected, generating types...")
+        tasks.run().catch((r) => {});
+      });
+      await waitForKey();
+      watcher.close();
+      return;
+    } else {
+      return tasks.run();
+    }
   }
 }
