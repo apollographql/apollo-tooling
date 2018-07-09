@@ -303,7 +303,7 @@ class Compiler {
           ]);
         }
 
-        if (!(fieldDef.astNode && (fieldDef.astNode as any).__client) && (isClient || fieldIsClient)) {
+        if (!(fieldDef.astNode && (fieldDef.astNode as any).__client) && fieldIsClient) {
           throw new GraphQLError(`Cannot query server-side field "${name}" on type "${String(parentType)}" with @client directive`, [
             selectionNode
           ]);
