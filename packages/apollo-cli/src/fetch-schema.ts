@@ -21,7 +21,11 @@ export const fromFile = async ({ endpoint }: { endpoint: string }) => {
     const ext = path.extname(endpoint);
 
     // an actual introspectionQuery result
-    if (ext === ".json") return JSON.parse(result).data.__schema;
+    if (ext === ".json") {
+      const parsed = JSON.parse(result)
+      return parsed.data ? parsed.data.__schema :
+        parsed.__schema ? parsed.__schema : parsed;
+    };
 
     if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
       const schema = buildSchema(result);
