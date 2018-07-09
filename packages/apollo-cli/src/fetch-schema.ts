@@ -1,4 +1,4 @@
-import * as fs from "fs";
+import { fs } from "apollo-codegen-core/lib/localfs";
 import * as path from "path";
 import fetch from "node-fetch";
 import gql from "graphql-tag";
@@ -13,7 +13,7 @@ import { createHttpLink } from "apollo-link-http";
 
 const introspection = gql(introspectionQuery);
 
-const fromFile = async ({ endpoint }: { endpoint: string }) => {
+export const fromFile = async ({ endpoint }: { endpoint: string }) => {
   try {
     const result = fs.readFileSync(endpoint, {
       encoding: "utf-8",

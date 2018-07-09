@@ -1,0 +1,12 @@
+query SimpleQuery {
+  hello
+  localState @client
+  complexLocalState @client {
+    someData
+  }
+
+  serverSideField {
+    serverData
+    addedLocalData @client
+  }
+}

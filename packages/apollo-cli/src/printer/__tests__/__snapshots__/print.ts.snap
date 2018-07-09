@@ -160,6 +160,7 @@ type Query {
   
   # ⚡ Warning ⚡
   hello: String!
+  serverSideField: ServerField!
 
   # ✔️ Notice ✔️
   me: User
@@ -174,6 +175,8 @@ type RemovedField {
   name: RemovedType
 
 }
+
+type ServerField { }
 
 "
 `;

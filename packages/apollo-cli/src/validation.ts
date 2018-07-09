@@ -8,12 +8,13 @@ import {
   ValidationContext,
   GraphQLSchema,
   DocumentNode,
-  OperationDefinitionNode
+  OperationDefinitionNode,
+  TypeInfo
 } from 'graphql';
 
 import { ToolError, logError } from 'apollo-codegen-core/lib/errors';
 
-export function validateQueryDocument(schema: GraphQLSchema, document: DocumentNode) {
+export function validateQueryDocument(schema: GraphQLSchema, document: DocumentNode, typeInfo?: TypeInfo) {
   const specifiedRulesToBeRemoved = [NoUnusedFragmentsRule, KnownDirectivesRule];
 
   const rules = [
@@ -22,7 +23,7 @@ export function validateQueryDocument(schema: GraphQLSchema, document: DocumentN
     ...specifiedRules.filter(rule => !specifiedRulesToBeRemoved.includes(rule))
   ];
 
-  const validationErrors = validate(schema, document, rules);
+  const validationErrors = validate(schema, document, rules, typeInfo);
   if (validationErrors && validationErrors.length > 0) {
     for (const error of validationErrors) {
       logError(error);

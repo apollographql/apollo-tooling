@@ -5,7 +5,7 @@ import * as path from "path";
 
 import { TargetType, default as generate } from "../../generate";
 
-import { buildClientSchema } from "graphql";
+import { buildClientSchema, buildSchema, parse, visit, GraphQLCompositeType, extendSchema, buildASTSchema } from "graphql";
 
 import * as fg from "glob";
 import { fs, withGlobalFS } from "apollo-codegen-core/lib/localfs";
@@ -14,6 +14,8 @@ import { promisify } from "util";
 import { loadSchemaStep } from "../../load-schema";
 
 import { engineFlags } from "../../engine-cli";
+import { fromFile } from '../../fetch-schema';
+import { loadQueryDocuments } from 'apollo-codegen-core/lib/loading';
 
 export default class Generate extends Command {
   static description =
@@ -31,6 +33,9 @@ export default class Generate extends Command {
     }),
     schema: flags.string({
       description: "Path to your GraphQL schema introspection result"
+    }),
+    clientSchema: flags.string({
+      description: "Path to your client-side GraphQL schema file for `apollo-link-state` (either .graphql or .json)"
     }),
 
     ...engineFlags,
@@ -177,7 +182,7 @@ export default class Generate extends Command {
             );
           });
           task.title = `Scanning for GraphQL queries (${paths.length} found)`;
-          ctx.queryPaths = paths;
+          ctx.queryPaths = paths.filter(p => path.resolve(p) != (flags.clientSchema ? path.resolve(flags.clientSchema) : undefined));
         }
       },
       loadSchemaStep(
@@ -187,21 +192,62 @@ export default class Generate extends Command {
         flags.engine,
         "Loading GraphQL schema",
         async ctx => {
-          const schemaFileContent = await promisify(fs.readFile)(
-            path.resolve(flags.schema as string)
-          );
-          const schemaData = JSON.parse((schemaFileContent as any) as string);
-          ctx.schema = schemaData.data
-            ? schemaData.data.__schema
-            : schemaData.__schema
-              ? schemaData.__schema
-              : schemaData;
+          if (flags.schema) {
+            const schemaFileContent = await promisify(fs.readFile)(
+              path.resolve(flags.schema as string)
+            );
+            const schemaData = JSON.parse((schemaFileContent as any) as string);
+            ctx.schema = schemaData.data
+              ? schemaData.data.__schema
+              : schemaData.__schema
+                ? schemaData.__schema
+                : schemaData;
+          } else {
+            this.log("Not loading because no path was provided (you should have a client-side schema)");
+          }
         }
       ),
       {
         title: "Parsing GraphQL schema",
-        task: async ctx => {
-          ctx.schema = buildClientSchema({ __schema: ctx.schema });
+        task: async (ctx, task) => {
+          if (ctx.schema) {
+            ctx.schema = buildClientSchema({ __schema: ctx.schema });
+          } else {
+            task.skip("No server-side schema provided")
+          }
+        }
+      },
+      {
+        title: "Loading client-side GraphQL schema",
+        task: async (ctx, task) => {
+          if (!flags.clientSchema) {
+            task.skip("Path to client schema not provided")
+          } else {
+            const foundDocuments = loadQueryDocuments([path.resolve(flags.clientSchema)]);
+            if (foundDocuments.length == 0) {
+              this.error("Found no query documents, aborting");
+            }
+
+            if (foundDocuments.length > 1) {
+              this.warn("Found more than one query document, using the first one");
+            }
+
+            const ast = foundDocuments[0];
+            const clientNodes: {parentType: string}[] = [];
+            visit(ast, {
+              enter(node, key, parent, path, ancestors) {
+                if (node.kind == "FieldDefinition") {
+                  (node as any).__client = true;
+                }
+              }
+            });
+
+            if (ctx.schema) {
+              ctx.schema = extendSchema(ctx.schema, ast);
+            } else {
+              ctx.schema = buildASTSchema(ast);
+            }
+          }
         }
       },
       {

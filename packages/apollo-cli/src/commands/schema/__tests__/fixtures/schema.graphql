@@ -1,5 +1,10 @@
 type Query {
   hello: String!
+  serverSideField: ServerField!
+}
+
+type ServerField {
+  serverData: String!
 }
 
 type RemovedField {
