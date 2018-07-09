@@ -47,6 +47,10 @@ export default function generate(
 
   validateQueryDocument(schema, document);
 
+  if (outputPath.split('.').length <= 1 && !fs.existsSync(outputPath)) {
+    fs.mkdirSync(outputPath);
+  }
+
   if (target === "swift") {
     options.addTypename = true;
     const context = compileToIR(schema, document, options);
