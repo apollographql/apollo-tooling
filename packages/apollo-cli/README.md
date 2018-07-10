@@ -20,7 +20,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/1.3.0 darwin-x64 node-v10.4.1
+apollo/1.4.0 darwin-x64 node-v10.4.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -62,7 +62,7 @@ OPTIONS
   --addTypename                              Automatically add __typename to your queries
 
   --clientSchema=clientSchema                Path to your client-side GraphQL schema file for `apollo-link-state`
-                                             (either .graphql or .json)
+                                             (.graphql, .json, .js, .ts)
 
   --customScalarsPrefix=customScalarsPrefix  Include a prefix when using provided types for custom scalars
 
@@ -89,7 +89,7 @@ OPTIONS
   --queries=queries                          [default: **/*.graphql] Path to your GraphQL queries, can include search
                                              tokens like **
 
-  --schema=schema                            Path to your GraphQL schema introspection result
+  --schema=schema                            Path to your GraphQL schema (.graphql, .json, .js, .ts)
 
   --tagName=tagName                          [default: gql] Name of the template literal tag used to identify template
                                              literals containing GraphQL queries in Javascript/Typescript code
@@ -100,9 +100,11 @@ OPTIONS
   --useFlowExactObjects                      Use Flow exact objects for generated types [flow only]
 
   --useFlowReadOnlyTypes                     Use Flow read only types for generated types [flow only]
+
+  --watch                                    Watch the query files to auto-generate on changes.
 ```
 
-_See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-cli/blob/v1.3.0/src/commands/codegen/generate.ts)_
+_See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/codegen/generate.ts)_
 
 ## `apollo help [COMMAND]`
 
@@ -139,7 +141,7 @@ OPTIONS
                      GraphQL queries in Javascript/Typescript code
 ```
 
-_See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.3.0/src/commands/queries/check.ts)_
+_See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/queries/check.ts)_
 
 ## `apollo schema:check`
 
@@ -157,7 +159,7 @@ OPTIONS
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.3.0/src/commands/schema/check.ts)_
+_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/schema/check.ts)_
 
 ## `apollo schema:download OUTPUT`
 
@@ -181,7 +183,7 @@ OPTIONS
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-cli/blob/v1.3.0/src/commands/schema/download.ts)_
+_See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/schema/download.ts)_
 
 ## `apollo schema:publish`
 
@@ -199,7 +201,7 @@ OPTIONS
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.3.0/src/commands/schema/publish.ts)_
+_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/schema/publish.ts)_
 <!-- commandsstop -->
 
 # Code Generation

@@ -1,6 +1,25 @@
 # Changelog
 ## vNEXT
 
+## v1.4.0
+#### :rocket: Feature
+* `apollo-cli`
+  * [#484](https://github.com/apollographql/apollo-cli/pull/484) Support file watching for codegen:generate ([@shadaj](https://github.com/shadaj))
+  * [#490](https://github.com/apollographql/apollo-cli/pull/490) Assume the output is a directory when it has no extension ([@shadaj](https://github.com/shadaj))
+  * [#485](https://github.com/apollographql/apollo-cli/pull/485) Support loading server-side schema from JS/TS files ([@shadaj](https://github.com/shadaj))
+  * [#483](https://github.com/apollographql/apollo-cli/pull/483) Support generating based on .graphql schema files ([@shadaj](https://github.com/shadaj))
+
+#### :bug: Bug Fix
+* `apollo-cli`, `apollo-codegen-core`
+  * [#488](https://github.com/apollographql/apollo-cli/pull/488)  Handle cases when storing server-defined models in local state ([@shadaj](https://github.com/shadaj))
+
+#### :house: Internal
+* `apollo-cli`
+  * [#489](https://github.com/apollographql/apollo-cli/pull/489) Remove unused locals in Apollo CLI ([@shadaj](https://github.com/shadaj))
+
+#### Committers: 1
+- Shadaj Laddad ([@shadaj](https://github.com/shadaj))
+
 ## v1.3.0
 #### :rocket: Feature
 * `apollo-cli`, `apollo-codegen-core`
