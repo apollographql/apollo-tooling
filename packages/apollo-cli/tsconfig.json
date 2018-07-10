@@ -3,11 +3,9 @@
   "compilerOptions": {
     "declaration": true,
     "jsx": "react",
-    "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
-    "outDir": "./lib",
+    "outDir": "lib",
     "pretty": true,
-    "rootDirs": ["./src"],
     "lib": ["es2017", "esnext.asynciterable"],
     "target": "es2017",
     "baseUrl": ".",

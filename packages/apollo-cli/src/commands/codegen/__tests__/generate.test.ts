@@ -84,7 +84,7 @@ beforeEach(() => {
   });
 });
 
-jest.setTimeout(15000);
+jest.setTimeout(25000);
 
 describe("successful codegen", () => {
   test
