@@ -6,6 +6,7 @@ export interface ApolloConfig {
   subscriptionEndpoint?: string;
   projectName: string;
   queries: string | string[];
+  engineKey?: string;
 }
 
 export function loadConfig(obj: any, configFilePath: string): ApolloConfig {
@@ -24,6 +25,7 @@ export function loadConfig(obj: any, configFilePath: string): ApolloConfig {
         ? obj.queries
         : obj.queries
           ? (obj.queries as string[])
-          : ["**/*.graphql"]
+          : ["**/*.graphql"],
+    engineKey: obj.engineKey
   };
 }
