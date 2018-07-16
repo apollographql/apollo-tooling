@@ -61,15 +61,11 @@ export const fetchSchema = async ({ url, headers }: EndpointConfig) => {
   if (!url) throw new Error("No endpoint provided when fetching schema");
   if (fs.existsSync(url)) return fromFile(url);
 
-  const headersObject = headers
-    ? headers.reduce((current, next) => ({ ...current, ...next }), {})
-    : {};
-
   return toPromise(
     // XXX node-fetch isn't compatiable typescript wise here?
     execute(createHttpLink({ uri: url, fetch } as any), {
       query: introspection,
-      context: { headersObject }
+      context: { headers }
     })
   ).then(({ data, errors }: any) => {
     if (errors)

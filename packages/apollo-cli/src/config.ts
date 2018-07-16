@@ -3,7 +3,7 @@ import { basename, dirname } from "path";
 export interface EndpointConfig {
   url?: string; // main HTTP endpoint
   subscriptions?: string; // WS endpoint for subscriptions
-  headers?: Object[]; // headers to send when performing operations
+  headers?: Object; // headers to send when performing operations
 }
 
 export interface ApolloConfig {
