@@ -2,15 +2,14 @@ import { fs } from "apollo-codegen-core/lib/localfs";
 import * as path from "path";
 import fetch from "node-fetch";
 import gql from "graphql-tag";
-import {
-  buildSchema,
-  execute as graphql,
-  introspectionQuery,
-} from "graphql";
+import { buildSchema, execute as graphql, introspectionQuery } from "graphql";
 import { execute, toPromise } from "apollo-link";
 import { createHttpLink } from "apollo-link-http";
 
 import { extractDocumentFromJavascript } from "apollo-codegen-core/lib/loading";
+import { EndpointConfig } from "./config";
+import { getIdFromKey, engineLink } from "./engine";
+import { SCHEMA_QUERY } from "./operations/schema";
 
 const introspection = gql(introspectionQuery);
 
@@ -22,21 +21,24 @@ const loadSchemaFromString = async (schemaSource: string) => {
       localSchema.errors!.map(({ message }) => message).join("\n")
     );
   return localSchema.data!.__schema;
-}
+};
 
-export const fromFile = async ({ endpoint }: { endpoint: string }) => {
+export async function fromFile(file: string) {
   try {
-    const result = fs.readFileSync(endpoint, {
-      encoding: "utf-8",
+    const result = fs.readFileSync(file, {
+      encoding: "utf-8"
     });
-    const ext = path.extname(endpoint);
+    const ext = path.extname(file);
 
     // an actual introspectionQuery result
     if (ext === ".json") {
-      const parsed = JSON.parse(result)
-      return parsed.data ? parsed.data.__schema :
-        parsed.__schema ? parsed.__schema : parsed;
-    };
+      const parsed = JSON.parse(result);
+      return parsed.data
+        ? parsed.data.__schema
+        : parsed.__schema
+          ? parsed.__schema
+          : parsed;
+    }
 
     if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
       return await loadSchemaFromString(result);
@@ -46,28 +48,28 @@ export const fromFile = async ({ endpoint }: { endpoint: string }) => {
       return await loadSchemaFromString(extractDocumentFromJavascript(result)!);
     }
   } catch (e) {
-    throw new Error(`Unable to read file ${endpoint}. ${e.message}`);
+    throw new Error(`Unable to read file ${file}. ${e.message}`);
   }
-};
+}
 
 export interface FetchParams {
   endpoint: string | undefined;
   header?: Object[];
 }
 
-export const fetchSchema = async ({ endpoint, header }: FetchParams) => {
-  if (!endpoint) throw new Error("No endpoint provided when fetching schema");
-  if (fs.existsSync(endpoint)) return fromFile({ endpoint });
+export const fetchSchema = async ({ url, headers }: EndpointConfig) => {
+  if (!url) throw new Error("No endpoint provided when fetching schema");
+  if (fs.existsSync(url)) return fromFile(url);
 
-  const headers = header
-    ? header.reduce((current, next) => ({ ...current, ...next }), {})
+  const headersObject = headers
+    ? headers.reduce((current, next) => ({ ...current, ...next }), {})
     : {};
 
   return toPromise(
     // XXX node-fetch isn't compatiable typescript wise here?
-    execute(createHttpLink({ uri: endpoint, fetch } as any), {
+    execute(createHttpLink({ uri: url, fetch } as any), {
       query: introspection,
-      context: { headers },
+      context: { headersObject }
     })
   ).then(({ data, errors }: any) => {
     if (errors)
@@ -75,3 +77,26 @@ export const fetchSchema = async ({ endpoint, header }: FetchParams) => {
     return data!.__schema;
   });
 };
+
+export async function fetchSchemaFromEngine(apiKey: string) {
+  const variables = {
+    id: getIdFromKey(apiKey as string),
+    tag: "current"
+  };
+
+  const engineSchema = await toPromise(
+    execute(engineLink, {
+      query: SCHEMA_QUERY,
+      variables,
+      context: {
+        headers: { ["x-api-key"]: apiKey }
+      }
+    })
+  );
+
+  if (engineSchema.data && engineSchema.data.service.schema) {
+    return engineSchema.data.service.schema.__schema;
+  } else {
+    throw new Error("Unable to get schema from Apollo Engine");
+  }
+}

@@ -17,7 +17,7 @@ export default class SchemaPublish extends Command {
   static flags = {
     help: flags.help({
       char: "h",
-      description: "Show command help",
+      description: "Show command help"
     }),
     ...engineFlags,
     header: flags.string({
@@ -26,16 +26,15 @@ export default class SchemaPublish extends Command {
         const [key, value] = header.split(":");
         return JSON.stringify({ [key.trim()]: value.trim() });
       },
-      description:
-        "Additional headers to send to server for introspectionQuery",
+      description: "Additional headers to send to server for introspectionQuery"
     }),
     endpoint: flags.string({
       description: "The URL of the server to fetch the schema from",
-      default: "http://localhost:4000/graphql", // apollo-server 2.0 default address
+      default: "http://localhost:4000/graphql" // apollo-server 2.0 default address
     }),
     json: flags.boolean({
-      description: "Output successful publish result as JSON",
-    }),
+      description: "Output successful publish result as JSON"
+    })
   };
 
   async run() {
@@ -57,10 +56,10 @@ export default class SchemaPublish extends Command {
         title: "Fetching current schema",
         task: async ctx => {
           ctx.schema = await fetchSchema({
-            endpoint: flags.endpoint,
-            header: header.filter(x => !!x).map(x => JSON.parse(x)),
+            url: flags.endpoint,
+            headers: header.filter(x => !!x).map(x => JSON.parse(x))
           }).catch(this.error);
-        },
+        }
       },
       {
         title: `Publishing ${getIdFromKey(apiKey)} to Apollo Engine`,
@@ -70,7 +69,7 @@ export default class SchemaPublish extends Command {
             schema: ctx.schema,
             tag,
             gitContext,
-            id: getIdFromKey(apiKey),
+            id: getIdFromKey(apiKey)
           };
 
           ctx.current = await toPromise(
@@ -79,8 +78,8 @@ export default class SchemaPublish extends Command {
               variables,
               context: {
                 headers: { ["x-api-key"]: apiKey },
-                ...(flags.engine && { uri: flags.engine }),
-              },
+                ...(flags.engine && { uri: flags.engine })
+              }
             })
           )
             .then(async ({ data, errors }) => {
@@ -104,8 +103,8 @@ export default class SchemaPublish extends Command {
                 this.error(e.message);
               }
             });
-        },
-      },
+        }
+      }
     ]);
 
     return tasks.run().then(({ current }) => {
@@ -114,7 +113,7 @@ export default class SchemaPublish extends Command {
       const result = {
         service: getIdFromKey(apiKey),
         hash: current.tag.schema.hash,
-        tag: current.tag.tag,
+        tag: current.tag.tag
       };
 
       if (flags.json) return styledJSON(result);
@@ -127,11 +126,11 @@ export default class SchemaPublish extends Command {
           {
             key: "hash",
             label: "id",
-            format: (hash: string) => hash.slice(0, 6),
+            format: (hash: string) => hash.slice(0, 6)
           },
           { key: "service", label: "schema" },
-          { key: "tag" },
-        ],
+          { key: "tag" }
+        ]
       });
       this.log("\n");
     });

@@ -5,7 +5,12 @@ import * as path from "path";
 
 import { TargetType, default as generate } from "../../generate";
 
-import { buildClientSchema, visit, extendSchema, buildASTSchema } from "graphql";
+import {
+  buildClientSchema,
+  visit,
+  extendSchema,
+  buildASTSchema
+} from "graphql";
 
 import * as fg from "glob";
 import { withGlobalFS } from "apollo-codegen-core/lib/localfs";
@@ -13,19 +18,21 @@ import { withGlobalFS } from "apollo-codegen-core/lib/localfs";
 import { loadSchemaStep } from "../../load-schema";
 
 import { engineFlags } from "../../engine-cli";
-import { fetchSchema } from '../../fetch-schema';
-import { loadQueryDocuments } from 'apollo-codegen-core/lib/loading';
+import { fetchSchema } from "../../fetch-schema";
+import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
 
 import { Gaze } from "gaze";
 
 const waitForKey = async () => {
   console.log("Press any key to stop.");
   process.stdin.setRawMode!(true);
-  return new Promise(resolve => process.stdin.once('data', () => {
-    (process.stdin as any).unref();
-    process.stdin.setRawMode!(false)
-    resolve();
-  }))
+  return new Promise(resolve =>
+    process.stdin.once("data", () => {
+      (process.stdin as any).unref();
+      process.stdin.setRawMode!(false);
+      resolve();
+    })
+  );
 };
 
 export default class Generate extends Command {
@@ -46,7 +53,8 @@ export default class Generate extends Command {
       description: "Path to your GraphQL schema (.graphql, .json, .js, .ts)"
     }),
     clientSchema: flags.string({
-      description: "Path to your client-side GraphQL schema file for `apollo-link-state` (.graphql, .json, .js, .ts)"
+      description:
+        "Path to your client-side GraphQL schema file for `apollo-link-state` (.graphql, .json, .js, .ts)"
     }),
 
     ...engineFlags,
@@ -175,10 +183,12 @@ export default class Generate extends Command {
     if (
       !flags.outputFlat &&
       (inferredTarget === "typescript" || inferredTarget === "flow") &&
-      (args.output && (path.isAbsolute(args.output) || args.output.split(path.sep).length > 1))
+      (args.output &&
+        (path.isAbsolute(args.output) ||
+          args.output.split(path.sep).length > 1))
     ) {
       this.error(
-        "For TypeScript and Flow generators, \"output\" must be empty or a single directory name, unless the \"outputFlat\" flag is set."
+        'For TypeScript and Flow generators, "output" must be empty or a single directory name, unless the "outputFlat" flag is set.'
       );
       return;
     }
@@ -202,24 +212,24 @@ export default class Generate extends Command {
             flags.schema ? path.resolve(flags.schema) : undefined
           ];
 
-          ctx.queryPaths = paths.filter(p =>
-            !excludedPaths.some(v => v == path.resolve(p))
+          ctx.queryPaths = paths.filter(
+            p => !excludedPaths.some(v => v == path.resolve(p))
           );
         }
       },
       loadSchemaStep(
-        this,
         pullFromEngine,
         apiKey,
-        flags.engine,
         "Loading GraphQL schema",
         async ctx => {
           if (flags.schema) {
             ctx.schema = await fetchSchema({
-              endpoint: flags.schema
+              url: flags.schema
             });
           } else {
-            this.log("Not loading because no path was provided (you should have a client-side schema)");
+            this.log(
+              "Not loading because no path was provided (you should have a client-side schema)"
+            );
           }
         }
       ),
@@ -229,7 +239,7 @@ export default class Generate extends Command {
           if (ctx.schema) {
             ctx.schema = buildClientSchema({ __schema: ctx.schema });
           } else {
-            task.skip("No server-side schema provided")
+            task.skip("No server-side schema provided");
           }
         }
       },
@@ -237,15 +247,19 @@ export default class Generate extends Command {
         title: "Loading client-side GraphQL schema",
         task: async (ctx, task) => {
           if (!flags.clientSchema) {
-            task.skip("Path to client schema not provided")
+            task.skip("Path to client schema not provided");
           } else {
-            const foundDocuments = loadQueryDocuments([path.resolve(flags.clientSchema)]);
+            const foundDocuments = loadQueryDocuments([
+              path.resolve(flags.clientSchema)
+            ]);
             if (foundDocuments.length == 0) {
               this.error("Found no query documents, aborting");
             }
 
             if (foundDocuments.length > 1) {
-              this.warn("Found more than one query document, using the first one");
+              this.warn(
+                "Found more than one query document, using the first one"
+              );
             }
 
             const ast = foundDocuments[0];
@@ -301,7 +315,7 @@ export default class Generate extends Command {
       await tasks.run().catch(() => {});
       const watcher = new Gaze(flags.queries!);
       watcher.on("all", () => {
-        console.log("\nChange detected, generating types...")
+        console.log("\nChange detected, generating types...");
         tasks.run().catch(() => {});
       });
       await waitForKey();
