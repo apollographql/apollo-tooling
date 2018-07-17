@@ -4,12 +4,12 @@ import { fromFile, fetchSchema, fetchSchemaFromEngine } from "./fetch-schema";
 export async function loadSchema(config: ApolloConfig) {
   if (config.schema) {
     return await fromFile(config.schema);
-  } else if (config.endpoint) {
+  } else if (config.endpoint && config.endpoint.url) {
     return await fetchSchema(config.endpoint);
   } else if (config.engineKey) {
     return await fetchSchemaFromEngine(config.engineKey, undefined);
   } else {
-    throw new Error("No methods of getting the schema found");
+    return undefined;
   }
 }
 

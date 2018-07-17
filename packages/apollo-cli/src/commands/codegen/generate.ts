@@ -12,16 +12,15 @@ import {
   buildASTSchema
 } from "graphql";
 
-import * as fg from "glob";
-import { withGlobalFS } from "apollo-codegen-core/lib/localfs";
-
-import { loadSchemaStep } from "../../load-schema";
+import { loadSchema } from "../../load-schema";
 
 import { engineFlags } from "../../engine-cli";
-import { fetchSchema } from "../../fetch-schema";
 import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
 
 import { Gaze } from "gaze";
+
+import { getOperationPathsForConfig } from "../../config";
+import { loadConfigStep } from "../../load-config";
 
 const waitForKey = async () => {
   console.log("Press any key to stop.");
@@ -43,6 +42,9 @@ export default class Generate extends Command {
     help: flags.help({
       char: "h",
       description: "Show command help"
+    }),
+    config: flags.string({
+      description: "Path to your Apollo config file"
     }),
     queries: flags.string({
       description:
@@ -193,47 +195,30 @@ export default class Generate extends Command {
       return;
     }
 
-    const apiKey = flags.key;
-    const pullFromEngine = !!apiKey && !flags.schema;
-
     const tasks: Listr = new Listr([
+      loadConfigStep((msg) => this.error(msg), flags, false, true),
       {
         title: "Scanning for GraphQL queries",
         task: async (ctx, task) => {
-          const paths = withGlobalFS(() => {
-            return (flags.queries ? flags.queries.split("\n") : []).flatMap(p =>
-              fg.sync(p)
-            );
-          });
+          const paths = getOperationPathsForConfig(ctx.config);
           task.title = `Scanning for GraphQL queries (${paths.length} found)`;
 
           const excludedPaths = [
             flags.clientSchema ? path.resolve(flags.clientSchema) : undefined,
-            flags.schema ? path.resolve(flags.schema) : undefined
+            ctx.config.schema ? path.resolve(ctx.config.schema) : undefined
           ];
 
           ctx.queryPaths = paths.filter(
             p => !excludedPaths.some(v => v == path.resolve(p))
-          );
+          ).map(p => path.relative(ctx.config.projectFolder, p));
         }
       },
-      loadSchemaStep(
-        pullFromEngine,
-        apiKey,
-        flags.engine,
-        "Loading GraphQL schema",
-        async ctx => {
-          if (flags.schema) {
-            ctx.schema = await fetchSchema({
-              url: flags.schema
-            });
-          } else {
-            this.log(
-              "Not loading because no path was provided (you should have a client-side schema)"
-            );
-          }
+      {
+        title: "Fetching current schema",
+        task: async ctx => {
+          ctx.schema = await loadSchema(ctx.config).catch(this.error);
         }
-      ),
+      },
       {
         title: "Parsing GraphQL schema",
         task: async (ctx, task) => {

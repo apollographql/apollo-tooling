@@ -1,15 +1,15 @@
 import { loadConfigFromFile, findAndLoadConfig } from './config';
 import { ListrTask } from 'listr';
 
-export function loadConfigStep(error: (msg: string) => void, flags: any, engineRequired: boolean): ListrTask {
+export function loadConfigStep(error: (msg: string) => void, flags: any, engineRequired: boolean, noDefaultEndpoint: boolean = false): ListrTask {
   const header: any[] = Array.isArray(flags.header) ? flags.header : [flags.header];
   const task = {
     title: "Loading Apollo config",
     task: async (ctx: any) => {
       if (flags.config) {
-        ctx.config = loadConfigFromFile(flags.config);
+        ctx.config = loadConfigFromFile(flags.config, noDefaultEndpoint);
       } else {
-        ctx.config = findAndLoadConfig();
+        ctx.config = findAndLoadConfig(process.cwd(), noDefaultEndpoint);
       }
 
       ctx.config = {
@@ -23,7 +23,8 @@ export function loadConfigStep(error: (msg: string) => void, flags: any, engineR
             .reduce((a, b) => Object.assign(a, b), {})) })
         },
         ...(flags.key && { engineKey: flags.key }),
-        ...(flags.queries && { operations: flags.queries.split("\n") })
+        ...(flags.queries && { operations: flags.queries.split("\n") }),
+        ...(flags.schema && { schema: flags.schema })
       };
 
       if (!ctx.config.engineKey && engineRequired) {

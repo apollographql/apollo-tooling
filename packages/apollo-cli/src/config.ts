@@ -20,18 +20,18 @@ export interface ApolloConfig {
   engineKey?: string; // Apollo Engine key
 }
 
-function loadEndpointConfig(obj: any): EndpointConfig {
-  let preSubscriptions: EndpointConfig;
+function loadEndpointConfig(obj: any, shouldDefaultURL: boolean): EndpointConfig | undefined {
+  let preSubscriptions: EndpointConfig | undefined;
   if (typeof obj === "string") {
     preSubscriptions = {
       url: obj
     };
   } else {
     preSubscriptions = (obj as EndpointConfig | undefined) ||
-      { url: "http://localhost:4000/graphql" };
+      (shouldDefaultURL ? { url: "http://localhost:4000/graphql" } : undefined);
   }
 
-  if (!preSubscriptions.subscriptions && preSubscriptions.url) {
+  if (preSubscriptions && !preSubscriptions.subscriptions && preSubscriptions.url) {
     preSubscriptions.subscriptions = preSubscriptions.url!.replace(
       "http",
       "ws"
@@ -41,11 +41,11 @@ function loadEndpointConfig(obj: any): EndpointConfig {
   return preSubscriptions;
 }
 
-export function loadConfig(obj: any, configDir: string): ApolloConfig {
+export function loadConfig(obj: any, configDir: string, noDefaultEndpoint: boolean): ApolloConfig {
   return {
     projectFolder: configDir,
     schema: obj.schema,
-    endpoint: loadEndpointConfig(obj.endpoint),
+    endpoint: loadEndpointConfig(obj.endpoint, !obj.engineKey && !noDefaultEndpoint),
     projectName: basename(configDir),
     operations:
       typeof obj.operations === "string"
@@ -63,29 +63,29 @@ export function loadConfig(obj: any, configDir: string): ApolloConfig {
   };
 }
 
-export function loadConfigFromFile(file: string): ApolloConfig {
+export function loadConfigFromFile(file: string, noDefaultEndpoint: boolean): ApolloConfig {
   if (file.endsWith(".js")) {
     delete require.cache[require.resolve(file)];
-    return loadConfig(require(file), dirname(file));
+    return loadConfig(require(file), dirname(file), noDefaultEndpoint);
   } else if (file.endsWith("package.json")) {
     const apolloKey = JSON.parse(fs.readFileSync(file).toString()).apollo;
     if (apolloKey) {
-      return loadConfig(apolloKey, dirname(file));
+      return loadConfig(apolloKey, dirname(file), noDefaultEndpoint);
     } else {
-      return loadConfig({}, dirname(file));
+      return loadConfig({}, dirname(file), noDefaultEndpoint);
     }
   } else {
     throw new Error("Unsupported config file format");
   }
 }
 
-export function findAndLoadConfig(dir: string = process.cwd()): ApolloConfig {
+export function findAndLoadConfig(dir: string, noDefaultEndpoint: boolean): ApolloConfig {
   if (fs.existsSync(join(dir, "apollo.config.js"))) {
-    return loadConfigFromFile(join(dir, "apollo.config.js"));
+    return loadConfigFromFile(join(dir, "apollo.config.js"), noDefaultEndpoint);
   } else if (fs.existsSync(join(dir, "package.json"))) {
-    return loadConfigFromFile(join(dir, "package.json"));
+    return loadConfigFromFile(join(dir, "package.json"), noDefaultEndpoint);
   } else {
-    return loadConfig({}, dir);
+    return loadConfig({}, dir, noDefaultEndpoint);
   }
 }
 
