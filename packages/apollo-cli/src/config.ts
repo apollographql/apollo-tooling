@@ -1,4 +1,6 @@
-import { basename, dirname } from "path";
+import { basename, dirname, join } from "path";
+import { fs } from "../node_modules/apollo-codegen-core/lib/localfs";
+import { readFileSync } from "fs";
 
 export interface EndpointConfig {
   url?: string; // main HTTP endpoint
@@ -16,23 +18,23 @@ export interface ApolloConfig {
 }
 
 function loadEndpointConfig(obj: any): EndpointConfig {
-  let withoutSubscriptions: EndpointConfig;
+  let preSubscriptions: EndpointConfig;
   if (typeof obj === "string") {
-    withoutSubscriptions = {
+    preSubscriptions = {
       url: obj
     };
   } else {
-    withoutSubscriptions = obj as EndpointConfig;
+    preSubscriptions = obj as EndpointConfig;
   }
 
-  if (!withoutSubscriptions.subscriptions) {
-    withoutSubscriptions.subscriptions = withoutSubscriptions.url!.replace(
+  if (!preSubscriptions.subscriptions) {
+    preSubscriptions.subscriptions = preSubscriptions.url!.replace(
       "http",
       "ws"
     );
   }
 
-  return withoutSubscriptions;
+  return preSubscriptions;
 }
 
 export function loadConfig(obj: any, configFilePath: string): ApolloConfig {
@@ -58,4 +60,22 @@ export function loadConfig(obj: any, configFilePath: string): ApolloConfig {
           : [],
     engineKey: obj.engineKey
   };
+}
+
+export function findAndLoadConfig(dir: string): ApolloConfig | undefined {
+  if (fs.existsSync(join(dir, "apollo.config.js"))) {
+    const configFile = join(dir, "apollo.config.js");
+    delete require.cache[require.resolve(configFile)];
+    return loadConfig(require(configFile), configFile);
+  } else if (fs.existsSync(join(dir, "package.json"))) {
+    const configFile = join(dir, "package.json");
+    const apolloKey = JSON.parse(readFileSync(configFile).toString()).apollo;
+    if (apolloKey) {
+      return loadConfig(apolloKey, configFile);
+    } else {
+      return undefined;
+    }
+  } else {
+    return undefined;
+  }
 }
