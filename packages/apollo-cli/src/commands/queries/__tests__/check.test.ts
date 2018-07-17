@@ -100,6 +100,46 @@ describe("successful checks", () => {
     });
 
   test
+    .do(() => vol.fromJSON({
+      ...files,
+      "package.json": `
+      {
+        "apollo": {
+          "engineKey": "${ENGINE_API_KEY}"
+        }
+      }
+      `
+    }))
+    .nock(ENGINE_URI, engineSuccess())
+    .stdout()
+    .command(["queries:check"])
+    .exit(1)
+    .it("compares against the latest uploaded schema with engine key from config", () => {
+      expect(stdout).toContain("FAILURE");
+      expect(stdout).toContain("WARNING");
+    });
+
+  test
+    .do(() => vol.fromJSON({
+      ...files,
+      "test/package.json": `
+      {
+        "apollo": {
+          "engineKey": "${ENGINE_API_KEY}"
+        }
+      }
+      `
+    }))
+    .nock(ENGINE_URI, engineSuccess())
+    .stdout()
+    .command(["queries:check", "--config=test/package.json"])
+    .exit(1)
+    .it("compares against the latest uploaded schema with engine key from config", () => {
+      expect(stdout).toContain("FAILURE");
+      expect(stdout).toContain("WARNING");
+    });
+
+  test
     .do(() => vol.fromJSON(files))
     .nock(ENGINE_URI, engineSuccess())
     .stdout()

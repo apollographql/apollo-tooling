@@ -21,6 +21,7 @@ import {
   loadConfigFromFile,
   findAndLoadConfig
 } from "../../config";
+import { resolve } from 'path';
 
 export default class CheckQueries extends Command {
   static description =
@@ -61,7 +62,7 @@ export default class CheckQueries extends Command {
           if (flags.config) {
             ctx.config = loadConfigFromFile(flags.config) || {};
           } else {
-            ctx.config = findAndLoadConfig(__dirname) || {};
+            ctx.config = findAndLoadConfig(resolve(".")) || {};
           }
 
           ctx.config = {

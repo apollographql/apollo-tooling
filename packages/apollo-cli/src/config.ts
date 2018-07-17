@@ -1,6 +1,5 @@
 import { basename, dirname, join } from "path";
-import { fs } from "../node_modules/apollo-codegen-core/lib/localfs";
-import { readFileSync } from "fs";
+import { fs } from "apollo-codegen-core/lib/localfs";
 
 export interface EndpointConfig {
   url?: string; // main HTTP endpoint
@@ -24,10 +23,10 @@ function loadEndpointConfig(obj: any): EndpointConfig {
       url: obj
     };
   } else {
-    preSubscriptions = obj as EndpointConfig;
+    preSubscriptions = (obj || {}) as EndpointConfig;
   }
 
-  if (!preSubscriptions.subscriptions) {
+  if (!preSubscriptions.subscriptions && preSubscriptions.url) {
     preSubscriptions.subscriptions = preSubscriptions.url!.replace(
       "http",
       "ws"
@@ -38,10 +37,6 @@ function loadEndpointConfig(obj: any): EndpointConfig {
 }
 
 export function loadConfig(obj: any, configFilePath: string): ApolloConfig {
-  if (!obj.schema && !obj.endpoint) {
-    throw new Error("No schema or endpoint specified!");
-  }
-
   return {
     schema: obj.schema,
     endpoint: loadEndpointConfig(obj.endpoint),
@@ -67,7 +62,7 @@ export function loadConfigFromFile(file: string): ApolloConfig | undefined {
     delete require.cache[require.resolve(file)];
     return loadConfig(require(file), file);
   } else if (file.endsWith("package.json")) {
-    const apolloKey = JSON.parse(readFileSync(file).toString()).apollo;
+    const apolloKey = JSON.parse(fs.readFileSync(file).toString()).apollo;
     if (apolloKey) {
       return loadConfig(apolloKey, file);
     } else {
