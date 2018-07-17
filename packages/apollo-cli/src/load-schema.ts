@@ -7,7 +7,7 @@ export async function loadSchema(config: ApolloConfig) {
   } else if (config.endpoint) {
     return await fetchSchema(config.endpoint);
   } else if (config.engineKey) {
-    return await fetchSchemaFromEngine(config.engineKey);
+    return await fetchSchemaFromEngine(config.engineKey, undefined);
   } else {
     throw new Error("No methods of getting the schema found");
   }
@@ -16,6 +16,7 @@ export async function loadSchema(config: ApolloConfig) {
 export function loadSchemaStep(
   pullFromEngine: boolean,
   apiKey: string | undefined,
+  customEngine: string | undefined,
   notEngineTitle: string,
   notEngine: (ctx: any) => Promise<void>
 ) {
@@ -25,7 +26,10 @@ export function loadSchemaStep(
       : notEngineTitle,
     task: async (ctx: any) => {
       if (pullFromEngine) {
-        ctx.schema = await fetchSchemaFromEngine(apiKey as string);
+        ctx.schema = await fetchSchemaFromEngine(
+          apiKey as string,
+          customEngine
+        );
       } else {
         await notEngine(ctx);
       }

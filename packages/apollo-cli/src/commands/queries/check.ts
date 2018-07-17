@@ -3,10 +3,7 @@ import { Command, flags } from "@oclif/command";
 import { table, styledJSON } from "heroku-cli-util";
 import * as Listr from "listr";
 import { toPromise, execute } from "apollo-link";
-import {
-  print,
-  GraphQLError
-} from "graphql";
+import { print, GraphQLError } from "graphql";
 
 import * as fg from "glob";
 import { withGlobalFS } from "apollo-codegen-core/lib/localfs";
@@ -19,6 +16,11 @@ import { gitInfo } from "../../git";
 import { VALIDATE_OPERATIONS } from "../../operations/validateOperations";
 import { ChangeType } from "../../printer/ast";
 import { format } from "../schema/check";
+import {
+  ApolloConfig,
+  loadConfigFromFile,
+  findAndLoadConfig
+} from "../../config";
 
 export default class CheckQueries extends Command {
   static description =
@@ -28,6 +30,9 @@ export default class CheckQueries extends Command {
     help: flags.help({
       char: "h",
       description: "Show command help"
+    }),
+    config: flags.string({
+      description: "Path to your Apollo config file"
     }),
     queries: flags.string({
       description:
@@ -49,19 +54,37 @@ export default class CheckQueries extends Command {
   async run() {
     const { flags } = this.parse(CheckQueries);
 
-    const apiKey = flags.key;
-    if (!apiKey) {
-      this.error(
-        "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
-      );
-      return;
-    }
     const tasks: Listr = new Listr([
+      {
+        title: "Loading Apollo config",
+        task: async ctx => {
+          if (flags.config) {
+            ctx.config = loadConfigFromFile(flags.config) || {};
+          } else {
+            ctx.config = findAndLoadConfig(__dirname) || {};
+          }
+
+          ctx.config = {
+            ...ctx.config,
+            operations: flags.queries
+              ? flags.queries.split("\n")
+              : ctx.config.operations,
+            engineKey: flags.key || ctx.config.engineKey
+          };
+
+          if (!ctx.config.engineKey) {
+            this.error(
+              "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
+            );
+            return;
+          }
+        }
+      },
       {
         title: "Scanning for GraphQL queries",
         task: async (ctx, task) => {
           const paths = withGlobalFS(() => {
-            return (flags.queries ? flags.queries.split("\n") : []).flatMap(p =>
+            return (ctx.config as ApolloConfig).operations.flatMap(p =>
               fg.sync(p)
             );
           });
@@ -76,11 +99,11 @@ export default class CheckQueries extends Command {
       },
       {
         title: "Checking query compatibility with schema",
-        task: async (ctx) => {
+        task: async ctx => {
           const gitContext = await gitInfo();
 
           const variables = {
-            id: getIdFromKey(apiKey),
+            id: getIdFromKey(ctx.config.engineKey),
             // XXX hardcoded for now
             tag: "current",
             gitContext,
@@ -92,7 +115,7 @@ export default class CheckQueries extends Command {
               query: VALIDATE_OPERATIONS,
               variables,
               context: {
-                headers: { ["x-api-key"]: apiKey },
+                headers: { ["x-api-key"]: ctx.config.engineKey },
                 ...(flags.engine && { uri: flags.engine })
               }
             })

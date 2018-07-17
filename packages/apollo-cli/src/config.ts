@@ -12,7 +12,7 @@ export interface ApolloConfig {
   projectName?: string;
   schema?: string; // path to JSON introspection, if not provided endpoint will be used
   endpoint?: EndpointConfig; // GraphQL endpoint URL, used to run queries and grab schema
-  operations?: string[]; // glob path(s) to GraphQL operations (default: '**/*.graphql')
+  operations: string[]; // glob path(s) to GraphQL operations (default: '**/*.graphql')
   excludedOperations?: string[]; // glob path(s) to GraphQL operation paths to ignore (default: 'node_modules/**')
   engineKey?: string; // Apollo Engine key
 }
@@ -62,19 +62,27 @@ export function loadConfig(obj: any, configFilePath: string): ApolloConfig {
   };
 }
 
-export function findAndLoadConfig(dir: string): ApolloConfig | undefined {
-  if (fs.existsSync(join(dir, "apollo.config.js"))) {
-    const configFile = join(dir, "apollo.config.js");
-    delete require.cache[require.resolve(configFile)];
-    return loadConfig(require(configFile), configFile);
-  } else if (fs.existsSync(join(dir, "package.json"))) {
-    const configFile = join(dir, "package.json");
-    const apolloKey = JSON.parse(readFileSync(configFile).toString()).apollo;
+export function loadConfigFromFile(file: string): ApolloConfig | undefined {
+  if (file.endsWith(".js")) {
+    delete require.cache[require.resolve(file)];
+    return loadConfig(require(file), file);
+  } else if (file.endsWith("package.json")) {
+    const apolloKey = JSON.parse(readFileSync(file).toString()).apollo;
     if (apolloKey) {
-      return loadConfig(apolloKey, configFile);
+      return loadConfig(apolloKey, file);
     } else {
       return undefined;
     }
+  } else {
+    return undefined;
+  }
+}
+
+export function findAndLoadConfig(dir: string): ApolloConfig | undefined {
+  if (fs.existsSync(join(dir, "apollo.config.js"))) {
+    return loadConfigFromFile(join(dir, "apollo.config.js"));
+  } else if (fs.existsSync(join(dir, "package.json"))) {
+    return loadConfigFromFile(join(dir, "package.json"));
   } else {
     return undefined;
   }

@@ -63,9 +63,13 @@ export default class SchemaCheck extends Command {
       {
         title: "Fetching local schema",
         task: async ctx => {
+          const headers = header
+            .filter(x => Boolean(x))
+            .map(x => JSON.parse(x))
+            .reduce((a, b) => Object.assign(a, b), {});
           ctx.schema = await fetchSchema({
             url: flags.endpoint,
-            headers: header.filter(x => Boolean(x)).map(x => JSON.parse(x))
+            headers
           });
         }
       },

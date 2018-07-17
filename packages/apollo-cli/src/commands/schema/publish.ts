@@ -55,9 +55,13 @@ export default class SchemaPublish extends Command {
       {
         title: "Fetching current schema",
         task: async ctx => {
+          const headers = header
+            .filter(x => !!x)
+            .map(x => JSON.parse(x))
+            .reduce((a, b) => Object.assign(a, b), {});
           ctx.schema = await fetchSchema({
             url: flags.endpoint,
-            headers: header.filter(x => !!x).map(x => JSON.parse(x))
+            headers
           }).catch(this.error);
         }
       },

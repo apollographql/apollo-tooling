@@ -220,6 +220,7 @@ export default class Generate extends Command {
       loadSchemaStep(
         pullFromEngine,
         apiKey,
+        flags.engine,
         "Loading GraphQL schema",
         async ctx => {
           if (flags.schema) {

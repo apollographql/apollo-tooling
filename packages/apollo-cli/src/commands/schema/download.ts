@@ -56,6 +56,7 @@ export default class SchemaDownload extends Command {
       loadSchemaStep(
         pullFromEngine,
         apiKey,
+        flags.engine,
         "Fetching local schema",
         async ctx => {
           ctx.schema = await fetchSchema({

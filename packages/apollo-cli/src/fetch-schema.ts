@@ -52,11 +52,6 @@ export async function fromFile(file: string) {
   }
 }
 
-export interface FetchParams {
-  endpoint: string | undefined;
-  header?: Object[];
-}
-
 export const fetchSchema = async ({ url, headers }: EndpointConfig) => {
   if (!url) throw new Error("No endpoint provided when fetching schema");
   if (fs.existsSync(url)) return fromFile(url);
@@ -74,7 +69,10 @@ export const fetchSchema = async ({ url, headers }: EndpointConfig) => {
   });
 };
 
-export async function fetchSchemaFromEngine(apiKey: string) {
+export async function fetchSchemaFromEngine(
+  apiKey: string,
+  customEngine: string | undefined
+) {
   const variables = {
     id: getIdFromKey(apiKey as string),
     tag: "current"
@@ -85,7 +83,8 @@ export async function fetchSchemaFromEngine(apiKey: string) {
       query: SCHEMA_QUERY,
       variables,
       context: {
-        headers: { ["x-api-key"]: apiKey }
+        headers: { ["x-api-key"]: apiKey },
+        ...(customEngine && { uri: customEngine })
       }
     })
   );
