@@ -5,9 +5,6 @@ import * as Listr from "listr";
 import { toPromise, execute } from "apollo-link";
 import { print, GraphQLError } from "graphql";
 
-import * as fg from "glob";
-import { withGlobalFS } from "apollo-codegen-core/lib/localfs";
-
 import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
 
 import { engineFlags } from "../../engine-cli";
@@ -16,7 +13,7 @@ import { gitInfo } from "../../git";
 import { VALIDATE_OPERATIONS } from "../../operations/validateOperations";
 import { ChangeType } from "../../printer/ast";
 import { format } from "../schema/check";
-import { ApolloConfig } from "../../config";
+import { getOperationPathsForConfig } from "../../config";
 import { loadConfigStep } from '../../load-config';
 
 export default class CheckQueries extends Command {
@@ -55,11 +52,7 @@ export default class CheckQueries extends Command {
       {
         title: "Scanning for GraphQL queries",
         task: async (ctx, task) => {
-          const paths = withGlobalFS(() => {
-            return (ctx.config as ApolloConfig).operations.flatMap(p =>
-              fg.sync(p)
-            );
-          });
+          const paths = getOperationPathsForConfig(ctx.config);
 
           const operations = loadQueryDocuments(paths, flags.tagName);
           task.title = `Scanning for GraphQL queries (${

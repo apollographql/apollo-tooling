@@ -7,9 +7,9 @@ export function loadConfigStep(error: (msg: string) => void, flags: any, engineR
     title: "Loading Apollo config",
     task: async (ctx: any) => {
       if (flags.config) {
-        ctx.config = loadConfigFromFile(flags.config) || {};
+        ctx.config = loadConfigFromFile(flags.config);
       } else {
-        ctx.config = findAndLoadConfig() || {};
+        ctx.config = findAndLoadConfig();
       }
 
       ctx.config = {
@@ -23,14 +23,8 @@ export function loadConfigStep(error: (msg: string) => void, flags: any, engineR
             .reduce((a, b) => Object.assign(a, b), {})) })
         },
         ...(flags.key && { engineKey: flags.key }),
-        operations: (flags.queries ?
-          flags.queries.split("\n"):
-          (ctx.config.operations || [ "**/*.graphql" ]))
+        ...(flags.queries && { operations: flags.queries.split("\n") })
       };
-
-      if (!ctx.config.endpoint.url) {
-        ctx.config.endpoint.url = "http://localhost:4000/graphql";
-      }
 
       if (!ctx.config.engineKey && engineRequired) {
         error(
