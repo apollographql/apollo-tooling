@@ -1,3 +1,7 @@
+jest.mock("apollo-codegen-core/lib/localfs", () => {
+  return require("../../../__mocks__/localfs");
+});
+
 import * as path from "path";
 import * as fs from "fs";
 import { test as setup } from "apollo-cli-test";
@@ -8,18 +12,24 @@ import gql from "graphql-tag";
 import { ENGINE_URI } from "../../../engine";
 import { UPLOAD_SCHEMA } from "../../../operations/uploadSchema";
 
+import { fs as mockFS, vol } from "apollo-codegen-core/lib/localfs";
+
 const test = setup.do(() => mockConsole());
 const ENGINE_API_KEY = "service:test:1234";
 const hash = "12345";
 const localSchema = { __schema: { fakeSchema: true } };
+const schemaSource = fs.readFileSync(path.resolve(__dirname, "./fixtures/schema.graphql"), {
+  encoding: "utf-8",
+});
+
 const fullSchema = execute(
-  buildSchema(
-    fs.readFileSync(path.resolve(__dirname, "./fixtures/schema.graphql"), {
-      encoding: "utf-8",
-    })
-  ),
+  buildSchema(schemaSource),
   gql(introspectionQuery)
 ).data;
+
+const introspectionResult = fs.readFileSync(
+  path.resolve(__dirname, "./fixtures/introspection-result.json")
+);
 
 const localSuccess = nock => {
   nock
@@ -66,6 +76,13 @@ const engineSuccess = ({ schema, tag, result } = {}) => nock => {
 
 jest.setTimeout(35000);
 
+beforeEach(() => {
+  vol.reset();
+  vol.fromJSON({
+    __blankFileSoDirectoryExists: ""
+  });
+});
+
 describe("successful uploads", () => {
   test
     .nock("http://localhost:4000", localSuccess)
@@ -96,6 +113,25 @@ describe("successful uploads", () => {
       "--endpoint=https://staging.example.com/graphql",
     ])
     .it("calls engine with a schema from a custom remote", ({ stdout }) => {
+      expect(uiLog).toContain("12345");
+    });
+
+  test
+    .do(() => vol.fromJSON({
+      "package.json": `
+      {
+        "apollo": {
+          "endpoint": "https://staging.example.com/graphql",
+          "engineKey": "${ENGINE_API_KEY}"
+        }
+      }
+      `
+    }))
+    .stdout()
+    .nock("https://staging.example.com", localSuccess)
+    .nock(ENGINE_URI, engineSuccess())
+    .command([ "schema:publish" ])
+    .it("calls engine with a schema from a custom remote specified in config", ({ stdout }) => {
       expect(uiLog).toContain("12345");
     });
 
@@ -138,15 +174,15 @@ describe("successful uploads", () => {
     );
 
   test
+    .do(() => vol.fromJSON({
+      "introspection-result.json": introspectionResult.toString()
+    }))
     .stdout()
     .nock(ENGINE_URI, engineSuccess())
     .env({ ENGINE_API_KEY })
     .command([
       "schema:publish",
-      `--endpoint=${path.resolve(
-        __dirname,
-        "./fixtures/introspection-result.json"
-      )}`,
+      "--endpoint=introspection-result.json"
     ])
     .it(
       "calls engine with a schema from an introspection result on the filesystem",
@@ -156,12 +192,15 @@ describe("successful uploads", () => {
     );
 
   test
+    .do(() => vol.fromJSON({
+      "schema.graphql": schemaSource
+    }))
     .stdout()
     .nock(ENGINE_URI, engineSuccess({ schema: fullSchema.__schema }))
     .env({ ENGINE_API_KEY })
     .command([
       "schema:publish",
-      `--endpoint=${path.resolve(__dirname, "./fixtures/schema.graphql")}`,
+      "--endpoint=schema.graphql"
     ])
     .it(
       "calls engine with a schema from a schema file on the filesystem",

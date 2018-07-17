@@ -11,6 +11,12 @@ import { gitInfo } from "../../git";
 
 import { engineFlags } from "../../engine-cli";
 
+import {
+  loadConfigFromFile,
+  findAndLoadConfig
+} from "../../config";
+import { resolve } from 'path';
+
 export default class SchemaPublish extends Command {
   static description = "Publish a schema to Apollo Engine";
 
@@ -18,6 +24,9 @@ export default class SchemaPublish extends Command {
     help: flags.help({
       char: "h",
       description: "Show command help"
+    }),
+    config: flags.string({
+      description: "Path to your Apollo config file"
     }),
     ...engineFlags,
     header: flags.string({
@@ -30,7 +39,6 @@ export default class SchemaPublish extends Command {
     }),
     endpoint: flags.string({
       description: "The URL of the server to fetch the schema from",
-      default: "http://localhost:4000/graphql" // apollo-server 2.0 default address
     }),
     json: flags.boolean({
       description: "Output successful publish result as JSON"
@@ -42,38 +50,58 @@ export default class SchemaPublish extends Command {
     // hardcoded to current until service / schema / tag is settled
     const tag = "current";
 
-    const apiKey = flags.key;
-    if (!apiKey) {
-      this.error(
-        "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
-      );
-      return;
-    }
-
     const header = Array.isArray(flags.header) ? flags.header : [flags.header];
     const tasks = new Listr([
       {
-        title: "Fetching current schema",
+        title: "Loading Apollo config",
         task: async ctx => {
-          const headers = header
-            .filter(x => !!x)
-            .map(x => JSON.parse(x))
-            .reduce((a, b) => Object.assign(a, b), {});
-          ctx.schema = await fetchSchema({
-            url: flags.endpoint,
-            headers
-          }).catch(this.error);
+          if (flags.config) {
+            ctx.config = loadConfigFromFile(flags.config) || {};
+          } else {
+            ctx.config = findAndLoadConfig(resolve(".")) || {};
+          }
+
+          ctx.config = {
+            ...ctx.config,
+            endpoint: {
+              ...ctx.config.endpoint,
+              ...(flags.endpoint && { url: flags.endpoint }),
+              ...(header.length > 0 && { headers: (header
+                .filter(x => !!x)
+                .map(x => JSON.parse(x))
+                .reduce((a, b) => Object.assign(a, b), {})) })
+            },
+            ...(flags.key && { engineKey: flags.key })
+          };
+
+          if (!ctx.config.endpoint.url) {
+            ctx.config.endpoint.url = "http://localhost:4000/graphql";
+          }
+
+          if (!ctx.config.engineKey) {
+            this.error(
+              "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
+            );
+            return;
+          }
         }
       },
       {
-        title: `Publishing ${getIdFromKey(apiKey)} to Apollo Engine`,
+        title: "Fetching current schema",
         task: async ctx => {
+          ctx.schema = await fetchSchema(ctx.config.endpoint).catch(this.error);
+        }
+      },
+      {
+        title: `Publishing to Apollo Engine`,
+        task: async (ctx, task) => {
+          task.title = `Publishing ${getIdFromKey(ctx.config.engineKey)} to Apollo Engine`;
           const gitContext = await gitInfo();
           const variables = {
             schema: ctx.schema,
             tag,
             gitContext,
-            id: getIdFromKey(apiKey)
+            id: getIdFromKey(ctx.config.engineKey)
           };
 
           ctx.current = await toPromise(
@@ -81,7 +109,7 @@ export default class SchemaPublish extends Command {
               query: UPLOAD_SCHEMA,
               variables,
               context: {
-                headers: { ["x-api-key"]: apiKey },
+                headers: { ["x-api-key"]: ctx.config.engineKey },
                 ...(flags.engine && { uri: flags.engine })
               }
             })
@@ -111,11 +139,11 @@ export default class SchemaPublish extends Command {
       }
     ]);
 
-    return tasks.run().then(({ current }) => {
+    return tasks.run().then(({ current, config }) => {
       // XXX error on unexpected missing schema
       if (!current) return;
       const result = {
-        service: getIdFromKey(apiKey),
+        service: getIdFromKey(config.engineKey),
         hash: current.tag.schema.hash,
         tag: current.tag.tag
       };

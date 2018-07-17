@@ -4,17 +4,11 @@ jest.mock("apollo-codegen-core/lib/localfs", () => {
 
 // this is because of herkou-cli-utils hacky mocking system on their console logger
 import { stdout, mockConsole } from "heroku-cli-util";
-import * as path from "path";
-import * as fs from "fs";
 import { test as setup } from "apollo-cli-test";
 import {
-  introspectionQuery,
   print,
-  parse,
-  execute,
-  buildSchema
+  parse
 } from "graphql";
-import gql from "graphql-tag";
 import { ENGINE_URI } from "../../../engine";
 import { VALIDATE_OPERATIONS } from "../../../operations/validateOperations";
 
