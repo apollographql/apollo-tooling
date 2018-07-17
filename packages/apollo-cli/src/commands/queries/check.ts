@@ -16,12 +16,8 @@ import { gitInfo } from "../../git";
 import { VALIDATE_OPERATIONS } from "../../operations/validateOperations";
 import { ChangeType } from "../../printer/ast";
 import { format } from "../schema/check";
-import {
-  ApolloConfig,
-  loadConfigFromFile,
-  findAndLoadConfig
-} from "../../config";
-import { resolve } from 'path';
+import { ApolloConfig } from "../../config";
+import { loadConfigStep } from '../../load-config';
 
 export default class CheckQueries extends Command {
   static description =
@@ -37,8 +33,7 @@ export default class CheckQueries extends Command {
     }),
     queries: flags.string({
       description:
-        "Path to your GraphQL queries, can include search tokens like **",
-      default: "**/*.graphql"
+        "Path to your GraphQL queries, can include search tokens like **"
     }),
     json: flags.boolean({
       description: "Output result as JSON"
@@ -56,31 +51,7 @@ export default class CheckQueries extends Command {
     const { flags } = this.parse(CheckQueries);
 
     const tasks: Listr = new Listr([
-      {
-        title: "Loading Apollo config",
-        task: async ctx => {
-          if (flags.config) {
-            ctx.config = loadConfigFromFile(flags.config) || {};
-          } else {
-            ctx.config = findAndLoadConfig(resolve(".")) || {};
-          }
-
-          ctx.config = {
-            ...ctx.config,
-            operations: flags.queries
-              ? flags.queries.split("\n")
-              : ctx.config.operations,
-            engineKey: flags.key || ctx.config.engineKey
-          };
-
-          if (!ctx.config.engineKey) {
-            this.error(
-              "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
-            );
-            return;
-          }
-        }
-      },
+      loadConfigStep((msg) => this.error(msg), flags, true),
       {
         title: "Scanning for GraphQL queries",
         task: async (ctx, task) => {

@@ -8,11 +8,7 @@ import { engineFlags } from "../../engine-cli";
 
 import { loadSchema } from "../../load-schema";
 
-import {
-  loadConfigFromFile,
-  findAndLoadConfig
-} from "../../config";
-import { resolve } from 'path';
+import { loadConfigStep } from '../../load-config';
 
 export default class SchemaDownload extends Command {
   static description = "Download the schema from your GraphQL endpoint.";
@@ -53,36 +49,8 @@ export default class SchemaDownload extends Command {
   async run() {
     const { flags, args } = this.parse(SchemaDownload);
 
-    const header = Array.isArray(flags.header) ? flags.header : [flags.header];
-
     const tasks: Listr = new Listr([
-      {
-        title: "Loading Apollo config",
-        task: async ctx => {
-          if (flags.config) {
-            ctx.config = loadConfigFromFile(flags.config) || {};
-          } else {
-            ctx.config = findAndLoadConfig(resolve(".")) || {};
-          }
-
-          ctx.config = {
-            ...ctx.config,
-            endpoint: {
-              ...ctx.config.endpoint,
-              ...(flags.endpoint && { url: flags.endpoint }),
-              ...(header.length > 0 && { headers: (header
-                .filter(x => !!x)
-                .map(x => JSON.parse(x))
-                .reduce((a, b) => Object.assign(a, b), {})) })
-            },
-            ...(flags.key && { engineKey: flags.key })
-          };
-
-          if (!ctx.config.endpoint.url) {
-            ctx.config.endpoint.url = "http://localhost:4000/graphql";
-          }
-        }
-      },
+      loadConfigStep((msg) => this.error(msg), flags, false),
       {
         title: "Fetching current schema",
         task: async ctx => {

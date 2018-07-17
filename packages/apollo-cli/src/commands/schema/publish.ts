@@ -11,11 +11,7 @@ import { gitInfo } from "../../git";
 
 import { engineFlags } from "../../engine-cli";
 
-import {
-  loadConfigFromFile,
-  findAndLoadConfig
-} from "../../config";
-import { resolve } from 'path';
+import { loadConfigStep } from '../../load-config';
 
 export default class SchemaPublish extends Command {
   static description = "Publish a schema to Apollo Engine";
@@ -50,42 +46,8 @@ export default class SchemaPublish extends Command {
     // hardcoded to current until service / schema / tag is settled
     const tag = "current";
 
-    const header = Array.isArray(flags.header) ? flags.header : [flags.header];
     const tasks = new Listr([
-      {
-        title: "Loading Apollo config",
-        task: async ctx => {
-          if (flags.config) {
-            ctx.config = loadConfigFromFile(flags.config) || {};
-          } else {
-            ctx.config = findAndLoadConfig(resolve(".")) || {};
-          }
-
-          ctx.config = {
-            ...ctx.config,
-            endpoint: {
-              ...ctx.config.endpoint,
-              ...(flags.endpoint && { url: flags.endpoint }),
-              ...(header.length > 0 && { headers: (header
-                .filter(x => !!x)
-                .map(x => JSON.parse(x))
-                .reduce((a, b) => Object.assign(a, b), {})) })
-            },
-            ...(flags.key && { engineKey: flags.key })
-          };
-
-          if (!ctx.config.endpoint.url) {
-            ctx.config.endpoint.url = "http://localhost:4000/graphql";
-          }
-
-          if (!ctx.config.engineKey) {
-            this.error(
-              "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
-            );
-            return;
-          }
-        }
-      },
+      loadConfigStep((msg) => this.error(msg), flags, true),
       {
         title: "Fetching current schema",
         task: async ctx => {

@@ -13,6 +13,7 @@ import { gitInfo } from "../../git";
 import { ChangeType } from "../../printer/ast";
 
 import { engineFlags } from "../../engine-cli";
+import { loadConfigStep } from '../../load-config';
 
 // how its brought down from schema
 interface Change {
@@ -30,6 +31,9 @@ export default class SchemaCheck extends Command {
       char: "h",
       description: "Show command help"
     }),
+    config: flags.string({
+      description: "Path to your Apollo config file"
+    }),
     ...engineFlags,
     header: flags.string({
       multiple: true,
@@ -40,8 +44,7 @@ export default class SchemaCheck extends Command {
       description: "Additional headers to send to server for introspectionQuery"
     }),
     endpoint: flags.string({
-      description: "The URL of the server to fetch the schema from",
-      default: "http://localhost:4000/graphql" // apollo-server 2.0 default address
+      description: "The URL of the server to fetch the schema from"
     }),
     json: flags.boolean({
       description: "Output result as JSON"
@@ -50,27 +53,13 @@ export default class SchemaCheck extends Command {
 
   async run() {
     const { flags } = this.parse(SchemaCheck);
-    const apiKey = flags.key;
-    if (!apiKey) {
-      this.error(
-        "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
-      );
-      return;
-    }
 
-    const header = Array.isArray(flags.header) ? flags.header : [flags.header];
     const tasks = new Listr([
+      loadConfigStep((msg) => this.error(msg), flags, true),
       {
         title: "Fetching local schema",
         task: async ctx => {
-          const headers = header
-            .filter(x => Boolean(x))
-            .map(x => JSON.parse(x))
-            .reduce((a, b) => Object.assign(a, b), {});
-          ctx.schema = await fetchSchema({
-            url: flags.endpoint,
-            headers
-          });
+          ctx.schema = await fetchSchema(ctx.config.endpoint);
         }
       },
       {
@@ -79,7 +68,7 @@ export default class SchemaCheck extends Command {
           const gitContext = await gitInfo();
 
           const variables = {
-            id: getIdFromKey(apiKey),
+            id: getIdFromKey(ctx.config.engineKey),
             schema: ctx.schema,
             // XXX hardcoded for now
             tag: "current",
@@ -91,7 +80,7 @@ export default class SchemaCheck extends Command {
               query: VALIDATE_SCHEMA,
               variables,
               context: {
-                headers: { ["x-api-key"]: apiKey },
+                headers: { ["x-api-key"]: ctx.config.engineKey },
                 ...(flags.engine && { uri: flags.engine })
               }
             })
