@@ -50,4 +50,20 @@ describe("successful schema downloading", () => {
     .it("grabs schema JSON from local server", () => {
       expect(mockFS.readFileSync("schema.json").toString()).toMatchSnapshot();
     });
+
+  test
+    .do(() => vol.fromJSON({
+      "package.json": `
+      {
+        "apollo": {
+          "endpoint": "http://localhost:1234/graphql"
+        }
+      }
+      `
+    }))
+    .nock("http://localhost:1234", localSuccess)
+    .command(["schema:download"])
+    .it("grabs schema JSON from local server specified in config", () => {
+      expect(mockFS.readFileSync("schema.json").toString()).toMatchSnapshot();
+    });
 });
