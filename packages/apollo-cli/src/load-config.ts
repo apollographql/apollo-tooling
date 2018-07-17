@@ -1,5 +1,4 @@
 import { loadConfigFromFile, findAndLoadConfig } from './config';
-import { resolve } from 'path';
 import { ListrTask } from 'listr';
 
 export function loadConfigStep(error: (msg: string) => void, flags: any, engineRequired: boolean): ListrTask {
@@ -10,7 +9,7 @@ export function loadConfigStep(error: (msg: string) => void, flags: any, engineR
       if (flags.config) {
         ctx.config = loadConfigFromFile(flags.config) || {};
       } else {
-        ctx.config = findAndLoadConfig(resolve(".")) || {};
+        ctx.config = findAndLoadConfig() || {};
       }
 
       ctx.config = {

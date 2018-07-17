@@ -73,7 +73,7 @@ export function loadConfigFromFile(file: string): ApolloConfig | undefined {
   }
 }
 
-export function findAndLoadConfig(dir: string): ApolloConfig | undefined {
+export function findAndLoadConfig(dir: string = process.cwd()): ApolloConfig | undefined {
   if (fs.existsSync(join(dir, "apollo.config.js"))) {
     return loadConfigFromFile(join(dir, "apollo.config.js"));
   } else if (fs.existsSync(join(dir, "package.json"))) {
