@@ -51,6 +51,14 @@ export default class SchemaPublish extends Command {
       {
         title: "Fetching current schema",
         task: async ctx => {
+          if (Object.values(ctx.config.schemas).length > 1) {
+            this.error("More than one schema found.");
+          }
+
+          if (Object.values(ctx.config.schemas).length == 0) {
+            this.error("No schemas found.");
+          }
+
           ctx.currentSchema = Object.values(ctx.config.schemas)[0];
           if (!ctx.currentSchema.engineKey) {
             this.error(

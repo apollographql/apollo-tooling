@@ -192,10 +192,9 @@ export default class Generate extends Command {
         task: async (ctx, task) => {
           ctx.documentSets = await resolveDocumentSets(ctx.config, true);
 
-          task.title = `Scanning for GraphQL queries (${
-            (ctx.documentSets as ResolvedDocumentSet[])
-              .map(s => s.documentPaths.length).reduce((a, b) => a + b, 0)
-          } found)`; // this is a bogus wrong value
+          task.title = `Scanning for GraphQL queries (${(ctx.documentSets as ResolvedDocumentSet[])
+            .map(s => s.documentPaths.length)
+            .reduce((a, b) => a + b, 0)} found)`; // this is a bogus wrong value
         }
       },
       {
@@ -203,7 +202,7 @@ export default class Generate extends Command {
         task: async (ctx, task) => {
           task.title = `Generating query files with '${inferredTarget}' target`;
           if (ctx.documentSets.length == 0) {
-            // error
+            this.error("No document sets found to generate code for.");
           } else if (ctx.documentSets.length == 1) {
             const set = ctx.documentSets[0] as ResolvedDocumentSet;
             const writtenFiles = generate(
@@ -233,7 +232,7 @@ export default class Generate extends Command {
 
             task.title = `Generating query files with '${inferredTarget}' target - wrote ${writtenFiles} files`;
           } else {
-            // TODO
+            this.error("More than one document set found.");
           }
         }
       }

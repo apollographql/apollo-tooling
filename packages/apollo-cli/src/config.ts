@@ -3,9 +3,15 @@ import { fs, withGlobalFS } from "apollo-codegen-core/lib/localfs";
 
 import * as fg from "glob";
 import * as minimatch from "minimatch";
-import { GraphQLSchema, buildClientSchema, extendSchema, visit, buildASTSchema } from "graphql";
+import {
+  GraphQLSchema,
+  buildClientSchema,
+  extendSchema,
+  visit,
+  buildASTSchema
+} from "graphql";
 import { loadSchema } from "./load-schema";
-import { loadQueryDocuments } from 'apollo-codegen-core/lib/loading';
+import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
 
 export interface EndpointConfig {
   url?: string; // main HTTP endpoint
@@ -32,7 +38,6 @@ export interface ApolloConfig {
   projectName?: string;
   schemas?: { [name: string]: SchemaDependency }; // path to JSON introspection, if not provided endpoint will be used
   documents?: DocumentSet[];
-  engineKey?: string; // Apollo Engine key
 }
 
 function loadEndpointConfig(
@@ -133,11 +138,21 @@ export function loadConfigFromFile(
 ): ApolloConfig {
   if (file.endsWith(".js")) {
     delete require.cache[require.resolve(file)];
-    return loadConfig(require(file), dirname(file), defaultEndpoint, defaultSchema);
+    return loadConfig(
+      require(file),
+      dirname(file),
+      defaultEndpoint,
+      defaultSchema
+    );
   } else if (file.endsWith("package.json")) {
     const apolloKey = JSON.parse(fs.readFileSync(file).toString()).apollo;
     if (apolloKey) {
-      return loadConfig(apolloKey, dirname(file), defaultEndpoint, defaultSchema);
+      return loadConfig(
+        apolloKey,
+        dirname(file),
+        defaultEndpoint,
+        defaultSchema
+      );
     } else {
       return loadConfig({}, dirname(file), defaultEndpoint, defaultSchema);
     }
@@ -152,9 +167,17 @@ export function findAndLoadConfig(
   defaultSchema: boolean
 ): ApolloConfig {
   if (fs.existsSync(join(dir, "apollo.config.js"))) {
-    return loadConfigFromFile(join(dir, "apollo.config.js"), defaultEndpoint, defaultSchema);
+    return loadConfigFromFile(
+      join(dir, "apollo.config.js"),
+      defaultEndpoint,
+      defaultSchema
+    );
   } else if (fs.existsSync(join(dir, "package.json"))) {
-    return loadConfigFromFile(join(dir, "package.json"), defaultEndpoint, defaultSchema);
+    return loadConfigFromFile(
+      join(dir, "package.json"),
+      defaultEndpoint,
+      defaultSchema
+    );
   } else {
     return loadConfig({}, dir, defaultEndpoint, defaultSchema);
   }
@@ -168,11 +191,14 @@ export interface ResolvedDocumentSet {
   documentPaths: string[];
 }
 
-export async function resolveSchema(name: string, config: ApolloConfig): Promise<GraphQLSchema | undefined> {
+export async function resolveSchema(
+  name: string,
+  config: ApolloConfig
+): Promise<GraphQLSchema | undefined> {
   const referredSchema = (config.schemas || {})[name];
 
   const loadAsAST = () => {
-    const ast = loadQueryDocuments([ referredSchema.schema! ])[0];
+    const ast = loadQueryDocuments([referredSchema.schema!])[0];
     if (referredSchema.clientSide) {
       visit(ast, {
         enter(node) {
@@ -184,16 +210,16 @@ export async function resolveSchema(name: string, config: ApolloConfig): Promise
     }
 
     return ast;
-  }
+  };
 
-  return referredSchema.extends ? extendSchema(
-    (await resolveSchema(referredSchema.extends, config))!,
-    loadAsAST()
-  ) : (
-    referredSchema.clientSide ?
-      buildASTSchema(loadAsAST()) :
-      buildClientSchema({ __schema: await loadSchema(referredSchema) })
-  );
+  return referredSchema.extends
+    ? extendSchema(
+        (await resolveSchema(referredSchema.extends, config))!,
+        loadAsAST()
+      )
+    : referredSchema.clientSide
+      ? buildASTSchema(loadAsAST())
+      : buildClientSchema({ __schema: await loadSchema(referredSchema) });
 }
 
 export async function resolveDocumentSets(
@@ -213,11 +239,14 @@ export async function resolveDocumentSets(
           schemaPaths.push(currentSchema.schema);
         }
 
-        currentSchema = (config.schemas || {})[currentSchema.extends!]
+        currentSchema = (config.schemas || {})[currentSchema.extends!];
       }
 
       return {
-        schema: (needSchema && doc.schema) ? await resolveSchema(doc.schema, config) : undefined,
+        schema:
+          needSchema && doc.schema
+            ? await resolveSchema(doc.schema, config)
+            : undefined,
         endpoint: referredSchema ? referredSchema.endpoint : undefined,
         engineKey: referredSchema ? referredSchema.engineKey : undefined,
         documentPaths: doc.includes
@@ -228,9 +257,9 @@ export async function resolveDocumentSets(
           )
           .filter(
             f =>
-              !([...doc.excludes, ...schemaPaths].some(e =>
+              ![...doc.excludes, ...schemaPaths].some(e =>
                 minimatch(relative(config.projectFolder, f), e)
-              ))
+              )
           )
       };
     })
