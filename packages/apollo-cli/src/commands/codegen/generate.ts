@@ -191,73 +191,13 @@ export default class Generate extends Command {
         title: "Resolving GraphQL document sets and dependencies",
         task: async (ctx, task) => {
           ctx.documentSets = await resolveDocumentSets(ctx.config, true);
+
           task.title = `Scanning for GraphQL queries (${
-            ctx.documentSets.length
+            (ctx.documentSets as ResolvedDocumentSet[])
+              .map(s => s.documentPaths.length).reduce((a, b) => a + b, 0)
           } found)`; // this is a bogus wrong value
-
-          // const excludedPaths = [
-          //   flags.clientSchema ? path.resolve(flags.clientSchema) : undefined,
-          //   ctx.config.schema ? path.resolve(ctx.config.schema) : undefined
-          // ];
-
-          // TODO: move filtering somewhere else
-          // ctx.queryPaths = paths.filter(
-          //   p => !excludedPaths.some(v => v == path.resolve(p))
-          // ).map(p => path.relative(ctx.config.projectFolder, p));
         }
       },
-      // {
-      //   title: "Fetching current schema",
-      //   task: async ctx => {
-      //     ctx.schema = await loadSchema(ctx.config).catch(this.error);
-      //   }
-      // },
-      // {
-      //   title: "Parsing GraphQL schema",
-      //   task: async (ctx, task) => {
-      //     if (ctx.schema) {
-      //       ctx.schema = buildClientSchema({ __schema: ctx.schema });
-      //     } else {
-      //       task.skip("No server-side schema provided");
-      //     }
-      //   }
-      // },
-      // {
-      //   title: "Loading client-side GraphQL schema",
-      //   task: async (ctx, task) => {
-      //     if (!flags.clientSchema) {
-      //       task.skip("Path to client schema not provided");
-      //     } else {
-      //       const foundDocuments = loadQueryDocuments([
-      //         path.resolve(flags.clientSchema)
-      //       ]);
-      //       if (foundDocuments.length == 0) {
-      //         this.error("Found no query documents, aborting");
-      //       }
-
-      //       if (foundDocuments.length > 1) {
-      //         this.warn(
-      //           "Found more than one query document, using the first one"
-      //         );
-      //       }
-
-      //       const ast = foundDocuments[0];
-            // visit(ast, {
-            //   enter(node) {
-            //     if (node.kind == "FieldDefinition") {
-            //       (node as any).__client = true;
-            //     }
-            //   }
-            // });
-
-      //       if (ctx.schema) {
-      //         ctx.schema = extendSchema(ctx.schema, ast);
-      //       } else {
-      //         ctx.schema = buildASTSchema(ast);
-      //       }
-      //     }
-      //   }
-      // },
       {
         title: "Generating query files",
         task: async (ctx, task) => {
