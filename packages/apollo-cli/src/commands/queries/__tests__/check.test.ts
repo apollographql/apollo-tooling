@@ -5,10 +5,7 @@ jest.mock("apollo-codegen-core/lib/localfs", () => {
 // this is because of herkou-cli-utils hacky mocking system on their console logger
 import { stdout, mockConsole } from "heroku-cli-util";
 import { test as setup } from "apollo-cli-test";
-import {
-  print,
-  parse
-} from "graphql";
+import { print, parse } from "graphql";
 import { ENGINE_URI } from "../../../engine";
 import { VALIDATE_OPERATIONS } from "../../../operations/validateOperations";
 
@@ -94,44 +91,62 @@ describe("successful checks", () => {
     });
 
   test
-    .do(() => vol.fromJSON({
-      ...files,
-      "package.json": `
+    .do(() =>
+      vol.fromJSON({
+        ...files,
+        "package.json": `
       {
         "apollo": {
-          "engineKey": "${ENGINE_API_KEY}"
+          "schemas": {
+            "customSchema": {
+              "engineKey": "${ENGINE_API_KEY}"
+            }
+          }
         }
       }
       `
-    }))
+      })
+    )
     .nock(ENGINE_URI, engineSuccess())
     .stdout()
     .command(["queries:check"])
     .exit(1)
-    .it("compares against the latest uploaded schema with engine key from config", () => {
-      expect(stdout).toContain("FAILURE");
-      expect(stdout).toContain("WARNING");
-    });
+    .it(
+      "compares against the latest uploaded schema with engine key from default config",
+      () => {
+        expect(stdout).toContain("FAILURE");
+        expect(stdout).toContain("WARNING");
+      }
+    );
 
   test
-    .do(() => vol.fromJSON({
-      ...files,
-      "test/package.json": `
+    .do(() =>
+      vol.fromJSON({
+        ...files,
+        "test/package.json": `
       {
         "apollo": {
-          "engineKey": "${ENGINE_API_KEY}"
+          "schemas": {
+            "customSchema": {
+              "engineKey": "${ENGINE_API_KEY}"
+            }
+          }
         }
       }
       `
-    }))
+      })
+    )
     .nock(ENGINE_URI, engineSuccess())
     .stdout()
     .command(["queries:check", "--config=test/package.json"])
     .exit(1)
-    .it("compares against the latest uploaded schema with engine key from config", () => {
-      expect(stdout).toContain("FAILURE");
-      expect(stdout).toContain("WARNING");
-    });
+    .it(
+      "compares against the latest uploaded schema with engine key from specified config",
+      () => {
+        expect(stdout).toContain("FAILURE");
+        expect(stdout).toContain("WARNING");
+      }
+    );
 
   test
     .do(() => vol.fromJSON(files))

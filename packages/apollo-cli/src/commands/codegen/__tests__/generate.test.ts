@@ -198,7 +198,7 @@ describe("successful codegen", () => {
       expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
     });
 
-    test
+  test
     .do(() => {
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),

@@ -5,21 +5,11 @@ import * as path from "path";
 
 import { TargetType, default as generate } from "../../generate";
 
-import {
-  buildClientSchema,
-  visit,
-  extendSchema,
-  buildASTSchema
-} from "graphql";
-
-import { loadSchema } from "../../load-schema";
-
 import { engineFlags } from "../../engine-cli";
-import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
 
 import { Gaze } from "gaze";
 
-import { getOperationPathsForConfig } from "../../config";
+import { resolveDocumentSets, ResolvedDocumentSet } from "../../config";
 import { loadConfigStep } from "../../load-config";
 
 const waitForKey = async () => {
@@ -196,103 +186,115 @@ export default class Generate extends Command {
     }
 
     const tasks: Listr = new Listr([
-      loadConfigStep((msg) => this.error(msg), flags, false, true),
+      loadConfigStep(flags),
       {
-        title: "Scanning for GraphQL queries",
+        title: "Resolving GraphQL document sets and dependencies",
         task: async (ctx, task) => {
-          const paths = getOperationPathsForConfig(ctx.config);
-          task.title = `Scanning for GraphQL queries (${paths.length} found)`;
+          ctx.documentSets = await resolveDocumentSets(ctx.config, true);
+          task.title = `Scanning for GraphQL queries (${
+            ctx.documentSets.length
+          } found)`; // this is a bogus wrong value
 
-          const excludedPaths = [
-            flags.clientSchema ? path.resolve(flags.clientSchema) : undefined,
-            ctx.config.schema ? path.resolve(ctx.config.schema) : undefined
-          ];
+          // const excludedPaths = [
+          //   flags.clientSchema ? path.resolve(flags.clientSchema) : undefined,
+          //   ctx.config.schema ? path.resolve(ctx.config.schema) : undefined
+          // ];
 
-          ctx.queryPaths = paths.filter(
-            p => !excludedPaths.some(v => v == path.resolve(p))
-          ).map(p => path.relative(ctx.config.projectFolder, p));
+          // TODO: move filtering somewhere else
+          // ctx.queryPaths = paths.filter(
+          //   p => !excludedPaths.some(v => v == path.resolve(p))
+          // ).map(p => path.relative(ctx.config.projectFolder, p));
         }
       },
-      {
-        title: "Fetching current schema",
-        task: async ctx => {
-          ctx.schema = await loadSchema(ctx.config).catch(this.error);
-        }
-      },
-      {
-        title: "Parsing GraphQL schema",
-        task: async (ctx, task) => {
-          if (ctx.schema) {
-            ctx.schema = buildClientSchema({ __schema: ctx.schema });
-          } else {
-            task.skip("No server-side schema provided");
-          }
-        }
-      },
-      {
-        title: "Loading client-side GraphQL schema",
-        task: async (ctx, task) => {
-          if (!flags.clientSchema) {
-            task.skip("Path to client schema not provided");
-          } else {
-            const foundDocuments = loadQueryDocuments([
-              path.resolve(flags.clientSchema)
-            ]);
-            if (foundDocuments.length == 0) {
-              this.error("Found no query documents, aborting");
-            }
+      // {
+      //   title: "Fetching current schema",
+      //   task: async ctx => {
+      //     ctx.schema = await loadSchema(ctx.config).catch(this.error);
+      //   }
+      // },
+      // {
+      //   title: "Parsing GraphQL schema",
+      //   task: async (ctx, task) => {
+      //     if (ctx.schema) {
+      //       ctx.schema = buildClientSchema({ __schema: ctx.schema });
+      //     } else {
+      //       task.skip("No server-side schema provided");
+      //     }
+      //   }
+      // },
+      // {
+      //   title: "Loading client-side GraphQL schema",
+      //   task: async (ctx, task) => {
+      //     if (!flags.clientSchema) {
+      //       task.skip("Path to client schema not provided");
+      //     } else {
+      //       const foundDocuments = loadQueryDocuments([
+      //         path.resolve(flags.clientSchema)
+      //       ]);
+      //       if (foundDocuments.length == 0) {
+      //         this.error("Found no query documents, aborting");
+      //       }
 
-            if (foundDocuments.length > 1) {
-              this.warn(
-                "Found more than one query document, using the first one"
-              );
-            }
+      //       if (foundDocuments.length > 1) {
+      //         this.warn(
+      //           "Found more than one query document, using the first one"
+      //         );
+      //       }
 
-            const ast = foundDocuments[0];
-            visit(ast, {
-              enter(node) {
-                if (node.kind == "FieldDefinition") {
-                  (node as any).__client = true;
-                }
-              }
-            });
+      //       const ast = foundDocuments[0];
+            // visit(ast, {
+            //   enter(node) {
+            //     if (node.kind == "FieldDefinition") {
+            //       (node as any).__client = true;
+            //     }
+            //   }
+            // });
 
-            if (ctx.schema) {
-              ctx.schema = extendSchema(ctx.schema, ast);
-            } else {
-              ctx.schema = buildASTSchema(ast);
-            }
-          }
-        }
-      },
+      //       if (ctx.schema) {
+      //         ctx.schema = extendSchema(ctx.schema, ast);
+      //       } else {
+      //         ctx.schema = buildASTSchema(ast);
+      //       }
+      //     }
+      //   }
+      // },
       {
         title: "Generating query files",
         task: async (ctx, task) => {
           task.title = `Generating query files with '${inferredTarget}' target`;
-          const writtenFiles = generate(
-            ctx.queryPaths,
-            ctx.schema,
-            typeof args.output === "string" ? args.output : "__generated__",
-            flags.only,
-            inferredTarget,
-            flags.tagName as string,
-            !flags.outputFlat,
-            {
-              passthroughCustomScalars:
-                flags.passthroughCustomScalars || !!flags.customScalarsPrefix,
-              customScalarsPrefix: flags.customScalarsPrefix || "",
-              addTypename: flags.addTypename,
-              namespace: flags.namespace,
-              operationIdsPath: flags.operationIdsPath,
-              generateOperationIds: !!flags.operationIdsPath,
-              mergeInFieldsFromFragmentSpreads:
-                flags.mergeInFieldsFromFragmentSpreads,
-              useFlowExactObjects: flags.useFlowExactObjects,
-              useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes
-            }
-          );
+          if (ctx.documentSets.length == 0) {
+            // error
+          } else if (ctx.documentSets.length == 1) {
+            const set = ctx.documentSets[0] as ResolvedDocumentSet;
+            const writtenFiles = generate(
+              set.documentPaths.map(p =>
+                path.relative(ctx.config.projectFolder, p)
+              ),
+              set.schema!,
+              typeof args.output === "string" ? args.output : "__generated__",
+              flags.only,
+              inferredTarget,
+              flags.tagName as string,
+              !flags.outputFlat,
+              {
+                passthroughCustomScalars:
+                  flags.passthroughCustomScalars || !!flags.customScalarsPrefix,
+                customScalarsPrefix: flags.customScalarsPrefix || "",
+                addTypename: flags.addTypename,
+                namespace: flags.namespace,
+                operationIdsPath: flags.operationIdsPath,
+                generateOperationIds: !!flags.operationIdsPath,
+                mergeInFieldsFromFragmentSpreads:
+                  flags.mergeInFieldsFromFragmentSpreads,
+                useFlowExactObjects: flags.useFlowExactObjects,
+                useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes
+              }
+            );
 
-          task.title = `Generating query files with '${inferredTarget}' target - wrote ${writtenFiles} files`;
+            task.title = `Generating query files with '${inferredTarget}' target - wrote ${writtenFiles} files`;
+          } else {
+            // TODO
+          }
         }
       }
     ]);

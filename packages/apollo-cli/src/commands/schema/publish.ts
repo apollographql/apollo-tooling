@@ -11,7 +11,7 @@ import { gitInfo } from "../../git";
 
 import { engineFlags } from "../../engine-cli";
 
-import { loadConfigStep } from '../../load-config';
+import { loadConfigStep } from "../../load-config";
 
 export default class SchemaPublish extends Command {
   static description = "Publish a schema to Apollo Engine";
@@ -34,7 +34,7 @@ export default class SchemaPublish extends Command {
       description: "Additional headers to send to server for introspectionQuery"
     }),
     endpoint: flags.string({
-      description: "The URL of the server to fetch the schema from",
+      description: "The URL of the server to fetch the schema from"
     }),
     json: flags.boolean({
       description: "Output successful publish result as JSON"
@@ -47,23 +47,34 @@ export default class SchemaPublish extends Command {
     const tag = "current";
 
     const tasks = new Listr([
-      loadConfigStep((msg) => this.error(msg), flags, true),
+      loadConfigStep(flags, true),
       {
         title: "Fetching current schema",
         task: async ctx => {
-          ctx.schema = await fetchSchema(ctx.config.endpoint).catch(this.error);
+          ctx.currentSchema = Object.values(ctx.config.schemas)[0];
+          if (!ctx.currentSchema.engineKey) {
+            this.error(
+              "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
+            );
+          }
+
+          ctx.schema = await fetchSchema(ctx.currentSchema.endpoint).catch(
+            this.error
+          );
         }
       },
       {
         title: `Publishing to Apollo Engine`,
         task: async (ctx, task) => {
-          task.title = `Publishing ${getIdFromKey(ctx.config.engineKey)} to Apollo Engine`;
+          task.title = `Publishing ${getIdFromKey(
+            ctx.currentSchema.engineKey
+          )} to Apollo Engine`;
           const gitContext = await gitInfo();
           const variables = {
             schema: ctx.schema,
             tag,
             gitContext,
-            id: getIdFromKey(ctx.config.engineKey)
+            id: getIdFromKey(ctx.currentSchema.engineKey)
           };
 
           ctx.current = await toPromise(
@@ -71,7 +82,7 @@ export default class SchemaPublish extends Command {
               query: UPLOAD_SCHEMA,
               variables,
               context: {
-                headers: { ["x-api-key"]: ctx.config.engineKey },
+                headers: { ["x-api-key"]: ctx.currentSchema.engineKey },
                 ...(flags.engine && { uri: flags.engine })
               }
             })
@@ -101,11 +112,11 @@ export default class SchemaPublish extends Command {
       }
     ]);
 
-    return tasks.run().then(({ current, config }) => {
+    return tasks.run().then(({ current, currentSchema }) => {
       // XXX error on unexpected missing schema
       if (!current) return;
       const result = {
-        service: getIdFromKey(config.engineKey),
+        service: getIdFromKey(currentSchema.engineKey),
         hash: current.tag.schema.hash,
         tag: current.tag.tag
       };

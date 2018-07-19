@@ -18,14 +18,15 @@ const test = setup.do(() => mockConsole());
 const ENGINE_API_KEY = "service:test:1234";
 const hash = "12345";
 const localSchema = { __schema: { fakeSchema: true } };
-const schemaSource = fs.readFileSync(path.resolve(__dirname, "./fixtures/schema.graphql"), {
-  encoding: "utf-8",
-});
+const schemaSource = fs.readFileSync(
+  path.resolve(__dirname, "./fixtures/schema.graphql"),
+  {
+    encoding: "utf-8"
+  }
+);
 
-const fullSchema = execute(
-  buildSchema(schemaSource),
-  gql(introspectionQuery)
-).data;
+const fullSchema = execute(buildSchema(schemaSource), gql(introspectionQuery))
+  .data;
 
 const introspectionResult = fs.readFileSync(
   path.resolve(__dirname, "./fixtures/introspection-result.json")
@@ -36,7 +37,7 @@ const localSuccess = nock => {
     .post("/graphql", {
       query: print(gql(introspectionQuery)),
       operationName: "IntrospectionQuery",
-      variables: {},
+      variables: {}
     })
     .reply(200, { data: localSchema });
 };
@@ -53,10 +54,10 @@ const engineSuccess = ({ schema, tag, result } = {}) => nock => {
         gitContext: {
           commit: /.+/i,
           remoteUrl: /apollo-cli/i,
-          committer: /@/i,
-        },
+          committer: /@/i
+        }
       },
-      query: print(UPLOAD_SCHEMA),
+      query: print(UPLOAD_SCHEMA)
     })
     .reply(
       200,
@@ -66,10 +67,10 @@ const engineSuccess = ({ schema, tag, result } = {}) => nock => {
             uploadSchema: {
               code: "UPLOAD_SUCCESS",
               message: "upload was successful",
-              tag: { tag: tag || "current", schema: { hash: "12345" } },
-            },
-          },
-        },
+              tag: { tag: tag || "current", schema: { hash: "12345" } }
+            }
+          }
+        }
       }
     );
 };
@@ -110,30 +111,39 @@ describe("successful uploads", () => {
     .env({ ENGINE_API_KEY })
     .command([
       "schema:publish",
-      "--endpoint=https://staging.example.com/graphql",
+      "--endpoint=https://staging.example.com/graphql"
     ])
     .it("calls engine with a schema from a custom remote", ({ stdout }) => {
       expect(uiLog).toContain("12345");
     });
 
   test
-    .do(() => vol.fromJSON({
-      "package.json": `
+    .do(() =>
+      vol.fromJSON({
+        "package.json": `
       {
         "apollo": {
-          "endpoint": "https://staging.example.com/graphql",
-          "engineKey": "${ENGINE_API_KEY}"
+          "schemas": {
+            "customEndpoint": {
+              "endpoint": "https://staging.example.com/graphql",
+              "engineKey": "${ENGINE_API_KEY}"
+            }
+          }
         }
       }
       `
-    }))
+      })
+    )
     .stdout()
     .nock("https://staging.example.com", localSuccess)
     .nock(ENGINE_URI, engineSuccess())
-    .command([ "schema:publish" ])
-    .it("calls engine with a schema from a custom remote specified in config", ({ stdout }) => {
-      expect(uiLog).toContain("12345");
-    });
+    .command(["schema:publish"])
+    .it(
+      "calls engine with a schema from a custom remote specified in config",
+      ({ stdout }) => {
+        expect(uiLog).toContain("12345");
+      }
+    );
 
   test
     .nock("http://localhost:4000", localSuccess)
@@ -154,7 +164,7 @@ describe("successful uploads", () => {
         .post("/graphql", {
           query: print(gql(introspectionQuery)),
           operationName: "IntrospectionQuery",
-          variables: {},
+          variables: {}
         })
         .reply(200, { data: localSchema });
     })
@@ -164,7 +174,7 @@ describe("successful uploads", () => {
       "schema:publish",
       "--endpoint=https://staging.example.com/graphql",
       "--header=Authorization: 1234",
-      "--header=Hello: World",
+      "--header=Hello: World"
     ])
     .it(
       "calls engine with a schema from a custom remote with custom headers",
@@ -174,16 +184,15 @@ describe("successful uploads", () => {
     );
 
   test
-    .do(() => vol.fromJSON({
-      "introspection-result.json": introspectionResult.toString()
-    }))
+    .do(() =>
+      vol.fromJSON({
+        "introspection-result.json": introspectionResult.toString()
+      })
+    )
     .stdout()
     .nock(ENGINE_URI, engineSuccess())
     .env({ ENGINE_API_KEY })
-    .command([
-      "schema:publish",
-      "--endpoint=introspection-result.json"
-    ])
+    .command(["schema:publish", "--endpoint=introspection-result.json"])
     .it(
       "calls engine with a schema from an introspection result on the filesystem",
       ({ stdout }) => {
@@ -192,16 +201,15 @@ describe("successful uploads", () => {
     );
 
   test
-    .do(() => vol.fromJSON({
-      "schema.graphql": schemaSource
-    }))
+    .do(() =>
+      vol.fromJSON({
+        "schema.graphql": schemaSource
+      })
+    )
     .stdout()
     .nock(ENGINE_URI, engineSuccess({ schema: fullSchema.__schema }))
     .env({ ENGINE_API_KEY })
-    .command([
-      "schema:publish",
-      "--endpoint=schema.graphql"
-    ])
+    .command(["schema:publish", "--endpoint=schema.graphql"])
     .it(
       "calls engine with a schema from a schema file on the filesystem",
       ({ stdout }) => {
@@ -237,11 +245,11 @@ describe("error handling", () => {
               uploadSchema: {
                 code: "NO_CHANGES",
                 message: "no changes to current",
-                tag: { tag: "current", schema: { hash: "12345" } },
-              },
-            },
-          },
-        },
+                tag: { tag: "current", schema: { hash: "12345" } }
+              }
+            }
+          }
+        }
       })
     )
     .env({ ENGINE_API_KEY })

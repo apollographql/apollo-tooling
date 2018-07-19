@@ -13,7 +13,7 @@ import { gitInfo } from "../../git";
 import { ChangeType } from "../../printer/ast";
 
 import { engineFlags } from "../../engine-cli";
-import { loadConfigStep } from '../../load-config';
+import { loadConfigStep } from "../../load-config";
 
 // how its brought down from schema
 interface Change {
@@ -55,11 +55,18 @@ export default class SchemaCheck extends Command {
     const { flags } = this.parse(SchemaCheck);
 
     const tasks = new Listr([
-      loadConfigStep((msg) => this.error(msg), flags, true),
+      loadConfigStep(flags),
       {
         title: "Fetching local schema",
         task: async ctx => {
-          ctx.schema = await fetchSchema(ctx.config.endpoint);
+          ctx.currentSchema = Object.values(ctx.config.schemas)[0];
+          if (!ctx.currentSchema.engineKey) {
+            this.error(
+              "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
+            );
+          }
+
+          ctx.schema = await fetchSchema(ctx.currentSchema.endpoint);
         }
       },
       {
@@ -68,7 +75,7 @@ export default class SchemaCheck extends Command {
           const gitContext = await gitInfo();
 
           const variables = {
-            id: getIdFromKey(ctx.config.engineKey),
+            id: getIdFromKey(ctx.currentSchema.engineKey),
             schema: ctx.schema,
             // XXX hardcoded for now
             tag: "current",
@@ -80,7 +87,7 @@ export default class SchemaCheck extends Command {
               query: VALIDATE_SCHEMA,
               variables,
               context: {
-                headers: { ["x-api-key"]: ctx.config.engineKey },
+                headers: { ["x-api-key"]: ctx.currentSchema.engineKey },
                 ...(flags.engine && { uri: flags.engine })
               }
             })

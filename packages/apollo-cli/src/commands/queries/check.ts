@@ -13,8 +13,8 @@ import { gitInfo } from "../../git";
 import { VALIDATE_OPERATIONS } from "../../operations/validateOperations";
 import { ChangeType } from "../../printer/ast";
 import { format } from "../schema/check";
-import { getOperationPathsForConfig } from "../../config";
-import { loadConfigStep } from '../../load-config';
+import { resolveDocumentSets } from "../../config";
+import { loadConfigStep } from "../../load-config";
 
 export default class CheckQueries extends Command {
   static description =
@@ -48,13 +48,15 @@ export default class CheckQueries extends Command {
     const { flags } = this.parse(CheckQueries);
 
     const tasks: Listr = new Listr([
-      loadConfigStep((msg) => this.error(msg), flags, true),
+      loadConfigStep(flags, false),
       {
-        title: "Scanning for GraphQL queries",
+        title: "Resolving GraphQL document sets",
         task: async (ctx, task) => {
-          const paths = getOperationPathsForConfig(ctx.config);
-
-          const operations = loadQueryDocuments(paths, flags.tagName);
+          ctx.documentSets = await resolveDocumentSets(ctx.config, false);
+          const operations = loadQueryDocuments(
+            ctx.documentSets[0].documentPaths,
+            flags.tagName
+          );
           task.title = `Scanning for GraphQL queries (${
             operations.length
           } found)`;
@@ -65,10 +67,16 @@ export default class CheckQueries extends Command {
       {
         title: "Checking query compatibility with schema",
         task: async ctx => {
+          if (!ctx.documentSets[0].engineKey) {
+            this.error(
+              "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
+            );
+          }
+
           const gitContext = await gitInfo();
 
           const variables = {
-            id: getIdFromKey(ctx.config.engineKey),
+            id: getIdFromKey(ctx.documentSets[0].engineKey),
             // XXX hardcoded for now
             tag: "current",
             gitContext,
@@ -80,7 +88,7 @@ export default class CheckQueries extends Command {
               query: VALIDATE_OPERATIONS,
               variables,
               context: {
-                headers: { ["x-api-key"]: ctx.config.engineKey },
+                headers: { ["x-api-key"]: ctx.documentSets[0].engineKey },
                 ...(flags.engine && { uri: flags.engine })
               }
             })

@@ -1,37 +1,80 @@
-import { loadConfigFromFile, findAndLoadConfig } from './config';
-import { ListrTask } from 'listr';
+import {
+  loadConfigFromFile,
+  findAndLoadConfig,
+  SchemaDependency
+} from "./config";
+import { ListrTask } from "listr";
 
-export function loadConfigStep(error: (msg: string) => void, flags: any, engineRequired: boolean, noDefaultEndpoint: boolean = false): ListrTask {
-  const header: any[] = Array.isArray(flags.header) ? flags.header : [flags.header];
+export function loadConfigStep(
+  flags: any,
+  defaultEndpoint: boolean = true
+): ListrTask {
+  const header: any[] = Array.isArray(flags.header)
+    ? flags.header
+    : [flags.header];
   const task = {
     title: "Loading Apollo config",
     task: async (ctx: any) => {
       if (flags.config) {
-        ctx.config = loadConfigFromFile(flags.config, noDefaultEndpoint);
+        ctx.config = loadConfigFromFile(flags.config, defaultEndpoint, !flags.clientSchema);
       } else {
-        ctx.config = findAndLoadConfig(process.cwd(), noDefaultEndpoint);
+        ctx.config = findAndLoadConfig(process.cwd(), defaultEndpoint, !flags.clientSchema);
       }
 
-      ctx.config = {
-        ...ctx.config,
-        endpoint: {
-          ...ctx.config.endpoint,
-          ...(flags.endpoint && { url: flags.endpoint }),
-          ...(header.length > 0 && { headers: (header
-            .filter(x => !!x)
-            .map(x => JSON.parse(x))
-            .reduce((a, b) => Object.assign(a, b), {})) })
-        },
-        ...(flags.key && { engineKey: flags.key }),
-        ...(flags.queries && { operations: flags.queries.split("\n") }),
-        ...(flags.schema && { schema: flags.schema })
-      };
+      if (flags.schema || flags.endpoint) {
+        ctx.config.schemas = {
+          default: {
+            schema: flags.schema,
+            endpoint: flags.endpoint && {
+              url: flags.endpoint,
+              ...(header.length > 0 && {
+                headers: header
+                  .filter(x => !!x)
+                  .map(x => JSON.parse(x))
+                  .reduce((a, b) => Object.assign(a, b), {})
+              })
+            }
+          }
+        };
+      }
 
-      if (!ctx.config.engineKey && engineRequired) {
-        error(
-          "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
-        );
-        return;
+      if (flags.clientSchema) {
+        const extendsName = ctx.config.schemas.default ? "serverSchema" : undefined;
+        ctx.config.schemas.serverSchema = ctx.config.schemas.default;
+
+        ctx.config.schemas.default = {
+          extends: extendsName,
+          schema: flags.clientSchema,
+          clientSide: true
+        }
+      }
+
+      if (flags.queries) {
+        ctx.config.documents = [
+          {
+            schema: "default",
+            includes: flags.queries.split("\n"),
+            excludes: []
+          }
+        ];
+      }
+
+      if (flags.key) {
+        if (Object.keys(ctx.config.schemas).length == 1) {
+          (Object.values(ctx.config.schemas)[0] as SchemaDependency).engineKey =
+            flags.key;
+        }
+      }
+
+      if (
+        ctx.config.documents.length == 0 &&
+        Object.keys(ctx.config.schemas).length == 1
+      ) {
+        ctx.config.documents.push({
+          schema: Object.keys(ctx.config.schemas)[0],
+          includes: ["**/*.graphql"],
+          excludes: []
+        });
       }
     }
   };

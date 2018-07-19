@@ -8,7 +8,7 @@ import { engineFlags } from "../../engine-cli";
 
 import { loadSchema } from "../../load-schema";
 
-import { loadConfigStep } from '../../load-config';
+import { loadConfigStep } from "../../load-config";
 
 export default class SchemaDownload extends Command {
   static description = "Download the schema from your GraphQL endpoint.";
@@ -50,11 +50,13 @@ export default class SchemaDownload extends Command {
     const { flags, args } = this.parse(SchemaDownload);
 
     const tasks: Listr = new Listr([
-      loadConfigStep((msg) => this.error(msg), flags, false),
+      loadConfigStep(flags),
       {
         title: "Fetching current schema",
         task: async ctx => {
-          ctx.schema = await loadSchema(ctx.config).catch(this.error);
+          ctx.schema = await loadSchema(
+            Object.values(ctx.config.schemas)[0]
+          ).catch(this.error);
         }
       },
       {
