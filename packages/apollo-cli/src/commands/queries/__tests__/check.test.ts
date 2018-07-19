@@ -98,7 +98,7 @@ describe("successful checks", () => {
       {
         "apollo": {
           "schemas": {
-            "customSchema": {
+            "default": {
               "engineKey": "${ENGINE_API_KEY}"
             }
           }
@@ -127,7 +127,7 @@ describe("successful checks", () => {
       {
         "apollo": {
           "schemas": {
-            "customSchema": {
+            "default": {
               "engineKey": "${ENGINE_API_KEY}"
             }
           }

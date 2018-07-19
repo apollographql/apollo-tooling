@@ -74,7 +74,9 @@ function loadSchemaConfig(
       obj.endpoint,
       !obj.engineKey && defaultEndpoint
     ),
-    engineKey: obj.engineKey
+    engineKey: obj.engineKey,
+    clientSide: obj.clientSide,
+    extends: obj.extends
   };
 }
 

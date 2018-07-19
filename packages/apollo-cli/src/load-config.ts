@@ -68,10 +68,10 @@ export function loadConfigStep(
 
       if (
         ctx.config.documents.length == 0 &&
-        Object.keys(ctx.config.schemas).length == 1
+        ctx.config.schemas.default
       ) {
         ctx.config.documents.push({
-          schema: Object.keys(ctx.config.schemas)[0],
+          schema: "default",
           includes: ["**/*.graphql"],
           excludes: []
         });
