@@ -1,0 +1,76 @@
+{
+  "name": "apollo-vscode",
+  "description": "A VS Code extension for Apollo GraphQL projects",
+  "author": "Apollo GraphQL",
+  "license": "MIT",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "apollographql/apollo-cli"
+  },
+  "engines": {
+    "vscode": "^1.23.0"
+  },
+  "publisher": "apollographql",
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/apollo.config.js",
+    "workspaceContains:**/package.json"
+  ],
+  "main": "./lib/extension",
+  "contributes": {
+    "configuration": {},
+    "languages": [
+      {
+        "id": "graphql",
+        "extensions": [
+          ".graphql",
+          ".gql"
+        ],
+        "aliases": [
+          "GraphQL"
+        ],
+        "configuration": "./graphql.configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "graphql",
+        "scopeName": "source.graphql",
+        "path": "./syntaxes/graphql.json"
+      },
+      {
+        "injectTo": [
+          "source.js",
+          "source.ts",
+          "source.js.jsx",
+          "source.tsx"
+        ],
+        "scopeName": "inline.graphql",
+        "path": "./syntaxes/graphql.js.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.graphql": "graphql"
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "clean": "rm -rf lib",
+    "prebuild": "npm run clean && rm -rf node_modules && npm install && npm run update-vscode",
+    "build": "tsc -p .",
+    "watch": "tsc -w -p ./",
+    "update-vscode": "node ./node_modules/vscode/bin/install",
+    "packageExtension": "npm run build && ./node_modules/vsce/out/vsce package"
+  },
+  "dependencies": {
+    "vscode": "^1.1.17",
+    "vscode-languageclient": "next"
+  },
+  "devDependencies": {
+    "typescript": "^2.6.2",
+    "vsce": "^1.44.0"
+  }
+}

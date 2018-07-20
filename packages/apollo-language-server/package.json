@@ -1,0 +1,51 @@
+{
+  "name": "apollo-language-server",
+  "description": "A language server for Apollo GraphQL projects",
+  "author": "Apollo GraphQL",
+  "license": "MIT",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "apollographql/apollo-cli"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "scripts": {
+    "installServer": "installServerIntoExtension ../apollo-vscode ./package.json ./tsconfig.json && ./copy-apollo-libs.sh",
+    "clean": "rm -rf ../apollo-vscode/server",
+    "prebuild": "npm run clean",
+    "build": "npm run installServer && tsc -p .",
+    "watch": "npm run installServer && tsc -w -p .",
+    "watchOnly": "tsc -w -p ."
+  },
+  "dependencies": {
+    "apollo": "^1.4.0",
+    "apollo-link": "^1.2.2",
+    "apollo-link-http": "^1.5.4",
+    "apollo-link-ws": "^1.0.8",
+    "subscriptions-transport-ws": "^0.9.12",
+    "ws": "^5.2.2",
+    "core-js": "^2.5.7",
+    "glob": "^7.1.2",
+    "graphql": "^0.13.1",
+    "graphql-language-service-server": "^1.1.2",
+    "graphql-tag": "^2.9.2",
+    "minimatch": "^3.0.4",
+    "node-fetch": "^2.1.2",
+    "recursive-readdir": "^2.2.2",
+    "regenerator-runtime": "^0.11.1",
+    "vscode-languageserver": "next",
+    "vscode-uri": "^1.0.3",
+    "moment": "^2.22.2"
+  },
+  "devDependencies": {
+    "@types/graphql": "^0.13.1",
+    "@types/minimatch": "^3.0.3",
+    "@types/node-fetch": "^2.1.1",
+    "@types/recursive-readdir": "^2.2.0",
+    "@types/ws": "^5.1.2",
+    "@types/moment": "^2.13.0",
+    "typescript": "^2.6.2"
+  }
+}
