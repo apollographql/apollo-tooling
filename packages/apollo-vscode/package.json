@@ -59,14 +59,15 @@
   },
   "scripts": {
     "clean": "rm -rf lib",
-    "prebuild": "npm run clean",
+    "prebuild": "npm run clean && rm -rf node_modules && npm install && npm run update-vscode",
     "build": "tsc -p .",
     "watch": "tsc -w -p ./",
     "update-vscode": "node ./node_modules/vscode/bin/install",
-    "packageExtension": "rm -rf node_modules && npm install && npm run update-vscode && npm run build && vsce package"
+    "packageExtension": "npm run build && vsce package"
   },
   "dependencies": {
     "vscode": "^1.1.17",
-    "vscode-languageclient": "next"
+    "vscode-languageclient": "next",
+    "typescript": "^2.6.2"
   }
 }

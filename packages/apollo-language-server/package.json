@@ -45,6 +45,7 @@
     "@types/node-fetch": "^2.1.1",
     "@types/recursive-readdir": "^2.2.0",
     "@types/ws": "^5.1.2",
-    "@types/moment": "^2.13.0"
+    "@types/moment": "^2.13.0",
+    "typescript": "^2.6.2"
   }
 }

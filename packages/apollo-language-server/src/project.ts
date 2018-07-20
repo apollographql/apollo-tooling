@@ -162,7 +162,10 @@ export class GraphQLProject {
                 id: getIdFromKey(schemaDef.engineKey!)
               },
               context: {
-                headers: { ["x-api-key"]: schemaDef.engineKey }
+                headers: { ["x-api-key"]: schemaDef.engineKey },
+                ...(this.config.engineEndpoint && {
+                  uri: this.config.engineEndpoint
+                })
               }
             })
           );
