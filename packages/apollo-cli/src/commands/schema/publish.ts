@@ -91,7 +91,9 @@ export default class SchemaPublish extends Command {
               variables,
               context: {
                 headers: { ["x-api-key"]: ctx.currentSchema.engineKey },
-                ...(flags.engine && { uri: flags.engine })
+                ...(ctx.config.engineEndpoint && {
+                  uri: ctx.config.engineEndpoint
+                })
               }
             })
           )

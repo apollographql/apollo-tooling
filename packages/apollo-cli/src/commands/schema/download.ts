@@ -63,7 +63,8 @@ export default class SchemaDownload extends Command {
           }
 
           ctx.schema = await loadSchema(
-            Object.values(ctx.config.schemas)[0]
+            Object.values(ctx.config.schemas)[0],
+            ctx.config
           ).catch(this.error);
         }
       },

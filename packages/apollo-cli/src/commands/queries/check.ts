@@ -89,7 +89,9 @@ export default class CheckQueries extends Command {
               variables,
               context: {
                 headers: { ["x-api-key"]: ctx.documentSets[0].engineKey },
-                ...(flags.engine && { uri: flags.engine })
+                ...(ctx.config.engineEndpoint && {
+                  uri: ctx.config.engineEndpoint
+                })
               }
             })
           )

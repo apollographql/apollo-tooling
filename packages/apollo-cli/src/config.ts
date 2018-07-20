@@ -221,7 +221,9 @@ export async function resolveSchema(
       )
     : referredSchema.clientSide
       ? buildASTSchema(loadAsAST())
-      : buildClientSchema({ __schema: await loadSchema(referredSchema) });
+      : buildClientSchema({
+          __schema: await loadSchema(referredSchema, config)
+        });
 }
 
 export async function resolveDocumentSets(

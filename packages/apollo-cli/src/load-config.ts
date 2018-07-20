@@ -76,6 +76,10 @@ export function loadConfigStep(
         }
       }
 
+      if (flags.engine) {
+        ctx.config.engineEndpoint = flags.engine;
+      }
+
       if (ctx.config.queries.length == 0 && ctx.config.schemas.default) {
         ctx.config.queries.push({
           schema: "default",
