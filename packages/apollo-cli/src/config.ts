@@ -38,6 +38,7 @@ export interface ApolloConfig {
   name?: string;
   schemas?: { [name: string]: SchemaDependency }; // path to JSON introspection, if not provided endpoint will be used
   queries?: DocumentSet[];
+  engineEndpoint?: string;
 }
 
 function loadEndpointConfig(
@@ -127,7 +128,8 @@ export function loadConfig(
         ? (obj.queries as any[])
         : [obj.queries]
       : []
-    ).map(d => loadDocumentSet(d))
+    ).map(d => loadDocumentSet(d)),
+    engineEndpoint: obj.engineEndpoint
   };
 }
 
