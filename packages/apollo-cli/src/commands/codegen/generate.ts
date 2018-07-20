@@ -194,7 +194,7 @@ export default class Generate extends Command {
 
           task.title = `Scanning for GraphQL queries (${(ctx.documentSets as ResolvedDocumentSet[])
             .map(s => s.documentPaths.length)
-            .reduce((a, b) => a + b, 0)} found)`; // this is a bogus wrong value
+            .reduce((a, b) => a + b, 0)} found)`;
         }
       },
       {
