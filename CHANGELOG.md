@@ -1,6 +1,20 @@
 # Changelog
 ## vNEXT
 
+## v1.5.0
+#### :rocket: Feature
+* `apollo-language-server`, `apollo-vscode`
+  * [#504](https://github.com/apollographql/apollo-cli/pull/504) Add Apollo VS Code extension ([@shadaj](https://github.com/shadaj))
+* `apollo-cli`, `apollo-codegen-core`
+  * [#497](https://github.com/apollographql/apollo-cli/pull/497) Load config from apollo.config.js or package.json ([@shadaj](https://github.com/shadaj))
+
+#### :house: Internal
+* `apollo-cli`
+  * [#492](https://github.com/apollographql/apollo-cli/pull/492) Make TypeScript options more consistent across packages ([@shadaj](https://github.com/shadaj))
+
+#### Committers: 1
+- Shadaj Laddad ([@shadaj](https://github.com/shadaj))
+
 ## v1.4.0
 #### :rocket: Feature
 * `apollo-cli`

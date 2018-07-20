@@ -20,7 +20,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/1.4.0 darwin-x64 node-v10.4.1
+apollo/1.5.0 darwin-x64 node-v10.4.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -64,6 +64,8 @@ OPTIONS
   --clientSchema=clientSchema                Path to your client-side GraphQL schema file for `apollo-link-state`
                                              (.graphql, .json, .js, .ts)
 
+  --config=config                            Path to your Apollo config file
+
   --customScalarsPrefix=customScalarsPrefix  Include a prefix when using provided types for custom scalars
 
   --key=key                                  The API key for the Apollo Engine service
@@ -104,7 +106,7 @@ OPTIONS
   --watch                                    Watch the query files to auto-generate on changes.
 ```
 
-_See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/codegen/generate.ts)_
+_See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-cli/blob/v1.5.0/src/commands/codegen/generate.ts)_
 
 ## `apollo help [COMMAND]`
 
@@ -133,15 +135,16 @@ USAGE
 
 OPTIONS
   -h, --help         Show command help
+  --config=config    Path to your Apollo config file
   --json             Output result as JSON
   --key=key          The API key for the Apollo Engine service
-  --queries=queries  [default: **/*.graphql] Path to your GraphQL queries, can include search tokens like **
+  --queries=queries  Path to your GraphQL queries, can include search tokens like **
 
   --tagName=tagName  [default: gql] Name of the template literal tag used to identify template literals containing
                      GraphQL queries in Javascript/Typescript code
 ```
 
-_See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/queries/check.ts)_
+_See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.5.0/src/commands/queries/check.ts)_
 
 ## `apollo schema:check`
 
@@ -153,13 +156,14 @@ USAGE
 
 OPTIONS
   -h, --help           Show command help
-  --endpoint=endpoint  [default: http://localhost:4000/graphql] The URL of the server to fetch the schema from
+  --config=config      Path to your Apollo config file
+  --endpoint=endpoint  The URL of the server to fetch the schema from
   --header=header      Additional headers to send to server for introspectionQuery
   --json               Output result as JSON
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/schema/check.ts)_
+_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.5.0/src/commands/schema/check.ts)_
 
 ## `apollo schema:download OUTPUT`
 
@@ -174,16 +178,13 @@ ARGUMENTS
 
 OPTIONS
   -h, --help           Show command help
-
-  --endpoint=endpoint  [default: http://localhost:4000/graphql] The URL of the server to fetch the schema from or path
-                       to ./your/local/schema.graphql
-
+  --config=config      Path to your Apollo config file
+  --endpoint=endpoint  The URL of the server to fetch the schema from or path to ./your/local/schema.graphql
   --header=header      Additional headers to send to server for introspectionQuery
-
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/schema/download.ts)_
+_See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-cli/blob/v1.5.0/src/commands/schema/download.ts)_
 
 ## `apollo schema:publish`
 
@@ -195,13 +196,14 @@ USAGE
 
 OPTIONS
   -h, --help           Show command help
-  --endpoint=endpoint  [default: http://localhost:4000/graphql] The URL of the server to fetch the schema from
+  --config=config      Path to your Apollo config file
+  --endpoint=endpoint  The URL of the server to fetch the schema from
   --header=header      Additional headers to send to server for introspectionQuery
   --json               Output successful publish result as JSON
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/schema/publish.ts)_
+_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.5.0/src/commands/schema/publish.ts)_
 <!-- commandsstop -->
 
 # Code Generation
