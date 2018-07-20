@@ -3,13 +3,7 @@ import { Command, flags } from "@oclif/command";
 import { table, styledJSON } from "heroku-cli-util";
 import * as Listr from "listr";
 import { toPromise, execute } from "apollo-link";
-import {
-  print,
-  GraphQLError
-} from "graphql";
-
-import * as fg from "glob";
-import { withGlobalFS } from "apollo-codegen-core/lib/localfs";
+import { print, GraphQLError } from "graphql";
 
 import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
 
@@ -19,6 +13,8 @@ import { gitInfo } from "../../git";
 import { VALIDATE_OPERATIONS } from "../../operations/validateOperations";
 import { ChangeType } from "../../printer/ast";
 import { format } from "../schema/check";
+import { resolveDocumentSets } from "../../config";
+import { loadConfigStep } from "../../load-config";
 
 export default class CheckQueries extends Command {
   static description =
@@ -29,10 +25,12 @@ export default class CheckQueries extends Command {
       char: "h",
       description: "Show command help"
     }),
+    config: flags.string({
+      description: "Path to your Apollo config file"
+    }),
     queries: flags.string({
       description:
-        "Path to your GraphQL queries, can include search tokens like **",
-      default: "**/*.graphql"
+        "Path to your GraphQL queries, can include search tokens like **"
     }),
     json: flags.boolean({
       description: "Output result as JSON"
@@ -49,24 +47,16 @@ export default class CheckQueries extends Command {
   async run() {
     const { flags } = this.parse(CheckQueries);
 
-    const apiKey = flags.key;
-    if (!apiKey) {
-      this.error(
-        "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
-      );
-      return;
-    }
     const tasks: Listr = new Listr([
+      loadConfigStep(flags, false),
       {
-        title: "Scanning for GraphQL queries",
+        title: "Resolving GraphQL document sets",
         task: async (ctx, task) => {
-          const paths = withGlobalFS(() => {
-            return (flags.queries ? flags.queries.split("\n") : []).flatMap(p =>
-              fg.sync(p)
-            );
-          });
-
-          const operations = loadQueryDocuments(paths, flags.tagName);
+          ctx.documentSets = await resolveDocumentSets(ctx.config, false);
+          const operations = loadQueryDocuments(
+            ctx.documentSets[0].documentPaths,
+            flags.tagName
+          );
           task.title = `Scanning for GraphQL queries (${
             operations.length
           } found)`;
@@ -76,11 +66,17 @@ export default class CheckQueries extends Command {
       },
       {
         title: "Checking query compatibility with schema",
-        task: async (ctx) => {
+        task: async ctx => {
+          if (!ctx.documentSets[0].engineKey) {
+            this.error(
+              "No API key was specified. Set an Apollo Engine API key using the `--key` flag or the `ENGINE_API_KEY` environment variable."
+            );
+          }
+
           const gitContext = await gitInfo();
 
           const variables = {
-            id: getIdFromKey(apiKey),
+            id: getIdFromKey(ctx.documentSets[0].engineKey),
             // XXX hardcoded for now
             tag: "current",
             gitContext,
@@ -92,8 +88,10 @@ export default class CheckQueries extends Command {
               query: VALIDATE_OPERATIONS,
               variables,
               context: {
-                headers: { ["x-api-key"]: apiKey },
-                ...(flags.engine && { uri: flags.engine })
+                headers: { ["x-api-key"]: ctx.documentSets[0].engineKey },
+                ...(ctx.config.engineEndpoint && {
+                  uri: ctx.config.engineEndpoint
+                })
               }
             })
           )

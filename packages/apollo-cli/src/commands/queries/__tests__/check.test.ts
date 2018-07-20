@@ -4,17 +4,8 @@ jest.mock("apollo-codegen-core/lib/localfs", () => {
 
 // this is because of herkou-cli-utils hacky mocking system on their console logger
 import { stdout, mockConsole } from "heroku-cli-util";
-import * as path from "path";
-import * as fs from "fs";
 import { test as setup } from "apollo-cli-test";
-import {
-  introspectionQuery,
-  print,
-  parse,
-  execute,
-  buildSchema
-} from "graphql";
-import gql from "graphql-tag";
+import { print, parse } from "graphql";
 import { ENGINE_URI } from "../../../engine";
 import { VALIDATE_OPERATIONS } from "../../../operations/validateOperations";
 
@@ -98,6 +89,64 @@ describe("successful checks", () => {
       expect(stdout).toContain("FAILURE");
       expect(stdout).toContain("WARNING");
     });
+
+  test
+    .do(() =>
+      vol.fromJSON({
+        ...files,
+        "package.json": `
+      {
+        "apollo": {
+          "schemas": {
+            "default": {
+              "engineKey": "${ENGINE_API_KEY}"
+            }
+          }
+        }
+      }
+      `
+      })
+    )
+    .nock(ENGINE_URI, engineSuccess())
+    .stdout()
+    .command(["queries:check"])
+    .exit(1)
+    .it(
+      "compares against the latest uploaded schema with engine key from default config",
+      () => {
+        expect(stdout).toContain("FAILURE");
+        expect(stdout).toContain("WARNING");
+      }
+    );
+
+  test
+    .do(() =>
+      vol.fromJSON({
+        ...files,
+        "test/package.json": `
+      {
+        "apollo": {
+          "schemas": {
+            "default": {
+              "engineKey": "${ENGINE_API_KEY}"
+            }
+          }
+        }
+      }
+      `
+      })
+    )
+    .nock(ENGINE_URI, engineSuccess())
+    .stdout()
+    .command(["queries:check", "--config=test/package.json"])
+    .exit(1)
+    .it(
+      "compares against the latest uploaded schema with engine key from specified config",
+      () => {
+        expect(stdout).toContain("FAILURE");
+        expect(stdout).toContain("WARNING");
+      }
+    );
 
   test
     .do(() => vol.fromJSON(files))
