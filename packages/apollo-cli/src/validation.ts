@@ -1,5 +1,4 @@
 import {
-  validate,
   specifiedRules,
   NoUnusedFragmentsRule,
   KnownDirectivesRule,
@@ -9,13 +8,24 @@ import {
   GraphQLSchema,
   DocumentNode,
   OperationDefinitionNode,
-  TypeInfo
-} from 'graphql';
+  TypeInfo,
+  FragmentDefinitionNode,
+  visit,
+  visitWithTypeInfo,
+  visitInParallel
+} from "graphql";
 
-import { ToolError, logError } from 'apollo-codegen-core/lib/errors';
+import { ToolError, logError } from "apollo-codegen-core/lib/errors";
 
-export function validateQueryDocument(schema: GraphQLSchema, document: DocumentNode, typeInfo?: TypeInfo) {
-  const specifiedRulesToBeRemoved = [NoUnusedFragmentsRule, KnownDirectivesRule];
+export function getValidationErrors(
+  schema: GraphQLSchema,
+  document: DocumentNode,
+  fragments?: { [fragmentName: string]: FragmentDefinitionNode }
+) {
+  const specifiedRulesToBeRemoved = [
+    NoUnusedFragmentsRule,
+    KnownDirectivesRule
+  ];
 
   const rules = [
     NoAnonymousQueries,
@@ -23,12 +33,25 @@ export function validateQueryDocument(schema: GraphQLSchema, document: DocumentN
     ...specifiedRules.filter(rule => !specifiedRulesToBeRemoved.includes(rule))
   ];
 
-  const validationErrors = validate(schema, document, rules, typeInfo);
+  const typeInfo = new TypeInfo(schema);
+  const context = new ValidationContext(schema, document, typeInfo);
+  (context as any)._fragments = fragments;
+  const visitors = rules.map(rule => rule(context));
+  // Visit the whole document with each instance of all provided rules.
+  visit(document, visitWithTypeInfo(typeInfo, visitInParallel(visitors)));
+  return context.getErrors();
+}
+
+export function validateQueryDocument(
+  schema: GraphQLSchema,
+  document: DocumentNode
+) {
+  const validationErrors = getValidationErrors(schema, document);
   if (validationErrors && validationErrors.length > 0) {
     for (const error of validationErrors) {
       logError(error);
     }
-    throw new ToolError('Validation of GraphQL query document failed');
+    throw new ToolError("Validation of GraphQL query document failed");
   }
 }
 
@@ -36,7 +59,11 @@ export function NoAnonymousQueries(context: ValidationContext) {
   return {
     OperationDefinition(node: OperationDefinitionNode) {
       if (!node.name) {
-        context.reportError(new GraphQLError('Apollo does not support anonymous operations', [node]));
+        context.reportError(
+          new GraphQLError("Apollo does not support anonymous operations", [
+            node
+          ])
+        );
       }
       return false;
     }
@@ -47,10 +74,10 @@ export function NoTypenameAlias(context: ValidationContext) {
   return {
     Field(node: FieldNode) {
       const aliasName = node.alias && node.alias.value;
-      if (aliasName == '__typename') {
+      if (aliasName == "__typename") {
         context.reportError(
           new GraphQLError(
-            'Apollo needs to be able to insert __typename when needed, please do not use it as an alias',
+            "Apollo needs to be able to insert __typename when needed, please do not use it as an alias",
             [node]
           )
         );
