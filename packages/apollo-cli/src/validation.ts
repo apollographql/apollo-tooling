@@ -35,7 +35,11 @@ export function getValidationErrors(
 
   const typeInfo = new TypeInfo(schema);
   const context = new ValidationContext(schema, document, typeInfo);
-  (context as any)._fragments = fragments;
+
+  if (fragments) {
+    (context as any)._fragments = fragments;
+  }
+
   const visitors = rules.map(rule => rule(context));
   // Visit the whole document with each instance of all provided rules.
   visit(document, visitWithTypeInfo(typeInfo, visitInParallel(visitors)));
