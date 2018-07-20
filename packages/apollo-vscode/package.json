@@ -58,10 +58,12 @@
     ]
   },
   "scripts": {
-    "compile": "tsc -p ./",
+    "clean": "rm -rf lib",
+    "prebuild": "npm run clean",
+    "build": "tsc -p .",
     "watch": "tsc -w -p ./",
     "update-vscode": "node ./node_modules/vscode/bin/install",
-    "packageExtension": "rm -rf node_modules && npm install && npm run update-vscode && npm run compile && vsce package"
+    "packageExtension": "rm -rf node_modules && npm install && npm run update-vscode && npm run build && vsce package"
   },
   "dependencies": {
     "vscode": "^1.1.17",
