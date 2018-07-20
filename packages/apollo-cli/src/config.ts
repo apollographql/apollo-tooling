@@ -37,7 +37,7 @@ export interface ApolloConfig {
   projectFolder: string;
   projectName?: string;
   schemas?: { [name: string]: SchemaDependency }; // path to JSON introspection, if not provided endpoint will be used
-  documents?: DocumentSet[];
+  queries?: DocumentSet[];
 }
 
 function loadEndpointConfig(
@@ -122,10 +122,10 @@ export function loadConfig(
     projectFolder: configDir,
     schemas: schemasObj,
     projectName: basename(configDir),
-    documents: (obj.documents
-      ? Array.isArray(obj.documents)
-        ? (obj.documents as any[])
-        : [obj.documents]
+    queries: (obj.queries
+      ? Array.isArray(obj.queries)
+        ? (obj.queries as any[])
+        : [obj.queries]
       : []
     ).map(d => loadDocumentSet(d))
   };
@@ -227,7 +227,7 @@ export async function resolveDocumentSets(
   needSchema: boolean
 ): Promise<ResolvedDocumentSet[]> {
   return await Promise.all(
-    (config.documents || []).map(async doc => {
+    (config.queries || []).map(async doc => {
       const referredSchema = doc.schema
         ? (config.schemas || {})[doc.schema]
         : undefined;

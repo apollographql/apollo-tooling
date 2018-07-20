@@ -16,9 +16,17 @@ export function loadConfigStep(
     title: "Loading Apollo config",
     task: async (ctx: any) => {
       if (flags.config) {
-        ctx.config = loadConfigFromFile(flags.config, defaultEndpoint, !flags.clientSchema);
+        ctx.config = loadConfigFromFile(
+          flags.config,
+          defaultEndpoint,
+          !flags.clientSchema
+        );
       } else {
-        ctx.config = findAndLoadConfig(process.cwd(), defaultEndpoint, !flags.clientSchema);
+        ctx.config = findAndLoadConfig(
+          process.cwd(),
+          defaultEndpoint,
+          !flags.clientSchema
+        );
       }
 
       if (flags.schema || flags.endpoint) {
@@ -39,18 +47,20 @@ export function loadConfigStep(
       }
 
       if (flags.clientSchema) {
-        const extendsName = ctx.config.schemas.default ? "serverSchema" : undefined;
+        const extendsName = ctx.config.schemas.default
+          ? "serverSchema"
+          : undefined;
         ctx.config.schemas.serverSchema = ctx.config.schemas.default;
 
         ctx.config.schemas.default = {
           extends: extendsName,
           schema: flags.clientSchema,
           clientSide: true
-        }
+        };
       }
 
       if (flags.queries) {
-        ctx.config.documents = [
+        ctx.config.queries = [
           {
             schema: "default",
             includes: flags.queries.split("\n"),
@@ -66,11 +76,8 @@ export function loadConfigStep(
         }
       }
 
-      if (
-        ctx.config.documents.length == 0 &&
-        ctx.config.schemas.default
-      ) {
-        ctx.config.documents.push({
+      if (ctx.config.queries.length == 0 && ctx.config.schemas.default) {
+        ctx.config.queries.push({
           schema: "default",
           includes: ["**/*.graphql"],
           excludes: []
