@@ -220,7 +220,7 @@ The core of any configuration is specifying schemas and queries. Schemas specify
 
 Let's take a look at a basic configuration file (`package.json` style):
 
-```json
+```js
 {
   ...
   "apollo": {
@@ -272,7 +272,7 @@ module.exports = {
 
 When configuring a schema's endpoint, you can either pass in a string or an object, which allows for specifying advanced options like headers and subscription endpoints.
 
-```json
+```js
 endpoint: {
   "url": "http://example.com/graphql",
   "subscriptions": "ws://example.com/graphql",
@@ -286,7 +286,7 @@ endpoint: {
 
 Schemas can also declare dependencies on eachother, which can be useful in situations like having a client-side schema for `apollo-link-state`. To declare a dependency, use the `extends` key. When working with a client-side schema, make sure to also specify the `clientSide` key to enable code-generation support.
 
-```json
+```js
 "schemas": {
   "myServerSideSchema": {
     ...
