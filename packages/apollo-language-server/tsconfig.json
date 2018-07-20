@@ -1,18 +1,8 @@
 {
+  "extends": "../../tsconfig.base",
   "compilerOptions": {
     "target": "es2015",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "outDir": "../apollo-vscode/server",
-    "lib": ["es2017", "esnext.asynciterable", "dom"],
-    "removeComments": true,
-    "strict": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedParameters": true,
-    "noUnusedLocals": true,
-    "skipLibCheck": true
+    "outDir": "../apollo-vscode/server"
   },
   "exclude": ["node_modules"]
 }
