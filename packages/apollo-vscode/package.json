@@ -63,11 +63,14 @@
     "build": "tsc -p .",
     "watch": "tsc -w -p ./",
     "update-vscode": "node ./node_modules/vscode/bin/install",
-    "packageExtension": "npm run build && vsce package"
+    "packageExtension": "npm run build && ./node_modules/vsce/out/vsce package"
   },
   "dependencies": {
     "vscode": "^1.1.17",
-    "vscode-languageclient": "next",
-    "typescript": "^2.6.2"
+    "vscode-languageclient": "next"
+  },
+  "devDependencies": {
+    "typescript": "^2.6.2",
+    "vsce": "^1.44.0"
   }
 }
