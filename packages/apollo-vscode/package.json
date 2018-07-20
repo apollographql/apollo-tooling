@@ -6,7 +6,7 @@
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/apollographql/vscode-graphql"
+    "url": "apollographql/apollo-cli"
   },
   "engines": {
     "vscode": "^1.23.0"
