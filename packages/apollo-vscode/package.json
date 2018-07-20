@@ -61,8 +61,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -w -p ./",
     "update-vscode": "node ./node_modules/vscode/bin/install",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "packageExtension": "rm -rf node_modules && npm install && npm run compile && vsce package"
+    "packageExtension": "rm -rf node_modules && npm install && npm run update-vscode && npm run compile && vsce package"
   },
   "dependencies": {
     "vscode": "^1.1.17",
