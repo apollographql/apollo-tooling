@@ -248,23 +248,20 @@ Or in `apollo.config.js` style:
 ...
 
 module.exports = {
-  ...
-  apollo: {
-    schemas: {
-      myPrimaryBackend: {
-        schema: "downloadedSchema.json", // if not defined the an introspection query will be run
-        endpoint: "http://example.com/graphql", // if not defined the schema will be downloaded from Apollo Engine
-        engineKey: "my-engine-key" // use this key when connecting to Apollo Engine
-      }
-    },
-    queries: [
-      {
-        schema: "myPrimaryBackend", // reference the previously defined schema
-        includes: [ "**/*.tsx" ], // load queries from .tsx files
-        excludes: [ "node_modules/**" ] // don't include any matching files from node_modules
-      }
-    ]
-  }
+  schemas: {
+    myPrimaryBackend: {
+      schema: "downloadedSchema.json", // if not defined the an introspection query will be run
+      endpoint: "http://example.com/graphql", // if not defined the schema will be downloaded from Apollo Engine
+      engineKey: "my-engine-key" // use this key when connecting to Apollo Engine
+    }
+  },
+  queries: [
+    {
+      schema: "myPrimaryBackend", // reference the previously defined schema
+      includes: [ "**/*.tsx" ], // load queries from .tsx files
+      excludes: [ "node_modules/**" ] // don't include any matching files from node_modules
+    }
+  ]
 }
 ```
 
@@ -274,10 +271,10 @@ When configuring a schema's endpoint, you can either pass in a string or an obje
 
 ```js
 endpoint: {
-  "url": "http://example.com/graphql",
-  "subscriptions": "ws://example.com/graphql",
-  "headers": {
-    "cookie": "myCookie=myCookieValue"
+  url: "http://example.com/graphql",
+  subscriptions: "ws://example.com/graphql",
+  headers: {
+    cookie: "myCookie=myCookieValue"
   }
 }
 ```
@@ -287,13 +284,13 @@ endpoint: {
 Schemas can also declare dependencies on eachother, which can be useful in situations like having a client-side schema for `apollo-link-state`. To declare a dependency, use the `extends` key. When working with a client-side schema, make sure to also specify the `clientSide` key to enable code-generation support.
 
 ```js
-"schemas": {
-  "myServerSideSchema": {
+schemas: {
+  myServerSideSchema: {
     ...
   },
-  "myClientSideSchema": {
-    "extends": "myServerSideSchema",
-    "clientSide": true
+  myClientSideSchema: {
+    extends: "myServerSideSchema",
+    clientSide: true
     ...
   }
 }
