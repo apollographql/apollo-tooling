@@ -35,7 +35,7 @@ export interface DocumentSet {
 
 export interface ApolloConfig {
   projectFolder: string;
-  projectName?: string;
+  name?: string;
   schemas?: { [name: string]: SchemaDependency }; // path to JSON introspection, if not provided endpoint will be used
   queries?: DocumentSet[];
 }
@@ -121,7 +121,7 @@ export function loadConfig(
   return {
     projectFolder: configDir,
     schemas: schemasObj,
-    projectName: basename(configDir),
+    name: basename(configDir),
     queries: (obj.queries
       ? Array.isArray(obj.queries)
         ? (obj.queries as any[])
