@@ -3,13 +3,7 @@ import { fs, withGlobalFS } from "apollo-codegen-core/lib/localfs";
 
 import * as fg from "glob";
 import * as minimatch from "minimatch";
-import {
-  GraphQLSchema,
-  buildClientSchema,
-  extendSchema,
-  visit,
-  buildASTSchema
-} from "graphql";
+import { GraphQLSchema, extendSchema, visit, buildASTSchema } from "graphql";
 import { loadSchema } from "./load-schema";
 import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
 
@@ -221,9 +215,7 @@ export async function resolveSchema(
       )
     : referredSchema.clientSide
       ? buildASTSchema(loadAsAST())
-      : buildClientSchema({
-          __schema: await loadSchema(referredSchema, config)
-        });
+      : await loadSchema(referredSchema, config);
 }
 
 export async function resolveDocumentSets(

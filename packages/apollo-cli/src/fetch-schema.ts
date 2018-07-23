@@ -2,7 +2,14 @@ import { fs } from "apollo-codegen-core/lib/localfs";
 import * as path from "path";
 import fetch from "node-fetch";
 import gql from "graphql-tag";
-import { buildSchema, execute as graphql, introspectionQuery } from "graphql";
+import {
+  buildSchema,
+  execute as graphql,
+  introspectionQuery,
+  GraphQLSchema,
+  Source,
+  buildClientSchema
+} from "graphql";
 import { execute, toPromise } from "apollo-link";
 import { createHttpLink } from "apollo-link-http";
 
@@ -23,7 +30,9 @@ const loadSchemaFromString = async (schemaSource: string) => {
   return localSchema.data!.__schema;
 };
 
-export async function fromFile(file: string) {
+export async function fromFile(
+  file: string
+): Promise<GraphQLSchema | undefined> {
   try {
     const result = fs.readFileSync(file, {
       encoding: "utf-8"
@@ -33,28 +42,36 @@ export async function fromFile(file: string) {
     // an actual introspectionQuery result
     if (ext === ".json") {
       const parsed = JSON.parse(result);
-      return parsed.data
+      const schemaData = parsed.data
         ? parsed.data.__schema
         : parsed.__schema
           ? parsed.__schema
           : parsed;
+
+      return buildClientSchema({ __schema: schemaData });
     }
 
     if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
-      return await loadSchemaFromString(result);
+      return buildSchema(new Source(result, file));
     }
 
     if (ext === ".ts" || ext === ".tsx" || ext === ".js" || ext === ".jsx") {
       return await loadSchemaFromString(extractDocumentFromJavascript(result)!);
     }
+
+    return undefined;
   } catch (e) {
     throw new Error(`Unable to read file ${file}. ${e.message}`);
   }
 }
 
-export const fetchSchema = async ({ url, headers }: EndpointConfig) => {
+export const fetchSchema = async (
+  { url, headers }: EndpointConfig,
+  projectFolder?: string
+): Promise<GraphQLSchema | undefined> => {
   if (!url) throw new Error("No endpoint provided when fetching schema");
-  if (fs.existsSync(url)) return fromFile(url);
+  const filePath = projectFolder ? path.resolve(projectFolder, url) : url;
+  if (fs.existsSync(filePath)) return fromFile(filePath);
 
   return toPromise(
     // XXX node-fetch isn't compatiable typescript wise here?
@@ -65,14 +82,14 @@ export const fetchSchema = async ({ url, headers }: EndpointConfig) => {
   ).then(({ data, errors }: any) => {
     if (errors)
       throw new Error(errors.map(({ message }: Error) => message).join("\n"));
-    return data!.__schema;
+    return buildClientSchema(data);
   });
 };
 
 export async function fetchSchemaFromEngine(
   apiKey: string,
   customEngine: string | undefined
-) {
+): Promise<GraphQLSchema | undefined> {
   const variables = {
     id: getIdFromKey(apiKey as string),
     tag: "current"
@@ -90,7 +107,7 @@ export async function fetchSchemaFromEngine(
   );
 
   if (engineSchema.data && engineSchema.data.service.schema) {
-    return engineSchema.data.service.schema.__schema;
+    return buildClientSchema(engineSchema.data.service.schema);
   } else {
     throw new Error("Unable to get schema from Apollo Engine");
   }

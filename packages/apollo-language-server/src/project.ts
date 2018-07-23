@@ -10,7 +10,11 @@ import {
   FragmentSpreadNode,
   TypeInfo,
   visitWithTypeInfo,
-  GraphQLCompositeType
+  GraphQLCompositeType,
+  printSchema,
+  buildSchema,
+  Source,
+  GraphQLSchema
 } from "graphql";
 
 import {
@@ -203,6 +207,22 @@ export class GraphQLProject {
     this.documentSets = await resolveDocumentSets(this.config, true);
 
     for (const set of this.documentSets) {
+      let schemaWithSource: GraphQLSchema;
+      if (set.schema!.getQueryType()!.astNode) {
+        schemaWithSource = set.schema!;
+      } else {
+        const schemaSource = printSchema(set.schema!, {
+          commentDescriptions: true
+        });
+
+        schemaWithSource = buildSchema(
+          new Source(
+            schemaSource,
+            `graphql-schema:/schema.graphql?${encodeURIComponent(schemaSource)}`
+          )
+        );
+      }
+
       for (const filePath of set.documentPaths) {
         const uri = Uri.file(filePath).toString();
 
@@ -210,7 +230,7 @@ export class GraphQLProject {
         // opened or changed before we got a chance to read it.
         if (this.documentsByFile.has(uri)) continue;
 
-        this.fileDidChange(uri, set);
+        this.fileDidChange(uri, { ...set, schema: schemaWithSource });
       }
     }
 
