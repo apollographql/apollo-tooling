@@ -26,7 +26,6 @@ const schemaSource = fs.readFileSync(
 
 const fullSchema = execute(buildSchema(schemaSource), gql(introspectionQuery))
   .data;
-const localSchema = fullSchema;
 
 const introspectionResult = JSON.stringify({ data: fullSchema });
 
@@ -37,7 +36,7 @@ const localSuccess = nock => {
       operationName: "IntrospectionQuery",
       variables: {}
     })
-    .reply(200, { data: localSchema });
+    .reply(200, { data: fullSchema });
 };
 
 const engineSuccess = ({ schema, tag, result } = {}) => nock => {
@@ -46,7 +45,7 @@ const engineSuccess = ({ schema, tag, result } = {}) => nock => {
     .post("/", {
       operationName: "UploadSchema",
       variables: {
-        schema: schema || localSchema.__schema,
+        schema: schema || fullSchema.__schema,
         id: "test",
         tag: tag || "current",
         gitContext: {
@@ -164,7 +163,7 @@ describe("successful uploads", () => {
           operationName: "IntrospectionQuery",
           variables: {}
         })
-        .reply(200, { data: localSchema });
+        .reply(200, { data: fullSchema });
     })
     .nock(ENGINE_URI, engineSuccess())
     .env({ ENGINE_API_KEY })
