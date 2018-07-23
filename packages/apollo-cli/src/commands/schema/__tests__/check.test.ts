@@ -1,3 +1,7 @@
+jest.mock("apollo-codegen-core/lib/localfs", () => {
+  return require("../../../__mocks__/localfs");
+});
+
 // this is because of herkou-cli-utils hacky mocking system on their console logger
 import { stdout, mockConsole } from "heroku-cli-util";
 import * as path from "path";
@@ -8,25 +12,28 @@ import gql from "graphql-tag";
 import { ENGINE_URI } from "../../../engine";
 import { VALIDATE_SCHEMA } from "../../../operations/validateSchema";
 
+import { vol, fs as mockFS } from "apollo-codegen-core/lib/localfs";
+
 const test = setup.do(() => mockConsole());
 const ENGINE_API_KEY = "service:test:1234";
 const hash = "12345";
-const localSchema = { __schema: { fakeSchema: true } };
-const fullSchema = execute(
-  buildSchema(
-    fs.readFileSync(path.resolve(__dirname, "./fixtures/schema.graphql"), {
-      encoding: "utf-8",
-    })
-  ),
-  gql(introspectionQuery)
-).data;
+const schemaContents = fs.readFileSync(
+  path.resolve(__dirname, "./fixtures/schema.graphql"),
+  {
+    encoding: "utf-8"
+  }
+);
+
+const fullSchema = execute(buildSchema(schemaContents), gql(introspectionQuery))
+  .data;
+const localSchema = fullSchema;
 
 const localSuccess = nock => {
   nock
     .post("/graphql", {
       query: print(gql(introspectionQuery)),
       operationName: "IntrospectionQuery",
-      variables: {},
+      variables: {}
     })
     .reply(200, { data: localSchema });
 };
@@ -43,10 +50,10 @@ const engineSuccess = ({ schema, tag, results } = {}) => nock => {
         gitContext: {
           commit: /.+/i,
           remoteUrl: /apollo-cli/i,
-          committer: /@/i,
-        },
+          committer: /@/i
+        }
       },
-      query: print(VALIDATE_SCHEMA),
+      query: print(VALIDATE_SCHEMA)
     })
     .reply(200, {
       data: {
@@ -57,32 +64,39 @@ const engineSuccess = ({ schema, tag, results } = {}) => nock => {
                 {
                   type: "NOTICE",
                   code: "DEPRECATION_ADDED",
-                  description: "Field `User.lastName` was deprecated",
+                  description: "Field `User.lastName` was deprecated"
                 },
                 {
                   type: "WARNING",
                   code: "FIELD_REMOVED",
-                  description: "Field `User.firstName` removed",
+                  description: "Field `User.firstName` removed"
                 },
                 {
                   type: "FAILURE",
                   code: "ARG_CHANGE_TYPE",
-                  description: "Argument id on `Query.user` changed to ID!",
+                  description: "Argument id on `Query.user` changed to ID!"
                 },
                 {
                   type: "NOTICE",
                   code: "FIELD_ADDED",
-                  description: "Field `User.fullName` was added",
-                },
-              ],
-            },
-          },
-        },
-      },
+                  description: "Field `User.fullName` was added"
+                }
+              ]
+            }
+          }
+        }
+      }
     });
 };
 
 jest.setTimeout(25000);
+
+beforeEach(() => {
+  vol.reset();
+  vol.fromJSON({
+    __blankFileSoDirectoryExists: ""
+  });
+});
 
 describe("successful checks", () => {
   test
@@ -161,7 +175,7 @@ describe("successful checks", () => {
         .post("/graphql", {
           query: print(gql(introspectionQuery)),
           operationName: "IntrospectionQuery",
-          variables: {},
+          variables: {}
         })
         .reply(200, { data: localSchema });
     })
@@ -171,7 +185,7 @@ describe("successful checks", () => {
       "schema:check",
       "--endpoint=https://staging.example.com/graphql",
       "--header=Authorization: 1234",
-      "--header=Hello: World",
+      "--header=Hello: World"
     ])
     .exit(1)
     .it(
@@ -184,16 +198,15 @@ describe("successful checks", () => {
     );
 
   test
+    .do(() =>
+      vol.fromJSON({
+        "introspection-result.json": JSON.stringify({ data: fullSchema })
+      })
+    )
     .stdout()
     .nock(ENGINE_URI, engineSuccess())
     .env({ ENGINE_API_KEY })
-    .command([
-      "schema:check",
-      `--endpoint=${path.resolve(
-        __dirname,
-        "./fixtures/introspection-result.json"
-      )}`,
-    ])
+    .command(["schema:check", "--endpoint=introspection-result.json"])
     .exit(1)
     .it(
       "calls engine with a schema from an introspection result on the filesystem",
@@ -205,13 +218,15 @@ describe("successful checks", () => {
     );
 
   test
+    .do(() =>
+      vol.fromJSON({
+        "schema.graphql": schemaContents
+      })
+    )
     .stdout()
     .nock(ENGINE_URI, engineSuccess({ schema: fullSchema.__schema }))
     .env({ ENGINE_API_KEY })
-    .command([
-      "schema:check",
-      `--endpoint=${path.resolve(__dirname, "./fixtures/schema.graphql")}`,
-    ])
+    .command(["schema:check", "--endpoint=schema.graphql"])
     .exit(1)
     .it(
       "calls engine with a schema from a schema file on the filesystem",

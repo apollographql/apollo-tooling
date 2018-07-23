@@ -17,7 +17,6 @@ import { fs as mockFS, vol } from "apollo-codegen-core/lib/localfs";
 const test = setup.do(() => mockConsole());
 const ENGINE_API_KEY = "service:test:1234";
 const hash = "12345";
-const localSchema = { __schema: { fakeSchema: true } };
 const schemaSource = fs.readFileSync(
   path.resolve(__dirname, "./fixtures/schema.graphql"),
   {
@@ -27,10 +26,9 @@ const schemaSource = fs.readFileSync(
 
 const fullSchema = execute(buildSchema(schemaSource), gql(introspectionQuery))
   .data;
+const localSchema = fullSchema;
 
-const introspectionResult = fs.readFileSync(
-  path.resolve(__dirname, "./fixtures/introspection-result.json")
-);
+const introspectionResult = JSON.stringify({ data: fullSchema });
 
 const localSuccess = nock => {
   nock

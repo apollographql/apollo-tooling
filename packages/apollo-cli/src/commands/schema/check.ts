@@ -2,7 +2,12 @@ import { Command, flags } from "@oclif/command";
 import chalk from "chalk";
 import { table, styledJSON } from "heroku-cli-util";
 import * as Listr from "listr";
-import { GraphQLError } from "graphql";
+import {
+  GraphQLError,
+  parse,
+  introspectionQuery,
+  execute as graphql
+} from "graphql";
 
 import { toPromise, execute } from "apollo-link";
 
@@ -84,7 +89,8 @@ export default class SchemaCheck extends Command {
 
           const variables = {
             id: getIdFromKey(ctx.currentSchema.engineKey),
-            schema: ctx.schema,
+            schema: (await graphql(ctx.schema, parse(introspectionQuery))).data!
+              .__schema,
             // XXX hardcoded for now
             tag: "current",
             gitContext

@@ -4,7 +4,6 @@ import fetch from "node-fetch";
 import gql from "graphql-tag";
 import {
   buildSchema,
-  execute as graphql,
   introspectionQuery,
   GraphQLSchema,
   Source,
@@ -19,16 +18,6 @@ import { getIdFromKey, engineLink } from "./engine";
 import { SCHEMA_QUERY } from "./operations/schema";
 
 const introspection = gql(introspectionQuery);
-
-const loadSchemaFromString = async (schemaSource: string) => {
-  const schema = buildSchema(schemaSource);
-  const localSchema = await graphql(schema, introspection);
-  if (!localSchema || localSchema.errors)
-    throw new Error(
-      localSchema.errors!.map(({ message }) => message).join("\n")
-    );
-  return localSchema.data!.__schema;
-};
 
 export async function fromFile(
   file: string
@@ -56,7 +45,7 @@ export async function fromFile(
     }
 
     if (ext === ".ts" || ext === ".tsx" || ext === ".js" || ext === ".jsx") {
-      return await loadSchemaFromString(extractDocumentFromJavascript(result)!);
+      return await buildSchema(extractDocumentFromJavascript(result)!);
     }
 
     return undefined;
@@ -82,7 +71,7 @@ export const fetchSchema = async (
   ).then(({ data, errors }: any) => {
     if (errors)
       throw new Error(errors.map(({ message }: Error) => message).join("\n"));
-    return buildClientSchema(data);
+    return buildClientSchema({ __schema: data.__schema });
   });
 };
 
