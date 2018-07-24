@@ -14,6 +14,7 @@
     "webpack": "3.8.1"
   },
   "scripts": {
+    "clean": "rm -rf ../apollo-vscode/webview-content",
     "build": "npx webpack"
   },
   "devDependencies": {
