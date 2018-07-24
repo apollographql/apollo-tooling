@@ -81,7 +81,10 @@ export function activate(context: ExtensionContext) {
         "",
         sideViewColumn(),
         {
-          enableScripts: true
+          enableScripts: true,
+          localResourceRoots: [
+            vscode.Uri.file(path.join(context.extensionPath, "webview-content"))
+          ]
         }
       );
 
@@ -139,6 +142,13 @@ export function activate(context: ExtensionContext) {
           baseVariables[v] = null;
         });
 
+        const mediaPath =
+          vscode.Uri.file(path.join(context.extensionPath, "webview-content"))
+            .with({
+              scheme: "vscode-resource"
+            })
+            .toString() + "/";
+
         currentPanel!.webview.html = `
       <html>
         <body>
@@ -150,19 +160,8 @@ export function activate(context: ExtensionContext) {
           <div>
             <button id="submit">Submit!</button>
           </div>
-          <script>
-            const vscode = acquireVsCodeApi();
-            const textArea = document.getElementById("variables");
-            textArea.oninput = () => {
-              textArea.style.height = "";
-              textArea.style.height = textArea.scrollHeight + "px";
-            };
-            textArea.oninput();
-
-            document.getElementById("submit").onclick = () => {
-              vscode.postMessage(textArea.value);
-            };
-          </script>
+          <base href="${mediaPath}">
+          <script src="variables-input.js"></script>
         </body>
       </html>
       `;
