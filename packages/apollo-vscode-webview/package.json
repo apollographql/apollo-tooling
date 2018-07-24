@@ -1,0 +1,30 @@
+{
+  "name": "apollo-vscode-webview",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "babel-loader": "^7.1.2",
+    "babel-preset-react-app": "^3.1.1",
+    "case-sensitive-paths-webpack-plugin": "2.1.1",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "ts-loader": "^2.3.7",
+    "tsconfig-paths-webpack-plugin": "^2.0.0",
+    "uglifyjs-webpack-plugin": "^1.1.8",
+    "webpack": "3.8.1"
+  },
+  "scripts": {
+    "build": "npx webpack"
+  },
+  "devDependencies": {
+    "@types/node": "^10.5.2",
+    "@types/react": "^16.4.7",
+    "@types/react-dom": "^16.0.6",
+    "typescript": "^2.6.2"
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  }
+}

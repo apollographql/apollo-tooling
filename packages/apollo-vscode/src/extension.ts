@@ -160,8 +160,10 @@ export function activate(context: ExtensionContext) {
           <div>
             <button id="submit">Submit!</button>
           </div>
+          <div id="root"></div>
           <base href="${mediaPath}">
           <script src="variables-input.js"></script>
+          <script src="webview.bundle.js"></script>
         </body>
       </html>
       `;
