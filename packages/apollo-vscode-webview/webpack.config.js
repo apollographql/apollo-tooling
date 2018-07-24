@@ -2,7 +2,6 @@
 
 const path = require("path");
 const webpack = require("webpack");
-const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 // This is the production configuration.
@@ -40,8 +39,7 @@ module.exports = {
       ".json",
       ".web.jsx",
       ".jsx"
-    ],
-    plugins: [new TsconfigPathsPlugin({ configFile: "tsconfig.json" })]
+    ]
   },
   module: {
     strictExportPresence: true,
@@ -62,8 +60,6 @@ module.exports = {
           {
             loader: require.resolve("ts-loader"),
             options: {
-              // disable type checker - we will use it in fork plugin
-              transpileOnly: true,
               configFile: "tsconfig.json"
             }
           }

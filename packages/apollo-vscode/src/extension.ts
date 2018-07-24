@@ -56,6 +56,7 @@ export function activate(context: ExtensionContext) {
 
   let currentPanel: WebviewPanel | undefined = undefined;
   let currentCancellationID: number | undefined = undefined;
+  let currentMessageHandler: ((msg: any) => void) | undefined = undefined;
 
   const client = new LanguageClient(
     "apollographql",
@@ -105,6 +106,20 @@ export function activate(context: ExtensionContext) {
         context.subscriptions
       );
 
+      currentPanel!.webview.onDidReceiveMessage(
+        message => {
+          if (currentMessageHandler) {
+            currentMessageHandler(message);
+          }
+        },
+        undefined,
+        context.subscriptions
+      );
+
+      currentPanel!.onDidDispose(() => {
+        currentMessageHandler = undefined;
+      });
+
       return currentPanel;
     }
   };
@@ -123,24 +138,35 @@ export function activate(context: ExtensionContext) {
           currentCancellationID = undefined;
         }
 
-        const cancelReceive = currentPanel!.webview.onDidReceiveMessage(
-          variables => {
-            cancelReceive.dispose();
-            client.sendNotification("apollographql/runQueryWithVariables", {
-              query,
-              endpoint,
-              headers,
-              variables: JSON.parse(variables)
-            });
-          },
-          undefined,
-          context.subscriptions
-        );
-
         const baseVariables: { [key: string]: any } = {};
         (requestedVariables as string[]).forEach(v => {
           baseVariables[v] = null;
         });
+
+        currentMessageHandler = message => {
+          switch (message.type) {
+            case "started":
+              currentPanel!.webview.postMessage({
+                type: "setMode",
+                content: {
+                  type: "VariablesInput",
+                  variables: baseVariables
+                }
+              });
+              break;
+
+            case "variables":
+              client.sendNotification("apollographql/runQueryWithVariables", {
+                query,
+                endpoint,
+                headers,
+                variables: JSON.parse(message.content as string)
+              });
+
+              currentMessageHandler = undefined;
+              break;
+          }
+        };
 
         const mediaPath =
           vscode.Uri.file(path.join(context.extensionPath, "webview-content"))
@@ -150,23 +176,14 @@ export function activate(context: ExtensionContext) {
             .toString() + "/";
 
         currentPanel!.webview.html = `
-      <html>
-        <body>
-          <textarea id="variables" style="width: 100%">${JSON.stringify(
-            baseVariables,
-            null,
-            2
-          )}</textarea>
-          <div>
-            <button id="submit">Submit!</button>
-          </div>
-          <div id="root"></div>
-          <base href="${mediaPath}">
-          <script src="variables-input.js"></script>
-          <script src="webview.bundle.js"></script>
-        </body>
-      </html>
-      `;
+          <html>
+            <body>
+              <div id="root"></div>
+              <base href="${mediaPath}">
+              <script src="webview.bundle.js"></script>
+            </body>
+          </html>
+        `;
       }
     );
 
