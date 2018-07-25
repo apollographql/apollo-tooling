@@ -127,7 +127,7 @@ export function activate(context: ExtensionContext) {
   client.onReady().then(() => {
     client.onNotification(
       "apollographql/requestVariables",
-      ({ query, endpoint, headers, requestedVariables }) => {
+      ({ query, endpoint, headers, requestedVariables, schema }) => {
         getApolloPanel().title = "GraphQL Query Variables";
 
         if (currentCancellationID) {
@@ -138,11 +138,6 @@ export function activate(context: ExtensionContext) {
           currentCancellationID = undefined;
         }
 
-        const baseVariables: { [key: string]: any } = {};
-        (requestedVariables as string[]).forEach(v => {
-          baseVariables[v] = null;
-        });
-
         currentMessageHandler = message => {
           switch (message.type) {
             case "started":
@@ -150,7 +145,8 @@ export function activate(context: ExtensionContext) {
                 type: "setMode",
                 content: {
                   type: "VariablesInput",
-                  variables: baseVariables
+                  requestedVariables: requestedVariables,
+                  schema: schema
                 }
               });
               break;

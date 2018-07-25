@@ -2,10 +2,12 @@ import * as React from "react";
 
 import { vscode } from "./index";
 import { VariablesInput } from "./VariablesInput";
+import { buildSchema } from "graphql";
 
 interface VariablesInputState {
   type: "VariablesInput";
-  variables: any;
+  requestedVariables: any[];
+  schema: string;
 }
 
 interface WaitingForMode {
@@ -41,7 +43,10 @@ class App extends React.Component<any, AppModeState> {
     if (this.state.type === "Waiting") {
       return <div>Waiting for data from extension</div>;
     } else if (this.state.type === "VariablesInput") {
-      return <VariablesInput variables={this.state.variables} />;
+      return <VariablesInput
+        requestedVariables={this.state.requestedVariables}
+        schema={buildSchema(this.state.schema)}
+      />;
     } else {
       return <div>Error: unknown state {JSON.stringify(this.state)}</div>;
     }

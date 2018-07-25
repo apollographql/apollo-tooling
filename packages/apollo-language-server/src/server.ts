@@ -269,9 +269,15 @@ connection.onExecuteCommand(params => {
             query: params.arguments![0],
             endpoint: params.arguments![1],
             headers: params.arguments![2],
+            schema: params.arguments![3],
             requestedVariables: operation
-              .variableDefinitions!.filter(v => v.type.kind == "NonNullType")
-              .map(v => v.variable.name.value)
+              .variableDefinitions!
+              .map(v => {
+                return {
+                  name: v.variable.name.value,
+                  typeNode: v.type
+                };
+              })
           }
         );
       } else {

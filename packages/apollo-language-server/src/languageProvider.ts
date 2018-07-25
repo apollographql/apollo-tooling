@@ -390,7 +390,8 @@ ${type.description}
                 definition.operation === "subscription"
                   ? set.endpoint.subscriptions
                   : set.endpoint.url,
-                set.endpoint.headers
+                set.endpoint.headers,
+                graphql.printSchema(set.schema!)
               )
             });
           }
