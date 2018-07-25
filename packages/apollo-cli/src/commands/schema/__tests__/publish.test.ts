@@ -17,7 +17,6 @@ import { fs as mockFS, vol } from "apollo-codegen-core/lib/localfs";
 const test = setup.do(() => mockConsole());
 const ENGINE_API_KEY = "service:test:1234";
 const hash = "12345";
-const localSchema = { __schema: { fakeSchema: true } };
 const schemaSource = fs.readFileSync(
   path.resolve(__dirname, "./fixtures/schema.graphql"),
   {
@@ -28,9 +27,7 @@ const schemaSource = fs.readFileSync(
 const fullSchema = execute(buildSchema(schemaSource), gql(introspectionQuery))
   .data;
 
-const introspectionResult = fs.readFileSync(
-  path.resolve(__dirname, "./fixtures/introspection-result.json")
-);
+const introspectionResult = JSON.stringify({ data: fullSchema });
 
 const localSuccess = nock => {
   nock
@@ -39,7 +36,7 @@ const localSuccess = nock => {
       operationName: "IntrospectionQuery",
       variables: {}
     })
-    .reply(200, { data: localSchema });
+    .reply(200, { data: fullSchema });
 };
 
 const engineSuccess = ({ schema, tag, result } = {}) => nock => {
@@ -48,7 +45,7 @@ const engineSuccess = ({ schema, tag, result } = {}) => nock => {
     .post("/", {
       operationName: "UploadSchema",
       variables: {
-        schema: schema || localSchema.__schema,
+        schema: schema || fullSchema.__schema,
         id: "test",
         tag: tag || "current",
         gitContext: {
@@ -166,7 +163,7 @@ describe("successful uploads", () => {
           operationName: "IntrospectionQuery",
           variables: {}
         })
-        .reply(200, { data: localSchema });
+        .reply(200, { data: fullSchema });
     })
     .nock(ENGINE_URI, engineSuccess())
     .env({ ENGINE_API_KEY })

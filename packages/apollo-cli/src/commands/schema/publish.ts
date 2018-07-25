@@ -2,7 +2,12 @@ import { Command, flags } from "@oclif/command";
 import { table, styledJSON } from "heroku-cli-util";
 import * as Listr from "listr";
 import { toPromise, execute } from "apollo-link";
-import { GraphQLError } from "graphql";
+import {
+  GraphQLError,
+  parse,
+  introspectionQuery,
+  execute as graphql
+} from "graphql";
 
 import { UPLOAD_SCHEMA } from "../../operations/uploadSchema";
 import { getIdFromKey, engineLink } from "../../engine";
@@ -79,7 +84,8 @@ export default class SchemaPublish extends Command {
           )} to Apollo Engine`;
           const gitContext = await gitInfo();
           const variables = {
-            schema: ctx.schema,
+            schema: (await graphql(ctx.schema, parse(introspectionQuery))).data!
+              .__schema,
             tag,
             gitContext,
             id: getIdFromKey(ctx.currentSchema.engineKey)

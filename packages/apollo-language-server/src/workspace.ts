@@ -9,6 +9,8 @@ import { GraphQLProject, DocumentUri } from "./project";
 import { dirname } from "path";
 import * as fg from "glob";
 import { findAndLoadConfig } from "apollo/lib/config";
+import { GraphQLDocument } from "./document";
+import { Source, buildSchema } from "graphql";
 
 export class GraphQLWorkspace {
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
@@ -80,6 +82,21 @@ export class GraphQLWorkspace {
   }
 
   projectForFile(uri: DocumentUri): GraphQLProject | undefined {
+    if (uri.startsWith("graphql-schema")) {
+      return ({
+        documentAt(uri: string, _: any) {
+          return {
+            doc: new GraphQLDocument(new Source(Uri.parse(uri).query, uri)),
+            set: {
+              schema: buildSchema(new Source(Uri.parse(uri).query, uri))
+            }
+          };
+        },
+        documentDidChange() {},
+        documentsAt() {}
+      } as any) as GraphQLProject;
+    }
+
     for (const projects of this.projectsByFolderUri.values()) {
       const project = projects.find(project => project.includesFile(uri));
       if (project) {
