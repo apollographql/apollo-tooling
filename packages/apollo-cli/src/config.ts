@@ -191,6 +191,8 @@ export interface ResolvedDocumentSet {
   engineKey?: string;
 
   documentPaths: string[];
+
+  originalSet: DocumentSet;
 }
 
 export async function resolveSchema(
@@ -264,7 +266,8 @@ export async function resolveDocumentSets(
               ![...doc.excludes, ...schemaPaths].some(e =>
                 minimatch(relative(config.projectFolder, f), e)
               )
-          )
+          ),
+        originalSet: doc
       };
     })
   );

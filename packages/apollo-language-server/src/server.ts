@@ -129,18 +129,20 @@ connection.onDidChangeWatchedFiles(params => {
 
     // Don't respond to changes in files that are currently open,
     // because we'll get content change notifications instead
-    if (documents.get(uri)) continue;
+    if (change.type === FileChangeType.Changed) {
+      continue;
+    }
 
     const project = workspace.projectForFile(uri);
-    if (!project) return;
+    if (!project) continue;
 
     switch (change.type) {
       case FileChangeType.Created:
-      case FileChangeType.Changed:
         project.fileDidChange(uri);
         break;
       case FileChangeType.Deleted:
         project.fileWasDeleted(uri);
+        break;
     }
   }
 });
