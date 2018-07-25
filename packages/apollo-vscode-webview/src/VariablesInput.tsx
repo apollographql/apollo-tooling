@@ -1,9 +1,5 @@
 import * as React from "react";
 
-// import { vscode } from "./index";
-
-// import ReactJson from "react-json-view";
-
 import { VariableEditor } from "graphiql/dist/components/VariableEditor";
 
 import "graphiql/graphiql.css";
