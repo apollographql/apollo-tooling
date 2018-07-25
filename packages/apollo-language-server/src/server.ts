@@ -222,19 +222,19 @@ export const executeAndNotify = (
     value => {
       connection.sendNotification(
         new NotificationType<any, void>("apollographql/queryResult"),
-        { data: value.data, errors: value.errors, cancellationID }
+        { result: value, cancellationID }
       );
     },
     error => {
       if (error.result) {
         connection.sendNotification(
           new NotificationType<any, void>("apollographql/queryResult"),
-          { data: undefined, errors: error.result.errors, cancellationID }
+          { result: error.result, cancellationID }
         );
       } else {
         connection.sendNotification(
           new NotificationType<any, void>("apollographql/queryResult"),
-          { data: undefined, errors: [error], cancellationID }
+          { result: { errors: [error] }, cancellationID }
         );
       }
     }
@@ -242,7 +242,7 @@ export const executeAndNotify = (
 
   connection.sendNotification(
     new NotificationType<any, void>("apollographql/queryResult"),
-    { data: "Loading...", errors: [], cancellationID }
+    { result: "Loading...", cancellationID }
   );
 
   cancellationFunctions[cancellationID] = () => {
@@ -270,14 +270,12 @@ connection.onExecuteCommand(params => {
             endpoint: params.arguments![1],
             headers: params.arguments![2],
             schema: params.arguments![3],
-            requestedVariables: operation
-              .variableDefinitions!
-              .map(v => {
-                return {
-                  name: v.variable.name.value,
-                  typeNode: v.type
-                };
-              })
+            requestedVariables: operation.variableDefinitions!.map(v => {
+              return {
+                name: v.variable.name.value,
+                typeNode: v.type
+              };
+            })
           }
         );
       } else {

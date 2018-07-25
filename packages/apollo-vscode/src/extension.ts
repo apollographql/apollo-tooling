@@ -186,7 +186,7 @@ export function activate(context: ExtensionContext) {
 
     client.onNotification(
       "apollographql/queryResult",
-      ({ data, errors, cancellationID }) => {
+      ({ result, cancellationID }) => {
         getApolloPanel().title = "GraphQL Query Result";
 
         if (currentCancellationID !== cancellationID) {
@@ -206,7 +206,7 @@ export function activate(context: ExtensionContext) {
                 type: "setMode",
                 content: {
                   type: "ResultViewer",
-                  result: data || errors
+                  result
                 }
               });
 
