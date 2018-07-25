@@ -13,8 +13,7 @@ import {
   GraphQLCompositeType,
   printSchema,
   buildSchema,
-  Source,
-  GraphQLSchema
+  Source
 } from "graphql";
 
 import {
@@ -236,7 +235,7 @@ export class GraphQLProject {
           )
         );
       }
-                               
+
       this.setToResolved.set(set.originalSet, set);
 
       for (const filePath of set.documentPaths) {
