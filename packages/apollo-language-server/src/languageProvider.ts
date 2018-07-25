@@ -18,7 +18,7 @@ import {
 } from "graphql-language-service-interface/dist/getAutocompleteSuggestions";
 
 import { GraphQLWorkspace } from "./workspace";
-import { DocumentUri } from "./project";
+import { DocumentUri, GraphQLProject } from "./project";
 
 import {
   positionFromPositionInContainingDocument,
@@ -42,6 +42,7 @@ import { highlightNodeForNode } from "./utilities/graphql";
 import * as graphql from "graphql";
 
 import Uri from "vscode-uri";
+import { resolve } from "path";
 
 function hasFields(type: graphql.GraphQLType): boolean {
   return (
@@ -51,6 +52,13 @@ function hasFields(type: graphql.GraphQLType): boolean {
     (graphql.isNonNullType(type) &&
       hasFields((type as GraphQLNonNull<any>).ofType))
   );
+}
+
+function convertToURI(filePath: string, project: GraphQLProject) {
+  return filePath.startsWith("file:/") ||
+    filePath.startsWith("graphql-schema:/")
+    ? filePath
+    : `file://${resolve(project.config.projectFolder, filePath)}`;
 }
 
 export class GraphQLLanguageProvider {
@@ -262,7 +270,7 @@ ${type.description}
           const fragment = project.fragments[fragmentName];
           if (fragment && fragment.loc) {
             return {
-              uri: fragment.loc.source.name,
+              uri: convertToURI(fragment.loc.source.name, project),
               range: rangeForASTNode(fragment)
             };
           }
@@ -273,17 +281,17 @@ ${type.description}
           if (!(fieldDef && fieldDef.astNode && fieldDef.astNode.loc)) break;
 
           return {
-            uri: fieldDef.astNode.loc.source.name,
+            uri: convertToURI(fieldDef.astNode.loc.source.name, project),
             range: rangeForASTNode(fieldDef.astNode)
           };
         }
         case Kind.NAMED_TYPE: {
-          const type = typeInfo.getType() as GraphQLNamedType | void;
+          const type = graphql.typeFromAST(set.schema!, node);
 
           if (!(type && type.astNode && type.astNode.loc)) break;
 
           return {
-            uri: type.astNode.loc.source.name,
+            uri: convertToURI(type.astNode.loc.source.name, project),
             range: rangeForASTNode(type.astNode)
           };
         }
@@ -330,7 +338,7 @@ ${type.description}
             (locations, fragmentSpread) => {
               if (fragmentSpread.loc) {
                 locations.push({
-                  uri: fragmentSpread.loc.source.name,
+                  uri: convertToURI(fragmentSpread.loc.source.name, project),
                   range: rangeForASTNode(fragmentSpread)
                 });
               }
@@ -403,7 +411,9 @@ ${type.description}
             (locations, fragmentSpread) => {
               if (fragmentSpread.loc) {
                 locations.push({
-                  uri: Uri.parse(fragmentSpread.loc.source.name) as any,
+                  uri: Uri.parse(
+                    convertToURI(fragmentSpread.loc.source.name, project)
+                  ) as any,
                   range: {
                     startLineNumber:
                       rangeForASTNode(fragmentSpread).start.line + 1,

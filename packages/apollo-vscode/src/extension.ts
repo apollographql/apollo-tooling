@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { workspace, ExtensionContext, WebviewPanel } from "vscode";
+import { workspace, ExtensionContext, WebviewPanel, Uri } from "vscode";
 import * as vscode from "vscode";
 import {
   LanguageClient,
@@ -274,6 +274,12 @@ export function activate(context: ExtensionContext) {
 
     vscode.window.onDidChangeActiveTextEditor(() => {
       updateDecorations();
+    });
+
+    vscode.workspace.registerTextDocumentContentProvider("graphql-schema", {
+      provideTextDocumentContent(uri: Uri) {
+        return uri.query;
+      }
     });
   });
 }
