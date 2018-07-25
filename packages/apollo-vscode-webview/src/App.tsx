@@ -4,17 +4,24 @@ import { vscode } from "./index";
 import { VariablesInput } from "./VariablesInput";
 import { buildSchema } from "graphql";
 
+import { ResultViewer } from "graphiql/dist/components/ResultViewer";
+
 interface VariablesInputState {
   type: "VariablesInput";
   requestedVariables: any[];
   schema: string;
 }
 
+interface ResultViewerState {
+  type: "ResultViewer";
+  result: any;
+}
+
 interface WaitingForMode {
   type: "Waiting";
 }
 
-type AppModeState = WaitingForMode | VariablesInputState;
+type AppModeState = WaitingForMode | VariablesInputState | ResultViewerState;
 
 class App extends React.Component<any, AppModeState> {
   constructor(props: any) {
@@ -47,6 +54,8 @@ class App extends React.Component<any, AppModeState> {
         requestedVariables={this.state.requestedVariables}
         schema={buildSchema(this.state.schema)}
       />;
+    } else if (this.state.type === "ResultViewer") {
+      return <ResultViewer value={JSON.stringify(this.state.result, undefined, 2)}/>
     } else {
       return <div>Error: unknown state {JSON.stringify(this.state)}</div>;
     }

@@ -171,6 +171,7 @@ export function activate(context: ExtensionContext) {
             })
             .toString() + "/";
 
+        currentMessageHandler({ type: "started" });
         currentPanel!.webview.html = `
           <html>
             <body>
@@ -198,11 +199,40 @@ export function activate(context: ExtensionContext) {
           currentCancellationID = cancellationID;
         }
 
-        const htmlBody = data
-          ? JSON.stringify(data, null, 2)
-          : errors.map((e: any) => e.message).join("\n");
+        currentMessageHandler = message => {
+          switch (message.type) {
+            case "started":
+              currentPanel!.webview.postMessage({
+                type: "setMode",
+                content: {
+                  type: "ResultViewer",
+                  result: data || errors
+                }
+              });
 
-        currentPanel!.webview.html = `<html><body><pre>${htmlBody}</pre></body></html>`;
+              currentMessageHandler = undefined;
+
+              break;
+          }
+        };
+
+        const mediaPath =
+          vscode.Uri.file(path.join(context.extensionPath, "webview-content"))
+            .with({
+              scheme: "vscode-resource"
+            })
+            .toString() + "/";
+
+        currentMessageHandler({ type: "started" });
+        currentPanel!.webview.html = `
+          <html>
+            <body>
+              <div id="root"></div>
+              <base href="${mediaPath}">
+              <script src="webview.bundle.js"></script>
+            </body>
+          </html>
+        `;
       }
     );
 

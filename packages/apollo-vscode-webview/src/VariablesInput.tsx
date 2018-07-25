@@ -6,6 +6,8 @@ import "graphiql/graphiql.css";
 import { vscode } from ".";
 import { GraphQLSchema, typeFromAST, GraphQLType, TypeNode } from "graphql";
 
+import "./VariablesInput.css";
+
 function getBaseVariables(requestedVariables: any[]) {
   const obj: { [name: string]: null } = {};
   requestedVariables.filter(v => (v.typeNode as TypeNode).kind == "NonNullType").forEach(v => {
@@ -32,7 +34,16 @@ export class VariablesInput extends React.Component<{ requestedVariables: any[],
     });
 
     return (
-      <div>
+      <div className="variables-input">
+        <button style={{
+          margin: "20px",
+          fontSize: "25px"
+        }} onClick={() => {
+          vscode.postMessage({
+            type: "variables",
+            content: this.state.variables
+          });
+        }}>Run</button>
         <VariableEditor
           value={JSON.stringify(this.state.variables, undefined, 2)}
           onEdit={(v: string) => {
@@ -40,12 +51,6 @@ export class VariablesInput extends React.Component<{ requestedVariables: any[],
           }}
           variableToType={variableToType}
         />
-        <button onClick={() => {
-          vscode.postMessage({
-            type: "variables",
-            content: this.state.variables
-          });
-        }}>Submit</button>
       </div>
     );
   }
