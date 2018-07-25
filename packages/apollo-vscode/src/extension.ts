@@ -160,7 +160,7 @@ export function activate(context: ExtensionContext) {
                 query,
                 endpoint,
                 headers,
-                variables: JSON.parse(message.content as string)
+                variables: message.content
               });
 
               currentMessageHandler = undefined;

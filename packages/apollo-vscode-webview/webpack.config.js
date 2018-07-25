@@ -64,6 +64,18 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\.css$/,
+        loader: 'style-loader!css-loader',
+      },
+      {
+        test: /\.svg$/,
+        loader: 'url-loader'
+      },
+      {
+        test: /\.png$/,
+        loader: 'url-loader'
       }
     ]
   },
@@ -76,7 +88,7 @@ module.exports = {
     // It is absolutely essential that NODE_ENV was set to production here.
     // Otherwise React will be compiled in the very slow development mode.
     new webpack.DefinePlugin({
-      NODE_ENV: "production"
+      'process.env.NODE_ENV': JSON.stringify('production')
     }),
     // Minify the code.
     new UglifyJsPlugin({
@@ -97,9 +109,7 @@ module.exports = {
           // https://github.com/mishoo/UglifyJS2/issues/2011
           comparisons: false
         },
-        mangle: {
-          safari10: true
-        },
+        mangle: true,
         output: {
           ecma: 5,
           comments: false,
