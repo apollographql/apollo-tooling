@@ -252,8 +252,7 @@ export const executeAndNotify = (
 
 const operationHasVariables = (operation: OperationDefinitionNode) => {
   return (
-    operation.variableDefinitions &&
-    operation.variableDefinitions.some(v => v.type.kind === "NonNullType")
+    operation.variableDefinitions && operation.variableDefinitions.length > 0
   );
 };
 
