@@ -2,13 +2,18 @@ import * as React from "react";
 
 import { vscode } from "./index";
 import { VariablesInput } from "./VariablesInput";
-import { buildSchema } from "graphql";
+import { buildSchema, TypeNode } from "graphql";
 
 import { ResultViewer } from "graphiql/dist/components/ResultViewer";
 
+export interface RequestedVariable {
+  name: string;
+  typeNode: TypeNode;
+}
+
 interface VariablesInputState {
   type: "VariablesInput";
-  requestedVariables: any[];
+  requestedVariables: RequestedVariable[];
   schema: string;
 }
 
@@ -23,8 +28,8 @@ interface WaitingForMode {
 
 type AppModeState = WaitingForMode | VariablesInputState | ResultViewerState;
 
-class App extends React.Component<any, AppModeState> {
-  constructor(props: any) {
+class App extends React.Component<{}, AppModeState> {
+  constructor(props: {}) {
     super(props);
 
     this.state = {
@@ -50,12 +55,16 @@ class App extends React.Component<any, AppModeState> {
     if (this.state.type === "Waiting") {
       return <div>Waiting for data from extension</div>;
     } else if (this.state.type === "VariablesInput") {
-      return <VariablesInput
-        requestedVariables={this.state.requestedVariables}
-        schema={buildSchema(this.state.schema)}
-      />;
+      return (
+        <VariablesInput
+          requestedVariables={this.state.requestedVariables}
+          schema={buildSchema(this.state.schema)}
+        />
+      );
     } else if (this.state.type === "ResultViewer") {
-      return <ResultViewer value={JSON.stringify(this.state.result, undefined, 2)}/>
+      return (
+        <ResultViewer value={JSON.stringify(this.state.result, undefined, 2)} />
+      );
     } else {
       return <div>Error: unknown state {JSON.stringify(this.state)}</div>;
     }

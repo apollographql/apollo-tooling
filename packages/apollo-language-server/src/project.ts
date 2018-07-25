@@ -120,13 +120,11 @@ export class GraphQLProject {
     this.engineStats.clear();
     this.documentsByFile = new Map();
 
-    this.readyPromise = this.loadEngineStats().then(() =>
-      this.scanAllIncludedFiles()
-    );
-
-    this.readyPromise = this.readyPromise.catch(error => {
-      console.error(error);
-    });
+    this.readyPromise = this.loadEngineStats()
+      .then(() => this.scanAllIncludedFiles())
+      .catch(error => {
+        console.error(error);
+      });
   }
 
   get displayName(): string {
