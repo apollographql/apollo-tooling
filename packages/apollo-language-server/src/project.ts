@@ -221,9 +221,7 @@ export class GraphQLProject {
     this.documentSets = await resolveDocumentSets(this.config, true);
 
     for (const set of this.documentSets) {
-      if (set.schema!.getQueryType()!.astNode) {
-        set.schema = set.schema!;
-      } else {
+      if (!set.schema!.getQueryType()!.astNode) {
         const schemaSource = printSchema(set.schema!, {
           commentDescriptions: true
         });
