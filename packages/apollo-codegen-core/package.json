@@ -1,7 +1,7 @@
 {
   "name": "apollo-codegen-core",
   "description": "Core generator APIs for Apollo Codegen",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "main": "./lib/index.js",
   "scripts": {
     "clean": "rm -rf lib",
@@ -38,8 +38,7 @@
     "@babel/generator": "7.0.0-beta.38",
     "@babel/types": "7.0.0-beta.38",
     "common-tags": "^1.5.1",
-    "core-js": "^2.5.3",
-    "graphql-config": "^2.0.1"
+    "core-js": "^2.5.3"
   },
   "peerDependencies": {
     "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0"

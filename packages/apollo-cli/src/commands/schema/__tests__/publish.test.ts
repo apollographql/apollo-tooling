@@ -1,3 +1,7 @@
+jest.mock("apollo-codegen-core/lib/localfs", () => {
+  return require("../../../__mocks__/localfs");
+});
+
 import * as path from "path";
 import * as fs from "fs";
 import { test as setup } from "apollo-cli-test";
@@ -8,27 +12,31 @@ import gql from "graphql-tag";
 import { ENGINE_URI } from "../../../engine";
 import { UPLOAD_SCHEMA } from "../../../operations/uploadSchema";
 
+import { fs as mockFS, vol } from "apollo-codegen-core/lib/localfs";
+
 const test = setup.do(() => mockConsole());
 const ENGINE_API_KEY = "service:test:1234";
 const hash = "12345";
-const localSchema = { __schema: { fakeSchema: true } };
-const fullSchema = execute(
-  buildSchema(
-    fs.readFileSync(path.resolve(__dirname, "./fixtures/schema.graphql"), {
-      encoding: "utf-8",
-    })
-  ),
-  gql(introspectionQuery)
-).data;
+const schemaSource = fs.readFileSync(
+  path.resolve(__dirname, "./fixtures/schema.graphql"),
+  {
+    encoding: "utf-8"
+  }
+);
+
+const fullSchema = execute(buildSchema(schemaSource), gql(introspectionQuery))
+  .data;
+
+const introspectionResult = JSON.stringify({ data: fullSchema });
 
 const localSuccess = nock => {
   nock
     .post("/graphql", {
       query: print(gql(introspectionQuery)),
       operationName: "IntrospectionQuery",
-      variables: {},
+      variables: {}
     })
-    .reply(200, { data: localSchema });
+    .reply(200, { data: fullSchema });
 };
 
 const engineSuccess = ({ schema, tag, result } = {}) => nock => {
@@ -37,16 +45,16 @@ const engineSuccess = ({ schema, tag, result } = {}) => nock => {
     .post("/", {
       operationName: "UploadSchema",
       variables: {
-        schema: schema || localSchema.__schema,
+        schema: schema || fullSchema.__schema,
         id: "test",
         tag: tag || "current",
         gitContext: {
           commit: /.+/i,
           remoteUrl: /apollo-cli/i,
-          committer: /@/i,
-        },
+          committer: /@/i
+        }
       },
-      query: print(UPLOAD_SCHEMA),
+      query: print(UPLOAD_SCHEMA)
     })
     .reply(
       200,
@@ -56,15 +64,22 @@ const engineSuccess = ({ schema, tag, result } = {}) => nock => {
             uploadSchema: {
               code: "UPLOAD_SUCCESS",
               message: "upload was successful",
-              tag: { tag: tag || "current", schema: { hash: "12345" } },
-            },
-          },
-        },
+              tag: { tag: tag || "current", schema: { hash: "12345" } }
+            }
+          }
+        }
       }
     );
 };
 
 jest.setTimeout(35000);
+
+beforeEach(() => {
+  vol.reset();
+  vol.fromJSON({
+    __blankFileSoDirectoryExists: ""
+  });
+});
 
 describe("successful uploads", () => {
   test
@@ -93,11 +108,39 @@ describe("successful uploads", () => {
     .env({ ENGINE_API_KEY })
     .command([
       "schema:publish",
-      "--endpoint=https://staging.example.com/graphql",
+      "--endpoint=https://staging.example.com/graphql"
     ])
     .it("calls engine with a schema from a custom remote", ({ stdout }) => {
       expect(uiLog).toContain("12345");
     });
+
+  test
+    .do(() =>
+      vol.fromJSON({
+        "package.json": `
+      {
+        "apollo": {
+          "schemas": {
+            "customEndpoint": {
+              "endpoint": "https://staging.example.com/graphql",
+              "engineKey": "${ENGINE_API_KEY}"
+            }
+          }
+        }
+      }
+      `
+      })
+    )
+    .stdout()
+    .nock("https://staging.example.com", localSuccess)
+    .nock(ENGINE_URI, engineSuccess())
+    .command(["schema:publish"])
+    .it(
+      "calls engine with a schema from a custom remote specified in config",
+      ({ stdout }) => {
+        expect(uiLog).toContain("12345");
+      }
+    );
 
   test
     .nock("http://localhost:4000", localSuccess)
@@ -118,9 +161,9 @@ describe("successful uploads", () => {
         .post("/graphql", {
           query: print(gql(introspectionQuery)),
           operationName: "IntrospectionQuery",
-          variables: {},
+          variables: {}
         })
-        .reply(200, { data: localSchema });
+        .reply(200, { data: fullSchema });
     })
     .nock(ENGINE_URI, engineSuccess())
     .env({ ENGINE_API_KEY })
@@ -128,7 +171,7 @@ describe("successful uploads", () => {
       "schema:publish",
       "--endpoint=https://staging.example.com/graphql",
       "--header=Authorization: 1234",
-      "--header=Hello: World",
+      "--header=Hello: World"
     ])
     .it(
       "calls engine with a schema from a custom remote with custom headers",
@@ -138,16 +181,15 @@ describe("successful uploads", () => {
     );
 
   test
+    .do(() =>
+      vol.fromJSON({
+        "introspection-result.json": introspectionResult.toString()
+      })
+    )
     .stdout()
     .nock(ENGINE_URI, engineSuccess())
     .env({ ENGINE_API_KEY })
-    .command([
-      "schema:publish",
-      `--endpoint=${path.resolve(
-        __dirname,
-        "./fixtures/introspection-result.json"
-      )}`,
-    ])
+    .command(["schema:publish", "--endpoint=introspection-result.json"])
     .it(
       "calls engine with a schema from an introspection result on the filesystem",
       ({ stdout }) => {
@@ -156,13 +198,15 @@ describe("successful uploads", () => {
     );
 
   test
+    .do(() =>
+      vol.fromJSON({
+        "schema.graphql": schemaSource
+      })
+    )
     .stdout()
     .nock(ENGINE_URI, engineSuccess({ schema: fullSchema.__schema }))
     .env({ ENGINE_API_KEY })
-    .command([
-      "schema:publish",
-      `--endpoint=${path.resolve(__dirname, "./fixtures/schema.graphql")}`,
-    ])
+    .command(["schema:publish", "--endpoint=schema.graphql"])
     .it(
       "calls engine with a schema from a schema file on the filesystem",
       ({ stdout }) => {
@@ -198,11 +242,11 @@ describe("error handling", () => {
               uploadSchema: {
                 code: "NO_CHANGES",
                 message: "no changes to current",
-                tag: { tag: "current", schema: { hash: "12345" } },
-              },
-            },
-          },
-        },
+                tag: { tag: "current", schema: { hash: "12345" } }
+              }
+            }
+          }
+        }
       })
     )
     .env({ ENGINE_API_KEY })

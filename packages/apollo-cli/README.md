@@ -5,38 +5,43 @@
 Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
 
 <!-- toc -->
-* [Apollo CLI](#apollo-cli)
-* [Usage](#usage)
-* [Commands](#commands)
-* [Code Generation](#code-generation)
-* [Contributing](#contributing)
-<!-- tocstop -->
+
+- [Apollo CLI](#apollo-cli)
+- [Usage](#usage)
+- [Commands](#commands)
+- [Configuration](#configuration)
+- [Code Generation](#code-generation)
+- [Contributing](#contributing)
+  <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/1.4.0 darwin-x64 node-v10.4.1
+apollo/1.5.0 darwin-x64 node-v10.4.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-* [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
-* [`apollo help [COMMAND]`](#apollo-help-command)
-* [`apollo queries:check`](#apollo-queriescheck)
-* [`apollo schema:check`](#apollo-schemacheck)
-* [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
-* [`apollo schema:publish`](#apollo-schemapublish)
+
+- [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
+- [`apollo help [COMMAND]`](#apollo-help-command)
+- [`apollo queries:check`](#apollo-queriescheck)
+- [`apollo schema:check`](#apollo-schemacheck)
+- [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
+- [`apollo schema:publish`](#apollo-schemapublish)
 
 ## `apollo codegen:generate [OUTPUT]`
 
@@ -50,11 +55,11 @@ ARGUMENTS
   OUTPUT
       Directory to which generated files will be written.
       - For TypeScript/Flow generators, this specifies a directory relative to each source file by default.
-      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a 
+      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a
       file or directory (absolute or relative to the current working directory) to which:
          - a file will be written for each query (if "output" is a directory)
          - all generated types will be written
-      - For all other types, this defines a file (absolute or relative to the current working directory) to which all 
+      - For all other types, this defines a file (absolute or relative to the current working directory) to which all
       generated types are written.
 
 OPTIONS
@@ -63,6 +68,8 @@ OPTIONS
 
   --clientSchema=clientSchema                Path to your client-side GraphQL schema file for `apollo-link-state`
                                              (.graphql, .json, .js, .ts)
+
+  --config=config                            Path to your Apollo config file
 
   --customScalarsPrefix=customScalarsPrefix  Include a prefix when using provided types for custom scalars
 
@@ -104,7 +111,7 @@ OPTIONS
   --watch                                    Watch the query files to auto-generate on changes.
 ```
 
-_See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/codegen/generate.ts)_
+_See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-cli/blob/v1.5.0/src/commands/codegen/generate.ts)_
 
 ## `apollo help [COMMAND]`
 
@@ -133,15 +140,16 @@ USAGE
 
 OPTIONS
   -h, --help         Show command help
+  --config=config    Path to your Apollo config file
   --json             Output result as JSON
   --key=key          The API key for the Apollo Engine service
-  --queries=queries  [default: **/*.graphql] Path to your GraphQL queries, can include search tokens like **
+  --queries=queries  Path to your GraphQL queries, can include search tokens like **
 
   --tagName=tagName  [default: gql] Name of the template literal tag used to identify template literals containing
                      GraphQL queries in Javascript/Typescript code
 ```
 
-_See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/queries/check.ts)_
+_See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.5.0/src/commands/queries/check.ts)_
 
 ## `apollo schema:check`
 
@@ -153,13 +161,14 @@ USAGE
 
 OPTIONS
   -h, --help           Show command help
-  --endpoint=endpoint  [default: http://localhost:4000/graphql] The URL of the server to fetch the schema from
+  --config=config      Path to your Apollo config file
+  --endpoint=endpoint  The URL of the server to fetch the schema from
   --header=header      Additional headers to send to server for introspectionQuery
   --json               Output result as JSON
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/schema/check.ts)_
+_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/v1.5.0/src/commands/schema/check.ts)_
 
 ## `apollo schema:download OUTPUT`
 
@@ -174,16 +183,13 @@ ARGUMENTS
 
 OPTIONS
   -h, --help           Show command help
-
-  --endpoint=endpoint  [default: http://localhost:4000/graphql] The URL of the server to fetch the schema from or path
-                       to ./your/local/schema.graphql
-
+  --config=config      Path to your Apollo config file
+  --endpoint=endpoint  The URL of the server to fetch the schema from or path to ./your/local/schema.graphql
   --header=header      Additional headers to send to server for introspectionQuery
-
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/schema/download.ts)_
+_See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-cli/blob/v1.5.0/src/commands/schema/download.ts)_
 
 ## `apollo schema:publish`
 
@@ -195,14 +201,100 @@ USAGE
 
 OPTIONS
   -h, --help           Show command help
-  --endpoint=endpoint  [default: http://localhost:4000/graphql] The URL of the server to fetch the schema from
+  --config=config      Path to your Apollo config file
+  --endpoint=endpoint  The URL of the server to fetch the schema from
   --header=header      Additional headers to send to server for introspectionQuery
   --json               Output successful publish result as JSON
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.4.0/src/commands/schema/publish.ts)_
+_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/v1.5.0/src/commands/schema/publish.ts)_
+
 <!-- commandsstop -->
+
+# Configuration
+
+The Apollo CLI and VS Code extension can be configured with an Apollo Config file. Apollo configuration is stored as a plain object and can be either specified under the `apollo` key in your `package.json` or as a separate `apollo.config.js` which exports the config data.
+
+The core of any configuration is specifying schemas and queries. Schemas specify information about your backend such as where to get the schema, what endpoint to make requests against, and the Apollo Engine API key to get schema updates and stats from. Queries define which documents Apollo tooling should analyze and tie them to the schema they are targeting.
+
+Let's take a look at a basic configuration file (`package.json` style):
+
+```js
+{
+  ...
+  "apollo": {
+    "schemas": {
+      "myPrimaryBackend": {
+        "schema": "downloadedSchema.json", // if not defined the an introspection query will be run
+        "endpoint": "http://example.com/graphql", // if not defined the schema will be downloaded from Apollo Engine
+        "engineKey": "my-engine-key" // use this key when connecting to Apollo Engine
+      }
+    },
+    "queries": [
+      {
+        "schema": "myPrimaryBackend", // reference the previously defined schema
+        "includes": [ "**/*.tsx" ], // load queries from .tsx files
+        "excludes": [ "node_modules/**" ] // don't include any matching files from node_modules
+      }
+    ]
+  }
+}
+```
+
+Or in `apollo.config.js` style:
+
+```js
+...
+
+module.exports = {
+  schemas: {
+    myPrimaryBackend: {
+      schema: "downloadedSchema.json", // if not defined the an introspection query will be run
+      endpoint: "http://example.com/graphql", // if not defined the schema will be downloaded from Apollo Engine
+      engineKey: "my-engine-key" // use this key when connecting to Apollo Engine
+    }
+  },
+  queries: [
+    {
+      schema: "myPrimaryBackend", // reference the previously defined schema
+      includes: [ "**/*.tsx" ], // load queries from .tsx files
+      excludes: [ "node_modules/**" ] // don't include any matching files from node_modules
+    }
+  ]
+}
+```
+
+## Endpoint Configuration
+
+When configuring a schema's endpoint, you can either pass in a string or an object, which allows for specifying advanced options like headers and subscription endpoints.
+
+```js
+endpoint: {
+  url: "http://example.com/graphql",
+  subscriptions: "ws://example.com/graphql",
+  headers: {
+    cookie: "myCookie=myCookieValue"
+  }
+}
+```
+
+## Schema Dependencies
+
+Schemas can also declare dependencies on eachother, which can be useful in situations like having a client-side schema for `apollo-link-state`. To declare a dependency, use the `extends` key. When working with a client-side schema, make sure to also specify the `clientSide` key to enable code-generation support.
+
+```js
+schemas: {
+  myServerSideSchema: {
+    ...
+  },
+  myClientSideSchema: {
+    extends: "myServerSideSchema",
+    clientSide: true
+    ...
+  }
+}
+```
 
 # Code Generation
 

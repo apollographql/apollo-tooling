@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  // List of configurations. Add new configurations or edit existing ones.
+  "configurations": [
+    {
+      "name": "Launch Apollo VSCode",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceRoot}/packages/apollo-vscode"
+      ],
+      "stopOnEntry": false,
+      "sourceMaps": true,
+      "outFiles": ["${workspaceRoot}/packages/apollo-vscode/lib/**/*.js"]
+    }
+  ]
+}

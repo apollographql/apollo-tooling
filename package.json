@@ -6,7 +6,8 @@
     "postbootstrap": "npm run build",
     "build": "lerna run -- build",
     "test": "lerna run -- test",
-    "deploy": "lerna publish -m \"chore: Publish\" && cd packages/apollo-client && npm run deploy"
+    "deploy": "lerna publish -m \"chore: Publish\" && cd packages/apollo-client && npm run deploy",
+    "packageExtension": "lerna run packageExtension --scope=apollo-vscode"
   },
   "repository": {
     "type": "git",

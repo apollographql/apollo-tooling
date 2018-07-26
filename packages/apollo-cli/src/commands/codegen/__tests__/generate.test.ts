@@ -198,7 +198,7 @@ describe("successful codegen", () => {
       expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
     });
 
-    test
+  test
     .do(() => {
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
@@ -208,6 +208,35 @@ describe("successful codegen", () => {
     })
     .command(["codegen:generate", "--schema=schema.json", "--clientSchema=clientSideSchemaTag.js", "--outputFlat", "API.ts"])
     .it("infers TypeScript target and writes types for query with client-side data with schema in a JS file", () => {
+      expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
+    });
+
+  test
+    .do(() => {
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
+        "clientSideSchemaTag.js": clientSideSchemaTag.toString(),
+        "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString(),
+        "package.json": `
+        {
+          "apollo": {
+            "schemas": {
+              "serverSchema": {
+                "schema": "schema.json"
+              },
+              "default": {
+                "schema": "clientSideSchemaTag.js",
+                "extends": "serverSchema",
+                "clientSide": true
+              }
+            }
+          }
+        }
+        `
+      });
+    })
+    .command(["codegen:generate", "--outputFlat", "API.ts"])
+    .it("infers TypeScript target and writes types for query with client-side data with schema in a JS file from config", () => {
       expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
     });
 
