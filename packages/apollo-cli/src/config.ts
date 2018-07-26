@@ -250,7 +250,7 @@ export async function resolveDocumentSets(
         documentPaths: doc.includes
           .flatMap(i =>
             withGlobalFS(() =>
-              fg.sync(i, { root: config.projectFolder, absolute: true })
+              fg.sync(i, { cwd: config.projectFolder, absolute: true })
             )
           )
           .filter(
