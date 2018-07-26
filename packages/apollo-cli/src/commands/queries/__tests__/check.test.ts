@@ -123,7 +123,7 @@ describe("successful checks", () => {
     .do(() =>
       vol.fromJSON({
         ...files,
-        "test/package.json": `
+        "test-package.json": `
       {
         "apollo": {
           "schemas": {
@@ -138,7 +138,7 @@ describe("successful checks", () => {
     )
     .nock(ENGINE_URI, engineSuccess())
     .stdout()
-    .command(["queries:check", "--config=test/package.json"])
+    .command(["queries:check", "--config=test-package.json"])
     .exit(1)
     .it(
       "compares against the latest uploaded schema with engine key from specified config",

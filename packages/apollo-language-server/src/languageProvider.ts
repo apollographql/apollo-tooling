@@ -373,12 +373,22 @@ ${type.description}
       for (const definition of doc.ast.definitions) {
         if (definition.kind === Kind.OPERATION_DEFINITION) {
           if (set.endpoint) {
-            const fragmentSpreads: string[] = [];
-            visit(definition, {
-              FragmentSpread(node: FragmentSpreadNode) {
-                fragmentSpreads.push(node.name.value);
-              }
-            });
+            const fragmentSpreads: Set<graphql.FragmentDefinitionNode> = new Set();
+            const searchForReferencedFragments = (node: graphql.ASTNode) => {
+              visit(node, {
+                FragmentSpread(node: FragmentSpreadNode) {
+                  const fragDefn = project.fragments[node.name.value];
+                  if (!fragDefn) return;
+
+                  if (!fragmentSpreads.has(fragDefn)) {
+                    fragmentSpreads.add(fragDefn);
+                    searchForReferencedFragments(fragDefn);
+                  }
+                }
+              });
+            };
+
+            searchForReferencedFragments(definition);
 
             codeLenses.push({
               range: rangeForASTNode(definition),
@@ -388,9 +398,7 @@ ${type.description}
                 graphql.parse(
                   [
                     definition,
-                    ...Object.values(project.fragments).filter(f =>
-                      fragmentSpreads.some(r => f.name.value === r)
-                    )
+                    ...fragmentSpreads
                   ]
                     .map(n => graphql.print(n))
                     .join("\n")
@@ -398,7 +406,8 @@ ${type.description}
                 definition.operation === "subscription"
                   ? set.endpoint.subscriptions
                   : set.endpoint.url,
-                set.endpoint.headers
+                set.endpoint.headers,
+                graphql.printSchema(set.schema!)
               )
             });
           }

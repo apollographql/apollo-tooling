@@ -1,4 +1,4 @@
-import { extname } from "path";
+import { extname, relative } from "path";
 import { readFileSync } from "fs";
 
 import {
@@ -13,8 +13,7 @@ import {
   GraphQLCompositeType,
   printSchema,
   buildSchema,
-  Source,
-  GraphQLSchema
+  Source
 } from "graphql";
 
 import {
@@ -36,7 +35,8 @@ import { GraphQLDocument, extractGraphQLDocuments } from "./document";
 import {
   ApolloConfig,
   resolveDocumentSets,
-  ResolvedDocumentSet
+  ResolvedDocumentSet,
+  DocumentSet
 } from "apollo/lib/config";
 import { engineLink, getIdFromKey } from "apollo/lib/engine";
 
@@ -45,6 +45,8 @@ import { toPromise, execute } from "apollo-link";
 import gql from "graphql-tag";
 
 import Uri from "vscode-uri";
+
+import * as minimatch from "minimatch";
 
 export type DocumentUri = string;
 
@@ -102,6 +104,7 @@ export class GraphQLProject {
   public readyPromise: Promise<void> | undefined = undefined;
   private needsValidation = false;
 
+  private setToResolved: Map<DocumentSet, ResolvedDocumentSet> = new Map();
   private documentSets: ResolvedDocumentSet[] | undefined;
   private documentsByFile: Map<
     DocumentUri,
@@ -123,14 +126,13 @@ export class GraphQLProject {
     this.documentSets = undefined;
     this.engineStats.clear();
     this.documentsByFile = new Map();
+    this.setToResolved.clear();
 
-    this.readyPromise = this.loadEngineStats().then(() =>
-      this.scanAllIncludedFiles()
-    );
-
-    this.readyPromise = this.readyPromise.catch(error => {
-      console.error(error);
-    });
+    this.readyPromise = this.loadEngineStats()
+      .then(() => this.scanAllIncludedFiles())
+      .catch(error => {
+        console.error(error);
+      });
   }
 
   get displayName(): string {
@@ -149,10 +151,22 @@ export class GraphQLProject {
     return this.includesPath(Uri.parse(uri).fsPath);
   }
 
-  private includesPath(filePath: string) {
-    return (this.documentSets || []).some(s =>
-      s.documentPaths.some(p => p === filePath)
+  private setThatIncludes(filePath: string): ResolvedDocumentSet | undefined {
+    const set = (this.config.queries || []).find(
+      s =>
+        s.includes.some(i =>
+          minimatch(relative(this.config.projectFolder, filePath), i)
+        ) &&
+        !s.excludes.some(e =>
+          minimatch(relative(this.config.projectFolder, filePath), e)
+        )
     );
+
+    return set ? this.setToResolved.get(set) : undefined;
+  }
+
+  private includesPath(filePath: string) {
+    return !!this.setThatIncludes(filePath);
   }
 
   async loadEngineStats() {
@@ -207,21 +221,20 @@ export class GraphQLProject {
     this.documentSets = await resolveDocumentSets(this.config, true);
 
     for (const set of this.documentSets) {
-      let schemaWithSource: GraphQLSchema;
-      if (set.schema!.getQueryType()!.astNode) {
-        schemaWithSource = set.schema!;
-      } else {
+      if (!set.schema!.getQueryType()!.astNode) {
         const schemaSource = printSchema(set.schema!, {
           commentDescriptions: true
         });
 
-        schemaWithSource = buildSchema(
+        set.schema = buildSchema(
           new Source(
             schemaSource,
             `graphql-schema:/schema.graphql?${encodeURIComponent(schemaSource)}`
           )
         );
       }
+
+      this.setToResolved.set(set.originalSet, set);
 
       for (const filePath of set.documentPaths) {
         const uri = Uri.file(filePath).toString();
@@ -230,7 +243,7 @@ export class GraphQLProject {
         // opened or changed before we got a chance to read it.
         if (this.documentsByFile.has(uri)) continue;
 
-        this.fileDidChange(uri, { ...set, schema: schemaWithSource });
+        this.fileDidChange(uri, set);
       }
     }
 
@@ -265,7 +278,15 @@ export class GraphQLProject {
     const documents = extractGraphQLDocuments(document);
 
     if (documents) {
-      const associatedSet = set || this.documentsByFile.get(document.uri)!.set;
+      const associatedSet =
+        set ||
+        (this.documentsByFile.get(document.uri) || { set: undefined }).set ||
+        this.setThatIncludes(Uri.parse(document.uri).fsPath);
+
+      if (!associatedSet) {
+        return;
+      }
+
       this.documentsByFile.set(document.uri, {
         docs: documents,
         set: associatedSet
@@ -280,6 +301,15 @@ export class GraphQLProject {
   private removeGraphQLDocumentsFor(uri: DocumentUri) {
     if (this.documentsByFile.has(uri)) {
       this.documentsByFile.delete(uri);
+      const filePath = Uri.parse(uri).fsPath;
+      (this.documentSets || []).forEach(s => {
+        s.documentPaths = s.documentPaths.filter(p => p !== filePath);
+      });
+
+      if (this._onDiagnostics) {
+        this._onDiagnostics({ uri: uri, diagnostics: [] });
+      }
+
       this.invalidate();
     }
   }

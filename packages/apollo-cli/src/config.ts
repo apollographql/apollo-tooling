@@ -185,6 +185,8 @@ export interface ResolvedDocumentSet {
   engineKey?: string;
 
   documentPaths: string[];
+
+  originalSet: DocumentSet;
 }
 
 export async function resolveSchema(
@@ -248,7 +250,7 @@ export async function resolveDocumentSets(
         documentPaths: doc.includes
           .flatMap(i =>
             withGlobalFS(() =>
-              fg.sync(i, { root: config.projectFolder, absolute: true })
+              fg.sync(i, { cwd: config.projectFolder, absolute: true })
             )
           )
           .filter(
@@ -256,7 +258,8 @@ export async function resolveDocumentSets(
               ![...doc.excludes, ...schemaPaths].some(e =>
                 minimatch(relative(config.projectFolder, f), e)
               )
-          )
+          ),
+        originalSet: doc
       };
     })
   );

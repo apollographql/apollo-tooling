@@ -56,6 +56,7 @@ export function activate(context: ExtensionContext) {
 
   let currentPanel: WebviewPanel | undefined = undefined;
   let currentCancellationID: number | undefined = undefined;
+  let currentMessageHandler: ((msg: any) => void) | undefined = undefined;
 
   const client = new LanguageClient(
     "apollographql",
@@ -81,7 +82,10 @@ export function activate(context: ExtensionContext) {
         "",
         sideViewColumn(),
         {
-          enableScripts: true
+          enableScripts: true,
+          localResourceRoots: [
+            vscode.Uri.file(path.join(context.extensionPath, "webview-content"))
+          ]
         }
       );
 
@@ -102,6 +106,20 @@ export function activate(context: ExtensionContext) {
         context.subscriptions
       );
 
+      currentPanel!.webview.onDidReceiveMessage(
+        message => {
+          if (currentMessageHandler) {
+            currentMessageHandler(message);
+          }
+        },
+        undefined,
+        context.subscriptions
+      );
+
+      currentPanel!.onDidDispose(() => {
+        currentMessageHandler = undefined;
+      });
+
       return currentPanel;
     }
   };
@@ -109,7 +127,7 @@ export function activate(context: ExtensionContext) {
   client.onReady().then(() => {
     client.onNotification(
       "apollographql/requestVariables",
-      ({ query, endpoint, headers, requestedVariables }) => {
+      ({ query, endpoint, headers, requestedVariables, schema }) => {
         getApolloPanel().title = "GraphQL Query Variables";
 
         if (currentCancellationID) {
@@ -120,58 +138,55 @@ export function activate(context: ExtensionContext) {
           currentCancellationID = undefined;
         }
 
-        const cancelReceive = currentPanel!.webview.onDidReceiveMessage(
-          variables => {
-            cancelReceive.dispose();
-            client.sendNotification("apollographql/runQueryWithVariables", {
-              query,
-              endpoint,
-              headers,
-              variables: JSON.parse(variables)
-            });
-          },
-          undefined,
-          context.subscriptions
-        );
+        currentMessageHandler = message => {
+          switch (message.type) {
+            case "started":
+              currentPanel!.webview.postMessage({
+                type: "setMode",
+                content: {
+                  type: "VariablesInput",
+                  requestedVariables: requestedVariables,
+                  schema: schema
+                }
+              });
+              break;
 
-        const baseVariables: { [key: string]: any } = {};
-        (requestedVariables as string[]).forEach(v => {
-          baseVariables[v] = null;
-        });
+            case "variables":
+              client.sendNotification("apollographql/runQueryWithVariables", {
+                query,
+                endpoint,
+                headers,
+                variables: message.content
+              });
 
+              currentMessageHandler = undefined;
+              break;
+          }
+        };
+
+        const mediaPath =
+          vscode.Uri.file(path.join(context.extensionPath, "webview-content"))
+            .with({
+              scheme: "vscode-resource"
+            })
+            .toString() + "/";
+
+        currentMessageHandler({ type: "started" });
         currentPanel!.webview.html = `
-      <html>
-        <body>
-          <textarea id="variables" style="width: 100%">${JSON.stringify(
-            baseVariables,
-            null,
-            2
-          )}</textarea>
-          <div>
-            <button id="submit">Submit!</button>
-          </div>
-          <script>
-            const vscode = acquireVsCodeApi();
-            const textArea = document.getElementById("variables");
-            textArea.oninput = () => {
-              textArea.style.height = "";
-              textArea.style.height = textArea.scrollHeight + "px";
-            };
-            textArea.oninput();
-
-            document.getElementById("submit").onclick = () => {
-              vscode.postMessage(textArea.value);
-            };
-          </script>
-        </body>
-      </html>
-      `;
+          <html>
+            <body>
+              <div id="root"></div>
+              <base href="${mediaPath}">
+              <script src="webview.bundle.js"></script>
+            </body>
+          </html>
+        `;
       }
     );
 
     client.onNotification(
       "apollographql/queryResult",
-      ({ data, errors, cancellationID }) => {
+      ({ result, cancellationID }) => {
         getApolloPanel().title = "GraphQL Query Result";
 
         if (currentCancellationID !== cancellationID) {
@@ -184,11 +199,40 @@ export function activate(context: ExtensionContext) {
           currentCancellationID = cancellationID;
         }
 
-        const htmlBody = data
-          ? JSON.stringify(data, null, 2)
-          : errors.map((e: any) => e.message).join("\n");
+        currentMessageHandler = message => {
+          switch (message.type) {
+            case "started":
+              currentPanel!.webview.postMessage({
+                type: "setMode",
+                content: {
+                  type: "ResultViewer",
+                  result
+                }
+              });
 
-        currentPanel!.webview.html = `<html><body><pre>${htmlBody}</pre></body></html>`;
+              currentMessageHandler = undefined;
+
+              break;
+          }
+        };
+
+        const mediaPath =
+          vscode.Uri.file(path.join(context.extensionPath, "webview-content"))
+            .with({
+              scheme: "vscode-resource"
+            })
+            .toString() + "/";
+
+        currentMessageHandler({ type: "started" });
+        currentPanel!.webview.html = `
+          <html>
+            <body>
+              <div id="root"></div>
+              <base href="${mediaPath}">
+              <script src="webview.bundle.js"></script>
+            </body>
+          </html>
+        `;
       }
     );
 

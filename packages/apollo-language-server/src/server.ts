@@ -129,18 +129,20 @@ connection.onDidChangeWatchedFiles(params => {
 
     // Don't respond to changes in files that are currently open,
     // because we'll get content change notifications instead
-    if (documents.get(uri)) continue;
+    if (change.type === FileChangeType.Changed) {
+      continue;
+    }
 
     const project = workspace.projectForFile(uri);
-    if (!project) return;
+    if (!project) continue;
 
     switch (change.type) {
       case FileChangeType.Created:
-      case FileChangeType.Changed:
         project.fileDidChange(uri);
         break;
       case FileChangeType.Deleted:
         project.fileWasDeleted(uri);
+        break;
     }
   }
 });
@@ -222,19 +224,19 @@ export const executeAndNotify = (
     value => {
       connection.sendNotification(
         new NotificationType<any, void>("apollographql/queryResult"),
-        { data: value.data, errors: value.errors, cancellationID }
+        { result: value, cancellationID }
       );
     },
     error => {
       if (error.result) {
         connection.sendNotification(
           new NotificationType<any, void>("apollographql/queryResult"),
-          { data: undefined, errors: error.result.errors, cancellationID }
+          { result: error.result, cancellationID }
         );
       } else {
         connection.sendNotification(
           new NotificationType<any, void>("apollographql/queryResult"),
-          { data: undefined, errors: [error], cancellationID }
+          { result: { errors: [error] }, cancellationID }
         );
       }
     }
@@ -242,7 +244,7 @@ export const executeAndNotify = (
 
   connection.sendNotification(
     new NotificationType<any, void>("apollographql/queryResult"),
-    { data: "Loading...", errors: [], cancellationID }
+    { result: "Loading...", cancellationID }
   );
 
   cancellationFunctions[cancellationID] = () => {
@@ -252,8 +254,7 @@ export const executeAndNotify = (
 
 const operationHasVariables = (operation: OperationDefinitionNode) => {
   return (
-    operation.variableDefinitions &&
-    operation.variableDefinitions.some(v => v.type.kind === "NonNullType")
+    operation.variableDefinitions && operation.variableDefinitions.length > 0
   );
 };
 
@@ -269,9 +270,13 @@ connection.onExecuteCommand(params => {
             query: params.arguments![0],
             endpoint: params.arguments![1],
             headers: params.arguments![2],
-            requestedVariables: operation
-              .variableDefinitions!.filter(v => v.type.kind == "NonNullType")
-              .map(v => v.variable.name.value)
+            schema: params.arguments![3],
+            requestedVariables: operation.variableDefinitions!.map(v => {
+              return {
+                name: v.variable.name.value,
+                typeNode: v.type
+              };
+            })
           }
         );
       } else {

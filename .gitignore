@@ -14,4 +14,5 @@ yarn.lock
 lerna-debug.log
 
 packages/apollo-vscode/server
+packages/apollo-vscode/webview-content
 **/*.vsix
