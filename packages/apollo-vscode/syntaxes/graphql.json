@@ -171,13 +171,25 @@
       ]
     },
     "graphql-comment": {
-      "comment":
-        "need to prefix comment space with a scope else Atom's reflow cmd doesn't work",
-      "name": "comment.line.graphql.js",
-      "match": "(\\s*)(#).*",
-      "captures": {
-        "1": { "name": "punctuation.whitespace.comment.leading.graphql" }
-      }
+      "patterns": [
+        {
+          "comment":
+            "need to prefix comment space with a scope else Atom's reflow cmd doesn't work",
+          "name": "comment.line.graphql.js",
+          "match": "(\\s*)(#).*",
+          "captures": {
+            "1": { "name": "punctuation.whitespace.comment.leading.graphql" }
+          }
+        },
+        {
+          "name": "comment.line.graphql.js",
+          "begin": "(\"\"\")",
+          "end": "(\"\"\")",
+          "beginCaptures": {
+            "1": { "name": "punctuation.whitespace.comment.leading.graphql" }
+          }
+        }
+      ]
     },
     "graphql-variable-definitions": {
       "begin": "\\s*(\\()",

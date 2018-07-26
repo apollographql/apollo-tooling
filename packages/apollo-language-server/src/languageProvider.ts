@@ -197,27 +197,31 @@ export class GraphQLLanguageProvider {
           }
           break;
         }
+
         case Kind.FIELD: {
           const parentType = typeInfo.getParentType();
           const fieldDef = typeInfo.getFieldDef();
 
           if (parentType && fieldDef) {
+            const argsString = fieldDef.args.length > 0 ?
+              `(${fieldDef.args.map(a => `${a.name}: ${a.type}`).join(", ")})` : "";
             return {
               contents: `
 \`\`\`graphql
-${parentType}.${fieldDef.name}: ${fieldDef.type}
+${parentType}.${fieldDef.name}${argsString}: ${fieldDef.type}
 \`\`\`
 ${fieldDef.description}
 `,
               range: rangeForASTNode(highlightNodeForNode(node))
             };
           }
+
           break;
         }
-        case Kind.NAMED_TYPE: {
-          const type = typeInfo.getType() as GraphQLNamedType | void;
 
-          if (!(type && type.astNode && type.astNode.loc)) break;
+        case Kind.NAMED_TYPE: {
+          const type = set.schema.getType(node.name.value) as GraphQLNamedType | void;
+          if (!type) break;
 
           return {
             contents: `
@@ -228,6 +232,19 @@ ${type.description}
 `,
             range: rangeForASTNode(highlightNodeForNode(node))
           };
+        }
+
+        case Kind.ARGUMENT: {
+          const argumentNode = typeInfo.getArgument()!;
+          return {
+            contents: `
+\`\`\`graphql
+${argumentNode.name}: ${argumentNode.type}
+\`\`\`
+${argumentNode.description}
+`,
+            range: rangeForASTNode(highlightNodeForNode(node))
+          }
         }
       }
     }
