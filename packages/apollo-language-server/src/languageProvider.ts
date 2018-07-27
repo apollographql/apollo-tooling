@@ -11,11 +11,11 @@ import {
   InsertTextFormat
 } from "vscode-languageserver";
 
-import { getAutocompleteSuggestions } from "graphql-language-service-interface";
+import { getAutocompleteSuggestions } from "@apollographql/graphql-language-service-interface";
 import {
   getTokenAtPosition,
   getTypeInfo
-} from "graphql-language-service-interface/dist/getAutocompleteSuggestions";
+} from "@apollographql/graphql-language-service-interface/dist/getAutocompleteSuggestions";
 
 import { GraphQLWorkspace } from "./workspace";
 import { DocumentUri, GraphQLProject } from "./project";
@@ -114,6 +114,7 @@ export class GraphQLLanguageProvider {
         doc.source.body,
         positionInDocument
       ).map(suggest => {
+        // when code completing fields, expand out required variables and open braces
         const suggestedField = parentFields[suggest.label] as GraphQLField<
           void,
           void
@@ -203,8 +204,12 @@ export class GraphQLLanguageProvider {
           const fieldDef = typeInfo.getFieldDef();
 
           if (parentType && fieldDef) {
-            const argsString = fieldDef.args.length > 0 ?
-              `(${fieldDef.args.map(a => `${a.name}: ${a.type}`).join(", ")})` : "";
+            const argsString =
+              fieldDef.args.length > 0
+                ? `(${fieldDef.args
+                    .map(a => `${a.name}: ${a.type}`)
+                    .join(", ")})`
+                : "";
             return {
               contents: `
 \`\`\`graphql
@@ -220,7 +225,9 @@ ${fieldDef.description}
         }
 
         case Kind.NAMED_TYPE: {
-          const type = set.schema.getType(node.name.value) as GraphQLNamedType | void;
+          const type = set.schema.getType(
+            node.name.value
+          ) as GraphQLNamedType | void;
           if (!type) break;
 
           return {
@@ -244,7 +251,7 @@ ${argumentNode.name}: ${argumentNode.type}
 ${argumentNode.description}
 `,
             range: rangeForASTNode(highlightNodeForNode(node))
-          }
+          };
         }
       }
     }
@@ -390,7 +397,9 @@ ${argumentNode.description}
       for (const definition of doc.ast.definitions) {
         if (definition.kind === Kind.OPERATION_DEFINITION) {
           if (set.endpoint) {
-            const fragmentSpreads: Set<graphql.FragmentDefinitionNode> = new Set();
+            const fragmentSpreads: Set<
+              graphql.FragmentDefinitionNode
+            > = new Set();
             const searchForReferencedFragments = (node: graphql.ASTNode) => {
               visit(node, {
                 FragmentSpread(node: FragmentSpreadNode) {
@@ -413,10 +422,7 @@ ${argumentNode.description}
                 `Run ${definition.operation}`,
                 "apollographql.runQuery",
                 graphql.parse(
-                  [
-                    definition,
-                    ...fragmentSpreads
-                  ]
+                  [definition, ...fragmentSpreads]
                     .map(n => graphql.print(n))
                     .join("\n")
                 ),
