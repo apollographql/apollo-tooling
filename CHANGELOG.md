@@ -1,6 +1,29 @@
 # Changelog
 ## vNEXT
 
+## v1.6.0
+#### :rocket: Feature
+* `apollo-language-server`
+  * [#516](https://github.com/apollographql/apollo-cli/pull/516) Code complete default query variables ([@shadaj](https://github.com/shadaj))
+* `apollo-language-server`, `apollo-vscode`
+  * [#515](https://github.com/apollographql/apollo-cli/pull/515) Fix missing descriptions and add more hover information for arguments ([@shadaj](https://github.com/shadaj))
+* `apollo-cli`, `apollo-codegen-core`, `apollo-language-server`, `apollo-vscode-webview`, `apollo-vscode`
+  * [#512](https://github.com/apollographql/apollo-cli/pull/512) React UI for webviews, fix file tracking and fragment spreads ([@shadaj](https://github.com/shadaj))
+* `apollo-cli`, `apollo-language-server`, `apollo-vscode`
+  * [#508](https://github.com/apollographql/apollo-cli/pull/508) Support jumping to definitions in schema ([@shadaj](https://github.com/shadaj))
+
+#### :memo: Documentation
+* `apollo-cli`
+  * [#505](https://github.com/apollographql/apollo-cli/pull/505) Add docs for Apollo config ([@shadaj](https://github.com/shadaj))
+
+#### :house: Internal
+* `apollo-cli`, `apollo-language-server`
+  * [#506](https://github.com/apollographql/apollo-cli/pull/506) Share validation logic between CLI and language server ([@shadaj](https://github.com/shadaj))
+
+#### Committers: 2
+- Shadaj Laddad ([@shadaj](https://github.com/shadaj))
+- Thomas Ladd ([@TLadd](https://github.com/TLadd))
+
 ## v1.5.0
 #### :rocket: Feature
 * `apollo-language-server`, `apollo-vscode`
