@@ -10,7 +10,6 @@ import {
   FragmentSpreadNode,
   TypeInfo,
   visitWithTypeInfo,
-  GraphQLCompositeType,
   printSchema,
   buildSchema,
   Source
@@ -343,8 +342,7 @@ export class GraphQLProject {
             visitWithTypeInfo(typeInfo, {
               enter: node => {
                 if (node.kind == "Field" && typeInfo.getParentType()) {
-                  const parentName = (typeInfo.getParentType() as GraphQLCompositeType)
-                    .name;
+                  const parentName = typeInfo.getParentType()!.name;
                   const parentEngineStat = this.engineStats
                     .get(set.engineKey!)!
                     .get(parentName);
