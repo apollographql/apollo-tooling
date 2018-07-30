@@ -26,36 +26,36 @@ export class GraphQLWorkspace {
   }
 
   addProjectsInFolder(folder: WorkspaceFolder) {
-    const apolloConfigFiles: string[] = fg.sync("apollo.config.js", {
+    const apolloConfigFiles: string[] = fg.sync("**/apollo.config.js", {
       cwd: Uri.parse(folder.uri).fsPath,
       absolute: true
     });
 
     apolloConfigFiles.push(
-      ...fg.sync("package.json", {
+      ...fg.sync("**/package.json", {
         cwd: Uri.parse(folder.uri).fsPath,
         absolute: true
       })
     );
 
-    const projectConfigs = apolloConfigFiles.flatMap(configFile => {
-      const loadedConfig = findAndLoadConfig(dirname(configFile), false, true);
+    const apolloConfigFolders = new Set<string>(
+      apolloConfigFiles.map(f => dirname(f))
+    );
 
-      if (loadedConfig) {
-        return [
-          {
-            config: loadedConfig,
-            configFile
-          }
-        ];
-      } else {
-        return [];
+    const projectConfigs = Array.from(apolloConfigFolders).flatMap(
+      configFolder => {
+        try {
+          return [findAndLoadConfig(configFolder, false, true)];
+        } catch (e) {
+          console.error(e);
+          return [];
+        }
       }
-    });
+    );
 
     const projects = projectConfigs.map(projectConfig => {
       const project = new GraphQLProject(
-        projectConfig.config,
+        projectConfig,
         projectConfig.configFile
       );
 
