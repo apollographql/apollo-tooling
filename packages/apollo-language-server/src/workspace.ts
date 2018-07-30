@@ -28,13 +28,15 @@ export class GraphQLWorkspace {
   addProjectsInFolder(folder: WorkspaceFolder) {
     const apolloConfigFiles: string[] = fg.sync("**/apollo.config.js", {
       cwd: Uri.parse(folder.uri).fsPath,
-      absolute: true
+      absolute: true,
+      ignore: "**/node_modules/**"
     });
 
     apolloConfigFiles.push(
       ...fg.sync("**/package.json", {
         cwd: Uri.parse(folder.uri).fsPath,
-        absolute: true
+        absolute: true,
+        ignore: "**/node_modules/**"
       })
     );
 
