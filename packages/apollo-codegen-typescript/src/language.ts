@@ -81,10 +81,12 @@ export default class TypescriptGenerator {
       keyInheritsNullability: true
     }), []);
 
-    inputType.leadingComments = [{
-      type: 'CommentBlock',
-      value: commentBlockContent(description || "")
-    } as t.CommentBlock]
+    if (description) {
+      inputType.leadingComments = [{
+        type: 'CommentBlock',
+        value: commentBlockContent(description)
+      } as t.CommentBlock]
+    }
 
     return inputType;
   }
