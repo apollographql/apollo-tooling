@@ -59,7 +59,7 @@ export function loadConfigStep(
         };
       }
 
-      if (flags.queries) {
+      if (!ctx.config.queries || ctx.config.queries.length == 0 && flags.queries) {
         ctx.config.queries = [
           {
             schema: "default",
@@ -67,6 +67,13 @@ export function loadConfigStep(
             excludes: []
           }
         ];
+      }
+      else if (flags.queries && flags.queries != '**/*.graphql') {
+        ctx.config.queries = ctx.config.queries.map((query: any) => {
+          return Object.assign({}, query, {
+            includes: flags.queries.split("\n")
+          })
+        })
       }
 
       if (flags.key) {
