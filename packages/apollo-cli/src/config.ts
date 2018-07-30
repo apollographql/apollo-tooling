@@ -28,6 +28,7 @@ export interface DocumentSet {
 }
 
 export interface ApolloConfig {
+  configFile: string;
   projectFolder: string;
   name?: string;
   schemas?: { [name: string]: SchemaDependency }; // path to JSON introspection, if not provided endpoint will be used
@@ -100,6 +101,7 @@ function loadDocumentSet(obj: any): DocumentSet {
 
 export function loadConfig(
   obj: any,
+  configFile: string,
   configDir: string,
   defaultEndpoint: boolean,
   defaultSchema: boolean
@@ -114,6 +116,7 @@ export function loadConfig(
   }
 
   return {
+    configFile,
     projectFolder: configDir,
     schemas: schemasObj,
     name: basename(configDir),
@@ -136,6 +139,7 @@ export function loadConfigFromFile(
     delete require.cache[require.resolve(file)];
     return loadConfig(
       require(file),
+      file,
       dirname(file),
       defaultEndpoint,
       defaultSchema
@@ -145,12 +149,19 @@ export function loadConfigFromFile(
     if (apolloKey) {
       return loadConfig(
         apolloKey,
+        file,
         dirname(file),
         defaultEndpoint,
         defaultSchema
       );
     } else {
-      return loadConfig({}, dirname(file), defaultEndpoint, defaultSchema);
+      return loadConfig(
+        {},
+        file,
+        dirname(file),
+        defaultEndpoint,
+        defaultSchema
+      );
     }
   } else {
     throw new Error("Unsupported config file format");
@@ -175,7 +186,7 @@ export function findAndLoadConfig(
       defaultSchema
     );
   } else {
-    return loadConfig({}, dir, defaultEndpoint, defaultSchema);
+    return loadConfig({}, dir, dir, defaultEndpoint, defaultSchema);
   }
 }
 
