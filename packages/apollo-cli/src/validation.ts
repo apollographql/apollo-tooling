@@ -12,7 +12,9 @@ import {
   FragmentDefinitionNode,
   visit,
   visitWithTypeInfo,
-  visitInParallel
+  visitInParallel,
+  ASTVisitor,
+  isNonNullType
 } from "graphql";
 
 import { ToolError, logError } from "apollo-codegen-core/lib/errors";
@@ -30,6 +32,7 @@ export function getValidationErrors(
   const rules = [
     NoAnonymousQueries,
     NoTypenameAlias,
+    CannotDeferNonNullableFields,
     ...specifiedRules.filter(rule => !specifiedRulesToBeRemoved.includes(rule))
   ];
 
@@ -86,6 +89,31 @@ export function NoTypenameAlias(context: ValidationContext) {
           )
         );
       }
+    }
+  };
+}
+
+export function cannotDeferOnNonNullMessage(fieldName: string): string {
+  return `@defer cannot be applied on non-nullable field "${fieldName}".`;
+}
+
+export function CannotDeferNonNullableFields(
+  context: ValidationContext
+): ASTVisitor {
+  return {
+    Directive(node) {
+      const fieldDef = context.getFieldDef()!;
+      if (node.name.value === "defer" && isNonNullType(fieldDef.type)) {
+        context.reportError(
+          new GraphQLError(
+            cannotDeferOnNonNullMessage(
+              `${context.getParentType()}.${fieldDef.name}`
+            ),
+            [node]
+          )
+        );
+      }
+      return;
     }
   };
 }

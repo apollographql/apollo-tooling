@@ -14,7 +14,8 @@ import { GraphQLLanguageProvider } from "./languageProvider";
 
 import { execute, DocumentNode } from "apollo-link";
 import { createHttpLink } from "apollo-link-http";
-import fetch from "node-fetch";
+import { DeferPatchLink } from "apollo-link-patch";
+import fetch from "node-fetch-polyfill";
 import { OperationDefinitionNode } from "graphql";
 
 import { WebSocketLink } from "apollo-link-ws";
@@ -26,6 +27,11 @@ import * as ws from "ws";
 
 import { dirname } from "path";
 import { findAndLoadConfig } from "apollo/lib/config";
+
+import { TextEncoder, TextDecoder } from "text-encoding";
+
+(global as any).TextEncoder = TextEncoder;
+(global as any).TextDecoder = TextDecoder;
 
 const connection = createConnection(ProposedFeatures.all);
 
@@ -208,10 +214,13 @@ export const executeAndNotify = (
   variables: any
 ) => {
   const operation = query.definitions[0] as OperationDefinitionNode;
+
   const link =
     operation.operation === "subscription"
       ? createSubscriptionLink(endpoint)
-      : createHttpLink({ uri: endpoint, fetch } as any);
+      : new DeferPatchLink().concat(
+          createHttpLink({ uri: endpoint, fetch } as any)
+        );
 
   const cancellationID = nextCancellationID;
   nextCancellationID++;
