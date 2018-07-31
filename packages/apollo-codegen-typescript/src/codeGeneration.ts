@@ -1,3 +1,4 @@
+import * as path from "path";
 import * as t from '@babel/types';
 import { stripIndent } from 'common-tags';
 import {
@@ -67,6 +68,28 @@ function printEnumsAndInputObjects(generator: TypescriptAPIGenerator, typesUsed:
   `)
 }
 
+function printGlobalImport(
+  generator: TypescriptAPIGenerator,
+  typesUsed: GraphQLType[],
+  outputPath: string,
+  globalSourcePath: string,
+) {
+  const types = typesUsed.filter((type) => {
+    return type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType;
+  });
+  if (types.length > 0) {
+    const relative = path.relative(
+      path.dirname(outputPath),
+      path.join(
+        path.dirname(globalSourcePath),
+        path.basename(globalSourcePath, '.ts')
+      )
+    );
+    generator.printer.enqueue(generator.import(types, relative));
+  }
+}
+
+// TODO: deprecate this, use generateLocalSource and generateGlobalSource instead.
 export function generateSource(
   context: CompilerContext,
 ) {
@@ -109,6 +132,75 @@ export function generateSource(
     generatedFiles,
     common
   };
+}
+
+interface IGeneratedFileOptions {
+  outputPath?: string;
+  globalSourcePath?: string;
+}
+
+interface IGeneratedFile {
+  sourcePath: string;
+  fileName: string;
+  content: (options?: IGeneratedFileOptions) => TypescriptGeneratedFile;
+}
+
+export function generateLocalSource(
+  context: CompilerContext,
+): IGeneratedFile[] {
+  const generator = new TypescriptAPIGenerator(context);
+
+  const operations = Object.values(context.operations)
+    .map((operation) => ({
+      sourcePath: operation.filePath,
+      fileName: `${operation.operationName}.ts`,
+      content: (options?: IGeneratedFileOptions) => {
+        generator.fileHeader();
+        if (options && options.outputPath && options.globalSourcePath) {
+          printGlobalImport(
+            generator,
+            generator.getTypesUsedForOperation(operation, context),
+            options.outputPath,
+            options.globalSourcePath
+          );
+        }
+        generator.interfacesForOperation(operation);
+        const output = generator.printer.printAndClear();
+        return new TypescriptGeneratedFile(output);
+      },
+    }));
+
+  const fragments = Object.values(context.fragments)
+    .map((fragment) => ({
+      sourcePath: fragment.filePath,
+      fileName: `${fragment.fragmentName}.ts`,
+      content: (options?: IGeneratedFileOptions) => {
+        generator.fileHeader();
+        if (options && options.outputPath && options.globalSourcePath) {
+          printGlobalImport(
+            generator,
+            generator.getTypesUsedForOperation(fragment, context),
+            options.outputPath,
+            options.globalSourcePath
+          );
+        }
+        generator.interfacesForFragment(fragment);
+        const output = generator.printer.printAndClear();
+        return new TypescriptGeneratedFile(output);
+      },
+    }));
+
+  return operations.concat(fragments);
+}
+
+export function generateGlobalSource(
+  context: CompilerContext,
+): TypescriptGeneratedFile {
+  const generator = new TypescriptAPIGenerator(context);
+  generator.fileHeader();
+  printEnumsAndInputObjects(generator, context.typesUsed);
+  const output = generator.printer.printAndClear();
+  return new TypescriptGeneratedFile(output);
 }
 
 export class TypescriptAPIGenerator extends TypescriptGenerator {

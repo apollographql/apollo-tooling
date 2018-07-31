@@ -592,7 +592,11 @@ exports[`successful codegen writes TypeScript types into a __generated__ directo
 
 export interface SimpleQuery {
   hello: string;
-}
+}"
+`;
+
+exports[`successful codegen writes TypeScript types into a __generated__ directory next to sources when no output is set 2`] = `
+"
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -618,7 +622,11 @@ exports[`successful codegen writes TypeScript types next to sources when output 
 
 export interface SimpleQuery {
   hello: string;
-}
+}"
+`;
+
+exports[`successful codegen writes TypeScript types next to sources when output is set to empty string 2`] = `
+"
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -644,7 +652,11 @@ exports[`successful codegen writes TypeScript types to a custom directory next t
 
 export interface SimpleQuery {
   hello: string;
-}
+}"
+`;
+
+exports[`successful codegen writes TypeScript types to a custom directory next to sources when output is set 2`] = `
+"
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
