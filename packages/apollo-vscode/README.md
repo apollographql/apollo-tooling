@@ -8,13 +8,13 @@ An all-in-one experience for developing applications with GraphQL.
 - Run queries you write without leaving the editor
 - Provide performance statistics next to your query definitions
 
-![Code completing queries](./images/variable-argument-completion.gif)
-![Running a query with variables](./images/query-with-vars.gif)
-![Viewing Engine statistics](./images/engine-stats.png)
+![Code completing queries](images/variable-argument-completion.gif)
+![Running a query with variables](images/query-with-vars.gif)
+![Viewing Engine statistics](images/engine-stats.png)
 
 ## Features
 
-- Loads your GraphQL schemas and queries automatically from an [Apollo Config](../apollo-cli/config.md) file
+- Loads your GraphQL schemas and queries automatically from an [Apollo Config](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo-cli/README.md#configuration) file
 - Adds syntax highlighting for GraphQL files and `gql` templates inside JavaScript files
 - Code-completes fields, arguments, types, and variables in your queries
 - Lets you run queryies, mutations, and subscriptions within the IDE with code-completion for variables
@@ -28,7 +28,7 @@ Open up VS Code and search for the extension "Apollo".
 
 ## How to get it set up?
 
-The extension searches for [Apollo Config](../apollo-cli/config.md) definitions in `package.json` or `apollo.config.js` files. To set up a basic endpoint and queries defined in `.tsx` files, a config file would look like.
+The extension searches for [Apollo Config](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo-cli/README.md#configuration) definitions in `package.json` or `apollo.config.js` files. To set up a basic endpoint and queries defined in `.tsx` files, a config file would look like.
 
 ```js
 // package.json
