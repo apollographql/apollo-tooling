@@ -735,8 +735,6 @@ export interface HeroNameVariables {
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"../../__generated__/globalTypes\\";
-
 // ====================================================
 // GraphQL fragment: humanFragment
 // ====================================================
@@ -905,8 +903,6 @@ Array [
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
-
-import { Episode } from \\"../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL fragment: simpleFragment
@@ -1374,8 +1370,6 @@ export interface HeroFragmentVariables {
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"../../__generated__/globalTypes\\";
-
 // ====================================================
 // GraphQL fragment: simpleFragment
 // ====================================================
@@ -1540,7 +1534,7 @@ Array [
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Episode, ReviewInput, ColorInput } from \\"../../__generated__/globalTypes\\";
+import { Episode, ReviewInput } from \\"../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL mutation operation: ReviewMovie
