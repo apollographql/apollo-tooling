@@ -4,7 +4,9 @@
       "queryType": {
         "name": "Query"
       },
-      "mutationType": null,
+      "mutationType": {
+        "name": "Mutation"
+      },
       "subscriptionType": null,
       "types": [{
         "kind": "OBJECT",
@@ -64,6 +66,21 @@
             "ofType": {
               "kind": "SCALAR",
               "name": "Boolean",
+              "ofType": null
+            }
+          },
+          "isDeprecated": false,
+          "deprecationReason": null
+        }, {
+          "name": "nesting",
+          "description": null,
+          "args": [],
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "OBJECT",
+              "name": "Nesting",
               "ofType": null
             }
           },
@@ -318,6 +335,171 @@
         "description": "The `Boolean` scalar type represents `true` or `false`.",
         "fields": null,
         "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      }, {
+        "kind": "OBJECT",
+        "name": "Nesting",
+        "description": null,
+        "fields": [{
+          "name": "propA",
+          "description": null,
+          "args": [],
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "EnumCommentTestCase",
+                      "ofType": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "isDeprecated": false,
+          "deprecationReason": null
+        }, {
+          "name": "propB",
+          "description": null,
+          "args": [],
+          "type": {
+            "kind": "LIST",
+            "name": null,
+            "ofType": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "EnumCommentTestCase",
+                "ofType": null
+              }
+            }
+          },
+          "isDeprecated": false,
+          "deprecationReason": null
+        }],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      }, {
+        "kind": "OBJECT",
+        "name": "Mutation",
+        "description": null,
+        "fields": [{
+          "name": "duplicates",
+          "description": null,
+          "args": [{
+            "name": "a",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "EnumCommentTestCase",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          }, {
+            "name": "b",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "EnumCommentTestCase",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          }, {
+            "name": "c",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "Duplicate",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          }],
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "OBJECT",
+              "name": "Nesting",
+              "ofType": null
+            }
+          },
+          "isDeprecated": false,
+          "deprecationReason": null
+        }],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      }, {
+        "kind": "INPUT_OBJECT",
+        "name": "Duplicate",
+        "description": null,
+        "fields": null,
+        "inputFields": [{
+          "name": "propA",
+          "description": null,
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "ENUM",
+              "name": "EnumCommentTestCase",
+              "ofType": null
+            }
+          },
+          "defaultValue": null
+        }, {
+          "name": "propB",
+          "description": null,
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "EnumCommentTestCase",
+                  "ofType": null
+                }
+              }
+            }
+          },
+          "defaultValue": null
+        }],
         "interfaces": null,
         "enumValues": null,
         "possibleTypes": null

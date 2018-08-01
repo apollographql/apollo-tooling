@@ -2,6 +2,7 @@ import { parse } from 'graphql';
 
 import { loadSchema } from 'apollo-codegen-core/lib/loading';
 const schema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
+const miscSchema = loadSchema(require.resolve('../../../common-test/fixtures/misc/schema.json'));
 
 import {
   compileToIR,
@@ -16,10 +17,21 @@ function compile(
   options: CompilerOptions = {
     mergeInFieldsFromFragmentSpreads: true,
     addTypename: true
-  }
+  },
 ): CompilerContext {
   const document = parse(source);
   return compileToIR(schema, document, options);
+}
+
+function compileMisc(
+  source: string,
+  options: CompilerOptions = {
+    mergeInFieldsFromFragmentSpreads: true,
+    addTypename: true
+  },
+): CompilerContext {
+  const document = parse(source);
+  return compileToIR(miscSchema, document, options);
 }
 
 describe('Typescript codeGeneration', () => {
@@ -256,9 +268,7 @@ describe('Typescript codeGeneration', () => {
   });
 
   test('handles multiline graphql comments', () => {
-    const miscSchema = loadSchema(require.resolve('../../../common-test/fixtures/misc/schema.json'));
-
-    const document = parse(`
+    const context = compileMisc(`
       query CustomScalar {
         commentTest {
           multiLine
@@ -266,13 +276,7 @@ describe('Typescript codeGeneration', () => {
       }
     `);
 
-    const output = generateSource(
-      compileToIR(miscSchema, document, {
-        mergeInFieldsFromFragmentSpreads: true,
-        addTypename: true
-      })
-    );
-
+    const output = generateSource(context);
     expect(output).toMatchSnapshot();
   });
 });
@@ -544,9 +548,7 @@ describe('Typescript codeGeneration local / global', () => {
   });
 
   test('handles multiline graphql comments', () => {
-    const miscSchema = loadSchema(require.resolve('../../../common-test/fixtures/misc/schema.json'));
-
-    const document = parse(`
+    const context = compileMisc(`
       query CustomScalar {
         commentTest {
           multiLine
@@ -554,10 +556,66 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const context = compileToIR(miscSchema, document, {
-      mergeInFieldsFromFragmentSpreads: true,
-      addTypename: true
-    });
+    const output = generateLocalSource(context).map((f) => ({
+      ...f,
+      content: f.content({
+        outputPath: '/some/file/ComponentA.tsx',
+        globalSourcePath: '/__generated__/globalTypes.ts'
+      }),
+    }));
+    expect(output).toMatchSnapshot();
+    expect(generateGlobalSource(context)).toMatchSnapshot();
+  });
+
+  test('multiple nested non-null list enum', () => {
+    const context = compileMisc(`
+      query nesting {
+        nesting {
+          propA
+        }
+      }
+    `);
+
+    const output = generateLocalSource(context).map((f) => ({
+      ...f,
+      content: f.content({
+        outputPath: '/some/file/ComponentA.tsx',
+        globalSourcePath: '/__generated__/globalTypes.ts'
+      }),
+    }));
+    expect(output).toMatchSnapshot();
+    expect(generateGlobalSource(context)).toMatchSnapshot();
+  });
+
+  test('multiple nested list enum', () => {
+    const context = compileMisc(`
+      query nesting {
+        nesting {
+          propB
+        }
+      }
+    `);
+
+    const output = generateLocalSource(context).map((f) => ({
+      ...f,
+      content: f.content({
+        outputPath: '/some/file/ComponentA.tsx',
+        globalSourcePath: '/__generated__/globalTypes.ts'
+      }),
+    }));
+    expect(output).toMatchSnapshot();
+    expect(generateGlobalSource(context)).toMatchSnapshot();
+  });
+
+  test('duplicates', () => {
+    const context = compileMisc(`
+      mutation duplicates($a: EnumCommentTestCase!, $b: EnumCommentTestCase!, $c: Duplicate!) {
+        duplicates(a: $a, b: $b, c: $c) {
+          propA
+          propB
+        }
+      }
+    `);
 
     const output = generateLocalSource(context).map((f) => ({
       ...f,

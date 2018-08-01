@@ -1,5 +1,6 @@
 schema {
   query: Query
+  mutation: Mutation
 }
 
 scalar Date
@@ -60,6 +61,16 @@ type PartialB {
   prop: String!
 }
 
+type Nesting {
+  propA: [[EnumCommentTestCase!]!]!
+  propB: [[EnumCommentTestCase]]
+}
+
+input Duplicate {
+  propA: EnumCommentTestCase!
+  propB: [EnumCommentTestCase!]!
+}
+
 union UnionTestCase = PartialA | PartialB
 
 type Query {
@@ -68,4 +79,9 @@ type Query {
   interfaceTest: InterfaceTestCase
   unionTest: UnionTestCase
   scalarTest: Boolean!
+  nesting: Nesting!
+}
+
+type Mutation {
+  duplicates(a: EnumCommentTestCase!, b: EnumCommentTestCase!, c: Duplicate!): Nesting!
 }

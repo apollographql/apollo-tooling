@@ -646,6 +646,70 @@ export interface HeroNameVariables {
 }
 `;
 
+exports[`Typescript codeGeneration local / global duplicates 1`] = `
+Array [
+  Object {
+    "content": TypescriptGeneratedFile {
+      "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+import { EnumCommentTestCase, Duplicate } from \\"../../__generated__/globalTypes\\";
+
+// ====================================================
+// GraphQL mutation operation: duplicates
+// ====================================================
+
+export interface duplicates_duplicates {
+  __typename: \\"Nesting\\";
+  propA: EnumCommentTestCase[][];
+  propB: ((EnumCommentTestCase | null)[] | null)[] | null;
+}
+
+export interface duplicates {
+  duplicates: duplicates_duplicates;
+}
+
+export interface duplicatesVariables {
+  a: EnumCommentTestCase;
+  b: EnumCommentTestCase;
+  c: Duplicate;
+}",
+    },
+    "fileName": "duplicates.ts",
+    "sourcePath": "GraphQL request",
+  },
+]
+`;
+
+exports[`Typescript codeGeneration local / global duplicates 2`] = `
+TypescriptGeneratedFile {
+  "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+export enum EnumCommentTestCase {
+  first = \\"first\\",
+  second = \\"second\\",
+}
+
+export interface Duplicate {
+  propA: EnumCommentTestCase;
+  propB: EnumCommentTestCase[];
+}
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+}
+`;
+
 exports[`Typescript codeGeneration local / global fragment spreads with inline fragments 1`] = `
 Array [
   Object {
@@ -1317,6 +1381,110 @@ export enum Episode {
   EMPIRE = \\"EMPIRE\\",
   JEDI = \\"JEDI\\",
   NEWHOPE = \\"NEWHOPE\\",
+}
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+}
+`;
+
+exports[`Typescript codeGeneration local / global multiple nested list enum 1`] = `
+Array [
+  Object {
+    "content": TypescriptGeneratedFile {
+      "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+import { EnumCommentTestCase } from \\"../../__generated__/globalTypes\\";
+
+// ====================================================
+// GraphQL query operation: nesting
+// ====================================================
+
+export interface nesting_nesting {
+  __typename: \\"Nesting\\";
+  propB: ((EnumCommentTestCase | null)[] | null)[] | null;
+}
+
+export interface nesting {
+  nesting: nesting_nesting;
+}",
+    },
+    "fileName": "nesting.ts",
+    "sourcePath": "GraphQL request",
+  },
+]
+`;
+
+exports[`Typescript codeGeneration local / global multiple nested list enum 2`] = `
+TypescriptGeneratedFile {
+  "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+export enum EnumCommentTestCase {
+  first = \\"first\\",
+  second = \\"second\\",
+}
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================",
+}
+`;
+
+exports[`Typescript codeGeneration local / global multiple nested non-null list enum 1`] = `
+Array [
+  Object {
+    "content": TypescriptGeneratedFile {
+      "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+import { EnumCommentTestCase } from \\"../../__generated__/globalTypes\\";
+
+// ====================================================
+// GraphQL query operation: nesting
+// ====================================================
+
+export interface nesting_nesting {
+  __typename: \\"Nesting\\";
+  propA: EnumCommentTestCase[][];
+}
+
+export interface nesting {
+  nesting: nesting_nesting;
+}",
+    },
+    "fileName": "nesting.ts",
+    "sourcePath": "GraphQL request",
+  },
+]
+`;
+
+exports[`Typescript codeGeneration local / global multiple nested non-null list enum 2`] = `
+TypescriptGeneratedFile {
+  "fileContents": "
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+export enum EnumCommentTestCase {
+  first = \\"first\\",
+  second = \\"second\\",
 }
 
 //==============================================================

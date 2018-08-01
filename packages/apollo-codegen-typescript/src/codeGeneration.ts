@@ -10,6 +10,7 @@ import {
   CompilerContext,
   Operation,
   Fragment,
+  Selection,
   SelectionSet,
   Field,
   FragmentSpread
@@ -156,7 +157,7 @@ export function generateLocalSource(
         if (options && options.outputPath && options.globalSourcePath) {
           printGlobalImport(
             generator,
-            generator.getGlobalTypesUsedForOperation(operation, context),
+            generator.getGlobalTypesUsedForOperation(operation),
             options.outputPath,
             options.globalSourcePath
           );
@@ -176,7 +177,7 @@ export function generateLocalSource(
         if (options && options.outputPath && options.globalSourcePath) {
           printGlobalImport(
             generator,
-            generator.getGlobalTypesUsedForOperation(fragment, context),
+            generator.getGlobalTypesUsedForFragment(fragment),
             options.outputPath,
             options.globalSourcePath
           );
@@ -335,66 +336,49 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     this.scopeStackPop();
   }
 
-  public getGlobalTypesUsedForOperation(doc: Operation | Fragment, context: CompilerContext) {
-    let docTypesUsed: GraphQLType[] = [];
-
-    if (doc.hasOwnProperty('operationName')) {
-      const operation = doc as Operation;
-      docTypesUsed = operation.variables.map(({ type }) => type);
-    }
-
-    const reduceTypesForDocument = (
-      nested: SelectionSet,
-      acc: GraphQLType[]
-    ) => {
-      acc = nested.selections
-        .reduce((selectionAcc, selection) => {
-          switch (selection.kind) {
-            case 'Field':
-            case 'TypeCondition':
-              if (selection.selectionSet) {
-                selectionAcc = reduceTypesForDocument(selection.selectionSet, selectionAcc);
-              } else {
-                selectionAcc = maybePush(selectionAcc, selection.type);
-              }
-              break;
-            case 'FragmentSpread':
-              selectionAcc = reduceTypesForDocument(selection.selectionSet, selectionAcc);
-              break;
-            default:
-              break;
-          }
-
-          return selectionAcc;
-        }, acc);
-
-      return acc;
-    }
-
-    docTypesUsed = reduceTypesForDocument(doc.selectionSet, docTypesUsed)
-      .reduce(this.reduceGlobalTypesUsed, []);
-
-    return context.typesUsed.filter((type) => {
-      return (type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType)
-        && docTypesUsed.find((typeUsed) => type === typeUsed);
-    });
+  public getGlobalTypesUsedForOperation = (doc: Operation) => {
+    const typesUsed = doc.variables
+      .reduce((acc: GraphQLType[], { type } : { type : GraphQLType }) => {
+        const t = this.getUnderlyingType(type);
+        if (this.isGlobalType(t)) {
+          return maybePush(acc, t);
+        }
+        return acc;
+      }, []);
+    return doc.selectionSet.selections.reduce(this.reduceSelection, typesUsed);
   }
 
-  private reduceGlobalTypesUsed = (
-    acc: (GraphQLType | GraphQLOutputType)[],
-    type: GraphQLType
-  ) =>{
-    if (type instanceof GraphQLNonNull) {
-      type = getNullableType(type);
+  public getGlobalTypesUsedForFragment = (doc: Fragment) => {
+    return doc.selectionSet.selections.reduce(this.reduceSelection, []);
+  }
+
+  private reduceSelection = (acc: GraphQLType[], selection: Selection): GraphQLType[] => {
+    if (selection.kind === 'Field' || selection.kind === 'TypeCondition') {
+      const type = this.getUnderlyingType(selection.type);
+      if (this.isGlobalType(type)) {
+        acc = maybePush(acc, type);
+      }
     }
 
-    if (type instanceof GraphQLList) {
-      type = type.ofType
+    if (selection.selectionSet) {
+      return selection.selectionSet.selections.reduce(this.reduceSelection, acc);
     }
-
-    acc = maybePush(acc, type);
 
     return acc;
+  }
+
+  private isGlobalType = (type: GraphQLType) => {
+    return type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType;
+  }
+
+  private getUnderlyingType = (type: GraphQLType): GraphQLType => {
+    if (type instanceof GraphQLNonNull) {
+      return this.getUnderlyingType(getNullableType(type));
+    }
+    if (type instanceof GraphQLList) {
+      return this.getUnderlyingType(type.ofType);
+    }
+    return type;
   }
 
   public getTypesUsedForOperation(doc: Operation | Fragment, context: CompilerContext) {
