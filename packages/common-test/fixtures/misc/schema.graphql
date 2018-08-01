@@ -19,7 +19,8 @@ type CommentTest {
   "This is a single-line comment"
   singleLine: String
   """
-  This is a multi-line
+  This is a
+  multi-line
   comment.
   """
   multiLine: String
@@ -30,7 +31,8 @@ enum EnumCommentTestCase {
   "This is a single-line comment"
   first
   """
-  This is a multi-line
+  This is a
+  multi-line
   comment.
   """
   second
