@@ -1,6 +1,7 @@
 import {
   GraphQLEnumType,
-  GraphQLInputObjectType
+  GraphQLInputObjectType,
+  GraphQLType
 } from 'graphql';
 
 import {
@@ -162,5 +163,15 @@ export default class TypescriptGenerator {
 
   public isNullableType(type: t.TSType) {
     return t.isTSUnionType(type) && type.types.some(type => t.isTSNullKeyword(type));
+  }
+
+  public import(types: GraphQLType[], source: string) {
+    return t.importDeclaration(
+      types.map((type) => t.importSpecifier(
+        t.identifier(type.toString()),
+        t.identifier(type.toString()),
+      )),
+      t.stringLiteral(source)
+    );
   }
 }
