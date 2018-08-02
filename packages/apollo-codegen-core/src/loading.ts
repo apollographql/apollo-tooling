@@ -84,6 +84,10 @@ export function loadQueryDocuments(
 ): DocumentNode[] {
   const sources = inputPaths
     .map(inputPath => {
+      if (fs.lstatSync(inputPath).isDirectory()) {
+        return null;
+      }
+
       const body = fs.readFileSync(inputPath, "utf8");
       if (!body) {
         return null;
@@ -99,11 +103,22 @@ export function loadQueryDocuments(
         return doc ? new Source(doc, inputPath) : null;
       }
 
-      return new Source(body, inputPath);
-    })
-    .filter(source => source);
+      if (inputPath.endsWith(".graphql") || inputPath.endsWith(".gql")) {
+        return new Source(body, inputPath);
+      }
 
-  return (sources as Source[]).map(source => parse(source));
+      return null;
+    })
+    .filter(source => source)
+    .map(source => {
+      try {
+        return parse(source!);
+      } catch {
+        return null;
+      }
+    }).filter(source => source);
+
+  return sources as DocumentNode[];
 }
 
 export function loadAndMergeQueryDocuments(

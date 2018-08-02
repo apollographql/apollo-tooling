@@ -60,7 +60,7 @@ export default class SchemaCheck extends Command {
     const { flags } = this.parse(SchemaCheck);
 
     const tasks = new Listr([
-      loadConfigStep(flags),
+      loadConfigStep(flags, true),
       {
         title: "Fetching local schema",
         task: async ctx => {
