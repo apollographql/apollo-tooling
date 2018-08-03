@@ -157,7 +157,7 @@ export default function generate(
     } else {
       fs.writeFileSync(
         outputPath,
-        generatedFiles.map(o => o.content().fileContents).join("\n") +
+        generatedFiles.map(o => o.content().fileContents).join("\n") + "\n" +
           generatedGlobalFile.fileContents,
       );
 

@@ -2,9 +2,7 @@
 
 exports[`Typescript codeGeneration fragment spreads with inline fragments 1`] = `
 Object {
-  "common": "
-
-/* tslint:disable */
+  "common": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -22,13 +20,12 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
   "generatedFiles": Array [
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -97,16 +94,15 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
-}",
+}
+",
       },
       "fileName": "HeroName.ts",
       "sourcePath": "GraphQL request",
     },
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -141,16 +137,15 @@ export interface humanFragment {
    * This human's friends, or an empty list if they have none
    */
   friends: (humanFragment_friends | null)[] | null;
-}",
+}
+",
       },
       "fileName": "humanFragment.ts",
       "sourcePath": "GraphQL request",
     },
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -163,7 +158,8 @@ export interface droidFragment {
    * The movies this droid appears in
    */
   appearsIn: (Episode | null)[];
-}",
+}
+",
       },
       "fileName": "droidFragment.ts",
       "sourcePath": "GraphQL request",
@@ -174,9 +170,7 @@ export interface droidFragment {
 
 exports[`Typescript codeGeneration fragment with fragment spreads 1`] = `
 Object {
-  "common": "
-
-/* tslint:disable */
+  "common": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -185,13 +179,12 @@ Object {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
   "generatedFiles": Array [
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -204,16 +197,15 @@ export interface simpleFragment {
    * The name of the character
    */
   name: string;
-}",
+}
+",
       },
       "fileName": "simpleFragment.ts",
       "sourcePath": "GraphQL request",
     },
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -230,7 +222,8 @@ export interface anotherFragment {
    * The name of the character
    */
   name: string;
-}",
+}
+",
       },
       "fileName": "anotherFragment.ts",
       "sourcePath": "GraphQL request",
@@ -241,9 +234,7 @@ export interface anotherFragment {
 
 exports[`Typescript codeGeneration fragment with fragment spreads with inline fragment 1`] = `
 Object {
-  "common": "
-
-/* tslint:disable */
+  "common": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -261,13 +252,12 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
   "generatedFiles": Array [
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -280,16 +270,15 @@ export interface simpleFragment {
    * The name of the character
    */
   name: string;
-}",
+}
+",
       },
       "fileName": "simpleFragment.ts",
       "sourcePath": "GraphQL request",
     },
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -324,7 +313,8 @@ export interface anotherFragment_Human {
   appearsIn: (Episode | null)[];
 }
 
-export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;",
+export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
+",
       },
       "fileName": "anotherFragment.ts",
       "sourcePath": "GraphQL request",
@@ -335,9 +325,7 @@ export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;",
 
 exports[`Typescript codeGeneration handles multiline graphql comments 1`] = `
 Object {
-  "common": "
-
-/* tslint:disable */
+  "common": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -346,13 +334,12 @@ Object {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
   "generatedFiles": Array [
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -371,7 +358,8 @@ export interface CustomScalar_commentTest {
 
 export interface CustomScalar {
   commentTest: CustomScalar_commentTest | null;
-}",
+}
+",
       },
       "fileName": "CustomScalar.ts",
       "sourcePath": "GraphQL request",
@@ -382,9 +370,7 @@ export interface CustomScalar {
 
 exports[`Typescript codeGeneration inline fragment 1`] = `
 Object {
-  "common": "
-
-/* tslint:disable */
+  "common": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -402,13 +388,12 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
   "generatedFiles": Array [
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -433,7 +418,8 @@ export interface HeroInlineFragment {
 
 export interface HeroInlineFragmentVariables {
   episode?: Episode | null;
-}",
+}
+",
       },
       "fileName": "HeroInlineFragment.ts",
       "sourcePath": "GraphQL request",
@@ -444,9 +430,7 @@ export interface HeroInlineFragmentVariables {
 
 exports[`Typescript codeGeneration inline fragment on type conditions 1`] = `
 Object {
-  "common": "
-
-/* tslint:disable */
+  "common": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -464,13 +448,12 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
   "generatedFiles": Array [
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -529,7 +512,8 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
-}",
+}
+",
       },
       "fileName": "HeroName.ts",
       "sourcePath": "GraphQL request",
@@ -540,9 +524,7 @@ export interface HeroNameVariables {
 
 exports[`Typescript codeGeneration inline fragment on type conditions with differing inner fields 1`] = `
 Object {
-  "common": "
-
-/* tslint:disable */
+  "common": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -560,13 +542,12 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
   "generatedFiles": Array [
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -637,7 +618,8 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
-}",
+}
+",
       },
       "fileName": "HeroName.ts",
       "sourcePath": "GraphQL request",
@@ -650,9 +632,7 @@ exports[`Typescript codeGeneration local / global duplicates 1`] = `
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 import { EnumCommentTestCase, Duplicate } from \\"../../__generated__/globalTypes\\";
@@ -675,7 +655,8 @@ export interface duplicatesVariables {
   a: EnumCommentTestCase;
   b: EnumCommentTestCase;
   c: Duplicate;
-}",
+}
+",
     },
     "fileName": "duplicates.ts",
     "sourcePath": "GraphQL request",
@@ -685,9 +666,7 @@ export interface duplicatesVariables {
 
 exports[`Typescript codeGeneration local / global duplicates 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -706,7 +685,8 @@ export interface Duplicate {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -714,9 +694,7 @@ exports[`Typescript codeGeneration local / global fragment spreads with inline f
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"../../__generated__/globalTypes\\";
@@ -787,16 +765,15 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
-}",
+}
+",
     },
     "fileName": "HeroName.ts",
     "sourcePath": "GraphQL request",
   },
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -831,16 +808,15 @@ export interface humanFragment {
    * This human's friends, or an empty list if they have none
    */
   friends: (humanFragment_friends | null)[] | null;
-}",
+}
+",
     },
     "fileName": "humanFragment.ts",
     "sourcePath": "GraphQL request",
   },
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"../../__generated__/globalTypes\\";
@@ -855,7 +831,8 @@ export interface droidFragment {
    * The movies this droid appears in
    */
   appearsIn: (Episode | null)[];
-}",
+}
+",
     },
     "fileName": "droidFragment.ts",
     "sourcePath": "GraphQL request",
@@ -865,9 +842,7 @@ export interface droidFragment {
 
 exports[`Typescript codeGeneration local / global fragment spreads with inline fragments 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -885,7 +860,8 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -893,9 +869,7 @@ exports[`Typescript codeGeneration local / global fragment with fragment spreads
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -908,16 +882,15 @@ export interface simpleFragment {
    * The name of the character
    */
   name: string;
-}",
+}
+",
     },
     "fileName": "simpleFragment.ts",
     "sourcePath": "GraphQL request",
   },
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -934,7 +907,8 @@ export interface anotherFragment {
    * The name of the character
    */
   name: string;
-}",
+}
+",
     },
     "fileName": "anotherFragment.ts",
     "sourcePath": "GraphQL request",
@@ -944,9 +918,7 @@ export interface anotherFragment {
 
 exports[`Typescript codeGeneration local / global fragment with fragment spreads 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -955,7 +927,8 @@ TypescriptGeneratedFile {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -963,9 +936,7 @@ exports[`Typescript codeGeneration local / global fragment with fragment spreads
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -978,16 +949,15 @@ export interface simpleFragment {
    * The name of the character
    */
   name: string;
-}",
+}
+",
     },
     "fileName": "simpleFragment.ts",
     "sourcePath": "GraphQL request",
   },
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"../../__generated__/globalTypes\\";
@@ -1024,7 +994,8 @@ export interface anotherFragment_Human {
   appearsIn: (Episode | null)[];
 }
 
-export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;",
+export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
+",
     },
     "fileName": "anotherFragment.ts",
     "sourcePath": "GraphQL request",
@@ -1034,9 +1005,7 @@ export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;",
 
 exports[`Typescript codeGeneration local / global fragment with fragment spreads with inline fragment 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1054,7 +1023,8 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -1062,9 +1032,7 @@ exports[`Typescript codeGeneration local / global handles multiline graphql comm
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1083,7 +1051,8 @@ export interface CustomScalar_commentTest {
 
 export interface CustomScalar {
   commentTest: CustomScalar_commentTest | null;
-}",
+}
+",
     },
     "fileName": "CustomScalar.ts",
     "sourcePath": "GraphQL request",
@@ -1093,9 +1062,7 @@ export interface CustomScalar {
 
 exports[`Typescript codeGeneration local / global handles multiline graphql comments 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1104,7 +1071,8 @@ TypescriptGeneratedFile {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -1112,9 +1080,7 @@ exports[`Typescript codeGeneration local / global inline fragment 1`] = `
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"../../__generated__/globalTypes\\";
@@ -1141,7 +1107,8 @@ export interface HeroInlineFragment {
 
 export interface HeroInlineFragmentVariables {
   episode?: Episode | null;
-}",
+}
+",
     },
     "fileName": "HeroInlineFragment.ts",
     "sourcePath": "GraphQL request",
@@ -1151,9 +1118,7 @@ export interface HeroInlineFragmentVariables {
 
 exports[`Typescript codeGeneration local / global inline fragment 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1171,7 +1136,8 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -1179,9 +1145,7 @@ exports[`Typescript codeGeneration local / global inline fragment on type condit
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"../../__generated__/globalTypes\\";
@@ -1242,7 +1206,8 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
-}",
+}
+",
     },
     "fileName": "HeroName.ts",
     "sourcePath": "GraphQL request",
@@ -1252,9 +1217,7 @@ export interface HeroNameVariables {
 
 exports[`Typescript codeGeneration local / global inline fragment on type conditions 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1272,7 +1235,8 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -1280,9 +1244,7 @@ exports[`Typescript codeGeneration local / global inline fragment on type condit
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"../../__generated__/globalTypes\\";
@@ -1355,7 +1317,8 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
-}",
+}
+",
     },
     "fileName": "HeroName.ts",
     "sourcePath": "GraphQL request",
@@ -1365,9 +1328,7 @@ export interface HeroNameVariables {
 
 exports[`Typescript codeGeneration local / global inline fragment on type conditions with differing inner fields 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1385,7 +1346,8 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -1393,9 +1355,7 @@ exports[`Typescript codeGeneration local / global multiple nested list enum 1`] 
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 import { EnumCommentTestCase } from \\"../../__generated__/globalTypes\\";
@@ -1411,7 +1371,8 @@ export interface nesting_nesting {
 
 export interface nesting {
   nesting: nesting_nesting;
-}",
+}
+",
     },
     "fileName": "nesting.ts",
     "sourcePath": "GraphQL request",
@@ -1421,9 +1382,7 @@ export interface nesting {
 
 exports[`Typescript codeGeneration local / global multiple nested list enum 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1437,7 +1396,8 @@ export enum EnumCommentTestCase {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -1445,9 +1405,7 @@ exports[`Typescript codeGeneration local / global multiple nested non-null list 
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 import { EnumCommentTestCase } from \\"../../__generated__/globalTypes\\";
@@ -1463,7 +1421,8 @@ export interface nesting_nesting {
 
 export interface nesting {
   nesting: nesting_nesting;
-}",
+}
+",
     },
     "fileName": "nesting.ts",
     "sourcePath": "GraphQL request",
@@ -1473,9 +1432,7 @@ export interface nesting {
 
 exports[`Typescript codeGeneration local / global multiple nested non-null list enum 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1489,7 +1446,8 @@ export enum EnumCommentTestCase {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -1497,9 +1455,7 @@ exports[`Typescript codeGeneration local / global query with fragment spreads 1`
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"../../__generated__/globalTypes\\";
@@ -1526,16 +1482,15 @@ export interface HeroFragment {
 
 export interface HeroFragmentVariables {
   episode?: Episode | null;
-}",
+}
+",
     },
     "fileName": "HeroFragment.ts",
     "sourcePath": "GraphQL request",
   },
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1548,7 +1503,8 @@ export interface simpleFragment {
    * The name of the character
    */
   name: string;
-}",
+}
+",
     },
     "fileName": "simpleFragment.ts",
     "sourcePath": "GraphQL request",
@@ -1558,9 +1514,7 @@ export interface simpleFragment {
 
 exports[`Typescript codeGeneration local / global query with fragment spreads 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1578,7 +1532,8 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -1586,9 +1541,7 @@ exports[`Typescript codeGeneration local / global simple fragment 1`] = `
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1601,7 +1554,8 @@ export interface SimpleFragment {
    * The name of the character
    */
   name: string;
-}",
+}
+",
     },
     "fileName": "SimpleFragment.ts",
     "sourcePath": "GraphQL request",
@@ -1611,9 +1565,7 @@ export interface SimpleFragment {
 
 exports[`Typescript codeGeneration local / global simple fragment 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1622,7 +1574,8 @@ TypescriptGeneratedFile {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -1630,9 +1583,7 @@ exports[`Typescript codeGeneration local / global simple hero query 1`] = `
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"../../__generated__/globalTypes\\";
@@ -1659,7 +1610,8 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
-}",
+}
+",
     },
     "fileName": "HeroName.ts",
     "sourcePath": "GraphQL request",
@@ -1669,9 +1621,7 @@ export interface HeroNameVariables {
 
 exports[`Typescript codeGeneration local / global simple hero query 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1689,7 +1639,8 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -1697,9 +1648,7 @@ exports[`Typescript codeGeneration local / global simple mutation 1`] = `
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode, ReviewInput } from \\"../../__generated__/globalTypes\\";
@@ -1727,7 +1676,8 @@ export interface ReviewMovie {
 export interface ReviewMovieVariables {
   episode?: Episode | null;
   review?: ReviewInput | null;
-}",
+}
+",
     },
     "fileName": "ReviewMovie.ts",
     "sourcePath": "GraphQL request",
@@ -1737,9 +1687,7 @@ export interface ReviewMovieVariables {
 
 exports[`Typescript codeGeneration local / global simple mutation 2`] = `
 TypescriptGeneratedFile {
-  "fileContents": "
-
-/* tslint:disable */
+  "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1775,7 +1723,8 @@ export interface ColorInput {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
 }
 `;
 
@@ -1785,9 +1734,7 @@ exports[`Typescript codeGeneration multiple files 2`] = `
 Array [
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1812,16 +1759,15 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
-}",
+}
+",
     },
     "fileName": "HeroName.ts",
     "sourcePath": "/some/file/ComponentA.js",
   },
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1846,16 +1792,15 @@ export interface SomeOther {
 
 export interface SomeOtherVariables {
   episode?: Episode | null;
-}",
+}
+",
     },
     "fileName": "SomeOther.ts",
     "sourcePath": "/some/file/ComponentB.js",
   },
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1881,16 +1826,15 @@ export interface ReviewMovie {
 export interface ReviewMovieVariables {
   episode?: Episode | null;
   review?: ReviewInput | null;
-}",
+}
+",
     },
     "fileName": "ReviewMovie.ts",
     "sourcePath": "GraphQL request",
   },
   Object {
     "content": TypescriptGeneratedFile {
-      "fileContents": "
-
-/* tslint:disable */
+      "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1903,7 +1847,8 @@ export interface someFragment {
    * The movies this character appears in
    */
   appearsIn: (Episode | null)[];
-}",
+}
+",
     },
     "fileName": "someFragment.ts",
     "sourcePath": "/some/file/ComponentB.js",
@@ -1914,9 +1859,7 @@ export interface someFragment {
 exports[`Typescript codeGeneration multiple files 3`] = `"common"`;
 
 exports[`Typescript codeGeneration multiple files 4`] = `
-"
-
-/* tslint:disable */
+"/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1952,14 +1895,13 @@ export interface ColorInput {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================
+"
 `;
 
 exports[`Typescript codeGeneration query with fragment spreads 1`] = `
 Object {
-  "common": "
-
-/* tslint:disable */
+  "common": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1977,13 +1919,12 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
   "generatedFiles": Array [
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -2008,16 +1949,15 @@ export interface HeroFragment {
 
 export interface HeroFragmentVariables {
   episode?: Episode | null;
-}",
+}
+",
       },
       "fileName": "HeroFragment.ts",
       "sourcePath": "GraphQL request",
     },
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -2030,7 +1970,8 @@ export interface simpleFragment {
    * The name of the character
    */
   name: string;
-}",
+}
+",
       },
       "fileName": "simpleFragment.ts",
       "sourcePath": "GraphQL request",
@@ -2041,9 +1982,7 @@ export interface simpleFragment {
 
 exports[`Typescript codeGeneration simple fragment 1`] = `
 Object {
-  "common": "
-
-/* tslint:disable */
+  "common": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -2052,13 +1991,12 @@ Object {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
   "generatedFiles": Array [
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -2071,7 +2009,8 @@ export interface SimpleFragment {
    * The name of the character
    */
   name: string;
-}",
+}
+",
       },
       "fileName": "SimpleFragment.ts",
       "sourcePath": "GraphQL request",
@@ -2082,9 +2021,7 @@ export interface SimpleFragment {
 
 exports[`Typescript codeGeneration simple hero query 1`] = `
 Object {
-  "common": "
-
-/* tslint:disable */
+  "common": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -2102,13 +2039,12 @@ export enum Episode {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
   "generatedFiles": Array [
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -2133,7 +2069,8 @@ export interface HeroName {
 
 export interface HeroNameVariables {
   episode?: Episode | null;
-}",
+}
+",
       },
       "fileName": "HeroName.ts",
       "sourcePath": "GraphQL request",
@@ -2144,9 +2081,7 @@ export interface HeroNameVariables {
 
 exports[`Typescript codeGeneration simple mutation 1`] = `
 Object {
-  "common": "
-
-/* tslint:disable */
+  "common": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -2182,13 +2117,12 @@ export interface ColorInput {
 
 //==============================================================
 // END Enums and Input Objects
-//==============================================================",
+//==============================================================
+",
   "generatedFiles": Array [
     Object {
       "content": TypescriptGeneratedFile {
-        "fileContents": "
-
-/* tslint:disable */
+        "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -2214,7 +2148,8 @@ export interface ReviewMovie {
 export interface ReviewMovieVariables {
   episode?: Episode | null;
   review?: ReviewInput | null;
-}",
+}
+",
       },
       "fileName": "ReviewMovie.ts",
       "sourcePath": "GraphQL request",
