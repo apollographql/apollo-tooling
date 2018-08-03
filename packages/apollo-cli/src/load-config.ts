@@ -7,7 +7,7 @@ import { ListrTask } from "listr";
 
 export function loadConfigStep(
   flags: any,
-  defaultEndpoint: boolean = true
+  defaultEndpoint: boolean
 ): ListrTask {
   const header: any[] = Array.isArray(flags.header)
     ? flags.header

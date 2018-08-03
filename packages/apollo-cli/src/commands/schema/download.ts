@@ -52,7 +52,7 @@ export default class SchemaDownload extends Command {
     const { flags, args } = this.parse(SchemaDownload);
 
     const tasks: Listr = new Listr([
-      loadConfigStep(flags),
+      loadConfigStep(flags, false),
       {
         title: "Fetching current schema",
         task: async ctx => {
@@ -67,7 +67,7 @@ export default class SchemaDownload extends Command {
           ctx.schema = await loadSchema(
             Object.values(ctx.config.schemas)[0],
             ctx.config
-          ).catch(this.error);
+          );
         }
       },
       {
