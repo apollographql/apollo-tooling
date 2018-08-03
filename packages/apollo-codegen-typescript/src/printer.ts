@@ -18,16 +18,15 @@ export default class Printer {
           }
         },
         ''
-      );
+      ) + '\n';
   }
 
   public enqueue(printable: Printable) {
-    this.printQueue = [
-      ...this.printQueue,
-      '\n',
-      '\n',
-      printable
-    ];
+    if (this.printQueue.length > 0) {
+      this.printQueue.push('\n');
+      this.printQueue.push('\n');
+    }
+    this.printQueue.push(printable);
   }
 
   public printAndClear() {
