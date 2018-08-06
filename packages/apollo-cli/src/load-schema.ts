@@ -7,15 +7,28 @@ export async function loadSchema(
   config: ApolloConfig
 ): Promise<GraphQLSchema | undefined> {
   if (dependency.schema) {
-    return await fetchSchema({ url: dependency.schema }, config.projectFolder);
-  } else if (dependency.endpoint && dependency.endpoint.url) {
-    return await fetchSchema(dependency.endpoint, config.projectFolder);
-  } else if (dependency.engineKey) {
-    return await fetchSchemaFromEngine(
-      dependency.engineKey,
-      config.engineEndpoint
-    );
-  } else {
-    return undefined;
+    try {
+      return await fetchSchema(
+        { url: dependency.schema },
+        config.projectFolder
+      );
+    } catch {}
   }
+
+  if (dependency.endpoint && dependency.endpoint.url) {
+    try {
+      return await fetchSchema(dependency.endpoint, config.projectFolder);
+    } catch {}
+  }
+
+  if (dependency.engineKey) {
+    try {
+      return await fetchSchemaFromEngine(
+        dependency.engineKey,
+        config.engineEndpoint
+      );
+    } catch {}
+  }
+
+  return undefined;
 }
