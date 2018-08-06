@@ -89,13 +89,13 @@ function loadDocumentSet(obj: any): DocumentSet {
         ? [obj.includes as string]
         : obj.includes
           ? (obj.includes as string[])
-          : ["**/*.graphql"],
+          : ["**"],
     excludes:
       typeof obj.excludes === "string"
         ? [obj.excludes as string]
         : obj.excludes
           ? (obj.excludes as string[])
-          : ["node_modules"]
+          : ["node_modules/**"]
   };
 }
 
@@ -124,7 +124,11 @@ export function loadConfig(
       ? Array.isArray(obj.queries)
         ? (obj.queries as any[])
         : [obj.queries]
-      : []
+      : (
+          Object.keys(schemasObj).length == 1 ?
+            [ { schema: Object.keys(schemasObj)[0] } ] :
+            []
+        )
     ).map(d => loadDocumentSet(d)),
     engineEndpoint: obj.engineEndpoint
   };

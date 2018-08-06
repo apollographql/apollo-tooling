@@ -186,7 +186,7 @@ export default class Generate extends Command {
     }
 
     const tasks: Listr = new Listr([
-      loadConfigStep(flags),
+      loadConfigStep(flags, false),
       {
         title: "Resolving GraphQL document sets and dependencies",
         task: async (ctx, task) => {

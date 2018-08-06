@@ -311,9 +311,7 @@ public final class SimpleQueryQuery: GraphQLQuery {
 `;
 
 exports[`successful codegen infers TypeScript target and writes types 1`] = `
-"
-
-/* tslint:disable */
+"/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -333,13 +331,12 @@ export interface SimpleQuery {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================
+"
 `;
 
 exports[`successful codegen infers TypeScript target and writes types for query with client-side data 1`] = `
-"
-
-/* tslint:disable */
+"/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -376,13 +373,12 @@ export interface SimpleQuery {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================
+"
 `;
 
 exports[`successful codegen infers TypeScript target and writes types for query with client-side data with schema in a JS file 1`] = `
-"
-
-/* tslint:disable */
+"/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -419,13 +415,12 @@ export interface SimpleQuery {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================
+"
 `;
 
 exports[`successful codegen infers TypeScript target and writes types for query with client-side data with schema in a JS file from config 1`] = `
-"
-
-/* tslint:disable */
+"/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -462,13 +457,12 @@ export interface SimpleQuery {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================
+"
 `;
 
 exports[`successful codegen infers TypeScript target and writes types for query with only client-side data 1`] = `
-"
-
-/* tslint:disable */
+"/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -493,7 +487,8 @@ export interface SimpleQuery {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================
+"
 `;
 
 exports[`successful codegen writes Flow types into a __generated__ directory next to sources when no output is set 1`] = `
@@ -581,9 +576,7 @@ export type SimpleQuery = {
 `;
 
 exports[`successful codegen writes TypeScript types into a __generated__ directory next to sources when no output is set 1`] = `
-"
-
-/* tslint:disable */
+"/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -593,8 +586,11 @@ exports[`successful codegen writes TypeScript types into a __generated__ directo
 export interface SimpleQuery {
   hello: string;
 }
+"
+`;
 
-/* tslint:disable */
+exports[`successful codegen writes TypeScript types into a __generated__ directory next to sources when no output is set 2`] = `
+"/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -603,13 +599,12 @@ export interface SimpleQuery {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================
+"
 `;
 
 exports[`successful codegen writes TypeScript types next to sources when output is set to empty string 1`] = `
-"
-
-/* tslint:disable */
+"/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -619,8 +614,11 @@ exports[`successful codegen writes TypeScript types next to sources when output 
 export interface SimpleQuery {
   hello: string;
 }
+"
+`;
 
-/* tslint:disable */
+exports[`successful codegen writes TypeScript types next to sources when output is set to empty string 2`] = `
+"/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -629,13 +627,12 @@ export interface SimpleQuery {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================
+"
 `;
 
 exports[`successful codegen writes TypeScript types to a custom directory next to sources when output is set 1`] = `
-"
-
-/* tslint:disable */
+"/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -645,8 +642,11 @@ exports[`successful codegen writes TypeScript types to a custom directory next t
 export interface SimpleQuery {
   hello: string;
 }
+"
+`;
 
-/* tslint:disable */
+exports[`successful codegen writes TypeScript types to a custom directory next to sources when output is set 2`] = `
+"/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -655,7 +655,8 @@ export interface SimpleQuery {
 
 //==============================================================
 // END Enums and Input Objects
-//=============================================================="
+//==============================================================
+"
 `;
 
 exports[`successful codegen writes exact Flow types when the flag is set 1`] = `

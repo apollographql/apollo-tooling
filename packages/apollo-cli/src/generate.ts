@@ -12,7 +12,7 @@ import { generateSource as generateSwiftSource } from "apollo-codegen-swift";
 import { generateSource as generateTypescriptLegacySource } from "apollo-codegen-typescript-legacy";
 import { generateSource as generateFlowLegacySource } from "apollo-codegen-flow-legacy";
 import { generateSource as generateFlowSource } from "apollo-codegen-flow";
-import { generateSource as generateTypescriptSource } from "apollo-codegen-typescript";
+import { generateLocalSource as generateTypescriptLocalSource, generateGlobalSource as generateTypescriptGlobalSource } from "apollo-codegen-typescript";
 import { generateSource as generateScalaSource } from "apollo-codegen-scala";
 import { GraphQLSchema } from "graphql";
 import { FlowCompilerOptions } from '../../apollo-codegen-flow/lib/language';
@@ -71,12 +71,9 @@ export default function generate(
       writeOperationIdsMap(context);
       writtenFiles += 1;
     }
-  } else if (target === "flow" || target === "typescript" || target === "ts") {
+  } else if (target === "flow") {
     const context = compileToIR(schema, document, options);
-    const { generatedFiles, common } =
-      target === "flow"
-        ? generateFlowSource(context)
-        : generateTypescriptSource(context);
+    const { generatedFiles, common } = generateFlowSource(context);
 
     const outFiles: {
       [fileName: string]: BasicGeneratedFile;
@@ -116,6 +113,52 @@ export default function generate(
       fs.writeFileSync(
         outputPath,
         generatedFiles.map(o => o.content.fileContents).join("\n") + common
+      );
+
+      writtenFiles += 1;
+    }
+  } else if (target === "typescript" || target === "ts") {
+    const context = compileToIR(schema, document, options);
+    const generatedFiles = generateTypescriptLocalSource(context);
+    const generatedGlobalFile = generateTypescriptGlobalSource(context);
+
+    const outFiles: {
+      [fileName: string]: BasicGeneratedFile;
+    } = {};
+
+    if (nextToSources || (fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory())) {
+      if (nextToSources && !fs.existsSync(outputPath)) {
+        fs.mkdirSync(outputPath);
+      }
+
+      const globalSourcePath = path.join(outputPath, "globalTypes.ts");
+      outFiles[globalSourcePath] = {
+        output: generatedGlobalFile.fileContents,
+      };
+
+      generatedFiles.forEach(({ sourcePath, fileName, content }) => {
+        let dir = outputPath;
+        if (nextToSources) {
+          dir = path.join(path.dirname(sourcePath), dir);
+          if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+          }
+        }
+
+        const outFilePath = path.join(dir, fileName);
+        outFiles[outFilePath] = {
+          output: content({ outputPath: outFilePath, globalSourcePath }).fileContents,
+        };
+      });
+
+      writeGeneratedFiles(outFiles, path.resolve("."));
+
+      writtenFiles += Object.keys(outFiles).length;
+    } else {
+      fs.writeFileSync(
+        outputPath,
+        generatedFiles.map(o => o.content().fileContents).join("\n") + "\n" +
+          generatedGlobalFile.fileContents,
       );
 
       writtenFiles += 1;

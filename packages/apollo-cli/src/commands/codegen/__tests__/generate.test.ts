@@ -325,6 +325,9 @@ describe("successful codegen", () => {
       expect(
         mockFS.readFileSync("directory/__generated__/SimpleQuery.ts").toString()
       ).toMatchSnapshot();
+      expect(
+        mockFS.readFileSync("__generated__/globalTypes.ts").toString()
+      ).toMatchSnapshot();
     });
 
   test
@@ -379,6 +382,9 @@ describe("successful codegen", () => {
           mockFS
             .readFileSync("directory/__foo__/SimpleQuery.ts")
             .toString()
+        ).toMatchSnapshot();
+        expect(
+          mockFS.readFileSync("__foo__/globalTypes.ts").toString()
         ).toMatchSnapshot();
       }
     );
@@ -441,6 +447,9 @@ describe("successful codegen", () => {
             mockFS
               .readFileSync("directory/SimpleQuery.ts")
               .toString()
+          ).toMatchSnapshot();
+          expect(
+            mockFS.readFileSync("globalTypes.ts").toString()
           ).toMatchSnapshot();
         }
       );

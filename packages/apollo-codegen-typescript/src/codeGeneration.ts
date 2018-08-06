@@ -1,3 +1,4 @@
+import * as path from "path";
 import * as t from '@babel/types';
 import { stripIndent } from 'common-tags';
 import {
@@ -9,6 +10,7 @@ import {
   CompilerContext,
   Operation,
   Fragment,
+  Selection,
   SelectionSet,
   Field,
   FragmentSpread
@@ -67,6 +69,25 @@ function printEnumsAndInputObjects(generator: TypescriptAPIGenerator, typesUsed:
   `)
 }
 
+function printGlobalImport(
+  generator: TypescriptAPIGenerator,
+  typesUsed: GraphQLType[],
+  outputPath: string,
+  globalSourcePath: string,
+) {
+  if (typesUsed.length > 0) {
+    const relative = path.relative(
+      path.dirname(outputPath),
+      path.join(
+        path.dirname(globalSourcePath),
+        path.basename(globalSourcePath, '.ts')
+      )
+    );
+    generator.printer.enqueue(generator.import(typesUsed, relative));
+  }
+}
+
+// TODO: deprecate this, use generateLocalSource and generateGlobalSource instead.
 export function generateSource(
   context: CompilerContext,
 ) {
@@ -109,6 +130,75 @@ export function generateSource(
     generatedFiles,
     common
   };
+}
+
+interface IGeneratedFileOptions {
+  outputPath?: string;
+  globalSourcePath?: string;
+}
+
+interface IGeneratedFile {
+  sourcePath: string;
+  fileName: string;
+  content: (options?: IGeneratedFileOptions) => TypescriptGeneratedFile;
+}
+
+export function generateLocalSource(
+  context: CompilerContext,
+): IGeneratedFile[] {
+  const generator = new TypescriptAPIGenerator(context);
+
+  const operations = Object.values(context.operations)
+    .map((operation) => ({
+      sourcePath: operation.filePath,
+      fileName: `${operation.operationName}.ts`,
+      content: (options?: IGeneratedFileOptions) => {
+        generator.fileHeader();
+        if (options && options.outputPath && options.globalSourcePath) {
+          printGlobalImport(
+            generator,
+            generator.getGlobalTypesUsedForOperation(operation),
+            options.outputPath,
+            options.globalSourcePath
+          );
+        }
+        generator.interfacesForOperation(operation);
+        const output = generator.printer.printAndClear();
+        return new TypescriptGeneratedFile(output);
+      },
+    }));
+
+  const fragments = Object.values(context.fragments)
+    .map((fragment) => ({
+      sourcePath: fragment.filePath,
+      fileName: `${fragment.fragmentName}.ts`,
+      content: (options?: IGeneratedFileOptions) => {
+        generator.fileHeader();
+        if (options && options.outputPath && options.globalSourcePath) {
+          printGlobalImport(
+            generator,
+            generator.getGlobalTypesUsedForFragment(fragment),
+            options.outputPath,
+            options.globalSourcePath
+          );
+        }
+        generator.interfacesForFragment(fragment);
+        const output = generator.printer.printAndClear();
+        return new TypescriptGeneratedFile(output);
+      },
+    }));
+
+  return operations.concat(fragments);
+}
+
+export function generateGlobalSource(
+  context: CompilerContext,
+): TypescriptGeneratedFile {
+  const generator = new TypescriptAPIGenerator(context);
+  generator.fileHeader();
+  printEnumsAndInputObjects(generator, context.typesUsed);
+  const output = generator.printer.printAndClear();
+  return new TypescriptGeneratedFile(output);
 }
 
 export class TypescriptAPIGenerator extends TypescriptGenerator {
@@ -244,6 +334,51 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     }
 
     this.scopeStackPop();
+  }
+
+  public getGlobalTypesUsedForOperation = (doc: Operation) => {
+    const typesUsed = doc.variables
+      .reduce((acc: GraphQLType[], { type } : { type : GraphQLType }) => {
+        const t = this.getUnderlyingType(type);
+        if (this.isGlobalType(t)) {
+          return maybePush(acc, t);
+        }
+        return acc;
+      }, []);
+    return doc.selectionSet.selections.reduce(this.reduceSelection, typesUsed);
+  }
+
+  public getGlobalTypesUsedForFragment = (doc: Fragment) => {
+    return doc.selectionSet.selections.reduce(this.reduceSelection, []);
+  }
+
+  private reduceSelection = (acc: GraphQLType[], selection: Selection): GraphQLType[] => {
+    if (selection.kind === 'Field' || selection.kind === 'TypeCondition') {
+      const type = this.getUnderlyingType(selection.type);
+      if (this.isGlobalType(type)) {
+        acc = maybePush(acc, type);
+      }
+    }
+
+    if (selection.selectionSet) {
+      return selection.selectionSet.selections.reduce(this.reduceSelection, acc);
+    }
+
+    return acc;
+  }
+
+  private isGlobalType = (type: GraphQLType) => {
+    return type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType;
+  }
+
+  private getUnderlyingType = (type: GraphQLType): GraphQLType => {
+    if (type instanceof GraphQLNonNull) {
+      return this.getUnderlyingType(getNullableType(type));
+    }
+    if (type instanceof GraphQLList) {
+      return this.getUnderlyingType(type.ofType);
+    }
+    return type;
   }
 
   public getTypesUsedForOperation(doc: Operation | Fragment, context: CompilerContext) {
