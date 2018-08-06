@@ -61,6 +61,6 @@ Queries and mutations are executed with the same [Apollo Link HTTP](https://www.
 
 If you're having trouble with the extension not launching or not detecting your configuration files, you can check the language server logs.
 
-1.  Open the VS Code output tab from the bottom of your editor
+1.  Open the VS Code output tab by running the command "View: Toggle Output"
 2.  Switch the output view to "Apollo GraphQL"
 3.  Check the logs and report any bugs you find!
