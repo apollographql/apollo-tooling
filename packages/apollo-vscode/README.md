@@ -38,13 +38,7 @@ The extension searches for [Apollo Config](https://github.com/apollographql/apol
       "mainSchema": {
         "endpoint": "http://localhost:4000/graphql"
       }
-    },
-    "queries": [
-      {
-        "schema": "mainSchema",
-        "includes": [ "**/*.tsx" ]
-      }
-    ]
+    }
   }
 }
 ```
