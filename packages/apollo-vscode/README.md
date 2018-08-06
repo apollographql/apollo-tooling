@@ -47,7 +47,7 @@ The extension searches for [Apollo Config](https://github.com/apollographql/apol
 
 The extension enables query execution when an `endpoint` is specified for the schema you are targeting. When you hit `Run query/mutations/subscription`, the extension will open a menu for you to input variables if there are any defined or directly run the query otherwise.
 
-Queries and mutations are executed with the same [Apollo Link HTTP](https://www.apollographql.com/docs/link/links/http.html) configured to run queries against the specified endpoint. Subscriptions are handled with [Apollo Link WS](https://www.apollographql.com/docs/link/links/ws.html) configured to run against the `subscriptions` key in your schema or your endpoint with `http` replaced by `ws` if the key is not defined.
+Queries and mutations are executed the same network interface as Apollo Client. Subscriptions are configured to run against the `subscriptions` key in your schema or your endpoint with `http` replaced by `ws` if the key is not defined.
 
 ## Troubleshooting
 
