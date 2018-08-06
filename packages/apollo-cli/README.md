@@ -5,17 +5,19 @@
 Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
 
 <!-- toc -->
-* [Apollo CLI](#apollo-cli)
-* [Usage](#usage)
-* [Commands](#commands)
-* [Configuration](#configuration)
-* [Code Generation](#code-generation)
-* [Contributing](#contributing)
-<!-- tocstop -->
+
+- [Apollo CLI](#apollo-cli)
+- [Usage](#usage)
+- [Commands](#commands)
+- [Configuration](#configuration)
+- [Code Generation](#code-generation)
+- [Contributing](#contributing)
+  <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g apollo
 $ apollo COMMAND
@@ -27,17 +29,19 @@ USAGE
   $ apollo COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-* [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
-* [`apollo help [COMMAND]`](#apollo-help-command)
-* [`apollo queries:check`](#apollo-queriescheck)
-* [`apollo schema:check`](#apollo-schemacheck)
-* [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
-* [`apollo schema:publish`](#apollo-schemapublish)
+
+- [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
+- [`apollo help [COMMAND]`](#apollo-help-command)
+- [`apollo queries:check`](#apollo-queriescheck)
+- [`apollo schema:check`](#apollo-schemacheck)
+- [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
+- [`apollo schema:publish`](#apollo-schemapublish)
 
 ## `apollo codegen:generate [OUTPUT]`
 
@@ -51,11 +55,11 @@ ARGUMENTS
   OUTPUT
       Directory to which generated files will be written.
       - For TypeScript/Flow generators, this specifies a directory relative to each source file by default.
-      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a 
+      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a
       file or directory (absolute or relative to the current working directory) to which:
          - a file will be written for each query (if "output" is a directory)
          - all generated types will be written
-      - For all other types, this defines a file (absolute or relative to the current working directory) to which all 
+      - For all other types, this defines a file (absolute or relative to the current working directory) to which all
       generated types are written.
 
 OPTIONS
@@ -226,7 +230,7 @@ Let's take a look at a basic configuration file (`package.json` style):
         "engineKey": "my-engine-key" // use this key when connecting to Apollo Engine
       }
     },
-    "queries": [
+    "queries": [ // optional if you only have one schema
       {
         "schema": "myPrimaryBackend", // reference the previously defined schema
         "includes": [ "**/*.tsx" ], // load queries from .tsx files
@@ -250,7 +254,7 @@ module.exports = {
       engineKey: "my-engine-key" // use this key when connecting to Apollo Engine
     }
   },
-  queries: [
+  queries: [ // optional if you only have one schema
     {
       schema: "myPrimaryBackend", // reference the previously defined schema
       includes: [ "**/*.tsx" ], // load queries from .tsx files
