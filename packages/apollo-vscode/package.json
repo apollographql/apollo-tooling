@@ -1,5 +1,6 @@
 {
   "name": "apollo-vscode",
+  "displayName": "Apollo GraphQL",
   "description": "A VS Code extension for Apollo GraphQL projects",
   "private": true,
   "author": "Apollo GraphQL",
@@ -17,6 +18,7 @@
     "Programming Languages",
     "Linters"
   ],
+  "icon": "images/icon-apollo-teal-400x400.png",
   "activationEvents": [
     "workspaceContains:**/apollo.config.js",
     "workspaceContains:**/package.json"
