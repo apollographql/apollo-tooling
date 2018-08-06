@@ -26,7 +26,7 @@ Open up VS Code and search for the extension "Apollo".
 
 ## How to get it set up?
 
-The extension searches for [Apollo Config](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo-cli/README.md#configuration) definitions in `package.json` or `apollo.config.js` files. To set up a basic endpoint and queries defined in `.tsx` files, a config file would look like.
+The extension searches for [Apollo Config](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo-cli/README.md#configuration) definitions in `package.json` or `apollo.config.js` files. Apollo Config can be set up to pull a schema from an introspection or from a [published version on Apollo Engine](https://www.apollographql.com/docs/engine/features/schema-history.html). To run queries in your editor, the `endpoint` key must be set to the GraphQL endpoint to run queries against. To enable performance statistics, make sure to specify your Engine API key with the `engineKey` value.
 
 ```js
 // package.json
@@ -36,7 +36,8 @@ The extension searches for [Apollo Config](https://github.com/apollographql/apol
   "apollo": {
     "schemas": {
       "mainSchema": {
-        "endpoint": "http://localhost:4000/graphql"
+        "endpoint": "http://localhost:4000/graphql",
+        "engineKey": "my-apollo-engine-api-key"
       }
     }
   }
