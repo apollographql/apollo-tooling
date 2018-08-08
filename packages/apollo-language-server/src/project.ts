@@ -52,6 +52,7 @@ export type DocumentUri = string;
 import "core-js/fn/array/flat-map";
 import { rangeForASTNode } from "./utilities/source";
 import { formatMS } from "./format";
+import { LoadingHandler } from "./server";
 declare global {
   interface Array<T> {
     flatMap<U>(
@@ -114,11 +115,22 @@ export class GraphQLProject {
     Map<string, Map<string, number>>
   > = new Map();
 
-  constructor(config: ApolloConfig, public configFile: string) {
+  constructor(
+    config: ApolloConfig,
+    public configFile: string,
+    private loadingHandler: LoadingHandler
+  ) {
     this.updateConfig(config);
   }
 
   updateConfig(newConfig: ApolloConfig) {
+    if (
+      this.config &&
+      JSON.stringify(this.config) === JSON.stringify(newConfig)
+    ) {
+      return;
+    }
+
     this.needsValidation = true;
     this.config = newConfig;
 
@@ -169,85 +181,94 @@ export class GraphQLProject {
   }
 
   async loadEngineStats() {
-    await Promise.all(
-      Object.values(this.config.schemas!).map(async schemaDef => {
-        if (schemaDef.engineKey) {
-          const engineData = await toPromise(
-            execute(engineLink, {
-              query: engineStatsQuery,
-              variables: {
-                id: getIdFromKey(schemaDef.engineKey!)
-              },
-              context: {
-                headers: { ["x-api-key"]: schemaDef.engineKey },
-                ...(this.config.engineEndpoint && {
-                  uri: this.config.engineEndpoint
-                })
+    await this.loadingHandler.handle(
+      `Loading Apollo Engine stats for ${this.config.name!}`,
+      Promise.all(
+        Object.values(this.config.schemas!).map(async schemaDef => {
+          if (schemaDef.engineKey) {
+            const engineData = await toPromise(
+              execute(engineLink, {
+                query: engineStatsQuery,
+                variables: {
+                  id: getIdFromKey(schemaDef.engineKey!)
+                },
+                context: {
+                  headers: { ["x-api-key"]: schemaDef.engineKey },
+                  ...(this.config.engineEndpoint && {
+                    uri: this.config.engineEndpoint
+                  })
+                }
+              })
+            );
+
+            const schemaEngineStats = new Map<string, Map<string, number>>();
+            engineData.data!.service.report.usageStats.types.forEach(
+              (typ: any) => {
+                const fieldsMap = new Map<string, number>();
+                typ.fields.forEach((field: any) => {
+                  fieldsMap.set(
+                    field.name,
+                    field.latencyHistogram.serviceTimeP95
+                  );
+                });
+
+                schemaEngineStats.set(typ.name, fieldsMap);
               }
-            })
-          );
+            );
 
-          const schemaEngineStats = new Map<string, Map<string, number>>();
-          engineData.data!.service.report.usageStats.types.forEach(
-            (typ: any) => {
-              const fieldsMap = new Map<string, number>();
-              typ.fields.forEach((field: any) => {
-                fieldsMap.set(
-                  field.name,
-                  field.latencyHistogram.serviceTimeP95
-                );
-              });
+            this.engineStats.set(schemaDef.engineKey, schemaEngineStats);
 
-              schemaEngineStats.set(typ.name, fieldsMap);
-            }
-          );
-
-          this.engineStats.set(schemaDef.engineKey, schemaEngineStats);
-
-          return;
-        } else {
-          return;
-        }
-      })
+            return;
+          } else {
+            return;
+          }
+        })
+      )
     );
 
     return;
   }
 
   async scanAllIncludedFiles() {
-    console.time(`scanAllIncludedFiles - ${this.displayName}`);
+    await this.loadingHandler.handle(
+      `Loading queries and schemas for ${this.config.name!}`,
+      (async () => {
+        console.time(`scanAllIncludedFiles - ${this.displayName}`);
+        this.documentSets = await resolveDocumentSets(this.config, true);
 
-    this.documentSets = await resolveDocumentSets(this.config, true);
+        for (const set of this.documentSets) {
+          if (!set.schema!.getQueryType()!.astNode) {
+            const schemaSource = printSchema(set.schema!);
 
-    for (const set of this.documentSets) {
-      if (!set.schema!.getQueryType()!.astNode) {
-        const schemaSource = printSchema(set.schema!);
+            set.schema = buildSchema(
+              new Source(
+                schemaSource,
+                `graphql-schema:/schema.graphql?${encodeURIComponent(
+                  schemaSource
+                )}`
+              )
+            );
+          }
 
-        set.schema = buildSchema(
-          new Source(
-            schemaSource,
-            `graphql-schema:/schema.graphql?${encodeURIComponent(schemaSource)}`
-          )
-        );
-      }
+          this.setToResolved.set(set.originalSet, set);
 
-      this.setToResolved.set(set.originalSet, set);
+          for (const filePath of set.documentPaths) {
+            const uri = Uri.file(filePath).toString();
 
-      for (const filePath of set.documentPaths) {
-        const uri = Uri.file(filePath).toString();
+            // If we already have query documents for this file, that means it was either
+            // opened or changed before we got a chance to read it.
+            if (this.documentsByFile.has(uri)) continue;
 
-        // If we already have query documents for this file, that means it was either
-        // opened or changed before we got a chance to read it.
-        if (this.documentsByFile.has(uri)) continue;
+            this.fileDidChange(uri, set);
+          }
+        }
 
-        this.fileDidChange(uri, set);
-      }
-    }
+        console.timeEnd(`scanAllIncludedFiles - ${this.displayName}`);
 
-    console.timeEnd(`scanAllIncludedFiles - ${this.displayName}`);
-
-    this.isReady = true;
-    this.validateIfNeeded();
+        this.isReady = true;
+        this.validateIfNeeded();
+      })()
+    );
   }
 
   fileDidChange(uri: DocumentUri, set?: ResolvedDocumentSet) {

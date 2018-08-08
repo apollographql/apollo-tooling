@@ -8,14 +8,17 @@ import Uri from "vscode-uri";
 import { GraphQLProject, DocumentUri } from "./project";
 import { dirname } from "path";
 import * as fg from "glob";
-import { findAndLoadConfig } from "apollo/lib/config";
+import { findAndLoadConfig, ApolloConfig } from "apollo/lib/config";
 import { GraphQLDocument } from "./document";
 import { Source, buildSchema } from "graphql";
+import { LoadingHandler } from "./server";
 
 export class GraphQLWorkspace {
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
   private _onDecorations?: (any: any) => void;
   public projectsByFolderUri: Map<string, GraphQLProject[]> = new Map();
+
+  constructor(private loadingHandler: LoadingHandler) {}
 
   onDiagnostics(handler: NotificationHandler<PublishDiagnosticsParams>) {
     this._onDiagnostics = handler;
@@ -46,19 +49,30 @@ export class GraphQLWorkspace {
 
     const projectConfigs = Array.from(apolloConfigFolders).flatMap(
       configFolder => {
-        try {
-          return [findAndLoadConfig(configFolder, false, true)];
-        } catch (e) {
-          console.error(e);
-          return [];
-        }
+        return this.loadingHandler.handleSync(
+          `Loading Apollo Config in folder ${configFolder}`,
+          () => {
+            let configLoadingResult: ApolloConfig[];
+            try {
+              configLoadingResult = [
+                findAndLoadConfig(configFolder, false, true)
+              ];
+            } catch (e) {
+              console.error(e);
+              configLoadingResult = [];
+            }
+
+            return configLoadingResult;
+          }
+        );
       }
     );
 
     const projects = projectConfigs.map(projectConfig => {
       const project = new GraphQLProject(
         projectConfig,
-        projectConfig.configFile
+        projectConfig.configFile,
+        this.loadingHandler
       );
 
       project.onDiagnostics(params => {

@@ -125,6 +125,31 @@ export function activate(context: ExtensionContext) {
   };
 
   client.onReady().then(() => {
+    let currentLoadingResolve: Map<number, () => void> = new Map();
+
+    client.onNotification("apollographql/loadingComplete", token => {
+      const inMap = currentLoadingResolve.get(token);
+      if (inMap) {
+        inMap();
+        currentLoadingResolve.delete(token);
+      }
+    });
+
+    client.onNotification("apollographql/loading", ({ message, token }) => {
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: message,
+          cancellable: false
+        },
+        () => {
+          return new Promise(resolve => {
+            currentLoadingResolve.set(token, resolve);
+          });
+        }
+      );
+    });
+
     client.onNotification(
       "apollographql/requestVariables",
       ({ query, endpoint, headers, requestedVariables, schema }) => {
