@@ -52,12 +52,14 @@ function printEnumsAndInputObjects(generator: TypescriptAPIGenerator, typesUsed:
 
   typesUsed
     .filter(type => (type instanceof GraphQLEnumType))
+    .sort()
     .forEach((enumType) => {
       generator.typeAliasForEnumType(enumType as GraphQLEnumType);
     });
 
   typesUsed
     .filter(type => type instanceof GraphQLInputObjectType)
+    .sort()
     .forEach((inputObjectType) => {
       generator.typeAliasForInputObjectType(inputObjectType as GraphQLInputObjectType);
     });
