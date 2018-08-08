@@ -303,6 +303,7 @@ export function activate(context: ExtensionContext) {
 
     vscode.workspace.registerTextDocumentContentProvider("graphql-schema", {
       provideTextDocumentContent(uri: Uri) {
+        // the schema source is provided inside the URI, just return that here
         return uri.query;
       }
     });

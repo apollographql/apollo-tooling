@@ -241,6 +241,8 @@ export class GraphQLProject {
             const schemaSource = printSchema(set.schema!);
 
             set.schema = buildSchema(
+              // rebuild the schema from a generated source file and attach the source to a graphql-schema
+              // URI that can be loaded as an in-memory file by VSCode
               new Source(
                 schemaSource,
                 `graphql-schema:/schema.graphql?${encodeURIComponent(

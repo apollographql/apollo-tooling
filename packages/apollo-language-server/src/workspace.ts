@@ -52,17 +52,12 @@ export class GraphQLWorkspace {
         return this.loadingHandler.handleSync(
           `Loading Apollo Config in folder ${configFolder}`,
           () => {
-            let configLoadingResult: ApolloConfig[];
             try {
-              configLoadingResult = [
-                findAndLoadConfig(configFolder, false, true)
-              ];
+              return [findAndLoadConfig(configFolder, false, true)];
             } catch (e) {
               console.error(e);
-              configLoadingResult = [];
+              return [];
             }
-
-            return configLoadingResult;
           }
         );
       }
