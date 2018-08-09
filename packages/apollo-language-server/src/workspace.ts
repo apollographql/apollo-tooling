@@ -8,7 +8,7 @@ import Uri from "vscode-uri";
 import { GraphQLProject, DocumentUri } from "./project";
 import { dirname } from "path";
 import * as fg from "glob";
-import { findAndLoadConfig, ApolloConfig } from "apollo/lib/config";
+import { findAndLoadConfig } from "apollo/lib/config";
 import { GraphQLDocument } from "./document";
 import { Source, buildSchema } from "graphql";
 import { LoadingHandler } from "./server";
