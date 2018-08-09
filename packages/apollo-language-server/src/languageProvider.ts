@@ -11,6 +11,7 @@ import {
   InsertTextFormat
 } from "vscode-languageserver";
 
+// should eventually be moved into this package, since we're overriding a lot of the existing behavior here
 import { getAutocompleteSuggestions } from "@apollographql/graphql-language-service-interface";
 import {
   getTokenAtPosition,

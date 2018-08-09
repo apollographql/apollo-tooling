@@ -31,7 +31,60 @@ const connection = createConnection(ProposedFeatures.all);
 
 let hasWorkspaceFolderCapability = false;
 
-const workspace = new GraphQLWorkspace();
+export class LoadingHandler {
+  private latestLoadingToken = 0;
+  async handle<T>(message: string, value: Promise<T>): Promise<T> {
+    const token = this.latestLoadingToken;
+    this.latestLoadingToken += 1;
+    connection.sendNotification(
+      new NotificationType<any, void>("apollographql/loading"),
+      { message, token }
+    );
+
+    try {
+      const ret = await value;
+      connection.sendNotification(
+        new NotificationType<any, void>("apollographql/loadingComplete"),
+        token
+      );
+      return ret;
+    } catch (e) {
+      connection.sendNotification(
+        new NotificationType<any, void>("apollographql/loadingComplete"),
+        token
+      );
+      connection.window.showErrorMessage(`Error in "${message}": ${e}`);
+      throw e;
+    }
+  }
+
+  handleSync<T>(message: string, value: () => T): T {
+    const token = this.latestLoadingToken;
+    this.latestLoadingToken += 1;
+    connection.sendNotification(
+      new NotificationType<any, void>("apollographql/loading"),
+      { message, token }
+    );
+
+    try {
+      const ret = value();
+      connection.sendNotification(
+        new NotificationType<any, void>("apollographql/loadingComplete"),
+        token
+      );
+      return ret;
+    } catch (e) {
+      connection.sendNotification(
+        new NotificationType<any, void>("apollographql/loadingComplete"),
+        token
+      );
+      connection.window.showErrorMessage(`Error in "${message}": ${e}`);
+      throw e;
+    }
+  }
+}
+
+const workspace = new GraphQLWorkspace(new LoadingHandler());
 
 workspace.onDiagnostics(params => {
   connection.sendDiagnostics(params);
@@ -39,6 +92,21 @@ workspace.onDiagnostics(params => {
 
 workspace.onDecorations(decs => {
   connection.sendNotification("apollographql/engineDecorations", decs);
+});
+
+const hasInitializedPromise = new Promise(resolve => {
+  connection.onInitialized(async () => {
+    resolve();
+
+    if (hasWorkspaceFolderCapability) {
+      connection.workspace.onDidChangeWorkspaceFolders(event => {
+        event.removed.forEach(folder =>
+          workspace.removeProjectsInFolder(folder)
+        );
+        event.added.forEach(folder => workspace.addProjectsInFolder(folder));
+      });
+    }
+  });
 });
 
 connection.onInitialize(async params => {
@@ -49,7 +117,9 @@ connection.onInitialize(async params => {
 
   const workspaceFolders = params.workspaceFolders;
   if (workspaceFolders) {
-    workspaceFolders.forEach(folder => workspace.addProjectsInFolder(folder));
+    hasInitializedPromise.then(() => {
+      workspaceFolders.forEach(folder => workspace.addProjectsInFolder(folder));
+    });
   }
 
   return {
@@ -73,15 +143,6 @@ connection.onInitialize(async params => {
       textDocumentSync: documents.syncKind
     }
   };
-});
-
-connection.onInitialized(async () => {
-  if (hasWorkspaceFolderCapability) {
-    connection.workspace.onDidChangeWorkspaceFolders(event => {
-      event.removed.forEach(folder => workspace.removeProjectsInFolder(folder));
-      event.added.forEach(folder => workspace.addProjectsInFolder(folder));
-    });
-  }
 });
 
 const documents: TextDocuments = new TextDocuments();
