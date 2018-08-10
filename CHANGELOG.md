@@ -1,6 +1,38 @@
 # Changelog
 ## vNEXT
 
+## v1.7.0
+#### :rocket: Feature
+* `apollo-language-server`, `apollo-vscode`
+  * [#536](https://github.com/apollographql/apollo-cli/pull/536) Display status of loading tasks for config and Engine stats ([@shadaj](https://github.com/shadaj))
+* `apollo-cli`
+  * [#533](https://github.com/apollographql/apollo-cli/pull/533) Fall back to other methods of schema loading when one fails ([@shadaj](https://github.com/shadaj))
+* `apollo-cli`, `apollo-codegen-typescript`
+  * [#525](https://github.com/apollographql/apollo-cli/pull/525) [TS] Elimate newlines at beginning of file and add newline at end of file ([@danilobuerger](https://github.com/danilobuerger))
+* `apollo-cli`, `apollo-codegen-core`
+  * [#526](https://github.com/apollographql/apollo-cli/pull/526) Scan all files for queries and reduce use of default endpoints ([@shadaj](https://github.com/shadaj))
+* `apollo-cli`, `apollo-codegen-typescript`, `common-test`
+  * [#520](https://github.com/apollographql/apollo-cli/pull/520) [TS] Dedup enums and inputs by using global types file ([@danilobuerger](https://github.com/danilobuerger))
+* `apollo-codegen-typescript`
+  * [#518](https://github.com/apollographql/apollo-cli/pull/518) [typescript] Only output comment for input if there is one ([@danilobuerger](https://github.com/danilobuerger))
+
+#### :bug: Bug Fix
+* `apollo-cli`, `apollo-language-server`, `apollo-vscode`
+  * [#519](https://github.com/apollographql/apollo-cli/pull/519)  [VSCode] Fix detection of projects inside folders ([@shadaj](https://github.com/shadaj))
+* `apollo-cli`
+  * [#511](https://github.com/apollographql/apollo-cli/pull/511) Stop default flag values from overriding custom config ([@klujanrosas](https://github.com/klujanrosas))
+
+#### :memo: Documentation
+* `apollo-cli`, `apollo-vscode`
+  * [#521](https://github.com/apollographql/apollo-cli/pull/521) Add README for the VS Code extension ([@shadaj](https://github.com/shadaj))
+* `apollo-cli`
+  * [#524](https://github.com/apollographql/apollo-cli/pull/524) Fixed broken command links ([@danilobuerger](https://github.com/danilobuerger))
+
+#### Committers: 3
+- Danilo Bürger ([@danilobuerger](https://github.com/danilobuerger))
+- Kenneth Luján Rosas ([@klujanrosas](https://github.com/klujanrosas))
+- Shadaj Laddad ([@shadaj](https://github.com/shadaj))
+
 ## v1.6.0
 #### :rocket: Feature
 * `apollo-language-server`
