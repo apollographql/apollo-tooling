@@ -2,6 +2,7 @@ import "apollo-codegen-core/lib/polyfills";
 import { Command, flags } from "@oclif/command";
 import * as Listr from "listr";
 import * as path from "path";
+import * as tty from "tty";
 
 import { TargetType, default as generate } from "../../generate";
 
@@ -245,8 +246,10 @@ export default class Generate extends Command {
         console.log("\nChange detected, generating types...");
         tasks.run().catch(() => {});
       });
-      await waitForKey();
-      watcher.close();
+      if (tty.isatty((process.stdin as any).fd)) {
+        await waitForKey();
+        watcher.close();
+      }
       return;
     } else {
       return tasks.run();
