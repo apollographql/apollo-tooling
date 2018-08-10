@@ -635,7 +635,7 @@ Array [
       "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { EnumCommentTestCase, Duplicate } from \\"../../__generated__/globalTypes\\";
+import { EnumCommentTestCase, Duplicate } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL mutation operation: duplicates
@@ -697,7 +697,7 @@ Array [
       "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"../../__generated__/globalTypes\\";
+import { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: HeroName
@@ -819,7 +819,7 @@ export interface humanFragment {
       "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"../../__generated__/globalTypes\\";
+import { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL fragment: droidFragment
@@ -960,7 +960,7 @@ export interface simpleFragment {
       "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"../../__generated__/globalTypes\\";
+import { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL fragment: anotherFragment
@@ -1083,7 +1083,7 @@ Array [
       "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"../../__generated__/globalTypes\\";
+import { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: HeroInlineFragment
@@ -1148,7 +1148,7 @@ Array [
       "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"../../__generated__/globalTypes\\";
+import { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: HeroName
@@ -1247,7 +1247,7 @@ Array [
       "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"../../__generated__/globalTypes\\";
+import { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: HeroName
@@ -1358,7 +1358,7 @@ Array [
       "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { EnumCommentTestCase } from \\"../../__generated__/globalTypes\\";
+import { EnumCommentTestCase } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: nesting
@@ -1408,7 +1408,7 @@ Array [
       "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { EnumCommentTestCase } from \\"../../__generated__/globalTypes\\";
+import { EnumCommentTestCase } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: nesting
@@ -1458,7 +1458,7 @@ Array [
       "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"../../__generated__/globalTypes\\";
+import { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: HeroFragment
@@ -1586,7 +1586,7 @@ Array [
       "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"../../__generated__/globalTypes\\";
+import { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: HeroName
@@ -1651,7 +1651,7 @@ Array [
       "fileContents": "/* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Episode, ReviewInput } from \\"../../__generated__/globalTypes\\";
+import { Episode, ReviewInput } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL mutation operation: ReviewMovie
