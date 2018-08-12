@@ -1,6 +1,7 @@
 type Query {
   hello: String!
   serverSideField: ServerField!
+  someEnum: SomeEnum!
 }
 
 type ServerField {
@@ -14,4 +15,9 @@ type RemovedField {
 
 type RemovedType {
   fieldName: String
+}
+
+enum SomeEnum {
+  foo
+  bar
 }

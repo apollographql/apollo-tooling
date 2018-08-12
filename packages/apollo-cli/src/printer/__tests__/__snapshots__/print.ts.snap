@@ -161,6 +161,7 @@ type Query {
   # ⚡ Warning ⚡
   hello: String!
   serverSideField: ServerField!
+  someEnum: SomeEnum!
 
   # ✔️ Notice ✔️
   me: User
@@ -175,6 +176,8 @@ type RemovedField {
   name: RemovedType
 
 }
+
+enum SomeEnum { }
 
 type ServerField { }
 

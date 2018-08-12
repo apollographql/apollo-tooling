@@ -3,8 +3,15 @@ import * as path from "path";
 
 import { loadAndMergeQueryDocuments } from "apollo-codegen-core/lib/loading";
 import { validateQueryDocument } from "./validation";
-import { compileToIR, CompilerContext, CompilerOptions } from "apollo-codegen-core/lib/compiler";
-import { compileToLegacyIR, CompilerOptions as LegacyCompilerOptions } from "apollo-codegen-core/lib/compiler/legacyIR";
+import {
+  compileToIR,
+  CompilerContext,
+  CompilerOptions
+} from "apollo-codegen-core/lib/compiler";
+import {
+  compileToLegacyIR,
+  CompilerOptions as LegacyCompilerOptions
+} from "apollo-codegen-core/lib/compiler/legacyIR";
 import serializeToJSON from "apollo-codegen-core/lib/serializeToJSON";
 import { BasicGeneratedFile } from "apollo-codegen-core/lib/utilities/CodeGenerator";
 
@@ -12,10 +19,13 @@ import { generateSource as generateSwiftSource } from "apollo-codegen-swift";
 import { generateSource as generateTypescriptLegacySource } from "apollo-codegen-typescript-legacy";
 import { generateSource as generateFlowLegacySource } from "apollo-codegen-flow-legacy";
 import { generateSource as generateFlowSource } from "apollo-codegen-flow";
-import { generateLocalSource as generateTypescriptLocalSource, generateGlobalSource as generateTypescriptGlobalSource } from "apollo-codegen-typescript";
+import {
+  generateLocalSource as generateTypescriptLocalSource,
+  generateGlobalSource as generateTypescriptGlobalSource
+} from "apollo-codegen-typescript";
 import { generateSource as generateScalaSource } from "apollo-codegen-scala";
 import { GraphQLSchema } from "graphql";
-import { FlowCompilerOptions } from '../../apollo-codegen-flow/lib/language';
+import { FlowCompilerOptions } from "../../apollo-codegen-flow/lib/language";
 
 export type TargetType =
   | "json"
@@ -28,7 +38,11 @@ export type TargetType =
   | "typescript"
   | "ts";
 
-export type GenerationOptions = CompilerOptions & LegacyCompilerOptions & FlowCompilerOptions;
+export type GenerationOptions = CompilerOptions &
+  LegacyCompilerOptions &
+  FlowCompilerOptions & {
+    globalTypesFile?: string;
+  };
 
 export default function generate(
   inputPaths: string[],
@@ -46,7 +60,7 @@ export default function generate(
 
   validateQueryDocument(schema, document);
 
-  if (outputPath.split('.').length <= 1 && !fs.existsSync(outputPath)) {
+  if (outputPath.split(".").length <= 1 && !fs.existsSync(outputPath)) {
     fs.mkdirSync(outputPath);
   }
 
@@ -95,9 +109,10 @@ export default function generate(
       writeGeneratedFiles(outFiles, path.resolve("."));
 
       writtenFiles += Object.keys(outFiles).length;
-    }
-
-    else if (fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory()) {
+    } else if (
+      fs.existsSync(outputPath) &&
+      fs.statSync(outputPath).isDirectory()
+    ) {
       generatedFiles.forEach(({ fileName, content }) => {
         outFiles[fileName] = {
           output: content.fileContents + common
@@ -107,9 +122,7 @@ export default function generate(
       writeGeneratedFiles(outFiles, outputPath);
 
       writtenFiles += Object.keys(outFiles).length;
-    }
-
-    else {
+    } else {
       fs.writeFileSync(
         outputPath,
         generatedFiles.map(o => o.content.fileContents).join("\n") + common
@@ -126,19 +139,28 @@ export default function generate(
       [fileName: string]: BasicGeneratedFile;
     } = {};
 
-    if (nextToSources || (fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory())) {
-      if (nextToSources && !fs.existsSync(outputPath)) {
+    if (
+      nextToSources ||
+      (fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory())
+    ) {
+      if (options.globalTypesFile) {
+        const globalTypesDir = path.dirname(options.globalTypesFile);
+        if (!fs.existsSync(globalTypesDir)) {
+          fs.mkdirSync(globalTypesDir);
+        }
+      } else if (nextToSources && !fs.existsSync(outputPath)) {
         fs.mkdirSync(outputPath);
       }
 
-      const globalSourcePath = path.join(outputPath, "globalTypes.ts");
+      const globalSourcePath =
+        options.globalTypesFile || path.join(outputPath, "globalTypes.ts");
       outFiles[globalSourcePath] = {
-        output: generatedGlobalFile.fileContents,
+        output: generatedGlobalFile.fileContents
       };
 
       generatedFiles.forEach(({ sourcePath, fileName, content }) => {
         let dir = outputPath;
-        if (nextToSources) {
+        if (nextToSources) {
           dir = path.join(path.dirname(sourcePath), dir);
           if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
@@ -147,7 +169,8 @@ export default function generate(
 
         const outFilePath = path.join(dir, fileName);
         outFiles[outFilePath] = {
-          output: content({ outputPath: outFilePath, globalSourcePath }).fileContents,
+          output: content({ outputPath: outFilePath, globalSourcePath })
+            .fileContents
         };
       });
 
@@ -157,8 +180,9 @@ export default function generate(
     } else {
       fs.writeFileSync(
         outputPath,
-        generatedFiles.map(o => o.content().fileContents).join("\n") + "\n" +
-          generatedGlobalFile.fileContents,
+        generatedFiles.map(o => o.content().fileContents).join("\n") +
+          "\n" +
+          generatedGlobalFile.fileContents
       );
 
       writtenFiles += 1;
