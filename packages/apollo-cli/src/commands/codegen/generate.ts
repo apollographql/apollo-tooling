@@ -95,6 +95,10 @@ export default class Generate extends Command {
       description:
         'By default, TypeScript/Flow will put each generated file in a directory next to its source file using the value of the "output" as the directory name. Set "outputFlat" to put all generated files in the directory relative to the current working directory defined by "output".'
     }),
+    globalTypesFile: flags.string({
+      description:
+        'By default, TypeScript will put a file named "globalTypes.ts" inside the "output" directory. Set "globalTypesFile" to specify a different path.'
+    }),
     watch: flags.boolean({
       description: "Watch the query files to auto-generate on changes."
     })
@@ -227,7 +231,8 @@ export default class Generate extends Command {
                 mergeInFieldsFromFragmentSpreads:
                   flags.mergeInFieldsFromFragmentSpreads,
                 useFlowExactObjects: flags.useFlowExactObjects,
-                useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes
+                useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes,
+                globalTypesFile: flags.globalTypesFile
               }
             );
 

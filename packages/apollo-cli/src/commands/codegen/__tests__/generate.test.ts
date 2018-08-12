@@ -471,6 +471,40 @@ describe("successful codegen", () => {
     .do(() => {
       vol.fromJSON({
         "schema.json": JSON.stringify(fullSchema.__schema),
+        "directory/component.tsx": `
+          gql\`
+            query SimpleQuery {
+              someEnum
+            }
+          \`;
+        `
+      });
+    })
+    .command([
+      "codegen:generate",
+      "--schema=schema.json",
+      "--queries=**/*.tsx",
+      "--target=typescript",
+      "--globalTypesFile=__foo__/bar.ts"
+    ])
+    .it(
+      "writes TypeScript global types to a custom path when globalTypesFile is set",
+      () => {
+        expect(
+          mockFS
+            .readFileSync("directory/__generated__/SimpleQuery.ts")
+            .toString()
+        ).toMatchSnapshot();
+        expect(
+          mockFS.readFileSync("__foo__/bar.ts").toString()
+        ).toMatchSnapshot();
+      }
+    );
+
+  test
+    .do(() => {
+      vol.fromJSON({
+        "schema.json": JSON.stringify(fullSchema.__schema),
         "directory/component.jsx": `
           gql\`
             query SimpleQuery {
