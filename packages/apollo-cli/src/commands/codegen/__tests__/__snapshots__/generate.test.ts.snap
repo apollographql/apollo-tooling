@@ -95,36 +95,32 @@ export type SimpleQuery = {
 
 exports[`successful codegen infers JSON target and writes operations 1`] = `
 "{
-	\\"data\\": {
-		\\"__schema\\": {
-			\\"operations\\": [
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"queryOne.graphql\\",
+			\\"operationName\\": \\"SimpleQuery\\",
+			\\"operationType\\": \\"query\\",
+			\\"rootType\\": \\"Query\\",
+			\\"variables\\": [],
+			\\"source\\": \\"query SimpleQuery {\\\\n  hello\\\\n}\\",
+			\\"fields\\": [
 				{
-					\\"filePath\\": \\"queryOne.graphql\\",
-					\\"operationName\\": \\"SimpleQuery\\",
-					\\"operationType\\": \\"query\\",
-					\\"rootType\\": \\"Query\\",
-					\\"variables\\": [],
-					\\"source\\": \\"query SimpleQuery {\\\\n  hello\\\\n}\\",
-					\\"fields\\": [
-						{
-							\\"responseName\\": \\"hello\\",
-							\\"fieldName\\": \\"hello\\",
-							\\"type\\": \\"String!\\",
-							\\"isConditional\\": false,
-							\\"isDeprecated\\": false
-						}
-					],
-					\\"fragmentSpreads\\": [],
-					\\"inlineFragments\\": [],
-					\\"fragmentsReferenced\\": [],
-					\\"sourceWithFragments\\": \\"query SimpleQuery {\\\\n  hello\\\\n}\\",
-					\\"operationId\\": \\"4de1e386589b0853a102a87a3f21ca25266116517e59c1e8be9442e2571f00bc\\"
+					\\"responseName\\": \\"hello\\",
+					\\"fieldName\\": \\"hello\\",
+					\\"type\\": \\"String!\\",
+					\\"isConditional\\": false,
+					\\"isDeprecated\\": false
 				}
 			],
-			\\"fragments\\": [],
-			\\"typesUsed\\": []
+			\\"fragmentSpreads\\": [],
+			\\"inlineFragments\\": [],
+			\\"fragmentsReferenced\\": [],
+			\\"sourceWithFragments\\": \\"query SimpleQuery {\\\\n  hello\\\\n}\\",
+			\\"operationId\\": \\"4de1e386589b0853a102a87a3f21ca25266116517e59c1e8be9442e2571f00bc\\"
 		}
-	}
+	],
+	\\"fragments\\": [],
+	\\"typesUsed\\": []
 }"
 `;
 
