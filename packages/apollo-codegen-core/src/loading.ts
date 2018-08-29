@@ -106,27 +106,18 @@ export function extractDocumentFromJavascript(
     inputPath?: string;
   } = {}
 ): string | null {
-  let tagName = options.tagName || "gql";
-
-  let match;
   let matches: string[] = [];
 
   try {
     matches = extractDocumentsWithAST(content, options);
   } catch (e) {
-    console.log(
-      "Extraction using AST",
-      options.inputPath ? "in file " + options.inputPath : "",
-      "failed with \n",
-      e,
-      "\nRetrying using regex"
-    );
-    const re = new RegExp(tagName + "s*`([^`]*)`", "g");
-    while ((match = re.exec(content))) {
-      const doc = match[1].replace(/\${[^}]*}/g, "");
+    e.message =
+      "Operation extraction " +
+      (options.inputPath ? "from file " + options.inputPath + " " : "") +
+      "failed with \n" +
+      e.message;
 
-      matches.push(doc);
-    }
+    throw e;
   }
 
   matches = filterValidDocuments(matches);
