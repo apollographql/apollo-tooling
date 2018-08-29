@@ -19,6 +19,7 @@ export interface SchemaDependency {
   engineKey?: string;
   extends?: string;
   clientSide?: boolean;
+  skipsSSLValidation?: boolean;
 }
 
 export interface DocumentSet {

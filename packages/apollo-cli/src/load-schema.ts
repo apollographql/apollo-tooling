@@ -17,7 +17,7 @@ export async function loadSchema(
 
   if (dependency.endpoint && dependency.endpoint.url) {
     try {
-      return await fetchSchema(dependency.endpoint, config.projectFolder);
+      return await fetchSchema(dependency.endpoint, config.projectFolder, dependency.skipsSSLValidation);
     } catch {}
   }
 

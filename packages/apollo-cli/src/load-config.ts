@@ -87,6 +87,12 @@ export function loadConfigStep(
         ctx.config.engineEndpoint = flags.engine;
       }
 
+      if (flags.insecure) {
+        if (Object.keys(ctx.config.schemas).length == 1) {
+          (Object.values(ctx.config.schemas)[0] as SchemaDependency).skipsSSLValidation = flags.insecure;
+        }
+      }
+
       if (ctx.config.queries.length == 0 && ctx.config.schemas.default) {
         ctx.config.queries.push({
           schema: "default",
