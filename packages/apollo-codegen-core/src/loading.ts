@@ -253,25 +253,10 @@ export function combineOperationsAndFragments(
   operations.forEach(operation => {
     const completeOperation: Array<
       OperationDefinitionNode | FragmentDefinitionNode
-    > = [operation];
-
-    visit(operation, {
-      [Kind.FRAGMENT_SPREAD]: node => {
-        if (!node.name || node.name.kind !== "Name") {
-          (errorLogger || console.warn)(
-            `Fragment Spread must have a name ${node}`
-          );
-        }
-        if (!fragments[node.name.value]) {
-          (errorLogger || console.warn)(
-            `Fragment ${
-              node.name.value
-            } is not defined. Please add the file containing the fragment to the set of included paths`
-          );
-        }
-        completeOperation.push(fragments[node.name.value]);
-      }
-    });
+    > = [
+      operation,
+      ...Object.values(getNestedFragments(operation, fragments, errorLogger))
+    ];
 
     fullOperations.push({
       kind: "Document",
@@ -279,4 +264,37 @@ export function combineOperationsAndFragments(
     });
   });
   return fullOperations;
+}
+
+function getNestedFragments(
+  operation: OperationDefinitionNode | FragmentDefinitionNode,
+  fragments: Record<string, FragmentDefinitionNode>,
+  errorLogger?: (message: string) => void
+) {
+  // Using an object ensures that we only include each fragment definition once.
+  // We are assured that there will be no duplicate fragment names during the
+  // extraction step
+  const combination: Record<string, FragmentDefinitionNode> = {};
+  visit(operation, {
+    [Kind.FRAGMENT_SPREAD]: node => {
+      if (!node.name || node.name.kind !== "Name") {
+        (errorLogger || console.warn)(
+          `Fragment Spread must have a name ${node}`
+        );
+      }
+      if (!fragments[node.name.value]) {
+        (errorLogger || console.warn)(
+          `Fragment ${
+            node.name.value
+          } is not defined. Please add the file containing the fragment to the set of included paths`
+        );
+      }
+      Object.assign(
+        combination,
+        getNestedFragments(fragments[node.name.value], fragments, errorLogger),
+        { [node.name.value]: fragments[node.name.value] }
+      );
+    }
+  });
+  return combination;
 }
