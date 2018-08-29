@@ -119,7 +119,7 @@ export default function generate(
     }
   } else if (target === "typescript" || target === "ts") {
     const context = compileToIR(schema, document, options);
-    const generatedFiles = generateTypescriptLocalSource(context);
+    const generatedFiles = generateTypescriptLocalSource(context, tagName);
     const generatedGlobalFile = generateTypescriptGlobalSource(context);
 
     const outFiles: {

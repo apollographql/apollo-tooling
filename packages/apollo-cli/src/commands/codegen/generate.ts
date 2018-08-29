@@ -86,6 +86,9 @@ export default class Generate extends Command {
       description:
         "Parse all input files, but only output generated code for the specified file [Swift only]"
     }),
+    codeGenerationModule: flags.string({
+      description: "Path to module for generating actual GraphQL queries [TypeScript only]"
+    }),
     tagName: flags.string({
       description:
         "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
@@ -227,7 +230,8 @@ export default class Generate extends Command {
                 mergeInFieldsFromFragmentSpreads:
                   flags.mergeInFieldsFromFragmentSpreads,
                 useFlowExactObjects: flags.useFlowExactObjects,
-                useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes
+                useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes,
+                codeGenerationModule: flags.codeGenerationModule
               }
             );
 

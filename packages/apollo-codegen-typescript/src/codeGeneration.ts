@@ -107,10 +107,13 @@ export function generateSource(context: CompilerContext) {
     content: TypescriptGeneratedFile;
   }[] = [];
 
+  const codeGenerationModule = context.options.codeGenerationModule;
   Object.values(context.operations).forEach(operation => {
-    generator.fileHeader();
+    generator.fileHeader("gql");
     generator.interfacesForOperation(operation);
-
+    if (codeGenerationModule) {
+      generator.codeGenerationDeclarationForOperation(operation, "gql");
+    }
     const output = generator.printer.printAndClear();
 
     generatedFiles.push({
@@ -155,15 +158,17 @@ interface IGeneratedFile {
 }
 
 export function generateLocalSource(
-  context: CompilerContext
+  context: CompilerContext,
+  tagName: string
 ): IGeneratedFile[] {
   const generator = new TypescriptAPIGenerator(context);
+  const codeGenerationModule = context.options.codeGenerationModule;
 
   const operations = Object.values(context.operations).map(operation => ({
     sourcePath: operation.filePath,
     fileName: `${operation.operationName}.ts`,
     content: (options?: IGeneratedFileOptions) => {
-      generator.fileHeader();
+      generator.fileHeader(tagName);
       if (options && options.outputPath && options.globalSourcePath) {
         printGlobalImport(
           generator,
@@ -173,6 +178,9 @@ export function generateLocalSource(
         );
       }
       generator.interfacesForOperation(operation);
+      if (codeGenerationModule) {
+        generator.codeGenerationDeclarationForOperation(operation, tagName);
+      }
       const output = generator.printer.printAndClear();
       return new TypescriptGeneratedFile(output);
     }
@@ -223,13 +231,22 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     this.scopeStack = [];
   }
 
-  fileHeader() {
+  fileHeader(tagName?: string) {
     this.printer.enqueue(
       stripIndent`
         /* tslint:disable */
         // This file was automatically generated and should not be edited.
       `
     );
+
+    if (this.context.options.codeGenerationModule && tagName) {
+      this.printer.enqueue(
+        stripIndent`
+          import codeGenerationModule from "${this.context.options.codeGenerationModule}";
+          import ${tagName} from "graphql-tag";
+        `
+      );
+    }
   }
 
   public typeAliasForEnumType(enumType: GraphQLEnumType) {
@@ -238,6 +255,15 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
 
   public typeAliasForInputObjectType(inputObjectType: GraphQLInputObjectType) {
     this.printer.enqueue(this.inputObjectDeclaration(inputObjectType));
+  }
+
+  public codeGenerationDeclarationForOperation(operation: Operation, tagName: string) {
+    const { operationName, operationType, variables, source } = operation;
+    this.printer.enqueue(
+      this.exportDeclaration(
+        this.codeGenerationDeclaration(operationName, operationType, tagName, source, variables.length > 0)
+      )
+    );
   }
 
   public interfacesForOperation(operation: Operation) {

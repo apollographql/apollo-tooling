@@ -136,6 +136,53 @@ export default class TypescriptGenerator {
     );
   }
 
+  public codeGenerationDeclaration(
+    operationName: string,
+    operationType: string = "query",
+    tagName: string,
+    source: string,
+    usesVaribles?: boolean) {
+    // getUsers becomes doGetUsers
+    const exportName = 'do' + operationName[0].toUpperCase() + operationName.substr(1);
+    // getUsers becomes getUsersVariables
+    const variablesName = operationName + 'Variables';
+
+    const expTypes = t.TSTypeParameterInstantiation([
+      t.TSTypeReference(t.identifier(operationName)),
+      usesVaribles ? t.TSTypeReference(t.identifier(variablesName)) : t.TSNullKeyword(),
+      t.TSTypeLiteral([
+        t.TSPropertySignature(
+          t.identifier('operationType'),
+          t.TSTypeAnnotation(
+            t.TSLiteralType(t.stringLiteral(operationType)),
+          )
+        )
+      ])
+    ]);
+
+    const parameters = [
+      t.taggedTemplateExpression(
+        t.identifier(tagName),
+        t.templateLiteral([t.templateElement({raw: source, cooked: source}, true)], [])
+      ),
+      t.objectExpression([
+        t.objectProperty(
+          t.identifier('operationType'),
+          t.stringLiteral(operationType),
+        )
+      ])
+    ];
+
+    const exp = t.callExpression(t.identifier('codeGenerationModule'), parameters);
+
+    // The build fails with "error TS2339: Property 'typeParameters' does not exist on type 'CallExpression'
+    // if exp isn't cast to any here
+    (exp as any).typeParameters = expTypes;
+    return t.variableDeclaration('const', [
+      t.variableDeclarator(t.identifier(exportName), exp)
+    ]);
+  }
+
   public typeAliasGenericUnion(name: string, members: t.TSType[]) {
     return t.TSTypeAliasDeclaration(
       t.identifier(name),
