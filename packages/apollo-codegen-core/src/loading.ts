@@ -1,3 +1,6 @@
+// provides flatMap
+import "./polyfills";
+
 import { fs, withGlobalFS } from "./localfs";
 import { stripIndents } from "common-tags";
 import * as fg from "glob";

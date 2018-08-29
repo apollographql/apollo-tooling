@@ -1,3 +1,6 @@
+// provides flatMap
+import "apollo-codegen-core/lib/polyfills";
+
 import { Command, flags } from "@oclif/command";
 import * as Listr from "listr";
 import * as crypto from "crypto";
