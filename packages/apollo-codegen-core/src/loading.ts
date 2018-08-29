@@ -10,7 +10,11 @@ import {
   concatAST,
   parse,
   DocumentNode,
-  GraphQLSchema
+  GraphQLSchema,
+  visit,
+  Kind,
+  OperationDefinitionNode,
+  FragmentDefinitionNode
 } from "graphql";
 
 import { ToolError } from "./errors";
@@ -197,4 +201,79 @@ export function loadAndMergeQueryDocuments(
   tagName: string = "gql"
 ): DocumentNode {
   return concatAST(loadQueryDocuments(inputPaths, tagName));
+}
+
+export function extractOperationsAndFragments(
+  documents: Array<DocumentNode>,
+  errorLogger?: (message: string) => void
+) {
+  const fragments: Record<string, FragmentDefinitionNode> = {};
+  const operations: Array<OperationDefinitionNode> = [];
+
+  documents.forEach(operation => {
+    // We could use separateOperations from graphql-js in the case that
+    // all fragments are defined in the same file. Currently this
+    // solution duplicates much of the logic, adding the ability to pull
+    // fragments from separate files
+    visit(operation, {
+      [Kind.FRAGMENT_DEFINITION]: node => {
+        if (!node.name || node.name.kind !== "Name") {
+          (errorLogger || console.warn)(
+            `Fragment Definition must have a name ${node}`
+          );
+        }
+
+        if (fragments[node.name.value]) {
+          (errorLogger || console.warn)(
+            `Duplicate definition of fragment ${
+              node.name.value
+            }. Please rename one of them or use the same fragment`
+          );
+        }
+        fragments[node.name.value] = node;
+      },
+      [Kind.OPERATION_DEFINITION]: node => {
+        operations.push(node);
+      }
+    });
+  });
+
+  return { fragments, operations };
+}
+
+export function combineOperationsAndFragments(
+  operations: Array<OperationDefinitionNode>,
+  fragments: Record<string, FragmentDefinitionNode>,
+  errorLogger?: (message: string) => void
+) {
+  const fullOperations: Array<DocumentNode> = [];
+  operations.forEach(operation => {
+    const completeOperation: Array<
+      OperationDefinitionNode | FragmentDefinitionNode
+    > = [operation];
+
+    visit(operation, {
+      [Kind.FRAGMENT_SPREAD]: node => {
+        if (!node.name || node.name.kind !== "Name") {
+          (errorLogger || console.warn)(
+            `Fragment Spread must have a name ${node}`
+          );
+        }
+        if (!fragments[node.name.value]) {
+          (errorLogger || console.warn)(
+            `Fragment ${
+              node.name.value
+            } is not defined. Please add the file containing the fragment to the set of included paths`
+          );
+        }
+        completeOperation.push(fragments[node.name.value]);
+      }
+    });
+
+    fullOperations.push({
+      kind: "Document",
+      definitions: completeOperation
+    });
+  });
+  return fullOperations;
 }

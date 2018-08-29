@@ -2,20 +2,18 @@ import { Command, flags } from "@oclif/command";
 import * as Listr from "listr";
 import * as crypto from "crypto";
 import * as fs from "fs";
-import {
-  DocumentNode,
-  visit,
-  Kind,
-  OperationDefinitionNode,
-  FragmentDefinitionNode
-} from "graphql";
+import { DocumentNode } from "graphql";
 import {
   hideLiterals,
   printWithReducedWhitespace,
   sortAST
 } from "apollo-engine-reporting";
 
-import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
+import {
+  loadQueryDocuments,
+  extractOperationsAndFragments,
+  combineOperationsAndFragments
+} from "apollo-codegen-core/lib/loading";
 
 import { engineFlags } from "../../engine-cli";
 import { resolveDocumentSets } from "../../config";
@@ -67,79 +65,26 @@ export default class ExtractQueries extends Command {
           task.title = `Scanning for GraphQL queries (${
             ctx.queryDocuments.length
           } found)`;
-          // XXX send along file information as well
-          // ctx.operations = operations.map(doc => ({ document: print(doc) }));
-          // ctx.operations = loadInterpolatedQueries(
-          //   (flags.queries && [flags.queries]) || ctx.documentSets[0].documentPaths,
-          //   flags.tagName
-          // );
-          // XXX send along file information as well
         }
       },
       {
         title: "Isolating operations and fragments",
         task: async ctx => {
-          ctx.fragments = {};
-          ctx.operations = [] as Array<DocumentNode>;
-
-          (ctx.queryDocuments as Array<DocumentNode>).forEach(operation => {
-            // We could use separateOperations from graphql-js in the case that
-            // all fragments are defined in the same file. Currently this
-            // solution duplicates much of the logic, adding the ability to pull
-            // fragments from separate files
-            visit(operation, {
-              [Kind.FRAGMENT_DEFINITION]: node => {
-                if (!node.name || node.name.kind !== "Name") {
-                  this.error(`Fragment Definition must have a name ${node}`);
-                }
-
-                if (ctx.fragments[node.name.value]) {
-                  this.error(
-                    `Duplicate definition of fragment ${
-                      node.name.value
-                    }. Please rename one of them or use the same fragment`
-                  );
-                }
-                ctx.fragments[node.name.value] = node;
-              },
-              [Kind.OPERATION_DEFINITION]: node => {
-                ctx.operations.push(node);
-              }
-            });
-          });
+          const { fragments, operations } = extractOperationsAndFragments(
+            ctx.queryDocuments,
+            this.error.bind(this)
+          );
+          ctx.fragments = fragments;
+          ctx.operations = operations;
         }
       },
       {
         title: "Combining operations and fragments",
         task: async ctx => {
-          ctx.fullOperations = [];
-          (ctx.operations as Array<OperationDefinitionNode>).forEach(
-            operation => {
-              const completeOperation: Array<
-                OperationDefinitionNode | FragmentDefinitionNode
-              > = [operation];
-
-              visit(operation, {
-                [Kind.FRAGMENT_SPREAD]: node => {
-                  if (!node.name || node.name.kind !== "Name") {
-                    this.error(`Fragment Spread must have a name ${node}`);
-                  }
-                  if (!ctx.fragments[node.name.value]) {
-                    this.error(
-                      `Fragment ${
-                        node.name.value
-                      } is not defined. Please add the file containing the fragment to the set of included paths`
-                    );
-                  }
-                  completeOperation.push(ctx.fragments[node.name.value]);
-                }
-              });
-
-              ctx.fullOperations.push({
-                kind: "Document",
-                definitions: completeOperation
-              } as DocumentNode);
-            }
+          ctx.fullOperations = combineOperationsAndFragments(
+            ctx.operations,
+            ctx.fragments,
+            this.error.bind(this)
           );
         }
       },
