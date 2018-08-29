@@ -233,7 +233,6 @@ export function extractDocumentFromJavascript(
   }
 
   matches = filterValidDocuments(matches);
-  console.log(matches);
   const doc = matches.join("\n");
   return doc.length ? doc : null;
 }
