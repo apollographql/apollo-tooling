@@ -3,9 +3,13 @@ import { Command, flags } from "@oclif/command";
 import { table, styledJSON } from "heroku-cli-util";
 import * as Listr from "listr";
 import { toPromise, execute } from "apollo-link";
-import { print, GraphQLError } from "graphql";
+import { print, GraphQLError, DocumentNode } from "graphql";
 
-import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
+import {
+  loadQueryDocuments,
+  extractOperationsAndFragments,
+  combineOperationsAndFragments
+} from "apollo-codegen-core/lib/loading";
 
 import { engineFlags } from "../../engine-cli";
 import { engineLink, getIdFromKey } from "../../engine";
@@ -51,17 +55,53 @@ export default class CheckQueries extends Command {
       loadConfigStep(flags, false),
       {
         title: "Resolving GraphQL document sets",
-        task: async (ctx, task) => {
+        task: async ctx => {
           ctx.documentSets = await resolveDocumentSets(ctx.config, false);
-          const operations = loadQueryDocuments(
-            ctx.documentSets[0].documentPaths,
+        }
+      },
+      {
+        title: "Scanning for GraphQL queries",
+        task: async (ctx, task) => {
+          ctx.queryDocuments = loadQueryDocuments(
+            (flags.queries && [flags.queries]) ||
+              ctx.documentSets[0].documentPaths,
             flags.tagName
           );
           task.title = `Scanning for GraphQL queries (${
-            operations.length
+            ctx.queryDocuments.length
           } found)`;
+        }
+      },
+      {
+        title: "Isolating operations and fragments",
+        task: async ctx => {
+          const { fragments, operations } = extractOperationsAndFragments(
+            ctx.queryDocuments,
+            this.error.bind(this)
+          );
+          ctx.fragments = fragments;
+          ctx.operations = operations;
+        }
+      },
+      {
+        title: "Combining operations and fragments",
+        task: async ctx => {
+          ctx.fullOperations = combineOperationsAndFragments(
+            ctx.operations,
+            ctx.fragments,
+            this.error.bind(this)
+          );
+        }
+      },
+      {
+        title: "Printing operations",
+        task: async ctx => {
           // XXX send along file information as well
-          ctx.operations = operations.map(doc => ({ document: print(doc) }));
+          ctx.operations = (ctx.fullOperations as Array<DocumentNode>).map(
+            doc => ({
+              document: print(doc)
+            })
+          );
         }
       },
       {
