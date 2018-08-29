@@ -46,8 +46,17 @@ export default class ExtractQueries extends Command {
     })
   };
 
+  static args = [
+    {
+      name: "output",
+      description: "Path to write the extracted queries to",
+      required: true,
+      default: "manifest.json"
+    }
+  ];
+
   async run() {
-    const { flags } = this.parse(ExtractQueries);
+    const { flags, args } = this.parse(ExtractQueries);
 
     const tasks: Listr = new Listr([
       loadConfigStep(flags, false),
@@ -120,9 +129,11 @@ export default class ExtractQueries extends Command {
         }
       },
       {
-        title: "Outputing manifest",
-        task: async ctx => {
-          fs.writeFileSync("manifest.json", JSON.stringify(ctx.mapping));
+        title: "Outputing extracted queries",
+        task: async (ctx, task) => {
+          const filename = args.output;
+          task.title = "Outputing extracted queries to " + filename;
+          fs.writeFileSync(filename, JSON.stringify(ctx.mapping));
         }
       }
     ]);
