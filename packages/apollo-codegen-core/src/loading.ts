@@ -62,13 +62,14 @@ function extractDocumentsWithAST(
   content: string,
   options: {
     tagName?: string;
+    parser?: any;
   }
 ): string[] {
   let tagName = options.tagName || "gql";
 
   // Sometimes the js is unparsable, so this function will throw
   const ast = recast.parse(content, {
-    parser: require("recast/parsers/babylon")
+    parser: options.parser || require("recast/parsers/babylon")
   });
 
   const finished: string[] = [];
@@ -101,6 +102,8 @@ export function extractDocumentFromJavascript(
   content: string,
   options: {
     tagName?: string;
+    parser?: any;
+    inputPath?: string;
   } = {}
 ): string | null {
   let tagName = options.tagName || "gql";
@@ -112,7 +115,9 @@ export function extractDocumentFromJavascript(
     matches = extractDocumentsWithAST(content, options);
   } catch (e) {
     console.log(
-      "Extraction using AST failed with \n",
+      "Extraction using AST",
+      options.inputPath ? "in file " + options.inputPath : "",
+      "failed with \n",
       e,
       "\nRetrying using regex"
     );
@@ -153,7 +158,27 @@ export function loadQueryDocuments(
         inputPath.endsWith(".tsx") ||
         inputPath.endsWith(".ts")
       ) {
-        const doc = extractDocumentFromJavascript(body.toString(), { tagName });
+        let parser;
+        if (inputPath.endsWith(".ts")) {
+          parser = require("recast/parsers/typescript");
+        } else if (inputPath.endsWith(".tsx")) {
+          parser = {
+            parse: (source: any, options: any) => {
+              const babelParser = require("@babel/parser");
+              options = require("recast/parsers/_babylon_options.js")(options);
+              options.plugins.push("jsx", "typescript");
+              return babelParser.parse(source, options);
+            }
+          };
+        } else {
+          parser = require("recast/parsers/babylon");
+        }
+
+        const doc = extractDocumentFromJavascript(body.toString(), {
+          tagName,
+          parser,
+          inputPath
+        });
         return doc ? new Source(doc, inputPath) : null;
       }
 
