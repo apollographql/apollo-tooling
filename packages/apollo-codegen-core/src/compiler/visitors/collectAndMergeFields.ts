@@ -1,9 +1,9 @@
-import { SelectionSet, Selection, Field, BooleanCondition } from '../';
-import { GraphQLObjectType } from 'graphql';
+import { SelectionSet, Selection, Field, BooleanCondition } from "../";
+import { GraphQLObjectType } from "graphql";
 
 // This is a temporary workaround to keep track of conditions on fields in the fields themselves.
 // It is only added here because we want to expose it to the Android target, which relies on the legacy IR.
-declare module '../' {
+declare module "../" {
   interface Field {
     conditions?: BooleanCondition[];
   }
@@ -24,7 +24,7 @@ export function collectAndMergeFields(
 
     for (const selection of selections) {
       switch (selection.kind) {
-        case 'Field':
+        case "Field":
           let groupForResponseKey = groupedFields.get(selection.responseKey);
           if (!groupForResponseKey) {
             groupForResponseKey = [];
@@ -44,17 +44,30 @@ export function collectAndMergeFields(
               : undefined
           });
           break;
-        case 'FragmentSpread':
-        case 'TypeCondition':
-          if (selection.kind === 'FragmentSpread' && !mergeInFragmentSpreads) continue;
+        case "FragmentSpread":
+        case "TypeCondition":
+          if (selection.kind === "FragmentSpread" && !mergeInFragmentSpreads)
+            continue;
 
           // Only merge fragment spreads and type conditions if they match all possible types.
-          if (!possibleTypes.every(type => selection.selectionSet.possibleTypes.includes(type))) continue;
+          if (
+            !possibleTypes.every(type =>
+              selection.selectionSet.possibleTypes.includes(type)
+            )
+          )
+            continue;
 
-          visitSelectionSet(selection.selectionSet.selections, possibleTypes, conditions);
+          visitSelectionSet(
+            selection.selectionSet.selections,
+            possibleTypes,
+            conditions
+          );
           break;
-        case 'BooleanCondition':
-          visitSelectionSet(selection.selectionSet.selections, possibleTypes, [...conditions, selection]);
+        case "BooleanCondition":
+          visitSelectionSet(selection.selectionSet.selections, possibleTypes, [
+            ...conditions,
+            selection
+          ]);
           break;
       }
     }
@@ -65,11 +78,17 @@ export function collectAndMergeFields(
   // Merge selection sets
 
   const fields = Array.from(groupedFields.values()).map(fields => {
-    const isFieldIncludedUnconditionally = fields.some(field => !field.isConditional);
+    const isFieldIncludedUnconditionally = fields.some(
+      field => !field.isConditional
+    );
 
     return fields
       .map(field => {
-        if (isFieldIncludedUnconditionally && field.isConditional && field.selectionSet) {
+        if (
+          isFieldIncludedUnconditionally &&
+          field.isConditional &&
+          field.selectionSet
+        ) {
           field.selectionSet.selections = wrapInBooleanConditionsIfNeeded(
             field.selectionSet.selections,
             field.conditions
@@ -90,7 +109,9 @@ export function collectAndMergeFields(
         }
 
         if (field.selectionSet && otherField.selectionSet) {
-          field.selectionSet.selections.push(...otherField.selectionSet.selections);
+          field.selectionSet.selections.push(
+            ...otherField.selectionSet.selections
+          );
         }
 
         return field;

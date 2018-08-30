@@ -13,13 +13,7 @@ import {
   UnionTypeDefinitionNode
 } from "graphql";
 
-import {
-  ChangeType,
-  Change,
-  TypeKind,
-  DiffField,
-  DiffEnum
-} from "./ast";
+import { ChangeType, Change, TypeKind, DiffField, DiffEnum } from "./ast";
 import * as decode from "decode-html";
 
 import { diffSchemas } from "./diff";

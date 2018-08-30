@@ -1,20 +1,21 @@
-import { fs } from "apollo-codegen-core/lib/localfs";
-import * as path from "path";
-import fetch from "node-fetch";
-import gql from "graphql-tag";
-import {
-  buildSchema,
-  introspectionQuery,
-  GraphQLSchema,
-  Source,
-  buildClientSchema
-} from "graphql";
-import { execute, toPromise } from "apollo-link";
-import { createHttpLink } from "apollo-link-http";
-
 import { extractDocumentFromJavascript } from "apollo-codegen-core/lib/loading";
+import { fs } from "apollo-codegen-core/lib/localfs";
+import { execute, toPromise } from "apollo-link";
+import { createHttpLink, HttpLink } from "apollo-link-http";
+import {
+  buildClientSchema,
+  buildSchema,
+  GraphQLSchema,
+  introspectionQuery,
+  Source
+} from "graphql";
+import gql from "graphql-tag";
+import { Agent, AgentOptions } from "https";
+import fetch from "node-fetch";
+import * as path from "path";
+import { URL } from "url";
 import { EndpointConfig } from "./config";
-import { getIdFromKey, engineLink } from "./engine";
+import { engineLink, getIdFromKey } from "./engine";
 import { SCHEMA_QUERY } from "./operations/schema";
 
 const introspection = gql(introspectionQuery);
@@ -55,16 +56,34 @@ export async function fromFile(
 }
 
 export const fetchSchema = async (
-  { url, headers }: EndpointConfig,
+  { url, headers, skipSSLValidation }: EndpointConfig,
   projectFolder?: string
 ): Promise<GraphQLSchema | undefined> => {
   if (!url) throw new Error("No endpoint provided when fetching schema");
   const filePath = projectFolder ? path.resolve(projectFolder, url) : url;
   if (fs.existsSync(filePath)) return fromFile(filePath);
 
+  var options: HttpLink.Options = { uri: url, fetch };
+
+  if (skipSSLValidation) {
+    const urlObject = new URL(url);
+    const host = urlObject.host;
+    const port = +urlObject.port || 443;
+
+    const agentOptions: AgentOptions = {
+      host: host,
+      port: port,
+      rejectUnauthorized: false
+    };
+
+    const agent = new Agent(agentOptions);
+
+    options.fetchOptions = { agent: agent };
+  }
+
   return toPromise(
-    // XXX node-fetch isn't compatiable typescript wise here?
-    execute(createHttpLink({ uri: url, fetch } as any), {
+    // XXX node-fetch isn't compatible typescript wise here?
+    execute(createHttpLink(options), {
       query: introspection,
       context: { headers }
     })

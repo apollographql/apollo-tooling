@@ -23,7 +23,7 @@ import {
   isSpecifiedScalarType,
   NonNullTypeNode,
   GraphQLNonNull
-} from 'graphql';
+} from "graphql";
 
 import {
   getOperationRootType,
@@ -32,7 +32,7 @@ import {
   filePathForNode,
   withTypenameFieldAddedWhereNeeded,
   isMetaFieldName
-} from '../utilities/graphql';
+} from "../utilities/graphql";
 
 export interface CompilerOptions {
   addTypename?: boolean;
@@ -86,10 +86,14 @@ export interface Argument {
   type?: GraphQLInputType;
 }
 
-export type Selection = Field | TypeCondition | BooleanCondition | FragmentSpread;
+export type Selection =
+  | Field
+  | TypeCondition
+  | BooleanCondition
+  | FragmentSpread;
 
 export interface Field {
-  kind: 'Field';
+  kind: "Field";
   responseKey: string;
   name: string;
   alias?: string;
@@ -103,20 +107,20 @@ export interface Field {
 }
 
 export interface TypeCondition {
-  kind: 'TypeCondition';
+  kind: "TypeCondition";
   type: GraphQLCompositeType;
   selectionSet: SelectionSet;
 }
 
 export interface BooleanCondition {
-  kind: 'BooleanCondition';
+  kind: "BooleanCondition";
   variableName: string;
   inverted: boolean;
   selectionSet: SelectionSet;
 }
 
 export interface FragmentSpread {
-  kind: 'FragmentSpread';
+  kind: "FragmentSpread";
   fragmentName: string;
   isConditional?: boolean;
   selectionSet: SelectionSet;
@@ -133,7 +137,9 @@ export function compileToIR(
 
   const compiler = new Compiler(schema, options);
 
-  const operations: { [operationName: string]: Operation } = Object.create(null);
+  const operations: { [operationName: string]: Operation } = Object.create(
+    null
+  );
   const fragments: { [fragmentName: string]: Fragment } = Object.create(null);
 
   for (const definition of document.definitions) {
@@ -212,22 +218,27 @@ class Compiler {
 
   compileOperation(operationDefinition: OperationDefinitionNode): Operation {
     if (!operationDefinition.name) {
-      throw new Error('Operations should be named');
+      throw new Error("Operations should be named");
     }
 
     const filePath = filePathForNode(operationDefinition);
     const operationName = operationDefinition.name.value;
     const operationType = operationDefinition.operation;
 
-    const variables = (operationDefinition.variableDefinitions || []).map(node => {
-      const name = node.variable.name.value;
-      const type = typeFromAST(this.schema, node.type as NonNullTypeNode);
-      this.addTypeUsed(getNamedType(type as GraphQLType));
-      return { name, type: type as GraphQLNonNull<any> };
-    });
+    const variables = (operationDefinition.variableDefinitions || []).map(
+      node => {
+        const name = node.variable.name.value;
+        const type = typeFromAST(this.schema, node.type as NonNullTypeNode);
+        this.addTypeUsed(getNamedType(type as GraphQLType));
+        return { name, type: type as GraphQLNonNull<any> };
+      }
+    );
 
     const source = print(operationDefinition);
-    const rootType = getOperationRootType(this.schema, operationDefinition) as GraphQLObjectType;
+    const rootType = getOperationRootType(
+      this.schema,
+      operationDefinition
+    ) as GraphQLObjectType;
 
     return {
       filePath,
@@ -236,24 +247,38 @@ class Compiler {
       variables,
       source,
       rootType,
-      selectionSet: this.compileSelectionSet(operationDefinition.selectionSet, rootType, false)
+      selectionSet: this.compileSelectionSet(
+        operationDefinition.selectionSet,
+        rootType,
+        false
+      )
     };
   }
 
-  compileFragment(fragmentDefinition: FragmentDefinitionNode, isClient: boolean): Fragment {
+  compileFragment(
+    fragmentDefinition: FragmentDefinitionNode,
+    isClient: boolean
+  ): Fragment {
     const fragmentName = fragmentDefinition.name.value;
 
     const filePath = filePathForNode(fragmentDefinition);
     const source = print(fragmentDefinition);
 
-    const type = typeFromAST(this.schema, fragmentDefinition.typeCondition) as GraphQLCompositeType;
+    const type = typeFromAST(
+      this.schema,
+      fragmentDefinition.typeCondition
+    ) as GraphQLCompositeType;
 
     return {
       fragmentName,
       filePath,
       source,
       type,
-      selectionSet: this.compileSelectionSet(fragmentDefinition.selectionSet, type, isClient)
+      selectionSet: this.compileSelectionSet(
+        fragmentDefinition.selectionSet,
+        type,
+        isClient
+      )
     };
   }
 
@@ -269,7 +294,13 @@ class Compiler {
       selections: selectionSetNode.selections
         .map(selectionNode =>
           wrapInBooleanConditionsIfNeeded(
-            this.compileSelection(selectionNode, parentType, possibleTypes, visitedFragments, isClient),
+            this.compileSelection(
+              selectionNode,
+              parentType,
+              possibleTypes,
+              visitedFragments,
+              isClient
+            ),
             selectionNode,
             possibleTypes
           )
@@ -287,27 +318,45 @@ class Compiler {
   ): Selection | null {
     switch (selectionNode.kind) {
       case Kind.FIELD: {
-        const fieldIsClient = (selectionNode.directives || []).some(d => d.name.value == "client");
+        const fieldIsClient = (selectionNode.directives || []).some(
+          d => d.name.value == "client"
+        );
         const name = selectionNode.name.value;
-        const alias = selectionNode.alias ? selectionNode.alias.value : undefined;
+        const alias = selectionNode.alias
+          ? selectionNode.alias.value
+          : undefined;
 
         const fieldDef = getFieldDef(this.schema, parentType, selectionNode);
         if (!fieldDef) {
-          throw new GraphQLError(`Cannot query field "${name}" on type "${String(parentType)}"`, [
-            selectionNode
-          ]);
+          throw new GraphQLError(
+            `Cannot query field "${name}" on type "${String(parentType)}"`,
+            [selectionNode]
+          );
         }
 
-        if (fieldDef.astNode && (fieldDef.astNode as any).__client && !(isClient || fieldIsClient)) {
-          throw new GraphQLError(`Cannot query client-side field "${name}" on type "${String(parentType)}" without @client directive`, [
-            selectionNode
-          ]);
+        if (
+          fieldDef.astNode &&
+          (fieldDef.astNode as any).__client &&
+          !(isClient || fieldIsClient)
+        ) {
+          throw new GraphQLError(
+            `Cannot query client-side field "${name}" on type "${String(
+              parentType
+            )}" without @client directive`,
+            [selectionNode]
+          );
         }
 
-        if (!(fieldDef.astNode && (fieldDef.astNode as any).__client) && fieldIsClient) {
-          throw new GraphQLError(`Cannot query server-side field "${name}" on type "${String(parentType)}" with @client directive`, [
-            selectionNode
-          ]);
+        if (
+          !(fieldDef.astNode && (fieldDef.astNode as any).__client) &&
+          fieldIsClient
+        ) {
+          throw new GraphQLError(
+            `Cannot query server-side field "${name}" on type "${String(
+              parentType
+            )}" with @client directive`,
+            [selectionNode]
+          );
         }
 
         const fieldType = fieldDef.type;
@@ -323,7 +372,9 @@ class Compiler {
           selectionNode.arguments && selectionNode.arguments.length > 0
             ? selectionNode.arguments.map(arg => {
                 const name = arg.name.value;
-                const argDef = fieldDef.args.find(argDef => argDef.name === arg.name.value);
+                const argDef = fieldDef.args.find(
+                  argDef => argDef.name === arg.name.value
+                );
                 return {
                   name,
                   value: valueFromValueNode(arg.value),
@@ -333,13 +384,14 @@ class Compiler {
             : undefined;
 
         let field: Field = {
-          kind: 'Field',
+          kind: "Field",
           responseKey,
           name,
           alias,
           args,
           type: fieldType,
-          description: !isMetaFieldName(name) && description ? description : undefined,
+          description:
+            !isMetaFieldName(name) && description ? description : undefined,
           isDeprecated,
           deprecationReason: deprecationReason || undefined
         };
@@ -348,7 +400,9 @@ class Compiler {
           const selectionSetNode = selectionNode.selectionSet;
           if (!selectionSetNode) {
             throw new GraphQLError(
-              `Composite field "${name}" on type "${String(parentType)}" requires selection set`,
+              `Composite field "${name}" on type "${String(
+                parentType
+              )}" requires selection set`,
               [selectionNode]
             );
           }
@@ -363,12 +417,14 @@ class Compiler {
       }
       case Kind.INLINE_FRAGMENT: {
         const typeNode = selectionNode.typeCondition;
-        const type = typeNode ? (typeFromAST(this.schema, typeNode) as GraphQLCompositeType) : parentType;
-        const possibleTypesForTypeCondition = this.possibleTypesForType(type).filter(type =>
-          possibleTypes.includes(type)
-        );
+        const type = typeNode
+          ? (typeFromAST(this.schema, typeNode) as GraphQLCompositeType)
+          : parentType;
+        const possibleTypesForTypeCondition = this.possibleTypesForType(
+          type
+        ).filter(type => possibleTypes.includes(type));
         return {
-          kind: 'TypeCondition',
+          kind: "TypeCondition",
           type,
           selectionSet: this.compileSelectionSet(
             selectionNode.selectionSet,
@@ -384,7 +440,7 @@ class Compiler {
         visitedFragments.add(fragmentName);
 
         const fragmentSpread: FragmentSpread = {
-          kind: 'FragmentSpread',
+          kind: "FragmentSpread",
           fragmentName,
           selectionSet: {
             possibleTypes,
@@ -418,24 +474,24 @@ function wrapInBooleanConditionsIfNeeded(
   for (const directive of selectionNode.directives) {
     const directiveName = directive.name.value;
 
-    if (directiveName === 'skip' || directiveName === 'include') {
+    if (directiveName === "skip" || directiveName === "include") {
       if (!directive.arguments) continue;
 
       const value = directive.arguments[0].value;
 
       switch (value.kind) {
-        case 'BooleanValue':
-          if (directiveName === 'skip') {
+        case "BooleanValue":
+          if (directiveName === "skip") {
             return value.value ? null : selection;
           } else {
             return value.value ? selection : null;
           }
           break;
-        case 'Variable':
+        case "Variable":
           selection = {
-            kind: 'BooleanCondition',
+            kind: "BooleanCondition",
             variableName: value.name.value,
-            inverted: directiveName === 'skip',
+            inverted: directiveName === "skip",
             selectionSet: {
               possibleTypes,
               selections: [selection]

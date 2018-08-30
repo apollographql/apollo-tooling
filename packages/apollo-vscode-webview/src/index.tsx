@@ -8,7 +8,4 @@ declare function acquireVsCodeApi(): {
 
 export const vscode = acquireVsCodeApi();
 
-ReactDOM.render(
-  <App />,
-  document.getElementById("root") as HTMLElement
-);
+ReactDOM.render(<App />, document.getElementById("root") as HTMLElement);

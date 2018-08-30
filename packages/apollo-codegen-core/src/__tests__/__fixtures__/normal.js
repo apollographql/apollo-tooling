@@ -6,4 +6,4 @@ const query = gql`
       role
     }
   }
-`
+`;

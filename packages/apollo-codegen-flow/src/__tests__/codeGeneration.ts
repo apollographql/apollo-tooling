@@ -1,15 +1,14 @@
-import { parse } from 'graphql';
+import { parse } from "graphql";
 
-import { loadSchema } from 'apollo-codegen-core/lib/loading';
-const schema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
+import { loadSchema } from "apollo-codegen-core/lib/loading";
+const schema = loadSchema(
+  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+);
 
-import {
-  compileToIR,
-  CompilerContext,
-} from 'apollo-codegen-core/lib/compiler';
+import { compileToIR, CompilerContext } from "apollo-codegen-core/lib/compiler";
 
-import { generateSource } from '../codeGeneration';
-import { FlowCompilerOptions } from '../language';
+import { generateSource } from "../codeGeneration";
+import { FlowCompilerOptions } from "../language";
 
 function compile(
   source: string,
@@ -24,8 +23,8 @@ function compile(
   return compileToIR(schema, document, options);
 }
 
-describe('Flow codeGeneration', () => {
-  test('multiple files', () => {
+describe("Flow codeGeneration", () => {
+  test("multiple files", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -52,19 +51,18 @@ describe('Flow codeGeneration', () => {
         }
       }
     `);
-    context.operations["HeroName"].filePath = '/some/file/ComponentA.js';
-    context.operations["SomeOther"].filePath = '/some/file/ComponentB.js';
-    context.fragments['someFragment'].filePath = '/some/file/ComponentB.js';
+    context.operations["HeroName"].filePath = "/some/file/ComponentA.js";
+    context.operations["SomeOther"].filePath = "/some/file/ComponentB.js";
+    context.fragments["someFragment"].filePath = "/some/file/ComponentB.js";
     const output = generateSource(context);
     expect(output).toBeInstanceOf(Object);
-    Object.keys(output)
-      .forEach((filePath) => {
-        expect(filePath).toMatchSnapshot();
-        expect(output[filePath]).toMatchSnapshot();
-      });
+    Object.keys(output).forEach(filePath => {
+      expect(filePath).toMatchSnapshot();
+      expect(output[filePath]).toMatchSnapshot();
+    });
   });
 
-  test('simple hero query', () => {
+  test("simple hero query", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -78,7 +76,7 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('simple mutation', () => {
+  test("simple mutation", () => {
     const context = compile(`
       mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
         createReview(episode: $episode, review: $review) {
@@ -92,7 +90,7 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('simple fragment', () => {
+  test("simple fragment", () => {
     const context = compile(`
       fragment SimpleFragment on Character{
         name
@@ -103,7 +101,7 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('fragment with fragment spreads', () => {
+  test("fragment with fragment spreads", () => {
     const context = compile(`
       fragment simpleFragment on Character {
         name
@@ -119,7 +117,7 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('fragment with fragment spreads with inline fragment', () => {
+  test("fragment with fragment spreads with inline fragment", () => {
     const context = compile(`
       fragment simpleFragment on Character {
         name
@@ -139,7 +137,7 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('query with fragment spreads', () => {
+  test("query with fragment spreads", () => {
     const context = compile(`
       fragment simpleFragment on Character {
         name
@@ -157,7 +155,7 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('inline fragment', () => {
+  test("inline fragment", () => {
     const context = compile(`
       query HeroInlineFragment($episode: Episode) {
         hero(episode: $episode) {
@@ -171,9 +169,9 @@ describe('Flow codeGeneration', () => {
 
     const output = generateSource(context);
     expect(output).toMatchSnapshot();
-  })
+  });
 
-  test('inline fragment on type conditions', () => {
+  test("inline fragment on type conditions", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -197,7 +195,7 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('inline fragment on type conditions with differing inner fields', () => {
+  test("inline fragment on type conditions with differing inner fields", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -225,7 +223,7 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('fragment spreads with inline fragments', () => {
+  test("fragment spreads with inline fragments", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -257,8 +255,9 @@ describe('Flow codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('covariant properties with $ReadOnlyArray', () => {
-    const context = compile(`
+  test("covariant properties with $ReadOnlyArray", () => {
+    const context = compile(
+      `
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
           name
@@ -284,18 +283,22 @@ describe('Flow codeGeneration', () => {
       fragment droidFragment on Droid {
         appearsIn
       }
-    `, {
-      mergeInFieldsFromFragmentSpreads: true,
-      useFlowReadOnlyTypes: true,
-      useFlowExactObjects: true,
-      addTypename: true
-    });
+    `,
+      {
+        mergeInFieldsFromFragmentSpreads: true,
+        useFlowReadOnlyTypes: true,
+        useFlowExactObjects: true,
+        addTypename: true
+      }
+    );
     const output = generateSource(context);
     expect(output).toMatchSnapshot();
   });
 
-  test('handles multiline graphql comments', () => {
-    const miscSchema = loadSchema(require.resolve('../../../common-test/fixtures/misc/schema.json'));
+  test("handles multiline graphql comments", () => {
+    const miscSchema = loadSchema(
+      require.resolve("../../../common-test/fixtures/misc/schema.json")
+    );
 
     const document = parse(`
       query CustomScalar {

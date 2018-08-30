@@ -1,11 +1,11 @@
 /**
  * Augment incomplete definitions in `@types/babel-types`
  */
-import 'babel-types';
+import "babel-types";
 
-declare module 'babel-types' {
+declare module "babel-types" {
   interface StringLiteralTypeAnnotation {
-    value: string
+    value: string;
   }
 
   interface ObjectTypeAnnotation {
@@ -13,7 +13,7 @@ declare module 'babel-types' {
   }
 
   interface ObjectTypeProperty {
-    variance?: {kind: 'plus' | 'minus'};
+    variance?: { kind: "plus" | "minus" };
     optional: boolean;
   }
 }

@@ -11,6 +11,7 @@ export interface EndpointConfig {
   url?: string; // main HTTP endpoint
   subscriptions?: string; // WS endpoint for subscriptions
   headers?: Object; // headers to send when performing operations
+  skipSSLValidation?: boolean; // bypass the SSL validation on a HTTPS request
 }
 
 export interface SchemaDependency {
@@ -124,11 +125,9 @@ export function loadConfig(
       ? Array.isArray(obj.queries)
         ? (obj.queries as any[])
         : [obj.queries]
-      : (
-          Object.keys(schemasObj).length == 1 ?
-            [ { schema: Object.keys(schemasObj)[0] } ] :
-            []
-        )
+      : Object.keys(schemasObj).length == 1
+        ? [{ schema: Object.keys(schemasObj)[0] }]
+        : []
     ).map(d => loadDocumentSet(d)),
     engineEndpoint: obj.engineEndpoint
   };
