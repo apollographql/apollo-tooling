@@ -1,6 +1,6 @@
-import { SchemaDependency, ApolloConfig } from "./config";
-import { fetchSchema, fetchSchemaFromEngine } from "./fetch-schema";
 import { GraphQLSchema } from "graphql";
+import { ApolloConfig, SchemaDependency } from "./config";
+import { fetchSchema, fetchSchemaFromEngine } from "./fetch-schema";
 
 export async function loadSchema(
   dependency: SchemaDependency,
@@ -17,7 +17,7 @@ export async function loadSchema(
 
   if (dependency.endpoint && dependency.endpoint.url) {
     try {
-      return await fetchSchema(dependency.endpoint, config.projectFolder, dependency.skipsSSLValidation);
+      return await fetchSchema(dependency.endpoint, config.projectFolder);
     } catch {}
   }
 

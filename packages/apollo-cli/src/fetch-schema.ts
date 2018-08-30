@@ -50,24 +50,23 @@ export async function fromFile(
 }
 
 export const fetchSchema = async (
-  { url, headers }: EndpointConfig,
-  projectFolder?: string,
-  insecureEnabled?: boolean
+  { url, headers, skipSSLValidation }: EndpointConfig,
+  projectFolder?: string
 ): Promise<GraphQLSchema | undefined> => {
   if (!url) throw new Error("No endpoint provided when fetching schema");
   const filePath = projectFolder ? path.resolve(projectFolder, url) : url;
   if (fs.existsSync(filePath)) return fromFile(filePath);
 
-  const insecureOptionActive = insecureEnabled ? insecureEnabled : false;
-
   var options: HttpLink.Options = { uri: url, fetch }
 
-  if (insecureOptionActive) {
-    const host = new URL(url).host
+  if (skipSSLValidation) {
+    const urlObject = new URL(url)
+    const host = urlObject.host
+    const port = +urlObject.port || 443
 
     const agentOptions: AgentOptions = {
       host: host,
-      port: 443,
+      port: port,
       rejectUnauthorized: false
     };
 

@@ -35,7 +35,7 @@ export default class SchemaDownload extends Command {
       description:
         "The URL of the server to fetch the schema from or path to ./your/local/schema.graphql"
     }),
-    insecure: flags.boolean({
+    skipSSLValidation: flags.boolean({
       char: "k",
       description: "Allow connections to a SSL site without certs"
     }),

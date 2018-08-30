@@ -1,9 +1,5 @@
-import {
-  loadConfigFromFile,
-  findAndLoadConfig,
-  SchemaDependency
-} from "./config";
 import { ListrTask } from "listr";
+import { findAndLoadConfig, loadConfigFromFile, SchemaDependency } from "./config";
 
 export function loadConfigStep(
   flags: any,
@@ -87,9 +83,12 @@ export function loadConfigStep(
         ctx.config.engineEndpoint = flags.engine;
       }
 
-      if (flags.insecure) {
+      if (flags.skipSSLValidation) {
         if (Object.keys(ctx.config.schemas).length == 1) {
-          (Object.values(ctx.config.schemas)[0] as SchemaDependency).skipsSSLValidation = flags.insecure;
+          const endpointConfiguration = (Object.values(ctx.config.schemas)[0] as SchemaDependency).endpoint
+          if (endpointConfiguration) {
+            endpointConfiguration.skipSSLValidation = flags.skipSSLValidation
+          }
         }
       }
 
