@@ -2,16 +2,36 @@
   "name": "apollo-vscode",
   "displayName": "Apollo GraphQL",
   "description": "A VS Code extension for Apollo GraphQL projects",
-  "private": true,
-  "author": "Apollo GraphQL",
-  "license": "MIT",
   "version": "0.1.4",
+  "private": true,
+  "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "apollographql/apollo-cli"
+    "url": "git+https://github.com/apollographql/apollo-cli.git"
+  },
+  "homepage": "https://github.com/apollographql/apollo-cli",
+  "bugs": "https://github.com/apollographql/apollo-cli/issues",
+  "main": "./lib/extension",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf lib",
+    "prebuild": "npm run clean && rm -rf node_modules && npm install && npm run update-vscode",
+    "build": "tsc -p .",
+    "watch": "tsc -w -p ./",
+    "update-vscode": "node ./node_modules/vscode/bin/install",
+    "packageExtension": "npm run build && ./node_modules/vsce/out/vsce package --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-cli/master/packages/apollo-vscode"
   },
   "engines": {
     "vscode": "^1.23.0"
+  },
+  "dependencies": {
+    "vscode": "^1.1.17",
+    "vscode-languageclient": "next"
+  },
+  "devDependencies": {
+    "typescript": "^2.6.2",
+    "vsce": "^1.44.0"
   },
   "publisher": "apollographql",
   "categories": [
@@ -23,7 +43,6 @@
     "workspaceContains:**/apollo.config.js",
     "workspaceContains:**/package.json"
   ],
-  "main": "./lib/extension",
   "contributes": {
     "configuration": {},
     "languages": [
@@ -59,21 +78,5 @@
         }
       }
     ]
-  },
-  "scripts": {
-    "clean": "rm -rf lib",
-    "prebuild": "npm run clean && rm -rf node_modules && npm install && npm run update-vscode",
-    "build": "tsc -p .",
-    "watch": "tsc -w -p ./",
-    "update-vscode": "node ./node_modules/vscode/bin/install",
-    "packageExtension": "npm run build && ./node_modules/vsce/out/vsce package --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-cli/master/packages/apollo-vscode"
-  },
-  "dependencies": {
-    "vscode": "^1.1.17",
-    "vscode-languageclient": "next"
-  },
-  "devDependencies": {
-    "typescript": "^2.6.2",
-    "vsce": "^1.44.0"
   }
 }

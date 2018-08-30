@@ -1,5 +1,14 @@
 {
+  "name": "apollo-cli-monorepo",
   "private": true,
+  "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apollographql/apollo-cli.git"
+  },
+  "homepage": "https://github.com/apollographql/apollo-cli",
+  "bugs": "https://github.com/apollographql/apollo-cli/issues",
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "postinstall": "npm run bootstrap",
@@ -19,15 +28,9 @@
       "git add"
     ]
   },
-  "repository": {
-    "type": "git",
-    "url": "apollographql/apollo-cli"
-  },
-  "author": "Martijn Walraven <martijn@martijnwalraven.com>",
-  "license": "MIT",
   "engines": {
-    "node": ">=6.0",
-    "npm": ">=5.0"
+    "node": ">=8",
+    "npm": ">=6"
   },
   "devDependencies": {
     "husky": "^0.14.3",

@@ -1,12 +1,39 @@
 {
   "name": "apollo",
-  "description": "CLI for apollographql",
+  "description": "Command line tool for Apollo GraphQL",
   "version": "1.7.1",
-  "author": "opensource@apollographql.com",
+  "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apollographql/apollo-cli.git"
+  },
+  "homepage": "https://github.com/apollographql/apollo-cli",
+  "bugs": "https://github.com/apollographql/apollo-cli/issues",
+  "files": [
+    "/bin",
+    "/lib",
+    "/oclif.manifest.json"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "bin": {
     "apollo": "./bin/run"
   },
-  "bugs": "https://github.com/apollographql/apollo-cli/issues",
+  "scripts": {
+    "clean": "rm -rf lib",
+    "prebuild": "npm run clean",
+    "build": "tsc -p .",
+    "postpack": "rm -f oclif.manifest.json",
+    "posttest": "tsc -p . --noEmit",
+    "prepack": "npm run build && oclif-dev manifest && oclif-dev readme",
+    "test": "jest",
+    "version": "oclif-dev readme && git add README.md"
+  },
+  "engines": {
+    "node": ">=8",
+    "npm": ">=6"
+  },
   "dependencies": {
     "@oclif/command": "^1.4.21",
     "@oclif/config": "^1.6.17",
@@ -67,20 +94,6 @@
     "tslib": "^1.9.0",
     "typescript": "^2.8.3"
   },
-  "engines": {
-    "node": ">=8.0.0"
-  },
-  "files": [
-    "/bin",
-    "/lib",
-    "/oclif.manifest.json"
-  ],
-  "homepage": "https://github.com/apollographql/apollo-cli",
-  "keywords": [
-    "oclif"
-  ],
-  "license": "MIT",
-  "main": "lib/index.js",
   "oclif": {
     "commands": "./lib/commands",
     "bin": "apollo",
@@ -109,17 +122,5 @@
       "node"
     ],
     "testEnvironment": "node"
-  },
-  "repository": "apollographql/apollo-cli",
-  "scripts": {
-    "clean": "rm -rf lib",
-    "prebuild": "npm run clean",
-    "build": "tsc -p .",
-    "postpack": "rm -f oclif.manifest.json",
-    "posttest": "tsc -p . --noEmit",
-    "prepack": "npm run build && oclif-dev manifest && oclif-dev readme",
-    "test": "jest",
-    "version": "oclif-dev readme && git add README.md"
-  },
-  "types": "lib/index.d.ts"
+  }
 }

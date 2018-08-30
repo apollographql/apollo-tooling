@@ -1,17 +1,18 @@
 {
   "name": "apollo-language-server",
   "description": "A language server for Apollo GraphQL projects",
-  "private": true,
-  "author": "Apollo GraphQL",
-  "license": "MIT",
   "version": "0.1.4",
+  "private": true,
+  "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "apollographql/apollo-cli"
+    "url": "git+https://github.com/apollographql/apollo-cli.git"
   },
-  "engines": {
-    "node": "*"
-  },
+  "homepage": "https://github.com/apollographql/apollo-cli",
+  "bugs": "https://github.com/apollographql/apollo-cli/issues",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "installServer": "installServerIntoExtension ../apollo-vscode ./package.json ./tsconfig.json && ./copy-apollo-libs.sh",
     "clean": "rm -rf ../apollo-vscode/server",
@@ -19,6 +20,9 @@
     "build": "npm run installServer && tsc -p .",
     "watch": "npm run installServer && tsc -w -p .",
     "watchOnly": "tsc -w -p ."
+  },
+  "engines": {
+    "node": "*"
   },
   "dependencies": {
     "@apollographql/graphql-language-service-interface": "1.3.2",
