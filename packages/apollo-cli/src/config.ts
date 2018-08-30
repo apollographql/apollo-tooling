@@ -11,6 +11,7 @@ export interface EndpointConfig {
   url?: string; // main HTTP endpoint
   subscriptions?: string; // WS endpoint for subscriptions
   headers?: Object; // headers to send when performing operations
+  skipSSLValidation?: boolean; // bypass the SSL validation on a HTTPS request
 }
 
 export interface SchemaDependency {
