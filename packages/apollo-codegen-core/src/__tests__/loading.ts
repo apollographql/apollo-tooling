@@ -1,19 +1,20 @@
-import { stripIndents } from 'common-tags';
-import * as fs from 'fs';
-import * as path from 'path';
+import { stripIndents } from "common-tags";
+import * as fs from "fs";
+import * as path from "path";
 
 import {
   extractDocumentFromJavascript,
   loadAndMergeQueryDocuments
-} from '../loading';
+} from "../loading";
 
 // Test example javascript source files are located within __fixtures__
-describe('extractDocumentFromJavascript', () => {
-  test('normal queries', () => {
-    const contents = fs.readFileSync(path.join(__dirname, '__fixtures__', 'normal.js')).toString();
-    expect(stripIndents`${extractDocumentFromJavascript(contents)}`)
-      .toMatch(
-        stripIndents`
+describe("extractDocumentFromJavascript", () => {
+  test("normal queries", () => {
+    const contents = fs
+      .readFileSync(path.join(__dirname, "__fixtures__", "normal.js"))
+      .toString();
+    expect(stripIndents`${extractDocumentFromJavascript(contents)}`).toMatch(
+      stripIndents`
           query UserProfileView {
             me {
               id
@@ -22,14 +23,15 @@ describe('extractDocumentFromJavascript', () => {
             }
           }
         `
-      );
+    );
   });
 
-  test('comments in template string', () => {
-    const contents = fs.readFileSync(path.join(__dirname, '__fixtures__', 'comments.js')).toString();
-    expect(stripIndents`${extractDocumentFromJavascript(contents)}`)
-      .toMatch(
-        stripIndents`
+  test("comments in template string", () => {
+    const contents = fs
+      .readFileSync(path.join(__dirname, "__fixtures__", "comments.js"))
+      .toString();
+    expect(stripIndents`${extractDocumentFromJavascript(contents)}`).toMatch(
+      stripIndents`
           query UserProfileView {
             me {
               id
@@ -40,31 +42,35 @@ describe('extractDocumentFromJavascript', () => {
             }
           }
         `
-      );
+    );
   });
 
-  test('gql completely commented out', () => {
-    const contents = fs.readFileSync(path.join(__dirname, '__fixtures__', 'commentedOut.js')).toString();
-    expect(extractDocumentFromJavascript(contents))
-      .toBeNull();
+  test("gql completely commented out", () => {
+    const contents = fs
+      .readFileSync(path.join(__dirname, "__fixtures__", "commentedOut.js"))
+      .toString();
+    expect(extractDocumentFromJavascript(contents)).toBeNull();
   });
 
-  test('invalid gql', () => {
-    const contents = fs.readFileSync(path.join(__dirname, '__fixtures__', 'invalid.js')).toString();
-    expect(extractDocumentFromJavascript(contents))
-      .toBeNull();
+  test("invalid gql", () => {
+    const contents = fs
+      .readFileSync(path.join(__dirname, "__fixtures__", "invalid.js"))
+      .toString();
+    expect(extractDocumentFromJavascript(contents)).toBeNull();
   });
 });
 
-describe('Validation', () => {
+describe("Validation", () => {
   test(`should extract gql snippet from javascript file`, () => {
     const inputPaths = [
-      path.join(__dirname, '../../../common-test/fixtures/starwars/gqlQueries.js'),
+      path.join(
+        __dirname,
+        "../../../common-test/fixtures/starwars/gqlQueries.js"
+      )
     ];
 
     const document = loadAndMergeQueryDocuments(inputPaths);
 
     expect(document).toMatchSnapshot();
-  })
+  });
 });
-

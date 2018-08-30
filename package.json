@@ -6,8 +6,18 @@
     "postbootstrap": "npm run build",
     "build": "lerna run -- build",
     "test": "lerna run -- test",
+    "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
+    "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "deploy": "lerna publish -m \"chore: Publish\" && cd packages/apollo-client && npm run deploy",
-    "packageExtension": "lerna run packageExtension --scope=apollo-vscode"
+    "packageExtension": "lerna run packageExtension --scope=apollo-vscode",
+    "precommit": "lint-staged",
+    "clean": "find . -name \"node_modules\" -exec rm -rf '{}' + && find . -name \"lib\" -exec rm -rf '{}' +"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "repository": {
     "type": "git",
@@ -20,8 +30,11 @@
     "npm": ">=5.0"
   },
   "devDependencies": {
+    "husky": "^0.14.3",
     "lerna": "^2.11.0",
-    "lerna-changelog": "^0.8.0"
+    "lerna-changelog": "^0.8.0",
+    "lint-staged": "^7.2.2",
+    "prettier": "1.14.2"
   },
   "changelog": {
     "repo": "apollographql/apollo-cli",

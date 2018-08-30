@@ -6,8 +6,6 @@
   "editor.wordWrapColumn": 110,
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
-  "prettier.singleQuote": true,
-  "prettier.printWidth": 110,
   "files.exclude": {
     "**/.git": true,
     "**/.DS_Store": true,

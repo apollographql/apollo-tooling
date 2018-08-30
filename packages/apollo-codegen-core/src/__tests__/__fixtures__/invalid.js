@@ -5,4 +5,4 @@ query UserProfileView {
     uuid
     role
 }
-`
+`;

@@ -1,8 +1,8 @@
-import { stripIndent } from 'common-tags';
+import { stripIndent } from "common-tags";
 
-import { SwiftGenerator } from '../language';
+import { SwiftGenerator } from "../language";
 
-describe('Swift code generation: Basic language constructs', () => {
+describe("Swift code generation: Basic language constructs", () => {
   let generator: SwiftGenerator<any>;
 
   beforeEach(() => {
@@ -10,10 +10,16 @@ describe('Swift code generation: Basic language constructs', () => {
   });
 
   it(`should generate a class declaration`, () => {
-    generator.classDeclaration({ className: 'Hero', modifiers: ['public', 'final'] }, () => {
-      generator.propertyDeclaration({ propertyName: 'name', typeName: 'String' });
-      generator.propertyDeclaration({ propertyName: 'age', typeName: 'Int' });
-    });
+    generator.classDeclaration(
+      { className: "Hero", modifiers: ["public", "final"] },
+      () => {
+        generator.propertyDeclaration({
+          propertyName: "name",
+          typeName: "String"
+        });
+        generator.propertyDeclaration({ propertyName: "age", typeName: "Int" });
+      }
+    );
 
     expect(generator.output).toBe(stripIndent`
       public final class Hero {
@@ -24,9 +30,12 @@ describe('Swift code generation: Basic language constructs', () => {
   });
 
   it(`should generate a struct declaration`, () => {
-    generator.structDeclaration({ structName: 'Hero' }, () => {
-      generator.propertyDeclaration({ propertyName: 'name', typeName: 'String' });
-      generator.propertyDeclaration({ propertyName: 'age', typeName: 'Int' });
+    generator.structDeclaration({ structName: "Hero" }, () => {
+      generator.propertyDeclaration({
+        propertyName: "name",
+        typeName: "String"
+      });
+      generator.propertyDeclaration({ propertyName: "age", typeName: "Int" });
     });
 
     expect(generator.output).toBe(stripIndent`
@@ -38,9 +47,15 @@ describe('Swift code generation: Basic language constructs', () => {
   });
 
   it(`should generate an escaped struct declaration`, () => {
-    generator.structDeclaration({ structName: 'Type' }, () => {
-      generator.propertyDeclaration({ propertyName: 'name', typeName: 'String' });
-      generator.propertyDeclaration({ propertyName: 'yearOfBirth', typeName: 'Int' });
+    generator.structDeclaration({ structName: "Type" }, () => {
+      generator.propertyDeclaration({
+        propertyName: "name",
+        typeName: "String"
+      });
+      generator.propertyDeclaration({
+        propertyName: "yearOfBirth",
+        typeName: "Int"
+      });
     });
 
     expect(generator.output).toBe(stripIndent`
@@ -52,12 +67,21 @@ describe('Swift code generation: Basic language constructs', () => {
   });
 
   it(`should generate nested struct declarations`, () => {
-    generator.structDeclaration({ structName: 'Hero' }, () => {
-      generator.propertyDeclaration({ propertyName: 'name', typeName: 'String' });
-      generator.propertyDeclaration({ propertyName: 'friends', typeName: '[Friend]' });
+    generator.structDeclaration({ structName: "Hero" }, () => {
+      generator.propertyDeclaration({
+        propertyName: "name",
+        typeName: "String"
+      });
+      generator.propertyDeclaration({
+        propertyName: "friends",
+        typeName: "[Friend]"
+      });
 
-      generator.structDeclaration({ structName: 'Friend' }, () => {
-        generator.propertyDeclaration({ propertyName: 'name', typeName: 'String' });
+      generator.structDeclaration({ structName: "Friend" }, () => {
+        generator.propertyDeclaration({
+          propertyName: "name",
+          typeName: "String"
+        });
       });
     });
 
@@ -74,10 +98,19 @@ describe('Swift code generation: Basic language constructs', () => {
   });
 
   it(`should generate a protocol declaration`, () => {
-    generator.protocolDeclaration({ protocolName: 'HeroDetails', adoptedProtocols: ['HasName'] }, () => {
-      generator.protocolPropertyDeclaration({ propertyName: 'name', typeName: 'String' });
-      generator.protocolPropertyDeclaration({ propertyName: 'age', typeName: 'Int' });
-    });
+    generator.protocolDeclaration(
+      { protocolName: "HeroDetails", adoptedProtocols: ["HasName"] },
+      () => {
+        generator.protocolPropertyDeclaration({
+          propertyName: "name",
+          typeName: "String"
+        });
+        generator.protocolPropertyDeclaration({
+          propertyName: "age",
+          typeName: "Int"
+        });
+      }
+    );
 
     expect(generator.output).toBe(stripIndent`
       public protocol HeroDetails: HasName {
@@ -88,10 +121,21 @@ describe('Swift code generation: Basic language constructs', () => {
   });
 
   it(`should handle multi-line descriptions`, () => {
-    generator.structDeclaration({ structName: 'Hero', description: 'A hero' }, () => {
-      generator.propertyDeclaration({ propertyName: 'name', typeName: 'String', description: `A multiline comment \n on the hero's name.` });
-      generator.propertyDeclaration({ propertyName: 'age', typeName: 'String', description: `A multiline comment \n on the hero's age.` });
-    });
+    generator.structDeclaration(
+      { structName: "Hero", description: "A hero" },
+      () => {
+        generator.propertyDeclaration({
+          propertyName: "name",
+          typeName: "String",
+          description: `A multiline comment \n on the hero's name.`
+        });
+        generator.propertyDeclaration({
+          propertyName: "age",
+          typeName: "String",
+          description: `A multiline comment \n on the hero's age.`
+        });
+      }
+    );
 
     expect(generator.output).toMatchSnapshot();
   });

@@ -1,6 +1,6 @@
-import CodeGenerator from 'apollo-codegen-core/lib/utilities/CodeGenerator';
+import CodeGenerator from "apollo-codegen-core/lib/utilities/CodeGenerator";
 
-import { join, wrap } from 'apollo-codegen-core/lib/utilities/printing';
+import { join, wrap } from "apollo-codegen-core/lib/utilities/printing";
 
 export interface Class {
   className: string;
@@ -28,7 +28,7 @@ export interface Property {
 }
 
 export function escapedString(string: string) {
-  return string.replace(/"/g, '\\"').replace(/\n/g, '\\n');
+  return string.replace(/"/g, '\\"').replace(/\n/g, "\\n");
 }
 
 // prettier-ignore
@@ -46,13 +46,16 @@ const reservedKeywords = new Set(['associatedtype', 'class', 'deinit', 'enum', '
 
 export function escapeIdentifierIfNeeded(identifier: string) {
   if (reservedKeywords.has(identifier)) {
-    return '`' + identifier + '`';
+    return "`" + identifier + "`";
   } else {
     return identifier;
   }
 }
 
-export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: string }> {
+export class SwiftGenerator<Context> extends CodeGenerator<
+  Context,
+  { typeName: string }
+> {
   constructor(context: Context) {
     super(context);
   }
@@ -63,15 +66,25 @@ export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: 
 
   comment(comment?: string) {
     comment &&
-      comment.split('\n').forEach(line => {
+      comment.split("\n").forEach(line => {
         this.printOnNewline(`/// ${line.trim()}`);
       });
   }
 
-  deprecationAttributes(isDeprecated: boolean | undefined, deprecationReason: string | undefined) {
+  deprecationAttributes(
+    isDeprecated: boolean | undefined,
+    deprecationReason: string | undefined
+  ) {
     if (isDeprecated !== undefined && isDeprecated) {
-      deprecationReason = (deprecationReason !== undefined && deprecationReason.length > 0) ? deprecationReason : ""
-      this.printOnNewline(`@available(*, deprecated, message: "${escapedString(deprecationReason)}")`)
+      deprecationReason =
+        deprecationReason !== undefined && deprecationReason.length > 0
+          ? deprecationReason
+          : "";
+      this.printOnNewline(
+        `@available(*, deprecated, message: "${escapedString(
+          deprecationReason
+        )}")`
+      );
     }
   }
 
@@ -90,7 +103,10 @@ export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: 
     }
   }
 
-  namespaceExtensionDeclaration(namespace: string | undefined, closure: Function) {
+  namespaceExtensionDeclaration(
+    namespace: string | undefined,
+    closure: Function
+  ) {
     if (namespace) {
       this.printNewlineIfNeeded();
       this.printOnNewline(`/// ${namespace} namespace`);
@@ -105,20 +121,30 @@ export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: 
     }
   }
 
-  classDeclaration({ className, modifiers, superClass, adoptedProtocols = [] }: Class, closure: Function) {
+  classDeclaration(
+    { className, modifiers, superClass, adoptedProtocols = [] }: Class,
+    closure: Function
+  ) {
     this.printNewlineIfNeeded();
-    this.printOnNewline(wrap('', join(modifiers, ' '), ' ') + `class ${className}`);
-    this.print(wrap(': ', join([superClass, ...adoptedProtocols], ', ')));
+    this.printOnNewline(
+      wrap("", join(modifiers, " "), " ") + `class ${className}`
+    );
+    this.print(wrap(": ", join([superClass, ...adoptedProtocols], ", ")));
     this.pushScope({ typeName: className });
     this.withinBlock(closure);
     this.popScope();
   }
 
-  structDeclaration({ structName, description, adoptedProtocols = [] }: Struct, closure: Function) {
+  structDeclaration(
+    { structName, description, adoptedProtocols = [] }: Struct,
+    closure: Function
+  ) {
     this.printNewlineIfNeeded();
     this.comment(description);
-    this.printOnNewline(`public struct ${escapeIdentifierIfNeeded(structName)}`);
-    this.print(wrap(': ', join(adoptedProtocols, ', ')));
+    this.printOnNewline(
+      `public struct ${escapeIdentifierIfNeeded(structName)}`
+    );
+    this.print(wrap(": ", join(adoptedProtocols, ", ")));
     this.pushScope({ typeName: structName });
     this.withinBlock(closure);
     this.popScope();
@@ -126,7 +152,9 @@ export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: 
 
   propertyDeclaration({ propertyName, typeName, description }: Property) {
     this.comment(description);
-    this.printOnNewline(`public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`);
+    this.printOnNewline(
+      `public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`
+    );
   }
 
   propertyDeclarations(properties: Property[]) {
@@ -134,10 +162,13 @@ export class SwiftGenerator<Context> extends CodeGenerator<Context, { typeName: 
     properties.forEach(property => this.propertyDeclaration(property));
   }
 
-  protocolDeclaration({ protocolName, adoptedProtocols }: Protocol, closure: Function) {
+  protocolDeclaration(
+    { protocolName, adoptedProtocols }: Protocol,
+    closure: Function
+  ) {
     this.printNewlineIfNeeded();
     this.printOnNewline(`public protocol ${protocolName}`);
-    this.print(wrap(': ', join(adoptedProtocols, ', ')));
+    this.print(wrap(": ", join(adoptedProtocols, ", ")));
     this.pushScope({ typeName: protocolName });
     this.withinBlock(closure);
     this.popScope();

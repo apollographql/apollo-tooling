@@ -1,11 +1,16 @@
-import { GraphQLSchema, buildSchema, parse } from 'graphql';
-import { compileToLegacyIR } from '../compiler/legacyIR';
-import serializeToJSON from '../serializeToJSON';
+import { GraphQLSchema, buildSchema, parse } from "graphql";
+import { compileToLegacyIR } from "../compiler/legacyIR";
+import serializeToJSON from "../serializeToJSON";
 
-import { loadSchema } from '../loading';
-const starWarsSchema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
+import { loadSchema } from "../loading";
+const starWarsSchema = loadSchema(
+  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+);
 
-function compileFromSource(source: string, schema: GraphQLSchema = starWarsSchema) {
+function compileFromSource(
+  source: string,
+  schema: GraphQLSchema = starWarsSchema
+) {
   const document = parse(source);
   return compileToLegacyIR(schema, document, {
     mergeInFieldsFromFragmentSpreads: false,
@@ -13,7 +18,7 @@ function compileFromSource(source: string, schema: GraphQLSchema = starWarsSchem
   });
 }
 
-describe('JSON output', function() {
+describe("JSON output", function() {
   test(`should generate JSON output for a query with an enum variable`, function() {
     const context = compileFromSource(`
       query HeroName($episode: Episode) {

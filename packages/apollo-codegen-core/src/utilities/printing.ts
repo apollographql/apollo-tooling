@@ -5,7 +5,7 @@
  * print all items together separated by separator if provided
  */
 export function join(maybeArray?: any[], separator?: string) {
-  return maybeArray ? maybeArray.filter(x => x).join(separator || '') : '';
+  return maybeArray ? maybeArray.filter(x => x).join(separator || "") : "";
 }
 
 /**
@@ -13,9 +13,9 @@ export function join(maybeArray?: any[], separator?: string) {
  * indented "{ }" block.
  */
 export function block(array: any[]) {
-  return array && array.length !== 0 ?
-    indent('{\n' + join(array, '\n')) + '\n}' :
-    '{}';
+  return array && array.length !== 0
+    ? indent("{\n" + join(array, "\n")) + "\n}"
+    : "{}";
 }
 
 /**
@@ -23,21 +23,23 @@ export function block(array: any[]) {
  * print an empty string.
  */
 export function wrap(start: string, maybeString?: string, end?: string) {
-  return maybeString ?
-    start + maybeString + (end || '') :
-    '';
+  return maybeString ? start + maybeString + (end || "") : "";
 }
 
 export function indent(maybeString?: string) {
-  return maybeString && maybeString.replace(/\n/g, '\n  ');
+  return maybeString && maybeString.replace(/\n/g, "\n  ");
 }
 
 /**
  * Generates the body of a JSDoc style comment
  */
 export function commentBlockContent(commentString: string) {
-  return '*\n' + commentString
-    .split('\n')
-    .map(line => ` * ${line.replace('*/', '')}`)
-    .join('\n') + '\n ';
+  return (
+    "*\n" +
+    commentString
+      .split("\n")
+      .map(line => ` * ${line.replace("*/", "")}`)
+      .join("\n") +
+    "\n "
+  );
 }

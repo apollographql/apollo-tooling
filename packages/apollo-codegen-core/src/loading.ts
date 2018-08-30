@@ -116,7 +116,8 @@ export function loadQueryDocuments(
       } catch {
         return null;
       }
-    }).filter(source => source);
+    })
+    .filter(source => source);
 
   return sources as DocumentNode[];
 }

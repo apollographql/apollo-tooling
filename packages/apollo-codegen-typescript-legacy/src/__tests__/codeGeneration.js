@@ -1,16 +1,20 @@
-import { parse } from 'graphql';
+import { parse } from "graphql";
 
-import { generateSource } from '../codeGeneration';
+import { generateSource } from "../codeGeneration";
 
-import { loadSchema } from 'apollo-codegen-core/lib/loading';
-const starWarsSchema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
-const miscSchema = loadSchema(require.resolve('../../../common-test/fixtures/misc/schema.json'));
+import { loadSchema } from "apollo-codegen-core/lib/loading";
+const starWarsSchema = loadSchema(
+  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+);
+const miscSchema = loadSchema(
+  require.resolve("../../../common-test/fixtures/misc/schema.json")
+);
 
-import CodeGenerator from 'apollo-codegen-core/lib/utilities/CodeGenerator';
+import CodeGenerator from "apollo-codegen-core/lib/utilities/CodeGenerator";
 
-import { compileToLegacyIR } from 'apollo-codegen-core/lib/compiler/legacyIR';
+import { compileToLegacyIR } from "apollo-codegen-core/lib/compiler/legacyIR";
 
-describe('TypeScript code generation', function() {
+describe("TypeScript code generation", function() {
   let generator;
   let compileFromSource;
   let addFragment;
@@ -21,11 +25,11 @@ describe('TypeScript code generation', function() {
       operations: {},
       fragments: {},
       typesUsed: {}
-    }
+    };
 
     generator = new CodeGenerator(context);
 
-    compileFromSource = (source) => {
+    compileFromSource = source => {
       const document = parse(source);
       const context = compileToLegacyIR(schema, document, {
         mergeInFieldsFromFragmentSpreads: true,
@@ -35,14 +39,14 @@ describe('TypeScript code generation', function() {
       return context;
     };
 
-    addFragment = (fragment) => {
+    addFragment = fragment => {
       generator.context.fragments[fragment.fragmentName] = fragment;
     };
 
     return { generator, compileFromSource, addFragment };
   }
 
-  describe('#generateSource()', function() {
+  describe("#generateSource()", function() {
     test(`should generate simple query operations`, function() {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
@@ -183,7 +187,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should handle single line comments', () => {
+    test("should handle single line comments", () => {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
         query CustomScalar {
@@ -197,7 +201,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should handle multi-line comments', () => {
+    test("should handle multi-line comments", () => {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
         query CustomScalar {
@@ -211,7 +215,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should handle comments in enums', () => {
+    test("should handle comments in enums", () => {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
         query CustomScalar {
@@ -225,7 +229,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should handle interfaces at root', () => {
+    test("should handle interfaces at root", () => {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
         query CustomScalar {
@@ -245,7 +249,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should handle unions at root', () => {
+    test("should handle unions at root", () => {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
         query CustomScalar {
@@ -264,7 +268,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should have __typename value matching fragment type on generic type', () => {
+    test("should have __typename value matching fragment type on generic type", () => {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroName {
@@ -283,7 +287,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should have __typename value matching fragment type on specific type', () => {
+    test("should have __typename value matching fragment type on specific type", () => {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query DroidName {
@@ -302,7 +306,7 @@ describe('TypeScript code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should have __typename value in nested property', () => {
+    test("should have __typename value in nested property", () => {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroName {

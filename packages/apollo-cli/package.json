@@ -62,8 +62,6 @@
     "jest": "^22.4.4",
     "memfs": "^2.9.1",
     "nock": "^9.2.6",
-    "prettier": "^1.12.1",
-    "pretty-quick": "^1.4.1",
     "ts-jest": "^22.4.6",
     "ts-node": "^5.0.1",
     "tslib": "^1.9.0",
@@ -120,7 +118,6 @@
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "tsc -p . --noEmit",
     "prepack": "npm run build && oclif-dev manifest && oclif-dev readme",
-    "precommit": "pretty-quick --staged",
     "test": "jest",
     "version": "oclif-dev readme && git add README.md"
   },
