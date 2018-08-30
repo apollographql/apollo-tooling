@@ -1,4 +1,4 @@
-import { SelectionSet, Fragment } from '../';
+import { SelectionSet, Fragment } from "../";
 
 export function collectFragmentsReferenced(
   selectionSet: SelectionSet,
@@ -7,7 +7,7 @@ export function collectFragmentsReferenced(
 ): Set<string> {
   for (const selection of selectionSet.selections) {
     switch (selection.kind) {
-      case 'FragmentSpread':
+      case "FragmentSpread":
         fragmentsReferenced.add(selection.fragmentName);
 
         const fragment = fragments[selection.fragmentName];
@@ -15,13 +15,21 @@ export function collectFragmentsReferenced(
           throw new Error(`Cannot find fragment "${selection.fragmentName}"`);
         }
 
-        collectFragmentsReferenced(fragment.selectionSet, fragments, fragmentsReferenced);
+        collectFragmentsReferenced(
+          fragment.selectionSet,
+          fragments,
+          fragmentsReferenced
+        );
         break;
-      case 'Field':
-      case 'TypeCondition':
-      case 'BooleanCondition':
+      case "Field":
+      case "TypeCondition":
+      case "BooleanCondition":
         if (selection.selectionSet) {
-          collectFragmentsReferenced(selection.selectionSet, fragments, fragmentsReferenced);
+          collectFragmentsReferenced(
+            selection.selectionSet,
+            fragments,
+            fragmentsReferenced
+          );
         }
         break;
     }

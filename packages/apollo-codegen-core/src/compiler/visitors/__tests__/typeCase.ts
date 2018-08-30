@@ -1,9 +1,9 @@
-import { buildSchema } from 'graphql';
-import { compile } from './test-utils/helpers';
+import { buildSchema } from "graphql";
+import { compile } from "./test-utils/helpers";
 
-import { SelectionSet, Field } from '../..';
-import { typeCaseForSelectionSet } from '../typeCase';
-import { collectAndMergeFields } from '../collectAndMergeFields';
+import { SelectionSet, Field } from "../..";
+import { typeCaseForSelectionSet } from "../typeCase";
+import { collectAndMergeFields } from "../collectAndMergeFields";
 
 export const animalSchema = buildSchema(`
   type Query {
@@ -41,8 +41,8 @@ export const animalSchema = buildSchema(`
   }
 `);
 
-describe('TypeCase', () => {
-  it('should recursively include inline fragments with type conditions that match the parent type', () => {
+describe("TypeCase", () => {
+  it("should recursively include inline fragments with type conditions that match the parent type", () => {
     const context = compile(`
       query Hero {
         hero {
@@ -59,22 +59,25 @@ describe('TypeCase', () => {
       }
     `);
 
-    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
-      .selectionSet as SelectionSet;
+    const selectionSet = (context.operations["Hero"].selectionSet
+      .selections[0] as Field).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['id', 'name', 'appearsIn']);
+    expect(typeCase.default).toMatchSelectionSet(
+      ["Human", "Droid"],
+      ["id", "name", "appearsIn"]
+    );
 
     expect(typeCase.variants).toHaveLength(0);
 
     expect(typeCase.exhaustiveVariants).toHaveLength(1);
     expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
-      ['Human', 'Droid'],
-      ['id', 'name', 'appearsIn']
+      ["Human", "Droid"],
+      ["id", "name", "appearsIn"]
     );
   });
 
-  it('should recursively include fragment spreads with type conditions that match the parent type', () => {
+  it("should recursively include fragment spreads with type conditions that match the parent type", () => {
     const context = compile(`
       query Hero {
         hero {
@@ -94,23 +97,30 @@ describe('TypeCase', () => {
       }
     `);
 
-    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
-      .selectionSet as SelectionSet;
+    const selectionSet = (context.operations["Hero"].selectionSet
+      .selections[0] as Field).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['id', 'name', 'appearsIn']);
-    expect(typeCase.default.fragmentSpreads.map(fragmentSpread => fragmentSpread.fragmentName)).toEqual(['HeroDetails', 'MoreHeroDetails']);
+    expect(typeCase.default).toMatchSelectionSet(
+      ["Human", "Droid"],
+      ["id", "name", "appearsIn"]
+    );
+    expect(
+      typeCase.default.fragmentSpreads.map(
+        fragmentSpread => fragmentSpread.fragmentName
+      )
+    ).toEqual(["HeroDetails", "MoreHeroDetails"]);
 
     expect(typeCase.variants).toHaveLength(0);
 
     expect(typeCase.exhaustiveVariants).toHaveLength(1);
     expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
-      ['Human', 'Droid'],
-      ['id', 'name', 'appearsIn']
+      ["Human", "Droid"],
+      ["id", "name", "appearsIn"]
     );
   });
 
-  it('should include fragment spreads when nested within inline fragments', () => {
+  it("should include fragment spreads when nested within inline fragments", () => {
     const context = compile(`
       query Hero {
         hero {
@@ -125,17 +135,21 @@ describe('TypeCase', () => {
       }
     `);
 
-    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
-      .selectionSet as SelectionSet;
+    const selectionSet = (context.operations["Hero"].selectionSet
+      .selections[0] as Field).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
-    expect(typeCase.default.fragmentSpreads.map(fragmentSpread => fragmentSpread.fragmentName)).toEqual(['CharacterName']);
+    expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], ["name"]);
+    expect(
+      typeCase.default.fragmentSpreads.map(
+        fragmentSpread => fragmentSpread.fragmentName
+      )
+    ).toEqual(["CharacterName"]);
 
     expect(typeCase.variants).toHaveLength(0);
   });
 
-  it('should only include fragment spreads once even if included twice in different subselections', () => {
+  it("should only include fragment spreads once even if included twice in different subselections", () => {
     const context = compile(`
       query Hero {
         hero {
@@ -155,15 +169,21 @@ describe('TypeCase', () => {
       }
     `);
 
-    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
-      .selectionSet as SelectionSet;
-    const typeCase = typeCaseForSelectionSet(collectAndMergeFields(typeCaseForSelectionSet(selectionSet).variants[0])[0].selectionSet as SelectionSet);
+    const selectionSet = (context.operations["Hero"].selectionSet
+      .selections[0] as Field).selectionSet as SelectionSet;
+    const typeCase = typeCaseForSelectionSet(collectAndMergeFields(
+      typeCaseForSelectionSet(selectionSet).variants[0]
+    )[0].selectionSet as SelectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
-    expect(typeCase.default.fragmentSpreads.map(fragmentSpread => fragmentSpread.fragmentName)).toEqual(['CharacterName']);
+    expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], ["name"]);
+    expect(
+      typeCase.default.fragmentSpreads.map(
+        fragmentSpread => fragmentSpread.fragmentName
+      )
+    ).toEqual(["CharacterName"]);
   });
 
-  it('should ignore type modifiers when matching the parent type', () => {
+  it("should ignore type modifiers when matching the parent type", () => {
     const schema = buildSchema(`
       type Query {
         heroes: [Character]
@@ -195,19 +215,22 @@ describe('TypeCase', () => {
       schema
     );
 
-    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
-      .selectionSet as SelectionSet;
+    const selectionSet = (context.operations["Hero"].selectionSet
+      .selections[0] as Field).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
+    expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], ["name"]);
 
     expect(typeCase.variants).toHaveLength(0);
 
     expect(typeCase.exhaustiveVariants).toHaveLength(1);
-    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(['Human', 'Droid'], ['name']);
+    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
+      ["Human", "Droid"],
+      ["name"]
+    );
   });
 
-  it('should merge fields from the default case into type conditions', () => {
+  it("should merge fields from the default case into type conditions", () => {
     const context = compile(`
       query Hero {
         hero {
@@ -223,27 +246,33 @@ describe('TypeCase', () => {
       }
     `);
 
-    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
-      .selectionSet as SelectionSet;
+    const selectionSet = (context.operations["Hero"].selectionSet
+      .selections[0] as Field).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name', 'appearsIn']);
+    expect(typeCase.default).toMatchSelectionSet(
+      ["Human", "Droid"],
+      ["name", "appearsIn"]
+    );
 
     expect(typeCase.variants).toHaveLength(2);
     expect(typeCase.variants).toContainSelectionSetMatching(
-      ['Droid'],
-      ['name', 'primaryFunction', 'appearsIn']
+      ["Droid"],
+      ["name", "primaryFunction", "appearsIn"]
     );
-    expect(typeCase.variants).toContainSelectionSetMatching(['Human'], ['name', 'appearsIn', 'height']);
+    expect(typeCase.variants).toContainSelectionSetMatching(
+      ["Human"],
+      ["name", "appearsIn", "height"]
+    );
 
     expect(typeCase.exhaustiveVariants).toHaveLength(2);
     expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
-      ['Droid'],
-      ['name', 'primaryFunction', 'appearsIn']
+      ["Droid"],
+      ["name", "primaryFunction", "appearsIn"]
     );
     expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
-      ['Human'],
-      ['name', 'appearsIn', 'height']
+      ["Human"],
+      ["name", "appearsIn", "height"]
     );
   });
 
@@ -262,27 +291,30 @@ describe('TypeCase', () => {
       }
     `);
 
-    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
-      .selectionSet as SelectionSet;
+    const selectionSet = (context.operations["Hero"].selectionSet
+      .selections[0] as Field).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], ['name']);
+    expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], ["name"]);
 
     expect(typeCase.variants).toHaveLength(1);
     expect(typeCase.variants).toContainSelectionSetMatching(
-      ['Droid'],
-      ['name', 'primaryFunction', 'appearsIn']
+      ["Droid"],
+      ["name", "primaryFunction", "appearsIn"]
     );
 
     expect(typeCase.exhaustiveVariants).toHaveLength(2);
     expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
-      ['Droid'],
-      ['name', 'primaryFunction', 'appearsIn']
+      ["Droid"],
+      ["name", "primaryFunction", "appearsIn"]
     );
-    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(['Human'], ['name']);
+    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
+      ["Human"],
+      ["name"]
+    );
   });
 
-  it('should inherit type condition when nesting an inline fragment in an inline fragment with a more specific type condition', () => {
+  it("should inherit type condition when nesting an inline fragment in an inline fragment with a more specific type condition", () => {
     const context = compile(`
       query Hero {
         hero {
@@ -295,21 +327,30 @@ describe('TypeCase', () => {
       }
     `);
 
-    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
-      .selectionSet as SelectionSet;
+    const selectionSet = (context.operations["Hero"].selectionSet
+      .selections[0] as Field).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], []);
+    expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], []);
 
     expect(typeCase.variants).toHaveLength(1);
-    expect(typeCase.variants).toContainSelectionSetMatching(['Droid'], ['name']);
+    expect(typeCase.variants).toContainSelectionSetMatching(
+      ["Droid"],
+      ["name"]
+    );
 
     expect(typeCase.exhaustiveVariants).toHaveLength(2);
-    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(['Droid'], ['name']);
-    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(['Human'], []);
+    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
+      ["Droid"],
+      ["name"]
+    );
+    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
+      ["Human"],
+      []
+    );
   });
 
-  it('should not inherit type condition when nesting an inline fragment in an inline fragment with a less specific type condition', () => {
+  it("should not inherit type condition when nesting an inline fragment in an inline fragment with a less specific type condition", () => {
     const context = compile(`
       query Hero {
         hero {
@@ -322,21 +363,30 @@ describe('TypeCase', () => {
       }
     `);
 
-    const selectionSet = (context.operations['Hero'].selectionSet.selections[0] as Field)
-      .selectionSet as SelectionSet;
+    const selectionSet = (context.operations["Hero"].selectionSet
+      .selections[0] as Field).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Human', 'Droid'], []);
+    expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], []);
 
     expect(typeCase.variants).toHaveLength(1);
-    expect(typeCase.variants).toContainSelectionSetMatching(['Droid'], ['name']);
+    expect(typeCase.variants).toContainSelectionSetMatching(
+      ["Droid"],
+      ["name"]
+    );
 
     expect(typeCase.exhaustiveVariants).toHaveLength(2);
-    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(['Droid'], ['name']);
-    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(['Human'], []);
+    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
+      ["Droid"],
+      ["name"]
+    );
+    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
+      ["Human"],
+      []
+    );
   });
 
-  it('should merge fields from the parent case into nested type conditions', () => {
+  it("should merge fields from the parent case into nested type conditions", () => {
     const context = compile(
       `
       query Animal {
@@ -353,26 +403,38 @@ describe('TypeCase', () => {
       animalSchema
     );
 
-    const selectionSet = (context.operations['Animal'].selectionSet.selections[0] as Field)
-      .selectionSet as SelectionSet;
+    const selectionSet = (context.operations["Animal"].selectionSet
+      .selections[0] as Field).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Cat', 'Bird', 'Fish', 'Crocodile'], []);
+    expect(typeCase.default).toMatchSelectionSet(
+      ["Cat", "Bird", "Fish", "Crocodile"],
+      []
+    );
 
     expect(typeCase.variants).toHaveLength(2);
-    expect(typeCase.variants).toContainSelectionSetMatching(['Cat', 'Bird'], ['name', 'bodyTemperature']);
-    expect(typeCase.variants).toContainSelectionSetMatching(['Fish'], ['name']);
+    expect(typeCase.variants).toContainSelectionSetMatching(
+      ["Cat", "Bird"],
+      ["name", "bodyTemperature"]
+    );
+    expect(typeCase.variants).toContainSelectionSetMatching(["Fish"], ["name"]);
 
     expect(typeCase.exhaustiveVariants).toHaveLength(3);
     expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
-      ['Cat', 'Bird'],
-      ['name', 'bodyTemperature']
+      ["Cat", "Bird"],
+      ["name", "bodyTemperature"]
     );
-    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(['Fish'], ['name']);
-    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(['Crocodile'], []);
+    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
+      ["Fish"],
+      ["name"]
+    );
+    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
+      ["Crocodile"],
+      []
+    );
   });
 
-  it('should merge fields from the parent case into nested type conditions', () => {
+  it("should merge fields from the parent case into nested type conditions", () => {
     const context = compile(
       `
       query Animal {
@@ -395,26 +457,38 @@ describe('TypeCase', () => {
       animalSchema
     );
 
-    const selectionSet = (context.operations['Animal'].selectionSet.selections[0] as Field)
-      .selectionSet as SelectionSet;
+    const selectionSet = (context.operations["Animal"].selectionSet
+      .selections[0] as Field).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Cat', 'Bird', 'Fish', 'Crocodile'], []);
+    expect(typeCase.default).toMatchSelectionSet(
+      ["Cat", "Bird", "Fish", "Crocodile"],
+      []
+    );
 
     expect(typeCase.variants).toHaveLength(2);
-    expect(typeCase.variants).toContainSelectionSetMatching(['Cat', 'Bird'], ['name', 'bodyTemperature']);
-    expect(typeCase.variants).toContainSelectionSetMatching(['Fish'], ['name']);
+    expect(typeCase.variants).toContainSelectionSetMatching(
+      ["Cat", "Bird"],
+      ["name", "bodyTemperature"]
+    );
+    expect(typeCase.variants).toContainSelectionSetMatching(["Fish"], ["name"]);
 
     expect(typeCase.exhaustiveVariants).toHaveLength(3);
     expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
-      ['Cat', 'Bird'],
-      ['name', 'bodyTemperature']
+      ["Cat", "Bird"],
+      ["name", "bodyTemperature"]
     );
-    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(['Fish'], ['name']);
-    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(['Crocodile'], []);
+    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
+      ["Fish"],
+      ["name"]
+    );
+    expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
+      ["Crocodile"],
+      []
+    );
   });
 
-  it('should not keep type conditions when all possible objects match', () => {
+  it("should not keep type conditions when all possible objects match", () => {
     const context = compile(
       `
       query Animal {
@@ -431,17 +505,20 @@ describe('TypeCase', () => {
       animalSchema
     );
 
-    const selectionSet = (context.operations['Animal'].selectionSet.selections[0] as Field)
-      .selectionSet as SelectionSet;
+    const selectionSet = (context.operations["Animal"].selectionSet
+      .selections[0] as Field).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
-    expect(typeCase.default).toMatchSelectionSet(['Cat', 'Bird'], ['name', 'bodyTemperature']);
+    expect(typeCase.default).toMatchSelectionSet(
+      ["Cat", "Bird"],
+      ["name", "bodyTemperature"]
+    );
     expect(typeCase.variants).toHaveLength(0);
 
     expect(typeCase.exhaustiveVariants).toHaveLength(1);
     expect(typeCase.exhaustiveVariants).toContainSelectionSetMatching(
-      ['Cat', 'Bird'],
-      ['name', 'bodyTemperature']
+      ["Cat", "Bird"],
+      ["name", "bodyTemperature"]
     );
   });
 });

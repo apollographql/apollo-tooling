@@ -2,12 +2,18 @@ import { extractDocumentFromJavascript } from "apollo-codegen-core/lib/loading";
 import { fs } from "apollo-codegen-core/lib/localfs";
 import { execute, toPromise } from "apollo-link";
 import { createHttpLink, HttpLink } from "apollo-link-http";
-import { buildClientSchema, buildSchema, GraphQLSchema, introspectionQuery, Source } from "graphql";
+import {
+  buildClientSchema,
+  buildSchema,
+  GraphQLSchema,
+  introspectionQuery,
+  Source
+} from "graphql";
 import gql from "graphql-tag";
-import { Agent, AgentOptions } from 'https';
+import { Agent, AgentOptions } from "https";
 import fetch from "node-fetch";
 import * as path from "path";
-import { URL } from 'url';
+import { URL } from "url";
 import { EndpointConfig } from "./config";
 import { engineLink, getIdFromKey } from "./engine";
 import { SCHEMA_QUERY } from "./operations/schema";
@@ -57,12 +63,12 @@ export const fetchSchema = async (
   const filePath = projectFolder ? path.resolve(projectFolder, url) : url;
   if (fs.existsSync(filePath)) return fromFile(filePath);
 
-  var options: HttpLink.Options = { uri: url, fetch }
+  var options: HttpLink.Options = { uri: url, fetch };
 
   if (skipSSLValidation) {
-    const urlObject = new URL(url)
-    const host = urlObject.host
-    const port = +urlObject.port || 443
+    const urlObject = new URL(url);
+    const host = urlObject.host;
+    const port = +urlObject.port || 443;
 
     const agentOptions: AgentOptions = {
       host: host,
@@ -72,11 +78,10 @@ export const fetchSchema = async (
 
     const agent = new Agent(agentOptions);
 
-    options.fetchOptions = { agent: agent }
+    options.fetchOptions = { agent: agent };
   }
 
   return toPromise(
-
     // XXX node-fetch isn't compatible typescript wise here?
     execute(createHttpLink(options), {
       query: introspection,

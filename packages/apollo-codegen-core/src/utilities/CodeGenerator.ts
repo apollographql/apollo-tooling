@@ -1,7 +1,6 @@
 export interface BasicGeneratedFile {
-  output: string
+  output: string;
 }
-
 
 export class GeneratedFile<Scope = any> implements BasicGeneratedFile {
   scopeStack: Scope[] = [];
@@ -9,7 +8,7 @@ export class GeneratedFile<Scope = any> implements BasicGeneratedFile {
   indentLevel = 0;
   startOfIndentLevel = false;
 
-  public output = '';
+  public output = "";
 
   pushScope(scope: Scope) {
     this.scopeStack.push(scope);
@@ -20,7 +19,7 @@ export class GeneratedFile<Scope = any> implements BasicGeneratedFile {
   }
 
   get scope(): Scope {
-    if (this.scopeStack.length < 1) throw new Error('No active scope');
+    if (this.scopeStack.length < 1) throw new Error("No active scope");
 
     return this.scopeStack[this.scopeStack.length - 1];
   }
@@ -33,7 +32,7 @@ export class GeneratedFile<Scope = any> implements BasicGeneratedFile {
 
   printNewline() {
     if (this.output) {
-      this.print('\n');
+      this.print("\n");
       this.startOfIndentLevel = false;
     }
   }
@@ -53,7 +52,7 @@ export class GeneratedFile<Scope = any> implements BasicGeneratedFile {
   }
 
   printIndent() {
-    const indentation = ' '.repeat(this.indentLevel * this.indentWidth);
+    const indentation = " ".repeat(this.indentLevel * this.indentWidth);
     this.output += indentation;
   }
 
@@ -66,7 +65,7 @@ export class GeneratedFile<Scope = any> implements BasicGeneratedFile {
     this.indentLevel--;
   }
 
-  withinBlock(closure: Function, open = ' {', close = '}') {
+  withinBlock(closure: Function, open = " {", close = "}") {
     this.print(open);
     this.withIndent(closure);
     this.printOnNewline(close);
@@ -133,7 +132,7 @@ export default class CodeGenerator<Context = any, Scope = any> {
     this.currentFile.withIndent(closure);
   }
 
-  withinBlock(closure: Function, open = ' {', close = '}') {
+  withinBlock(closure: Function, open = " {", close = "}") {
     this.currentFile.withinBlock(closure, open, close);
   }
 }

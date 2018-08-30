@@ -13,7 +13,7 @@ import {
   isNonNullType,
   InputObjectTypeDefinitionNode,
   ObjectTypeDefinitionNode,
-  EnumTypeDefinitionNode,
+  EnumTypeDefinitionNode
 } from "graphql";
 
 import {
@@ -22,7 +22,7 @@ import {
   Change,
   DiffField,
   DiffInputValue,
-  DiffEnum,
+  DiffEnum
 } from "./ast";
 
 // A lot / most of this code is lifted from non exported members of graphql-js
@@ -135,7 +135,7 @@ const diffTypesLeft = (
       change: ChangeType.WARNING,
       code: "TYPE_REMOVED",
       description: `${m(type)} removed`,
-      type: type.astNode,
+      type: type.astNode
     };
     changes.push(change);
 
@@ -160,7 +160,7 @@ const diffTypesLeft = (
           description: `${m(type.name)} no longer implements interface ${m(
             oldInterface.name
           )}`,
-          type: newType.astNode,
+          type: newType.astNode
         };
         changes.push(change);
       }
@@ -181,7 +181,7 @@ const diffTypesLeft = (
           description: `${m(type.name)} was removed from union type ${m(
             oldType.name
           )}.`,
-          type: newType.astNode,
+          type: newType.astNode
         };
         changes.push(change);
       }
@@ -210,7 +210,7 @@ const diffFieldsLeft = (
             newType
           )}.`,
           type: newType.astNode,
-          field: value.astNode,
+          field: value.astNode
         };
         changes.push(change);
         const t = change.type as EnumTypeDefinitionNode;
@@ -245,7 +245,7 @@ const diffFieldsLeft = (
           code: "FIELD_REMOVED",
           description: `${m(`${newType}.${fieldName}`)} was removed`,
           type: newType.astNode,
-          field: oldTypeFieldsDef[fieldName].astNode,
+          field: oldTypeFieldsDef[fieldName].astNode
         };
         changes.push(change);
         const t = change.type as ObjectTypeDefinitionNode;
@@ -285,7 +285,7 @@ const diffFieldsLeft = (
             `${m(oldFieldTypeString)} to ${m(newFieldTypeString)}.`,
           change: ChangeType.WARNING,
           type: newType.astNode,
-          field: newTypeFieldsDef[fieldName].astNode,
+          field: newTypeFieldsDef[fieldName].astNode
         };
         changes.push(change);
         const t = change.type as ObjectTypeDefinitionNode;
@@ -316,7 +316,7 @@ const diffFieldsLeft = (
             )} was removed`,
             type: newType.astNode,
             field: newTypeFieldsDef[fieldName].astNode,
-            arg: oldArgDef.astNode,
+            arg: oldArgDef.astNode
           };
 
           changes.push(change);
@@ -349,7 +349,7 @@ const diffFieldsLeft = (
                 `${m(oldArgDef.type)} to ${m(newArgDef.type)}`,
               type: newType.astNode,
               field: newTypeFieldsDef[fieldName].astNode,
-              arg: oldArgDef.astNode,
+              arg: oldArgDef.astNode
             };
           } else if (
             oldArgDef.defaultValue !== undefined &&
@@ -363,7 +363,7 @@ const diffFieldsLeft = (
                 `${m(oldArgDef.name)} has changed defaultValue`,
               type: newType.astNode,
               field: newTypeFieldsDef[fieldName].astNode,
-              arg: oldArgDef.astNode,
+              arg: oldArgDef.astNode
             };
           }
           if (!change) return;
@@ -393,7 +393,7 @@ const diffFieldsLeft = (
           code: "INPUT_FIELD_REMOVED",
           description: `${m(`${newType}.${fieldName}`)} was removed`,
           type: newType.astNode,
-          field: oldTypeFieldsDef[fieldName].astNode,
+          field: oldTypeFieldsDef[fieldName].astNode
         };
 
         changes.push(change);
@@ -434,7 +434,7 @@ const diffFieldsLeft = (
             `${m(oldFieldTypeString)} to ${m(newFieldTypeString)}.`,
           change: ChangeType.WARNING,
           type: newType.astNode,
-          field: newTypeFieldsDef[fieldName].astNode,
+          field: newTypeFieldsDef[fieldName].astNode
         };
         changes.push(change);
         const t = change.type as InputObjectTypeDefinitionNode;
@@ -467,7 +467,7 @@ const diffTypesRight = (
       change: ChangeType.NOTICE,
       code: "TYPE_ADDED",
       description: `${m(type)} added`,
-      type: type.astNode,
+      type: type.astNode
     };
     changes.push(change);
     // change.type.change = change;
@@ -482,7 +482,7 @@ const diffTypesRight = (
       description:
         `${m(type.name)} changed from ` +
         `${typeKindName(oldType)} to ${typeKindName(newType)}.`,
-      type: newType.astNode,
+      type: newType.astNode
     };
     changes.push(change);
   }
@@ -500,7 +500,7 @@ const diffTypesRight = (
           description: `${m(newInterface.name)} was added to type ${m(
             newType.name
           )}`,
-          type: newType.astNode,
+          type: newType.astNode
         };
         changes.push(change);
       }
@@ -520,7 +520,7 @@ const diffTypesRight = (
           description: `${m(type.name)} was added to union type ${m(
             oldType.name
           )}.`,
-          type: newType.astNode,
+          type: newType.astNode
         };
         changes.push(change);
       }
@@ -547,7 +547,7 @@ const diffFieldsRight = (
           code: "ENUM_VALUE_ADDED",
           description: `${m(value.name)} was added to enum type ${m(newType)}.`,
           type: newType.astNode,
-          field: value.astNode,
+          field: value.astNode
         };
         changes.push(change);
         const t = change.type as EnumTypeDefinitionNode;
@@ -567,7 +567,7 @@ const diffFieldsRight = (
           code: "ENUM_DEPRECATED",
           description: `${m(`${newType}.${value.name}`)} was deprecated`,
           type: newType.astNode,
-          field: oldValue.astNode,
+          field: oldValue.astNode
         };
       } else if (oldValue.isDeprecated && !value.isDeprecated) {
         change = {
@@ -577,7 +577,7 @@ const diffFieldsRight = (
             `${newType}.${value.name}`
           )} is no longer deprecated`,
           type: newType.astNode,
-          field: oldValue.astNode,
+          field: oldValue.astNode
         };
       } else if (
         oldValue.isDeprecated &&
@@ -591,7 +591,7 @@ const diffFieldsRight = (
             `${newType}.${value.name}`
           )} deprecation reason changed`,
           type: newType.astNode,
-          field: oldValue.astNode,
+          field: oldValue.astNode
         };
       }
       if (!change) return;
@@ -621,7 +621,7 @@ const diffFieldsRight = (
           code: "FIELD_ADDED",
           description: `${m(`${newType}.${fieldName}`)} was added`,
           type: newType.astNode,
-          field: newTypeFieldsDef[fieldName].astNode,
+          field: newTypeFieldsDef[fieldName].astNode
         };
         changes.push(change);
         const t = change.type as ObjectTypeDefinitionNode;
@@ -643,7 +643,7 @@ const diffFieldsRight = (
           code: "FIELD_DEPRECATED",
           description: `${m(`${newType}.${fieldName}`)} was deprecated`,
           type: newType.astNode,
-          field: newTypeFieldsDef[fieldName].astNode,
+          field: newTypeFieldsDef[fieldName].astNode
         };
       } else if (
         oldTypeFieldsDef[fieldName].isDeprecated &&
@@ -656,7 +656,7 @@ const diffFieldsRight = (
             `${newType}.${fieldName}`
           )} is no longer deprecated`,
           type: newType.astNode,
-          field: newTypeFieldsDef[fieldName].astNode,
+          field: newTypeFieldsDef[fieldName].astNode
         };
       } else if (
         oldTypeFieldsDef[fieldName].isDeprecated &&
@@ -670,7 +670,7 @@ const diffFieldsRight = (
           description: `${m(
             `${newType}.${fieldName}`
           )} deprecation reason changed`,
-          type: newType.astNode,
+          type: newType.astNode
         };
       }
       if (change) {
@@ -697,7 +697,7 @@ const diffFieldsRight = (
             )} was added`,
             type: newType.astNode,
             field: newTypeFieldsDef[fieldName].astNode,
-            arg: newArgDef.astNode,
+            arg: newArgDef.astNode
           };
 
           changes.push(change);
@@ -730,7 +730,7 @@ const diffFieldsRight = (
             description: `A non-null field ${m(fieldName)} on input type ${m(
               newType.name
             )} was added.`,
-            type: newType.astNode,
+            type: newType.astNode
           };
         } else {
           change = {
@@ -740,7 +740,7 @@ const diffFieldsRight = (
               newType.name
             )} was added.`,
             type: newType.astNode,
-            field: newTypeFieldsDef[fieldName].astNode,
+            field: newTypeFieldsDef[fieldName].astNode
           };
         }
 

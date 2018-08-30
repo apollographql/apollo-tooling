@@ -125,11 +125,9 @@ export function loadConfig(
       ? Array.isArray(obj.queries)
         ? (obj.queries as any[])
         : [obj.queries]
-      : (
-          Object.keys(schemasObj).length == 1 ?
-            [ { schema: Object.keys(schemasObj)[0] } ] :
-            []
-        )
+      : Object.keys(schemasObj).length == 1
+        ? [{ schema: Object.keys(schemasObj)[0] }]
+        : []
     ).map(d => loadDocumentSet(d)),
     engineEndpoint: obj.engineEndpoint
   };

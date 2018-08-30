@@ -1,1 +1,5 @@
-export { generateSource, generateLocalSource, generateGlobalSource } from './codeGeneration';
+export {
+  generateSource,
+  generateLocalSource,
+  generateGlobalSource
+} from "./codeGeneration";
