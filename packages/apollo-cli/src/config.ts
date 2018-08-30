@@ -1,4 +1,4 @@
-import { basename, dirname, join, relative } from "path";
+import { basename, dirname, join, relative, isAbsolute } from "path";
 import { fs, withGlobalFS } from "apollo-codegen-core/lib/localfs";
 
 import * as fg from "glob";
@@ -140,6 +140,9 @@ export function loadConfigFromFile(
   defaultSchema: boolean
 ): ApolloConfig {
   if (file.endsWith(".js")) {
+    if(!isAbsolute(file)) {
+      file = join(process.cwd(), file);
+    }
     delete require.cache[require.resolve(file)];
     return loadConfig(
       require(file),
