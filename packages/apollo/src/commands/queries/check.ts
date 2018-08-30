@@ -4,14 +4,12 @@ import { table, styledJSON } from "heroku-cli-util";
 import * as Listr from "listr";
 import { toPromise, execute } from "apollo-link";
 import { print, GraphQLError, DocumentNode } from "graphql";
-import * as fg from "glob";
 
 import {
   loadQueryDocuments,
   extractOperationsAndFragments,
   combineOperationsAndFragments
 } from "apollo-codegen-core/lib/loading";
-import { withGlobalFS } from "apollo-codegen-core/lib/localfs";
 
 import { engineFlags } from "../../engine-cli";
 import { engineLink, getIdFromKey } from "../../engine";
@@ -65,16 +63,7 @@ export default class CheckQueries extends Command {
         title: "Scanning for GraphQL queries",
         task: async (ctx, task) => {
           ctx.queryDocuments = loadQueryDocuments(
-            typeof flags.queries === "string"
-              ? [
-                  withGlobalFS(() =>
-                    fg.sync(flags.queries!, {
-                      cwd: ctx.config.projectFolder,
-                      absolute: true
-                    })
-                  )
-                ]
-              : ctx.documentSets[0].documentPaths,
+            ctx.documentSets[0].documentPaths,
             flags.tagName
           );
           task.title = `Scanning for GraphQL queries (${
