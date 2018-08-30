@@ -11,7 +11,9 @@ import {
   printWithReducedWhitespace,
   sortAST
 } from "apollo-engine-reporting";
+import * as fg from "glob";
 
+import { withGlobalFS } from "apollo-codegen-core/lib/localfs";
 import {
   loadQueryDocuments,
   extractOperationsAndFragments,
@@ -70,8 +72,16 @@ export default class ExtractQueries extends Command {
         title: "Scanning for GraphQL queries",
         task: async (ctx, task) => {
           ctx.queryDocuments = loadQueryDocuments(
-            (flags.queries && [flags.queries]) ||
-              ctx.documentSets[0].documentPaths,
+            typeof flags.queries === "string"
+              ? [
+                  withGlobalFS(() =>
+                    fg.sync(flags.queries!, {
+                      cwd: ctx.config.projectFolder,
+                      absolute: true
+                    })
+                  )
+                ]
+              : ctx.documentSets[0].documentPaths,
             flags.tagName
           );
           task.title = `Scanning for GraphQL queries (${

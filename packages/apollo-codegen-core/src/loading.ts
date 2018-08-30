@@ -1,9 +1,8 @@
 // provides flatMap
 import "./polyfills";
 
-import { fs, withGlobalFS } from "./localfs";
+import { fs } from "./localfs";
 import { stripIndents } from "common-tags";
-import * as fg from "glob";
 const astTypes = require("ast-types");
 const recast = require("recast");
 
@@ -137,9 +136,6 @@ export function loadQueryDocuments(
   tagName: string = "gql"
 ): DocumentNode[] {
   const sources = inputPaths
-    .flatMap(i =>
-      withGlobalFS(() => fg.sync(i, { cwd: process.cwd(), absolute: true }))
-    )
     .map(inputPath => {
       if (fs.lstatSync(inputPath).isDirectory()) {
         return null;
