@@ -344,6 +344,16 @@ npm test
 
 You can also run `npm` commands within package folders after you have bootstrapped the repository (part of `npm install`).
 
+## Nock tests
+
+To display the debugging messages for nock, run the following command:
+
+```bash
+DEBUG=nock.* npm test
 ```
 
+It can also be helpful to print standard out during testing. To enable logging, add the following configuration to the `stdout` function call during test creation:
+
+```
+.stdout({ print: true })
 ```
