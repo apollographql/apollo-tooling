@@ -40,7 +40,9 @@ export type TargetType =
 
 export type GenerationOptions = CompilerOptions &
   LegacyCompilerOptions &
-  FlowCompilerOptions;
+  FlowCompilerOptions & {
+    globalTypesFile?: string;
+  };
 
 export default function generate(
   inputPaths: string[],
@@ -141,11 +143,17 @@ export default function generate(
       nextToSources ||
       (fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory())
     ) {
-      if (nextToSources && !fs.existsSync(outputPath)) {
+      if (options.globalTypesFile) {
+        const globalTypesDir = path.dirname(options.globalTypesFile);
+        if (!fs.existsSync(globalTypesDir)) {
+          fs.mkdirSync(globalTypesDir);
+        }
+      } else if (nextToSources && !fs.existsSync(outputPath)) {
         fs.mkdirSync(outputPath);
       }
 
-      const globalSourcePath = path.join(outputPath, "globalTypes.ts");
+      const globalSourcePath =
+        options.globalTypesFile || path.join(outputPath, "globalTypes.ts");
       outFiles[globalSourcePath] = {
         output: generatedGlobalFile.fileContents
       };
