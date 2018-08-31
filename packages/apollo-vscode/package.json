@@ -16,22 +16,17 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rm -rf lib",
-    "prebuild": "npm run clean && rm -rf node_modules && npm install && npm run update-vscode",
-    "build": "tsc -p .",
-    "watch": "tsc -w -p ./",
-    "update-vscode": "node ./node_modules/vscode/bin/install",
-    "packageExtension": "npm run build && ./node_modules/vsce/out/vsce package --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-cli/master/packages/apollo-vscode"
+    "compile": "tsc",
+    "postinstall": "npm run clean && npm run update-vscode && npm run compile",
+    "update-vscode": "node ../../node_modules/vscode/bin/install",
+    "packageExtension": "npm run compile && ./node_modules/vsce/out/vsce package --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-cli/master/packages/apollo-vscode"
   },
   "engines": {
-    "vscode": "^1.23.0"
+    "vscode": "^1.26.0"
   },
   "dependencies": {
-    "vscode": "^1.1.17",
-    "vscode-languageclient": "next"
-  },
-  "devDependencies": {
-    "typescript": "^2.6.2",
-    "vsce": "^1.44.0"
+    "vscode": "^1.1.21",
+    "vscode-languageclient": "^5.0.1"
   },
   "publisher": "apollographql",
   "categories": [

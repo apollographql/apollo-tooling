@@ -14,11 +14,9 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rm -rf lib",
-    "prebuild": "npm run clean",
-    "build": "tsc -p .",
-    "watch": "tsc -w -p .",
-    "test": "./node_modules/.bin/jest",
-    "prepack": "npm run build"
+    "compile": "tsc",
+    "prepare": "npm run clean && npm run compile",
+    "test": "jest"
   },
   "engines": {
     "node": ">=8",
@@ -29,22 +27,6 @@
     "@babel/types": "7.0.0-beta.38",
     "common-tags": "^1.5.1",
     "core-js": "^2.5.3"
-  },
-  "peerDependencies": {
-    "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0"
-  },
-  "devDependencies": {
-    "@types/babel-generator": "^6.25.1",
-    "@types/babel-types": "^7.0.0",
-    "@types/common-tags": "^1.4.0",
-    "@types/graphql": "^0.13.1",
-    "@types/jest": "^21.1.8",
-    "graphql": "^0.13.1",
-    "jest": "^22.0.3",
-    "jest-matcher-utils": "^22.0.3",
-    "lerna": "^2.11.0",
-    "ts-jest": "^22.0.0",
-    "typescript": "^2.6.2"
   },
   "jest": {
     "testEnvironment": "node",

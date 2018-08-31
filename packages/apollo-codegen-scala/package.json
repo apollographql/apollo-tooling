@@ -14,30 +14,18 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rm -rf lib",
-    "prebuild": "npm run clean",
-    "build": "tsc -p .",
-    "watch": "tsc -w -p .",
-    "test": "./node_modules/.bin/jest",
-    "prepack": "npm run build"
+    "compile": "tsc",
+    "prepare": "npm run clean && npm run compile",
+    "test": "jest"
   },
   "engines": {
     "node": ">=8",
     "npm": ">=6"
   },
   "dependencies": {
-    "apollo-codegen-core": "^0.27.0",
+    "apollo-codegen-core": "file:../apollo-codegen-core",
     "change-case": "^3.0.1",
     "inflected": "^2.0.3"
-  },
-  "devDependencies": {
-    "@types/graphql": "^0.13.1",
-    "@types/inflected": "^1.1.29",
-    "graphql": "^0.13.1",
-    "jest": "^22.0.3",
-    "jest-matcher-utils": "^22.0.3",
-    "lerna": "^2.11.0",
-    "ts-jest": "^22.0.0",
-    "typescript": "^2.6.2"
   },
   "jest": {
     "testEnvironment": "node",

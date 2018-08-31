@@ -32,25 +32,15 @@
     "apollo-link-ws": "^1.0.8",
     "core-js": "^2.5.7",
     "glob": "^7.1.2",
-    "graphql": "^0.13.1",
+    "graphql": "^14.0.0",
     "graphql-tag": "^2.9.2",
     "minimatch": "^3.0.4",
     "moment": "^2.22.2",
     "node-fetch": "^2.1.2",
     "recursive-readdir": "^2.2.2",
-    "regenerator-runtime": "^0.11.1",
     "subscriptions-transport-ws": "^0.9.12",
     "vscode-languageserver": "next",
     "vscode-uri": "^1.0.3",
     "ws": "^5.2.2"
-  },
-  "devDependencies": {
-    "@types/graphql": "^0.13.1",
-    "@types/minimatch": "^3.0.3",
-    "@types/moment": "^2.13.0",
-    "@types/node-fetch": "^2.1.1",
-    "@types/recursive-readdir": "^2.2.0",
-    "@types/ws": "^5.1.2",
-    "typescript": "^2.6.2"
   }
 }
