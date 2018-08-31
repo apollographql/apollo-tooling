@@ -5,7 +5,7 @@
 ## v1.8.3
 
 - `apollo`
-  - [#546](https://github.com/apollographql/apollo-cli/pull/546) Add `outputGlobalTypes` option to specify path for global types https://github.com/apollographql/apollo-cli/pull/562
+  - [#546](https://github.com/apollographql/apollo-cli/pull/546) Add `outputGlobalTypes` option to specify path for global types ([@danilobuerger](https://github.com/danilobuerger))
   - [#562](https://github.com/apollographql/apollo-cli/pull/562) Preserve "\_\_schema" key when outputting JSON schema from `schema:download` [@jamesmbourne](https://github.com/jamesmbourne))
   - [#565](https://github.com/apollographql/apollo-cli/pull/565) Support for self-signed certificates ([@robertomg](https://github.com/robertomg))
 - `apollo-codegen-swift`
