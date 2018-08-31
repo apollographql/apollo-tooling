@@ -12,9 +12,13 @@
   "scripts": {
     "postinstall": "lerna run prepare",
     "build": "lerna run build",
-    "test": "jest",
     "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
+    "pretest": "npm run build",
+    "test": "npm run testonly",
+    "posttest": "npm run lint",
+    "testonly": "jest --verbose",
+    "circle": "npm run testonly -- --ci --maxWorkers=2",
     "precommit": "lint-staged",
     "deploy": "lerna publish -m \"chore: Publish\" && cd packages/apollo-client && npm run deploy",
     "clean": "find . -name \"node_modules\" -exec rm -rf '{}' + && find . -name \"lib\" -exec rm -rf '{}' +",
@@ -25,6 +29,7 @@
     "npm": ">=6"
   },
   "dependencies": {
+    "apollo-cli": "file:packages/apollo-cli",
     "apollo-codegen-core": "file:packages/apollo-codegen-core",
     "apollo-codegen-flow": "file:packages/apollo-codegen-flow",
     "apollo-codegen-flow-legacy": "file:packages/apollo-codegen-flow-legacy",
@@ -32,10 +37,10 @@
     "apollo-codegen-swift": "file:packages/apollo-codegen-swift",
     "apollo-codegen-typescript": "file:packages/apollo-codegen-typescript",
     "apollo-codegen-typescript-legacy": "file:packages/apollo-codegen-typescript-legacy",
-    "apollo-cli": "file:packages/apollo-cli",
     "apollo-language-server": "file:packages/apollo-language-server",
     "apollo-vscode": "file:packages/apollo-vscode",
-    "apollo-vscode-webview": "file:packages/apollo-vscode-webview"
+    "apollo-vscode-webview": "file:packages/apollo-vscode-webview",
+    "webpack-command": "^0.4.1"
   },
   "devDependencies": {
     "@fancy-test/nock": "^0.1.1",
@@ -57,6 +62,7 @@
     "@types/react-dom": "^16.0.7",
     "@types/recursive-readdir": "^2.2.0",
     "@types/ws": "^6.0.0",
+    "babel-loader": "^7.1.2",
     "babel-preset-react-app": "^3.1.2",
     "case-sensitive-paths-webpack-plugin": "2.1.2",
     "chai": "^4.1.2",
