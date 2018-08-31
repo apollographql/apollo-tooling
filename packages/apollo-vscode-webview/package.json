@@ -2,33 +2,25 @@
   "name": "apollo-vscode-webview",
   "version": "0.1.1",
   "private": true,
-  "dependencies": {
-    "graphiql": "0.11.11",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
-    "react-json-view": "1.19.1"
+  "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apollographql/apollo-cli.git"
   },
+  "homepage": "https://github.com/apollographql/apollo-cli",
+  "bugs": "https://github.com/apollographql/apollo-cli/issues",
   "scripts": {
     "clean": "rm -rf ../apollo-vscode/webview-content",
     "prebuild": "npm run clean",
     "build": "npx webpack",
     "watch": "npx webpack --watch"
   },
-  "devDependencies": {
-    "@types/node": "^10.5.2",
-    "@types/react": "^16.4.7",
-    "@types/react-dom": "^16.0.6",
-    "babel-loader": "^7.1.2",
-    "babel-preset-react-app": "^3.1.1",
-    "case-sensitive-paths-webpack-plugin": "2.1.1",
-    "css-loader": "1.0.0",
-    "style-loader": "0.21.0",
-    "ts-loader": "^2.3.7",
-    "tsconfig-paths-webpack-plugin": "^2.0.0",
-    "typescript": "^2.6.2",
-    "uglifyjs-webpack-plugin": "^1.1.8",
-    "url-loader": "1.0.1",
-    "webpack": "3.8.1"
+  "dependencies": {
+    "graphiql": "0.11.11",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-json-view": "1.19.1"
   },
   "babel": {
     "presets": [
