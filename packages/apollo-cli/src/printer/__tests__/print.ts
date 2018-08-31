@@ -20,7 +20,7 @@ const change = fs.readFileSync(
 
 const schemas = (sd1, sd2) => ({
   current: buildSchema(sd1),
-  next: buildSchema(sd2),
+  next: buildSchema(sd2)
 });
 
 const compare = (name, sd1, sd2, debug = false) => {

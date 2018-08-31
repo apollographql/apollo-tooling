@@ -3,7 +3,7 @@ import {
   TypeDefinitionNode,
   FieldDefinitionNode,
   EnumValueDefinitionNode,
-  InputValueDefinitionNode,
+  InputValueDefinitionNode
 } from "graphql";
 
 export type Maybe<T> = null | undefined | T;
@@ -16,13 +16,13 @@ export enum TypeKind {
   ENUM = "EnumTypeDefinition",
   INPUT_OBJECT = "InputObjectTypeDefinition",
   LIST = "ListTypeDefinition",
-  NON_NULL = "NonNullTypeDefinition",
+  NON_NULL = "NonNullTypeDefinition"
 }
 
 export enum ChangeType {
   FAILURE = "FAILURE",
   WARNING = "WARNING",
-  NOTICE = "NOTICE",
+  NOTICE = "NOTICE"
 }
 
 export type DiffType = TypeDefinitionNode & { change?: Change };

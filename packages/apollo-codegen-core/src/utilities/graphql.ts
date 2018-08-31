@@ -26,7 +26,7 @@ import {
   GraphQLList,
   GraphQLNonNull,
   DocumentNode
-} from 'graphql';
+} from "graphql";
 
 declare module "graphql" {
   function isNamedType(type: GraphQLType): type is GraphQLNamedType;
@@ -40,23 +40,31 @@ declare module "graphql" {
 declare module "graphql/utilities/buildASTSchema" {
   function buildASTSchema(
     ast: DocumentNode,
-    options?: { assumeValid?: boolean, commentDescriptions?: boolean },
+    options?: { assumeValid?: boolean; commentDescriptions?: boolean }
   ): GraphQLSchema;
 }
 
 export function sortEnumValues(values: GraphQLEnumValue[]): GraphQLEnumValue[] {
-  return values.sort((a, b) => a.value < b.value ? -1 : a.value > b.value ? 1 : 0);
+  return values.sort(
+    (a, b) => (a.value < b.value ? -1 : a.value > b.value ? 1 : 0)
+  );
 }
 
 export function isList(type: GraphQLType): boolean {
-  return type instanceof GraphQLList || (type instanceof GraphQLNonNull && type.ofType instanceof GraphQLList);
+  return (
+    type instanceof GraphQLList ||
+    (type instanceof GraphQLNonNull && type.ofType instanceof GraphQLList)
+  );
 }
 
 export function isMetaFieldName(name: string) {
-  return name.startsWith('__');
+  return name.startsWith("__");
 }
 
-const typenameField = { kind: Kind.FIELD, name: { kind: Kind.NAME, value: '__typename' } };
+const typenameField = {
+  kind: Kind.FIELD,
+  name: { kind: Kind.NAME, value: "__typename" }
+};
 
 export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
   return visit(ast, {
@@ -65,13 +73,18 @@ export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
         return {
           ...node,
           selections: node.selections.filter(
-            selection => !(selection.kind === 'Field' && (selection as FieldNode).name.value === '__typename')
+            selection =>
+              !(
+                selection.kind === "Field" &&
+                (selection as FieldNode).name.value === "__typename"
+              )
           )
         };
       }
     },
     leave(node: ASTNode) {
-      if (!(node.kind === 'Field' || node.kind === 'FragmentDefinition')) return undefined;
+      if (!(node.kind === "Field" || node.kind === "FragmentDefinition"))
+        return undefined;
       if (!node.selectionSet) return undefined;
 
       if (true) {
@@ -93,7 +106,7 @@ export function sourceAt(location: Location) {
   return location.source.body.slice(location.start, location.end);
 }
 
-export function filePathForNode(node: ASTNode): string  {
+export function filePathForNode(node: ASTNode): string {
   const name = node.loc && node.loc.source && node.loc.source.name;
   if (!name || name === "GraphQL") {
     throw new Error("Node does not seem to have a file path");
@@ -101,29 +114,43 @@ export function filePathForNode(node: ASTNode): string  {
   return name;
 }
 
-export function valueFromValueNode(valueNode: ValueNode): any | { kind: 'Variable', variableName: string } {
+export function valueFromValueNode(
+  valueNode: ValueNode
+): any | { kind: "Variable"; variableName: string } {
   switch (valueNode.kind) {
-    case 'IntValue':
-    case 'FloatValue':
+    case "IntValue":
+    case "FloatValue":
       return Number(valueNode.value);
-    case 'NullValue':
+    case "NullValue":
       return null;
-    case 'ListValue':
+    case "ListValue":
       return valueNode.values.map(valueFromValueNode);
-    case 'ObjectValue':
-      return valueNode.fields.reduce((object, field) => {
-        object[field.name.value] = valueFromValueNode(field.value);
-        return object;
-      }, {} as any);
-    case 'Variable':
-      return { kind: 'Variable', variableName: valueNode.name.value };
+    case "ObjectValue":
+      return valueNode.fields.reduce(
+        (object, field) => {
+          object[field.name.value] = valueFromValueNode(field.value);
+          return object;
+        },
+        {} as any
+      );
+    case "Variable":
+      return { kind: "Variable", variableName: valueNode.name.value };
     default:
       return valueNode.value;
   }
 }
 
-export function isTypeProperSuperTypeOf(schema: GraphQLSchema, maybeSuperType: GraphQLCompositeType, subType: GraphQLCompositeType) {
-  return isEqualType(maybeSuperType, subType) || subType instanceof GraphQLObjectType && (isAbstractType(maybeSuperType) && schema.isPossibleType(maybeSuperType, subType));
+export function isTypeProperSuperTypeOf(
+  schema: GraphQLSchema,
+  maybeSuperType: GraphQLCompositeType,
+  subType: GraphQLCompositeType
+) {
+  return (
+    isEqualType(maybeSuperType, subType) ||
+    (subType instanceof GraphQLObjectType &&
+      (isAbstractType(maybeSuperType) &&
+        schema.isPossibleType(maybeSuperType, subType)))
+  );
 }
 
 // Utility functions extracted from graphql-js
@@ -131,31 +158,32 @@ export function isTypeProperSuperTypeOf(schema: GraphQLSchema, maybeSuperType: G
 /**
  * Extracts the root type of the operation from the schema.
  */
-export function getOperationRootType(schema: GraphQLSchema, operation: OperationDefinitionNode) {
+export function getOperationRootType(
+  schema: GraphQLSchema,
+  operation: OperationDefinitionNode
+) {
   switch (operation.operation) {
-    case 'query':
+    case "query":
       return schema.getQueryType();
-    case 'mutation':
+    case "mutation":
       const mutationType = schema.getMutationType();
       if (!mutationType) {
-        throw new GraphQLError(
-          'Schema is not configured for mutations',
-          [operation]
-        );
+        throw new GraphQLError("Schema is not configured for mutations", [
+          operation
+        ]);
       }
       return mutationType;
-    case 'subscription':
+    case "subscription":
       const subscriptionType = schema.getSubscriptionType();
       if (!subscriptionType) {
-        throw new GraphQLError(
-          'Schema is not configured for subscriptions',
-          [operation]
-        );
+        throw new GraphQLError("Schema is not configured for subscriptions", [
+          operation
+        ]);
       }
       return subscriptionType;
     default:
       throw new GraphQLError(
-        'Can only compile queries, mutations and subscriptions',
+        "Can only compile queries, mutations and subscriptions",
         [operation]
       );
   }
@@ -166,25 +194,33 @@ export function getOperationRootType(schema: GraphQLSchema, operation: Operation
  * statically evaluated environment we do not always have an Object type,
  * and need to handle Interface and Union types.
  */
-export function getFieldDef(schema: GraphQLSchema, parentType: GraphQLCompositeType, fieldAST: FieldNode): GraphQLField<any, any> | undefined {
+export function getFieldDef(
+  schema: GraphQLSchema,
+  parentType: GraphQLCompositeType,
+  fieldAST: FieldNode
+): GraphQLField<any, any> | undefined {
   const name = fieldAST.name.value;
-  if (name === SchemaMetaFieldDef.name &&
-      schema.getQueryType() === parentType) {
+  if (
+    name === SchemaMetaFieldDef.name &&
+    schema.getQueryType() === parentType
+  ) {
     return SchemaMetaFieldDef;
   }
-  if (name === TypeMetaFieldDef.name &&
-      schema.getQueryType() === parentType) {
+  if (name === TypeMetaFieldDef.name && schema.getQueryType() === parentType) {
     return TypeMetaFieldDef;
   }
-  if (name === TypeNameMetaFieldDef.name &&
-      (parentType instanceof GraphQLObjectType ||
-       parentType instanceof GraphQLInterfaceType ||
-       parentType instanceof GraphQLUnionType)
+  if (
+    name === TypeNameMetaFieldDef.name &&
+    (parentType instanceof GraphQLObjectType ||
+      parentType instanceof GraphQLInterfaceType ||
+      parentType instanceof GraphQLUnionType)
   ) {
     return TypeNameMetaFieldDef;
   }
-  if (parentType instanceof GraphQLObjectType ||
-      parentType instanceof GraphQLInterfaceType) {
+  if (
+    parentType instanceof GraphQLObjectType ||
+    parentType instanceof GraphQLInterfaceType
+  ) {
     return parentType.getFields()[name];
   }
 

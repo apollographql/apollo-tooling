@@ -1,5 +1,5 @@
-import {Volume, createFsFromVolume} from 'memfs';
-import {patchFs} from 'fs-monkey';
+import { Volume, createFsFromVolume } from "memfs";
+import { patchFs } from "fs-monkey";
 
 export const vol = Volume.fromJSON({});
 export const fs = createFsFromVolume(vol);

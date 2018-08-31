@@ -4,72 +4,81 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLEnumType
-} from 'graphql';
+} from "graphql";
 
 import {
   generateSource,
   classDeclarationForOperation,
   caseClassDeclarationForFragment,
   caseClassDeclarationForSelectionSet,
-  typeDeclarationForGraphQLType,
-} from '../codeGeneration';
+  typeDeclarationForGraphQLType
+} from "../codeGeneration";
 
-import { loadSchema } from 'apollo-codegen-core/lib/loading';
-const schema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
+import { loadSchema } from "apollo-codegen-core/lib/loading";
+const schema = loadSchema(
+  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+);
 
-import CodeGenerator from 'apollo-codegen-core/lib/utilities/CodeGenerator';
+import CodeGenerator from "apollo-codegen-core/lib/utilities/CodeGenerator";
 
-import { compileToLegacyIR } from 'apollo-codegen-core/lib/compiler/legacyIR';
+import { compileToLegacyIR } from "apollo-codegen-core/lib/compiler/legacyIR";
 
-describe('Scala code generation', function() {
+describe("Scala code generation", function() {
   let generator;
   let resetGenerator;
   let compileFromSource;
   let addFragment;
 
   beforeEach(function() {
-
     resetGenerator = () => {
       const context = {
         schema: schema,
         operations: {},
         fragments: {},
         typesUsed: {}
-      }
+      };
       generator = new CodeGenerator(context);
     };
 
     compileFromSource = (source, options = { generateOperationIds: false }) => {
       const document = parse(source);
       let context = compileToLegacyIR(schema, document);
-      options.generateOperationIds && Object.assign(context.options, { generateOperationIds: true, operationIdsMap: {} });
-      options.namespace && Object.assign(context.options, { namespace: options.namespace });
+      options.generateOperationIds &&
+        Object.assign(context.options, {
+          generateOperationIds: true,
+          operationIdsMap: {}
+        });
+      options.namespace &&
+        Object.assign(context.options, { namespace: options.namespace });
       generator.context = context;
       return context;
     };
 
-    addFragment = (fragment) => {
+    addFragment = fragment => {
       generator.context.fragments[fragment.fragmentName] = fragment;
     };
 
     resetGenerator();
   });
 
-  describe('#generateSource()', function() {
+  describe("#generateSource()", function() {
     test(`should emit a package declaration when the namespace option is specified`, function() {
-      const context = compileFromSource(`
+      const context = compileFromSource(
+        `
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
             name
           }
         }
-      `, { namespace: "hello.world" });
+      `,
+        { namespace: "hello.world" }
+      );
 
       expect(generateSource(context)).toMatchSnapshot();
     });
   });
 
-  describe('#classDeclarationForOperation()', function() {
+  describe("#classDeclarationForOperation()", function() {
     test(`should generate a class declaration for a query with variables`, function() {
       const { operations, fragments } = compileFromSource(`
         query HeroName($episode: Episode) {
@@ -79,7 +88,11 @@ describe('Scala code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['HeroName'], Object.values(fragments));
+      classDeclarationForOperation(
+        generator,
+        operations["HeroName"],
+        Object.values(fragments)
+      );
       expect(generator.output).toMatchSnapshot();
     });
 
@@ -96,7 +109,11 @@ describe('Scala code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['Hero'], Object.values(fragments));
+      classDeclarationForOperation(
+        generator,
+        operations["Hero"],
+        Object.values(fragments)
+      );
       expect(generator.output).toMatchSnapshot();
     });
 
@@ -113,7 +130,11 @@ describe('Scala code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['Hero'], Object.values(fragments));
+      classDeclarationForOperation(
+        generator,
+        operations["Hero"],
+        Object.values(fragments)
+      );
       expect(generator.output).toMatchSnapshot();
     });
 
@@ -132,7 +153,11 @@ describe('Scala code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['Hero'], Object.values(fragments));
+      classDeclarationForOperation(
+        generator,
+        operations["Hero"],
+        Object.values(fragments)
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -147,7 +172,11 @@ describe('Scala code generation', function() {
         }
       `);
 
-      classDeclarationForOperation(generator, operations['CreateReview'], Object.values(fragments));
+      classDeclarationForOperation(
+        generator,
+        operations["CreateReview"],
+        Object.values(fragments)
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -156,7 +185,8 @@ describe('Scala code generation', function() {
       let compileOptions = { generateOperationIds: true };
 
       test(`should generate a class declaration with an operationId property`, function() {
-        const context = compileFromSource(`
+        const context = compileFromSource(
+          `
           query Hero {
             hero {
               ...HeroDetails
@@ -165,14 +195,21 @@ describe('Scala code generation', function() {
           fragment HeroDetails on Character {
             name
           }
-        `, compileOptions);
+        `,
+          compileOptions
+        );
 
-        classDeclarationForOperation(generator, context.operations['Hero'], Object.values(context.fragments));
+        classDeclarationForOperation(
+          generator,
+          context.operations["Hero"],
+          Object.values(context.fragments)
+        );
         expect(generator.output).toMatchSnapshot();
       });
 
       test(`should generate different operation ids for different operations`, function() {
-        const context1 = compileFromSource(`
+        const context1 = compileFromSource(
+          `
           query Hero {
             hero {
               ...HeroDetails
@@ -181,13 +218,20 @@ describe('Scala code generation', function() {
           fragment HeroDetails on Character {
             name
           }
-        `, compileOptions);
+        `,
+          compileOptions
+        );
 
-        classDeclarationForOperation(generator, context1.operations['Hero'], Object.values(context1.fragments));
+        classDeclarationForOperation(
+          generator,
+          context1.operations["Hero"],
+          Object.values(context1.fragments)
+        );
         const output1 = generator.output;
 
         resetGenerator();
-        const context2 = compileFromSource(`
+        const context2 = compileFromSource(
+          `
           query Hero {
             hero {
               ...HeroDetails
@@ -196,41 +240,62 @@ describe('Scala code generation', function() {
           fragment HeroDetails on Character {
             appearsIn
           }
-        `, compileOptions);
+        `,
+          compileOptions
+        );
 
-        classDeclarationForOperation(generator, context2.operations['Hero'], Object.values(context2.fragments));
+        classDeclarationForOperation(
+          generator,
+          context2.operations["Hero"],
+          Object.values(context2.fragments)
+        );
         const output2 = generator.output;
 
         expect(output1).not.toBe(output2);
       });
 
       test(`should generate the same operation id regardless of operation formatting/commenting`, function() {
-        const context1 = compileFromSource(`
+        const context1 = compileFromSource(
+          `
           query HeroName($episode: Episode) {
             hero(episode: $episode) {
               name
             }
           }
-        `, compileOptions);
+        `,
+          compileOptions
+        );
 
-        classDeclarationForOperation(generator, context1.operations['HeroName'], Object.values(context1.fragments));
+        classDeclarationForOperation(
+          generator,
+          context1.operations["HeroName"],
+          Object.values(context1.fragments)
+        );
         const output1 = generator.output;
 
         resetGenerator();
-        const context2 = compileFromSource(`
+        const context2 = compileFromSource(
+          `
           # Profound comment
           query HeroName($episode:Episode) { hero(episode: $episode) { name } }
           # Deeply meaningful comment
-        `, compileOptions);
+        `,
+          compileOptions
+        );
 
-        classDeclarationForOperation(generator, context2.operations['HeroName'], Object.values(context2.fragments));
+        classDeclarationForOperation(
+          generator,
+          context2.operations["HeroName"],
+          Object.values(context2.fragments)
+        );
         const output2 = generator.output;
 
         expect(output1).toBe(output2);
       });
 
       test(`should generate the same operation id regardless of fragment order`, function() {
-        const context1 = compileFromSource(`
+        const context1 = compileFromSource(
+          `
           query Hero {
             hero {
               ...HeroName
@@ -243,13 +308,20 @@ describe('Scala code generation', function() {
           fragment HeroAppearsIn on Character {
             appearsIn
           }
-        `, compileOptions);
+        `,
+          compileOptions
+        );
 
-        classDeclarationForOperation(generator, context1.operations['Hero'], Object.values(context1.fragments));
+        classDeclarationForOperation(
+          generator,
+          context1.operations["Hero"],
+          Object.values(context1.fragments)
+        );
         const output1 = generator.output;
 
         resetGenerator();
-        const context2 = compileFromSource(`
+        const context2 = compileFromSource(
+          `
           query Hero {
             hero {
               ...HeroName
@@ -262,9 +334,15 @@ describe('Scala code generation', function() {
           fragment HeroName on Character {
             name
           }
-        `, compileOptions);
+        `,
+          compileOptions
+        );
 
-        classDeclarationForOperation(generator, context2.operations['Hero'], Object.values(context2.fragments));
+        classDeclarationForOperation(
+          generator,
+          context2.operations["Hero"],
+          Object.values(context2.fragments)
+        );
         const output2 = generator.output;
 
         expect(output1).toBe(output2);
@@ -286,13 +364,14 @@ describe('Scala code generation', function() {
           }
         `;
         const context = compileFromSource(source, true);
-        expect(context.operations['Hero'].sourceWithFragments).toMatchSnapshot();
+        expect(
+          context.operations["Hero"].sourceWithFragments
+        ).toMatchSnapshot();
       });
-
     });
   });
 
-  describe('#caseClassDeclarationForFragment()', function() {
+  describe("#caseClassDeclarationForFragment()", function() {
     test(`should generate a caseClass declaration for a fragment with an abstract type condition`, function() {
       const { fragments } = compileFromSource(`
         fragment HeroDetails on Character {
@@ -301,7 +380,7 @@ describe('Scala code generation', function() {
         }
       `);
 
-      caseClassDeclarationForFragment(generator, fragments['HeroDetails']);
+      caseClassDeclarationForFragment(generator, fragments["HeroDetails"]);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -314,7 +393,7 @@ describe('Scala code generation', function() {
         }
       `);
 
-      caseClassDeclarationForFragment(generator, fragments['DroidDetails']);
+      caseClassDeclarationForFragment(generator, fragments["DroidDetails"]);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -329,7 +408,7 @@ describe('Scala code generation', function() {
         }
       `);
 
-      caseClassDeclarationForFragment(generator, fragments['HeroDetails']);
+      caseClassDeclarationForFragment(generator, fragments["HeroDetails"]);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -346,21 +425,21 @@ describe('Scala code generation', function() {
         }
       `);
 
-      caseClassDeclarationForFragment(generator, fragments['HeroDetails']);
+      caseClassDeclarationForFragment(generator, fragments["HeroDetails"]);
 
       expect(generator.output).toMatchSnapshot();
     });
   });
 
-  describe('#caseClassDeclarationForSelectionSet()', function() {
+  describe("#caseClassDeclarationForSelectionSet()", function() {
     test(`should generate a caseClass declaration for a selection set`, function() {
       caseClassDeclarationForSelectionSet(generator, {
-        caseClassName: 'Hero',
-        parentType: schema.getType('Character'),
+        caseClassName: "Hero",
+        parentType: schema.getType("Character"),
         fields: [
           {
-            responseName: 'name',
-            fieldName: 'name',
+            responseName: "name",
+            fieldName: "name",
             type: GraphQLString
           }
         ]
@@ -371,12 +450,12 @@ describe('Scala code generation', function() {
 
     test(`should escape reserved keywords in a caseClass declaration for a selection set`, function() {
       caseClassDeclarationForSelectionSet(generator, {
-        caseClassName: 'Hero',
-        parentType: schema.getType('Character'),
+        caseClassName: "Hero",
+        parentType: schema.getType("Character"),
         fields: [
           {
-            responseName: 'private',
-            fieldName: 'name',
+            responseName: "private",
+            fieldName: "name",
             type: GraphQLString
           }
         ]
@@ -387,17 +466,17 @@ describe('Scala code generation', function() {
 
     test(`should generate a nested caseClass declaration for a selection set with subselections`, function() {
       caseClassDeclarationForSelectionSet(generator, {
-        caseClassName: 'Hero',
-        parentType: schema.getType('Character'),
+        caseClassName: "Hero",
+        parentType: schema.getType("Character"),
         fields: [
           {
-            responseName: 'friends',
-            fieldName: 'friends',
-            type: new GraphQLList(schema.getType('Character')),
+            responseName: "friends",
+            fieldName: "friends",
+            type: new GraphQLList(schema.getType("Character")),
             fields: [
               {
-                responseName: 'name',
-                fieldName: 'name',
+                responseName: "name",
+                fieldName: "name",
                 type: GraphQLString
               }
             ]
@@ -410,18 +489,18 @@ describe('Scala code generation', function() {
 
     test(`should generate a caseClass declaration for a selection set with a fragment spread that matches the parent type`, function() {
       addFragment({
-        fragmentName: 'HeroDetails',
-        typeCondition: schema.getType('Character')
+        fragmentName: "HeroDetails",
+        typeCondition: schema.getType("Character")
       });
 
       caseClassDeclarationForSelectionSet(generator, {
-        caseClassName: 'Hero',
-        parentType: schema.getType('Character'),
-        fragmentSpreads: ['HeroDetails'],
+        caseClassName: "Hero",
+        parentType: schema.getType("Character"),
+        fragmentSpreads: ["HeroDetails"],
         fields: [
           {
-            responseName: 'name',
-            fieldName: 'name',
+            responseName: "name",
+            fieldName: "name",
             type: GraphQLString
           }
         ]
@@ -432,18 +511,18 @@ describe('Scala code generation', function() {
 
     test(`should generate a caseClass declaration for a selection set with a fragment spread with a more specific type condition`, function() {
       addFragment({
-        fragmentName: 'DroidDetails',
-        typeCondition: schema.getType('Droid')
+        fragmentName: "DroidDetails",
+        typeCondition: schema.getType("Droid")
       });
 
       caseClassDeclarationForSelectionSet(generator, {
-        caseClassName: 'Hero',
-        parentType: schema.getType('Character'),
-        fragmentSpreads: ['DroidDetails'],
+        caseClassName: "Hero",
+        parentType: schema.getType("Character"),
+        fragmentSpreads: ["DroidDetails"],
         fields: [
           {
-            responseName: 'name',
-            fieldName: 'name',
+            responseName: "name",
+            fieldName: "name",
             type: GraphQLString
           }
         ]
@@ -454,28 +533,28 @@ describe('Scala code generation', function() {
 
     test(`should generate a caseClass declaration for a selection set with an inline fragment`, function() {
       caseClassDeclarationForSelectionSet(generator, {
-        caseClassName: 'Hero',
-        parentType: schema.getType('Character'),
+        caseClassName: "Hero",
+        parentType: schema.getType("Character"),
         fields: [
           {
-            responseName: 'name',
-            fieldName: 'name',
+            responseName: "name",
+            fieldName: "name",
             type: new GraphQLNonNull(GraphQLString)
           }
         ],
         inlineFragments: [
           {
-            typeCondition: schema.getType('Droid'),
-            possibleTypes: ['Droid'],
+            typeCondition: schema.getType("Droid"),
+            possibleTypes: ["Droid"],
             fields: [
               {
-                responseName: 'name',
-                fieldName: 'name',
+                responseName: "name",
+                fieldName: "name",
                 type: new GraphQLNonNull(GraphQLString)
               },
               {
-                responseName: 'primaryFunction',
-                fieldName: 'primaryFunction',
+                responseName: "primaryFunction",
+                fieldName: "primaryFunction",
                 type: GraphQLString
               }
             ]
@@ -488,20 +567,20 @@ describe('Scala code generation', function() {
 
     test(`should generate a caseClass declaration for a fragment spread nested in an inline fragment`, function() {
       addFragment({
-        fragmentName: 'HeroDetails',
-        typeCondition: schema.getType('Character')
+        fragmentName: "HeroDetails",
+        typeCondition: schema.getType("Character")
       });
 
       caseClassDeclarationForSelectionSet(generator, {
-        caseClassName: 'Hero',
-        parentType: schema.getType('Character'),
+        caseClassName: "Hero",
+        parentType: schema.getType("Character"),
         fields: [],
         inlineFragments: [
           {
-            typeCondition: schema.getType('Droid'),
-            possibleTypes: ['Droid'],
+            typeCondition: schema.getType("Droid"),
+            possibleTypes: ["Droid"],
             fields: [],
-            fragmentSpreads: ['HeroDetails'],
+            fragmentSpreads: ["HeroDetails"]
           }
         ]
       });
@@ -510,20 +589,20 @@ describe('Scala code generation', function() {
     });
   });
 
-  describe('#typeDeclarationForGraphQLType()', function() {
-    test('should generate an enum declaration for a GraphQLEnumType', function() {
-      const generator = new CodeGenerator({options: {}});
+  describe("#typeDeclarationForGraphQLType()", function() {
+    test("should generate an enum declaration for a GraphQLEnumType", function() {
+      const generator = new CodeGenerator({ options: {} });
 
-      typeDeclarationForGraphQLType(generator, schema.getType('Episode'));
+      typeDeclarationForGraphQLType(generator, schema.getType("Episode"));
 
       expect(generator.output).toMatchSnapshot();
     });
 
-    test('should escape identifiers in cases of enum declaration for a GraphQLEnumType', function() {
-      const generator = new CodeGenerator({options: {}});
+    test("should escape identifiers in cases of enum declaration for a GraphQLEnumType", function() {
+      const generator = new CodeGenerator({ options: {} });
 
       const albumPrivaciesEnum = new GraphQLEnumType({
-        name: 'AlbumPrivacies',
+        name: "AlbumPrivacies",
         values: { PUBLIC: { value: "PUBLIC" }, PRIVATE: { value: "PRIVATE" } }
       });
 
@@ -532,10 +611,10 @@ describe('Scala code generation', function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test('should generate a caseClass declaration for a GraphQLInputObjectType', function() {
-      const generator = new CodeGenerator({options: {}});
+    test("should generate a caseClass declaration for a GraphQLInputObjectType", function() {
+      const generator = new CodeGenerator({ options: {} });
 
-      typeDeclarationForGraphQLType(generator, schema.getType('ReviewInput'));
+      typeDeclarationForGraphQLType(generator, schema.getType("ReviewInput"));
 
       expect(generator.output).toMatchSnapshot();
     });

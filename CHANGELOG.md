@@ -1,6 +1,22 @@
 # Changelog
 ## vNEXT
 
+## v1.7.1
+#### :rocket: Feature
+* `apollo-codegen-typescript`
+  * [#535](https://github.com/apollographql/apollo-cli/pull/535) [TS] Sort global types so order is not determined by order of appearance ([@danilobuerger](https://github.com/danilobuerger))
+
+#### :bug: Bug Fix
+* `apollo-codegen-typescript`
+  * [#544](https://github.com/apollographql/apollo-cli/pull/544) Prepend ./ to TS relative paths to make them valid, Closes [#543](https://github.com/apollographql/apollo-cli/issues/543) ([@shadaj](https://github.com/shadaj))
+* `apollo-cli`
+  * [#534](https://github.com/apollographql/apollo-cli/pull/534) Allow to run `apollo codegen:generate --watch` on non tty devices ([@trojanowski](https://github.com/trojanowski))
+
+#### Committers: 3
+- Daniel Trojanowski ([@trojanowski](https://github.com/trojanowski))
+- Danilo Bürger ([@danilobuerger](https://github.com/danilobuerger))
+- Shadaj Laddad ([@shadaj](https://github.com/shadaj))
+
 ## v1.7.0
 #### :rocket: Feature
 * `apollo-language-server`, `apollo-vscode`

@@ -10,19 +10,25 @@ export interface Property {
   description?: string;
 }
 
-export function comment(generator: CodeGenerator<LegacyCompilerContext, any>, comment: string) {
-  const split = comment ? comment.split('\n') : [];
+export function comment(
+  generator: CodeGenerator<LegacyCompilerContext, any>,
+  comment: string
+) {
+  const split = comment ? comment.split("\n") : [];
   if (split.length > 0) {
-    generator.printOnNewline('/**')
+    generator.printOnNewline("/**");
     split.forEach(line => {
       generator.printOnNewline(` * ${line.trim()}`);
     });
 
-    generator.printOnNewline(' */');
+    generator.printOnNewline(" */");
   }
 }
 
-export function packageDeclaration(generator: CodeGenerator<LegacyCompilerContext, any>, pkg: string) {
+export function packageDeclaration(
+  generator: CodeGenerator<LegacyCompilerContext, any>,
+  pkg: string
+) {
   generator.printNewlineIfNeeded();
   generator.printOnNewline(`package ${pkg}`);
   generator.popScope();
@@ -30,14 +36,19 @@ export function packageDeclaration(generator: CodeGenerator<LegacyCompilerContex
 
 export function objectDeclaration(
   generator: CodeGenerator<LegacyCompilerContext, any>,
-  { objectName, superclass }: {
-    objectName: string,
-    superclass?: string
+  {
+    objectName,
+    superclass
+  }: {
+    objectName: string;
+    superclass?: string;
   },
   closure?: () => void
 ) {
   generator.printNewlineIfNeeded();
-  generator.printOnNewline(`object ${objectName}` + (superclass ? ` extends ${superclass}` : ''));
+  generator.printOnNewline(
+    `object ${objectName}` + (superclass ? ` extends ${superclass}` : "")
+  );
   generator.pushScope({ typeName: objectName });
   if (closure) {
     generator.withinBlock(closure);
@@ -47,15 +58,20 @@ export function objectDeclaration(
 
 export function caseClassDeclaration(
   generator: CodeGenerator<LegacyCompilerContext, any>,
-  { caseClassName, description, superclass, params }: {
-    caseClassName: string,
-    description?: string,
-    superclass?: string,
+  {
+    caseClassName,
+    description,
+    superclass,
+    params
+  }: {
+    caseClassName: string;
+    description?: string;
+    superclass?: string;
     params?: {
-      name: string,
-      type: string,
-      defaultValue?: string
-    }[],
+      name: string;
+      type: string;
+      defaultValue?: string;
+    }[];
   },
   closure?: () => void
 ) {
@@ -65,11 +81,18 @@ export function caseClassDeclaration(
     comment(generator, description);
   }
 
-  const paramsSection = (params || []).map(v => {
-    return v.name + ": " + v.type + (v.defaultValue ? ` = ${v.defaultValue}` : "");
-  }).join(', ');
+  const paramsSection = (params || [])
+    .map(v => {
+      return (
+        v.name + ": " + v.type + (v.defaultValue ? ` = ${v.defaultValue}` : "")
+      );
+    })
+    .join(", ");
 
-  generator.printOnNewline(`case class ${caseClassName}(${paramsSection})` + (superclass ? ` extends ${superclass}` : ''));
+  generator.printOnNewline(
+    `case class ${caseClassName}(${paramsSection})` +
+      (superclass ? ` extends ${superclass}` : "")
+  );
   generator.pushScope({ typeName: caseClassName });
   if (closure) {
     generator.withinBlock(closure);
@@ -79,10 +102,14 @@ export function caseClassDeclaration(
 
 export function propertyDeclaration(
   generator: CodeGenerator<LegacyCompilerContext, any>,
-  { propertyName, typeName, description}: {
-    propertyName: string,
-    typeName: string,
-    description: string
+  {
+    propertyName,
+    typeName,
+    description
+  }: {
+    propertyName: string;
+    typeName: string;
+    description: string;
   },
   closure?: () => void
 ) {
@@ -97,9 +124,9 @@ export function propertyDeclaration(
 export function propertyDeclarations(
   generator: CodeGenerator<LegacyCompilerContext, any>,
   declarations: {
-    propertyName: string,
-    typeName: string,
-    description: string
+    propertyName: string;
+    typeName: string;
+    description: string;
   }[]
 ) {
   declarations.forEach(o => {
@@ -108,15 +135,34 @@ export function propertyDeclarations(
 }
 
 const reservedKeywords = new Set([
-  'case', 'catch', 'class', 'def', 'do', 'else',
-  'extends', 'false', 'final', 'for', 'if', 'match',
-  'new', 'null', 'throw', 'trait', 'true', 'try', 'until',
-  'val', 'var', 'while', 'with'
+  "case",
+  "catch",
+  "class",
+  "def",
+  "do",
+  "else",
+  "extends",
+  "false",
+  "final",
+  "for",
+  "if",
+  "match",
+  "new",
+  "null",
+  "throw",
+  "trait",
+  "true",
+  "try",
+  "until",
+  "val",
+  "var",
+  "while",
+  "with"
 ]);
 
 export function escapeIdentifierIfNeeded(identifier: string) {
   if (reservedKeywords.has(identifier)) {
-    return '`' + identifier + '`';
+    return "`" + identifier + "`";
   } else {
     return identifier;
   }

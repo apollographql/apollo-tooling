@@ -1,9 +1,9 @@
+import { ListrTask } from "listr";
 import {
-  loadConfigFromFile,
   findAndLoadConfig,
+  loadConfigFromFile,
   SchemaDependency
 } from "./config";
-import { ListrTask } from "listr";
 
 export function loadConfigStep(
   flags: any,
@@ -59,7 +59,10 @@ export function loadConfigStep(
         };
       }
 
-      if (!ctx.config.queries || ctx.config.queries.length == 0 && flags.queries) {
+      if (
+        !ctx.config.queries ||
+        (ctx.config.queries.length == 0 && flags.queries)
+      ) {
         ctx.config.queries = [
           {
             schema: "default",
@@ -67,13 +70,12 @@ export function loadConfigStep(
             excludes: []
           }
         ];
-      }
-      else if (flags.queries && flags.queries != '**/*.graphql') {
+      } else if (flags.queries && flags.queries != "**/*.graphql") {
         ctx.config.queries = ctx.config.queries.map((query: any) => {
           return Object.assign({}, query, {
             includes: flags.queries.split("\n")
-          })
-        })
+          });
+        });
       }
 
       if (flags.key) {
@@ -85,6 +87,17 @@ export function loadConfigStep(
 
       if (flags.engine) {
         ctx.config.engineEndpoint = flags.engine;
+      }
+
+      if (flags.skipSSLValidation) {
+        if (Object.keys(ctx.config.schemas).length == 1) {
+          const endpointConfiguration = (Object.values(
+            ctx.config.schemas
+          )[0] as SchemaDependency).endpoint;
+          if (endpointConfiguration) {
+            endpointConfiguration.skipSSLValidation = flags.skipSSLValidation;
+          }
+        }
       }
 
       if (ctx.config.queries.length == 0 && ctx.config.schemas.default) {

@@ -1,11 +1,11 @@
-import { GraphQLError } from 'graphql';
-import * as path from 'path';
+import { GraphQLError } from "graphql";
+import * as path from "path";
 
 // ToolError is used for errors that are part of the expected flow
 // and for which a stack trace should not be printed
 
 export class ToolError extends Error {
-  name: string = 'ToolError';
+  name: string = "ToolError";
 
   constructor(message: string) {
     super(message);
@@ -32,7 +32,11 @@ export function logError(error: Error) {
   }
 }
 
-export function logErrorMessage(message: string, fileName?: string, lineNumber?: number) {
+export function logErrorMessage(
+  message: string,
+  fileName?: string,
+  lineNumber?: number
+) {
   if (isRunningFromXcodeScript) {
     if (fileName && lineNumber) {
       // Prefixing error output with file name, line and 'error: ',
@@ -44,7 +48,12 @@ export function logErrorMessage(message: string, fileName?: string, lineNumber?:
     }
   } else {
     if (fileName) {
-      const truncatedFileName = '/' + fileName.split(path.sep).slice(-4).join(path.sep);
+      const truncatedFileName =
+        "/" +
+        fileName
+          .split(path.sep)
+          .slice(-4)
+          .join(path.sep);
       console.error(`...${truncatedFileName}: ${message}`);
     } else {
       console.error(`error: ${message}`);
