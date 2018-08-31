@@ -6,7 +6,6 @@ import {
   SchemaMetaFieldDef,
   TypeMetaFieldDef,
   TypeNameMetaFieldDef,
-  GraphQLNamedType,
   GraphQLCompositeType,
   GraphQLObjectType,
   GraphQLInterfaceType,
@@ -15,7 +14,6 @@ import {
   GraphQLError,
   GraphQLSchema,
   GraphQLType,
-  GraphQLScalarType,
   ASTNode,
   Location,
   ValueNode,
@@ -27,15 +25,6 @@ import {
   GraphQLNonNull,
   DocumentNode
 } from "graphql";
-
-declare module "graphql" {
-  function isNamedType(type: GraphQLType): type is GraphQLNamedType;
-  const specifiedScalarTypes: GraphQLScalarType[];
-  function isSpecifiedScalarType(type: GraphQLType): boolean;
-  const introspectionTypes: GraphQLNamedType[];
-  function isIntrospectionType(type: GraphQLType): boolean;
-  function validateSchema(schema: GraphQLSchema): GraphQLError[];
-}
 
 declare module "graphql/utilities/buildASTSchema" {
   function buildASTSchema(

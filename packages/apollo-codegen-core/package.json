@@ -1,47 +1,35 @@
 {
   "name": "apollo-codegen-core",
   "description": "Core generator APIs for Apollo Codegen",
-  "version": "0.27.0",
-  "main": "./lib/index.js",
+  "version": "0.27.3",
+  "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apollographql/apollo-cli.git"
+  },
+  "homepage": "https://github.com/apollographql/apollo-cli",
+  "bugs": "https://github.com/apollographql/apollo-cli/issues",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",
-    "build": "tsc -p .",
-    "watch": "tsc -w -p .",
-    "test": "./node_modules/.bin/jest",
-    "prepack": "npm run build"
+    "build": "tsc",
+    "prepare": "npm run build"
   },
-  "repository": {
-    "type": "git",
-    "url": "apollographql/apollo-cli"
-  },
-  "author": "Martijn Walraven <martijn@martijnwalraven.com>",
-  "license": "MIT",
   "engines": {
-    "node": ">=6.0",
-    "npm": ">=5.0"
-  },
-  "devDependencies": {
-    "@types/babel-generator": "^6.25.1",
-    "@types/babel-types": "^7.0.0",
-    "@types/common-tags": "^1.4.0",
-    "@types/graphql": "^0.13.1",
-    "@types/jest": "^21.1.8",
-    "graphql": "^0.13.1",
-    "jest": "^22.0.3",
-    "jest-matcher-utils": "^22.0.3",
-    "lerna": "^2.11.0",
-    "ts-jest": "^22.0.0",
-    "typescript": "^2.6.2"
+    "node": ">=8",
+    "npm": ">=6"
   },
   "dependencies": {
     "@babel/generator": "7.0.0-beta.38",
+    "@babel/parser": "^7.0.0",
     "@babel/types": "7.0.0-beta.38",
+    "ast-types": "^0.11.5",
     "common-tags": "^1.5.1",
-    "core-js": "^2.5.3"
-  },
-  "peerDependencies": {
-    "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0"
+    "core-js": "^2.5.3",
+    "recast": "^0.15.3"
   },
   "jest": {
     "testEnvironment": "node",

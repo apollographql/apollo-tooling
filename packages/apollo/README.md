@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/1.7.1 darwin-x64 node-v10.8.0
+apollo/1.8.3 darwin-x64 node-v8.11.4
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -32,82 +32,11 @@ USAGE
 # Commands
 
 <!-- commands -->
-* [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
 * [`apollo help [COMMAND]`](#apollo-help-command)
 * [`apollo queries:check`](#apollo-queriescheck)
 * [`apollo schema:check`](#apollo-schemacheck)
 * [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
 * [`apollo schema:publish`](#apollo-schemapublish)
-
-## `apollo codegen:generate [OUTPUT]`
-
-Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.
-
-```
-USAGE
-  $ apollo codegen:generate [OUTPUT]
-
-ARGUMENTS
-  OUTPUT
-      Directory to which generated files will be written.
-      - For TypeScript/Flow generators, this specifies a directory relative to each source file by default.
-      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a 
-      file or directory (absolute or relative to the current working directory) to which:
-         - a file will be written for each query (if "output" is a directory)
-         - all generated types will be written
-      - For all other types, this defines a file (absolute or relative to the current working directory) to which all 
-      generated types are written.
-
-OPTIONS
-  -h, --help                                 Show command help
-  --addTypename                              Automatically add __typename to your queries
-
-  --clientSchema=clientSchema                Path to your client-side GraphQL schema file for `apollo-link-state`
-                                             (.graphql, .json, .js, .ts)
-
-  --config=config                            Path to your Apollo config file
-
-  --customScalarsPrefix=customScalarsPrefix  Include a prefix when using provided types for custom scalars
-
-  --key=key                                  The API key for the Apollo Engine service
-
-  --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
-
-  --namespace=namespace                      The namespace to emit generated code into.
-
-  --only=only                                Parse all input files, but only output generated code for the specified
-                                             file [Swift only]
-
-  --operationIdsPath=operationIdsPath        Path to an operation id JSON map file. If specified, also stores the
-                                             operation ids (hashes) as properties on operation types [currently
-                                             Swift-only]
-
-  --outputFlat                               By default, TypeScript/Flow will put each generated file in a directory
-                                             next to its source file using the value of the "output" as the directory
-                                             name. Set "outputFlat" to put all generated files in the directory relative
-                                             to the current working directory defined by "output".
-
-  --passthroughCustomScalars                 Use your own types for custom scalars
-
-  --queries=queries                          [default: **/*.graphql] Path to your GraphQL queries, can include search
-                                             tokens like **
-
-  --schema=schema                            Path to your GraphQL schema (.graphql, .json, .js, .ts)
-
-  --tagName=tagName                          [default: gql] Name of the template literal tag used to identify template
-                                             literals containing GraphQL queries in Javascript/Typescript code
-
-  --target=target                            Type of code generator to use (swift | typescript | flow | scala), inferred
-                                             from output
-
-  --useFlowExactObjects                      Use Flow exact objects for generated types [flow only]
-
-  --useFlowReadOnlyTypes                     Use Flow read only types for generated types [flow only]
-
-  --watch                                    Watch the query files to auto-generate on changes.
-```
-
-_See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo-cli/src/commands/codegen/generate.ts)_
 
 ## `apollo help [COMMAND]`
 
@@ -145,7 +74,7 @@ OPTIONS
                      GraphQL queries in Javascript/Typescript code
 ```
 
-_See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo-cli/src/commands/queries/check.ts)_
+_See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/queries/check.ts)_
 
 ## `apollo schema:check`
 
@@ -164,7 +93,7 @@ OPTIONS
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo-cli/src/commands/schema/check.ts)_
+_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/schema/check.ts)_
 
 ## `apollo schema:download OUTPUT`
 
@@ -178,14 +107,15 @@ ARGUMENTS
   OUTPUT  [default: schema.json] Path to write the introspection result to
 
 OPTIONS
-  -h, --help           Show command help
-  --config=config      Path to your Apollo config file
-  --endpoint=endpoint  The URL of the server to fetch the schema from or path to ./your/local/schema.graphql
-  --header=header      Additional headers to send to server for introspectionQuery
-  --key=key            The API key for the Apollo Engine service
+  -h, --help               Show command help
+  -k, --skipSSLValidation  Allow connections to a SSL site without certs
+  --config=config          Path to your Apollo config file
+  --endpoint=endpoint      The URL of the server to fetch the schema from or path to ./your/local/schema.graphql
+  --header=header          Additional headers to send to server for introspectionQuery
+  --key=key                The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo-cli/src/commands/schema/download.ts)_
+_See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/schema/download.ts)_
 
 ## `apollo schema:publish`
 
@@ -204,7 +134,7 @@ OPTIONS
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo-cli/src/commands/schema/publish.ts)_
+_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/schema/publish.ts)_
 <!-- commandsstop -->
 
 # Configuration
@@ -401,7 +331,7 @@ function CharacterFigures({ characters }: CharactersQuery) {
 
 # Contributing
 
-[![Build status](https://travis-ci.org/apollographql/apollo-cli.svg?branch=master)](https://travis-ci.org/apollographql/apollo-cli)
+[![Build Status](https://circleci.com/gh/apollographql/apollo-cli.svg?style=svg)](https://circleci.com/gh/apollographql/apollo-cli)
 
 This repo is composed of multiple packages managed by Lerna. The `apollo-cli` contains the core CLI commands. The `apollo-codegen-core` package contains all the compiler APIs needed to implement code generation support for new languages. The other `apollo-codegen-*` packages implement code generation support for individual languages.
 
@@ -414,6 +344,16 @@ npm test
 
 You can also run `npm` commands within package folders after you have bootstrapped the repository (part of `npm install`).
 
+## Nock tests
+
+To display the debugging messages for nock, run the following command:
+
+```bash
+DEBUG=nock.* npm test
 ```
 
+It can also be helpful to print standard out during testing. To enable logging, add the following configuration to the `stdout` function call during test creation:
+
+```
+.stdout({ print: true })
 ```

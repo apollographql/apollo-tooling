@@ -300,7 +300,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
   ) {
     const typeCase = typeCaseForSelectionSet(
       selectionSet,
-      this.context.options.mergeInFieldsFromFragmentSpreads
+      !!this.context.options.mergeInFieldsFromFragmentSpreads
     );
 
     this.structDeclarationForVariant(
@@ -384,7 +384,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
       const fields = collectAndMergeFields(
         variant,
-        this.context.options.mergeInFieldsFromFragmentSpreads
+        !!this.context.options.mergeInFieldsFromFragmentSpreads
       ).map(field => this.helpers.propertyFromField(field as Field));
 
       const fragmentSpreads = variant.fragmentSpreads.map(fragmentSpread => {

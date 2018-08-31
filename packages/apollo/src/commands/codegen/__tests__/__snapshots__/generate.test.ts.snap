@@ -12,17 +12,17 @@ exports[`successful codegen generates operation IDs files when flag is set 1`] =
 exports[`successful codegen handles only flag for Swift target 1`] = `
 Array [
   Array [
-    "../../../../outDirectory/__create_this_directory",
+    "../../../../../../outDirectory/__create_this_directory",
     "",
   ],
   Array [
-    "../../../../outDirectory/Types.graphql.swift",
+    "../../../../../../outDirectory/Types.graphql.swift",
     "//  This file was automatically generated and should not be edited.
 
 import Apollo",
   ],
   Array [
-    "../../../../outDirectory/queryTwo.graphql.swift",
+    "../../../../../../outDirectory/queryTwo.graphql.swift",
     "//  This file was automatically generated and should not be edited.
 
 import Apollo
@@ -573,6 +573,41 @@ export type SimpleQuery = {
 //==============================================================
 // END Enums and Input Objects
 //=============================================================="
+`;
+
+exports[`successful codegen writes TypeScript global types to a custom path when globalTypesFile is set 1`] = `
+"/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+import { SomeEnum } from \\"./../../__foo__/bar\\";
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  someEnum: SomeEnum;
+}
+"
+`;
+
+exports[`successful codegen writes TypeScript global types to a custom path when globalTypesFile is set 2`] = `
+"/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+export enum SomeEnum {
+  bar = \\"bar\\",
+  foo = \\"foo\\",
+}
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================
+"
 `;
 
 exports[`successful codegen writes TypeScript types into a __generated__ directory next to sources when no output is set 1`] = `

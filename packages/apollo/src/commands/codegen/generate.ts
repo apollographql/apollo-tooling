@@ -87,7 +87,8 @@ export default class Generate extends Command {
         "Parse all input files, but only output generated code for the specified file [Swift only]"
     }),
     codeGenerationModule: flags.string({
-      description: "Path to module for generating actual GraphQL queries [TypeScript only]"
+      description:
+        "Path to module for generating actual GraphQL queries [TypeScript only]"
     }),
     tagName: flags.string({
       description:
@@ -97,6 +98,10 @@ export default class Generate extends Command {
     outputFlat: flags.boolean({
       description:
         'By default, TypeScript/Flow will put each generated file in a directory next to its source file using the value of the "output" as the directory name. Set "outputFlat" to put all generated files in the directory relative to the current working directory defined by "output".'
+    }),
+    globalTypesFile: flags.string({
+      description:
+        'By default, TypeScript will put a file named "globalTypes.ts" inside the "output" directory. Set "globalTypesFile" to specify a different path.'
     }),
     watch: flags.boolean({
       description: "Watch the query files to auto-generate on changes."
@@ -231,7 +236,8 @@ export default class Generate extends Command {
                   flags.mergeInFieldsFromFragmentSpreads,
                 useFlowExactObjects: flags.useFlowExactObjects,
                 useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes,
-                codeGenerationModule: flags.codeGenerationModule
+                codeGenerationModule: flags.codeGenerationModule,
+                globalTypesFile: flags.globalTypesFile
               }
             );
 
