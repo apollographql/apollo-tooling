@@ -21,7 +21,7 @@
     "prepare": "npm run build",
     "postinstall": "npm run update-vscode",
     "update-vscode": "node ../../node_modules/vscode/bin/install",
-    "packageExtension": "npm run build && ./node_modules/vsce/out/vsce package --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-cli/master/packages/apollo-vscode"
+    "packageExtension": "npm run build && ../../node_modules/vsce/out/vsce package --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-cli/master/packages/apollo-vscode"
   },
   "engines": {
     "vscode": "^1.26.0"
