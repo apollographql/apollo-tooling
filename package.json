@@ -66,7 +66,7 @@
     "chai": "^4.1.2",
     "css-loader": "1.0.0",
     "fs-monkey": "^0.3.3",
-    "graphql": "^0.13.0",
+    "graphql": "^0.13.2",
     "husky": "^0.14.3",
     "jest": "^23.5.0",
     "jest-matcher-utils": "^23.5.0",
