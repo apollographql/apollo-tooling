@@ -13,12 +13,16 @@
     "postinstall": "lerna run prepare",
     "build": "lerna run build",
     "precommit": "lint-staged",
-    "test": "lerna run -- test",
+    "test": "jest",
     "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "packageExtension": "lerna run packageExtension --scope=apollo-vscode",
     "deploy": "lerna publish -m \"chore: Publish\" && cd packages/apollo-client && npm run deploy",
     "clean": "find . -name \"node_modules\" -exec rm -rf '{}' + && find . -name \"lib\" -exec rm -rf '{}' +"
+  },
+  "engines": {
+    "node": ">=8",
+    "npm": ">=6"
   },
   "dependencies": {
     "apollo-cli": "file:packages/apollo-cli",
@@ -73,9 +77,10 @@
     "vsce": "^1.46.0",
     "webpack": "4.17.1"
   },
-  "engines": {
-    "node": ">=8",
-    "npm": ">=6"
+  "jest": {
+    "projects": [
+      "<rootDir>/packages/!(babel-typing|common-test)"
+    ]
   },
   "changelog": {
     "repo": "apollographql/apollo-cli",
