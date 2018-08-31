@@ -12,19 +12,26 @@
   "scripts": {
     "postinstall": "lerna run prepare",
     "build": "lerna run build",
-    "precommit": "lint-staged",
     "test": "jest",
     "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
-    "packageExtension": "lerna run packageExtension --scope=apollo-vscode",
+    "precommit": "lint-staged",
     "deploy": "lerna publish -m \"chore: Publish\" && cd packages/apollo-client && npm run deploy",
-    "clean": "find . -name \"node_modules\" -exec rm -rf '{}' + && find . -name \"lib\" -exec rm -rf '{}' +"
+    "clean": "find . -name \"node_modules\" -exec rm -rf '{}' + && find . -name \"lib\" -exec rm -rf '{}' +",
+    "packageExtension": "lerna run packageExtension --scope=apollo-vscode"
   },
   "engines": {
     "node": ">=8",
     "npm": ">=6"
   },
   "dependencies": {
+    "apollo-codegen-core": "file:packages/apollo-codegen-core",
+    "apollo-codegen-flow": "file:packages/apollo-codegen-flow",
+    "apollo-codegen-flow-legacy": "file:packages/apollo-codegen-flow-legacy",
+    "apollo-codegen-scala": "file:packages/apollo-codegen-scala",
+    "apollo-codegen-swift": "file:packages/apollo-codegen-swift",
+    "apollo-codegen-typescript": "file:packages/apollo-codegen-typescript",
+    "apollo-codegen-typescript-legacy": "file:packages/apollo-codegen-typescript-legacy",
     "apollo-cli": "file:packages/apollo-cli",
     "apollo-language-server": "file:packages/apollo-language-server",
     "apollo-vscode": "file:packages/apollo-vscode",

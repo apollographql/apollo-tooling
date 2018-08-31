@@ -16,8 +16,10 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rm -rf lib",
-    "compile": "tsc",
-    "postinstall": "npm run clean && npm run update-vscode && npm run compile",
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "postinstall": "npm run update-vscode",
     "update-vscode": "node ../../node_modules/vscode/bin/install",
     "packageExtension": "npm run compile && ./node_modules/vsce/out/vsce package --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-cli/master/packages/apollo-vscode"
   },

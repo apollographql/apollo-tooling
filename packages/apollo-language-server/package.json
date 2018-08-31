@@ -19,7 +19,8 @@
     "prebuild": "npm run clean",
     "build": "npm run installServer && tsc -p .",
     "watch": "npm run installServer && tsc -w -p .",
-    "watchOnly": "tsc -w -p ."
+    "watchOnly": "tsc -w -p .",
+    "prepare": "npm run build"
   },
   "engines": {
     "node": "*"

@@ -22,11 +22,11 @@
   },
   "scripts": {
     "clean": "rm -rf lib",
-    "compile": "tsc",
-    "prepare": "npm run clean && npm run compile",
-    "prepack": "npm run prepare && oclif-dev manifest && oclif-dev readme",
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "prepack": "oclif-dev manifest && oclif-dev readme",
     "postpack": "rm -f oclif.manifest.json",
-    "test": "jest",
     "version": "oclif-dev readme && git add README.md"
   },
   "engines": {

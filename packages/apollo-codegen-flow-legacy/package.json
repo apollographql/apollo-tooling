@@ -14,9 +14,9 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rm -rf lib",
-    "compile": "tsc",
-    "prepare": "npm run clean && npm run compile",
-    "test": "jest"
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "prepare": "npm run build"
   },
   "engines": {
     "node": ">=8",
