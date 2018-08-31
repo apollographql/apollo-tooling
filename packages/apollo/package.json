@@ -1,7 +1,7 @@
 {
   "name": "apollo",
   "description": "Command line tool for Apollo GraphQL",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {
