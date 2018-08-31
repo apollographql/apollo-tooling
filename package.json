@@ -27,7 +27,7 @@
     "npm": ">=6"
   },
   "dependencies": {
-    "apollo": "file:packages/apollo-cli",
+    "apollo": "file:packages/apollo",
     "apollo-codegen-core": "file:packages/apollo-codegen-core",
     "apollo-codegen-flow": "file:packages/apollo-codegen-flow",
     "apollo-codegen-flow-legacy": "file:packages/apollo-codegen-flow-legacy",

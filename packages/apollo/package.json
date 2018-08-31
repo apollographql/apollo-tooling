@@ -78,7 +78,7 @@
       "@oclif/plugin-not-found",
       "@oclif/plugin-warn-if-update-available"
     ],
-    "repositoryPrefix": "<%- repo %>/blob/master/packages/apollo-cli/<%- commandPath %>"
+    "repositoryPrefix": "<%- repo %>/blob/master/packages/apollo/<%- commandPath %>"
   },
   "jest": {
     "transform": {
