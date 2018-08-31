@@ -5,17 +5,19 @@
 Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
 
 <!-- toc -->
-* [Apollo CLI](#apollo-cli)
-* [Usage](#usage)
-* [Commands](#commands)
-* [Configuration](#configuration)
-* [Code Generation](#code-generation)
-* [Contributing](#contributing)
-<!-- tocstop -->
+
+- [Apollo CLI](#apollo-cli)
+- [Usage](#usage)
+- [Commands](#commands)
+- [Configuration](#configuration)
+- [Code Generation](#code-generation)
+- [Contributing](#contributing)
+  <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g apollo
 $ apollo COMMAND
@@ -27,17 +29,19 @@ USAGE
   $ apollo COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-* [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
-* [`apollo help [COMMAND]`](#apollo-help-command)
-* [`apollo queries:check`](#apollo-queriescheck)
-* [`apollo schema:check`](#apollo-schemacheck)
-* [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
-* [`apollo schema:publish`](#apollo-schemapublish)
+
+- [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
+- [`apollo help [COMMAND]`](#apollo-help-command)
+- [`apollo queries:check`](#apollo-queriescheck)
+- [`apollo schema:check`](#apollo-schemacheck)
+- [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
+- [`apollo schema:publish`](#apollo-schemapublish)
 
 ## `apollo codegen:generate [OUTPUT]`
 
@@ -51,11 +55,11 @@ ARGUMENTS
   OUTPUT
       Directory to which generated files will be written.
       - For TypeScript/Flow generators, this specifies a directory relative to each source file by default.
-      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a 
+      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a
       file or directory (absolute or relative to the current working directory) to which:
          - a file will be written for each query (if "output" is a directory)
          - all generated types will be written
-      - For all other types, this defines a file (absolute or relative to the current working directory) to which all 
+      - For all other types, this defines a file (absolute or relative to the current working directory) to which all
       generated types are written.
 
 OPTIONS
@@ -205,6 +209,7 @@ OPTIONS
 ```
 
 _See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo-cli/src/commands/schema/publish.ts)_
+
 <!-- commandsstop -->
 
 # Configuration
@@ -401,7 +406,7 @@ function CharacterFigures({ characters }: CharactersQuery) {
 
 # Contributing
 
-[![Build status](https://travis-ci.org/apollographql/apollo-cli.svg?branch=master)](https://travis-ci.org/apollographql/apollo-cli)
+[![Build Status](https://circleci.com/gh/apollographql/apollo-cli.svg?style=svg)](https://circleci.com/gh/apollographql/apollo-cli)
 
 This repo is composed of multiple packages managed by Lerna. The `apollo-cli` contains the core CLI commands. The `apollo-codegen-core` package contains all the compiler APIs needed to implement code generation support for new languages. The other `apollo-codegen-*` packages implement code generation support for individual languages.
 

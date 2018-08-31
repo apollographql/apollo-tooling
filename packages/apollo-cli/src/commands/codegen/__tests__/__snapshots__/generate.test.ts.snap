@@ -12,17 +12,17 @@ exports[`successful codegen generates operation IDs files when flag is set 1`] =
 exports[`successful codegen handles only flag for Swift target 1`] = `
 Array [
   Array [
-    "../../../../outDirectory/__create_this_directory",
+    "../../../../../../outDirectory/__create_this_directory",
     "",
   ],
   Array [
-    "../../../../outDirectory/Types.graphql.swift",
+    "../../../../../../outDirectory/Types.graphql.swift",
     "//  This file was automatically generated and should not be edited.
 
 import Apollo",
   ],
   Array [
-    "../../../../outDirectory/queryTwo.graphql.swift",
+    "../../../../../../outDirectory/queryTwo.graphql.swift",
     "//  This file was automatically generated and should not be edited.
 
 import Apollo
