@@ -11,12 +11,11 @@ cache:
     - $HOME/.npm
 
 before_install:
-  - npm install -g npm@5
+  - npm install -g npm@6
   - npm --version
 
 install:
   - npm install
-  - npm run bootstrap
 
 script:
   - npm test
