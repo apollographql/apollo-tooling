@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/1.8.3 darwin-x64 node-v8.11.4
+apollo/1.9.0 darwin-x64 node-v10.9.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -32,11 +32,86 @@ USAGE
 # Commands
 
 <!-- commands -->
+* [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
 * [`apollo help [COMMAND]`](#apollo-help-command)
 * [`apollo queries:check`](#apollo-queriescheck)
+* [`apollo queries:extract OUTPUT`](#apollo-queriesextract-output)
 * [`apollo schema:check`](#apollo-schemacheck)
 * [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
 * [`apollo schema:publish`](#apollo-schemapublish)
+
+## `apollo codegen:generate [OUTPUT]`
+
+Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.
+
+```
+USAGE
+  $ apollo codegen:generate [OUTPUT]
+
+ARGUMENTS
+  OUTPUT
+      Directory to which generated files will be written.
+      - For TypeScript/Flow generators, this specifies a directory relative to each source file by default.
+      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a 
+      file or directory (absolute or relative to the current working directory) to which:
+         - a file will be written for each query (if "output" is a directory)
+         - all generated types will be written
+      - For all other types, this defines a file (absolute or relative to the current working directory) to which all 
+      generated types are written.
+
+OPTIONS
+  -h, --help                                 Show command help
+  --addTypename                              Automatically add __typename to your queries
+
+  --clientSchema=clientSchema                Path to your client-side GraphQL schema file for `apollo-link-state`
+                                             (.graphql, .json, .js, .ts)
+
+  --config=config                            Path to your Apollo config file
+
+  --customScalarsPrefix=customScalarsPrefix  Include a prefix when using provided types for custom scalars
+
+  --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
+                                             "output" directory. Set "globalTypesFile" to specify a different path.
+
+  --key=key                                  The API key for the Apollo Engine service
+
+  --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
+
+  --namespace=namespace                      The namespace to emit generated code into.
+
+  --only=only                                Parse all input files, but only output generated code for the specified
+                                             file [Swift only]
+
+  --operationIdsPath=operationIdsPath        Path to an operation id JSON map file. If specified, also stores the
+                                             operation ids (hashes) as properties on operation types [currently
+                                             Swift-only]
+
+  --outputFlat                               By default, TypeScript/Flow will put each generated file in a directory
+                                             next to its source file using the value of the "output" as the directory
+                                             name. Set "outputFlat" to put all generated files in the directory relative
+                                             to the current working directory defined by "output".
+
+  --passthroughCustomScalars                 Use your own types for custom scalars
+
+  --queries=queries                          [default: **/*.graphql] Path to your GraphQL queries, can include search
+                                             tokens like **
+
+  --schema=schema                            Path to your GraphQL schema (.graphql, .json, .js, .ts)
+
+  --tagName=tagName                          [default: gql] Name of the template literal tag used to identify template
+                                             literals containing GraphQL queries in Javascript/Typescript code
+
+  --target=target                            Type of code generator to use (swift | typescript | flow | scala), inferred
+                                             from output
+
+  --useFlowExactObjects                      Use Flow exact objects for generated types [flow only]
+
+  --useFlowReadOnlyTypes                     Use Flow read only types for generated types [flow only]
+
+  --watch                                    Watch the query files to auto-generate on changes.
+```
+
+_See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/codegen/generate.ts)_
 
 ## `apollo help [COMMAND]`
 
@@ -75,6 +150,29 @@ OPTIONS
 ```
 
 _See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/queries/check.ts)_
+
+## `apollo queries:extract OUTPUT`
+
+Extracts queries
+
+```
+USAGE
+  $ apollo queries:extract OUTPUT
+
+ARGUMENTS
+  OUTPUT  [default: manifest.json] Path to write the extracted queries to
+
+OPTIONS
+  -h, --help         Show command help
+  --config=config    Path to your Apollo config file
+  --key=key          The API key for the Apollo Engine service
+  --queries=queries  Path to your GraphQL queries, can include search tokens like **
+
+  --tagName=tagName  [default: gql] Name of the template literal tag used to identify template literals containing
+                     GraphQL queries in Javascript/Typescript code
+```
+
+_See code: [src/commands/queries/extract.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/queries/extract.ts)_
 
 ## `apollo schema:check`
 
