@@ -9,6 +9,9 @@
   },
   "license": "MIT",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "bin": {
+    "apollo": "./packages/apollo/bin/run"
+  },
   "scripts": {
     "postinstall": "lerna run prepare",
     "build": "lerna run build",
