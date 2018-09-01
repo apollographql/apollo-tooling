@@ -80,7 +80,9 @@ export default class SchemaDownload extends Command {
           await promisify(fs.writeFile)(
             args.output,
             JSON.stringify(
-              (await execute(ctx.schema, parse(introspectionQuery))).data!
+              (await execute(ctx.schema, parse(introspectionQuery))).data!,
+              null,
+              2
             )
           );
         }
