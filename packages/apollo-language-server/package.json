@@ -1,52 +1,47 @@
 {
   "name": "apollo-language-server",
   "description": "A language server for Apollo GraphQL projects",
+  "version": "0.1.9",
   "private": true,
-  "author": "Apollo GraphQL",
+  "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
-  "version": "0.1.4",
   "repository": {
     "type": "git",
-    "url": "apollographql/apollo-cli"
+    "url": "git+https://github.com/apollographql/apollo-cli.git"
   },
-  "engines": {
-    "node": "*"
-  },
+  "homepage": "https://github.com/apollographql/apollo-cli",
+  "bugs": "https://github.com/apollographql/apollo-cli/issues",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "installServer": "installServerIntoExtension ../apollo-vscode ./package.json ./tsconfig.json && ./copy-apollo-libs.sh",
     "clean": "rm -rf ../apollo-vscode/server",
     "prebuild": "npm run clean",
     "build": "npm run installServer && tsc -p .",
     "watch": "npm run installServer && tsc -w -p .",
-    "watchOnly": "tsc -w -p ."
+    "watchOnly": "tsc -w -p .",
+    "prepare": "npm run build"
+  },
+  "engines": {
+    "node": "*"
   },
   "dependencies": {
     "@apollographql/graphql-language-service-interface": "1.3.2",
-    "apollo": "^1.7.1",
+    "apollo": "file:../apollo",
     "apollo-link": "^1.2.2",
     "apollo-link-http": "^1.5.4",
     "apollo-link-ws": "^1.0.8",
     "core-js": "^2.5.7",
     "glob": "^7.1.2",
-    "graphql": "^0.13.1",
+    "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
     "minimatch": "^3.0.4",
     "moment": "^2.22.2",
     "node-fetch": "^2.1.2",
     "recursive-readdir": "^2.2.2",
-    "regenerator-runtime": "^0.11.1",
     "subscriptions-transport-ws": "^0.9.12",
     "vscode-languageserver": "next",
     "vscode-uri": "^1.0.3",
     "ws": "^5.2.2"
-  },
-  "devDependencies": {
-    "@types/graphql": "^0.13.1",
-    "@types/minimatch": "^3.0.3",
-    "@types/moment": "^2.13.0",
-    "@types/node-fetch": "^2.1.1",
-    "@types/recursive-readdir": "^2.2.0",
-    "@types/ws": "^5.1.2",
-    "typescript": "^2.6.2"
   }
 }

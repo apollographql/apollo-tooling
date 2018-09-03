@@ -1,16 +1,18 @@
-import { parse } from 'graphql';
+import { parse } from "graphql";
 
-import {
-  generateSource
-} from '../codeGeneration';
+import { generateSource } from "../codeGeneration";
 
-import { loadSchema } from 'apollo-codegen-core/lib/loading';
-const starWarsSchema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
-const miscSchema = loadSchema(require.resolve('../../../common-test/fixtures/misc/schema.json'));
+import { loadSchema } from "apollo-codegen-core/lib/loading";
+const starWarsSchema = loadSchema(
+  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+);
+const miscSchema = loadSchema(
+  require.resolve("../../../common-test/fixtures/misc/schema.json")
+);
 
-import CodeGenerator from 'apollo-codegen-core/lib/utilities/CodeGenerator';
+import CodeGenerator from "apollo-codegen-core/lib/utilities/CodeGenerator";
 
-import { compileToLegacyIR } from 'apollo-codegen-core/lib/compiler/legacyIR';
+import { compileToLegacyIR } from "apollo-codegen-core/lib/compiler/legacyIR";
 
 function setup(schema) {
   const context = {
@@ -18,26 +20,29 @@ function setup(schema) {
     operations: {},
     fragments: {},
     typesUsed: {}
-  }
+  };
 
   const generator = new CodeGenerator(context);
 
-  const compileFromSource = (source) => {
+  const compileFromSource = source => {
     const document = parse(source);
-    const context = compileToLegacyIR(schema, document, { mergeInFieldsFromFragmentSpreads: true, addTypename: true } );
+    const context = compileToLegacyIR(schema, document, {
+      mergeInFieldsFromFragmentSpreads: true,
+      addTypename: true
+    });
     generator.context = context;
     return context;
   };
 
-  const addFragment = (fragment) => {
+  const addFragment = fragment => {
     generator.context.fragments[fragment.fragmentName] = fragment;
   };
 
   return { generator, compileFromSource, addFragment };
 }
 
-describe('Flow code generation', function() {
-  describe('#generateSource()', function() {
+describe("Flow code generation", function() {
+  describe("#generateSource()", function() {
     test(`should generate simple query operations`, function() {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
@@ -232,7 +237,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should handle single line comments', () => {
+    test("should handle single line comments", () => {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
         query CustomScalar {
@@ -246,7 +251,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should handle multi-line comments', () => {
+    test("should handle multi-line comments", () => {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
         query CustomScalar {
@@ -260,7 +265,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should handle comments in enums', () => {
+    test("should handle comments in enums", () => {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
         query CustomScalar {
@@ -274,7 +279,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should handle interfaces at root', () => {
+    test("should handle interfaces at root", () => {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
         query CustomScalar {
@@ -294,7 +299,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should handle unions at root', () => {
+    test("should handle unions at root", () => {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
         query CustomScalar {
@@ -313,7 +318,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should handle scalars at root', () => {
+    test("should handle scalars at root", () => {
       const { compileFromSource } = setup(miscSchema);
       const context = compileFromSource(`
         query RootScalar {
@@ -325,7 +330,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should have __typename value matching fragment type on generic type', () => {
+    test("should have __typename value matching fragment type on generic type", () => {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroName {
@@ -344,7 +349,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should have __typename value matching fragment type on specific type', () => {
+    test("should have __typename value matching fragment type on specific type", () => {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query DroidName {
@@ -363,7 +368,7 @@ describe('Flow code generation', function() {
       expect(source).toMatchSnapshot();
     });
 
-    test('should have __typename value in nested property', () => {
+    test("should have __typename value in nested property", () => {
       const { compileFromSource } = setup(starWarsSchema);
       const context = compileFromSource(`
         query HeroName {

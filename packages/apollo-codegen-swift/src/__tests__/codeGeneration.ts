@@ -1,7 +1,15 @@
-import { parse, GraphQLNonNull, GraphQLString, GraphQLEnumType, GraphQLList } from 'graphql';
+import {
+  parse,
+  GraphQLNonNull,
+  GraphQLString,
+  GraphQLEnumType,
+  GraphQLList
+} from "graphql";
 
-import { loadSchema } from 'apollo-codegen-core/lib/loading';
-const schema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
+import { loadSchema } from "apollo-codegen-core/lib/loading";
+const schema = loadSchema(
+  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+);
 
 import {
   compileToIR,
@@ -10,11 +18,11 @@ import {
   SelectionSet,
   Field,
   Argument
-} from 'apollo-codegen-core/lib/compiler';
+} from "apollo-codegen-core/lib/compiler";
 
-import { SwiftAPIGenerator } from '../codeGeneration';
+import { SwiftAPIGenerator } from "../codeGeneration";
 
-describe('Swift code generation', () => {
+describe("Swift code generation", () => {
   let generator: SwiftAPIGenerator;
 
   beforeEach(() => {
@@ -31,7 +39,7 @@ describe('Swift code generation', () => {
     return context;
   }
 
-  describe('#classDeclarationForOperation()', () => {
+  describe("#classDeclarationForOperation()", () => {
     it(`should generate a class declaration for a query with variables`, () => {
       const { operations } = compile(`
         query HeroName($episode: Episode) {
@@ -41,7 +49,7 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations['HeroName']);
+      generator.classDeclarationForOperation(operations["HeroName"]);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -59,7 +67,7 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations['Hero']);
+      generator.classDeclarationForOperation(operations["Hero"]);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -77,7 +85,7 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations['Hero']);
+      generator.classDeclarationForOperation(operations["Hero"]);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -97,7 +105,7 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations['Hero']);
+      generator.classDeclarationForOperation(operations["Hero"]);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -112,7 +120,7 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations['CreateReview']);
+      generator.classDeclarationForOperation(operations["CreateReview"]);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -132,22 +140,24 @@ describe('Swift code generation', () => {
         { generateOperationIds: true, mergeInFieldsFromFragmentSpreads: true }
       );
 
-      generator.classDeclarationForOperation(operations['Hero']);
+      generator.classDeclarationForOperation(operations["Hero"]);
 
       expect(generator.output).toMatchSnapshot();
     });
   });
 
-  describe('#initializerDeclarationForProperties()', () => {
+  describe("#initializerDeclarationForProperties()", () => {
     it(`should generate initializer for a property`, () => {
-      generator.initializerDeclarationForProperties([{ propertyName: 'episode', typeName: 'Episode' }]);
+      generator.initializerDeclarationForProperties([
+        { propertyName: "episode", typeName: "Episode" }
+      ]);
 
       expect(generator.output).toMatchSnapshot();
     });
 
     it(`should generate initializer for an optional property`, () => {
       generator.initializerDeclarationForProperties([
-        { propertyName: 'episode', typeName: 'Episode?', isOptional: true }
+        { propertyName: "episode", typeName: "Episode?", isOptional: true }
       ]);
 
       expect(generator.output).toMatchSnapshot();
@@ -155,137 +165,151 @@ describe('Swift code generation', () => {
 
     it(`should generate initializer for multiple properties`, () => {
       generator.initializerDeclarationForProperties([
-        { propertyName: 'episode', typeName: 'Episode?', isOptional: true },
-        { propertyName: 'scene', typeName: 'String?', isOptional: true }
+        { propertyName: "episode", typeName: "Episode?", isOptional: true },
+        { propertyName: "scene", typeName: "String?", isOptional: true }
       ]);
 
       expect(generator.output).toMatchSnapshot();
     });
   });
 
-  describe('#propertyAssignmentForField()', () => {
-    it('should generate expression for nullable scalar', () => {
+  describe("#propertyAssignmentForField()", () => {
+    it("should generate expression for nullable scalar", () => {
       expect(
         generator.propertyAssignmentForField({
-          responseKey: 'response_key',
-          propertyName: 'propertyName',
+          responseKey: "response_key",
+          propertyName: "propertyName",
           type: GraphQLString
         })
       ).toBe('"response_key": propertyName');
     });
 
-    it('should generate expression for non-null scalar', () => {
+    it("should generate expression for non-null scalar", () => {
       expect(
         generator.propertyAssignmentForField({
-          responseKey: 'response_key',
-          propertyName: 'propertyName',
+          responseKey: "response_key",
+          propertyName: "propertyName",
           type: new GraphQLNonNull(GraphQLString)
         })
       ).toBe('"response_key": propertyName');
     });
 
-    it('should generate expression for nullable list of nullable scalars', () => {
+    it("should generate expression for nullable list of nullable scalars", () => {
       expect(
         generator.propertyAssignmentForField({
-          responseKey: 'response_key',
-          propertyName: 'propertyName',
+          responseKey: "response_key",
+          propertyName: "propertyName",
           type: new GraphQLList(GraphQLString)
         })
       ).toBe('"response_key": propertyName');
     });
 
-    it('should generate expression for nullable list of non-null scalars', () => {
+    it("should generate expression for nullable list of non-null scalars", () => {
       expect(
         generator.propertyAssignmentForField({
-          responseKey: 'response_key',
-          propertyName: 'propertyName',
+          responseKey: "response_key",
+          propertyName: "propertyName",
           type: new GraphQLList(new GraphQLNonNull(GraphQLString))
         })
       ).toBe('"response_key": propertyName');
     });
 
-    it('should generate expression for non-null list of nullable scalars', () => {
+    it("should generate expression for non-null list of nullable scalars", () => {
       expect(
         generator.propertyAssignmentForField({
-          responseKey: 'response_key',
-          propertyName: 'propertyName',
+          responseKey: "response_key",
+          propertyName: "propertyName",
           type: new GraphQLNonNull(new GraphQLList(GraphQLString))
         })
       ).toBe('"response_key": propertyName');
     });
 
-    it('should generate expression for non-null list of non-null scalars', () => {
+    it("should generate expression for non-null list of non-null scalars", () => {
       expect(
         generator.propertyAssignmentForField({
-          responseKey: 'response_key',
-          propertyName: 'propertyName',
-          type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString)))
+          responseKey: "response_key",
+          propertyName: "propertyName",
+          type: new GraphQLNonNull(
+            new GraphQLList(new GraphQLNonNull(GraphQLString))
+          )
         })
       ).toBe('"response_key": propertyName');
     });
 
-    it('should generate expression for nullable composite', () => {
+    it("should generate expression for nullable composite", () => {
       expect(
         generator.propertyAssignmentForField({
-          responseKey: 'response_key',
-          propertyName: 'propertyName',
-          type: schema.getType('Droid')
+          responseKey: "response_key",
+          propertyName: "propertyName",
+          type: schema.getType("Droid")
         })
-      ).toBe('"response_key": propertyName.flatMap { (value: Droid) -> ResultMap in value.resultMap }');
+      ).toBe(
+        '"response_key": propertyName.flatMap { (value: Droid) -> ResultMap in value.resultMap }'
+      );
     });
 
-    it('should generate expression for non-null composite', () => {
+    it("should generate expression for non-null composite", () => {
       expect(
         generator.propertyAssignmentForField({
-          responseKey: 'response_key',
-          propertyName: 'propertyName',
-          type: new GraphQLNonNull(schema.getType('Droid'))
+          responseKey: "response_key",
+          propertyName: "propertyName",
+          type: new GraphQLNonNull(schema.getType("Droid"))
         })
       ).toBe('"response_key": propertyName.resultMap');
     });
 
-    it('should generate expression for nullable list of nullable composites', () => {
+    it("should generate expression for nullable list of nullable composites", () => {
       expect(
         generator.propertyAssignmentForField({
-          responseKey: 'response_key',
-          propertyName: 'propertyName',
-          type: new GraphQLList(schema.getType('Droid'))
+          responseKey: "response_key",
+          propertyName: "propertyName",
+          type: new GraphQLList(schema.getType("Droid"))
         })
-      ).toBe('"response_key": propertyName.flatMap { (value: [Droid?]) -> [ResultMap?] in value.map { (value: Droid?) -> ResultMap? in value.flatMap { (value: Droid) -> ResultMap in value.resultMap } } }');
+      ).toBe(
+        '"response_key": propertyName.flatMap { (value: [Droid?]) -> [ResultMap?] in value.map { (value: Droid?) -> ResultMap? in value.flatMap { (value: Droid) -> ResultMap in value.resultMap } } }'
+      );
     });
 
-    it('should generate expression for nullable list of non-null composites', () => {
+    it("should generate expression for nullable list of non-null composites", () => {
       expect(
         generator.propertyAssignmentForField({
-          responseKey: 'response_key',
-          propertyName: 'propertyName',
-          type: new GraphQLList(new GraphQLNonNull(schema.getType('Droid')))
+          responseKey: "response_key",
+          propertyName: "propertyName",
+          type: new GraphQLList(new GraphQLNonNull(schema.getType("Droid")))
         })
-      ).toBe('"response_key": propertyName.flatMap { (value: [Droid]) -> [ResultMap] in value.map { (value: Droid) -> ResultMap in value.resultMap } }');
+      ).toBe(
+        '"response_key": propertyName.flatMap { (value: [Droid]) -> [ResultMap] in value.map { (value: Droid) -> ResultMap in value.resultMap } }'
+      );
     });
 
-    it('should generate expression for non-null list of nullable composites', () => {
+    it("should generate expression for non-null list of nullable composites", () => {
       expect(
         generator.propertyAssignmentForField({
-          responseKey: 'response_key',
-          propertyName: 'propertyName',
-          type: new GraphQLNonNull(new GraphQLList(schema.getType('Droid')))
+          responseKey: "response_key",
+          propertyName: "propertyName",
+          type: new GraphQLNonNull(new GraphQLList(schema.getType("Droid")))
         })
-      ).toBe('"response_key": propertyName.map { (value: Droid?) -> ResultMap? in value.flatMap { (value: Droid) -> ResultMap in value.resultMap } }');
+      ).toBe(
+        '"response_key": propertyName.map { (value: Droid?) -> ResultMap? in value.flatMap { (value: Droid) -> ResultMap in value.resultMap } }'
+      );
     });
 
-    it('should generate expression for non-null list of non-null composites', () => {
+    it("should generate expression for non-null list of non-null composites", () => {
       expect(
         generator.propertyAssignmentForField({
-          responseKey: 'response_key',
-          propertyName: 'propertyName',
-          type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(schema.getType('Droid'))))
+          responseKey: "response_key",
+          propertyName: "propertyName",
+          type: new GraphQLNonNull(
+            new GraphQLList(new GraphQLNonNull(schema.getType("Droid")))
+          )
         })
-      ).toBe('"response_key": propertyName.map { (value: Droid) -> ResultMap in value.resultMap }');
+      ).toBe(
+        '"response_key": propertyName.map { (value: Droid) -> ResultMap in value.resultMap }'
+      );
     });
   });
 
-  describe('#structDeclarationForFragment()', () => {
+  describe("#structDeclarationForFragment()", () => {
     it(`should generate a struct declaration for a fragment with an abstract type condition`, () => {
       const { fragments } = compile(`
         fragment HeroDetails on Character {
@@ -294,7 +318,7 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments['HeroDetails']);
+      generator.structDeclarationForFragment(fragments["HeroDetails"]);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -307,7 +331,7 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments['DroidDetails']);
+      generator.structDeclarationForFragment(fragments["DroidDetails"]);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -322,7 +346,7 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments['HeroDetails']);
+      generator.structDeclarationForFragment(fragments["HeroDetails"]);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -339,13 +363,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments['HeroDetails']);
+      generator.structDeclarationForFragment(fragments["HeroDetails"]);
 
       expect(generator.output).toMatchSnapshot();
     });
   });
 
-  describe('#structDeclarationForSelectionSet()', () => {
+  describe("#structDeclarationForSelectionSet()", () => {
     it(`should generate a struct declaration for a selection set`, () => {
       const { operations } = compile(`
         query Hero {
@@ -355,10 +379,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      const selectionSet = (operations['Hero'].selectionSet.selections[0] as Field)
-        .selectionSet as SelectionSet;
+      const selectionSet = (operations["Hero"].selectionSet
+        .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({ structName: 'Hero', selectionSet });
+      generator.structDeclarationForSelectionSet({
+        structName: "Hero",
+        selectionSet
+      });
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -372,10 +399,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      const selectionSet = (operations['Hero'].selectionSet.selections[0] as Field)
-        .selectionSet as SelectionSet;
+      const selectionSet = (operations["Hero"].selectionSet
+        .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({ structName: 'Hero', selectionSet });
+      generator.structDeclarationForSelectionSet({
+        structName: "Hero",
+        selectionSet
+      });
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -391,10 +421,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      const selectionSet = (operations['Hero'].selectionSet.selections[0] as Field)
-        .selectionSet as SelectionSet;
+      const selectionSet = (operations["Hero"].selectionSet
+        .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({ structName: 'Hero', selectionSet });
+      generator.structDeclarationForSelectionSet({
+        structName: "Hero",
+        selectionSet
+      });
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -413,10 +446,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      const selectionSet = (operations['Hero'].selectionSet.selections[0] as Field)
-        .selectionSet as SelectionSet;
+      const selectionSet = (operations["Hero"].selectionSet
+        .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({ structName: 'Hero', selectionSet });
+      generator.structDeclarationForSelectionSet({
+        structName: "Hero",
+        selectionSet
+      });
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -435,10 +471,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      const selectionSet = (operations['Hero'].selectionSet.selections[0] as Field)
-        .selectionSet as SelectionSet;
+      const selectionSet = (operations["Hero"].selectionSet
+        .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({ structName: 'Hero', selectionSet });
+      generator.structDeclarationForSelectionSet({
+        structName: "Hero",
+        selectionSet
+      });
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -455,10 +494,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      const selectionSet = (operations['Hero'].selectionSet.selections[0] as Field)
-        .selectionSet as SelectionSet;
+      const selectionSet = (operations["Hero"].selectionSet
+        .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({ structName: 'Hero', selectionSet });
+      generator.structDeclarationForSelectionSet({
+        structName: "Hero",
+        selectionSet
+      });
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -479,10 +521,13 @@ describe('Swift code generation', () => {
         }
       `);
 
-      const selectionSet = (operations['Hero'].selectionSet.selections[0] as Field)
-        .selectionSet as SelectionSet;
+      const selectionSet = (operations["Hero"].selectionSet
+        .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({ structName: 'Hero', selectionSet });
+      generator.structDeclarationForSelectionSet({
+        structName: "Hero",
+        selectionSet
+      });
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -496,26 +541,29 @@ describe('Swift code generation', () => {
         }
       `);
 
-      const selectionSet = (operations['Hero'].selectionSet.selections[0] as Field)
-        .selectionSet as SelectionSet;
+      const selectionSet = (operations["Hero"].selectionSet
+        .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({ structName: 'Hero', selectionSet });
+      generator.structDeclarationForSelectionSet({
+        structName: "Hero",
+        selectionSet
+      });
 
       expect(generator.output).toMatchSnapshot();
     });
   });
 
-  describe('#typeDeclarationForGraphQLType()', () => {
-    it('should generate an enum declaration for a GraphQLEnumType', () => {
-      generator.typeDeclarationForGraphQLType(schema.getType('Episode'));
+  describe("#typeDeclarationForGraphQLType()", () => {
+    it("should generate an enum declaration for a GraphQLEnumType", () => {
+      generator.typeDeclarationForGraphQLType(schema.getType("Episode"));
 
       expect(generator.output).toMatchSnapshot();
     });
 
-    it('should escape identifiers in cases of enum declaration for a GraphQLEnumType', () => {
+    it("should escape identifiers in cases of enum declaration for a GraphQLEnumType", () => {
       const albumPrivaciesEnum = new GraphQLEnumType({
-        name: 'AlbumPrivacies',
-        values: { PUBLIC: { value: 'PUBLIC' }, PRIVATE: { value: 'PRIVATE' } }
+        name: "AlbumPrivacies",
+        values: { PUBLIC: { value: "PUBLIC" }, PRIVATE: { value: "PRIVATE" } }
       });
 
       generator.typeDeclarationForGraphQLType(albumPrivaciesEnum);
@@ -523,15 +571,15 @@ describe('Swift code generation', () => {
       expect(generator.output).toMatchSnapshot();
     });
 
-    it('should generate a struct declaration for a GraphQLInputObjectType', () => {
-      generator.typeDeclarationForGraphQLType(schema.getType('ReviewInput'));
+    it("should generate a struct declaration for a GraphQLInputObjectType", () => {
+      generator.typeDeclarationForGraphQLType(schema.getType("ReviewInput"));
 
       expect(generator.output).toMatchSnapshot();
     });
   });
 
-  describe('#dictionaryLiteralForFieldArguments()', () => {
-    it('should include expressions for input objects with variables', () => {
+  describe("#dictionaryLiteralForFieldArguments()", () => {
+    it("should include expressions for input objects with variables", () => {
       const { operations } = compile(`
         mutation FieldArgumentsWithInputObjects($commentary: String!, $red: Int!) {
           createReview(episode: JEDI, review: { stars: 2, commentary: $commentary, favorite_color: { red: $red, blue: 100, green: 50 } }) {
@@ -540,9 +588,11 @@ describe('Swift code generation', () => {
         }
       `);
 
-      const fieldArguments = (operations['FieldArgumentsWithInputObjects'].selectionSet
-        .selections[0] as Field).args as Argument[];
-      const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(fieldArguments);
+      const fieldArguments = (operations["FieldArgumentsWithInputObjects"]
+        .selectionSet.selections[0] as Field).args as Argument[];
+      const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(
+        fieldArguments
+      );
 
       expect(dictionaryLiteral).toBe(
         '["episode": "JEDI", "review": ["stars": 2, "commentary": GraphQLVariable("commentary"), "favorite_color": ["red": GraphQLVariable("red"), "blue": 100, "green": 50]]]'

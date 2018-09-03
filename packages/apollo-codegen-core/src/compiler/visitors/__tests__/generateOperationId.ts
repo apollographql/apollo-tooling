@@ -1,7 +1,7 @@
-import { generateOperationId } from '../generateOperationId';
-import { stripIndent } from 'common-tags';
+import { generateOperationId } from "../generateOperationId";
+import { stripIndent } from "common-tags";
 
-import { compile } from './test-utils/helpers';
+import { compile } from "./test-utils/helpers";
 
 describe(`generateOperationId()`, () => {
   it(`should generate different operation IDs for different operations`, () => {
@@ -16,7 +16,10 @@ describe(`generateOperationId()`, () => {
       }
     `);
 
-    const { operationId: id1 } = generateOperationId(context1.operations['Hero'], context1.fragments);
+    const { operationId: id1 } = generateOperationId(
+      context1.operations["Hero"],
+      context1.fragments
+    );
 
     const context2 = compile(`
       query Hero {
@@ -29,7 +32,10 @@ describe(`generateOperationId()`, () => {
       }
     `);
 
-    const { operationId: id2 } = generateOperationId(context2.operations['Hero'], context2.fragments);
+    const { operationId: id2 } = generateOperationId(
+      context2.operations["Hero"],
+      context2.fragments
+    );
 
     expect(id1).not.toBe(id2);
   });
@@ -43,7 +49,10 @@ describe(`generateOperationId()`, () => {
       }
     `);
 
-    const { operationId: id1 } = generateOperationId(context1.operations['HeroName'], context1.fragments);
+    const { operationId: id1 } = generateOperationId(
+      context1.operations["HeroName"],
+      context1.fragments
+    );
 
     const context2 = compile(`
       # Profound comment
@@ -51,7 +60,10 @@ describe(`generateOperationId()`, () => {
       # Deeply meaningful comment
     `);
 
-    const { operationId: id2 } = generateOperationId(context2.operations['HeroName'], context2.fragments);
+    const { operationId: id2 } = generateOperationId(
+      context2.operations["HeroName"],
+      context2.fragments
+    );
 
     expect(id1).toBe(id2);
   });
@@ -72,7 +84,10 @@ describe(`generateOperationId()`, () => {
       }
     `);
 
-    const { operationId: id1 } = generateOperationId(context1.operations['Hero'], context1.fragments);
+    const { operationId: id1 } = generateOperationId(
+      context1.operations["Hero"],
+      context1.fragments
+    );
 
     const context2 = compile(`
       query Hero {
@@ -89,7 +104,10 @@ describe(`generateOperationId()`, () => {
       }
     `);
 
-    const { operationId: id2 } = generateOperationId(context2.operations['Hero'], context2.fragments);
+    const { operationId: id2 } = generateOperationId(
+      context2.operations["Hero"],
+      context2.fragments
+    );
 
     expect(id1).toBe(id2);
   });
@@ -110,7 +128,10 @@ describe(`generateOperationId()`, () => {
       }
     `);
 
-    const { sourceWithFragments } = generateOperationId(context.operations['Hero'], context.fragments);
+    const { sourceWithFragments } = generateOperationId(
+      context.operations["Hero"],
+      context.fragments
+    );
 
     expect(sourceWithFragments).toBe(stripIndent`
       query Hero {

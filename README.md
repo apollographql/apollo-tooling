@@ -1,1 +1,1 @@
-packages/apollo-cli/README.md
+packages/apollo/README.md

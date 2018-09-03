@@ -1,6 +1,6 @@
-import { Operation, Fragment } from '../';
-import { collectFragmentsReferenced } from './collectFragmentsReferenced';
-import { createHash } from 'crypto';
+import { Operation, Fragment } from "../";
+import { collectFragmentsReferenced } from "./collectFragmentsReferenced";
+import { createHash } from "crypto";
 
 export function generateOperationId(
   operation: Operation,
@@ -8,7 +8,10 @@ export function generateOperationId(
   fragmentsReferenced?: Iterable<string>
 ) {
   if (!fragmentsReferenced) {
-    fragmentsReferenced = collectFragmentsReferenced(operation.selectionSet, fragments);
+    fragmentsReferenced = collectFragmentsReferenced(
+      operation.selectionSet,
+      fragments
+    );
   }
 
   const sourceWithFragments = [
@@ -20,11 +23,11 @@ export function generateOperationId(
       }
       return fragment.source;
     })
-  ].join('\n');
+  ].join("\n");
 
-  const hash = createHash('sha256');
+  const hash = createHash("sha256");
   hash.update(sourceWithFragments);
-  const operationId = hash.digest('hex');
+  const operationId = hash.digest("hex");
 
   return { operationId, sourceWithFragments };
 }

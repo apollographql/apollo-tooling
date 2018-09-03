@@ -1,23 +1,31 @@
-import { parse } from 'graphql';
+import { parse } from "graphql";
 
-import { loadSchema } from 'apollo-codegen-core/lib/loading';
-const schema = loadSchema(require.resolve('../../../common-test/fixtures/starwars/schema.json'));
-const miscSchema = loadSchema(require.resolve('../../../common-test/fixtures/misc/schema.json'));
+import { loadSchema } from "apollo-codegen-core/lib/loading";
+const schema = loadSchema(
+  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+);
+const miscSchema = loadSchema(
+  require.resolve("../../../common-test/fixtures/misc/schema.json")
+);
 
 import {
   compileToIR,
   CompilerOptions,
-  CompilerContext,
-} from 'apollo-codegen-core/lib/compiler';
+  CompilerContext
+} from "apollo-codegen-core/lib/compiler";
 
-import { generateSource, generateLocalSource, generateGlobalSource } from '../codeGeneration';
+import {
+  generateSource,
+  generateLocalSource,
+  generateGlobalSource
+} from "../codeGeneration";
 
 function compile(
   source: string,
   options: CompilerOptions = {
     mergeInFieldsFromFragmentSpreads: true,
     addTypename: true
-  },
+  }
 ): CompilerContext {
   const document = parse(source);
   return compileToIR(schema, document, options);
@@ -28,14 +36,14 @@ function compileMisc(
   options: CompilerOptions = {
     mergeInFieldsFromFragmentSpreads: true,
     addTypename: true
-  },
+  }
 ): CompilerContext {
   const document = parse(source);
   return compileToIR(miscSchema, document, options);
 }
 
-describe('Typescript codeGeneration', () => {
-  test('multiple files', () => {
+describe("Typescript codeGeneration", () => {
+  test("multiple files", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -62,19 +70,18 @@ describe('Typescript codeGeneration', () => {
         }
       }
     `);
-    context.operations["HeroName"].filePath = '/some/file/ComponentA.js';
-    context.operations["SomeOther"].filePath = '/some/file/ComponentB.js';
-    context.fragments['someFragment'].filePath = '/some/file/ComponentB.js';
+    context.operations["HeroName"].filePath = "/some/file/ComponentA.js";
+    context.operations["SomeOther"].filePath = "/some/file/ComponentB.js";
+    context.fragments["someFragment"].filePath = "/some/file/ComponentB.js";
     const output = generateSource(context);
     expect(output).toBeInstanceOf(Object);
-    Object.keys(output)
-      .forEach((filePath) => {
-        expect(filePath).toMatchSnapshot();
-        expect(output[filePath]).toMatchSnapshot();
-      });
+    Object.keys(output).forEach(filePath => {
+      expect(filePath).toMatchSnapshot();
+      expect(output[filePath]).toMatchSnapshot();
+    });
   });
 
-  test('simple hero query', () => {
+  test("simple hero query", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -88,7 +95,7 @@ describe('Typescript codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('simple mutation', () => {
+  test("simple mutation", () => {
     const context = compile(`
       mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
         createReview(episode: $episode, review: $review) {
@@ -102,7 +109,7 @@ describe('Typescript codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('simple fragment', () => {
+  test("simple fragment", () => {
     const context = compile(`
       fragment SimpleFragment on Character{
         name
@@ -113,7 +120,7 @@ describe('Typescript codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('fragment with fragment spreads', () => {
+  test("fragment with fragment spreads", () => {
     const context = compile(`
       fragment simpleFragment on Character {
         name
@@ -129,7 +136,7 @@ describe('Typescript codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('fragment with fragment spreads with inline fragment', () => {
+  test("fragment with fragment spreads with inline fragment", () => {
     const context = compile(`
       fragment simpleFragment on Character {
         name
@@ -149,7 +156,7 @@ describe('Typescript codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('query with fragment spreads', () => {
+  test("query with fragment spreads", () => {
     const context = compile(`
       fragment simpleFragment on Character {
         name
@@ -167,7 +174,7 @@ describe('Typescript codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('inline fragment', () => {
+  test("inline fragment", () => {
     const context = compile(`
       query HeroInlineFragment($episode: Episode) {
         hero(episode: $episode) {
@@ -181,9 +188,9 @@ describe('Typescript codeGeneration', () => {
 
     const output = generateSource(context);
     expect(output).toMatchSnapshot();
-  })
+  });
 
-  test('inline fragment on type conditions', () => {
+  test("inline fragment on type conditions", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -207,7 +214,7 @@ describe('Typescript codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('inline fragment on type conditions with differing inner fields', () => {
+  test("inline fragment on type conditions with differing inner fields", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -235,7 +242,7 @@ describe('Typescript codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('fragment spreads with inline fragments', () => {
+  test("fragment spreads with inline fragments", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -267,7 +274,7 @@ describe('Typescript codeGeneration', () => {
     expect(output).toMatchSnapshot();
   });
 
-  test('handles multiline graphql comments', () => {
+  test("handles multiline graphql comments", () => {
     const context = compileMisc(`
       query CustomScalar {
         commentTest {
@@ -281,8 +288,8 @@ describe('Typescript codeGeneration', () => {
   });
 });
 
-describe('Typescript codeGeneration local / global', () => {
-  test('simple hero query', () => {
+describe("Typescript codeGeneration local / global", () => {
+  test("simple hero query", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -292,18 +299,18 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
 
-  test('simple mutation', () => {
+  test("simple mutation", () => {
     const context = compile(`
       mutation ReviewMovie($episode: Episode, $review: ReviewInput) {
         createReview(episode: $episode, review: $review) {
@@ -313,36 +320,36 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
 
-  test('simple fragment', () => {
+  test("simple fragment", () => {
     const context = compile(`
       fragment SimpleFragment on Character{
         name
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
 
-  test('fragment with fragment spreads', () => {
+  test("fragment with fragment spreads", () => {
     const context = compile(`
       fragment simpleFragment on Character {
         name
@@ -354,18 +361,18 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
 
-  test('fragment with fragment spreads with inline fragment', () => {
+  test("fragment with fragment spreads with inline fragment", () => {
     const context = compile(`
       fragment simpleFragment on Character {
         name
@@ -381,18 +388,18 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
 
-  test('query with fragment spreads', () => {
+  test("query with fragment spreads", () => {
     const context = compile(`
       fragment simpleFragment on Character {
         name
@@ -406,18 +413,18 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
 
-  test('inline fragment', () => {
+  test("inline fragment", () => {
     const context = compile(`
       query HeroInlineFragment($episode: Episode) {
         hero(episode: $episode) {
@@ -429,18 +436,18 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
-  })
+  });
 
-  test('inline fragment on type conditions', () => {
+  test("inline fragment on type conditions", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -461,18 +468,18 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
 
-  test('inline fragment on type conditions with differing inner fields', () => {
+  test("inline fragment on type conditions with differing inner fields", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -496,18 +503,18 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
 
-  test('fragment spreads with inline fragments', () => {
+  test("fragment spreads with inline fragments", () => {
     const context = compile(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -536,18 +543,18 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
 
-  test('handles multiline graphql comments', () => {
+  test("handles multiline graphql comments", () => {
     const context = compileMisc(`
       query CustomScalar {
         commentTest {
@@ -556,18 +563,18 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
 
-  test('multiple nested non-null list enum', () => {
+  test("multiple nested non-null list enum", () => {
     const context = compileMisc(`
       query nesting {
         nesting {
@@ -576,18 +583,18 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
 
-  test('multiple nested list enum', () => {
+  test("multiple nested list enum", () => {
     const context = compileMisc(`
       query nesting {
         nesting {
@@ -596,18 +603,18 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
 
-  test('duplicates', () => {
+  test("duplicates", () => {
     const context = compileMisc(`
       mutation duplicates($a: EnumCommentTestCase!, $b: EnumCommentTestCase!, $c: Duplicate!) {
         duplicates(a: $a, b: $b, c: $c) {
@@ -617,12 +624,12 @@ describe('Typescript codeGeneration local / global', () => {
       }
     `);
 
-    const output = generateLocalSource(context).map((f) => ({
+    const output = generateLocalSource(context).map(f => ({
       ...f,
       content: f.content({
-        outputPath: '/some/file/ComponentA.tsx',
-        globalSourcePath: '/__generated__/globalTypes.ts'
-      }),
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();

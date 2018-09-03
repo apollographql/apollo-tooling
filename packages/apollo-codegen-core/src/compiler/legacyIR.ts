@@ -5,16 +5,22 @@ import {
   GraphQLCompositeType,
   GraphQLInputType,
   DocumentNode
-} from 'graphql';
+} from "graphql";
 
-import { compileToIR, CompilerContext, SelectionSet, Field, FragmentSpread } from './';
+import {
+  compileToIR,
+  CompilerContext,
+  SelectionSet,
+  Field,
+  FragmentSpread
+} from "./";
 
-import { collectFragmentsReferenced } from './visitors/collectFragmentsReferenced';
-import { generateOperationId } from './visitors/generateOperationId';
-import { typeCaseForSelectionSet } from './visitors/typeCase';
-import { collectAndMergeFields } from './visitors/collectAndMergeFields';
+import { collectFragmentsReferenced } from "./visitors/collectFragmentsReferenced";
+import { generateOperationId } from "./visitors/generateOperationId";
+import { typeCaseForSelectionSet } from "./visitors/typeCase";
+import { collectAndMergeFields } from "./visitors/collectAndMergeFields";
 
-import '../utilities/array';
+import "../utilities/array";
 
 export interface CompilerOptions {
   addTypename?: boolean;
@@ -112,11 +118,25 @@ class LegacyIRTransformer {
   ) {}
 
   transformIR(): LegacyCompilerContext {
-    const operations: { [operationName: string]: LegacyOperation } = Object.create({});
+    const operations: {
+      [operationName: string]: LegacyOperation;
+    } = Object.create({});
 
-    for (const [operationName, operation] of Object.entries(this.context.operations)) {
-      const { filePath, operationType, rootType, variables, source, selectionSet } = operation;
-      const fragmentsReferenced = collectFragmentsReferenced(selectionSet, this.context.fragments);
+    for (const [operationName, operation] of Object.entries(
+      this.context.operations
+    )) {
+      const {
+        filePath,
+        operationType,
+        rootType,
+        variables,
+        source,
+        selectionSet
+      } = operation;
+      const fragmentsReferenced = collectFragmentsReferenced(
+        selectionSet,
+        this.context.fragments
+      );
 
       const { sourceWithFragments, operationId } = generateOperationId(
         operation,
@@ -138,9 +158,13 @@ class LegacyIRTransformer {
       };
     }
 
-    const fragments: { [fragmentName: string]: LegacyFragment } = Object.create({});
+    const fragments: { [fragmentName: string]: LegacyFragment } = Object.create(
+      {}
+    );
 
-    for (const [fragmentName, fragment] of Object.entries(this.context.fragments)) {
+    for (const [fragmentName, fragment] of Object.entries(
+      this.context.fragments
+    )) {
       const { selectionSet, type, ...fragmentWithoutSelectionSet } = fragment;
       fragments[fragmentName] = {
         typeCondition: type,
@@ -162,43 +186,55 @@ class LegacyIRTransformer {
   }
 
   transformSelectionSetToLegacyIR(selectionSet: SelectionSet) {
-    const typeCase = typeCaseForSelectionSet(selectionSet, this.options.mergeInFieldsFromFragmentSpreads);
+    const typeCase = typeCaseForSelectionSet(
+      selectionSet,
+      this.options.mergeInFieldsFromFragmentSpreads
+    );
 
     const fields: LegacyField[] = this.transformFieldsToLegacyIR(
       collectAndMergeFields(typeCase.default, false)
     );
 
-    const inlineFragments: LegacyInlineFragment[] = typeCase.variants.flatMap(variant => {
-      const fields = this.transformFieldsToLegacyIR(collectAndMergeFields(variant, false));
+    const inlineFragments: LegacyInlineFragment[] = typeCase.variants.flatMap(
+      variant => {
+        const fields = this.transformFieldsToLegacyIR(
+          collectAndMergeFields(variant, false)
+        );
 
-      if (
-        // Filter out records that represent the same possible types as the default record.
-        selectionSet.possibleTypes.every(type => variant.possibleTypes.includes(type)) &&
-        // Filter out empty records for consistency with legacy compiler.
-        fields.length < 1
-      )
-        return undefined;
+        if (
+          // Filter out records that represent the same possible types as the default record.
+          selectionSet.possibleTypes.every(type =>
+            variant.possibleTypes.includes(type)
+          ) &&
+          // Filter out empty records for consistency with legacy compiler.
+          fields.length < 1
+        )
+          return undefined;
 
-      const fragmentSpreads: string[] = this.collectFragmentSpreads(selectionSet, variant.possibleTypes).map(
-        (fragmentSpread: FragmentSpread) => fragmentSpread.fragmentName
-      );
-      return variant.possibleTypes.map(possibleType => {
-        return {
-          typeCondition: possibleType,
-          possibleTypes: [possibleType],
-          fields,
-          fragmentSpreads
-        } as LegacyInlineFragment;
-      });
-    });
+        const fragmentSpreads: string[] = this.collectFragmentSpreads(
+          selectionSet,
+          variant.possibleTypes
+        ).map((fragmentSpread: FragmentSpread) => fragmentSpread.fragmentName);
+        return variant.possibleTypes.map(possibleType => {
+          return {
+            typeCondition: possibleType,
+            possibleTypes: [possibleType],
+            fields,
+            fragmentSpreads
+          } as LegacyInlineFragment;
+        });
+      }
+    );
 
     for (const inlineFragment of inlineFragments) {
-      inlineFragments[inlineFragment.typeCondition.name as any] = inlineFragment;
+      inlineFragments[
+        inlineFragment.typeCondition.name as any
+      ] = inlineFragment;
     }
 
-    const fragmentSpreads: string[] = this.collectFragmentSpreads(selectionSet).map(
-      (fragmentSpread: FragmentSpread) => fragmentSpread.fragmentName
-    );
+    const fragmentSpreads: string[] = this.collectFragmentSpreads(
+      selectionSet
+    ).map((fragmentSpread: FragmentSpread) => fragmentSpread.fragmentName);
 
     return {
       fields,
@@ -209,7 +245,15 @@ class LegacyIRTransformer {
 
   transformFieldsToLegacyIR(fields: Field[]) {
     return fields.map(field => {
-      const { args, type, isConditional, description, isDeprecated, deprecationReason, selectionSet } = field;
+      const {
+        args,
+        type,
+        isConditional,
+        description,
+        isDeprecated,
+        deprecationReason,
+        selectionSet
+      } = field;
       const conditions =
         field.conditions && field.conditions.length > 0
           ? field.conditions.map(({ kind, variableName, inverted }) => {
@@ -230,7 +274,9 @@ class LegacyIRTransformer {
         description,
         isDeprecated,
         deprecationReason,
-        ...(selectionSet ? this.transformSelectionSetToLegacyIR(selectionSet) : {})
+        ...(selectionSet
+          ? this.transformSelectionSetToLegacyIR(selectionSet)
+          : {})
       } as LegacyField;
     });
   }
@@ -243,16 +289,30 @@ class LegacyIRTransformer {
 
     for (const selection of selectionSet.selections) {
       switch (selection.kind) {
-        case 'FragmentSpread':
+        case "FragmentSpread":
           fragmentSpreads.push(selection);
           break;
-        case 'TypeCondition':
-          if (possibleTypes.every(type => selection.selectionSet.possibleTypes.includes(type))) {
-            fragmentSpreads.push(...this.collectFragmentSpreads(selection.selectionSet, possibleTypes));
+        case "TypeCondition":
+          if (
+            possibleTypes.every(type =>
+              selection.selectionSet.possibleTypes.includes(type)
+            )
+          ) {
+            fragmentSpreads.push(
+              ...this.collectFragmentSpreads(
+                selection.selectionSet,
+                possibleTypes
+              )
+            );
           }
           break;
-        case 'BooleanCondition':
-          fragmentSpreads.push(...this.collectFragmentSpreads(selection.selectionSet, possibleTypes));
+        case "BooleanCondition":
+          fragmentSpreads.push(
+            ...this.collectFragmentSpreads(
+              selection.selectionSet,
+              possibleTypes
+            )
+          );
           break;
       }
     }

@@ -5,7 +5,7 @@
 # to NPM. So we copy all the local lib folders into the installed NPM packages to get them up to date
 # with what we have in the Lerna build.
 
-cp -r ../apollo-cli/lib ../apollo-vscode/server/node_modules/apollo
+cp -r ../apollo/lib ../apollo-vscode/server/node_modules/apollo
 cp -r ../apollo-codegen-core/lib ../apollo-vscode/server/node_modules/apollo-codegen-core
 cp -r ../apollo-codegen-flow-legacy/lib ../apollo-vscode/server/node_modules/apollo-codegen-flow-legacy
 cp -r ../apollo-codegen-scala/lib ../apollo-vscode/server/node_modules/apollo-codegen-scala
