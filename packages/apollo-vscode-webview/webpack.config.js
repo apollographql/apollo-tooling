@@ -45,7 +45,12 @@ module.exports = {
     strictExportPresence: true,
     rules: [
       {
-        test: /\.(js|jsx|mjs)$/,
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: "javascript/auto"
+      },
+      {
+        test: /\.(js|jsx)$/,
         include: path.resolve("src"),
         loader: require.resolve("babel-loader"),
         options: {
@@ -67,15 +72,15 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader',
+        loader: "style-loader!css-loader"
       },
       {
         test: /\.svg$/,
-        loader: 'url-loader'
+        loader: "url-loader"
       },
       {
         test: /\.png$/,
-        loader: 'url-loader'
+        loader: "url-loader"
       }
     ]
   },
@@ -88,7 +93,7 @@ module.exports = {
     // It is absolutely essential that NODE_ENV was set to production here.
     // Otherwise React will be compiled in the very slow development mode.
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production')
+      "process.env.NODE_ENV": JSON.stringify("production")
     }),
     // Minify the code.
     new UglifyJsPlugin({
