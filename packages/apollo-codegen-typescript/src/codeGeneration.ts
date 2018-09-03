@@ -242,7 +242,9 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     if (this.context.options.codeGenerationModule && tagName) {
       this.printer.enqueue(
         stripIndent`
-          import codeGenerationModule from "${this.context.options.codeGenerationModule}";
+          import codeGenerationModule from "${
+            this.context.options.codeGenerationModule
+          }";
           import ${tagName} from "graphql-tag";
         `
       );
@@ -257,11 +259,20 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     this.printer.enqueue(this.inputObjectDeclaration(inputObjectType));
   }
 
-  public codeGenerationDeclarationForOperation(operation: Operation, tagName: string) {
+  public codeGenerationDeclarationForOperation(
+    operation: Operation,
+    tagName: string
+  ) {
     const { operationName, operationType, variables, source } = operation;
     this.printer.enqueue(
       this.exportDeclaration(
-        this.codeGenerationDeclaration(operationName, operationType, tagName, source, variables.length > 0)
+        this.codeGenerationDeclaration(
+          operationName,
+          operationType,
+          tagName,
+          source,
+          variables.length > 0
+        )
       )
     );
   }
