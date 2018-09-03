@@ -1,7 +1,7 @@
 {
   "name": "apollo-language-server",
   "description": "A language server for Apollo GraphQL projects",
-  "version": "0.1.7",
+  "version": "0.1.9",
   "private": true,
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -40,7 +40,7 @@
     "node-fetch": "^2.1.2",
     "recursive-readdir": "^2.2.2",
     "subscriptions-transport-ws": "^0.9.12",
-    "vscode-languageserver": "next",
+    "vscode-languageserver": "^5.0.3",
     "vscode-uri": "^1.0.3",
     "ws": "^5.2.2"
   }
