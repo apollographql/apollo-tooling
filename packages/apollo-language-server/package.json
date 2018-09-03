@@ -40,7 +40,7 @@
     "node-fetch": "^2.1.2",
     "recursive-readdir": "^2.2.2",
     "subscriptions-transport-ws": "^0.9.12",
-    "vscode-languageserver": "next",
+    "vscode-languageserver": "^5.0.3",
     "vscode-uri": "^1.0.3",
     "ws": "^5.2.2"
   }
