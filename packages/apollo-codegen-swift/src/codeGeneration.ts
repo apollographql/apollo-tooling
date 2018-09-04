@@ -146,7 +146,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       selectionSet
     } = operation;
 
-    let className;
+    let className: string;
     let protocol;
 
     switch (operationType) {
@@ -176,7 +176,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       },
       () => {
         if (source) {
-          this.printOnNewline("public let operationDefinition =");
+          this.printOnNewline("public static let operationDefinition =");
           this.withIndent(() => {
             this.multilineString(source);
           });
@@ -203,7 +203,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         if (fragmentsReferenced.size > 0) {
           this.printNewlineIfNeeded();
           this.printOnNewline(
-            "public var queryDocument: String { return operationDefinition"
+            `public var queryDocument: String { return ${className}.operationDefinition`
           );
           fragmentsReferenced.forEach(fragmentName => {
             this.print(

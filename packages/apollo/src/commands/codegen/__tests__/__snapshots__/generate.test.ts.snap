@@ -28,7 +28,7 @@ import Apollo",
 import Apollo
 
 public final class OtherQueryQuery: GraphQLQuery {
-  public let operationDefinition =
+  public static let operationDefinition =
     \\"query OtherQuery {\\\\n  hello\\\\n}\\"
 
   public init() {
@@ -152,7 +152,7 @@ exports[`successful codegen infers Swift target and writes types 1`] = `
 import Apollo
 
 public final class SimpleQueryQuery: GraphQLQuery {
-  public let operationDefinition =
+  public static let operationDefinition =
     \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
 
   public init() {
@@ -193,7 +193,7 @@ exports[`successful codegen infers Swift target and writes types when schema is 
 import Apollo
 
 public final class SimpleQueryQuery: GraphQLQuery {
-  public let operationDefinition =
+  public static let operationDefinition =
     \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
 
   public init() {
@@ -234,7 +234,7 @@ exports[`successful codegen infers Swift target and writes types when schema is 
 import Apollo
 
 public final class SimpleQueryQuery: GraphQLQuery {
-  public let operationDefinition =
+  public static let operationDefinition =
     \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
 
   public init() {
@@ -275,7 +275,7 @@ exports[`successful codegen infers Swift target and writes types when schema is 
 import Apollo
 
 public final class SimpleQueryQuery: GraphQLQuery {
-  public let operationDefinition =
+  public static let operationDefinition =
     \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
 
   public init() {
