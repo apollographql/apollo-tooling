@@ -244,7 +244,7 @@ function writeOperationIdsMap(context: CompilerContext) {
       };
     });
   fs.writeFileSync(
-    context.options.operationIdsPath,
+    context.options.operationIdsPath!,
     JSON.stringify(operationIdsMap, null, 2)
   );
 }
