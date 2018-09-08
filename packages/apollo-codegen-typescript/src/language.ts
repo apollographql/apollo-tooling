@@ -153,7 +153,12 @@ export default class TypescriptGenerator {
   }
 
   public nameFromScopeStack(scope: string[]) {
-    return scope.join("_");
+    // this probably should be definable by some input parrameter such as "casing=--camel"
+    // I could not find out from where you pull the options
+    if (optionsFromSomewhere.casing == 'camel') {
+      return scope.map(s => s[0].toUpperCase() + s.substring(1)).join('');
+    }
+    return return scope.join("_");
   }
 
   public makeNullableType(type: t.TSType) {
