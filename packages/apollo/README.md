@@ -246,7 +246,7 @@ In `apollo.config.js` style:
 ```js
 module.exports = {
   engineKey: "my-engine-key", // use this key when connecting to Apollo Engine
-  localSchema: "http://example.com/graphql", // optional if not defined the schema will be downloaded from Apollo Engine
+  localSchema: "localhost:4000/graphql", // optional point to your local schema for development
   queries: { // optional for apollo queries:check
     "includes": [ "**/*.tsx" ], // load queries from .tsx files
     "excludes": [ "node_modules/**" ] // don't include any matching files from node_modules
