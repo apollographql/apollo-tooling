@@ -241,52 +241,20 @@ The Apollo CLI and VS Code extension can be configured with an Apollo Config fil
 
 The core of any configuration is specifying schemas and queries. Schemas specify information about your backend such as where to get the schema, what endpoint to make requests against, and the Apollo Engine API key to get schema updates and stats from. Queries define which documents Apollo tooling should analyze and tie them to the schema they are targeting.
 
-Let's take a look at a basic configuration file (`package.json` style):
+In `apollo.config.js` style:
 
 ```js
-{
-  ...
-  "apollo": {
-    "schemas": {
-      "myPrimaryBackend": {
-        "schema": "downloadedSchema.json", // if not defined the an introspection query will be run
-        "endpoint": "http://example.com/graphql", // if not defined the schema will be downloaded from Apollo Engine
-        "engineKey": "my-engine-key" // use this key when connecting to Apollo Engine
-      }
-    },
-    "queries": [ // optional if you only have one schema
-      {
-        "schema": "myPrimaryBackend", // reference the previously defined schema
-        "includes": [ "**/*.tsx" ], // load queries from .tsx files
-        "excludes": [ "node_modules/**" ] // don't include any matching files from node_modules
-      }
-    ]
-  }
-}
-```
-
-Or in `apollo.config.js` style:
-
-```js
-...
-
 module.exports = {
-  schemas: {
-    myPrimaryBackend: {
-      schema: "downloadedSchema.json", // if not defined the an introspection query will be run
-      endpoint: "http://example.com/graphql", // if not defined the schema will be downloaded from Apollo Engine
-      engineKey: "my-engine-key" // use this key when connecting to Apollo Engine
-    }
+  engineKey: "my-engine-key", // use this key when connecting to Apollo Engine
+  localSchema: "http://example.com/graphql", // optional if not defined the schema will be downloaded from Apollo Engine
+  queries: { // optional for apollo queries:check
+    "includes": [ "**/*.tsx" ], // load queries from .tsx files
+    "excludes": [ "node_modules/**" ] // don't include any matching files from node_modules
   },
-  queries: [ // optional if you only have one schema
-    {
-      schema: "myPrimaryBackend", // reference the previously defined schema
-      includes: [ "**/*.tsx" ], // load queries from .tsx files
-      excludes: [ "node_modules/**" ] // don't include any matching files from node_modules
-    }
-  ]
 }
 ```
+
+> Note: the engine api key can come from a .secrets or .env file
 
 ## Endpoint Configuration
 
