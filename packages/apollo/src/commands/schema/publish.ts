@@ -71,7 +71,7 @@ export default class SchemaPublish extends Command {
             );
           }
 
-          ctx.schema = await fetchSchema(ctx.currentSchema.endpoint).catch(
+          ctx.schema = await fetchSchema(ctx.currentSchema.schema || ctx.currentSchema.endpoint).catch(
             this.error
           );
         }
