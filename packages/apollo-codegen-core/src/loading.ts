@@ -176,7 +176,7 @@ export function loadQueryDocuments(
         return doc ? new Source(doc, inputPath) : null;
       }
 
-      if (inputPath.endsWith(".graphql") || inputPath.endsWith(".gql")) {
+      if ([".graphql", ".graphqls", "gql"].some((ext) => inputPath.endsWith(ext))) {
         return new Source(body, inputPath);
       }
 
