@@ -4,7 +4,8 @@ import * as path from "path";
 
 import {
   extractDocumentFromJavascript,
-  loadAndMergeQueryDocuments
+  loadAndMergeQueryDocuments,
+  loadQueryDocuments
 } from "../loading";
 
 // Test example javascript source files are located within __fixtures__
@@ -72,5 +73,21 @@ describe("Validation", () => {
     const document = loadAndMergeQueryDocuments(inputPaths);
 
     expect(document).toMatchSnapshot();
+  });
+});
+
+describe("loadQueryDocuments", () => {
+  test(`should load a schema document from a .graphqls file`, () => {
+    const inputPaths = [
+      path.join(
+        __dirname,
+        "../../../common-test/fixtures/starwars/schema.graphqls"
+      )
+    ];
+
+    const document = loadQueryDocuments(inputPaths);
+
+    expect(document.length).toEqual(1);
+    expect(document[0]).toMatchSnapshot();
   });
 });
