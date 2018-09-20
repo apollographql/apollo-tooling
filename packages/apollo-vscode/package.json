@@ -18,6 +18,7 @@
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",
     "build": "tsc",
+    "watch": "tsc -w -p .",
     "prepare": "npm run build",
     "postinstall": "npm run update-vscode",
     "update-vscode": "node ../../node_modules/vscode/bin/install",

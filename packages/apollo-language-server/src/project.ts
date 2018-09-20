@@ -73,15 +73,14 @@ const fileAssociations: { [extension: string]: string } = {
 const engineStatsQuery = gql`
   query EngineSchemaStats($id: ID!) {
     service(id: $id) {
-      report(from: "-3600", to: "-0") {
-        usageStats {
-          types {
-            name
-            fields {
-              name
-              latencyHistogram {
-                serviceTimeP95: durationMs(percentile: 0.95)
-              }
+      stats(from: "-3600", to: "-0") {
+        fieldStats {
+          groupBy {
+            field
+          }
+          metrics {
+            fieldHistogram {
+              durationMs(percentile: 0.95)
             }
           }
         }
@@ -201,27 +200,44 @@ export class GraphQLProject {
               })
             );
 
-            const schemaEngineStats = new Map<string, Map<string, number>>();
-            engineData.data!.service.report.usageStats.types.forEach(
-              (typ: any) => {
-                const fieldsMap = new Map<string, number>();
-                typ.fields.forEach((field: any) => {
-                  fieldsMap.set(
-                    field.name,
-                    field.latencyHistogram.serviceTimeP95
-                  );
-                });
+            type FieldStat = {
+              groupBy: {
+                field: string;
+              };
+              metrics: {
+                fieldHistogram: {
+                  durationMs: number;
+                };
+              };
+            };
 
-                schemaEngineStats.set(typ.name, fieldsMap);
+            const schemaEngineStats = new Map<string, Map<string, number>>();
+            engineData.data!.service.stats.fieldStats.forEach(
+              (fieldStat: FieldStat) => {
+                // Parse field "ParentType.fieldName:FieldType" into ["ParentType", "fieldName", "FieldType"]
+                const [parentType = null, fieldName = null] =
+                  fieldStat.groupBy.field.split(/\.|:/) || [];
+
+                if (!parentType || !fieldName) {
+                  return;
+                }
+                const fieldsMap =
+                  schemaEngineStats.get(parentType) ||
+                  schemaEngineStats
+                    .set(parentType, new Map<string, number>())
+                    .get(parentType)!;
+
+                fieldsMap.set(
+                  fieldName,
+                  fieldStat.metrics.fieldHistogram.durationMs
+                );
               }
             );
 
             this.engineStats.set(schemaDef.engineKey, schemaEngineStats);
-
-            return;
-          } else {
-            return;
           }
+
+          return;
         })
       )
     );
