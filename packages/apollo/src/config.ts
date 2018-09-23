@@ -139,7 +139,7 @@ export function loadConfigFromFile(
   defaultSchema: boolean
 ): ApolloConfig {
   if (file.endsWith(".js")) {
-    const filepath = resolve(file)
+    const filepath = resolve(file);
     delete require.cache[require.resolve(filepath)];
     return loadConfig(
       require(filepath),
