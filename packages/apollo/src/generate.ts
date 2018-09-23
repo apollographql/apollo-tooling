@@ -94,6 +94,16 @@ export default function generate(
     } = {};
 
     if (nextToSources) {
+      if (options.globalTypesFile) {
+        const globalTypesDir = path.dirname(options.globalTypesFile);
+        if (!fs.existsSync(globalTypesDir)) {
+          fs.mkdirSync(globalTypesDir);
+        }
+        outFiles[options.globalTypesFile] = {
+          output: common
+        };
+      }
+
       generatedFiles.forEach(({ sourcePath, fileName, content }) => {
         const dir = path.join(path.dirname(sourcePath), outputPath);
 
@@ -102,7 +112,9 @@ export default function generate(
         }
 
         outFiles[path.join(dir, fileName)] = {
-          output: content.fileContents + common
+          output: options.globalTypesFile
+            ? content.fileContents
+            : content.fileContents + common
         };
       });
 

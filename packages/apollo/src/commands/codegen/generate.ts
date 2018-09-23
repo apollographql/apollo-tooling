@@ -97,7 +97,7 @@ export default class Generate extends Command {
     }),
     globalTypesFile: flags.string({
       description:
-        'By default, TypeScript will put a file named "globalTypes.ts" inside the "output" directory. Set "globalTypesFile" to specify a different path.'
+        'By default, TypeScript will put a file named "globalTypes.ts" inside the "output" directory. Set "globalTypesFile" to specify a different path. Similarly, Flow will put common types in a global file, only if this option is set.'
     }),
     watch: flags.boolean({
       description: "Watch the query files to auto-generate on changes."

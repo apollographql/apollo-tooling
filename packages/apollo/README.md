@@ -72,6 +72,7 @@ OPTIONS
 
   --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
                                              "output" directory. Set "globalTypesFile" to specify a different path.
+                                             Similarly, Flow will put common types in a global file, only if this option is set.
 
   --key=key                                  The API key for the Apollo Engine service
 

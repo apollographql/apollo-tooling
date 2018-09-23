@@ -491,6 +491,42 @@ export interface SimpleQuery {
 "
 `;
 
+exports[`successful codegen writes Flow global types to a custom path when globalTypesFile is set 1`] = `
+"/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+import { SomeEnum } from \\"./../../__foo__/bar.flow.js\\";
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+  someEnum: SomeEnum;
+}
+"
+`;
+
+exports[`successful codegen writes Flow global types to a custom path when globalTypesFile is set 2`] = `
+"/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+export enum SomeEnum {
+  bar = \\"bar\\",
+  foo = \\"foo\\",
+}
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================
+"
+`;
+
 exports[`successful codegen writes Flow types into a __generated__ directory next to sources when no output is set 1`] = `
 "
 
