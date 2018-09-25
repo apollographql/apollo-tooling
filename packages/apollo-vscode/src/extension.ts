@@ -1,31 +1,39 @@
-import * as path from "path";
-
-import { workspace, ExtensionContext, WebviewPanel, Uri } from "vscode";
-import * as vscode from "vscode";
+import { join } from "path";
+import {
+  window,
+  workspace,
+  ExtensionContext,
+  ViewColumn,
+  WebviewPanel,
+  Uri,
+  ProgressLocation,
+  DecorationOptions
+} from "vscode";
 import {
   LanguageClient,
   LanguageClientOptions,
   ServerOptions,
   TransportKind
 } from "vscode-languageclient";
+import StatusBar from "./StatusBar";
 
 function sideViewColumn() {
-  if (!vscode.window.activeTextEditor) {
-    return vscode.ViewColumn.One;
+  if (!window.activeTextEditor) {
+    return ViewColumn.One;
   }
 
-  switch (vscode.window.activeTextEditor.viewColumn) {
-    case vscode.ViewColumn.One:
-      return vscode.ViewColumn.Two;
-    case vscode.ViewColumn.Two:
-      return vscode.ViewColumn.Three;
+  switch (window.activeTextEditor.viewColumn) {
+    case ViewColumn.One:
+      return ViewColumn.Two;
+    case ViewColumn.Two:
+      return ViewColumn.Three;
     default:
-      return vscode.window.activeTextEditor.viewColumn!;
+      return window.activeTextEditor.viewColumn!;
   }
 }
 
 export function activate(context: ExtensionContext) {
-  const serverModule = context.asAbsolutePath(path.join("server", "server.js"));
+  const serverModule = context.asAbsolutePath(join("server", "server.js"));
   const debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
 
   const serverOptions: ServerOptions = {
@@ -57,6 +65,7 @@ export function activate(context: ExtensionContext) {
   let currentPanel: WebviewPanel | undefined = undefined;
   let currentCancellationID: number | undefined = undefined;
   let currentMessageHandler: ((msg: any) => void) | undefined = undefined;
+  const statusBar = new StatusBar();
 
   const client = new LanguageClient(
     "apollographql",
@@ -77,14 +86,14 @@ export function activate(context: ExtensionContext) {
       return currentPanel;
     } else {
       // Otherwise, create a new panel
-      currentPanel = vscode.window.createWebviewPanel(
+      currentPanel = window.createWebviewPanel(
         "apolloPanel",
         "",
         sideViewColumn(),
         {
           enableScripts: true,
           localResourceRoots: [
-            vscode.Uri.file(path.join(context.extensionPath, "webview-content"))
+            Uri.file(join(context.extensionPath, "webview-content"))
           ]
         }
       );
@@ -128,6 +137,7 @@ export function activate(context: ExtensionContext) {
     let currentLoadingResolve: Map<number, () => void> = new Map();
 
     client.onNotification("apollographql/loadingComplete", token => {
+      statusBar.showLoadedState();
       const inMap = currentLoadingResolve.get(token);
       if (inMap) {
         inMap();
@@ -136,9 +146,9 @@ export function activate(context: ExtensionContext) {
     });
 
     client.onNotification("apollographql/loading", ({ message, token }) => {
-      vscode.window.withProgress(
+      window.withProgress(
         {
-          location: vscode.ProgressLocation.Notification,
+          location: ProgressLocation.Notification,
           title: message,
           cancellable: false
         },
@@ -190,7 +200,7 @@ export function activate(context: ExtensionContext) {
         };
 
         const mediaPath =
-          vscode.Uri.file(path.join(context.extensionPath, "webview-content"))
+          Uri.file(join(context.extensionPath, "webview-content"))
             .with({
               scheme: "vscode-resource"
             })
@@ -242,7 +252,7 @@ export function activate(context: ExtensionContext) {
         };
 
         const mediaPath =
-          vscode.Uri.file(path.join(context.extensionPath, "webview-content"))
+          Uri.file(join(context.extensionPath, "webview-content"))
             .with({
               scheme: "vscode-resource"
             })
@@ -261,17 +271,15 @@ export function activate(context: ExtensionContext) {
       }
     );
 
-    const engineDecoration = vscode.window.createTextEditorDecorationType({});
+    const engineDecoration = window.createTextEditorDecorationType({});
     let latestDecs: any[] | undefined = undefined;
 
     const updateDecorations = () => {
-      if (vscode.window.activeTextEditor && latestDecs) {
-        const editor = vscode.window.activeTextEditor!;
-        const decorations: vscode.DecorationOptions[] = latestDecs
+      if (window.activeTextEditor && latestDecs) {
+        const editor = window.activeTextEditor!;
+        const decorations: DecorationOptions[] = latestDecs
           .filter(
-            d =>
-              d.document ===
-              vscode.window.activeTextEditor!.document.uri.toString()
+            d => d.document === window.activeTextEditor!.document.uri.toString()
           )
           .map(dec => {
             return {
@@ -285,10 +293,7 @@ export function activate(context: ExtensionContext) {
             };
           });
 
-        vscode.window.activeTextEditor!.setDecorations(
-          engineDecoration,
-          decorations
-        );
+        window.activeTextEditor!.setDecorations(engineDecoration, decorations);
       }
     };
 
@@ -297,11 +302,11 @@ export function activate(context: ExtensionContext) {
       updateDecorations();
     });
 
-    vscode.window.onDidChangeActiveTextEditor(() => {
+    window.onDidChangeActiveTextEditor(() => {
       updateDecorations();
     });
 
-    vscode.workspace.registerTextDocumentContentProvider("graphql-schema", {
+    workspace.registerTextDocumentContentProvider("graphql-schema", {
       provideTextDocumentContent(uri: Uri) {
         // the schema source is provided inside the URI, just return that here
         return uri.query;

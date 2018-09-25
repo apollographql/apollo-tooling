@@ -38,8 +38,7 @@
   ],
   "icon": "images/icon-apollo-teal-400x400.png",
   "activationEvents": [
-    "workspaceContains:**/apollo.config.js",
-    "workspaceContains:**/package.json"
+    "workspaceContains:**/apollo.config.js"
   ],
   "contributes": {
     "configuration": {},
