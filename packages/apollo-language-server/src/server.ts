@@ -1,6 +1,3 @@
-// Seems to be needed for graphql-language-service-server
-import "regenerator-runtime/runtime";
-
 import {
   createConnection,
   ProposedFeatures,

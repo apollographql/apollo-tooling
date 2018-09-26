@@ -189,7 +189,7 @@ class LegacyIRTransformer {
   transformSelectionSetToLegacyIR(selectionSet: SelectionSet) {
     const typeCase = typeCaseForSelectionSet(
       selectionSet,
-      this.options.mergeInFieldsFromFragmentSpreads
+      !!this.options.mergeInFieldsFromFragmentSpreads
     );
 
     const fields: LegacyField[] = this.transformFieldsToLegacyIR(
