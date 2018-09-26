@@ -634,4 +634,58 @@ describe("Typescript codeGeneration local / global", () => {
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
+  test("code generation module - mutation", () => {
+    const context = compile(
+      `
+      mutation createReview($ep: Episode!, $input: ReviewInput!) {
+        createReview(episode: $ep, review: $input) {
+          stars
+        }
+      }
+    `,
+      { codeGenerationModule: "testModule" }
+    );
+    const output = generateSource(context);
+    expect(output).toMatchSnapshot();
+  });
+  test("code generation module - simple query", () => {
+    const context = compile(
+      `
+      query heroSimple($id: ID!) {
+        hero(id: $id) {
+          id
+          name
+        }
+      }
+    `,
+      { codeGenerationModule: "testModule" }
+    );
+    const output = generateSource(context);
+    expect(output).toMatchSnapshot();
+  });
+  test("code generation module - query with fragment", () => {
+    const context = compile(
+      `
+      fragment heroDetails on Character {
+        name
+        ... on Droid {
+          primaryFunction
+       }
+       
+       ... on Human {
+         height
+       }
+      }
+      query heroFragment($id: ID!) {
+        hero(id: $id) {
+          id
+          ... heroDetails
+        }
+      }
+    `,
+      { codeGenerationModule: "testModule" }
+    );
+    const output = generateSource(context);
+    expect(output).toMatchSnapshot();
+  });
 });
