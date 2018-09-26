@@ -221,6 +221,13 @@ export default class TypescriptGenerator {
     );
   }
 
+  public importDefault(specifier: string, module: string) {
+    return t.importDeclaration(
+      [t.importDefaultSpecifier(t.identifier(specifier))],
+      t.stringLiteral(module)
+    );
+  }
+
   public import(types: GraphQLType[], source: string) {
     return t.importDeclaration(
       types.map(type =>

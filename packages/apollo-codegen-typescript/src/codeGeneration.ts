@@ -109,7 +109,10 @@ export function generateSource(context: CompilerContext) {
 
   const codeGenerationModule = context.options.codeGenerationModule;
   Object.values(context.operations).forEach(operation => {
-    generator.fileHeader("gql");
+    generator.fileHeader();
+    if (codeGenerationModule) {
+      generator.fileImports("gql", codeGenerationModule);
+    }
     generator.interfacesForOperation(operation);
     if (codeGenerationModule) {
       generator.codeGenerationDeclarationForOperation(operation, "gql");
@@ -168,7 +171,10 @@ export function generateLocalSource(
     sourcePath: operation.filePath,
     fileName: `${operation.operationName}.ts`,
     content: (options?: IGeneratedFileOptions) => {
-      generator.fileHeader(tagName);
+      generator.fileHeader();
+      if (codeGenerationModule) {
+        generator.fileImports(tagName, codeGenerationModule);
+      }
       if (options && options.outputPath && options.globalSourcePath) {
         printGlobalImport(
           generator,
@@ -231,23 +237,23 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     this.scopeStack = [];
   }
 
-  fileHeader(tagName?: string) {
+  fileHeader() {
     this.printer.enqueue(
       stripIndent`
         /* tslint:disable */
         // This file was automatically generated and should not be edited.
       `
     );
+  }
 
-    if (this.context.options.codeGenerationModule && tagName) {
-      this.printer.enqueue(
-        stripIndent`
-          import codeGenerationModule from "${
-            this.context.options.codeGenerationModule
-          }";
-          import ${tagName} from "graphql-tag";
-        `
-      );
+  fileImports(tagName?: string, codeGenerationModule?: string) {
+    if (tagName) {
+      this.printer.enqueue(this.importDefault(tagName, "graphql-tag"));
+      if (codeGenerationModule) {
+        this.printer.enqueue(
+          this.importDefault("codeGenerationModule", codeGenerationModule)
+        );
+      }
     }
   }
 
