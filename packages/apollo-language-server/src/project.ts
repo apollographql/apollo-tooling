@@ -236,13 +236,9 @@ export class GraphQLProject {
 
             this.engineStats.set(schemaDef.engineKey, schemaEngineStats);
           }
-
-          return;
         })
       )
     );
-
-    return;
   }
 
   async scanAllIncludedFiles() {
