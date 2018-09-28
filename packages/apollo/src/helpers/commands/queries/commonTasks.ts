@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { ListrTask } from "listr";
 
 import {
@@ -5,6 +6,13 @@ import {
   extractOperationsAndFragments,
   combineOperationsAndFragments
 } from "apollo-codegen-core/lib/loading";
+
+import { DocumentNode } from "graphql";
+import {
+  hideLiterals,
+  printWithReducedWhitespace,
+  sortAST
+} from "apollo-engine-reporting";
 
 import { resolveDocumentSets } from "../../../config";
 
@@ -74,4 +82,40 @@ export function getCommonTasks({
     taskIsolateOperationsAndFragments({ errorLogger }),
     taskCombineOperationsAndFragments({ errorLogger })
   ];
+}
+
+/*
+  Manifest related tasks
+*/
+
+const taskNormalizeOperations = (): ListrTask => ({
+  title: "Normalizing Operations",
+  task: async ctx => {
+    ctx.normalizedOperations = (ctx.fullOperations as Array<DocumentNode>).map(
+      operation =>
+        // While this could include dropping unused definitions, they are
+        // kept because the registered operations should mirror those in the
+        // client bundle minus any PPI. This provides more predictability
+        // and allows a better understanding of where a query comes from.
+        printWithReducedWhitespace(sortAST(hideLiterals(operation)))
+    );
+  }
+});
+
+const taskGenerateHashes = (): ListrTask => ({
+  title: "Generating hashes",
+  task: async ctx => {
+    ctx.mapping = {};
+    (ctx.normalizedOperations as Array<string>).forEach(operation => {
+      ctx.mapping[
+        createHash("sha512")
+          .update(operation)
+          .digest("base64")
+      ] = operation;
+    });
+  }
+});
+
+export function getCommonManifestTasks(): ListrTask[] {
+  return [taskNormalizeOperations(), taskGenerateHashes()];
 }
