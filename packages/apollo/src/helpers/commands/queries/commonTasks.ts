@@ -1,5 +1,6 @@
 import { createHash } from "crypto";
 import { ListrTask } from "listr";
+import * as assert from "assert";
 
 import {
   loadQueryDocuments,
@@ -21,6 +22,10 @@ type ErrorLogger = (message: string) => void;
 const taskResolveDocumentSets = (): ListrTask => ({
   title: "Resolving GraphQL document sets",
   task: async ctx => {
+    // Make sure the expectations of our context are correct.
+    assert.notStrictEqual(typeof ctx.config, "undefined");
+    assert.strictEqual(typeof ctx.documentSets, "undefined");
+
     ctx.documentSets = await resolveDocumentSets(ctx.config, false);
   }
 });
@@ -28,6 +33,9 @@ const taskResolveDocumentSets = (): ListrTask => ({
 const taskScanForOperations = ({ flags }: { flags: any }): ListrTask => ({
   title: "Scanning for GraphQL queries",
   task: async (ctx, task) => {
+    // Make sure the expectations of our context are correct.
+    assert.strictEqual(typeof ctx.queryDocuments, "undefined");
+
     ctx.queryDocuments = loadQueryDocuments(
       ctx.documentSets[0].documentPaths,
       flags.tagName
@@ -45,6 +53,10 @@ const taskIsolateOperationsAndFragments = ({
 }): ListrTask => ({
   title: "Isolating operations and fragments",
   task: async ctx => {
+    // Make sure the expectations of our context are correct.
+    assert.strictEqual(typeof ctx.fragments, "undefined");
+    assert.strictEqual(typeof ctx.operations, "undefined");
+
     const { fragments, operations } = extractOperationsAndFragments(
       ctx.queryDocuments,
       errorLogger
@@ -61,6 +73,9 @@ const taskCombineOperationsAndFragments = ({
 }): ListrTask => ({
   title: "Combining operations and fragments",
   task: async ctx => {
+    // Make sure the expectations of our context are correct.
+    assert.strictEqual(typeof ctx.fullOperations, "undefined");
+
     ctx.fullOperations = combineOperationsAndFragments(
       ctx.operations,
       ctx.fragments,
