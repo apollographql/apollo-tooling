@@ -32,7 +32,7 @@ const taskResolveDocumentSets = (): ListrTask => ({
 
 const taskScanForOperations = ({ flags }: { flags: any }): ListrTask => ({
   title: "Scanning for GraphQL queries",
-  task: async (ctx, task) => {
+  task: (ctx, task) => {
     // Make sure the expectations of our context are correct.
     assert.strictEqual(typeof ctx.queryDocuments, "undefined");
 
@@ -52,7 +52,7 @@ const taskIsolateOperationsAndFragments = ({
   errorLogger?: ErrorLogger;
 }): ListrTask => ({
   title: "Isolating operations and fragments",
-  task: async ctx => {
+  task: ctx => {
     // Make sure the expectations of our context are correct.
     assert.strictEqual(typeof ctx.fragments, "undefined");
     assert.strictEqual(typeof ctx.operations, "undefined");
@@ -72,7 +72,7 @@ const taskCombineOperationsAndFragments = ({
   errorLogger?: ErrorLogger;
 }): ListrTask => ({
   title: "Combining operations and fragments",
-  task: async ctx => {
+  task: ctx => {
     // Make sure the expectations of our context are correct.
     assert.strictEqual(typeof ctx.fullOperations, "undefined");
 

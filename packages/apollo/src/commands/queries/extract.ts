@@ -56,7 +56,7 @@ export default class ExtractQueries extends Command {
       ...getCommonManifestTasks(),
       {
         title: "Outputing extracted queries",
-        task: async (ctx, task) => {
+        task: (ctx, task) => {
           const filename = args.output;
           task.title = "Outputing extracted queries to " + filename;
           writeFileSync(filename, JSON.stringify(ctx.mapping));
