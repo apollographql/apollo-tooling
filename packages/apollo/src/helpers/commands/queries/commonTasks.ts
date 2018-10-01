@@ -12,7 +12,8 @@ import { DocumentNode } from "graphql";
 import {
   hideLiterals,
   printWithReducedWhitespace,
-  sortAST
+  sortAST,
+  defaultSignature as engineDefaultSignature
 } from "apollo-engine-reporting";
 
 import { resolveDocumentSets } from "../../../config";
@@ -103,34 +104,63 @@ export function getCommonTasks({
   Manifest related tasks
 */
 
-const taskNormalizeOperations = (): ListrTask => ({
-  title: "Normalizing Operations",
-  task: async ctx => {
-    ctx.normalizedOperations = (ctx.fullOperations as Array<DocumentNode>).map(
-      operation =>
-        // While this could include dropping unused definitions, they are
-        // kept because the registered operations should mirror those in the
-        // client bundle minus any PPI. This provides more predictability
-        // and allows a better understanding of where a query comes from.
-        printWithReducedWhitespace(sortAST(hideLiterals(operation)))
-    );
-  }
-});
+const manifestOperationHash = (str: string): string =>
+  createHash("sha512")
+    .update(str)
+    .digest("base64");
 
-const taskGenerateHashes = (): ListrTask => ({
-  title: "Generating hashes",
-  task: async ctx => {
-    ctx.mapping = {};
-    (ctx.normalizedOperations as Array<string>).forEach(operation => {
-      ctx.mapping[
-        createHash("sha512")
-          .update(operation)
-          .digest("base64")
-      ] = operation;
-    });
+const engineSignature = (_TODO_operationAST: DocumentNode): string => {
+  // TODO.  We don't currently have access to the operation name since it's
+  // currently omitted by the `apollo-codegen-core` package logic.
+  return engineDefaultSignature(_TODO_operationAST, "TODO");
+};
+
+interface OperationManifestRecord {
+  signature: string;
+  document: string;
+  metadata: {
+    engineSignature: string;
+  };
+}
+
+const manifestRecordForOperation = (
+  operationAST: DocumentNode
+): OperationManifestRecord => {
+  // While this could include dropping unused definitions, they are
+  // kept because the registered operations should mirror those in the
+  // client bundle minus any PII which lives within string literals.
+  const document = printWithReducedWhitespace(
+    sortAST(hideLiterals(operationAST))
+  );
+
+  return {
+    signature: manifestOperationHash(document),
+    document,
+    metadata: {
+      engineSignature: engineSignature(operationAST)
+    }
+  };
+};
+
+const taskGenerateManifest = (): ListrTask => ({
+  title: "Generating manifest",
+  task: ctx => {
+    // Make sure the expectations of our context are correct.
+    assert.strictEqual(Array.isArray(ctx.fullOperations), true);
+    assert.strictEqual(typeof ctx.manifest, "undefined");
+
+    const operations = (ctx.fullOperations as Array<DocumentNode>).map(
+      operationAST => manifestRecordForOperation(operationAST)
+    );
+
+    // Set the manifest into a known location on the context.
+    ctx.manifest = {
+      version: 1,
+      operations
+    };
   }
 });
 
 export function getCommonManifestTasks(): ListrTask[] {
-  return [taskNormalizeOperations(), taskGenerateHashes()];
+  return [taskGenerateManifest()];
 }

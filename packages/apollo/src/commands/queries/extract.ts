@@ -59,7 +59,7 @@ export default class ExtractQueries extends Command {
         task: (ctx, task) => {
           const filename = args.output;
           task.title = "Outputing extracted queries to " + filename;
-          writeFileSync(filename, JSON.stringify(ctx.mapping));
+          writeFileSync(filename, JSON.stringify(ctx.manifest));
         }
       }
     ]);
