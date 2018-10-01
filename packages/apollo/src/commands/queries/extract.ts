@@ -3,7 +3,7 @@ import "apollo-codegen-core/lib/polyfills";
 
 import { Command, flags } from "@oclif/command";
 import * as Listr from "listr";
-import * as fs from "fs";
+import { writeFileSync } from "fs";
 
 import {
   getCommonTasks,
@@ -59,7 +59,7 @@ export default class ExtractQueries extends Command {
         task: async (ctx, task) => {
           const filename = args.output;
           task.title = "Outputing extracted queries to " + filename;
-          fs.writeFileSync(filename, JSON.stringify(ctx.mapping));
+          writeFileSync(filename, JSON.stringify(ctx.mapping));
         }
       }
     ]);
