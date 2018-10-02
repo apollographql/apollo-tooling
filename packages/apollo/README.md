@@ -458,7 +458,7 @@ It can also be helpful to print standard out during testing. To enable logging, 
 
 ## Publishing
 
-* Before publishing, make sure to update the `CHANGELOG.md` and make sure it's up to date.
+* Before publishing, check the `CHANGELOG.md` in the root of the repository and make sure it's up to date.
 * Make sure you have a `GITHUB_TOKEN` set in your environment variables.  For more information on setting `GITHUB_AUTH`, check the [`lerna-changelog` documentation](https://github.com/lerna/lerna-changelog#github-token).
 * In the root of the repository, run `npx lerna-changelog` (PR labels are read automatically using the `GITHUB_AUTH` token).
 * Copy the result into the `CHANGELOG.md` file and replace the top line with the CLI version that will be published.
