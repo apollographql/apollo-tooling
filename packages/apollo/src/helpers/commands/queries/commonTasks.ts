@@ -105,9 +105,9 @@ export function getCommonTasks({
 */
 
 const manifestOperationHash = (str: string): string =>
-  createHash("sha512")
+  createHash("sha256")
     .update(str)
-    .digest("base64");
+    .digest("hex");
 
 const engineSignature = (_TODO_operationAST: DocumentNode): string => {
   // TODO.  We don't currently have access to the operation name since it's
