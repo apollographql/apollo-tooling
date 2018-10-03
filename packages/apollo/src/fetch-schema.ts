@@ -20,7 +20,7 @@ import { SCHEMA_QUERY } from "./operations/schema";
 
 const introspection = gql(introspectionQuery);
 
-export async function fromFile(
+async function fromFile(
   file: string
 ): Promise<GraphQLSchema | undefined> {
   try {
