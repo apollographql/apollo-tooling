@@ -1,6 +1,6 @@
 import { extractDocumentFromJavascript } from "apollo-codegen-core/lib/loading";
 import { fs } from "apollo-codegen-core/lib/localfs";
-import { execute, toPromise } from "apollo-link";
+import { execute as linkExecute, toPromise } from "apollo-link";
 import { createHttpLink, HttpLink } from "apollo-link-http";
 import {
   buildClientSchema,
@@ -83,7 +83,7 @@ export const fetchSchema = async (
 
   return toPromise(
     // XXX node-fetch isn't compatible typescript wise here?
-    execute(createHttpLink(options), {
+    linkExecute(createHttpLink(options), {
       query: introspection,
       context: { headers }
     })
@@ -104,7 +104,7 @@ export async function fetchSchemaFromEngine(
   };
 
   const engineSchema = await toPromise(
-    execute(engineLink, {
+    linkExecute(engineLink, {
       query: SCHEMA_QUERY,
       variables,
       context: {
