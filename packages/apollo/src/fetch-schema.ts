@@ -81,17 +81,22 @@ export const fetchSchema = async (
     options.fetchOptions = { agent: agent };
   }
 
-  return toPromise(
-    // XXX node-fetch isn't compatible typescript wise here?
+  const { data, errors }: any = await toPromise(
     linkExecute(createHttpLink(options), {
       query: introspection,
       context: { headers }
     })
-  ).then(({ data, errors }: any) => {
-    if (errors)
-      throw new Error(errors.map(({ message }: Error) => message).join("\n"));
-    return buildClientSchema({ __schema: data.__schema });
-  });
+  );
+
+  if (!data) {
+    throw new Error("No data received from server introspection.");
+  }
+
+  if (errors) {
+    throw new Error(errors.map(({ message }: Error) => message).join("\n"));
+  }
+
+  return buildClientSchema({ __schema: data.__schema });
 };
 
 export async function fetchSchemaFromEngine(
