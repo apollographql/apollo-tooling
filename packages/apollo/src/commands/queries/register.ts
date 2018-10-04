@@ -110,9 +110,9 @@ export default class RegisterQueries extends Command {
 
           const variables = {
             clientIdentity: {
-              clientName: flags.clientName,
-              clientIdentifier: flags.clientIdentifier || flags.clientName,
-              clientVersion: flags.clientVersion
+              name: flags.clientName,
+              identifier: flags.clientIdentifier || flags.clientName,
+              version: flags.clientVersion
             },
             serviceId: getIdFromKey(ctx.currentSchema.engineKey),
             operations: ctx.manifest.operations
