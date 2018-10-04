@@ -22,7 +22,7 @@ import { SCHEMA_QUERY } from "./operations/schema";
 
 const introspection = gql(getIntrospectionQuery());
 
-async function buildIntrospectionSchemaInLocalGraphQLContext(
+async function buildIntrospectionSchemaFromSDL(
   source: string | Source
 ): Promise<IntrospectionSchema> {
   const schema: GraphQLSchema = buildSchema(source);
@@ -70,13 +70,11 @@ async function fromFile(
   }
 
   if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
-    return await buildIntrospectionSchemaInLocalGraphQLContext(
-      new Source(result, file)
-    );
+    return await buildIntrospectionSchemaFromSDL(new Source(result, file));
   }
 
   if (ext === ".ts" || ext === ".tsx" || ext === ".js" || ext === ".jsx") {
-    return await buildIntrospectionSchemaInLocalGraphQLContext(
+    return await buildIntrospectionSchemaFromSDL(
       extractDocumentFromJavascript(result)!
     );
   }
@@ -152,7 +150,5 @@ export async function fetchSchemaFromEngine(
     throw new Error("Unable to get schema from Apollo Engine");
   }
 
-  return buildIntrospectionSchemaInLocalGraphQLContext(
-    engineSchema.data.service.schema
-  );
+  return buildIntrospectionSchemaFromSDL(engineSchema.data.service.schema);
 }
