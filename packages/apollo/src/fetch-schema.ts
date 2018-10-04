@@ -117,12 +117,12 @@ export const fetchSchema = async (
     })
   );
 
-  if (!data) {
-    throw new Error("No data received from server introspection.");
-  }
-
   if (errors) {
     throw new Error(errors.map(({ message }: Error) => message).join("\n"));
+  }
+
+  if (!data) {
+    throw new Error("No data received from server introspection.");
   }
 
   return data.__schema;
