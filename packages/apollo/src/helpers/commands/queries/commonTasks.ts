@@ -8,6 +8,12 @@ import {
   combineOperationsAndFragments
 } from "apollo-codegen-core/lib/loading";
 
+import {
+  withTypenameFieldAddedWhereNeeded,
+  removeClientDirectives,
+  removeConnectionDirectives
+} from "apollo-codegen-core/lib/utilities/graphql";
+
 import { DocumentNode } from "graphql";
 import {
   hideLiterals,
@@ -123,35 +129,60 @@ interface OperationManifestRecord {
   };
 }
 
+type DocumentConfigSettings = {
+  addTypename?: Boolean;
+  removeClientDirectives?: Boolean;
+};
+
 const manifestRecordForOperation = (
-  operationAST: DocumentNode
-): OperationManifestRecord => {
+  operationAST: DocumentNode,
+  settings: DocumentConfigSettings = {
+    addTypename: true,
+    removeClientDirectives: true
+  }
+): OperationManifestRecord | undefined => {
+  let document = operationAST;
+
+  if (settings.addTypename) {
+    document = withTypenameFieldAddedWhereNeeded(document);
+  }
+
+  if (settings.removeClientDirectives) {
+    document = removeClientDirectives(removeConnectionDirectives(document));
+  }
+
   // While this could include dropping unused definitions, they are
   // kept because the registered operations should mirror those in the
   // client bundle minus any PII which lives within string literals.
-  const document = printWithReducedWhitespace(
-    sortAST(hideLiterals(operationAST))
-  );
+  const printed = printWithReducedWhitespace(
+    sortAST(hideLiterals(document))
+  ).trim();
+  if (!printed) return;
 
   return {
-    signature: manifestOperationHash(document),
-    document,
+    signature: manifestOperationHash(printed),
+    document: printed,
     metadata: {
-      engineSignature: engineSignature(operationAST)
+      engineSignature: engineSignature(document)
     }
   };
 };
 
-const taskGenerateManifest = (): ListrTask => ({
+const taskGenerateManifest = ({ flags }: { flags: any }): ListrTask => ({
   title: "Generating manifest",
   task: ctx => {
     // Make sure the expectations of our context are correct.
     assert.strictEqual(Array.isArray(ctx.fullOperations), true);
     assert.strictEqual(typeof ctx.manifest, "undefined");
 
-    const operations = (ctx.fullOperations as Array<DocumentNode>).map(
-      operationAST => manifestRecordForOperation(operationAST)
-    );
+    const operations = (ctx.fullOperations as Array<DocumentNode>)
+      .map(operationAST =>
+        manifestRecordForOperation(operationAST, {
+          addTypename: flags.addTypename,
+          removeClientDirectives: flags.removeClientDirectives
+        })
+      )
+      .filter(Boolean);
 
     // Set the manifest into a known location on the context.
     ctx.manifest = {
@@ -161,6 +192,6 @@ const taskGenerateManifest = (): ListrTask => ({
   }
 });
 
-export function getCommonManifestTasks(): ListrTask[] {
-  return [taskGenerateManifest()];
+export function getCommonManifestTasks(flags: any): ListrTask[] {
+  return [taskGenerateManifest(flags)];
 }

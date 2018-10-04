@@ -29,6 +29,15 @@ export default class ExtractQueries extends Command {
       description:
         "Path to your GraphQL queries, can include search tokens like **"
     }),
+    addTypename: flags.boolean({
+      description: "Automatically add __typename to your queries",
+      allowNo: true
+    }),
+    removeClientDirectives: flags.boolean({
+      allowNo: true,
+      description:
+        "Automatically remove @client and @connection directives and fields from operations"
+    }),
     ...engineFlags,
 
     tagName: flags.string({
@@ -48,12 +57,16 @@ export default class ExtractQueries extends Command {
   ];
 
   async run() {
-    const { flags, args } = this.parse(ExtractQueries);
+    let { flags, args } = this.parse(ExtractQueries);
+
+    // oclif doesn't let setting boolean flags to be default
+    const defaultFlags = { addTypename: true, removeClientDirectives: true };
+    flags = { ...defaultFlags, ...flags };
 
     const tasks: Listr = new Listr([
       loadConfigStep(flags, false),
       ...getCommonTasks({ flags, errorLogger: this.error.bind(this) }),
-      ...getCommonManifestTasks(),
+      ...getCommonManifestTasks({ flags }),
       {
         title: "Outputing extracted queries",
         task: (ctx, task) => {
