@@ -238,9 +238,9 @@ export async function resolveSchema(
       )
     : referredSchema.clientSide
       ? buildASTSchema(loadAsAST())
-      : await loadSchema(referredSchema, config).then(introspectionResult => {
-          if (!introspectionResult) return;
-          return buildClientSchema({ __schema: introspectionResult });
+      : await loadSchema(referredSchema, config).then(introspectionSchema => {
+          if (!introspectionSchema) return;
+          return buildClientSchema({ __schema: introspectionSchema });
         });
 }
 
