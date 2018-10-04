@@ -7,7 +7,10 @@ export const REGISTER_OPERATIONS = gql`
     $operations: [RegisteredOperationInput!]!
   ) {
     service(id: $serviceId) {
-      registerOperations(client: { name: $clientName }, operations: $operations)
+      registerOperations(
+        clientIdentity: $clientIdentity
+        operations: $operations
+      )
     }
   }
 `;
