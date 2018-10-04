@@ -192,6 +192,6 @@ const taskGenerateManifest = ({ flags }: { flags: any }): ListrTask => ({
   }
 });
 
-export function getCommonManifestTasks(flags: any): ListrTask[] {
-  return [taskGenerateManifest(flags)];
+export function getCommonManifestTasks({ flags }: { flags: any }): ListrTask[] {
+  return [taskGenerateManifest({ flags })];
 }
