@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 export const REGISTER_OPERATIONS = gql`
   mutation RegisterOperations(
     $serviceId: ID!
-    $clientName: String!
+    $clientIdentity: RegisteredClientIdentityInput!
     $operations: [RegisteredOperationInput!]!
   ) {
     service(id: $serviceId) {
