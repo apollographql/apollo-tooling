@@ -32,8 +32,10 @@ async function buildIntrospectionSchemaFromSDL(
   );
 
   if (executionResult.errors) {
-    console.error(executionResult.errors);
-    throw new Error("No data received during introspection query execution.");
+    throw new Error(
+      "An error occurred during introspection query execution.\n" +
+        executionResult.errors.map(({ message }: Error) => message).join("\n")
+    );
   }
 
   if (!executionResult.data) {
