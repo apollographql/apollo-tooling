@@ -1,11 +1,11 @@
-import { GraphQLSchema } from "graphql";
+import { IntrospectionSchema } from "graphql";
 import { ApolloConfig, SchemaDependency } from "./config";
 import { fetchSchema, fetchSchemaFromEngine } from "./fetch-schema";
 
 export async function loadSchema(
   dependency: SchemaDependency,
   config: ApolloConfig
-): Promise<GraphQLSchema | undefined> {
+): Promise<IntrospectionSchema | undefined> {
   if (dependency.schema) {
     return await fetchSchema({ url: dependency.schema }, config.projectFolder);
   } else if (dependency.endpoint && dependency.endpoint.url) {

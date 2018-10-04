@@ -3,11 +3,13 @@ import { fs } from "apollo-codegen-core/lib/localfs";
 import { execute as linkExecute, toPromise } from "apollo-link";
 import { createHttpLink, HttpLink } from "apollo-link-http";
 import {
-  buildClientSchema,
   buildSchema,
   GraphQLSchema,
-  introspectionQuery,
-  Source
+  getIntrospectionQuery,
+  Source,
+  ExecutionResult,
+  graphql,
+  IntrospectionSchema
 } from "graphql";
 import gql from "graphql-tag";
 import { Agent, AgentOptions } from "https";
@@ -18,11 +20,30 @@ import { EndpointConfig } from "./config";
 import { engineLink, getIdFromKey } from "./engine";
 import { SCHEMA_QUERY } from "./operations/schema";
 
-const introspection = gql(introspectionQuery);
+const introspection = gql(getIntrospectionQuery());
 
-async function fromFile(
-  file: string
-): Promise<GraphQLSchema | undefined> {
+async function buildIntrospectionSchemaInLocalGraphQLContext(
+  source: string | Source
+): Promise<IntrospectionSchema> {
+  const schema: GraphQLSchema = buildSchema(source);
+  const executionResult: ExecutionResult = await graphql(
+    schema,
+    getIntrospectionQuery()
+  );
+
+  if (executionResult.errors) {
+    console.error(executionResult.errors);
+    throw new Error("No data received during introspection query execution.");
+  }
+
+  if (!executionResult.data) {
+    throw new Error("No data received during introspection query execution.");
+  }
+
+  return executionResult.data.__schema;
+}
+
+function fromFile(file: string): Promise<IntrospectionSchema | undefined> {
   try {
     const result = fs.readFileSync(file, {
       encoding: "utf-8"
@@ -38,18 +59,22 @@ async function fromFile(
           ? parsed.__schema
           : parsed;
 
-      return buildClientSchema({ __schema: schemaData });
+      return schemaData;
     }
 
     if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
-      return buildSchema(new Source(result, file));
+      return buildIntrospectionSchemaInLocalGraphQLContext(
+        new Source(result, file)
+      );
     }
 
     if (ext === ".ts" || ext === ".tsx" || ext === ".js" || ext === ".jsx") {
-      return await buildSchema(extractDocumentFromJavascript(result)!);
+      return buildIntrospectionSchemaInLocalGraphQLContext(
+        extractDocumentFromJavascript(result)!
+      );
     }
 
-    return undefined;
+    return Promise.resolve(undefined);
   } catch (e) {
     throw new Error(`Unable to read file ${file}. ${e.message}`);
   }
@@ -58,7 +83,7 @@ async function fromFile(
 export const fetchSchema = async (
   { url, headers, skipSSLValidation }: EndpointConfig,
   projectFolder?: string
-): Promise<GraphQLSchema | undefined> => {
+): Promise<IntrospectionSchema | undefined> => {
   if (!url) throw new Error("No endpoint provided when fetching schema");
   const filePath = projectFolder ? path.resolve(projectFolder, url) : url;
   if (fs.existsSync(filePath)) return fromFile(filePath);
@@ -96,13 +121,13 @@ export const fetchSchema = async (
     throw new Error(errors.map(({ message }: Error) => message).join("\n"));
   }
 
-  return buildClientSchema({ __schema: data.__schema });
+  return data.__schema;
 };
 
 export async function fetchSchemaFromEngine(
   apiKey: string,
   customEngine: string | undefined
-): Promise<GraphQLSchema | undefined> {
+): Promise<IntrospectionSchema | undefined> {
   const variables = {
     id: getIdFromKey(apiKey as string),
     tag: "current"
@@ -119,9 +144,11 @@ export async function fetchSchemaFromEngine(
     })
   );
 
-  if (engineSchema.data && engineSchema.data.service.schema) {
-    return buildClientSchema(engineSchema.data.service.schema);
-  } else {
+  if (!engineSchema.data || !engineSchema.data.service.schema) {
     throw new Error("Unable to get schema from Apollo Engine");
   }
+
+  return buildIntrospectionSchemaInLocalGraphQLContext(
+    engineSchema.data.service.schema
+  );
 }
