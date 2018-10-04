@@ -43,41 +43,45 @@ async function buildIntrospectionSchemaInLocalGraphQLContext(
   return executionResult.data.__schema;
 }
 
-function fromFile(file: string): Promise<IntrospectionSchema | undefined> {
+async function fromFile(
+  file: string
+): Promise<IntrospectionSchema | undefined> {
+  let result;
   try {
-    const result = fs.readFileSync(file, {
+    result = fs.readFileSync(file, {
       encoding: "utf-8"
     });
-    const ext = path.extname(file);
-
-    // an actual introspectionQuery result
-    if (ext === ".json") {
-      const parsed = JSON.parse(result);
-      const schemaData = parsed.data
-        ? parsed.data.__schema
-        : parsed.__schema
-          ? parsed.__schema
-          : parsed;
-
-      return schemaData;
-    }
-
-    if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
-      return buildIntrospectionSchemaInLocalGraphQLContext(
-        new Source(result, file)
-      );
-    }
-
-    if (ext === ".ts" || ext === ".tsx" || ext === ".js" || ext === ".jsx") {
-      return buildIntrospectionSchemaInLocalGraphQLContext(
-        extractDocumentFromJavascript(result)!
-      );
-    }
-
-    return Promise.resolve(undefined);
-  } catch (e) {
-    throw new Error(`Unable to read file ${file}. ${e.message}`);
+  } catch (err) {
+    throw new Error(`Unable to read file ${file}. ${err.message}`);
   }
+
+  const ext = path.extname(file);
+
+  // an actual introspectionQuery result
+  if (ext === ".json") {
+    const parsed = JSON.parse(result);
+    const schemaData = parsed.data
+      ? parsed.data.__schema
+      : parsed.__schema
+        ? parsed.__schema
+        : parsed;
+
+    return schemaData;
+  }
+
+  if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
+    return await buildIntrospectionSchemaInLocalGraphQLContext(
+      new Source(result, file)
+    );
+  }
+
+  if (ext === ".ts" || ext === ".tsx" || ext === ".js" || ext === ".jsx") {
+    return await buildIntrospectionSchemaInLocalGraphQLContext(
+      extractDocumentFromJavascript(result)!
+    );
+  }
+
+  return;
 }
 
 export const fetchSchema = async (
