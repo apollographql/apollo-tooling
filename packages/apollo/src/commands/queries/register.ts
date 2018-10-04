@@ -40,9 +40,9 @@ export default class RegisterQueries extends Command {
         "Automatically remove @client and @connection directives and fields from operations"
     }),
     // XXX abstract for "clientFlags" and add to config
-    clientId: flags.string({
+    clientIdentifier: flags.string({
       description:
-        "Id for the client which will match ids from client traces, will use clientName if not provided"
+        "Identifier for the client which will match ids from client traces, will use clientName if not provided"
     }),
     clientName: flags.string({
       required: true,
@@ -111,7 +111,7 @@ export default class RegisterQueries extends Command {
           const variables = {
             clientIdentity: {
               clientName: flags.clientName,
-              clientId: flags.clientId || flags.clientName,
+              clientIdentifier: flags.clientIdentifier || flags.clientName,
               clientVersion: flags.clientVersion
             },
             serviceId: getIdFromKey(ctx.currentSchema.engineKey),
