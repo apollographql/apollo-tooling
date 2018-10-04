@@ -39,6 +39,19 @@ export default class RegisterQueries extends Command {
       description:
         "Automatically remove @client and @connection directives and fields from operations"
     }),
+    // XXX abstract for "clientFlags" and add to config
+    clientIdentifier: flags.string({
+      description:
+        "Identifier for the client which will match ids from client traces, will use clientName if not provided"
+    }),
+    clientName: flags.string({
+      required: true,
+      description: "Name of the client that the queries will be attached to"
+    }),
+    clientVersion: flags.string({
+      description:
+        "The version of the client that the queries will be attached to"
+    }),
     ...engineFlags,
 
     tagName: flags.string({
@@ -96,7 +109,11 @@ export default class RegisterQueries extends Command {
           }
 
           const variables = {
-            clientName: "TODO Client",
+            clientIdentity: {
+              clientName: flags.clientName,
+              clientIdentifier: flags.clientIdentifier || flags.clientName,
+              clientVersion: flags.clientVersion
+            },
             serviceId: getIdFromKey(ctx.currentSchema.engineKey),
             operations: ctx.manifest.operations
           };
