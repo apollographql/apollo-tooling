@@ -5,11 +5,7 @@ import * as Listr from "listr";
 import { toPromise, execute } from "apollo-link";
 import { print, GraphQLError, DocumentNode } from "graphql";
 
-import {
-  loadQueryDocuments,
-  extractOperationsAndFragments,
-  combineOperationsAndFragments
-} from "apollo-codegen-core/lib/loading";
+import { getCommonTasks } from "../../helpers/commands/queries/commonTasks";
 
 import { engineFlags } from "../../engine-cli";
 import { engineLink, getIdFromKey } from "../../engine";
@@ -17,7 +13,6 @@ import { gitInfo } from "../../git";
 import { VALIDATE_OPERATIONS } from "../../operations/validateOperations";
 import { ChangeType } from "../../printer/ast";
 import { format } from "../schema/check";
-import { resolveDocumentSets } from "../../config";
 import { loadConfigStep } from "../../load-config";
 
 export default class CheckQueries extends Command {
@@ -53,45 +48,7 @@ export default class CheckQueries extends Command {
 
     const tasks: Listr = new Listr([
       loadConfigStep(flags, false),
-      {
-        title: "Resolving GraphQL document sets",
-        task: async ctx => {
-          ctx.documentSets = await resolveDocumentSets(ctx.config, false);
-        }
-      },
-      {
-        title: "Scanning for GraphQL queries",
-        task: async (ctx, task) => {
-          ctx.queryDocuments = loadQueryDocuments(
-            ctx.documentSets[0].documentPaths,
-            flags.tagName
-          );
-          task.title = `Scanning for GraphQL queries (${
-            ctx.queryDocuments.length
-          } found)`;
-        }
-      },
-      {
-        title: "Isolating operations and fragments",
-        task: async ctx => {
-          const { fragments, operations } = extractOperationsAndFragments(
-            ctx.queryDocuments,
-            this.error.bind(this)
-          );
-          ctx.fragments = fragments;
-          ctx.operations = operations;
-        }
-      },
-      {
-        title: "Combining operations and fragments",
-        task: async ctx => {
-          ctx.fullOperations = combineOperationsAndFragments(
-            ctx.operations,
-            ctx.fragments,
-            this.error.bind(this)
-          );
-        }
-      },
+      ...getCommonTasks({ flags, errorLogger: this.error.bind(this) }),
       {
         title: "Printing operations",
         task: async ctx => {
