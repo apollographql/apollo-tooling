@@ -23,7 +23,8 @@ import {
   GraphQLField,
   GraphQLList,
   GraphQLNonNull,
-  DocumentNode
+  DocumentNode,
+  DirectiveNode
 } from "graphql";
 
 declare module "graphql/utilities/buildASTSchema" {
@@ -48,6 +49,34 @@ export function isList(type: GraphQLType): boolean {
 
 export function isMetaFieldName(name: string) {
   return name.startsWith("__");
+}
+
+export function removeConnectionDirectives(ast: ASTNode) {
+  return visit(ast, {
+    Directive(node: DirectiveNode): DirectiveNode | null {
+      if (node.name.value === "connection") return null;
+      return node;
+    }
+  });
+}
+
+export function removeClientDirectives(ast: ASTNode) {
+  return visit(ast, {
+    Field(node: FieldNode): FieldNode | null {
+      if (
+        node.directives &&
+        node.directives.find(directive => directive.name.value === "client")
+      )
+        return null;
+      return node;
+    },
+    OperationDefinition: {
+      leave(node: OperationDefinitionNode): OperationDefinitionNode | null {
+        if (!node.selectionSet.selections.length) return null;
+        return node;
+      }
+    }
+  });
 }
 
 const typenameField = {

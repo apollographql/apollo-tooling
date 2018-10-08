@@ -10,8 +10,6 @@ import { loadSchema } from "../../load-schema";
 
 import { loadConfigStep } from "../../load-config";
 
-import { execute, introspectionQuery, parse } from "graphql";
-
 export default class SchemaDownload extends Command {
   static description = "Download the schema from your GraphQL endpoint.";
 
@@ -79,11 +77,7 @@ export default class SchemaDownload extends Command {
         task: async ctx => {
           await promisify(fs.writeFile)(
             args.output,
-            JSON.stringify(
-              (await execute(ctx.schema, parse(introspectionQuery))).data!,
-              null,
-              2
-            )
+            JSON.stringify({ __schema: ctx.schema }, null, 2)
           );
         }
       }
