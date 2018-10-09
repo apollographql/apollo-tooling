@@ -128,13 +128,18 @@ export const fetchSchema = async (
   return data.__schema;
 };
 
-export async function fetchSchemaFromEngine(
-  apiKey: string,
-  customEngine: string | undefined
-): Promise<IntrospectionSchema | undefined> {
+export async function fetchSchemaFromEngine({
+  apiKey,
+  tag = "current",
+  customEngine
+}: {
+  apiKey: string;
+  tag?: string;
+  customEngine?: string;
+}): Promise<IntrospectionSchema | undefined> {
   const variables = {
     id: getIdFromKey(apiKey as string),
-    tag: "current"
+    tag
   };
 
   const engineSchema = await toPromise(
@@ -152,5 +157,5 @@ export async function fetchSchemaFromEngine(
     throw new Error("Unable to get schema from Apollo Engine");
   }
 
-  return buildIntrospectionSchemaFromSDL(engineSchema.data.service.schema);
+  return engineSchema.data.service.schema.__schema;
 }

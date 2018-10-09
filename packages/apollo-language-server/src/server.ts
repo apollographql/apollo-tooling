@@ -6,6 +6,7 @@ import {
   FileChangeType,
   NotificationType
 } from "vscode-languageserver";
+import { QuickPickItem } from "vscode";
 import Uri from "vscode-uri";
 import { findAndLoadConfig } from "apollo/lib/config";
 import { GraphQLWorkspace } from "./workspace";
@@ -69,6 +70,13 @@ export class LoadingHandler {
 }
 
 const workspace = new GraphQLWorkspace(new LoadingHandler());
+
+workspace.onSchemaTags((tags: Map<string, string[]>) => {
+  connection.sendNotification(
+    "apollographql/tagsLoaded",
+    JSON.stringify([...tags])
+  );
+});
 
 workspace.onDiagnostics(params => {
   connection.sendDiagnostics(params);
@@ -224,5 +232,10 @@ connection.onCompletion((params, token) => {
 connection.onCodeLens((params, token) => {
   return languageProvider.provideCodeLenses(params.textDocument.uri, token);
 });
+
+connection.onNotification(
+  "apollographql/tagSelected",
+  (selection: QuickPickItem) => workspace.updateSchemaTag(selection)
+);
 
 connection.listen();
