@@ -5,13 +5,14 @@ import {
   GraphQLFloat,
   GraphQLBoolean,
   GraphQLID,
-  GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
   GraphQLEnumType,
   isCompositeType,
   getNamedType,
-  GraphQLInputField
+  GraphQLInputField,
+  isNonNullType,
+  isListType
 } from "graphql";
 
 import { camelCase, pascalCase } from "change-case";
@@ -49,7 +50,7 @@ export class Helpers {
     unmodifiedTypeName?: string,
     isOptional?: boolean
   ): string {
-    if (type instanceof GraphQLNonNull) {
+    if (isNonNullType(type)) {
       return this.typeNameFromGraphQLType(
         type.ofType,
         unmodifiedTypeName,
@@ -60,7 +61,7 @@ export class Helpers {
     }
 
     let typeName;
-    if (type instanceof GraphQLList) {
+    if (isListType(type)) {
       typeName =
         "[" +
         this.typeNameFromGraphQLType(type.ofType, unmodifiedTypeName) +
@@ -84,9 +85,9 @@ export class Helpers {
   }
 
   fieldTypeEnum(type: GraphQLType, structName: string): string {
-    if (type instanceof GraphQLNonNull) {
+    if (isNonNullType(type)) {
       return `.nonNull(${this.fieldTypeEnum(type.ofType, structName)})`;
-    } else if (type instanceof GraphQLList) {
+    } else if (isListType(type)) {
       return `.list(${this.fieldTypeEnum(type.ofType, structName)})`;
     } else if (type instanceof GraphQLScalarType) {
       return `.scalar(${this.typeNameForScalarType(type)}.self)`;
@@ -146,7 +147,7 @@ export class Helpers {
 
     let type = field.type;
 
-    if (isConditional && type instanceof GraphQLNonNull) {
+    if (isConditional && isNonNullType(type)) {
       type = type.ofType;
     }
 
@@ -270,14 +271,14 @@ export class Helpers {
     outputTypeName: string
   ): string {
     let isOptional;
-    if (type instanceof GraphQLNonNull) {
+    if (isNonNullType(type)) {
       isOptional = !!isConditional;
       type = type.ofType;
     } else {
       isOptional = true;
     }
 
-    if (type instanceof GraphQLList) {
+    if (isListType(type)) {
       const elementType = type.ofType;
       if (isOptional) {
         return `${expression}.flatMap { ${makeClosureSignature(

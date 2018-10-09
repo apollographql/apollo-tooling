@@ -26,12 +26,11 @@ import TypescriptGenerator, {
   TypescriptCompilerOptions
 } from "./language";
 import Printer from "./printer";
-import { GraphQLType } from "graphql/type/definition";
+import { GraphQLType, isListType } from "graphql/type/definition";
 import {
   GraphQLNonNull,
   GraphQLOutputType,
   getNullableType,
-  GraphQLList,
   GraphQLObjectType
 } from "graphql";
 import { maybePush } from "apollo-codegen-core/lib/utilities/array";
@@ -388,7 +387,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     if (type instanceof GraphQLNonNull) {
       return this.getUnderlyingType(getNullableType(type));
     }
-    if (type instanceof GraphQLList) {
+    if (isListType(type)) {
       return this.getUnderlyingType(type.ofType);
     }
     return type;
@@ -452,7 +451,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       type = getNullableType(type);
     }
 
-    if (type instanceof GraphQLList) {
+    if (isListType(type)) {
       type = type.ofType;
     }
 

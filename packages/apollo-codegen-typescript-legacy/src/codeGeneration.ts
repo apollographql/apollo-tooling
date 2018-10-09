@@ -12,13 +12,14 @@ import {
   isCompositeType,
   isAbstractType,
   GraphQLEnumType,
-  GraphQLList,
   GraphQLNonNull,
   GraphQLInputObjectType,
   GraphQLType,
   GraphQLUnionType,
   GraphQLInterfaceType,
-  GraphQLObjectType
+  GraphQLObjectType,
+  isListType,
+  isNonNullType
 } from "graphql";
 
 import { sortEnumValues } from "apollo-codegen-core/lib/utilities/graphql";
@@ -154,10 +155,10 @@ export function interfaceVariablesDeclarationForOperation(
 }
 
 function getObjectTypeName(type: GraphQLType): string {
-  if (type instanceof GraphQLList) {
+  if (isListType(type)) {
     return getObjectTypeName(type.ofType);
   }
-  if (type instanceof GraphQLNonNull) {
+  if (isNonNullType(type)) {
     return getObjectTypeName(type.ofType);
   }
   if (type instanceof GraphQLObjectType) {
@@ -356,13 +357,10 @@ export function propertyFromField(
     const typeName = typeNameFromGraphQLType(context, fieldType);
     let isArray = false;
     let isArrayElementNullable = null;
-    if (fieldType instanceof GraphQLList) {
+    if (isListType(fieldType)) {
       isArray = true;
       isArrayElementNullable = !(fieldType.ofType instanceof GraphQLNonNull);
-    } else if (
-      fieldType instanceof GraphQLNonNull &&
-      fieldType.ofType instanceof GraphQLList
-    ) {
+    } else if (isNonNullType(fieldType) && isListType(fieldType.ofType)) {
       isArray = true;
       isArrayElementNullable = !(
         fieldType.ofType.ofType instanceof GraphQLNonNull

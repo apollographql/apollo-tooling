@@ -6,9 +6,9 @@ import {
   getNamedType,
   isCompositeType,
   GraphQLEnumType,
-  GraphQLList,
-  GraphQLNonNull,
-  GraphQLInputObjectType
+  GraphQLInputObjectType,
+  isNonNullType,
+  isListType
 } from "graphql";
 
 import {
@@ -221,9 +221,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           const properties = variables.map(({ name, type }) => {
             const typeName = this.helpers.typeNameFromGraphQLType(type);
             const isOptional = !(
-              type instanceof GraphQLNonNull ||
-              (type instanceof GraphQLList &&
-                type.ofType instanceof GraphQLNonNull)
+              isNonNullType(type) ||
+              (isListType(type) && isNonNullType(type.ofType))
             );
             return { name, propertyName: name, type, typeName, isOptional };
           });

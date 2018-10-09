@@ -6,10 +6,10 @@ import {
   GraphQLFloat,
   GraphQLBoolean,
   GraphQLID,
-  GraphQLList,
-  GraphQLNonNull,
   GraphQLScalarType,
-  GraphQLType
+  GraphQLType,
+  isListType,
+  isNonNullType
 } from "graphql";
 
 const builtInScalarMap = {
@@ -26,12 +26,12 @@ export function typeNameFromGraphQLType(
   bareTypeName?: string | null,
   nullable = true
 ): string {
-  if (type instanceof GraphQLNonNull) {
+  if (isNonNullType(type)) {
     return typeNameFromGraphQLType(context, type.ofType, bareTypeName, false);
   }
 
   let typeName;
-  if (type instanceof GraphQLList) {
+  if (isListType(type)) {
     typeName = `Array< ${typeNameFromGraphQLType(
       context,
       type.ofType,

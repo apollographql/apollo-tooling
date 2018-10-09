@@ -16,6 +16,7 @@
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",
     "build": "tsc",
+    "watch": "tsc -w",
     "prepare": "npm run build"
   },
   "engines": {

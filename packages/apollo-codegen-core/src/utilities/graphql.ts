@@ -21,10 +21,10 @@ import {
   SelectionSetNode,
   FieldNode,
   GraphQLField,
-  GraphQLList,
-  GraphQLNonNull,
   DocumentNode,
-  DirectiveNode
+  DirectiveNode,
+  isListType,
+  isNonNullType
 } from "graphql";
 
 declare module "graphql/utilities/buildASTSchema" {
@@ -41,10 +41,7 @@ export function sortEnumValues(values: GraphQLEnumValue[]): GraphQLEnumValue[] {
 }
 
 export function isList(type: GraphQLType): boolean {
-  return (
-    type instanceof GraphQLList ||
-    (type instanceof GraphQLNonNull && type.ofType instanceof GraphQLList)
-  );
+  return isListType(type) || (isNonNullType(type) && isListType(type.ofType));
 }
 
 export function isMetaFieldName(name: string) {
