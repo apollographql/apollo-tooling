@@ -28,7 +28,7 @@ import {
   Diagnostic
 } from "vscode-languageserver";
 
-import { collectDiagnostics } from "./diagnostics";
+import { collectExecutableDefinitionDiagnositics } from "./diagnostics";
 import { GraphQLDocument, extractGraphQLDocuments } from "./document";
 
 import {
@@ -367,7 +367,11 @@ export class GraphQLProject {
       const diagnostics: Diagnostic[] = [];
       for (const queryDocument of queryDocumentsForFile) {
         diagnostics.push(
-          ...collectDiagnostics(set.schema!, queryDocument, fragments)
+          ...collectExecutableDefinitionDiagnositics(
+            set.schema!,
+            queryDocument,
+            fragments
+          )
         );
 
         if (queryDocument.ast && this.engineStats && set.engineKey) {
