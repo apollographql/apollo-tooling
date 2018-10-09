@@ -15,6 +15,7 @@
   "scripts": {
     "postinstall": "lerna run prepare",
     "build": "lerna run build",
+    "watch": "lerna run watch --stream --no-sort --concurrency 20",
     "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "test": "jest --verbose",
