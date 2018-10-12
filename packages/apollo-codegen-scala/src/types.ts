@@ -4,11 +4,11 @@ import {
   GraphQLFloat,
   GraphQLBoolean,
   GraphQLID,
-  GraphQLList,
-  GraphQLNonNull,
   GraphQLScalarType,
   GraphQLEnumType,
-  isAbstractType
+  isAbstractType,
+  isNonNullType,
+  isListType
 } from "graphql";
 import { LegacyCompilerContext } from "apollo-codegen-core/lib/compiler/legacyIR";
 import { GraphQLType } from "graphql";
@@ -39,7 +39,7 @@ export function typeNameFromGraphQLType(
   isOptional?: boolean,
   isInputObject?: boolean
 ): string {
-  if (type instanceof GraphQLNonNull) {
+  if (isNonNullType(type)) {
     return typeNameFromGraphQLType(
       context,
       type.ofType,
@@ -51,7 +51,7 @@ export function typeNameFromGraphQLType(
   }
 
   let typeName;
-  if (type instanceof GraphQLList) {
+  if (isListType(type)) {
     typeName =
       "Seq[" +
       typeNameFromGraphQLType(context, type.ofType, bareTypeName) +

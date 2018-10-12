@@ -33,7 +33,7 @@
     "apollo-link-ws": "^1.0.8",
     "core-js": "^2.5.7",
     "glob": "^7.1.2",
-    "graphql": "^0.13.2",
+    "graphql": "^14.0.2",
     "graphql-tag": "^2.9.2",
     "minimatch": "^3.0.4",
     "moment": "^2.22.2",

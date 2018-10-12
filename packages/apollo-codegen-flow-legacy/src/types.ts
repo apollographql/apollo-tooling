@@ -4,9 +4,9 @@ import {
   GraphQLFloat,
   GraphQLBoolean,
   GraphQLID,
-  GraphQLList,
-  GraphQLNonNull,
-  GraphQLScalarType
+  GraphQLScalarType,
+  isListType,
+  isNonNullType
 } from "graphql";
 import { LegacyCompilerContext } from "apollo-codegen-core/lib/compiler/legacyIR";
 import { GraphQLType } from "graphql";
@@ -25,12 +25,12 @@ export function typeNameFromGraphQLType(
   bareTypeName?: string | null,
   nullable = true
 ): string {
-  if (type instanceof GraphQLNonNull) {
+  if (isNonNullType(type)) {
     return typeNameFromGraphQLType(context, type.ofType, bareTypeName, false);
   }
 
   let typeName;
-  if (type instanceof GraphQLList) {
+  if (isListType(type)) {
     typeName = `Array< ${typeNameFromGraphQLType(
       context,
       type.ofType,
