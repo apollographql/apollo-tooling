@@ -5,17 +5,19 @@
 Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
 
 <!-- toc -->
-* [Apollo CLI](#apollo-cli)
-* [Usage](#usage)
-* [Commands](#commands)
-* [Configuration](#configuration)
-* [Code Generation](#code-generation)
-* [Contributing](#contributing)
-<!-- tocstop -->
+
+- [Apollo CLI](#apollo-cli)
+- [Usage](#usage)
+- [Commands](#commands)
+- [Configuration](#configuration)
+- [Code Generation](#code-generation)
+- [Contributing](#contributing)
+  <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g apollo
 $ apollo COMMAND
@@ -27,18 +29,20 @@ USAGE
   $ apollo COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-* [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
-* [`apollo help [COMMAND]`](#apollo-help-command)
-* [`apollo queries:check`](#apollo-queriescheck)
-* [`apollo queries:extract OUTPUT`](#apollo-queriesextract-output)
-* [`apollo schema:check`](#apollo-schemacheck)
-* [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
-* [`apollo schema:publish`](#apollo-schemapublish)
+
+- [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
+- [`apollo help [COMMAND]`](#apollo-help-command)
+- [`apollo queries:check`](#apollo-queriescheck)
+- [`apollo queries:extract OUTPUT`](#apollo-queriesextract-output)
+- [`apollo schema:check`](#apollo-schemacheck)
+- [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
+- [`apollo schema:publish`](#apollo-schemapublish)
 
 ## `apollo codegen:generate [OUTPUT]`
 
@@ -230,9 +234,11 @@ OPTIONS
   --header=header      Additional headers to send to server for introspectionQuery
   --json               Output successful publish result as JSON
   --key=key            The API key for the Apollo Engine service
+  --tag=tag            The tag to publish the schema to
 ```
 
 _See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/schema/publish.ts)_
+
 <!-- commandsstop -->
 
 # Configuration
@@ -458,9 +464,9 @@ It can also be helpful to print standard out during testing. To enable logging, 
 
 ## Publishing
 
-* Before publishing, check the `CHANGELOG.md` in the root of the repository and make sure it's up to date.
-* Make sure you have a `GITHUB_TOKEN` set in your environment variables.  For more information on setting `GITHUB_AUTH`, check the [`lerna-changelog` documentation](https://github.com/lerna/lerna-changelog#github-token).
-* In the root of the repository, run `npx lerna-changelog` (PR labels are read automatically using the `GITHUB_AUTH` token).
-* Copy the result into the `CHANGELOG.md` file and replace the top line with the CLI version that will be published.
-* Run `git add CHANGELOG.md` so that the update will be included in Lerna's "publish" commit.
-* Finally, run `npm run release` to publish the individual packages.
+- Before publishing, check the `CHANGELOG.md` in the root of the repository and make sure it's up to date.
+- Make sure you have a `GITHUB_TOKEN` set in your environment variables. For more information on setting `GITHUB_AUTH`, check the [`lerna-changelog` documentation](https://github.com/lerna/lerna-changelog#github-token).
+- In the root of the repository, run `npx lerna-changelog` (PR labels are read automatically using the `GITHUB_AUTH` token).
+- Copy the result into the `CHANGELOG.md` file and replace the top line with the CLI version that will be published.
+- Run `git add CHANGELOG.md` so that the update will be included in Lerna's "publish" commit.
+- Finally, run `npm run release` to publish the individual packages.
