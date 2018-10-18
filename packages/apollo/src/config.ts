@@ -238,17 +238,23 @@ export async function resolveSchema({
 
   return referredSchema.extends
     ? extendSchema(
-        (await resolveSchema({ name: referredSchema.extends, config, tag }))!,
+        (await resolveSchema({
+          name: referredSchema.extends,
+          config,
+          ...(tag && { tag })
+        }))!,
         loadAsAST()
       )
     : referredSchema.clientSide
       ? buildASTSchema(loadAsAST())
-      : await loadSchema({ dependency: referredSchema, config, tag }).then(
-          introspectionSchema => {
-            if (!introspectionSchema) return;
-            return buildClientSchema({ __schema: introspectionSchema });
-          }
-        );
+      : await loadSchema({
+          dependency: referredSchema,
+          config,
+          ...(tag && { tag })
+        }).then(introspectionSchema => {
+          if (!introspectionSchema) return;
+          return buildClientSchema({ __schema: introspectionSchema });
+        });
 }
 
 export async function resolveDocumentSets(
@@ -275,7 +281,11 @@ export async function resolveDocumentSets(
       return {
         schema:
           needSchema && doc.schema
-            ? await resolveSchema({ name: doc.schema, config, tag })
+            ? await resolveSchema({
+                name: doc.schema,
+                config,
+                ...(tag && { tag })
+              })
             : undefined,
         endpoint: referredSchema ? referredSchema.endpoint : undefined,
         engineKey: referredSchema ? referredSchema.engineKey : undefined,
