@@ -76,6 +76,7 @@
     "prettier": "1.14.2",
     "ts-jest": "^23.1.4",
     "ts-node": "^7.0.1",
+    "tsc-watch": "^1.0.30",
     "tslib": "^1.9.3",
     "typescript": "^3.0.3",
     "vsce": "^1.46.0"
