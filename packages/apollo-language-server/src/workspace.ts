@@ -12,7 +12,7 @@ import * as fg from "glob";
 import { findAndLoadConfig } from "apollo/lib/config";
 import { GraphQLDocument } from "./document";
 import { Source, buildSchema } from "graphql";
-import { LoadingHandler } from "./server";
+import { LoadingHandler } from "./loadingHandler";
 
 export class GraphQLWorkspace {
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;

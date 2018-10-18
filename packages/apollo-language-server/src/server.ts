@@ -3,73 +3,20 @@ import {
   createConnection,
   ProposedFeatures,
   TextDocuments,
-  FileChangeType,
-  NotificationType
+  FileChangeType
 } from "vscode-languageserver";
 import { QuickPickItem } from "vscode";
 import Uri from "vscode-uri";
 import { findAndLoadConfig } from "apollo/lib/config";
 import { GraphQLWorkspace } from "./workspace";
 import { GraphQLLanguageProvider } from "./languageProvider";
+import { LoadingHandler } from "./loadingHandler";
 
 const connection = createConnection(ProposedFeatures.all);
 
 let hasWorkspaceFolderCapability = false;
 
-export class LoadingHandler {
-  private latestLoadingToken = 0;
-  async handle<T>(message: string, value: Promise<T>): Promise<T> {
-    const token = this.latestLoadingToken;
-    this.latestLoadingToken += 1;
-    connection.sendNotification(
-      new NotificationType<any, void>("apollographql/loading"),
-      { message, token }
-    );
-
-    try {
-      const ret = await value;
-      connection.sendNotification(
-        new NotificationType<any, void>("apollographql/loadingComplete"),
-        token
-      );
-      return ret;
-    } catch (e) {
-      connection.sendNotification(
-        new NotificationType<any, void>("apollographql/loadingComplete"),
-        token
-      );
-      connection.window.showErrorMessage(`Error in "${message}": ${e}`);
-      throw e;
-    }
-  }
-
-  handleSync<T>(message: string, value: () => T): T {
-    const token = this.latestLoadingToken;
-    this.latestLoadingToken += 1;
-    connection.sendNotification(
-      new NotificationType<any, void>("apollographql/loading"),
-      { message, token }
-    );
-
-    try {
-      const ret = value();
-      connection.sendNotification(
-        new NotificationType<any, void>("apollographql/loadingComplete"),
-        token
-      );
-      return ret;
-    } catch (e) {
-      connection.sendNotification(
-        new NotificationType<any, void>("apollographql/loadingComplete"),
-        token
-      );
-      connection.window.showErrorMessage(`Error in "${message}": ${e}`);
-      throw e;
-    }
-  }
-}
-
-const workspace = new GraphQLWorkspace(new LoadingHandler());
+const workspace = new GraphQLWorkspace(new LoadingHandler(connection));
 
 workspace.onSchemaTags((tags: Map<string, string[]>) => {
   connection.sendNotification(
@@ -86,19 +33,18 @@ workspace.onDecorations(decs => {
   connection.sendNotification("apollographql/engineDecorations", decs);
 });
 
-const hasInitializedPromise = new Promise(resolve => {
-  connection.onInitialized(async () => {
-    resolve();
+let initialize: () => void;
+const whenInitialized = new Promise<void>(resolve => (initialize = resolve));
 
-    if (hasWorkspaceFolderCapability) {
-      connection.workspace.onDidChangeWorkspaceFolders(event => {
-        event.removed.forEach(folder =>
-          workspace.removeProjectsInFolder(folder)
-        );
-        event.added.forEach(folder => workspace.addProjectsInFolder(folder));
-      });
-    }
-  });
+connection.onInitialized(async () => {
+  initialize();
+
+  if (hasWorkspaceFolderCapability) {
+    connection.workspace.onDidChangeWorkspaceFolders(event => {
+      event.removed.forEach(folder => workspace.removeProjectsInFolder(folder));
+      event.added.forEach(folder => workspace.addProjectsInFolder(folder));
+    });
+  }
 });
 
 connection.onInitialize(async params => {
@@ -109,7 +55,7 @@ connection.onInitialize(async params => {
 
   const workspaceFolders = params.workspaceFolders;
   if (workspaceFolders) {
-    hasInitializedPromise.then(() => {
+    whenInitialized.then(() => {
       workspaceFolders.forEach(folder => workspace.addProjectsInFolder(folder));
     });
   }
@@ -196,42 +142,38 @@ connection.onDidChangeWatchedFiles(params => {
 
 const languageProvider = new GraphQLLanguageProvider(workspace);
 
-connection.onHover((params, token) => {
-  return languageProvider.provideHover(
+connection.onHover((params, token) =>
+  languageProvider.provideHover(params.textDocument.uri, params.position, token)
+);
+
+connection.onDefinition((params, token) =>
+  languageProvider.provideDefinition(
     params.textDocument.uri,
     params.position,
     token
-  );
-});
+  )
+);
 
-connection.onDefinition((params, token) => {
-  return languageProvider.provideDefinition(
-    params.textDocument.uri,
-    params.position,
-    token
-  );
-});
-
-connection.onReferences((params, token) => {
-  return languageProvider.provideReferences(
+connection.onReferences((params, token) =>
+  languageProvider.provideReferences(
     params.textDocument.uri,
     params.position,
     params.context,
     token
-  );
-});
+  )
+);
 
-connection.onCompletion((params, token) => {
-  return languageProvider.provideCompletionItems(
+connection.onCompletion((params, token) =>
+  languageProvider.provideCompletionItems(
     params.textDocument.uri,
     params.position,
     token
-  );
-});
+  )
+);
 
-connection.onCodeLens((params, token) => {
-  return languageProvider.provideCodeLenses(params.textDocument.uri, token);
-});
+connection.onCodeLens((params, token) =>
+  languageProvider.provideCodeLenses(params.textDocument.uri, token)
+);
 
 connection.onNotification(
   "apollographql/tagSelected",

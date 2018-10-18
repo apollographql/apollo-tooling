@@ -52,7 +52,7 @@ export type DocumentUri = string;
 import "core-js/fn/array/flat-map";
 import { rangeForASTNode } from "./utilities/source";
 import { formatMS } from "./format";
-import { LoadingHandler } from "./server";
+import { LoadingHandler } from "./loadingHandler";
 declare global {
   interface Array<T> {
     flatMap<U>(
