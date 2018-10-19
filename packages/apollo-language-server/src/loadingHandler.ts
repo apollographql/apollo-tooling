@@ -22,7 +22,7 @@ export class LoadingHandler {
         new NotificationType<any, void>("apollographql/loadingComplete"),
         token
       );
-      this.connection.window.showErrorMessage(`Error in "${message}": ${e}`);
+      this.showError(`Error in "${message}": ${e}`);
       throw e;
     }
   }
@@ -45,8 +45,11 @@ export class LoadingHandler {
         new NotificationType<any, void>("apollographql/loadingComplete"),
         token
       );
-      this.connection.window.showErrorMessage(`Error in "${message}": ${e}`);
+      this.showError(`Error in "${message}": ${e}`);
       throw e;
     }
+  }
+  showError(message: string) {
+    this.connection.window.showErrorMessage(message);
   }
 }

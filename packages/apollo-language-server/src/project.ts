@@ -70,9 +70,12 @@ const fileAssociations: { [extension: string]: string } = {
   ".tsx": "typescriptreact"
 };
 
-const engineStatsQuery = gql`
-  query EngineSchemaStats($id: ID!) {
+const ENGINE_TAGS_AND_STATS = gql`
+  query EngineTagsAndStats($id: ID!) {
     service(id: $id) {
+      schemaTags {
+        tag
+      }
       stats(from: "-3600", to: "-0") {
         fieldStats {
           groupBy {
@@ -89,15 +92,16 @@ const engineStatsQuery = gql`
   }
 `;
 
-const schemaTagsQuery = gql`
-  query SchemaTags($id: ID!) {
-    service(id: $id) {
-      schemaTags {
-        tag
-      }
-    }
-  }
-`;
+interface FieldStat {
+  groupBy: {
+    field: string;
+  };
+  metrics: {
+    fieldHistogram: {
+      durationMs: number;
+    };
+  };
+}
 
 export interface DocumentAndSet {
   doc: GraphQLDocument;
@@ -151,15 +155,21 @@ export class GraphQLProject {
     this.documentsByFile = new Map();
     this.setToResolved.clear();
 
-    this.readyPromise = this.loadEngineStats()
-      .then(() => this.scanAllIncludedFiles())
-      .catch(error => {
-        console.error(error);
-      });
-
-    this.loadSchemaTags().then(() => {
-      this._onSchemaTags && this._onSchemaTags(this.schemaTags);
-    });
+    this.readyPromise = process.env.ENGINE_API_KEY
+      ? this.loadEngineData()
+          .then(() => {
+            this.scanAllIncludedFiles();
+            this._onSchemaTags && this._onSchemaTags(this.schemaTags);
+          })
+          .catch(error => {
+            console.error(error);
+          })
+      : Promise.reject(
+          "Apollo: failed to load Engine stats. No ENGINE_API_KEY found in .env"
+        ).catch(e => {
+          this.loadingHandler.showError(e);
+          throw e;
+        });
   }
 
   get displayName(): string {
@@ -200,95 +210,56 @@ export class GraphQLProject {
     return !!this.setThatIncludes(filePath);
   }
 
-  async loadSchemaTags() {
+  async loadEngineData() {
     await this.loadingHandler.handle(
-      `Loading available schema tags for ${this.config.name!}`,
+      `Loading Engine data for ${this.config.name!}`,
       Promise.all(
-        Object.values(this.config.schemas!).map(async schemaDef => {
-          if (schemaDef.engineKey) {
-            const tagsResult = await toPromise(
-              execute(engineLink, {
-                query: schemaTagsQuery,
-                variables: {
-                  id: getIdFromKey(schemaDef.engineKey)
-                },
-                context: {
-                  headers: { ["x-api-key"]: schemaDef.engineKey },
-                  ...(this.config.engineEndpoint && {
-                    uri: this.config.engineEndpoint
-                  })
-                }
-              })
-            );
-
-            const flattenedResult: string[] = tagsResult.data!.service.schemaTags.map(
-              ({ tag }: { tag: string }) => tag
-            );
-
-            this.schemaTags.set(schemaDef.engineKey, flattenedResult);
-          }
-        })
-      )
-    );
-  }
-
-  async loadEngineStats() {
-    await this.loadingHandler.handle(
-      `Loading Apollo Engine stats for ${this.config.name!}`,
-      Promise.all(
-        Object.values(this.config.schemas!).map(async schemaDef => {
-          if (schemaDef.engineKey) {
-            const engineData = await toPromise(
-              execute(engineLink, {
-                query: engineStatsQuery,
-                variables: {
-                  id: getIdFromKey(schemaDef.engineKey)
-                },
-                context: {
-                  headers: { ["x-api-key"]: schemaDef.engineKey },
-                  ...(this.config.engineEndpoint && {
-                    uri: this.config.engineEndpoint
-                  })
-                }
-              })
-            );
-
-            type FieldStat = {
-              groupBy: {
-                field: string;
-              };
-              metrics: {
-                fieldHistogram: {
-                  durationMs: number;
-                };
-              };
-            };
-
-            const schemaEngineStats = new Map<string, Map<string, number>>();
-            engineData.data!.service.stats.fieldStats.forEach(
-              (fieldStat: FieldStat) => {
-                // Parse field "ParentType.fieldName:FieldType" into ["ParentType", "fieldName", "FieldType"]
-                const [parentType = null, fieldName = null] =
-                  fieldStat.groupBy.field.split(/\.|:/) || [];
-
-                if (!parentType || !fieldName) {
-                  return;
-                }
-                const fieldsMap =
-                  schemaEngineStats.get(parentType) ||
-                  schemaEngineStats
-                    .set(parentType, new Map<string, number>())
-                    .get(parentType)!;
-
-                fieldsMap.set(
-                  fieldName,
-                  fieldStat.metrics.fieldHistogram.durationMs
-                );
+        Object.values(this.config.schemas!).map(async () => {
+          const engineData = await toPromise(
+            execute(engineLink, {
+              query: ENGINE_TAGS_AND_STATS,
+              variables: {
+                id: getIdFromKey(process.env.ENGINE_API_KEY!)
+              },
+              context: {
+                headers: { ["x-api-key"]: process.env.ENGINE_API_KEY },
+                ...(this.config.engineEndpoint && {
+                  uri: this.config.engineEndpoint
+                })
               }
-            );
+            })
+          );
 
-            this.engineStats.set(schemaDef.engineKey, schemaEngineStats);
-          }
+          const allSchemaTags: string[] = engineData.data!.service.schemaTags.map(
+            ({ tag }: { tag: string }) => tag
+          );
+
+          this.schemaTags.set(process.env.ENGINE_API_KEY!, allSchemaTags);
+
+          const engineStats = new Map<string, Map<string, number>>();
+          engineData.data!.service.stats.fieldStats.forEach(
+            (fieldStat: FieldStat) => {
+              // Parse field "ParentType.fieldName:FieldType" into ["ParentType", "fieldName", "FieldType"]
+              const [parentType = null, fieldName = null] =
+                fieldStat.groupBy.field.split(/\.|:/) || [];
+
+              if (!parentType || !fieldName) {
+                return;
+              }
+              const fieldsMap =
+                engineStats.get(parentType) ||
+                engineStats
+                  .set(parentType, new Map<string, number>())
+                  .get(parentType)!;
+
+              fieldsMap.set(
+                fieldName,
+                fieldStat.metrics.fieldHistogram.durationMs
+              );
+            }
+          );
+
+          this.engineStats.set(process.env.ENGINE_API_KEY!, engineStats);
         })
       )
     );
