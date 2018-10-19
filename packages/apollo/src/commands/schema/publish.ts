@@ -35,13 +35,15 @@ export default class SchemaPublish extends Command {
     }),
     json: flags.boolean({
       description: "Output successful publish result as JSON"
+    }),
+    tag: flags.string({
+      description: "The tag to publish the schema to",
+      default: "current"
     })
   };
 
   async run() {
     const { flags } = this.parse(SchemaPublish);
-    // hardcoded to current until service / schema / tag is settled
-    const tag = "current";
 
     const tasks = new Listr([
       loadConfigStep(flags, true),
@@ -77,7 +79,7 @@ export default class SchemaPublish extends Command {
           const gitContext = await gitInfo();
           const variables = {
             schema: ctx.schema,
-            tag,
+            tag: flags.tag,
             gitContext,
             id: getIdFromKey(ctx.currentSchema.engineKey)
           };

@@ -52,7 +52,7 @@ export type DocumentUri = string;
 import "core-js/fn/array/flat-map";
 import { rangeForASTNode } from "./utilities/source";
 import { formatMS } from "./format";
-import { LoadingHandler } from "./server";
+import { LoadingHandler } from "./loadingHandler";
 declare global {
   interface Array<T> {
     flatMap<U>(
@@ -70,9 +70,12 @@ const fileAssociations: { [extension: string]: string } = {
   ".tsx": "typescriptreact"
 };
 
-const engineStatsQuery = gql`
-  query EngineSchemaStats($id: ID!) {
+const ENGINE_TAGS_AND_STATS = gql`
+  query EngineTagsAndStats($id: ID!) {
     service(id: $id) {
+      schemaTags {
+        tag
+      }
       stats(from: "-3600", to: "-0") {
         fieldStats {
           groupBy {
@@ -89,6 +92,17 @@ const engineStatsQuery = gql`
   }
 `;
 
+interface FieldStat {
+  groupBy: {
+    field: string;
+  };
+  metrics: {
+    fieldHistogram: {
+      durationMs: number;
+    };
+  };
+}
+
 export interface DocumentAndSet {
   doc: GraphQLDocument;
   set: ResolvedDocumentSet;
@@ -98,6 +112,7 @@ export class GraphQLProject {
   public config: ApolloConfig = (null as any) as ApolloConfig;
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
   private _onDecorations?: (any: any) => void;
+  private _onSchemaTags?: (tags: Map<string, string[]>) => void;
 
   public isReady = false;
   public readyPromise: Promise<void> | undefined = undefined;
@@ -113,6 +128,7 @@ export class GraphQLProject {
     string,
     Map<string, Map<string, number>>
   > = new Map();
+  private schemaTags: Map<string, string[]> = new Map();
 
   constructor(
     config: ApolloConfig,
@@ -135,18 +151,33 @@ export class GraphQLProject {
 
     this.documentSets = undefined;
     this.engineStats.clear();
+    this.schemaTags = new Map();
     this.documentsByFile = new Map();
     this.setToResolved.clear();
 
-    this.readyPromise = this.loadEngineStats()
-      .then(() => this.scanAllIncludedFiles())
-      .catch(error => {
-        console.error(error);
-      });
+    this.readyPromise = process.env.ENGINE_API_KEY
+      ? this.loadEngineData()
+          .then(() => {
+            this.scanAllIncludedFiles();
+            this._onSchemaTags && this._onSchemaTags(this.schemaTags);
+          })
+          .catch(error => {
+            console.error(error);
+          })
+      : Promise.reject(
+          "Apollo: failed to load Engine stats. No ENGINE_API_KEY found in .env"
+        ).catch(e => {
+          this.loadingHandler.showError(e);
+          throw e;
+        });
   }
 
   get displayName(): string {
     return this.config.name || "";
+  }
+
+  onSchemaTags(handler: (tags: Map<string, string[]>) => void): void {
+    this._onSchemaTags = handler;
   }
 
   onDiagnostics(handler: NotificationHandler<PublishDiagnosticsParams>) {
@@ -179,65 +210,98 @@ export class GraphQLProject {
     return !!this.setThatIncludes(filePath);
   }
 
-  async loadEngineStats() {
+  async loadEngineData() {
     await this.loadingHandler.handle(
-      `Loading Apollo Engine stats for ${this.config.name!}`,
+      `Loading Engine data for ${this.config.name!}`,
       Promise.all(
-        Object.values(this.config.schemas!).map(async schemaDef => {
-          if (schemaDef.engineKey) {
-            const engineData = await toPromise(
-              execute(engineLink, {
-                query: engineStatsQuery,
-                variables: {
-                  id: getIdFromKey(schemaDef.engineKey!)
-                },
-                context: {
-                  headers: { ["x-api-key"]: schemaDef.engineKey },
-                  ...(this.config.engineEndpoint && {
-                    uri: this.config.engineEndpoint
-                  })
-                }
-              })
-            );
-
-            type FieldStat = {
-              groupBy: {
-                field: string;
-              };
-              metrics: {
-                fieldHistogram: {
-                  durationMs: number;
-                };
-              };
-            };
-
-            const schemaEngineStats = new Map<string, Map<string, number>>();
-            engineData.data!.service.stats.fieldStats.forEach(
-              (fieldStat: FieldStat) => {
-                // Parse field "ParentType.fieldName:FieldType" into ["ParentType", "fieldName", "FieldType"]
-                const [parentType = null, fieldName = null] =
-                  fieldStat.groupBy.field.split(/\.|:/) || [];
-
-                if (!parentType || !fieldName) {
-                  return;
-                }
-                const fieldsMap =
-                  schemaEngineStats.get(parentType) ||
-                  schemaEngineStats
-                    .set(parentType, new Map<string, number>())
-                    .get(parentType)!;
-
-                fieldsMap.set(
-                  fieldName,
-                  fieldStat.metrics.fieldHistogram.durationMs
-                );
+        Object.values(this.config.schemas!).map(async () => {
+          const engineData = await toPromise(
+            execute(engineLink, {
+              query: ENGINE_TAGS_AND_STATS,
+              variables: {
+                id: getIdFromKey(process.env.ENGINE_API_KEY!)
+              },
+              context: {
+                headers: { ["x-api-key"]: process.env.ENGINE_API_KEY },
+                ...(this.config.engineEndpoint && {
+                  uri: this.config.engineEndpoint
+                })
               }
-            );
+            })
+          );
 
-            this.engineStats.set(schemaDef.engineKey, schemaEngineStats);
-          }
+          const allSchemaTags: string[] = engineData.data!.service.schemaTags.map(
+            ({ tag }: { tag: string }) => tag
+          );
+
+          this.schemaTags.set(process.env.ENGINE_API_KEY!, allSchemaTags);
+
+          const engineStats = new Map<string, Map<string, number>>();
+          engineData.data!.service.stats.fieldStats.forEach(
+            (fieldStat: FieldStat) => {
+              // Parse field "ParentType.fieldName:FieldType" into ["ParentType", "fieldName", "FieldType"]
+              const [parentType = null, fieldName = null] =
+                fieldStat.groupBy.field.split(/\.|:/) || [];
+
+              if (!parentType || !fieldName) {
+                return;
+              }
+              const fieldsMap =
+                engineStats.get(parentType) ||
+                engineStats
+                  .set(parentType, new Map<string, number>())
+                  .get(parentType)!;
+
+              fieldsMap.set(
+                fieldName,
+                fieldStat.metrics.fieldHistogram.durationMs
+              );
+            }
+          );
+
+          this.engineStats.set(process.env.ENGINE_API_KEY!, engineStats);
         })
       )
+    );
+  }
+
+  private documentSetHasAstNode(set: ResolvedDocumentSet): boolean {
+    const queryType = set && set.schema && set.schema.getQueryType();
+    return !!(queryType && queryType.astNode);
+  }
+
+  async updateSchemaTag(tag: string) {
+    await this.loadingHandler.handle(
+      `Loading queries and schemas for ${this.config.name!}`,
+      (async () => {
+        this.documentSets = await resolveDocumentSets(this.config, true, tag);
+        for (const set of this.documentSets) {
+          if (!this.documentSetHasAstNode(set)) {
+            const schemaSource = printSchema(set.schema!);
+
+            set.schema = buildSchema(
+              // rebuild the schema from a generated source file and attach the source to a graphql-schema
+              // URI that can be loaded as an in-memory file by VSCode
+              new Source(
+                schemaSource,
+                `graphql-schema:/schema.graphql?${encodeURIComponent(
+                  schemaSource
+                )}`
+              )
+            );
+          }
+
+          this.setToResolved.set(set.originalSet, set);
+
+          for (const filePath of set.documentPaths) {
+            const uri = Uri.file(filePath).toString();
+            this.fileDidChange(uri, set);
+          }
+        }
+
+        this.isReady = true;
+        this.validateIfNeeded();
+      })()
     );
   }
 
@@ -245,11 +309,14 @@ export class GraphQLProject {
     await this.loadingHandler.handle(
       `Loading queries and schemas for ${this.config.name!}`,
       (async () => {
-        console.time(`scanAllIncludedFiles - ${this.displayName}`);
-        this.documentSets = await resolveDocumentSets(this.config, true);
+        this.documentSets = await resolveDocumentSets(
+          this.config,
+          true,
+          "current"
+        );
 
         for (const set of this.documentSets) {
-          if (!set.schema!.getQueryType()!.astNode) {
+          if (!this.documentSetHasAstNode(set)) {
             const schemaSource = printSchema(set.schema!);
 
             set.schema = buildSchema(
@@ -276,8 +343,6 @@ export class GraphQLProject {
             this.fileDidChange(uri, set);
           }
         }
-
-        console.timeEnd(`scanAllIncludedFiles - ${this.displayName}`);
 
         this.isReady = true;
         this.validateIfNeeded();

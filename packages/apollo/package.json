@@ -24,7 +24,7 @@
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",
     "build": "tsc",
-    "watch": "tsc -w",
+    "watch": "tsc-watch --onSuccess \"cp -r . ../apollo-vscode/server/node_modules/apollo\"",
     "prepare": "npm run build",
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "postpack": "rm -f oclif.manifest.json",

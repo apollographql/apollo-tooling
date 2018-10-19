@@ -17,9 +17,9 @@
     "installServer": "installServerIntoExtension ../apollo-vscode ./package.json ./tsconfig.json && ./copy-apollo-libs.sh",
     "clean": "rm -rf ../apollo-vscode/server",
     "prebuild": "npm run clean",
-    "build": "npm run installServer && tsc -p .",
-    "watch": "npm run installServer && tsc -w -p .",
-    "watchOnly": "tsc -w -p .",
+    "build": "npm run installServer && tsc",
+    "watch": "npm run installServer && tsc-watch --onSuccess \"./copy-apollo-libs.sh\"",
+    "watchOnly": "tsc -w",
     "prepare": "npm run build"
   },
   "engines": {

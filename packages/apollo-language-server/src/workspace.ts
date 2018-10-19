@@ -4,6 +4,7 @@ import {
   PublishDiagnosticsParams
 } from "vscode-languageserver";
 import Uri from "vscode-uri";
+import { QuickPickItem } from "vscode";
 
 import { GraphQLProject, DocumentUri } from "./project";
 import { dirname } from "path";
@@ -11,11 +12,12 @@ import * as fg from "glob";
 import { findAndLoadConfig } from "apollo/lib/config";
 import { GraphQLDocument } from "./document";
 import { Source, buildSchema } from "graphql";
-import { LoadingHandler } from "./server";
+import { LoadingHandler } from "./loadingHandler";
 
 export class GraphQLWorkspace {
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
   private _onDecorations?: (any: any) => void;
+  private _onSchemaTags?: (tags: Map<string, string[]>) => void;
   public projectsByFolderUri: Map<string, GraphQLProject[]> = new Map();
 
   constructor(private loadingHandler: LoadingHandler) {}
@@ -26,6 +28,10 @@ export class GraphQLWorkspace {
 
   onDecorations(handler: (any: any) => void) {
     this._onDecorations = handler;
+  }
+
+  onSchemaTags(handler: (tags: Map<string, string[]>) => void): void {
+    this._onSchemaTags = handler;
   }
 
   addProjectsInFolder(folder: WorkspaceFolder) {
@@ -70,6 +76,10 @@ export class GraphQLWorkspace {
         this.loadingHandler
       );
 
+      project.onSchemaTags((tags: Map<string, string[]>) => {
+        this._onSchemaTags && this._onSchemaTags(tags);
+      });
+
       project.onDiagnostics(params => {
         this._onDiagnostics && this._onDiagnostics(params);
       });
@@ -82,6 +92,19 @@ export class GraphQLWorkspace {
     });
 
     this.projectsByFolderUri.set(folder.uri, projects);
+  }
+
+  updateSchemaTag(selection: QuickPickItem) {
+    this.projectsByFolderUri.forEach(projects => {
+      projects.forEach(project => {
+        const projectConsumesService = project.config.schemas!.default.engineKey!.includes(
+          selection.detail!
+        );
+        if (projectConsumesService) {
+          project.updateSchemaTag(selection.label);
+        }
+      });
+    });
   }
 
   removeProjectsInFolder(folder: WorkspaceFolder) {

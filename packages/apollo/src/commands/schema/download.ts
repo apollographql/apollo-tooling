@@ -66,10 +66,10 @@ export default class SchemaDownload extends Command {
             this.error("No schemas found.");
           }
 
-          ctx.schema = await loadSchema(
-            Object.values(ctx.config.schemas)[0],
-            ctx.config
-          );
+          ctx.schema = await loadSchema({
+            dependency: Object.values(ctx.config.schemas)[0],
+            config: ctx.config
+          });
         }
       },
       {
