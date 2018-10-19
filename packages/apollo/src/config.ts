@@ -82,7 +82,7 @@ function loadSchemaConfig(
       obj.endpoint,
       !obj.engineKey && defaultEndpoint
     ),
-    engineKey: obj.engineKey,
+    engineKey: obj.engineKey || process.env.ENGINE_API_KEY,
     clientSide: obj.clientSide,
     extends: obj.extends
   };

@@ -210,7 +210,7 @@ export class GraphQLProject {
               execute(engineLink, {
                 query: schemaTagsQuery,
                 variables: {
-                  id: getIdFromKey(schemaDef.engineKey!)
+                  id: getIdFromKey(schemaDef.engineKey)
                 },
                 context: {
                   headers: { ["x-api-key"]: schemaDef.engineKey },
@@ -242,7 +242,7 @@ export class GraphQLProject {
               execute(engineLink, {
                 query: engineStatsQuery,
                 variables: {
-                  id: getIdFromKey(schemaDef.engineKey!)
+                  id: getIdFromKey(schemaDef.engineKey)
                 },
                 context: {
                   headers: { ["x-api-key"]: schemaDef.engineKey },
