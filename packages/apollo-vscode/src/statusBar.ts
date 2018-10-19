@@ -20,13 +20,6 @@ export default class ApolloStatusBar {
     this.statusBarItem.show();
   }
 
-  public enableClickHandler(isEnabled: boolean) {
-    this.statusBarItem.tooltip = isEnabled ? "Select schema tag" : undefined;
-    this.statusBarItem.command = isEnabled
-      ? "launchSchemaTagPicker"
-      : undefined;
-  }
-
   public dispose() {
     this.statusBarItem.dispose();
   }

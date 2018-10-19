@@ -92,11 +92,10 @@ export function activate(context: ExtensionContext) {
         );
 
         schemaTags = [...quickPickItems, ...schemaTags];
-        statusBar.enableClickHandler(true);
       }
     );
 
-    commands.registerCommand("launchSchemaTagPicker", async () => {
+    commands.registerCommand("apollographql/selectSchemaTag", async () => {
       const selection = await window.showQuickPick(schemaTags);
       if (selection) {
         client.sendNotification("apollographql/tagSelected", selection);

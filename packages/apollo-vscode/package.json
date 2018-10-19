@@ -76,6 +76,11 @@
           "meta.embedded.block.graphql": "graphql"
         }
       }
-    ]
+    ],
+    "commands": [{
+      "command": "apollographql/selectSchemaTag",
+      "title": "Select Schema Tag",
+      "category": "Apollo"
+  }]
   }
 }
