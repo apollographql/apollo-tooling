@@ -265,13 +265,18 @@ export class GraphQLProject {
     );
   }
 
+  private documentSetHasAstNode(set: ResolvedDocumentSet): boolean {
+    const queryType = set && set.schema && set.schema.getQueryType();
+    return !!(queryType && queryType.astNode);
+  }
+
   async updateSchemaTag(tag: string) {
     await this.loadingHandler.handle(
       `Loading queries and schemas for ${this.config.name!}`,
       (async () => {
         this.documentSets = await resolveDocumentSets(this.config, true, tag);
         for (const set of this.documentSets) {
-          if (!set.schema!.getQueryType()!.astNode) {
+          if (!this.documentSetHasAstNode(set)) {
             const schemaSource = printSchema(set.schema!);
 
             set.schema = buildSchema(
@@ -311,7 +316,7 @@ export class GraphQLProject {
         );
 
         for (const set of this.documentSets) {
-          if (!set.schema!.getQueryType()!.astNode) {
+          if (!this.documentSetHasAstNode(set)) {
             const schemaSource = printSchema(set.schema!);
 
             set.schema = buildSchema(
