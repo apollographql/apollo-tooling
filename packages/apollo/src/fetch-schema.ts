@@ -85,7 +85,19 @@ export const fetchSchema = async (
     // XXX node-fetch isn't compatible typescript wise here?
     execute(createHttpLink(options), {
       query: introspection,
-      context: { headers }
+      context: {
+        headers,
+        extensions: {
+          clientInfo: {
+            clientName: "apollo-cli",
+            clientId: "apollo-cli",
+            clientVersion: require("../package.json").version
+          }
+        },
+        http: {
+          includeExtensions: true
+        }
+      }
     })
   ).then(({ data, errors }: any) => {
     if (errors)
