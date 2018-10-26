@@ -25,11 +25,11 @@
     "packageExtension": "npm run build && ../../node_modules/vsce/out/vsce package --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-cli/master/packages/apollo-vscode"
   },
   "engines": {
-    "vscode": "^1.26.0"
+    "vscode": "^1.28.0"
   },
   "dependencies": {
     "vscode": "^1.1.21",
-    "vscode-languageclient": "^5.0.1"
+    "vscode-languageclient": "^5.1.1"
   },
   "publisher": "apollographql",
   "categories": [
