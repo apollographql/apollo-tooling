@@ -43,13 +43,16 @@ export default class SchemaPublish extends Command {
     }),
     json: flags.boolean({
       description: "Output successful publish result as JSON"
+    }),
+    branch: flags.string({
+      description: "Schema branch to publish under"
     })
   };
 
   async run() {
     const { flags } = this.parse(SchemaPublish);
     // hardcoded to current until service / schema / tag is settled
-    const tag = "current";
+    const tag = flags.branch || "current";
 
     const tasks = new Listr([
       loadConfigStep(flags, true),
