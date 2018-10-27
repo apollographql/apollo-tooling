@@ -10,7 +10,6 @@ lib
 
 .DS_Store
 
-yarn.lock
 lerna-debug.log
 
 packages/apollo-vscode/server
