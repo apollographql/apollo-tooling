@@ -26,6 +26,7 @@
     "apollo-codegen-core": "file:../apollo-codegen-core"
   },
   "jest": {
+    "preset": "ts-jest/presets/js-with-ts",
     "testEnvironment": "node",
     "testMatch": [
       "**/__tests__/*.(js|ts)"
@@ -39,17 +40,14 @@
       "<rootDir>/test/fixtures/",
       "<rootDir>/test/test-utils"
     ],
-    "transform": {
-      "^.+\\.(ts|js)x?$": "<rootDir>../../node_modules/ts-jest/preprocessor.js"
-    },
     "moduleFileExtensions": [
       "ts",
       "js"
     ],
     "globals": {
       "ts-jest": {
-        "skipBabel": true,
-        "tsConfigFile": "tsconfig.test.json"
+        "tsConfig": "<rootDir>/tsconfig.test.json",
+        "diagnostics": false
       }
     }
   }
