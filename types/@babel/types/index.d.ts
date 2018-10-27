@@ -1,6 +1,10 @@
 export * from "babel-types";
 
 declare module "babel-types" {
+  export function stringLiteralTypeAnnotation(
+    value: string
+  ): StringLiteralTypeAnnotation;
+
   export interface StringLiteralTypeAnnotation {
     value: string;
   }
