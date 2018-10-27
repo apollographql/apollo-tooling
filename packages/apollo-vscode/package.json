@@ -19,10 +19,10 @@
     "prebuild": "npm run clean",
     "build": "tsc",
     "watch": "tsc -w -p .",
-    "prepare": "npm update --production && npm run build",
+    "prepare": "npm run build",
     "postinstall": "npm run update-vscode",
     "update-vscode": "node ../../node_modules/vscode/bin/install",
-    "packageExtension": "npm run build && ../../node_modules/vsce/out/vsce package --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-cli/master/packages/apollo-vscode"
+    "packageExtension": "npm run build && npm update --production && ../../node_modules/vsce/out/vsce package --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-cli/master/packages/apollo-vscode && git clean -dfqX -- ./node_modules"
   },
   "engines": {
     "vscode": "^1.28.0"
