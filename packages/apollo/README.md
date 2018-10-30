@@ -249,7 +249,7 @@ Let's take a look at a basic configuration file (`package.json` style):
   "apollo": {
     "schemas": {
       "myPrimaryBackend": {
-        "schema": "downloadedSchema.json", // if not defined the an introspection query will be run
+        "schema": "downloadedSchema.json", // if not defined then an introspection query will be run
         "endpoint": "http://example.com/graphql", // if not defined the schema will be downloaded from Apollo Engine
         "engineKey": "my-engine-key" // use this key when connecting to Apollo Engine
       }
