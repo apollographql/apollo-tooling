@@ -15,7 +15,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rm -rf ../apollo-vscode/server",
-    "install-dependencies-into-extension": "yarn upgrade --silent --production --modules-folder ../apollo-vscode/server/node_modules",
+    "install-dependencies-into-extension": "yarn install --no-lockfile --force --production --modules-folder ../apollo-vscode/server/node_modules",
     "prebuild": "npm run clean",
     "build": "npm run install-dependencies-into-extension && tsc -p .",
     "watch": "npm run install-dependencies-into-extension && tsc -w -p .",
