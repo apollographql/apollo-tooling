@@ -30,6 +30,8 @@ import {
 import {
   GraphQLNamedType,
   Kind,
+  visit,
+  FragmentSpreadNode,
   GraphQLField,
   GraphQLNonNull,
   isAbstractType,
@@ -390,11 +392,50 @@ ${argumentNode.description}
 
     let codeLenses: CodeLens[] = [];
 
-    for (const { doc } of docsAndSets) {
+    for (const { doc, set } of docsAndSets) {
       if (!doc.ast) continue;
 
       for (const definition of doc.ast.definitions) {
-        if (definition.kind === Kind.FRAGMENT_DEFINITION) {
+        if (definition.kind === Kind.OPERATION_DEFINITION) {
+          if (set.endpoint) {
+            const fragmentSpreads: Set<
+              graphql.FragmentDefinitionNode
+            > = new Set();
+            const searchForReferencedFragments = (node: graphql.ASTNode) => {
+              visit(node, {
+                FragmentSpread(node: FragmentSpreadNode) {
+                  const fragDefn = project.fragments[node.name.value];
+                  if (!fragDefn) return;
+
+                  if (!fragmentSpreads.has(fragDefn)) {
+                    fragmentSpreads.add(fragDefn);
+                    searchForReferencedFragments(fragDefn);
+                  }
+                }
+              });
+            };
+
+            searchForReferencedFragments(definition);
+
+            codeLenses.push({
+              range: rangeForASTNode(definition),
+              command: Command.create(
+                `Run ${definition.operation}`,
+                "apollographql.runQuery",
+                graphql.parse(
+                  [definition, ...fragmentSpreads]
+                    .map(n => graphql.print(n))
+                    .join("\n")
+                ),
+                definition.operation === "subscription"
+                  ? set.endpoint.subscriptions
+                  : set.endpoint.url,
+                set.endpoint.headers,
+                graphql.printSchema(set.schema!)
+              )
+            });
+          }
+        } else if (definition.kind === Kind.FRAGMENT_DEFINITION) {
           const references = project.fragmentSpreadsForFragment(
             definition.name.value
           );

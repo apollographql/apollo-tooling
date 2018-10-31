@@ -4,6 +4,8 @@ import {
   window,
   workspace,
   ExtensionContext,
+  ViewColumn,
+  WebviewPanel,
   Uri,
   ProgressLocation,
   DecorationOptions,
@@ -27,6 +29,21 @@ const env: { [key: string]: string } = workspace.rootPath
 const key = "ENGINE_API_KEY";
 if (env[key]) {
   process.env[key] = env[key];
+}
+
+function sideViewColumn() {
+  if (!window.activeTextEditor) {
+    return ViewColumn.One;
+  }
+
+  switch (window.activeTextEditor.viewColumn) {
+    case ViewColumn.One:
+      return ViewColumn.Two;
+    case ViewColumn.Two:
+      return ViewColumn.Three;
+    default:
+      return window.activeTextEditor.viewColumn!;
+  }
 }
 
 export function activate(context: ExtensionContext) {
@@ -61,6 +78,10 @@ export function activate(context: ExtensionContext) {
     }
   };
 
+  let currentPanel: WebviewPanel | undefined = undefined;
+  let currentCancellationID: number | undefined = undefined;
+  let currentMessageHandler: ((msg: any) => void) | undefined = undefined;
+
   const client = new LanguageClient(
     "apollographql",
     "Apollo GraphQL",
@@ -69,6 +90,63 @@ export function activate(context: ExtensionContext) {
   );
   client.registerProposedFeatures();
   context.subscriptions.push(client.start());
+
+  const getApolloPanel = () => {
+    if (currentPanel) {
+      if (!currentPanel.visible) {
+        // If we already have a panel, show it in the target column
+        currentPanel.reveal(sideViewColumn());
+      }
+
+      return currentPanel;
+    } else {
+      // Otherwise, create a new panel
+      currentPanel = window.createWebviewPanel(
+        "apolloPanel",
+        "",
+        sideViewColumn(),
+        {
+          enableScripts: true,
+          localResourceRoots: [
+            Uri.file(join(context.extensionPath, "webview-content"))
+          ]
+        }
+      );
+
+      // Reset when the current panel is closed
+      currentPanel.onDidDispose(
+        () => {
+          currentPanel = undefined;
+
+          if (currentCancellationID) {
+            client.sendNotification("apollographql/cancelQuery", {
+              cancellationID: currentCancellationID
+            });
+
+            currentCancellationID = undefined;
+          }
+        },
+        null,
+        context.subscriptions
+      );
+
+      currentPanel!.webview.onDidReceiveMessage(
+        message => {
+          if (currentMessageHandler) {
+            currentMessageHandler(message);
+          }
+        },
+        undefined,
+        context.subscriptions
+      );
+
+      currentPanel!.onDidDispose(() => {
+        currentMessageHandler = undefined;
+      });
+
+      return currentPanel;
+    }
+  };
 
   client.onReady().then(() => {
     // For some reason, non-strings can only be sent in one direction. For now, messages
@@ -127,6 +205,117 @@ export function activate(context: ExtensionContext) {
         }
       );
     });
+
+    client.onNotification(
+      "apollographql/requestVariables",
+      ({ query, endpoint, headers, requestedVariables, schema }) => {
+        getApolloPanel().title = "GraphQL Query Variables";
+
+        if (currentCancellationID) {
+          client.sendNotification("apollographql/cancelQuery", {
+            cancellationID: currentCancellationID
+          });
+
+          currentCancellationID = undefined;
+        }
+
+        currentMessageHandler = message => {
+          switch (message.type) {
+            case "started":
+              currentPanel!.webview.postMessage({
+                type: "setMode",
+                content: {
+                  type: "VariablesInput",
+                  requestedVariables: requestedVariables,
+                  schema: schema
+                }
+              });
+              break;
+
+            case "variables":
+              client.sendNotification("apollographql/runQueryWithVariables", {
+                query,
+                endpoint,
+                headers,
+                variables: message.content
+              });
+
+              currentMessageHandler = undefined;
+              break;
+          }
+        };
+
+        const mediaPath =
+          Uri.file(join(context.extensionPath, "webview-content"))
+            .with({
+              scheme: "vscode-resource"
+            })
+            .toString() + "/";
+
+        currentMessageHandler({ type: "started" });
+        currentPanel!.webview.html = `
+          <html>
+            <body>
+              <div id="root"></div>
+              <base href="${mediaPath}">
+              <script src="webview.bundle.js"></script>
+            </body>
+          </html>
+        `;
+      }
+    );
+
+    client.onNotification(
+      "apollographql/queryResult",
+      ({ result, cancellationID }) => {
+        getApolloPanel().title = "GraphQL Query Result";
+
+        if (currentCancellationID !== cancellationID) {
+          if (currentCancellationID) {
+            client.sendNotification("apollographql/cancelQuery", {
+              cancellationID: currentCancellationID
+            });
+          }
+
+          currentCancellationID = cancellationID;
+        }
+
+        currentMessageHandler = message => {
+          switch (message.type) {
+            case "started":
+              currentPanel!.webview.postMessage({
+                type: "setMode",
+                content: {
+                  type: "ResultViewer",
+                  result
+                }
+              });
+
+              currentMessageHandler = undefined;
+
+              break;
+          }
+        };
+
+        const mediaPath =
+          Uri.file(join(context.extensionPath, "webview-content"))
+            .with({
+              scheme: "vscode-resource"
+            })
+            .toString() + "/";
+
+        currentMessageHandler({ type: "started" });
+        currentPanel!.webview.html = `
+          <html>
+            <body>
+              <div id="root"></div>
+              <base href="${mediaPath}">
+              <script src="webview.bundle.js"></script>
+            </body>
+          </html>
+        `;
+      }
+    );
 
     const engineDecoration = window.createTextEditorDecorationType({});
     let latestDecs: any[] | undefined = undefined;
