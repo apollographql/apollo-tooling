@@ -13,6 +13,7 @@
     "apollo": "./packages/apollo/bin/run"
   },
   "scripts": {
+    "clean": "git clean -dfqX -- ./node_modules **/{lib,node_modules}/",
     "postinstall": "lerna run prepare",
     "build": "lerna run build",
     "watch": "lerna run watch --stream --no-sort --concurrency 20",
@@ -23,7 +24,6 @@
     "circle": "npm run test -- --ci --maxWorkers=2",
     "precommit": "lint-staged",
     "release": "npm run clean && npm ci && lerna publish --exact",
-    "clean": "find . -name \"node_modules\" -exec rm -rf '{}' + && find . -name \"lib\" -exec rm -rf '{}' +",
     "packageExtension": "lerna run packageExtension --scope=apollo-vscode"
   },
   "engines": {
@@ -48,8 +48,8 @@
     "@fancy-test/nock": "^0.1.1",
     "@oclif/dev-cli": "^1.17.0",
     "@oclif/test": "^1.2.0",
-    "@types/babel-generator": "^6.25.2",
     "@types/babel-types": "^7.0.4",
+    "@types/babel__generator": "^7.0.0",
     "@types/chai": "^4.1.4",
     "@types/common-tags": "^1.4.0",
     "@types/graphql": "^0.13.4",
@@ -89,8 +89,9 @@
     "typescript": "^3.0.3",
     "uglifyjs-webpack-plugin": "^1.3.0",
     "url-loader": "1.1.1",
-    "vsce": "^1.46.0",
-    "webpack": "4.17.1"
+    "vsce": "^1.52.0",
+    "webpack": "4.17.1",
+    "yarn": "^1.10.1"
   },
   "jest": {
     "projects": [

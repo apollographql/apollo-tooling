@@ -335,8 +335,7 @@ export class FlowAPIGenerator extends FlowGenerator {
     let res;
     if (field.name === "__typename") {
       const annotations = variant.possibleTypes.map(type => {
-        const annotation = t.stringLiteralTypeAnnotation();
-        annotation.value = type.toString();
+        const annotation = t.stringLiteralTypeAnnotation(type.toString());
         return annotation;
       });
 
