@@ -21,9 +21,10 @@ import {
   SelectionSetNode,
   FieldNode,
   GraphQLField,
-  GraphQLList,
-  GraphQLNonNull,
-  DocumentNode
+  DocumentNode,
+  DirectiveNode,
+  isListType,
+  isNonNullType
 } from "graphql";
 
 declare module "graphql/utilities/buildASTSchema" {
@@ -40,14 +41,39 @@ export function sortEnumValues(values: GraphQLEnumValue[]): GraphQLEnumValue[] {
 }
 
 export function isList(type: GraphQLType): boolean {
-  return (
-    type instanceof GraphQLList ||
-    (type instanceof GraphQLNonNull && type.ofType instanceof GraphQLList)
-  );
+  return isListType(type) || (isNonNullType(type) && isListType(type.ofType));
 }
 
 export function isMetaFieldName(name: string) {
   return name.startsWith("__");
+}
+
+export function removeConnectionDirectives(ast: ASTNode) {
+  return visit(ast, {
+    Directive(node: DirectiveNode): DirectiveNode | null {
+      if (node.name.value === "connection") return null;
+      return node;
+    }
+  });
+}
+
+export function removeClientDirectives(ast: ASTNode) {
+  return visit(ast, {
+    Field(node: FieldNode): FieldNode | null {
+      if (
+        node.directives &&
+        node.directives.find(directive => directive.name.value === "client")
+      )
+        return null;
+      return node;
+    },
+    OperationDefinition: {
+      leave(node: OperationDefinitionNode): OperationDefinitionNode | null {
+        if (!node.selectionSet.selections.length) return null;
+        return node;
+      }
+    }
+  });
 }
 
 const typenameField = {

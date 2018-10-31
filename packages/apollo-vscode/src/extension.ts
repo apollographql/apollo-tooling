@@ -1,4 +1,5 @@
-import { join } from "path";
+import { join, resolve } from "path";
+import { readFileSync } from "fs";
 import {
   window,
   workspace,
@@ -7,7 +8,9 @@ import {
   WebviewPanel,
   Uri,
   ProgressLocation,
-  DecorationOptions
+  DecorationOptions,
+  commands,
+  QuickPickItem
 } from "vscode";
 import {
   LanguageClient,
@@ -15,7 +18,18 @@ import {
   ServerOptions,
   TransportKind
 } from "vscode-languageclient";
-import StatusBar from "./StatusBar";
+import { getIdFromKey } from "apollo/lib/engine";
+import StatusBar from "./statusBar";
+
+// Parse the .env file and load the ENGINE_API_KEY into process.env
+const env: { [key: string]: string } = workspace.rootPath
+  ? require("dotenv").parse(readFileSync(resolve(workspace.rootPath, ".env")))
+  : {};
+
+const key = "ENGINE_API_KEY";
+if (env[key]) {
+  process.env[key] = env[key];
+}
 
 function sideViewColumn() {
   if (!window.activeTextEditor) {
@@ -35,6 +49,8 @@ function sideViewColumn() {
 export function activate(context: ExtensionContext) {
   const serverModule = context.asAbsolutePath(join("server", "server.js"));
   const debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
+  const statusBar = new StatusBar();
+  let schemaTags: QuickPickItem[] = [];
 
   const serverOptions: ServerOptions = {
     run: { module: serverModule, transport: TransportKind.ipc },
@@ -65,7 +81,6 @@ export function activate(context: ExtensionContext) {
   let currentPanel: WebviewPanel | undefined = undefined;
   let currentCancellationID: number | undefined = undefined;
   let currentMessageHandler: ((msg: any) => void) | undefined = undefined;
-  const statusBar = new StatusBar();
 
   const client = new LanguageClient(
     "apollographql",
@@ -134,6 +149,37 @@ export function activate(context: ExtensionContext) {
   };
 
   client.onReady().then(() => {
+    // For some reason, non-strings can only be sent in one direction. For now, messages
+    // coming from the language server just need to be stringified and parsed.
+    client.onNotification(
+      "apollographql/tagsLoaded",
+      (stringifiedTags: string) => {
+        const parsedTags: [string, string[]][] =
+          JSON.parse(stringifiedTags) || [];
+
+        const quickPickItems = parsedTags.reduce(
+          (flattenedTags: QuickPickItem[], [serviceId, tags]) => [
+            ...flattenedTags,
+            ...tags.map(tag => ({
+              label: tag,
+              description: "",
+              detail: getIdFromKey(serviceId)
+            }))
+          ],
+          []
+        );
+
+        schemaTags = [...quickPickItems, ...schemaTags];
+      }
+    );
+
+    commands.registerCommand("apollographql/selectSchemaTag", async () => {
+      const selection = await window.showQuickPick(schemaTags);
+      if (selection) {
+        client.sendNotification("apollographql/tagSelected", selection);
+      }
+    });
+
     let currentLoadingResolve: Map<number, () => void> = new Map();
 
     client.onNotification("apollographql/loadingComplete", token => {

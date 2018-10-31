@@ -3,7 +3,13 @@ import { fs, withGlobalFS } from "apollo-codegen-core/lib/localfs";
 
 import * as fg from "glob";
 import * as minimatch from "minimatch";
-import { GraphQLSchema, extendSchema, visit, buildASTSchema } from "graphql";
+import {
+  GraphQLSchema,
+  extendSchema,
+  visit,
+  buildASTSchema,
+  buildClientSchema
+} from "graphql";
 import { loadSchema } from "./load-schema";
 import { loadQueryDocuments } from "apollo-codegen-core/lib/loading";
 
@@ -76,7 +82,7 @@ function loadSchemaConfig(
       obj.endpoint,
       !obj.engineKey && defaultEndpoint
     ),
-    engineKey: obj.engineKey,
+    engineKey: process.env.ENGINE_API_KEY || obj.engineKey,
     clientSide: obj.clientSide,
     extends: obj.extends
   };
@@ -204,10 +210,15 @@ export interface ResolvedDocumentSet {
   originalSet: DocumentSet;
 }
 
-export async function resolveSchema(
-  name: string,
-  config: ApolloConfig
-): Promise<GraphQLSchema | undefined> {
+export async function resolveSchema({
+  name,
+  config,
+  tag
+}: {
+  name: string;
+  config: ApolloConfig;
+  tag?: string;
+}): Promise<GraphQLSchema | undefined> {
   const referredSchema = (config.schemas || {})[name];
 
   const loadAsAST = () => {
@@ -227,17 +238,29 @@ export async function resolveSchema(
 
   return referredSchema.extends
     ? extendSchema(
-        (await resolveSchema(referredSchema.extends, config))!,
+        (await resolveSchema({
+          name: referredSchema.extends,
+          config,
+          ...(tag && { tag })
+        }))!,
         loadAsAST()
       )
     : referredSchema.clientSide
       ? buildASTSchema(loadAsAST())
-      : await loadSchema(referredSchema, config);
+      : await loadSchema({
+          dependency: referredSchema,
+          config,
+          ...(tag && { tag })
+        }).then(introspectionSchema => {
+          if (!introspectionSchema) return;
+          return buildClientSchema({ __schema: introspectionSchema });
+        });
 }
 
 export async function resolveDocumentSets(
   config: ApolloConfig,
-  needSchema: boolean
+  needSchema: boolean,
+  tag?: string
 ): Promise<ResolvedDocumentSet[]> {
   return await Promise.all(
     (config.queries || []).map(async doc => {
@@ -258,7 +281,11 @@ export async function resolveDocumentSets(
       return {
         schema:
           needSchema && doc.schema
-            ? await resolveSchema(doc.schema, config)
+            ? await resolveSchema({
+                name: doc.schema,
+                config,
+                ...(tag && { tag })
+              })
             : undefined,
         endpoint: referredSchema ? referredSchema.endpoint : undefined,
         engineKey: referredSchema ? referredSchema.engineKey : undefined,

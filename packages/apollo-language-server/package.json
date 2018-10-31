@@ -1,7 +1,7 @@
 {
   "name": "apollo-language-server",
   "description": "A language server for Apollo GraphQL projects",
-  "version": "0.1.10",
+  "version": "0.1.11-register.0",
   "private": true,
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -33,7 +33,7 @@
     "apollo-link-ws": "^1.0.8",
     "core-js": "^2.5.7",
     "glob": "^7.1.2",
-    "graphql": "^0.13.2",
+    "graphql": "^14.0.2",
     "graphql-tag": "^2.9.2",
     "minimatch": "^3.0.4",
     "moment": "^2.22.2",
@@ -43,5 +43,32 @@
     "vscode-languageserver": "^5.0.3",
     "vscode-uri": "^1.0.3",
     "ws": "^5.2.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/*.(js|ts)"
+    ],
+    "setupFiles": [
+      "<rootDir>/../apollo-codegen-core/src/polyfills.ts"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/lib/",
+      "<rootDir>/test/fixtures/",
+      "<rootDir>/test/test-utils"
+    ],
+    "transform": {
+      "^.+\\.(ts|js)x?$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "globals": {
+      "ts-jest": {
+        "skipBabel": true
+      }
+    }
   }
 }

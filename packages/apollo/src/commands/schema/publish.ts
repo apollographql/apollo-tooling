@@ -2,20 +2,12 @@ import { Command, flags } from "@oclif/command";
 import { table, styledJSON } from "heroku-cli-util";
 import * as Listr from "listr";
 import { toPromise, execute } from "apollo-link";
-import {
-  GraphQLError,
-  parse,
-  introspectionQuery,
-  execute as graphql
-} from "graphql";
-
+import { GraphQLError } from "graphql";
 import { UPLOAD_SCHEMA } from "../../operations/uploadSchema";
 import { getIdFromKey, engineLink } from "../../engine";
 import { fetchSchema } from "../../fetch-schema";
 import { gitInfo } from "../../git";
-
 import { engineFlags } from "../../engine-cli";
-
 import { loadConfigStep } from "../../load-config";
 
 export default class SchemaPublish extends Command {
@@ -43,13 +35,15 @@ export default class SchemaPublish extends Command {
     }),
     json: flags.boolean({
       description: "Output successful publish result as JSON"
+    }),
+    tag: flags.string({
+      description: "The tag to publish the schema to",
+      default: "current"
     })
   };
 
   async run() {
     const { flags } = this.parse(SchemaPublish);
-    // hardcoded to current until service / schema / tag is settled
-    const tag = "current";
 
     const tasks = new Listr([
       loadConfigStep(flags, true),
@@ -84,9 +78,8 @@ export default class SchemaPublish extends Command {
           )} to Apollo Engine`;
           const gitContext = await gitInfo();
           const variables = {
-            schema: (await graphql(ctx.schema, parse(introspectionQuery))).data!
-              .__schema,
-            tag,
+            schema: ctx.schema,
+            tag: flags.tag,
             gitContext,
             id: getIdFromKey(ctx.currentSchema.engineKey)
           };

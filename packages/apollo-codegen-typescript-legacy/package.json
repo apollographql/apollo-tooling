@@ -1,7 +1,7 @@
 {
   "name": "apollo-codegen-typescript-legacy",
   "description": "Legacy TypeScript generator module for Apollo Codegen",
-  "version": "0.28.1",
+  "version": "0.28.2-register.0",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {
@@ -16,6 +16,7 @@
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",
     "build": "tsc",
+    "watch": "tsc -w",
     "prepare": "npm run build"
   },
   "engines": {

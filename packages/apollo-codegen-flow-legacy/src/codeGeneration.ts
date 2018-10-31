@@ -4,11 +4,12 @@ import {
   isCompositeType,
   isAbstractType,
   GraphQLEnumType,
-  GraphQLList,
   GraphQLNonNull,
   GraphQLInputObjectType,
   GraphQLObjectType,
-  GraphQLUnionType
+  GraphQLUnionType,
+  isListType,
+  isNonNullType
 } from "graphql";
 
 import { wrap } from "apollo-codegen-core/lib/utilities/printing";
@@ -187,10 +188,10 @@ export function interfaceVariablesDeclarationForOperation(
 }
 
 function getObjectTypeName(type: GraphQLType): string {
-  if (type instanceof GraphQLList) {
+  if (isListType(type)) {
     return getObjectTypeName(type.ofType);
   }
-  if (type instanceof GraphQLNonNull) {
+  if (isNonNullType(type)) {
     return getObjectTypeName(type.ofType);
   }
   if (type instanceof GraphQLObjectType) {
@@ -355,17 +356,12 @@ export function propertyFromField(
     const typeName = typeNameFromGraphQLType(context, fieldType);
     let isArray = false;
     let isArrayElementNullable = null;
-    if (fieldType instanceof GraphQLList) {
+    if (isListType(fieldType)) {
       isArray = true;
-      isArrayElementNullable = !(fieldType.ofType instanceof GraphQLNonNull);
-    } else if (
-      fieldType instanceof GraphQLNonNull &&
-      fieldType.ofType instanceof GraphQLList
-    ) {
+      isArrayElementNullable = !isNonNullType(fieldType.ofType);
+    } else if (isNonNullType(fieldType) && isListType(fieldType.ofType)) {
       isArray = true;
-      isArrayElementNullable = !(
-        fieldType.ofType.ofType instanceof GraphQLNonNull
-      );
+      isArrayElementNullable = !isNonNullType(fieldType.ofType.ofType);
     }
     return {
       ...property,

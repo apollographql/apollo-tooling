@@ -1,7 +1,7 @@
 {
   "name": "apollo",
   "description": "Command line tool for Apollo GraphQL",
-  "version": "1.9.2",
+  "version": "1.10.0-register.0",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {
@@ -24,6 +24,7 @@
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",
     "build": "tsc",
+    "watch": "tsc-watch --onSuccess \"cp -r . ../apollo-vscode/server/node_modules/apollo\"",
     "prepare": "npm run build",
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "postpack": "rm -f oclif.manifest.json",
@@ -62,7 +63,7 @@
     "git-parse": "^1.0.3",
     "git-rev-sync": "^1.12.0",
     "glob": "^7.1.2",
-    "graphql": "^0.13.2",
+    "graphql": "^14.0.2",
     "graphql-tag": "^2.9.2",
     "heroku-cli-util": "^8.0.9",
     "listr": "^0.14.1",
