@@ -35,7 +35,7 @@ const engineSuccess = ({ operations, tag, results } = {}) => nock => {
           commit: /.+/i,
           // If you are still using apollo-codegen as your remote, you must
           // change to apollo-cli for the tests to pass
-          remoteUrl: /apollo-cli/i,
+          remoteUrl: /apollo-tooling/i,
           committer: /@/i
         }
       },
