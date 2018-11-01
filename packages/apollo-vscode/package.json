@@ -28,7 +28,6 @@
     "vscode": "^1.28.0"
   },
   "dependencies": {
-    "apollo": "file:../apollo",
     "dotenv": "^6.1.0",
     "vscode": "^1.1.21",
     "vscode-languageclient": "^5.1.1"

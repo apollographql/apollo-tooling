@@ -18,8 +18,9 @@ import {
   ServerOptions,
   TransportKind
 } from "vscode-languageclient";
-import { getIdFromKey } from "apollo/lib/engine";
 import StatusBar from "./statusBar";
+
+export const getIdFromKey = (key: string) => key.split(":")[1];
 
 // Parse the .env file and load the ENGINE_API_KEY into process.env
 const env: { [key: string]: string } = workspace.rootPath
