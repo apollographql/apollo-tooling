@@ -30,8 +30,6 @@ import {
 import {
   GraphQLNamedType,
   Kind,
-  visit,
-  FragmentSpreadNode,
   GraphQLField,
   GraphQLNonNull,
   isAbstractType,
@@ -73,21 +71,19 @@ export class GraphQLLanguageProvider {
     const project = this.workspace.projectForFile(uri);
     if (!project) return [];
 
-    const docAndSet = project.documentAt(uri, position);
-    if (!docAndSet) return [];
+    const document = project.documentAt(uri, position);
+    if (!(document && document.ast)) return [];
 
-    const { doc, set } = docAndSet;
-
-    if (!set.schema) return [];
+    if (!project.schema) return [];
 
     const positionInDocument = positionFromPositionInContainingDocument(
-      doc.source,
+      document.source,
       position
     );
-    const token = getTokenAtPosition(doc.source.body, positionInDocument);
+    const token = getTokenAtPosition(document.source.body, positionInDocument);
     const state =
       token.state.kind === "Invalid" ? token.state.prevState : token.state;
-    const typeInfo = getTypeInfo(set.schema, token.state);
+    const typeInfo = getTypeInfo(project.schema, token.state);
 
     if (
       state.kind === "SelectionSet" ||
@@ -105,14 +101,14 @@ export class GraphQLLanguageProvider {
         parentFields[TypeNameMetaFieldDef.name] = TypeNameMetaFieldDef;
       }
 
-      if (parentType === set.schema.getQueryType()) {
+      if (parentType === project.schema.getQueryType()) {
         parentFields[SchemaMetaFieldDef.name] = SchemaMetaFieldDef;
         parentFields[TypeMetaFieldDef.name] = TypeMetaFieldDef;
       }
 
       return getAutocompleteSuggestions(
-        set.schema,
-        doc.source.body,
+        project.schema,
+        document.source.body,
         positionInDocument
       ).map(suggest => {
         // when code completing fields, expand out required variables and open braces
@@ -146,8 +142,8 @@ export class GraphQLLanguageProvider {
       });
     } else {
       return getAutocompleteSuggestions(
-        set.schema,
-        doc.source.body,
+        project.schema,
+        document.source.body,
         positionInDocument
       );
     }
@@ -161,23 +157,21 @@ export class GraphQLLanguageProvider {
     const project = this.workspace.projectForFile(uri);
     if (!project) return null;
 
-    const docAndSet = project.documentAt(uri, position);
-    if (!(docAndSet && docAndSet.doc.ast)) return null;
+    const document = project.documentAt(uri, position);
+    if (!(document && document.ast)) return null;
 
-    const { doc, set } = docAndSet;
-
-    if (!set.schema) return null;
+    if (!project.schema) return null;
 
     const positionInDocument = positionFromPositionInContainingDocument(
-      doc.source,
+      document.source,
       position
     );
 
     const nodeAndTypeInfo = getASTNodeAndTypeInfoAtPosition(
-      doc.source,
+      document.source,
       positionInDocument,
-      doc.ast!,
-      set.schema
+      document.ast,
+      project.schema
     );
 
     if (nodeAndTypeInfo) {
@@ -226,7 +220,7 @@ ${fieldDef.description}
         }
 
         case Kind.NAMED_TYPE: {
-          const type = set.schema.getType(
+          const type = project.schema.getType(
             node.name.value
           ) as GraphQLNamedType | void;
           if (!type) break;
@@ -267,23 +261,21 @@ ${argumentNode.description}
     const project = this.workspace.projectForFile(uri);
     if (!project) return null;
 
-    const docAndSet = project.documentAt(uri, position);
-    if (!(docAndSet && docAndSet.doc.ast)) return null;
+    const document = project.documentAt(uri, position);
+    if (!(document && document.ast)) return null;
 
-    const { doc, set } = docAndSet;
-
-    if (!set.schema) return null;
+    if (!project.schema) return null;
 
     const positionInDocument = positionFromPositionInContainingDocument(
-      doc.source,
+      document.source,
       position
     );
 
     const nodeAndTypeInfo = getASTNodeAndTypeInfoAtPosition(
-      doc.source,
+      document.source,
       positionInDocument,
-      doc.ast!,
-      set.schema
+      document.ast,
+      project.schema
     );
 
     if (nodeAndTypeInfo) {
@@ -311,7 +303,7 @@ ${argumentNode.description}
           };
         }
         case Kind.NAMED_TYPE: {
-          const type = graphql.typeFromAST(set.schema!, node);
+          const type = graphql.typeFromAST(project.schema, node);
 
           if (!(type && type.astNode && type.astNode.loc)) break;
 
@@ -334,23 +326,21 @@ ${argumentNode.description}
     const project = this.workspace.projectForFile(uri);
     if (!project) return null;
 
-    const docAndSet = project.documentAt(uri, position);
-    if (!(docAndSet && docAndSet.doc.ast)) return null;
+    const document = project.documentAt(uri, position);
+    if (!(document && document.ast)) return null;
 
-    const { doc, set } = docAndSet;
-
-    if (!set.schema) return null;
+    if (!project.schema) return null;
 
     const positionInDocument = positionFromPositionInContainingDocument(
-      doc.source,
+      document.source,
       position
     );
 
     const nodeAndTypeInfo = getASTNodeAndTypeInfoAtPosition(
-      doc.source,
+      document.source,
       positionInDocument,
-      doc.ast!,
-      set.schema
+      document.ast,
+      project.schema
     );
 
     if (nodeAndTypeInfo) {
@@ -385,18 +375,17 @@ ${argumentNode.description}
     const project = this.workspace.projectForFile(uri);
     if (!project) return [];
 
-    await project.readyPromise;
-
-    const docsAndSets = project.documentsAt(uri);
-    if (!docsAndSets) return [];
+    const documents = project.documentsAt(uri);
+    if (!documents) return [];
 
     let codeLenses: CodeLens[] = [];
 
-    for (const { doc, set } of docsAndSets) {
-      if (!doc.ast) continue;
+    for (const document of documents) {
+      if (!document.ast) continue;
 
-      for (const definition of doc.ast.definitions) {
+      for (const definition of document.ast.definitions) {
         if (definition.kind === Kind.OPERATION_DEFINITION) {
+          /*
           if (set.endpoint) {
             const fragmentSpreads: Set<
               graphql.FragmentDefinitionNode
@@ -435,6 +424,7 @@ ${argumentNode.description}
               )
             });
           }
+          */
         } else if (definition.kind === Kind.FRAGMENT_DEFINITION) {
           const references = project.fragmentSpreadsForFragment(
             definition.name.value

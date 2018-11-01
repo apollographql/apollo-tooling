@@ -1,4 +1,4 @@
-import { extname, relative } from "path";
+import { extname } from "path";
 import { readFileSync } from "fs";
 
 import {
@@ -12,7 +12,8 @@ import {
   visitWithTypeInfo,
   printSchema,
   buildSchema,
-  Source
+  Source,
+  GraphQLSchema
 } from "graphql";
 
 import {
@@ -31,21 +32,9 @@ import {
 import { collectExecutableDefinitionDiagnositics } from "./diagnostics";
 import { GraphQLDocument, extractGraphQLDocuments } from "./document";
 
-import {
-  ApolloConfig,
-  resolveDocumentSets,
-  ResolvedDocumentSet,
-  DocumentSet
-} from "apollo/lib/config";
-import { engineLink, getIdFromKey } from "apollo/lib/engine";
-
-import { toPromise, execute } from "apollo-link";
-
-import gql from "graphql-tag";
+import { ApolloConfig, resolveSchema } from "apollo/lib/config";
 
 import Uri from "vscode-uri";
-
-import * as minimatch from "minimatch";
 
 export type DocumentUri = string;
 
@@ -53,6 +42,9 @@ import "core-js/fn/array/flat-map";
 import { rangeForASTNode } from "./utilities/source";
 import { formatMS } from "./format";
 import { LoadingHandler } from "./loadingHandler";
+import { FileSet } from "./fileSet";
+import { ApolloEngineClient, FieldStats, SchemaTag } from "./engine";
+import { getIdFromKey } from "apollo/lib/engine";
 declare global {
   interface Array<T> {
     flatMap<U>(
@@ -70,114 +62,63 @@ const fileAssociations: { [extension: string]: string } = {
   ".tsx": "typescriptreact"
 };
 
-const ENGINE_TAGS_AND_STATS = gql`
-  query EngineTagsAndStats($id: ID!) {
-    service(id: $id) {
-      schemaTags {
-        tag
-      }
-      stats(from: "-3600", to: "-0") {
-        fieldStats {
-          groupBy {
-            field
-          }
-          metrics {
-            fieldHistogram {
-              durationMs(percentile: 0.95)
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-interface FieldStat {
-  groupBy: {
-    field: string;
-  };
-  metrics: {
-    fieldHistogram: {
-      durationMs: number;
-    };
-  };
-}
-
-export interface DocumentAndSet {
-  doc: GraphQLDocument;
-  set: ResolvedDocumentSet;
+function schemaHasASTNodes(schema: GraphQLSchema): boolean {
+  const queryType = schema && schema.getQueryType();
+  return !!(queryType && queryType.astNode);
 }
 
 export class GraphQLProject {
-  public config: ApolloConfig = (null as any) as ApolloConfig;
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
   private _onDecorations?: (any: any) => void;
-  private _onSchemaTags?: (tags: Map<string, string[]>) => void;
+  private _onSchemaTags?: (tags: SchemaTag[]) => void;
 
   public isReady = false;
-  public readyPromise: Promise<void> | undefined = undefined;
   private needsValidation = false;
 
-  private setToResolved: Map<DocumentSet, ResolvedDocumentSet> = new Map();
-  private documentSets: ResolvedDocumentSet[] | undefined;
-  private documentsByFile: Map<
-    DocumentUri,
-    { set: ResolvedDocumentSet; docs: GraphQLDocument[] }
-  > = new Map();
-  private engineStats: Map<
-    string,
-    Map<string, Map<string, number>>
-  > = new Map();
-  private schemaTags: Map<string, string[]> = new Map();
+  public serviceID?: string;
+  public schema?: GraphQLSchema;
+
+  private fileSet: FileSet;
+  private documentsByFile: Map<DocumentUri, GraphQLDocument[]> = new Map();
+
+  private engineClient?: ApolloEngineClient;
+  private fieldStats?: FieldStats;
 
   constructor(
-    config: ApolloConfig,
-    public configFile: string,
+    public config: ApolloConfig,
     private loadingHandler: LoadingHandler
   ) {
-    this.updateConfig(config);
-  }
+    console.log("BLAAA");
 
-  updateConfig(newConfig: ApolloConfig) {
-    if (
-      this.config &&
-      JSON.stringify(this.config) === JSON.stringify(newConfig)
-    ) {
-      return;
+    // FIXME: This should take includes and excludes from the new config format.
+    const queries = config.queries![0];
+
+    this.fileSet = new FileSet({
+      rootPath: config.projectFolder,
+      includes: queries.includes,
+      excludes: queries.excludes
+    });
+
+    this.scanAllIncludedFiles();
+
+    const engineKey = process.env.ENGINE_API_KEY;
+    if (engineKey) {
+      this.serviceID = getIdFromKey(engineKey);
+
+      this.engineClient = new ApolloEngineClient(
+        engineKey,
+        this.config.engineEndpoint
+      );
+      this.loadEngineData();
+    } else {
+      this.loadingHandler.showError(
+        "Apollo: failed to load Engine stats. No ENGINE_API_KEY found in .env"
+      );
     }
-
-    this.needsValidation = true;
-    this.config = newConfig;
-
-    this.documentSets = undefined;
-    this.engineStats.clear();
-    this.schemaTags = new Map();
-    this.documentsByFile = new Map();
-    this.setToResolved.clear();
-
-    this.readyPromise = process.env.ENGINE_API_KEY
-      ? this.loadEngineData()
-          .then(() => {
-            this.scanAllIncludedFiles();
-            this._onSchemaTags && this._onSchemaTags(this.schemaTags);
-          })
-          .catch(error => {
-            console.error(error);
-          })
-      : Promise.reject(
-          "Apollo: failed to load Engine stats. No ENGINE_API_KEY found in .env"
-        ).catch(e => {
-          this.loadingHandler.showError(e);
-          throw e;
-        });
   }
 
   get displayName(): string {
-    return this.config.name || "";
-  }
-
-  onSchemaTags(handler: (tags: Map<string, string[]>) => void): void {
-    this._onSchemaTags = handler;
+    return this.config.name || "<Unnamed>";
   }
 
   onDiagnostics(handler: NotificationHandler<PublishDiagnosticsParams>) {
@@ -188,160 +129,82 @@ export class GraphQLProject {
     this._onDecorations = handler;
   }
 
-  includesFile(uri: DocumentUri) {
-    return this.includesPath(Uri.parse(uri).fsPath);
+  onSchemaTags(handler: (tags: SchemaTag[]) => void): void {
+    this._onSchemaTags = handler;
   }
 
-  private setThatIncludes(filePath: string): ResolvedDocumentSet | undefined {
-    const set = (this.config.queries || []).find(
-      s =>
-        s.includes.some(i =>
-          minimatch(relative(this.config.projectFolder, filePath), i)
-        ) &&
-        !s.excludes.some(e =>
-          minimatch(relative(this.config.projectFolder, filePath), e)
-        )
+  async updateSchemaTag(tag: SchemaTag) {
+    this.loadSchema(tag);
+  }
+
+  private async loadSchema(tag: SchemaTag = "current") {
+    await this.loadingHandler.handle(
+      `Loading schema for ${this.displayName}`,
+      (async () => {
+        const schema = await resolveSchema({
+          name,
+          config: this.config,
+          tag
+        });
+
+        if (!schema) return;
+
+        if (!schemaHasASTNodes(schema)) {
+          const schemaSource = printSchema(schema);
+
+          this.schema = buildSchema(
+            // rebuild the schema from a generated source file and attach the source to a graphql-schema
+            // URI that can be loaded as an in-memory file by VSCode
+            new Source(
+              schemaSource,
+              `graphql-schema:/schema.graphql?${encodeURIComponent(
+                schemaSource
+              )}`
+            )
+          );
+        } else {
+          this.schema = schema;
+        }
+      })()
     );
-
-    return set ? this.setToResolved.get(set) : undefined;
-  }
-
-  private includesPath(filePath: string) {
-    return !!this.setThatIncludes(filePath);
   }
 
   async loadEngineData() {
+    const engineClient = this.engineClient;
+    if (!engineClient) return;
+
+    const serviceID = this.serviceID;
+    if (!serviceID) return;
+
     await this.loadingHandler.handle(
-      `Loading Engine data for ${this.config.name!}`,
-      Promise.all(
-        Object.values(this.config.schemas!).map(async () => {
-          const engineData = await toPromise(
-            execute(engineLink, {
-              query: ENGINE_TAGS_AND_STATS,
-              variables: {
-                id: getIdFromKey(process.env.ENGINE_API_KEY!)
-              },
-              context: {
-                headers: { ["x-api-key"]: process.env.ENGINE_API_KEY },
-                ...(this.config.engineEndpoint && {
-                  uri: this.config.engineEndpoint
-                })
-              }
-            })
-          );
-
-          const allSchemaTags: string[] = engineData.data!.service.schemaTags.map(
-            ({ tag }: { tag: string }) => tag
-          );
-
-          this.schemaTags.set(process.env.ENGINE_API_KEY!, allSchemaTags);
-
-          const engineStats = new Map<string, Map<string, number>>();
-          engineData.data!.service.stats.fieldStats.forEach(
-            (fieldStat: FieldStat) => {
-              // Parse field "ParentType.fieldName:FieldType" into ["ParentType", "fieldName", "FieldType"]
-              const [parentType = null, fieldName = null] =
-                fieldStat.groupBy.field.split(/\.|:/) || [];
-
-              if (!parentType || !fieldName) {
-                return;
-              }
-              const fieldsMap =
-                engineStats.get(parentType) ||
-                engineStats
-                  .set(parentType, new Map<string, number>())
-                  .get(parentType)!;
-
-              fieldsMap.set(
-                fieldName,
-                fieldStat.metrics.fieldHistogram.durationMs
-              );
-            }
-          );
-
-          this.engineStats.set(process.env.ENGINE_API_KEY!, engineStats);
-        })
-      )
-    );
-  }
-
-  private documentSetHasAstNode(set: ResolvedDocumentSet): boolean {
-    const queryType = set && set.schema && set.schema.getQueryType();
-    return !!(queryType && queryType.astNode);
-  }
-
-  async updateSchemaTag(tag: string) {
-    await this.loadingHandler.handle(
-      `Loading queries and schemas for ${this.config.name!}`,
+      `Loading Engine data for ${this.displayName}`,
       (async () => {
-        this.documentSets = await resolveDocumentSets(this.config, true, tag);
-        for (const set of this.documentSets) {
-          if (!this.documentSetHasAstNode(set)) {
-            const schemaSource = printSchema(set.schema!);
-
-            set.schema = buildSchema(
-              // rebuild the schema from a generated source file and attach the source to a graphql-schema
-              // URI that can be loaded as an in-memory file by VSCode
-              new Source(
-                schemaSource,
-                `graphql-schema:/schema.graphql?${encodeURIComponent(
-                  schemaSource
-                )}`
-              )
-            );
-          }
-
-          this.setToResolved.set(set.originalSet, set);
-
-          for (const filePath of set.documentPaths) {
-            const uri = Uri.file(filePath).toString();
-            this.fileDidChange(uri, set);
-          }
-        }
-
-        this.isReady = true;
-        this.validateIfNeeded();
+        const [
+          schemaTags,
+          fieldStats
+        ] = await engineClient.loadSchemaTagsAndFieldStats(serviceID);
+        this._onSchemaTags && this._onSchemaTags(schemaTags);
+        this.fieldStats = fieldStats;
       })()
     );
+  }
+
+  includesFile(uri: DocumentUri) {
+    return this.fileSet.includesFile(Uri.parse(uri).fsPath);
   }
 
   async scanAllIncludedFiles() {
     await this.loadingHandler.handle(
-      `Loading queries and schemas for ${this.config.name!}`,
+      `Loading queries for ${this.displayName}`,
       (async () => {
-        this.documentSets = await resolveDocumentSets(
-          this.config,
-          true,
-          "current"
-        );
+        for (const filePath of this.fileSet.allFiles()) {
+          const uri = Uri.file(filePath).toString();
 
-        for (const set of this.documentSets) {
-          if (!this.documentSetHasAstNode(set)) {
-            const schemaSource = printSchema(set.schema!);
+          // If we already have query documents for this file, that means it was either
+          // opened or changed before we got a chance to read it.
+          if (this.documentsByFile.has(uri)) continue;
 
-            set.schema = buildSchema(
-              // rebuild the schema from a generated source file and attach the source to a graphql-schema
-              // URI that can be loaded as an in-memory file by VSCode
-              new Source(
-                schemaSource,
-                `graphql-schema:/schema.graphql?${encodeURIComponent(
-                  schemaSource
-                )}`
-              )
-            );
-          }
-
-          this.setToResolved.set(set.originalSet, set);
-
-          for (const filePath of set.documentPaths) {
-            const uri = Uri.file(filePath).toString();
-
-            // If we already have query documents for this file, that means it was either
-            // opened or changed before we got a chance to read it.
-            if (this.documentsByFile.has(uri)) continue;
-
-            this.fileDidChange(uri, set);
-          }
+          this.fileDidChange(uri);
         }
 
         this.isReady = true;
@@ -350,7 +213,7 @@ export class GraphQLProject {
     );
   }
 
-  fileDidChange(uri: DocumentUri, set?: ResolvedDocumentSet) {
+  fileDidChange(uri: DocumentUri) {
     const filePath = Uri.parse(uri).fsPath;
     const extension = extname(filePath);
     const languageId = fileAssociations[extension];
@@ -361,7 +224,7 @@ export class GraphQLProject {
     try {
       const contents = readFileSync(filePath, "utf8");
       const document = TextDocument.create(uri, languageId, -1, contents);
-      this.documentDidChange(document, set);
+      this.documentDidChange(document);
     } catch (error) {
       console.error(error);
     }
@@ -371,24 +234,11 @@ export class GraphQLProject {
     this.removeGraphQLDocumentsFor(uri);
   }
 
-  documentDidChange(document: TextDocument, set?: ResolvedDocumentSet) {
+  documentDidChange(document: TextDocument) {
     const documents = extractGraphQLDocuments(document);
 
     if (documents) {
-      const associatedSet =
-        set ||
-        (this.documentsByFile.get(document.uri) || { set: undefined }).set ||
-        this.setThatIncludes(Uri.parse(document.uri).fsPath);
-
-      if (!associatedSet) {
-        return;
-      }
-
-      this.documentsByFile.set(document.uri, {
-        docs: documents,
-        set: associatedSet
-      });
-
+      this.documentsByFile.set(document.uri, documents);
       this.invalidate();
     } else {
       this.removeGraphQLDocumentsFor(document.uri);
@@ -398,10 +248,6 @@ export class GraphQLProject {
   private removeGraphQLDocumentsFor(uri: DocumentUri) {
     if (this.documentsByFile.has(uri)) {
       this.documentsByFile.delete(uri);
-      const filePath = Uri.parse(uri).fsPath;
-      (this.documentSets || []).forEach(s => {
-        s.documentPaths = s.documentPaths.filter(p => p !== filePath);
-      });
 
       if (this._onDiagnostics) {
         this._onDiagnostics({ uri: uri, diagnostics: [] });
@@ -421,35 +267,35 @@ export class GraphQLProject {
   }
 
   private validateIfNeeded() {
-    if (!this.needsValidation || !this._onDiagnostics || !this.documentSets)
-      return;
+    if (!this.needsValidation || !this._onDiagnostics) return;
+
+    if (!this.schema) return;
 
     const fragments = this.fragments;
 
     const decorations: any[] = [];
-    for (const [uri, { set, docs: queryDocumentsForFile }] of this
-      .documentsByFile) {
+
+    for (const [uri, queryDocumentsForFile] of this.documentsByFile) {
       const diagnostics: Diagnostic[] = [];
       for (const queryDocument of queryDocumentsForFile) {
         diagnostics.push(
           ...collectExecutableDefinitionDiagnositics(
-            set.schema!,
+            this.schema,
             queryDocument,
             fragments
           )
         );
 
-        if (queryDocument.ast && this.engineStats && set.engineKey) {
-          const typeInfo = new TypeInfo(set.schema!);
+        if (queryDocument.ast && this.fieldStats) {
+          const fieldStats = this.fieldStats;
+          const typeInfo = new TypeInfo(this.schema);
           visit(
             queryDocument.ast,
             visitWithTypeInfo(typeInfo, {
               enter: node => {
                 if (node.kind == "Field" && typeInfo.getParentType()) {
                   const parentName = typeInfo.getParentType()!.name;
-                  const parentEngineStat = this.engineStats
-                    .get(set.engineKey!)!
-                    .get(parentName);
+                  const parentEngineStat = fieldStats.get(parentName);
                   const engineStat = parentEngineStat
                     ? parentEngineStat.get(node.name.value)
                     : undefined;
@@ -485,33 +331,24 @@ export class GraphQLProject {
     }
   }
 
-  documentsAt(uri: DocumentUri): DocumentAndSet[] | undefined {
-    const gotDoc = this.documentsByFile.get(uri);
-    return gotDoc
-      ? gotDoc.docs.map(d => {
-          return { set: gotDoc.set, doc: d };
-        })
-      : undefined;
+  documentsAt(uri: DocumentUri): GraphQLDocument[] | undefined {
+    return this.documentsByFile.get(uri);
   }
 
-  documentAt(uri: DocumentUri, position: Position): DocumentAndSet | undefined {
+  documentAt(
+    uri: DocumentUri,
+    position: Position
+  ): GraphQLDocument | undefined {
     const queryDocuments = this.documentsByFile.get(uri);
     if (!queryDocuments) return undefined;
-    const found = queryDocuments.docs.find(document =>
-      document.containsPosition(position)
-    );
-    return found
-      ? {
-          doc: found,
-          set: queryDocuments.set
-        }
-      : undefined;
+
+    return queryDocuments.find(document => document.containsPosition(position));
   }
 
   get documents(): GraphQLDocument[] {
     const documents: GraphQLDocument[] = [];
     for (const documentsForFile of this.documentsByFile.values()) {
-      documents.push(...documentsForFile.docs);
+      documents.push(...documentsForFile);
     }
     return documents;
   }

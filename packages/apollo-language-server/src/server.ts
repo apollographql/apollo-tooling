@@ -18,12 +18,9 @@ import { OperationDefinitionNode } from "graphql";
 import { WebSocketLink } from "apollo-link-ws";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 
-import Uri from "vscode-uri";
-
 import * as ws from "ws";
 
-import { dirname } from "path";
-import { findAndLoadConfig } from "apollo/lib/config";
+import { SchemaTag } from "./engine";
 
 const connection = createConnection(ProposedFeatures.all);
 
@@ -31,7 +28,7 @@ let hasWorkspaceFolderCapability = false;
 
 const workspace = new GraphQLWorkspace(new LoadingHandler(connection));
 
-workspace.onSchemaTags((tags: Map<string, string[]>) => {
+workspace.onSchemaTags((tags: SchemaTag[]) => {
   connection.sendNotification(
     "apollographql/tagsLoaded",
     JSON.stringify([...tags])
@@ -113,34 +110,37 @@ connection.onDidChangeWatchedFiles(params => {
   for (const change of params.changes) {
     const uri = change.uri;
 
-    const filePath = Uri.parse(change.uri).fsPath;
-    if (
-      filePath.endsWith("apollo.config.js") ||
-      filePath.endsWith("package.json")
-    ) {
-      const projectForConfig = Array.from(
-        workspace.projectsByFolderUri.values()
-      )
-        .flatMap(arr => arr)
-        .find(proj => {
-          return proj.configFile === filePath;
-        });
+    // FIXME: Re-enable updating projects when config files change.
 
-      if (projectForConfig) {
-        const newConfig = findAndLoadConfig(
-          dirname(projectForConfig.configFile),
-          false,
-          true
-        );
+    // const filePath = Uri.parse(change.uri).fsPath;
+    // if (
+    //   filePath.endsWith("apollo.config.js") ||
+    //   filePath.endsWith("package.json")
+    // ) {
+    //   const projectForConfig = Array.from(
+    //     workspace.projectsByFolderUri.values()
+    //   )
+    //     .flatMap(arr => arr)
+    //     .find(proj => {
+    //       return proj.configFile === filePath;
+    //     });
 
-        if (newConfig) {
-          projectForConfig.updateConfig(newConfig);
-        }
-      }
-    }
+    //   if (projectForConfig) {
+    //     const newConfig = findAndLoadConfig(
+    //       dirname(projectForConfig.configFile),
+    //       false,
+    //       true
+    //     );
+
+    //     if (newConfig) {
+    //       projectForConfig.updateConfig(newConfig);
+    //     }
+    //   }
+    // }
 
     // Don't respond to changes in files that are currently open,
     // because we'll get content change notifications instead
+
     if (change.type === FileChangeType.Changed) {
       continue;
     }
