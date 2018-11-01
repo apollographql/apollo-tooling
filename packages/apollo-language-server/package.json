@@ -18,8 +18,7 @@
     "install-dependencies-into-extension": "yarn install --no-lockfile --force --production --modules-folder ../apollo-vscode/server/node_modules",
     "prebuild": "npm run clean",
     "build": "npm run install-dependencies-into-extension && tsc -p .",
-    "watch": "npm run install-dependencies-into-extension && tsc -w -p .",
-    "watchOnly": "tsc -w -p .",
+    "watch": "tsc -w",
     "prepare": "npm run build"
   },
   "engines": {
