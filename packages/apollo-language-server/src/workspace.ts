@@ -17,8 +17,9 @@ import { LoadingHandler } from "./loadingHandler";
 export class GraphQLWorkspace {
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
   private _onDecorations?: (any: any) => void;
-  private _onSchemaTags?: (tags: Map<string, string[]>) => void;
-  public projectsByFolderUri: Map<string, GraphQLProject[]> = new Map();
+  private _onSchemaTags?: (tags: string[]) => void;
+
+  private projectsByFolderUri: Map<string, GraphQLProject[]> = new Map();
 
   constructor(private loadingHandler: LoadingHandler) {}
 
@@ -30,7 +31,7 @@ export class GraphQLWorkspace {
     this._onDecorations = handler;
   }
 
-  onSchemaTags(handler: (tags: Map<string, string[]>) => void): void {
+  onSchemaTags(handler: (tags: string[]) => void): void {
     this._onSchemaTags = handler;
   }
 
@@ -70,15 +71,7 @@ export class GraphQLWorkspace {
     );
 
     const projects = projectConfigs.map(projectConfig => {
-      const project = new GraphQLProject(
-        projectConfig,
-        projectConfig.configFile,
-        this.loadingHandler
-      );
-
-      project.onSchemaTags((tags: Map<string, string[]>) => {
-        this._onSchemaTags && this._onSchemaTags(tags);
-      });
+      const project = new GraphQLProject(projectConfig, this.loadingHandler);
 
       project.onDiagnostics(params => {
         this._onDiagnostics && this._onDiagnostics(params);
@@ -88,6 +81,10 @@ export class GraphQLWorkspace {
         this._onDecorations && this._onDecorations(params);
       });
 
+      project.onSchemaTags((tags: string[]) => {
+        this._onSchemaTags && this._onSchemaTags(tags);
+      });
+
       return project;
     });
 
@@ -95,12 +92,12 @@ export class GraphQLWorkspace {
   }
 
   updateSchemaTag(selection: QuickPickItem) {
+    const serviceID = selection.detail;
+    if (!serviceID) return;
+
     this.projectsByFolderUri.forEach(projects => {
       projects.forEach(project => {
-        const projectConsumesService = project.config.schemas!.default.engineKey!.includes(
-          selection.detail!
-        );
-        if (projectConsumesService) {
+        if (project.serviceID === serviceID) {
           project.updateSchemaTag(selection.label);
         }
       });
