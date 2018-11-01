@@ -1,5 +1,5 @@
 import { join, resolve } from "path";
-import { readFileSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 import {
   window,
   workspace,
@@ -23,13 +23,12 @@ import StatusBar from "./statusBar";
 export const getIdFromKey = (key: string) => key.split(":")[1];
 
 // Parse the .env file and load the ENGINE_API_KEY into process.env
-const env: { [key: string]: string } = workspace.rootPath
-  ? require("dotenv").parse(readFileSync(resolve(workspace.rootPath, ".env")))
-  : {};
-
-const key = "ENGINE_API_KEY";
-if (env[key]) {
-  process.env[key] = env[key];
+const envPath = workspace.rootPath ? resolve(workspace.rootPath, ".env") : null;
+if (envPath && existsSync(envPath)) {
+  const env: { [key: string]: string } = workspace.rootPath
+    ? require("dotenv").parse(readFileSync(envPath))
+    : {};
+  process.env["ENGINE_API_KEY"] = env["ENGINE_API_KEY"];
 }
 
 function sideViewColumn() {
