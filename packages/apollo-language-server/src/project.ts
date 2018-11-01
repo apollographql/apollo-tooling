@@ -169,6 +169,7 @@ export class GraphQLProject {
         } else {
           this.schema = schema;
         }
+        this.validateIfNeeded();
       })()
     );
   }
