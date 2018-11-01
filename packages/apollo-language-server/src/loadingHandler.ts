@@ -50,6 +50,6 @@ export class LoadingHandler {
     }
   }
   showError(message: string) {
-    this.connection.window.showErrorMessage(message);
+    this.connection.window.showErrorMessage(`Apollo: ${message}`);
   }
 }

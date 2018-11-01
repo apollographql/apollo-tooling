@@ -55,17 +55,14 @@ export class GraphQLWorkspace {
 
     const projectConfigs = Array.from(apolloConfigFolders).flatMap(
       configFolder => {
-        return this.loadingHandler.handleSync(
-          `Loading Apollo Config in folder ${configFolder}`,
-          () => {
-            try {
-              return [findAndLoadConfig(configFolder, false, true)];
-            } catch (e) {
-              console.error(e);
-              return [];
-            }
-          }
-        );
+        try {
+          return [findAndLoadConfig(configFolder, false, true)];
+        } catch (e) {
+          this.loadingHandler.showError(
+            `Failed to load apollo.config.js in folder ${configFolder}`
+          );
+          return [];
+        }
       }
     );
 

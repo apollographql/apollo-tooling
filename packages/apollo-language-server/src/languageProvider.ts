@@ -385,7 +385,7 @@ ${argumentNode.description}
     const project = this.workspace.projectForFile(uri);
     if (!project) return [];
 
-    await project.readyPromise;
+    await project.whenInitialized;
 
     const docsAndSets = project.documentsAt(uri);
     if (!docsAndSets) return [];
