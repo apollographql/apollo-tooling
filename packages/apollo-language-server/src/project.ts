@@ -88,8 +88,6 @@ export class GraphQLProject {
     public config: ApolloConfig,
     private loadingHandler: LoadingHandler
   ) {
-    console.log("BLAAA");
-
     // FIXME: This should take includes and excludes from the new config format.
     const queries = config.queries![0];
 
@@ -99,6 +97,7 @@ export class GraphQLProject {
       excludes: queries.excludes
     });
 
+    this.loadSchema();
     this.scanAllIncludedFiles();
 
     const engineKey = process.env.ENGINE_API_KEY;
@@ -138,11 +137,16 @@ export class GraphQLProject {
   }
 
   private async loadSchema(tag: SchemaTag = "current") {
+    // FIXME: This needs to be adapted to the new config format.
+    const schemaName =
+      this.config.schemas && Object.keys(this.config.schemas)[0];
+    if (!schemaName) return;
+
     await this.loadingHandler.handle(
       `Loading schema for ${this.displayName}`,
       (async () => {
         const schema = await resolveSchema({
-          name,
+          name: schemaName,
           config: this.config,
           tag
         });
@@ -194,6 +198,8 @@ export class GraphQLProject {
   }
 
   async scanAllIncludedFiles() {
+    console.time(`scanAllIncludedFiles - ${this.displayName}`);
+
     await this.loadingHandler.handle(
       `Loading queries for ${this.displayName}`,
       (async () => {
@@ -206,6 +212,8 @@ export class GraphQLProject {
 
           this.fileDidChange(uri);
         }
+
+        console.timeEnd(`scanAllIncludedFiles - ${this.displayName}`);
 
         this.isReady = true;
         this.validateIfNeeded();
