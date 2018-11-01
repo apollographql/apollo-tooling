@@ -190,6 +190,8 @@ export class GraphQLProject {
         ] = await engineClient.loadSchemaTagsAndFieldStats(serviceID);
         this._onSchemaTags && this._onSchemaTags(schemaTags);
         this.fieldStats = fieldStats;
+
+        this.generateDecorations();
       })()
     );
   }
@@ -282,8 +284,6 @@ export class GraphQLProject {
 
     const fragments = this.fragments;
 
-    const decorations: any[] = [];
-
     for (const [uri, queryDocumentsForFile] of this.documentsByFile) {
       const diagnostics: Diagnostic[] = [];
       for (const queryDocument of queryDocumentsForFile) {
@@ -294,7 +294,32 @@ export class GraphQLProject {
             fragments
           )
         );
+      }
 
+      this._onDiagnostics({ uri, diagnostics });
+    }
+
+    this.needsValidation = false;
+
+    this.generateDecorations();
+  }
+
+  clearAllDiagnostics() {
+    if (!this._onDiagnostics) return;
+
+    for (const uri of this.documentsByFile.keys()) {
+      this._onDiagnostics({ uri, diagnostics: [] });
+    }
+  }
+
+  generateDecorations() {
+    if (!this._onDecorations) return;
+    if (!this.schema) return;
+
+    const decorations: any[] = [];
+
+    for (const [uri, queryDocumentsForFile] of this.documentsByFile) {
+      for (const queryDocument of queryDocumentsForFile) {
         if (queryDocument.ast && this.fieldStats) {
           const fieldStats = this.fieldStats;
           const typeInfo = new TypeInfo(this.schema);
@@ -321,23 +346,9 @@ export class GraphQLProject {
           );
         }
       }
-
-      this._onDiagnostics({ uri, diagnostics });
     }
 
-    if (this._onDecorations) {
-      this._onDecorations(decorations);
-    }
-
-    this.needsValidation = false;
-  }
-
-  clearAllDiagnostics() {
-    if (!this._onDiagnostics) return;
-
-    for (const uri of this.documentsByFile.keys()) {
-      this._onDiagnostics({ uri, diagnostics: [] });
-    }
+    this._onDecorations(decorations);
   }
 
   documentsAt(uri: DocumentUri): GraphQLDocument[] | undefined {
