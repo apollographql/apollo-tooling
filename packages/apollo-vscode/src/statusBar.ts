@@ -17,7 +17,16 @@ export default class ApolloStatusBar {
     }
 
     this.statusBarItem.text = "Apollo GraphQL $(rocket)";
-    this.statusBarItem.show();
+  }
+
+  public showWarningState(tooltip?: string) {
+    if (!window.activeTextEditor) {
+      this.statusBarItem.hide();
+      return;
+    }
+
+    this.statusBarItem.tooltip = tooltip;
+    this.statusBarItem.text = "Apollo GraphQL $(issue-opened)";
   }
 
   public dispose() {

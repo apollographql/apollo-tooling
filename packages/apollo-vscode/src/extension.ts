@@ -22,15 +22,6 @@ import StatusBar from "./statusBar";
 
 export const getIdFromKey = (key: string) => key.split(":")[1];
 
-// Parse the .env file and load the ENGINE_API_KEY into process.env
-const envPath = workspace.rootPath ? resolve(workspace.rootPath, ".env") : null;
-if (envPath && existsSync(envPath)) {
-  const env: { [key: string]: string } = workspace.rootPath
-    ? require("dotenv").parse(readFileSync(envPath))
-    : {};
-  process.env["ENGINE_API_KEY"] = env["ENGINE_API_KEY"];
-}
-
 function sideViewColumn() {
   if (!window.activeTextEditor) {
     return ViewColumn.One;
@@ -44,6 +35,26 @@ function sideViewColumn() {
     default:
       return window.activeTextEditor.viewColumn!;
   }
+}
+
+function parseEnv() {
+  // Parse the .env file and load the ENGINE_API_KEY into process.env
+  const envPath = workspace.rootPath
+    ? resolve(workspace.rootPath, ".env")
+    : null;
+
+  if (envPath && existsSync(envPath)) {
+    const env: { [key: string]: string } = workspace.rootPath
+      ? require("dotenv").parse(readFileSync(envPath))
+      : {};
+
+    const key = "ENGINE_API_KEY";
+    if (env[key]) {
+      process.env[key] = env[key];
+    }
+    return true;
+  }
+  return false;
 }
 
 export function activate(context: ExtensionContext) {
@@ -73,7 +84,8 @@ export function activate(context: ExtensionContext) {
       fileEvents: [
         workspace.createFileSystemWatcher("**/apollo.config.js"),
         workspace.createFileSystemWatcher("**/package.json"),
-        workspace.createFileSystemWatcher("**/*.{graphql,js,ts,jsx,tsx}")
+        workspace.createFileSystemWatcher("**/*.{graphql,js,ts,jsx,tsx}"),
+        workspace.createFileSystemWatcher("**/.env")
       ]
     }
   };
@@ -89,7 +101,26 @@ export function activate(context: ExtensionContext) {
     clientOptions
   );
   client.registerProposedFeatures();
-  context.subscriptions.push(client.start());
+
+  // No .env file found
+  if (!parseEnv()) {
+    window.showWarningMessage(
+      "Apollo: No .env file was found. Please provide an .env file with an ENGINE_API_KEY."
+    );
+    statusBar.showWarningState(
+      "Please provide an .env file with an ENGINE_API_KEY"
+    );
+    // No ENGINE_API_KEY in .env file
+  } else if (!process.env.ENGINE_API_KEY) {
+    window.showWarningMessage(
+      "Apollo: For stats and linting from Engine, please provide an ENGINE_API_KEY in your .env file."
+    );
+    statusBar.showWarningState(
+      "Please provide an ENGINE_API_KEY in your .env file."
+    );
+  } else {
+    context.subscriptions.push(client.start());
+  }
 
   const getApolloPanel = () => {
     if (currentPanel) {

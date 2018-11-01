@@ -116,7 +116,8 @@ connection.onDidChangeWatchedFiles(params => {
     const filePath = Uri.parse(change.uri).fsPath;
     if (
       filePath.endsWith("apollo.config.js") ||
-      filePath.endsWith("package.json")
+      filePath.endsWith("package.json") ||
+      filePath.endsWith(".env")
     ) {
       const projectForConfig = Array.from(
         workspace.projectsByFolderUri.values()
