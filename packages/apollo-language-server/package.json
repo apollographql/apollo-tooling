@@ -14,11 +14,13 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "clean": "rm -rf ../apollo-vscode/server",
+    "compile": "tsc --build tsconfig.json",
+    "compile:clean": "tsc --build tsconfig.json --clean",
+    "watch": "tsc --build tsconfig.json --watch",
     "install-dependencies-into-extension": "yarn install --no-lockfile --force --production --modules-folder ../apollo-vscode/server/node_modules",
+    "clean": "rm -rf ../apollo-vscode/server",
     "prebuild": "npm run clean",
     "build": "npm run install-dependencies-into-extension && tsc -p .",
-    "watch": "npm run install-dependencies-into-extension && tsc -w -p .",
     "watchOnly": "tsc -w -p .",
     "prepare": "npm run build"
   },

@@ -1,0 +1,27 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "[apollo-language-server] TypeScript watch",
+			"type": "shell",
+			"command": "./node_modules/.bin/tsc",
+			"args": [
+				"--build",
+				"./packages/apollo-language-server/tsconfig.json",
+				"--watch"
+			],
+			"isBackground": true,
+			"problemMatcher": [
+				"$tsc-watch"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "never",
+				"panel": "dedicated"
+			}
+		}
+	]
+}
