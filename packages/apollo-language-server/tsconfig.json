@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base",
   "compilerOptions": {
     "composite": true,
+    "rootDir": "./src",
     "outDir": "../apollo-vscode/server",
     "skipLibCheck": true,
   },

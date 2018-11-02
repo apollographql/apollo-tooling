@@ -2,8 +2,9 @@
   "extends": "../../tsconfig.base",
   "compilerOptions": {
     "noImplicitAny": false,
-    "outDir": "lib"
-  },
+    "rootDir": "./src",
+    "outDir": "./lib"
+   },
   "include": ["./src/**/*"],
   "exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
 }
