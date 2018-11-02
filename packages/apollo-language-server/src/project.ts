@@ -160,7 +160,7 @@ export class GraphQLProject {
 
   async initializeProject() {
     await this.loadingHandler.handle(
-      "Apollo: Loading Engine stats",
+      "Apollo: Initializing extension...",
       this.loadEngineData()
         .then(async () => {
           this._onSchemaTags && this._onSchemaTags(this.schemaTags);
