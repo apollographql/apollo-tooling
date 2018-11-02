@@ -81,9 +81,6 @@ export class GraphQLClientProject extends GraphQLProject {
     super(config, fileSet, loadingHandler);
     this.rootPath = rootPath;
 
-    this.loadSchema();
-    this.scanAllIncludedFiles();
-
     const { engine } = this.config;
     if (!engine || !engine.engineApiKey) {
       this.loadingHandler.showError(
