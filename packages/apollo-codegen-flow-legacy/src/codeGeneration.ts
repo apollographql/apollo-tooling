@@ -355,7 +355,7 @@ export function propertyFromField(
   if (isCompositeType(namedType)) {
     const typeName = typeNameFromGraphQLType(context, fieldType);
     let isArray = false;
-    let isArrayElementNullable = null;
+    let isArrayElementNullable;
     if (isListType(fieldType)) {
       isArray = true;
       isArrayElementNullable = !isNonNullType(fieldType.ofType);

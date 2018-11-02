@@ -1,8 +1,9 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
-    "target": "es2015",
+    "lib": ["es2017", "esnext.asynciterable", "dom"],
     "jsx": "react"
   },
-  "exclude": ["node_modules", "server"]
+  "include": ["./src/**/*"],
+  "exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
 }
