@@ -36,7 +36,11 @@ interface FieldStat {
 }
 
 export type ServiceID = string;
+export type ClientID = string;
 export type SchemaTag = string;
+export type ServiceSpecififerTuple = [ServiceID, SchemaTag?];
+export type ServiceSpecififer = string;
+export type StatsWindowSize = number;
 export type FieldStats = Map<string, Map<string, number>>;
 
 export class ApolloEngineClient {

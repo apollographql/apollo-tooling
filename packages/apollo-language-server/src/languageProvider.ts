@@ -19,7 +19,7 @@ import {
 } from "@apollographql/graphql-language-service-interface/dist/getAutocompleteSuggestions";
 
 import { GraphQLWorkspace } from "./workspace";
-import { DocumentUri } from "./project";
+import { DocumentUri } from "./project/base";
 
 import {
   positionFromPositionInContainingDocument,
@@ -47,7 +47,7 @@ import { highlightNodeForNode } from "./utilities/graphql";
 
 import Uri from "vscode-uri";
 import { resolve } from "path";
-import { GraphQLClientProject } from "./clientProject";
+import { GraphQLClientProject } from "./project/client";
 
 function hasFields(type: GraphQLType): boolean {
   return (

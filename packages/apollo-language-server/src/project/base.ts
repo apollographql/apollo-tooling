@@ -6,7 +6,7 @@ import { TypeSystemDefinitionNode, TypeSystemExtensionNode } from "graphql";
 import {
   isTypeSystemDefinitionNode,
   isTypeSystemExtensionNode
-} from "./utilities/graphql";
+} from "../utilities/graphql";
 
 import {
   TextDocument,
@@ -15,19 +15,11 @@ import {
   Position
 } from "vscode-languageserver";
 
-import { GraphQLDocument, extractGraphQLDocuments } from "./document";
-
-import {
-  ApolloConfigFormat,
-  getServiceName,
-  selectProjectFromConfig
-} from "./config";
-
-import { resolveSchema } from "apollo/lib/config";
+import { GraphQLDocument, extractGraphQLDocuments } from "../document";
 
 import Uri from "vscode-uri";
-import { LoadingHandler } from "./loadingHandler";
-import { FileSet } from "./fileSet";
+import { LoadingHandler } from "../loadingHandler";
+import { FileSet } from "../fileSet";
 
 export type DocumentUri = string;
 
@@ -40,6 +32,7 @@ const fileAssociations: { [extension: string]: string } = {
 };
 
 export abstract class GraphQLProject {
+  public __type: string = "";
   protected _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
 
   public isReady = false;

@@ -3,16 +3,17 @@ import { LoaderEntry } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
 import { defaultsDeep } from "lodash/fp";
 
+import {
+  ServiceID,
+  ServiceSpecififer,
+  ClientID,
+  StatsWindowSize,
+  ServiceSpecififerTuple
+} from "./engine";
+
 // TypeScript util requiring an optional field
 export type RequireProperty<T, Prop extends keyof T> = T &
   { [key in Prop]-?: T[key] };
-
-export type EngineServiceID = string;
-export type EngineClientID = string;
-export type EngineTagName = string;
-export type EngineServiceTuple = [EngineServiceID, EngineTagName?];
-export type EngineServiceSpecififer = string;
-export type EngineStatsWindowSize = number;
 
 export interface EngineStatsWindow {
   to: number;
@@ -28,7 +29,7 @@ export interface HistoricalEngineStatsWindow extends EngineStatsWindow {}
 
 export type EndpointURI = string;
 export interface RemoteServiceConfig {
-  name: EngineServiceID;
+  name: ServiceID;
   endpoint: EndpointURI;
   headers?: { [key: string]: string };
 }
@@ -55,9 +56,9 @@ export interface ConfigBase {
 
 export interface ClientConfig extends ConfigBase {
   // service linking
-  service: EngineServiceSpecififer | RemoteServiceConfig;
+  service: ServiceSpecififer | RemoteServiceConfig;
   // client identity
-  name?: EngineClientID;
+  name?: ClientID;
   referenceId?: string;
   // client schemas
   clientOnlyDirectives?: string[];
@@ -65,7 +66,7 @@ export interface ClientConfig extends ConfigBase {
 
   tagName?: string;
   // stats window config
-  statsWindow: EngineStatsWindowSize;
+  statsWindow: StatsWindowSize;
 }
 
 export const DefaultClientConfig = {
@@ -85,18 +86,21 @@ export const DefaultServiceConfig = {
   ...DefaultConfigBase
 };
 
-export interface ClientConfigFormat {
-  client: ClientConfig;
-}
-
-export interface ServiceConfigFormat {
-  service: ServiceConfig;
-}
 export interface ConfigBaseFormat {
   client?: ClientConfig;
   service?: ServiceConfig;
   engine?: EngineConfig;
 }
+
+export type ClientConfigFormat = Exclude<
+  RequireProperty<ConfigBaseFormat, "client">,
+  "service"
+>;
+
+export type ServiceConfigFormat = Exclude<
+  RequireProperty<ConfigBaseFormat, "service">,
+  "client"
+>;
 
 export type ApolloConfigFormat =
   | RequireProperty<ConfigBaseFormat, "client">
@@ -163,11 +167,19 @@ export const loadConfig = async ({
   return { config, filepath, isEmpty };
 };
 
+export const isClient = (
+  config: ApolloConfigFormat
+): config is ClientConfigFormat => !!config.client;
+
+export const isService = (
+  config: ApolloConfigFormat
+): config is ServiceConfigFormat => !!config.service;
+
 // take a config with multiple project types and return
 // an array of individual types
 export const projectsFromConfig = (
   config: ApolloConfigFormat
-): ApolloConfigFormat[] => {
+): Array<ClientConfigFormat | ServiceConfigFormat> => {
   const configs = [];
   const { client, service, ...rest } = config;
   if (client) configs.push({ client, ...rest });
@@ -176,8 +188,8 @@ export const projectsFromConfig = (
 };
 
 export const parseServiceSpecificer = (
-  specifier: EngineServiceSpecififer
-): EngineServiceTuple => {
+  specifier: ServiceSpecififer
+): ServiceSpecififerTuple => {
   const [id, tag] = specifier.split("@").map(x => x.trim());
   // typescript hinting
   return [id, tag];
@@ -185,9 +197,9 @@ export const parseServiceSpecificer = (
 
 export const getServiceName = (config: ApolloConfigFormat): string => {
   if (config.service) return config.service.name;
-  if (typeof (config.client!.service as EngineServiceSpecififer) === "string") {
+  if (typeof (config.client!.service as ServiceSpecififer) === "string") {
     return parseServiceSpecificer(config.client!
-      .service as EngineServiceSpecififer)[0];
+      .service as ServiceSpecififer)[0];
   }
 
   return (config.client!.service as RemoteServiceConfig).name;

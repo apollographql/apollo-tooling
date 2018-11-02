@@ -1,4 +1,4 @@
-import { GraphQLProject } from "./project";
+import { GraphQLProject } from "./base";
 import {
   GraphQLSchema,
   printSchema,
@@ -12,24 +12,35 @@ import {
   FragmentSpreadNode
 } from "graphql";
 
-import { rangeForASTNode } from "./utilities/source";
-import { formatMS } from "./format";
-import { LoadingHandler } from "./loadingHandler";
-import { FileSet } from "./fileSet";
-import { ApolloEngineClient, FieldStats, SchemaTag, ServiceID } from "./engine";
+import { rangeForASTNode } from "../utilities/source";
+import { formatMS } from "../format";
+import { LoadingHandler } from "../loadingHandler";
+import { FileSet } from "../fileSet";
+import {
+  ApolloEngineClient,
+  FieldStats,
+  SchemaTag,
+  ServiceID
+} from "../engine";
+import { ClientConfigFormat, getServiceName } from "../config";
 import { getIdFromKey } from "apollo/lib/engine";
-import { ApolloConfig, resolveSchema } from "apollo/lib/config";
+import { resolveSchema } from "apollo/lib/config";
 
 import { NotificationHandler, Diagnostic } from "vscode-languageserver";
-import { collectExecutableDefinitionDiagnositics } from "./diagnostics";
+import { collectExecutableDefinitionDiagnositics } from "../diagnostics";
 
 function schemaHasASTNodes(schema: GraphQLSchema): boolean {
   const queryType = schema && schema.getQueryType();
   return !!(queryType && queryType.astNode);
 }
 
+export const isClientProject = (
+  project: GraphQLProject
+): project is GraphQLClientProject => project.__type === "client";
+
 export class GraphQLClientProject extends GraphQLProject {
-  public config: ApolloConfig;
+  public config: ClientConfigFormat;
+  public rootPath: string;
   public serviceID?: string;
   public schema?: GraphQLSchema;
 
@@ -39,19 +50,22 @@ export class GraphQLClientProject extends GraphQLProject {
   private engineClient?: ApolloEngineClient;
   private fieldStats?: FieldStats;
 
-  constructor(config: ApolloConfig, loadingHandler: LoadingHandler) {
-    // FIXME: This should take includes and excludes from the new config format.
-    const queries = config.queries![0];
-
+  constructor(
+    config: ClientConfigFormat,
+    loadingHandler: LoadingHandler,
+    rootPath: string
+  ) {
     const fileSet = new FileSet({
-      rootPath: config.projectFolder,
-      includes: queries.includes,
-      excludes: queries.excludes
+      rootPath,
+      includes: config.client.includes,
+      excludes: config.client.excludes
     });
 
     super(fileSet, loadingHandler);
+    this.__type = "client";
 
     this.config = config;
+    this.rootPath = rootPath;
 
     this.loadSchema();
     this.scanAllIncludedFiles();
@@ -62,7 +76,7 @@ export class GraphQLClientProject extends GraphQLProject {
 
       this.engineClient = new ApolloEngineClient(
         engineKey,
-        this.config.engineEndpoint
+        this.config.engine && this.config.engine.endpoint
       );
       this.loadEngineData();
     } else {
@@ -73,7 +87,7 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   get displayName(): string {
-    return this.config.name || "<Unnamed>";
+    return getServiceName(this.config) || "<Unnamed>";
   }
 
   onDecorations(handler: (any: any) => void) {
@@ -90,8 +104,7 @@ export class GraphQLClientProject extends GraphQLProject {
 
   private async loadSchema(tag: SchemaTag = "current") {
     // FIXME: This needs to be adapted to the new config format.
-    const schemaName =
-      this.config.schemas && Object.keys(this.config.schemas)[0];
+    const schemaName = this.displayName;
     if (!schemaName) return;
 
     await this.loadingHandler.handle(
