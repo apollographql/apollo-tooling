@@ -6,13 +6,19 @@ import {
 import Uri from "vscode-uri";
 import { QuickPickItem } from "vscode";
 
-import { GraphQLProject, DocumentUri } from "./project";
+import { GraphQLProject, DocumentUri } from "./project/base";
 import { dirname } from "path";
 import * as fg from "glob";
-import { loadConfig, projectsFromConfig, ApolloConfigFormat } from "./config";
+import {
+  loadConfig,
+  projectsFromConfig,
+  ApolloConfigFormat,
+  isClient
+} from "./config";
 import { LoadingHandler } from "./loadingHandler";
 import { ServiceID, SchemaTag } from "./engine";
-import { GraphQLClientProject } from "./clientProject";
+import { GraphQLClientProject, isClientProject } from "./project/client";
+import { GraphQLServiceProject } from "./project/service";
 
 export class GraphQLWorkspace {
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
@@ -78,23 +84,31 @@ export class GraphQLWorkspace {
           // we create a GraphQLProject for each kind of project
           return projectsFromConfig(projectConfig as ApolloConfigFormat).map(
             config => {
-              const project = new GraphQLClientProject(
-                config,
-                this.loadingHandler,
-                folder.uri
-              );
+              const project = isClient(config)
+                ? new GraphQLClientProject(
+                    config,
+                    this.loadingHandler,
+                    folder.uri
+                  )
+                : new GraphQLServiceProject(
+                    config,
+                    this.loadingHandler,
+                    folder.uri
+                  );
 
               project.onDiagnostics(params => {
                 this._onDiagnostics && this._onDiagnostics(params);
               });
 
-              project.onDecorations(params => {
-                this._onDecorations && this._onDecorations(params);
-              });
+              if (isClientProject(project)) {
+                project.onDecorations(params => {
+                  this._onDecorations && this._onDecorations(params);
+                });
 
-              project.onSchemaTags((tags: string[]) => {
-                this._onSchemaTags && this._onSchemaTags(tags);
-              });
+                project.onSchemaTags(tags => {
+                  this._onSchemaTags && this._onSchemaTags(tags);
+                });
+              }
 
               return project;
             }
