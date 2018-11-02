@@ -76,7 +76,7 @@ const ENGINE_TAGS_AND_STATS = gql`
       schemaTags {
         tag
       }
-      stats(from: "-3600", to: "-0") {
+      stats(from: "-86400", to: "-0") {
         fieldStats {
           groupBy {
             field
