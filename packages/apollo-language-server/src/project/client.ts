@@ -11,8 +11,6 @@ import {
   Kind,
   FragmentSpreadNode,
   extendSchema,
-  print,
-  parse,
   DocumentNode
 } from "graphql";
 
@@ -58,7 +56,10 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   get clientSchema(): DocumentNode {
-    return parse(this.typeSystemDefinitionsAndExtensions.map(print).join("\n"));
+    return {
+      kind: Kind.DOCUMENT,
+      definitions: this.typeSystemDefinitionsAndExtensions
+    };
   }
 
   private _onDecorations?: (any: any) => void;
