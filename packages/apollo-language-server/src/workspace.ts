@@ -9,7 +9,7 @@ import { QuickPickItem } from "vscode";
 import { GraphQLProject, DocumentUri } from "./project";
 import { dirname } from "path";
 import * as fg from "glob";
-import { findAndLoadConfig } from "apollo/lib/config";
+import { loadConfig, projectsFromConfig, ApolloConfigFormat } from "./config";
 import { LoadingHandler } from "./loadingHandler";
 import { ServiceID, SchemaTag } from "./engine";
 import { GraphQLClientProject } from "./clientProject";
@@ -36,7 +36,8 @@ export class GraphQLWorkspace {
   }
 
   addProjectsInFolder(folder: WorkspaceFolder) {
-    const apolloConfigFiles: string[] = fg.sync("**/apollo.config.js", {
+    // load all possible workspace projects (contains possible config)
+    const apolloConfigFiles: string[] = fg.sync("**/apollo.config.(js|ts)", {
       cwd: Uri.parse(folder.uri).fsPath,
       absolute: true,
       ignore: "**/node_modules/**"
@@ -50,48 +51,57 @@ export class GraphQLWorkspace {
       })
     );
 
+    // only have unique possible folders
     const apolloConfigFolders = new Set<string>(
       apolloConfigFiles.map(f => dirname(f))
     );
 
-    const projectConfigs = Array.from(apolloConfigFolders).flatMap(
-      configFolder => {
-        return this.loadingHandler.handleSync(
-          `Loading Apollo Config in folder ${configFolder}`,
-          () => {
-            try {
-              return [findAndLoadConfig(configFolder, false, true)];
-            } catch (e) {
-              console.error(e);
-              return [];
-            }
+    // go from possible folders to known array of configs
+    const projectConfigs = Array.from(apolloConfigFolders).map(configFolder =>
+      this.loadingHandler.handle<ApolloConfigFormat | null>(
+        `Loading Apollo Config in folder ${configFolder}`,
+        (async () => {
+          try {
+            const config = await loadConfig({ cwd: configFolder });
+            return config && config.config;
+          } catch (e) {
+            console.error(e);
+            return null;
           }
-        );
-      }
+        })()
+      )
     );
 
-    const projects = projectConfigs.map(projectConfig => {
-      const project = new GraphQLClientProject(
-        projectConfig,
-        this.loadingHandler
-      );
+    Promise.all(projectConfigs)
+      .then(configs =>
+        configs.filter(Boolean).flatMap(projectConfig => {
+          // we create a GraphQLProject for each kind of project
+          return projectsFromConfig(projectConfig as ApolloConfigFormat).map(
+            config => {
+              const project = new GraphQLClientProject(
+                config,
+                this.loadingHandler,
+                folder.uri
+              );
 
-      project.onDiagnostics(params => {
-        this._onDiagnostics && this._onDiagnostics(params);
-      });
+              project.onDiagnostics(params => {
+                this._onDiagnostics && this._onDiagnostics(params);
+              });
 
-      project.onDecorations(params => {
-        this._onDecorations && this._onDecorations(params);
-      });
+              project.onDecorations(params => {
+                this._onDecorations && this._onDecorations(params);
+              });
 
-      project.onSchemaTags(params => {
-        this._onSchemaTags && this._onSchemaTags(params);
-      });
+              project.onSchemaTags((tags: string[]) => {
+                this._onSchemaTags && this._onSchemaTags(tags);
+              });
 
-      return project;
-    });
-
-    this.projectsByFolderUri.set(folder.uri, projects);
+              return project;
+            }
+          );
+        })
+      )
+      .then(projects => this.projectsByFolderUri.set(folder.uri, projects));
   }
 
   updateSchemaTag(selection: QuickPickItem) {
