@@ -17,6 +17,14 @@ import {
 
 import { GraphQLDocument, extractGraphQLDocuments } from "./document";
 
+import {
+  ApolloConfigFormat,
+  getServiceName,
+  selectProjectFromConfig
+} from "./config";
+
+import { resolveSchema } from "apollo/lib/config";
+
 import Uri from "vscode-uri";
 import { LoadingHandler } from "./loadingHandler";
 import { FileSet } from "./fileSet";

@@ -61,7 +61,7 @@ function convertToURI(filePath: string, project: GraphQLClientProject) {
   return filePath.startsWith("file:/") ||
     filePath.startsWith("graphql-schema:/")
     ? filePath
-    : `file://${resolve(project.config.projectFolder, filePath)}`;
+    : `file://${resolve(project.rootPath, filePath)}`;
 }
 
 export class GraphQLLanguageProvider {
