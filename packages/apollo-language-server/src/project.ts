@@ -174,7 +174,9 @@ export class GraphQLProject {
         })
         .catch(() => {
           this.loadingHandler.showError(
-            `Error loading Engine data for ${this.config.name}`
+            `Error loading Engine data for ${
+              this.config.name
+            }. Please confirm your Engine API key is valid.`
           );
         })
     );
