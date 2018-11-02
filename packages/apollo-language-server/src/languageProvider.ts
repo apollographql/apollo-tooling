@@ -35,22 +35,25 @@ import {
   isAbstractType,
   TypeNameMetaFieldDef,
   SchemaMetaFieldDef,
-  TypeMetaFieldDef
+  TypeMetaFieldDef,
+  typeFromAST,
+  GraphQLType,
+  isObjectType,
+  isListType,
+  GraphQLList,
+  isNonNullType
 } from "graphql";
 import { highlightNodeForNode } from "./utilities/graphql";
-import * as graphql from "graphql";
 
 import Uri from "vscode-uri";
 import { resolve } from "path";
 import { GraphQLClientProject } from "./clientProject";
 
-function hasFields(type: graphql.GraphQLType): boolean {
+function hasFields(type: GraphQLType): boolean {
   return (
-    graphql.isObjectType(type) ||
-    (graphql.isListType(type) &&
-      hasFields((type as graphql.GraphQLList<any>).ofType)) ||
-    (graphql.isNonNullType(type) &&
-      hasFields((type as GraphQLNonNull<any>).ofType))
+    isObjectType(type) ||
+    (isListType(type) && hasFields((type as GraphQLList<any>).ofType)) ||
+    (isNonNullType(type) && hasFields((type as GraphQLNonNull<any>).ofType))
   );
 }
 
@@ -304,7 +307,7 @@ ${argumentNode.description}
           };
         }
         case Kind.NAMED_TYPE: {
-          const type = graphql.typeFromAST(project.schema, node);
+          const type = typeFromAST(project.schema, node);
 
           if (!(type && type.astNode && type.astNode.loc)) break;
 
