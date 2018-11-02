@@ -39,7 +39,7 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
       query: SCHEMA_QUERY,
       variables: {
         id,
-        tag
+        tag: tag || "current"
       }
     });
 
