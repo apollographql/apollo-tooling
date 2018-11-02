@@ -81,7 +81,7 @@ export const SCHEMA_QUERY = gql`
           subscriptionType {
             name
           }
-          types(filter: { includeAbstractTypes: true }) {
+          types {
             ...IntrospectionFullType
           }
           directives {
