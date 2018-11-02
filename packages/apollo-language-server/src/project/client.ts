@@ -50,6 +50,7 @@ export class GraphQLClientProject extends GraphQLProject {
   public schema?: GraphQLSchema;
 
   async resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
+    // XXX cache the merging of these
     return extendSchema(
       await this.schemaProvider.resolveSchema(config),
       this.clientSchema
@@ -114,14 +115,13 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   private async loadSchema(tag: SchemaTag = "current") {
-    // FIXME: This needs to be adapted to the new config format.
     const schemaName = this.displayName;
     if (!schemaName) return;
 
     await this.loadingHandler.handle(
       `Loading schema for ${this.displayName}`,
       (async () => {
-        const schema = await this.schemaProvider.resolveSchema({ tag });
+        const schema = await this.resolveSchema({ tag });
 
         if (!schema) return;
 
