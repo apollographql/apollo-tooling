@@ -45,7 +45,9 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   public schemaProvider: GraphQLSchemaProvider;
   protected _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
 
-  public isReady = false;
+  private _isReady: boolean;
+  private readyPromise: Promise<void>;
+
   private needsValidation = false;
 
   protected documentsByFile: Map<DocumentUri, GraphQLDocument[]> = new Map();
@@ -56,9 +58,36 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     protected loadingHandler: LoadingHandler
   ) {
     this.schemaProvider = schemaProviderFromConfig(config);
+
+    this._isReady = false;
+    // FIXME: Instead of `Promise.all`, we should catch individual promise rejections
+    // so we can show multiple errors.
+    this.readyPromise = Promise.all(this.initialize())
+      .then(() => {
+        this._isReady = true;
+        this.invalidate();
+      })
+      .catch(error => {
+        console.error(error);
+        this.loadingHandler.showError(
+          `Error initializing Apollo GraphQL project "${
+            this.displayName
+          }": ${error}`
+        );
+      });
   }
 
   abstract get displayName(): string;
+
+  protected abstract initialize(): Promise<void>[];
+
+  get isReady(): boolean {
+    return this._isReady;
+  }
+
+  whenReady(): Promise<void> {
+    return this.readyPromise;
+  }
 
   public resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
     return this.schemaProvider.resolveSchema(config);
@@ -93,9 +122,6 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
         }
 
         console.timeEnd(`scanAllIncludedFiles - ${this.displayName}`);
-
-        this.isReady = true;
-        this.validateIfNeeded();
       })()
     );
   }
@@ -144,17 +170,17 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     }
   }
 
-  private invalidate() {
+  protected invalidate() {
     if (!this.needsValidation && this.isReady) {
       setTimeout(() => {
         this.validateIfNeeded();
       }, 0);
+      this.needsValidation = true;
     }
-    this.needsValidation = true;
   }
 
-  protected validateIfNeeded() {
-    if (!this.needsValidation) return;
+  private validateIfNeeded() {
+    if (!this.needsValidation || !this.isReady) return;
 
     this.validate();
 
