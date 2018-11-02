@@ -1,6 +1,5 @@
 import gql from "graphql-tag";
-// XXX build and bundle typescript types
-import { GraphQLDataSource } from "apollo-datasource-graphql/src";
+import { GraphQLDataSource } from "./GraphQLDataSource";
 import { GraphQLRequest } from "apollo-link";
 
 import { DefaultEngineConfig } from "../config";
