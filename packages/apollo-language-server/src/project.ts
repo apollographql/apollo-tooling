@@ -43,7 +43,7 @@ import { rangeForASTNode } from "./utilities/source";
 import { formatMS } from "./format";
 import { LoadingHandler } from "./loadingHandler";
 import { FileSet } from "./fileSet";
-import { ApolloEngineClient, FieldStats, SchemaTag } from "./engine";
+import { ApolloEngineClient, FieldStats, SchemaTag, ServiceID } from "./engine";
 import { getIdFromKey } from "apollo/lib/engine";
 declare global {
   interface Array<T> {
@@ -70,7 +70,7 @@ function schemaHasASTNodes(schema: GraphQLSchema): boolean {
 export class GraphQLProject {
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
   private _onDecorations?: (any: any) => void;
-  private _onSchemaTags?: (tags: SchemaTag[]) => void;
+  private _onSchemaTags?: NotificationHandler<[ServiceID, SchemaTag[]]>;
 
   public isReady = false;
   private needsValidation = false;
@@ -128,7 +128,7 @@ export class GraphQLProject {
     this._onDecorations = handler;
   }
 
-  onSchemaTags(handler: (tags: SchemaTag[]) => void): void {
+  onSchemaTags(handler: NotificationHandler<[ServiceID, SchemaTag[]]>) {
     this._onSchemaTags = handler;
   }
 
@@ -188,7 +188,7 @@ export class GraphQLProject {
           schemaTags,
           fieldStats
         ] = await engineClient.loadSchemaTagsAndFieldStats(serviceID);
-        this._onSchemaTags && this._onSchemaTags(schemaTags);
+        this._onSchemaTags && this._onSchemaTags([serviceID, schemaTags]);
         this.fieldStats = fieldStats;
 
         this.generateDecorations();

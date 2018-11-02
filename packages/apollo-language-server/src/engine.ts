@@ -35,6 +35,7 @@ interface FieldStat {
   };
 }
 
+export type ServiceID = string;
 export type SchemaTag = string;
 export type FieldStats = Map<string, Map<string, number>>;
 

@@ -51,7 +51,7 @@ export function activate(context: ExtensionContext) {
   const serverModule = context.asAbsolutePath(join("server", "server.js"));
   const debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
   const statusBar = new StatusBar();
-  let schemaTags: QuickPickItem[] = [];
+  let schemaTagItems: QuickPickItem[] = [];
 
   const serverOptions: ServerOptions = {
     run: { module: serverModule, transport: TransportKind.ipc },
@@ -152,30 +152,19 @@ export function activate(context: ExtensionContext) {
   client.onReady().then(() => {
     // For some reason, non-strings can only be sent in one direction. For now, messages
     // coming from the language server just need to be stringified and parsed.
-    client.onNotification(
-      "apollographql/tagsLoaded",
-      (stringifiedTags: string) => {
-        const parsedTags: [string, string[]][] =
-          JSON.parse(stringifiedTags) || [];
+    client.onNotification("apollographql/tagsLoaded", params => {
+      const [serviceID, tags]: [string, string[]] = JSON.parse(params);
+      const items = tags.map(tag => ({
+        label: tag,
+        description: "",
+        detail: serviceID
+      }));
 
-        const quickPickItems = parsedTags.reduce(
-          (flattenedTags: QuickPickItem[], [serviceId, tags]) => [
-            ...flattenedTags,
-            ...tags.map(tag => ({
-              label: tag,
-              description: "",
-              detail: getIdFromKey(serviceId)
-            }))
-          ],
-          []
-        );
-
-        schemaTags = [...quickPickItems, ...schemaTags];
-      }
-    );
+      schemaTagItems = [...items, ...schemaTagItems];
+    });
 
     commands.registerCommand("apollographql/selectSchemaTag", async () => {
-      const selection = await window.showQuickPick(schemaTags);
+      const selection = await window.showQuickPick(schemaTagItems);
       if (selection) {
         client.sendNotification("apollographql/tagSelected", selection);
       }
