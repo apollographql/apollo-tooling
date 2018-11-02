@@ -64,7 +64,7 @@
     ],
     "globals": {
       "ts-jest": {
-        "skipBabel": true
+        "diagnostics": false
       }
     }
   }
