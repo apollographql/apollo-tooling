@@ -3,6 +3,6 @@
   "compilerOptions": {
     "allowJs": true
   },
-  "include" : [ "src/**/*" ],
-  "exclude": [ "**/__tests__/*" ]
+  "include": ["./src/**/*"],
+  "exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
 }

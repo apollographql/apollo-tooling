@@ -1,8 +1,9 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
-    "target": "es2015",
-    "outDir": "../apollo-vscode/server"
+    "outDir": "../apollo-vscode/server",
+    "skipLibCheck": true,
   },
-  "exclude": ["node_modules"]
+  "include": ["./src/**/*"],
+  "exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
 }
