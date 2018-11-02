@@ -14,7 +14,7 @@
   },
   "scripts": {
     "clean": "git clean -dfqX -- ./node_modules **/{lib,node_modules}/",
-    "postinstall": "lerna run prepare",
+    "postinstall": "npm run build",
     "build": "lerna run build && npm run compile",
     "compile": "tsc --build tsconfig.json",
     "compile:clean": "tsc --build tsconfig.json --clean",
@@ -26,7 +26,7 @@
     "circle": "npm run test -- --ci --maxWorkers=2",
     "precommit": "lint-staged",
     "release": "npm run clean && npm ci && lerna publish --exact",
-    "package-extension": "lerna run package-extension --scope=apollo-vscode"
+    "package-extension": "lerna run package-extension --stream --scope=apollo-vscode"
   },
   "engines": {
     "node": ">=8",

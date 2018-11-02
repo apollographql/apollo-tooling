@@ -16,8 +16,7 @@
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",
     "build": "tsc",
-    "watch": "tsc -w",
-    "prepare": "npm run build"
+    "watch": "tsc -w"
   },
   "engines": {
     "node": ">=8",
