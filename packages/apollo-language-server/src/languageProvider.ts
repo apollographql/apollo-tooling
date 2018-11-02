@@ -19,7 +19,7 @@ import {
 } from "@apollographql/graphql-language-service-interface/dist/getAutocompleteSuggestions";
 
 import { GraphQLWorkspace } from "./workspace";
-import { DocumentUri, GraphQLProject } from "./project";
+import { DocumentUri } from "./project";
 
 import {
   positionFromPositionInContainingDocument,
@@ -42,6 +42,7 @@ import * as graphql from "graphql";
 
 import Uri from "vscode-uri";
 import { resolve } from "path";
+import { GraphQLClientProject } from "./clientProject";
 
 function hasFields(type: graphql.GraphQLType): boolean {
   return (
@@ -53,7 +54,7 @@ function hasFields(type: graphql.GraphQLType): boolean {
   );
 }
 
-function convertToURI(filePath: string, project: GraphQLProject) {
+function convertToURI(filePath: string, project: GraphQLClientProject) {
   return filePath.startsWith("file:/") ||
     filePath.startsWith("graphql-schema:/")
     ? filePath
@@ -69,7 +70,7 @@ export class GraphQLLanguageProvider {
     _token: CancellationToken
   ): Promise<CompletionItem[]> {
     const project = this.workspace.projectForFile(uri);
-    if (!project) return [];
+    if (!(project && project instanceof GraphQLClientProject)) return [];
 
     const document = project.documentAt(uri, position);
     if (!(document && document.ast)) return [];
@@ -155,7 +156,7 @@ export class GraphQLLanguageProvider {
     _token: CancellationToken
   ): Promise<Hover | null> {
     const project = this.workspace.projectForFile(uri);
-    if (!project) return null;
+    if (!(project && project instanceof GraphQLClientProject)) return null;
 
     const document = project.documentAt(uri, position);
     if (!(document && document.ast)) return null;
@@ -259,7 +260,7 @@ ${argumentNode.description}
     _token: CancellationToken
   ): Promise<Definition> {
     const project = this.workspace.projectForFile(uri);
-    if (!project) return null;
+    if (!(project && project instanceof GraphQLClientProject)) return null;
 
     const document = project.documentAt(uri, position);
     if (!(document && document.ast)) return null;
@@ -324,7 +325,7 @@ ${argumentNode.description}
     _token: CancellationToken
   ): Promise<Location[] | null> {
     const project = this.workspace.projectForFile(uri);
-    if (!project) return null;
+    if (!(project && project instanceof GraphQLClientProject)) return null;
 
     const document = project.documentAt(uri, position);
     if (!(document && document.ast)) return null;
@@ -373,7 +374,7 @@ ${argumentNode.description}
     _token: CancellationToken
   ): Promise<CodeLens[]> {
     const project = this.workspace.projectForFile(uri);
-    if (!project) return [];
+    if (!(project && project instanceof GraphQLClientProject)) return [];
 
     const documents = project.documentsAt(uri);
     if (!documents) return [];

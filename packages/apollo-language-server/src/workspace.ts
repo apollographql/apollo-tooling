@@ -10,10 +10,9 @@ import { GraphQLProject, DocumentUri } from "./project";
 import { dirname } from "path";
 import * as fg from "glob";
 import { findAndLoadConfig } from "apollo/lib/config";
-import { GraphQLDocument } from "./document";
-import { Source, buildSchema } from "graphql";
 import { LoadingHandler } from "./loadingHandler";
 import { ServiceID, SchemaTag } from "./engine";
+import { GraphQLClientProject } from "./clientProject";
 
 export class GraphQLWorkspace {
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
@@ -72,7 +71,10 @@ export class GraphQLWorkspace {
     );
 
     const projects = projectConfigs.map(projectConfig => {
-      const project = new GraphQLProject(projectConfig, this.loadingHandler);
+      const project = new GraphQLClientProject(
+        projectConfig,
+        this.loadingHandler
+      );
 
       project.onDiagnostics(params => {
         this._onDiagnostics && this._onDiagnostics(params);
@@ -98,7 +100,10 @@ export class GraphQLWorkspace {
 
     this.projectsByFolderUri.forEach(projects => {
       projects.forEach(project => {
-        if (project.serviceID === serviceID) {
+        if (
+          project instanceof GraphQLClientProject &&
+          project.serviceID === serviceID
+        ) {
           project.updateSchemaTag(selection.label);
         }
       });
@@ -114,21 +119,6 @@ export class GraphQLWorkspace {
   }
 
   projectForFile(uri: DocumentUri): GraphQLProject | undefined {
-    if (uri.startsWith("graphql-schema")) {
-      return ({
-        documentAt(uri: string, _: any) {
-          return {
-            doc: new GraphQLDocument(new Source(Uri.parse(uri).query, uri)),
-            set: {
-              schema: buildSchema(new Source(Uri.parse(uri).query, uri))
-            }
-          };
-        },
-        documentDidChange() {},
-        documentsAt() {}
-      } as any) as GraphQLProject;
-    }
-
     for (const projects of this.projectsByFolderUri.values()) {
       const project = projects.find(project => project.includesFile(uri));
       if (project) {
