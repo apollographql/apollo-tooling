@@ -3,12 +3,13 @@ import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
 import { ServiceConfigFormat, getServiceName } from "../config";
 
-export const isServiceProject = (
+export function isServiceProject(
   project: GraphQLProject
-): project is GraphQLServiceProject => project.__type === "service";
+): project is GraphQLServiceProject {
+  return project instanceof GraphQLServiceProject;
+}
 
 export class GraphQLServiceProject extends GraphQLProject {
-  public config: ServiceConfigFormat;
   constructor(
     config: ServiceConfigFormat,
     loadingHandler: LoadingHandler,
@@ -20,8 +21,7 @@ export class GraphQLServiceProject extends GraphQLProject {
       excludes: config.service.excludes
     });
 
-    super(fileSet, loadingHandler);
-    this.__type = "service";
+    super(config, fileSet, loadingHandler);
     this.config = config;
   }
 

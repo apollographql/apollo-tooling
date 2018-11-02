@@ -5,15 +5,14 @@ import { defaultsDeep } from "lodash/fp";
 
 import {
   ServiceID,
-  ServiceSpecififer,
+  ServiceSpecifier,
   ClientID,
   StatsWindowSize,
-  ServiceSpecififerTuple
+  ServiceIDAndTag
 } from "./engine";
 
 // TypeScript util requiring an optional field
-export type RequireProperty<T, Prop extends keyof T> = T &
-  { [key in Prop]-?: T[key] };
+export type WithRequired<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
 export interface EngineStatsWindow {
   to: number;
@@ -30,13 +29,15 @@ export interface HistoricalEngineStatsWindow extends EngineStatsWindow {}
 export type EndpointURI = string;
 export interface RemoteServiceConfig {
   name: ServiceID;
-  endpoint: EndpointURI;
+  url: EndpointURI;
   headers?: { [key: string]: string };
+  skipSSLValidation?: boolean;
 }
 
 export interface EngineConfig {
   endpoint?: EndpointURI;
   frontend?: EndpointURI;
+  readonly engineApiKey?: string;
 }
 
 export const DefaultEngineConfig = {
@@ -56,10 +57,10 @@ export interface ConfigBase {
 
 export interface ClientConfig extends ConfigBase {
   // service linking
-  service: ServiceSpecififer | RemoteServiceConfig;
+  service: ServiceSpecifier | RemoteServiceConfig;
   // client identity
   name?: ClientID;
-  referenceId?: string;
+  referenceID?: string;
   // client schemas
   clientOnlyDirectives?: string[];
   clientSchemaDirectives?: string[];
@@ -79,11 +80,15 @@ export const DefaultClientConfig = {
 
 export interface ServiceConfig extends ConfigBase {
   name: string;
-  endpoint?: EndpointURI;
+  endpoint?: Exclude<RemoteServiceConfig, "name">;
+  localSchemaFile?: string;
 }
 
 export const DefaultServiceConfig = {
-  ...DefaultConfigBase
+  ...DefaultConfigBase,
+  endpoint: {
+    url: "http://localhost:4000/graphql"
+  }
 };
 
 export interface ConfigBaseFormat {
@@ -93,18 +98,18 @@ export interface ConfigBaseFormat {
 }
 
 export type ClientConfigFormat = Exclude<
-  RequireProperty<ConfigBaseFormat, "client">,
+  WithRequired<ConfigBaseFormat, "client">,
   "service"
 >;
 
 export type ServiceConfigFormat = Exclude<
-  RequireProperty<ConfigBaseFormat, "service">,
+  WithRequired<ConfigBaseFormat, "service">,
   "client"
 >;
 
 export type ApolloConfigFormat =
-  | RequireProperty<ConfigBaseFormat, "client">
-  | RequireProperty<ConfigBaseFormat, "service">;
+  | WithRequired<ConfigBaseFormat, "client">
+  | WithRequired<ConfigBaseFormat, "service">;
 
 // config settings
 const MODULE_NAME = "apollo";
@@ -167,6 +172,7 @@ export const loadConfig = async ({
   return { config, filepath, isEmpty };
 };
 
+// XXX change => to named functions
 export const isClient = (
   config: ApolloConfigFormat
 ): config is ClientConfigFormat => !!config.client;
@@ -182,14 +188,15 @@ export const projectsFromConfig = (
 ): Array<ClientConfigFormat | ServiceConfigFormat> => {
   const configs = [];
   const { client, service, ...rest } = config;
+  // XXX use casting detection
   if (client) configs.push({ client, ...rest });
   if (service) configs.push({ service, ...rest });
   return configs;
 };
 
 export const parseServiceSpecificer = (
-  specifier: ServiceSpecififer
-): ServiceSpecififerTuple => {
+  specifier: ServiceSpecifier
+): ServiceIDAndTag => {
   const [id, tag] = specifier.split("@").map(x => x.trim());
   // typescript hinting
   return [id, tag];
@@ -197,9 +204,9 @@ export const parseServiceSpecificer = (
 
 export const getServiceName = (config: ApolloConfigFormat): string => {
   if (config.service) return config.service.name;
-  if (typeof (config.client!.service as ServiceSpecififer) === "string") {
+  if (typeof (config.client!.service as ServiceSpecifier) === "string") {
     return parseServiceSpecificer(config.client!
-      .service as ServiceSpecififer)[0];
+      .service as ServiceSpecifier)[0];
   }
 
   return (config.client!.service as RemoteServiceConfig).name;
