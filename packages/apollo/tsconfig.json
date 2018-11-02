@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.base",
   "compilerOptions": {
     "composite": true,
-    "outDir": "lib",
+    "rootDir": "./src",
+    "outDir": "./lib",
     "noImplicitAny": false,
     "lib": ["es2017"],
     "skipLibCheck": true,
