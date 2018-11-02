@@ -14,8 +14,6 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "prepare": "npm run clean && npm run install-dependencies-into-extension",
-    "clean": "rm -rf ../apollo-vscode/server",
     "install-dependencies-into-extension": "yarn install --no-lockfile --force --production --modules-folder ../apollo-vscode/server/node_modules"
   },
   "engines": {
