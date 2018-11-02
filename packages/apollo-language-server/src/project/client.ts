@@ -102,6 +102,10 @@ export class GraphQLClientProject extends GraphQLProject {
     return getServiceName(this.config) || "<Unnamed>";
   }
 
+  initialize() {
+    return [this.scanAllIncludedFiles(), this.loadSchema()];
+  }
+
   onDecorations(handler: (any: any) => void) {
     this._onDecorations = handler;
   }
@@ -141,7 +145,6 @@ export class GraphQLClientProject extends GraphQLProject {
         } else {
           this.schema = schema;
         }
-        this.validateIfNeeded();
       })()
     );
   }

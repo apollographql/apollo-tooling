@@ -29,5 +29,9 @@ export class GraphQLServiceProject extends GraphQLProject {
     return getServiceName(this.config);
   }
 
+  initialize() {
+    return [];
+  }
+
   validate() {}
 }
