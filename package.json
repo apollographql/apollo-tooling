@@ -15,8 +15,10 @@
   "scripts": {
     "clean": "git clean -dfqX -- ./node_modules **/{lib,node_modules}/",
     "postinstall": "lerna run prepare",
-    "build": "lerna run build",
-    "watch": "lerna run watch --stream --no-sort --concurrency 20",
+    "build": "lerna run build && npm run compile",
+    "compile": "tsc --build tsconfig.json",
+    "compile:clean": "tsc --build tsconfig.json --clean",
+    "watch": "tsc --build tsconfig.json --watch",
     "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "test": "jest --verbose",
@@ -24,7 +26,7 @@
     "circle": "npm run test -- --ci --maxWorkers=2",
     "precommit": "lint-staged",
     "release": "npm run clean && npm ci && lerna publish --exact",
-    "packageExtension": "lerna run packageExtension --scope=apollo-vscode"
+    "package-extension": "lerna run package-extension --scope=apollo-vscode"
   },
   "engines": {
     "node": ">=8",

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "composite": true
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    { "path": "./packages/apollo" },
+    { "path": "./packages/apollo-language-server" },
+    { "path": "./packages/apollo-vscode" },
+  ]
+}
