@@ -61,7 +61,7 @@ export class IntrospectionSchemaProvider implements GraphQLSchemaProvider {
     return this.schema;
   }
   onSchemaChange(
-    handler: NotificationHandler<GraphQLSchema>
+    _handler: NotificationHandler<GraphQLSchema>
   ): SchemaChangeUnsubscribeHandler {
     throw new Error("Polling of endpoint not implemented yet");
     return () => {};
