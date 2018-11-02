@@ -2,12 +2,12 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "[apollo-language-server] TypeScript watch",
+			"label": "TypeScript watch",
 			"type": "shell",
 			"command": "./node_modules/.bin/tsc",
 			"args": [
 				"--build",
-				"./packages/apollo-language-server/tsconfig.json",
+				"./tsconfig.json",
 				"--watch"
 			],
 			"isBackground": true,
