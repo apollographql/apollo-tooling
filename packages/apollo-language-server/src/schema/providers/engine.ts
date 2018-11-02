@@ -59,7 +59,7 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
   }
 
   onSchemaChange(
-    handler: NotificationHandler<GraphQLSchema>
+    _handler: NotificationHandler<GraphQLSchema>
   ): SchemaChangeUnsubscribeHandler {
     throw new Error("Polling of Engine not implemented yet");
     return () => {};

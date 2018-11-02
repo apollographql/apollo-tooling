@@ -28,7 +28,6 @@ import { ApolloConfigFormat } from "../config";
 import {
   schemaProviderFromConfig,
   GraphQLSchemaProvider,
-  SchemaChangeUnsubscribeHandler,
   SchemaResolveConfig
 } from "../schema/providers";
 

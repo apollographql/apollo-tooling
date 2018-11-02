@@ -46,7 +46,7 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
   }
 
   onSchemaChange(
-    handler: NotificationHandler<GraphQLSchema>
+    _handler: NotificationHandler<GraphQLSchema>
   ): SchemaChangeUnsubscribeHandler {
     throw new Error("File watching not implemented yet");
     return () => {};
