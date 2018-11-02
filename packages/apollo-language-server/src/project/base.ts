@@ -1,7 +1,11 @@
 import { extname } from "path";
 import { readFileSync } from "fs";
 
-import { TypeSystemDefinitionNode, TypeSystemExtensionNode } from "graphql";
+import {
+  TypeSystemDefinitionNode,
+  TypeSystemExtensionNode,
+  GraphQLSchema
+} from "graphql";
 
 import {
   isTypeSystemDefinitionNode,
@@ -20,6 +24,13 @@ import { GraphQLDocument, extractGraphQLDocuments } from "../document";
 import Uri from "vscode-uri";
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
+import { ApolloConfigFormat } from "../config";
+import {
+  schemaProviderFromConfig,
+  GraphQLSchemaProvider,
+  SchemaChangeUnsubscribeHandler,
+  SchemaResolveConfig
+} from "../schema/providers";
 
 export type DocumentUri = string;
 
@@ -31,8 +42,8 @@ const fileAssociations: { [extension: string]: string } = {
   ".tsx": "typescriptreact"
 };
 
-export abstract class GraphQLProject {
-  public __type: string = "";
+export abstract class GraphQLProject implements GraphQLSchemaProvider {
+  public schemaProvider: GraphQLSchemaProvider;
   protected _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
 
   public isReady = false;
@@ -41,11 +52,22 @@ export abstract class GraphQLProject {
   protected documentsByFile: Map<DocumentUri, GraphQLDocument[]> = new Map();
 
   constructor(
+    public config: ApolloConfigFormat,
     private fileSet: FileSet,
     protected loadingHandler: LoadingHandler
-  ) {}
+  ) {
+    this.schemaProvider = schemaProviderFromConfig(config);
+  }
 
   abstract get displayName(): string;
+
+  public resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
+    return this.schemaProvider.resolveSchema(config);
+  }
+
+  public onSchemaChange(handler: NotificationHandler<GraphQLSchema>) {
+    return this.schemaProvider.onSchemaChange(handler);
+  }
 
   onDiagnostics(handler: NotificationHandler<PublishDiagnosticsParams>) {
     this._onDiagnostics = handler;

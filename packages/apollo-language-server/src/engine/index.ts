@@ -1,6 +1,9 @@
 import gql from "graphql-tag";
-import { engineLink } from "apollo/lib/engine";
-import { toPromise, execute } from "apollo-link";
+// XXX build and bundle typescript types
+import { GraphQLDataSource } from "apollo-datasource-graphql/src";
+import { GraphQLRequest } from "apollo-link";
+
+import { DefaultEngineConfig } from "../config";
 
 const SCHEMA_TAGS_AND_FIELD_STATS = gql`
   query SchemaTagsAndFieldStats($id: ID!) {
@@ -38,29 +41,41 @@ interface FieldStat {
 export type ServiceID = string;
 export type ClientID = string;
 export type SchemaTag = string;
-export type ServiceSpecififerTuple = [ServiceID, SchemaTag?];
-export type ServiceSpecififer = string;
+export type ServiceIDAndTag = [ServiceID, SchemaTag?];
+export type ServiceSpecifier = string;
 export type StatsWindowSize = number;
 export type FieldStats = Map<string, Map<string, number>>;
 
-export class ApolloEngineClient {
-  constructor(private engineKey: string, private engineEndpoint?: string) {}
+export class ApolloEngineClient extends GraphQLDataSource {
+  constructor(
+    private engineKey: string,
+    engineEndpoint: string = DefaultEngineConfig.endpoint
+  ) {
+    super();
+    this.baseURL = engineEndpoint;
+  }
+
+  // XXX fix typings on base package
+  willSendRequest(request: any) {
+    if (!request.headers) request.headers = {};
+    request.headers["x-api-key"] = this.engineKey;
+  }
+
+  // ad-hoc typings
+  // XXX fix typings on base package
+  public async execute(options: GraphQLRequest) {
+    return super.query(options.query, options).then(result => result || {});
+  }
 
   async loadSchemaTagsAndFieldStats(
     serviceID: string
   ): Promise<[SchemaTag[], FieldStats]> {
-    const result = await toPromise(
-      execute(engineLink, {
-        query: SCHEMA_TAGS_AND_FIELD_STATS,
-        variables: {
-          id: serviceID
-        },
-        context: {
-          headers: { ["x-api-key"]: this.engineKey },
-          ...(this.engineEndpoint && { uri: this.engineEndpoint })
-        }
-      })
-    );
+    const result = await this.execute({
+      query: SCHEMA_TAGS_AND_FIELD_STATS,
+      variables: {
+        id: serviceID
+      }
+    });
 
     if (!result.data) {
       throw new Error();

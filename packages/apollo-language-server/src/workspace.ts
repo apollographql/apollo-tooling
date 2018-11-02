@@ -43,6 +43,20 @@ export class GraphQLWorkspace {
 
   addProjectsInFolder(folder: WorkspaceFolder) {
     // load all possible workspace projects (contains possible config)
+    // see if we can move this detection to cosmiconfig
+    /*
+
+      - monorepo (GraphQLWorkspace) as WorkspaceFolder
+        -- engine-api (GraphQLProject)
+        -- engine-frontend (GraphQLProject)
+
+      OR
+
+      - vscode workspace (fullstack)
+        -- ~/:user/client (GraphQLProject) as WorkspaceFolder
+        -- ~/:user/server (GraphQLProject) as WorkspaceFolder
+      
+    */
     const apolloConfigFiles: string[] = fg.sync("**/apollo.config.(js|ts)", {
       cwd: Uri.parse(folder.uri).fsPath,
       absolute: true,

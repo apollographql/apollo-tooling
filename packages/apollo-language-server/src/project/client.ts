@@ -9,13 +9,18 @@ import {
   visitWithTypeInfo,
   FragmentDefinitionNode,
   Kind,
-  FragmentSpreadNode
+  FragmentSpreadNode,
+  extendSchema,
+  print,
+  parse,
+  DocumentNode
 } from "graphql";
 
 import { rangeForASTNode } from "../utilities/source";
 import { formatMS } from "../format";
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
+
 import {
   ApolloEngineClient,
   FieldStats,
@@ -23,8 +28,7 @@ import {
   ServiceID
 } from "../engine";
 import { ClientConfigFormat, getServiceName } from "../config";
-import { getIdFromKey } from "apollo/lib/engine";
-import { resolveSchema } from "apollo/lib/config";
+import { SchemaResolveConfig } from "../schema/providers";
 
 import { NotificationHandler, Diagnostic } from "vscode-languageserver";
 import { collectExecutableDefinitionDiagnositics } from "../diagnostics";
@@ -34,15 +38,27 @@ function schemaHasASTNodes(schema: GraphQLSchema): boolean {
   return !!(queryType && queryType.astNode);
 }
 
-export const isClientProject = (
+export function isClientProject(
   project: GraphQLProject
-): project is GraphQLClientProject => project.__type === "client";
+): project is GraphQLClientProject {
+  return project instanceof GraphQLClientProject;
+}
 
 export class GraphQLClientProject extends GraphQLProject {
-  public config: ClientConfigFormat;
   public rootPath: string;
   public serviceID?: string;
   public schema?: GraphQLSchema;
+
+  async resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
+    return extendSchema(
+      await this.schemaProvider.resolveSchema(config),
+      this.clientSchema
+    );
+  }
+
+  get clientSchema(): DocumentNode {
+    return parse(this.typeSystemDefinitionsAndExtensions.map(print).join("\n"));
+  }
 
   private _onDecorations?: (any: any) => void;
   private _onSchemaTags?: NotificationHandler<[ServiceID, SchemaTag[]]>;
@@ -61,29 +77,24 @@ export class GraphQLClientProject extends GraphQLProject {
       excludes: config.client.excludes
     });
 
-    super(fileSet, loadingHandler);
-    this.__type = "client";
-
-    this.config = config;
+    super(config, fileSet, loadingHandler);
     this.rootPath = rootPath;
 
     this.loadSchema();
     this.scanAllIncludedFiles();
 
-    const engineKey = process.env.ENGINE_API_KEY;
-    if (engineKey) {
-      this.serviceID = getIdFromKey(engineKey);
-
-      this.engineClient = new ApolloEngineClient(
-        engineKey,
-        this.config.engine && this.config.engine.endpoint
-      );
-      this.loadEngineData();
-    } else {
+    const { engine } = this.config;
+    if (!engine || !engine.engineApiKey) {
       this.loadingHandler.showError(
         "Apollo: failed to load Engine stats. No ENGINE_API_KEY found in .env"
       );
     }
+
+    this.engineClient = new ApolloEngineClient(
+      engine!.engineApiKey!,
+      engine!.endpoint!
+    );
+    this.loadEngineData();
   }
 
   get displayName(): string {
@@ -110,11 +121,7 @@ export class GraphQLClientProject extends GraphQLProject {
     await this.loadingHandler.handle(
       `Loading schema for ${this.displayName}`,
       (async () => {
-        const schema = await resolveSchema({
-          name: schemaName,
-          config: this.config,
-          tag
-        });
+        const schema = await this.schemaProvider.resolveSchema({ tag });
 
         if (!schema) return;
 
