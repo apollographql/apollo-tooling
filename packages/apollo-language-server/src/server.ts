@@ -1,3 +1,4 @@
+import "./polyfills";
 import {
   createConnection,
   ProposedFeatures,
@@ -141,6 +142,21 @@ connection.onDidChangeWatchedFiles(params => {
 
     if (change.type === FileChangeType.Changed) {
       continue;
+    }
+
+    if (uri.startsWith("graphql-schema")) {
+      return ({
+        documentAt(uri: string, _: any) {
+          return {
+            doc: new GraphQLDocument(new Source(Uri.parse(uri).query, uri)),
+            set: {
+              schema: buildSchema(new Source(Uri.parse(uri).query, uri))
+            }
+          };
+        },
+        documentDidChange() {},
+        documentsAt() {}
+      } as any) as GraphQLProject;
     }
 
     const project = workspace.projectForFile(uri);

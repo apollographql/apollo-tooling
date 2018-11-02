@@ -38,21 +38,12 @@ import Uri from "vscode-uri";
 
 export type DocumentUri = string;
 
-import "core-js/fn/array/flat-map";
 import { rangeForASTNode } from "./utilities/source";
 import { formatMS } from "./format";
 import { LoadingHandler } from "./loadingHandler";
 import { FileSet } from "./fileSet";
 import { ApolloEngineClient, FieldStats, SchemaTag, ServiceID } from "./engine";
 import { getIdFromKey } from "apollo/lib/engine";
-declare global {
-  interface Array<T> {
-    flatMap<U>(
-      callbackfn: (value: T, index: number, array: T[]) => U[] | undefined,
-      thisArg?: any
-    ): U[];
-  }
-}
 
 const fileAssociations: { [extension: string]: string } = {
   ".graphql": "graphql",
