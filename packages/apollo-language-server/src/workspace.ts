@@ -13,11 +13,12 @@ import { findAndLoadConfig } from "apollo/lib/config";
 import { GraphQLDocument } from "./document";
 import { Source, buildSchema } from "graphql";
 import { LoadingHandler } from "./loadingHandler";
+import { ServiceID, SchemaTag } from "./engine";
 
 export class GraphQLWorkspace {
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
   private _onDecorations?: (any: any) => void;
-  private _onSchemaTags?: (tags: string[]) => void;
+  private _onSchemaTags?: NotificationHandler<[ServiceID, SchemaTag[]]>;
 
   private projectsByFolderUri: Map<string, GraphQLProject[]> = new Map();
 
@@ -31,7 +32,7 @@ export class GraphQLWorkspace {
     this._onDecorations = handler;
   }
 
-  onSchemaTags(handler: (tags: string[]) => void): void {
+  onSchemaTags(handler: NotificationHandler<[ServiceID, SchemaTag[]]>) {
     this._onSchemaTags = handler;
   }
 
@@ -81,8 +82,8 @@ export class GraphQLWorkspace {
         this._onDecorations && this._onDecorations(params);
       });
 
-      project.onSchemaTags((tags: string[]) => {
-        this._onSchemaTags && this._onSchemaTags(tags);
+      project.onSchemaTags(params => {
+        this._onSchemaTags && this._onSchemaTags(params);
       });
 
       return project;

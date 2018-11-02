@@ -20,27 +20,25 @@ import { SubscriptionClient } from "subscriptions-transport-ws";
 
 import * as ws from "ws";
 
-import { SchemaTag } from "./engine";
-
 const connection = createConnection(ProposedFeatures.all);
 
 let hasWorkspaceFolderCapability = false;
 
 const workspace = new GraphQLWorkspace(new LoadingHandler(connection));
 
-workspace.onSchemaTags((tags: SchemaTag[]) => {
-  connection.sendNotification(
-    "apollographql/tagsLoaded",
-    JSON.stringify([...tags])
-  );
-});
-
 workspace.onDiagnostics(params => {
   connection.sendDiagnostics(params);
 });
 
-workspace.onDecorations(decs => {
-  connection.sendNotification("apollographql/engineDecorations", decs);
+workspace.onDecorations(params => {
+  connection.sendNotification("apollographql/engineDecorations", params);
+});
+
+workspace.onSchemaTags(params => {
+  connection.sendNotification(
+    "apollographql/tagsLoaded",
+    JSON.stringify(params)
+  );
 });
 
 let initialize: () => void;
