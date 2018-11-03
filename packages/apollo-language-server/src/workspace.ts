@@ -55,7 +55,7 @@ export class GraphQLWorkspace {
       - vscode workspace (fullstack)
         -- ~/:user/client (GraphQLProject) as WorkspaceFolder
         -- ~/:user/server (GraphQLProject) as WorkspaceFolder
-      
+
     */
     const apolloConfigFiles: string[] = fg.sync("**/apollo.config.(js|ts)", {
       cwd: Uri.parse(folder.uri).fsPath,
@@ -129,7 +129,10 @@ export class GraphQLWorkspace {
           );
         })
       )
-      .then(projects => this.projectsByFolderUri.set(folder.uri, projects));
+      .then(projects => this.projectsByFolderUri.set(folder.uri, projects))
+      .catch(error => {
+        console.error(error);
+      });
   }
 
   updateSchemaTag(selection: QuickPickItem) {
