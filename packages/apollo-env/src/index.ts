@@ -1,2 +1,4 @@
-export * from "./polyfills/fetch";
-export * from "./polyfills/url";
+import "./polyfills";
+
+export * from "./fetch";
+export * from "./url";
