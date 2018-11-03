@@ -86,7 +86,6 @@ function extractGraphQLDocumentsFromTemplateLiterals(
       line: position.line + 1,
       column: position.character + 1
     };
-    // @ts-ignore: We should fix the typings
     const source = new Source(contents, document.uri, locationOffset);
     documents.push(new GraphQLDocument(source));
   }

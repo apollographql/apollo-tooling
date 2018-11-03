@@ -11,9 +11,7 @@ import {
   TypeNameMetaFieldDef,
   ASTNode,
   Kind,
-  NameNode,
-  TypeSystemDefinitionNode,
-  TypeSystemExtensionNode
+  NameNode
 } from "graphql";
 
 export function isNode(maybeNode: any): maybeNode is ASTNode {
@@ -26,41 +24,6 @@ export type NamedNode = ASTNode & {
 
 export function isNamedNode(node: ASTNode): node is NamedNode {
   return "name" in node;
-}
-
-export function isTypeSystemDefinitionNode(
-  node: ASTNode
-): node is TypeSystemDefinitionNode {
-  switch (node.kind) {
-    case Kind.SCHEMA_DEFINITION:
-    case Kind.SCALAR_TYPE_DEFINITION:
-    case Kind.OBJECT_TYPE_DEFINITION:
-    case Kind.INTERFACE_TYPE_DEFINITION:
-    case Kind.UNION_TYPE_DEFINITION:
-    case Kind.ENUM_TYPE_DEFINITION:
-    case Kind.INPUT_OBJECT_TYPE_DEFINITION:
-    case Kind.DIRECTIVE_DEFINITION:
-      return true;
-    default:
-      return false;
-  }
-}
-
-export function isTypeSystemExtensionNode(
-  node: ASTNode
-): node is TypeSystemExtensionNode {
-  switch (node.kind) {
-    // case Kind.SCHEMA_EXTENSION:
-    case Kind.SCALAR_TYPE_EXTENSION:
-    case Kind.OBJECT_TYPE_EXTENSION:
-    case Kind.INTERFACE_TYPE_EXTENSION:
-    case Kind.UNION_TYPE_EXTENSION:
-    case Kind.ENUM_TYPE_EXTENSION:
-    case Kind.INPUT_OBJECT_TYPE_EXTENSION:
-      return true;
-    default:
-      return false;
-  }
 }
 
 export function highlightNodeForNode(node: ASTNode): ASTNode {

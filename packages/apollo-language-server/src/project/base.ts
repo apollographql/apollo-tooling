@@ -3,14 +3,11 @@ import { readFileSync } from "fs";
 
 import {
   TypeSystemDefinitionNode,
+  isTypeSystemDefinitionNode,
   TypeSystemExtensionNode,
+  isTypeSystemExtensionNode,
   GraphQLSchema
 } from "graphql";
-
-import {
-  isTypeSystemDefinitionNode,
-  isTypeSystemExtensionNode
-} from "../utilities/graphql";
 
 import {
   TextDocument,

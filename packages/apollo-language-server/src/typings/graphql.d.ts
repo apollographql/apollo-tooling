@@ -1,38 +1,23 @@
 import {
-  GraphQLSchema,
-  DocumentNode,
-  DirectiveNode,
-  FragmentDefinitionNode,
-  OperationTypeDefinitionNode,
-  SchemaDefinitionNode,
-  TypeDefinitionNode,
-  TypeExtensionNode,
-  DirectiveDefinitionNode
+  ASTNode,
+  TypeSystemDefinitionNode,
+  TypeSystemExtensionNode,
+  FragmentDefinitionNode
 } from "graphql";
-import { SourceLocation } from "graphql/language/location";
 
-declare module "graphql" {
-  // FIXME: Get this into graphql-js typings, add SchemaExtensionNode
-  export type TypeSystemExtensionNode = TypeExtensionNode;
-}
-
-declare module "graphql/language/source" {
-  interface Source {
-    body: string;
-    name: string;
-    locationOffset: Location;
-  }
+// FIXME: We should add proper type guards for these predicate functions
+// to `@types/graphql`.
+declare module "graphql/language/predicates" {
+  function isTypeSystemDefinitionNode(
+    node: ASTNode
+  ): node is TypeSystemDefinitionNode;
+  function isTypeSystemExtensionNode(
+    node: ASTNode
+  ): node is TypeSystemExtensionNode;
 }
 
 declare module "graphql/validation/validate" {
   interface ValidationContext {
     _fragments: { [fragmentName: string]: FragmentDefinitionNode };
   }
-}
-
-declare module "graphql/utilities/buildASTSchema" {
-  function buildASTSchema(
-    ast: DocumentNode,
-    options?: { assumeValid?: boolean; commentDescriptions?: boolean }
-  ): GraphQLSchema;
 }
