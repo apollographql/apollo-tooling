@@ -1,6 +1,7 @@
 import { relative } from "path";
 import minimatch = require("minimatch");
 import * as glob from "glob";
+import { invariant } from "./utilities/invariant";
 
 export class FileSet {
   private rootPath: string;
@@ -16,6 +17,10 @@ export class FileSet {
     includes: string[];
     excludes: string[];
   }) {
+    invariant(rootPath, `Must provide "rootPath".`);
+    invariant(includes, `Must provide "includes".`);
+    invariant(excludes, `Must provide "excludes".`);
+
     this.rootPath = rootPath;
     this.includes = includes;
     this.excludes = excludes;
