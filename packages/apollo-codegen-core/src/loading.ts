@@ -1,5 +1,4 @@
-// provides flatMap
-import "./polyfills";
+import "apollo-env";
 
 import { fs } from "./localfs";
 import { stripIndents } from "common-tags";

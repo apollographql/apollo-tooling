@@ -1,4 +1,4 @@
-import "./polyfills";
+import "apollo-env";
 import {
   createConnection,
   ProposedFeatures,

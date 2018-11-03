@@ -29,14 +29,13 @@
     "apollo-env": "file:../apollo-env",
     "ast-types": "^0.11.6",
     "common-tags": "^1.5.1",
-    "core-js": "^2.5.3",
     "recast": "^0.15.3"
   },
   "jest": {
     "preset": "ts-jest/presets/js-with-ts",
     "testEnvironment": "node",
     "setupFiles": [
-      "<rootDir>/src/polyfills.ts"
+      "<rootDir>/../apollo-env/lib/index.js"
     ],
     "setupTestFrameworkScriptFile": "<rootDir>/test-utils/matchers.ts",
     "testMatch": [

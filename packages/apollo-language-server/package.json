@@ -48,7 +48,7 @@
       "**/__tests__/*.(js|ts)"
     ],
     "setupFiles": [
-      "<rootDir>/../apollo-codegen-core/src/polyfills.ts"
+      "<rootDir>/../apollo-env/lib/index.js"
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",

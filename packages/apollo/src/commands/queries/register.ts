@@ -1,5 +1,4 @@
-// provides flatMap
-import "apollo-codegen-core/lib/polyfills";
+import "apollo-env";
 
 import { Command, flags } from "@oclif/command";
 import * as Listr from "listr";
