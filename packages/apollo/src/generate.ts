@@ -2,7 +2,7 @@ import { fs } from "apollo-codegen-core/lib/localfs";
 import * as path from "path";
 
 import { loadAndMergeQueryDocuments } from "apollo-codegen-core/lib/loading";
-import { validateQueryDocument } from "./validation";
+// import { validateQueryDocument } from "./validation";
 import {
   compileToIR,
   CompilerContext,
@@ -58,7 +58,8 @@ export default function generate(
 
   const document = loadAndMergeQueryDocuments(inputPaths, tagName);
 
-  validateQueryDocument(schema, document);
+  // fIXME(jbaxleyiii): expose from apollo-language-server
+  // validateQueryDocument(schema, document);
 
   if (outputPath.split(".").length <= 1 && !fs.existsSync(outputPath)) {
     fs.mkdirSync(outputPath);

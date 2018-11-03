@@ -14,7 +14,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "install-dependencies-into-extension": "yarn install --no-lockfile --force --production --modules-folder ../apollo-vscode/server/node_modules"
+    "install-dependencies-into-extension":
+      "yarn install --no-lockfile --force --production --modules-folder ../apollo-vscode/server/node_modules"
   },
   "engines": {
     "node": "*"
@@ -22,7 +23,6 @@
   "dependencies": {
     "@apollographql/graphql-language-service-interface": "1.3.2",
     "@endemolshinegroup/cosmiconfig-typescript-loader": "^1.0.0",
-    "apollo": "file:../apollo",
     "apollo-datasource-graphql": "^1.2.0",
     "apollo-env": "file:../apollo-env",
     "apollo-link": "^1.2.2",
@@ -58,10 +58,7 @@
     "transform": {
       "^.+\\.(ts|js)x?$": "ts-jest"
     },
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
+    "moduleFileExtensions": ["ts", "js"],
     "globals": {
       "ts-jest": {
         "diagnostics": false

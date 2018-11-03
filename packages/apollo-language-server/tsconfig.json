@@ -3,7 +3,8 @@
   "compilerOptions": {
     "composite": true,
     "rootDir": "./src",
-    "outDir": "./lib"
+    "outDir": "./lib",
+    "skipLibCheck": true
   },
   "include": ["./src/**/*"],
   "exclude": ["**/__tests__/*", "**/__mocks__/*"],

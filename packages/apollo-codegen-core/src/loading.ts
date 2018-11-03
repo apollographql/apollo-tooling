@@ -18,7 +18,7 @@ import {
   FragmentDefinitionNode
 } from "graphql";
 
-import { ToolError } from "./errors";
+import { ToolError } from "apollo-language-server";
 
 export function loadSchema(schemaPath: string): GraphQLSchema {
   if (!fs.existsSync(schemaPath)) {
