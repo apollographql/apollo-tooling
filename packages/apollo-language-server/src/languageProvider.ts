@@ -58,10 +58,11 @@ function hasFields(type: GraphQLType): boolean {
 }
 
 function convertToURI(filePath: string, project: GraphQLClientProject) {
-  return filePath.startsWith("file:/") ||
-    filePath.startsWith("graphql-schema:/")
-    ? filePath
-    : `file://${resolve(project.rootPath, filePath)}`;
+  return "";
+  // return filePath.startsWith("file:/") ||
+  //   filePath.startsWith("graphql-schema:/")
+  //   ? filePath
+  //   : `file://${resolve(project.rootPath, filePath)}`;
 }
 
 export class GraphQLLanguageProvider {
