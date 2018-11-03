@@ -11,7 +11,8 @@ import {
   Kind,
   FragmentSpreadNode,
   extendSchema,
-  DocumentNode
+  DocumentNode,
+  GraphQLError
 } from "graphql";
 
 import { rangeForASTNode } from "../utilities/source";
@@ -26,15 +27,36 @@ import {
   ServiceID
 } from "../engine";
 import { ClientConfigFormat, getServiceName } from "../config";
-import { SchemaResolveConfig } from "../schema/providers";
 
-import { NotificationHandler, Diagnostic } from "vscode-languageserver";
+import {
+  NotificationHandler,
+  Diagnostic,
+  DiagnosticSeverity
+} from "vscode-languageserver";
 import Uri from "vscode-uri";
-import { collectExecutableDefinitionDiagnositics } from "../diagnostics";
+import {
+  collectExecutableDefinitionDiagnositics,
+  diagnosticsFromError,
+  DiagnosticSet
+} from "../diagnostics";
 
 function schemaHasASTNodes(schema: GraphQLSchema): boolean {
   const queryType = schema && schema.getQueryType();
   return !!(queryType && queryType.astNode);
+}
+
+function augmentSchemaWithGeneratedSDLIfNeeded(
+  schema: GraphQLSchema
+): GraphQLSchema {
+  if (schemaHasASTNodes(schema)) return schema;
+
+  const sdl = printSchema(schema);
+
+  return buildSchema(
+    // Rebuild the schema from a generated source file and attach the source to a `graphql-schema:/`
+    // URI that can be loaded as an in-memory file by VS Code.
+    new Source(sdl, `graphql-schema:/schema.graphql?${encodeURIComponent(sdl)}`)
+  );
 }
 
 export function isClientProject(
@@ -89,7 +111,7 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   initialize() {
-    return [this.scanAllIncludedFiles(), this.loadSchema()];
+    return [this.scanAllIncludedFiles(), this.loadServiceSchema()];
   }
 
   onDecorations(handler: (any: any) => void) {
@@ -101,41 +123,23 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   async updateSchemaTag(tag: SchemaTag) {
-    this.loadSchema(tag);
+    this.loadServiceSchema(tag);
   }
 
-  private async loadSchema(tag: SchemaTag = "current") {
+  private async loadServiceSchema(tag: SchemaTag = "current") {
     await this.loadingHandler.handle(
       `Loading schema for ${this.displayName}`,
       (async () => {
-        const schema = await this.resolveSchema({ tag });
-
-        if (!schemaHasASTNodes(schema)) {
-          const schemaSource = printSchema(schema);
-
-          this.serviceSchema = buildSchema(
-            // rebuild the schema from a generated source file and attach the source to a graphql-schema
-            // URI that can be loaded as an in-memory file by VSCode
-            new Source(
-              schemaSource,
-              `graphql-schema:/schema.graphql?${encodeURIComponent(
-                schemaSource
-              )}`
-            )
-          );
-        } else {
-          this.serviceSchema = schema;
-        }
+        this.serviceSchema = augmentSchemaWithGeneratedSDLIfNeeded(
+          await this.schemaProvider.resolveSchema({ tag })
+        );
       })()
     );
   }
 
-  async resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
-    // XXX cache the merging of these
-    return extendSchema(
-      await this.schemaProvider.resolveSchema(config),
-      this.clientSchema
-    );
+  async resolveSchema(): Promise<GraphQLSchema> {
+    if (!this.schema) throw new Error();
+    return this.schema;
   }
 
   get clientSchema(): DocumentNode {
@@ -145,38 +149,50 @@ export class GraphQLClientProject extends GraphQLProject {
     };
   }
 
-  validate() {
+  async validate() {
     if (!this._onDiagnostics) return;
+
     if (!this.serviceSchema) return;
 
-    const clientSchema = this.clientSchema;
-    console.log("clientSchema", clientSchema.definitions);
+    const diagnosticSet = new DiagnosticSet();
 
     try {
-      this.schema = extendSchema(this.serviceSchema, clientSchema);
+      this.schema = extendSchema(this.serviceSchema, this.clientSchema);
     } catch (error) {
-      console.error(error);
+      if (error instanceof GraphQLError) {
+        const uri = error.source && error.source.name;
+        if (uri) {
+          diagnosticSet.addDiagnostics(
+            uri,
+            diagnosticsFromError(error, DiagnosticSeverity.Error, "Validation")
+          );
+        }
+      } else {
+        console.error(error);
+      }
       this.schema = this.serviceSchema;
     }
 
     const fragments = this.fragments;
 
-    for (const [uri, queryDocumentsForFile] of this.documentsByFile) {
-      const diagnostics: Diagnostic[] = [];
-      for (const queryDocument of queryDocumentsForFile) {
-        diagnostics.push(
-          ...collectExecutableDefinitionDiagnositics(
+    for (const [uri, documentsForFile] of this.documentsByFile) {
+      for (const document of documentsForFile) {
+        diagnosticSet.addDiagnostics(
+          uri,
+          collectExecutableDefinitionDiagnositics(
             this.schema,
-            queryDocument,
+            document,
             fragments
           )
         );
       }
-
-      this._onDiagnostics({ uri, diagnostics });
-
-      this.generateDecorations();
     }
+
+    for (const [uri, diagnostics] of diagnosticSet.entries()) {
+      this._onDiagnostics({ uri, diagnostics });
+    }
+
+    this.generateDecorations();
   }
 
   async loadEngineData() {

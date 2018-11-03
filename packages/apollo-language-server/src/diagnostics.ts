@@ -13,6 +13,7 @@ import { highlightNodeForNode } from "./utilities/graphql";
 import { rangeForASTNode } from "./utilities/source";
 
 import { getValidationErrors } from "apollo/lib/validation";
+import { DocumentUri } from "./project/base";
 
 /**
  * Build an array of code diagnostics for all executable definitions in a document.
@@ -54,7 +55,7 @@ export function collectExecutableDefinitionDiagnositics(
   return diagnostics;
 }
 
-function diagnosticsFromError(
+export function diagnosticsFromError(
   error: GraphQLError,
   severity: DiagnosticSeverity,
   type: string
@@ -71,4 +72,21 @@ function diagnosticsFromError(
       range: rangeForASTNode(highlightNodeForNode(node) || node)
     };
   });
+}
+
+export class DiagnosticSet {
+  private diagnosticsByFile = new Map<DocumentUri, Diagnostic[]>();
+
+  entries() {
+    return this.diagnosticsByFile.entries();
+  }
+
+  addDiagnostics(uri: DocumentUri, diagnostics: Diagnostic[]) {
+    const existingDiagnostics = this.diagnosticsByFile.get(uri);
+    if (!existingDiagnostics) {
+      this.diagnosticsByFile.set(uri, diagnostics);
+    } else {
+      existingDiagnostics.push(...diagnostics);
+    }
+  }
 }
