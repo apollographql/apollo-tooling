@@ -370,6 +370,10 @@ ${argumentNode.description}
     const project = this.workspace.projectForFile(uri);
     if (!(project && project instanceof GraphQLClientProject)) return [];
 
+    // Wait for the project to be fully initialized, so we always provide code lenses for open files, even
+    // if we receive the request before the project is ready.
+    await project.whenReady;
+
     const documents = project.documentsAt(uri);
     if (!documents) return [];
 

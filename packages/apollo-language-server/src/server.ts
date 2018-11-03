@@ -42,20 +42,6 @@ workspace.onSchemaTags(params => {
   );
 });
 
-let initialize: () => void;
-const whenInitialized = new Promise<void>(resolve => (initialize = resolve));
-
-connection.onInitialized(async () => {
-  initialize();
-
-  if (hasWorkspaceFolderCapability) {
-    connection.workspace.onDidChangeWorkspaceFolders(event => {
-      event.removed.forEach(folder => workspace.removeProjectsInFolder(folder));
-      event.added.forEach(folder => workspace.addProjectsInFolder(folder));
-    });
-  }
-});
-
 connection.onInitialize(async params => {
   let capabilities = params.capabilities;
   hasWorkspaceFolderCapability = !!(
@@ -64,9 +50,12 @@ connection.onInitialize(async params => {
 
   const workspaceFolders = params.workspaceFolders;
   if (workspaceFolders) {
-    whenInitialized.then(() => {
-      workspaceFolders.forEach(folder => workspace.addProjectsInFolder(folder));
-    });
+    // We wait until all projects are added, because after `initialize` returns we can get additional requests
+    // like `textDocument/codeLens`, and that way these can await `GraphQLProject#whenReady` to make sure
+    // we provide them eventually.
+    await Promise.all(
+      workspaceFolders.map(folder => workspace.addProjectsInFolder(folder))
+    );
   }
 
   return {
@@ -90,6 +79,19 @@ connection.onInitialize(async params => {
       textDocumentSync: documents.syncKind
     }
   };
+});
+
+connection.onInitialized(async () => {
+  if (hasWorkspaceFolderCapability) {
+    connection.workspace.onDidChangeWorkspaceFolders(async event => {
+      await Promise.all([
+        ...event.removed.map(folder =>
+          workspace.removeProjectsInFolder(folder)
+        ),
+        ...event.added.map(folder => workspace.addProjectsInFolder(folder))
+      ]);
+    });
+  }
 });
 
 const documents: TextDocuments = new TextDocuments();

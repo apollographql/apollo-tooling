@@ -82,7 +82,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     return this._isReady;
   }
 
-  whenReady(): Promise<void> {
+  get whenReady(): Promise<void> {
     return this.readyPromise;
   }
 
