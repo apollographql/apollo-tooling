@@ -7,6 +7,6 @@
   "references": [
     { "path": "./packages/apollo" },
     { "path": "./packages/apollo-language-server" },
-    { "path": "./packages/apollo-vscode" },
+    { "path": "./packages/apollo-vscode" }
   ]
 }

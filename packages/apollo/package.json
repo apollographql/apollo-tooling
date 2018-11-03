@@ -48,6 +48,7 @@
     "apollo-codegen-typescript": "file:../apollo-codegen-typescript",
     "apollo-codegen-typescript-legacy": "file:../apollo-codegen-typescript-legacy",
     "apollo-engine-reporting": "0.0.2",
+    "apollo-env": "file:../apollo-env",
     "apollo-link": "^1.2.2",
     "apollo-link-http": "^1.5.4",
     "chalk": "^2.4.1",

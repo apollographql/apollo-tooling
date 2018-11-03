@@ -23,7 +23,8 @@
     "npm": ">=6"
   },
   "dependencies": {
-    "apollo-codegen-core": "file:../apollo-codegen-core"
+    "apollo-codegen-core": "file:../apollo-codegen-core",
+    "apollo-env": "file:../apollo-env"
   },
   "jest": {
     "preset": "ts-jest/presets/js-with-ts",
