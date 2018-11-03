@@ -6,7 +6,8 @@
     "outDir": "./lib",
     "allowJs": true,
     "declaration": false,
-    "declarationMap": false
+    "declarationMap": false,
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["**/__tests__", "**/__mocks__"]

@@ -9,8 +9,8 @@
   },
   "homepage": "https://github.com/apollographql/apollo-tooling",
   "bugs": "https://github.com/apollographql/apollo-tooling/issues",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",

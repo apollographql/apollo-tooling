@@ -14,7 +14,7 @@
     "noUnusedParameters": false,
     "noUnusedLocals": false,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["es2017", "esnext.asynciterable"],
+    "lib": ["esnext", "esnext.asynciterable"],
     "types": ["node"],
     "baseUrl": ".",
     "paths": {

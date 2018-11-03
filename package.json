@@ -41,6 +41,7 @@
     "apollo-codegen-swift": "file:packages/apollo-codegen-swift",
     "apollo-codegen-typescript": "file:packages/apollo-codegen-typescript",
     "apollo-codegen-typescript-legacy": "file:packages/apollo-codegen-typescript-legacy",
+    "apollo-env": "file:packages/apollo-env",
     "apollo-language-server": "file:packages/apollo-language-server",
     "apollo-vscode": "file:packages/apollo-vscode",
     "apollo-vscode-webview": "file:packages/apollo-vscode-webview",
