@@ -46,8 +46,7 @@ export const DefaultEngineConfig = {
 };
 
 export const DefaultConfigBase = {
-  // FIXME(jbaxleyiii): Missing extension in glob
-  includes: ["src/**/*"],
+  includes: ["src/**/*.{ts,tsx,js,jsx,graphql}"],
   excludes: ["**/node_modules", "**/__tests__"]
 };
 
@@ -164,6 +163,8 @@ export const loadConfig = async ({
   }
 
   // selectivly apply defaults when loading the config
+  // XXX(jbaxleyiii): `defaultsDeep` has weird semantics for array values like `includes`,
+  // which always seems to overwrite a specified value with the default.
   if (config.client)
     config = defaultsDeep(config, { client: DefaultClientConfig });
   if (config.service)
