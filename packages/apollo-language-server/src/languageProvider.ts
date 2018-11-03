@@ -8,9 +8,9 @@ import {
   CodeLens,
   Command,
   ReferenceContext,
-  InsertTextFormat,
-  Range
+  InsertTextFormat
 } from "vscode-languageserver";
+import Uri from "vscode-uri";
 
 // should eventually be moved into this package, since we're overriding a lot of the existing behavior here
 import { getAutocompleteSuggestions } from "@apollographql/graphql-language-service-interface";
@@ -47,8 +47,8 @@ import {
 } from "graphql";
 import { highlightNodeForNode } from "./utilities/graphql";
 
-import Uri from "vscode-uri";
 import { GraphQLClientProject } from "./project/client";
+import { isNotNullOrUndefined } from "./utilities/predicates";
 
 function hasFields(type: GraphQLType): boolean {
   return (
@@ -352,16 +352,10 @@ ${argumentNode.description}
       switch (node.kind) {
         case Kind.FRAGMENT_DEFINITION: {
           const fragmentName = node.name.value;
-          return project.fragmentSpreadsForFragment(fragmentName).reduce(
-            (locations, fragmentSpread) => {
-              const location = locationForASTNode(fragmentSpread);
-              if (location) {
-                locations.push(location);
-              }
-              return locations;
-            },
-            [] as Location[]
-          );
+          return project
+            .fragmentSpreadsForFragment(fragmentName)
+            .map(fragmentSpread => locationForASTNode(fragmentSpread))
+            .filter(isNotNullOrUndefined);
         }
       }
     }
@@ -427,32 +421,24 @@ ${argumentNode.description}
           }
           */
         } else if (definition.kind === Kind.FRAGMENT_DEFINITION) {
-          const references = project.fragmentSpreadsForFragment(
-            definition.name.value
-          );
-          const locs = references.reduce(
-            (locations, fragmentSpread) => {
-              const location = locationForASTNode(fragmentSpread);
-              if (location) {
-                locations.push(location);
-              }
-              return locations;
-            },
-            [] as Location[]
+          const fragmentName = definition.name.value;
+
+          const locations = project
+            .fragmentSpreadsForFragment(fragmentName)
+            .map(fragmentSpread => locationForASTNode(fragmentSpread))
+            .filter(isNotNullOrUndefined);
+
+          const command = Command.create(
+            `${locations.length} references`,
+            "editor.action.showReferences",
+            uri,
+            rangeForASTNode(definition).start,
+            locations
           );
 
           codeLenses.push({
             range: rangeForASTNode(definition),
-            command: Command.create(
-              `${references.length} references`,
-              "editor.action.showReferences",
-              Uri.parse(uri),
-              {
-                lineNumber: rangeForASTNode(definition).start.line + 1,
-                column: rangeForASTNode(definition).start.character
-              },
-              locs
-            )
+            command
           });
         }
       }
