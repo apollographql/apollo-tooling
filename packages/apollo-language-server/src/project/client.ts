@@ -1,4 +1,4 @@
-import { GraphQLProject } from "./base";
+import { GraphQLProject, DocumentUri } from "./base";
 import {
   GraphQLSchema,
   printSchema,
@@ -29,6 +29,7 @@ import { ClientConfigFormat, getServiceName } from "../config";
 import { SchemaResolveConfig } from "../schema/providers";
 
 import { NotificationHandler, Diagnostic } from "vscode-languageserver";
+import Uri from "vscode-uri";
 import { collectExecutableDefinitionDiagnositics } from "../diagnostics";
 
 function schemaHasASTNodes(schema: GraphQLSchema): boolean {
@@ -43,24 +44,11 @@ export function isClientProject(
 }
 
 export class GraphQLClientProject extends GraphQLProject {
-  public rootPath: string;
+  public rootURI: DocumentUri;
   public serviceID?: string;
+
+  private serviceSchema?: GraphQLSchema;
   public schema?: GraphQLSchema;
-
-  async resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
-    // XXX cache the merging of these
-    return extendSchema(
-      await this.schemaProvider.resolveSchema(config),
-      this.clientSchema
-    );
-  }
-
-  get clientSchema(): DocumentNode {
-    return {
-      kind: Kind.DOCUMENT,
-      definitions: this.typeSystemDefinitionsAndExtensions
-    };
-  }
 
   private _onDecorations?: (any: any) => void;
   private _onSchemaTags?: NotificationHandler<[ServiceID, SchemaTag[]]>;
@@ -71,16 +59,16 @@ export class GraphQLClientProject extends GraphQLProject {
   constructor(
     config: ClientConfigFormat,
     loadingHandler: LoadingHandler,
-    rootPath: string
+    rootURI: DocumentUri
   ) {
     const fileSet = new FileSet({
-      rootPath,
+      rootPath: Uri.parse(rootURI).fsPath,
       includes: config.client.includes,
       excludes: config.client.excludes
     });
 
     super(config, fileSet, loadingHandler);
-    this.rootPath = rootPath;
+    this.rootURI = rootURI;
 
     const { engine } = this.config;
     if (!engine || !engine.engineApiKey) {
@@ -117,20 +105,15 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   private async loadSchema(tag: SchemaTag = "current") {
-    const schemaName = this.displayName;
-    if (!schemaName) return;
-
     await this.loadingHandler.handle(
       `Loading schema for ${this.displayName}`,
       (async () => {
         const schema = await this.resolveSchema({ tag });
 
-        if (!schema) return;
-
         if (!schemaHasASTNodes(schema)) {
           const schemaSource = printSchema(schema);
 
-          this.schema = buildSchema(
+          this.serviceSchema = buildSchema(
             // rebuild the schema from a generated source file and attach the source to a graphql-schema
             // URI that can be loaded as an in-memory file by VSCode
             new Source(
@@ -141,15 +124,40 @@ export class GraphQLClientProject extends GraphQLProject {
             )
           );
         } else {
-          this.schema = schema;
+          this.serviceSchema = schema;
         }
       })()
     );
   }
 
+  async resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
+    // XXX cache the merging of these
+    return extendSchema(
+      await this.schemaProvider.resolveSchema(config),
+      this.clientSchema
+    );
+  }
+
+  get clientSchema(): DocumentNode {
+    return {
+      kind: Kind.DOCUMENT,
+      definitions: this.typeSystemDefinitionsAndExtensions
+    };
+  }
+
   validate() {
     if (!this._onDiagnostics) return;
-    if (!this.schema) return;
+    if (!this.serviceSchema) return;
+
+    const clientSchema = this.clientSchema;
+    console.log("clientSchema", clientSchema.definitions);
+
+    try {
+      this.schema = extendSchema(this.serviceSchema, clientSchema);
+    } catch (error) {
+      console.error(error);
+      this.schema = this.serviceSchema;
+    }
 
     const fragments = this.fragments;
 
