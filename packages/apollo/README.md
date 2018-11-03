@@ -1,6 +1,6 @@
 # Apollo CLI
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg?maxAge=2592000)](https://raw.githubusercontent.com/apollographql/apollo-cli/master/LICENSE) [![npm](https://img.shields.io/npm/v/apollo.svg)](https://www.npmjs.com/package/apollo) [![Get on Slack](https://img.shields.io/badge/slack-join-orange.svg)](http://www.apollostack.com/#slack)
+[![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg?maxAge=2592000)](https://raw.githubusercontent.com/apollographql/apollo-tooling/master/LICENSE) [![npm](https://img.shields.io/npm/v/apollo.svg)](https://www.npmjs.com/package/apollo) [![Get on Slack](https://img.shields.io/badge/slack-join-orange.svg)](http://www.apollostack.com/#slack)
 
 Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
 
@@ -115,7 +115,7 @@ OPTIONS
   --watch                                    Watch the query files to auto-generate on changes.
 ```
 
-_See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/codegen/generate.ts)_
+_See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/codegen/generate.ts)_
 
 ## `apollo help [COMMAND]`
 
@@ -153,7 +153,7 @@ OPTIONS
                      GraphQL queries in Javascript/Typescript code
 ```
 
-_See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/queries/check.ts)_
+_See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/queries/check.ts)_
 
 ## `apollo queries:extract OUTPUT`
 
@@ -176,7 +176,7 @@ OPTIONS
                      GraphQL queries in Javascript/Typescript code
 ```
 
-_See code: [src/commands/queries/extract.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/queries/extract.ts)_
+_See code: [src/commands/queries/extract.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/queries/extract.ts)_
 
 ## `apollo schema:check`
 
@@ -195,7 +195,7 @@ OPTIONS
   --key=key            The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/schema/check.ts)_
+_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/schema/check.ts)_
 
 ## `apollo schema:download OUTPUT`
 
@@ -217,7 +217,7 @@ OPTIONS
   --key=key                The API key for the Apollo Engine service
 ```
 
-_See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/schema/download.ts)_
+_See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/schema/download.ts)_
 
 ## `apollo schema:publish`
 
@@ -237,7 +237,7 @@ OPTIONS
   --tag=tag            The tag to publish the schema to
 ```
 
-_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-cli/blob/master/packages/apollo/src/commands/schema/publish.ts)_
+_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/schema/publish.ts)_
 
 <!-- commandsstop -->
 
@@ -435,7 +435,7 @@ function CharacterFigures({ characters }: CharactersQuery) {
 
 # Contributing
 
-[![Build Status](https://circleci.com/gh/apollographql/apollo-cli.svg?style=svg)](https://circleci.com/gh/apollographql/apollo-cli)
+[![Build Status](https://circleci.com/gh/apollographql/apollo-tooling.svg?style=svg)](https://circleci.com/gh/apollographql/apollo-tooling)
 
 This repo is composed of multiple packages managed by Lerna. The `apollo-cli` contains the core CLI commands. The `apollo-codegen-core` package contains all the compiler APIs needed to implement code generation support for new languages. The other `apollo-codegen-*` packages implement code generation support for individual languages.
 

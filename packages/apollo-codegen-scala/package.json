@@ -6,10 +6,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/apollographql/apollo-cli.git"
+    "url": "git+https://github.com/apollographql/apollo-tooling.git"
   },
-  "homepage": "https://github.com/apollographql/apollo-cli",
-  "bugs": "https://github.com/apollographql/apollo-cli/issues",
+  "homepage": "https://github.com/apollographql/apollo-tooling",
+  "bugs": "https://github.com/apollographql/apollo-tooling/issues",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
