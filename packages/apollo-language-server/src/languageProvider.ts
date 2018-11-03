@@ -8,7 +8,8 @@ import {
   CodeLens,
   Command,
   ReferenceContext,
-  InsertTextFormat
+  InsertTextFormat,
+  Range
 } from "vscode-languageserver";
 
 // should eventually be moved into this package, since we're overriding a lot of the existing behavior here
@@ -41,12 +42,12 @@ import {
   isObjectType,
   isListType,
   GraphQLList,
-  isNonNullType
+  isNonNullType,
+  ASTNode
 } from "graphql";
 import { highlightNodeForNode } from "./utilities/graphql";
 
 import Uri from "vscode-uri";
-import { resolve } from "path";
 import { GraphQLClientProject } from "./project/client";
 
 function hasFields(type: GraphQLType): boolean {
@@ -57,12 +58,18 @@ function hasFields(type: GraphQLType): boolean {
   );
 }
 
-function convertToURI(filePath: string, project: GraphQLClientProject) {
-  return "";
-  // return filePath.startsWith("file:/") ||
-  //   filePath.startsWith("graphql-schema:/")
-  //   ? filePath
-  //   : `file://${resolve(project.rootPath, filePath)}`;
+function uriForASTNode(node: ASTNode): DocumentUri | null {
+  const uri = node.loc && node.loc.source && node.loc.source.name;
+  if (!uri || uri === "GraphQL") {
+    return null;
+  }
+  return uri;
+}
+
+function locationForASTNode(node: ASTNode): Location | null {
+  const uri = uriForASTNode(node);
+  if (!uri) return null;
+  return Location.create(uri, rangeForASTNode(node));
 }
 
 export class GraphQLLanguageProvider {
@@ -291,10 +298,7 @@ ${argumentNode.description}
           const fragmentName = node.name.value;
           const fragment = project.fragments[fragmentName];
           if (fragment && fragment.loc) {
-            return {
-              uri: convertToURI(fragment.loc.source.name, project),
-              range: rangeForASTNode(fragment)
-            };
+            return locationForASTNode(fragment);
           }
           break;
         case Kind.FIELD: {
@@ -302,20 +306,14 @@ ${argumentNode.description}
 
           if (!(fieldDef && fieldDef.astNode && fieldDef.astNode.loc)) break;
 
-          return {
-            uri: convertToURI(fieldDef.astNode.loc.source.name, project),
-            range: rangeForASTNode(fieldDef.astNode)
-          };
+          return locationForASTNode(fieldDef.astNode);
         }
         case Kind.NAMED_TYPE: {
           const type = typeFromAST(project.schema, node);
 
           if (!(type && type.astNode && type.astNode.loc)) break;
 
-          return {
-            uri: convertToURI(type.astNode.loc.source.name, project),
-            range: rangeForASTNode(type.astNode)
-          };
+          return locationForASTNode(type.astNode);
         }
       }
     }
@@ -356,11 +354,9 @@ ${argumentNode.description}
           const fragmentName = node.name.value;
           return project.fragmentSpreadsForFragment(fragmentName).reduce(
             (locations, fragmentSpread) => {
-              if (fragmentSpread.loc) {
-                locations.push({
-                  uri: convertToURI(fragmentSpread.loc.source.name, project),
-                  range: rangeForASTNode(fragmentSpread)
-                });
+              const location = locationForASTNode(fragmentSpread);
+              if (location) {
+                locations.push(location);
               }
               return locations;
             },
@@ -436,20 +432,9 @@ ${argumentNode.description}
           );
           const locs = references.reduce(
             (locations, fragmentSpread) => {
-              if (fragmentSpread.loc) {
-                locations.push({
-                  uri: Uri.parse(
-                    convertToURI(fragmentSpread.loc.source.name, project)
-                  ) as any,
-                  range: {
-                    startLineNumber:
-                      rangeForASTNode(fragmentSpread).start.line + 1,
-                    startColumn: rangeForASTNode(fragmentSpread).start
-                      .character,
-                    endLineNumber: rangeForASTNode(fragmentSpread).end.line + 1,
-                    endColumn: rangeForASTNode(fragmentSpread).end.character
-                  } as any
-                });
+              const location = locationForASTNode(fragmentSpread);
+              if (location) {
+                locations.push(location);
               }
               return locations;
             },
