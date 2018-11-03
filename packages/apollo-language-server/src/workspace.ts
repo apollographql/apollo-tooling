@@ -41,7 +41,7 @@ export class GraphQLWorkspace {
     this._onSchemaTags = handler;
   }
 
-  addProjectsInFolder(folder: WorkspaceFolder) {
+  async addProjectsInFolder(folder: WorkspaceFolder) {
     // load all possible workspace projects (contains possible config)
     // see if we can move this detection to cosmiconfig
     /*
@@ -92,7 +92,7 @@ export class GraphQLWorkspace {
       )
     );
 
-    Promise.all(projectConfigs)
+    await Promise.all(projectConfigs)
       .then(configs =>
         configs.filter(Boolean).flatMap(projectConfig => {
           // we create a GraphQLProject for each kind of project
