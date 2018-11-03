@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "composite": false,
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "allowJs": true,
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": ["src/**/*"],
+  "exclude": ["**/__tests__", "**/__mocks__"]
+}

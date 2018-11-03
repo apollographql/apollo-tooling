@@ -1,0 +1,25 @@
+{
+  "name": "apollo-env",
+  "version": "0.1.0",
+  "author": "opensource@apollographql.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apollographql/apollo-tooling.git"
+  },
+  "homepage": "https://github.com/apollographql/apollo-tooling",
+  "bugs": "https://github.com/apollographql/apollo-tooling/issues",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf lib",
+    "prebuild": "npm run clean",
+    "build": "tsc && cp src/*.d.ts lib"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "dependencies": {
+    "node-fetch": "^2.2.0"
+  }
+}

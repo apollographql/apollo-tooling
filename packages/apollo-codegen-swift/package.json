@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "apollo-codegen-core": "file:../apollo-codegen-core",
+    "apollo-env": "file:../apollo-env",
     "change-case": "^3.0.1",
     "inflected": "^2.0.3"
   },
