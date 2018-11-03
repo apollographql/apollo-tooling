@@ -1,5 +1,5 @@
-import React from 'react'
-import { gql, graphql } from 'react-apollo'
+import React from "react";
+import { gql, graphql } from "react-apollo";
 
 const Query = gql`
   query HeroAndFriends($episode: Episode) {
@@ -18,8 +18,8 @@ const Query = gql`
     }
   }
 
-  ${'this should be ignored'}
-`
+  ${"this should be ignored"}
+`;
 
 const AnotherQuery = gql`
   query HeroName {
@@ -27,10 +27,10 @@ const AnotherQuery = gql`
       name
     }
   }
-`
+`;
 
 function Component() {
-  return <div />
+  return <div />;
 }
 
-export default graphql(Query)(Component)
+export default graphql(Query)(Component);

@@ -2,10 +2,10 @@ import { parse } from "graphql";
 
 import { loadSchema } from "apollo-codegen-core/lib/loading";
 const schema = loadSchema(
-  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+  require.resolve("../../../../__fixtures__/starwars/schema.json")
 );
 const miscSchema = loadSchema(
-  require.resolve("../../../common-test/fixtures/misc/schema.json")
+  require.resolve("../../../../__fixtures__/misc/schema.json")
 );
 
 import {

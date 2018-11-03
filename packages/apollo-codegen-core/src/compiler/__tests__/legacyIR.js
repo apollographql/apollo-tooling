@@ -19,7 +19,7 @@ function withStringifiedTypes(ir) {
 }
 
 const schema = loadSchema(
-  require.resolve("../../../../common-test/fixtures/starwars/schema.json")
+  require.resolve("../../../../../__fixtures__/starwars/schema.json")
 );
 
 describe("Compiling query documents to the legacy IR", () => {

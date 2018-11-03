@@ -3,7 +3,7 @@ import { loadSchema } from "apollo-codegen-core/lib/loading";
 import { GraphQLDocument } from "../document";
 import { collectExecutableDefinitionDiagnositics } from "../diagnostics";
 const schema = loadSchema(
-  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+  require.resolve("../../../../__fixtures__/starwars/schema.json")
 );
 const validDocument = new GraphQLDocument(
   new Source(`
