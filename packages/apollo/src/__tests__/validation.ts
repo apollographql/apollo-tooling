@@ -8,13 +8,13 @@ import {
 import { validateQueryDocument } from "../validation";
 
 const schema = loadSchema(
-  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+  require.resolve("../../../../__fixtures__/starwars/schema.json")
 );
 
 describe("Validation", () => {
   function loadQueryDocument(filename: string) {
     return loadAndMergeQueryDocuments([
-      path.join(__dirname, "../../../common-test/fixtures/starwars", filename)
+      path.join(__dirname, "../../../../__fixtures__/starwars", filename)
     ]);
   }
 

@@ -4,10 +4,10 @@ import { generateSource } from "../codeGeneration";
 
 import { loadSchema } from "apollo-codegen-core/lib/loading";
 const starWarsSchema = loadSchema(
-  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+  require.resolve("../../../../__fixtures__/starwars/schema.json")
 );
 const miscSchema = loadSchema(
-  require.resolve("../../../common-test/fixtures/misc/schema.json")
+  require.resolve("../../../../__fixtures__/misc/schema.json")
 );
 
 import CodeGenerator from "apollo-codegen-core/lib/utilities/CodeGenerator";

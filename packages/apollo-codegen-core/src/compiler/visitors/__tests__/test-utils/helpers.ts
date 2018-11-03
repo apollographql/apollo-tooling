@@ -3,7 +3,7 @@ import { compileToIR, CompilerOptions } from "../../..";
 import { loadSchema } from "../../../../loading";
 
 export const starWarsSchema = loadSchema(
-  require.resolve("../../../../../../common-test/fixtures/starwars/schema.json")
+  require.resolve("../../../../../../../__fixtures__/starwars/schema.json")
 );
 
 export function compile(

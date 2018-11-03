@@ -99,7 +99,7 @@
   },
   "jest": {
     "projects": [
-      "<rootDir>/packages/!(babel-typing|common-test)"
+      "<rootDir>/packages/*"
     ]
   },
   "changelog": {
