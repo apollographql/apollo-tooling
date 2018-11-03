@@ -46,7 +46,8 @@ export const DefaultEngineConfig = {
 };
 
 export const DefaultConfigBase = {
-  includes: ["**/*.(ts|js|graphql)"],
+  // FIXME(jbaxleyiii): Missing extension in glob
+  includes: ["src/**/*"],
   excludes: ["**/node_modules", "**/__tests__"]
 };
 
