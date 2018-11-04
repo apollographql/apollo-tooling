@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
-    "composite": true,
     "rootDir": "./src",
     "outDir": "./lib",
     "noImplicitAny": false,
@@ -11,5 +10,12 @@
     }
   },
   "include": ["./src/**/*"],
-  "exclude": ["**/__tests__/*", "**/__mocks__/*"]
+  "exclude": ["**/__tests__/*", "**/__mocks__/*"],
+  "references": [
+    { "path": "../apollo-codegen-flow" },
+    { "path": "../apollo-codegen-scala" },
+    { "path": "../apollo-codegen-swift" },
+    { "path": "../apollo-codegen-typescript" },
+    { "path": "../apollo-language-server" }
+  ]
 }

@@ -12,12 +12,6 @@
   "bugs": "https://github.com/apollographql/apollo-tooling/issues",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "scripts": {
-    "clean": "rm -rf lib",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "watch": "tsc -w"
-  },
   "engines": {
     "node": ">=8",
     "npm": ">=6"

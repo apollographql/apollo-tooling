@@ -15,7 +15,7 @@
   "scripts": {
     "clean": "git clean -dfqX -- ./node_modules **/{lib,node_modules}/",
     "postinstall": "npm run build",
-    "build": "lerna run build && npm run compile",
+    "build": "lerna run build --scope apollo-env && npm run compile && lerna run build --ignore apollo-env",
     "compile": "tsc --build tsconfig.json",
     "compile:clean": "tsc --build tsconfig.json --clean",
     "watch": "tsc --build tsconfig.json --watch",
