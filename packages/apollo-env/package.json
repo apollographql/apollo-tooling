@@ -14,7 +14,7 @@
   "scripts": {
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",
-    "build": "tsc && cd src && find . -type f -name '*.d.ts' | cpio -p -d -v ../lib/"
+    "build": "tsc && cd src && tar c $(find . -name '*.d.ts') | tar xv -C ../lib"
   },
   "engines": {
     "node": ">=8"
