@@ -17,7 +17,6 @@
     "forceConsistentCasingInFileNames": true,
     "lib": ["es2017", "esnext.asynciterable"],
     "types": ["node", "apollo-env"],
-    "typeRoots": ["node_modules/@types", "./packages"],
     "baseUrl": ".",
     "paths": {
       "*": ["types/*"]
