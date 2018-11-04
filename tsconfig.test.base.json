@@ -2,7 +2,6 @@
   "extends": "./tsconfig.base",
   "compilerOptions": {
     "noEmit": true,
-    "allowJs": true,
     "types": ["node", "apollo-env", "jest"]
   }
 }

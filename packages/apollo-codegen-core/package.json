@@ -27,7 +27,7 @@
     "recast": "^0.15.3"
   },
   "jest": {
-    "preset": "ts-jest/presets/js-with-ts",
+    "preset": "ts-jest",
     "transformIgnorePatterns": [
       "/node_modules/",
       "/apollo-env/"
