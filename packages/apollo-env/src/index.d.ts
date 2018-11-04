@@ -1,5 +1,5 @@
 import "./polyfills";
-import "./global";
+import "./global-fetch";
 
 export * from "./fetch";
 export * from "./url";
