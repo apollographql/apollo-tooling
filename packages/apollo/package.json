@@ -1,7 +1,7 @@
 {
   "name": "apollo",
   "description": "Command line tool for Apollo GraphQL",
-  "version": "1.10.0-register.0",
+  "version": "2.0.0-alpha.0",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {
@@ -45,8 +45,6 @@
     "apollo-engine-reporting": "0.0.2",
     "apollo-env": "file:../apollo-env",
     "apollo-language-server": "file:../apollo-language-server",
-    "apollo-link": "^1.2.2",
-    "apollo-link-http": "^1.5.4",
     "chalk": "^2.4.1",
     "cli-ux": "^4.3.0",
     "env-ci": "^2.1.0",
@@ -58,7 +56,6 @@
     "heroku-cli-util": "^8.0.9",
     "listr": "^0.14.1",
     "lodash": "^4.17.10",
-    "node-fetch": "^2.1.2",
     "rimraf": "^2.6.2",
     "vscode-uri": "^1.0.6"
   },
@@ -71,7 +68,7 @@
     "plugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-not-found",
-      "@oclif/plugin-plugin",
+      "@oclif/plugin-plugins",
       "@oclif/plugin-warn-if-update-available"
     ],
     "repositoryPrefix": "<%- repo %>/blob/master/packages/apollo/<%- commandPath %>"

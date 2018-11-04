@@ -1,6 +1,8 @@
 import * as cosmiconfig from "cosmiconfig";
 import { LoaderEntry } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
+import { parse, resolve } from "path";
+import { readFileSync, existsSync } from "fs";
 import { merge } from "lodash/fp";
 
 import {
@@ -252,6 +254,18 @@ export const loadConfig = async ({
   }
 
   let { config, filepath, isEmpty } = loadedConfig;
+
+  // add API to the env
+  const dotEnvPath = resolve(parse(filepath).dir, ".env");
+  if (existsSync(dotEnvPath)) {
+    const env: { [key: string]: string } = require("dotenv").parse(
+      readFileSync(dotEnvPath)
+    );
+
+    if (env["ENGINE_API_KEY"]) {
+      config = merge({ engine: { apiKey: env["ENGINE_API_KEY"] } }, config);
+    }
+  }
 
   if (isEmpty) {
     throw new Error(

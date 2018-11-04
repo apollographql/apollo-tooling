@@ -7,6 +7,5 @@
     "skipLibCheck": true
   },
   "include": ["./src/**/*"],
-  "exclude": ["**/__tests__/*", "**/__mocks__/*"],
-  "references": [{ "path": "../apollo" }]
+  "exclude": ["**/__tests__/*", "**/__mocks__/*"]
 }

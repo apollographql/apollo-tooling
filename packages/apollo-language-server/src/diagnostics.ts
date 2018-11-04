@@ -12,7 +12,7 @@ import { GraphQLDocument } from "./document";
 import { highlightNodeForNode } from "./utilities/graphql";
 import { rangeForASTNode } from "./utilities/source";
 
-import { getValidationErrors } from "apollo/lib/validation";
+import { getValidationErrors } from "./errors/validation";
 import { DocumentUri } from "./project/base";
 
 /**

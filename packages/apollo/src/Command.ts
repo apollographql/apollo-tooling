@@ -65,7 +65,7 @@ export abstract class ProjectCommand extends Command {
       this.tasks.push({
         title: "Loading Apollo Project",
         task: async ctx => {
-          await this.project.whenReady();
+          await this.project.whenReady;
           ctx = { ...ctx, ...this.ctx };
         }
       });
