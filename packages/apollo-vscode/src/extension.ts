@@ -48,7 +48,9 @@ function sideViewColumn() {
 }
 
 export function activate(context: ExtensionContext) {
-  const serverModule = context.asAbsolutePath(join("server", "server.js"));
+  const serverModule = context.asAbsolutePath(
+    join("node_modules/apollo-language-server/lib", "server.js")
+  );
   const debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
   const statusBar = new StatusBar();
   let schemaTagItems: QuickPickItem[] = [];
