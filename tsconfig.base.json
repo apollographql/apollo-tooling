@@ -14,8 +14,9 @@
     "noUnusedParameters": false,
     "noUnusedLocals": false,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["esnext", "esnext.asynciterable"],
-    "types": ["node"],
+    "lib": ["es2017", "esnext.asynciterable"],
+    "types": ["node", "apollo-env"],
+    "typeRoots": ["node_modules/@types", "./packages"],
     "baseUrl": ".",
     "paths": {
       "*": ["types/*"]

@@ -11,7 +11,7 @@ import {
   parse
 } from "graphql";
 import { Agent, AgentOptions } from "https";
-import fetch from "node-fetch";
+import { fetch } from "apollo-env";
 import { URL } from "url";
 
 import { RemoteServiceConfig } from "../../config";

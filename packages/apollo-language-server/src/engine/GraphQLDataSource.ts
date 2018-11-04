@@ -10,7 +10,7 @@ import {
 } from "apollo-server-errors";
 import to from "await-to-js";
 import { DocumentNode } from "graphql";
-import fetch from "node-fetch";
+import { fetch } from "apollo-env";
 
 export class GraphQLDataSource<TContext = any> {
   public baseURL!: string;

@@ -13,7 +13,7 @@ import {
 } from "graphql";
 import gql from "graphql-tag";
 import { Agent, AgentOptions } from "https";
-import fetch from "node-fetch";
+import { fetch } from "apollo-env";
 import * as path from "path";
 import { URL } from "url";
 import { EndpointConfig } from "./config";
