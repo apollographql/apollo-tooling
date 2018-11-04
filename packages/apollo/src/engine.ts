@@ -1,5 +1,5 @@
 import { createHttpLink } from "apollo-link-http";
-import fetch from "node-fetch";
+import { fetch } from "apollo-env";
 import { ApolloLink } from "apollo-link";
 
 export { ApolloLink };

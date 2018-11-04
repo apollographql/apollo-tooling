@@ -13,7 +13,7 @@ import { LoadingHandler } from "./loadingHandler";
 
 import { execute, DocumentNode } from "apollo-link";
 import { createHttpLink } from "apollo-link-http";
-import fetch from "node-fetch";
+import { fetch } from "apollo-env";
 import { OperationDefinitionNode } from "graphql";
 
 import { WebSocketLink } from "apollo-link-ws";
