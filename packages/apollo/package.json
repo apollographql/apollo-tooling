@@ -75,6 +75,10 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "transformIgnorePatterns": [
+      "/node_modules/",
+      "/apollo-env/"
+    ],
     "testMatch": null,
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "testPathIgnorePatterns": [
@@ -92,6 +96,7 @@
     "testEnvironment": "node",
     "globals": {
       "ts-jest": {
+        "tsConfig": "<rootDir>/tsconfig.test.json",
         "diagnostics": false
       }
     }

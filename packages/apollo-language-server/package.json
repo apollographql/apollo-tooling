@@ -14,8 +14,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "install-dependencies-into-extension":
-      "yarn install --no-lockfile --force --production --modules-folder ../apollo-vscode/server/node_modules"
+    "install-dependencies-into-extension": "yarn install --no-lockfile --force --production --modules-folder ../apollo-vscode/server/node_modules"
   },
   "engines": {
     "node": "*"
@@ -42,6 +41,11 @@
     "ws": "^5.2.2"
   },
   "jest": {
+    "preset": "ts-jest",
+    "transformIgnorePatterns": [
+      "/node_modules/",
+      "/apollo-env/"
+    ],
     "testEnvironment": "node",
     "testMatch": [
       "**/__tests__/*.(js|ts)"
@@ -55,12 +59,13 @@
       "<rootDir>/test/fixtures/",
       "<rootDir>/test/test-utils"
     ],
-    "transform": {
-      "^.+\\.(ts|js)x?$": "ts-jest"
-    },
-    "moduleFileExtensions": ["ts", "js"],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
     "globals": {
       "ts-jest": {
+        "tsConfig": "<rootDir>/tsconfig.test.json",
         "diagnostics": false
       }
     }

@@ -28,6 +28,10 @@
   },
   "jest": {
     "preset": "ts-jest/presets/js-with-ts",
+    "transformIgnorePatterns": [
+      "/node_modules/",
+      "/apollo-env/"
+    ],
     "testEnvironment": "node",
     "setupFiles": [
       "<rootDir>/../apollo-env/lib/index.js"

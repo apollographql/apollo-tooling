@@ -1,8 +1,4 @@
 {
-  "extends": "../../tsconfig.base",
-  "compilerOptions": {
-    "allowJs": true
-  },
-  "include": ["./src/**/*"],
-  "exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
+  "extends": "../../tsconfig.test.base",
+  "include": ["**/__tests__/*", "**/__mocks__/*"]
 }
