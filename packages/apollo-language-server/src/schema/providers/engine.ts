@@ -6,13 +6,13 @@ import gql from "graphql-tag";
 import { GraphQLSchema, buildClientSchema } from "graphql";
 
 import { ApolloEngineClient } from "../../engine";
-import { ClientConfigFormat, parseServiceSpecificer } from "../../config";
+import { ClientConfig, parseServiceSpecificer } from "../../config";
 import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
 
 export class EngineSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
   private client?: ApolloEngineClient;
-  constructor(private config: ClientConfigFormat) {}
+  constructor(private config: ClientConfig) {}
   async resolveSchema() {
     if (this.schema) return this.schema;
     const { engine, client } = this.config;
@@ -25,13 +25,10 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
 
     // create engine client
     if (!this.client) {
-      if (!engine || !engine.engineApiKey) {
+      if (!engine.apiKey) {
         throw new Error("ENGINE_API_KEY not found");
       }
-      this.client = new ApolloEngineClient(
-        engine.engineApiKey,
-        engine.endpoint
-      );
+      this.client = new ApolloEngineClient(engine.apiKey, engine.endpoint);
     }
 
     const [id, tag] = parseServiceSpecificer(client.service);

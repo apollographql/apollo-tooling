@@ -3,7 +3,7 @@ import {
   SchemaChangeUnsubscribeHandler,
   SchemaResolveConfig
 } from "./base";
-import { ApolloConfigFormat, isClient, isService } from "../../config";
+import { ApolloConfig, isClientConfig, isServiceConfig } from "../../config";
 
 import { IntrospectionSchemaProvider } from "./introspection";
 import { EngineSchemaProvider } from "./engine";
@@ -16,9 +16,9 @@ export {
 };
 
 export function schemaProviderFromConfig(
-  config: ApolloConfigFormat
+  config: ApolloConfig
 ): GraphQLSchemaProvider {
-  if (isService(config)) {
+  if (isServiceConfig(config)) {
     if (config.service.localSchemaFile) {
       return new FileSchemaProvider({ path: config.service.localSchemaFile });
     }
@@ -27,7 +27,7 @@ export function schemaProviderFromConfig(
     }
   }
 
-  if (isClient(config)) {
+  if (isClientConfig(config)) {
     if (typeof config.client.service === "string") {
       return new EngineSchemaProvider(config);
     }

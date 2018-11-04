@@ -43,7 +43,11 @@ export class GraphQLDataSource<TContext = any> {
 
   private didEncounterError(error: any) {
     const status = error.statusCode ? error.statusCode : null;
-    const message = error.bodyText ? error.bodyText : null;
+    const message = error.bodyText
+      ? error.bodyText
+      : error.message
+        ? error.message
+        : null;
 
     let apolloError: ApolloError;
 

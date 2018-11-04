@@ -148,7 +148,7 @@ export function compileToIR(
         operations[operation.operationName] = operation;
         break;
       case Kind.FRAGMENT_DEFINITION:
-        const fragment = compiler.compileFragment(definition, false);
+        const fragment = compiler.compileFragment(definition);
         fragments[fragment.fragmentName] = fragment;
         break;
     }
@@ -248,16 +248,12 @@ class Compiler {
       rootType,
       selectionSet: this.compileSelectionSet(
         operationDefinition.selectionSet,
-        rootType,
-        false
+        rootType
       )
     };
   }
 
-  compileFragment(
-    fragmentDefinition: FragmentDefinitionNode,
-    isClient: boolean
-  ): Fragment {
+  compileFragment(fragmentDefinition: FragmentDefinitionNode): Fragment {
     const fragmentName = fragmentDefinition.name.value;
 
     const filePath = filePathForNode(fragmentDefinition);
@@ -275,8 +271,7 @@ class Compiler {
       type,
       selectionSet: this.compileSelectionSet(
         fragmentDefinition.selectionSet,
-        type,
-        isClient
+        type
       )
     };
   }
@@ -284,7 +279,6 @@ class Compiler {
   compileSelectionSet(
     selectionSetNode: SelectionSetNode,
     parentType: GraphQLCompositeType,
-    isClient: boolean,
     possibleTypes: GraphQLObjectType[] = this.possibleTypesForType(parentType),
     visitedFragments: Set<string> = new Set()
   ): SelectionSet {
@@ -297,8 +291,7 @@ class Compiler {
               selectionNode,
               parentType,
               possibleTypes,
-              visitedFragments,
-              isClient
+              visitedFragments
             ),
             selectionNode,
             possibleTypes
@@ -312,14 +305,10 @@ class Compiler {
     selectionNode: SelectionNode,
     parentType: GraphQLCompositeType,
     possibleTypes: GraphQLObjectType[],
-    visitedFragments: Set<string>,
-    isClient: boolean
+    visitedFragments: Set<string>
   ): Selection | null {
     switch (selectionNode.kind) {
       case Kind.FIELD: {
-        const fieldIsClient = (selectionNode.directives || []).some(
-          d => d.name.value == "client"
-        );
         const name = selectionNode.name.value;
         const alias = selectionNode.alias
           ? selectionNode.alias.value
@@ -329,31 +318,6 @@ class Compiler {
         if (!fieldDef) {
           throw new GraphQLError(
             `Cannot query field "${name}" on type "${String(parentType)}"`,
-            [selectionNode]
-          );
-        }
-
-        if (
-          fieldDef.astNode &&
-          (fieldDef.astNode as any).__client &&
-          !(isClient || fieldIsClient)
-        ) {
-          throw new GraphQLError(
-            `Cannot query client-side field "${name}" on type "${String(
-              parentType
-            )}" without @client directive`,
-            [selectionNode]
-          );
-        }
-
-        if (
-          !(fieldDef.astNode && (fieldDef.astNode as any).__client) &&
-          fieldIsClient
-        ) {
-          throw new GraphQLError(
-            `Cannot query server-side field "${name}" on type "${String(
-              parentType
-            )}" with @client directive`,
             [selectionNode]
           );
         }
@@ -408,8 +372,7 @@ class Compiler {
 
           field.selectionSet = this.compileSelectionSet(
             selectionNode.selectionSet as SelectionSetNode,
-            unmodifiedFieldType,
-            isClient || fieldIsClient
+            unmodifiedFieldType
           );
         }
         return field;
@@ -428,7 +391,6 @@ class Compiler {
           selectionSet: this.compileSelectionSet(
             selectionNode.selectionSet,
             type,
-            isClient,
             possibleTypesForTypeCondition
           )
         };

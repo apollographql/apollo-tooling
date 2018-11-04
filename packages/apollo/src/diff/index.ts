@@ -1,3 +1,5 @@
+import chalk from "chalk";
+
 import {
   GraphQLNamedType,
   GraphQLObjectType,
@@ -24,6 +26,31 @@ import {
   DiffInputValue,
   DiffEnum
 } from "./ast";
+
+export * from "./ast";
+
+// how its brought down from schema
+export interface SchemaChange {
+  type: ChangeType;
+  code: string;
+  description: string;
+}
+
+export const format = (change: SchemaChange) => {
+  let color = (x: string): string => x;
+  if (change.type === ChangeType.FAILURE) {
+    color = chalk.red;
+  }
+  if (change.type === ChangeType.WARNING) {
+    color = chalk.yellow;
+  }
+
+  return {
+    type: color(change.type),
+    code: color(change.code),
+    description: color(change.description)
+  };
+};
 
 // A lot / most of this code is lifted from non exported members of graphql-js
 // really amazing work in there

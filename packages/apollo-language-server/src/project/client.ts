@@ -1,6 +1,7 @@
 import { GraphQLProject, DocumentUri } from "./base";
 import {
   GraphQLSchema,
+  GraphQLError,
   printSchema,
   buildSchema,
   Source,
@@ -10,34 +11,32 @@ import {
   FragmentDefinitionNode,
   Kind,
   FragmentSpreadNode,
+  separateOperations,
+  OperationDefinitionNode,
   extendSchema,
-  DocumentNode,
-  GraphQLError
+  DocumentNode
 } from "graphql";
+
+import { NotificationHandler, DiagnosticSeverity } from "vscode-languageserver";
+import Uri from "vscode-uri";
 
 import { rangeForASTNode } from "../utilities/source";
 import { formatMS } from "../format";
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
 
+import { FieldStats, SchemaTag, ServiceID } from "../engine";
+import { ClientConfig } from "../config";
 import {
-  ApolloEngineClient,
-  FieldStats,
-  SchemaTag,
-  ServiceID
-} from "../engine";
-import { ClientConfigFormat, getServiceName } from "../config";
+  removeDirectives,
+  removeDirectiveAnnotatedFields,
+  withTypenameFieldAddedWhereNeeded
+} from "../utilities/graphql";
 
 import {
-  NotificationHandler,
-  Diagnostic,
-  DiagnosticSeverity
-} from "vscode-languageserver";
-import Uri from "vscode-uri";
-import {
   collectExecutableDefinitionDiagnositics,
-  diagnosticsFromError,
-  DiagnosticSet
+  DiagnosticSet,
+  diagnosticsFromError
 } from "../diagnostics";
 
 function schemaHasASTNodes(schema: GraphQLSchema): boolean {
@@ -68,6 +67,7 @@ export function isClientProject(
 export class GraphQLClientProject extends GraphQLProject {
   public rootURI: DocumentUri;
   public serviceID?: string;
+  public config!: ClientConfig;
 
   private serviceSchema?: GraphQLSchema;
   public schema?: GraphQLSchema;
@@ -75,11 +75,10 @@ export class GraphQLClientProject extends GraphQLProject {
   private _onDecorations?: (any: any) => void;
   private _onSchemaTags?: NotificationHandler<[ServiceID, SchemaTag[]]>;
 
-  private engineClient?: ApolloEngineClient;
   private fieldStats?: FieldStats;
 
   constructor(
-    config: ClientConfigFormat,
+    config: ClientConfig,
     loadingHandler: LoadingHandler,
     rootURI: DocumentUri
   ) {
@@ -92,22 +91,11 @@ export class GraphQLClientProject extends GraphQLProject {
     super(config, fileSet, loadingHandler);
     this.rootURI = rootURI;
 
-    const { engine } = this.config;
-    if (!engine || !engine.engineApiKey) {
-      this.loadingHandler.showError(
-        "Apollo: failed to load Engine stats. No ENGINE_API_KEY found in .env"
-      );
-    }
-
-    this.engineClient = new ApolloEngineClient(
-      engine!.engineApiKey!,
-      engine!.endpoint!
-    );
     this.loadEngineData();
   }
 
   get displayName(): string {
-    return getServiceName(this.config) || "<Unnamed>";
+    return this.config.name || "<Unnamed>";
   }
 
   initialize() {
@@ -196,9 +184,7 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   async loadEngineData() {
-    const engineClient = this.engineClient;
-    if (!engineClient) return;
-
+    if (!this.engine) return;
     const serviceID = this.serviceID;
     if (!serviceID) return;
 
@@ -208,7 +194,7 @@ export class GraphQLClientProject extends GraphQLProject {
         const [
           schemaTags,
           fieldStats
-        ] = await engineClient.loadSchemaTagsAndFieldStats(serviceID);
+        ] = await this.engine.loadSchemaTagsAndFieldStats(serviceID);
         this._onSchemaTags && this._onSchemaTags([serviceID, schemaTags]);
         this.fieldStats = fieldStats;
 
@@ -267,6 +253,69 @@ export class GraphQLClientProject extends GraphQLProject {
       }
     }
     return fragments;
+  }
+
+  get operations(): { [operationName: string]: OperationDefinitionNode } {
+    const operations = Object.create(null);
+    for (const document of this.documents) {
+      if (!document.ast) continue;
+      for (const definition of document.ast.definitions) {
+        if (definition.kind === Kind.OPERATION_DEFINITION) {
+          if (!definition.name) {
+            throw new GraphQLError(
+              "Apollo does not support anonymous operations",
+              [definition]
+            );
+          }
+          operations[definition.name.value] = definition;
+        }
+      }
+    }
+    return operations;
+  }
+
+  get mergedOperationsAndFragments(): {
+    [operationName: string]: DocumentNode;
+  } {
+    return separateOperations({
+      kind: Kind.DOCUMENT,
+      definitions: [
+        ...Object.values(this.fragments),
+        ...Object.values(this.operations)
+      ]
+    });
+  }
+
+  get mergedOperationsAndFragmentsForService(): {
+    [operationName: string]: DocumentNode;
+  } {
+    const {
+      clientOnlyDirectives,
+      clientSchemaDirectives,
+      addTypename
+    } = this.config.client;
+    const current = this.mergedOperationsAndFragments;
+    if (
+      (!clientOnlyDirectives || !clientOnlyDirectives.length) &&
+      (!clientSchemaDirectives || !clientSchemaDirectives.length)
+    )
+      return current;
+
+    const filtered = Object.create(null);
+    for (const operationName in current) {
+      const document = current[operationName];
+      let serviceOnly: DocumentNode = removeDirectiveAnnotatedFields(
+        removeDirectives(document, clientOnlyDirectives as string[]),
+        clientSchemaDirectives as string[]
+      );
+      if (addTypename)
+        serviceOnly = withTypenameFieldAddedWhereNeeded(serviceOnly);
+      if (serviceOnly.definitions.length) {
+        filtered[operationName] = serviceOnly;
+      }
+    }
+
+    return filtered;
   }
 
   fragmentSpreadsForFragment(fragmentName: string): FragmentSpreadNode[] {

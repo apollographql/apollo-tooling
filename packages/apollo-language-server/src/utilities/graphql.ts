@@ -11,7 +11,11 @@ import {
   TypeNameMetaFieldDef,
   ASTNode,
   Kind,
-  NameNode
+  NameNode,
+  visit,
+  DirectiveNode,
+  OperationDefinitionNode,
+  SelectionSetNode
 } from "graphql";
 
 export function isNode(maybeNode: any): maybeNode is ASTNode {
@@ -71,4 +75,82 @@ export function getFieldDef(
   }
 
   return undefined;
+}
+
+export function removeDirectives(ast: ASTNode, directiveNames: string[]) {
+  if (!directiveNames.length) return ast;
+  return visit(ast, {
+    Directive(node: DirectiveNode): DirectiveNode | null {
+      if (!!directiveNames.find(name => name === node.name.value)) return null;
+      return node;
+    }
+  });
+}
+
+// remove fields where a given directive is found
+export function removeDirectiveAnnotatedFields(
+  ast: ASTNode,
+  directiveNames: string[]
+) {
+  if (!directiveNames.length) return ast;
+  return visit(ast, {
+    Field(node: FieldNode): FieldNode | null {
+      if (
+        node.directives &&
+        node.directives.find(
+          directive =>
+            !!directiveNames.find(name => name === directive.name.value)
+        )
+      )
+        return null;
+      return node;
+    },
+    OperationDefinition: {
+      leave(node: OperationDefinitionNode): OperationDefinitionNode | null {
+        if (!node.selectionSet.selections.length) return null;
+        return node;
+      }
+    }
+  });
+}
+
+const typenameField = {
+  kind: Kind.FIELD,
+  name: { kind: Kind.NAME, value: "__typename" }
+};
+
+export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
+  return visit(ast, {
+    enter: {
+      SelectionSet(node: SelectionSetNode) {
+        return {
+          ...node,
+          selections: node.selections.filter(
+            selection =>
+              !(
+                selection.kind === "Field" &&
+                (selection as FieldNode).name.value === "__typename"
+              )
+          )
+        };
+      }
+    },
+    leave(node: ASTNode) {
+      if (!(node.kind === "Field" || node.kind === "FragmentDefinition"))
+        return undefined;
+      if (!node.selectionSet) return undefined;
+
+      if (true) {
+        return {
+          ...node,
+          selectionSet: {
+            ...node.selectionSet,
+            selections: [typenameField, ...node.selectionSet.selections]
+          }
+        };
+      } else {
+        return undefined;
+      }
+    }
+  });
 }

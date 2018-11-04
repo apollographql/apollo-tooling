@@ -26,27 +26,38 @@ export interface Commit {
   authorEmail: string | null;
 }
 
-export const gitInfo = async () => {
-  const { isCi, commit, slug, root } = ci();
+export interface GitContext {
+  committer?: string;
+  commit: string;
+  message?: string;
+  remoteUrl?: string;
+  branch?: string;
+}
+
+export const gitInfo = async (): Promise<GitContext | undefined> => {
+  const { isCi, commit, branch, slug, root } = ci();
   const gitLoc = root ? root : findGitRoot();
 
   if (!commit) return;
 
   let committer;
   let remoteUrl = slug;
+  let message;
   if (gitLoc) {
-    const { authorName, authorEmail } = await gitToJs(gitLoc)
+    const { authorName, authorEmail, ...commit } = await gitToJs(gitLoc)
       .then(
         (commits: Commit[]) =>
           commits && commits.length > 0
             ? commits[0]
-            : { authorName: null, authorEmail: null }
+            : { authorName: null, authorEmail: null, message: null }
       )
-      .catch(() => ({ authorEmail: null, authorName: null }));
+      .catch(() => ({ authorEmail: null, authorName: null, message: null }));
 
     committer = `${authorName || ""} ${
       authorEmail ? `<${authorEmail}>` : ""
     }`.trim();
+
+    message = commit.message;
 
     if (!isCi) {
       try {
@@ -55,5 +66,8 @@ export const gitInfo = async () => {
     }
   }
 
-  return pickBy({ committer, commit, remoteUrl }, identity);
+  return pickBy(
+    { committer, commit, remoteUrl, message, branch },
+    identity
+  ) as GitContext;
 };

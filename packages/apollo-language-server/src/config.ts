@@ -1,7 +1,7 @@
 import * as cosmiconfig from "cosmiconfig";
 import { LoaderEntry } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
-import { defaultsDeep } from "lodash/fp";
+import { merge } from "lodash/fp";
 
 import {
   ServiceID,
@@ -37,7 +37,7 @@ export interface RemoteServiceConfig {
 export interface EngineConfig {
   endpoint?: EndpointURI;
   frontend?: EndpointURI;
-  readonly engineApiKey?: string;
+  readonly apiKey?: string;
 }
 
 export const DefaultEngineConfig = {
@@ -55,30 +55,33 @@ export interface ConfigBase {
   excludes: string[];
 }
 
-export interface ClientConfig extends ConfigBase {
+export interface ClientConfigFormat extends ConfigBase {
   // service linking
   service: ServiceSpecifier | RemoteServiceConfig;
   // client identity
   name?: ClientID;
   referenceID?: string;
+  version?: string;
   // client schemas
   clientOnlyDirectives?: string[];
   clientSchemaDirectives?: string[];
+  addTypename?: boolean;
 
   tagName?: string;
   // stats window config
-  statsWindow: StatsWindowSize;
+  statsWindow?: StatsWindowSize;
 }
 
 export const DefaultClientConfig = {
   ...DefaultConfigBase,
   tagName: "gql",
-  clientOnlyDirectives: ["@connection", "@type"],
-  clientSchemaDirectives: ["@client", "@rest"],
+  clientOnlyDirectives: ["connection", "type"],
+  clientSchemaDirectives: ["client", "rest"],
+  addTypename: true,
   statsWindow: DefaultEngineStatsWindow
 };
 
-export interface ServiceConfig extends ConfigBase {
+export interface ServiceConfigFormat extends ConfigBase {
   name: string;
   endpoint?: Exclude<RemoteServiceConfig, "name">;
   localSchemaFile?: string;
@@ -92,20 +95,10 @@ export const DefaultServiceConfig = {
 };
 
 export interface ConfigBaseFormat {
-  client?: ClientConfig;
-  service?: ServiceConfig;
+  client?: ClientConfigFormat;
+  service?: ServiceConfigFormat;
   engine?: EngineConfig;
 }
-
-export type ClientConfigFormat = Exclude<
-  WithRequired<ConfigBaseFormat, "client">,
-  "service"
->;
-
-export type ServiceConfigFormat = Exclude<
-  WithRequired<ConfigBaseFormat, "service">,
-  "client"
->;
 
 export type ApolloConfigFormat =
   | WithRequired<ConfigBaseFormat, "client">
@@ -132,6 +125,8 @@ export interface LoadConfigSettings {
   // config loading only works on node so we default to
   // process.cwd()
   cwd: string;
+  name?: string;
+  type?: "service" | "client";
 }
 
 export type ConfigResult<Config> = {
@@ -140,59 +135,17 @@ export type ConfigResult<Config> = {
   isEmpty?: boolean;
 } | null;
 
-// XXX load .env files automatically
-export const loadConfig = async ({
-  cwd
-}: LoadConfigSettings): Promise<ConfigResult<ApolloConfigFormat>> => {
-  const explorer = cosmiconfig(MODULE_NAME, {
-    searchPlaces,
-    loaders
-  });
-
-  const loadedConfig = (await explorer.search(cwd)) as ConfigResult<
-    ApolloConfigFormat
-  >;
-
-  if (!loadedConfig) return null;
-  let { config, filepath, isEmpty } = loadedConfig;
-
-  if (isEmpty) {
-    throw new Error(
-      `Apollo config found at ${filepath} is empty. Please add either a client or service config`
-    );
-  }
-
-  // selectivly apply defaults when loading the config
-  // XXX(jbaxleyiii): `defaultsDeep` has weird semantics for array values like `includes`,
-  // which always seems to overwrite a specified value with the default.
-  if (config.client)
-    config = defaultsDeep(config, { client: DefaultClientConfig });
-  if (config.service)
-    config = defaultsDeep(config, { service: DefaultServiceConfig });
-  config = defaultsDeep(config, DefaultEngineConfig);
-
-  return { config, filepath, isEmpty };
-};
-
 // XXX change => to named functions
-export const isClient = (
-  config: ApolloConfigFormat
-): config is ClientConfigFormat => !!config.client;
-
-export const isService = (
-  config: ApolloConfigFormat
-): config is ServiceConfigFormat => !!config.service;
-
 // take a config with multiple project types and return
 // an array of individual types
 export const projectsFromConfig = (
   config: ApolloConfigFormat
-): Array<ClientConfigFormat | ServiceConfigFormat> => {
+): Array<ClientConfig | ServiceConfig> => {
   const configs = [];
   const { client, service, ...rest } = config;
   // XXX use casting detection
-  if (client) configs.push({ client, ...rest });
-  if (service) configs.push({ service, ...rest });
+  if (client) configs.push(new ClientConfig(config));
+  if (service) configs.push(new ServiceConfig(config));
   return configs;
 };
 
@@ -214,7 +167,102 @@ export const getServiceName = (config: ApolloConfigFormat): string => {
   return (config.client!.service as RemoteServiceConfig).name;
 };
 
-export const selectProjectFromConfig = ({
-  client,
-  service
-}: ApolloConfigFormat): ClientConfig | ServiceConfig => client || service!;
+export class ApolloConfig {
+  public isClient: boolean;
+  public isService: boolean;
+  public engine: EngineConfig;
+  public name: string;
+  public service?: ServiceConfigFormat;
+  public client?: ClientConfigFormat;
+
+  constructor(public rawConfig: ApolloConfigFormat) {
+    this.isService = !!rawConfig.service;
+    this.isClient = !!rawConfig.client;
+    this.engine = rawConfig.engine!;
+    this.name = getServiceName(rawConfig);
+    this.client = rawConfig.client;
+    this.service = rawConfig.service;
+  }
+
+  get projects() {
+    return projectsFromConfig(this.rawConfig);
+  }
+
+  get tag(): string | void {
+    if (
+      this.client &&
+      (typeof this.client!.service as ServiceSpecifier) === "string"
+    ) {
+      return parseServiceSpecificer(this.client.service as ServiceSpecifier)[1];
+    }
+  }
+
+  // this type needs to be an "EveryKeyIsOptionalApolloConfig"
+  public setDefaults({ client, engine, service }: any): void {
+    const config = merge(this.rawConfig, { client, engine, service });
+    this.rawConfig = config;
+    this.client = config.client;
+    this.service = config.service;
+    if (engine) this.engine = config.engine;
+  }
+}
+
+export class ClientConfig extends ApolloConfig {
+  public client!: ClientConfigFormat;
+}
+
+export class ServiceConfig extends ApolloConfig {
+  public service!: ServiceConfigFormat;
+}
+
+export function isClientConfig(config: ApolloConfig): config is ClientConfig {
+  return config.isClient;
+}
+
+export function isServiceConfig(config: ApolloConfig): config is ServiceConfig {
+  return config.isService;
+}
+
+// XXX load .env files automatically
+export const loadConfig = async ({
+  cwd,
+  name,
+  type
+}: LoadConfigSettings): Promise<ConfigResult<ApolloConfig>> => {
+  const explorer = cosmiconfig(MODULE_NAME, {
+    searchPlaces,
+    loaders
+  });
+
+  let loadedConfig = (await explorer.search(cwd)) as ConfigResult<
+    ApolloConfigFormat
+  >;
+
+  if (!loadedConfig) {
+    loadedConfig = {
+      isEmpty: false,
+      filepath: cwd || process.cwd(),
+      config:
+        type === "client"
+          ? {
+              client: { service: name!, ...DefaultConfigBase }
+            }
+          : { service: { name: name!, ...DefaultConfigBase } }
+    };
+  }
+
+  let { config, filepath, isEmpty } = loadedConfig;
+
+  if (isEmpty) {
+    throw new Error(
+      `Apollo config found at ${filepath} is empty. Please add either a client or service config`
+    );
+  }
+
+  // selectivly apply defaults when loading the config
+  if (config.client) config = merge({ client: DefaultClientConfig }, config);
+  if (config.service) config = merge({ service: DefaultServiceConfig }, config);
+  config = merge({ engine: DefaultEngineConfig }, config);
+
+  return { config: new ApolloConfig(config), filepath, isEmpty };
+};

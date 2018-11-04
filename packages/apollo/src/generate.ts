@@ -1,8 +1,8 @@
 import { fs } from "apollo-codegen-core/lib/localfs";
 import * as path from "path";
+import { GraphQLSchema, DocumentNode } from "graphql";
+import Uri from "vscode-uri";
 
-import { loadAndMergeQueryDocuments } from "apollo-codegen-core/lib/loading";
-// import { validateQueryDocument } from "./validation";
 import {
   compileToIR,
   CompilerContext,
@@ -16,23 +16,18 @@ import serializeToJSON from "apollo-codegen-core/lib/serializeToJSON";
 import { BasicGeneratedFile } from "apollo-codegen-core/lib/utilities/CodeGenerator";
 
 import { generateSource as generateSwiftSource } from "apollo-codegen-swift";
-import { generateSource as generateTypescriptLegacySource } from "apollo-codegen-typescript-legacy";
-import { generateSource as generateFlowLegacySource } from "apollo-codegen-flow-legacy";
 import { generateSource as generateFlowSource } from "apollo-codegen-flow";
 import {
   generateLocalSource as generateTypescriptLocalSource,
   generateGlobalSource as generateTypescriptGlobalSource
 } from "apollo-codegen-typescript";
 import { generateSource as generateScalaSource } from "apollo-codegen-scala";
-import { GraphQLSchema } from "graphql";
+
 import { FlowCompilerOptions } from "../../apollo-codegen-flow/lib/language";
 
 export type TargetType =
   | "json"
   | "swift"
-  | "ts-legacy"
-  | "typescript-legacy"
-  | "flow-legacy"
   | "scala"
   | "flow"
   | "typescript"
@@ -42,10 +37,15 @@ export type GenerationOptions = CompilerOptions &
   LegacyCompilerOptions &
   FlowCompilerOptions & {
     globalTypesFile?: string;
+    rootPath?: string;
   };
 
+function toPath(uri: string): string {
+  return Uri.parse(uri).path;
+}
+
 export default function generate(
-  inputPaths: string[],
+  document: DocumentNode,
   schema: GraphQLSchema,
   outputPath: string,
   only: string | undefined,
@@ -56,11 +56,7 @@ export default function generate(
 ): number {
   let writtenFiles = 0;
 
-  const document = loadAndMergeQueryDocuments(inputPaths, tagName);
-
-  // fIXME(jbaxleyiii): expose from apollo-language-server
-  // validateQueryDocument(schema, document);
-
+  const { rootPath = process.cwd() } = options;
   if (outputPath.split(".").length <= 1 && !fs.existsSync(outputPath)) {
     fs.mkdirSync(outputPath);
   }
@@ -96,8 +92,10 @@ export default function generate(
 
     if (nextToSources) {
       generatedFiles.forEach(({ sourcePath, fileName, content }) => {
-        const dir = path.join(path.dirname(sourcePath), outputPath);
-
+        const dir = path.join(
+          path.dirname(path.relative(rootPath, toPath(sourcePath))),
+          outputPath
+        );
         if (!fs.existsSync(dir)) {
           fs.mkdirSync(dir);
         }
@@ -162,7 +160,10 @@ export default function generate(
       generatedFiles.forEach(({ sourcePath, fileName, content }) => {
         let dir = outputPath;
         if (nextToSources) {
-          dir = path.join(path.dirname(sourcePath), dir);
+          dir = path.join(
+            path.dirname(path.relative(rootPath, toPath(sourcePath))),
+            dir
+          );
           if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
           }
@@ -194,13 +195,6 @@ export default function generate(
     switch (target) {
       case "json":
         output = serializeToJSON(context);
-        break;
-      case "ts-legacy":
-      case "typescript-legacy":
-        output = generateTypescriptLegacySource(context);
-        break;
-      case "flow-legacy":
-        output = generateFlowLegacySource(context);
         break;
       case "scala":
         output = generateScalaSource(context);

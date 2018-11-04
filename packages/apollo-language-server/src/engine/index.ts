@@ -3,7 +3,23 @@ import { GraphQLDataSource } from "./GraphQLDataSource";
 import { GraphQLRequest } from "apollo-link";
 
 import { DefaultEngineConfig } from "../config";
+import { CHECK_SCHEMA, CheckSchemaVariables } from "./operations/checkSchema";
+import {
+  UPLOAD_SCHEMA,
+  UploadSchemaVariables
+} from "./operations/uploadSchema";
 
+import {
+  CHECK_OPERATIONS,
+  CheckOperationsVariables
+} from "./operations/checkOperations";
+
+import {
+  REGISTER_OPERATIONS,
+  RegisterOperationsVariables
+} from "./operations/registerOperations";
+
+// XXX move to its own file
 const SCHEMA_TAGS_AND_FIELD_STATS = gql`
   query SchemaTagsAndFieldStats($id: ID!) {
     service(id: $id) {
@@ -45,6 +61,10 @@ export type ServiceSpecifier = string;
 export type StatsWindowSize = number;
 export type FieldStats = Map<string, Map<string, number>>;
 
+export function noServiceError(service: string, endpoint?: string) {
+  return `Could not find service ${service} from Engine at ${endpoint}. Please check your API key and service name`;
+}
+
 export class ApolloEngineClient extends GraphQLDataSource {
   constructor(
     private engineKey: string,
@@ -64,6 +84,81 @@ export class ApolloEngineClient extends GraphQLDataSource {
   // XXX fix typings on base package
   public async execute(options: GraphQLRequest) {
     return super.query(options.query, options).then(result => result || {});
+  }
+
+  // XXX can we use codegen for these types?
+  public async checkSchema(variables: CheckSchemaVariables) {
+    return this.execute({
+      query: CHECK_SCHEMA,
+      variables
+    }).then(({ data, errors }) => {
+      if (data && !data.service) {
+        throw new Error(noServiceError(variables.id, this.baseURL));
+      }
+      // use error logger
+      // if (errors) {
+      //   throw new Error(errors);
+      // }
+      if (!data) {
+        throw new Error("Error in request from Engine");
+      }
+      return data.service.checkSchema;
+    });
+  }
+
+  public async uploadSchema(variables: UploadSchemaVariables) {
+    return this.execute({
+      query: UPLOAD_SCHEMA,
+      variables
+    }).then(({ data, errors }) => {
+      if (data && !data.service) {
+        throw new Error(noServiceError(variables.id, this.baseURL));
+      }
+      // use error logger
+      // if (errors) {
+      //   throw new Error(errors);
+      // }
+      if (!data) {
+        throw new Error("Error in request from Engine");
+      }
+      return data.service.uploadSchema;
+    });
+  }
+
+  public async checkOperations(variables: CheckOperationsVariables) {
+    return this.execute({ query: CHECK_OPERATIONS, variables }).then(
+      ({ data, errors }) => {
+        if (data && !data.service) {
+          throw new Error(noServiceError(variables.id, this.baseURL));
+        }
+        // use error logger
+        // if (errors) {
+        //   throw new Error(errors);
+        // }
+        if (!data) {
+          throw new Error("Error in request from Engine");
+        }
+        return data.service.checkOperations;
+      }
+    );
+  }
+
+  public async registerOperations(variables: RegisterOperationsVariables) {
+    return this.execute({ query: REGISTER_OPERATIONS, variables }).then(
+      ({ data, errors }) => {
+        if (data && !data.service) {
+          throw new Error(noServiceError(variables.id, this.baseURL));
+        }
+        // use error logger
+        // if (errors) {
+        //   throw new Error(errors);
+        // }
+        if (!data) {
+          throw new Error("Error in request from Engine");
+        }
+        return data.service.registerOperations;
+      }
+    );
   }
 
   async loadSchemaTagsAndFieldStats(

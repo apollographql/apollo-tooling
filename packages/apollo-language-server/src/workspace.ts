@@ -9,13 +9,8 @@ import { QuickPickItem } from "vscode";
 import { GraphQLProject, DocumentUri } from "./project/base";
 import { dirname } from "path";
 import * as fg from "glob";
-import {
-  loadConfig,
-  projectsFromConfig,
-  ApolloConfigFormat,
-  isClient
-} from "./config";
-import { LoadingHandler } from "./loadingHandler";
+import { loadConfig, ApolloConfig, isClientConfig } from "./config";
+import { LanguageServerLoadingHandler } from "./loadingHandler";
 import { ServiceID, SchemaTag } from "./engine";
 import { GraphQLClientProject, isClientProject } from "./project/client";
 import { GraphQLServiceProject } from "./project/service";
@@ -27,7 +22,9 @@ export class GraphQLWorkspace {
 
   private projectsByFolderUri: Map<string, GraphQLProject[]> = new Map();
 
-  constructor(private loadingHandler: LoadingHandler) {}
+  constructor(
+    private LanguageServerLoadingHandler: LanguageServerLoadingHandler
+  ) {}
 
   onDiagnostics(handler: NotificationHandler<PublishDiagnosticsParams>) {
     this._onDiagnostics = handler;
@@ -78,7 +75,7 @@ export class GraphQLWorkspace {
 
     // go from possible folders to known array of configs
     const projectConfigs = Array.from(apolloConfigFolders).map(configFolder =>
-      this.loadingHandler.handle<ApolloConfigFormat | null>(
+      this.LanguageServerLoadingHandler.handle<ApolloConfig | null>(
         `Loading Apollo Config in folder ${configFolder}`,
         (async () => {
           try {
@@ -96,37 +93,35 @@ export class GraphQLWorkspace {
       .then(configs =>
         configs.filter(Boolean).flatMap(projectConfig => {
           // we create a GraphQLProject for each kind of project
-          return projectsFromConfig(projectConfig as ApolloConfigFormat).map(
-            config => {
-              const project = isClient(config)
-                ? new GraphQLClientProject(
-                    config,
-                    this.loadingHandler,
-                    folder.uri
-                  )
-                : new GraphQLServiceProject(
-                    config,
-                    this.loadingHandler,
-                    folder.uri
-                  );
+          return (projectConfig as ApolloConfig).projects.map(config => {
+            const project = isClientConfig(config)
+              ? new GraphQLClientProject(
+                  config,
+                  this.LanguageServerLoadingHandler,
+                  folder.uri
+                )
+              : new GraphQLServiceProject(
+                  config,
+                  this.LanguageServerLoadingHandler,
+                  folder.uri
+                );
 
-              project.onDiagnostics(params => {
-                this._onDiagnostics && this._onDiagnostics(params);
+            project.onDiagnostics(params => {
+              this._onDiagnostics && this._onDiagnostics(params);
+            });
+
+            if (isClientProject(project)) {
+              project.onDecorations(params => {
+                this._onDecorations && this._onDecorations(params);
               });
 
-              if (isClientProject(project)) {
-                project.onDecorations(params => {
-                  this._onDecorations && this._onDecorations(params);
-                });
-
-                project.onSchemaTags(tags => {
-                  this._onSchemaTags && this._onSchemaTags(tags);
-                });
-              }
-
-              return project;
+              project.onSchemaTags(tags => {
+                this._onSchemaTags && this._onSchemaTags(tags);
+              });
             }
-          );
+
+            return project;
+          });
         })
       )
       .then(projects => this.projectsByFolderUri.set(folder.uri, projects))

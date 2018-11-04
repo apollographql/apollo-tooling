@@ -1,7 +1,7 @@
 import { GraphQLProject } from "./base";
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
-import { ServiceConfigFormat, getServiceName } from "../config";
+import { ServiceConfig } from "../config";
 
 export function isServiceProject(
   project: GraphQLProject
@@ -11,7 +11,7 @@ export function isServiceProject(
 
 export class GraphQLServiceProject extends GraphQLProject {
   constructor(
-    config: ServiceConfigFormat,
+    config: ServiceConfig,
     loadingHandler: LoadingHandler,
     rootPath: string
   ) {
@@ -26,7 +26,7 @@ export class GraphQLServiceProject extends GraphQLProject {
   }
 
   get displayName() {
-    return getServiceName(this.config);
+    return this.config.name;
   }
 
   initialize() {

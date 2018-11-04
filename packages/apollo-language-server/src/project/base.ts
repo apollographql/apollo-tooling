@@ -1,5 +1,6 @@
 import { extname } from "path";
 import { readFileSync } from "fs";
+import Uri from "vscode-uri";
 
 import {
   TypeSystemDefinitionNode,
@@ -18,15 +19,20 @@ import {
 
 import { GraphQLDocument, extractGraphQLDocuments } from "../document";
 
-import Uri from "vscode-uri";
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
-import { ApolloConfigFormat } from "../config";
+import { ApolloConfig } from "../config";
 import {
   schemaProviderFromConfig,
   GraphQLSchemaProvider,
   SchemaResolveConfig
 } from "../schema/providers";
+import {
+  ApolloEngineClient,
+  FieldStats,
+  SchemaTag,
+  ServiceID
+} from "../engine";
 
 export type DocumentUri = string;
 
@@ -44,17 +50,25 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   private _isReady: boolean;
   private readyPromise: Promise<void>;
+  private _engineClient?: ApolloEngineClient;
 
   private needsValidation = false;
 
   protected documentsByFile: Map<DocumentUri, GraphQLDocument[]> = new Map();
 
   constructor(
-    public config: ApolloConfigFormat,
+    public config: ApolloConfig,
     private fileSet: FileSet,
     protected loadingHandler: LoadingHandler
   ) {
     this.schemaProvider = schemaProviderFromConfig(config);
+    const { engine } = config;
+    if (engine.apiKey) {
+      this._engineClient = new ApolloEngineClient(
+        engine.apiKey!,
+        engine.endpoint
+      );
+    }
 
     this._isReady = false;
     // FIXME: Instead of `Promise.all`, we should catch individual promise rejections
@@ -82,6 +96,15 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     return this._isReady;
   }
 
+  get engine(): ApolloEngineClient {
+    // handle error states for missing engine config
+    // all in the same place :tada:
+    if (!this._engineClient) {
+      throw new Error("Unable to find ENGINE_API_KEY");
+    }
+    return this._engineClient!;
+  }
+
   get whenReady(): Promise<void> {
     return this.readyPromise;
   }
@@ -103,8 +126,6 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   }
 
   async scanAllIncludedFiles() {
-    console.time(`scanAllIncludedFiles - ${this.displayName}`);
-
     await this.loadingHandler.handle(
       `Loading queries for ${this.displayName}`,
       (async () => {
@@ -117,8 +138,6 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
           this.fileDidChange(uri);
         }
-
-        console.timeEnd(`scanAllIncludedFiles - ${this.displayName}`);
       })()
     );
   }
@@ -146,7 +165,6 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   documentDidChange(document: TextDocument) {
     const documents = extractGraphQLDocuments(document);
-
     if (documents) {
       this.documentsByFile.set(document.uri, documents);
       this.invalidate();

@@ -9,7 +9,7 @@ import {
 import { QuickPickItem } from "vscode";
 import { GraphQLWorkspace } from "./workspace";
 import { GraphQLLanguageProvider } from "./languageProvider";
-import { LoadingHandler } from "./loadingHandler";
+import { LanguageServerLoadingHandler } from "./loadingHandler";
 
 import { execute, DocumentNode } from "apollo-link";
 import { createHttpLink } from "apollo-link-http";
@@ -25,7 +25,9 @@ const connection = createConnection(ProposedFeatures.all);
 
 let hasWorkspaceFolderCapability = false;
 
-const workspace = new GraphQLWorkspace(new LoadingHandler(connection));
+const workspace = new GraphQLWorkspace(
+  new LanguageServerLoadingHandler(connection)
+);
 
 workspace.onDiagnostics(params => {
   connection.sendDiagnostics(params);
