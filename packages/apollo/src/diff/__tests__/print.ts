@@ -1,20 +1,22 @@
 import * as fs from "fs";
 import * as path from "path";
-import { buildSchema, parse } from "graphql";
+import { buildSchema } from "graphql";
 const gql = String.raw;
 
-import { printFromSchemas, printChanges } from "../print";
-import { diffSchemas } from "../diff";
+import { diffSchemas } from "../";
 
 const initial = fs.readFileSync(
   path.join(
     __dirname,
-    "../../commands/schema/__tests__/fixtures/schema.graphql"
+    "../../commands/service/__tests__/fixtures/schema.graphql"
   ),
   { encoding: "utf8" }
 );
 const change = fs.readFileSync(
-  path.join(__dirname, "../../commands/schema/__tests__/fixtures/next.graphql"),
+  path.join(
+    __dirname,
+    "../../commands/service/__tests__/fixtures/next.graphql"
+  ),
   { encoding: "utf8" }
 );
 
@@ -26,18 +28,18 @@ const schemas = (sd1, sd2) => ({
 const compare = (name, sd1, sd2, debug = false) => {
   it(name, () => {
     const { current, next } = schemas(sd1, sd2);
-    const sdl = printFromSchemas(current, next);
-    if (debug) console.log("DEBUG\n" + sdl);
-    if (!debug) expect(sdl).toMatchSnapshot();
+    const changes = diffSchemas(current.getTypeMap(), next.getTypeMap());
+    if (debug) console.log("DEBUG\n" + changes);
+    if (!debug) expect(changes).toMatchSnapshot();
   });
 };
 
 const fcompare = (name, sd1, sd2, debug = true) => {
   fit(name, () => {
     const { current, next } = schemas(sd1, sd2);
-    const sdl = printFromSchemas(current, next);
-    if (debug) console.log("DEBUG\n" + sdl);
-    if (!debug) expect(sdl).toMatchSnapshot();
+    const changes = diffSchemas(current.getTypeMap(), next.getTypeMap());
+    if (debug) console.log("DEBUG\n" + changes);
+    if (!debug) expect(changes).toMatchSnapshot();
   });
 };
 
@@ -55,8 +57,8 @@ describe("types", () => {
         }
       `
     );
-    const sdl = printFromSchemas(current, next);
-    expect(sdl).toBeFalsy();
+    const changes = diffSchemas(current.getTypeMap(), next.getTypeMap());
+    expect(changes).toHaveLength(0);
   });
 
   compare(
@@ -569,7 +571,6 @@ describe("integration", () => {
   it("reports changes for a complex scenario", () => {
     const { current, next } = schemas(initial, change);
     const changes = diffSchemas(current.getTypeMap(), next.getTypeMap());
-    const sdl = printChanges(changes);
-    expect(sdl).toMatchSnapshot();
+    expect(changes).toMatchSnapshot();
   });
 });
