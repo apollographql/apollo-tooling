@@ -222,7 +222,7 @@ export class GraphQLLanguageProvider {
 \`\`\`graphql
 ${parentType}.${fieldDef.name}${argsString}: ${fieldDef.type}
 \`\`\`
-${fieldDef.description}
+${fieldDef.description ? fieldDef.description : ""}
 `,
               range: rangeForASTNode(highlightNodeForNode(node))
             };
@@ -242,7 +242,7 @@ ${fieldDef.description}
 \`\`\`graphql
 ${String(type)}
 \`\`\`
-${type.description}
+${type.description ? type.description : ""}
 `,
             range: rangeForASTNode(highlightNodeForNode(node))
           };
@@ -255,7 +255,7 @@ ${type.description}
 \`\`\`graphql
 ${argumentNode.name}: ${argumentNode.type}
 \`\`\`
-${argumentNode.description}
+${argumentNode.description ? argumentNode.description : ""}
 `,
             range: rangeForASTNode(highlightNodeForNode(node))
           };

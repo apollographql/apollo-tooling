@@ -90,6 +90,7 @@ export class GraphQLClientProject extends GraphQLProject {
 
     super(config, fileSet, loadingHandler);
     this.rootURI = rootURI;
+    this.serviceID = config.name;
 
     this.loadEngineData();
   }

@@ -1,9 +1,0 @@
-{
-  "extends": "../../tsconfig.base",
-  "compilerOptions": {
-    "lib": ["es2017", "esnext.asynciterable", "dom"],
-    "jsx": "react"
-  },
-  "include": ["./src/**/*"],
-  "exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
-}
