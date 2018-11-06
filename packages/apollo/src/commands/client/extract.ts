@@ -10,6 +10,7 @@ import { DocumentNode } from "graphql";
 
 import { ClientCommand } from "../../Command";
 
+// XXX this is duplicated code
 const manifestOperationHash = (str: string): string =>
   createHash("sha256")
     .update(str)
@@ -27,7 +28,7 @@ export default class ServicePush extends ClientCommand {
     ...ClientCommand.flags
   };
   // not a public feature for now
-  static hidden = true;
+  // static hidden = true;
 
   static args = [
     {
