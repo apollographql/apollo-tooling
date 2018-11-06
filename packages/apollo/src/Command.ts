@@ -17,9 +17,7 @@ import {
 } from "apollo-language-server";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 
-// const { version, referenceID } = require("package.json");
-const version = "1";
-const referenceID = "2";
+const { version, referenceID } = require("../package.json");
 
 export interface ProjectContext<Flags = any, Args = any> {
   project: GraphQLProject;

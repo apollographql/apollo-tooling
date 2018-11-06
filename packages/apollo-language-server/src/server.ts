@@ -19,7 +19,7 @@ import { OperationDefinitionNode } from "graphql";
 import { WebSocketLink } from "apollo-link-ws";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 
-// const flags = require("minimist")(process.argv.slice(2));
+const flags = require("minimist")(process.argv.slice(2));
 
 import * as ws from "ws";
 
@@ -31,9 +31,9 @@ const workspace = new GraphQLWorkspace(
   new LanguageServerLoadingHandler(connection),
   {
     clientIdentity: {
-      // name: flags["apollo-client-name"],
-      // version: flags["apollo-client-version"],
-      // referenceID: flags["apollo-client-reference-id"]
+      name: flags["apollo-client-name"],
+      version: flags["apollo-client-version"],
+      referenceID: flags["apollo-client-reference-id"]
     }
   }
 );
