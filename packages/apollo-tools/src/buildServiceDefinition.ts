@@ -8,9 +8,11 @@ import {
   GraphQLError,
   buildASTSchema,
   Kind,
-  extendSchema
+  extendSchema,
+  isObjectType
 } from "graphql";
 import { isNode, isDocumentNode } from "./utilities/graphql";
+import { GraphQLResolverMap } from "./schema/resolverMap";
 
 interface GraphQLServiceDefinition {
   schema?: GraphQLSchema;
@@ -87,8 +89,42 @@ export function buildServiceDefinition(
       });
     }
 
+    for (const module of modules) {
+      if (!module.resolvers) continue;
+
+      addResolversToSchema(schema, module.resolvers);
+    }
+
     return { schema };
   } catch (error) {
     return { errors: [error] };
+  }
+}
+
+function addResolversToSchema(
+  schema: GraphQLSchema,
+  resolvers: GraphQLResolverMap<any>
+) {
+  for (const [typeName, fieldConfigs] of Object.entries(resolvers)) {
+    const type = schema.getType(typeName);
+    if (!isObjectType(type)) continue;
+
+    const fieldMap = type.getFields();
+
+    for (const [fieldName, fieldConfig] of Object.entries(fieldConfigs)) {
+      if (fieldName.startsWith("__")) {
+        (type as any)[fieldName.substring(2)] = fieldConfig;
+        continue;
+      }
+
+      const field = fieldMap[fieldName];
+      if (!field) continue;
+
+      if (typeof fieldConfig === "function") {
+        field.resolve = fieldConfig;
+      } else {
+        field.resolve = fieldConfig.resolve;
+      }
+    }
   }
 }

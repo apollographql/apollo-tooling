@@ -1,5 +1,6 @@
 import gql from "graphql-tag";
 import { buildServiceDefinition } from "../buildServiceDefinition";
+import { GraphQLObjectType } from "graphql";
 
 describe("buildServiceDefinition", () => {
   it(`should include types from different modules`, () => {
@@ -17,6 +18,21 @@ describe("buildServiceDefinition", () => {
     ]);
 
     expect(service.errors).toBeUndefined();
+
+    expect(service.schema).toBeDefined();
+    const schema = service.schema!;
+
+    expect(schema.getType("User")).toMatchInlineSnapshot(`
+type User {
+  name: String
+}
+`);
+
+    expect(schema.getType("Post")).toMatchInlineSnapshot(`
+type Post {
+  title: String
+}
+`);
   });
 
   it(`should not allow two types with the same name in the same module`, () => {
@@ -177,5 +193,35 @@ Array [
     const schema = service.schema!;
 
     expect(schema.getType("Query")).toMatchInlineSnapshot();
+  });
+
+  it(`should add resolvers for fields`, () => {
+    const name = () => {};
+
+    const service = buildServiceDefinition([
+      {
+        typeDefs: gql`
+          type User {
+            name: String
+          }
+        `,
+        resolvers: {
+          User: {
+            name
+          }
+        }
+      }
+    ]);
+
+    expect(service.schema).toBeDefined();
+    const schema = service.schema!;
+
+    const userType = schema.getType("User");
+    expect(userType).toBeDefined();
+
+    const nameField = (userType! as GraphQLObjectType).getFields()["name"];
+    expect(nameField).toBeDefined();
+
+    expect(nameField.resolve).toEqual(name);
   });
 });
