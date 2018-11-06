@@ -21,7 +21,7 @@ export default class ClientCheck extends ClientCommand {
     const { changes }: any = await this.runTasks(
       ({ flags, project, config }) => [
         {
-          title: "Checking client compataibility with service",
+          title: "Checking client compatibility with service",
           task: async ctx => {
             ctx.gitContext = await gitInfo();
 
