@@ -20,18 +20,6 @@ import {
 } from "vscode-languageclient";
 import StatusBar from "./statusBar";
 
-export const getIdFromKey = (key: string) => key.split(":")[1];
-
-// Parse the .env file and load the ENGINE_API_KEY into process.env
-const env: { [key: string]: string } = workspace.rootPath
-  ? require("dotenv").parse(readFileSync(resolve(workspace.rootPath, ".env")))
-  : {};
-
-const key = "ENGINE_API_KEY";
-if (env[key]) {
-  process.env[key] = env[key];
-}
-
 function sideViewColumn() {
   if (!window.activeTextEditor) {
     return ViewColumn.One;
@@ -152,6 +140,13 @@ export function activate(context: ExtensionContext) {
   };
 
   client.onReady().then(() => {
+    commands.registerCommand("apollographql/reloadService", () => {
+      // wipe out tags when reloading
+      // XXX we should clean up this handling
+      schemaTagItems = [];
+      client.sendNotification("apollographql/reloadService");
+    });
+
     // For some reason, non-strings can only be sent in one direction. For now, messages
     // coming from the language server just need to be stringified and parsed.
     client.onNotification("apollographql/tagsLoaded", params => {
@@ -324,8 +319,8 @@ export function activate(context: ExtensionContext) {
               range: editor.document.lineAt(dec.range.start.line).range,
               renderOptions: {
                 after: {
-                  contentText: `# ${dec.message}`,
-                  textDecoration: "none; padding-left: 15px; opacity: 0.5"
+                  contentText: `${dec.message}`,
+                  textDecoration: "none; padding-left: 15px; opacity: .5"
                 }
               }
             };

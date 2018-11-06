@@ -7,14 +7,19 @@ import { GraphQLSchema, buildClientSchema } from "graphql";
 
 import { ApolloEngineClient } from "../../engine";
 import { ClientConfig, parseServiceSpecificer } from "../../config";
-import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
+import {
+  GraphQLSchemaProvider,
+  SchemaChangeUnsubscribeHandler,
+  SchemaResolveConfig
+} from "./base";
 
 export class EngineSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
   private client?: ApolloEngineClient;
+
   constructor(private config: ClientConfig) {}
-  async resolveSchema() {
-    if (this.schema) return this.schema;
+  async resolveSchema(override: SchemaResolveConfig) {
+    if (this.schema && (!override || !override.force)) return this.schema;
     const { engine, client } = this.config;
 
     if (typeof client.service !== "string") {
@@ -31,12 +36,12 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
       this.client = new ApolloEngineClient(engine.apiKey, engine.endpoint);
     }
 
-    const [id, tag] = parseServiceSpecificer(client.service);
+    const [id, tag = "current"] = parseServiceSpecificer(client.service);
     const { data, errors } = await this.client.execute({
       query: SCHEMA_QUERY,
       variables: {
         id,
-        tag: tag || "current"
+        tag: override && override.tag ? override.tag : tag
       }
     });
 

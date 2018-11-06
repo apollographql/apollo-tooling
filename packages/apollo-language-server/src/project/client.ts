@@ -90,6 +90,7 @@ export class GraphQLClientProject extends GraphQLProject {
 
     super(config, fileSet, loadingHandler);
     this.rootURI = rootURI;
+    this.serviceID = config.name;
 
     this.loadEngineData();
   }
@@ -111,16 +112,20 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   async updateSchemaTag(tag: SchemaTag) {
-    this.loadServiceSchema(tag);
+    await this.loadServiceSchema(tag);
   }
 
-  private async loadServiceSchema(tag: SchemaTag = "current") {
+  private async loadServiceSchema(tag?: SchemaTag) {
     await this.loadingHandler.handle(
       `Loading schema for ${this.displayName}`,
       (async () => {
         this.serviceSchema = augmentSchemaWithGeneratedSDLIfNeeded(
-          await this.schemaProvider.resolveSchema({ tag })
+          await this.schemaProvider.resolveSchema({
+            tag: tag || this.config.tag,
+            force: true
+          })
         );
+        this.invalidate();
       })()
     );
   }
@@ -224,10 +229,10 @@ export class GraphQLClientProject extends GraphQLProject {
                   const engineStat = parentEngineStat
                     ? parentEngineStat.get(node.name.value)
                     : undefined;
-                  if (engineStat) {
+                  if (engineStat && engineStat > 1) {
                     decorations.push({
                       document: uri,
-                      message: `p95: ${formatMS(engineStat, 3)}`,
+                      message: `~${formatMS(engineStat, 0)}`,
                       range: rangeForASTNode(node)
                     });
                   }

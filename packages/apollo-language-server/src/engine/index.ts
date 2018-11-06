@@ -26,7 +26,7 @@ const SCHEMA_TAGS_AND_FIELD_STATS = gql`
       schemaTags {
         tag
       }
-      stats(from: "-3600", to: "-0") {
+      stats(from: "-86400", to: "-0") {
         fieldStats {
           groupBy {
             field
@@ -78,6 +78,13 @@ export class ApolloEngineClient extends GraphQLDataSource {
   willSendRequest(request: any) {
     if (!request.headers) request.headers = {};
     request.headers["x-api-key"] = this.engineKey;
+    // TODO(pass UI using this client (i.e. vscode, cli, etc))
+    request.headers.clientName = "Apollo Language Server";
+    // this is a generated id so we can change the name above as this becomes
+    // more sophisticated. This id should stay with the base language server
+    // so when we fix tthe TODO above, this can be retired
+    request.headers.clientReferenceId = "146d29c0-912c-46d3-b686-920e52586be6";
+    request.headers.clientVersion = require("../../package.json").version;
   }
 
   // ad-hoc typings

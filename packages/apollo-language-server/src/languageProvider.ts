@@ -84,7 +84,7 @@ export class GraphQLLanguageProvider {
     if (!(project && project instanceof GraphQLClientProject)) return [];
 
     const document = project.documentAt(uri, position);
-    if (!(document && document.ast)) return [];
+    if (!document) return [];
 
     if (!project.schema) return [];
 
@@ -222,7 +222,7 @@ export class GraphQLLanguageProvider {
 \`\`\`graphql
 ${parentType}.${fieldDef.name}${argsString}: ${fieldDef.type}
 \`\`\`
-${fieldDef.description}
+${fieldDef.description ? fieldDef.description : ""}
 `,
               range: rangeForASTNode(highlightNodeForNode(node))
             };
@@ -242,7 +242,7 @@ ${fieldDef.description}
 \`\`\`graphql
 ${String(type)}
 \`\`\`
-${type.description}
+${type.description ? type.description : ""}
 `,
             range: rangeForASTNode(highlightNodeForNode(node))
           };
@@ -255,7 +255,7 @@ ${type.description}
 \`\`\`graphql
 ${argumentNode.name}: ${argumentNode.type}
 \`\`\`
-${argumentNode.description}
+${argumentNode.description ? argumentNode.description : ""}
 `,
             range: rangeForASTNode(highlightNodeForNode(node))
           };
@@ -425,25 +425,23 @@ ${argumentNode.description}
           }
           */
         } else if (definition.kind === Kind.FRAGMENT_DEFINITION) {
-          const fragmentName = definition.name.value;
-
-          const locations = project
-            .fragmentSpreadsForFragment(fragmentName)
-            .map(fragmentSpread => locationForASTNode(fragmentSpread))
-            .filter(isNotNullOrUndefined);
-
-          const command = Command.create(
-            `${locations.length} references`,
-            "editor.action.showReferences",
-            uri,
-            rangeForASTNode(definition).start,
-            locations
-          );
-
-          codeLenses.push({
-            range: rangeForASTNode(definition),
-            command
-          });
+          // remove project references for fragment now
+          // const fragmentName = definition.name.value;
+          // const locations = project
+          //   .fragmentSpreadsForFragment(fragmentName)
+          //   .map(fragmentSpread => locationForASTNode(fragmentSpread))
+          //   .filter(isNotNullOrUndefined);
+          // const command = Command.create(
+          //   `${locations.length} references`,
+          //   "editor.action.showReferences",
+          //   uri,
+          //   rangeForASTNode(definition).start,
+          //   locations
+          // );
+          // codeLenses.push({
+          //   range: rangeForASTNode(definition),
+          //   command
+          // });
         }
       }
     }

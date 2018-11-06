@@ -6,6 +6,7 @@ import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
 
 export default class ServicePush extends ProjectCommand {
+  static aliases = ["schema:publish"];
   static description = "Push a service to Engine";
   static flags = {
     ...ProjectCommand.flags,
