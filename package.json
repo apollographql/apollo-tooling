@@ -26,7 +26,7 @@
     "circle": "npm run test -- --ci --maxWorkers=2",
     "precommit": "lint-staged",
     "release": "npm run clean && npm ci && lerna publish --exact",
-    "package-extension": "lerna run package-extension --stream --scope=apollo-vscode"
+    "package-extension": "lerna run package-extension --stream --scope=vscode-apollo"
   },
   "engines": {
     "node": ">=8",
@@ -41,7 +41,7 @@
     "apollo-codegen-typescript": "file:packages/apollo-codegen-typescript",
     "apollo-env": "file:packages/apollo-env",
     "apollo-language-server": "file:packages/apollo-language-server",
-    "apollo-vscode": "file:packages/apollo-vscode",
+    "vscode-apollo": "file:packages/vscode-apollo",
     "webpack-command": "^0.4.1"
   },
   "devDependencies": {

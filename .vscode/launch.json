@@ -8,11 +8,11 @@
       "request": "launch",
       "runtimeExecutable": "${execPath}",
       "args": [
-        "--extensionDevelopmentPath=${workspaceRoot}/packages/apollo-vscode"
+        "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-apollo"
       ],
       "stopOnEntry": false,
       "sourceMaps": true,
-      "outFiles": ["${workspaceRoot}/packages/apollo-vscode/lib/**/*.js"]
+      "outFiles": ["${workspaceRoot}/packages/vscode-apollo/lib/**/*.js"]
     }
   ]
 }

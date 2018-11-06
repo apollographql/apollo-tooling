@@ -22,6 +22,14 @@
 				"reveal": "never",
 				"panel": "dedicated"
 			}
+		},
+		{
+			"type": "npm",
+			"script": "watch",
+			"problemMatcher": [
+				"$tsc-watch"
+			],
+			"isBackground": true
 		}
 	]
 }

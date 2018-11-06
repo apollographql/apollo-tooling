@@ -425,25 +425,23 @@ ${argumentNode.description ? argumentNode.description : ""}
           }
           */
         } else if (definition.kind === Kind.FRAGMENT_DEFINITION) {
-          const fragmentName = definition.name.value;
-
-          const locations = project
-            .fragmentSpreadsForFragment(fragmentName)
-            .map(fragmentSpread => locationForASTNode(fragmentSpread))
-            .filter(isNotNullOrUndefined);
-
-          const command = Command.create(
-            `${locations.length} references`,
-            "editor.action.showReferences",
-            uri,
-            rangeForASTNode(definition).start,
-            locations
-          );
-
-          codeLenses.push({
-            range: rangeForASTNode(definition),
-            command
-          });
+          // remove project references for fragment now
+          // const fragmentName = definition.name.value;
+          // const locations = project
+          //   .fragmentSpreadsForFragment(fragmentName)
+          //   .map(fragmentSpread => locationForASTNode(fragmentSpread))
+          //   .filter(isNotNullOrUndefined);
+          // const command = Command.create(
+          //   `${locations.length} references`,
+          //   "editor.action.showReferences",
+          //   uri,
+          //   rangeForASTNode(definition).start,
+          //   locations
+          // );
+          // codeLenses.push({
+          //   range: rangeForASTNode(definition),
+          //   command
+          // });
         }
       }
     }

@@ -9,7 +9,14 @@ import { QuickPickItem } from "vscode";
 import { GraphQLProject, DocumentUri } from "./project/base";
 import { dirname } from "path";
 import * as fg from "glob";
-import { loadConfig, ApolloConfig, isClientConfig } from "./config";
+import {
+  loadConfig,
+  ApolloConfig,
+  isClientConfig,
+  ApolloConfigFormat,
+  ClientConfig,
+  ServiceConfig
+} from "./config";
 import { LanguageServerLoadingHandler } from "./loadingHandler";
 import { ServiceID, SchemaTag } from "./engine";
 import { GraphQLClientProject, isClientProject } from "./project/client";
@@ -36,6 +43,36 @@ export class GraphQLWorkspace {
 
   onSchemaTags(handler: NotificationHandler<[ServiceID, SchemaTag[]]>) {
     this._onSchemaTags = handler;
+  }
+
+  private createProject(config: ApolloConfig, folder: WorkspaceFolder) {
+    const project = isClientConfig(config)
+      ? new GraphQLClientProject(
+          config,
+          this.LanguageServerLoadingHandler,
+          folder.uri
+        )
+      : new GraphQLServiceProject(
+          config as ServiceConfig,
+          this.LanguageServerLoadingHandler,
+          folder.uri
+        );
+
+    project.onDiagnostics(params => {
+      this._onDiagnostics && this._onDiagnostics(params);
+    });
+
+    if (isClientProject(project)) {
+      project.onDecorations(params => {
+        this._onDecorations && this._onDecorations(params);
+      });
+
+      project.onSchemaTags(tags => {
+        this._onSchemaTags && this._onSchemaTags(tags);
+      });
+    }
+
+    return project;
   }
 
   async addProjectsInFolder(folder: WorkspaceFolder) {
@@ -94,33 +131,7 @@ export class GraphQLWorkspace {
         configs.filter(Boolean).flatMap(projectConfig => {
           // we create a GraphQLProject for each kind of project
           return (projectConfig as ApolloConfig).projects.map(config => {
-            const project = isClientConfig(config)
-              ? new GraphQLClientProject(
-                  config,
-                  this.LanguageServerLoadingHandler,
-                  folder.uri
-                )
-              : new GraphQLServiceProject(
-                  config,
-                  this.LanguageServerLoadingHandler,
-                  folder.uri
-                );
-
-            project.onDiagnostics(params => {
-              this._onDiagnostics && this._onDiagnostics(params);
-            });
-
-            if (isClientProject(project)) {
-              project.onDecorations(params => {
-                this._onDecorations && this._onDecorations(params);
-              });
-
-              project.onSchemaTags(tags => {
-                this._onSchemaTags && this._onSchemaTags(tags);
-              });
-            }
-
-            return project;
+            return this.createProject(config, folder);
           });
         })
       )
@@ -130,16 +141,25 @@ export class GraphQLWorkspace {
       });
   }
 
+  reloadService() {
+    this.projectsByFolderUri.forEach((projects, uri) => {
+      this.projectsByFolderUri.set(
+        uri,
+        projects.map(project => {
+          project.clearAllDiagnostics();
+          return this.createProject(project.config, { uri } as WorkspaceFolder);
+        })
+      );
+    });
+  }
+
   updateSchemaTag(selection: QuickPickItem) {
     const serviceID = selection.detail;
     if (!serviceID) return;
 
     this.projectsByFolderUri.forEach(projects => {
       projects.forEach(project => {
-        if (
-          project instanceof GraphQLClientProject &&
-          project.serviceID === serviceID
-        ) {
+        if (isClientProject(project) && project.serviceID === serviceID) {
           project.updateSchemaTag(selection.label);
         }
       });

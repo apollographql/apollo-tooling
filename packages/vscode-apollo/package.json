@@ -1,8 +1,8 @@
 {
-  "name": "apollo-vscode",
+  "name": "vscode-apollo",
   "displayName": "Apollo GraphQL",
   "description": "A VS Code extension for Apollo GraphQL projects",
-  "version": "0.1.6-register.0",
+  "version": "1.0.0-alpha.4",
   "private": true,
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -17,8 +17,8 @@
   "scripts": {
     "postinstall": "npm run update-vscode && npm run create-server-symlink",
     "update-vscode": "node ../../node_modules/vscode/bin/install",
-    "create-server-symlink": "mkdir node_modules && ln -s ../../apollo-language-server ./node_modules/",
-    "package-extension": "rm -rf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/apollo-vscode && git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink"
+    "create-server-symlink": "rm -rf node_modules && mkdir node_modules && ln -s ../../apollo-language-server ./node_modules/",
+    "package-extension": "rm -rf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink"
   },
   "engines": {
     "vscode": "^1.28.0"
@@ -93,7 +93,12 @@
     "commands": [
       {
         "command": "apollographql/selectSchemaTag",
-        "title": "Select Schema Tag",
+        "title": "Select schema tag",
+        "category": "Apollo"
+      },
+      {
+        "command": "apollographql/reloadService",
+        "title": "Reload schema",
         "category": "Apollo"
       }
     ]

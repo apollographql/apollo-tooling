@@ -14,4 +14,6 @@ lerna-debug.log
 
 packages/apollo-vscode/server
 packages/apollo-vscode/webview-content
+packages/vscode-apollo/server
+packages/vscode-apollo/webview-content
 **/*.vsix

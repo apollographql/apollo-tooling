@@ -85,7 +85,6 @@ export class ApolloEngineClient extends GraphQLDataSource {
     // so when we fix tthe TODO above, this can be retired
     request.headers.clientReferenceId = "146d29c0-912c-46d3-b686-920e52586be6";
     request.headers.clientVersion = require("../../package.json").version;
-    console.log(request.headers);
   }
 
   // ad-hoc typings

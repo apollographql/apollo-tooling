@@ -197,6 +197,10 @@ connection.onCodeLens((params, token) =>
   languageProvider.provideCodeLenses(params.textDocument.uri, token)
 );
 
+connection.onNotification("apollographql/reloadService", () =>
+  workspace.reloadService()
+);
+
 connection.onNotification(
   "apollographql/tagSelected",
   (selection: QuickPickItem) => workspace.updateSchemaTag(selection)
