@@ -25,7 +25,7 @@ import { formatMS } from "../format";
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
 
-import { FieldStats, SchemaTag, ServiceID } from "../engine";
+import { FieldStats, SchemaTag, ServiceID, ClientIdentity } from "../engine";
 import { ClientConfig } from "../config";
 import {
   removeDirectives,
@@ -64,6 +64,12 @@ export function isClientProject(
   return project instanceof GraphQLClientProject;
 }
 
+export interface GraphQLClientProjectConfig {
+  clientIdentity?: ClientIdentity;
+  config: ClientConfig;
+  rootURI: DocumentUri;
+  loadingHandler: LoadingHandler;
+}
 export class GraphQLClientProject extends GraphQLProject {
   public rootURI: DocumentUri;
   public serviceID?: string;
@@ -77,18 +83,19 @@ export class GraphQLClientProject extends GraphQLProject {
 
   private fieldStats?: FieldStats;
 
-  constructor(
-    config: ClientConfig,
-    loadingHandler: LoadingHandler,
-    rootURI: DocumentUri
-  ) {
+  constructor({
+    config,
+    loadingHandler,
+    rootURI,
+    clientIdentity
+  }: GraphQLClientProjectConfig) {
     const fileSet = new FileSet({
       rootPath: Uri.parse(rootURI).fsPath,
       includes: config.client.includes,
       excludes: config.client.excludes
     });
 
-    super(config, fileSet, loadingHandler);
+    super({ config, fileSet, loadingHandler, clientIdentity });
     this.rootURI = rootURI;
     this.serviceID = config.name;
 

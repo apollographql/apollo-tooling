@@ -19,6 +19,12 @@ import {
   RegisterOperationsVariables
 } from "./operations/registerOperations";
 
+export interface ClientIdentity {
+  name?: string;
+  version?: string;
+  referenceID?: string;
+}
+
 // XXX move to its own file
 const SCHEMA_TAGS_AND_FIELD_STATS = gql`
   query SchemaTagsAndFieldStats($id: ID!) {
@@ -68,7 +74,8 @@ export function noServiceError(service: string, endpoint?: string) {
 export class ApolloEngineClient extends GraphQLDataSource {
   constructor(
     private engineKey: string,
-    engineEndpoint: string = DefaultEngineConfig.endpoint
+    engineEndpoint: string = DefaultEngineConfig.endpoint,
+    private clientIdentity?: ClientIdentity
   ) {
     super();
     this.baseURL = engineEndpoint;
@@ -78,13 +85,23 @@ export class ApolloEngineClient extends GraphQLDataSource {
   willSendRequest(request: any) {
     if (!request.headers) request.headers = {};
     request.headers["x-api-key"] = this.engineKey;
-    // TODO(pass UI using this client (i.e. vscode, cli, etc))
-    request.headers.clientName = "Apollo Language Server";
-    // this is a generated id so we can change the name above as this becomes
-    // more sophisticated. This id should stay with the base language server
-    // so when we fix tthe TODO above, this can be retired
-    request.headers.clientReferenceId = "146d29c0-912c-46d3-b686-920e52586be6";
-    request.headers.clientVersion = require("../../package.json").version;
+
+    if (this.clientIdentity && this.clientIdentity.name) {
+      request.headers["apollo-client-name"] = this.clientIdentity.name;
+      request.headers[
+        "apollo-client-reference-id"
+      ] = this.clientIdentity.referenceID;
+      request.headers["apollo-client-version"] = this.clientIdentity.version;
+      return;
+    }
+
+    // default values
+    request.headers["apollo-client-name"] = "Apollo Language Server";
+    request.headers["apollo-client-reference-id"] =
+      "146d29c0-912c-46d3-b686-920e52586be6";
+    request.headers[
+      "apollo-client-version"
+    ] = require("../../package.json").version;
   }
 
   // ad-hoc typings

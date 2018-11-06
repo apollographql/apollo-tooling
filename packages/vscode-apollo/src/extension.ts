@@ -20,6 +20,8 @@ import {
 } from "vscode-languageclient";
 import StatusBar from "./statusBar";
 
+const { version, referenceID } = require("../package.json");
+
 function sideViewColumn() {
   if (!window.activeTextEditor) {
     return ViewColumn.One;
@@ -44,7 +46,15 @@ export function activate(context: ExtensionContext) {
   let schemaTagItems: QuickPickItem[] = [];
 
   const serverOptions: ServerOptions = {
-    run: { module: serverModule, transport: TransportKind.ipc },
+    run: {
+      module: serverModule,
+      transport: TransportKind.ipc,
+      execArgv: [
+        `--apollo-client-name=Apollo VS Code`,
+        `--apollo-client-version=${version}`,
+        `--apollo-client-reference-id=${referenceID}`
+      ]
+    },
     debug: {
       module: serverModule,
       transport: TransportKind.ipc,
