@@ -17,6 +17,8 @@ import {
 } from "apollo-language-server";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 
+const { version, referenceID } = require("../package.json");
+
 export interface ProjectContext<Flags = any, Args = any> {
   project: GraphQLProject;
   config: ApolloConfig;
@@ -98,16 +100,27 @@ export abstract class ProjectCommand extends Command {
 
   protected createService(config: ApolloConfig, filepath: string, flags: any) {
     const loadingHandler = new OclifLoadingHandler(this);
-    const rootPath = `file://${parse(filepath).dir}`;
+    const rootURI = `file://${parse(filepath).dir}`;
+    const clientIdentity = {
+      name: "Apollo CLI",
+      version,
+      referenceID
+    };
 
     if (isServiceConfig(config)) {
-      this.project = new GraphQLServiceProject(
+      this.project = new GraphQLServiceProject({
         config,
         loadingHandler,
-        rootPath
-      );
+        rootURI,
+        clientIdentity
+      });
     } else if (isClientConfig(config)) {
-      this.project = new GraphQLClientProject(config, loadingHandler, rootPath);
+      this.project = new GraphQLClientProject({
+        config,
+        loadingHandler,
+        rootURI,
+        clientIdentity
+      });
     }
 
     this.ctx.project = this.project;

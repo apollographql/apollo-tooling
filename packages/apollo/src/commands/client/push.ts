@@ -27,10 +27,14 @@ export default class ServicePush extends ClientCommand {
   };
 
   async run() {
-    await this.runTasks(({ flags, project, config }) => [
+    const {
+      clientIdentity,
+      operations,
+      serviceName
+    }: any = await this.runTasks(({ flags, project, config }) => [
       {
         title: "Pushing client information to Engine",
-        task: async () => {
+        task: async ctx => {
           const operations = Object.values(
             this.project.mergedOperationsAndFragmentsForService
           ).map(operationAST => {
@@ -66,8 +70,19 @@ export default class ServicePush extends ClientCommand {
           };
 
           await project.engine.registerOperations(variables);
+
+          // store data for logging
+          ctx.operations = operations;
+          ctx.serviceName = variables.id;
+          ctx.clientIdentity = variables.clientIdentity;
         }
       }
     ]);
+
+    this.log(
+      `Successfully pushed ${operations.length} operations from the ${
+        clientIdentity.name
+      } client to the ${serviceName} service in Engine`
+    );
   }
 }

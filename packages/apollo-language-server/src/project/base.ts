@@ -27,12 +27,7 @@ import {
   GraphQLSchemaProvider,
   SchemaResolveConfig
 } from "../schema/providers";
-import {
-  ApolloEngineClient,
-  FieldStats,
-  SchemaTag,
-  ServiceID
-} from "../engine";
+import { ApolloEngineClient, ClientIdentity } from "../engine";
 
 export type DocumentUri = string;
 
@@ -44,6 +39,12 @@ const fileAssociations: { [extension: string]: string } = {
   ".tsx": "typescriptreact"
 };
 
+export interface GraphQLProjectConfig {
+  clientIdentity?: ClientIdentity;
+  config: ApolloConfig;
+  fileSet: FileSet;
+  loadingHandler: LoadingHandler;
+}
 export abstract class GraphQLProject implements GraphQLSchemaProvider {
   public schemaProvider: GraphQLSchemaProvider;
   protected _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
@@ -56,11 +57,19 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   protected documentsByFile: Map<DocumentUri, GraphQLDocument[]> = new Map();
 
-  constructor(
-    public config: ApolloConfig,
-    private fileSet: FileSet,
-    protected loadingHandler: LoadingHandler
-  ) {
+  public config: ApolloConfig;
+  private fileSet: FileSet;
+  protected loadingHandler: LoadingHandler;
+
+  constructor({
+    config,
+    fileSet,
+    loadingHandler,
+    clientIdentity
+  }: GraphQLProjectConfig) {
+    this.config = config;
+    this.fileSet = fileSet;
+    this.loadingHandler = loadingHandler;
     this.schemaProvider = schemaProviderFromConfig(config);
     const { engine } = config;
     if (engine.apiKey) {

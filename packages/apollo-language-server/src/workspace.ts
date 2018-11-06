@@ -18,10 +18,13 @@ import {
   ServiceConfig
 } from "./config";
 import { LanguageServerLoadingHandler } from "./loadingHandler";
-import { ServiceID, SchemaTag } from "./engine";
+import { ServiceID, SchemaTag, ClientIdentity } from "./engine";
 import { GraphQLClientProject, isClientProject } from "./project/client";
 import { GraphQLServiceProject } from "./project/service";
 
+export interface WorkspaceConfig {
+  clientIdentity?: ClientIdentity;
+}
 export class GraphQLWorkspace {
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
   private _onDecorations?: (any: any) => void;
@@ -30,7 +33,8 @@ export class GraphQLWorkspace {
   private projectsByFolderUri: Map<string, GraphQLProject[]> = new Map();
 
   constructor(
-    private LanguageServerLoadingHandler: LanguageServerLoadingHandler
+    private LanguageServerLoadingHandler: LanguageServerLoadingHandler,
+    private config: WorkspaceConfig
   ) {}
 
   onDiagnostics(handler: NotificationHandler<PublishDiagnosticsParams>) {
@@ -46,17 +50,20 @@ export class GraphQLWorkspace {
   }
 
   private createProject(config: ApolloConfig, folder: WorkspaceFolder) {
+    const { clientIdentity } = this.config;
     const project = isClientConfig(config)
-      ? new GraphQLClientProject(
+      ? new GraphQLClientProject({
           config,
-          this.LanguageServerLoadingHandler,
-          folder.uri
-        )
-      : new GraphQLServiceProject(
-          config as ServiceConfig,
-          this.LanguageServerLoadingHandler,
-          folder.uri
-        );
+          loadingHandler: this.LanguageServerLoadingHandler,
+          rootURI: folder.uri,
+          clientIdentity
+        })
+      : new GraphQLServiceProject({
+          config: config as ServiceConfig,
+          loadingHandler: this.LanguageServerLoadingHandler,
+          rootURI: folder.uri,
+          clientIdentity
+        });
 
     project.onDiagnostics(params => {
       this._onDiagnostics && this._onDiagnostics(params);
