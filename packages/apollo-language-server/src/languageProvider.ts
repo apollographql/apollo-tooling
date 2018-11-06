@@ -84,7 +84,7 @@ export class GraphQLLanguageProvider {
     if (!(project && project instanceof GraphQLClientProject)) return [];
 
     const document = project.documentAt(uri, position);
-    if (!(document && document.ast)) return [];
+    if (!document) return [];
 
     if (!project.schema) return [];
 
