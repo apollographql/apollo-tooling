@@ -190,13 +190,17 @@ export class ApolloConfig {
     return projectsFromConfig(this.rawConfig);
   }
 
-  get tag(): string | void {
+  get tag(): string {
+    let tag: string = "current";
     if (
       this.client &&
       (typeof this.client!.service as ServiceSpecifier) === "string"
     ) {
-      return parseServiceSpecificer(this.client.service as ServiceSpecifier)[1];
+      const specifierTag = parseServiceSpecificer(this.client
+        .service as ServiceSpecifier)[1];
+      if (specifierTag) tag = specifierTag;
     }
+    return tag;
   }
 
   // this type needs to be an "EveryKeyIsOptionalApolloConfig"

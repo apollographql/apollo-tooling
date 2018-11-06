@@ -18,20 +18,20 @@ export default class ClientCheck extends ClientCommand {
   };
 
   async run() {
-    const { changes }: any = await this.runTasks(
+    const { changes, operations }: any = await this.runTasks(
       ({ flags, project, config }) => [
         {
-          title: "Checking client compataibility with service",
+          title: "Checking client compatibility with service",
           task: async ctx => {
             ctx.gitContext = await gitInfo();
 
-            const operations = Object.values(
+            ctx.operations = Object.values(
               this.project.mergedOperationsAndFragmentsForService
             ).map(doc => ({ document: print(doc) }));
 
             const { changes } = await project.engine.checkOperations({
               id: config.name,
-              operations,
+              operations: ctx.operations,
               tag: flags.tag,
               gitContext: ctx.gitContext
             });
@@ -48,6 +48,8 @@ export default class ClientCheck extends ClientCommand {
 
     const exit = failures.length > 0 ? 1 : 0;
 
+    const count = operations.length;
+    this.log(`\n${count} operations extracted and validated`);
     if (changes.length === 0) {
       return this.log("\nAll operations are valid against service\n");
     }

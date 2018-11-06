@@ -112,18 +112,20 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   async updateSchemaTag(tag: SchemaTag) {
-    await this.invalidate();
     await this.loadServiceSchema(tag);
-    await this.validate();
   }
 
-  private async loadServiceSchema(tag: SchemaTag = "current") {
+  private async loadServiceSchema(tag?: SchemaTag) {
     await this.loadingHandler.handle(
       `Loading schema for ${this.displayName}`,
       (async () => {
         this.serviceSchema = augmentSchemaWithGeneratedSDLIfNeeded(
-          await this.schemaProvider.resolveSchema({ tag, force: true })
+          await this.schemaProvider.resolveSchema({
+            tag: tag || this.config.tag,
+            force: true
+          })
         );
+        this.invalidate();
       })()
     );
   }
@@ -230,7 +232,7 @@ export class GraphQLClientProject extends GraphQLProject {
                   if (engineStat && engineStat > 1) {
                     decorations.push({
                       document: uri,
-                      message: `~${formatMS(engineStat, 3)}`,
+                      message: `~${formatMS(engineStat, 0)}`,
                       range: rangeForASTNode(node)
                     });
                   }
