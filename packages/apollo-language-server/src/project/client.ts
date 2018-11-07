@@ -132,7 +132,8 @@ export class GraphQLClientProject extends GraphQLProject {
             force: true
           })
         );
-        this.invalidate();
+        // await this.validate();
+        this.schema = extendSchema(this.serviceSchema, this.clientSchema);
       })()
     );
   }
@@ -187,7 +188,6 @@ export class GraphQLClientProject extends GraphQLProject {
         );
       }
     }
-
     for (const [uri, diagnostics] of diagnosticSet.entries()) {
       this._onDiagnostics({ uri, diagnostics });
     }

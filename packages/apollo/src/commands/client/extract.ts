@@ -71,7 +71,6 @@ export default class ServicePush extends ClientCommand {
         {
           title: "Outputing extracted queries",
           task: (ctx, task) => {
-            console.log(args);
             const filename = args.output;
             task.title = "Outputing extracted queries to " + filename;
             ctx.filename = filename;

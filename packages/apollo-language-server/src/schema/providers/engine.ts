@@ -44,7 +44,6 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
         tag: override && override.tag ? override.tag : tag
       }
     });
-
     if (errors) {
       // XXX better error handling of GraphQL errors
       throw new Error(errors.map(({ message }: Error) => message).join("\n"));

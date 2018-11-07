@@ -1,6 +1,6 @@
 import { fs } from "apollo-codegen-core/lib/localfs";
 import * as path from "path";
-import { GraphQLSchema, DocumentNode } from "graphql";
+import { GraphQLSchema, DocumentNode, print } from "graphql";
 import Uri from "vscode-uri";
 
 import {
@@ -24,6 +24,7 @@ import {
 import { generateSource as generateScalaSource } from "apollo-codegen-scala";
 
 import { FlowCompilerOptions } from "../../apollo-codegen-flow/lib/language";
+import { validateQueryDocument } from "apollo-language-server/lib/errors/validation";
 
 export type TargetType =
   | "json"
@@ -55,6 +56,7 @@ export default function generate(
   options: GenerationOptions
 ): number {
   let writtenFiles = 0;
+  validateQueryDocument(schema, document);
 
   const { rootPath = process.cwd() } = options;
   if (outputPath.split(".").length <= 1 && !fs.existsSync(outputPath)) {

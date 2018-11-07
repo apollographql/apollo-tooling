@@ -2,10 +2,15 @@ import "apollo-env";
 import { flags } from "@oclif/command";
 import * as path from "path";
 import { Kind, DocumentNode } from "graphql";
+import * as tty from "tty";
+import { Gaze } from "gaze";
+
+import Uri from "vscode-uri";
 
 import { TargetType, default as generate } from "../../generate";
 
 import { ClientCommand } from "../../Command";
+import URI from "vscode-uri";
 
 const waitForKey = async () => {
   console.log("Press any key to stop.");
@@ -27,6 +32,12 @@ export default class Generate extends ClientCommand {
   static flags = {
     ...ClientCommand.flags,
 
+    queries: flags.string({
+      description: "Glob of files to watch for recompilation"
+    }),
+    watch: flags.boolean({
+      description: "Watch for file changes and reload codegen"
+    }),
     // general
     target: flags.string({
       description:
@@ -102,84 +113,118 @@ export default class Generate extends ClientCommand {
   async run() {
     const { flags, args } = this.parse(Generate);
 
-    await this.runTasks(({ flags, args, project }) => {
-      let inferredTarget: TargetType = "" as TargetType;
-      if (
-        ["json", "swift", "typescript", "flow", "scala"].includes(flags.target)
-      ) {
-        inferredTarget = flags.target as TargetType;
-      } else {
-        throw new Error(`Unsupported target: ${flags.target}`);
-      }
-
-      if (
-        !args.output &&
-        inferredTarget != "typescript" &&
-        inferredTarget != "flow"
-      ) {
-        throw new Error(
-          "The output path must be specified in the arguments for Swift and Scala"
-        );
-      }
-
-      if (
-        !flags.outputFlat &&
-        (inferredTarget === "typescript" || inferredTarget === "flow") &&
-        (args.output &&
-          (path.isAbsolute(args.output) ||
-            args.output.split(path.sep).length > 1))
-      ) {
-        throw new Error(
-          'For TypeScript and Flow generators, "output" must be empty or a single directory name, unless the "outputFlat" flag is set.'
-        );
-      }
-
-      return [
-        {
-          title: "Generating query files",
-          task: async (ctx, task) => {
-            task.title = `Generating query files with '${inferredTarget}' target`;
-            const schema = await project.resolveSchema({ tag: flags.tag });
-            const operations = Object.values(this.project.operations);
-            const fragments = Object.values(this.project.fragments);
-
-            if (!operations.length) {
-              throw new Error("No document sets found to generate code for.");
-            }
-
-            const document: DocumentNode = {
-              kind: Kind.DOCUMENT,
-              definitions: [...operations, ...fragments]
-            };
-
-            const writtenFiles = generate(
-              document,
-              schema,
-              typeof args.output === "string" ? args.output : "__generated__",
-              flags.only,
-              inferredTarget,
-              flags.tagName as string,
-              !flags.outputFlat,
-              {
-                passthroughCustomScalars:
-                  flags.passthroughCustomScalars || !!flags.customScalarsPrefix,
-                customScalarsPrefix: flags.customScalarsPrefix || "",
-                addTypename: flags.addTypename,
-                namespace: flags.namespace,
-                operationIdsPath: flags.operationIdsPath,
-                generateOperationIds: !!flags.operationIdsPath,
-                mergeInFieldsFromFragmentSpreads:
-                  flags.mergeInFieldsFromFragmentSpreads,
-                useFlowExactObjects: flags.useFlowExactObjects,
-                useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes,
-                globalTypesFile: flags.globalTypesFile
-              }
-            );
-
-            task.title = `Generating query files with '${inferredTarget}' target - wrote ${writtenFiles} files`;
-          }
+    const run = () =>
+      this.runTasks(({ flags, args, project }) => {
+        let inferredTarget: TargetType = "" as TargetType;
+        if (
+          ["json", "swift", "typescript", "flow", "scala"].includes(
+            flags.target
+          )
+        ) {
+          inferredTarget = flags.target as TargetType;
+        } else {
+          throw new Error(`Unsupported target: ${flags.target}`);
         }
-      ];
-    });
+
+        if (
+          !args.output &&
+          inferredTarget != "typescript" &&
+          inferredTarget != "flow"
+        ) {
+          throw new Error(
+            "The output path must be specified in the arguments for Swift and Scala"
+          );
+        }
+
+        if (
+          !flags.outputFlat &&
+          (inferredTarget === "typescript" || inferredTarget === "flow") &&
+          (args.output &&
+            (path.isAbsolute(args.output) ||
+              args.output.split(path.sep).length > 1))
+        ) {
+          throw new Error(
+            'For TypeScript and Flow generators, "output" must be empty or a single directory name, unless the "outputFlat" flag is set.'
+          );
+        }
+
+        return [
+          {
+            title: "Generating query files",
+            task: async (ctx, task) => {
+              task.title = `Generating query files with '${inferredTarget}' target`;
+              const schema = await project.resolveSchema({ tag: flags.tag });
+
+              if (!schema) throw new Error("Error loading schema");
+              const write = () => {
+                const operations = Object.values(this.project.operations);
+                const fragments = Object.values(this.project.fragments);
+
+                if (!operations.length) {
+                  throw new Error(
+                    "No document sets found to generate code for."
+                  );
+                }
+
+                const document: DocumentNode = {
+                  kind: Kind.DOCUMENT,
+                  definitions: [...operations, ...fragments]
+                };
+                generate(
+                  document,
+                  schema,
+                  typeof args.output === "string"
+                    ? args.output
+                    : "__generated__",
+                  flags.only,
+                  inferredTarget,
+                  flags.tagName as string,
+                  !flags.outputFlat,
+                  {
+                    passthroughCustomScalars:
+                      flags.passthroughCustomScalars ||
+                      !!flags.customScalarsPrefix,
+                    customScalarsPrefix: flags.customScalarsPrefix || "",
+                    addTypename: flags.addTypename,
+                    namespace: flags.namespace,
+                    operationIdsPath: flags.operationIdsPath,
+                    generateOperationIds: !!flags.operationIdsPath,
+                    mergeInFieldsFromFragmentSpreads:
+                      flags.mergeInFieldsFromFragmentSpreads,
+                    useFlowExactObjects: flags.useFlowExactObjects,
+                    useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes,
+                    globalTypesFile: flags.globalTypesFile
+                  }
+                );
+              };
+
+              // project.validationDidFinish(write);
+              project.onDiagnostics(({ uri }) => {
+                write();
+              });
+
+              const writtenFiles = write();
+
+              task.title = `Generating query files with '${inferredTarget}' target - wrote ${writtenFiles} files`;
+            }
+          }
+        ];
+      });
+
+    if (flags.watch) {
+      await run().catch(() => {});
+      const watcher = new Gaze(flags.queries!);
+      watcher.on("all", (event, file) => {
+        // console.log("\nChange detected, generating types...");
+        this.project.fileDidChange(Uri.file(file).toString());
+      });
+      if (tty.isatty((process.stdin as any).fd)) {
+        await waitForKey();
+        watcher.close();
+      }
+      return;
+    } else {
+      return run();
+    }
   }
 }
