@@ -23,6 +23,9 @@ export default class ClientCheck extends ClientCommand {
         {
           title: "Checking client compatibility with service",
           task: async ctx => {
+            if (!config.name) {
+              throw new Error("No service name found to link to Engine");
+            }
             ctx.gitContext = await gitInfo();
 
             ctx.operations = Object.values(

@@ -24,6 +24,9 @@ export default class ServiceCheck extends ProjectCommand {
         {
           title: "Checking service for changes",
           task: async ctx => {
+            if (!config.name) {
+              throw new Error("No service name found to link to Engine");
+            }
             const schema = await project.resolveSchema({ tag: flags.tag });
             ctx.gitContext = await gitInfo();
 

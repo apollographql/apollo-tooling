@@ -24,6 +24,9 @@ export default class ServicePush extends ProjectCommand {
       {
         title: "Uploading service to Engine",
         task: async () => {
+          if (!config.name) {
+            throw new Error("No service name found to link to Engine");
+          }
           const schema = await project.resolveSchema({ tag: flags.tag });
           gitContext = await gitInfo();
 
