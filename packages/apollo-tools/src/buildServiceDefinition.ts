@@ -1,6 +1,6 @@
-import { GraphQLSchemaModule } from ".";
 import {
   GraphQLSchema,
+  DocumentNode,
   TypeDefinitionNode,
   isTypeDefinitionNode,
   TypeExtensionNode,
@@ -9,10 +9,19 @@ import {
   buildASTSchema,
   Kind,
   extendSchema,
-  isObjectType
+  isObjectType,
+  SchemaDefinitionNode,
+  OperationTypeNode,
+  SchemaExtensionNode
 } from "graphql";
 import { isNode, isDocumentNode } from "./utilities/graphql";
 import { GraphQLResolverMap } from "./schema/resolverMap";
+import { isNotNullOrUndefined } from "./utilities/predicates";
+
+export interface GraphQLSchemaModule {
+  typeDefs: DocumentNode;
+  resolvers?: GraphQLResolverMap<any>;
+}
 
 interface GraphQLServiceDefinition {
   schema?: GraphQLSchema;
@@ -31,6 +40,9 @@ export function buildServiceDefinition(
   const typeExtensionsMap: {
     [name: string]: TypeExtensionNode[];
   } = Object.create(null);
+
+  const schemaDefinitions: SchemaDefinitionNode[] = [];
+  const schemaExtensions: SchemaExtensionNode[] = [];
 
   for (let module of modules) {
     if (isNode(module) && isDocumentNode(module)) {
@@ -53,18 +65,87 @@ export function buildServiceDefinition(
         } else {
           typeExtensionsMap[typeName] = [definition];
         }
+      } else if (definition.kind === Kind.SCHEMA_DEFINITION) {
+        schemaDefinitions.push(definition);
+      } else if (definition.kind === Kind.SCHEMA_EXTENSION) {
+        schemaExtensions.push(definition);
       }
     }
   }
 
-  for (const [typeName, typeDefs] of Object.entries(typeDefinitionsMap)) {
-    if (typeDefs.length > 1) {
+  for (const [typeName, typeDefinitions] of Object.entries(
+    typeDefinitionsMap
+  )) {
+    if (typeDefinitions.length > 1) {
       errors.push(
         new GraphQLError(
           `Type "${typeName}" was defined more than once.`,
-          typeDefs
+          typeDefinitions
         )
       );
+    }
+  }
+
+  let operationTypeMap: { [operation in OperationTypeNode]?: string };
+
+  if (schemaDefinitions.length > 0 || schemaExtensions.length > 0) {
+    operationTypeMap = {};
+
+    // We should report an error if more than one schema definition is included,
+    // but this matches the current 'last definition wins' behavior of `buildASTSchema`.
+    const schemaDefinition = schemaDefinitions[schemaDefinitions.length - 1];
+
+    const operationTypes = [schemaDefinition, ...schemaExtensions]
+      .map(node => node.operationTypes)
+      .filter(isNotNullOrUndefined)
+      .flat();
+
+    for (const operationType of operationTypes) {
+      const typeName = operationType.type.name.value;
+      const operation = operationType.operation;
+
+      if (operationTypeMap[operation]) {
+        throw new GraphQLError(
+          `Must provide only one ${operation} type in schema.`,
+          [schemaDefinition]
+        );
+      }
+      if (!(typeDefinitionsMap[typeName] || typeExtensionsMap[typeName])) {
+        throw new GraphQLError(
+          `Specified ${operation} type "${typeName}" not found in document.`,
+          [schemaDefinition]
+        );
+      }
+      operationTypeMap[operation] = typeName;
+    }
+  } else {
+    operationTypeMap = {
+      query: "Query",
+      mutation: "Mutation",
+      subscription: "Subscription"
+    };
+  }
+
+  for (const [typeName, typeExtensions] of Object.entries(typeExtensionsMap)) {
+    if (!typeDefinitionsMap[typeName]) {
+      if (Object.values(operationTypeMap).includes(typeName)) {
+        typeDefinitionsMap[typeName] = [
+          {
+            kind: Kind.OBJECT_TYPE_DEFINITION,
+            name: {
+              kind: Kind.NAME,
+              value: typeName
+            }
+          }
+        ];
+      } else {
+        errors.push(
+          new GraphQLError(
+            `Cannot extend type "${typeName}" because it does not exist in the existing schema.`,
+            typeExtensions
+          )
+        );
+      }
     }
   }
 

@@ -5,6 +5,7 @@ export interface GraphQLResolverMap<TContext> {
     [fieldName: string]:
       | GraphQLFieldResolver<any, TContext>
       | {
+          requires?: string;
           resolve: GraphQLFieldResolver<any, TContext>;
         };
   };

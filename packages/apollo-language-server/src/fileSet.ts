@@ -1,7 +1,7 @@
 import { relative } from "path";
 import minimatch = require("minimatch");
 import * as glob from "glob";
-import { invariant } from "./utilities/invariant";
+import { invariant } from "@apollographql/apollo-tools";
 
 export class FileSet {
   private rootPath: string;

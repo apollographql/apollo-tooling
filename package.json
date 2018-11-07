@@ -33,6 +33,7 @@
     "npm": ">=6"
   },
   "dependencies": {
+    "@apollographql/apollo-tools": "file:packages/apollo-tools",
     "apollo": "file:packages/apollo",
     "apollo-codegen-core": "file:packages/apollo-codegen-core",
     "apollo-codegen-flow": "file:packages/apollo-codegen-flow",
@@ -74,7 +75,7 @@
     "chai": "^4.1.2",
     "css-loader": "1.0.0",
     "fs-monkey": "^0.3.3",
-    "graphql": "^14.0.2",
+    "graphql": "file:../graphql-js/dist",
     "husky": "^0.14.3",
     "jest": "^23.5.0",
     "jest-matcher-utils": "^23.5.0",

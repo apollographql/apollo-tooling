@@ -48,7 +48,7 @@ import {
 import { highlightNodeForNode } from "./utilities/graphql";
 
 import { GraphQLClientProject } from "./project/client";
-import { isNotNullOrUndefined } from "./utilities/predicates";
+import { isNotNullOrUndefined } from "@apollographql/apollo-tools";
 
 function hasFields(type: GraphQLType): boolean {
   return (
