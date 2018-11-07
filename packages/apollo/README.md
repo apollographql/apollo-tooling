@@ -5,74 +5,107 @@
 Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
 
 <!-- toc -->
-
-- [Apollo CLI](#apollo-cli)
-- [Usage](#usage)
-- [Commands](#commands)
-- [Configuration](#configuration)
-- [Code Generation](#code-generation)
-- [Contributing](#contributing)
-  <!-- tocstop -->
+* [Apollo CLI](#apollo-cli)
+* [Usage](#usage)
+* [Commands](#commands)
+* [Configuration](#configuration)
+* [Code Generation](#code-generation)
+* [Contributing](#contributing)
+<!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
-
 ```sh-session
 $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/1.9.2 darwin-x64 node-v8.11.4
+apollo/2.0.0 darwin-x64 node-v10.12.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
+* [`apollo client:check`](#apollo-clientcheck)
+* [`apollo client:codegen [OUTPUT]`](#apollo-clientcodegen-output)
+* [`apollo client:extract OUTPUT`](#apollo-clientextract-output)
+* [`apollo client:push`](#apollo-clientpush)
+* [`apollo help [COMMAND]`](#apollo-help-command)
+* [`apollo plugins`](#apollo-plugins)
+* [`apollo plugins:install PLUGIN...`](#apollo-pluginsinstall-plugin)
+* [`apollo plugins:link PLUGIN`](#apollo-pluginslink-plugin)
+* [`apollo plugins:uninstall PLUGIN...`](#apollo-pluginsuninstall-plugin)
+* [`apollo plugins:update`](#apollo-pluginsupdate)
+* [`apollo service:check`](#apollo-servicecheck)
+* [`apollo service:download OUTPUT`](#apollo-servicedownload-output)
+* [`apollo service:push`](#apollo-servicepush)
 
-- [`apollo codegen:generate [OUTPUT]`](#apollo-codegengenerate-output)
-- [`apollo help [COMMAND]`](#apollo-help-command)
-- [`apollo queries:check`](#apollo-queriescheck)
-- [`apollo queries:extract OUTPUT`](#apollo-queriesextract-output)
-- [`apollo schema:check`](#apollo-schemacheck)
-- [`apollo schema:download OUTPUT`](#apollo-schemadownload-output)
-- [`apollo schema:publish`](#apollo-schemapublish)
+## `apollo client:check`
 
-## `apollo codegen:generate [OUTPUT]`
+Check a client project against a pushed service
+
+```
+USAGE
+  $ apollo client:check
+
+OPTIONS
+  -c, --config=config                    Path to your Apollo config file
+  -t, --tag=tag                          [default: current] The published tag to check this client against
+  --clientName=clientName                Name of the client that the queries will be attached to
+
+  --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
+                                         clientName if not provided
+
+  --clientVersion=clientVersion          The version of the client that the queries will be attached to
+
+  --endpoint=endpoint                    The url of your service
+
+  --key=key                              The API key for the Apollo Engine service
+
+  --service=service                      Name of service for Apollo engine
+```
+
+_See code: [src/commands/client/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/check.ts)_
+
+## `apollo client:codegen [OUTPUT]`
 
 Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.
 
 ```
 USAGE
-  $ apollo codegen:generate [OUTPUT]
+  $ apollo client:codegen [OUTPUT]
 
 ARGUMENTS
   OUTPUT
       Directory to which generated files will be written.
       - For TypeScript/Flow generators, this specifies a directory relative to each source file by default.
-      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a
+      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a 
       file or directory (absolute or relative to the current working directory) to which:
          - a file will be written for each query (if "output" is a directory)
          - all generated types will be written
-      - For all other types, this defines a file (absolute or relative to the current working directory) to which all
+      - For all other types, this defines a file (absolute or relative to the current working directory) to which all 
       generated types are written.
 
 OPTIONS
-  -h, --help                                 Show command help
+  -c, --config=config                        Path to your Apollo config file
+  -t, --tag=tag                              [default: current] The published service tag for this client
   --addTypename                              Automatically add __typename to your queries
+  --clientName=clientName                    Name of the client that the queries will be attached to
 
-  --clientSchema=clientSchema                Path to your client-side GraphQL schema file for `apollo-link-state`
-                                             (.graphql, .json, .js, .ts)
+  --clientReferenceId=clientReferenceId      Reference id for the client which will match ids from client traces, will
+                                             use clientName if not provided
 
-  --config=config                            Path to your Apollo config file
+  --clientVersion=clientVersion              The version of the client that the queries will be attached to
 
   --customScalarsPrefix=customScalarsPrefix  Include a prefix when using provided types for custom scalars
+
+  --endpoint=endpoint                        The url of your service
 
   --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
                                              "output" directory. Set "globalTypesFile" to specify a different path.
@@ -97,25 +130,84 @@ OPTIONS
 
   --passthroughCustomScalars                 Use your own types for custom scalars
 
-  --queries=queries                          [default: **/*.graphql] Path to your GraphQL queries, can include search
-                                             tokens like **
+  --queries=queries                          Glob of files to watch for recompilation
 
-  --schema=schema                            Path to your GraphQL schema (.graphql, .json, .js, .ts)
+  --service=service                          Name of service for Apollo engine
 
   --tagName=tagName                          [default: gql] Name of the template literal tag used to identify template
                                              literals containing GraphQL queries in Javascript/Typescript code
 
-  --target=target                            Type of code generator to use (swift | typescript | flow | scala), inferred
-                                             from output
+  --target=target                            (required) Type of code generator to use (swift | typescript | flow |
+                                             scala), inferred from output
 
   --useFlowExactObjects                      Use Flow exact objects for generated types [flow only]
 
   --useFlowReadOnlyTypes                     Use Flow read only types for generated types [flow only]
 
-  --watch                                    Watch the query files to auto-generate on changes.
+  --watch                                    Watch for file changes and reload codegen
+
+ALIASES
+  $ apollo codegen:generate
 ```
 
-_See code: [src/commands/codegen/generate.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/codegen/generate.ts)_
+_See code: [src/commands/client/codegen.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/codegen.ts)_
+
+## `apollo client:extract OUTPUT`
+
+Push a service to Engine
+
+```
+USAGE
+  $ apollo client:extract OUTPUT
+
+ARGUMENTS
+  OUTPUT  [default: manifest.json] Path to write the extracted queries to
+
+OPTIONS
+  -c, --config=config                    Path to your Apollo config file
+  -t, --tag=tag                          [default: current] The published service tag for this client
+  --clientName=clientName                Name of the client that the queries will be attached to
+
+  --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
+                                         clientName if not provided
+
+  --clientVersion=clientVersion          The version of the client that the queries will be attached to
+
+  --endpoint=endpoint                    The url of your service
+
+  --key=key                              The API key for the Apollo Engine service
+
+  --service=service                      Name of service for Apollo engine
+```
+
+_See code: [src/commands/client/extract.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/extract.ts)_
+
+## `apollo client:push`
+
+Push a service to Engine
+
+```
+USAGE
+  $ apollo client:push
+
+OPTIONS
+  -c, --config=config                    Path to your Apollo config file
+  -t, --tag=tag                          [default: current] The published service tag for this client
+  --clientName=clientName                Name of the client that the queries will be attached to
+
+  --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
+                                         clientName if not provided
+
+  --clientVersion=clientVersion          The version of the client that the queries will be attached to
+
+  --endpoint=endpoint                    The url of your service
+
+  --key=key                              The API key for the Apollo Engine service
+
+  --service=service                      Name of service for Apollo engine
+```
+
+_See code: [src/commands/client/push.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/push.ts)_
 
 ## `apollo help [COMMAND]`
 
@@ -134,111 +226,181 @@ OPTIONS
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v1.2.11/src/commands/help.ts)_
 
-## `apollo queries:check`
+## `apollo plugins`
 
-Checks your GraphQL operations for compatibility with the server. Checks against the published schema in Apollo Engine.
+list installed plugins
 
 ```
 USAGE
-  $ apollo queries:check
+  $ apollo plugins
 
 OPTIONS
-  -h, --help         Show command help
-  --config=config    Path to your Apollo config file
-  --json             Output result as JSON
-  --key=key          The API key for the Apollo Engine service
-  --queries=queries  Path to your GraphQL queries, can include search tokens like **
+  --core  show core plugins
 
-  --tagName=tagName  [default: gql] Name of the template literal tag used to identify template literals containing
-                     GraphQL queries in Javascript/Typescript code
+EXAMPLE
+  $ apollo plugins
 ```
 
-_See code: [src/commands/queries/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/queries/check.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/index.ts)_
 
-## `apollo queries:extract OUTPUT`
+## `apollo plugins:install PLUGIN...`
 
-Extracts queries
+installs a plugin into the CLI
 
 ```
 USAGE
-  $ apollo queries:extract OUTPUT
+  $ apollo plugins:install PLUGIN...
 
 ARGUMENTS
-  OUTPUT  [default: manifest.json] Path to write the extracted queries to
+  PLUGIN  plugin to install
 
 OPTIONS
-  -h, --help         Show command help
-  --config=config    Path to your Apollo config file
-  --key=key          The API key for the Apollo Engine service
-  --queries=queries  Path to your GraphQL queries, can include search tokens like **
+  -h, --help     show CLI help
+  -v, --verbose
 
-  --tagName=tagName  [default: gql] Name of the template literal tag used to identify template literals containing
-                     GraphQL queries in Javascript/Typescript code
+DESCRIPTION
+  Can be installed from npm or a git url.
+
+  Installation of a user-installed plugin will override a core plugin.
+
+  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command 
+  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in 
+  the CLI without the need to patch and update the whole CLI.
+
+ALIASES
+  $ apollo plugins:add
+
+EXAMPLES
+  $ apollo plugins:install myplugin 
+  $ apollo plugins:install https://github.com/someuser/someplugin
+  $ apollo plugins:install someuser/someplugin
 ```
 
-_See code: [src/commands/queries/extract.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/queries/extract.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/install.ts)_
 
-## `apollo schema:check`
+## `apollo plugins:link PLUGIN`
 
-Check a schema against the version registered in Apollo Engine.
+links a plugin into the CLI for development
 
 ```
 USAGE
-  $ apollo schema:check
+  $ apollo plugins:link PLUGIN
+
+ARGUMENTS
+  PATH  [default: .] path to plugin
 
 OPTIONS
-  -h, --help           Show command help
-  --config=config      Path to your Apollo config file
-  --endpoint=endpoint  The URL of the server to fetch the schema from
-  --header=header      Additional headers to send to server for introspectionQuery
-  --json               Output result as JSON
-  --key=key            The API key for the Apollo Engine service
+  -h, --help     show CLI help
+  -v, --verbose
+
+DESCRIPTION
+  Installation of a linked plugin will override a user-installed or core plugin.
+
+  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello' 
+  command will override the user-installed or core plugin implementation. This is useful for development work.
+
+EXAMPLE
+  $ apollo plugins:link myplugin
 ```
 
-_See code: [src/commands/schema/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/schema/check.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/link.ts)_
 
-## `apollo schema:download OUTPUT`
+## `apollo plugins:uninstall PLUGIN...`
+
+removes a plugin from the CLI
+
+```
+USAGE
+  $ apollo plugins:uninstall PLUGIN...
+
+ARGUMENTS
+  PLUGIN  plugin to uninstall
+
+OPTIONS
+  -h, --help     show CLI help
+  -v, --verbose
+
+ALIASES
+  $ apollo plugins:unlink
+  $ apollo plugins:remove
+```
+
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/uninstall.ts)_
+
+## `apollo plugins:update`
+
+update installed plugins
+
+```
+USAGE
+  $ apollo plugins:update
+
+OPTIONS
+  -h, --help     show CLI help
+  -v, --verbose
+```
+
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/update.ts)_
+
+## `apollo service:check`
+
+Check a service against known operation workloads to find breaking changes
+
+```
+USAGE
+  $ apollo service:check
+
+OPTIONS
+  -c, --config=config  Path to your Apollo config file
+  -t, --tag=tag        [default: current] The published tag to check this service against
+  --endpoint=endpoint  The url of your service
+  --key=key            The API key for the Apollo Engine service
+  --service=service    Name of service for Apollo engine
+```
+
+_See code: [src/commands/service/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/check.ts)_
+
+## `apollo service:download OUTPUT`
 
 Download the schema from your GraphQL endpoint.
 
 ```
 USAGE
-  $ apollo schema:download OUTPUT
+  $ apollo service:download OUTPUT
 
 ARGUMENTS
   OUTPUT  [default: schema.json] Path to write the introspection result to
 
 OPTIONS
-  -h, --help               Show command help
-  -k, --skipSSLValidation  Allow connections to a SSL site without certs
-  --config=config          Path to your Apollo config file
-  --endpoint=endpoint      The URL of the server to fetch the schema from or path to ./your/local/schema.graphql
-  --header=header          Additional headers to send to server for introspectionQuery
-  --key=key                The API key for the Apollo Engine service
+  -c, --config=config  Path to your Apollo config file
+  -t, --tag=tag        [default: current] The published tag to check this service against
+  --endpoint=endpoint  The url of your service
+  --key=key            The API key for the Apollo Engine service
+  --service=service    Name of service for Apollo engine
 ```
 
-_See code: [src/commands/schema/download.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/schema/download.ts)_
+_See code: [src/commands/service/download.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/download.ts)_
 
-## `apollo schema:publish`
+## `apollo service:push`
 
-Publish a schema to Apollo Engine
+Push a service to Engine
 
 ```
 USAGE
-  $ apollo schema:publish
+  $ apollo service:push
 
 OPTIONS
-  -h, --help           Show command help
-  --config=config      Path to your Apollo config file
-  --endpoint=endpoint  The URL of the server to fetch the schema from
-  --header=header      Additional headers to send to server for introspectionQuery
-  --json               Output successful publish result as JSON
+  -c, --config=config  Path to your Apollo config file
+  -t, --tag=tag        [default: current] The published tag to check this service against
+  --endpoint=endpoint  The url of your service
   --key=key            The API key for the Apollo Engine service
-  --tag=tag            The tag to publish the schema to
+  --service=service    Name of service for Apollo engine
+
+ALIASES
+  $ apollo schema:publish
 ```
 
-_See code: [src/commands/schema/publish.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/schema/publish.ts)_
-
+_See code: [src/commands/service/push.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/push.ts)_
 <!-- commandsstop -->
 
 # Configuration

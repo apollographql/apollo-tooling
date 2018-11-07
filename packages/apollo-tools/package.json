@@ -1,6 +1,6 @@
 {
   "name": "@apollographql/apollo-tools",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -16,7 +16,6 @@
     "node": ">=8",
     "npm": ">=6"
   },
-  "dependencies": {},
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
