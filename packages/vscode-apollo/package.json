@@ -21,7 +21,7 @@
     "package-extension": "rm -rf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink"
   },
   "engines": {
-    "vscode": "^1.23.0"
+    "vscode": "^1.28.0"
   },
   "dependencies": {
     "apollo-env": "file:../apollo-env",
