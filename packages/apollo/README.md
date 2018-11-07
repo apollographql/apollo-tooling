@@ -449,18 +449,19 @@ module.exports = {
 
 The service config needs to know how to fetch the schema for that service. This can be done with either an endpoint config or a filepath of a generated SDL file
 
-````js
+```js
 module.exports = {
   service: {
     name: "my-service",
     // this is the default endpoint info
     endpoint: {
-      url: "https://localhost:4000/graphql
+      url: "https://localhost:4000/graphql"
     },
     // or a local generated schema
     localSchemaFile: "./path/to/sdl.graphql"
   }
 }
+```
 
 # Code Generation
 
@@ -478,7 +479,7 @@ The tag name is configurable using the CLI `--tagName` option.
 
 When using the codegen command with Typescript or Flow, make sure to add the `__typename` introspection field to every selection set within your graphql operations.
 
-If you're using a client like `apollo-client` that does this automatically for your GraphQL operations, pass in the `--addTypename` option to `apollo codegen:generate` to make sure the generated Typescript and Flow types have the `__typename` field as well. This is required to ensure proper type generation support for `GraphQLUnionType` and `GraphQLInterfaceType` fields.
+If you are using a client like `apollo-client` that does this automatically for your GraphQL operations, pass in the `--addTypename` option to `apollo codegen:generate` to make sure the generated Typescript and Flow types have the `__typename` field as well. This is required to ensure proper type generation support for `GraphQLUnionType` and `GraphQLInterfaceType` fields.
 
 ## Why is the \_\_typename field required?
 
@@ -544,7 +545,6 @@ export type CharactersQuery = {
   >
 };
 ```
-
 This type can then be used as follows to ensure that all possible types are handled:
 
 ```javascript
