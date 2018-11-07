@@ -111,7 +111,9 @@ export default class Generate extends ClientCommand {
   ];
 
   async run() {
-    const { flags, args } = this.parse(Generate);
+    const {
+      flags: { watch, queries }
+    } = this.parse(Generate);
 
     const run = () =>
       this.runTasks(({ flags, args, project }) => {
@@ -153,7 +155,11 @@ export default class Generate extends ClientCommand {
             title: "Generating query files",
             task: async (ctx, task) => {
               task.title = `Generating query files with '${inferredTarget}' target`;
-              const schema = await project.resolveSchema({ tag: flags.tag });
+              console.log({ tag: flags.tag });
+              const schema = await project.resolveSchema({
+                tag: flags.tag,
+                force: true
+              });
 
               if (!schema) throw new Error("Error loading schema");
               const write = () => {
@@ -211,9 +217,9 @@ export default class Generate extends ClientCommand {
         ];
       });
 
-    if (flags.watch) {
+    if (watch) {
       await run().catch(() => {});
-      const watcher = new Gaze(flags.queries!);
+      const watcher = new Gaze(queries!);
       watcher.on("all", (event, file) => {
         // console.log("\nChange detected, generating types...");
         this.project.fileDidChange(Uri.file(file).toString());
