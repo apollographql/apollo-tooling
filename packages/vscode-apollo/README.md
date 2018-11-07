@@ -3,7 +3,7 @@
 An all-in-one tooling experience for developing apps with Apollo
 
 - Get instant feedback and intelligent autocomplete as you write queries
-- Seamlessly managed your client side schema alongside your remote one
+- Seamlessly manage your client side schema alongside your remote one
 - View performance statistics next to your query definitions
 
 ## Features
