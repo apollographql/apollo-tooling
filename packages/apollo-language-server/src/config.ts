@@ -84,7 +84,7 @@ export const DefaultClientConfig = {
 };
 
 export interface ServiceConfigFormat extends ConfigBase {
-  name: string;
+  name?: string;
   endpoint?: Exclude<RemoteServiceConfig, "name">;
   localSchemaFile?: string;
 }
@@ -159,7 +159,9 @@ export const parseServiceSpecificer = (
   return [id, tag];
 };
 
-export const getServiceName = (config: ApolloConfigFormat): string => {
+export const getServiceName = (
+  config: ApolloConfigFormat
+): string | undefined => {
   if (config.service) return config.service.name;
   if (typeof (config.client!.service as ServiceSpecifier) === "string") {
     return parseServiceSpecificer(config.client!
@@ -173,7 +175,7 @@ export class ApolloConfig {
   public isClient: boolean;
   public isService: boolean;
   public engine: EngineConfig;
-  public name: string;
+  public name?: string;
   public service?: ServiceConfigFormat;
   public client?: ClientConfigFormat;
   private _tag?: string;

@@ -103,7 +103,7 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   get displayName(): string {
-    return this.config.name || "<Unnamed>";
+    return this.config.name || "Unnamed Project";
   }
 
   initialize() {

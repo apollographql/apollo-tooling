@@ -1,7 +1,6 @@
 {
   "name": "@apollographql/apollo-tools",
   "version": "0.2.0",
-  "private": true,
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {
