@@ -26,6 +26,12 @@ export interface ProjectContext<Flags = any, Args = any> {
   args: Args;
 }
 
+const getServiceFromKey = (key): string | undefined => {
+  const [type, service] = key.split(":");
+  if (type === "service") return service;
+  return;
+};
+
 export abstract class ProjectCommand extends Command {
   static flags = {
     config: flags.string({
@@ -79,9 +85,9 @@ export abstract class ProjectCommand extends Command {
   protected async createConfig(flags: any) {
     let { service } = flags;
     if (!service && flags.key) {
-      if (flags.key) service = flags.key.split(":")[1];
+      if (flags.key) service = getServiceFromKey(flags.key);
       if (process.env.ENGINE_API_KEY)
-        service = process.env.ENGINE_API_KEY.split(":")[1];
+        service = getServiceFromKey(process.env.ENGINE_API_KEY);
     }
     const loadedConfig = await loadConfig({
       cwd: flags.config,
