@@ -77,9 +77,15 @@ export abstract class ProjectCommand extends Command {
   }
 
   protected async createConfig(flags: any) {
+    let { service } = flags;
+    if (!service && flags.key) {
+      if (flags.key) service = flags.key.split(":")[1];
+      if (process.env.ENGINE_API_KEY)
+        service = process.env.ENGINE_API_KEY.split(":")[1];
+    }
     const loadedConfig = await loadConfig({
       cwd: flags.config,
-      name: flags.service,
+      name: service,
       type: this.type
     });
     const { config, filepath, isEmpty } = loadedConfig!;
