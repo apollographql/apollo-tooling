@@ -449,18 +449,19 @@ module.exports = {
 
 The service config needs to know how to fetch the schema for that service. This can be done with either an endpoint config or a filepath of a generated SDL file
 
-````js
+```js
 module.exports = {
   service: {
     name: "my-service",
     // this is the default endpoint info
     endpoint: {
-      url: "https://localhost:4000/graphql
+      url: "https://localhost:4000/graphql"
     },
     // or a local generated schema
     localSchemaFile: "./path/to/sdl.graphql"
   }
 }
+```
 
 # Code Generation
 
