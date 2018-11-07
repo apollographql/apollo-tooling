@@ -84,10 +84,10 @@ export abstract class ProjectCommand extends Command {
 
   protected async createConfig(flags: any) {
     let { service } = flags;
-    if (!service && flags.key) {
-      if (flags.key) service = getServiceFromKey(flags.key);
+    if (!service) {
       if (process.env.ENGINE_API_KEY)
         service = getServiceFromKey(process.env.ENGINE_API_KEY);
+      if (flags.key) service = getServiceFromKey(flags.key);
     }
     const loadedConfig = await loadConfig({
       cwd: flags.config,
