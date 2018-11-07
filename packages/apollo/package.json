@@ -31,6 +31,7 @@
     "npm": ">=6"
   },
   "dependencies": {
+    "@apollographql/apollo-tools": "file:../apollo-tools",
     "@oclif/command": "^1.4.21",
     "@oclif/config": "^1.6.17",
     "@oclif/plugin-autocomplete": "^0.1.0",
