@@ -35,6 +35,9 @@ export abstract class ProjectCommand extends Command {
     service: flags.string({
       description: "Name of service for Apollo engine"
     }),
+    endpoint: flags.string({
+      description: "The url of your service"
+    }),
     key: flags.string({
       description: "The API key for the Apollo Engine service",
       default: () => process.env.ENGINE_API_KEY
@@ -80,6 +83,7 @@ export abstract class ProjectCommand extends Command {
       type: this.type
     });
     const { config, filepath, isEmpty } = loadedConfig!;
+    if (flags.tag) config.tag = flags.tag;
     //  flag overides
     config.setDefaults({
       engine: {
@@ -88,6 +92,12 @@ export abstract class ProjectCommand extends Command {
         frontend: flags.frontend
       }
     });
+
+    if (flags.endpoint) {
+      config.setDefaults({
+        service: { endpoint: { url: flags.endpoint } }
+      });
+    }
 
     // load per command type defaults;
     if (this.configMap) {

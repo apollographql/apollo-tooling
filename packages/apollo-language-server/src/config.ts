@@ -176,6 +176,7 @@ export class ApolloConfig {
   public name: string;
   public service?: ServiceConfigFormat;
   public client?: ClientConfigFormat;
+  private _tag?: string;
 
   constructor(public rawConfig: ApolloConfigFormat) {
     this.isService = !!rawConfig.service;
@@ -190,7 +191,12 @@ export class ApolloConfig {
     return projectsFromConfig(this.rawConfig);
   }
 
+  set tag(tag: string) {
+    this._tag = tag;
+  }
+
   get tag(): string {
+    if (this._tag) return this._tag;
     let tag: string = "current";
     if (
       this.client &&

@@ -155,10 +155,8 @@ export default class Generate extends ClientCommand {
             title: "Generating query files",
             task: async (ctx, task) => {
               task.title = `Generating query files with '${inferredTarget}' target`;
-              // TODO(jbaxleyiii) this isn't pulling the correct tag
               const schema = await project.resolveSchema({
-                tag: flags.tag,
-                force: true
+                tag: flags.tag
               });
 
               if (!schema) throw new Error("Error loading schema");
