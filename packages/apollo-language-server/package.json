@@ -1,4 +1,4 @@
-"dotenv": "^6.1.0",{
+{
   "name": "apollo-language-server",
   "description": "A language server for Apollo GraphQL projects",
   "version": "1.0.1",
