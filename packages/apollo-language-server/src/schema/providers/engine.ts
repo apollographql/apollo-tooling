@@ -68,29 +68,31 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
 }
 
 export const SCHEMA_QUERY = gql`
-  query GetSchemaByTag($id: ID!, $tag: String!) {
-    service(id: $id) {
-      schema(tag: $tag) {
-        hash
-        __schema: introspection {
-          queryType {
-            name
-          }
-          mutationType {
-            name
-          }
-          subscriptionType {
-            name
-          }
-          types {
-            ...IntrospectionFullType
-          }
-          directives {
-            name
-            description
-            locations
-            args {
-              ...IntrospectionInputValue
+  query GetSchemaByTag($tag: String!) {
+    service: me {
+      ... on Service {
+        schema(tag: $tag) {
+          hash
+          __schema: introspection {
+            queryType {
+              name
+            }
+            mutationType {
+              name
+            }
+            subscriptionType {
+              name
+            }
+            types {
+              ...IntrospectionFullType
+            }
+            directives {
+              name
+              description
+              locations
+              args {
+                ...IntrospectionInputValue
+              }
             }
           }
         }

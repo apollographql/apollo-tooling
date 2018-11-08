@@ -67,9 +67,18 @@ export type ServiceSpecifier = string;
 export type StatsWindowSize = number;
 export type FieldStats = Map<string, Map<string, number>>;
 
-export function noServiceError(service: string, endpoint?: string) {
-  return `Could not find service ${service} from Engine at ${endpoint}. Please check your API key and service name`;
+export function noServiceError(service: string | undefined, endpoint?: string) {
+  return `Could not find service ${
+    service ? service : ""
+  } from Engine at ${endpoint}. Please check your API key and service name`;
 }
+
+const getServiceFromKey = (key: string | undefined): string | undefined => {
+  if (!key) return "";
+  const [type, service] = key.split(":");
+  if (type === "service") return service;
+  return;
+};
 
 export class ApolloEngineClient extends GraphQLDataSource {
   constructor(
@@ -116,7 +125,9 @@ export class ApolloEngineClient extends GraphQLDataSource {
       variables
     }).then(({ data, errors }) => {
       if (data && !data.service) {
-        throw new Error(noServiceError(variables.id, this.baseURL));
+        throw new Error(
+          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+        );
       }
       // use error logger
       // if (errors) {
@@ -135,7 +146,9 @@ export class ApolloEngineClient extends GraphQLDataSource {
       variables
     }).then(({ data, errors }) => {
       if (data && !data.service) {
-        throw new Error(noServiceError(variables.id, this.baseURL));
+        throw new Error(
+          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+        );
       }
       // use error logger
       // if (errors) {
@@ -152,7 +165,9 @@ export class ApolloEngineClient extends GraphQLDataSource {
     return this.execute({ query: CHECK_OPERATIONS, variables }).then(
       ({ data, errors }) => {
         if (data && !data.service) {
-          throw new Error(noServiceError(variables.id, this.baseURL));
+          throw new Error(
+            noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+          );
         }
         // use error logger
         // if (errors) {
@@ -170,7 +185,9 @@ export class ApolloEngineClient extends GraphQLDataSource {
     return this.execute({ query: REGISTER_OPERATIONS, variables }).then(
       ({ data, errors }) => {
         if (data && !data.service) {
-          throw new Error(noServiceError(variables.id, this.baseURL));
+          throw new Error(
+            noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+          );
         }
         // use error logger
         // if (errors) {

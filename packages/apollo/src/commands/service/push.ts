@@ -25,13 +25,12 @@ export default class ServicePush extends ProjectCommand {
         title: "Uploading service to Engine",
         task: async () => {
           if (!config.name) {
-            throw new Error("No service name found to link to Engine");
+            throw new Error("No service found to link to Engine");
           }
           const schema = await project.resolveSchema({ tag: flags.tag });
           gitContext = await gitInfo();
 
           const { tag, code } = await project.engine.uploadSchema({
-            id: config.name,
             schema: introspectionFromSchema(schema).__schema,
             tag: flags.tag,
             gitContext

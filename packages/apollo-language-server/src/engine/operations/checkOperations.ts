@@ -15,21 +15,22 @@ export interface CheckOperationsVariables {
 
 export const CHECK_OPERATIONS = gql`
   mutation CheckOperations(
-    $id: ID!
     $operations: [QueryDocumentInput!]!
     $tag: String
     $gitContext: GitContextInput
   ) {
-    service(id: $id) {
-      checkOperations(
-        tag: $tag
-        operations: $operations
-        gitContext: $gitContext
-      ) {
-        changes {
-          type
-          code
-          description
+    service: me {
+      ... on Service {
+        checkOperations(
+          tag: $tag
+          operations: $operations
+          gitContext: $gitContext
+        ) {
+          changes {
+            type
+            code
+            description
+          }
         }
       }
     }
