@@ -3,7 +3,12 @@ import {
   SchemaChangeUnsubscribeHandler,
   SchemaResolveConfig
 } from "./base";
-import { ApolloConfig, isClientConfig, isServiceConfig } from "../../config";
+import {
+  ApolloConfig,
+  isClientConfig,
+  isServiceConfig,
+  isLocalServiceConfig
+} from "../../config";
 
 import { IntrospectionSchemaProvider } from "./introspection";
 import { EngineSchemaProvider } from "./engine";
@@ -22,6 +27,7 @@ export function schemaProviderFromConfig(
     if (config.service.localSchemaFile) {
       return new FileSchemaProvider({ path: config.service.localSchemaFile });
     }
+
     if (config.service.endpoint) {
       return new IntrospectionSchemaProvider(config.service.endpoint);
     }
@@ -30,7 +36,15 @@ export function schemaProviderFromConfig(
   if (isClientConfig(config)) {
     if (typeof config.client.service === "string") {
       return new EngineSchemaProvider(config);
-    } else if (config.client.service) {
+    }
+
+    if (config.client.service) {
+      if (isLocalServiceConfig(config.client.service)) {
+        return new FileSchemaProvider({
+          path: config.client.service.localSchemaFile
+        });
+      }
+
       return new IntrospectionSchemaProvider(config.client.service);
     }
   }
