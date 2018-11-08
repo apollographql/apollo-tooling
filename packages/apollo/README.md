@@ -422,7 +422,7 @@ module.exports = {
 
 ### Service Configuration
 
-When linking a client to a service, you can either use the name of a service that has been publishedto the Apollo service registry, or you can use a remote url that supports introspection
+When linking a client to a service, you can either use the name of a service that has been published to the Apollo service registry, or you can use a remote url that supports introspection
 
 ```js
 module.exports = {
