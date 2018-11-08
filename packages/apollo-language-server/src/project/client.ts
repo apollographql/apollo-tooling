@@ -14,7 +14,11 @@ import {
   separateOperations,
   OperationDefinitionNode,
   extendSchema,
-  DocumentNode
+  DocumentNode,
+  GraphQLType,
+  FieldNode,
+  ASTNode,
+  ObjectTypeDefinitionNode
 } from "graphql";
 
 import { NotificationHandler, DiagnosticSeverity } from "vscode-languageserver";
@@ -76,7 +80,6 @@ export class GraphQLClientProject extends GraphQLProject {
   public config!: ClientConfig;
 
   private serviceSchema?: GraphQLSchema;
-  public schema?: GraphQLSchema;
 
   private _onDecorations?: (any: any) => void;
   private _onSchemaTags?: NotificationHandler<[ServiceID, SchemaTag[]]>;
@@ -120,6 +123,7 @@ export class GraphQLClientProject extends GraphQLProject {
 
   async updateSchemaTag(tag: SchemaTag) {
     await this.loadServiceSchema(tag);
+    this.invalidate();
   }
 
   private async loadServiceSchema(tag?: SchemaTag) {
@@ -132,7 +136,7 @@ export class GraphQLClientProject extends GraphQLProject {
             force: true
           })
         );
-        // await this.validate();
+
         this.schema = extendSchema(this.serviceSchema, this.clientSchema);
       })()
     );
@@ -330,6 +334,31 @@ export class GraphQLClientProject extends GraphQLProject {
     return filtered;
   }
 
+  getOperationFieldsFromFieldDefinition(
+    fieldName: string,
+    parent: ObjectTypeDefinitionNode | null
+  ): FieldNode[] {
+    if (!this.schema || !parent) return [];
+    const fields: FieldNode[] = [];
+    const typeInfo = new TypeInfo(this.schema);
+    for (const document of this.documents) {
+      if (!document.ast) continue;
+      visit(
+        document.ast,
+        visitWithTypeInfo(typeInfo, {
+          Field(node: FieldNode) {
+            if (node.name.value !== fieldName) return;
+            const parentType = typeInfo.getParentType();
+            if (parentType && parentType.name === parent.name.value) {
+              fields.push(node);
+            }
+            return;
+          }
+        })
+      );
+    }
+    return fields;
+  }
   fragmentSpreadsForFragment(fragmentName: string): FragmentSpreadNode[] {
     const fragmentSpreads: FragmentSpreadNode[] = [];
     for (const document of this.documents) {

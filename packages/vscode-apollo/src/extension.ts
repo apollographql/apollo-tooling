@@ -42,7 +42,6 @@ export function activate(context: ExtensionContext) {
     join("node_modules/apollo-language-server/lib", "server.js")
   );
   const debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
-  const statusBar = new StatusBar();
   let schemaTagItems: QuickPickItem[] = [];
 
   const serverOptions: ServerOptions = {
@@ -89,6 +88,8 @@ export function activate(context: ExtensionContext) {
     serverOptions,
     clientOptions
   );
+  const statusBar = new StatusBar(context, client);
+
   client.registerProposedFeatures();
   context.subscriptions.push(client.start());
 

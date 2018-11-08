@@ -58,6 +58,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   protected documentsByFile: Map<DocumentUri, GraphQLDocument[]> = new Map();
 
   public config: ApolloConfig;
+  public schema?: GraphQLSchema;
   private fileSet: FileSet;
   protected loadingHandler: LoadingHandler;
 
@@ -75,7 +76,8 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     if (engine.apiKey) {
       this._engineClient = new ApolloEngineClient(
         engine.apiKey!,
-        engine.endpoint
+        engine.endpoint,
+        clientIdentity
       );
     }
 

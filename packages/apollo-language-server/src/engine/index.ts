@@ -85,7 +85,6 @@ export class ApolloEngineClient extends GraphQLDataSource {
   willSendRequest(request: any) {
     if (!request.headers) request.headers = {};
     request.headers["x-api-key"] = this.engineKey;
-
     if (this.clientIdentity && this.clientIdentity.name) {
       request.headers["apollo-client-name"] = this.clientIdentity.name;
       request.headers[

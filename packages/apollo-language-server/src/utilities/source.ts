@@ -93,7 +93,6 @@ export function getASTNodeAndTypeInfoAtPosition(
   let nodeContainingPosition: ASTNode | null = null;
 
   const typeInfo = new TypeInfo(schema);
-
   visit(
     root,
     visitWithTypeInfo(typeInfo, {

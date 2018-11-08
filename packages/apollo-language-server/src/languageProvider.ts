@@ -25,7 +25,8 @@ import { DocumentUri } from "./project/base";
 import {
   positionFromPositionInContainingDocument,
   rangeForASTNode,
-  getASTNodeAndTypeInfoAtPosition
+  getASTNodeAndTypeInfoAtPosition,
+  positionToOffset
 } from "./utilities/source";
 
 import {
@@ -43,12 +44,18 @@ import {
   isListType,
   GraphQLList,
   isNonNullType,
-  ASTNode
+  ASTNode,
+  FieldDefinitionNode,
+  FieldNode,
+  visit,
+  BREAK,
+  ObjectTypeDefinitionNode
 } from "graphql";
 import { highlightNodeForNode } from "./utilities/graphql";
 
-import { GraphQLClientProject } from "./project/client";
+import { GraphQLClientProject, isClientProject } from "./project/client";
 import { isNotNullOrUndefined } from "@apollographql/apollo-tools";
+import { notDeepEqual } from "assert";
 
 function hasFields(type: GraphQLType): boolean {
   return (
@@ -301,6 +308,7 @@ ${argumentNode.description ? argumentNode.description : ""}
             return locationForASTNode(fragment);
           }
           break;
+
         case Kind.FIELD: {
           const fieldDef = typeInfo.getFieldDef();
 
@@ -327,8 +335,7 @@ ${argumentNode.description ? argumentNode.description : ""}
     _token: CancellationToken
   ): Promise<Location[] | null> {
     const project = this.workspace.projectForFile(uri);
-    if (!(project && project instanceof GraphQLClientProject)) return null;
-
+    if (!project) return null;
     const document = project.documentAt(uri, position);
     if (!(document && document.ast)) return null;
 
@@ -347,14 +354,53 @@ ${argumentNode.description ? argumentNode.description : ""}
     );
 
     if (nodeAndTypeInfo) {
-      const [node] = nodeAndTypeInfo;
+      const [node, typeInfo] = nodeAndTypeInfo;
 
       switch (node.kind) {
         case Kind.FRAGMENT_DEFINITION: {
+          if (!isClientProject(project)) return null;
           const fragmentName = node.name.value;
           return project
             .fragmentSpreadsForFragment(fragmentName)
             .map(fragmentSpread => locationForASTNode(fragmentSpread))
+            .filter(isNotNullOrUndefined);
+        }
+        // TODO(jbaxleyiii): manage no parent type references (unions + scalars)
+        // TODO(jbaxleyiii): support more than fields
+        case Kind.FIELD_DEFINITION: {
+          // case Kind.ENUM_VALUE_DEFINITION:
+          // case Kind.INPUT_OBJECT_TYPE_DEFINITION:
+          // case Kind.INPUT_OBJECT_TYPE_EXTENSION: {
+          if (!isClientProject(project)) return null;
+          const offset = positionToOffset(document.source, positionInDocument);
+          // withWithTypeInfo doesn't suppport SDL so we instead
+          // write our own visitor methods here to collect the fields that we
+          // care about
+          let parent: ASTNode | null = null;
+          visit(document.ast, {
+            enter(node: ASTNode) {
+              // the parent types we care about
+              if (
+                node.loc &&
+                node.loc.start <= offset &&
+                offset <= node.loc.end &&
+                (node.kind === Kind.OBJECT_TYPE_DEFINITION ||
+                  node.kind === Kind.OBJECT_TYPE_EXTENSION ||
+                  node.kind === Kind.INTERFACE_TYPE_DEFINITION ||
+                  node.kind === Kind.INTERFACE_TYPE_EXTENSION ||
+                  node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION ||
+                  node.kind === Kind.INPUT_OBJECT_TYPE_EXTENSION ||
+                  node.kind === Kind.ENUM_TYPE_DEFINITION ||
+                  node.kind === Kind.ENUM_TYPE_EXTENSION)
+              ) {
+                parent = node;
+              }
+              return;
+            }
+          });
+          return project
+            .getOperationFieldsFromFieldDefinition(node.name.value, parent)
+            .map(fieldNode => locationForASTNode(fieldNode))
             .filter(isNotNullOrUndefined);
         }
       }
