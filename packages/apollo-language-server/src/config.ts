@@ -33,6 +33,11 @@ export interface RemoteServiceConfig {
   skipSSLValidation?: boolean;
 }
 
+export interface LocalServiceConfig {
+  name: ServiceID;
+  localSchemaFile: string;
+}
+
 export interface EngineConfig {
   endpoint?: EndpointURI;
   frontend?: EndpointURI;
@@ -54,9 +59,11 @@ export interface ConfigBase {
   excludes: string[];
 }
 
+export type ClientServiceConfig = RemoteServiceConfig | LocalServiceConfig;
+
 export interface ClientConfigFormat extends ConfigBase {
   // service linking
-  service?: ServiceSpecifier | RemoteServiceConfig;
+  service?: ServiceSpecifier | ClientServiceConfig;
   // client identity
   name?: ClientID;
   referenceID?: string;
@@ -228,6 +235,12 @@ export class ServiceConfig extends ApolloConfig {
 
 export function isClientConfig(config: ApolloConfig): config is ClientConfig {
   return config.isClient;
+}
+
+export function isLocalServiceConfig(
+  config: ClientServiceConfig
+): config is LocalServiceConfig {
+  return !!(config as LocalServiceConfig).localSchemaFile;
 }
 
 export function isServiceConfig(config: ApolloConfig): config is ServiceConfig {
