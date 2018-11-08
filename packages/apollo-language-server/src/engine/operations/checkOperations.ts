@@ -19,18 +19,16 @@ export const CHECK_OPERATIONS = gql`
     $tag: String
     $gitContext: GitContextInput
   ) {
-    service: me {
-      ... on Service {
-        checkOperations(
-          tag: $tag
-          operations: $operations
-          gitContext: $gitContext
-        ) {
-          changes {
-            type
-            code
-            description
-          }
+    service(id: $id) {
+      checkOperations(
+        tag: $tag
+        operations: $operations
+        gitContext: $gitContext
+      ) {
+        changes {
+          type
+          code
+          description
         }
       }
     }

@@ -38,8 +38,13 @@ export abstract class ProjectCommand extends Command {
       char: "c",
       description: "Path to your Apollo config file"
     }),
-    service: flags.string({
-      description: "Name of service for Apollo engine"
+    header: flags.string({
+      multiple: true,
+      parse: header => {
+        const [key, value] = header.split(":");
+        return JSON.stringify({ [key.trim()]: value.trim() });
+      },
+      description: "Additional headers to send to server for introspectionQuery"
     }),
     endpoint: flags.string({
       description: "The url of your service"
@@ -83,12 +88,10 @@ export abstract class ProjectCommand extends Command {
   }
 
   protected async createConfig(flags: any) {
-    let { service } = flags;
-    if (!service) {
-      if (process.env.ENGINE_API_KEY)
-        service = getServiceFromKey(process.env.ENGINE_API_KEY);
-      if (flags.key) service = getServiceFromKey(flags.key);
-    }
+    let service;
+    if (process.env.ENGINE_API_KEY)
+      service = getServiceFromKey(process.env.ENGINE_API_KEY);
+    if (flags.key) service = getServiceFromKey(flags.key);
     const loadedConfig = await loadConfig({
       cwd: flags.config,
       name: service,
@@ -107,7 +110,7 @@ export abstract class ProjectCommand extends Command {
 
     if (flags.endpoint) {
       config.setDefaults({
-        service: { endpoint: { url: flags.endpoint } }
+        service: { endpoint: { url: flags.endpoint, headers: flags.header } }
       });
     }
 

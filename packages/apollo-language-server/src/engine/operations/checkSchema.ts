@@ -25,35 +25,34 @@ export interface CheckSchemaVariables {
 
 export const CHECK_SCHEMA = gql`
   mutation CheckSchema(
+    $id: ID!
     $schema: IntrospectionSchemaInput!
     $tag: String
     $gitContext: GitContextInput
     $historicParameters: HistoricQueryParameters
     $frontend: String
   ) {
-    service: me {
-      ... on Service {
-        checkSchema(
-          proposedSchema: $schema
-          baseSchemaTag: $tag
-          gitContext: $gitContext
-          historicParameters: $historicParameters
-          frontend: $frontend
-        ) {
-          targetUrl
-          diffToPrevious {
+    service(id: $id) {
+      checkSchema(
+        proposedSchema: $schema
+        baseSchemaTag: $tag
+        gitContext: $gitContext
+        historicParameters: $historicParameters
+        frontend: $frontend
+      ) {
+        targetUrl
+        diffToPrevious {
+          type
+          changes {
             type
-            changes {
-              type
-              code
-              description
-            }
-            validationConfig {
-              from
-              to
-              queryCountThreshold
-              queryCountThresholdPercentage
-            }
+            code
+            description
+          }
+          validationConfig {
+            from
+            to
+            queryCountThreshold
+            queryCountThresholdPercentage
           }
         }
       }

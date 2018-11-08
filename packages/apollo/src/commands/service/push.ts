@@ -31,6 +31,7 @@ export default class ServicePush extends ProjectCommand {
           gitContext = await gitInfo();
 
           const { tag, code } = await project.engine.uploadSchema({
+            id: config.name,
             schema: introspectionFromSchema(schema).__schema,
             tag: flags.tag,
             gitContext

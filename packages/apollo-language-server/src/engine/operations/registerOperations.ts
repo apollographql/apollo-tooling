@@ -14,22 +14,22 @@ export interface RegisteredClientIdentityInput {
   version?: String;
 }
 export interface RegisterOperationsVariables {
+  id: string;
   clientIdentity: RegisteredClientIdentityInput;
   operations: RegisteredOperationInput[];
 }
 
 export const REGISTER_OPERATIONS = gql`
   mutation RegisterOperations(
+    $id: ID!
     $clientIdentity: RegisteredClientIdentityInput!
     $operations: [RegisteredOperationInput!]!
   ) {
-    service: me {
-      ... on Service {
-        registerOperations(
-          clientIdentity: $clientIdentity
-          operations: $operations
-        )
-      }
+    service(id: $id) {
+      registerOperations(
+        clientIdentity: $clientIdentity
+        operations: $operations
+      )
     }
   }
 `;
