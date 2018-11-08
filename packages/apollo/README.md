@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.0.7 linux-x64 node-v10.5.0
+apollo/2.0.8 darwin-x64 node-v10.12.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -32,12 +32,182 @@ USAGE
 # Commands
 
 <!-- commands -->
+* [`apollo client:check`](#apollo-clientcheck)
+* [`apollo client:codegen [OUTPUT]`](#apollo-clientcodegen-output)
+* [`apollo client:extract OUTPUT`](#apollo-clientextract-output)
+* [`apollo client:push`](#apollo-clientpush)
 * [`apollo help [COMMAND]`](#apollo-help-command)
 * [`apollo plugins`](#apollo-plugins)
 * [`apollo plugins:install PLUGIN...`](#apollo-pluginsinstall-plugin)
 * [`apollo plugins:link PLUGIN`](#apollo-pluginslink-plugin)
 * [`apollo plugins:uninstall PLUGIN...`](#apollo-pluginsuninstall-plugin)
 * [`apollo plugins:update`](#apollo-pluginsupdate)
+* [`apollo service:check`](#apollo-servicecheck)
+* [`apollo service:download OUTPUT`](#apollo-servicedownload-output)
+* [`apollo service:push`](#apollo-servicepush)
+
+## `apollo client:check`
+
+Check a client project against a pushed service
+
+```
+USAGE
+  $ apollo client:check
+
+OPTIONS
+  -c, --config=config                    Path to your Apollo config file
+  -t, --tag=tag                          [default: current] The published tag to check this client against
+  --clientName=clientName                Name of the client that the queries will be attached to
+
+  --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
+                                         clientName if not provided
+
+  --clientVersion=clientVersion          The version of the client that the queries will be attached to
+
+  --endpoint=endpoint                    The url of your service
+
+  --header=header                        Additional headers to send to server for introspectionQuery
+
+  --key=key                              The API key for the Apollo Engine service
+```
+
+_See code: [src/commands/client/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/check.ts)_
+
+## `apollo client:codegen [OUTPUT]`
+
+Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.
+
+```
+USAGE
+  $ apollo client:codegen [OUTPUT]
+
+ARGUMENTS
+  OUTPUT
+      Directory to which generated files will be written.
+      - For TypeScript/Flow generators, this specifies a directory relative to each source file by default.
+      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a 
+      file or directory (absolute or relative to the current working directory) to which:
+         - a file will be written for each query (if "output" is a directory)
+         - all generated types will be written
+      - For all other types, this defines a file (absolute or relative to the current working directory) to which all 
+      generated types are written.
+
+OPTIONS
+  -c, --config=config                        Path to your Apollo config file
+  -t, --tag=tag                              [default: current] The published service tag for this client
+  --addTypename                              Automatically add __typename to your queries
+  --clientName=clientName                    Name of the client that the queries will be attached to
+
+  --clientReferenceId=clientReferenceId      Reference id for the client which will match ids from client traces, will
+                                             use clientName if not provided
+
+  --clientVersion=clientVersion              The version of the client that the queries will be attached to
+
+  --customScalarsPrefix=customScalarsPrefix  Include a prefix when using provided types for custom scalars
+
+  --endpoint=endpoint                        The url of your service
+
+  --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
+                                             "output" directory. Set "globalTypesFile" to specify a different path.
+
+  --header=header                            Additional headers to send to server for introspectionQuery
+
+  --key=key                                  The API key for the Apollo Engine service
+
+  --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
+
+  --namespace=namespace                      The namespace to emit generated code into.
+
+  --only=only                                Parse all input files, but only output generated code for the specified
+                                             file [Swift only]
+
+  --operationIdsPath=operationIdsPath        Path to an operation id JSON map file. If specified, also stores the
+                                             operation ids (hashes) as properties on operation types [currently
+                                             Swift-only]
+
+  --outputFlat                               By default, TypeScript/Flow will put each generated file in a directory
+                                             next to its source file using the value of the "output" as the directory
+                                             name. Set "outputFlat" to put all generated files in the directory relative
+                                             to the current working directory defined by "output".
+
+  --passthroughCustomScalars                 Use your own types for custom scalars
+
+  --queries=queries                          Glob of files to watch for recompilation
+
+  --tagName=tagName                          [default: gql] Name of the template literal tag used to identify template
+                                             literals containing GraphQL queries in Javascript/Typescript code
+
+  --target=target                            (required) Type of code generator to use (swift | typescript | flow |
+                                             scala), inferred from output
+
+  --useFlowExactObjects                      Use Flow exact objects for generated types [flow only]
+
+  --useFlowReadOnlyTypes                     Use Flow read only types for generated types [flow only]
+
+  --watch                                    Watch for file changes and reload codegen
+
+ALIASES
+  $ apollo codegen:generate
+```
+
+_See code: [src/commands/client/codegen.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/codegen.ts)_
+
+## `apollo client:extract OUTPUT`
+
+Push a service to Engine
+
+```
+USAGE
+  $ apollo client:extract OUTPUT
+
+ARGUMENTS
+  OUTPUT  [default: manifest.json] Path to write the extracted queries to
+
+OPTIONS
+  -c, --config=config                    Path to your Apollo config file
+  -t, --tag=tag                          [default: current] The published service tag for this client
+  --clientName=clientName                Name of the client that the queries will be attached to
+
+  --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
+                                         clientName if not provided
+
+  --clientVersion=clientVersion          The version of the client that the queries will be attached to
+
+  --endpoint=endpoint                    The url of your service
+
+  --header=header                        Additional headers to send to server for introspectionQuery
+
+  --key=key                              The API key for the Apollo Engine service
+```
+
+_See code: [src/commands/client/extract.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/extract.ts)_
+
+## `apollo client:push`
+
+Push a service to Engine
+
+```
+USAGE
+  $ apollo client:push
+
+OPTIONS
+  -c, --config=config                    Path to your Apollo config file
+  -t, --tag=tag                          [default: current] The published service tag for this client
+  --clientName=clientName                Name of the client that the queries will be attached to
+
+  --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
+                                         clientName if not provided
+
+  --clientVersion=clientVersion          The version of the client that the queries will be attached to
+
+  --endpoint=endpoint                    The url of your service
+
+  --header=header                        Additional headers to send to server for introspectionQuery
+
+  --key=key                              The API key for the Apollo Engine service
+```
+
+_See code: [src/commands/client/push.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/push.ts)_
 
 ## `apollo help [COMMAND]`
 
@@ -171,6 +341,66 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/update.ts)_
+
+## `apollo service:check`
+
+Check a service against known operation workloads to find breaking changes
+
+```
+USAGE
+  $ apollo service:check
+
+OPTIONS
+  -c, --config=config  Path to your Apollo config file
+  -t, --tag=tag        [default: current] The published tag to check this service against
+  --endpoint=endpoint  The url of your service
+  --header=header      Additional headers to send to server for introspectionQuery
+  --key=key            The API key for the Apollo Engine service
+```
+
+_See code: [src/commands/service/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/check.ts)_
+
+## `apollo service:download OUTPUT`
+
+Download the schema from your GraphQL endpoint.
+
+```
+USAGE
+  $ apollo service:download OUTPUT
+
+ARGUMENTS
+  OUTPUT  [default: schema.json] Path to write the introspection result to
+
+OPTIONS
+  -c, --config=config  Path to your Apollo config file
+  -t, --tag=tag        [default: current] The published tag to check this service against
+  --endpoint=endpoint  The url of your service
+  --header=header      Additional headers to send to server for introspectionQuery
+  --key=key            The API key for the Apollo Engine service
+```
+
+_See code: [src/commands/service/download.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/download.ts)_
+
+## `apollo service:push`
+
+Push a service to Engine
+
+```
+USAGE
+  $ apollo service:push
+
+OPTIONS
+  -c, --config=config  Path to your Apollo config file
+  -t, --tag=tag        [default: current] The published tag to check this service against
+  --endpoint=endpoint  The url of your service
+  --header=header      Additional headers to send to server for introspectionQuery
+  --key=key            The API key for the Apollo Engine service
+
+ALIASES
+  $ apollo schema:publish
+```
+
+_See code: [src/commands/service/push.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/push.ts)_
 <!-- commandsstop -->
 
 # Configuration
