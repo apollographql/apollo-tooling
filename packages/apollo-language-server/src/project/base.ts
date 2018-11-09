@@ -51,7 +51,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   private _isReady: boolean;
   private readyPromise: Promise<void>;
-  private _engineClient?: ApolloEngineClient;
+  protected engineClient?: ApolloEngineClient;
 
   private needsValidation = false;
 
@@ -74,7 +74,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     this.schemaProvider = schemaProviderFromConfig(config);
     const { engine } = config;
     if (engine.apiKey) {
-      this._engineClient = new ApolloEngineClient(
+      this.engineClient = new ApolloEngineClient(
         engine.apiKey!,
         engine.endpoint,
         clientIdentity
@@ -110,10 +110,10 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   get engine(): ApolloEngineClient {
     // handle error states for missing engine config
     // all in the same place :tada:
-    if (!this._engineClient) {
+    if (!this.engineClient) {
       throw new Error("Unable to find ENGINE_API_KEY");
     }
-    return this._engineClient!;
+    return this.engineClient!;
   }
 
   get whenReady(): Promise<void> {

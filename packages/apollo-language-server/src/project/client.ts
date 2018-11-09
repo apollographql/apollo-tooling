@@ -200,7 +200,9 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   async loadEngineData() {
-    if (!this.engine) return;
+    const engineClient = this.engineClient;
+    if (!engineClient) return;
+
     const serviceID = this.serviceID;
     if (!serviceID) return;
 
@@ -210,7 +212,7 @@ export class GraphQLClientProject extends GraphQLProject {
         const [
           schemaTags,
           fieldStats
-        ] = await this.engine.loadSchemaTagsAndFieldStats(serviceID);
+        ] = await engineClient.loadSchemaTagsAndFieldStats(serviceID);
         this._onSchemaTags && this._onSchemaTags([serviceID, schemaTags]);
         this.fieldStats = fieldStats;
 
