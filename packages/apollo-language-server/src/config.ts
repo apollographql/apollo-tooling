@@ -13,9 +13,6 @@ import {
   ServiceIDAndTag
 } from "./engine";
 
-// TypeScript util requiring an optional field
-export type WithRequired<T, K extends keyof T> = T & Required<Pick<T, K>>;
-
 export interface EngineStatsWindow {
   to: number;
   from: number;

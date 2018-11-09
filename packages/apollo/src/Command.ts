@@ -67,7 +67,7 @@ export abstract class ProjectCommand extends Command {
   public tasks: ListrTask[] = [];
 
   protected type: "service" | "client" = "service";
-  protected configMap?: (flags: any) => any;
+  protected configMap?: (flags: any) => DeepPartial<ApolloConfig>;
   private ctx!: ProjectContext;
 
   async init() {
