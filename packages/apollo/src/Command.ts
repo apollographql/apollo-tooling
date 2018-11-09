@@ -190,12 +190,21 @@ export abstract class ClientCommand extends ProjectCommand {
   constructor(argv, config) {
     super(argv, config);
     this.type = "client";
-    this.configMap = (flags: any) => ({
-      client: {
-        name: flags.clientName,
-        referenceID: flags.clientReferenceId,
-        version: flags.clientVersion
+    this.configMap = (flags: any) => {
+      const config = {
+        client: {
+          name: flags.clientName,
+          referenceID: flags.clientReferenceId,
+          version: flags.clientVersion
+        }
+      } as WithRequired<DeepPartial<ApolloConfig>, "client">;
+      if (flags.endpoint) {
+        config.client.service = {
+          url: flags.endpoint,
+          headers: flags.headers
+        };
       }
-    });
+      return config;
+    };
   }
 }
