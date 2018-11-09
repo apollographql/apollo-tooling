@@ -30,8 +30,10 @@ export function schemaProviderFromConfig(
   if (isClientConfig(config)) {
     if (typeof config.client.service === "string") {
       return new EngineSchemaProvider(config);
+    } else if (config.client.service) {
+      return new IntrospectionSchemaProvider(config.client.service);
     }
-    return new IntrospectionSchemaProvider(config.client.service);
   }
+
   throw new Error("No provider was created for config");
 }

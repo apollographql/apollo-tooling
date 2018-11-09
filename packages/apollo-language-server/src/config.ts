@@ -59,7 +59,7 @@ export interface ConfigBase {
 
 export interface ClientConfigFormat extends ConfigBase {
   // service linking
-  service: ServiceSpecifier | RemoteServiceConfig;
+  service?: ServiceSpecifier | RemoteServiceConfig;
   // client identity
   name?: ClientID;
   referenceID?: string;
@@ -163,12 +163,15 @@ export const getServiceName = (
   config: ApolloConfigFormat
 ): string | undefined => {
   if (config.service) return config.service.name;
-  if (typeof (config.client!.service as ServiceSpecifier) === "string") {
-    return parseServiceSpecificer(config.client!
-      .service as ServiceSpecifier)[0];
+  if (config.client) {
+    if (typeof config.client.service === "string") {
+      return parseServiceSpecificer(config.client
+        .service as ServiceSpecifier)[0];
+    }
+    return config.client.service && config.client.service.name;
+  } else {
+    return undefined;
   }
-
-  return (config.client!.service as RemoteServiceConfig).name;
 };
 
 export class ApolloConfig {
@@ -200,10 +203,7 @@ export class ApolloConfig {
   get tag(): string {
     if (this._tag) return this._tag;
     let tag: string = "current";
-    if (
-      this.client &&
-      (typeof this.client!.service as ServiceSpecifier) === "string"
-    ) {
+    if (this.client && typeof this.client.service === "string") {
       const specifierTag = parseServiceSpecificer(this.client
         .service as ServiceSpecifier)[1];
       if (specifierTag) tag = specifierTag;
