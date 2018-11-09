@@ -15,6 +15,9 @@
     "node": ">=8",
     "npm": ">=6"
   },
+  "dependencies": {
+    "apollo-env": "file:../apollo-env"
+  },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
