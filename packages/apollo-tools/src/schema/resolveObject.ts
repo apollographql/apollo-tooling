@@ -1,7 +1,8 @@
-import { GraphQLResolveInfo } from "graphql";
+import { GraphQLResolveInfo, FieldNode } from "graphql";
 
 export type GraphQLObjectResolver<TSource, TContext> = (
   source: TSource,
+  fields: Record<string, ReadonlyArray<FieldNode>>,
   context: TContext,
   info: GraphQLResolveInfo
 ) => any;
