@@ -26,6 +26,15 @@ export interface ProjectContext<Flags = any, Args = any> {
   args: Args;
 }
 
+const headersArrayToObject = (
+  arr: string[]
+): Record<string, string> | undefined => {
+  if (!arr) return;
+  return arr
+    .map(val => JSON.parse(val))
+    .reduce((pre, next) => ({ ...pre, ...next }), {});
+};
+
 const getServiceFromKey = (key): string | undefined => {
   const [type, service] = key.split(":");
   if (type === "service") return service;
@@ -110,7 +119,12 @@ export abstract class ProjectCommand extends Command {
 
     if (flags.endpoint) {
       config.setDefaults({
-        service: { endpoint: { url: flags.endpoint, headers: flags.header } }
+        service: {
+          endpoint: {
+            url: flags.endpoint,
+            headers: headersArrayToObject(flags.header)
+          }
+        }
       });
     }
 
@@ -201,7 +215,7 @@ export abstract class ClientCommand extends ProjectCommand {
       if (flags.endpoint) {
         config.client.service = {
           url: flags.endpoint,
-          headers: flags.headers
+          headers: headersArrayToObject(flags.headers)
         };
       }
       return config;
