@@ -422,12 +422,13 @@ module.exports = {
 
 ### Service Configuration
 
-When linking a client to a service, you can either use the name of a service that has been published to the Apollo service registry, or you can use a remote url that supports introspection
+When linking a client to a service, you can either use the name of a service that has been published to the Apollo service registry, or you can use a remote url that supports introspection or you can provide a filepath of a generated SDL (Schema Definition Language) file, for example: `schema.json` or `schema.graphql`.
 
 ```js
 module.exports = {
   client: {
     service: "my-service-name",
+
     // or
     service: {
       name: "my-service-name",
@@ -435,6 +436,12 @@ module.exports = {
       headers: {
         cookie: "myCookieValue"
       }
+    },
+
+    // or a local generated schema file
+    service: {
+      name: "my-service-name",
+      localSchemaFile: "./path/to/schema.graphl"
     }
   }
 };
@@ -442,20 +449,22 @@ module.exports = {
 
 ## Service settings
 
-The service config needs to know how to fetch the schema for that service. This can be done with either an endpoint config or a filepath of a generated SDL file
+The service config needs to know how to fetch the schema for that service. This can be done with either an endpoint config or a filepath of a generated SDL (Schema Definition Language) file, for example: `schema.json` or `schema.graphql`.
 
 ```js
 module.exports = {
   service: {
     name: "my-service",
+
     // this is the default endpoint info
     endpoint: {
       url: "https://localhost:4000/graphql"
     },
-    // or a local generated schema
-    localSchemaFile: "./path/to/sdl.graphql"
+
+    // or a local generated schema file
+    localSchemaFile: "./path/to/schema.graphl"
   }
-}
+};
 ```
 
 # Code Generation
