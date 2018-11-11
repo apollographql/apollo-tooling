@@ -7,6 +7,7 @@ import { ChangeType, format, SchemaChange as Change } from "../../diff";
 import { ProjectCommand } from "../../Command";
 
 export default class ServiceCheck extends ProjectCommand {
+  static aliases = ["schema:check"];
   static description =
     "Check a service against known operation workloads to find breaking changes";
   static flags = {
