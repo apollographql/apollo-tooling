@@ -5,6 +5,7 @@ import { writeFileSync } from "fs";
 import { ProjectCommand } from "../../Command";
 
 export default class ServiceDownload extends ProjectCommand {
+  static aliases = ["schema:download"];
   static description = "Download the schema from your GraphQL endpoint.";
 
   static flags = {
