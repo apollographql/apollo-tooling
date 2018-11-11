@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.0.11 linux-x64 node-v10.5.0
+apollo/2.0.12 linux-x64 node-v10.5.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -356,6 +356,9 @@ OPTIONS
   --endpoint=endpoint  The url of your service
   --header=header      Additional headers to send to server for introspectionQuery
   --key=key            The API key for the Apollo Engine service
+
+ALIASES
+  $ apollo schema:check
 ```
 
 _See code: [src/commands/service/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/check.ts)_

@@ -2,7 +2,7 @@
   "name": "vscode-apollo",
   "displayName": "Apollo GraphQL",
   "description": "A VS Code extension for Apollo GraphQL projects",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "referenceID": "87197759-7617-40d0-b32e-46d378e907c7",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
