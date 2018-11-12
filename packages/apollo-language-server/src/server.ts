@@ -4,7 +4,8 @@ import {
   ProposedFeatures,
   TextDocuments,
   FileChangeType,
-  NotificationType
+  NotificationType,
+  ServerCapabilities
 } from "vscode-languageserver";
 import { QuickPickItem } from "vscode";
 import { GraphQLWorkspace } from "./workspace";
@@ -72,12 +73,14 @@ connection.onInitialize(async params => {
   return {
     capabilities: {
       hoverProvider: true,
-      definitionProvider: true,
-      referencesProvider: true,
       completionProvider: {
         resolveProvider: false,
         triggerCharacters: ["..."]
       },
+      definitionProvider: true,
+      referencesProvider: true,
+      documentSymbolProvider: true,
+      workspaceSymbolProvider: true,
       codeLensProvider: {
         resolveProvider: false
       },
@@ -88,7 +91,7 @@ connection.onInitialize(async params => {
         ]
       },
       textDocumentSync: documents.syncKind
-    }
+    } as ServerCapabilities
   };
 });
 
@@ -192,6 +195,14 @@ connection.onReferences((params, token) =>
     params.context,
     token
   )
+);
+
+connection.onDocumentSymbol((params, token) =>
+  languageProvider.provideDocumentSymbol(params.textDocument.uri, token)
+);
+
+connection.onWorkspaceSymbol((params, token) =>
+  languageProvider.provideWorkspaceSymbol(params.query, token)
 );
 
 connection.onCompletion((params, token) =>
