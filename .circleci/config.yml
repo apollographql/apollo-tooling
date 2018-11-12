@@ -78,7 +78,7 @@ jobs:
             # This should cache the npm cache instead of node_modules, which is needed because
             # npm ci actually removes node_modules before installing to guarantee a clean slate.
             - ~/.npm
-      - run: ./packages/apollo/bin/run queries:check --queries="packages/apollo/src/operations/*" --key=$STAGING_API_KEY --engine=https://engine-staging-graphql.apollographql.com/api/graphql
+      - run: ./packages/apollo/bin/run client:check
 
 ignore_doc_branches: &ignore_doc_branches
   filters:
