@@ -418,7 +418,7 @@ Let's take a look at a basic configuration file (`apollo.config.js` style):
 ```js
 module.exports = {
   client: {
-    name: "My Client Project"
+    name: "My Client Project",
     service: "my-service-name"
   }
 }
