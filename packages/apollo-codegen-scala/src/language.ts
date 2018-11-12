@@ -56,6 +56,31 @@ export function objectDeclaration(
   generator.popScope();
 }
 
+export function traitDeclaration(
+  generator: CodeGenerator<LegacyCompilerContext, any>,
+  {
+    traitName,
+    annotations,
+    superclasses
+  }: {
+    traitName: string;
+    annotations?: string[];
+    superclasses?: string[];
+  },
+  closure?: () => void
+) {
+  generator.printNewlineIfNeeded();
+  generator.printOnNewline(
+    `${(annotations || []).map(a => "@" + a).join(" ")} trait ${traitName}` +
+      (superclasses ? ` extends ${superclasses.join(" with ")}` : "")
+  );
+  generator.pushScope({ typeName: traitName });
+  if (closure) {
+    generator.withinBlock(closure);
+  }
+  generator.popScope();
+}
+
 export function caseClassDeclaration(
   generator: CodeGenerator<LegacyCompilerContext, any>,
   {
@@ -109,12 +134,17 @@ export function propertyDeclaration(
   }: {
     propertyName: string;
     typeName: string;
-    description: string;
+    description?: string;
   },
   closure?: () => void
 ) {
-  comment(generator, description);
-  generator.printOnNewline(`val ${propertyName}: ${typeName} =`);
+  if (description) {
+    comment(generator, description);
+  }
+
+  generator.printOnNewline(
+    `val ${propertyName}: ${typeName}` + (closure ? ` =` : "")
+  );
 
   if (closure) {
     generator.withinBlock(closure);

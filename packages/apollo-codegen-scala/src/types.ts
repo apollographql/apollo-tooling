@@ -53,7 +53,7 @@ export function typeNameFromGraphQLType(
   let typeName;
   if (isListType(type)) {
     typeName =
-      "Seq[" +
+      "scala.scalajs.js.Array[" +
       typeNameFromGraphQLType(context, type.ofType, bareTypeName) +
       "]";
   } else if (type instanceof GraphQLScalarType) {
@@ -67,7 +67,7 @@ export function typeNameFromGraphQLType(
   return isOptional
     ? isInputObject
       ? `scala.scalajs.js.UndefOr[${typeName}]`
-      : `Option[${typeName}]`
+      : `scala.scalajs.js.UndefOr[${typeName}]`
     : typeName;
 }
 

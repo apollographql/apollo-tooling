@@ -16,7 +16,9 @@ import {
   objectDeclaration,
   caseClassDeclaration,
   escapeIdentifierIfNeeded,
-  comment
+  comment,
+  traitDeclaration,
+  propertyDeclaration
 } from "./language";
 
 import {
@@ -242,98 +244,58 @@ export function caseClassDeclarationForSelectionSet(
     ? possibleTypesForType(generator.context, parentType)
     : null;
 
-  if (!possibleTypes || possibleTypes.length == 1) {
-    const properties = fields
-      .map(field =>
-        propertyFromLegacyField(generator.context, field, caseClassName)
-      )
-      .filter(field => field.propertyName != "__typename");
+  const properties = fields
+    .map(field =>
+      propertyFromLegacyField(generator.context, field, caseClassName)
+    )
+    .filter(field => field.propertyName != "__typename");
 
-    caseClassDeclaration(
-      generator,
-      {
-        caseClassName,
-        params: properties.map(p => {
-          return {
-            name: p.responseName,
-            type: p.typeName
-          };
-        })
-      },
-      () => {}
-    );
-  } else {
-    generator.printNewlineIfNeeded();
-    const properties = fields
-      .map(field =>
-        propertyFromLegacyField(generator.context, field, caseClassName)
-      )
-      .filter(field => field.propertyName != "__typename");
-
-    caseClassDeclaration(
-      generator,
-      {
-        caseClassName,
-        params: properties.map(p => {
-          return {
-            name: p.responseName,
-            type: p.typeName
-          };
-        }),
-        superclass: "slinky.readwrite.WithRaw"
-      },
-      () => {
-        if (inlineFragments && inlineFragments.length > 0) {
-          inlineFragments.forEach(inlineFragment => {
-            const fragClass = caseClassNameForInlineFragment(inlineFragment);
-            generator.printOnNewline(`def as${inlineFragment.typeCondition}`);
-            generator.print(`: Option[${fragClass}] =`);
-            generator.withinBlock(() => {
-              generator.printOnNewline(
-                `if (${fragClass}.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[${fragClass}]].read(this.raw)) else None`
-              );
-            });
-          });
-        }
-
-        if (fragmentSpreads) {
-          fragmentSpreads.forEach(s => {
-            const fragment = generator.context.fragments[s];
-            const alwaysDefined = isTypeProperSuperTypeOf(
-              generator.context.schema,
-              fragment.typeCondition,
-              parentType
-            );
-            if (!alwaysDefined) {
-              generator.printOnNewline(`def as${s}`);
-              generator.print(`: Option[${s}] =`);
-              generator.withinBlock(() => {
-                generator.printOnNewline(
-                  `if (${s}.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[${s}]].read(this.raw)) else None`
-                );
-              });
-            }
-          });
-        }
-      }
+  const fragmentSpreadSuperClasses = (fragmentSpreads || []).filter(spread => {
+    const fragment = generator.context.fragments[spread];
+    const alwaysDefined = isTypeProperSuperTypeOf(
+      generator.context.schema,
+      fragment.typeCondition,
+      parentType
     );
 
-    // add types and implicit conversions
-    if (inlineFragments && inlineFragments.length > 0) {
-      inlineFragments.forEach(inlineFragment => {
-        caseClassDeclarationForSelectionSet(generator, {
-          caseClassName: caseClassNameForInlineFragment(inlineFragment),
-          parentType: inlineFragment.typeCondition,
-          fields: inlineFragment.fields,
-          // inlineFragments: inlineFragment.inlineFragments,
-          fragmentSpreads: inlineFragment.fragmentSpreads,
-          viewableAs: {
-            caseClassName,
-            properties
-          }
+    return alwaysDefined;
+  });
+
+  traitDeclaration(
+    generator,
+    {
+      traitName: caseClassName,
+      superclasses: [
+        "scala.scalajs.js.Object",
+        ...(viewableAs ? [viewableAs.caseClassName] : []),
+        ...(fragmentSpreadSuperClasses || [])
+      ],
+      annotations: ["scala.scalajs.js.native"]
+    },
+    () => {
+      properties.forEach(p => {
+        propertyDeclaration(generator, {
+          propertyName: p.responseName,
+          typeName: p.typeName
         });
       });
     }
+  );
+
+  // add types and implicit conversions
+  if (inlineFragments && inlineFragments.length > 0) {
+    inlineFragments.forEach(inlineFragment => {
+      caseClassDeclarationForSelectionSet(generator, {
+        caseClassName: caseClassNameForInlineFragment(inlineFragment),
+        parentType: inlineFragment.typeCondition,
+        fields: inlineFragment.fields,
+        fragmentSpreads: inlineFragment.fragmentSpreads,
+        viewableAs: {
+          caseClassName,
+          properties
+        }
+      });
+    });
   }
 
   objectDeclaration(generator, { objectName: caseClassName }, () => {
@@ -346,35 +308,43 @@ export function caseClassDeclarationForSelectionSet(
       generator.print(")");
     }
 
-    if (viewableAs) {
-      generator.printOnNewline(
-        `implicit def to${viewableAs.caseClassName}(a: ${caseClassName}): ${
-          viewableAs.caseClassName
-        } = ${viewableAs.caseClassName}(${viewableAs.properties
-          .map(p => "a." + p.responseName)
-          .join(", ")})`
-      );
-    }
+    generator.printOnNewline(
+      `implicit class ViewExtensions(private val orig: ${caseClassName}) extends AnyVal`
+    );
+    generator.withinBlock(() => {
+      if (inlineFragments && inlineFragments.length > 0) {
+        inlineFragments.forEach(inlineFragment => {
+          const fragClass = caseClassNameForInlineFragment(inlineFragment);
+          generator.printOnNewline(`def as${inlineFragment.typeCondition}`);
+          generator.print(`: Option[${fragClass}] =`);
+          generator.withinBlock(() => {
+            generator.printOnNewline(
+              `if (${fragClass}.possibleTypes.contains(orig.raw.__typename.asInstanceOf[String])) Some(orig.asInstanceOf[${fragClass}]) else None`
+            );
+          });
+        });
+      }
 
-    if (fragmentSpreads) {
-      fragmentSpreads.forEach(s => {
-        const fragment = generator.context.fragments[s];
-        const alwaysDefined = isTypeProperSuperTypeOf(
-          generator.context.schema,
-          fragment.typeCondition,
-          parentType
-        );
-        if (alwaysDefined) {
-          generator.printOnNewline(
-            `implicit def to${s}(a: ${caseClassName}): ${s} = ${s}(${(
-              fragment.fields || []
-            )
-              .map(p => "a." + p.responseName)
-              .join(", ")})`
+      if (fragmentSpreads) {
+        fragmentSpreads.forEach(s => {
+          const fragment = generator.context.fragments[s];
+          const alwaysDefined = isTypeProperSuperTypeOf(
+            generator.context.schema,
+            fragment.typeCondition,
+            parentType
           );
-        }
-      });
-    }
+          if (!alwaysDefined) {
+            generator.printOnNewline(`def as${s}`);
+            generator.print(`: Option[${s}] =`);
+            generator.withinBlock(() => {
+              generator.printOnNewline(
+                `if (${s}.possibleTypes.contains(orig.raw.__typename.asInstanceOf[String])) Some(orig.asInstanceOf[${s}]) else None`
+              );
+            });
+          }
+        });
+      }
+    });
 
     fields
       .filter(field => isCompositeType(getNamedType(field.type)))
