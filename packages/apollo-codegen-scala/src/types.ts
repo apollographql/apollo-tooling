@@ -86,8 +86,8 @@ export function typeNameFromGraphQLType(
 
   return isOptional
     ? isInputObject
-      ? `Option[${typeName}]`
-      : `scala.scalajs.js.UndefOr[${typeName}]`
+      ? `com.apollographql.scalajs.OptionalInput[${typeName}]`
+      : `com.apollographql.scalajs.OptionalResult[${typeName}]`
     : typeName;
 }
 
