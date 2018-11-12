@@ -3,9 +3,10 @@
   // List of configurations. Add new configurations or edit existing ones.
   "configurations": [
     {
-      "name": "Launch Apollo VSCode",
+      "name": "Launch VS Code Extension",
       "type": "extensionHost",
       "request": "launch",
+      "preLaunchTask": "npm: watch",
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-apollo"
