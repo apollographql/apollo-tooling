@@ -17,3 +17,5 @@ packages/apollo-vscode/webview-content
 packages/vscode-apollo/server
 packages/vscode-apollo/webview-content
 **/*.vsix
+
+.env
