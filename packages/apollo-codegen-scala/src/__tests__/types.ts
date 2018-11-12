@@ -18,9 +18,9 @@ import { typeNameFromGraphQLType } from "../types";
 
 describe("Scala code generation: Types", function() {
   describe("#typeNameFromGraphQLType()", function() {
-    test("should return Option[String] for GraphQLString", function() {
+    test("should return UndefOr[String] for GraphQLString", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLString)).toBe(
-        "Option[String]"
+        "scala.scalajs.js.UndefOr[String]"
       );
     });
 
@@ -33,91 +33,97 @@ describe("Scala code generation: Types", function() {
       ).toBe("String");
     });
 
-    test("should return Option[Seq[Option[String]]] for GraphQLList(GraphQLString)", function() {
+    test("should return UndefOr[Array[UndefOr[String]]] for GraphQLList(GraphQLString)", function() {
       expect(
         typeNameFromGraphQLType({ options: {} }, new GraphQLList(GraphQLString))
-      ).toBe("Option[Seq[Option[String]]]");
+      ).toBe(
+        "scala.scalajs.js.UndefOr[scala.scalajs.js.Array[scala.scalajs.js.UndefOr[String]]]"
+      );
     });
 
-    test("should return Seq[String] for GraphQLNonNull(GraphQLList(GraphQLString))", function() {
+    test("should return Array[UndefOr[String]] for GraphQLNonNull(GraphQLList(GraphQLString))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
           new GraphQLNonNull(new GraphQLList(GraphQLString))
         )
-      ).toBe("Seq[Option[String]]");
+      ).toBe("scala.scalajs.js.Array[scala.scalajs.js.UndefOr[String]]");
     });
 
-    test("should return Option[Seq[String]] for GraphQLList(GraphQLNonNull(GraphQLString))", function() {
+    test("should return UndefOr[Array[String]] for GraphQLList(GraphQLNonNull(GraphQLString))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
           new GraphQLList(new GraphQLNonNull(GraphQLString))
         )
-      ).toBe("Option[Seq[String]]");
+      ).toBe("scala.scalajs.js.UndefOr[scala.scalajs.js.Array[String]]");
     });
 
-    test("should return Seq[String] for GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))", function() {
+    test("should return Array[String] for GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
           new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString)))
         )
-      ).toBe("Seq[String]");
+      ).toBe("scala.scalajs.js.Array[String]");
     });
 
-    test("should return Option[Seq[Option[Seq[Option[String]]]]] for GraphQLList(GraphQLList(GraphQLString))", function() {
+    test("should return UndefOr[Array[UndefOr[Array[UndefOr[String]]]]] for GraphQLList(GraphQLList(GraphQLString))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
           new GraphQLList(new GraphQLList(GraphQLString))
         )
-      ).toBe("Option[Seq[Option[Seq[Option[String]]]]]");
+      ).toBe(
+        "scala.scalajs.js.UndefOr[scala.scalajs.js.Array[scala.scalajs.js.UndefOr[scala.scalajs.js.Array[scala.scalajs.js.UndefOr[String]]]]]"
+      );
     });
 
-    test("should return Option[Seq[Seq[Option[String]]]] for GraphQLList(GraphQLNonNull(GraphQLList(GraphQLString)))", function() {
+    test("should return UndefOr[Array[Array[UndefOr[String]]]] for GraphQLList(GraphQLNonNull(GraphQLList(GraphQLString)))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
           new GraphQLList(new GraphQLNonNull(new GraphQLList(GraphQLString)))
         )
-      ).toBe("Option[Seq[Seq[Option[String]]]]");
+      ).toBe(
+        "scala.scalajs.js.UndefOr[scala.scalajs.js.Array[scala.scalajs.js.Array[scala.scalajs.js.UndefOr[String]]]]"
+      );
     });
 
-    test("should return Option[Int] for GraphQLInt", function() {
+    test("should return UndefOr[Int] for GraphQLInt", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLInt)).toBe(
-        "Option[Int]"
+        "scala.scalajs.js.UndefOr[Int]"
       );
     });
 
-    test("should return Option[Double] for GraphQLFloat", function() {
+    test("should return UndefOr[Double] for GraphQLFloat", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLFloat)).toBe(
-        "Option[Double]"
+        "scala.scalajs.js.UndefOr[Double]"
       );
     });
 
-    test("should return Option[Boolean] for GraphQLBoolean", function() {
+    test("should return UndefOr[Boolean] for GraphQLBoolean", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLBoolean)).toBe(
-        "Option[Boolean]"
+        "scala.scalajs.js.UndefOr[Boolean]"
       );
     });
 
-    test("should return Option[String] for GraphQLID", function() {
+    test("should return UndefOr[String] for GraphQLID", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLID)).toBe(
-        "Option[String]"
+        "scala.scalajs.js.UndefOr[String]"
       );
     });
 
-    test("should return Option[String] for a custom scalar type", function() {
+    test("should return UndefOr[String] for a custom scalar type", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
           new GraphQLScalarType({ name: "CustomScalarType", serialize: String })
         )
-      ).toBe("Option[String]");
+      ).toBe("scala.scalajs.js.UndefOr[String]");
     });
 
-    test("should return a passed through custom scalar type with the passthroughCustomScalars option", function() {
+    test("should return a passed through custom scalar type with the passthroughCustomScalars UndefOr", function() {
       expect(
         typeNameFromGraphQLType(
           {
@@ -125,10 +131,10 @@ describe("Scala code generation: Types", function() {
           },
           new GraphQLScalarType({ name: "CustomScalarType", serialize: String })
         )
-      ).toBe("Option[CustomScalarType]");
+      ).toBe("scala.scalajs.js.UndefOr[CustomScalarType]");
     });
 
-    test("should return a passed through custom scalar type with a prefix with the customScalarsPrefix option", function() {
+    test("should return a passed through custom scalar type with a prefix with the customScalarsPrefix UndefOr", function() {
       expect(
         typeNameFromGraphQLType(
           {
@@ -139,7 +145,7 @@ describe("Scala code generation: Types", function() {
           },
           new GraphQLScalarType({ name: "CustomScalarType", serialize: String })
         )
-      ).toBe("Option[MyCustomScalarType]");
+      ).toBe("scala.scalajs.js.UndefOr[MyCustomScalarType]");
     });
   });
 });
