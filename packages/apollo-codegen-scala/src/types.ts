@@ -44,7 +44,8 @@ export function typeNameFromGraphQLType(
       context,
       type.ofType,
       bareTypeName,
-      isOptional || false
+      isOptional || false,
+      isInputObject
     );
   } else if (isOptional === undefined) {
     isOptional = true;
@@ -59,6 +60,7 @@ export function typeNameFromGraphQLType(
           context,
           type.ofType,
           bareTypeName,
+          false,
           isInputObject
         ) +
         "]";
@@ -69,6 +71,7 @@ export function typeNameFromGraphQLType(
           context,
           type.ofType,
           bareTypeName,
+          false,
           isInputObject
         ) +
         "]";
