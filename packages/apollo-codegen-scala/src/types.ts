@@ -60,7 +60,7 @@ export function typeNameFromGraphQLType(
           context,
           type.ofType,
           bareTypeName,
-          false,
+          undefined,
           isInputObject
         ) +
         "]";
@@ -71,7 +71,7 @@ export function typeNameFromGraphQLType(
           context,
           type.ofType,
           bareTypeName,
-          false,
+          undefined,
           isInputObject
         ) +
         "]";

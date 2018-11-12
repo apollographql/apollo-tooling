@@ -150,7 +150,13 @@ export function classDeclarationForOperation(
       if (variables && variables.length > 0) {
         const properties = variables.map(({ name, type }) => {
           const propertyName = escapeIdentifierIfNeeded(name);
-          const typeName = typeNameFromGraphQLType(generator.context, type);
+          const typeName = typeNameFromGraphQLType(
+            generator.context,
+            type,
+            undefined,
+            undefined,
+            true
+          );
           const isOptional = !(
             type instanceof GraphQLNonNull || type instanceof GraphQLNonNull
           );
