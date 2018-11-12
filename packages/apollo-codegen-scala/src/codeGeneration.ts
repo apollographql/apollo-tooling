@@ -319,7 +319,7 @@ export function caseClassDeclarationForSelectionSet(
           generator.print(`: Option[${fragClass}] =`);
           generator.withinBlock(() => {
             generator.printOnNewline(
-              `if (${fragClass}.possibleTypes.contains(orig.raw.__typename.asInstanceOf[String])) Some(orig.asInstanceOf[${fragClass}]) else None`
+              `if (${fragClass}.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[${fragClass}]) else None`
             );
           });
         });
@@ -338,7 +338,7 @@ export function caseClassDeclarationForSelectionSet(
             generator.print(`: Option[${s}] =`);
             generator.withinBlock(() => {
               generator.printOnNewline(
-                `if (${s}.possibleTypes.contains(orig.raw.__typename.asInstanceOf[String])) Some(orig.asInstanceOf[${s}]) else None`
+                `if (${s}.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[${s}]) else None`
               );
             });
           }
