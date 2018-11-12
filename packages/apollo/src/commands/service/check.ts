@@ -50,8 +50,6 @@ export default class ServiceCheck extends ProjectCommand {
       ({ type }: Change) => type === ChangeType.FAILURE
     );
 
-    const exit = failures.length > 0 ? 1 : 0;
-
     if (changes.length === 0) {
       return this.log("\nNo changes present between schemas\n");
     }
@@ -65,6 +63,9 @@ export default class ServiceCheck extends ProjectCommand {
     });
     this.log("\n");
     // exit with failing status if we have failures
-    this.exit(exit);
+    if (failures.length > 0) {
+      this.exit();
+    }
+    return;
   }
 }
