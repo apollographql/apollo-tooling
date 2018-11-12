@@ -52,10 +52,27 @@ export function typeNameFromGraphQLType(
 
   let typeName;
   if (isListType(type)) {
-    typeName =
-      "scala.scalajs.js.Array[" +
-      typeNameFromGraphQLType(context, type.ofType, bareTypeName) +
-      "]";
+    if (isInputObject) {
+      typeName =
+        "Seq[" +
+        typeNameFromGraphQLType(
+          context,
+          type.ofType,
+          bareTypeName,
+          isInputObject
+        ) +
+        "]";
+    } else {
+      typeName =
+        "scala.scalajs.js.Array[" +
+        typeNameFromGraphQLType(
+          context,
+          type.ofType,
+          bareTypeName,
+          isInputObject
+        ) +
+        "]";
+    }
   } else if (type instanceof GraphQLScalarType) {
     typeName = typeNameForScalarType(context, type);
   } else if (type instanceof GraphQLEnumType) {
@@ -66,7 +83,7 @@ export function typeNameFromGraphQLType(
 
   return isOptional
     ? isInputObject
-      ? `scala.scalajs.js.UndefOr[${typeName}]`
+      ? `Option[${typeName}]`
       : `scala.scalajs.js.UndefOr[${typeName}]`
     : typeName;
 }
