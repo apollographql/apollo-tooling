@@ -181,6 +181,10 @@ export class GraphQLWorkspace {
     }
   }
 
+  get projects(): GraphQLProject[] {
+    return Array.from(this.projectsByFolderUri.values()).flat();
+  }
+
   projectForFile(uri: DocumentUri): GraphQLProject | undefined {
     for (const projects of this.projectsByFolderUri.values()) {
       const project = projects.find(project => project.includesFile(uri));
