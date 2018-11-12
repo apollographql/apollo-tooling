@@ -7,6 +7,7 @@ import {
   isTypeSystemDefinitionNode,
   TypeSystemExtensionNode,
   isTypeSystemExtensionNode,
+  DefinitionNode,
   GraphQLSchema
 } from "graphql";
 
@@ -243,6 +244,33 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
       documents.push(...documentsForFile);
     }
     return documents;
+  }
+
+  get definitions(): DefinitionNode[] {
+    const definitions = [];
+
+    for (const document of this.documents) {
+      if (!document.ast) continue;
+
+      definitions.push(...document.ast.definitions);
+    }
+
+    return definitions;
+  }
+
+  definitionsAt(uri: DocumentUri): DefinitionNode[] {
+    const documents = this.documentsAt(uri);
+    if (!documents) return [];
+
+    const definitions = [];
+
+    for (const document of documents) {
+      if (!document.ast) continue;
+
+      definitions.push(...document.ast.definitions);
+    }
+
+    return definitions;
   }
 
   get typeSystemDefinitionsAndExtensions(): (
