@@ -453,7 +453,7 @@ function caseClassDeclarationForInputObjectType(
         return {
           name: p.propertyName,
           type: p.typeName,
-          defaultValue: p.isOptional ? "scala.scalajs.js.undefined" : ""
+          defaultValue: p.isOptional ? "None" : ""
         };
       })
     },
