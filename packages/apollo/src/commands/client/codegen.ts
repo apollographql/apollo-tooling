@@ -174,7 +174,7 @@ export default class Generate extends ClientCommand {
                   kind: Kind.DOCUMENT,
                   definitions: [...operations, ...fragments]
                 };
-                generate(
+                return generate(
                   document,
                   schema,
                   typeof args.output === "string"
