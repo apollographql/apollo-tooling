@@ -244,6 +244,81 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 }"
 `;
 
+exports[`Scala code generation #classDeclarationForOperation() should generate a class declaration for a query with a fragment spread containing deep fields 1`] = `
+"object HeroQuery extends com.apollographql.scalajs.GraphQLQuery {
+  val operationString =
+    \\"query Hero {\\" +
+    \\"  hero {\\" +
+    \\"    ...HeroDetails\\" +
+    \\"  }\\" +
+    \\"}\\"
+
+  val requestString: String = { operationString + HeroDetails.fragmentString }
+  val operation = com.apollographql.scalajs.gql(requestString)
+
+  type Variables = Unit
+
+  @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
+    val hero: scala.scalajs.js.UndefOr[Data.Hero]
+  }
+
+  object Data {
+    val possibleTypes = scala.collection.Set(\\"Query\\")
+    implicit class ViewExtensions(private val orig: Data) extends AnyVal {
+    }
+
+    @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object with HeroDetails {
+      val name: String
+      val friends: scala.scalajs.js.UndefOr[scala.scalajs.js.Array[scala.scalajs.js.UndefOr[Hero.Friend]]]
+    }
+
+    object Hero {
+      val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+      implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+      }
+
+      @scala.scalajs.js.native trait Friend extends scala.scalajs.js.Object with HeroDetails.Friend {
+        val name: String
+      }
+
+      object Friend {
+        val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+        implicit class ViewExtensions(private val orig: Friend) extends AnyVal {
+        }
+      }
+    }
+  }
+}
+
+@scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object {
+  val name: String
+  val friends: scala.scalajs.js.UndefOr[scala.scalajs.js.Array[scala.scalajs.js.UndefOr[HeroDetails.Friend]]]
+}
+
+object HeroDetails {
+  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  implicit class ViewExtensions(private val orig: HeroDetails) extends AnyVal {
+  }
+
+  @scala.scalajs.js.native trait Friend extends scala.scalajs.js.Object {
+    val name: String
+  }
+
+  object Friend {
+    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+    implicit class ViewExtensions(private val orig: Friend) extends AnyVal {
+    }
+  }
+  val fragmentString =
+    \\"fragment HeroDetails on Character {\\" +
+    \\"  name\\" +
+    \\"  friends {\\" +
+    \\"    name\\" +
+    \\"  }\\" +
+    \\"}\\"
+}"
+`;
+
 exports[`Scala code generation #classDeclarationForOperation() should generate a class declaration for a query with a fragment spread nested in an inline fragment 1`] = `
 "object HeroQuery extends com.apollographql.scalajs.GraphQLQuery {
   val operationString =

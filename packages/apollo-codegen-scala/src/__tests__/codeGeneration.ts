@@ -162,6 +162,33 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
+    test(`should generate a class declaration for a query with a fragment spread containing deep fields`, function() {
+      const { operations, fragments } = compileFromSource(`
+        query Hero {
+          hero {
+            ...HeroDetails
+          }
+        }
+
+        fragment HeroDetails on Character {
+          name
+          friends {
+            name
+          }
+        }
+      `);
+
+      classDeclarationForOperation(
+        generator,
+        operations["Hero"],
+        Object.values(fragments)
+      );
+
+      caseClassDeclarationForFragment(generator, fragments["HeroDetails"]);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
     test(`should generate a class declaration for a mutation with variables`, function() {
       const { operations, fragments } = compileFromSource(`
         mutation CreateReview($episode: Episode) {

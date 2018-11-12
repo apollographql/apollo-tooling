@@ -46,6 +46,7 @@ import {
 import { GraphQLType } from "graphql";
 import { Property } from "./language";
 import { GraphQLCompositeType } from "graphql";
+import { createLexer } from "graphql/language";
 
 export function generateSource(context: LegacyCompilerContext) {
   const generator = new CodeGenerator(context);
@@ -226,7 +227,8 @@ export function caseClassDeclarationForSelectionSet(
     fields,
     inlineFragments,
     fragmentSpreads,
-    viewableAs
+    viewableAs,
+    parentFragments
   }: {
     caseClassName: string;
     parentType: GraphQLCompositeType;
@@ -237,6 +239,7 @@ export function caseClassDeclarationForSelectionSet(
       caseClassName: string;
       properties: (LegacyField & Property)[];
     };
+    parentFragments?: string[];
   },
   objectClosure?: () => void
 ) {
@@ -268,7 +271,8 @@ export function caseClassDeclarationForSelectionSet(
       superclasses: [
         "scala.scalajs.js.Object",
         ...(viewableAs ? [viewableAs.caseClassName] : []),
-        ...(fragmentSpreadSuperClasses || [])
+        ...(fragmentSpreadSuperClasses || []),
+        ...(parentFragments || [])
       ],
       annotations: ["scala.scalajs.js.native"]
     },
@@ -346,6 +350,9 @@ export function caseClassDeclarationForSelectionSet(
       }
     });
 
+    const fragments = (fragmentSpreads || []).map(
+      f => generator.context.fragments[f]
+    );
     fields
       .filter(field => isCompositeType(getNamedType(field.type)))
       .forEach(field => {
@@ -354,7 +361,18 @@ export function caseClassDeclarationForSelectionSet(
           parentType: getNamedType(field.type) as GraphQLCompositeType,
           fields: field.fields || [],
           inlineFragments: field.inlineFragments,
-          fragmentSpreads: field.fragmentSpreads
+          fragmentSpreads: field.fragmentSpreads,
+          parentFragments: fragments
+            .filter(f => {
+              return f.fields.some(o => field.responseName == o.responseName);
+            })
+            .map(f => {
+              return (
+                caseClassNameForFragmentName(f.fragmentName) +
+                "." +
+                caseClassNameForPropertyName(field.responseName)
+              );
+            })
         });
       });
 
