@@ -63,25 +63,53 @@ export function extractGraphQLDocuments(
     case "javascriptreact":
     case "typescript":
     case "typescriptreact":
-      return extractGraphQLDocumentsFromTemplateLiterals(document);
+      return extractGraphQLDocumentsFromJSTemplateLiterals(document);
+    case "python":
+      return extractGraphQLDocumentsFromPythonStrings(document);
     default:
       return null;
   }
 }
 
-function extractGraphQLDocumentsFromTemplateLiterals(
+function extractGraphQLDocumentsFromJSTemplateLiterals(
   document: TextDocument
 ): GraphQLDocument[] | null {
   const text = document.getText();
 
   const documents: GraphQLDocument[] = [];
 
-  const regExp = new RegExp("gql" + "\\s*`([\\s\\S]+?)`", "mg");
+  const regExp = /gql\s*`([\s\S]+?)`/gm;
 
   let result;
   while ((result = regExp.exec(text)) !== null) {
     const contents = replacePlaceholdersWithWhiteSpace(result[1]);
     const position = document.positionAt(result.index + 4);
+    const locationOffset: SourceLocation = {
+      line: position.line + 1,
+      column: position.character + 1
+    };
+    const source = new Source(contents, document.uri, locationOffset);
+    documents.push(new GraphQLDocument(source));
+  }
+
+  if (documents.length < 1) return null;
+
+  return documents;
+}
+
+function extractGraphQLDocumentsFromPythonStrings(
+  document: TextDocument
+): GraphQLDocument[] | null {
+  const text = document.getText();
+
+  const documents: GraphQLDocument[] = [];
+
+  const regExp = /\b(gql\s*\(\s*[bfru]*("(?:"")?|'(?:'')?))([\s\S]+?)\2\s*\)/gm;
+
+  let result;
+  while ((result = regExp.exec(text)) !== null) {
+    const contents = replacePlaceholdersWithWhiteSpace(result[3]);
+    const position = document.positionAt(result.index + result[1].length);
     const locationOffset: SourceLocation = {
       line: position.line + 1,
       column: position.character + 1
