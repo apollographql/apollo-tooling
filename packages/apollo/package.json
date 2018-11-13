@@ -64,6 +64,7 @@
     "vscode-uri": "^1.0.6"
   },
   "devDependencies": {
+    "mock-fs": "^4.7.0",
     "typescript": "^3.0.3"
   },
   "oclif": {
