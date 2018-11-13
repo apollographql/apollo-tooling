@@ -1,5 +1,5 @@
 {
-  "name": "apollo-cli-monorepo",
+  "name": "apollo-tooling-monorepo",
   "private": true,
   "homepage": "https://github.com/apollographql/apollo-tooling",
   "bugs": "https://github.com/apollographql/apollo-tooling/issues",
