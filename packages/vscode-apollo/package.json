@@ -88,6 +88,16 @@
         "embeddedLanguages": {
           "meta.embedded.block.graphql": "graphql"
         }
+      },
+      {
+        "injectTo": [
+          "source.python"
+        ],
+        "scopeName": "inline.graphql.python",
+        "path": "./syntaxes/graphql.py.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.graphql": "graphql"
+        }
       }
     ],
     "commands": [
