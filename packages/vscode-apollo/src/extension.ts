@@ -59,13 +59,14 @@ export function activate(context: ExtensionContext) {
       "javascript",
       "typescript",
       "javascriptreact",
-      "typescriptreact"
+      "typescriptreact",
+      "python"
     ],
     synchronize: {
       fileEvents: [
         workspace.createFileSystemWatcher("**/apollo.config.js"),
         workspace.createFileSystemWatcher("**/package.json"),
-        workspace.createFileSystemWatcher("**/*.{graphql,js,ts,jsx,tsx}")
+        workspace.createFileSystemWatcher("**/*.{graphql,js,ts,jsx,tsx,py}")
       ]
     }
   };
