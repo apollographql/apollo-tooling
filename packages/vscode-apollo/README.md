@@ -1,4 +1,4 @@
-# Apollo VSCode
+# Apollo GraphQL extension for Visual Studio Code
 
 ## Features
 
