@@ -26,7 +26,7 @@
     "circle": "npm run test -- --ci --maxWorkers=2",
     "precommit": "lint-staged",
     "release": "npm run clean && npm ci && lerna publish --exact",
-    "package-extension": "lerna run package-extension --stream --scope=vscode-apollo"
+    "package-extension": "npm run clean && npm ci && lerna run package-extension --stream --scope=vscode-apollo"
   },
   "engines": {
     "node": ">=8",
