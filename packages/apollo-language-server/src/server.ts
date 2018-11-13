@@ -1,4 +1,6 @@
 import "apollo-env";
+// FIXME: The global fetch dependency comes from `apollo-link-http` and should be avoided.
+import "apollo-env/lib/global-fetch";
 import {
   createConnection,
   ProposedFeatures,
