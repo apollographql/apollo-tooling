@@ -123,7 +123,7 @@ export class GraphQLWorkspace {
         `Loading Apollo Config in folder ${configFolder}`,
         (async () => {
           try {
-            const config = await loadConfig({ cwd: configFolder });
+            const config = await loadConfig({ configLocation: configFolder });
             return config && config.config;
           } catch (e) {
             console.error(e);

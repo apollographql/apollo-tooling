@@ -118,6 +118,7 @@ const defaultSearchPlaces = [
   `${MODULE_NAME}.config.ts`
 ];
 
+// Based on order, a provided config file will take precedence over the defaults
 const getSearchPlaces = (configFile?: string) => [
   ...(configFile ? [configFile] : []),
   ...defaultSearchPlaces
@@ -136,7 +137,7 @@ export interface LoadConfigSettings {
   // the current working directory to start looking for the config
   // config loading only works on node so we default to
   // process.cwd()
-  cwd?: string;
+  configLocation?: string;
   name?: string;
   type?: "service" | "client";
 }
@@ -255,23 +256,23 @@ export function isServiceConfig(config: ApolloConfig): config is ServiceConfig {
 
 // XXX load .env files automatically
 export const loadConfig = async ({
-  cwd,
+  configLocation,
   name,
   type
 }: LoadConfigSettings): Promise<ConfigResult<ApolloConfig>> => {
   const explorer = cosmiconfig(MODULE_NAME, {
-    searchPlaces: getSearchPlaces(cwd),
+    searchPlaces: getSearchPlaces(configLocation),
     loaders
   });
 
-  let loadedConfig = (await explorer.search(cwd)) as ConfigResult<
+  let loadedConfig = (await explorer.search(configLocation)) as ConfigResult<
     ApolloConfigFormat
   >;
 
   if (!loadedConfig) {
     loadedConfig = {
       isEmpty: false,
-      filepath: cwd || process.cwd(),
+      filepath: configLocation || process.cwd(),
       config:
         type === "client"
           ? {
