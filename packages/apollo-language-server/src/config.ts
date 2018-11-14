@@ -112,11 +112,17 @@ export type ApolloConfigFormat =
 
 // config settings
 const MODULE_NAME = "apollo";
-const searchPlaces = [
+const defaultSearchPlaces = [
   "package.json",
   `${MODULE_NAME}.config.js`,
   `${MODULE_NAME}.config.ts`
 ];
+
+const getSearchPlaces = (configFile?: string) => [
+  ...(configFile ? [configFile] : []),
+  ...defaultSearchPlaces
+];
+
 const loaders = {
   // XXX improve types for config
   ".json": (cosmiconfig as any).loadJson as LoaderEntry,
@@ -130,7 +136,7 @@ export interface LoadConfigSettings {
   // the current working directory to start looking for the config
   // config loading only works on node so we default to
   // process.cwd()
-  cwd: string;
+  cwd?: string;
   name?: string;
   type?: "service" | "client";
 }
@@ -254,7 +260,7 @@ export const loadConfig = async ({
   type
 }: LoadConfigSettings): Promise<ConfigResult<ApolloConfig>> => {
   const explorer = cosmiconfig(MODULE_NAME, {
-    searchPlaces,
+    searchPlaces: getSearchPlaces(cwd),
     loaders
   });
 
