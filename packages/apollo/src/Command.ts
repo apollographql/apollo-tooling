@@ -102,7 +102,7 @@ export abstract class ProjectCommand extends Command {
       service = getServiceFromKey(process.env.ENGINE_API_KEY);
     if (flags.key) service = getServiceFromKey(flags.key);
     const loadedConfig = await loadConfig({
-      cwd: flags.config,
+      configPath: flags.config,
       name: service,
       type: this.type
     });
