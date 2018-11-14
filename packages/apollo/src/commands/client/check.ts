@@ -49,8 +49,6 @@ export default class ClientCheck extends ClientCommand {
       ({ type }: Change) => type === ChangeType.FAILURE
     );
 
-    const exit = failures.length > 0 ? 1 : 0;
-
     const count = operations.length;
     this.log(`\n${count} operations extracted and validated`);
     if (changes.length === 0) {
@@ -66,6 +64,9 @@ export default class ClientCheck extends ClientCommand {
     });
     this.log("\n");
     // exit with failing status if we have failures
-    this.exit(exit);
+    if (failures.length > 0) {
+      this.exit();
+    }
+    return;
   }
 }
