@@ -130,9 +130,9 @@ export class ApolloEngineClient extends GraphQLDataSource {
         );
       }
       // use error logger
-      // if (errors) {
-      //   throw new Error(errors);
-      // }
+      if (errors) {
+        throw new Error(errors.map(error => `${error.message}`).join("\n"));
+      }
       if (!data) {
         throw new Error("Error in request from Engine");
       }
@@ -151,9 +151,9 @@ export class ApolloEngineClient extends GraphQLDataSource {
         );
       }
       // use error logger
-      // if (errors) {
-      //   throw new Error(errors);
-      // }
+      if (errors) {
+        throw new Error(errors.map(error => `${error.message}`).join("\n"));
+      }
       if (!data) {
         throw new Error("Error in request from Engine");
       }
@@ -170,9 +170,9 @@ export class ApolloEngineClient extends GraphQLDataSource {
           );
         }
         // use error logger
-        // if (errors) {
-        //   throw new Error(errors);
-        // }
+        if (errors) {
+          throw new Error(errors.map(error => `${error.message}`).join("\n"));
+        }
         if (!data) {
           throw new Error("Error in request from Engine");
         }
@@ -190,9 +190,9 @@ export class ApolloEngineClient extends GraphQLDataSource {
           );
         }
         // use error logger
-        // if (errors) {
-        //   throw new Error(errors);
-        // }
+        if (errors) {
+          throw new Error(errors.map(error => `${error.message}`).join("\n"));
+        }
         if (!data) {
           throw new Error("Error in request from Engine");
         }
