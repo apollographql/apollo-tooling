@@ -69,9 +69,6 @@ export abstract class ProjectCommand extends Command {
     endpoint: flags.string({
       description: "The url of your service"
     }),
-    localSchemaFile: flags.string({
-      description: "Path to your local GraphQL schema file"
-    }),
     key: flags.string({
       description: "The API key for the Apollo Engine service",
       default: () => process.env.ENGINE_API_KEY
@@ -144,6 +141,11 @@ export abstract class ProjectCommand extends Command {
 
     if (flags.localSchemaFile) {
       config.setDefaults({
+        client: {
+          service: {
+            localSchemaFile: flags.localSchemaFile
+          }
+        },
         service: {
           localSchemaFile: flags.localSchemaFile
         }

@@ -14,6 +14,9 @@ export default class ServicePush extends ProjectCommand {
       char: "t",
       description: "The tag to publish this service to",
       default: "current"
+    }),
+    localSchemaFile: flags.string({
+      description: "Path to your local GraphQL schema file"
     })
   };
 
