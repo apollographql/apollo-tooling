@@ -2,7 +2,6 @@
 
 ## Features
 
-- Loads your GraphQL schemas and queries automatically from an [Apollo Config](https://www.apollographql.com/docs/resources/apollo-config.html) file
 - Adds syntax highlighting for GraphQL files and `gql` templates inside JavaScript files
 - Code-completes fields, arguments, types, and variables in your queries
 - Detects and loads client side schemas and validates client side field usage in operations
