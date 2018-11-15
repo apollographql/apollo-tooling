@@ -26,8 +26,19 @@ export interface ProjectContext<Flags = any, Args = any> {
   args: Args;
 }
 
+export interface Flags {
+  config?: string;
+  header?: string[];
+  endpoint?: string;
+  localSchemaFile?: string;
+  key?: string;
+  engine?: string;
+  frontend?: string;
+  tag?: string;
+}
+
 const headersArrayToObject = (
-  arr: string[]
+  arr?: string[]
 ): Record<string, string> | undefined => {
   if (!arr) return;
   return arr
@@ -57,6 +68,9 @@ export abstract class ProjectCommand extends Command {
     }),
     endpoint: flags.string({
       description: "The url of your service"
+    }),
+    localSchemaFile: flags.string({
+      description: "Path to your local GraphQL schema file"
     }),
     key: flags.string({
       description: "The API key for the Apollo Engine service",
@@ -96,7 +110,7 @@ export abstract class ProjectCommand extends Command {
       });
   }
 
-  protected async createConfig(flags: any) {
+  protected async createConfig(flags: Flags) {
     let service;
     if (process.env.ENGINE_API_KEY)
       service = getServiceFromKey(process.env.ENGINE_API_KEY);
@@ -124,6 +138,14 @@ export abstract class ProjectCommand extends Command {
             url: flags.endpoint,
             headers: headersArrayToObject(flags.header)
           }
+        }
+      });
+    }
+
+    if (flags.localSchemaFile) {
+      config.setDefaults({
+        service: {
+          localSchemaFile: flags.localSchemaFile
         }
       });
     }
