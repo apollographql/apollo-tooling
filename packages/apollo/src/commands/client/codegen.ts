@@ -164,7 +164,7 @@ export default class Generate extends ClientCommand {
                 const operations = Object.values(this.project.operations);
                 const fragments = Object.values(this.project.fragments);
 
-                if (!operations.length) {
+                if (!operations.length && !fragments.length) {
                   throw new Error(
                     "No document sets found to generate code for."
                   );
