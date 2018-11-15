@@ -166,7 +166,7 @@ export default class Generate extends ClientCommand {
 
                 if (!operations.length && !fragments.length) {
                   throw new Error(
-                    "No document sets found to generate code for."
+                    "No operations or fragments found to generate code for."
                   );
                 }
 
