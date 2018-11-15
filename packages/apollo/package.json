@@ -63,6 +63,9 @@
     "tty": "^1.0.1",
     "vscode-uri": "^1.0.6"
   },
+  "devDependencies": {
+    "typescript": "^3.0.3"
+  },
   "oclif": {
     "commands": "./lib/commands",
     "bin": "apollo",
