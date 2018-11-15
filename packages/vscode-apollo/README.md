@@ -11,8 +11,7 @@
 
 ## Configuration
 
-- Please refer to the [Editor Plugin](https://www.apollographql.com/docs/platform/editor-plugins.html) docs for configuration instructions.
-- For more advanced configuration see [Apollo Config](https://www.apollographql.com/docs/platform/apollo-config.html).
+Please refer to the [Editor Plugin](https://www.apollographql.com/docs/platform/editor-plugins.html) docs for configuration instructions.
 
 ## Issues
 
