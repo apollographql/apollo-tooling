@@ -22,8 +22,8 @@ const engineSignature = (_TODO_operationAST: DocumentNode): string => {
   return engineDefaultSignature(_TODO_operationAST, "TODO");
 };
 
-export default class ServicePush extends ClientCommand {
-  static description = "Push a service to Engine";
+export default class ClientExtract extends ClientCommand {
+  static description = "Extract queries from a client";
   static flags = {
     ...ClientCommand.flags
   };
