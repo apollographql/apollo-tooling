@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.1.1 darwin-x64 node-v10.10.0
+apollo/2.1.2 darwin-x64 node-v10.10.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -114,6 +114,8 @@ OPTIONS
 
   --key=key                                  The API key for the Apollo Engine service
 
+  --localSchemaFile=localSchemaFile          Path to your local GraphQL schema file (introspection result or SDL)
+
   --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
 
   --namespace=namespace                      The namespace to emit generated code into.
@@ -154,7 +156,7 @@ _See code: [src/commands/client/codegen.ts](https://github.com/apollographql/apo
 
 ## `apollo client:extract OUTPUT`
 
-Push a service to Engine
+Extract queries from a client
 
 ```
 USAGE
@@ -396,11 +398,12 @@ USAGE
   $ apollo service:push
 
 OPTIONS
-  -c, --config=config  Path to your Apollo config file
-  -t, --tag=tag        [default: current] The published tag to check this service against
-  --endpoint=endpoint  The url of your service
-  --header=header      Additional headers to send to server for introspectionQuery
-  --key=key            The API key for the Apollo Engine service
+  -c, --config=config                Path to your Apollo config file
+  -t, --tag=tag                      [default: current] The tag to publish this service to
+  --endpoint=endpoint                The url of your service
+  --header=header                    Additional headers to send to server for introspectionQuery
+  --key=key                          The API key for the Apollo Engine service
+  --localSchemaFile=localSchemaFile  Path to your local GraphQL schema file (introspection result or SDL)
 
 ALIASES
   $ apollo schema:publish
