@@ -45,7 +45,8 @@ export default class Generate extends ClientCommand {
       required: true
     }),
     localSchemaFile: flags.string({
-      description: "Path to your local GraphQL schema file"
+      description:
+        "Path to your local GraphQL schema file (introspection result or SDL)"
     }),
     addTypename: flags.boolean({
       description: "Automatically add __typename to your queries",

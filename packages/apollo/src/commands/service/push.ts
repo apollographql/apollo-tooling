@@ -16,7 +16,8 @@ export default class ServicePush extends ProjectCommand {
       default: "current"
     }),
     localSchemaFile: flags.string({
-      description: "Path to your local GraphQL schema file"
+      description:
+        "Path to your local GraphQL schema file (introspection result or SDL)"
     })
   };
 

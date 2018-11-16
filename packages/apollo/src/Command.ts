@@ -140,16 +140,21 @@ export abstract class ProjectCommand extends Command {
     }
 
     if (flags.localSchemaFile) {
-      config.setDefaults({
-        client: {
+      if (isClientConfig(config)) {
+        config.setDefaults({
+          client: {
+            service: {
+              localSchemaFile: flags.localSchemaFile
+            }
+          }
+        });
+      } else if (isServiceConfig(config)) {
+        config.setDefaults({
           service: {
             localSchemaFile: flags.localSchemaFile
           }
-        },
-        service: {
-          localSchemaFile: flags.localSchemaFile
-        }
-      });
+        });
+      }
     }
 
     // load per command type defaults;
@@ -161,7 +166,11 @@ export abstract class ProjectCommand extends Command {
     return { config, filepath, isEmpty };
   }
 
-  protected createService(config: ApolloConfig, filepath: string, flags: any) {
+  protected createService(
+    config: ApolloConfig,
+    filepath: string,
+    flags: Flags
+  ) {
     const loadingHandler = new OclifLoadingHandler(this);
     const rootURI = `file://${parse(filepath).dir}`;
     const clientIdentity = {
