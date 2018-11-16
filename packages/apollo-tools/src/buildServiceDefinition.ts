@@ -2,6 +2,7 @@ import {
   GraphQLSchema,
   DocumentNode,
   TypeDefinitionNode,
+  DirectiveDefinitionNode,
   isTypeDefinitionNode,
   TypeExtensionNode,
   isTypeExtensionNode,
@@ -34,7 +35,7 @@ export function buildServiceDefinition(
   const errors: GraphQLError[] = [];
 
   const typeDefinitionsMap: {
-    [name: string]: TypeDefinitionNode[];
+    [name: string]: (TypeDefinitionNode | DirectiveDefinitionNode)[];
   } = Object.create(null);
 
   const typeExtensionsMap: {
@@ -49,7 +50,10 @@ export function buildServiceDefinition(
       module = { typeDefs: module };
     }
     for (const definition of module.typeDefs.definitions) {
-      if (isTypeDefinitionNode(definition)) {
+      if (
+        isTypeDefinitionNode(definition) ||
+        definition.kind === Kind.DIRECTIVE_DEFINITION
+      ) {
         const typeName = definition.name.value;
 
         if (typeDefinitionsMap[typeName]) {

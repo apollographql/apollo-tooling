@@ -111,6 +111,23 @@ Array [
     });
   });
 
+  describe(`directive definitions`, () => {
+    it(`should include directive`, () => {
+      const service = buildServiceDefinition([
+        gql`
+          directive @something on FIELD_DEFINITION
+        `
+      ]);
+
+      expect(service.errors).toBeUndefined();
+
+      expect(service.schema).toBeDefined();
+      const schema = service.schema!;
+      const directive = schema.getDirective("something");
+      expect(directive).toBeDefined();
+    });
+  });
+
   describe(`type extension`, () => {
     it(`should allow extending a type from the same module`, () => {
       const service = buildServiceDefinition([
