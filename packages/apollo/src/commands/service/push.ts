@@ -12,8 +12,12 @@ export default class ServicePush extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The published tag to check this service against",
+      description: "The tag to publish this service to",
       default: "current"
+    }),
+    localSchemaFile: flags.string({
+      description:
+        "Path to your local GraphQL schema file (introspection result or SDL)"
     })
   };
 
@@ -27,6 +31,7 @@ export default class ServicePush extends ProjectCommand {
           if (!config.name) {
             throw new Error("No service found to link to Engine");
           }
+
           const schema = await project.resolveSchema({ tag: flags.tag });
           gitContext = await gitInfo();
 

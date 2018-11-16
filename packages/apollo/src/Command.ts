@@ -26,8 +26,19 @@ export interface ProjectContext<Flags = any, Args = any> {
   args: Args;
 }
 
+export interface Flags {
+  config?: string;
+  header?: string[];
+  endpoint?: string;
+  localSchemaFile?: string;
+  key?: string;
+  engine?: string;
+  frontend?: string;
+  tag?: string;
+}
+
 const headersArrayToObject = (
-  arr: string[]
+  arr?: string[]
 ): Record<string, string> | undefined => {
   if (!arr) return;
   return arr
@@ -96,7 +107,7 @@ export abstract class ProjectCommand extends Command {
       });
   }
 
-  protected async createConfig(flags: any) {
+  protected async createConfig(flags: Flags) {
     let service;
     if (process.env.ENGINE_API_KEY)
       service = getServiceFromKey(process.env.ENGINE_API_KEY);
@@ -128,6 +139,24 @@ export abstract class ProjectCommand extends Command {
       });
     }
 
+    if (flags.localSchemaFile) {
+      if (isClientConfig(config)) {
+        config.setDefaults({
+          client: {
+            service: {
+              localSchemaFile: flags.localSchemaFile
+            }
+          }
+        });
+      } else if (isServiceConfig(config)) {
+        config.setDefaults({
+          service: {
+            localSchemaFile: flags.localSchemaFile
+          }
+        });
+      }
+    }
+
     // load per command type defaults;
     if (this.configMap) {
       const defaults = this.configMap(flags);
@@ -137,7 +166,11 @@ export abstract class ProjectCommand extends Command {
     return { config, filepath, isEmpty };
   }
 
-  protected createService(config: ApolloConfig, filepath: string, flags: any) {
+  protected createService(
+    config: ApolloConfig,
+    filepath: string,
+    flags: Flags
+  ) {
     const loadingHandler = new OclifLoadingHandler(this);
     const rootURI = `file://${parse(filepath).dir}`;
     const clientIdentity = {

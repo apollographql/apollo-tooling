@@ -44,6 +44,10 @@ export default class Generate extends ClientCommand {
         "Type of code generator to use (swift | typescript | flow | scala), inferred from output",
       required: true
     }),
+    localSchemaFile: flags.string({
+      description:
+        "Path to your local GraphQL schema file (introspection result or SDL)"
+    }),
     addTypename: flags.boolean({
       description: "Automatically add __typename to your queries",
       default: true
