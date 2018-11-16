@@ -53,6 +53,8 @@ export function activate(context: ExtensionContext) {
     }
   };
 
+  const outputChannel = window.createOutputChannel("Apollo GraphQL");
+
   const clientOptions: LanguageClientOptions = {
     documentSelector: [
       "graphql",
@@ -68,7 +70,8 @@ export function activate(context: ExtensionContext) {
         workspace.createFileSystemWatcher("**/package.json"),
         workspace.createFileSystemWatcher("**/*.{graphql,js,ts,jsx,tsx,py}")
       ]
-    }
+    },
+    outputChannel
   };
 
   const client = new LanguageClient(
