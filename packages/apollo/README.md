@@ -133,6 +133,8 @@ OPTIONS
   --passthroughCustomScalars                 Use your own types for custom scalars
 
   --queries=queries                          Glob of files to watch for recompilation
+                                             (misnomer) Path to your GraphQL queries needs to be specified as "includes" in 
+                                             config file
 
   --tagName=tagName                          [default: gql] Name of the template literal tag used to identify template
                                              literals containing GraphQL queries in Javascript/Typescript code
@@ -447,8 +449,18 @@ module.exports = {
     // or a local generated schema file
     service: {
       name: "my-service-name",
-      localSchemaFile: "./path/to/schema.graphl"
-    }
+      localSchemaFile: "./path/to/schema.gql"
+    },
+    
+    // specify where GraphQL queries are located
+    // paths are relative to dir where this config file is located
+    // file extensions could be {graphql,js,jsx,ts,tsx,py}
+    includes: [
+      "./path/to/queries/**/*.graphql"
+    ],
+    excludes: [
+      "./path/to/files/to/exclude/**/*.graphql"
+    ]
   }
 };
 ```
@@ -468,7 +480,7 @@ module.exports = {
     },
 
     // or a local generated schema file
-    localSchemaFile: "./path/to/schema.graphl"
+    localSchemaFile: "./path/to/schema.gql"
   }
 };
 ```
