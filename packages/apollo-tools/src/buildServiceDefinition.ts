@@ -35,11 +35,15 @@ export function buildServiceDefinition(
   const errors: GraphQLError[] = [];
 
   const typeDefinitionsMap: {
-    [name: string]: (TypeDefinitionNode | DirectiveDefinitionNode)[];
+    [name: string]: TypeDefinitionNode[];
   } = Object.create(null);
 
   const typeExtensionsMap: {
     [name: string]: TypeExtensionNode[];
+  } = Object.create(null);
+
+  const directivesMap: {
+    [name: string]: DirectiveDefinitionNode[];
   } = Object.create(null);
 
   const schemaDefinitions: SchemaDefinitionNode[] = [];
@@ -50,10 +54,7 @@ export function buildServiceDefinition(
       module = { typeDefs: module };
     }
     for (const definition of module.typeDefs.definitions) {
-      if (
-        isTypeDefinitionNode(definition) ||
-        definition.kind === Kind.DIRECTIVE_DEFINITION
-      ) {
+      if (isTypeDefinitionNode(definition)) {
         const typeName = definition.name.value;
 
         if (typeDefinitionsMap[typeName]) {
@@ -68,6 +69,14 @@ export function buildServiceDefinition(
           typeExtensionsMap[typeName].push(definition);
         } else {
           typeExtensionsMap[typeName] = [definition];
+        }
+      } else if (definition.kind === Kind.DIRECTIVE_DEFINITION) {
+        const typeName = definition.name.value;
+
+        if (directivesMap[typeName]) {
+          directivesMap[typeName].push(definition);
+        } else {
+          directivesMap[typeName] = [definition];
         }
       } else if (definition.kind === Kind.SCHEMA_DEFINITION) {
         schemaDefinitions.push(definition);
@@ -171,6 +180,15 @@ export function buildServiceDefinition(
       schema = extendSchema(schema, {
         kind: Kind.DOCUMENT,
         definitions: typeExtensions
+      });
+    }
+
+    const directiveExtensions = Object.values(directivesMap).flat();
+
+    if (directiveExtensions.length > 0) {
+      schema = extendSchema(schema, {
+        kind: Kind.DOCUMENT,
+        definitions: directiveExtensions
       });
     }
 
