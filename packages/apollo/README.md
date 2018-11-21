@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.1.1 darwin-x64 node-v10.10.0
+apollo/2.1.3 darwin-x64 node-v10.10.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -66,9 +66,16 @@ OPTIONS
 
   --endpoint=endpoint                    The url of your service
 
+  --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
+                                         work in watch mode
+
   --header=header                        Additional headers to send to server for introspectionQuery
 
+  --includes=includes                    Glob of files to search for GraphQL operations
+
   --key=key                              The API key for the Apollo Engine service
+
+  --queries=queries                      Deprecated in favor of the includes flag
 ```
 
 _See code: [src/commands/client/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/check.ts)_
@@ -107,12 +114,19 @@ OPTIONS
 
   --endpoint=endpoint                        The url of your service
 
+  --excludes=excludes                        Glob of files to exclude for GraphQL operations. Caveat: this doesn't
+                                             currently work in watch mode
+
   --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
                                              "output" directory. Set "globalTypesFile" to specify a different path.
 
   --header=header                            Additional headers to send to server for introspectionQuery
 
+  --includes=includes                        Glob of files to search for GraphQL operations
+
   --key=key                                  The API key for the Apollo Engine service
+
+  --localSchemaFile=localSchemaFile          Path to your local GraphQL schema file (introspection result or SDL)
 
   --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
 
@@ -132,7 +146,7 @@ OPTIONS
 
   --passthroughCustomScalars                 Use your own types for custom scalars
 
-  --queries=queries                          Glob of files to watch for recompilation
+  --queries=queries                          Deprecated in favor of the includes flag
 
   --tagName=tagName                          [default: gql] Name of the template literal tag used to identify template
                                              literals containing GraphQL queries in Javascript/Typescript code
@@ -154,7 +168,7 @@ _See code: [src/commands/client/codegen.ts](https://github.com/apollographql/apo
 
 ## `apollo client:extract OUTPUT`
 
-Push a service to Engine
+Extract queries from a client
 
 ```
 USAGE
@@ -175,9 +189,16 @@ OPTIONS
 
   --endpoint=endpoint                    The url of your service
 
+  --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
+                                         work in watch mode
+
   --header=header                        Additional headers to send to server for introspectionQuery
 
+  --includes=includes                    Glob of files to search for GraphQL operations
+
   --key=key                              The API key for the Apollo Engine service
+
+  --queries=queries                      Deprecated in favor of the includes flag
 ```
 
 _See code: [src/commands/client/extract.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/extract.ts)_
@@ -202,9 +223,16 @@ OPTIONS
 
   --endpoint=endpoint                    The url of your service
 
+  --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
+                                         work in watch mode
+
   --header=header                        Additional headers to send to server for introspectionQuery
 
+  --includes=includes                    Glob of files to search for GraphQL operations
+
   --key=key                              The API key for the Apollo Engine service
+
+  --queries=queries                      Deprecated in favor of the includes flag
 ```
 
 _See code: [src/commands/client/push.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/push.ts)_
@@ -396,11 +424,12 @@ USAGE
   $ apollo service:push
 
 OPTIONS
-  -c, --config=config  Path to your Apollo config file
-  -t, --tag=tag        [default: current] The published tag to check this service against
-  --endpoint=endpoint  The url of your service
-  --header=header      Additional headers to send to server for introspectionQuery
-  --key=key            The API key for the Apollo Engine service
+  -c, --config=config                Path to your Apollo config file
+  -t, --tag=tag                      [default: current] The tag to publish this service to
+  --endpoint=endpoint                The url of your service
+  --header=header                    Additional headers to send to server for introspectionQuery
+  --key=key                          The API key for the Apollo Engine service
+  --localSchemaFile=localSchemaFile  Path to your local GraphQL schema file (introspection result or SDL)
 
 ALIASES
   $ apollo schema:publish
