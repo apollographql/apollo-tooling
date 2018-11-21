@@ -231,6 +231,16 @@ export abstract class ClientCommand extends ProjectCommand {
       char: "t",
       description: "The published service tag for this client",
       default: "current"
+    }),
+    queries: flags.string({
+      description: "Deprecated in favor of the includes flag"
+    }),
+    includes: flags.string({
+      description: "Glob of files to search for GraphQL operations"
+    }),
+    excludes: flags.string({
+      description:
+        "Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently work in watch mode"
     })
   };
   public project!: GraphQLClientProject;
@@ -251,6 +261,15 @@ export abstract class ClientCommand extends ProjectCommand {
           headers: headersArrayToObject(flags.headers)
         };
       }
+
+      if (flags.includes || flags.queries) {
+        config.client.includes = [flags.includes || flags.queries];
+      }
+
+      if (flags.excludes) {
+        config.client.excludes = [flags.excludes];
+      }
+
       return config;
     };
   }
