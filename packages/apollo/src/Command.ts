@@ -172,7 +172,14 @@ export abstract class ProjectCommand extends Command {
     flags: Flags
   ) {
     const loadingHandler = new OclifLoadingHandler(this);
-    const rootURI = `file://${parse(filepath).dir}`;
+
+    // When no config is provided, filepath === process.cwd()
+    // In this case, we don't want to look to the .dir since that's the parent
+    const rootURI =
+      filepath === process.cwd()
+        ? `file://${filepath}`
+        : `file://${parse(filepath).dir}`;
+
     const clientIdentity = {
       name: "Apollo CLI",
       version,
