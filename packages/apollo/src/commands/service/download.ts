@@ -14,6 +14,10 @@ export default class ServiceDownload extends ProjectCommand {
       char: "t",
       description: "The published tag to check this service against",
       default: "current"
+    }),
+    skipSSLValidation: flags.boolean({
+      char: "k",
+      description: "Allow connections to an SSL site without certs"
     })
   };
 
