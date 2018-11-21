@@ -10,10 +10,7 @@ import {
   loadConfig,
   isClientConfig,
   isServiceConfig,
-  ApolloConfig,
-  LoadingHandler,
-  ApolloConfigFormat,
-  ClientConfig
+  ApolloConfig
 } from "apollo-language-server";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 
