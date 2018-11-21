@@ -32,9 +32,6 @@ export default class Generate extends ClientCommand {
   static flags = {
     ...ClientCommand.flags,
 
-    queries: flags.string({
-      description: "Glob of files to watch for recompilation"
-    }),
     watch: flags.boolean({
       description: "Watch for file changes and reload codegen"
     }),
@@ -116,7 +113,7 @@ export default class Generate extends ClientCommand {
 
   async run() {
     const {
-      flags: { watch, queries }
+      flags: { watch }
     } = this.parse(Generate);
 
     const run = () =>
@@ -221,7 +218,7 @@ export default class Generate extends ClientCommand {
 
     if (watch) {
       await run().catch(() => {});
-      const watcher = new Gaze(queries!);
+      const watcher = new Gaze(this.project.config.client.includes);
       watcher.on("all", (event, file) => {
         // console.log("\nChange detected, generating types...");
         this.project.fileDidChange(Uri.file(file).toString());
