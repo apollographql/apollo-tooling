@@ -18,8 +18,6 @@ describe("buildServiceDefinition", () => {
         `
       ]);
 
-      expect(service.errors).toBeUndefined();
-
       expect(service.schema).toBeDefined();
       const schema = service.schema!;
 
@@ -37,76 +35,71 @@ type Post {
     });
 
     it(`should not allow two types with the same name in the same module`, () => {
-      const service = buildServiceDefinition([
-        gql`
-          type User {
-            name: String
-          }
-        `,
-        gql`
-          type User {
-            title: String
-          }
-        `
-      ]);
-
-      expect(service.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Type "User" was defined more than once.],
-]
-`);
+      expect(() =>
+        buildServiceDefinition([
+          gql`
+            type User {
+              name: String
+            }
+          `,
+          gql`
+            type User {
+              title: String
+            }
+          `
+        ])
+      ).toThrowErrorMatchingInlineSnapshot(
+        `"Type \\"User\\" was defined more than once."`
+      );
     });
 
     it(`should not allow two types with the same name in different modules`, () => {
-      const service = buildServiceDefinition([
-        gql`
-          type User {
-            name: String
-          }
-        `,
-        gql`
-          type User {
-            title: String
-          }
-        `
-      ]);
-
-      expect(service.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Type "User" was defined more than once.],
-]
-`);
+      expect(() =>
+        buildServiceDefinition([
+          gql`
+            type User {
+              name: String
+            }
+          `,
+          gql`
+            type User {
+              title: String
+            }
+          `
+        ])
+      ).toThrowErrorMatchingInlineSnapshot(
+        `"Type \\"User\\" was defined more than once."`
+      );
     });
 
     it(`should report multiple type duplication errors`, () => {
-      const service = buildServiceDefinition([
-        gql`
-          type User {
-            name: String
-          }
-        `,
-        gql`
-          type User {
-            title: String
-          }
-        `,
-        gql`
-          type Post {
-            title: String
-          }
-        `,
-        gql`
-          type Post {
-            name: String
-          }
-        `
-      ]);
+      expect(() =>
+        buildServiceDefinition([
+          gql`
+            type User {
+              name: String
+            }
+          `,
+          gql`
+            type User {
+              title: String
+            }
+          `,
+          gql`
+            type Post {
+              title: String
+            }
+          `,
+          gql`
+            type Post {
+              name: String
+            }
+          `
+        ])
+      ).toThrowErrorMatchingInlineSnapshot(`
+"Type \\"User\\" was defined more than once.
 
-      expect(service.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Type "User" was defined more than once.],
-  [GraphQLError: Type "Post" was defined more than once.],
-]
+Type \\"Post\\" was defined more than once."
 `);
     });
   });
@@ -124,8 +117,6 @@ Array [
           }
         `
       ]);
-
-      expect(service.errors).toBeUndefined();
 
       expect(service.schema).toBeDefined();
       const schema = service.schema!;
@@ -152,8 +143,6 @@ type User {
         `
       ]);
 
-      expect(service.errors).toBeUndefined();
-
       expect(service.schema).toBeDefined();
       const schema = service.schema!;
 
@@ -166,19 +155,17 @@ type User {
     });
 
     it(`should report an error when extending a non-existent type`, () => {
-      const service = buildServiceDefinition([
-        gql`
-          extend type User {
-            email: String
-          }
-        `
-      ]);
-
-      expect(service.errors).toMatchInlineSnapshot(`
-Array [
-  [GraphQLError: Cannot extend type "User" because it does not exist in the existing schema.],
-]
-`);
+      expect(() =>
+        buildServiceDefinition([
+          gql`
+            extend type User {
+              email: String
+            }
+          `
+        ])
+      ).toThrowErrorMatchingInlineSnapshot(
+        `"Cannot extend type \\"User\\" because it does not exist in the existing schema."`
+      );
     });
   });
 
@@ -191,8 +178,6 @@ Array [
           }
         `
       ]);
-
-      expect(service.errors).toBeUndefined();
 
       expect(service.schema).toBeDefined();
       const schema = service.schema!;
@@ -216,8 +201,6 @@ type Query {
         `
       ]);
 
-      expect(service.errors).toBeUndefined();
-
       expect(service.schema).toBeDefined();
       const schema = service.schema!;
 
@@ -228,7 +211,7 @@ type QueryRoot {
 `);
     });
 
-    it(`should be allowed with non default nanmes specified in schema extensions`, () => {
+    it(`should be allowed with non default names specified in schema extensions`, () => {
       const service = buildServiceDefinition([
         gql`
           schema {
@@ -247,8 +230,6 @@ type QueryRoot {
           }
         `
       ]);
-
-      expect(service.errors).toBeUndefined();
 
       expect(service.schema).toBeDefined();
       const schema = service.schema!;

@@ -17,6 +17,7 @@ import {
 import { isNode, isDocumentNode } from "./utilities/graphql";
 import { GraphQLResolverMap } from "./schema/resolverMap";
 import { isNotNullOrUndefined } from "./utilities/predicates";
+import { GraphQLSchemaValidationError } from "./schema/GraphQLSchemaValidationError";
 
 export interface GraphQLSchemaModule {
   typeDefs: DocumentNode;
@@ -25,7 +26,6 @@ export interface GraphQLSchemaModule {
 
 interface GraphQLServiceDefinition {
   schema?: GraphQLSchema;
-  errors?: GraphQLError[];
 }
 
 export function buildServiceDefinition(
@@ -150,7 +150,7 @@ export function buildServiceDefinition(
   }
 
   if (errors.length > 0) {
-    return { errors };
+    throw new GraphQLSchemaValidationError(errors);
   }
 
   try {
@@ -178,7 +178,7 @@ export function buildServiceDefinition(
 
     return { schema };
   } catch (error) {
-    return { errors: [error] };
+    throw new GraphQLSchemaValidationError([error]);
   }
 }
 
