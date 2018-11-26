@@ -42,6 +42,7 @@
     "apollo-codegen-typescript": "file:packages/apollo-codegen-typescript",
     "apollo-env": "file:packages/apollo-env",
     "apollo-language-server": "file:packages/apollo-language-server",
+    "event-stream": "=3.3.4",
     "vscode-apollo": "file:packages/vscode-apollo",
     "webpack-command": "^0.4.1"
   },
