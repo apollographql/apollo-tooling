@@ -57,6 +57,8 @@ connection.onInitialize(async params => {
     await Promise.all(
       workspaceFolders.map(folder => workspace.addProjectsInFolder(folder))
     );
+  } else if (params.rootUri) {
+    await workspace.addProjectsInFolder({ uri: params.rootUri });
   }
 
   return {

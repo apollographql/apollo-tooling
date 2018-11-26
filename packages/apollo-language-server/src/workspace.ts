@@ -49,7 +49,10 @@ export class GraphQLWorkspace {
     this._onSchemaTags = handler;
   }
 
-  private createProject(config: ApolloConfig, folder: WorkspaceFolder) {
+  private createProject(
+    config: ApolloConfig,
+    folder: Pick<WorkspaceFolder, "uri">
+  ) {
     const { clientIdentity } = this.config;
     const project = isClientConfig(config)
       ? new GraphQLClientProject({
@@ -82,7 +85,7 @@ export class GraphQLWorkspace {
     return project;
   }
 
-  async addProjectsInFolder(folder: WorkspaceFolder) {
+  async addProjectsInFolder(folder: Pick<WorkspaceFolder, "uri">) {
     // load all possible workspace projects (contains possible config)
     // see if we can move this detection to cosmiconfig
     /*
@@ -104,18 +107,12 @@ export class GraphQLWorkspace {
       ignore: "**/node_modules/**"
     });
 
-    apolloConfigFiles.push(
-      ...fg.sync("**/package.json", {
-        cwd: Uri.parse(folder.uri).fsPath,
-        absolute: true,
-        ignore: "**/node_modules/**"
-      })
-    );
-
     // only have unique possible folders
     const apolloConfigFolders = new Set<string>(
       apolloConfigFiles.map(f => dirname(f))
     );
+
+    console.error({ folder, apolloConfigFolders });
 
     // go from possible folders to known array of configs
     const projectConfigs = Array.from(apolloConfigFolders).map(configFolder =>
