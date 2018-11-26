@@ -1,22 +1,3 @@
-/**
-1) prior to each test, create a mock file system with some contents (https://www.npmjs.com/package/mock-fs)
-2) run the CLI on that mocked filesystem and have it write to the same place
-3) read the written files from the mocked fs and write expectations against what should have been written
-  (+ / - the CLI output for testing it is well behaving)
-4) clean up the mocked fs for the next test suite.
-
-The tricky bits here are building out a reusable set of fixtures that *can* be referenced from the real
-  filesystem (i.e. `import { schema } from "../../../__fixtures__/schema.ts` but one work around may be to use
-  a mocked package (we currently have the apollo-test-utils as a fake package that can be imported under the
-  root __mocks__ directory.
-
-Shortest path here is to try a new test suite that mocks the fs, uses the CLI on it, then expects / cleans
-  up the mocks
-
-The cool think with mock-fs is you should be able to use `fs` prior to calling `mock` and after calling
-  `mock.restore()` so it should be able to allow us to import fixtures (edited)
-*/
-
 // jest.mock("apollo-codegen-core/lib/localfs", () => {
 //   return require("../../../../__mocks__/mockFs");
 // });
@@ -34,9 +15,8 @@ import {
   graphql
 } from "graphql";
 import gql from "graphql-tag";
-let mockFS = require("mock-fs");
 
-const run = setup.do(() => mockConsole());
+const test = setup.do(() => mockConsole());
 
 // helper function to resolve files from the actual filesystem
 const resolveFiles = opts => {
@@ -100,38 +80,69 @@ const serverSideSchemaTag = `
   `;
 
 const apolloConfig = `
-module.exports = {
-  client: {
-    // a local generated schema file (mocked)
-    service: {
-      name: "my-service-name",
-      localSchemaFile: "./schema.json"
+  module.exports = {
+    client: {
+      includes: ["./**.graphql"],
+      service: {
+        name: "my-service-name",
+        localSchemaFile: "./schema.json"
+      }
     }
   }
-};
 `;
 
 describe("client:codegen", () => {
-  beforeEach(() => {
-    mockFS({
-      "schema.json": JSON.stringify(fullSchema.__schema),
-      "queryOne.graphql": simpleQuery.toString(),
-      "apollo.config.js": apolloConfig.toString(),
-      "package.json": JSON.stringify({ name: "my-test" })
-    });
-  });
-  afterEach(() => {
-    mockFS.restore();
-  });
-
-  run
+  test
+    .stdout({ print: true })
+    .fs({
+      "./schema.json": JSON.stringify(fullSchema.__schema),
+      "./queryOne.graphql": simpleQuery.toString(),
+      "./apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql"],
+            service: {
+              name: "my-service-name",
+              localSchemaFile: "./schema.json"
+            }
+          }
+        }
+      `
+    })
     .command([
       "client:codegen",
+      "API.swift",
       "--config=apollo.config.js",
-      "--schema=schema.json",
-      "API.swift"
+      "--target=swift"
     ])
-    .it("infers Swift target and writes types", () => {
-      expect(mockFS.readFileSync("API.swift").toString()).toEqual();
+    .it("writes swift types from local schema", () => {
+      expect(fs.readFileSync("API.swift").toString()).toMatchSnapshot();
+    });
+
+  test
+    .only()
+    .fs({
+      "schema.graphql": graphQLSchema,
+      "queryOne.graphql": simpleQuery.toString(),
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql"],
+            service: {
+              name: "my-service-name",
+              localSchemaFile: "./schema.graphql"
+            }
+          }
+        }
+      `
+    })
+    .command([
+      "client:codegen",
+      "API.swift",
+      "--config=apollo.config.js",
+      "--target=swift"
+    ])
+    .it("writes swift types from local schema in a graphql file", () => {
+      expect(fs.readFileSync("API.swift").toString()).toMatchSnapshot();
     });
 });
