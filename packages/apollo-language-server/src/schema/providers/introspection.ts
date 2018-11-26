@@ -34,7 +34,7 @@ export class IntrospectionSchemaProvider implements GraphQLSchemaProvider {
       })
     )) as ExecutionResult<IntrospectionQuery>;
 
-    if (errors) {
+    if (errors && errors.length > 0) {
       // XXX better error handling of GraphQL errors
       throw new Error(errors.map(({ message }: Error) => message).join("\n"));
     }
