@@ -32,6 +32,7 @@ export interface Flags {
   engine?: string;
   frontend?: string;
   tag?: string;
+  skipSSLValidation?: boolean;
 }
 
 const headersArrayToObject = (
@@ -130,7 +131,8 @@ export abstract class ProjectCommand extends Command {
         service: {
           endpoint: {
             url: flags.endpoint,
-            headers: headersArrayToObject(flags.header)
+            headers: headersArrayToObject(flags.header),
+            ...(flags.skipSSLValidation && { skipSSLValidation: true })
           }
         }
       });
