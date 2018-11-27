@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.1.4 darwin-x64 node-v8.12.0
+apollo/2.1.5 darwin-x64 node-v8.12.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -269,7 +269,7 @@ EXAMPLE
   $ apollo plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.3/src/commands/plugins/index.ts)_
 
 ## `apollo plugins:install PLUGIN...`
 
@@ -304,7 +304,7 @@ EXAMPLES
   $ apollo plugins:install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.3/src/commands/plugins/install.ts)_
 
 ## `apollo plugins:link PLUGIN`
 
@@ -331,7 +331,7 @@ EXAMPLE
   $ apollo plugins:link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.3/src/commands/plugins/link.ts)_
 
 ## `apollo plugins:uninstall PLUGIN...`
 
@@ -353,7 +353,7 @@ ALIASES
   $ apollo plugins:remove
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.3/src/commands/plugins/uninstall.ts)_
 
 ## `apollo plugins:update`
 
@@ -368,7 +368,7 @@ OPTIONS
   -v, --verbose
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.3/src/commands/plugins/update.ts)_
 
 ## `apollo service:check`
 
