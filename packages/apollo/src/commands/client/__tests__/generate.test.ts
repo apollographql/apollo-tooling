@@ -44,55 +44,35 @@ const {
   clientSideOnlyQuery: "./fixtures/clientSideOnlyQuery.graphql"
 });
 
-const fullSchema = execute(buildSchema(graphQLSchema), gql(introspectionQuery))
-  .data;
+// introspection results of a schema, JSON.stringified
+const fullSchemaJsonString = JSON.stringify(
+  execute(buildSchema(graphQLSchema), gql(introspectionQuery)).data.__schema
+);
 
+// to be used for sample js files that contain client side schema definitions
 const clientSideSchemaTag = `
-  gql\`
-  ${clientSideSchema}
+  const clientSchema = gql\`
+    ${clientSideSchema}
   \`
 `;
 
-const serverSideSchemaTag = `
-  gql\`
-  type Query {
-    hello: String!
-    serverSideField: ServerField!
+const defaultConfig = `
+  module.exports = {
+    client: {
+      includes: ["./**.graphql"],
+      service: { name: "my-service-name", localSchemaFile: "./schema.json" }
+    }
   }
-
-  type ServerField {
-    serverData: String!
-  }
-
-  type RemovedField {
-    id: ID!
-    name: RemovedType
-  }
-
-  type RemovedType {
-    fieldName: String
-  }
-  \`
-  `;
+`;
 
 jest.setTimeout(25000);
 
 describe("client:codegen", () => {
   test
     .fs({
-      "./schema.json": JSON.stringify(fullSchema.__schema),
+      "./schema.json": fullSchemaJsonString,
       "./queryOne.graphql": simpleQuery.toString(),
-      "./apollo.config.js": `
-        module.exports = {
-          client: {
-            includes: ["./**.graphql"],
-            service: {
-              name: "my-service-name",
-              localSchemaFile: "./schema.json"
-            }
-          }
-        }
-      `
+      "./apollo.config.js": defaultConfig
     })
     .command([
       "client:codegen",
@@ -112,10 +92,7 @@ describe("client:codegen", () => {
         module.exports = {
           client: {
             includes: ["./queryOne.graphql"],
-            service: {
-              name: "my-service-name",
-              localSchemaFile: "./schema.graphql"
-            }
+            service: { name: "my-service-name", localSchemaFile: "./schema.graphql" }
           }
         }
       `
@@ -132,16 +109,13 @@ describe("client:codegen", () => {
 
   test
     .fs({
-      "schema.json": JSON.stringify(fullSchema.__schema),
+      "schema.json": fullSchemaJsonString,
       "queryOne.graphql": simpleQuery.toString(),
       "apollo.config.js": `
         module.exports = {
           client: {
             includes: ["./queryOne.graphql"],
-            service: {
-              name: "my-service-name",
-              localSchemaFile: "./schema.json"
-            }
+            service: { name: "my-service-name", localSchemaFile: "./schema.json" }
           }
         }
       `
@@ -162,20 +136,10 @@ describe("client:codegen", () => {
   test
     .skip()
     .fs({
-      "schema.json": JSON.stringify(fullSchema.__schema),
+      "schema.json": fullSchemaJsonString,
       "queryOne.graphql": simpleQuery.toString(),
       "queryTwo.graphql": otherQuery.toString(),
-      "apollo.config.js": `
-        module.exports = {
-          client: {
-            includes: ["./**.graphql"],
-            service: {
-              name: "my-service-name",
-              localSchemaFile: "./schema.json"
-            }
-          }
-        }
-      `
+      "apollo.config.js": defaultConfig
     })
     .command([
       "client:codegen",
@@ -192,19 +156,9 @@ describe("client:codegen", () => {
 
   test
     .fs({
-      "schema.json": JSON.stringify(fullSchema.__schema),
+      "schema.json": fullSchemaJsonString,
       "queryOne.graphql": simpleQuery.toString(),
-      "apollo.config.js": `
-        module.exports = {
-          client: {
-            includes: ["./**.graphql"],
-            service: {
-              name: "my-service-name",
-              localSchemaFile: "./schema.json"
-            }
-          }
-        }
-      `
+      "apollo.config.js": defaultConfig
     })
     .command(["client:codegen", "--target=scala", "API.scala"])
     .it("writes types for scala", () => {
@@ -213,19 +167,9 @@ describe("client:codegen", () => {
 
   test
     .fs({
-      "schema.json": JSON.stringify(fullSchema.__schema),
+      "schema.json": fullSchemaJsonString,
       "queryOne.graphql": simpleQuery.toString(),
-      "apollo.config.js": `
-        module.exports = {
-          client: {
-            includes: ["./**.graphql"],
-            service: {
-              name: "my-service-name",
-              localSchemaFile: "./schema.json"
-            }
-          }
-        }
-      `
+      "apollo.config.js": defaultConfig
     })
     .command([
       "client:codegen",
@@ -239,176 +183,28 @@ describe("client:codegen", () => {
 
   test
     .fs({
-      "schema.json": JSON.stringify(fullSchema.__schema),
+      "schema.json": fullSchemaJsonString,
       "clientSideSchema.graphql": clientSideSchema.toString(),
       "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString(),
-      "apollo.config.js": `
-        module.exports = {
-          client: {
-            includes: ["./**.graphql"],
-            service: {
-              name: "my-service-name",
-              localSchemaFile: "./schema.json"
-            }
-          }
-        }
-      `
+      "apollo.config.js": defaultConfig
     })
     .command([
       "client:codegen",
       "--target=typescript",
       "--outputFlat",
-      "API.ts"
+      "__tmp__API.ts" // for some reason, this gets moved to root dir. naming __tmp__ to get .gitignore'd
     ])
     .it("writes typescript types for query with client-side data", () => {
-      expect(fs.readFileSync("API.ts").toString()).toMatchSnapshot();
+      expect(fs.readFileSync("__tmp__API.ts").toString()).toMatchSnapshot();
     });
 });
 
 // OLD TESTS BELOW -- TO REWRITE
 
-// describe("successful codegen", () => {
-// test
-//   .do(() => {
-//     vol.fromJSON({
-//       "schema.json": JSON.stringify(fullSchema.__schema),
-//       "queryOne.graphql": simpleQuery.toString()
-//     });
-//   })
-//   .command(["codegen:generate", "--schema=schema.json", "API.swift"])
-//   .it("infers Swift target and writes types", () => {
-//     expect(mockFS.readFileSync("API.swift").toString()).toMatchSnapshot();
-//   });
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.graphql": graphQLSchema,
-//         "queryOne.graphql": simpleQuery.toString()
-//       });
-//     })
-//     .command(["codegen:generate", "--schema=schema.graphql", "API.swift"])
-//     .it(
-//       "infers Swift target and writes types when schema is a GraphQL file",
-//       () => {
-//         expect(mockFS.readFileSync("API.swift").toString()).toMatchSnapshot();
-//       }
-//     );
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.js": serverSideSchemaTag,
-//         "queryOne.graphql": simpleQuery.toString()
-//       });
-//     })
-//     .command(["codegen:generate", "--schema=schema.js", "API.swift"])
-//     .it("infers Swift target and writes types when schema is a JS file", () => {
-//       expect(mockFS.readFileSync("API.swift").toString()).toMatchSnapshot();
-//     });
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.ts": serverSideSchemaTag,
-//         "queryOne.graphql": simpleQuery.toString()
-//       });
-//     })
-//     .command(["codegen:generate", "--schema=schema.ts", "API.swift"])
-//     .it("infers Swift target and writes types when schema is a TS file", () => {
-//       expect(mockFS.readFileSync("API.swift").toString()).toMatchSnapshot();
-//     });
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
-//         "queryOne.graphql": simpleQuery.toString()
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--operationIdsPath=myOperationIDs.json",
-//       "API.swift"
-//     ])
-//     .it("generates operation IDs files when flag is set", () => {
-//       expect(
-//         mockFS.readFileSync("myOperationIDs.json").toString()
-//       ).toMatchSnapshot();
-//     });
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
-//         "queryOne.graphql": simpleQuery.toString(),
-//         "queryTwo.graphql": otherQuery.toString(),
-//         "outDirectory/__create_this_directory": ""
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--only=queryTwo.graphql",
-//       "--target=swift",
-//       "outDirectory"
-//     ])
-//     .it("handles only flag for Swift target", () => {
-//       expect(
-//         Object.entries(vol.toJSON("outDirectory")).map(arr => [
-//           path.relative(__dirname, arr[0]),
-//           arr[1]
-//         ])
-//       ).toMatchSnapshot();
-//     });
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
-//         "queryOne.graphql": simpleQuery.toString()
-//       });
-//     })
-//     .command(["codegen:generate", "--schema=schema.json", "API.scala"])
-//     .it("infers Scala target and writes types", () => {
-//       expect(mockFS.readFileSync("API.scala").toString()).toMatchSnapshot();
-//     });
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
-//         "queryOne.graphql": simpleQuery.toString()
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--outputFlat",
-//       "API.ts"
-//     ])
-//     .it("infers TypeScript target and writes types", () => {
-//       expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
-//     });
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
-//         "clientSideSchema.graphql": clientSideSchema.toString(),
-//         "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString()
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--clientSchema=clientSideSchema.graphql",
-//       "--outputFlat",
-//       "API.ts"
-//     ])
-//     .it(
-//       "infers TypeScript target and writes types for query with client-side data",
-//       () => {
-//         expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
-//       }
-//     );
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "clientSideSchemaTag.js": clientSideSchemaTag.toString(),
 //         "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString()
 //       });
@@ -429,7 +225,7 @@ describe("client:codegen", () => {
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "clientSideSchemaTag.js": clientSideSchemaTag.toString(),
 //         "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString(),
 //         "package.json": `
@@ -479,7 +275,7 @@ describe("client:codegen", () => {
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "queryOne.graphql": simpleQuery.toString()
 //       });
 //     })
@@ -495,7 +291,7 @@ describe("client:codegen", () => {
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "queryOne.graphql": simpleQuery.toString()
 //       });
 //     })
@@ -512,7 +308,7 @@ describe("client:codegen", () => {
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "queryOne.graphql": simpleQuery.toString()
 //       });
 //     })
@@ -529,7 +325,7 @@ describe("client:codegen", () => {
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "queryOne.graphql": simpleQuery.toString()
 //       });
 //     })
@@ -542,7 +338,7 @@ describe("client:codegen", () => {
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "directory/component.tsx": `
 //           gql\`
 //             query SimpleQuery {
@@ -574,7 +370,7 @@ describe("client:codegen", () => {
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "directory/component.jsx": `
 //           gql\`
 //             query SimpleQuery {
@@ -603,7 +399,7 @@ describe("client:codegen", () => {
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "directory/component.tsx": `
 //           gql\`
 //             query SimpleQuery {
@@ -634,7 +430,7 @@ describe("client:codegen", () => {
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "directory/component.tsx": `
 //           gql\`
 //             query SimpleQuery {
@@ -667,7 +463,7 @@ describe("client:codegen", () => {
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "directory/component.jsx": `
 //           gql\`
 //             query SimpleQuery {
@@ -695,7 +491,7 @@ describe("client:codegen", () => {
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "directory/component.tsx": `
 //             gql\`
 //               query SimpleQuery {
@@ -726,7 +522,7 @@ describe("client:codegen", () => {
 //   test
 //     .do(() => {
 //       vol.fromJSON({
-//         "schema.json": JSON.stringify(fullSchema.__schema),
+//         "schema.json": fullSchemaJsonString,
 //         "directory/component.jsx": `
 //             gql\`
 //               query SimpleQuery {
