@@ -1,11 +1,17 @@
 import { createHash } from "crypto";
 import {
-  hideLiterals,
   printWithReducedWhitespace,
   sortAST,
   defaultSignature as engineDefaultSignature
 } from "apollo-engine-reporting";
-import { DocumentNode } from "graphql";
+
+import {
+  visit,
+  DocumentNode,
+  IntValueNode,
+  FloatValueNode,
+  StringValueNode
+} from "graphql";
 
 import { ClientCommand } from "../../Command";
 
@@ -19,6 +25,27 @@ const engineSignature = (_TODO_operationAST: DocumentNode): string => {
   // currently omitted by the `apollo-codegen-core` package logic.
   return engineDefaultSignature(_TODO_operationAST, "TODO");
 };
+
+// In the same spirit as the similarly named `hideLiterals` function from the
+// `apollo-engine-reporting/src/signature.ts` module, we'll do an AST visit
+// to redact literals.  Developers are strongly encouraged to use the
+// `variables` aspect of the which would avoid these being explicitly
+// present in the operation manifest at all.  The primary area of concern here
+// is to avoid sending in-lined literals which might contain sensitive
+// information (e.g. API keys, etc.).
+export function hideCertainLiterals(ast: DocumentNode): DocumentNode {
+  return visit(ast, {
+    IntValue(node: IntValueNode): IntValueNode {
+      return { ...node, value: "0" };
+    },
+    FloatValue(node: FloatValueNode): FloatValueNode {
+      return { ...node, value: "0" };
+    },
+    StringValue(node: StringValueNode): StringValueNode {
+      return { ...node, value: "", block: false };
+    }
+  });
+}
 
 export default class ServicePush extends ClientCommand {
   static description = "Push a service to Engine";
@@ -45,7 +72,7 @@ export default class ServicePush extends ClientCommand {
             // kept because the registered operations should mirror those in the
             // client bundle minus any PII which lives within string literals.
             const printed = printWithReducedWhitespace(
-              sortAST(hideLiterals(operationAST))
+              sortAST(hideCertainLiterals(operationAST))
             );
 
             return {
