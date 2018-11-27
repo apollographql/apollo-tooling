@@ -3,9 +3,6 @@ import Nock from "@fancy-test/nock";
 import * as Test from "@oclif/test";
 export { expect } from "@oclif/test";
 import { mockConsole } from "heroku-cli-util";
-// import { userInfo } from "os";
-// import { vol } from "memfs";
-// import { ufs } from "unionfs";
 
 const time = label => {
   let start = +new Date();
@@ -56,15 +53,8 @@ const setupFS = (files: Record<string, string>) => {
       });
     },
     finally(ctx: any) {
-      // const postFiles = fs.readdirSync("./");
-      // delele all files
-      // postFiles.forEach(key => {
-      // fs.unlinkSync(key);
-      // });
-      // go up one level & delete the temp dir
       process.chdir("../");
       deleteFolderRecursive(dir);
-      // fs.rmdirSync(dir);
     }
   };
 };
