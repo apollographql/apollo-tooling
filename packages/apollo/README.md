@@ -641,9 +641,9 @@ It can also be helpful to print standard out during testing. To enable logging, 
 
 ## Publishing
 
-- Before publishing, check the `CHANGELOG.md` in the root of the repository and make sure it's up to date.
-- Make sure you have a `GITHUB_TOKEN` set in your environment variables. For more information on setting `GITHUB_AUTH`, check the [`lerna-changelog` documentation](https://github.com/lerna/lerna-changelog#github-token).
+- Make sure you have a `GITHUB_AUTH` set in your environment variables. For more information on setting `GITHUB_AUTH`, check the [`lerna-changelog` documentation](https://github.com/lerna/lerna-changelog#github-token).
 - In the root of the repository, run `npx lerna-changelog` (PR labels are read automatically using the `GITHUB_AUTH` token).
 - Copy the result into the `CHANGELOG.md` file and replace the top line with the CLI version that will be published.
 - Run `git add CHANGELOG.md` so that the update will be included in Lerna's "publish" commit.
+- If the `CHANGELOG.md` is still missing included changes, please manually add those changes.
 - Finally, run `npm run release` to publish the individual packages.
