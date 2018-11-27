@@ -79,21 +79,8 @@ const serverSideSchemaTag = `
   \`
   `;
 
-const apolloConfig = `
-  module.exports = {
-    client: {
-      includes: ["./**.graphql"],
-      service: {
-        name: "my-service-name",
-        localSchemaFile: "./schema.json"
-      }
-    }
-  }
-`;
-
 describe("client:codegen", () => {
   test
-    .stdout({ print: true })
     .fs({
       "./schema.json": JSON.stringify(fullSchema.__schema),
       "./queryOne.graphql": simpleQuery.toString(),
@@ -120,14 +107,13 @@ describe("client:codegen", () => {
     });
 
   test
-    .only()
     .fs({
       "schema.graphql": graphQLSchema,
       "queryOne.graphql": simpleQuery.toString(),
       "apollo.config.js": `
         module.exports = {
           client: {
-            includes: ["./**.graphql"],
+            includes: ["./queryOne.graphql"],
             service: {
               name: "my-service-name",
               localSchemaFile: "./schema.graphql"
@@ -144,5 +130,139 @@ describe("client:codegen", () => {
     ])
     .it("writes swift types from local schema in a graphql file", () => {
       expect(fs.readFileSync("API.swift").toString()).toMatchSnapshot();
+    });
+
+  test
+    .fs({
+      "schema.json": JSON.stringify(fullSchema.__schema),
+      "queryOne.graphql": simpleQuery.toString(),
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./queryOne.graphql"],
+            service: {
+              name: "my-service-name",
+              localSchemaFile: "./schema.json"
+            }
+          }
+        }
+      `
+    })
+    .command([
+      "client:codegen",
+      "API.swift",
+      "--target=swift",
+      "--operationIdsPath=myOperationIDs.json"
+    ])
+    .it("generates operation IDs for swift files when flag is set", () => {
+      expect(
+        fs.readFileSync("myOperationIDs.json").toString()
+      ).toMatchSnapshot();
+    });
+
+  // FIXME: doesn't write anything significant to snapshot
+  test
+    .skip()
+    .fs({
+      "schema.json": JSON.stringify(fullSchema.__schema),
+      "queryOne.graphql": simpleQuery.toString(),
+      "queryTwo.graphql": otherQuery.toString(),
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql"],
+            service: {
+              name: "my-service-name",
+              localSchemaFile: "./schema.json"
+            }
+          }
+        }
+      `
+    })
+    .command([
+      "client:codegen",
+      "--only=queryTwo.graphql",
+      "--target=swift",
+      "outDirectory"
+    ])
+    .it("handles only flag for Swift target", () => {
+      const [filePath] = fs.readdirSync("./outDirectory");
+      const file = fs.readFileSync(`./outDirectory/${filePath}`).toString();
+
+      // expect(file).toMatchSnapshot();
+    });
+
+  test
+    .fs({
+      "schema.json": JSON.stringify(fullSchema.__schema),
+      "queryOne.graphql": simpleQuery.toString(),
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql"],
+            service: {
+              name: "my-service-name",
+              localSchemaFile: "./schema.json"
+            }
+          }
+        }
+      `
+    })
+    .command(["client:codegen", "--target=scala", "API.scala"])
+    .it("writes types for scala", () => {
+      expect(fs.readFileSync("API.scala").toString()).toMatchSnapshot();
+    });
+
+  test
+    .fs({
+      "schema.json": JSON.stringify(fullSchema.__schema),
+      "queryOne.graphql": simpleQuery.toString(),
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql"],
+            service: {
+              name: "my-service-name",
+              localSchemaFile: "./schema.json"
+            }
+          }
+        }
+      `
+    })
+    .command([
+      "client:codegen",
+      "--target=typescript",
+      "--outputFlat",
+      "API.ts"
+    ])
+    .it("writes types for typescript", () => {
+      expect(fs.readFileSync("API.ts").toString()).toMatchSnapshot();
+    });
+
+  test
+    .fs({
+      "schema.json": JSON.stringify(fullSchema.__schema),
+      "clientSideSchema.graphql": clientSideSchema.toString(),
+      "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString(),
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql"],
+            service: {
+              name: "my-service-name",
+              localSchemaFile: "./schema.json"
+            }
+          }
+        }
+      `
+    })
+    .command([
+      "client:codegen",
+      "--target=typescript",
+      "--outputFlat",
+      "API.ts"
+    ])
+    .it("writes typescript types for query with client-side data", () => {
+      expect(fs.readFileSync("API.ts").toString()).toMatchSnapshot();
     });
 });

@@ -27,6 +27,22 @@ const debug = fn => {
   };
 };
 
+const deleteFolderRecursive = path => {
+  if (fs.existsSync(path)) {
+    fs.readdirSync(path).forEach(function(file, index) {
+      var curPath = path + "/" + file;
+      if (fs.lstatSync(curPath).isDirectory()) {
+        // recurse
+        deleteFolderRecursive(curPath);
+      } else {
+        // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+};
+
 const setupFS = (files: Record<string, string>) => {
   let dir;
   return {
@@ -40,14 +56,15 @@ const setupFS = (files: Record<string, string>) => {
       });
     },
     finally(ctx: any) {
-      const postFiles = fs.readdirSync("./");
+      // const postFiles = fs.readdirSync("./");
       // delele all files
-      postFiles.forEach(key => {
-        fs.unlinkSync(key);
-      });
+      // postFiles.forEach(key => {
+      // fs.unlinkSync(key);
+      // });
       // go up one level & delete the temp dir
       process.chdir("../");
-      fs.rmdirSync(dir);
+      deleteFolderRecursive(dir);
+      // fs.rmdirSync(dir);
     }
   };
 };
@@ -57,5 +74,7 @@ export const test = Test.test
   .register("fs", setupFS)
   .register("timing", time)
   .register("debug", debug);
+
+// it would be great to have an .expectStdout(out => expection)
 
 mockConsole();
