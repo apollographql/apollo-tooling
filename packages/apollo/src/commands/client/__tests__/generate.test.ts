@@ -65,15 +65,17 @@ const defaultConfig = `
   }
 `;
 
+const defaultFiles = {
+  "./schema.json": fullSchemaJsonString,
+  "./queryOne.graphql": simpleQuery.toString(),
+  "./apollo.config.js": defaultConfig
+};
+
 jest.setTimeout(25000);
 
 describe("client:codegen", () => {
   test
-    .fs({
-      "./schema.json": fullSchemaJsonString,
-      "./queryOne.graphql": simpleQuery.toString(),
-      "./apollo.config.js": defaultConfig
-    })
+    .fs(defaultFiles)
     .command([
       "client:codegen",
       "API.swift",
@@ -194,377 +196,417 @@ describe("client:codegen", () => {
       "--outputFlat",
       "__tmp__API.ts" // for some reason, this gets moved to root dir. naming __tmp__ to get .gitignore'd
     ])
-    .it("writes typescript types for query with client-side data", () => {
+    .it(
+      "writes typescript types for query with client-side data when client schema in graphql file",
+      () => {
+        expect(fs.readFileSync("__tmp__API.ts").toString()).toMatchSnapshot();
+      }
+    );
+
+  test
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "clientSideSchemaTag.js": clientSideSchemaTag.toString(),
+      "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString(),
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql", "./**.js"], // include js file with schema in it
+            service: { name: "my-service-name", localSchemaFile: "./schema.json" }
+          }
+        }
+    `
+    })
+    .command([
+      "client:codegen",
+      "--target=typescript",
+      "--outputFlat",
+      "__tmp__API.ts" // for some reason, this gets moved to root dir. naming __tmp__ to get .gitignore'd
+    ])
+    .it(
+      "writes typescript types for query with client-side data when client schema in js file",
+      () => {
+        expect(fs.readFileSync("__tmp__API.ts").toString()).toMatchSnapshot();
+      }
+    );
+
+  // REMOVE?
+  //   test
+  //     .do(() => {
+  //       vol.fromJSON({
+  //         "schema.json": fullSchemaJsonString,
+  //         "clientSideSchemaTag.js": clientSideSchemaTag.toString(),
+  //         "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString(),
+  //         "package.json": `
+  //         {
+  //           "apollo": {
+  //             "schemas": {
+  //               "serverSchema": {
+  //                 "schema": "schema.json"
+  //               },
+  //               "default": {
+  //                 "schema": "clientSideSchemaTag.js",
+  //                 "extends": "serverSchema",
+  //                 "clientSide": true
+  //               }
+  //             }
+  //           }
+  //         }
+  //         `
+  //       });
+  //     })
+  //     .command(["codegen:generate", "--outputFlat", "API.ts"])
+  //     .it(
+  //       "infers TypeScript target and writes types for query with client-side data with schema in a JS file from config",
+  //       () => {
+  //         expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
+  //       }
+  //     );
+
+  // QUESTION: is this test necessary? It's essentially the same as the rest, since we've been using a localSchemaFile for tests
+  // and local schemas aren't any different than remote ones if you're not extending the remote types
+  test
+    .fs({
+      "clientSideOnlySchema.graphql": clientSideOnlySchema.toString(),
+      "clientSideOnlyQuery.graphql": clientSideOnlyQuery.toString(),
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./clientSideOnlyQuery.graphql"], // queries
+            service: { name: "my-service-name", localSchemaFile: "./clientSideOnlySchema.graphql" }
+          }
+        }
+    `
+    })
+    .command([
+      "client:codegen",
+      "--target=typescript",
+      "--outputFlat",
+      "__tmp__API.ts"
+    ])
+    .it("writes types for query with only client-side data", () => {
       expect(fs.readFileSync("__tmp__API.ts").toString()).toMatchSnapshot();
     });
+
+  test
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "queryOne.graphql": simpleQuery.toString(),
+      "apollo.config.js": defaultConfig
+    })
+    .command([
+      "client:codegen",
+      "--target=flow",
+      "--outputFlat",
+      "__tmp__API.js"
+    ])
+    .it("writes flow types", () => {
+      expect(fs.readFileSync("__tmp__API.js").toString()).toMatchSnapshot();
+    });
+
+  test
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "queryOne.graphql": simpleQuery.toString(),
+      "apollo.config.js": defaultConfig
+    })
+    .command([
+      "client:codegen",
+      "--target=flow",
+      "--outputFlat",
+      "--useFlowExactObjects",
+      "__tmp__API.js"
+    ])
+    .it(
+      "writes exact Flow types when the useFlowExactObjects flag is set",
+      () => {
+        expect(fs.readFileSync("__tmp__API.js").toString()).toMatchSnapshot();
+      }
+    );
+
+  test
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "queryOne.graphql": simpleQuery.toString(),
+      "apollo.config.js": defaultConfig
+    })
+    .command([
+      "client:codegen",
+      "--target=flow",
+      "--outputFlat",
+      "--useFlowReadOnlyTypes",
+      "__tmp__API.js"
+    ])
+    .it("writes read-only Flow types when the flag is set", () => {
+      expect(fs.readFileSync("__tmp__API.js").toString()).toMatchSnapshot();
+    });
+
+  test
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "queryOne.graphql": simpleQuery.toString(),
+      "apollo.config.js": defaultConfig
+    })
+    .command(["client:codegen", "--target=json", "__tmp__operations.json"])
+    .it("writes json operations", () => {
+      const output = JSON.parse(
+        fs.readFileSync("__tmp__operations.json").toString()
+      );
+      // have to overwrite filepath, since test directories change for every test
+      output.operations[0].filePath = "";
+      expect(output).toMatchSnapshot();
+    });
+
+  // TODO: fix UnhandledPromiseRejection
+  test
+    .skip()
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "components/component.tsx": `
+        const query = gql\`
+          query SimpleQuery {
+            hello
+          }
+        \`;
+      `,
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql", "./**/*.tsx"],
+            service: { name: "my-service-name", localSchemaFile: "./schema.json" }
+          }
+        }
+      `
+    })
+    .command(["client:codegen", "--target=typescript"])
+    .it(
+      "writes TypeScript types into a __generated__ directory next to sources when no output is set",
+      () => {
+        expect(
+          fs
+            .readFileSync("./components/__generated__/SimpleQuery.ts")
+            .toString()
+        ).toMatchSnapshot();
+        expect(
+          fs.readFileSync("./__generated__/globalTypes.ts").toString()
+        ).toMatchSnapshot();
+      }
+    );
+
+  // TODO: fix
+  test
+    .skip()
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "components/component.jsx": `
+        const query = gql\`
+          query SimpleQuery {
+            hello
+          }
+        \`;
+      `,
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql", "./**/*.jsx"],
+            service: { name: "my-service-name", localSchemaFile: "./schema.json" }
+          }
+        }
+      `
+    })
+    .command(["client:codegen", "--target=flow"])
+    .it(
+      "writes flow types into a __generated__ directory next to sources when no output is set",
+      () => {
+        expect(
+          fs
+            .readFileSync("./components/__generated__/SimpleQuery.js")
+            .toString()
+        ).toMatchSnapshot();
+      }
+    );
+
+  // TODO: fix
+  test
+    .skip()
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "components/component.tsx": `
+        const query = gql\`
+          query SimpleQuery {
+            hello
+          }
+        \`;
+      `,
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql", "./**/*.tsx"],
+            service: { name: "my-service-name", localSchemaFile: "./schema.json" }
+          }
+        }
+      `
+    })
+    .command(["client:codegen", "--target=typescript", "__foo__"])
+    .it(
+      "writes TypeScript types to a custom directory next to sources when output is set",
+      () => {
+        expect(
+          fs.readFileSync("components/__foo__/SimpleQuery.ts").toString()
+        ).toEqual();
+        expect(fs.readFileSync("__foo__/globalTypes.ts").toString()).toEqual();
+      }
+    );
+
+  // TODO: fix unhandled rejection
+  test
+    .skip()
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "components/component.tsx": `
+        const query = gql\`
+          query SimpleQuery {
+            someEnum
+          }
+        \`;
+      `,
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql", "./**/*.tsx"],
+            service: { name: "my-service-name", localSchemaFile: "./schema.json" }
+          }
+        }
+      `
+    })
+    .command([
+      "client:codegen",
+      "--target=typescript",
+      "--globalTypesFile=__foo__/bar.ts"
+    ])
+    .it(
+      "writes TypeScript global types to a custom path when globalTypesFile is set",
+      () => {
+        expect(
+          fs.readFileSync("components/__generated__/SimpleQuery.ts").toString()
+        ).toMatchSnapshot();
+        expect(fs.readFileSync("__foo__/bar.ts").toString()).toMatchSnapshot();
+      }
+    );
+
+  // fix
+  test
+    .skip()
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "components/component.jsx": `
+        const query = gql\`
+          query SimpleQuery {
+            hello
+          }
+        \`;
+      `,
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql", "./**/*.jsx"],
+            service: { name: "my-service-name", localSchemaFile: "./schema.json" }
+          }
+        }
+    `
+    })
+    .command(["client:codegen", "--target=flow", "__foo__"])
+    .it(
+      "writes Flow types to a custom directory next to sources when output is set",
+      () => {
+        expect(
+          fs.readFileSync("components/__foo__/SimpleQuery.js").toString()
+        ).toMatchSnapshot();
+      }
+    );
+
+  // fix
+  test
+    .skip()
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "components/component.tsx": `
+        const query = gql\`
+          query SimpleQuery {
+            hello
+          }
+        \`;
+      `,
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql", "./**/*.tsx"],
+            service: { name: "my-service-name", localSchemaFile: "./schema.json" }
+          }
+        }
+      `
+    })
+    .command(["client:codegen", "--target=typescript", ""])
+    .it(
+      "writes TypeScript types next to sources when output is set to empty string",
+      () => {
+        expect(
+          fs.readFileSync("components/SimpleQuery.ts").toString()
+        ).toMatchSnapshot();
+        expect(fs.readFileSync("globalTypes.ts").toString()).toMatchSnapshot();
+      }
+    );
+
+  // fix
+  test
+    .skip()
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "components/component.jsx": `
+        const query = gql\`
+          query SimpleQuery {
+            hello
+          }
+        \`;
+      `,
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**.graphql", "./**/*.jsx"],
+            service: { name: "my-service-name", localSchemaFile: "./schema.json" }
+          }
+        }
+      `
+    })
+    .command(["client:codegen", "--target=flow", ""])
+    .it(
+      "writes flow types next to sources when output is set to empty string",
+      () => {
+        expect(
+          fs.readFileSync("components/SimpleQuery.js").toString()
+        ).toMatchSnapshot();
+      }
+    );
 });
 
-// OLD TESTS BELOW -- TO REWRITE
+describe("error handling", () => {
+  test
+    .fs(defaultFiles)
+    .command(["client:codegen", "--target=foobar"])
+    .catch(err => expect(err.message).toMatch(/Unsupported target: foobar/))
+    .it("errors with an unsupported target");
 
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "clientSideSchemaTag.js": clientSideSchemaTag.toString(),
-//         "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString()
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--clientSchema=clientSideSchemaTag.js",
-//       "--outputFlat",
-//       "API.ts"
-//     ])
-//     .it(
-//       "infers TypeScript target and writes types for query with client-side data with schema in a JS file",
-//       () => {
-//         expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
-//       }
-//     );
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "clientSideSchemaTag.js": clientSideSchemaTag.toString(),
-//         "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString(),
-//         "package.json": `
-//         {
-//           "apollo": {
-//             "schemas": {
-//               "serverSchema": {
-//                 "schema": "schema.json"
-//               },
-//               "default": {
-//                 "schema": "clientSideSchemaTag.js",
-//                 "extends": "serverSchema",
-//                 "clientSide": true
-//               }
-//             }
-//           }
-//         }
-//         `
-//       });
-//     })
-//     .command(["codegen:generate", "--outputFlat", "API.ts"])
-//     .it(
-//       "infers TypeScript target and writes types for query with client-side data with schema in a JS file from config",
-//       () => {
-//         expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
-//       }
-//     );
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "clientSideOnlySchema.graphql": clientSideOnlySchema.toString(),
-//         "clientSideOnlyQuery.graphql": clientSideOnlyQuery.toString()
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--clientSchema=clientSideOnlySchema.graphql",
-//       "--outputFlat",
-//       "API.ts"
-//     ])
-//     .it(
-//       "infers TypeScript target and writes types for query with only client-side data",
-//       () => {
-//         expect(mockFS.readFileSync("API.ts").toString()).toMatchSnapshot();
-//       }
-//     );
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "queryOne.graphql": simpleQuery.toString()
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--outputFlat",
-//       "API.js"
-//     ])
-//     .it("infers Flow target and writes types", () => {
-//       expect(mockFS.readFileSync("API.js").toString()).toMatchSnapshot();
-//     });
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "queryOne.graphql": simpleQuery.toString()
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--useFlowExactObjects",
-//       "--outputFlat",
-//       "API.js"
-//     ])
-//     .it("writes exact Flow types when the flag is set", () => {
-//       expect(mockFS.readFileSync("API.js").toString()).toMatchSnapshot();
-//     });
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "queryOne.graphql": simpleQuery.toString()
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--useFlowReadOnlyTypes",
-//       "--outputFlat",
-//       "API.js"
-//     ])
-//     .it("writes read-only Flow types when the flag is set", () => {
-//       expect(mockFS.readFileSync("API.js").toString()).toMatchSnapshot();
-//     });
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "queryOne.graphql": simpleQuery.toString()
-//       });
-//     })
-//     .command(["codegen:generate", "--schema=schema.json", "operations.json"])
-//     .it("infers JSON target and writes operations", () => {
-//       expect(
-//         mockFS.readFileSync("operations.json").toString()
-//       ).toMatchSnapshot();
-//     });
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "directory/component.tsx": `
-//           gql\`
-//             query SimpleQuery {
-//               hello
-//             }
-//           \`;
-//         `
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--queries=**/*.tsx",
-//       "--target=typescript"
-//     ])
-//     .it(
-//       "writes TypeScript types into a __generated__ directory next to sources when no output is set",
-//       () => {
-//         expect(
-//           mockFS
-//             .readFileSync("directory/__generated__/SimpleQuery.ts")
-//             .toString()
-//         ).toMatchSnapshot();
-//         expect(
-//           mockFS.readFileSync("__generated__/globalTypes.ts").toString()
-//         ).toMatchSnapshot();
-//       }
-//     );
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "directory/component.jsx": `
-//           gql\`
-//             query SimpleQuery {
-//               hello
-//             }
-//           \`;
-//         `
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--queries=**/*.jsx",
-//       "--target=flow"
-//     ])
-//     .it(
-//       "writes Flow types into a __generated__ directory next to sources when no output is set",
-//       () => {
-//         expect(
-//           mockFS
-//             .readFileSync("directory/__generated__/SimpleQuery.js")
-//             .toString()
-//         ).toMatchSnapshot();
-//       }
-//     );
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "directory/component.tsx": `
-//           gql\`
-//             query SimpleQuery {
-//               hello
-//             }
-//           \`;
-//         `
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--queries=**/*.tsx",
-//       "--target=typescript",
-//       "__foo__"
-//     ])
-//     .it(
-//       "writes TypeScript types to a custom directory next to sources when output is set",
-//       () => {
-//         expect(
-//           mockFS.readFileSync("directory/__foo__/SimpleQuery.ts").toString()
-//         ).toMatchSnapshot();
-//         expect(
-//           mockFS.readFileSync("__foo__/globalTypes.ts").toString()
-//         ).toMatchSnapshot();
-//       }
-//     );
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "directory/component.tsx": `
-//           gql\`
-//             query SimpleQuery {
-//               someEnum
-//             }
-//           \`;
-//         `
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--queries=**/*.tsx",
-//       "--target=typescript",
-//       "--globalTypesFile=__foo__/bar.ts"
-//     ])
-//     .it(
-//       "writes TypeScript global types to a custom path when globalTypesFile is set",
-//       () => {
-//         expect(
-//           mockFS
-//             .readFileSync("directory/__generated__/SimpleQuery.ts")
-//             .toString()
-//         ).toMatchSnapshot();
-//         expect(
-//           mockFS.readFileSync("__foo__/bar.ts").toString()
-//         ).toMatchSnapshot();
-//       }
-//     );
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "directory/component.jsx": `
-//           gql\`
-//             query SimpleQuery {
-//               hello
-//             }
-//           \`;
-//         `
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--queries=**/*.jsx",
-//       "--target=flow",
-//       "__foo__"
-//     ])
-//     .it(
-//       "writes Flow types to a custom directory next to sources when output is set",
-//       () => {
-//         expect(
-//           mockFS.readFileSync("directory/__foo__/SimpleQuery.js").toString()
-//         ).toMatchSnapshot();
-//       }
-//     );
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "directory/component.tsx": `
-//             gql\`
-//               query SimpleQuery {
-//                 hello
-//               }
-//             \`;
-//           `
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--queries=**/*.tsx",
-//       "--target=typescript",
-//       ""
-//     ])
-//     .it(
-//       "writes TypeScript types next to sources when output is set to empty string",
-//       () => {
-//         expect(
-//           mockFS.readFileSync("directory/SimpleQuery.ts").toString()
-//         ).toMatchSnapshot();
-//         expect(
-//           mockFS.readFileSync("globalTypes.ts").toString()
-//         ).toMatchSnapshot();
-//       }
-//     );
-//   test
-//     .do(() => {
-//       vol.fromJSON({
-//         "schema.json": fullSchemaJsonString,
-//         "directory/component.jsx": `
-//             gql\`
-//               query SimpleQuery {
-//                 hello
-//               }
-//             \`;
-//           `
-//       });
-//     })
-//     .command([
-//       "codegen:generate",
-//       "--schema=schema.json",
-//       "--queries=**/*.jsx",
-//       "--target=flow",
-//       ""
-//     ])
-//     .it(
-//       "writes Flow types next to sources when output is set to empty string",
-//       () => {
-//         expect(
-//           mockFS.readFileSync("directory/SimpleQuery.js").toString()
-//         ).toMatchSnapshot();
-//       }
-//     );
-// });
-// describe("error handling", () => {
-//   test
-//     .command(["codegen:generate", "--target=foobar"])
-//     .catch(err => expect(err.message).toMatch(/Unsupported target: foobar/))
-//     .it("errors with an unsupported target");
-//   test
-//     .command(["codegen:generate", "--target=swift"])
-//     .catch(err =>
-//       expect(err.message).toMatch(/The output path must be specified/)
-//     )
-//     .it("errors when no output file is provided");
-//   test
-//     .command(["codegen:generate", "output-file"])
-//     .catch(err =>
-//       expect(err.message).toMatch(
-//         /Could not infer target from output file type, please use --target/
-//       )
-//     )
-//     .it("errors when target cannot be inferred");
-// });
+  test
+    .fs(defaultFiles)
+    .command(["client:codegen", "--target=swift"])
+    .catch(err =>
+      expect(err.message).toMatch(/The output path must be specified/)
+    )
+    .it("errors when no output file is provided");
+
+  test
+    .fs(defaultFiles)
+    .command(["client:codegen", "output-file"])
+    .catch(err => expect(err.message).toMatch(/Missing required flag/))
+    .it("errors when no target specified");
+});

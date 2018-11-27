@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as path from "path";
 import Nock from "@fancy-test/nock";
 import * as Test from "@oclif/test";
 export { expect } from "@oclif/test";
@@ -40,6 +41,19 @@ const deleteFolderRecursive = path => {
   }
 };
 
+const makeNestedDir = dir => {
+  if (fs.existsSync(dir)) return;
+
+  try {
+    fs.mkdirSync(dir);
+  } catch (err) {
+    if (err.code == "ENOENT") {
+      makeNestedDir(path.dirname(dir)); //create parent dir
+      makeNestedDir(dir); //create dir
+    }
+  }
+};
+
 const setupFS = (files: Record<string, string>) => {
   let dir;
   return {
@@ -49,6 +63,7 @@ const setupFS = (files: Record<string, string>) => {
       process.chdir(dir);
       // fill the dir with `files`
       Object.keys(files).forEach(key => {
+        if (key.includes("/")) makeNestedDir(path.dirname(key));
         fs.writeFileSync(key, files[key]);
       });
     },
