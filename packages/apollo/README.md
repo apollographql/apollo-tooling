@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.1.3 darwin-x64 node-v10.10.0
+apollo/2.1.4 darwin-x64 node-v8.12.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -403,11 +403,12 @@ ARGUMENTS
   OUTPUT  [default: schema.json] Path to write the introspection result to
 
 OPTIONS
-  -c, --config=config  Path to your Apollo config file
-  -t, --tag=tag        [default: current] The published tag to check this service against
-  --endpoint=endpoint  The url of your service
-  --header=header      Additional headers to send to server for introspectionQuery
-  --key=key            The API key for the Apollo Engine service
+  -c, --config=config      Path to your Apollo config file
+  -k, --skipSSLValidation  Allow connections to an SSL site without certs
+  -t, --tag=tag            [default: current] The published tag to check this service against
+  --endpoint=endpoint      The url of your service
+  --header=header          Additional headers to send to server for introspectionQuery
+  --key=key                The API key for the Apollo Engine service
 
 ALIASES
   $ apollo schema:download
