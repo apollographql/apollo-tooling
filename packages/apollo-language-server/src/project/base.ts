@@ -34,6 +34,7 @@ export type DocumentUri = string;
 
 const fileAssociations: { [extension: string]: string } = {
   ".graphql": "graphql",
+  ".gql": "graphql",
   ".js": "javascript",
   ".ts": "typescript",
   ".jsx": "javascriptreact",
