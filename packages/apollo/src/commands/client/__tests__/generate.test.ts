@@ -75,6 +75,8 @@ const serverSideSchemaTag = `
   \`
   `;
 
+jest.setTimeout(25000);
+
 describe("client:codegen", () => {
   test
     .fs({
