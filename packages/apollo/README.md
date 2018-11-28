@@ -648,3 +648,8 @@ It can also be helpful to print standard out during testing. To enable logging, 
 - Run `git add CHANGELOG.md` so that the update will be included in Lerna's "publish" commit.
 - If the `CHANGELOG.md` is still missing included changes, please manually add those changes.
 - Finally, run `npm run release` to publish the individual packages.
+
+## Maintainers
+
+- [@jbaxleyiii](https://github.com/jbaxleyiii) (Apollo)
+- [@trevor-scheer](https://github.com/trevor-scheer) (Apollo)
