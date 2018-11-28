@@ -21,7 +21,7 @@
     "watch": "tsc --build tsconfig.json --watch",
     "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
-    "test": "jest --verbose",
+    "test": "jest",
     "posttest": "npm run lint",
     "circle": "npm run test -- --ci --maxWorkers=2",
     "precommit": "lint-staged",
