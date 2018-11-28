@@ -34,8 +34,8 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
       const __schema = parsed.data
         ? parsed.data.__schema
         : parsed.__schema
-          ? parsed.__schema
-          : parsed;
+        ? parsed.__schema
+        : parsed;
 
       this.schema = buildClientSchema({ __schema });
     } else if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
