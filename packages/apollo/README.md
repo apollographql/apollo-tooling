@@ -152,7 +152,7 @@ OPTIONS
                                              literals containing GraphQL queries in Javascript/Typescript code
 
   --target=target                            (required) Type of code generator to use (swift | typescript | flow |
-                                             scala), inferred from output
+                                             scala)
 
   --useFlowExactObjects                      Use Flow exact objects for generated types [flow only]
 

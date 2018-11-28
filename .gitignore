@@ -24,3 +24,6 @@ packages/vscode-apollo/webview-content
 **/*.vsix
 
 .env
+
+# files generated from tests
+__tmp__*
