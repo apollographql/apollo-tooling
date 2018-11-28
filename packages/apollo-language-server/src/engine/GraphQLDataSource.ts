@@ -46,8 +46,8 @@ export class GraphQLDataSource<TContext = any> {
     const message = error.bodyText
       ? error.bodyText
       : error.message
-        ? error.message
-        : null;
+      ? error.message
+      : null;
 
     let apolloError: ApolloError;
 

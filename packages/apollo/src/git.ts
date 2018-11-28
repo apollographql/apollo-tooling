@@ -45,11 +45,10 @@ export const gitInfo = async (): Promise<GitContext | undefined> => {
   let message;
   if (gitLoc) {
     const { authorName, authorEmail, ...commit } = await gitToJs(gitLoc)
-      .then(
-        (commits: Commit[]) =>
-          commits && commits.length > 0
-            ? commits[0]
-            : { authorName: null, authorEmail: null, message: null }
+      .then((commits: Commit[]) =>
+        commits && commits.length > 0
+          ? commits[0]
+          : { authorName: null, authorEmail: null, message: null }
       )
       .catch(() => ({ authorEmail: null, authorName: null, message: null }));
 
