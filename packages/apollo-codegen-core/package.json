@@ -24,7 +24,7 @@
     "apollo-language-server": "file:../apollo-language-server",
     "ast-types": "^0.11.6",
     "common-tags": "^1.5.1",
-    "recast": "^0.15.3"
+    "recast": "^0.16.0"
   },
   "jest": {
     "preset": "ts-jest",
