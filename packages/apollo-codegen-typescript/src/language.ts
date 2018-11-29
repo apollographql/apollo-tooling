@@ -35,11 +35,11 @@ export default class TypescriptGenerator {
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
     const enumMembers = sortEnumValues(type.getValues()).map(({ value }) => {
-      return t.TSEnumMember(t.identifier(value), t.stringLiteral(value));
+      return t.TSLiteralType(t.stringLiteral(value.toString()));
     });
 
     const typeAlias = t.exportNamedDeclaration(
-      t.TSEnumDeclaration(t.identifier(name), enumMembers),
+      this.typeAliasGenericUnion(name, enumMembers),
       []
     );
 
