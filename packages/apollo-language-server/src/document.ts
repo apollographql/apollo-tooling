@@ -52,7 +52,8 @@ export class GraphQLDocument {
 }
 
 export function extractGraphQLDocuments(
-  document: TextDocument
+  document: TextDocument,
+  tagName: string = "gql"
 ): GraphQLDocument[] | null {
   switch (document.languageId) {
     case "graphql":
@@ -63,22 +64,23 @@ export function extractGraphQLDocuments(
     case "javascriptreact":
     case "typescript":
     case "typescriptreact":
-      return extractGraphQLDocumentsFromJSTemplateLiterals(document);
+      return extractGraphQLDocumentsFromJSTemplateLiterals(document, tagName);
     case "python":
-      return extractGraphQLDocumentsFromPythonStrings(document);
+      return extractGraphQLDocumentsFromPythonStrings(document, tagName);
     default:
       return null;
   }
 }
 
 function extractGraphQLDocumentsFromJSTemplateLiterals(
-  document: TextDocument
+  document: TextDocument,
+  tagName: string
 ): GraphQLDocument[] | null {
   const text = document.getText();
 
   const documents: GraphQLDocument[] = [];
 
-  const regExp = /gql\s*`([\s\S]+?)`/gm;
+  const regExp = new RegExp(`${tagName}\\s*\`([\\s\\S]+?)\``, "gm");
 
   let result;
   while ((result = regExp.exec(text)) !== null) {
@@ -98,13 +100,17 @@ function extractGraphQLDocumentsFromJSTemplateLiterals(
 }
 
 function extractGraphQLDocumentsFromPythonStrings(
-  document: TextDocument
+  document: TextDocument,
+  tagName: string
 ): GraphQLDocument[] | null {
   const text = document.getText();
 
   const documents: GraphQLDocument[] = [];
 
-  const regExp = /\b(gql\s*\(\s*[bfru]*("(?:"")?|'(?:'')?))([\s\S]+?)\2\s*\)/gm;
+  const regExp = new RegExp(
+    `\\b(${tagName}\\s*\\(\\s*[bfru]*("(?:"")?|'(?:'')?))([\\s\\S]+?)\\2\\s*\\)`,
+    "gm"
+  );
 
   let result;
   while ((result = regExp.exec(text)) !== null) {

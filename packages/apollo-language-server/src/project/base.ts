@@ -178,7 +178,10 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   }
 
   documentDidChange(document: TextDocument) {
-    const documents = extractGraphQLDocuments(document);
+    const documents = extractGraphQLDocuments(
+      document,
+      this.config.client && this.config.client.tagName
+    );
     if (documents) {
       this.documentsByFile.set(document.uri, documents);
       this.invalidate();
