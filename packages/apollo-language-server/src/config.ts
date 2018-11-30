@@ -269,16 +269,31 @@ export const loadConfig = async ({
     ApolloConfigFormat
   >;
 
-  if (!loadedConfig) {
+  // If there's a name passed in (from env/flag), it merges with the config file, to
+  // overwrite either the client's service (if a client project), or the service's name.
+  // if there's no config file, it uses the `DefaultConfigBase` to fill these in.
+  if (!loadedConfig || name) {
     loadedConfig = {
       isEmpty: false,
       filepath: configPath || process.cwd(),
       config:
         type === "client"
           ? {
-              client: { service: name!, ...DefaultConfigBase }
+              ...(loadedConfig ? loadedConfig.config : {}),
+              client: {
+                ...DefaultConfigBase,
+                ...(loadedConfig ? loadedConfig.config.client : {}),
+                service: name!
+              }
             }
-          : { service: { name: name!, ...DefaultConfigBase } }
+          : {
+              ...(loadedConfig ? loadedConfig.config : {}),
+              service: {
+                ...DefaultConfigBase,
+                ...(loadedConfig ? loadedConfig.config.service : {}),
+                name: name!
+              }
+            }
     };
   }
 
