@@ -269,7 +269,8 @@ export const loadConfig = async ({
     ApolloConfigFormat
   >;
 
-  if (!loadedConfig) {
+  // If there's a name passed in (from env/flag), it overrides the config file
+  if (!loadedConfig || name) {
     loadedConfig = {
       isEmpty: false,
       filepath: configPath || process.cwd(),
