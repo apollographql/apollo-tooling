@@ -46,8 +46,10 @@ export default class Generate extends ClientCommand {
         "Path to your local GraphQL schema file (introspection result or SDL)"
     }),
     addTypename: flags.boolean({
-      description: "Automatically add __typename to your queries",
-      default: true
+      description:
+        "[default: true] Automatically add __typename to your queries, can be unset with --no-addTypename",
+      default: true,
+      allowNo: true
     }),
     passthroughCustomScalars: flags.boolean({
       description: "Use your own types for custom scalars"
