@@ -65,7 +65,7 @@
     "@types/node": "10.12.10",
     "@types/node-fetch": "2.1.4",
     "@types/react": "16.7.10",
-    "@types/react-dom": "16.0.10",
+    "@types/react-dom": "16.0.11",
     "@types/recursive-readdir": "2.2.0",
     "@types/rimraf": "2.0.2",
     "@types/ws": "6.0.1",
