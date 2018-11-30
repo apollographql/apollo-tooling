@@ -78,7 +78,7 @@
     "husky": "0.14.3",
     "jest": "23.6.0",
     "jest-matcher-utils": "23.6.0",
-    "lerna": "3.4.3",
+    "lerna": "3.5.1",
     "lerna-changelog": "0.8.2",
     "lint-staged": "7.3.0",
     "memfs": "2.14.0",
