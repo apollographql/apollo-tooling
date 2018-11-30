@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.1.6 darwin-x64 node-v8.12.0
+apollo/2.1.7 darwin-x64 node-v8.11.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -102,7 +102,10 @@ ARGUMENTS
 OPTIONS
   -c, --config=config                        Path to your Apollo config file
   -t, --tag=tag                              [default: current] The published service tag for this client
-  --addTypename                              Automatically add __typename to your queries
+
+  --[no-]addTypename                         [default: true] Automatically add __typename to your queries, can be unset
+                                             with --no-addTypename
+
   --clientName=clientName                    Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId      Reference id for the client which will match ids from client traces, will
@@ -152,7 +155,7 @@ OPTIONS
                                              literals containing GraphQL queries in Javascript/Typescript code
 
   --target=target                            (required) Type of code generator to use (swift | typescript | flow |
-                                             scala)
+                                             scala), inferred from output
 
   --useFlowExactObjects                      Use Flow exact objects for generated types [flow only]
 
