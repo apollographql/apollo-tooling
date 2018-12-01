@@ -81,7 +81,7 @@
     "lerna": "3.5.1",
     "lerna-changelog": "0.8.2",
     "lint-staged": "7.3.0",
-    "memfs": "2.14.0",
+    "memfs": "2.14.1",
     "nock": "9.6.1",
     "prettier": "1.15.2",
     "style-loader": "0.23.1",
