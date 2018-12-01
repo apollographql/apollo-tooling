@@ -67,6 +67,9 @@ export function extractGraphQLDocuments(
       return extractGraphQLDocumentsFromJSTemplateLiterals(document, tagName);
     case "python":
       return extractGraphQLDocumentsFromPythonStrings(document, tagName);
+    case "kotlin":
+    case "java":
+      return extractGraphQLDocumentsFromJavaStrings(document);
     default:
       return null;
   }
@@ -80,12 +83,46 @@ function extractGraphQLDocumentsFromJSTemplateLiterals(
 
   const documents: GraphQLDocument[] = [];
 
-  const regExp = new RegExp(`${tagName}\\s*\`([\\s\\S]+?)\``, "gm");
+  const regExp = new RegExp(
+    `(${tagName}|\\/\\*\\sGraphQL\\s\\*\\/)\\s*\`([\\s\\S]+?)\``,
+    "gm"
+  );
+  let result;
+  while ((result = regExp.exec(text)) !== null) {
+    const contents = replacePlaceholdersWithWhiteSpace(result[2]);
+    const position = document.positionAt(result.index + result[1].length);
+    const locationOffset: SourceLocation = {
+      line: position.line + 1,
+      column: position.character + 1
+    };
+    const source = new Source(contents, document.uri, locationOffset);
+    documents.push(new GraphQLDocument(source));
+  }
+
+  if (documents.length < 1) return null;
+
+  return documents;
+}
+
+function extractGraphQLDocumentsFromJavaStrings(
+  document: TextDocument
+): GraphQLDocument[] | null {
+  const text = document.getText();
+
+  const documents: GraphQLDocument[] = [];
+
+  const regExp = new RegExp(
+    `(\\/\\*\\sGraphQL\\s\\*\\/)\\s*\\"\\"\\"([\\s\\S]+?)\\"\\"\\"`,
+    "gm"
+  );
+  const variableDefinitionEscape = new RegExp("\\$\\{\\'\\$\\'\\}", "gm");
 
   let result;
   while ((result = regExp.exec(text)) !== null) {
-    const contents = replacePlaceholdersWithWhiteSpace(result[1]);
-    const position = document.positionAt(result.index + 4);
+    const contents = replacePlaceholdersWithWhiteSpace(
+      result[2].replace(variableDefinitionEscape, "$")
+    );
+    const position = document.positionAt(result.index + result[1].length);
     const locationOffset: SourceLocation = {
       line: position.line + 1,
       column: position.character + 1

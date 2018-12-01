@@ -39,7 +39,9 @@ const fileAssociations: { [extension: string]: string } = {
   ".ts": "typescript",
   ".jsx": "javascriptreact",
   ".tsx": "typescriptreact",
-  ".py": "python"
+  ".py": "python",
+  ".kt": "kotlin",
+  ".java": "java"
 };
 
 export interface GraphQLProjectConfig {

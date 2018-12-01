@@ -1,0 +1,27 @@
+{
+  "fileTypes": ["java", "kotlin"],
+  "injectionSelector": "L:source -string -comment",
+  "patterns": [
+    {
+      "name": "taggedTemplates",
+      "contentName": "meta.embedded.block.graphql",
+      "begin": "(\\/\\*\\sGraphQL\\s\\*\\/)\\s*(\"\"\")",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.comment.kotlin"
+        },
+        "2": {
+          "name": "punctuation.definition.string.begin.kotlin"
+        }
+      },
+      "end": "\"\"\"",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.kotlin"
+        }
+      },
+      "patterns": [{ "include": "source.graphql" }]
+    }
+  ],
+  "scopeName": "inline.graphql.java"
+}

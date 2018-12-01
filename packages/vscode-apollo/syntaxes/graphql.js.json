@@ -5,12 +5,22 @@
     {
       "name": "taggedTemplates",
       "contentName": "meta.embedded.block.graphql",
-      "begin": "(Relay\\.QL|gql|graphql(\\.experimental)?)(`)",
+      "begin":
+        "\\s*+(?:(?:(Relay)\\??\\.)(QL)|(gql|graphql|graphql\\.experimental)|(/\\* GraphQL \\*/))\\s*(`)",
       "beginCaptures": {
         "1": {
-          "name": "entity.name.function.tagged-template.js"
+          "name": "variable.other.class.js"
         },
         "2": {
+          "name": "entity.name.function.tagged-template.js"
+        },
+        "3": {
+          "name": "entity.name.function.tagged-template.js"
+        },
+        "4": {
+          "name": "comment.graphql.js"
+        },
+        "5": {
           "name": "punctuation.definition.string.template.begin.js"
         }
       },

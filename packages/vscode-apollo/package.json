@@ -79,6 +79,17 @@
       },
       {
         "injectTo": [
+          "source.java",
+          "source.kotlin"
+        ],
+        "scopeName": "inline.graphql.java",
+        "path": "./syntaxes/graphql.java.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.graphql": "graphql"
+        }
+      },
+      {
+        "injectTo": [
           "source.js",
           "source.ts",
           "source.js.jsx",
