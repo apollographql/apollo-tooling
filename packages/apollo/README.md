@@ -71,7 +71,8 @@ OPTIONS
 
   --header=header                        Additional headers to send to server for introspectionQuery
 
-  --includes=includes                    Glob of files to search for GraphQL operations
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find queries
+                                         *and* any client schema extensions
 
   --key=key                              The API key for the Apollo Engine service
 
@@ -125,7 +126,8 @@ OPTIONS
 
   --header=header                            Additional headers to send to server for introspectionQuery
 
-  --includes=includes                        Glob of files to search for GraphQL operations
+  --includes=includes                        Glob of files to search for GraphQL operations. This should be used to find
+                                             queries *and* any client schema extensions
 
   --key=key                                  The API key for the Apollo Engine service
 
@@ -197,7 +199,8 @@ OPTIONS
 
   --header=header                        Additional headers to send to server for introspectionQuery
 
-  --includes=includes                    Glob of files to search for GraphQL operations
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find queries
+                                         *and* any client schema extensions
 
   --key=key                              The API key for the Apollo Engine service
 
@@ -231,7 +234,8 @@ OPTIONS
 
   --header=header                        Additional headers to send to server for introspectionQuery
 
-  --includes=includes                    Glob of files to search for GraphQL operations
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find queries
+                                         *and* any client schema extensions
 
   --key=key                              The API key for the Apollo Engine service
 
