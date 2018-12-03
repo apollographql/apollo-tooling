@@ -264,7 +264,7 @@ export abstract class ClientCommand extends ProjectCommand {
       if (flags.endpoint) {
         config.client.service = {
           url: flags.endpoint,
-          headers: headersArrayToObject(flags.headers)
+          headers: headersArrayToObject(flags.header)
         };
       }
 
