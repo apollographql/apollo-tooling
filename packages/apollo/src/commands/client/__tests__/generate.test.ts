@@ -587,6 +587,64 @@ describe("client:codegen", () => {
         ).toMatchSnapshot();
       }
     );
+
+  test
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "components/component.tsx": `
+        const query = customGraphQLTag\`
+          query SimpleQuery {
+            hello
+          }
+        \`;
+      `,
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**/*.tsx"],
+            service: { name: "my-service-name", localSchemaFile: "./schema.json" }
+          }
+        }
+    `
+    })
+    .command([
+      "client:codegen",
+      "--target=typescript",
+      "--tagName=customGraphQLTag",
+      "--outputFlat"
+    ])
+    .it("extracts queries with a custom tagName provided as a flag", () => {
+      expect(
+        fs.readFileSync("__generated__/SimpleQuery.ts").toString()
+      ).toMatchSnapshot();
+    });
+
+  test
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "components/component.tsx": `
+        const query = customGraphQLTag\`
+          query SimpleQuery {
+            hello
+          }
+        \`;
+      `,
+      "apollo.config.js": `
+        module.exports = {
+          client: {
+            includes: ["./**/*.tsx"],
+            service: { name: "my-service-name", localSchemaFile: "./schema.json" },
+            tagName: 'customGraphQLTag'
+          }
+        }
+    `
+    })
+    .command(["client:codegen", "--target=typescript", "--outputFlat"])
+    .it("extracts queries with a custom tagName provided in the config", () => {
+      expect(
+        fs.readFileSync("__generated__/SimpleQuery.ts").toString()
+      ).toMatchSnapshot();
+    });
 });
 
 describe("error handling", () => {
