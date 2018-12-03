@@ -61,11 +61,6 @@ export default class Generate extends ClientCommand {
     mergeInFieldsFromFragmentSpreads: flags.boolean({
       description: "Merge fragment fields onto its enclosing type"
     }),
-    tagName: flags.string({
-      description:
-        "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
-      default: "gql"
-    }),
 
     // swift
     namespace: flags.string({
