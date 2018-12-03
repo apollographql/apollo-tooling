@@ -59,8 +59,10 @@ export abstract class ProjectCommand extends Command {
     header: flags.string({
       multiple: true,
       parse: header => {
-        const [key, value] = header.split(":");
-        return JSON.stringify({ [key.trim()]: value.trim() });
+        const separatorIndex = header.indexOf(":");
+        const key = header.substring(0, separatorIndex).trim();;
+        const value = header.substring(separatorIndex + 1).trim();
+        return JSON.stringify({ [key]: value });
       },
       description: "Additional headers to send to server for introspectionQuery"
     }),
