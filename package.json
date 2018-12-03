@@ -24,7 +24,6 @@
     "test": "jest",
     "posttest": "npm run lint",
     "circle": "npm run test -- --ci --maxWorkers=2",
-    "precommit": "lint-staged",
     "release": "npm run clean && npm ci && lerna publish --exact",
     "package-extension": "npm run clean && npm ci && lerna run package-extension --stream --scope=vscode-apollo"
   },
@@ -117,5 +116,10 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
