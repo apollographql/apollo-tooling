@@ -76,6 +76,15 @@ export interface ClientConfigFormat extends ConfigBase {
   tagName?: string;
   // stats window config
   statsWindow?: StatsWindowSize;
+
+  /**
+   * Rules that should be excluded from the validation rules that are in the GraphQL specification.
+   *
+   * By default the `NoUnusedFragments` and `KnownDirectives` rules are excluded.
+   *
+   * @see https://github.com/graphql/graphql-js/blob/master/src/validation/specifiedRules.js
+   */
+  excludeValidationRules?: string[];
 }
 
 export const DefaultClientConfig = {

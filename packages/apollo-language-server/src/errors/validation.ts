@@ -20,17 +20,13 @@ import { ToolError, logError } from "./logger";
 export function getValidationErrors(
   schema: GraphQLSchema,
   document: DocumentNode,
-  fragments?: { [fragmentName: string]: FragmentDefinitionNode }
+  fragments?: { [fragmentName: string]: FragmentDefinitionNode },
+  excludeRules: string[] = ["NoUnusedFragments", "KnownDirectives"]
 ) {
-  const specifiedRulesToBeRemoved = [
-    NoUnusedFragmentsRule,
-    KnownDirectivesRule
-  ];
-
   const rules = [
     NoAnonymousQueries,
     NoTypenameAlias,
-    ...specifiedRules.filter(rule => !specifiedRulesToBeRemoved.includes(rule))
+    ...specifiedRules.filter(rule => !excludeRules.includes(rule.name))
   ];
 
   const typeInfo = new TypeInfo(schema);

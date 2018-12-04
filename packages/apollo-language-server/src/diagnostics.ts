@@ -21,7 +21,8 @@ import { DocumentUri } from "./project/base";
 export function collectExecutableDefinitionDiagnositics(
   schema: GraphQLSchema,
   queryDocument: GraphQLDocument,
-  fragments: { [fragmentName: string]: FragmentDefinitionNode } = {}
+  fragments: { [fragmentName: string]: FragmentDefinitionNode } = {},
+  excludeValidationRules?: string[]
 ): Diagnostic[] {
   const ast = queryDocument.ast;
   if (!ast) return queryDocument.syntaxErrors;
@@ -36,7 +37,8 @@ export function collectExecutableDefinitionDiagnositics(
   for (const error of getValidationErrors(
     schema,
     astWithExecutableDefinitions,
-    fragments
+    fragments,
+    excludeValidationRules
   )) {
     diagnostics.push(
       ...diagnosticsFromError(error, DiagnosticSeverity.Error, "Validation")
