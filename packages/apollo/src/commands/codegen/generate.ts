@@ -86,6 +86,11 @@ export default class Generate extends Command {
       description:
         "Parse all input files, but only output generated code for the specified file [Swift only]"
     }),
+    importFramework: flags.string({
+      multiple: true,
+      description:
+        "Framework imports to be added at the top of the generated Swift files [Swift only]"
+    }),
     tagName: flags.string({
       description:
         "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
@@ -232,7 +237,8 @@ export default class Generate extends Command {
                   flags.mergeInFieldsFromFragmentSpreads,
                 useFlowExactObjects: flags.useFlowExactObjects,
                 useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes,
-                globalTypesFile: flags.globalTypesFile
+                globalTypesFile: flags.globalTypesFile,
+                importFrameworks: flags.importFramework
               }
             );
 

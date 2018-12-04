@@ -26,6 +26,7 @@ import {
 import { generateSource as generateScalaSource } from "apollo-codegen-scala";
 import { GraphQLSchema } from "graphql";
 import { FlowCompilerOptions } from "../../apollo-codegen-flow/lib/language";
+import { SwiftGeneratorOptions } from "../../apollo-codegen-swift/lib/codeGeneration";
 
 export type TargetType =
   | "json"
@@ -40,6 +41,7 @@ export type TargetType =
 
 export type GenerationOptions = CompilerOptions &
   LegacyCompilerOptions &
+  SwiftGeneratorOptions &
   FlowCompilerOptions & {
     globalTypesFile?: string;
   };
@@ -71,7 +73,12 @@ export default function generate(
     const outputIndividualFiles =
       fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
 
-    const generator = generateSwiftSource(context, outputIndividualFiles, only);
+    const generator = generateSwiftSource(
+      context,
+      outputIndividualFiles,
+      only,
+      options
+    );
 
     if (outputIndividualFiles) {
       writeGeneratedFiles(generator.generatedFiles, outputPath);

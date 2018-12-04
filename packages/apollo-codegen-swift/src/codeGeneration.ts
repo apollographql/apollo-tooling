@@ -47,12 +47,17 @@ export interface Options {
   customScalarsPrefix?: string;
 }
 
+export interface SwiftGeneratorOptions {
+  importFrameworks?: string[];
+}
+
 export function generateSource(
   context: CompilerContext,
   outputIndividualFiles: boolean,
-  only?: string
+  only?: string,
+  options?: SwiftGeneratorOptions
 ): SwiftAPIGenerator {
-  const generator = new SwiftAPIGenerator(context);
+  const generator = new SwiftAPIGenerator(context, options);
 
   if (outputIndividualFiles) {
     generator.withinFile(`Types.graphql.swift`, () => {
@@ -122,11 +127,13 @@ export function generateSource(
 
 export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
   helpers: Helpers;
+  generatorOptions?: SwiftGeneratorOptions;
 
-  constructor(context: CompilerContext) {
+  constructor(context: CompilerContext, options?: SwiftGeneratorOptions) {
     super(context);
 
     this.helpers = new Helpers(context.options);
+    this.generatorOptions = options;
   }
 
   fileHeader() {
@@ -135,6 +142,12 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     );
     this.printNewline();
     this.printOnNewline("import Apollo");
+
+    if (this.generatorOptions && this.generatorOptions.importFrameworks) {
+      this.generatorOptions.importFrameworks.forEach(framework => {
+        this.printOnNewline(`import ${framework}`);
+      });
+    }
   }
 
   classDeclarationForOperation(operation: Operation) {
