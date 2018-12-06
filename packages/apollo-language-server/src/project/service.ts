@@ -1,4 +1,4 @@
-import { GraphQLProject, DocumentUri } from "./base";
+import { GraphQLProject } from "./base";
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
 import { ServiceConfig } from "../config";
@@ -14,7 +14,7 @@ export function isServiceProject(
 export interface GraphQLServiceProjectConfig {
   clientIdentity?: ClientIdentity;
   config: ServiceConfig;
-  rootURI: DocumentUri;
+  rootURI: Uri;
   loadingHandler: LoadingHandler;
 }
 export class GraphQLServiceProject extends GraphQLProject {
@@ -25,7 +25,7 @@ export class GraphQLServiceProject extends GraphQLProject {
     loadingHandler
   }: GraphQLServiceProjectConfig) {
     const fileSet = new FileSet({
-      rootPath: Uri.parse(rootURI).fsPath,
+      rootPath: rootURI.fsPath,
       includes: config.service.includes,
       excludes: config.service.excludes
     });

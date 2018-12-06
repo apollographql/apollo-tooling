@@ -71,11 +71,11 @@ export function isClientProject(
 export interface GraphQLClientProjectConfig {
   clientIdentity?: ClientIdentity;
   config: ClientConfig;
-  rootURI: DocumentUri;
+  rootURI: Uri;
   loadingHandler: LoadingHandler;
 }
 export class GraphQLClientProject extends GraphQLProject {
-  public rootURI: DocumentUri;
+  public rootURI: Uri;
   public serviceID?: string;
   public config!: ClientConfig;
 
@@ -93,7 +93,7 @@ export class GraphQLClientProject extends GraphQLProject {
     clientIdentity
   }: GraphQLClientProjectConfig) {
     const fileSet = new FileSet({
-      rootPath: Uri.parse(rootURI).fsPath,
+      rootPath: rootURI.fsPath,
       includes: config.client.includes,
       excludes: config.client.excludes
     });

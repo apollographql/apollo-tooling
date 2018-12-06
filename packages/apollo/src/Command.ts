@@ -13,6 +13,7 @@ import {
   ApolloConfig
 } from "apollo-language-server";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
+import Uri from "vscode-uri";
 
 const { version, referenceID } = require("../package.json");
 
@@ -188,8 +189,8 @@ export abstract class ProjectCommand extends Command {
     // In this case, we don't want to look to the .dir since that's the parent
     const rootURI =
       filepath === process.cwd()
-        ? `file://${filepath}`
-        : `file://${parse(filepath).dir}`;
+        ? Uri.file(filepath)
+        : Uri.file(parse(filepath).dir);
 
     const clientIdentity = {
       name: "Apollo CLI",
