@@ -1,8 +1,6 @@
 // EngineSchemaProvider (engine schema reg => schema)
 import { NotificationHandler } from "vscode-languageserver";
-
 import gql from "graphql-tag";
-
 import {
   GraphQLSchema,
   buildClientSchema,
@@ -11,48 +9,76 @@ import {
 } from "graphql";
 
 import { ApolloEngineClient, ClientIdentity } from "../../engine";
-import { ClientConfig, parseServiceSpecifier } from "../../config";
+import {
+  ClientConfig,
+  ServiceConfig,
+  parseServiceSpecifier,
+  isClientConfig,
+  isServiceConfig
+} from "../../config";
 import {
   GraphQLSchemaProvider,
   SchemaChangeUnsubscribeHandler,
   SchemaResolveConfig
 } from "./base";
-
 import { GetSchemaByTag } from "../../graphqlTypes";
 
 export class EngineSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
-  private client?: ApolloEngineClient;
+  private engineClient?: ApolloEngineClient;
 
   constructor(
-    private config: ClientConfig,
+    private config: ClientConfig | ServiceConfig,
     private clientIdentity?: ClientIdentity
   ) {}
 
   async resolveSchema(override: SchemaResolveConfig) {
     if (this.schema && (!override || !override.force)) return this.schema;
-    const { engine, client } = this.config;
+    const { engine, client, service } = this.config;
 
-    if (typeof client.service !== "string") {
-      throw new Error(
-        `Service name not found for client, found ${client.service}`
-      );
+    let serviceName;
+
+    if (isClientConfig(this.config)) {
+      if (typeof client!.service !== "string") {
+        throw new Error(
+          `Service name not found for client, found ${client!.service}`
+        );
+      }
+
+      serviceName = client!.service as string;
+    } else if (isServiceConfig(this.config)) {
+      if (typeof service!.name !== "string") {
+        throw new Error(
+          `Service name not found for service, found ${service!.name}`
+        );
+      }
+
+      serviceName = service!.name;
     }
 
     // create engine client
-    if (!this.client) {
+    if (!this.engineClient) {
       if (!engine.apiKey) {
         throw new Error("ENGINE_API_KEY not found");
       }
-      this.client = new ApolloEngineClient(
+
+      this.engineClient = new ApolloEngineClient(
         engine.apiKey,
         engine.endpoint,
         this.clientIdentity
       );
     }
 
-    const [id, tag = "current"] = parseServiceSpecifier(client.service);
-    const { data, errors } = await this.client.execute<GetSchemaByTag>({
+    if (!serviceName)
+      throw new Error(
+        `Unable to find a service name that would link to a service in Engine.
+This may be because we couldn't find an ENGINE_API_KEY in the environment,
+no --key was passed in, or the service name wasn't set in the apollo.config.js.
+For more information about configuring Apollo projects, see the guide here (https://bit.ly/2ByILPj).`
+      );
+
+    const [id, tag = "current"] = parseServiceSpecifier(serviceName);
+    const { data, errors } = await this.engineClient.execute<GetSchemaByTag>({
       query: SCHEMA_QUERY,
       variables: {
         id,

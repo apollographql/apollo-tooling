@@ -33,6 +33,10 @@ export function schemaProviderFromConfig(
     if (config.service.endpoint) {
       return new IntrospectionSchemaProvider(config.service.endpoint);
     }
+
+    if (config.service.name) {
+      return new EngineSchemaProvider(config);
+    }
   }
 
   if (isClientConfig(config)) {
