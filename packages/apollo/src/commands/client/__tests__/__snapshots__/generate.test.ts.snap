@@ -1,5 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`client:codegen extracts queries with a custom tagName provided as a flag 1`] = `
+"/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+}
+"
+`;
+
+exports[`client:codegen extracts queries with a custom tagName provided in the config 1`] = `
+"/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+}
+"
+`;
+
 exports[`client:codegen generates operation IDs for swift files when flag is set 1`] = `
 "{
   \\"4de1e386589b0853a102a87a3f21ca25266116517e59c1e8be9442e2571f00bc\\": {

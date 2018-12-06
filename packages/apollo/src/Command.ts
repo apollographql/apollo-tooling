@@ -35,6 +35,16 @@ export interface Flags {
   skipSSLValidation?: boolean;
 }
 
+export interface ClientCommandFlags extends Flags {
+  includes?: string;
+  queries?: string;
+  excludes?: string;
+  tagName?: string;
+  clientName?: string;
+  clientReferenceId?: string;
+  clientVersion?: string;
+}
+
 const headersArrayToObject = (
   arr?: string[]
 ): Record<string, string> | undefined => {
@@ -249,13 +259,17 @@ export abstract class ClientCommand extends ProjectCommand {
     excludes: flags.string({
       description:
         "Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently work in watch mode"
+    }),
+    tagName: flags.string({
+      description:
+        "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code"
     })
   };
   public project!: GraphQLClientProject;
   constructor(argv, config) {
     super(argv, config);
     this.type = "client";
-    this.configMap = (flags: any) => {
+    this.configMap = (flags: ClientCommandFlags) => {
       const config = {
         client: {
           name: flags.clientName,
@@ -276,6 +290,10 @@ export abstract class ClientCommand extends ProjectCommand {
 
       if (flags.excludes) {
         config.client.excludes = [flags.excludes];
+      }
+
+      if (flags.tagName) {
+        config.client.tagName = flags.tagName;
       }
 
       return config;
