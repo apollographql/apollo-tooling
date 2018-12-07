@@ -71,12 +71,12 @@ export function buildServiceDefinition(
           typeExtensionsMap[typeName] = [definition];
         }
       } else if (definition.kind === Kind.DIRECTIVE_DEFINITION) {
-        const typeName = definition.name.value;
+        const directiveName = definition.name.value;
 
-        if (directivesMap[typeName]) {
-          directivesMap[typeName].push(definition);
+        if (directivesMap[directiveName]) {
+          directivesMap[directiveName].push(definition);
         } else {
-          directivesMap[typeName] = [definition];
+          directivesMap[directiveName] = [definition];
         }
       } else if (definition.kind === Kind.SCHEMA_DEFINITION) {
         schemaDefinitions.push(definition);
@@ -94,6 +94,17 @@ export function buildServiceDefinition(
         new GraphQLError(
           `Type "${typeName}" was defined more than once.`,
           typeDefinitions
+        )
+      );
+    }
+  }
+
+  for (const [directiveName, directives] of Object.entries(directivesMap)) {
+    if (directives.length > 1) {
+      errors.push(
+        new GraphQLError(
+          `Directive "${directiveName}" was defined more than once.`,
+          directives
         )
       );
     }
@@ -168,10 +179,11 @@ export function buildServiceDefinition(
 
   try {
     const typeDefinitions = Object.values(typeDefinitionsMap).flat();
+    const directives = Object.values(directivesMap).flat();
 
     let schema = buildASTSchema({
       kind: Kind.DOCUMENT,
-      definitions: typeDefinitions
+      definitions: [...typeDefinitions, ...directives]
     });
 
     const typeExtensions = Object.values(typeExtensionsMap).flat();
@@ -180,15 +192,6 @@ export function buildServiceDefinition(
       schema = extendSchema(schema, {
         kind: Kind.DOCUMENT,
         definitions: typeExtensions
-      });
-    }
-
-    const directiveExtensions = Object.values(directivesMap).flat();
-
-    if (directiveExtensions.length > 0) {
-      schema = extendSchema(schema, {
-        kind: Kind.DOCUMENT,
-        definitions: directiveExtensions
       });
     }
 
