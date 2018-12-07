@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.1.7 darwin-x64 node-v8.11.1
+apollo/2.1.8 darwin-x64 node-v10.10.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -76,6 +76,9 @@ OPTIONS
   --key=key                              The API key for the Apollo Engine service
 
   --queries=queries                      Deprecated in favor of the includes flag
+
+  --tagName=tagName                      Name of the template literal tag used to identify template literals containing
+                                         GraphQL queries in Javascript/Typescript code
 ```
 
 _See code: [src/commands/client/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/check.ts)_
@@ -151,8 +154,8 @@ OPTIONS
 
   --queries=queries                          Deprecated in favor of the includes flag
 
-  --tagName=tagName                          [default: gql] Name of the template literal tag used to identify template
-                                             literals containing GraphQL queries in Javascript/Typescript code
+  --tagName=tagName                          Name of the template literal tag used to identify template literals
+                                             containing GraphQL queries in Javascript/Typescript code
 
   --target=target                            (required) Type of code generator to use (swift | typescript | flow |
                                              scala), inferred from output
@@ -202,6 +205,9 @@ OPTIONS
   --key=key                              The API key for the Apollo Engine service
 
   --queries=queries                      Deprecated in favor of the includes flag
+
+  --tagName=tagName                      Name of the template literal tag used to identify template literals containing
+                                         GraphQL queries in Javascript/Typescript code
 ```
 
 _See code: [src/commands/client/extract.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/extract.ts)_
@@ -236,6 +242,9 @@ OPTIONS
   --key=key                              The API key for the Apollo Engine service
 
   --queries=queries                      Deprecated in favor of the includes flag
+
+  --tagName=tagName                      Name of the template literal tag used to identify template literals containing
+                                         GraphQL queries in Javascript/Typescript code
 ```
 
 _See code: [src/commands/client/push.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/push.ts)_
