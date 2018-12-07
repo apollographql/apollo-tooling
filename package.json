@@ -44,6 +44,7 @@
     "apollo-codegen-typescript": "file:packages/apollo-codegen-typescript",
     "apollo-env": "file:packages/apollo-env",
     "apollo-language-server": "file:packages/apollo-language-server",
+    "symlink-dir": "^2.0.2",
     "vscode-apollo": "file:packages/vscode-apollo",
     "webpack-command": "^0.4.1"
   },
