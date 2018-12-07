@@ -254,6 +254,14 @@ export function isServiceConfig(config: ApolloConfig): config is ServiceConfig {
   return config.isService;
 }
 
+const getServiceFromKey = (key: string | undefined): string | undefined => {
+  if (key) {
+    const [type, service] = key.split(":");
+    if (type === "service") return service;
+  }
+  return;
+};
+
 // XXX load .env files automatically
 export const loadConfig = async ({
   configPath,
@@ -269,10 +277,29 @@ export const loadConfig = async ({
     ApolloConfigFormat
   >;
 
+  // add API to the env
+  let engineConfig = {},
+    nameFromKey;
+  const dotEnvPath = configPath
+    ? resolve(parse(configPath).dir, ".env")
+    : resolve(process.cwd(), ".env");
+
+  if (existsSync(dotEnvPath)) {
+    const env: { [key: string]: string } = require("dotenv").parse(
+      readFileSync(dotEnvPath)
+    );
+
+    if (env["ENGINE_API_KEY"]) {
+      engineConfig = { engine: { apiKey: env["ENGINE_API_KEY"] } };
+      nameFromKey = getServiceFromKey(env["ENGINE_API_KEY"]);
+    }
+  }
+
+  const resolvedName = name || nameFromKey;
   // If there's a name passed in (from env/flag), it merges with the config file, to
   // overwrite either the client's service (if a client project), or the service's name.
   // if there's no config file, it uses the `DefaultConfigBase` to fill these in.
-  if (!loadedConfig || name) {
+  if (!loadedConfig || resolvedName) {
     loadedConfig = {
       isEmpty: false,
       filepath: configPath || process.cwd(),
@@ -283,7 +310,7 @@ export const loadConfig = async ({
               client: {
                 ...DefaultConfigBase,
                 ...(loadedConfig ? loadedConfig.config.client : {}),
-                service: name!
+                service: resolvedName
               }
             }
           : {
@@ -291,25 +318,13 @@ export const loadConfig = async ({
               service: {
                 ...DefaultConfigBase,
                 ...(loadedConfig ? loadedConfig.config.service : {}),
-                name: name!
+                name: resolvedName
               }
             }
     };
   }
 
   let { config, filepath, isEmpty } = loadedConfig;
-
-  // add API to the env
-  const dotEnvPath = resolve(parse(filepath).dir, ".env");
-  if (existsSync(dotEnvPath)) {
-    const env: { [key: string]: string } = require("dotenv").parse(
-      readFileSync(dotEnvPath)
-    );
-
-    if (env["ENGINE_API_KEY"]) {
-      config = merge({ engine: { apiKey: env["ENGINE_API_KEY"] } }, config);
-    }
-  }
 
   if (isEmpty) {
     throw new Error(
@@ -320,6 +335,8 @@ export const loadConfig = async ({
   // selectivly apply defaults when loading the config
   if (config.client) config = merge({ client: DefaultClientConfig }, config);
   if (config.service) config = merge({ service: DefaultServiceConfig }, config);
+  if (engineConfig) config = merge(engineConfig, config);
+
   config = merge({ engine: DefaultEngineConfig }, config);
 
   return { config: new ApolloConfig(config), filepath, isEmpty };
