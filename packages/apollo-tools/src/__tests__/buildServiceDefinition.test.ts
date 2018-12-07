@@ -111,6 +111,105 @@ Array [
     });
   });
 
+  describe(`directive definitions`, () => {
+    it(`should include directive`, () => {
+      const service = buildServiceDefinition([
+        gql`
+          directive @something on FIELD_DEFINITION
+        `
+      ]);
+
+      expect(service.errors).toBeUndefined();
+
+      expect(service.schema).toBeDefined();
+      const schema = service.schema!;
+      const directive = schema.getDirective("something");
+      expect(directive).toBeDefined();
+    });
+
+    it(`should include directives from different modules`, () => {
+      const service = buildServiceDefinition([
+        gql`
+          directive @something on FIELD_DEFINITION
+        `,
+        gql`
+          directive @another on FIELD_DEFINITION
+        `
+      ]);
+
+      expect(service.errors).toBeUndefined();
+
+      expect(service.schema).toBeDefined();
+      const schema = service.schema!;
+
+      expect(schema.getDirective("something")).toMatchInlineSnapshot(
+        `"@something"`
+      );
+
+      expect(schema.getDirective("another")).toMatchInlineSnapshot(
+        `"@another"`
+      );
+    });
+
+    it(`should not allow two types with the same name in the same module`, () => {
+      const service = buildServiceDefinition([
+        gql`
+          directive @something on FIELD_DEFINITION
+        `,
+        gql`
+          directive @something on FIELD_DEFINITION
+        `
+      ]);
+
+      expect(service.errors).toMatchInlineSnapshot(`
+Array [
+  [GraphQLError: Directive "something" was defined more than once.],
+]
+`);
+    });
+
+    it(`should not allow two types with the same name in different modules`, () => {
+      const service = buildServiceDefinition([
+        gql`
+          directive @something on FIELD_DEFINITION
+        `,
+        gql`
+          directive @something on FIELD_DEFINITION
+        `
+      ]);
+
+      expect(service.errors).toMatchInlineSnapshot(`
+Array [
+  [GraphQLError: Directive "something" was defined more than once.],
+]
+`);
+    });
+
+    it(`should report multiple type duplication errors`, () => {
+      const service = buildServiceDefinition([
+        gql`
+          directive @something on FIELD_DEFINITION
+        `,
+        gql`
+          directive @something on FIELD_DEFINITION
+        `,
+        gql`
+          directive @another on FIELD_DEFINITION
+        `,
+        gql`
+          directive @another on FIELD_DEFINITION
+        `
+      ]);
+
+      expect(service.errors).toMatchInlineSnapshot(`
+Array [
+  [GraphQLError: Directive "something" was defined more than once.],
+  [GraphQLError: Directive "another" was defined more than once.],
+]
+`);
+    });
+  });
+
   describe(`type extension`, () => {
     it(`should allow extending a type from the same module`, () => {
       const service = buildServiceDefinition([
