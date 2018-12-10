@@ -17,7 +17,7 @@
   "scripts": {
     "postinstall": "npm run update-vscode && npm run create-server-symlink",
     "update-vscode": "node ../../node_modules/vscode/bin/install",
-    "create-server-symlink": "rm -rf node_modules && mkdir node_modules && symlink-dir ../../apollo-language-server ./node_modules/",
+    "create-server-symlink": "rm -rf node_modules && mkdir node_modules && ../../node_modules/symlink-dir/dist/cli.js ../../apollo-language-server ./node_modules/",
     "package-extension": "rm -rf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink"
   },
   "engines": {
