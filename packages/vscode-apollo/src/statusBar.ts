@@ -1,36 +1,37 @@
-import {
-  window,
-  StatusBarItem,
-  StatusBarAlignment,
-  ExtensionContext,
-  commands
-} from "vscode";
-import { LanguageClient } from "vscode-languageclient";
+import { window, StatusBarAlignment } from "vscode";
 
 export default class ApolloStatusBar {
-  private statusBarItem: StatusBarItem = window.createStatusBarItem(
-    StatusBarAlignment.Right
-  );
+  private _statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right);
 
-  constructor(context: ExtensionContext, client: LanguageClient) {
-    this.statusBarItem.text = "Apollo GraphQL $(rss)";
-    this.statusBarItem.show();
+  static loadingStateText = "Apollo GraphQL $(rss)";
+  static loadedStateText = "ApolloGraphQL $(rocket)";
+
+  constructor() {
+    this._statusBarItem.text = ApolloStatusBar.loadingStateText;
+    this._statusBarItem.show();
 
     // this.statusBarItem.command = "apollographql/showOutputChannel";
-    // context.subscriptions.push(this.statusBarItem);
   }
 
-  public showLoadedState() {
-    if (!window.activeTextEditor) {
-      this.statusBarItem.hide();
+  get statusBarItem() {
+    return this._statusBarItem;
+  }
+
+  public showLoadedState({
+    hasActiveTextEditor
+  }: {
+    hasActiveTextEditor: boolean;
+  }) {
+    if (!hasActiveTextEditor) {
+      this._statusBarItem.hide();
       return;
     }
 
-    this.statusBarItem.text = "Apollo GraphQL $(rocket)";
-    this.statusBarItem.show();
+    this._statusBarItem.text = ApolloStatusBar.loadedStateText;
+    this._statusBarItem.show();
   }
 
   public dispose() {
-    this.statusBarItem.dispose();
+    this._statusBarItem.dispose();
   }
 }
