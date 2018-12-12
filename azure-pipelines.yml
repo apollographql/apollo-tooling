@@ -3,23 +3,71 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
-trigger:
-- master
+jobs:
+  - job: Linux_Node8
 
-pool:
-  vmImage: 'vs2017-win2016'
+    pool:
+      vmImage: "ubuntu 16.04"
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '8.x'
-  displayName: 'Install Node.js'
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "8.x"
+        displayName: "Install Node.js"
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+      - script: |
+          npm ci
+          npm run build
+        displayName: "npm install and build"
 
-- script: |
-    npm test
-  displayName: 'npm test'
+      - script: |
+          npm test
+        displayName: "npm test"
+
+      - script: |
+          npm run lint
+        displayName: "npm run lint"
+
+      - script: |
+          ENGINE_API_KEY=$(CHECKS_API_KEY) ./packages/apollo/bin/run client:check
+        displayName: "Query Check"
+
+  - job: Linux_Node10
+
+    pool:
+      vmImage: "ubuntu 16.04"
+
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "10.x"
+        displayName: "Install Node.js"
+
+      - script: |
+          npm ci
+          npm run build
+        displayName: "npm install and build"
+
+      - script: |
+          npm test
+        displayName: "npm test"
+
+  - job: Windows_Node8
+
+    pool:
+      vmImage: "vs2017-win2016"
+
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "8.x"
+        displayName: "Install Node.js"
+
+      - script: |
+          npm ci
+          npm run build
+        displayName: "npm install and build"
+
+      - script: |
+          npm test
+        displayName: "npm test"
