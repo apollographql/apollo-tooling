@@ -7,7 +7,7 @@
 # - master
 
 jobs:
-  - job: Linux/Node 8
+  - job: Linux_Node8
 
     pool:
       vmImage: "ubuntu 16.04"
@@ -27,7 +27,7 @@ jobs:
           npm test
         displayName: "npm test"
 
-  - job: Linux/Node 10
+  - job: Linux_Node10
 
     pool:
       vmImage: "ubuntu 16.04"
@@ -47,7 +47,7 @@ jobs:
           npm test
         displayName: "npm test"
 
-  - job: Windows/Node 8
+  - job: Windows_Node8
 
     pool:
       vmImage: "vs2017-win2016"
