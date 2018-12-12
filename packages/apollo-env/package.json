@@ -14,7 +14,7 @@
   "scripts": {
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",
-    "build": "tsc --project ./src/fetch && cd src && tar c $(find . -name '*.d.ts') | tar xv -C ../lib && tsc"
+    "build": "tsc --project ./src/fetch && ./clone-types.sh && cd src && tar c $(find . -name '*.d.ts') | tar xv -C ../lib && tsc"
   },
   "engines": {
     "node": ">=8"
