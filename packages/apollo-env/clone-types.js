@@ -21,7 +21,6 @@ const walk = (dir, filter) => {
       fileList = [...fileList, ...subFileList];
     } else {
       if (filter && filter.test) {
-        console.log({ filePath, filter: filter.test(filePath) });
         if (filter.test(filePath)) fileList.push(filePath);
       } else {
         fileList.push(filePath);
@@ -48,7 +47,7 @@ const makeNestedDir = dir => {
 copyFilesWithDirStructure = (files, outputDir) => {
   for (file of files) {
     // strip off the src dir
-    const finalPath = path.join(outputDir, file.replace("src/", ""));
+    const finalPath = path.join(outputDir, file.replace(/src./, ""));
 
     // if it's in a nested dir, we need to create the full path to the file
     // before creating the file
