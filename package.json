@@ -22,6 +22,7 @@
     "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "test": "jest && lerna run test --scope=vscode-apollo",
+    "test:debug": "DEBUG=* node --inspect-brk=9001 node_modules/.bin/jest --runInBand",
     "posttest": "npm run lint",
     "circle": "npm run test -- --ci --maxWorkers=2",
     "release": "npm run clean && npm ci && lerna publish --exact",

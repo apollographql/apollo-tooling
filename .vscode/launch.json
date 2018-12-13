@@ -35,6 +35,14 @@
       ],
       "outFiles": ["${workspaceFolder}/packages/vscode-apollo/lib/**/*.js"],
       "preLaunchTask": "npm: watch"
+    },
+    {
+      "name": "Attach to Test Debugger",
+      "type": "node",
+      "request": "attach",
+      "protocol": "inspector",
+      "port": 9001,
+      "sourceMaps": true
     }
   ]
 }
