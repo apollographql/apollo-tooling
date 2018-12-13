@@ -15,10 +15,12 @@
   "main": "./lib/extension",
   "types": "lib/index.d.ts",
   "scripts": {
+    "preinstall": "rm -rf node_modules && mkdir node_modules",
     "postinstall": "npm run update-vscode && npm run create-server-symlink",
     "update-vscode": "node ../../node_modules/vscode/bin/install",
-    "create-server-symlink": "rm -rf node_modules && mkdir node_modules && ln -s ../../apollo-language-server ./node_modules/",
-    "package-extension": "rm -rf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink"
+    "create-server-symlink": "ln -s ../../apollo-language-server ./node_modules/",
+    "package-extension": "rm -rf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink",
+    "test": "node ./lib/testRunner/vscode-test-script.js"
   },
   "engines": {
     "vscode": "^1.28.0"
@@ -113,5 +115,8 @@
         "category": "Apollo"
       }
     ]
+  },
+  "devDependencies": {
+    "jest-environment-node": "^23.4.0"
   }
 }

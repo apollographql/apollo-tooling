@@ -21,7 +21,20 @@
       "request": "attach",
       "protocol": "inspector",
       "port": 6009,
-      "sourceMaps": true,
-  }
+      "sourceMaps": true
+    },
+    {
+      "name": "Extension Tests",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--disable-extensions",
+        "--extensionDevelopmentPath=${workspaceFolder}/packages/vscode-apollo",
+        "--extensionTestsPath=${workspaceFolder}/packages/vscode-apollo/lib/testRunner"
+      ],
+      "outFiles": ["${workspaceFolder}/packages/vscode-apollo/lib/**/*.js"],
+      "preLaunchTask": "npm: watch"
+    }
   ]
 }
