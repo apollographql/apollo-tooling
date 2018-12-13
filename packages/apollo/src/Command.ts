@@ -251,7 +251,8 @@ export abstract class ClientCommand extends ProjectCommand {
       description: "Deprecated in favor of the includes flag"
     }),
     includes: flags.string({
-      description: "Glob of files to search for GraphQL operations"
+      description:
+        "Glob of files to search for GraphQL operations. This should be used to find queries *and* any client schema extensions"
     }),
     excludes: flags.string({
       description:
