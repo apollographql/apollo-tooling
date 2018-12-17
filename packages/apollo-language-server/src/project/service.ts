@@ -43,4 +43,8 @@ export class GraphQLServiceProject extends GraphQLProject {
   }
 
   validate() {}
+
+  getProjectStats() {
+    return { loaded: true, type: "service" };
+  }
 }

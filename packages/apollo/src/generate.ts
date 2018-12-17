@@ -1,7 +1,7 @@
 import { fs } from "apollo-codegen-core/lib/localfs";
 import * as path from "path";
 import { GraphQLSchema, DocumentNode, print } from "graphql";
-import Uri from "vscode-uri";
+import URI from "vscode-uri";
 
 import {
   compileToIR,
@@ -42,7 +42,7 @@ export type GenerationOptions = CompilerOptions &
   };
 
 function toPath(uri: string): string {
-  return Uri.parse(uri).path;
+  return URI.parse(uri).path;
 }
 
 export default function generate(

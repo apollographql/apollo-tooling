@@ -153,13 +153,14 @@ export type ConfigResult<Config> = {
 // take a config with multiple project types and return
 // an array of individual types
 export const projectsFromConfig = (
-  config: ApolloConfigFormat
+  config: ApolloConfigFormat,
+  configURI?: URI
 ): Array<ClientConfig | ServiceConfig> => {
   const configs = [];
   const { client, service, ...rest } = config;
   // XXX use casting detection
-  if (client) configs.push(new ClientConfig(config));
-  if (service) configs.push(new ServiceConfig(config));
+  if (client) configs.push(new ClientConfig(config, configURI));
+  if (service) configs.push(new ServiceConfig(config, configURI));
   return configs;
 };
 
@@ -205,7 +206,7 @@ export class ApolloConfig {
   }
 
   get projects() {
-    return projectsFromConfig(this.rawConfig);
+    return projectsFromConfig(this.rawConfig, this.configURI);
   }
 
   set tag(tag: string) {
