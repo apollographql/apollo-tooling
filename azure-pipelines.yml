@@ -56,6 +56,10 @@ jobs:
         displayName: "Install Node.js"
 
       - script: |
+          npm install -g npm@6
+        displayName: "Install npm@6"
+
+      - script: |
           npm ci
           npm run build
         displayName: "npm install and build"
