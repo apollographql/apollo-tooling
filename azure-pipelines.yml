@@ -24,6 +24,14 @@ jobs:
           npm test
         displayName: "npm test"
 
+      - script: |
+          npm run lint
+        displayName: "npm run lint"
+
+      - script: |
+          ENGINE_API_KEY=$CHECKS_API_KEY ./packages/apollo/bin/run client:check
+        displayName: "Query Check"
+
   - job: Linux_Node10
 
     pool:
