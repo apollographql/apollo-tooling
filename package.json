@@ -13,6 +13,7 @@
     "apollo": "./packages/apollo/bin/run"
   },
   "scripts": {
+    "azure": "npm ci && npm run build && npm test",
     "clean": "git clean -dfqX -- ./node_modules **/{lib,node_modules}/",
     "postinstall": "npm run build",
     "build": "lerna run build --stream --scope apollo-env && npm run compile && lerna run build --stream --ignore apollo-env",
