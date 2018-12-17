@@ -453,9 +453,9 @@ _See code: [src/commands/service/push.ts](https://github.com/apollographql/apoll
 
 # Configuration
 
-The Apollo CLI and VS Code extension can be configured with an Apollo Config file. Apollo configuration is stored as a plain object and can be either specified under the `apollo` key in your `package.json` or as a separate `apollo.config.js` which exports the config data.
+The Apollo CLI and VS Code extension can be configured with an Apollo Config file. Apollo configuration is stored as a plain object and can be either specified under the `apollo` key in your `package.json` or as a separate `apollo.config.js` file which exports the config data.
 
-Let's take a look at a basic configuration file (`apollo.config.js` style):
+You'll need to set up your Apollo configuration for all the features of the Apollo CLI and VS Code extension to work correctly. For full details on how to do that, [visit our docs](https://www.apollographql.com/docs/references/apollo-config.html). A basic configuration (`apollo.config.js` style) looks something like this:
 
 ```js
 module.exports = {
@@ -464,55 +464,6 @@ module.exports = {
     service: "my-service-name"
   }
 }
-```
-
-## Client settings
-
-### Service Configuration
-
-When linking a client to a service, you can either use the name of a service that has been published to the Apollo service registry, or you can use a remote url that supports introspection or you can provide a filepath of a generated SDL (Schema Definition Language) file, for example: `schema.json` or `schema.graphql`.
-
-```js
-module.exports = {
-  client: {
-    service: "my-service-name",
-
-    // or
-    service: {
-      name: "my-service-name",
-      url: "http://example.com/graphql",
-      headers: {
-        cookie: "myCookieValue"
-      }
-    },
-
-    // or a local generated schema file
-    service: {
-      name: "my-service-name",
-      localSchemaFile: "./path/to/schema.graphl"
-    }
-  }
-};
-```
-
-## Service settings
-
-The service config needs to know how to fetch the schema for that service. This can be done with either an endpoint config or a filepath of a generated SDL (Schema Definition Language) file, for example: `schema.json` or `schema.graphql`.
-
-```js
-module.exports = {
-  service: {
-    name: "my-service",
-
-    // this is the default endpoint info
-    endpoint: {
-      url: "https://localhost:4000/graphql"
-    },
-
-    // or a local generated schema file
-    localSchemaFile: "./path/to/schema.graphl"
-  }
-};
 ```
 
 # Code Generation
