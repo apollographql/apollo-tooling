@@ -16,13 +16,8 @@ jobs:
         displayName: "Install Node.js"
 
       - script: |
-          npm ci
-          npm run build
-        displayName: "npm install and build"
-
-      - script: |
-          npm test
-        displayName: "npm test"
+          npm run azure
+        displayName: "npm ci && build && test"
 
       - script: |
           npm run lint
@@ -44,13 +39,8 @@ jobs:
         displayName: "Install Node.js"
 
       - script: |
-          npm ci
-          npm run build
-        displayName: "npm install and build"
-
-      - script: |
-          npm test
-        displayName: "npm test"
+          npm run azure
+        displayName: "npm ci && build && test"
 
   - job: Windows_Node8
 
@@ -60,14 +50,9 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "8.x"
+          versionSpec: ">8.14"
         displayName: "Install Node.js"
 
       - script: |
-          npm ci
-          npm run build
-        displayName: "npm install and build"
-
-      - script: |
-          npm test
-        displayName: "npm test"
+          npm run azure
+        displayName: "npm ci && build && test"
