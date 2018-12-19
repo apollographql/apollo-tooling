@@ -27,9 +27,6 @@ const makeNestedDir = dir => {
  *  and preserves the path in the filename.
  *
  *  e.g. "test/a/b/hello.txt" would create directories "test", "a", and "b"
- *
- *  NOTE: outputDir isn't a _path_ to a directory. Just the name of a dir
- *    at the current level.
  */
 copyFilesToDir = (files, outputDir) => {
   for (file of files) {
