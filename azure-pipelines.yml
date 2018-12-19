@@ -50,12 +50,8 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "8.x"
+          versionSpec: ">8.14"
         displayName: "Install Node.js"
-
-      - script: |
-          npm install -g npm@6
-        displayName: "Install npm@6"
 
       - script: |
           npm run azure
