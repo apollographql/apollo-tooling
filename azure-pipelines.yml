@@ -50,7 +50,7 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: ">8.14"
+          versionSpec: "8.14"
         displayName: "Install Node.js"
 
       - script: |
