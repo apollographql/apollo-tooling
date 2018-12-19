@@ -74,7 +74,7 @@
     "chai": "4.2.0",
     "css-loader": "1.0.1",
     "graphql": "14.0.2",
-    "husky": "1.2.1",
+    "husky": "1.3.0",
     "jest": "23.6.0",
     "jest-matcher-utils": "23.6.0",
     "lerna": "3.6.0",
