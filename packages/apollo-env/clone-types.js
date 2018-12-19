@@ -6,34 +6,12 @@
  */
 const fs = require("fs");
 const path = require("path");
+const glob = require("glob");
 
-// get list of all files that match filter
-const walk = (dir, filter) => {
-  let fileList = [];
-  const files = fs.readdirSync(dir);
-
-  for (file of files) {
-    const filePath = path.join(dir, file);
-    const stat = fs.statSync(filePath);
-
-    if (stat.isDirectory()) {
-      const subFileList = walk(filePath, filter);
-      fileList = [...fileList, ...subFileList];
-    } else {
-      if (filter && filter.test) {
-        if (filter.test(filePath)) fileList.push(filePath);
-      } else {
-        fileList.push(filePath);
-      }
-    }
-  }
-
-  return fileList;
-};
-
+// if the path to the file doesn't exist, we can't write the file
+// this function just recursively creates the dir tree for the file to be written.
 const makeNestedDir = dir => {
   if (fs.existsSync(dir)) return;
-
   try {
     fs.mkdirSync(dir);
   } catch (err) {
@@ -44,19 +22,34 @@ const makeNestedDir = dir => {
   }
 };
 
-copyFilesWithDirStructure = (files, outputDir) => {
+/*
+ *  This function copies files ([string]) to the outputDir
+ *  and preserves the path in the filename.
+ *
+ *  e.g. "test/a/b/hello.txt" would create directories "test", "a", and "b"
+ *
+ *  NOTE: outputDir isn't a _path_ to a directory. Just the name of a dir
+ *    at the current level.
+ */
+copyFilesToDir = (files, outputDir) => {
   for (file of files) {
-    // strip off the src dir
-    const finalPath = path.join(outputDir, file.replace(/src./, ""));
+    // replace the src/ directory in the path with the outputDir
+    const pathToWrite = path.join(outputDir, file.replace(/src./, ""));
 
     // if it's in a nested dir, we need to create the full path to the file
     // before creating the file
-    makeNestedDir(path.dirname(finalPath));
+    makeNestedDir(path.dirname(pathToWrite));
 
-    fs.copyFileSync(file, finalPath);
-    console.log(`copied: ${file} -> ${finalPath}`);
+    fs.copyFileSync(file, pathToWrite);
+    console.log(`copied: ${file} -> ${pathToWrite}`);
   }
 };
 
-const files = walk("./src", /.*\.d\.ts/);
-copyFilesWithDirStructure(files, "lib");
+const files = glob
+  .sync("./src/**/*.d.ts", {
+    absolute: true // want path to file, not just filename
+  })
+  // remove the path to the current dir
+  .map(file => file.replace(`${process.cwd()}/`, ""));
+
+copyFilesToDir(files, "lib");
