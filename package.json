@@ -92,7 +92,7 @@
     "typescript": "3.1.6",
     "uglifyjs-webpack-plugin": "1.3.0",
     "url-loader": "1.1.2",
-    "vsce": "1.53.2",
+    "vsce": "1.54.0",
     "webpack": "4.27.1",
     "yarn": "1.12.3"
   },
