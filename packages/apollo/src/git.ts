@@ -35,14 +35,24 @@ export interface GitContext {
 }
 
 export const gitInfo = async (): Promise<GitContext | undefined> => {
-  const { isCi, commit, branch, slug, root } = ci();
+  // Occasionally `branch` will be undefined depending on the environment, so
+  // we need to fallback on `prBranch`. However in some cases, we are not able
+  // to get to the branch at all. For more information, see
+  // https://github.com/pvdlg/env-ci#caveats
+  //
+  // slug is formatted as follows: ${organization}/${repository name}
+  const { isCi, commit, branch: ciBranch, slug, root, prBranch } = ci();
   const gitLoc = root ? root : findGitRoot();
 
   if (!commit) return;
 
   let committer;
+  let branch = ciBranch || prBranch;
   let remoteUrl = slug;
   let message;
+
+  // In order to use git-parse and git-rev-sync, we must ensure that a git context is
+  // accessible. Without this check, the commands would throw
   if (gitLoc) {
     const { authorName, authorEmail, ...commit } = await gitToJs(gitLoc)
       .then((commits: Commit[]) =>
@@ -63,10 +73,25 @@ export const gitInfo = async (): Promise<GitContext | undefined> => {
         remoteUrl = git.remoteUrl();
       } catch (e) {}
     }
+
+    // The ci and pr branches pulled from the ci's environment can be undefined,
+    // so we fallback on the git context.
+    //
+    // See https://github.com/pvdlg/env-ci#caveats for a detailed list of when
+    // branch can be undefined
+    if (!branch) {
+      branch = git.branch();
+    }
   }
 
   return pickBy(
-    { committer, commit, remoteUrl, message, branch },
+    {
+      committer,
+      commit,
+      remoteUrl,
+      message,
+      branch
+    },
     identity
   ) as GitContext;
 };
