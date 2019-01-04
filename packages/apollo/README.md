@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.1.8 darwin-x64 node-v10.10.0
+apollo/2.1.9 darwin-x64 node-v10.10.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -71,7 +71,8 @@ OPTIONS
 
   --header=header                        Additional headers to send to server for introspectionQuery
 
-  --includes=includes                    Glob of files to search for GraphQL operations
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
+                                         queries *and* any client schema extensions
 
   --key=key                              The API key for the Apollo Engine service
 
@@ -128,7 +129,8 @@ OPTIONS
 
   --header=header                            Additional headers to send to server for introspectionQuery
 
-  --includes=includes                        Glob of files to search for GraphQL operations
+  --includes=includes                        Glob of files to search for GraphQL operations. This should be used to find
+                                             queries *and* any client schema extensions
 
   --key=key                                  The API key for the Apollo Engine service
 
@@ -200,7 +202,8 @@ OPTIONS
 
   --header=header                        Additional headers to send to server for introspectionQuery
 
-  --includes=includes                    Glob of files to search for GraphQL operations
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
+                                         queries *and* any client schema extensions
 
   --key=key                              The API key for the Apollo Engine service
 
@@ -237,7 +240,8 @@ OPTIONS
 
   --header=header                        Additional headers to send to server for introspectionQuery
 
-  --includes=includes                    Glob of files to search for GraphQL operations
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
+                                         queries *and* any client schema extensions
 
   --key=key                              The API key for the Apollo Engine service
 
