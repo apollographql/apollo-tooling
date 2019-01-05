@@ -1,20 +1,16 @@
 import { window, StatusBarAlignment } from "vscode";
 
 export default class ApolloStatusBar {
-  private _statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right);
+  public statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right);
 
   static loadingStateText = "Apollo GraphQL $(rss)";
   static loadedStateText = "ApolloGraphQL $(rocket)";
 
   constructor() {
-    this._statusBarItem.text = ApolloStatusBar.loadingStateText;
-    this._statusBarItem.show();
+    this.statusBarItem.text = ApolloStatusBar.loadingStateText;
+    this.statusBarItem.show();
 
     // this.statusBarItem.command = "apollographql/showOutputChannel";
-  }
-
-  get statusBarItem() {
-    return this._statusBarItem;
   }
 
   public showLoadedState({
@@ -23,15 +19,15 @@ export default class ApolloStatusBar {
     hasActiveTextEditor: boolean;
   }) {
     if (!hasActiveTextEditor) {
-      this._statusBarItem.hide();
+      this.statusBarItem.hide();
       return;
     }
 
-    this._statusBarItem.text = ApolloStatusBar.loadedStateText;
-    this._statusBarItem.show();
+    this.statusBarItem.text = ApolloStatusBar.loadedStateText;
+    this.statusBarItem.show();
   }
 
   public dispose() {
-    this._statusBarItem.dispose();
+    this.statusBarItem.dispose();
   }
 }
