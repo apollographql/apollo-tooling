@@ -11,27 +11,28 @@ const NodeEnvironment = require("jest-environment-node");
 import * as vscode from "vscode";
 
 class VsCodeEnvironment extends NodeEnvironment {
-  constructor(config: any) {
-    super(config);
-  }
+  private stdOutRef: any;
+  private stdErrRef: any;
 
   public async setup() {
     await super.setup();
     this.global.vscode = vscode;
 
-    // For some reason this seems to be required for the Jest output to be streamed
-    // to the Debug Console.
+    // Save off refs to the original functions so they can be restored on teardown
+    this.stdOutRef = process.stdout.write;
+    this.stdErrRef = process.stderr.write;
+
+    // This seems to be required for Jest's output to be streamed to the Debug Console
     process.stdout.write = this.logger;
     process.stderr.write = this.logger;
   }
 
   public async teardown() {
+    process.stdout.write = this.stdOutRef;
+    process.stderr.write = this.stdErrRef;
+
     this.global.vscode = {};
     return await super.teardown();
-  }
-
-  public runScript(script: any) {
-    return super.runScript(script);
   }
 
   private logger(line: string) {
