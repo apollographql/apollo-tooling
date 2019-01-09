@@ -94,7 +94,7 @@
     "url-loader": "1.1.2",
     "vsce": "1.54.0",
     "webpack": "4.28.3",
-    "yarn": "1.12.3"
+    "yarn": "1.13.0"
   },
   "jest": {
     "projects": [
