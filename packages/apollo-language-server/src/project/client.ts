@@ -1,4 +1,4 @@
-import { GraphQLProject, DocumentUri } from "./base";
+import { GraphQLProject } from "./base";
 import {
   GraphQLSchema,
   GraphQLError,
@@ -15,14 +15,11 @@ import {
   OperationDefinitionNode,
   extendSchema,
   DocumentNode,
-  GraphQLType,
   FieldNode,
-  ASTNode,
   ObjectTypeDefinitionNode
 } from "graphql";
 
 import { NotificationHandler, DiagnosticSeverity } from "vscode-languageserver";
-import Uri from "vscode-uri";
 
 import { rangeForASTNode } from "../utilities/source";
 import { formatMS } from "../format";
@@ -42,6 +39,7 @@ import {
   DiagnosticSet,
   diagnosticsFromError
 } from "../diagnostics";
+import URI from "vscode-uri";
 
 function schemaHasASTNodes(schema: GraphQLSchema): boolean {
   const queryType = schema && schema.getQueryType();
@@ -71,11 +69,11 @@ export function isClientProject(
 export interface GraphQLClientProjectConfig {
   clientIdentity?: ClientIdentity;
   config: ClientConfig;
-  rootURI: DocumentUri;
+  rootURI: URI;
   loadingHandler: LoadingHandler;
 }
 export class GraphQLClientProject extends GraphQLProject {
-  public rootURI: DocumentUri;
+  public rootURI: URI;
   public serviceID?: string;
   public config!: ClientConfig;
 
@@ -93,7 +91,7 @@ export class GraphQLClientProject extends GraphQLProject {
     clientIdentity
   }: GraphQLClientProjectConfig) {
     const fileSet = new FileSet({
-      rootPath: Uri.parse(rootURI).fsPath,
+      rootPath: rootURI.fsPath,
       includes: config.client.includes,
       excludes: config.client.excludes
     });
