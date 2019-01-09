@@ -13,6 +13,7 @@ import {
   ApolloConfig
 } from "apollo-language-server";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
+import URI from "vscode-uri";
 
 const { version, referenceID } = require("../package.json");
 
@@ -104,8 +105,8 @@ export abstract class ProjectCommand extends Command {
     const { flags, args } = this.parse(this.constructor as any);
     this.ctx = { flags, args } as any;
 
-    const { config, filepath } = await this.createConfig(flags);
-    this.createService(config, filepath, flags);
+    const config = await this.createConfig(flags);
+    this.createService(config, flags);
     (this.ctx.config = config),
       // make sure this the first item in the task list
       this.tasks.push({
@@ -119,12 +120,12 @@ export abstract class ProjectCommand extends Command {
 
   protected async createConfig(flags: Flags) {
     const service = flags.key ? getServiceFromKey(flags.key) : undefined;
-    const loadedConfig = await loadConfig({
+    const config = await loadConfig({
       configPath: flags.config,
       name: service,
       type: this.type
     });
-    const { config, filepath, isEmpty } = loadedConfig!;
+
     if (flags.tag) config.tag = flags.tag;
     //  flag overides
     config.setDefaults({
@@ -171,22 +172,19 @@ export abstract class ProjectCommand extends Command {
       config.setDefaults(defaults);
     }
 
-    return { config, filepath, isEmpty };
+    return config;
   }
 
-  protected createService(
-    config: ApolloConfig,
-    filepath: string,
-    flags: Flags
-  ) {
+  protected createService(config: ApolloConfig, flags: Flags) {
     const loadingHandler = new OclifLoadingHandler(this);
 
-    // When no config is provided, filepath === process.cwd()
+    // When no config is provided, configURI === process.cwd()
     // In this case, we don't want to look to the .dir since that's the parent
+    const configPath = config.configURI!.fsPath;
     const rootURI =
-      filepath === process.cwd()
-        ? `file://${filepath}`
-        : `file://${parse(filepath).dir}`;
+      configPath === process.cwd()
+        ? URI.file(configPath)
+        : URI.file(parse(configPath).dir);
 
     const clientIdentity = {
       name: "Apollo CLI",

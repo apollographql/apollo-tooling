@@ -12,6 +12,7 @@ import {
   StatsWindowSize,
   ServiceIDAndTag
 } from "./engine";
+import URI from "vscode-uri";
 
 export interface EngineStatsWindow {
   to: number;
@@ -194,7 +195,7 @@ export class ApolloConfig {
   public client?: ClientConfigFormat;
   private _tag?: string;
 
-  constructor(public rawConfig: ApolloConfigFormat) {
+  constructor(public rawConfig: ApolloConfigFormat, public configURI?: URI) {
     this.isService = !!rawConfig.service;
     this.isClient = !!rawConfig.client;
     this.engine = rawConfig.engine!;
@@ -267,7 +268,7 @@ export const loadConfig = async ({
   configPath,
   name,
   type
-}: LoadConfigSettings): Promise<ConfigResult<ApolloConfig>> => {
+}: LoadConfigSettings): Promise<ApolloConfig> => {
   const explorer = cosmiconfig(MODULE_NAME, {
     searchPlaces: getSearchPlaces(configPath),
     loaders
@@ -339,5 +340,5 @@ export const loadConfig = async ({
 
   config = merge({ engine: DefaultEngineConfig }, config);
 
-  return { config: new ApolloConfig(config), filepath, isEmpty };
+  return new ApolloConfig(config, URI.file(resolve(filepath)));
 };
