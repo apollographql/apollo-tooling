@@ -217,7 +217,7 @@ _See code: [src/commands/client/extract.ts](https://github.com/apollographql/apo
 
 ## `apollo client:push`
 
-Push a service to Engine
+Push a client to Engine
 
 ```
 USAGE
