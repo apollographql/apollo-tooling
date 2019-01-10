@@ -11,21 +11,21 @@ export async function run(_testRoot: string, callback: TestRunnerCallback) {
 
   try {
     const testDirectory = resolve(__dirname, "..", "..", "src");
-    const { globalConfig, results } = await runCLI(config, [testDirectory]);
+    const { results } = await runCLI(config, [testDirectory]);
 
     restoreWriteStreams(writeStreamRefs);
 
     const failures = collectTestFailureMessages(results);
 
     if (failures.length > 0) {
-      console.log("globalConfig:", globalConfig);
       callback(null, failures);
-      return;
+      process.exit(1);
     }
 
     callback(null);
   } catch (e) {
     callback(e);
+    process.exit(1);
   }
 }
 
