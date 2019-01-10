@@ -18,9 +18,9 @@ import { typeNameFromGraphQLType } from "../types";
 
 describe("Scala code generation: Types", function() {
   describe("#typeNameFromGraphQLType()", function() {
-    test("should return Option[String] for GraphQLString", function() {
+    test("should return OptionalResult[String] for GraphQLString", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLString)).toBe(
-        "Option[String]"
+        "com.apollographql.scalajs.OptionalResult[String]"
       );
     });
 
@@ -33,91 +33,101 @@ describe("Scala code generation: Types", function() {
       ).toBe("String");
     });
 
-    test("should return Option[Seq[Option[String]]] for GraphQLList(GraphQLString)", function() {
+    test("should return OptionalResult[Array[OptionalResult[String]]] for GraphQLList(GraphQLString)", function() {
       expect(
         typeNameFromGraphQLType({ options: {} }, new GraphQLList(GraphQLString))
-      ).toBe("Option[Seq[Option[String]]]");
+      ).toBe(
+        "com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[String]]]"
+      );
     });
 
-    test("should return Seq[String] for GraphQLNonNull(GraphQLList(GraphQLString))", function() {
+    test("should return Array[OptionalResult[String]] for GraphQLNonNull(GraphQLList(GraphQLString))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
           new GraphQLNonNull(new GraphQLList(GraphQLString))
         )
-      ).toBe("Seq[Option[String]]");
+      ).toBe(
+        "scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[String]]"
+      );
     });
 
-    test("should return Option[Seq[String]] for GraphQLList(GraphQLNonNull(GraphQLString))", function() {
+    test("should return OptionalResult[Array[String]] for GraphQLList(GraphQLNonNull(GraphQLString))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
           new GraphQLList(new GraphQLNonNull(GraphQLString))
         )
-      ).toBe("Option[Seq[String]]");
+      ).toBe(
+        "com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[String]]"
+      );
     });
 
-    test("should return Seq[String] for GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))", function() {
+    test("should return Array[String] for GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
           new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(GraphQLString)))
         )
-      ).toBe("Seq[String]");
+      ).toBe("scala.scalajs.js.Array[String]");
     });
 
-    test("should return Option[Seq[Option[Seq[Option[String]]]]] for GraphQLList(GraphQLList(GraphQLString))", function() {
+    test("should return OptionalResult[Array[OptionalResult[Array[OptionalResult[String]]]]] for GraphQLList(GraphQLList(GraphQLString))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
           new GraphQLList(new GraphQLList(GraphQLString))
         )
-      ).toBe("Option[Seq[Option[Seq[Option[String]]]]]");
+      ).toBe(
+        "com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[String]]]]]"
+      );
     });
 
-    test("should return Option[Seq[Seq[Option[String]]]] for GraphQLList(GraphQLNonNull(GraphQLList(GraphQLString)))", function() {
+    test("should return OptionalResult[Array[Array[OptionalResult[String]]]] for GraphQLList(GraphQLNonNull(GraphQLList(GraphQLString)))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
           new GraphQLList(new GraphQLNonNull(new GraphQLList(GraphQLString)))
         )
-      ).toBe("Option[Seq[Seq[Option[String]]]]");
+      ).toBe(
+        "com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[String]]]]"
+      );
     });
 
-    test("should return Option[Int] for GraphQLInt", function() {
+    test("should return OptionalResult[Int] for GraphQLInt", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLInt)).toBe(
-        "Option[Int]"
+        "com.apollographql.scalajs.OptionalResult[Int]"
       );
     });
 
-    test("should return Option[Double] for GraphQLFloat", function() {
+    test("should return OptionalResult[Double] for GraphQLFloat", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLFloat)).toBe(
-        "Option[Double]"
+        "com.apollographql.scalajs.OptionalResult[Double]"
       );
     });
 
-    test("should return Option[Boolean] for GraphQLBoolean", function() {
+    test("should return OptionalResult[Boolean] for GraphQLBoolean", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLBoolean)).toBe(
-        "Option[Boolean]"
+        "com.apollographql.scalajs.OptionalResult[Boolean]"
       );
     });
 
-    test("should return Option[String] for GraphQLID", function() {
+    test("should return OptionalResult[String] for GraphQLID", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLID)).toBe(
-        "Option[String]"
+        "com.apollographql.scalajs.OptionalResult[String]"
       );
     });
 
-    test("should return Option[String] for a custom scalar type", function() {
+    test("should return OptionalResult[String] for a custom scalar type", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
           new GraphQLScalarType({ name: "CustomScalarType", serialize: String })
         )
-      ).toBe("Option[String]");
+      ).toBe("com.apollographql.scalajs.OptionalResult[String]");
     });
 
-    test("should return a passed through custom scalar type with the passthroughCustomScalars option", function() {
+    test("should return a passed through custom scalar type with the passthroughCustomScalars OptionalResult", function() {
       expect(
         typeNameFromGraphQLType(
           {
@@ -125,10 +135,10 @@ describe("Scala code generation: Types", function() {
           },
           new GraphQLScalarType({ name: "CustomScalarType", serialize: String })
         )
-      ).toBe("Option[CustomScalarType]");
+      ).toBe("com.apollographql.scalajs.OptionalResult[CustomScalarType]");
     });
 
-    test("should return a passed through custom scalar type with a prefix with the customScalarsPrefix option", function() {
+    test("should return a passed through custom scalar type with a prefix with the customScalarsPrefix OptionalResult", function() {
       expect(
         typeNameFromGraphQLType(
           {
@@ -139,7 +149,7 @@ describe("Scala code generation: Types", function() {
           },
           new GraphQLScalarType({ name: "CustomScalarType", serialize: String })
         )
-      ).toBe("Option[MyCustomScalarType]");
+      ).toBe("com.apollographql.scalajs.OptionalResult[MyCustomScalarType]");
     });
   });
 });

@@ -345,11 +345,14 @@ object SimpleQueryQuery extends com.apollographql.scalajs.GraphQLQuery {
 
   type Variables = Unit
 
-  case class Data(hello: String) {
+  @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
+    val hello: String
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Query\\")
+    implicit class ViewExtensions(private val orig: Data) extends AnyVal {
+    }
   }
 }"
 `;

@@ -1,170 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Scala code generation #caseClassDeclarationForFragment() should generate a caseClass declaration for a fragment that includes a fragment spread 1`] = `
-"case class HeroDetails(name: String, appearsIn: Seq[Option[String]]) extends slinky.readwrite.WithRaw {
-}
-
-object HeroDetails {
-  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-  implicit def toMoreHeroDetails(a: HeroDetails): MoreHeroDetails = MoreHeroDetails(a.appearsIn)
-  val fragmentString =
-    \\"fragment HeroDetails on Character {\\" +
-    \\"  name\\" +
-    \\"  ...MoreHeroDetails\\" +
-    \\"}\\"
-}"
-`;
-
-exports[`Scala code generation #caseClassDeclarationForFragment() should generate a caseClass declaration for a fragment with a concrete type condition 1`] = `
-"case class DroidDetails(name: String, primaryFunction: Option[String]) {
-}
-
-object DroidDetails {
-  val possibleTypes = scala.collection.Set(\\"Droid\\")
-  val fragmentString =
-    \\"fragment DroidDetails on Droid {\\" +
-    \\"  name\\" +
-    \\"  primaryFunction\\" +
-    \\"}\\"
-}"
-`;
-
-exports[`Scala code generation #caseClassDeclarationForFragment() should generate a caseClass declaration for a fragment with a subselection 1`] = `
-"case class HeroDetails(name: String, friends: Option[Seq[Option[HeroDetails.Friend]]]) extends slinky.readwrite.WithRaw {
-}
-
-object HeroDetails {
-  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-
-
-  case class Friend(name: String) extends slinky.readwrite.WithRaw {
-  }
-
-  object Friend {
-    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-  }
-  val fragmentString =
-    \\"fragment HeroDetails on Character {\\" +
-    \\"  name\\" +
-    \\"  friends {\\" +
-    \\"    name\\" +
-    \\"  }\\" +
-    \\"}\\"
-}"
-`;
-
-exports[`Scala code generation #caseClassDeclarationForFragment() should generate a caseClass declaration for a fragment with an abstract type condition 1`] = `
-"case class HeroDetails(name: String, appearsIn: Seq[Option[String]]) extends slinky.readwrite.WithRaw {
-}
-
-object HeroDetails {
-  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-  val fragmentString =
-    \\"fragment HeroDetails on Character {\\" +
-    \\"  name\\" +
-    \\"  appearsIn\\" +
-    \\"}\\"
-}"
-`;
-
-exports[`Scala code generation #caseClassDeclarationForSelectionSet() should escape reserved keywords in a caseClass declaration for a selection set 1`] = `
-"case class Hero(private: Option[String]) extends slinky.readwrite.WithRaw {
-}
-
-object Hero {
-  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-}"
-`;
-
-exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a fragment spread nested in an inline fragment 1`] = `
-"case class Hero() extends slinky.readwrite.WithRaw {
-  def asDroid: Option[AsDroid] = {
-    if (AsDroid.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[AsDroid]].read(this.raw)) else None
-  }
-}
-
-case class AsDroid() {
-}
-
-object AsDroid {
-  val possibleTypes = scala.collection.Set(\\"Droid\\")
-  implicit def toHero(a: AsDroid): Hero = Hero()
-  implicit def toHeroDetails(a: AsDroid): HeroDetails = HeroDetails()
-}
-
-object Hero {
-  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-}"
-`;
-
-exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a selection set 1`] = `
-"case class Hero(name: Option[String]) extends slinky.readwrite.WithRaw {
-}
-
-object Hero {
-  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-}"
-`;
-
-exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a selection set with a fragment spread that matches the parent type 1`] = `
-"case class Hero(name: Option[String]) extends slinky.readwrite.WithRaw {
-}
-
-object Hero {
-  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-  implicit def toHeroDetails(a: Hero): HeroDetails = HeroDetails()
-}"
-`;
-
-exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a selection set with a fragment spread with a more specific type condition 1`] = `
-"case class Hero(name: Option[String]) extends slinky.readwrite.WithRaw {
-  def asDroidDetails: Option[DroidDetails] = {
-    if (DroidDetails.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[DroidDetails]].read(this.raw)) else None
-  }
-}
-
-object Hero {
-  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-}"
-`;
-
-exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a selection set with an inline fragment 1`] = `
-"case class Hero(name: String) extends slinky.readwrite.WithRaw {
-  def asDroid: Option[AsDroid] = {
-    if (AsDroid.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[AsDroid]].read(this.raw)) else None
-  }
-}
-
-case class AsDroid(name: String, primaryFunction: Option[String]) {
-}
-
-object AsDroid {
-  val possibleTypes = scala.collection.Set(\\"Droid\\")
-  implicit def toHero(a: AsDroid): Hero = Hero(a.name)
-}
-
-object Hero {
-  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-}"
-`;
-
-exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a nested caseClass declaration for a selection set with subselections 1`] = `
-"case class Hero(friends: Option[Seq[Option[Hero.Friend]]]) extends slinky.readwrite.WithRaw {
-}
-
-object Hero {
-  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-
-
-  case class Friend(name: Option[String]) extends slinky.readwrite.WithRaw {
-  }
-
-  object Friend {
-    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-  }
-}"
-`;
-
 exports[`Scala code generation #classDeclarationForOperation() should generate a class declaration for a mutation with variables 1`] = `
 "object CreateReviewMutation extends com.apollographql.scalajs.GraphQLMutation {
   val operationString =
@@ -177,22 +12,111 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   val operation = com.apollographql.scalajs.gql(operationString)
 
 
-  case class Variables(episode: Option[String]) {
+  @scala.scalajs.js.native trait Variables extends scala.scalajs.js.Object {
+    val episode: com.apollographql.scalajs.OptionalInput[String]
   }
 
-  case class Data(createReview: Option[Data.CreateReview]) {
+  object Variables {
+    def apply(episode: com.apollographql.scalajs.OptionalInput[String] = com.apollographql.scalajs.OptionalInput.empty) =  {
+      scala.scalajs.js.Dynamic.literal(episode = episode).asInstanceOf[Variables]
+    }
+  }
+
+  @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
+    val createReview: com.apollographql.scalajs.OptionalResult[Data.CreateReview]
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Mutation\\")
+    implicit class ViewExtensions(private val orig: Data) extends AnyVal {
+    }
 
-    case class CreateReview(stars: Int, commentary: Option[String]) {
+    @scala.scalajs.js.native trait CreateReview extends scala.scalajs.js.Object {
+      val stars: Int
+      val commentary: com.apollographql.scalajs.OptionalResult[String]
     }
 
     object CreateReview {
       val possibleTypes = scala.collection.Set(\\"Review\\")
+      implicit class ViewExtensions(private val orig: CreateReview) extends AnyVal {
+      }
     }
   }
+}"
+`;
+
+exports[`Scala code generation #classDeclarationForOperation() should generate a class declaration for a query with a fragment spread containing deep fields 1`] = `
+"object HeroQuery extends com.apollographql.scalajs.GraphQLQuery {
+  val operationString =
+    \\"query Hero {\\" +
+    \\"  hero {\\" +
+    \\"    ...HeroDetails\\" +
+    \\"  }\\" +
+    \\"}\\"
+
+  val requestString: String = { operationString + HeroDetails.fragmentString }
+  val operation = com.apollographql.scalajs.gql(requestString)
+
+  type Variables = Unit
+
+  @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
+  }
+
+  object Data {
+    val possibleTypes = scala.collection.Set(\\"Query\\")
+    implicit class ViewExtensions(private val orig: Data) extends AnyVal {
+    }
+
+    @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object with HeroDetails {
+      val name: String
+      val friends: com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[Hero.Friend]]]
+    }
+
+    object Hero {
+      val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+      implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+      }
+
+      @scala.scalajs.js.native trait Friend extends scala.scalajs.js.Object with HeroDetails.Friend {
+        val name: String
+      }
+
+      object Friend {
+        val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+        implicit class ViewExtensions(private val orig: Friend) extends AnyVal {
+        }
+      }
+    }
+  }
+}
+
+@scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object {
+  val name: String
+  val friends: com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[HeroDetails.Friend]]]
+}
+
+object HeroDetails {
+  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  implicit class ViewExtensions(private val orig: HeroDetails) extends AnyVal {
+  }
+
+  @scala.scalajs.js.native trait Friend extends scala.scalajs.js.Object {
+    val name: String
+  }
+
+  object Friend {
+    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+    implicit class ViewExtensions(private val orig: Friend) extends AnyVal {
+    }
+  }
+  val fragmentString =
+    \\"fragment HeroDetails on Character {\\" +
+    \\"  name\\" +
+    \\"  friends {\\" +
+    \\"    name\\" +
+    \\"  }\\" +
+    \\"}\\"
 }"
 `;
 
@@ -212,30 +136,35 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
   type Variables = Unit
 
-  case class Data(hero: Option[Data.Hero]) {
+  @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Query\\")
-
-
-    case class Hero() extends slinky.readwrite.WithRaw {
-      def asDroid: Option[AsDroid] = {
-        if (AsDroid.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[AsDroid]].read(this.raw)) else None
-      }
+    implicit class ViewExtensions(private val orig: Data) extends AnyVal {
     }
 
-    case class AsDroid(name: String) {
+    @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
+    }
+
+    @scala.scalajs.js.native trait AsDroid extends scala.scalajs.js.Object with Hero with HeroDetails {
+      val name: String
     }
 
     object AsDroid {
       val possibleTypes = scala.collection.Set(\\"Droid\\")
-      implicit def toHero(a: AsDroid): Hero = Hero()
-      implicit def toHeroDetails(a: AsDroid): HeroDetails = HeroDetails(a.name)
+      implicit class ViewExtensions(private val orig: AsDroid) extends AnyVal {
+      }
     }
 
     object Hero {
       val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+      implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+        def asDroid: Option[AsDroid] = {
+          if (AsDroid.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[AsDroid]) else None
+        }
+      }
     }
   }
 }"
@@ -255,33 +184,38 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
   type Variables = Unit
 
-  case class Data(hero: Option[Data.Hero]) {
+  @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Query\\")
-
-
-    case class Hero() extends slinky.readwrite.WithRaw {
-      def asDroid: Option[AsDroid] = {
-        if (AsDroid.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[AsDroid]].read(this.raw)) else None
-      }
-      def asDroidDetails: Option[DroidDetails] = {
-        if (DroidDetails.possibleTypes.contains(this.raw.__typename.asInstanceOf[String])) Some(implicitly[slinky.readwrite.Reader[DroidDetails]].read(this.raw)) else None
-      }
+    implicit class ViewExtensions(private val orig: Data) extends AnyVal {
     }
 
-    case class AsDroid(primaryFunction: Option[String]) {
+    @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
+    }
+
+    @scala.scalajs.js.native trait AsDroid extends scala.scalajs.js.Object with Hero with DroidDetails {
+      val primaryFunction: com.apollographql.scalajs.OptionalResult[String]
     }
 
     object AsDroid {
       val possibleTypes = scala.collection.Set(\\"Droid\\")
-      implicit def toHero(a: AsDroid): Hero = Hero()
-      implicit def toDroidDetails(a: AsDroid): DroidDetails = DroidDetails(a.primaryFunction)
+      implicit class ViewExtensions(private val orig: AsDroid) extends AnyVal {
+      }
     }
 
     object Hero {
       val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+      implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+        def asDroid: Option[AsDroid] = {
+          if (AsDroid.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[AsDroid]) else None
+        }
+        def asDroidDetails: Option[DroidDetails] = {
+          if (DroidDetails.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[DroidDetails]) else None
+        }
+      }
     }
   }
 }"
@@ -301,19 +235,23 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
   type Variables = Unit
 
-  case class Data(hero: Option[Data.Hero]) {
+  @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Query\\")
+    implicit class ViewExtensions(private val orig: Data) extends AnyVal {
+    }
 
-
-    case class Hero(name: String) extends slinky.readwrite.WithRaw {
+    @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object with HeroDetails {
+      val name: String
     }
 
     object Hero {
       val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-      implicit def toHeroDetails(a: Hero): HeroDetails = HeroDetails(a.name)
+      implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+      }
     }
   }
 }"
@@ -330,21 +268,33 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   val operation = com.apollographql.scalajs.gql(operationString)
 
 
-  case class Variables(episode: Option[String]) {
+  @scala.scalajs.js.native trait Variables extends scala.scalajs.js.Object {
+    val episode: com.apollographql.scalajs.OptionalInput[String]
   }
 
-  case class Data(hero: Option[Data.Hero]) {
+  object Variables {
+    def apply(episode: com.apollographql.scalajs.OptionalInput[String] = com.apollographql.scalajs.OptionalInput.empty) =  {
+      scala.scalajs.js.Dynamic.literal(episode = episode).asInstanceOf[Variables]
+    }
+  }
+
+  @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Query\\")
+    implicit class ViewExtensions(private val orig: Data) extends AnyVal {
+    }
 
-
-    case class Hero(name: String) extends slinky.readwrite.WithRaw {
+    @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
+      val name: String
     }
 
     object Hero {
       val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+      implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+      }
     }
   }
 }"
@@ -366,19 +316,23 @@ exports[`Scala code generation #classDeclarationForOperation() when generateOper
 
   type Variables = Unit
 
-  case class Data(hero: Option[Data.Hero]) {
+  @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Query\\")
+    implicit class ViewExtensions(private val orig: Data) extends AnyVal {
+    }
 
-
-    case class Hero(name: String) extends slinky.readwrite.WithRaw {
+    @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object with HeroDetails {
+      val name: String
     }
 
     object Hero {
       val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
-      implicit def toHeroDetails(a: Hero): HeroDetails = HeroDetails(a.name)
+      implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+      }
     }
   }
 }"
@@ -434,21 +388,239 @@ object HeroNameQuery extends com.apollographql.scalajs.GraphQLQuery {
   val operation = com.apollographql.scalajs.gql(operationString)
 
 
-  case class Variables(episode: Option[String]) {
+  @scala.scalajs.js.native trait Variables extends scala.scalajs.js.Object {
+    val episode: com.apollographql.scalajs.OptionalInput[String]
   }
 
-  case class Data(hero: Option[Data.Hero]) {
+  object Variables {
+    def apply(episode: com.apollographql.scalajs.OptionalInput[String] = com.apollographql.scalajs.OptionalInput.empty) =  {
+      scala.scalajs.js.Dynamic.literal(episode = episode).asInstanceOf[Variables]
+    }
+  }
+
+  @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
     val possibleTypes = scala.collection.Set(\\"Query\\")
+    implicit class ViewExtensions(private val orig: Data) extends AnyVal {
+    }
 
-
-    case class Hero(name: String) extends slinky.readwrite.WithRaw {
+    @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
+      val name: String
     }
 
     object Hero {
       val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+      implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+      }
+    }
+  }
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForFragment() should generate a trait declaration for a fragment that includes a fragment spread 1`] = `
+"@scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object with MoreHeroDetails {
+  val name: String
+  val appearsIn: scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[String]]
+}
+
+object HeroDetails {
+  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  implicit class ViewExtensions(private val orig: HeroDetails) extends AnyVal {
+  }
+  val fragmentString =
+    \\"fragment HeroDetails on Character {\\" +
+    \\"  name\\" +
+    \\"  ...MoreHeroDetails\\" +
+    \\"}\\"
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForFragment() should generate a trait declaration for a fragment with a concrete type condition 1`] = `
+"@scala.scalajs.js.native trait DroidDetails extends scala.scalajs.js.Object {
+  val name: String
+  val primaryFunction: com.apollographql.scalajs.OptionalResult[String]
+}
+
+object DroidDetails {
+  val possibleTypes = scala.collection.Set(\\"Droid\\")
+  implicit class ViewExtensions(private val orig: DroidDetails) extends AnyVal {
+  }
+  val fragmentString =
+    \\"fragment DroidDetails on Droid {\\" +
+    \\"  name\\" +
+    \\"  primaryFunction\\" +
+    \\"}\\"
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForFragment() should generate a trait declaration for a fragment with a subselection 1`] = `
+"@scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object {
+  val name: String
+  val friends: com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[HeroDetails.Friend]]]
+}
+
+object HeroDetails {
+  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  implicit class ViewExtensions(private val orig: HeroDetails) extends AnyVal {
+  }
+
+  @scala.scalajs.js.native trait Friend extends scala.scalajs.js.Object {
+    val name: String
+  }
+
+  object Friend {
+    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+    implicit class ViewExtensions(private val orig: Friend) extends AnyVal {
+    }
+  }
+  val fragmentString =
+    \\"fragment HeroDetails on Character {\\" +
+    \\"  name\\" +
+    \\"  friends {\\" +
+    \\"    name\\" +
+    \\"  }\\" +
+    \\"}\\"
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForFragment() should generate a trait declaration for a fragment with an abstract type condition 1`] = `
+"@scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object {
+  val name: String
+  val appearsIn: scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[String]]
+}
+
+object HeroDetails {
+  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  implicit class ViewExtensions(private val orig: HeroDetails) extends AnyVal {
+  }
+  val fragmentString =
+    \\"fragment HeroDetails on Character {\\" +
+    \\"  name\\" +
+    \\"  appearsIn\\" +
+    \\"}\\"
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForSelectionSet() should escape reserved keywords in a trait declaration for a selection set 1`] = `
+"@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
+  val private: com.apollographql.scalajs.OptionalResult[String]
+}
+
+object Hero {
+  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+  }
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForSelectionSet() should generate a nested trait declaration for a selection set with subselections 1`] = `
+"@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
+  val friends: com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[Hero.Friend]]]
+}
+
+object Hero {
+  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+  }
+
+  @scala.scalajs.js.native trait Friend extends scala.scalajs.js.Object {
+    val name: com.apollographql.scalajs.OptionalResult[String]
+  }
+
+  object Friend {
+    val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+    implicit class ViewExtensions(private val orig: Friend) extends AnyVal {
+    }
+  }
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForSelectionSet() should generate a trait declaration for a fragment spread nested in an inline fragment 1`] = `
+"@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
+}
+
+@scala.scalajs.js.native trait AsDroid extends scala.scalajs.js.Object with Hero with HeroDetails {
+}
+
+object AsDroid {
+  val possibleTypes = scala.collection.Set(\\"Droid\\")
+  implicit class ViewExtensions(private val orig: AsDroid) extends AnyVal {
+  }
+}
+
+object Hero {
+  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+    def asDroid: Option[AsDroid] = {
+      if (AsDroid.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[AsDroid]) else None
+    }
+  }
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForSelectionSet() should generate a trait declaration for a selection set 1`] = `
+"@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
+  val name: com.apollographql.scalajs.OptionalResult[String]
+}
+
+object Hero {
+  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+  }
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForSelectionSet() should generate a trait declaration for a selection set with a fragment spread that matches the parent type 1`] = `
+"@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object with HeroDetails {
+  val name: com.apollographql.scalajs.OptionalResult[String]
+}
+
+object Hero {
+  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+  }
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForSelectionSet() should generate a trait declaration for a selection set with a fragment spread with a more specific type condition 1`] = `
+"@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
+  val name: com.apollographql.scalajs.OptionalResult[String]
+}
+
+object Hero {
+  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+    def asDroidDetails: Option[DroidDetails] = {
+      if (DroidDetails.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[DroidDetails]) else None
+    }
+  }
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForSelectionSet() should generate a trait declaration for a selection set with an inline fragment 1`] = `
+"@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
+  val name: String
+}
+
+@scala.scalajs.js.native trait AsDroid extends scala.scalajs.js.Object with Hero {
+  val name: String
+  val primaryFunction: com.apollographql.scalajs.OptionalResult[String]
+}
+
+object AsDroid {
+  val possibleTypes = scala.collection.Set(\\"Droid\\")
+  implicit class ViewExtensions(private val orig: AsDroid) extends AnyVal {
+  }
+}
+
+object Hero {
+  val possibleTypes = scala.collection.Set(\\"Human\\", \\"Droid\\")
+  implicit class ViewExtensions(private val orig: Hero) extends AnyVal {
+    def asDroid: Option[AsDroid] = {
+      if (AsDroid.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[AsDroid]) else None
     }
   }
 }"
@@ -462,11 +634,20 @@ exports[`Scala code generation #typeDeclarationForGraphQLType() should escape id
 "
 `;
 
-exports[`Scala code generation #typeDeclarationForGraphQLType() should generate a caseClass declaration for a GraphQLInputObjectType 1`] = `
+exports[`Scala code generation #typeDeclarationForGraphQLType() should generate a trait declaration for a GraphQLInputObjectType 1`] = `
 "/**
  * The input object sent when someone is creating a new review
  */
-case class ReviewInput(stars: Int, commentary: scala.scalajs.js.UndefOr[String] = scala.scalajs.js.undefined, favoriteColor: scala.scalajs.js.UndefOr[ColorInput] = scala.scalajs.js.undefined) {
+@scala.scalajs.js.native trait ReviewInput extends scala.scalajs.js.Object {
+  val stars: Int
+  val commentary: com.apollographql.scalajs.OptionalInput[String]
+  val favoriteColor: com.apollographql.scalajs.OptionalInput[ColorInput]
+}
+
+object ReviewInput {
+  def apply(stars: Int, commentary: com.apollographql.scalajs.OptionalInput[String] = com.apollographql.scalajs.OptionalInput.empty, favoriteColor: com.apollographql.scalajs.OptionalInput[ColorInput] = com.apollographql.scalajs.OptionalInput.empty) =  {
+    scala.scalajs.js.Dynamic.literal(stars = stars, commentary = commentary, favoriteColor = favoriteColor).asInstanceOf[ReviewInput]
+  }
 }"
 `;
 
