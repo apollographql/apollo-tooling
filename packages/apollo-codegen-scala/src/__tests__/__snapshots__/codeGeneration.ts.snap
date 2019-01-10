@@ -17,7 +17,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   }
 
   object Variables {
-    def apply(episode: com.apollographql.scalajs.OptionalInput[String] = None) =  {
+    def apply(episode: com.apollographql.scalajs.OptionalInput[String] = com.apollographql.scalajs.OptionalInput.empty) =  {
       scala.scalajs.js.Dynamic.literal(episode = episode).asInstanceOf[Variables]
     }
   }
@@ -273,7 +273,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   }
 
   object Variables {
-    def apply(episode: com.apollographql.scalajs.OptionalInput[String] = None) =  {
+    def apply(episode: com.apollographql.scalajs.OptionalInput[String] = com.apollographql.scalajs.OptionalInput.empty) =  {
       scala.scalajs.js.Dynamic.literal(episode = episode).asInstanceOf[Variables]
     }
   }
@@ -393,7 +393,7 @@ object HeroNameQuery extends com.apollographql.scalajs.GraphQLQuery {
   }
 
   object Variables {
-    def apply(episode: com.apollographql.scalajs.OptionalInput[String] = None) =  {
+    def apply(episode: com.apollographql.scalajs.OptionalInput[String] = com.apollographql.scalajs.OptionalInput.empty) =  {
       scala.scalajs.js.Dynamic.literal(episode = episode).asInstanceOf[Variables]
     }
   }
@@ -645,7 +645,7 @@ exports[`Scala code generation #typeDeclarationForGraphQLType() should generate 
 }
 
 object ReviewInput {
-  def apply(stars: Int, commentary: com.apollographql.scalajs.OptionalInput[String] = None, favoriteColor: com.apollographql.scalajs.OptionalInput[ColorInput] = None) =  {
+  def apply(stars: Int, commentary: com.apollographql.scalajs.OptionalInput[String] = com.apollographql.scalajs.OptionalInput.empty, favoriteColor: com.apollographql.scalajs.OptionalInput[ColorInput] = com.apollographql.scalajs.OptionalInput.empty) =  {
     scala.scalajs.js.Dynamic.literal(stars = stars, commentary = commentary, favoriteColor = favoriteColor).asInstanceOf[ReviewInput]
   }
 }"

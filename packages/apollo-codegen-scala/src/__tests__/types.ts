@@ -18,7 +18,7 @@ import { typeNameFromGraphQLType } from "../types";
 
 describe("Scala code generation: Types", function() {
   describe("#typeNameFromGraphQLType()", function() {
-    test("should return UndefOr[String] for GraphQLString", function() {
+    test("should return OptionalResult[String] for GraphQLString", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLString)).toBe(
         "com.apollographql.scalajs.OptionalResult[String]"
       );
@@ -33,7 +33,7 @@ describe("Scala code generation: Types", function() {
       ).toBe("String");
     });
 
-    test("should return UndefOr[Array[UndefOr[String]]] for GraphQLList(GraphQLString)", function() {
+    test("should return OptionalResult[Array[OptionalResult[String]]] for GraphQLList(GraphQLString)", function() {
       expect(
         typeNameFromGraphQLType({ options: {} }, new GraphQLList(GraphQLString))
       ).toBe(
@@ -41,7 +41,7 @@ describe("Scala code generation: Types", function() {
       );
     });
 
-    test("should return Array[UndefOr[String]] for GraphQLNonNull(GraphQLList(GraphQLString))", function() {
+    test("should return Array[OptionalResult[String]] for GraphQLNonNull(GraphQLList(GraphQLString))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
@@ -52,7 +52,7 @@ describe("Scala code generation: Types", function() {
       );
     });
 
-    test("should return UndefOr[Array[String]] for GraphQLList(GraphQLNonNull(GraphQLString))", function() {
+    test("should return OptionalResult[Array[String]] for GraphQLList(GraphQLNonNull(GraphQLString))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
@@ -72,7 +72,7 @@ describe("Scala code generation: Types", function() {
       ).toBe("scala.scalajs.js.Array[String]");
     });
 
-    test("should return UndefOr[Array[UndefOr[Array[UndefOr[String]]]]] for GraphQLList(GraphQLList(GraphQLString))", function() {
+    test("should return OptionalResult[Array[OptionalResult[Array[OptionalResult[String]]]]] for GraphQLList(GraphQLList(GraphQLString))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
@@ -83,7 +83,7 @@ describe("Scala code generation: Types", function() {
       );
     });
 
-    test("should return UndefOr[Array[Array[UndefOr[String]]]] for GraphQLList(GraphQLNonNull(GraphQLList(GraphQLString)))", function() {
+    test("should return OptionalResult[Array[Array[OptionalResult[String]]]] for GraphQLList(GraphQLNonNull(GraphQLList(GraphQLString)))", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
@@ -94,31 +94,31 @@ describe("Scala code generation: Types", function() {
       );
     });
 
-    test("should return UndefOr[Int] for GraphQLInt", function() {
+    test("should return OptionalResult[Int] for GraphQLInt", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLInt)).toBe(
         "com.apollographql.scalajs.OptionalResult[Int]"
       );
     });
 
-    test("should return UndefOr[Double] for GraphQLFloat", function() {
+    test("should return OptionalResult[Double] for GraphQLFloat", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLFloat)).toBe(
         "com.apollographql.scalajs.OptionalResult[Double]"
       );
     });
 
-    test("should return UndefOr[Boolean] for GraphQLBoolean", function() {
+    test("should return OptionalResult[Boolean] for GraphQLBoolean", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLBoolean)).toBe(
         "com.apollographql.scalajs.OptionalResult[Boolean]"
       );
     });
 
-    test("should return UndefOr[String] for GraphQLID", function() {
+    test("should return OptionalResult[String] for GraphQLID", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLID)).toBe(
         "com.apollographql.scalajs.OptionalResult[String]"
       );
     });
 
-    test("should return UndefOr[String] for a custom scalar type", function() {
+    test("should return OptionalResult[String] for a custom scalar type", function() {
       expect(
         typeNameFromGraphQLType(
           { options: {} },
@@ -127,7 +127,7 @@ describe("Scala code generation: Types", function() {
       ).toBe("com.apollographql.scalajs.OptionalResult[String]");
     });
 
-    test("should return a passed through custom scalar type with the passthroughCustomScalars UndefOr", function() {
+    test("should return a passed through custom scalar type with the passthroughCustomScalars OptionalResult", function() {
       expect(
         typeNameFromGraphQLType(
           {
@@ -138,7 +138,7 @@ describe("Scala code generation: Types", function() {
       ).toBe("com.apollographql.scalajs.OptionalResult[CustomScalarType]");
     });
 
-    test("should return a passed through custom scalar type with a prefix with the customScalarsPrefix UndefOr", function() {
+    test("should return a passed through custom scalar type with a prefix with the customScalarsPrefix OptionalResult", function() {
       expect(
         typeNameFromGraphQLType(
           {

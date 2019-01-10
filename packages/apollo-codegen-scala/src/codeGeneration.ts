@@ -489,7 +489,9 @@ function inputLikeDeclaration(
             return {
               name: p.propertyName,
               type: p.typeName,
-              defaultValue: p.isOptional ? "None" : ""
+              defaultValue: p.isOptional
+                ? "com.apollographql.scalajs.OptionalInput.empty"
+                : ""
             };
           })
         },
