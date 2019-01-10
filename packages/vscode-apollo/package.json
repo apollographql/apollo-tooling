@@ -115,8 +115,5 @@
         "category": "Apollo"
       }
     ]
-  },
-  "devDependencies": {
-    "jest-environment-node": "^23.4.0"
   }
 }
