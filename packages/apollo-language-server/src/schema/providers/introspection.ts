@@ -10,10 +10,8 @@ import {
   IntrospectionQuery,
   parse
 } from "graphql";
-import { Agent, AgentOptions } from "https";
+import { Agent } from "http";
 import { fetch } from "apollo-env";
-import { URL } from "url";
-
 import { RemoteServiceConfig } from "../../config";
 import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
 
@@ -23,23 +21,11 @@ export class IntrospectionSchemaProvider implements GraphQLSchemaProvider {
   async resolveSchema() {
     if (this.schema) return this.schema;
     const { skipSSLValidation, url, headers } = this.config;
-    let options: HttpLink.Options = { uri: url, fetch };
-
-    if (skipSSLValidation) {
-      const urlObject = new URL(url);
-      const host = urlObject.host;
-      const port = +urlObject.port || 443;
-
-      const agentOptions: AgentOptions = {
-        host: host,
-        port: port,
-        rejectUnauthorized: false
-      };
-
-      const agent = new Agent(agentOptions);
-
-      options.fetchOptions = { agent: agent };
-    }
+    const options: HttpLink.Options = {
+      uri: url,
+      fetch,
+      ...(skipSSLValidation && { fetchOptions: { agent: new Agent() } })
+    };
 
     const { data, errors } = (await toPromise(
       linkExecute(createHttpLink(options), {
@@ -48,7 +34,7 @@ export class IntrospectionSchemaProvider implements GraphQLSchemaProvider {
       })
     )) as ExecutionResult<IntrospectionQuery>;
 
-    if (errors) {
+    if (errors && errors.length) {
       // XXX better error handling of GraphQL errors
       throw new Error(errors.map(({ message }: Error) => message).join("\n"));
     }

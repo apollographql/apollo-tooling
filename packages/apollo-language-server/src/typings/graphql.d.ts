@@ -2,12 +2,16 @@ import {
   ASTNode,
   TypeSystemDefinitionNode,
   TypeSystemExtensionNode,
-  FragmentDefinitionNode
+  FragmentDefinitionNode,
+  OperationDefinitionNode
 } from "graphql";
 
 // FIXME: We should add proper type guards for these predicate functions
 // to `@types/graphql`.
 declare module "graphql/language/predicates" {
+  function isExecutableDefinitionNode(
+    node: ASTNode
+  ): node is OperationDefinitionNode | FragmentDefinitionNode;
   function isTypeSystemDefinitionNode(
     node: ASTNode
   ): node is TypeSystemDefinitionNode;

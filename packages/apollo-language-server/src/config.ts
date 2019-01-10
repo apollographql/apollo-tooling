@@ -12,6 +12,7 @@ import {
   StatsWindowSize,
   ServiceIDAndTag
 } from "./engine";
+import URI from "vscode-uri";
 
 export interface EngineStatsWindow {
   to: number;
@@ -112,11 +113,18 @@ export type ApolloConfigFormat =
 
 // config settings
 const MODULE_NAME = "apollo";
-const searchPlaces = [
+const defaultSearchPlaces = [
   "package.json",
   `${MODULE_NAME}.config.js`,
   `${MODULE_NAME}.config.ts`
 ];
+
+// Based on order, a provided config file will take precedence over the defaults
+const getSearchPlaces = (configFile?: string) => [
+  ...(configFile ? [configFile] : []),
+  ...defaultSearchPlaces
+];
+
 const loaders = {
   // XXX improve types for config
   ".json": (cosmiconfig as any).loadJson as LoaderEntry,
@@ -130,7 +138,7 @@ export interface LoadConfigSettings {
   // the current working directory to start looking for the config
   // config loading only works on node so we default to
   // process.cwd()
-  cwd: string;
+  configPath?: string;
   name?: string;
   type?: "service" | "client";
 }
@@ -187,7 +195,7 @@ export class ApolloConfig {
   public client?: ClientConfigFormat;
   private _tag?: string;
 
-  constructor(public rawConfig: ApolloConfigFormat) {
+  constructor(public rawConfig: ApolloConfigFormat, public configURI?: URI) {
     this.isService = !!rawConfig.service;
     this.isClient = !!rawConfig.client;
     this.engine = rawConfig.engine!;
@@ -247,47 +255,77 @@ export function isServiceConfig(config: ApolloConfig): config is ServiceConfig {
   return config.isService;
 }
 
+const getServiceFromKey = (key: string | undefined): string | undefined => {
+  if (key) {
+    const [type, service] = key.split(":");
+    if (type === "service") return service;
+  }
+  return;
+};
+
 // XXX load .env files automatically
 export const loadConfig = async ({
-  cwd,
+  configPath,
   name,
   type
-}: LoadConfigSettings): Promise<ConfigResult<ApolloConfig>> => {
+}: LoadConfigSettings): Promise<ApolloConfig> => {
   const explorer = cosmiconfig(MODULE_NAME, {
-    searchPlaces,
+    searchPlaces: getSearchPlaces(configPath),
     loaders
   });
 
-  let loadedConfig = (await explorer.search(cwd)) as ConfigResult<
+  let loadedConfig = (await explorer.search(configPath)) as ConfigResult<
     ApolloConfigFormat
   >;
 
-  if (!loadedConfig) {
-    loadedConfig = {
-      isEmpty: false,
-      filepath: cwd || process.cwd(),
-      config:
-        type === "client"
-          ? {
-              client: { service: name!, ...DefaultConfigBase }
-            }
-          : { service: { name: name!, ...DefaultConfigBase } }
-    };
-  }
-
-  let { config, filepath, isEmpty } = loadedConfig;
-
   // add API to the env
-  const dotEnvPath = resolve(parse(filepath).dir, ".env");
+  let engineConfig = {},
+    nameFromKey;
+  const dotEnvPath = configPath
+    ? resolve(parse(configPath).dir, ".env")
+    : resolve(process.cwd(), ".env");
+
   if (existsSync(dotEnvPath)) {
     const env: { [key: string]: string } = require("dotenv").parse(
       readFileSync(dotEnvPath)
     );
 
     if (env["ENGINE_API_KEY"]) {
-      config = merge({ engine: { apiKey: env["ENGINE_API_KEY"] } }, config);
+      engineConfig = { engine: { apiKey: env["ENGINE_API_KEY"] } };
+      nameFromKey = getServiceFromKey(env["ENGINE_API_KEY"]);
     }
   }
+
+  const resolvedName = name || nameFromKey;
+  // If there's a name passed in (from env/flag), it merges with the config file, to
+  // overwrite either the client's service (if a client project), or the service's name.
+  // if there's no config file, it uses the `DefaultConfigBase` to fill these in.
+  if (!loadedConfig || resolvedName) {
+    loadedConfig = {
+      isEmpty: false,
+      filepath: configPath || process.cwd(),
+      config:
+        type === "client"
+          ? {
+              ...(loadedConfig ? loadedConfig.config : {}),
+              client: {
+                ...DefaultConfigBase,
+                ...(loadedConfig ? loadedConfig.config.client : {}),
+                service: resolvedName
+              }
+            }
+          : {
+              ...(loadedConfig ? loadedConfig.config : {}),
+              service: {
+                ...DefaultConfigBase,
+                ...(loadedConfig ? loadedConfig.config.service : {}),
+                name: resolvedName
+              }
+            }
+    };
+  }
+
+  let { config, filepath, isEmpty } = loadedConfig;
 
   if (isEmpty) {
     throw new Error(
@@ -298,7 +336,9 @@ export const loadConfig = async ({
   // selectivly apply defaults when loading the config
   if (config.client) config = merge({ client: DefaultClientConfig }, config);
   if (config.service) config = merge({ service: DefaultServiceConfig }, config);
+  if (engineConfig) config = merge(engineConfig, config);
+
   config = merge({ engine: DefaultEngineConfig }, config);
 
-  return { config: new ApolloConfig(config), filepath, isEmpty };
+  return new ApolloConfig(config, URI.file(resolve(filepath)));
 };

@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.0.13 linux-x64 node-v10.5.0
+apollo/2.1.9 darwin-x64 node-v10.10.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -66,9 +66,20 @@ OPTIONS
 
   --endpoint=endpoint                    The url of your service
 
+  --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
+                                         work in watch mode
+
   --header=header                        Additional headers to send to server for introspectionQuery
 
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
+                                         queries *and* any client schema extensions
+
   --key=key                              The API key for the Apollo Engine service
+
+  --queries=queries                      Deprecated in favor of the includes flag
+
+  --tagName=tagName                      Name of the template literal tag used to identify template literals containing
+                                         GraphQL queries in Javascript/Typescript code
 ```
 
 _See code: [src/commands/client/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/check.ts)_
@@ -95,7 +106,10 @@ ARGUMENTS
 OPTIONS
   -c, --config=config                        Path to your Apollo config file
   -t, --tag=tag                              [default: current] The published service tag for this client
-  --addTypename                              Automatically add __typename to your queries
+
+  --[no-]addTypename                         [default: true] Automatically add __typename to your queries, can be unset
+                                             with --no-addTypename
+
   --clientName=clientName                    Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId      Reference id for the client which will match ids from client traces, will
@@ -107,12 +121,20 @@ OPTIONS
 
   --endpoint=endpoint                        The url of your service
 
+  --excludes=excludes                        Glob of files to exclude for GraphQL operations. Caveat: this doesn't
+                                             currently work in watch mode
+
   --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
                                              "output" directory. Set "globalTypesFile" to specify a different path.
 
   --header=header                            Additional headers to send to server for introspectionQuery
 
+  --includes=includes                        Glob of files to search for GraphQL operations. This should be used to find
+                                             queries *and* any client schema extensions
+
   --key=key                                  The API key for the Apollo Engine service
+
+  --localSchemaFile=localSchemaFile          Path to your local GraphQL schema file (introspection result or SDL)
 
   --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
 
@@ -132,10 +154,10 @@ OPTIONS
 
   --passthroughCustomScalars                 Use your own types for custom scalars
 
-  --queries=queries                          Glob of files to watch for recompilation
+  --queries=queries                          Deprecated in favor of the includes flag
 
-  --tagName=tagName                          [default: gql] Name of the template literal tag used to identify template
-                                             literals containing GraphQL queries in Javascript/Typescript code
+  --tagName=tagName                          Name of the template literal tag used to identify template literals
+                                             containing GraphQL queries in Javascript/Typescript code
 
   --target=target                            (required) Type of code generator to use (swift | typescript | flow |
                                              scala), inferred from output
@@ -154,7 +176,7 @@ _See code: [src/commands/client/codegen.ts](https://github.com/apollographql/apo
 
 ## `apollo client:extract OUTPUT`
 
-Push a service to Engine
+Extract queries from a client
 
 ```
 USAGE
@@ -175,9 +197,20 @@ OPTIONS
 
   --endpoint=endpoint                    The url of your service
 
+  --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
+                                         work in watch mode
+
   --header=header                        Additional headers to send to server for introspectionQuery
 
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
+                                         queries *and* any client schema extensions
+
   --key=key                              The API key for the Apollo Engine service
+
+  --queries=queries                      Deprecated in favor of the includes flag
+
+  --tagName=tagName                      Name of the template literal tag used to identify template literals containing
+                                         GraphQL queries in Javascript/Typescript code
 ```
 
 _See code: [src/commands/client/extract.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/extract.ts)_
@@ -202,9 +235,20 @@ OPTIONS
 
   --endpoint=endpoint                    The url of your service
 
+  --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
+                                         work in watch mode
+
   --header=header                        Additional headers to send to server for introspectionQuery
 
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
+                                         queries *and* any client schema extensions
+
   --key=key                              The API key for the Apollo Engine service
+
+  --queries=queries                      Deprecated in favor of the includes flag
+
+  --tagName=tagName                      Name of the template literal tag used to identify template literals containing
+                                         GraphQL queries in Javascript/Typescript code
 ```
 
 _See code: [src/commands/client/push.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/push.ts)_
@@ -241,7 +285,7 @@ EXAMPLE
   $ apollo plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.3/src/commands/plugins/index.ts)_
 
 ## `apollo plugins:install PLUGIN...`
 
@@ -276,7 +320,7 @@ EXAMPLES
   $ apollo plugins:install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.3/src/commands/plugins/install.ts)_
 
 ## `apollo plugins:link PLUGIN`
 
@@ -303,7 +347,7 @@ EXAMPLE
   $ apollo plugins:link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.3/src/commands/plugins/link.ts)_
 
 ## `apollo plugins:uninstall PLUGIN...`
 
@@ -325,7 +369,7 @@ ALIASES
   $ apollo plugins:remove
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.3/src/commands/plugins/uninstall.ts)_
 
 ## `apollo plugins:update`
 
@@ -340,7 +384,7 @@ OPTIONS
   -v, --verbose
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.2/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.3/src/commands/plugins/update.ts)_
 
 ## `apollo service:check`
 
@@ -375,11 +419,12 @@ ARGUMENTS
   OUTPUT  [default: schema.json] Path to write the introspection result to
 
 OPTIONS
-  -c, --config=config  Path to your Apollo config file
-  -t, --tag=tag        [default: current] The published tag to check this service against
-  --endpoint=endpoint  The url of your service
-  --header=header      Additional headers to send to server for introspectionQuery
-  --key=key            The API key for the Apollo Engine service
+  -c, --config=config      Path to your Apollo config file
+  -k, --skipSSLValidation  Allow connections to an SSL site without certs
+  -t, --tag=tag            [default: current] The published tag to check this service against
+  --endpoint=endpoint      The url of your service
+  --header=header          Additional headers to send to server for introspectionQuery
+  --key=key                The API key for the Apollo Engine service
 
 ALIASES
   $ apollo schema:download
@@ -396,11 +441,12 @@ USAGE
   $ apollo service:push
 
 OPTIONS
-  -c, --config=config  Path to your Apollo config file
-  -t, --tag=tag        [default: current] The published tag to check this service against
-  --endpoint=endpoint  The url of your service
-  --header=header      Additional headers to send to server for introspectionQuery
-  --key=key            The API key for the Apollo Engine service
+  -c, --config=config                Path to your Apollo config file
+  -t, --tag=tag                      [default: current] The tag to publish this service to
+  --endpoint=endpoint                The url of your service
+  --header=header                    Additional headers to send to server for introspectionQuery
+  --key=key                          The API key for the Apollo Engine service
+  --localSchemaFile=localSchemaFile  Path to your local GraphQL schema file (introspection result or SDL)
 
 ALIASES
   $ apollo schema:publish
@@ -411,66 +457,17 @@ _See code: [src/commands/service/push.ts](https://github.com/apollographql/apoll
 
 # Configuration
 
-The Apollo CLI and VS Code extension can be configured with an Apollo Config file. Apollo configuration is stored as a plain object and can be either specified under the `apollo` key in your `package.json` or as a separate `apollo.config.js` which exports the config data.
+The Apollo CLI and VS Code extension can be configured with an Apollo Config file. Apollo configuration is stored as a plain object and can be either specified under the `apollo` key in your `package.json` or as a separate `apollo.config.js` file which exports the config data.
 
-Let's take a look at a basic configuration file (`apollo.config.js` style):
+You'll need to set up your Apollo configuration for all the features of the Apollo CLI and VS Code extension to work correctly. For full details on how to do that, [visit our docs](https://www.apollographql.com/docs/references/apollo-config.html). A basic configuration (`apollo.config.js` style) looks something like this:
 
 ```js
 module.exports = {
   client: {
-    name: "My Client Project"
+    name: "My Client Project",
     service: "my-service-name"
   }
 }
-```
-
-## Client settings
-
-### Service Configuration
-
-When linking a client to a service, you can either use the name of a service that has been published to the Apollo service registry, or you can use a remote url that supports introspection or you can provide a filepath of a generated SDL (Schema Definition Language) file, for example: `schema.json` or `schema.graphql`.
-
-```js
-module.exports = {
-  client: {
-    service: "my-service-name",
-
-    // or
-    service: {
-      name: "my-service-name",
-      url: "http://example.com/graphql",
-      headers: {
-        cookie: "myCookieValue"
-      }
-    },
-
-    // or a local generated schema file
-    service: {
-      name: "my-service-name",
-      localSchemaFile: "./path/to/schema.graphl"
-    }
-  }
-};
-```
-
-## Service settings
-
-The service config needs to know how to fetch the schema for that service. This can be done with either an endpoint config or a filepath of a generated SDL (Schema Definition Language) file, for example: `schema.json` or `schema.graphql`.
-
-```js
-module.exports = {
-  service: {
-    name: "my-service",
-
-    // this is the default endpoint info
-    endpoint: {
-      url: "https://localhost:4000/graphql"
-    },
-
-    // or a local generated schema file
-    localSchemaFile: "./path/to/schema.graphl"
-  }
-};
 ```
 
 # Code Generation
@@ -612,9 +609,14 @@ It can also be helpful to print standard out during testing. To enable logging, 
 
 ## Publishing
 
-- Before publishing, check the `CHANGELOG.md` in the root of the repository and make sure it's up to date.
-- Make sure you have a `GITHUB_TOKEN` set in your environment variables. For more information on setting `GITHUB_AUTH`, check the [`lerna-changelog` documentation](https://github.com/lerna/lerna-changelog#github-token).
+- Make sure you have a `GITHUB_AUTH` set in your environment variables. For more information on setting `GITHUB_AUTH`, check the [`lerna-changelog` documentation](https://github.com/lerna/lerna-changelog#github-token).
 - In the root of the repository, run `npx lerna-changelog` (PR labels are read automatically using the `GITHUB_AUTH` token).
 - Copy the result into the `CHANGELOG.md` file and replace the top line with the CLI version that will be published.
 - Run `git add CHANGELOG.md` so that the update will be included in Lerna's "publish" commit.
+- If the `CHANGELOG.md` is still missing included changes, please manually add those changes.
 - Finally, run `npm run release` to publish the individual packages.
+
+## Maintainers
+
+- [@jbaxleyiii](https://github.com/jbaxleyiii) (Apollo)
+- [@trevor-scheer](https://github.com/trevor-scheer) (Apollo)

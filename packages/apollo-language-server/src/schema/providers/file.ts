@@ -1,7 +1,7 @@
 // FileSchemaProvider (FileProvider (SDL || IntrospectionResult) => schema)
 import { GraphQLSchema, buildClientSchema, Source, buildSchema } from "graphql";
 import { readFileSync } from "fs";
-import { extname } from "path";
+import { extname, resolve } from "path";
 import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
 import { NotificationHandler } from "vscode-languageserver";
 
@@ -34,12 +34,13 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
       const __schema = parsed.data
         ? parsed.data.__schema
         : parsed.__schema
-          ? parsed.__schema
-          : parsed;
+        ? parsed.__schema
+        : parsed;
 
       this.schema = buildClientSchema({ __schema });
     } else if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
-      this.schema = buildSchema(new Source(result, path));
+      const uri = `file://${resolve(path)}`;
+      this.schema = buildSchema(new Source(result, uri));
     }
     if (!this.schema) throw new Error(`Schema could not be loaded for ${path}`);
     return this.schema;

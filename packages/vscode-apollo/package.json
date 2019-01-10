@@ -1,8 +1,8 @@
 {
   "name": "vscode-apollo",
   "displayName": "Apollo GraphQL",
-  "description": "A VS Code extension for Apollo GraphQL projects",
-  "version": "1.1.7",
+  "description": "Rich editor support for GraphQL client and server development that seamlessly integrates with the Apollo platform",
+  "version": "1.2.8",
   "referenceID": "87197759-7617-40d0-b32e-46d378e907c7",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -27,7 +27,8 @@
     "apollo-env": "file:../apollo-env",
     "apollo-language-server": "file:../apollo-language-server",
     "dotenv": "^6.1.0",
-    "vscode": "^1.1.21",
+    "event-stream": "=3.3.4",
+    "vscode": "^1.1.22",
     "vscode-languageclient": "^5.1.1"
   },
   "publisher": "apollographql",
@@ -85,6 +86,16 @@
         ],
         "scopeName": "inline.graphql",
         "path": "./syntaxes/graphql.js.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.graphql": "graphql"
+        }
+      },
+      {
+        "injectTo": [
+          "source.python"
+        ],
+        "scopeName": "inline.graphql.python",
+        "path": "./syntaxes/graphql.py.json",
         "embeddedLanguages": {
           "meta.embedded.block.graphql": "graphql"
         }

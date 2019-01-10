@@ -1,14 +1,10 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
-    "composite": false,
     "rootDir": "./src",
     "outDir": "./lib",
-    "allowJs": true,
-    "declaration": false,
-    "declarationMap": false,
     "types": ["node"]
   },
   "include": ["src/**/*"],
-  "exclude": ["**/__tests__", "**/__mocks__"]
+  "exclude": ["src/fetch/**/*"]
 }

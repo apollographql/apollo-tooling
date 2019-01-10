@@ -13,14 +13,13 @@ import {
   loadConfig,
   ApolloConfig,
   isClientConfig,
-  ApolloConfigFormat,
-  ClientConfig,
   ServiceConfig
 } from "./config";
 import { LanguageServerLoadingHandler } from "./loadingHandler";
 import { ServiceID, SchemaTag, ClientIdentity } from "./engine";
 import { GraphQLClientProject, isClientProject } from "./project/client";
 import { GraphQLServiceProject } from "./project/service";
+import URI from "vscode-uri";
 
 export interface WorkspaceConfig {
   clientIdentity?: ClientIdentity;
@@ -55,13 +54,13 @@ export class GraphQLWorkspace {
       ? new GraphQLClientProject({
           config,
           loadingHandler: this.LanguageServerLoadingHandler,
-          rootURI: folder.uri,
+          rootURI: URI.file(folder.uri),
           clientIdentity
         })
       : new GraphQLServiceProject({
           config: config as ServiceConfig,
           loadingHandler: this.LanguageServerLoadingHandler,
-          rootURI: folder.uri,
+          rootURI: URI.file(folder.uri),
           clientIdentity
         });
 
@@ -123,8 +122,7 @@ export class GraphQLWorkspace {
         `Loading Apollo Config in folder ${configFolder}`,
         (async () => {
           try {
-            const config = await loadConfig({ cwd: configFolder });
-            return config && config.config;
+            return await loadConfig({ configPath: configFolder });
           } catch (e) {
             console.error(e);
             return null;
@@ -179,6 +177,10 @@ export class GraphQLWorkspace {
       projects.forEach(project => project.clearAllDiagnostics());
       this.projectsByFolderUri.delete(folder.uri);
     }
+  }
+
+  get projects(): GraphQLProject[] {
+    return Array.from(this.projectsByFolderUri.values()).flat();
   }
 
   projectForFile(uri: DocumentUri): GraphQLProject | undefined {

@@ -7,6 +7,7 @@ import {
   isTypeSystemDefinitionNode,
   TypeSystemExtensionNode,
   isTypeSystemExtensionNode,
+  DefinitionNode,
   GraphQLSchema
 } from "graphql";
 
@@ -33,10 +34,12 @@ export type DocumentUri = string;
 
 const fileAssociations: { [extension: string]: string } = {
   ".graphql": "graphql",
+  ".gql": "graphql",
   ".js": "javascript",
   ".ts": "typescript",
   ".jsx": "javascriptreact",
-  ".tsx": "typescriptreact"
+  ".tsx": "typescriptreact",
+  ".py": "python"
 };
 
 export interface GraphQLProjectConfig {
@@ -175,7 +178,10 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   }
 
   documentDidChange(document: TextDocument) {
-    const documents = extractGraphQLDocuments(document);
+    const documents = extractGraphQLDocuments(
+      document,
+      this.config.client && this.config.client.tagName
+    );
     if (documents) {
       this.documentsByFile.set(document.uri, documents);
       this.invalidate();
@@ -243,6 +249,33 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
       documents.push(...documentsForFile);
     }
     return documents;
+  }
+
+  get definitions(): DefinitionNode[] {
+    const definitions = [];
+
+    for (const document of this.documents) {
+      if (!document.ast) continue;
+
+      definitions.push(...document.ast.definitions);
+    }
+
+    return definitions;
+  }
+
+  definitionsAt(uri: DocumentUri): DefinitionNode[] {
+    const documents = this.documentsAt(uri);
+    if (!documents) return [];
+
+    const definitions = [];
+
+    for (const document of documents) {
+      if (!document.ast) continue;
+
+      definitions.push(...document.ast.definitions);
+    }
+
+    return definitions;
   }
 
   get typeSystemDefinitionsAndExtensions(): (

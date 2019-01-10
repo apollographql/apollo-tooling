@@ -32,9 +32,6 @@ export default class Generate extends ClientCommand {
   static flags = {
     ...ClientCommand.flags,
 
-    queries: flags.string({
-      description: "Glob of files to watch for recompilation"
-    }),
     watch: flags.boolean({
       description: "Watch for file changes and reload codegen"
     }),
@@ -44,9 +41,15 @@ export default class Generate extends ClientCommand {
         "Type of code generator to use (swift | typescript | flow | scala), inferred from output",
       required: true
     }),
+    localSchemaFile: flags.string({
+      description:
+        "Path to your local GraphQL schema file (introspection result or SDL)"
+    }),
     addTypename: flags.boolean({
-      description: "Automatically add __typename to your queries",
-      default: true
+      description:
+        "[default: true] Automatically add __typename to your queries, can be unset with --no-addTypename",
+      default: true,
+      allowNo: true
     }),
     passthroughCustomScalars: flags.boolean({
       description: "Use your own types for custom scalars"
@@ -57,11 +60,6 @@ export default class Generate extends ClientCommand {
     }),
     mergeInFieldsFromFragmentSpreads: flags.boolean({
       description: "Merge fragment fields onto its enclosing type"
-    }),
-    tagName: flags.string({
-      description:
-        "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
-      default: "gql"
     }),
 
     // swift
@@ -112,7 +110,7 @@ export default class Generate extends ClientCommand {
 
   async run() {
     const {
-      flags: { watch, queries }
+      flags: { watch }
     } = this.parse(Generate);
 
     const run = () =>
@@ -164,9 +162,9 @@ export default class Generate extends ClientCommand {
                 const operations = Object.values(this.project.operations);
                 const fragments = Object.values(this.project.fragments);
 
-                if (!operations.length) {
+                if (!operations.length && !fragments.length) {
                   throw new Error(
-                    "No document sets found to generate code for."
+                    "No operations or fragments found to generate code for."
                   );
                 }
 
@@ -174,7 +172,7 @@ export default class Generate extends ClientCommand {
                   kind: Kind.DOCUMENT,
                   definitions: [...operations, ...fragments]
                 };
-                generate(
+                return generate(
                   document,
                   schema,
                   typeof args.output === "string"
@@ -217,7 +215,7 @@ export default class Generate extends ClientCommand {
 
     if (watch) {
       await run().catch(() => {});
-      const watcher = new Gaze(queries!);
+      const watcher = new Gaze(this.project.config.client.includes);
       watcher.on("all", (event, file) => {
         // console.log("\nChange detected, generating types...");
         this.project.fileDidChange(Uri.file(file).toString());

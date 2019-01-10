@@ -1,7 +1,6 @@
 import { createHash } from "crypto";
 import { writeFileSync } from "fs";
 import {
-  hideLiterals,
   printWithReducedWhitespace,
   sortAST,
   defaultSignature as engineDefaultSignature
@@ -9,6 +8,7 @@ import {
 import { DocumentNode } from "graphql";
 
 import { ClientCommand } from "../../Command";
+import { hideCertainLiterals } from "./push";
 
 // XXX this is duplicated code
 const manifestOperationHash = (str: string): string =>
@@ -22,8 +22,8 @@ const engineSignature = (_TODO_operationAST: DocumentNode): string => {
   return engineDefaultSignature(_TODO_operationAST, "TODO");
 };
 
-export default class ServicePush extends ClientCommand {
-  static description = "Push a service to Engine";
+export default class ClientExtract extends ClientCommand {
+  static description = "Extract queries from a client";
   static flags = {
     ...ClientCommand.flags
   };
@@ -52,7 +52,7 @@ export default class ServicePush extends ClientCommand {
               // kept because the registered operations should mirror those in the
               // client bundle minus any PII which lives within string literals.
               const printed = printWithReducedWhitespace(
-                sortAST(hideLiterals(operationAST))
+                sortAST(hideCertainLiterals(operationAST))
               );
 
               return {

@@ -1,5 +1,4 @@
-import { join, resolve } from "path";
-import { readFileSync } from "fs";
+import { join } from "path";
 import {
   window,
   workspace,
@@ -22,37 +21,30 @@ import StatusBar from "./statusBar";
 
 const { version, referenceID } = require("../package.json");
 
-function sideViewColumn() {
-  if (!window.activeTextEditor) {
-    return ViewColumn.One;
-  }
-
-  switch (window.activeTextEditor.viewColumn) {
-    case ViewColumn.One:
-      return ViewColumn.Two;
-    case ViewColumn.Two:
-      return ViewColumn.Three;
-    default:
-      return window.activeTextEditor.viewColumn!;
-  }
-}
-
 export function activate(context: ExtensionContext) {
   const serverModule = context.asAbsolutePath(
     join("node_modules/apollo-language-server/lib", "server.js")
   );
-  const debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
+
+  const env = {
+    APOLLO_CLIENT_NAME: "Apollo VS Code",
+    APOLLO_CLIENT_VERSION: version,
+    APOLLO_CLIENT_REFERENCE_ID: referenceID
+  };
+
+  const debugOptions = {
+    execArgv: ["--nolazy", "--inspect=6009"],
+    env
+  };
   let schemaTagItems: QuickPickItem[] = [];
 
   const serverOptions: ServerOptions = {
     run: {
       module: serverModule,
       transport: TransportKind.ipc,
-      execArgv: [
-        `--apollo-client-name=Apollo VS Code`,
-        `--apollo-client-version=${version}`,
-        `--apollo-client-reference-id=${referenceID}`
-      ]
+      options: {
+        env
+      }
     },
     debug: {
       module: serverModule,
@@ -61,26 +53,26 @@ export function activate(context: ExtensionContext) {
     }
   };
 
+  const outputChannel = window.createOutputChannel("Apollo GraphQL");
+
   const clientOptions: LanguageClientOptions = {
     documentSelector: [
       "graphql",
       "javascript",
       "typescript",
       "javascriptreact",
-      "typescriptreact"
+      "typescriptreact",
+      "python"
     ],
     synchronize: {
       fileEvents: [
         workspace.createFileSystemWatcher("**/apollo.config.js"),
         workspace.createFileSystemWatcher("**/package.json"),
-        workspace.createFileSystemWatcher("**/*.{graphql,js,ts,jsx,tsx}")
+        workspace.createFileSystemWatcher("**/*.{graphql,js,ts,jsx,tsx,py}")
       ]
-    }
+    },
+    outputChannel
   };
-
-  let currentPanel: WebviewPanel | undefined = undefined;
-  let currentCancellationID: number | undefined = undefined;
-  let currentMessageHandler: ((msg: any) => void) | undefined = undefined;
 
   const client = new LanguageClient(
     "apollographql",
@@ -92,63 +84,6 @@ export function activate(context: ExtensionContext) {
 
   client.registerProposedFeatures();
   context.subscriptions.push(client.start());
-
-  const getApolloPanel = () => {
-    if (currentPanel) {
-      if (!currentPanel.visible) {
-        // If we already have a panel, show it in the target column
-        currentPanel.reveal(sideViewColumn());
-      }
-
-      return currentPanel;
-    } else {
-      // Otherwise, create a new panel
-      currentPanel = window.createWebviewPanel(
-        "apolloPanel",
-        "",
-        sideViewColumn(),
-        {
-          enableScripts: true,
-          localResourceRoots: [
-            Uri.file(join(context.extensionPath, "webview-content"))
-          ]
-        }
-      );
-
-      // Reset when the current panel is closed
-      currentPanel.onDidDispose(
-        () => {
-          currentPanel = undefined;
-
-          if (currentCancellationID) {
-            client.sendNotification("apollographql/cancelQuery", {
-              cancellationID: currentCancellationID
-            });
-
-            currentCancellationID = undefined;
-          }
-        },
-        null,
-        context.subscriptions
-      );
-
-      currentPanel!.webview.onDidReceiveMessage(
-        message => {
-          if (currentMessageHandler) {
-            currentMessageHandler(message);
-          }
-        },
-        undefined,
-        context.subscriptions
-      );
-
-      currentPanel!.onDidDispose(() => {
-        currentMessageHandler = undefined;
-      });
-
-      return currentPanel;
-    }
-  };
 
   client.onReady().then(() => {
     commands.registerCommand("apollographql/reloadService", () => {
@@ -203,117 +138,6 @@ export function activate(context: ExtensionContext) {
         }
       );
     });
-
-    client.onNotification(
-      "apollographql/requestVariables",
-      ({ query, endpoint, headers, requestedVariables, schema }) => {
-        getApolloPanel().title = "GraphQL Query Variables";
-
-        if (currentCancellationID) {
-          client.sendNotification("apollographql/cancelQuery", {
-            cancellationID: currentCancellationID
-          });
-
-          currentCancellationID = undefined;
-        }
-
-        currentMessageHandler = message => {
-          switch (message.type) {
-            case "started":
-              currentPanel!.webview.postMessage({
-                type: "setMode",
-                content: {
-                  type: "VariablesInput",
-                  requestedVariables: requestedVariables,
-                  schema: schema
-                }
-              });
-              break;
-
-            case "variables":
-              client.sendNotification("apollographql/runQueryWithVariables", {
-                query,
-                endpoint,
-                headers,
-                variables: message.content
-              });
-
-              currentMessageHandler = undefined;
-              break;
-          }
-        };
-
-        const mediaPath =
-          Uri.file(join(context.extensionPath, "webview-content"))
-            .with({
-              scheme: "vscode-resource"
-            })
-            .toString() + "/";
-
-        currentMessageHandler({ type: "started" });
-        currentPanel!.webview.html = `
-          <html>
-            <body>
-              <div id="root"></div>
-              <base href="${mediaPath}">
-              <script src="webview.bundle.js"></script>
-            </body>
-          </html>
-        `;
-      }
-    );
-
-    client.onNotification(
-      "apollographql/queryResult",
-      ({ result, cancellationID }) => {
-        getApolloPanel().title = "GraphQL Query Result";
-
-        if (currentCancellationID !== cancellationID) {
-          if (currentCancellationID) {
-            client.sendNotification("apollographql/cancelQuery", {
-              cancellationID: currentCancellationID
-            });
-          }
-
-          currentCancellationID = cancellationID;
-        }
-
-        currentMessageHandler = message => {
-          switch (message.type) {
-            case "started":
-              currentPanel!.webview.postMessage({
-                type: "setMode",
-                content: {
-                  type: "ResultViewer",
-                  result
-                }
-              });
-
-              currentMessageHandler = undefined;
-
-              break;
-          }
-        };
-
-        const mediaPath =
-          Uri.file(join(context.extensionPath, "webview-content"))
-            .with({
-              scheme: "vscode-resource"
-            })
-            .toString() + "/";
-
-        currentMessageHandler({ type: "started" });
-        currentPanel!.webview.html = `
-          <html>
-            <body>
-              <div id="root"></div>
-              <base href="${mediaPath}">
-              <script src="webview.bundle.js"></script>
-            </body>
-          </html>
-        `;
-      }
-    );
 
     const engineDecoration = window.createTextEditorDecorationType({});
     let latestDecs: any[] | undefined = undefined;

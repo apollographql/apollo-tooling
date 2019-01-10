@@ -1,6 +1,6 @@
 {
   "name": "apollo-env",
-  "version": "0.2.1",
+  "version": "0.2.5",
   "author": "opensource@apollographql.com",
   "license": "MIT",
   "repository": {
@@ -14,7 +14,7 @@
   "scripts": {
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",
-    "build": "tsc && cd src && tar c $(find . -name '*.d.ts') | tar xv -C ../lib"
+    "build": "tsc --project ./src/fetch && cd src && tar c $(find . -name '*.d.ts') | tar xv -C ../lib && tsc"
   },
   "engines": {
     "node": ">=8"

@@ -6,11 +6,12 @@ import {
   Hover,
   Definition,
   CodeLens,
-  Command,
   ReferenceContext,
-  InsertTextFormat
+  InsertTextFormat,
+  DocumentSymbol,
+  SymbolKind,
+  SymbolInformation
 } from "vscode-languageserver";
-import Uri from "vscode-uri";
 
 // should eventually be moved into this package, since we're overriding a lot of the existing behavior here
 import { getAutocompleteSuggestions } from "@apollographql/graphql-language-service-interface";
@@ -46,16 +47,15 @@ import {
   isNonNullType,
   ASTNode,
   FieldDefinitionNode,
-  FieldNode,
   visit,
-  BREAK,
-  ObjectTypeDefinitionNode
+  isExecutableDefinitionNode,
+  isTypeSystemDefinitionNode,
+  isTypeSystemExtensionNode
 } from "graphql";
 import { highlightNodeForNode } from "./utilities/graphql";
 
 import { GraphQLClientProject, isClientProject } from "./project/client";
 import { isNotNullOrUndefined } from "@apollographql/apollo-tools";
-import { notDeepEqual } from "assert";
 
 function hasFields(type: GraphQLType): boolean {
   return (
@@ -77,6 +77,17 @@ function locationForASTNode(node: ASTNode): Location | null {
   const uri = uriForASTNode(node);
   if (!uri) return null;
   return Location.create(uri, rangeForASTNode(node));
+}
+
+function symbolForFieldDefinition(
+  definition: FieldDefinitionNode
+): DocumentSymbol {
+  return {
+    name: definition.name.value,
+    kind: SymbolKind.Field,
+    range: rangeForASTNode(definition),
+    selectionRange: rangeForASTNode(definition)
+  };
 }
 
 export class GraphQLLanguageProvider {
@@ -407,6 +418,77 @@ ${argumentNode.description ? argumentNode.description : ""}
     }
 
     return null;
+  }
+
+  async provideDocumentSymbol(
+    uri: DocumentUri,
+    _token: CancellationToken
+  ): Promise<DocumentSymbol[]> {
+    const project = this.workspace.projectForFile(uri);
+    if (!project) return [];
+
+    const definitions = project.definitionsAt(uri);
+
+    const symbols: DocumentSymbol[] = [];
+
+    for (const definition of definitions) {
+      if (isExecutableDefinitionNode(definition)) {
+        if (!definition.name) continue;
+        const location = locationForASTNode(definition);
+        if (!location) continue;
+        symbols.push({
+          name: definition.name.value,
+          kind: SymbolKind.Function,
+          range: rangeForASTNode(definition),
+          selectionRange: rangeForASTNode(highlightNodeForNode(definition))
+        });
+      } else if (
+        isTypeSystemDefinitionNode(definition) ||
+        isTypeSystemExtensionNode(definition)
+      ) {
+        if (
+          definition.kind === Kind.SCHEMA_DEFINITION ||
+          definition.kind === Kind.SCHEMA_EXTENSION
+        ) {
+          continue;
+        }
+        symbols.push({
+          name: definition.name.value,
+          kind: SymbolKind.Class,
+          range: rangeForASTNode(definition),
+          selectionRange: rangeForASTNode(highlightNodeForNode(definition)),
+          children:
+            definition.kind === Kind.OBJECT_TYPE_DEFINITION ||
+            definition.kind === Kind.OBJECT_TYPE_EXTENSION
+              ? (definition.fields || []).map(symbolForFieldDefinition)
+              : undefined
+        });
+      }
+    }
+
+    return symbols;
+  }
+
+  async provideWorkspaceSymbol(
+    query: string,
+    _token: CancellationToken
+  ): Promise<SymbolInformation[]> {
+    const symbols: SymbolInformation[] = [];
+    for (const project of this.workspace.projects) {
+      for (const definition of project.definitions) {
+        if (isExecutableDefinitionNode(definition)) {
+          if (!definition.name) continue;
+          const location = locationForASTNode(definition);
+          if (!location) continue;
+          symbols.push({
+            name: definition.name.value,
+            kind: SymbolKind.Function,
+            location
+          });
+        }
+      }
+    }
+    return symbols;
   }
 
   async provideCodeLenses(

@@ -2,6 +2,7 @@ import {
   GraphQLSchema,
   DocumentNode,
   TypeDefinitionNode,
+  DirectiveDefinitionNode,
   isTypeDefinitionNode,
   TypeExtensionNode,
   isTypeExtensionNode,
@@ -41,6 +42,10 @@ export function buildServiceDefinition(
     [name: string]: TypeExtensionNode[];
   } = Object.create(null);
 
+  const directivesMap: {
+    [name: string]: DirectiveDefinitionNode[];
+  } = Object.create(null);
+
   const schemaDefinitions: SchemaDefinitionNode[] = [];
   const schemaExtensions: SchemaExtensionNode[] = [];
 
@@ -65,6 +70,14 @@ export function buildServiceDefinition(
         } else {
           typeExtensionsMap[typeName] = [definition];
         }
+      } else if (definition.kind === Kind.DIRECTIVE_DEFINITION) {
+        const directiveName = definition.name.value;
+
+        if (directivesMap[directiveName]) {
+          directivesMap[directiveName].push(definition);
+        } else {
+          directivesMap[directiveName] = [definition];
+        }
       } else if (definition.kind === Kind.SCHEMA_DEFINITION) {
         schemaDefinitions.push(definition);
       } else if (definition.kind === Kind.SCHEMA_EXTENSION) {
@@ -81,6 +94,17 @@ export function buildServiceDefinition(
         new GraphQLError(
           `Type "${typeName}" was defined more than once.`,
           typeDefinitions
+        )
+      );
+    }
+  }
+
+  for (const [directiveName, directives] of Object.entries(directivesMap)) {
+    if (directives.length > 1) {
+      errors.push(
+        new GraphQLError(
+          `Directive "${directiveName}" was defined more than once.`,
+          directives
         )
       );
     }
@@ -155,10 +179,11 @@ export function buildServiceDefinition(
 
   try {
     const typeDefinitions = Object.values(typeDefinitionsMap).flat();
+    const directives = Object.values(directivesMap).flat();
 
     let schema = buildASTSchema({
       kind: Kind.DOCUMENT,
-      definitions: typeDefinitions
+      definitions: [...typeDefinitions, ...directives]
     });
 
     const typeExtensions = Object.values(typeExtensionsMap).flat();

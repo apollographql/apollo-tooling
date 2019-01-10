@@ -10,12 +10,10 @@ import {
   loadConfig,
   isClientConfig,
   isServiceConfig,
-  ApolloConfig,
-  LoadingHandler,
-  ApolloConfigFormat,
-  ClientConfig
+  ApolloConfig
 } from "apollo-language-server";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
+import URI from "vscode-uri";
 
 const { version, referenceID } = require("../package.json");
 
@@ -26,8 +24,30 @@ export interface ProjectContext<Flags = any, Args = any> {
   args: Args;
 }
 
+export interface Flags {
+  config?: string;
+  header?: string[];
+  endpoint?: string;
+  localSchemaFile?: string;
+  key?: string;
+  engine?: string;
+  frontend?: string;
+  tag?: string;
+  skipSSLValidation?: boolean;
+}
+
+export interface ClientCommandFlags extends Flags {
+  includes?: string;
+  queries?: string;
+  excludes?: string;
+  tagName?: string;
+  clientName?: string;
+  clientReferenceId?: string;
+  clientVersion?: string;
+}
+
 const headersArrayToObject = (
-  arr: string[]
+  arr?: string[]
 ): Record<string, string> | undefined => {
   if (!arr) return;
   return arr
@@ -50,8 +70,10 @@ export abstract class ProjectCommand extends Command {
     header: flags.string({
       multiple: true,
       parse: header => {
-        const [key, value] = header.split(":");
-        return JSON.stringify({ [key.trim()]: value.trim() });
+        const separatorIndex = header.indexOf(":");
+        const key = header.substring(0, separatorIndex).trim();
+        const value = header.substring(separatorIndex + 1).trim();
+        return JSON.stringify({ [key]: value });
       },
       description: "Additional headers to send to server for introspectionQuery"
     }),
@@ -83,8 +105,8 @@ export abstract class ProjectCommand extends Command {
     const { flags, args } = this.parse(this.constructor as any);
     this.ctx = { flags, args } as any;
 
-    const { config, filepath } = await this.createConfig(flags);
-    this.createService(config, filepath, flags);
+    const config = await this.createConfig(flags);
+    this.createService(config, flags);
     (this.ctx.config = config),
       // make sure this the first item in the task list
       this.tasks.push({
@@ -96,17 +118,14 @@ export abstract class ProjectCommand extends Command {
       });
   }
 
-  protected async createConfig(flags: any) {
-    let service;
-    if (process.env.ENGINE_API_KEY)
-      service = getServiceFromKey(process.env.ENGINE_API_KEY);
-    if (flags.key) service = getServiceFromKey(flags.key);
-    const loadedConfig = await loadConfig({
-      cwd: flags.config,
+  protected async createConfig(flags: Flags) {
+    const service = flags.key ? getServiceFromKey(flags.key) : undefined;
+    const config = await loadConfig({
+      configPath: flags.config,
       name: service,
       type: this.type
     });
-    const { config, filepath, isEmpty } = loadedConfig!;
+
     if (flags.tag) config.tag = flags.tag;
     //  flag overides
     config.setDefaults({
@@ -122,10 +141,29 @@ export abstract class ProjectCommand extends Command {
         service: {
           endpoint: {
             url: flags.endpoint,
-            headers: headersArrayToObject(flags.header)
+            headers: headersArrayToObject(flags.header),
+            ...(flags.skipSSLValidation && { skipSSLValidation: true })
           }
         }
       });
+    }
+
+    if (flags.localSchemaFile) {
+      if (isClientConfig(config)) {
+        config.setDefaults({
+          client: {
+            service: {
+              localSchemaFile: flags.localSchemaFile
+            }
+          }
+        });
+      } else if (isServiceConfig(config)) {
+        config.setDefaults({
+          service: {
+            localSchemaFile: flags.localSchemaFile
+          }
+        });
+      }
     }
 
     // load per command type defaults;
@@ -134,12 +172,20 @@ export abstract class ProjectCommand extends Command {
       config.setDefaults(defaults);
     }
 
-    return { config, filepath, isEmpty };
+    return config;
   }
 
-  protected createService(config: ApolloConfig, filepath: string, flags: any) {
+  protected createService(config: ApolloConfig, flags: Flags) {
     const loadingHandler = new OclifLoadingHandler(this);
-    const rootURI = `file://${parse(filepath).dir}`;
+
+    // When no config is provided, configURI === process.cwd()
+    // In this case, we don't want to look to the .dir since that's the parent
+    const configPath = config.configURI!.fsPath;
+    const rootURI =
+      configPath === process.cwd()
+        ? URI.file(configPath)
+        : URI.file(parse(configPath).dir);
+
     const clientIdentity = {
       name: "Apollo CLI",
       version,
@@ -198,13 +244,28 @@ export abstract class ClientCommand extends ProjectCommand {
       char: "t",
       description: "The published service tag for this client",
       default: "current"
+    }),
+    queries: flags.string({
+      description: "Deprecated in favor of the includes flag"
+    }),
+    includes: flags.string({
+      description:
+        "Glob of files to search for GraphQL operations. This should be used to find queries *and* any client schema extensions"
+    }),
+    excludes: flags.string({
+      description:
+        "Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently work in watch mode"
+    }),
+    tagName: flags.string({
+      description:
+        "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code"
     })
   };
   public project!: GraphQLClientProject;
   constructor(argv, config) {
     super(argv, config);
     this.type = "client";
-    this.configMap = (flags: any) => {
+    this.configMap = (flags: ClientCommandFlags) => {
       const config = {
         client: {
           name: flags.clientName,
@@ -215,9 +276,22 @@ export abstract class ClientCommand extends ProjectCommand {
       if (flags.endpoint) {
         config.client.service = {
           url: flags.endpoint,
-          headers: headersArrayToObject(flags.headers)
+          headers: headersArrayToObject(flags.header)
         };
       }
+
+      if (flags.includes || flags.queries) {
+        config.client.includes = [flags.includes || flags.queries];
+      }
+
+      if (flags.excludes) {
+        config.client.excludes = [flags.excludes];
+      }
+
+      if (flags.tagName) {
+        config.client.tagName = flags.tagName;
+      }
+
       return config;
     };
   }

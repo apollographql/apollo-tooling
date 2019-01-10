@@ -62,7 +62,11 @@ export function positionFromSourceLocation(
     (source.locationOffset ? source.locationOffset.line - 1 : 0) +
       location.line -
       1,
-    location.column - 1
+    (source.locationOffset && location.line === 1
+      ? source.locationOffset.column - 1
+      : 0) +
+      location.column -
+      1
   );
 }
 

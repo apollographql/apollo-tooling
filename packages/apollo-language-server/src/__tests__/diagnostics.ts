@@ -45,6 +45,12 @@ const documentWithTypes = new GraphQLDocument(
       }
     }`)
 );
+const documentWithOffset = new GraphQLDocument(
+  new Source(`query QueryWithOffset { hero { nam } }`, "testDocument", {
+    line: 5,
+    column: 10
+  })
+);
 describe("Language server diagnostics", () => {
   describe("#collectExecutableDefinitionDiagnositics", () => {
     it("returns no diagnostics for a correct document", () => {
@@ -67,6 +73,14 @@ describe("Language server diagnostics", () => {
         documentWithTypes
       );
       expect(diagnostics.length).toEqual(0);
+    });
+    it("correctly offsets locations", () => {
+      const diagnostics = collectExecutableDefinitionDiagnositics(
+        schema,
+        documentWithOffset
+      );
+      expect(diagnostics.length).toEqual(1);
+      expect(diagnostics[0].range.start.character).toEqual(40);
     });
   });
 });

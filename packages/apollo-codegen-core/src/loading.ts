@@ -185,7 +185,11 @@ export function loadQueryDocuments(
     .map(source => {
       try {
         return parse(source!);
-      } catch {
+      } catch (e) {
+        const name = (source && source.name) || "";
+        console.warn(stripIndents`
+        Warning: error parsing GraphQL file ${name}
+        ${e.stack}`);
         return null;
       }
     })
