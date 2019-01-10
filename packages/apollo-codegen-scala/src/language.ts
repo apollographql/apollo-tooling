@@ -4,7 +4,7 @@ import { LegacyCompilerContext } from "apollo-codegen-core/lib/compiler/legacyIR
 export interface Property {
   propertyName: string;
   typeName: string;
-  caseClassName?: string;
+  traitName?: string;
   isOptional?: boolean;
   isList?: boolean;
   description?: string;
@@ -61,15 +61,22 @@ export function traitDeclaration(
   {
     traitName,
     annotations,
-    superclasses
+    superclasses,
+    description
   }: {
     traitName: string;
     annotations?: string[];
     superclasses?: string[];
+    description?: string;
   },
   closure?: () => void
 ) {
   generator.printNewlineIfNeeded();
+
+  if (description) {
+    comment(generator, description);
+  }
+
   generator.printOnNewline(
     `${(annotations || []).map(a => "@" + a).join(" ")} trait ${traitName}` +
       (superclasses ? ` extends ${superclasses.join(" with ")}` : "")
@@ -81,17 +88,15 @@ export function traitDeclaration(
   generator.popScope();
 }
 
-export function caseClassDeclaration(
+export function methodDeclaration(
   generator: CodeGenerator<LegacyCompilerContext, any>,
   {
-    caseClassName,
+    methodName,
     description,
-    superclass,
     params
   }: {
-    caseClassName: string;
+    methodName: string;
     description?: string;
-    superclass?: string;
     params?: {
       name: string;
       type: string;
@@ -115,10 +120,8 @@ export function caseClassDeclaration(
     .join(", ");
 
   generator.printOnNewline(
-    `case class ${caseClassName}(${paramsSection})` +
-      (superclass ? ` extends ${superclass}` : "")
+    `def ${methodName}(${paramsSection})` + (closure ? " = " : "")
   );
-  generator.pushScope({ typeName: caseClassName });
   if (closure) {
     generator.withinBlock(closure);
   }

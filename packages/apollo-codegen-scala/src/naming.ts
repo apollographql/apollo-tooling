@@ -28,15 +28,15 @@ export function operationClassName(name: string) {
   return pascalCase(name);
 }
 
-export function caseClassNameForPropertyName(propertyName: string) {
+export function traitNameForPropertyName(propertyName: string) {
   return pascalCase(Inflector.singularize(propertyName));
 }
 
-export function caseClassNameForFragmentName(fragmentName: string) {
+export function traitNameForFragmentName(fragmentName: string) {
   return pascalCase(fragmentName);
 }
 
-export function caseClassNameForInlineFragment(
+export function traitNameForInlineFragment(
   inlineFragment: LegacyInlineFragment
 ) {
   return "As" + pascalCase(String(inlineFragment.typeCondition));
@@ -46,7 +46,7 @@ export function propertyFromInputField(
   context: LegacyCompilerContext,
   field: GraphQLInputField,
   namespace?: string,
-  parentCaseClassName?: string
+  parentTraitName?: string
 ): GraphQLInputField & Property {
   const name = field.name;
   const unescapedPropertyName = isMetaFieldName(name) ? name : camelCase(name);
@@ -61,7 +61,7 @@ export function propertyFromInputField(
     const bareTypeName = join(
       [
         namespace,
-        parentCaseClassName,
+        parentTraitName,
         escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)))
       ],
       "."
@@ -104,7 +104,7 @@ export function propertyFromLegacyField(
   context: LegacyCompilerContext,
   field: LegacyField,
   namespace?: string,
-  parentCaseClassName?: string
+  parentTraitName?: string
 ): LegacyField & Property {
   const name = field.responseName;
   const unescapedPropertyName = isMetaFieldName(name) ? name : camelCase(name);
@@ -119,7 +119,7 @@ export function propertyFromLegacyField(
     const bareTypeName = join(
       [
         namespace,
-        parentCaseClassName,
+        parentTraitName,
         escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)))
       ],
       "."
