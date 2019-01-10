@@ -3,7 +3,7 @@
 exports[`Scala code generation #caseClassDeclarationForFragment() should generate a caseClass declaration for a fragment that includes a fragment spread 1`] = `
 "@scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object with MoreHeroDetails {
   val name: String
-  val appearsIn: scala.scalajs.js.Array[scala.scalajs.js.UndefOr[String]]
+  val appearsIn: scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[String]]
 }
 
 object HeroDetails {
@@ -21,7 +21,7 @@ object HeroDetails {
 exports[`Scala code generation #caseClassDeclarationForFragment() should generate a caseClass declaration for a fragment with a concrete type condition 1`] = `
 "@scala.scalajs.js.native trait DroidDetails extends scala.scalajs.js.Object {
   val name: String
-  val primaryFunction: scala.scalajs.js.UndefOr[String]
+  val primaryFunction: com.apollographql.scalajs.OptionalResult[String]
 }
 
 object DroidDetails {
@@ -39,7 +39,7 @@ object DroidDetails {
 exports[`Scala code generation #caseClassDeclarationForFragment() should generate a caseClass declaration for a fragment with a subselection 1`] = `
 "@scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object {
   val name: String
-  val friends: scala.scalajs.js.UndefOr[scala.scalajs.js.Array[scala.scalajs.js.UndefOr[HeroDetails.Friend]]]
+  val friends: com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[HeroDetails.Friend]]]
 }
 
 object HeroDetails {
@@ -69,7 +69,7 @@ object HeroDetails {
 exports[`Scala code generation #caseClassDeclarationForFragment() should generate a caseClass declaration for a fragment with an abstract type condition 1`] = `
 "@scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object {
   val name: String
-  val appearsIn: scala.scalajs.js.Array[scala.scalajs.js.UndefOr[String]]
+  val appearsIn: scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[String]]
 }
 
 object HeroDetails {
@@ -86,7 +86,7 @@ object HeroDetails {
 
 exports[`Scala code generation #caseClassDeclarationForSelectionSet() should escape reserved keywords in a caseClass declaration for a selection set 1`] = `
 "@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
-  val private: scala.scalajs.js.UndefOr[String]
+  val private: com.apollographql.scalajs.OptionalResult[String]
 }
 
 object Hero {
@@ -121,7 +121,7 @@ object Hero {
 
 exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a selection set 1`] = `
 "@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
-  val name: scala.scalajs.js.UndefOr[String]
+  val name: com.apollographql.scalajs.OptionalResult[String]
 }
 
 object Hero {
@@ -133,7 +133,7 @@ object Hero {
 
 exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a selection set with a fragment spread that matches the parent type 1`] = `
 "@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object with HeroDetails {
-  val name: scala.scalajs.js.UndefOr[String]
+  val name: com.apollographql.scalajs.OptionalResult[String]
 }
 
 object Hero {
@@ -145,7 +145,7 @@ object Hero {
 
 exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a caseClass declaration for a selection set with a fragment spread with a more specific type condition 1`] = `
 "@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
-  val name: scala.scalajs.js.UndefOr[String]
+  val name: com.apollographql.scalajs.OptionalResult[String]
 }
 
 object Hero {
@@ -165,7 +165,7 @@ exports[`Scala code generation #caseClassDeclarationForSelectionSet() should gen
 
 @scala.scalajs.js.native trait AsDroid extends scala.scalajs.js.Object with Hero {
   val name: String
-  val primaryFunction: scala.scalajs.js.UndefOr[String]
+  val primaryFunction: com.apollographql.scalajs.OptionalResult[String]
 }
 
 object AsDroid {
@@ -186,7 +186,7 @@ object Hero {
 
 exports[`Scala code generation #caseClassDeclarationForSelectionSet() should generate a nested caseClass declaration for a selection set with subselections 1`] = `
 "@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
-  val friends: scala.scalajs.js.UndefOr[scala.scalajs.js.Array[scala.scalajs.js.UndefOr[Hero.Friend]]]
+  val friends: com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[Hero.Friend]]]
 }
 
 object Hero {
@@ -195,7 +195,7 @@ object Hero {
   }
 
   @scala.scalajs.js.native trait Friend extends scala.scalajs.js.Object {
-    val name: scala.scalajs.js.UndefOr[String]
+    val name: com.apollographql.scalajs.OptionalResult[String]
   }
 
   object Friend {
@@ -218,11 +218,11 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   val operation = com.apollographql.scalajs.gql(operationString)
 
 
-  case class Variables(episode: scala.scalajs.js.UndefOr[String]) {
+  case class Variables(episode: com.apollographql.scalajs.OptionalInput[String]) {
   }
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val createReview: scala.scalajs.js.UndefOr[Data.CreateReview]
+    val createReview: com.apollographql.scalajs.OptionalResult[Data.CreateReview]
   }
 
   object Data {
@@ -232,7 +232,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
     @scala.scalajs.js.native trait CreateReview extends scala.scalajs.js.Object {
       val stars: Int
-      val commentary: scala.scalajs.js.UndefOr[String]
+      val commentary: com.apollographql.scalajs.OptionalResult[String]
     }
 
     object CreateReview {
@@ -259,7 +259,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   type Variables = Unit
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: scala.scalajs.js.UndefOr[Data.Hero]
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
@@ -269,7 +269,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
     @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object with HeroDetails {
       val name: String
-      val friends: scala.scalajs.js.UndefOr[scala.scalajs.js.Array[scala.scalajs.js.UndefOr[Hero.Friend]]]
+      val friends: com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[Hero.Friend]]]
     }
 
     object Hero {
@@ -292,7 +292,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
 @scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object {
   val name: String
-  val friends: scala.scalajs.js.UndefOr[scala.scalajs.js.Array[scala.scalajs.js.UndefOr[HeroDetails.Friend]]]
+  val friends: com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[HeroDetails.Friend]]]
 }
 
 object HeroDetails {
@@ -336,7 +336,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   type Variables = Unit
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: scala.scalajs.js.UndefOr[Data.Hero]
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
@@ -384,7 +384,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   type Variables = Unit
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: scala.scalajs.js.UndefOr[Data.Hero]
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
@@ -396,7 +396,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
     }
 
     @scala.scalajs.js.native trait AsDroid extends scala.scalajs.js.Object with Hero with DroidDetails {
-      val primaryFunction: scala.scalajs.js.UndefOr[String]
+      val primaryFunction: com.apollographql.scalajs.OptionalResult[String]
     }
 
     object AsDroid {
@@ -435,7 +435,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   type Variables = Unit
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: scala.scalajs.js.UndefOr[Data.Hero]
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
@@ -467,11 +467,11 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   val operation = com.apollographql.scalajs.gql(operationString)
 
 
-  case class Variables(episode: scala.scalajs.js.UndefOr[String]) {
+  case class Variables(episode: com.apollographql.scalajs.OptionalInput[String]) {
   }
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: scala.scalajs.js.UndefOr[Data.Hero]
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
@@ -509,7 +509,7 @@ exports[`Scala code generation #classDeclarationForOperation() when generateOper
   type Variables = Unit
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: scala.scalajs.js.UndefOr[Data.Hero]
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
@@ -580,11 +580,11 @@ object HeroNameQuery extends com.apollographql.scalajs.GraphQLQuery {
   val operation = com.apollographql.scalajs.gql(operationString)
 
 
-  case class Variables(episode: scala.scalajs.js.UndefOr[String]) {
+  case class Variables(episode: com.apollographql.scalajs.OptionalInput[String]) {
   }
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: scala.scalajs.js.UndefOr[Data.Hero]
+    val hero: com.apollographql.scalajs.OptionalResult[Data.Hero]
   }
 
   object Data {
@@ -617,7 +617,7 @@ exports[`Scala code generation #typeDeclarationForGraphQLType() should generate 
 "/**
  * The input object sent when someone is creating a new review
  */
-case class ReviewInput(stars: Int, commentary: scala.scalajs.js.UndefOr[String] = scala.scalajs.js.undefined, favoriteColor: scala.scalajs.js.UndefOr[ColorInput] = scala.scalajs.js.undefined) {
+case class ReviewInput(stars: Int, commentary: com.apollographql.scalajs.OptionalInput[String] = None, favoriteColor: com.apollographql.scalajs.OptionalInput[ColorInput] = None) {
 }"
 `;
 
