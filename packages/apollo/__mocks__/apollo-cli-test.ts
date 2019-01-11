@@ -27,7 +27,7 @@ const debug = fn => {
 
 const deleteFolderRecursive = path => {
   // if (process.env.NODE_ENV === "test") return;
-  console.log("CI ENV", process.env.CI);
+  console.log("CI ENV", process.env);
   // if (fs.existsSync(path)) {
   //   fs.readdirSync(path).forEach(function(file, index) {
   //     var curPath = path + "/" + file;
