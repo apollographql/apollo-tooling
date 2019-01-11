@@ -26,6 +26,9 @@ const debug = fn => {
 };
 
 const deleteFolderRecursive = path => {
+  // don't relete files on azure CI
+  if (process.env.AZURE_HTTP_USER_AGENT) return;
+
   if (fs.existsSync(path)) {
     fs.readdirSync(path).forEach(function(file, index) {
       var curPath = path + "/" + file;
