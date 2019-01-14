@@ -34,6 +34,7 @@ import {
   GraphQLObjectType
 } from "graphql";
 import { maybePush } from "apollo-codegen-core/lib/utilities/array";
+import { unifyPaths } from "apollo-codegen-core/lib/utilities/printing";
 
 class TypescriptGeneratedFile implements BasicGeneratedFile {
   fileContents: string;
@@ -93,7 +94,10 @@ function printGlobalImport(
         path.basename(globalSourcePath, ".ts")
       )
     );
-    generator.printer.enqueue(generator.import(typesUsed, "./" + relative));
+
+    generator.printer.enqueue(
+      generator.import(typesUsed, "./" + unifyPaths(relative))
+    );
   }
 }
 
