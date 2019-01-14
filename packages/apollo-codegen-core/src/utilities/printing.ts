@@ -1,3 +1,5 @@
+import { sep } from "path";
+
 // Code generation helper functions copied from graphql-js (https://github.com/graphql/graphql-js)
 
 /**
@@ -42,4 +44,12 @@ export function commentBlockContent(commentString: string) {
       .join("\n") +
     "\n "
   );
+}
+/**
+ * Because different OS's have different file separators, and we don't want those for
+ * codegen files, we can take a uri and replace the OS separators with the "universal" separator (/)
+ * @param uri
+ */
+export function unifyPaths(uri: string) {
+  return uri.split(sep).join("/");
 }
