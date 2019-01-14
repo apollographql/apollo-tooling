@@ -87,7 +87,7 @@ function printGlobalImport(
   globalSourcePath: string
 ) {
   if (typesUsed.length > 0) {
-    const relative = path.posix.relative(
+    const relative = path.relative(
       path.dirname(outputPath),
       path.join(
         path.dirname(globalSourcePath),
