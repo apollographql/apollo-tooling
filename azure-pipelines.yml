@@ -4,43 +4,43 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 jobs:
-  - job: Linux_Node8
+  # - job: Linux_Node8
 
-    pool:
-      vmImage: "ubuntu 16.04"
+  #   pool:
+  #     vmImage: "ubuntu 16.04"
 
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "8.x"
-        displayName: "Install Node.js"
+  #   steps:
+  #     - task: NodeTool@0
+  #       inputs:
+  #         versionSpec: "8.x"
+  #       displayName: "Install Node.js"
 
-      - script: |
-          npm run azure
-        displayName: "npm ci && build && test"
+  #     - script: |
+  #         npm run azure
+  #       displayName: "npm ci && test"
 
-      - script: |
-          npm run lint
-        displayName: "npm run lint"
+  #     - script: |
+  #         npm run lint
+  #       displayName: "npm run lint"
 
-      - script: |
-          ENGINE_API_KEY=$(CHECKS_API_KEY) ./packages/apollo/bin/run client:check
-        displayName: "Query Check"
+  #     - script: |
+  #         ENGINE_API_KEY=$(CHECKS_API_KEY) ./packages/apollo/bin/run client:check
+  #       displayName: "Query Check"
 
-  - job: Linux_Node10
+  # - job: Linux_Node10
 
-    pool:
-      vmImage: "ubuntu 16.04"
+  #   pool:
+  #     vmImage: "ubuntu 16.04"
 
-    steps:
-      - task: NodeTool@0
-        inputs:
-          versionSpec: "10.x"
-        displayName: "Install Node.js"
+  #   steps:
+  #     - task: NodeTool@0
+  #       inputs:
+  #         versionSpec: "10.x"
+  #       displayName: "Install Node.js"
 
-      - script: |
-          npm run azure
-        displayName: "npm ci && build && test"
+  #     - script: |
+  #         npm run azure
+  #       displayName: "npm ci && test"
 
   - job: Windows_Node8
 
@@ -55,4 +55,19 @@ jobs:
 
       - script: |
           npm run azure
-        displayName: "npm ci && build && test"
+        displayName: "npm ci && test"
+
+  - job: Windows_Node10
+
+    pool:
+      vmImage: "vs2017-win2016"
+
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "10.x"
+        displayName: "Install Node.js"
+
+      - script: |
+          npm run azure
+        displayName: "npm ci && test"

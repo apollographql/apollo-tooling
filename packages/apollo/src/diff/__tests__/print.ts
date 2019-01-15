@@ -43,7 +43,7 @@ const fcompare = (name, sd1, sd2, debug = true) => {
   });
 };
 
-xdescribe("types", () => {
+describe("types", () => {
   it("renders nothing for no changes", () => {
     const { current, next } = schemas(
       gql`
@@ -129,7 +129,7 @@ xdescribe("types", () => {
     `
   );
 });
-xdescribe("fields", () => {
+describe("fields", () => {
   compare(
     "shows warning for removals",
     gql`
@@ -216,7 +216,7 @@ xdescribe("fields", () => {
   );
 });
 
-xdescribe("arguments", () => {
+describe("arguments", () => {
   compare(
     "shows removed arguments",
     gql`
@@ -261,7 +261,7 @@ xdescribe("arguments", () => {
   );
 });
 
-xdescribe("interfaces", () => {
+describe("interfaces", () => {
   compare(
     "reports removal of interface implementations",
     gql`
@@ -397,7 +397,7 @@ xdescribe("interfaces", () => {
   );
 });
 
-xdescribe("unions", () => {
+describe("unions", () => {
   compare(
     "type removed from union",
     gql`
@@ -450,7 +450,7 @@ xdescribe("unions", () => {
   );
 });
 
-xdescribe("kind changes", () => {
+describe("kind changes", () => {
   compare(
     "type changed kind",
     gql`
@@ -510,7 +510,7 @@ xdescribe("kind changes", () => {
   );
 });
 
-xdescribe("deprecation changes", () => {
+describe("deprecation changes", () => {
   compare(
     "deprecation additions",
     gql`
@@ -566,11 +566,14 @@ xdescribe("deprecation changes", () => {
 // DIRECTIVE_ARG_REMOVED,
 // NON_NULL_DIRECTIVE_ARG_ADDED,
 
-xdescribe("integration", () => {
+describe("integration", () => {
   // XXX make this change complex
   it("reports changes for a complex scenario", () => {
     const { current, next } = schemas(initial, change);
-    const changes = diffSchemas(current.getTypeMap(), next.getTypeMap());
+    let changes = diffSchemas(current.getTypeMap(), next.getTypeMap());
+    changes = changes.map(c => {
+      return { ...c, type: print(c.type), field: print(c.field) };
+    });
     expect(changes).toMatchSnapshot();
   });
 });
