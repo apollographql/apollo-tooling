@@ -80,7 +80,7 @@ export function activate(context: ExtensionContext) {
     serverOptions,
     clientOptions
   );
-  const statusBar = new StatusBar(context, client);
+  const statusBar = new StatusBar();
 
   client.registerProposedFeatures();
   context.subscriptions.push(client.start());
@@ -116,7 +116,9 @@ export function activate(context: ExtensionContext) {
     let currentLoadingResolve: Map<number, () => void> = new Map();
 
     client.onNotification("apollographql/loadingComplete", token => {
-      statusBar.showLoadedState();
+      statusBar.showLoadedState({
+        hasActiveTextEditor: Boolean(window.activeTextEditor)
+      });
       const inMap = currentLoadingResolve.get(token);
       if (inMap) {
         inMap();
