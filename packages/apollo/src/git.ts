@@ -48,7 +48,8 @@ export const gitInfo = async (): Promise<GitContext | undefined> => {
 
   let committer;
   let branch = ciBranch || prBranch;
-  let remoteUrl = slug;
+  // BUILD_REPOSITORY_ID is for azure pipelines
+  let remoteUrl = slug || process.env.BUILD_REPOSITORY_ID;
   let message;
 
   // In order to use git-parse and git-rev-sync, we must ensure that a git context is

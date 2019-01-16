@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { buildSchema } from "graphql";
+import { buildSchema, print } from "graphql";
 const gql = String.raw;
 
 import { diffSchemas } from "../";
@@ -570,7 +570,10 @@ describe("integration", () => {
   // XXX make this change complex
   it("reports changes for a complex scenario", () => {
     const { current, next } = schemas(initial, change);
-    const changes = diffSchemas(current.getTypeMap(), next.getTypeMap());
+    let changes = diffSchemas(current.getTypeMap(), next.getTypeMap());
+    changes = changes.map(c => {
+      return { ...c, type: print(c.type), field: print(c.field) };
+    });
     expect(changes).toMatchSnapshot();
   });
 });

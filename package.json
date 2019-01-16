@@ -13,6 +13,7 @@
     "apollo": "./packages/apollo/bin/run"
   },
   "scripts": {
+    "azure": "npm ci && npm run test:ci",
     "clean": "git clean -dfqX -- ./node_modules **/{lib,node_modules}/",
     "postinstall": "npm run build",
     "build": "lerna run build --stream --scope apollo-env && npm run compile && lerna run build --stream --ignore apollo-env",
@@ -27,6 +28,7 @@
     "postcircle": "npm run lint",
     "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
+    "posttest": "npm run lint",
     "release": "npm run clean && npm ci && lerna publish --exact",
     "package-extension": "npm run clean && npm ci && lerna run package-extension --stream --scope=vscode-apollo"
   },
@@ -44,6 +46,8 @@
     "apollo-codegen-typescript": "file:packages/apollo-codegen-typescript",
     "apollo-env": "file:packages/apollo-env",
     "apollo-language-server": "file:packages/apollo-language-server",
+    "glob": "^7.1.3",
+    "symlink-dir": "^2.0.2",
     "vscode-apollo": "file:packages/vscode-apollo",
     "webpack-command": "^0.4.1"
   },
@@ -87,6 +91,7 @@
     "memfs": "2.14.2",
     "nock": "10.0.6",
     "prettier": "1.15.3",
+    "rimraf": "^2.6.3",
     "style-loader": "0.23.1",
     "ts-jest": "23.10.5",
     "ts-loader": "4.5.0",
