@@ -1,7 +1,7 @@
 import * as cosmiconfig from "cosmiconfig";
 import { LoaderEntry } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
-import { parse, resolve } from "path";
+import { resolve } from "path";
 import { readFileSync, existsSync } from "fs";
 import { merge } from "lodash/fp";
 
@@ -282,7 +282,7 @@ export const loadConfig = async ({
   let engineConfig = {},
     nameFromKey;
   const dotEnvPath = configPath
-    ? resolve(parse(configPath).dir, ".env")
+    ? resolve(configPath, ".env")
     : resolve(process.cwd(), ".env");
 
   if (existsSync(dotEnvPath)) {
@@ -297,6 +297,23 @@ export const loadConfig = async ({
   }
 
   const resolvedName = name || nameFromKey;
+
+  // The CLI passes in a type when loading config. The editor extension
+  // does not. So we determine the type of the config here, and use it if
+  // the type wasn't explicitly passed in.
+  let resolvedType: "client" | "service";
+  if (type) {
+    resolvedType = type;
+  } else if (loadedConfig && loadedConfig.config.client) {
+    resolvedType = "client";
+  } else if (loadedConfig && loadedConfig.config.service) {
+    resolvedType = "service";
+  } else {
+    throw new Error(
+      "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://www.apollographql.com/docs/references/apollo-config.html"
+    );
+  }
+
   // If there's a name passed in (from env/flag), it merges with the config file, to
   // overwrite either the client's service (if a client project), or the service's name.
   // if there's no config file, it uses the `DefaultConfigBase` to fill these in.
@@ -305,7 +322,7 @@ export const loadConfig = async ({
       isEmpty: false,
       filepath: configPath || process.cwd(),
       config:
-        type === "client"
+        resolvedType === "client"
           ? {
               ...(loadedConfig ? loadedConfig.config : {}),
               client: {

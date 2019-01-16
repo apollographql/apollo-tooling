@@ -1,7 +1,7 @@
 import Command, { flags } from "@oclif/command";
 import * as Listr from "listr";
 import { ListrTask } from "listr";
-import { parse } from "path";
+import { parse, resolve } from "path";
 
 import {
   GraphQLProject,
@@ -121,7 +121,7 @@ export abstract class ProjectCommand extends Command {
   protected async createConfig(flags: Flags) {
     const service = flags.key ? getServiceFromKey(flags.key) : undefined;
     const config = await loadConfig({
-      configPath: flags.config,
+      configPath: flags.config && parse(resolve(flags.config)).dir,
       name: service,
       type: this.type
     });
