@@ -26,6 +26,19 @@ let clientDisposable: Disposable;
 let statusBar: StatusBar;
 let outputChannel: OutputChannel;
 let schemaTagItems: QuickPickItem[] = [];
+interface ErrorShape {
+  message: string;
+  stack: string;
+}
+
+function isError(response: any): response is ErrorShape {
+  return (
+    typeof response === "object" &&
+    response !== null &&
+    "message" in response &&
+    "stack" in response
+  );
+}
 
 export function activate(context: ExtensionContext) {
   const serverModule = context.asAbsolutePath(
@@ -70,6 +83,47 @@ export function activate(context: ExtensionContext) {
       printStatsToClientOutputChannel(client, params, version);
       client.outputChannel.show();
     });
+    // For some reason, non-strings can only be sent in one direction. For now, messages
+    // coming from the language server just need to be stringified and parsed.
+    client.onNotification(
+      "apollographql/configFilesFound",
+      (params: string) => {
+        const response = JSON.parse(params) as Array<any> | ErrorShape;
+
+        const hasActiveTextEditor = Boolean(window.activeTextEditor);
+        if (isError(response)) {
+          statusBar.showWarningState({
+            hasActiveTextEditor,
+            tooltip: "Configuration Error"
+          });
+          outputChannel.append(response.stack);
+
+          const infoButtonText = "More Info";
+          window
+            .showInformationMessage(response.message, infoButtonText)
+            .then(clicked => {
+              if (clicked === infoButtonText) {
+                outputChannel.show();
+              }
+            });
+        } else if (Array.isArray(response)) {
+          if (response.length === 0) {
+            statusBar.showWarningState({
+              hasActiveTextEditor,
+              tooltip: "No apollo.config.js file found"
+            });
+          } else {
+            statusBar.showLoadedState({ hasActiveTextEditor });
+          }
+        } else {
+          throw TypeError(
+            `Invalid response type in message apollographql/configFilesFound:\n${JSON.stringify(
+              response
+            )}`
+          );
+        }
+      }
+    );
 
     commands.registerCommand("apollographql/reloadService", () => {
       // wipe out tags when reloading

@@ -133,17 +133,7 @@ export class GraphQLWorkspace {
 
     // go from possible folders to known array of configs
     const projectConfigs = Array.from(apolloConfigFolders).map(configFolder =>
-      this.LanguageServerLoadingHandler.handle<ApolloConfig | null>(
-        `Loading Apollo Config in folder ${configFolder}`,
-        (async () => {
-          try {
-            return await loadConfig({ configPath: configFolder });
-          } catch (e) {
-            console.error(e);
-            return null;
-          }
-        })()
-      )
+      loadConfig({ configPath: configFolder, requireConfig: true })
     );
 
     let foundConfigs: ApolloConfig[] | Error = [];
