@@ -108,48 +108,25 @@ documents.onDidChangeContent(params => {
 });
 
 connection.onDidChangeWatchedFiles(params => {
-  for (const change of params.changes) {
-    const uri = change.uri;
-
-    // FIXME: Re-enable updating projects when config files change.
-
-    // const filePath = Uri.parse(change.uri).fsPath;
-    // if (
-    //   filePath.endsWith("apollo.config.js") ||
-    //   filePath.endsWith("package.json")
-    // ) {
-    //   const projectForConfig = Array.from(
-    //     workspace.projectsByFolderUri.values()
-    //   )
-    //     .flatMap(arr => arr)
-    //     .find(proj => {
-    //       return proj.configFile === filePath;
-    //     });
-
-    //   if (projectForConfig) {
-    //     const newConfig = findAndLoadConfig(
-    //       dirname(projectForConfig.configFile),
-    //       false,
-    //       true
-    //     );
-
-    //     if (newConfig) {
-    //       projectForConfig.updateConfig(newConfig);
-    //     }
-    //   }
-    // }
+  for (const { uri, type } of params.changes) {
+    if (
+      uri.endsWith("apollo.config.js") ||
+      uri.endsWith("package.json") ||
+      uri.endsWith(".env")
+    ) {
+      workspace.reloadProjectForConfig(uri);
+    }
 
     // Don't respond to changes in files that are currently open,
     // because we'll get content change notifications instead
-
-    if (change.type === FileChangeType.Changed) {
+    if (type === FileChangeType.Changed) {
       continue;
     }
 
     const project = workspace.projectForFile(uri);
     if (!project) continue;
 
-    switch (change.type) {
+    switch (type) {
       case FileChangeType.Created:
         project.fileDidChange(uri);
         break;
