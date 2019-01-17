@@ -25,7 +25,7 @@ export class GraphQLServiceProject extends GraphQLProject {
     loadingHandler
   }: GraphQLServiceProjectConfig) {
     const fileSet = new FileSet({
-      rootURI: rootURI,
+      rootURI: config.configDirURI || rootURI,
       includes: config.service.includes,
       excludes: config.service.excludes
     });

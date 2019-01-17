@@ -91,8 +91,9 @@ export class GraphQLClientProject extends GraphQLProject {
     clientIdentity
   }: GraphQLClientProjectConfig) {
     const fileSet = new FileSet({
-      configURI: config.configURI,
-      rootURI: rootURI,
+      // the URI of the folder _containing_ the apollo.config.js is the true project's root.
+      // if a config doesn't have a uri associated, we can assume the `rootURI` is the project's root.
+      rootURI: config.configDirURI || rootURI,
       includes: config.client.includes,
       excludes: config.client.excludes
     });

@@ -1,7 +1,7 @@
 import * as cosmiconfig from "cosmiconfig";
 import { LoaderEntry } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
-import { resolve } from "path";
+import { resolve, dirname } from "path";
 import { readFileSync, existsSync } from "fs";
 import { merge } from "lodash/fp";
 
@@ -203,6 +203,12 @@ export class ApolloConfig {
     this.name = getServiceName(rawConfig);
     this.client = rawConfig.client;
     this.service = rawConfig.service;
+  }
+
+  get configDirURI() {
+    return this.configURI && this.configURI.fsPath.includes(".js")
+      ? URI.parse(dirname(this.configURI.fsPath))
+      : this.configURI;
   }
 
   get projects() {
