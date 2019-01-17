@@ -45,12 +45,18 @@ export class FileSet {
   allFiles(): string[] {
     return this.includes
       .flatMap(include =>
-        glob.sync(include, { cwd: this.rootPath, absolute: true })
+        glob.sync(include, {
+          cwd: this.configPath || this.rootPath,
+          absolute: true
+        })
       )
       .filter(
         filePath =>
           !this.excludes.some(exclude =>
-            minimatch(relative(this.rootPath, filePath), exclude)
+            minimatch(
+              relative(this.configPath || this.rootPath, filePath),
+              exclude
+            )
           )
       );
   }
