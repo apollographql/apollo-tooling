@@ -140,6 +140,11 @@ export class GraphQLClientProject extends GraphQLProject {
     };
   }
 
+  updateConfig(config: ClientConfig) {
+    this.config = config;
+    return this.initialize();
+  }
+
   onDecorations(handler: (any: any) => void) {
     this._onDecorations = handler;
   }
