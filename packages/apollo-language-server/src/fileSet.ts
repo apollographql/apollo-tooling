@@ -2,32 +2,33 @@ import { relative } from "path";
 import minimatch = require("minimatch");
 import * as glob from "glob";
 import { invariant } from "@apollographql/apollo-tools";
+import URI from "vscode-uri";
 
 export class FileSet {
-  private rootPath: string;
+  private rootURI: URI;
   private includes: string[];
   private excludes: string[];
 
   constructor({
-    rootPath,
+    rootURI,
     includes,
     excludes
   }: {
-    rootPath: string;
+    rootURI: URI;
     includes: string[];
     excludes: string[];
   }) {
-    invariant(rootPath, `Must provide "rootPath".`);
+    invariant(rootURI, `Must provide "rootURI".`);
     invariant(includes, `Must provide "includes".`);
     invariant(excludes, `Must provide "excludes".`);
 
-    this.rootPath = rootPath;
+    this.rootURI = rootURI;
     this.includes = includes;
     this.excludes = excludes;
   }
 
   includesFile(filePath: string): boolean {
-    filePath = relative(this.rootPath, filePath);
+    filePath = relative(this.rootURI.fsPath, filePath);
 
     return (
       this.includes.some(include => minimatch(filePath, include)) &&
@@ -38,12 +39,12 @@ export class FileSet {
   allFiles(): string[] {
     return this.includes
       .flatMap(include =>
-        glob.sync(include, { cwd: this.rootPath, absolute: true })
+        glob.sync(include, { cwd: this.rootURI.fsPath, absolute: true })
       )
       .filter(
         filePath =>
           !this.excludes.some(exclude =>
-            minimatch(relative(this.rootPath, filePath), exclude)
+            minimatch(relative(this.rootURI.fsPath, filePath), exclude)
           )
       );
   }

@@ -3,7 +3,6 @@ import {
   NotificationHandler,
   PublishDiagnosticsParams
 } from "vscode-languageserver";
-import Uri from "vscode-uri";
 import { QuickPickItem } from "vscode";
 
 import { GraphQLProject, DocumentUri } from "./project/base";
@@ -54,13 +53,13 @@ export class GraphQLWorkspace {
       ? new GraphQLClientProject({
           config,
           loadingHandler: this.LanguageServerLoadingHandler,
-          rootURI: URI.file(folder.uri),
+          rootURI: URI.parse(folder.uri),
           clientIdentity
         })
       : new GraphQLServiceProject({
           config: config as ServiceConfig,
           loadingHandler: this.LanguageServerLoadingHandler,
-          rootURI: URI.file(folder.uri),
+          rootURI: URI.parse(folder.uri),
           clientIdentity
         });
 
@@ -98,14 +97,14 @@ export class GraphQLWorkspace {
 
     */
     const apolloConfigFiles: string[] = fg.sync("**/apollo.config.@(js|ts)", {
-      cwd: Uri.parse(folder.uri).fsPath,
+      cwd: URI.parse(folder.uri).fsPath,
       absolute: true,
       ignore: "**/node_modules/**"
     });
 
     apolloConfigFiles.push(
       ...fg.sync("**/package.json", {
-        cwd: Uri.parse(folder.uri).fsPath,
+        cwd: URI.parse(folder.uri).fsPath,
         absolute: true,
         ignore: "**/node_modules/**"
       })

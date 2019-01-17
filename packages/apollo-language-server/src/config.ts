@@ -1,7 +1,7 @@
 import * as cosmiconfig from "cosmiconfig";
 import { LoaderEntry } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
-import { resolve } from "path";
+import { resolve, dirname } from "path";
 import { readFileSync, existsSync } from "fs";
 import { merge } from "lodash/fp";
 
@@ -153,13 +153,14 @@ export type ConfigResult<Config> = {
 // take a config with multiple project types and return
 // an array of individual types
 export const projectsFromConfig = (
-  config: ApolloConfigFormat
+  config: ApolloConfigFormat,
+  configURI?: URI
 ): Array<ClientConfig | ServiceConfig> => {
   const configs = [];
   const { client, service, ...rest } = config;
   // XXX use casting detection
-  if (client) configs.push(new ClientConfig(config));
-  if (service) configs.push(new ServiceConfig(config));
+  if (client) configs.push(new ClientConfig(config, configURI));
+  if (service) configs.push(new ServiceConfig(config, configURI));
   return configs;
 };
 
@@ -204,8 +205,14 @@ export class ApolloConfig {
     this.service = rawConfig.service;
   }
 
+  get configDirURI() {
+    return this.configURI && this.configURI.fsPath.includes(".js")
+      ? URI.parse(dirname(this.configURI.fsPath))
+      : this.configURI;
+  }
+
   get projects() {
-    return projectsFromConfig(this.rawConfig);
+    return projectsFromConfig(this.rawConfig, this.configURI);
   }
 
   set tag(tag: string) {

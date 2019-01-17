@@ -113,6 +113,11 @@
         "command": "apollographql/reloadService",
         "title": "Reload schema",
         "category": "Apollo"
+      },
+      {
+        "command": "apollographql/showStatus",
+        "title": "Show Status",
+        "category": "Apollo"
       }
     ]
   }

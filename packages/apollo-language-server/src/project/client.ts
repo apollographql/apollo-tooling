@@ -91,7 +91,9 @@ export class GraphQLClientProject extends GraphQLProject {
     clientIdentity
   }: GraphQLClientProjectConfig) {
     const fileSet = new FileSet({
-      rootPath: rootURI.fsPath,
+      // the URI of the folder _containing_ the apollo.config.js is the true project's root.
+      // if a config doesn't have a uri associated, we can assume the `rootURI` is the project's root.
+      rootURI: config.configDirURI || rootURI,
       includes: config.client.includes,
       excludes: config.client.excludes
     });
@@ -109,6 +111,33 @@ export class GraphQLClientProject extends GraphQLProject {
 
   initialize() {
     return [this.scanAllIncludedFiles(), this.loadServiceSchema()];
+  }
+
+  public getProjectStats() {
+    // use this to remove primitives and internal fields for stats
+    const filterTypes = (type: string) =>
+      !/^__|Boolean|ID|Int|String|Float/.test(type);
+
+    // filter out primitives and internal Types for type stats to match engine
+    const serviceTypes = this.serviceSchema
+      ? Object.keys(this.serviceSchema.getTypeMap()).filter(filterTypes).length
+      : 0;
+    const totalTypes = this.schema
+      ? Object.keys(this.schema.getTypeMap()).filter(filterTypes).length
+      : 0;
+
+    return {
+      type: "client",
+      serviceId: this.serviceID,
+      types: {
+        service: serviceTypes,
+        client: totalTypes - serviceTypes,
+        total: totalTypes
+      },
+      tag: this.config.tag,
+      loaded: this.serviceID ? true : false,
+      lastFetch: this.lastLoadDate
+    };
   }
 
   onDecorations(handler: (any: any) => void) {
@@ -213,6 +242,7 @@ export class GraphQLClientProject extends GraphQLProject {
         ] = await engineClient.loadSchemaTagsAndFieldStats(serviceID);
         this._onSchemaTags && this._onSchemaTags([serviceID, schemaTags]);
         this.fieldStats = fieldStats;
+        this.lastLoadDate = +new Date();
 
         this.generateDecorations();
       })()

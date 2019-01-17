@@ -93,6 +93,15 @@ function symbolForFieldDefinition(
 export class GraphQLLanguageProvider {
   constructor(public workspace: GraphQLWorkspace) {}
 
+  async provideStats(uri?: DocumentUri) {
+    if (this.workspace.projects.length && uri) {
+      const project = this.workspace.projectForFile(uri);
+      return project ? project.getProjectStats() : { loaded: false };
+    }
+
+    return { loaded: false };
+  }
+
   async provideCompletionItems(
     uri: DocumentUri,
     position: Position,

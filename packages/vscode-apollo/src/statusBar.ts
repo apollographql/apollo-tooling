@@ -10,7 +10,8 @@ export default class ApolloStatusBar {
     this.statusBarItem.text = ApolloStatusBar.loadingStateText;
     this.statusBarItem.show();
 
-    // this.statusBarItem.command = "apollographql/showOutputChannel";
+    this.statusBarItem.command = "apollographql/showStats";
+    // context.subscriptions.push(this.statusBarItem);
   }
 
   public showLoadedState({

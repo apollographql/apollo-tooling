@@ -17,8 +17,12 @@ import {
   ServerOptions,
   TransportKind
 } from "vscode-languageclient";
-import StatusBar from "./statusBar";
 
+import StatusBar from "./statusBar";
+import {
+  printStatsToClientOutputChannel,
+  printNoFileOpenMessage
+} from "./utils";
 const { version, referenceID } = require("../package.json");
 
 export function activate(context: ExtensionContext) {
@@ -42,9 +46,7 @@ export function activate(context: ExtensionContext) {
     run: {
       module: serverModule,
       transport: TransportKind.ipc,
-      options: {
-        env
-      }
+      options: { env }
     },
     debug: {
       module: serverModule,
@@ -86,6 +88,29 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(client.start());
 
   client.onReady().then(() => {
+    commands.registerCommand("apollographql/showStats", () => {
+      const fileUri = window.activeTextEditor
+        ? window.activeTextEditor.document.uri.fsPath
+        : null;
+
+      // if no editor is open, but an output channel is, vscode returns something like
+      // output:extension-output-%234. If an editor IS open, this is something like file://Users/...
+      // This check is just for either a / or a \ anywhere in a fileUri
+      const fileOpen = fileUri && /[\/\\]/.test(fileUri);
+
+      if (fileOpen) {
+        client.sendNotification("apollographql/getStats", { uri: fileUri });
+        return;
+      }
+      printNoFileOpenMessage(client, version);
+      client.outputChannel.show();
+    });
+
+    client.onNotification("apollographql/statsLoaded", params => {
+      printStatsToClientOutputChannel(client, params, version);
+      client.outputChannel.show();
+    });
+
     commands.registerCommand("apollographql/reloadService", () => {
       // wipe out tags when reloading
       // XXX we should clean up this handling

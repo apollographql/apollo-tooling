@@ -1,6 +1,6 @@
 import { extname } from "path";
 import { readFileSync } from "fs";
-import Uri from "vscode-uri";
+import URI from "vscode-uri";
 
 import {
   TypeSystemDefinitionNode,
@@ -48,6 +48,22 @@ export interface GraphQLProjectConfig {
   fileSet: FileSet;
   loadingHandler: LoadingHandler;
 }
+
+export interface TypeStats {
+  service?: number;
+  client?: number;
+  total?: number;
+}
+
+export interface ProjectStats {
+  type: string;
+  loaded: boolean;
+  serviceId?: string;
+  types?: TypeStats;
+  tag?: string;
+  lastFetch?: number;
+}
+
 export abstract class GraphQLProject implements GraphQLSchemaProvider {
   public schemaProvider: GraphQLSchemaProvider;
   protected _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
@@ -64,6 +80,8 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   public schema?: GraphQLSchema;
   private fileSet: FileSet;
   protected loadingHandler: LoadingHandler;
+
+  protected lastLoadDate?: number;
 
   constructor({
     config,
@@ -106,6 +124,8 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   protected abstract initialize(): Promise<void>[];
 
+  abstract getProjectStats(): ProjectStats;
+
   get isReady(): boolean {
     return this._isReady;
   }
@@ -124,10 +144,12 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   }
 
   public resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
+    this.lastLoadDate = +new Date();
     return this.schemaProvider.resolveSchema(config);
   }
 
   public onSchemaChange(handler: NotificationHandler<GraphQLSchema>) {
+    this.lastLoadDate = +new Date();
     return this.schemaProvider.onSchemaChange(handler);
   }
 
@@ -136,7 +158,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   }
 
   includesFile(uri: DocumentUri) {
-    return this.fileSet.includesFile(Uri.parse(uri).fsPath);
+    return this.fileSet.includesFile(URI.parse(uri).fsPath);
   }
 
   async scanAllIncludedFiles() {
@@ -144,7 +166,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
       `Loading queries for ${this.displayName}`,
       (async () => {
         for (const filePath of this.fileSet.allFiles()) {
-          const uri = Uri.file(filePath).toString();
+          const uri = URI.file(filePath).toString();
 
           // If we already have query documents for this file, that means it was either
           // opened or changed before we got a chance to read it.
@@ -157,7 +179,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   }
 
   fileDidChange(uri: DocumentUri) {
-    const filePath = Uri.parse(uri).fsPath;
+    const filePath = URI.parse(uri).fsPath;
     const extension = extname(filePath);
     const languageId = fileAssociations[extension];
 

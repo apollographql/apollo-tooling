@@ -4,13 +4,11 @@ import * as path from "path";
 import { Kind, DocumentNode } from "graphql";
 import * as tty from "tty";
 import { Gaze } from "gaze";
-
-import Uri from "vscode-uri";
+import URI from "vscode-uri";
 
 import { TargetType, default as generate } from "../../generate";
 
 import { ClientCommand } from "../../Command";
-import URI from "vscode-uri";
 
 const waitForKey = async () => {
   console.log("Press any key to stop.");
@@ -218,7 +216,7 @@ export default class Generate extends ClientCommand {
       const watcher = new Gaze(this.project.config.client.includes);
       watcher.on("all", (event, file) => {
         // console.log("\nChange detected, generating types...");
-        this.project.fileDidChange(Uri.file(file).toString());
+        this.project.fileDidChange(URI.file(file).toString());
       });
       if (tty.isatty((process.stdin as any).fd)) {
         await waitForKey();
