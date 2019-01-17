@@ -48,6 +48,10 @@ export class GraphQLWorkspace {
     this._onSchemaTags = handler;
   }
 
+  onConfigFilesFound(handler: NotificationHandler<ApolloConfig[]>) {
+    this._onConfigFilesFound = handler;
+  }
+
   private createProject({
     config,
     folder
@@ -142,19 +146,25 @@ export class GraphQLWorkspace {
       )
     );
 
+    let foundConfigs: ApolloConfig[] | Error = [];
     await Promise.all(projectConfigs)
-      .then(configs =>
-        configs.filter(Boolean).flatMap(projectConfig => {
+      .then(configs => {
+        foundConfigs = configs;
+        return configs.flatMap(projectConfig =>
           // we create a GraphQLProject for each kind of project
-          return (projectConfig as ApolloConfig).projects.map(config => {
-            return this.createProject(config, folder);
-          });
-        })
-      )
+          projectConfig.projects.map(config =>
+            this.createProject({ config, folder })
+          )
+        );
+      })
       .then(projects => this.projectsByFolderUri.set(folder.uri, projects))
       .catch(error => {
-        console.error(error);
+        foundConfigs = error;
       });
+
+    if (this._onConfigFilesFound) {
+      this._onConfigFilesFound(foundConfigs);
+    }
   }
 
   reloadService() {
@@ -163,10 +173,52 @@ export class GraphQLWorkspace {
         uri,
         projects.map(project => {
           project.clearAllDiagnostics();
-          return this.createProject(project.config, { uri } as WorkspaceFolder);
+          return this.createProject({
+            config: project.config,
+            folder: { uri } as WorkspaceFolder
+          });
         })
       );
     });
+  }
+
+  async reloadProjectForConfig(configUri: DocumentUri) {
+    const configPath = dirname(URI.parse(configUri).fsPath);
+
+    let config, error;
+    try {
+      config = await loadConfig({ configPath, requireConfig: true });
+    } catch (e) {
+      error = e;
+    }
+
+    const project = this.projectForFile(configUri);
+
+    if (!config && this._onConfigFilesFound) {
+      this._onConfigFilesFound(error);
+    }
+    // If project exists, update the config
+    if (project && config) {
+      await Promise.all(project.updateConfig(config));
+      this.reloadService();
+    }
+
+    // If project doesn't exist (new config file), create the project and add to workspace
+    if (!project && config) {
+      const folderUri = URI.file(configPath).toString();
+
+      const newProject = this.createProject({
+        config,
+        folder: { uri: folderUri } as WorkspaceFolder
+      });
+
+      const existingProjects = this.projectsByFolderUri.get(folderUri) || [];
+      this.projectsByFolderUri.set(folderUri, [
+        ...existingProjects,
+        newProject
+      ]);
+      this.reloadService();
+    }
   }
 
   updateSchemaTag(selection: QuickPickItem) {
