@@ -607,6 +607,16 @@ It can also be helpful to print standard out during testing. To enable logging, 
 .stdout({ print: true })
 ```
 
+## Active Development / Debugging
+
+To simplify the development process, you may want to step through and debug commands whose behavior you're modifying. To do this, run the executable with node in debug mode like so, where `<command>` is a valid CLI command like `client:check` or `service:push`:
+
+```
+node --inspect-brk=9002 packages/apollo/bin/run <command>
+```
+
+If you're using VS Code, you can run the included "Attach to CLI Debugger" launch task and debug right from VS Code! Otherwise, you may use the (Chrome inspector)[https://nodejs.org/en/docs/guides/debugging-getting-started/] or other Node debugger of your choice.
+
 ## Publishing
 
 - Make sure you have a `GITHUB_AUTH` set in your environment variables. For more information on setting `GITHUB_AUTH`, check the [`lerna-changelog` documentation](https://github.com/lerna/lerna-changelog#github-token).

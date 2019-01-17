@@ -43,6 +43,14 @@
       "protocol": "inspector",
       "port": 9001,
       "sourceMaps": true
+    },
+    {
+      "name": "Attach to CLI Debugger",
+      "type": "node",
+      "request": "attach",
+      "protocol": "inspector",
+      "port": 9002,
+      "sourceMaps": true
     }
   ]
 }
