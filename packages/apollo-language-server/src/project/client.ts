@@ -91,8 +91,8 @@ export class GraphQLClientProject extends GraphQLProject {
     clientIdentity
   }: GraphQLClientProjectConfig) {
     const fileSet = new FileSet({
-      configPath: config.configURI ? config.configURI.fsPath : undefined,
-      rootPath: rootURI.fsPath,
+      configURI: config.configURI,
+      rootURI: rootURI,
       includes: config.client.includes,
       excludes: config.client.excludes
     });

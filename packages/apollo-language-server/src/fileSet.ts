@@ -5,37 +5,44 @@ import { invariant } from "@apollographql/apollo-tools";
 import URI from "vscode-uri";
 
 export class FileSet {
-  private configPath?: string;
-  private rootPath: string;
+  private configDirURI?: URI;
+  private rootURI: URI;
   private includes: string[];
   private excludes: string[];
 
   constructor({
-    configPath,
-    rootPath,
+    configURI,
+    rootURI,
     includes,
     excludes
   }: {
-    configPath?: string;
-    rootPath: string;
+    configURI?: URI;
+    rootURI: URI;
     includes: string[];
     excludes: string[];
   }) {
-    invariant(rootPath, `Must provide "rootPath".`);
+    invariant(rootURI, `Must provide "rootURI".`);
     invariant(includes, `Must provide "includes".`);
     invariant(excludes, `Must provide "excludes".`);
 
-    this.configPath = configPath;
-    this.rootPath = rootPath;
+    // the URI of the folder _containing_ the apollo.config.js
+    this.configDirURI =
+      configURI && configURI.fsPath.includes(".js")
+        ? URI.parse(dirname(configURI.fsPath))
+        : configURI;
+    this.rootURI = rootURI;
     this.includes = includes;
     this.excludes = excludes;
   }
 
-  includesFile(filePath: string, configDir?: URI): boolean {
+  includesFile(filePath: string, configDirURI?: URI): boolean {
     // if we're given a path to the config file, we should match the
     // "includes" glob relative to that dir. This allows us to run this command
     // from a "root" dir above the root of the project, like when at the root of a monorepo
-    filePath = relative(configDir ? configDir.path : this.rootPath, filePath);
+    filePath = relative(
+      configDirURI ? configDirURI.path : this.rootURI.fsPath,
+      filePath
+    );
     return (
       this.includes.some(include => minimatch(filePath, include)) &&
       !this.excludes.some(exclude => minimatch(filePath, exclude))
@@ -46,7 +53,9 @@ export class FileSet {
     return this.includes
       .flatMap(include =>
         glob.sync(include, {
-          cwd: this.configPath || this.rootPath,
+          cwd: this.configDirURI
+            ? this.configDirURI.fsPath
+            : this.rootURI.fsPath,
           absolute: true
         })
       )
@@ -54,7 +63,12 @@ export class FileSet {
         filePath =>
           !this.excludes.some(exclude =>
             minimatch(
-              relative(this.configPath || this.rootPath, filePath),
+              relative(
+                this.configDirURI
+                  ? this.configDirURI.fsPath
+                  : this.rootURI.fsPath,
+                filePath
+              ),
               exclude
             )
           )
