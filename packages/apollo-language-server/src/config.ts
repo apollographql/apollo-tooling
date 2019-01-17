@@ -349,24 +349,24 @@ export const loadConfig = async ({
     loadedConfig = {
       isEmpty: false,
       filepath: configPath || process.cwd(),
-      config:
-        resolvedType === "client"
+      config: {
+        ...(loadedConfig && loadedConfig.config),
+        ...(resolvedType === "client"
           ? {
-              ...(loadedConfig ? loadedConfig.config : {}),
               client: {
                 ...DefaultConfigBase,
-                ...(loadedConfig ? loadedConfig.config.client : {}),
+                ...(loadedConfig && loadedConfig.config.client),
                 service: resolvedName
               }
             }
           : {
-              ...(loadedConfig ? loadedConfig.config : {}),
               service: {
                 ...DefaultConfigBase,
-                ...(loadedConfig ? loadedConfig.config.service : {}),
+                ...(loadedConfig && loadedConfig.config.service),
                 name: resolvedName
               }
-            }
+            })
+      }
     };
   }
 
