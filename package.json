@@ -85,7 +85,7 @@
     "jest": "23.6.0",
     "jest-environment-node": "^23.4.0",
     "jest-matcher-utils": "23.6.0",
-    "lerna": "3.10.5",
+    "lerna": "3.10.6",
     "lerna-changelog": "0.8.2",
     "lint-staged": "8.1.0",
     "memfs": "2.14.2",
