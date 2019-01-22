@@ -1,6 +1,19 @@
 # Changelog
 
-## vNEXT
+## Unreleased
+
+## `apollo@2.3.0`, `vscode-apollo@1.4.0`, `apollo-language-server@1.3.0`
+
+- `apollo` 2.3.0
+  - Fixed filesystem issues on Windows [#810](https://github.com/apollographql/apollo-tooling/pull/810)
+  - Fixed codegen for Scala users [#686](https://github.com/apollographql/apollo-tooling/pull/686)
+- `vscode-apollo` 1.4.0
+  - Added a status bar action to show service stats in client projects [#840](https://github.com/apollographql/apollo-tooling/pull/840)
+  - Added monorepo support for multiple projects open at once [#840](https://github.com/apollographql/apollo-tooling/pull/840)
+- `apollo-language-server` 1.3.0
+  - Added listener for `getStats` to provide service stats for extensions [#840](https://github.com/apollographql/apollo-tooling/pull/840)
+
+---
 
 ## v1.8.3
 
