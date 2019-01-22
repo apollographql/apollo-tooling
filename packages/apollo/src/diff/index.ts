@@ -26,6 +26,10 @@ import {
   DiffInputValue,
   DiffEnum
 } from "./ast";
+import {
+  ValidationResult,
+  ValidationErrorType
+} from "apollo-language-server/lib/engine/operations/validateOperations";
 
 export * from "./ast";
 
@@ -36,21 +40,21 @@ export interface SchemaChange {
   description: string;
 }
 
-export const format = (change: SchemaChange) => {
-  let color = (x: string): string => x;
-  if (change.type === ChangeType.FAILURE) {
-    color = chalk.red;
+export function format({ type, description }: ValidationResult, index: number) {
+  let color = (x: string) => x;
+  switch (type) {
+    case ValidationErrorType.FAILURE:
+      color = chalk.red;
+      break;
+    case ValidationErrorType.INVALID:
+      color = chalk.gray;
+      break;
+    case ValidationErrorType.WARNING:
+      color = chalk.yellow;
+      break;
   }
-  if (change.type === ChangeType.WARNING) {
-    color = chalk.yellow;
-  }
-
-  return {
-    type: color(change.type),
-    code: color(change.code),
-    description: color(change.description)
-  };
-};
+  return `    [${index}] ${color(type)}    ${description}`;
+}
 
 // A lot / most of this code is lifted from non exported members of graphql-js
 // really amazing work in there
