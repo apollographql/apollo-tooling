@@ -624,9 +624,8 @@ If you're using VS Code, you can run the included "Attach to CLI Debugger" launc
 
 ## Publishing
 
-- Make sure the `CHANGELOG.md` is updated with all changes committed since the last release.
+- Make sure the `CHANGELOG.md` is updated with all changes committed since the last release. Make sure the versions for each package to update are correct, and there's a blank `Upcoming` section for future work.
 - Run `npm run release` to publish the individual packages.
-- Open a pull request into master with the `CHANGELOG.md` with the correct version number above the list of changes. There should be a `Upcoming` section left blank for future work.
 
 ## Maintainers
 
