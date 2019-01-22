@@ -18,6 +18,7 @@ export type ObjectProperty = {
 
 export interface TypescriptCompilerOptions extends CompilerOptions {
   // Leaving this open for Typescript only compiler options
+  useTypescriptGlobalNS: boolean;
 }
 
 export default class TypescriptGenerator {

@@ -161,13 +161,19 @@ export function generateLocalSource(
   context: CompilerContext
 ): IGeneratedFile[] {
   const generator = new TypescriptAPIGenerator(context);
+  const compilerOptions = context.options as TypescriptCompilerOptions;
 
   const operations = Object.values(context.operations).map(operation => ({
     sourcePath: operation.filePath,
     fileName: `${operation.operationName}.ts`,
     content: (options?: IGeneratedFileOptions) => {
       generator.fileHeader();
-      if (options && options.outputPath && options.globalSourcePath) {
+      if (
+        options &&
+        options.outputPath &&
+        options.globalSourcePath &&
+        !compilerOptions.useTypescriptGlobalNS
+      ) {
         printGlobalImport(
           generator,
           generator.getGlobalTypesUsedForOperation(operation),
@@ -210,6 +216,7 @@ export function generateGlobalSource(
   generator.fileHeader();
   printEnumsAndInputObjects(generator, context.typesUsed);
   const output = generator.printer.printAndClear();
+  generator.fileFooter();
   return new TypescriptGeneratedFile(output);
 }
 
@@ -233,6 +240,24 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
         // This file was automatically generated and should not be edited.
       `
     );
+    if (this.options.useTypescriptGlobalNS) {
+      this.printer.enqueue(
+        stripIndent`
+          export {}
+          declare global {
+        `
+      );
+    }
+  }
+
+  fileFooter() {
+    if (this.options.useTypescriptGlobalNS) {
+      this.printer.enqueue(
+        stripIndent`
+          }
+        `
+      );
+    }
   }
 
   public typeAliasForEnumType(enumType: GraphQLEnumType) {
