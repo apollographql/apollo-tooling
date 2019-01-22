@@ -8,7 +8,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/apollographql/apollo-tooling.git"
+    "url": "https://github.com/apollographql/apollo-tooling"
   },
   "homepage": "https://github.com/apollographql/apollo-tooling",
   "bugs": "https://github.com/apollographql/apollo-tooling/issues",

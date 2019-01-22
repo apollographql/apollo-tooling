@@ -5,17 +5,19 @@
 Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
 
 <!-- toc -->
-* [Apollo CLI](#apollo-cli)
-* [Usage](#usage)
-* [Commands](#commands)
-* [Configuration](#configuration)
-* [Code Generation](#code-generation)
-* [Contributing](#contributing)
-<!-- tocstop -->
+
+- [Apollo CLI](#apollo-cli)
+- [Usage](#usage)
+- [Commands](#commands)
+- [Configuration](#configuration)
+- [Code Generation](#code-generation)
+- [Contributing](#contributing)
+  <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g apollo
 $ apollo COMMAND
@@ -27,24 +29,26 @@ USAGE
   $ apollo COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-* [`apollo client:check`](#apollo-clientcheck)
-* [`apollo client:codegen [OUTPUT]`](#apollo-clientcodegen-output)
-* [`apollo client:extract OUTPUT`](#apollo-clientextract-output)
-* [`apollo client:push`](#apollo-clientpush)
-* [`apollo help [COMMAND]`](#apollo-help-command)
-* [`apollo plugins`](#apollo-plugins)
-* [`apollo plugins:install PLUGIN...`](#apollo-pluginsinstall-plugin)
-* [`apollo plugins:link PLUGIN`](#apollo-pluginslink-plugin)
-* [`apollo plugins:uninstall PLUGIN...`](#apollo-pluginsuninstall-plugin)
-* [`apollo plugins:update`](#apollo-pluginsupdate)
-* [`apollo service:check`](#apollo-servicecheck)
-* [`apollo service:download OUTPUT`](#apollo-servicedownload-output)
-* [`apollo service:push`](#apollo-servicepush)
+
+- [`apollo client:check`](#apollo-clientcheck)
+- [`apollo client:codegen [OUTPUT]`](#apollo-clientcodegen-output)
+- [`apollo client:extract OUTPUT`](#apollo-clientextract-output)
+- [`apollo client:push`](#apollo-clientpush)
+- [`apollo help [COMMAND]`](#apollo-help-command)
+- [`apollo plugins`](#apollo-plugins)
+- [`apollo plugins:install PLUGIN...`](#apollo-pluginsinstall-plugin)
+- [`apollo plugins:link PLUGIN`](#apollo-pluginslink-plugin)
+- [`apollo plugins:uninstall PLUGIN...`](#apollo-pluginsuninstall-plugin)
+- [`apollo plugins:update`](#apollo-pluginsupdate)
+- [`apollo service:check`](#apollo-servicecheck)
+- [`apollo service:download OUTPUT`](#apollo-servicedownload-output)
+- [`apollo service:push`](#apollo-servicepush)
 
 ## `apollo client:check`
 
@@ -96,11 +100,11 @@ ARGUMENTS
   OUTPUT
       Directory to which generated files will be written.
       - For TypeScript/Flow generators, this specifies a directory relative to each source file by default.
-      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a 
+      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a
       file or directory (absolute or relative to the current working directory) to which:
          - a file will be written for each query (if "output" is a directory)
          - all generated types will be written
-      - For all other types, this defines a file (absolute or relative to the current working directory) to which all 
+      - For all other types, this defines a file (absolute or relative to the current working directory) to which all
       generated types are written.
 
 OPTIONS
@@ -307,15 +311,15 @@ DESCRIPTION
 
   Installation of a user-installed plugin will override a core plugin.
 
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command 
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in 
+  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
+  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
   the CLI without the need to patch and update the whole CLI.
 
 ALIASES
   $ apollo plugins:add
 
 EXAMPLES
-  $ apollo plugins:install myplugin 
+  $ apollo plugins:install myplugin
   $ apollo plugins:install https://github.com/someuser/someplugin
   $ apollo plugins:install someuser/someplugin
 ```
@@ -340,7 +344,7 @@ OPTIONS
 DESCRIPTION
   Installation of a linked plugin will override a user-installed or core plugin.
 
-  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello' 
+  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
   command will override the user-installed or core plugin implementation. This is useful for development work.
 
 EXAMPLE
@@ -453,6 +457,7 @@ ALIASES
 ```
 
 _See code: [src/commands/service/push.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/push.ts)_
+
 <!-- commandsstop -->
 
 # Configuration
@@ -467,7 +472,7 @@ module.exports = {
     name: "My Client Project",
     service: "my-service-name"
   }
-}
+};
 ```
 
 # Code Generation
@@ -511,7 +516,7 @@ type Droid implements Character {
 }
 
 ...
-````
+```
 
 Whenever a field of type `Character` is encountered, it could be either a Human or Droid. Human and Droid objects
 will have a different set of fields. Within your application code, when interacting with a `Character` you'll want to make sure to handle both of these cases.
@@ -619,12 +624,8 @@ If you're using VS Code, you can run the included "Attach to CLI Debugger" launc
 
 ## Publishing
 
-- Make sure you have a `GITHUB_AUTH` set in your environment variables. For more information on setting `GITHUB_AUTH`, check the [`lerna-changelog` documentation](https://github.com/lerna/lerna-changelog#github-token).
-- In the root of the repository, run `npx lerna-changelog` (PR labels are read automatically using the `GITHUB_AUTH` token).
-- Copy the result into the `CHANGELOG.md` file and replace the top line with the CLI version that will be published.
-- Run `git add CHANGELOG.md` so that the update will be included in Lerna's "publish" commit.
-- If the `CHANGELOG.md` is still missing included changes, please manually add those changes.
-- Finally, run `npm run release` to publish the individual packages.
+- Make sure the `CHANGELOG.md` is updated with all changes committed since the last release. Make sure the versions for each package to update are correct, and there's a blank `Upcoming` section for future work.
+- Run `npm run release` to publish the individual packages.
 
 ## Maintainers
 
