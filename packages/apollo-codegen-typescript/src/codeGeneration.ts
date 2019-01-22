@@ -113,6 +113,7 @@ export function generateSource(context: CompilerContext) {
   Object.values(context.operations).forEach(operation => {
     generator.fileHeader();
     generator.interfacesForOperation(operation);
+    generator.fileFooter();
 
     const output = generator.printer.printAndClear();
 
@@ -126,6 +127,7 @@ export function generateSource(context: CompilerContext) {
   Object.values(context.fragments).forEach(fragment => {
     generator.fileHeader();
     generator.interfacesForFragment(fragment);
+    generator.fileFooter();
 
     const output = generator.printer.printAndClear();
 
@@ -138,6 +140,7 @@ export function generateSource(context: CompilerContext) {
 
   generator.fileHeader();
   printEnumsAndInputObjects(generator, context.typesUsed);
+  generator.fileFooter();
   const common = generator.printer.printAndClear();
 
   return {
@@ -182,6 +185,7 @@ export function generateLocalSource(
         );
       }
       generator.interfacesForOperation(operation);
+      generator.fileFooter();
       const output = generator.printer.printAndClear();
       return new TypescriptGeneratedFile(output);
     }
@@ -192,7 +196,12 @@ export function generateLocalSource(
     fileName: `${fragment.fragmentName}.ts`,
     content: (options?: IGeneratedFileOptions) => {
       generator.fileHeader();
-      if (options && options.outputPath && options.globalSourcePath) {
+      if (
+        options &&
+        options.outputPath &&
+        options.globalSourcePath &&
+        !compilerOptions.useTypescriptGlobalNS
+      ) {
         printGlobalImport(
           generator,
           generator.getGlobalTypesUsedForFragment(fragment),
@@ -201,6 +210,7 @@ export function generateLocalSource(
         );
       }
       generator.interfacesForFragment(fragment);
+      generator.fileFooter();
       const output = generator.printer.printAndClear();
       return new TypescriptGeneratedFile(output);
     }
@@ -213,10 +223,10 @@ export function generateGlobalSource(
   context: CompilerContext
 ): TypescriptGeneratedFile {
   const generator = new TypescriptAPIGenerator(context);
-  generator.fileHeader();
+  generator.fileHeader(true);
   printEnumsAndInputObjects(generator, context.typesUsed);
+  generator.fileFooter(true);
   const output = generator.printer.printAndClear();
-  generator.fileFooter();
   return new TypescriptGeneratedFile(output);
 }
 
@@ -233,14 +243,14 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     this.scopeStack = [];
   }
 
-  fileHeader() {
+  fileHeader(globalFileHeader = false) {
     this.printer.enqueue(
       stripIndent`
         /* tslint:disable */
         // This file was automatically generated and should not be edited.
       `
     );
-    if (this.options.useTypescriptGlobalNS) {
+    if (globalFileHeader && this.options.useTypescriptGlobalNS) {
       this.printer.enqueue(
         stripIndent`
           export {}
@@ -250,8 +260,8 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     }
   }
 
-  fileFooter() {
-    if (this.options.useTypescriptGlobalNS) {
+  fileFooter(globalFileFooter = false) {
+    if (globalFileFooter && this.options.useTypescriptGlobalNS) {
       this.printer.enqueue(
         stripIndent`
           }
