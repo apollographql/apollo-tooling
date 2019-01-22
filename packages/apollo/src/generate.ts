@@ -24,6 +24,7 @@ import {
 import { generateSource as generateScalaSource } from "apollo-codegen-scala";
 
 import { FlowCompilerOptions } from "../../apollo-codegen-flow/lib/language";
+import { TypescriptCompilerOptions } from "../../apollo-codegen-typescript/lib/language";
 import { validateQueryDocument } from "apollo-language-server/lib/errors/validation";
 
 export type TargetType =
@@ -36,6 +37,7 @@ export type TargetType =
 
 export type GenerationOptions = CompilerOptions &
   LegacyCompilerOptions &
+  TypescriptCompilerOptions &
   FlowCompilerOptions & {
     globalTypesFile?: string;
     rootPath?: string;
