@@ -42,11 +42,6 @@ export class GraphQLServiceProject extends GraphQLProject {
     return [];
   }
 
-  updateConfig(config: ServiceConfig) {
-    this.config = config;
-    return this.initialize();
-  }
-
   validate() {}
 
   getProjectStats() {

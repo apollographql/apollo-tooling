@@ -125,7 +125,6 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   protected abstract initialize(): Promise<void>[];
 
   abstract getProjectStats(): ProjectStats;
-  abstract updateConfig(config: ApolloConfig): Promise<void>[];
 
   get isReady(): boolean {
     return this._isReady;
@@ -142,6 +141,11 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   get whenReady(): Promise<void> {
     return this.readyPromise;
+  }
+
+  public updateConfig(config: ApolloConfig) {
+    this.config = config;
+    return this.initialize();
   }
 
   public resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
