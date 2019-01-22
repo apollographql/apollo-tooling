@@ -19,7 +19,7 @@ import {
   printStatsToClientOutputChannel
 } from "./utils";
 
-const { version } = require("./package.json");
+const { version } = require("../package.json");
 
 let client: LanguageClient;
 let clientDisposable: Disposable;
