@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## Upcoming
+
+<!-- add changes for upcoming versions here -->
 
 ## `apollo@2.3.0`, `vscode-apollo@1.4.0`, `apollo-language-server@1.3.0`
 
