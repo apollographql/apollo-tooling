@@ -42,7 +42,7 @@ export type GenerationOptions = CompilerOptions &
   };
 
 function toPath(uri: string): string {
-  return URI.parse(uri).path;
+  return URI.parse(uri).fsPath;
 }
 
 export default function generate(
@@ -163,7 +163,7 @@ export default function generate(
         let dir = outputPath;
         if (nextToSources) {
           dir = path.join(
-            path.dirname(path.posix.relative(rootPath, toPath(sourcePath))),
+            path.dirname(path.relative(rootPath, toPath(sourcePath))),
             dir
           );
           if (!fs.existsSync(dir)) {
