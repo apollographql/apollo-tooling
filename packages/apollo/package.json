@@ -57,6 +57,7 @@
     "graphql": "^14.0.2",
     "graphql-tag": "^2.9.2",
     "heroku-cli-util": "^8.0.9",
+    "inquirer": "^6.2.1",
     "listr": "^0.14.1",
     "lodash": "^4.17.10",
     "tty": "^1.0.1",
