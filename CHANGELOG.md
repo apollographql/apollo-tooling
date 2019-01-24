@@ -4,6 +4,11 @@
 
 <!-- add changes for upcoming versions here -->
 
+## `apollo@2.3.1`
+
+- `apollo` 2.3.1
+  - Fixed path building issues on Windows [#917](https://github.com/apollographql/apollo-tooling/pull/917)
+
 ## `apollo@2.3.0`, `vscode-apollo@1.4.0`, `apollo-language-server@1.3.0`
 
 - `apollo` 2.3.0
