@@ -126,7 +126,7 @@ export abstract class ProjectCommand extends Command {
       type: this.type
     });
 
-    if (flags.tag) config.tag = flags.tag;
+    config.tag = flags.tag || config.tag || "current";
     //  flag overides
     config.setDefaults({
       engine: {

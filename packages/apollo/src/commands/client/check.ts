@@ -12,8 +12,7 @@ export default class ClientCheck extends ClientCommand {
     ...ClientCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The published tag to check this client against",
-      default: "current"
+      description: "The published tag to check this client against"
     })
   };
 
@@ -35,7 +34,7 @@ export default class ClientCheck extends ClientCommand {
             const { changes } = await project.engine.checkOperations({
               id: config.name,
               operations: ctx.operations,
-              tag: flags.tag,
+              tag: config.tag,
               gitContext: ctx.gitContext
             });
 
