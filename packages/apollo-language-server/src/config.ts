@@ -303,7 +303,7 @@ export const loadConfig = async ({
     }
   }
 
-  const resolvedName = name || nameFromKey;
+  let resolvedName = name || nameFromKey;
 
   // The CLI passes in a type when loading config. The editor extension
   // does not. So we determine the type of the config here, and use it if
@@ -311,8 +311,19 @@ export const loadConfig = async ({
   let resolvedType: "client" | "service";
   if (type) {
     resolvedType = type;
+    if (
+      loadedConfig &&
+      loadedConfig.config.client &&
+      typeof loadedConfig.config.client.service === "string"
+    ) {
+      resolvedName = loadedConfig.config.client.service;
+    }
   } else if (loadedConfig && loadedConfig.config.client) {
     resolvedType = "client";
+    resolvedName =
+      typeof loadedConfig.config.client.service === "string"
+        ? loadedConfig.config.client.service
+        : resolvedName;
   } else if (loadedConfig && loadedConfig.config.service) {
     resolvedType = "service";
   } else {
