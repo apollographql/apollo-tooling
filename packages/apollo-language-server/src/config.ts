@@ -311,6 +311,13 @@ export const loadConfig = async ({
   let resolvedType: "client" | "service";
   if (type) {
     resolvedType = type;
+    if (
+      loadedConfig &&
+      loadedConfig.config.client &&
+      typeof loadedConfig.config.client.service === "string"
+    ) {
+      resolvedName = loadedConfig.config.client.service;
+    }
   } else if (loadedConfig && loadedConfig.config.client) {
     resolvedType = "client";
     resolvedName =

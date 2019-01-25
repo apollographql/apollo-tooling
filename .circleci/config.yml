@@ -109,7 +109,7 @@ jobs:
             # This should cache the npm cache instead of node_modules, which is needed because
             # npm ci actually removes node_modules before installing to guarantee a clean slate.
             - ~/.npm
-      - run: ENGINE_API_KEY=$CHECKS_API_KEY ./packages/apollo/bin/run client:check
+      - run: ENGINE_API_KEY=$CHECKS_API_KEY ./packages/apollo/bin/run client:check --tag=master
 
 workflows:
   version: 2
