@@ -20,6 +20,132 @@
 - `apollo-language-server` 1.3.0
   - Added listener for `getStats` to provide service stats for extensions [#840](https://github.com/apollographql/apollo-tooling/pull/840)
 
+## `apollo@2.0.x`
+
+- `apollo` 2.0.x
+
+## `apollo@2.0.x`
+
+- `apollo` 2.0.x
+
+## `apollo@2.0.x`
+
+- `apollo` 2.0.x
+
+## `apollo@2.0.x`
+
+- `apollo` 2.0.x
+
+## `apollo@2.0.x`
+
+- `apollo` 2.0.x
+
+## `apollo@2.0.x`
+
+- `apollo` 2.0.x
+
+## `apollo@2.0.8`
+
+- Fixed issue with package lockfile [commit](https://github.com/apollographql/apollo-tooling/commit/892172c473b533dcf52eecd55273d74ce725105c)
+
+## `apollo@2.0.7`, `apollo-language-server@1.0.5`, `vscode-apollo@1.1.2`
+
+- `apollo-language-server` 1.0.5
+  - Fix mutations to engine for schema uploads & operation registration [commit](https://github.com/apollographql/apollo-tooling/commit/0caf59250851cb1aaef1e4b24fac2474de13f449)
+
+## `apollo@2.0.6`, `vscode-apollo@1.1.1`, `apollo-language-server@1.0.4`
+
+- `apollo-language-server` 1.0.4
+  - Changed engine queries to use `me` field instead of `service` to look up services [commit](https://github.com/apollographql/apollo-tooling/commit/50254d606296dbecfca981ea6785caaced300f89)
+
+## `apollo@2.0.5`, `vscode-apollo@1.1.0`
+
+- `apollo` 2.0.5
+  - Fix schema tag diagnostics
+  - Provide ability to go from sdl to operations via references [commit](https://github.com/apollographql/apollo-tooling/commit/4f00eb9995fe5a25f52879e13bc9e3e80e72acad)
+
+## `apollo@2.0.4`
+
+- Fixed config to only use service name from the correct key types [commit](https://github.com/apollographql/apollo-tooling/commit/6891f6a19c6d7de1c352944394ada9cba08ee87e)
+- Adjust priority of engine api key parsing to prefer flag over env key [commit](https://github.com/apollographql/apollo-tooling/commit/0694e84c4476848dd06252ac61f5a14353681ff2)
+
+## `apollo@2.0.3`, `vscode-apollo@1.0.3`
+
+- `apollo` 2.0.3
+  - Fallback to using the engine service from the api key if not specified in configs [commit](https://github.com/apollographql/apollo-tooling/commit/59bc1ea84248cfbfcd74bddd40f610a4cce89c25)
+
+## `apollo@2.0.2`, `vscode-apollo@1.0.2`
+
+- `apollo` 2.0.2
+  - fixed missing dotenv dependency [#663](https://github.com/apollographql/apollo-tooling/commit/5557b7813ec15b9c2a57a34e83118ccbe0705ce1)
+
+## `apollo@2.0.1`
+
+- Added better errors around missing services
+- Updated config documentation
+- Fixed failures with missing service name
+
+## `apollo@2.0.0`, `vscode-apollo@1.0.0`, `apollo-language-server@1.0.0`
+
+> NOTE: Many of the updates and changes in this release came from a complete rebuild of the Apollo CLI in preparation for GraphQL summit. Many of these changes can be traced to [this commit](https://github.com/apollographql/apollo-tooling/commit/d2d73f9c597845355b7ee267e411d80d1c493043) but aren't tied to a specific pull request, and won't be linked.
+
+- `apollo` 2.0.0
+
+  - :rocket: Features
+    - `queries:register` to register operations with the apollo platform [#621](https://github.com/apollographql/apollo-tooling/pull/621)
+    - Update `graphql` to version 14 [#624](https://github.com/apollographql/apollo-tooling/pull/624)
+    - Supports a `.env` file for engine API keys [commit](https://github.com/apollographql/apollo-tooling/commit/4a2bccfd900fcd61b75caa5bf891ac7b049f3844)
+  - :bug: Fixes & Changes
+    - Fixed config file resolution [#591](https://github.com/apollographql/apollo-tooling/pull/591)
+  - :boom: Breaking Changes
+    - Introduced a new `apollo.config.js` format []()
+    - Changed format of `queries:extract` manifest to be more extensible [#611](https://github.com/apollographql/apollo-tooling/pull/611)
+    - Changed manifest hash encoding to SHA-256 instead of SHA-512 [#611](https://github.com/apollographql/apollo-tooling/pull/611)
+    - Deprecated apollo `schema:*`, and `codegen:*` commands and aliased usage to new commands
+      - `apollo codegen:generate` aliases to `apollo client:codegen`
+      - `apollo schema:check` aliases to `apollo service:check`
+      - `apollo schema:download` aliases to `apollo service:download`
+      - `apollo schema:publish` aliases to `apollo service:push`
+      - `apollo plugins:add` aliases to `apollo plugins:install`
+      - `apollo plugins:unlink` and `apollo plugins:remove` aliases to `apollo plugins:uninstall`
+    - Removed apollo `queries:*` commands
+      - `apollo client:check` should be used in place of `apollo queries:check`
+      - `apollo client:extract` should be used in place of `apollo queries:extract`
+    - Deprecated `--queries` flag in client commands in place of the `--includes` flag
+
+- `apollo-language-server` 1.0.0
+
+  - Initial release of [apollo-language-server]() to support `vscode-apollo`, and `apollo`
+  - Supports editor features for...
+    - Autocompletion of GraphQL documents
+    - Hover information for fields anr arguments
+    - Type definitions and references
+    - Code lenses for open files
+
+- `vscode-apollo` 1.0.0
+  - Initial Release of [vscode-apollo]()
+  - Switching of schema tags [#632](https://github.com/apollographql/apollo-tooling/pull/632)
+  - Supports all of the editor features exposed by `apollo-language-server`
+
+## `apollo@1.9.2`, `apollo-language-server@0.1.10`, `apollo-codegen-swift@0.28.1`, `apollo-codegen-core@0.28.1`
+
+- `apollo` 1.9.2
+  - Fixed codegen issues listed below
+- `apollo-language-server` 0.1.10
+  - Fixed version of `vscode-languageserver` to follow a stable version instead of `next`
+- `apollo-codegen-swift` 0.28.1
+  - Fixed swift enums to conform to Hashable [#578](https://github.com/apollographql/apollo-tooling/pull/578)
+- `apollo-codegen-core` 0.28.1
+  - Fixed `mergeInFieldsFromFragmentSpreads` when flag isn't specified [#537](https://github.com/apollographql/apollo-tooling/issues/537)
+
+## `apollo@1.9.1`
+
+- Fixes formatting of the `schema:download` response to match previous codegen schemas [#573](https://github.com/apollographql/apollo-tooling/pull/573)
+
+## `apollo@1.9.0`
+
+- Added `queries:extract` command to write a manifest of client queries [#553](https://github.com/apollographql/apollo-tooling/pull/553)
+
 ---
 
 ## v1.8.3
