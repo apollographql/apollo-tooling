@@ -217,7 +217,7 @@
   - Updated config documentation
   - Fixed failures with missing service name
 
-## `apollo@2.0.0`, `vscode-apollo@1.0.0`, `apollo-language-server@1.0.0`
+## :tada: `apollo@2.0.0` :tada:
 
 > NOTE: Many of the updates and changes in this release came from a complete rebuild of the Apollo CLI in preparation for GraphQL summit. Many of these changes can be traced to [this commit](https://github.com/apollographql/apollo-tooling/commit/d2d73f9c597845355b7ee267e411d80d1c493043) but aren't tied to a specific pull request, and won't be linked.
 
