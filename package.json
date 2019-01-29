@@ -15,7 +15,7 @@
   "scripts": {
     "azure": "npm ci && npm run test:ci",
     "clean": "git clean -dfqX -- ./node_modules **/{lib,node_modules}/",
-    "postinstall": "npm run build",
+    "postinstalla": "#npm run build",
     "build": "lerna run build --stream --scope apollo-env && npm run compile && lerna run build --stream --ignore apollo-env",
     "compile": "tsc --build tsconfig.json",
     "compile:clean": "tsc --build tsconfig.json --clean",
