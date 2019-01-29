@@ -181,7 +181,7 @@
 ## `apollo@2.0.6`
 
 - `apollo@2.0.6`
-- `apollo-language-server` 1.0.4
+- `apollo-language-server@1.0.4`
   - Changed engine queries to use `me` field instead of `service` to look up services [commit](https://github.com/apollographql/apollo-tooling/commit/50254d606296dbecfca981ea6785caaced300f89)
 - `vscode-apollo@1.1.1`
 
@@ -200,7 +200,7 @@
 
 ## `apollo@2.0.3`
 
-- `apollo` 2.0.3
+- `apollo@2.0.3`
   - Fallback to using the engine service from the api key if not specified in configs [commit](https://github.com/apollographql/apollo-tooling/commit/59bc1ea84248cfbfcd74bddd40f610a4cce89c25)
 - `vscode-apollo@1.0.3`
 
