@@ -10,9 +10,10 @@ import {
 } from "./operations/uploadSchema";
 
 import {
-  CHECK_OPERATIONS,
-  CheckOperationsVariables
-} from "./operations/checkOperations";
+  VALIDATE_OPERATIONS,
+  ValidateOperationsVariables,
+  ValidationResult
+} from "./operations/validateOperations";
 
 import {
   REGISTER_OPERATIONS,
@@ -161,8 +162,8 @@ export class ApolloEngineClient extends GraphQLDataSource {
     });
   }
 
-  public async checkOperations(variables: CheckOperationsVariables) {
-    return this.execute({ query: CHECK_OPERATIONS, variables }).then(
+  public async validateOperations(variables: ValidateOperationsVariables) {
+    return this.execute({ query: VALIDATE_OPERATIONS, variables }).then(
       ({ data, errors }) => {
         if (data && !data.service) {
           throw new Error(
@@ -176,7 +177,9 @@ export class ApolloEngineClient extends GraphQLDataSource {
         if (!data) {
           throw new Error("Error in request from Engine");
         }
-        return data.service.checkOperations;
+
+        return data.service.validateOperations
+          .validationResults as ValidationResult[];
       }
     );
   }
