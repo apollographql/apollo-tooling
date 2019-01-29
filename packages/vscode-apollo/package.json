@@ -37,7 +37,7 @@
     "Programming Languages",
     "Linters"
   ],
-  "icon": "images/icon-apollo-teal-400x400.png",
+  "icon": "images/icon-apollo-blue-400x400.png",
   "activationEvents": [
     "workspaceContains:**/package.json"
   ],
@@ -120,5 +120,9 @@
         "category": "Apollo"
       }
     ]
+  },
+  "galleryBanner": {
+    "color": "#1d127d",
+    "theme": "dark"
   }
 }
