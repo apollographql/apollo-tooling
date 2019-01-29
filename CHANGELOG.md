@@ -4,6 +4,9 @@
 
 - `apollo`
   - Fix configuration loading and schema tag support [#925](https://github.com/apollographql/apollo-tooling/pull/925)
+  - Improve client:check output [#934](https://github.com/apollographql/apollo-tooling/pull/934)
+- `apollo-language-server`
+  - Replace checkOperations mutation with new validateOperations mutation [#934](https://github.com/apollographql/apollo-tooling/pull/934)
 
 ## `apollo@2.3.1`
 
