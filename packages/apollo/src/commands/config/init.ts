@@ -13,10 +13,15 @@ interface Header {
 }
 
 export default class ApolloInit extends Command {
-  static description = "Initialize an Apollo project";
+  static description = "Generate an Apollo config file for a project";
   static flags = {};
 
   async run() {
+    this.log(chalk.green("\nWelcome to the Apollo config generator!\n"));
+    this.log(
+      "This tool is meant to simplify configuring your Apollo project. For more specifics, please reference the config docs here:"
+    );
+    this.log(chalk.blue("    https://bit.ly/2Tb3mAu\n"));
     if (existsSync("apollo.config.js")) {
       const {
         shouldOverwriteConfig
@@ -103,7 +108,12 @@ export default class ApolloInit extends Command {
 
           const { prefix, serviceName, keyId } = this.parseApiKey(input);
           return (
-            prefix === "service" && serviceName.length > 0 && keyId.length > 0
+            (prefix === "service" &&
+              serviceName.length > 0 &&
+              keyId.length > 0) ||
+            `Invalid API key provided. For details on how to find or get an API key, see: ${chalk.blue(
+              "https://bit.ly/2B9vLQF"
+            )}`
           );
         }
       }
