@@ -1,12 +1,16 @@
 import Command from "@oclif/command";
 import { existsSync, writeFileSync, readFileSync } from "fs";
 import { resolve } from "path";
+import chalk from "chalk";
 
 const inquirer = require("inquirer");
 const prettier = require("prettier");
 
 type ProjectType = "client" | "service";
-type Header = { key: string; value: string };
+interface Header {
+  key: string;
+  value: string;
+}
 
 export default class ApolloInit extends Command {
   static description = "Initialize an Apollo project";
@@ -18,11 +22,10 @@ export default class ApolloInit extends Command {
         shouldOverwriteConfig
       }: { shouldOverwriteConfig: boolean } = await inquirer.prompt([
         {
-          message: `Apollo found an existing config in the current working directory:\n\n    📂  ${process.cwd()}\n\n⚠️  This will overwrite your config. Would you like to continue?`,
+          message: `Apollo found an existing config in the current working directory:\n\n   ${process.cwd()}\n\n⚠️  This will overwrite your config. Would you like to continue?`,
           name: "shouldOverwriteConfig",
           type: "confirm",
-          default: false,
-          prefix: "🚀  "
+          default: false
         }
       ]);
 
@@ -40,8 +43,7 @@ export default class ApolloInit extends Command {
           choices: [
             { name: "Client", value: "client" },
             { name: "Service", value: "service" }
-          ],
-          prefix: "🤔  "
+          ]
         }
       ]);
 
@@ -49,7 +51,7 @@ export default class ApolloInit extends Command {
         ? this.buildClientConfig()
         : this.buildServiceConfig());
 
-      // Use their prettier config if we can find it
+      // Use their prettier config if we find one, else default
       const prettierConfig = await (prettier.resolveConfig(process.cwd()) ||
         {});
 
@@ -63,9 +65,9 @@ export default class ApolloInit extends Command {
       writeFileSync("apollo.config.js", formatted);
 
       this.log(
-        `\n\n🚀  Successfully created Apollo config!\n\nConfig file: ${resolve(
-          "apollo.config.js"
-        )}`
+        `\n\n🚀  ${chalk.bold.green(
+          "Successfully created Apollo config!"
+        )}\n\nConfig file: ${chalk.blue(`${resolve("apollo.config.js")}`)}\n`
       );
     }
   }
@@ -80,8 +82,7 @@ export default class ApolloInit extends Command {
         type: "list",
         name: "clientServiceType",
         message:
-          "How would you like to reference your service?\n\n    For more details, see: https://bit.ly/2Tb3mAu\n",
-        prefix: "🖥  ",
+          "How would you like to reference your service?\n\n    For more details, see our configuration docs: https://bit.ly/2Tb3mAu\n",
         choices: [
           { name: "Engine", value: "engine" },
           { name: "Remote Endpoint", value: "endpoint" },
@@ -97,7 +98,6 @@ export default class ApolloInit extends Command {
         name: "engineKey",
         message:
           "Please paste your Engine API Key. API Keys can be found and created on the service's settings page.\n",
-        prefix: "🔑  ",
         validate: (input: string) => {
           if (!(typeof input === "string")) return false;
 
@@ -136,21 +136,21 @@ export default class ApolloInit extends Command {
             );
 
             writeFileSync(".env", updatedEnv);
-            this.log("\n    ✅ Replaced ENGINE_API_KEY in .env file\n");
+            this.log("\n    ✅  Replaced ENGINE_API_KEY in .env file\n");
           } else {
             this.log(
-              "\n    ❌ Did not write new ENGINE_API_KEY to .env file\n"
+              "\n    ❌  Did not write new ENGINE_API_KEY to .env file\n"
             );
           }
         } else {
           // Write key to end of .env file if no key previously existed
           writeFileSync(".env", `${envFile}\nENGINE_API_KEY=${engineKey}`);
-          this.log("\n    ✅ Wrote ENGINE_API_KEY to .env file\n");
+          this.log("\n    ✅  Wrote ENGINE_API_KEY to .env file\n");
         }
       } else {
         // Create a new .env file if none is found
         writeFileSync(".env", `ENGINE_API_KEY=${engineKey}`);
-        this.log("\n    ✅ Created .env file and added ENGINE_API_KEY\n");
+        this.log("\n    ✅  Created .env file and added ENGINE_API_KEY\n");
 
         if (existsSync(".gitignore")) {
           const {
@@ -160,7 +160,7 @@ export default class ApolloInit extends Command {
               type: "confirm",
               name: "shouldUpdateGitIgnore",
               message:
-                "💾  It's strongly recommended to add your new .env file to .gitignore, would you like to do that now?"
+                "It's strongly recommended to add your new .env file to .gitignore, would you like to do that now?"
             }
           ]);
 
@@ -186,8 +186,7 @@ export default class ApolloInit extends Command {
           clientServiceType === "localSchema",
         type: "name",
         name: "clientServiceName",
-        message: "(Optional) Name for your service?",
-        prefix: "🗣  "
+        message: "(Optional) Name for your service?"
       }
     ]);
 
@@ -198,8 +197,7 @@ export default class ApolloInit extends Command {
         when: () => clientServiceType === "localSchema",
         type: "input",
         name: "localSchemaFile",
-        message: "Path to your local schema?",
-        prefix: "📂  "
+        message: "Path to your local schema?"
       }
     ]);
 
@@ -214,15 +212,13 @@ export default class ApolloInit extends Command {
         when: () => clientServiceType === "endpoint",
         type: "input",
         name: "remoteUrl",
-        message: "URL of your remote endpoint?",
-        prefix: "🌎  "
+        message: "URL of your remote endpoint?"
       },
       {
         when: () => clientServiceType === "endpoint",
         type: "confirm",
         name: "endpointHasHeaders",
-        message: "Does your endpoint require any headers?",
-        prefix: "🔒  "
+        message: "Does your endpoint require any headers?"
       }
     ]);
 
@@ -230,22 +226,21 @@ export default class ApolloInit extends Command {
 
     const includes = await this.getGlobs(
       [],
-      "Glob pattern for query and client-side schema files? (i.e. src/**/*.{ts|js})",
-      "✅  "
+      "Glob pattern for query and client-side schema files? Please provide one at a time.\n    i.e. src/**/*.{ts,tsx,js,jsx,graphql}\n"
     );
 
     const { hasExcludes }: { hasExcludes: boolean } = await inquirer.prompt([
       {
         type: "confirm",
         name: "hasExcludes",
+        default: false,
         message:
-          "Are there any patterns you'd like to EXCLUDE from the project? i.e. **/__tests__/**",
-        prefix: "❌  "
+          "Are there any patterns you'd like to EXCLUDE from the project? Please provide one at a time.\n    By default, we exclude: **/node_modules and **/__tests__"
       }
     ]);
 
     const excludes = hasExcludes
-      ? await this.getGlobs([], "Glob patterns to exclude?", "❌  ")
+      ? await this.getGlobs([], "Glob pattern to exclude?")
       : [];
 
     const { tagName }: { tagName: string } = await inquirer.prompt([
@@ -254,15 +249,13 @@ export default class ApolloInit extends Command {
         name: "hasCustomTagName",
         default: false,
         message:
-          "Does your project use a custom tagged template literal for operations? i.e. NOT gql",
-        prefix: "✨  "
+          "Does your project use a custom tagged template literal for operations? i.e. NOT gql"
       },
       {
         when: ({ hasCustomTagName }) => hasCustomTagName,
         type: "input",
         name: "tagName",
-        message: "Custom tag?",
-        prefix: "🏷  "
+        message: "Custom tag?"
       }
     ]);
 
@@ -274,8 +267,7 @@ export default class ApolloInit extends Command {
         name: "removeAddTypename",
         default: false,
         message:
-          'Does your project explicitly remove __typename from your queries?\n    To determine this, look for "addTypename: false" in your ApolloClient config.\n    If you are unsure, the answer is likely no.',
-        prefix: "❌  "
+          'Does your project explicitly remove __typename from your queries?\n    To determine this, look for "addTypename: false" in your ApolloClient config.\n    If you are unsure, the answer is likely no.'
       }
     ]);
 
@@ -291,15 +283,14 @@ export default class ApolloInit extends Command {
         name: "usesClientOnlyDirectives",
         default: false,
         message:
-          "Does your project use any custom client-only directives?\n    By default, we include 'connection' and 'type'.",
-        prefix: "✨  "
+          "Does your project use any custom client-only directives?\n    By default, we include 'connection' and 'type'."
       },
       {
         when: ({ usesClientOnlyDirectives }) => usesClientOnlyDirectives,
         type: "input",
         name: "clientOnlyDirectives",
         message:
-          "List all custom client-only directives (seperated by spaces or commas)"
+          "List all custom, client-only directives (seperated by spaces or commas)"
       }
     ]);
 
@@ -315,15 +306,14 @@ export default class ApolloInit extends Command {
         name: "usesClientSchemaDirectives",
         default: false,
         message:
-          "Does your project use any custom client schema directives?\n    By default, we include 'client' and 'rest'.",
-        prefix: "✨  "
+          "Does your project use any custom client schema directives?\n    By default, we include 'client' and 'rest'."
       },
       {
         when: ({ usesClientSchemaDirectives }) => usesClientSchemaDirectives,
         type: "input",
         name: "clientSchemaDirectives",
         message:
-          "List all custom client schema directives (seperated by spaces or commas)"
+          "List all custom, client schema directives (seperated by spaces or commas)"
       }
     ]);
 
@@ -373,8 +363,7 @@ export default class ApolloInit extends Command {
         type: "list",
         name: "serviceType",
         message:
-          "How would you like to reference your service?\n\n    For more details, see: https://bit.ly/2RbYSYC\n",
-        prefix: "🖥  ",
+          "How would you like to reference your service?\n\n    For more details, see our configuration docs: https://bit.ly/2RbYSYC\n",
         choices: [
           { name: "Remote Endpoint", value: "endpoint" },
           { name: "Local Schema", value: "localSchema" }
@@ -389,8 +378,7 @@ export default class ApolloInit extends Command {
         when: () => serviceType === "localSchema",
         type: "input",
         name: "localSchemaFile",
-        message: "Path to your local schema?",
-        prefix: "📂  "
+        message: "Path to your local schema?"
       }
     ]);
 
@@ -405,15 +393,13 @@ export default class ApolloInit extends Command {
         when: () => serviceType === "endpoint",
         type: "input",
         name: "remoteUrl",
-        message: "URL of your remote endpoint?",
-        prefix: "🌎  "
+        message: "URL of your remote endpoint?"
       },
       {
         when: () => serviceType === "endpoint",
         type: "confirm",
         name: "endpointHasHeaders",
-        message: "Does your endpoint require any headers?",
-        prefix: "🔒  "
+        message: "Does your endpoint require any headers?"
       }
     ]);
 
@@ -438,7 +424,12 @@ export default class ApolloInit extends Command {
     }: Header & { more: boolean } = await inquirer.prompt([
       { type: "input", name: "key", message: "Header Key?" },
       { type: "input", name: "value", message: "Header Value?" },
-      { type: "confirm", name: "more", message: "Add another header?" }
+      {
+        type: "confirm",
+        name: "more",
+        default: false,
+        message: "Add another header?"
+      }
     ]);
 
     const allHeaders = [...headers, { key, value }];
@@ -449,11 +440,7 @@ export default class ApolloInit extends Command {
     }
   }
 
-  async getGlobs(
-    globs: string[],
-    message: string,
-    prefix: string
-  ): Promise<string[]> {
+  async getGlobs(globs: string[], message: string): Promise<string[]> {
     const {
       glob,
       more
@@ -461,20 +448,18 @@ export default class ApolloInit extends Command {
       {
         type: "input",
         name: "glob",
-        message,
-        prefix
+        message
       },
       {
         type: "confirm",
         name: "more",
-        message: "Add another pattern?",
-        prefix: "➕  "
+        message: "Add another pattern?"
       }
     ]);
 
     const allGlobs = [...globs, glob];
     if (more) {
-      return this.getGlobs(allGlobs, message, prefix);
+      return this.getGlobs(allGlobs, message);
     } else {
       return allGlobs;
     }
