@@ -7,6 +7,9 @@
   - Improve client:check output [#934](https://github.com/apollographql/apollo-tooling/pull/934)
 - `apollo-language-server`
   - Replace checkOperations mutation with new validateOperations mutation [#934](https://github.com/apollographql/apollo-tooling/pull/934)
+  - Fix language server mis-reporting client identity for schema loading operation [#940](https://github.com/apollographql/apollo-tooling/pull/940)
+- `vscode-apollo`
+  - Fix graphql comments not being highlighted correctly [#907](https://github.com/apollographql/apollo-tooling/pull/907)
 
 ## `apollo@2.3.1`
 
