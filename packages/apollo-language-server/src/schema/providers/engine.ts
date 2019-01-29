@@ -5,7 +5,7 @@ import gql from "graphql-tag";
 
 import { GraphQLSchema, buildClientSchema } from "graphql";
 
-import { ApolloEngineClient } from "../../engine";
+import { ApolloEngineClient, ClientIdentity } from "../../engine";
 import { ClientConfig, parseServiceSpecificer } from "../../config";
 import {
   GraphQLSchemaProvider,
@@ -17,7 +17,11 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
   private client?: ApolloEngineClient;
 
-  constructor(private config: ClientConfig) {}
+  constructor(
+    private config: ClientConfig,
+    private clientIdentity?: ClientIdentity
+  ) {}
+
   async resolveSchema(override: SchemaResolveConfig) {
     if (this.schema && (!override || !override.force)) return this.schema;
     const { engine, client } = this.config;
@@ -33,7 +37,11 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
       if (!engine.apiKey) {
         throw new Error("ENGINE_API_KEY not found");
       }
-      this.client = new ApolloEngineClient(engine.apiKey, engine.endpoint);
+      this.client = new ApolloEngineClient(
+        engine.apiKey,
+        engine.endpoint,
+        this.clientIdentity
+      );
     }
 
     const [id, tag = "current"] = parseServiceSpecificer(client.service);
