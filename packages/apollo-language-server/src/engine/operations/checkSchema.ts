@@ -40,6 +40,7 @@ export const CHECK_SCHEMA = gql`
         historicParameters: $historicParameters
         frontend: $frontend
       ) {
+        targetUrl
         diffToPrevious {
           type
           changes {

@@ -10,7 +10,6 @@ import {
   ValidationResult,
   ValidationErrorType
 } from "apollo-language-server/lib/engine/operations/validateOperations";
-import { format } from "../../diff";
 import chalk from "chalk";
 
 interface Operation {
@@ -169,13 +168,29 @@ export default class ClientCheck extends ClientCommand {
 
     Object.values(byErrorType).map(validations => {
       if (validations.length > 0) {
-        validations.map(format).forEach(formatted => {
-          this.log(formatted);
+        validations.forEach(validation => {
+          this.log(this.formatValidation(validation));
         });
         this.log();
       }
     });
   };
+
+  formatValidation({ type, description }: ValidationResult) {
+    let color = (x: string) => x;
+    switch (type) {
+      case ValidationErrorType.FAILURE:
+        color = chalk.red;
+        break;
+      case ValidationErrorType.INVALID:
+        color = chalk.gray;
+        break;
+      case ValidationErrorType.WARNING:
+        color = chalk.yellow;
+        break;
+    }
+    return `    ${color(type)}    ${description}`;
+  }
 
   printStats = (
     validationResults: ValidationResult[],
