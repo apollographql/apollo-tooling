@@ -12,4 +12,4 @@ TODO:
 - [ ] Rebase your changes on master so that they can be merged easily
 - [ ] Make sure all tests and linter rules pass
 
-\*Make sure changelog entries note which project has been affected. See older entries for examples on how what this looks like.
+\*Make sure changelog entries note which project(s) has been affected. See older entries for examples on what this looks like.
