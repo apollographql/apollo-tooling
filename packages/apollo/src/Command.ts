@@ -107,21 +107,23 @@ export abstract class ProjectCommand extends Command {
 
     const config = await this.createConfig(flags);
     this.createService(config, flags);
-    (this.ctx.config = config),
-      // make sure this the first item in the task list
-      this.tasks.push({
-        title: "Loading Apollo Project",
-        task: async ctx => {
-          await this.project.whenReady;
-          ctx = { ...ctx, ...this.ctx };
-        }
-      });
+    this.ctx.config = config;
+
+    // make sure this the first item in the task list
+    this.tasks.push({
+      title: "Loading Apollo Project",
+      task: async ctx => {
+        await this.project.whenReady;
+        ctx = { ...ctx, ...this.ctx };
+      }
+    });
   }
 
   protected async createConfig(flags: Flags) {
     const service = flags.key ? getServiceFromKey(flags.key) : undefined;
     const config = await loadConfig({
       configPath: flags.config && parse(resolve(flags.config)).dir,
+      configFileName: flags.config,
       name: service,
       type: this.type
     });
@@ -206,6 +208,10 @@ export abstract class ProjectCommand extends Command {
         rootURI,
         clientIdentity
       });
+    } else {
+      throw new Error(
+        "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
+      );
     }
 
     this.ctx.project = this.project;

@@ -4,7 +4,6 @@ import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
 import { resolve, dirname } from "path";
 import { readFileSync, existsSync } from "fs";
 import { merge } from "lodash/fp";
-
 import {
   ServiceID,
   ServiceSpecifier,
@@ -139,6 +138,8 @@ export interface LoadConfigSettings {
   // config loading only works on node so we default to
   // process.cwd()
   configPath?: string;
+  configFileName?: string;
+  requireConfig?: boolean;
   name?: string;
   type?: "service" | "client";
 }
@@ -273,17 +274,26 @@ const getServiceFromKey = (key: string | undefined): string | undefined => {
 // XXX load .env files automatically
 export const loadConfig = async ({
   configPath,
+  configFileName,
+  requireConfig = false,
   name,
   type
 }: LoadConfigSettings): Promise<ApolloConfig> => {
   const explorer = cosmiconfig(MODULE_NAME, {
-    searchPlaces: getSearchPlaces(configPath),
+    searchPlaces: getSearchPlaces(configFileName),
     loaders
   });
 
   let loadedConfig = (await explorer.search(configPath)) as ConfigResult<
     ApolloConfigFormat
   >;
+
+  if (requireConfig && !loadedConfig) {
+    throw new Error(
+      `No Apollo config found for project. For more information, please refer to:
+      https://bit.ly/2ByILPj`
+    );
+  }
 
   // add API to the env
   let engineConfig = {},
@@ -328,7 +338,7 @@ export const loadConfig = async ({
     resolvedType = "service";
   } else {
     throw new Error(
-      "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://www.apollographql.com/docs/references/apollo-config.html"
+      "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
     );
   }
 
@@ -339,24 +349,24 @@ export const loadConfig = async ({
     loadedConfig = {
       isEmpty: false,
       filepath: configPath || process.cwd(),
-      config:
-        resolvedType === "client"
+      config: {
+        ...(loadedConfig && loadedConfig.config),
+        ...(resolvedType === "client"
           ? {
-              ...(loadedConfig ? loadedConfig.config : {}),
               client: {
                 ...DefaultConfigBase,
-                ...(loadedConfig ? loadedConfig.config.client : {}),
+                ...(loadedConfig && loadedConfig.config.client),
                 service: resolvedName
               }
             }
           : {
-              ...(loadedConfig ? loadedConfig.config : {}),
               service: {
                 ...DefaultConfigBase,
-                ...(loadedConfig ? loadedConfig.config.service : {}),
+                ...(loadedConfig && loadedConfig.config.service),
                 name: resolvedName
               }
-            }
+            })
+      }
     };
   }
 

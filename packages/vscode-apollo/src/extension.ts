@@ -3,90 +3,63 @@ import {
   window,
   workspace,
   ExtensionContext,
-  ViewColumn,
-  WebviewPanel,
   Uri,
   ProgressLocation,
   DecorationOptions,
   commands,
-  QuickPickItem
+  QuickPickItem,
+  Disposable,
+  OutputChannel
 } from "vscode";
-import {
-  LanguageClient,
-  LanguageClientOptions,
-  ServerOptions,
-  TransportKind
-} from "vscode-languageclient";
-
 import StatusBar from "./statusBar";
+import { getLanguageServerClient } from "./languageServerClient";
+import { LanguageClient } from "vscode-languageclient";
 import {
-  printStatsToClientOutputChannel,
-  printNoFileOpenMessage
+  printNoFileOpenMessage,
+  printStatsToClientOutputChannel
 } from "./utils";
-const { version, referenceID } = require("../package.json");
+
+const { version } = require("../package.json");
+
+let client: LanguageClient;
+let clientDisposable: Disposable;
+let statusBar: StatusBar;
+let outputChannel: OutputChannel;
+let schemaTagItems: QuickPickItem[] = [];
+interface ErrorShape {
+  message: string;
+  stack: string;
+}
+
+function isError(response: any): response is ErrorShape {
+  return (
+    typeof response === "object" &&
+    response !== null &&
+    "message" in response &&
+    "stack" in response
+  );
+}
 
 export function activate(context: ExtensionContext) {
   const serverModule = context.asAbsolutePath(
     join("node_modules/apollo-language-server/lib", "server.js")
   );
 
-  const env = {
-    APOLLO_CLIENT_NAME: "Apollo VS Code",
-    APOLLO_CLIENT_VERSION: version,
-    APOLLO_CLIENT_REFERENCE_ID: referenceID
-  };
-
-  const debugOptions = {
-    execArgv: ["--nolazy", "--inspect=6009"],
-    env
-  };
-  let schemaTagItems: QuickPickItem[] = [];
-
-  const serverOptions: ServerOptions = {
-    run: {
-      module: serverModule,
-      transport: TransportKind.ipc,
-      options: { env }
-    },
-    debug: {
-      module: serverModule,
-      transport: TransportKind.ipc,
-      options: debugOptions
-    }
-  };
-
-  const outputChannel = window.createOutputChannel("Apollo GraphQL");
-
-  const clientOptions: LanguageClientOptions = {
-    documentSelector: [
-      "graphql",
-      "javascript",
-      "typescript",
-      "javascriptreact",
-      "typescriptreact",
-      "python"
-    ],
-    synchronize: {
-      fileEvents: [
-        workspace.createFileSystemWatcher("**/apollo.config.js"),
-        workspace.createFileSystemWatcher("**/package.json"),
-        workspace.createFileSystemWatcher("**/*.{graphql,js,ts,jsx,tsx,py}")
-      ]
-    },
-    outputChannel
-  };
-
-  const client = new LanguageClient(
-    "apollographql",
-    "Apollo GraphQL",
-    serverOptions,
-    clientOptions
-  );
-  const statusBar = new StatusBar();
-
+  // Initialize language client
+  client = getLanguageServerClient(serverModule, outputChannel);
   client.registerProposedFeatures();
-  context.subscriptions.push(client.start());
 
+  // Initialize disposables
+  statusBar = new StatusBar({
+    hasActiveTextEditor: Boolean(window.activeTextEditor)
+  });
+  outputChannel = window.createOutputChannel("Apollo GraphQL");
+  clientDisposable = client.start();
+
+  // Handoff disposables for cleanup
+  context.subscriptions.push(statusBar, outputChannel, clientDisposable);
+
+  // Once client is ready, we can send messages and add listeners for various notifications
   client.onReady().then(() => {
     commands.registerCommand("apollographql/showStats", () => {
       const fileUri = window.activeTextEditor
@@ -110,6 +83,47 @@ export function activate(context: ExtensionContext) {
       printStatsToClientOutputChannel(client, params, version);
       client.outputChannel.show();
     });
+    // For some reason, non-strings can only be sent in one direction. For now, messages
+    // coming from the language server just need to be stringified and parsed.
+    client.onNotification(
+      "apollographql/configFilesFound",
+      (params: string) => {
+        const response = JSON.parse(params) as Array<any> | ErrorShape;
+
+        const hasActiveTextEditor = Boolean(window.activeTextEditor);
+        if (isError(response)) {
+          statusBar.showWarningState({
+            hasActiveTextEditor,
+            tooltip: "Configuration Error"
+          });
+          outputChannel.append(response.stack);
+
+          const infoButtonText = "More Info";
+          window
+            .showInformationMessage(response.message, infoButtonText)
+            .then(clicked => {
+              if (clicked === infoButtonText) {
+                outputChannel.show();
+              }
+            });
+        } else if (Array.isArray(response)) {
+          if (response.length === 0) {
+            statusBar.showWarningState({
+              hasActiveTextEditor,
+              tooltip: "No apollo.config.js file found"
+            });
+          } else {
+            statusBar.showLoadedState({ hasActiveTextEditor });
+          }
+        } else {
+          throw TypeError(
+            `Invalid response type in message apollographql/configFilesFound:\n${JSON.stringify(
+              response
+            )}`
+          );
+        }
+      }
+    );
 
     commands.registerCommand("apollographql/reloadService", () => {
       // wipe out tags when reloading
@@ -208,4 +222,10 @@ export function activate(context: ExtensionContext) {
       }
     });
   });
+}
+
+export function deactivate(): Thenable<void> | void {
+  if (client) {
+    return client.stop();
+  }
 }

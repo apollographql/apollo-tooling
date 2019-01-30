@@ -143,6 +143,11 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     return this.readyPromise;
   }
 
+  public updateConfig(config: ApolloConfig) {
+    this.config = config;
+    return this.initialize();
+  }
+
   public resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
     this.lastLoadDate = +new Date();
     return this.schemaProvider.resolveSchema(config);

@@ -6,7 +6,8 @@ import {
   ProposedFeatures,
   TextDocuments,
   FileChangeType,
-  ServerCapabilities
+  ServerCapabilities,
+  WorkspaceFolder
 } from "vscode-languageserver";
 import { QuickPickItem } from "vscode";
 import { GraphQLWorkspace } from "./workspace";
@@ -16,6 +17,12 @@ import { LanguageServerLoadingHandler } from "./loadingHandler";
 const connection = createConnection(ProposedFeatures.all);
 
 let hasWorkspaceFolderCapability = false;
+
+// Awaitable promise for sending messages before the connection is initialized
+let initializeConnection: () => void;
+const whenConnectionInitialized: Promise<void> = new Promise(
+  resolve => (initializeConnection = resolve)
+);
 
 const workspace = new GraphQLWorkspace(
   new LanguageServerLoadingHandler(connection),
@@ -43,13 +50,23 @@ workspace.onSchemaTags(params => {
   );
 });
 
-connection.onInitialize(async params => {
-  let capabilities = params.capabilities;
+workspace.onConfigFilesFound(async params => {
+  await whenConnectionInitialized;
+
+  connection.sendNotification(
+    "apollographql/configFilesFound",
+    params instanceof Error
+      ? // Can't stringify Errors, just results in "{}"
+        JSON.stringify({ message: params.message, stack: params.stack })
+      : JSON.stringify(params)
+  );
+});
+
+connection.onInitialize(async ({ capabilities, workspaceFolders }) => {
   hasWorkspaceFolderCapability = !!(
     capabilities.workspace && capabilities.workspace.workspaceFolders
   );
 
-  const workspaceFolders = params.workspaceFolders;
   if (workspaceFolders) {
     // We wait until all projects are added, because after `initialize` returns we can get additional requests
     // like `textDocument/codeLens`, and that way these can await `GraphQLProject#whenReady` to make sure
@@ -82,6 +99,7 @@ connection.onInitialize(async params => {
 });
 
 connection.onInitialized(async () => {
+  initializeConnection();
   if (hasWorkspaceFolderCapability) {
     connection.workspace.onDidChangeWorkspaceFolders(async event => {
       await Promise.all([
@@ -108,48 +126,25 @@ documents.onDidChangeContent(params => {
 });
 
 connection.onDidChangeWatchedFiles(params => {
-  for (const change of params.changes) {
-    const uri = change.uri;
-
-    // FIXME: Re-enable updating projects when config files change.
-
-    // const filePath = Uri.parse(change.uri).fsPath;
-    // if (
-    //   filePath.endsWith("apollo.config.js") ||
-    //   filePath.endsWith("package.json")
-    // ) {
-    //   const projectForConfig = Array.from(
-    //     workspace.projectsByFolderUri.values()
-    //   )
-    //     .flatMap(arr => arr)
-    //     .find(proj => {
-    //       return proj.configFile === filePath;
-    //     });
-
-    //   if (projectForConfig) {
-    //     const newConfig = findAndLoadConfig(
-    //       dirname(projectForConfig.configFile),
-    //       false,
-    //       true
-    //     );
-
-    //     if (newConfig) {
-    //       projectForConfig.updateConfig(newConfig);
-    //     }
-    //   }
-    // }
+  for (const { uri, type } of params.changes) {
+    if (
+      uri.endsWith("apollo.config.js") ||
+      uri.endsWith("package.json") ||
+      uri.endsWith(".env")
+    ) {
+      workspace.reloadProjectForConfig(uri);
+    }
 
     // Don't respond to changes in files that are currently open,
     // because we'll get content change notifications instead
-
-    if (change.type === FileChangeType.Changed) {
+    if (type === FileChangeType.Changed) {
       continue;
     }
 
     const project = workspace.projectForFile(uri);
     if (!project) continue;
 
-    switch (change.type) {
+    switch (type) {
       case FileChangeType.Created:
         project.fileDidChange(uri);
         break;
