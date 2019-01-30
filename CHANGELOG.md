@@ -7,6 +7,13 @@
   - Improve client:check output [#934](https://github.com/apollographql/apollo-tooling/pull/934)
 - `apollo-language-server`
   - Replace checkOperations mutation with new validateOperations mutation [#934](https://github.com/apollographql/apollo-tooling/pull/934)
+  - Include config files into a project's fileSet [#897](https://github.com/apollographql/apollo-tooling/pull/897)
+  - Add hook into workspace for communicating out when configs are loaded or when errors are found [#897](https://github.com/apollographql/apollo-tooling/pull/897)
+  - Add fn to workspace for reloading a project with a given config URI [#897](https://github.com/apollographql/apollo-tooling/pull/897)
+  - Reload project when config file is changed [#897](https://github.com/apollographql/apollo-tooling/pull/897)
+  - Update error handling from within the server (send as message). This message can be listened for and handled by the consumer [#897](https://github.com/apollographql/apollo-tooling/pull/897)
+- `vscode-apollo`
+  - Update statusBar to reflect new possible "warning" states [#897](https://github.com/apollographql/apollo-tooling/pull/897)
 
 ## `apollo@2.3.1`
 
