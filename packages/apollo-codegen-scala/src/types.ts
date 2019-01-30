@@ -85,9 +85,7 @@ export function typeNameFromGraphQLType(
   }
 
   return isOptional
-    ? isInputObject
-      ? `com.apollographql.scalajs.OptionalInput[${typeName}]`
-      : `com.apollographql.scalajs.OptionalResult[${typeName}]`
+    ? `com.apollographql.scalajs.OptionalValue[${typeName}]`
     : typeName;
 }
 
