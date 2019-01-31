@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.3.1 darwin-x64 node-v8.11.1
+apollo/2.4.0 darwin-x64 node-v10.10.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -56,7 +56,7 @@ USAGE
 
 OPTIONS
   -c, --config=config                    Path to your Apollo config file
-  -t, --tag=tag                          [default: current] The published tag to check this client against
+  -t, --tag=tag                          The published tag to check this client against
   --clientName=clientName                Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
