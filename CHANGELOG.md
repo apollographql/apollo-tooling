@@ -4,11 +4,10 @@
 
 ## `apollo@2.4.0`, `apollo-language-server@1.4.0`, `vscode-apollo@1.4.1`
 
-- `apollo tooling`
-  - Fix a bug where tagging a build will cause the tool to not be able to figure out where the git repo is [#944](https://github.com/apollographql/apollo-tooling/pull/944)
 - `apollo` 2.4.0
   - Fix configuration loading and schema tag support [#925](https://github.com/apollographql/apollo-tooling/pull/925)
   - Improve client:check output [#934](https://github.com/apollographql/apollo-tooling/pull/934)
+  - Fix a bug where tagging a build will cause the tool to not be able to figure out where the git repo is [#944](https://github.com/apollographql/apollo-tooling/pull/944)
 - `apollo-language-server` 1.4.0
   - Replace checkOperations mutation with new validateOperations mutation [#934](https://github.com/apollographql/apollo-tooling/pull/934)
   - Include config files into a project's fileSet [#897](https://github.com/apollographql/apollo-tooling/pull/897)
