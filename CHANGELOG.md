@@ -2,7 +2,9 @@
 
 ## Upcoming
 
-- `apollo`
+## `apollo@2.4.1`
+
+- `apollo` 2.4.1
   - Bump the apollo-engine-reporting version [#950](https://github.com/apollographql/apollo-tooling/pull/950)
 
 ## `apollo@2.4.0`, `apollo-language-server@1.4.0`, `vscode-apollo@1.4.1`
