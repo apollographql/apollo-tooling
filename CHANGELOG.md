@@ -2,17 +2,19 @@
 
 ## Upcoming
 
-- `apollo`
+## `apollo@2.4.0`, `apollo-language-server@1.4.0`, `vscode-apollo@1.4.1`
+
+- `apollo` 2.4.0
   - Fix configuration loading and schema tag support [#925](https://github.com/apollographql/apollo-tooling/pull/925)
   - Improve client:check output [#934](https://github.com/apollographql/apollo-tooling/pull/934)
-- `apollo-language-server`
+- `apollo-language-server` 1.4.0
   - Replace checkOperations mutation with new validateOperations mutation [#934](https://github.com/apollographql/apollo-tooling/pull/934)
   - Include config files into a project's fileSet [#897](https://github.com/apollographql/apollo-tooling/pull/897)
   - Add hook into workspace for communicating out when configs are loaded or when errors are found [#897](https://github.com/apollographql/apollo-tooling/pull/897)
   - Add fn to workspace for reloading a project with a given config URI [#897](https://github.com/apollographql/apollo-tooling/pull/897)
   - Reload project when config file is changed [#897](https://github.com/apollographql/apollo-tooling/pull/897)
   - Update error handling from within the server (send as message). This message can be listened for and handled by the consumer [#897](https://github.com/apollographql/apollo-tooling/pull/897)
-- `vscode-apollo`
+- `vscode-apollo` 1.4.1
   - Update statusBar to reflect new possible "warning" states [#897](https://github.com/apollographql/apollo-tooling/pull/897)
 
 ## `apollo@2.3.1`
