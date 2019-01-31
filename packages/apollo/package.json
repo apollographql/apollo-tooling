@@ -44,7 +44,7 @@
     "apollo-codegen-scala": "file:../apollo-codegen-scala",
     "apollo-codegen-swift": "file:../apollo-codegen-swift",
     "apollo-codegen-typescript": "file:../apollo-codegen-typescript",
-    "apollo-engine-reporting": "0.0.2",
+    "apollo-engine-reporting": "0.2.1",
     "apollo-env": "file:../apollo-env",
     "apollo-language-server": "file:../apollo-language-server",
     "chalk": "^2.4.1",
