@@ -1,3 +1,9 @@
 {
-  "extends": ["apollo-open-source"]
+  "extends": ["apollo-open-source"],
+  "packageRules": [
+    {
+      "paths": ["packages/apollo/package.json"],
+      "rangeStrategy": "pin"
+    }
+  ]
 }
