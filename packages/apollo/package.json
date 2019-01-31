@@ -47,6 +47,7 @@
     "apollo-engine-reporting": "0.2.1",
     "apollo-env": "file:../apollo-env",
     "apollo-language-server": "file:../apollo-language-server",
+    "apollo-server-core": "^2.3.4",
     "chalk": "^2.4.1",
     "cli-ux": "^4.3.0",
     "env-ci": "^3.0.0",
@@ -54,17 +55,13 @@
     "git-parse": "^1.0.3",
     "git-rev-sync": "^1.12.0",
     "glob": "^7.1.2",
-    "graphql": "^14.0.2",
+    "graphql": "14.0.2",
     "graphql-tag": "^2.9.2",
     "heroku-cli-util": "^8.0.9",
     "listr": "^0.14.1",
     "lodash": "^4.17.10",
-    "rimraf": "^2.6.2",
     "tty": "^1.0.1",
     "vscode-uri": "^1.0.6"
-  },
-  "devDependencies": {
-    "typescript": "3.1.6"
   },
   "oclif": {
     "commands": "./lib/commands",

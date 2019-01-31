@@ -23,15 +23,15 @@
     "test": "node ./lib/testRunner/vscode-test-script.js"
   },
   "engines": {
-    "vscode": "^1.28.0"
+    "vscode": "^1.30"
   },
   "dependencies": {
     "apollo-env": "file:../apollo-env",
     "apollo-language-server": "file:../apollo-language-server",
     "dotenv": "^6.1.0",
     "event-stream": "=3.3.4",
-    "vscode": "^1.1.22",
-    "vscode-languageclient": "^5.1.1"
+    "vscode": "^1.1.21",
+    "vscode-languageclient": "^5.2.1"
   },
   "publisher": "apollographql",
   "categories": [

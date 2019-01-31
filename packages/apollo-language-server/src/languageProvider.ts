@@ -296,7 +296,7 @@ ${argumentNode.description ? argumentNode.description : ""}
     uri: DocumentUri,
     position: Position,
     _token: CancellationToken
-  ): Promise<Definition> {
+  ): Promise<Definition | null> {
     const project = this.workspace.projectForFile(uri);
     if (!(project && project instanceof GraphQLClientProject)) return null;
 
