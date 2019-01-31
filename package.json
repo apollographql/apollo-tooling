@@ -82,7 +82,7 @@
     "lint-staged": "8.1.1",
     "memfs": "2.15.0",
     "nock": "10.0.6",
-    "prettier": "1.16.1",
+    "prettier": "1.16.3",
     "rimraf": "^2.6.3",
     "symlink-dir": "2.0.2",
     "ts-jest": "23.10.5",
