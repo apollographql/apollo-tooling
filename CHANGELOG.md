@@ -229,7 +229,7 @@
   - :bug: Fixes & Changes
     - Fixed config file resolution [#591](https://github.com/apollographql/apollo-tooling/pull/591)
   - :boom: Breaking Changes
-    - Introduced a new `apollo.config.js` format []()
+    - Introduced a new `apollo.config.js` format [commit](https://github.com/apollographql/apollo-tooling/commit/a8bb35627bb2a9cd397a98f485a271447b713a6f)
     - Changed format of `queries:extract` manifest to be more extensible [#611](https://github.com/apollographql/apollo-tooling/pull/611)
     - Changed manifest hash encoding to SHA-256 instead of SHA-512 [#611](https://github.com/apollographql/apollo-tooling/pull/611)
     - Deprecated apollo `schema:*`, and `codegen:*` commands and aliased usage to new commands
