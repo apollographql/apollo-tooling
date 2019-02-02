@@ -350,13 +350,17 @@ export class GraphQLClientProject extends GraphQLProject {
     const filtered = Object.create(null);
     for (const operationName in current) {
       const document = current[operationName];
+
       let serviceOnly: DocumentNode = removeDirectiveAnnotatedFields(
         removeDirectives(document, clientOnlyDirectives as string[]),
         clientSchemaDirectives as string[]
       );
+
       if (addTypename)
         serviceOnly = withTypenameFieldAddedWhereNeeded(serviceOnly);
-      if (serviceOnly.definitions.length) {
+      // In the case we've made a document empty by filtering client directives,
+      // we don't want to include that in the result we pass on.
+      if (serviceOnly.definitions.filter(Boolean).length) {
         filtered[operationName] = serviceOnly;
       }
     }
