@@ -4,6 +4,10 @@
     {
       "paths": ["packages/apollo/package.json"],
       "rangeStrategy": "pin"
+    },
+    {
+      "packageNames": ["@oclif/config"],
+      "rangeStrategy": "pin"
     }
   ]
 }
