@@ -2,7 +2,9 @@
 
 ## Upcoming
 
-- `apollo-language-server`
+## `apollo-language-server@1.4.1`
+
+- `apollo-language-server` 1.4.1
   - Fix edge case for empty operations [#959](https://github.com/apollographql/apollo-tooling/pull/959)
 
 ## `apollo@2.4.1`
