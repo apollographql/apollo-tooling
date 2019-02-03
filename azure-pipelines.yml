@@ -71,3 +71,29 @@ jobs:
       - script: |
           npm run azure
         displayName: "npm ci && test"
+
+  - job: Build_VSCode
+
+    pool:
+      vmImage: "ubuntu 16.04"
+
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "10.x"
+        displayName: "Install Node.js"
+
+      - script: |
+          npm run package-extension
+        displayName: "package-extension"
+
+      - task: CopyFiles@2
+        inputs:
+          sourceFolder: "./packages/vscode-apollo"
+          contents: "*.vsix"
+          targetFolder: "$(Build.ArtifactStagingDirectory)"
+
+      - task: PublishArtifacts@1
+        inputs:
+          pathtoPublish: "$(Build.ArtifactStagingDirectory)"
+          artifactName: "vsix"
