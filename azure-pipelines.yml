@@ -93,7 +93,7 @@ jobs:
           contents: "*.vsix"
           targetFolder: "$(Build.ArtifactStagingDirectory)"
 
-      - task: PublishArtifacts@1
+      - task: PublishBuildArtifacts@1
         inputs:
           pathtoPublish: "$(Build.ArtifactStagingDirectory)"
           artifactName: "vsix"
