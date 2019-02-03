@@ -2,6 +2,14 @@
 
 ## Upcoming
 
+## `apollo@2.4.3`
+
+- `apollo-env@0.3.1`
+  - Fix core-js dependency by pinning to `3.0.0-beta.3` [#961](https://github.com/apollographql/apollo-tooling/pull/961)
+- `apollo-language-server@1.4.2`
+- `apollo@2.4.3`
+- `vscode-apollo@1.4.4`
+
 ## `apollo-language-server@1.4.1`
 
 - `apollo-language-server` 1.4.1
