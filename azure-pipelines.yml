@@ -92,8 +92,10 @@ jobs:
           sourceFolder: "./packages/vscode-apollo"
           contents: "*.vsix"
           targetFolder: "$(Build.ArtifactStagingDirectory)"
+        condition: succeededOrFailed()
 
       - task: PublishBuildArtifacts@1
         inputs:
           pathtoPublish: "$(Build.ArtifactStagingDirectory)"
           artifactName: "vsix"
+        condition: succeededOrFailed()
