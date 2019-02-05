@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@apollographql/apollo-tools": "file:../apollo-tools",
+    "@atom/watcher": "^1.3.1-0",
     "@oclif/command": "^1.4.21",
     "@oclif/config": "1.12.0",
     "@oclif/plugin-autocomplete": "^0.1.0",
@@ -51,7 +52,6 @@
     "chalk": "^2.4.1",
     "cli-ux": "^4.3.0",
     "env-ci": "^3.0.0",
-    "gaze": "^1.1.3",
     "git-parse": "^1.0.3",
     "git-rev-sync": "^1.12.0",
     "glob": "^7.1.2",

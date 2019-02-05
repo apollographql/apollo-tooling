@@ -3,7 +3,7 @@ import { flags } from "@oclif/command";
 import * as path from "path";
 import { Kind, DocumentNode } from "graphql";
 import * as tty from "tty";
-import { Gaze } from "gaze";
+import { watchPath } from "@atom/watcher";
 import URI from "vscode-uri";
 
 import { TargetType, default as generate } from "../../generate";
@@ -213,14 +213,30 @@ export default class Generate extends ClientCommand {
 
     if (watch) {
       await run().catch(() => {});
-      const watcher = new Gaze(this.project.config.client.includes);
-      watcher.on("all", (event, file) => {
-        // console.log("\nChange detected, generating types...");
-        this.project.fileDidChange(URI.file(file).toString());
+
+      // Invoke a callback with each filesystem event that occurs under the project's root
+      const watcher = await watchPath(
+        this.project.rootURI.fsPath,
+        {},
+        events => {
+          // events are batched
+          for (const event of events) {
+            // since we can't watch a glob, we just check the path against the project
+            if (!this.project.includesFile(event.path)) return;
+            this.project.fileDidChange(URI.file(event.path).toString());
+          }
+        }
+      );
+
+      // Report errors that occur after the watch root has been started.
+      watcher.onDidError(err => {
+        console.error(`An error occurred while watching files: ${err}`);
       });
+
       if (tty.isatty((process.stdin as any).fd)) {
         await waitForKey();
-        watcher.close();
+        watcher.dispose();
+        process.exit(0);
       }
       return;
     } else {
