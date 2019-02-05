@@ -39,7 +39,6 @@
     "minimatch": "^3.0.4",
     "minimist": "^1.2.0",
     "moment": "^2.22.2",
-    "recursive-readdir": "^2.2.2",
     "subscriptions-transport-ws": "^0.9.15",
     "vscode-languageserver": "^5.1.0",
     "vscode-uri": "^1.0.6",
