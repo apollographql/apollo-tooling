@@ -163,7 +163,7 @@ export function classDeclarationForOperation(
           return { name, propertyName, type, typeName, isOptional };
         });
 
-        inputLikeDeclaration(generator, {
+        dataContainerDeclaration(generator, {
           name: "Variables",
           properties
         });
@@ -258,28 +258,6 @@ export function traitDeclarationForSelectionSet(
     return alwaysDefined;
   });
 
-  traitDeclaration(
-    generator,
-    {
-      traitName: traitName,
-      superclasses: [
-        "scala.scalajs.js.Object",
-        ...(viewableAs ? [viewableAs.traitName] : []),
-        ...(fragmentSpreadSuperClasses || []),
-        ...(parentFragments || [])
-      ],
-      annotations: ["scala.scalajs.js.native"]
-    },
-    () => {
-      properties.forEach(p => {
-        propertyDeclaration(generator, {
-          propertyName: p.responseName,
-          typeName: p.typeName
-        });
-      });
-    }
-  );
-
   // add types and implicit conversions
   if (inlineFragments && inlineFragments.length > 0) {
     inlineFragments.forEach(inlineFragment => {
@@ -296,82 +274,92 @@ export function traitDeclarationForSelectionSet(
     });
   }
 
-  objectDeclaration(generator, { objectName: traitName }, () => {
-    if (possibleTypes) {
-      generator.printNewlineIfNeeded();
-      generator.printOnNewline("val possibleTypes = scala.collection.Set(");
-      generator.print(
-        join(Array.from(possibleTypes).map(type => `"${String(type)}"`), ", ")
-      );
-      generator.print(")");
-    }
-
-    generator.printOnNewline(
-      `implicit class ViewExtensions(private val orig: ${traitName}) extends AnyVal`
-    );
-    generator.withinBlock(() => {
-      if (inlineFragments && inlineFragments.length > 0) {
-        inlineFragments.forEach(inlineFragment => {
-          const fragClass = traitNameForInlineFragment(inlineFragment);
-          generator.printOnNewline(`def as${inlineFragment.typeCondition}`);
-          generator.print(`: Option[${fragClass}] =`);
-          generator.withinBlock(() => {
-            generator.printOnNewline(
-              `if (${fragClass}.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[${fragClass}]) else None`
-            );
-          });
-        });
+  dataContainerDeclaration(generator, {
+    name: traitName,
+    properties,
+    extraSuperClasses: [
+      ...(viewableAs ? [viewableAs.traitName] : []),
+      ...(fragmentSpreadSuperClasses || []),
+      ...(parentFragments || [])
+    ],
+    insideCompanion: () => {
+      if (possibleTypes) {
+        generator.printNewlineIfNeeded();
+        generator.printOnNewline("val possibleTypes = scala.collection.Set(");
+        generator.print(
+          join(Array.from(possibleTypes).map(type => `"${String(type)}"`), ", ")
+        );
+        generator.print(")");
       }
 
-      if (fragmentSpreads) {
-        fragmentSpreads.forEach(s => {
-          const fragment = generator.context.fragments[s];
-          const alwaysDefined = isTypeProperSuperTypeOf(
-            generator.context.schema,
-            fragment.typeCondition,
-            parentType
-          );
-          if (!alwaysDefined) {
-            generator.printOnNewline(`def as${s}`);
-            generator.print(`: Option[${s}] =`);
+      generator.printNewlineIfNeeded();
+      generator.printOnNewline(
+        `implicit class ViewExtensions(private val orig: ${traitName}) extends AnyVal`
+      );
+      generator.withinBlock(() => {
+        if (inlineFragments && inlineFragments.length > 0) {
+          inlineFragments.forEach(inlineFragment => {
+            const fragClass = traitNameForInlineFragment(inlineFragment);
+            generator.printOnNewline(`def as${inlineFragment.typeCondition}`);
+            generator.print(`: Option[${fragClass}] =`);
             generator.withinBlock(() => {
               generator.printOnNewline(
-                `if (${s}.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[${s}]) else None`
+                `if (${fragClass}.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[${fragClass}]) else None`
               );
             });
-          }
-        });
-      }
-    });
+          });
+        }
 
-    const fragments = (fragmentSpreads || []).map(
-      f => generator.context.fragments[f]
-    );
-    fields
-      .filter(field => isCompositeType(getNamedType(field.type)))
-      .forEach(field => {
-        traitDeclarationForSelectionSet(generator, {
-          traitName: traitNameForPropertyName(field.responseName),
-          parentType: getNamedType(field.type) as GraphQLCompositeType,
-          fields: field.fields || [],
-          inlineFragments: field.inlineFragments,
-          fragmentSpreads: field.fragmentSpreads,
-          parentFragments: fragments
-            .filter(f => {
-              return f.fields.some(o => field.responseName == o.responseName);
-            })
-            .map(f => {
-              return (
-                traitNameForFragmentName(f.fragmentName) +
-                "." +
-                traitNameForPropertyName(field.responseName)
-              );
-            })
-        });
+        if (fragmentSpreads) {
+          fragmentSpreads.forEach(s => {
+            const fragment = generator.context.fragments[s];
+            const alwaysDefined = isTypeProperSuperTypeOf(
+              generator.context.schema,
+              fragment.typeCondition,
+              parentType
+            );
+            if (!alwaysDefined) {
+              generator.printOnNewline(`def as${s}`);
+              generator.print(`: Option[${s}] =`);
+              generator.withinBlock(() => {
+                generator.printOnNewline(
+                  `if (${s}.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[${s}]) else None`
+                );
+              });
+            }
+          });
+        }
       });
 
-    if (objectClosure) {
-      objectClosure();
+      const fragments = (fragmentSpreads || []).map(
+        f => generator.context.fragments[f]
+      );
+      fields
+        .filter(field => isCompositeType(getNamedType(field.type)))
+        .forEach(field => {
+          traitDeclarationForSelectionSet(generator, {
+            traitName: traitNameForPropertyName(field.responseName),
+            parentType: getNamedType(field.type) as GraphQLCompositeType,
+            fields: field.fields || [],
+            inlineFragments: field.inlineFragments,
+            fragmentSpreads: field.fragmentSpreads,
+            parentFragments: fragments
+              .filter(f => {
+                return f.fields.some(o => field.responseName == o.responseName);
+              })
+              .map(f => {
+                return (
+                  traitNameForFragmentName(f.fragmentName) +
+                  "." +
+                  traitNameForPropertyName(field.responseName)
+                );
+              })
+          });
+        });
+
+      if (objectClosure) {
+        objectClosure();
+      }
     }
   });
 }
@@ -438,30 +426,34 @@ function traitDeclarationForInputObjectType(
     )
   );
 
-  inputLikeDeclaration(generator, {
+  dataContainerDeclaration(generator, {
     name,
     properties,
     description: description || undefined
   });
 }
 
-function inputLikeDeclaration(
+function dataContainerDeclaration(
   generator: CodeGenerator<LegacyCompilerContext, any>,
   {
     name,
     properties,
-    description
+    extraSuperClasses,
+    description,
+    insideCompanion
   }: {
     name: string;
     properties: Property[];
+    extraSuperClasses?: string[];
     description?: string;
+    insideCompanion?: () => void;
   }
 ) {
   traitDeclaration(
     generator,
     {
       traitName: name,
-      superclasses: ["scala.scalajs.js.Object"],
+      superclasses: ["scala.scalajs.js.Object", ...(extraSuperClasses || [])],
       annotations: ["scala.scalajs.js.native"],
       description: description || undefined
     },
@@ -490,7 +482,7 @@ function inputLikeDeclaration(
               name: p.propertyName,
               type: p.typeName,
               defaultValue: p.isOptional
-                ? "com.apollographql.scalajs.OptionalInput.empty"
+                ? "com.apollographql.scalajs.OptionalValue.empty"
                 : ""
             };
           })
@@ -504,6 +496,58 @@ function inputLikeDeclaration(
           );
         }
       );
+
+      methodDeclaration(
+        generator,
+        {
+          methodName: "unapply",
+          params: [
+            {
+              name: "value",
+              type: name
+            }
+          ]
+        },
+        () => {
+          const propertiesExtracted = properties
+            .map(p => `value.${p.propertyName}`)
+            .join(", ");
+
+          generator.printOnNewline(`Some((${propertiesExtracted}))`);
+        }
+      );
+
+      generator.printNewlineIfNeeded();
+      generator.printOnNewline(
+        `implicit class CopyExtensions(private val orig: ${name}) extends AnyVal`
+      );
+      generator.withinBlock(() => {
+        methodDeclaration(
+          generator,
+          {
+            methodName: "copy",
+            params: properties.map(p => {
+              return {
+                name: p.propertyName,
+                type: p.typeName,
+                defaultValue: `orig.${p.propertyName}`
+              };
+            })
+          },
+          () => {
+            const propertiesIn = properties
+              .map(p => `${p.propertyName} = ${p.propertyName}`)
+              .join(", ");
+            generator.printOnNewline(
+              `scala.scalajs.js.Dynamic.literal(${propertiesIn}).asInstanceOf[${name}]`
+            );
+          }
+        );
+      });
+
+      if (insideCompanion) {
+        insideCompanion();
+      }
     }
   );
 }

@@ -1,6 +1,8 @@
 # Changelog
 
 ## Upcoming
+- `apollo-codegen-scala`
+  - Generate additional case-class like APIs for data containers [#943](https://github.com/apollographql/apollo-tooling/pull/943)
 
 ## `apollo@2.4.3`
 

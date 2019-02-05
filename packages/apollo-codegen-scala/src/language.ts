@@ -31,7 +31,6 @@ export function packageDeclaration(
 ) {
   generator.printNewlineIfNeeded();
   generator.printOnNewline(`package ${pkg}`);
-  generator.popScope();
 }
 
 export function objectDeclaration(
@@ -120,12 +119,12 @@ export function methodDeclaration(
     .join(", ");
 
   generator.printOnNewline(
-    `def ${methodName}(${paramsSection})` + (closure ? " = " : "")
+    `def ${methodName}(${paramsSection})` + (closure ? " =" : "")
   );
+
   if (closure) {
     generator.withinBlock(closure);
   }
-  generator.popScope();
 }
 
 export function propertyDeclaration(
