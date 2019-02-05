@@ -15,11 +15,11 @@
   "main": "./lib/extension",
   "types": "lib/index.d.ts",
   "scripts": {
-    "preinstall": "rm -rf node_modules && mkdir node_modules",
+    "preinstall": "npx rimraf node_modules && mkdir node_modules",
     "postinstall": "npm run update-vscode && npm run create-server-symlink",
     "update-vscode": "node ../../node_modules/vscode/bin/install",
-    "create-server-symlink": "rimraf node_modules && mkdir node_modules && node create-server-symlink.js",
-    "package-extension": "rimraf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink",
+    "create-server-symlink": "npx rimraf node_modules && mkdir node_modules && node create-server-symlink.js",
+    "package-extension": "npx rimraf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink",
     "test": "node ./lib/testRunner/vscode-test-script.js"
   },
   "engines": {
