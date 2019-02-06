@@ -288,6 +288,12 @@ export const loadConfig = async ({
     ApolloConfigFormat
   >;
 
+  if (loadedConfig && loadedConfig.filepath.endsWith("package.json")) {
+    console.warn(
+      'The "apollo" package.json configuration key will no longer be supported in Apollo v3. Please use the apollo.config.js file for Apollo project configuration. For more information, see: https://bit.ly/2ByILPj'
+    );
+  }
+
   if (requireConfig && !loadedConfig) {
     throw new Error(
       `No Apollo config found for project. For more information, please refer to:

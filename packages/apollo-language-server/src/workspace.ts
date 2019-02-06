@@ -113,21 +113,6 @@ export class GraphQLWorkspace {
       ignore: "**/node_modules/**"
     });
 
-    apolloConfigFiles.push(
-      ...fg
-        .sync("**/package.json", {
-          cwd: URI.parse(folder.uri).fsPath,
-          absolute: true,
-          ignore: "**/node_modules/**"
-        })
-        // Every package.json file _potentially_ has an apollo config, but we can filter out
-        // the ones that don't before we even call loadConfig and send cosmiconfig looking.
-        .filter(packageFile => {
-          const { apollo } = require(packageFile);
-          return Boolean(apollo);
-        })
-    );
-
     // only have unique possible folders
     const apolloConfigFolders = new Set<string>(apolloConfigFiles.map(dirname));
 
