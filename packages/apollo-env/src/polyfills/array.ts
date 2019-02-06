@@ -1,4 +1,5 @@
-import "core-js/proposals/array-flat-and-flat-map";
+import "core-js/features/array/flat";
+import "core-js/features/array/flat-map";
 
 declare global {
   interface Array<T> {
