@@ -6,8 +6,7 @@ import {
   ProposedFeatures,
   TextDocuments,
   FileChangeType,
-  ServerCapabilities,
-  WorkspaceFolder
+  ServerCapabilities
 } from "vscode-languageserver";
 import { QuickPickItem } from "vscode";
 import { GraphQLWorkspace } from "./workspace";
@@ -127,11 +126,7 @@ documents.onDidChangeContent(params => {
 
 connection.onDidChangeWatchedFiles(params => {
   for (const { uri, type } of params.changes) {
-    if (
-      uri.endsWith("apollo.config.js") ||
-      uri.endsWith("package.json") ||
-      uri.endsWith(".env")
-    ) {
+    if (uri.endsWith("apollo.config.js") || uri.endsWith(".env")) {
       workspace.reloadProjectForConfig(uri);
     }
 
