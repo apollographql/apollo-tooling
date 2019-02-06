@@ -2,6 +2,11 @@
 
 ## Upcoming
 
+- `apollo`
+  - Support validation parameters for service:check [#953](https://github.com/apollographql/apollo-tooling/pull/953)
+- `apollo-language-server`
+  - Better error handling in ApolloEngineClient [#953](https://github.com/apollographql/apollo-tooling/pull/953)
+
 ## `apollo@2.4.4`, `apollo-codegen-scala@0.33.0`
 
 - `apollo@2.4.4`

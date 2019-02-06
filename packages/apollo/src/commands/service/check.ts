@@ -2,9 +2,9 @@ import { flags } from "@oclif/command";
 import { table } from "heroku-cli-util";
 import { introspectionFromSchema } from "graphql";
 import chalk from "chalk";
-
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
+import { validateHistoricParams } from "../../utils";
 
 // TODO These types can/should be generated from the engine schema when we
 // dogfood codegen inside of the apollo-tooling repo
@@ -43,8 +43,22 @@ export default class ServiceCheck extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The published tag to check this service against",
-      default: "current"
+      description: "The published tag to check this service against"
+    }),
+    validationPeriod: flags.string({
+      description:
+        "The size of the time window with which to validate the schema against. You may provide a number (in seconds), or an ISO8601 format duration for more granularity (see: https://en.wikipedia.org/wiki/ISO_8601#Durations)",
+      default: "86400"
+    }),
+    queryCountThreshold: flags.integer({
+      description:
+        "Minimum number of requests within the requested time window for a query to be considered.",
+      default: 1
+    }),
+    queryCountThresholdPercentage: flags.integer({
+      description:
+        "Number of requests within the requested time window for a query to be considered, relative to total request count. Expected values are between 0 and 0.05 (minimum 5% of total request volume)",
+      default: 0
     })
   };
 
@@ -57,16 +71,24 @@ export default class ServiceCheck extends ProjectCommand {
             if (!config.name) {
               throw new Error("No service found to link to Engine");
             }
-            const schema = await project.resolveSchema({ tag: flags.tag });
+
+            const tag = flags.tag || config.tag || "current";
+            const schema = await project.resolveSchema({ tag });
             ctx.gitContext = await gitInfo();
+
+            const historicParameters = validateHistoricParams({
+              validationPeriod: flags.validationPeriod,
+              queryCountThreshold: flags.queryCountThreshold,
+              queryCountThresholdPercentage: flags.queryCountThresholdPercentage
+            });
 
             ctx.checkSchemaResult = await project.engine.checkSchema({
               id: config.name,
               schema: introspectionFromSchema(schema).__schema,
               tag: flags.tag,
               gitContext: ctx.gitContext,
-              frontend: flags.frontend || config.engine!.frontend
-              // historicParameters
+              frontend: flags.frontend || config.engine.frontend,
+              historicParameters
             });
           }
         }
