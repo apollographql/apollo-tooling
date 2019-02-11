@@ -4,6 +4,7 @@
 
 - `apollo`
   - Support validation parameters for service:check [#953](https://github.com/apollographql/apollo-tooling/pull/953)
+  - Leverage nullability of validation parameters [#1006](https://github.com/apollographql/apollo-tooling/pull/1006)
 - `apollo-language-server`
   - Better error handling in ApolloEngineClient [#953](https://github.com/apollographql/apollo-tooling/pull/953)
 - `vscode-apollo`
