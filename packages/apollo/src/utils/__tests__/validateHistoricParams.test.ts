@@ -47,6 +47,35 @@ describe("validateHistoricParams", () => {
       })
     ).toThrow(/--queryCountThresholdPercentage/);
   });
+
+  it("handles partial input", () => {
+    expect(validateHistoricParams({})).toEqual(null);
+
+    expect(
+      validateHistoricParams({
+        validationPeriod: "P1D"
+      })
+    ).toEqual({ to: -0, from: -86400 });
+
+    expect(
+      validateHistoricParams({
+        queryCountThreshold: 1
+      })
+    ).toEqual({ queryCountThreshold: 1 });
+
+    expect(
+      validateHistoricParams({
+        queryCountThresholdPercentage: 50
+      })
+    ).toEqual({ queryCountThresholdPercentage: 0.5 });
+
+    expect(
+      validateHistoricParams({
+        validationPeriod: "P1D",
+        queryCountThresholdPercentage: 50
+      })
+    ).toEqual({ to: -0, from: -86400, queryCountThresholdPercentage: 0.5 });
+  });
 });
 
 function getValidParams(validationPeriod: string) {

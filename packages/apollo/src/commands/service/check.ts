@@ -47,18 +47,15 @@ export default class ServiceCheck extends ProjectCommand {
     }),
     validationPeriod: flags.string({
       description:
-        "The size of the time window with which to validate the schema against. You may provide a number (in seconds), or an ISO8601 format duration for more granularity (see: https://en.wikipedia.org/wiki/ISO_8601#Durations)",
-      default: "86400"
+        "The size of the time window with which to validate the schema against. You may provide a number (in seconds), or an ISO8601 format duration for more granularity (see: https://en.wikipedia.org/wiki/ISO_8601#Durations)"
     }),
     queryCountThreshold: flags.integer({
       description:
-        "Minimum number of requests within the requested time window for a query to be considered.",
-      default: 1
+        "Minimum number of requests within the requested time window for a query to be considered."
     }),
     queryCountThresholdPercentage: flags.integer({
       description:
-        "Number of requests within the requested time window for a query to be considered, relative to total request count. Expected values are between 0 and 0.05 (minimum 5% of total request volume)",
-      default: 0
+        "Number of requests within the requested time window for a query to be considered, relative to total request count. Expected values are between 0 and 0.05 (minimum 5% of total request volume)"
     })
   };
 
@@ -88,7 +85,7 @@ export default class ServiceCheck extends ProjectCommand {
               tag: flags.tag,
               gitContext: ctx.gitContext,
               frontend: flags.frontend || config.engine.frontend,
-              historicParameters
+              ...(historicParameters && { historicParameters })
             });
           }
         }
