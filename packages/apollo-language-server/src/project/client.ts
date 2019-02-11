@@ -95,7 +95,8 @@ export class GraphQLClientProject extends GraphQLProject {
       // if a config doesn't have a uri associated, we can assume the `rootURI` is the project's root.
       rootURI: config.configDirURI || rootURI,
       includes: [...config.client.includes, ".env", "apollo.config.js"],
-      excludes: config.client.excludes
+      excludes: config.client.excludes,
+      configURI: config.configURI
     });
 
     super({ config, fileSet, loadingHandler, clientIdentity });
