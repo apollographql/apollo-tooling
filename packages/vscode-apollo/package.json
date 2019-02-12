@@ -2,7 +2,7 @@
   "name": "vscode-apollo",
   "displayName": "Apollo GraphQL",
   "description": "Rich editor support for GraphQL client and server development that seamlessly integrates with the Apollo platform",
-  "version": "1.4.1",
+  "version": "1.4.5",
   "referenceID": "87197759-7617-40d0-b32e-46d378e907c7",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -15,23 +15,22 @@
   "main": "./lib/extension",
   "types": "lib/index.d.ts",
   "scripts": {
-    "preinstall": "rm -rf node_modules && mkdir node_modules",
+    "preinstall": "npx rimraf node_modules && mkdir node_modules",
     "postinstall": "npm run update-vscode && npm run create-server-symlink",
     "update-vscode": "node ../../node_modules/vscode/bin/install",
-    "create-server-symlink": "rimraf node_modules && mkdir node_modules && node create-server-symlink.js",
-    "package-extension": "rimraf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink",
+    "create-server-symlink": "npx rimraf node_modules && mkdir node_modules && node create-server-symlink.js",
+    "package-extension": "npx rimraf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink",
     "test": "node ./lib/testRunner/vscode-test-script.js"
   },
   "engines": {
-    "vscode": "^1.28.0"
+    "vscode": "^1.30.0"
   },
   "dependencies": {
     "apollo-env": "file:../apollo-env",
     "apollo-language-server": "file:../apollo-language-server",
     "dotenv": "^6.1.0",
     "event-stream": "=3.3.4",
-    "vscode": "^1.1.22",
-    "vscode-languageclient": "^5.1.1"
+    "vscode-languageclient": "^5.2.1"
   },
   "publisher": "apollographql",
   "categories": [
@@ -40,7 +39,7 @@
   ],
   "icon": "images/icon-apollo-teal-400x400.png",
   "activationEvents": [
-    "workspaceContains:**/apollo.config.js"
+    "workspaceContains:**/package.json"
   ],
   "contributes": {
     "configuration": {
@@ -84,7 +83,8 @@
           "source.js",
           "source.ts",
           "source.js.jsx",
-          "source.tsx"
+          "source.tsx",
+          "source.vue"
         ],
         "scopeName": "inline.graphql",
         "path": "./syntaxes/graphql.js.json",

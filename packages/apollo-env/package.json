@@ -1,6 +1,6 @@
 {
   "name": "apollo-env",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "author": "opensource@apollographql.com",
   "license": "MIT",
   "repository": {
@@ -12,7 +12,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "clean": "rimraf lib",
+    "clean": "npx rimraf lib",
     "prebuild": "npm run clean",
     "build": "tsc --project ./src/fetch && node clone-types.js && cd src && tsc"
   },
@@ -20,7 +20,7 @@
     "node": ">=8"
   },
   "dependencies": {
-    "core-js": "^3.0.0-beta.3",
+    "core-js": "3.0.0-beta.13",
     "node-fetch": "^2.2.0"
   }
 }

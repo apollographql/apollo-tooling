@@ -125,15 +125,17 @@ export class ApolloEngineClient extends GraphQLDataSource {
       query: CHECK_SCHEMA,
       variables
     }).then(({ data, errors }) => {
+      // use error logger
+      if (errors) {
+        throw new Error(errors.map(error => error.message).join("\n"));
+      }
+
       if (data && !data.service) {
         throw new Error(
           noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
         );
       }
-      // use error logger
-      if (errors) {
-        throw new Error(errors.map(error => error.message).join("\n"));
-      }
+
       if (!data) {
         throw new Error("Error in request from Engine");
       }
@@ -146,15 +148,17 @@ export class ApolloEngineClient extends GraphQLDataSource {
       query: UPLOAD_SCHEMA,
       variables
     }).then(({ data, errors }) => {
+      // use error logger
+      if (errors) {
+        throw new Error(errors.map(error => error.message).join("\n"));
+      }
+
       if (data && !data.service) {
         throw new Error(
           noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
         );
       }
-      // use error logger
-      if (errors) {
-        throw new Error(errors.map(error => error.message).join("\n"));
-      }
+
       if (!data) {
         throw new Error("Error in request from Engine");
       }
@@ -165,15 +169,17 @@ export class ApolloEngineClient extends GraphQLDataSource {
   public async validateOperations(variables: ValidateOperationsVariables) {
     return this.execute({ query: VALIDATE_OPERATIONS, variables }).then(
       ({ data, errors }) => {
+        // use error logger
+        if (errors) {
+          throw new Error(errors.map(error => error.message).join("\n"));
+        }
+
         if (data && !data.service) {
           throw new Error(
             noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
           );
         }
-        // use error logger
-        if (errors) {
-          throw new Error(errors.map(error => error.message).join("\n"));
-        }
+
         if (!data) {
           throw new Error("Error in request from Engine");
         }
@@ -187,15 +193,17 @@ export class ApolloEngineClient extends GraphQLDataSource {
   public async registerOperations(variables: RegisterOperationsVariables) {
     return this.execute({ query: REGISTER_OPERATIONS, variables }).then(
       ({ data, errors }) => {
+        // use error logger
+        if (errors) {
+          throw new Error(errors.map(error => error.message).join("\n"));
+        }
+
         if (data && !data.service) {
           throw new Error(
             noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
           );
         }
-        // use error logger
-        if (errors) {
-          throw new Error(errors.map(error => error.message).join("\n"));
-        }
+
         if (!data) {
           throw new Error("Error in request from Engine");
         }

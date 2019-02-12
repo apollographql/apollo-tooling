@@ -4,7 +4,6 @@ import {
   PublishDiagnosticsParams
 } from "vscode-languageserver";
 import { QuickPickItem } from "vscode";
-
 import { GraphQLProject, DocumentUri } from "./project/base";
 import { dirname } from "path";
 import * as fg from "glob";
@@ -23,10 +22,12 @@ import URI from "vscode-uri";
 export interface WorkspaceConfig {
   clientIdentity?: ClientIdentity;
 }
+
 export class GraphQLWorkspace {
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
-  private _onDecorations?: (any: any) => void;
+  private _onDecorations?: NotificationHandler<any>;
   private _onSchemaTags?: NotificationHandler<[ServiceID, SchemaTag[]]>;
+  private _onConfigFilesFound?: NotificationHandler<ApolloConfig[]>;
 
   private projectsByFolderUri: Map<string, GraphQLProject[]> = new Map();
 
@@ -39,7 +40,7 @@ export class GraphQLWorkspace {
     this._onDiagnostics = handler;
   }
 
-  onDecorations(handler: (any: any) => void) {
+  onDecorations(handler: NotificationHandler<any>) {
     this._onDecorations = handler;
   }
 
@@ -47,7 +48,17 @@ export class GraphQLWorkspace {
     this._onSchemaTags = handler;
   }
 
-  private createProject(config: ApolloConfig, folder: WorkspaceFolder) {
+  onConfigFilesFound(handler: NotificationHandler<ApolloConfig[]>) {
+    this._onConfigFilesFound = handler;
+  }
+
+  private createProject({
+    config,
+    folder
+  }: {
+    config: ApolloConfig;
+    folder: WorkspaceFolder;
+  }) {
     const { clientIdentity } = this.config;
     const project = isClientConfig(config)
       ? new GraphQLClientProject({
@@ -102,54 +113,33 @@ export class GraphQLWorkspace {
       ignore: "**/node_modules/**"
     });
 
-    apolloConfigFiles.push(
-      ...fg
-        .sync("**/package.json", {
-          cwd: URI.parse(folder.uri).fsPath,
-          absolute: true,
-          ignore: "**/node_modules/**"
-        })
-        // Every package.json file _potentially_ has an apollo config, but we can filter out
-        // the ones that don't before we even call loadConfig and send cosmiconfig looking.
-        .filter(packageFile => {
-          const { apollo } = require(packageFile);
-          return Boolean(apollo);
-        })
-    );
-
     // only have unique possible folders
-    const apolloConfigFolders = new Set<string>(
-      apolloConfigFiles.map(f => dirname(f))
-    );
+    const apolloConfigFolders = new Set<string>(apolloConfigFiles.map(dirname));
 
     // go from possible folders to known array of configs
     const projectConfigs = Array.from(apolloConfigFolders).map(configFolder =>
-      this.LanguageServerLoadingHandler.handle<ApolloConfig | null>(
-        `Loading Apollo Config in folder ${configFolder}`,
-        (async () => {
-          try {
-            return await loadConfig({ configPath: configFolder });
-          } catch (e) {
-            console.error(e);
-            return null;
-          }
-        })()
-      )
+      loadConfig({ configPath: configFolder, requireConfig: true })
     );
 
+    let foundConfigs: ApolloConfig[] | Error = [];
     await Promise.all(projectConfigs)
-      .then(configs =>
-        configs.filter(Boolean).flatMap(projectConfig => {
+      .then(configs => {
+        foundConfigs = configs;
+        return configs.flatMap(projectConfig =>
           // we create a GraphQLProject for each kind of project
-          return (projectConfig as ApolloConfig).projects.map(config => {
-            return this.createProject(config, folder);
-          });
-        })
-      )
+          projectConfig.projects.map(config =>
+            this.createProject({ config, folder })
+          )
+        );
+      })
       .then(projects => this.projectsByFolderUri.set(folder.uri, projects))
       .catch(error => {
-        console.error(error);
+        foundConfigs = error;
       });
+
+    if (this._onConfigFilesFound) {
+      this._onConfigFilesFound(foundConfigs);
+    }
   }
 
   reloadService() {
@@ -158,10 +148,52 @@ export class GraphQLWorkspace {
         uri,
         projects.map(project => {
           project.clearAllDiagnostics();
-          return this.createProject(project.config, { uri } as WorkspaceFolder);
+          return this.createProject({
+            config: project.config,
+            folder: { uri } as WorkspaceFolder
+          });
         })
       );
     });
+  }
+
+  async reloadProjectForConfig(configUri: DocumentUri) {
+    const configPath = dirname(URI.parse(configUri).fsPath);
+
+    let config, error;
+    try {
+      config = await loadConfig({ configPath, requireConfig: true });
+    } catch (e) {
+      error = e;
+    }
+
+    const project = this.projectForFile(configUri);
+
+    if (!config && this._onConfigFilesFound) {
+      this._onConfigFilesFound(error);
+    }
+    // If project exists, update the config
+    if (project && config) {
+      await Promise.all(project.updateConfig(config));
+      this.reloadService();
+    }
+
+    // If project doesn't exist (new config file), create the project and add to workspace
+    if (!project && config) {
+      const folderUri = URI.file(configPath).toString();
+
+      const newProject = this.createProject({
+        config,
+        folder: { uri: folderUri } as WorkspaceFolder
+      });
+
+      const existingProjects = this.projectsByFolderUri.get(folderUri) || [];
+      this.projectsByFolderUri.set(folderUri, [
+        ...existingProjects,
+        newProject
+      ]);
+      this.reloadService();
+    }
   }
 
   updateSchemaTag(selection: QuickPickItem) {

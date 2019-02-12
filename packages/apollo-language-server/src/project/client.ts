@@ -94,7 +94,7 @@ export class GraphQLClientProject extends GraphQLProject {
       // the URI of the folder _containing_ the apollo.config.js is the true project's root.
       // if a config doesn't have a uri associated, we can assume the `rootURI` is the project's root.
       rootURI: config.configDirURI || rootURI,
-      includes: config.client.includes,
+      includes: [...config.client.includes, ".env", "apollo.config.js"],
       excludes: config.client.excludes
     });
 
@@ -350,13 +350,17 @@ export class GraphQLClientProject extends GraphQLProject {
     const filtered = Object.create(null);
     for (const operationName in current) {
       const document = current[operationName];
+
       let serviceOnly: DocumentNode = removeDirectiveAnnotatedFields(
         removeDirectives(document, clientOnlyDirectives as string[]),
         clientSchemaDirectives as string[]
       );
+
       if (addTypename)
         serviceOnly = withTypenameFieldAddedWhereNeeded(serviceOnly);
-      if (serviceOnly.definitions.length) {
+      // In the case we've made a document empty by filtering client directives,
+      // we don't want to include that in the result we pass on.
+      if (serviceOnly.definitions.filter(Boolean).length) {
         filtered[operationName] = serviceOnly;
       }
     }

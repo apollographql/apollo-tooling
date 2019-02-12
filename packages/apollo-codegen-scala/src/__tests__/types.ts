@@ -20,7 +20,7 @@ describe("Scala code generation: Types", function() {
   describe("#typeNameFromGraphQLType()", function() {
     test("should return OptionalResult[String] for GraphQLString", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLString)).toBe(
-        "com.apollographql.scalajs.OptionalResult[String]"
+        "com.apollographql.scalajs.OptionalValue[String]"
       );
     });
 
@@ -37,7 +37,7 @@ describe("Scala code generation: Types", function() {
       expect(
         typeNameFromGraphQLType({ options: {} }, new GraphQLList(GraphQLString))
       ).toBe(
-        "com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[String]]]"
+        "com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[String]]]"
       );
     });
 
@@ -48,7 +48,7 @@ describe("Scala code generation: Types", function() {
           new GraphQLNonNull(new GraphQLList(GraphQLString))
         )
       ).toBe(
-        "scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[String]]"
+        "scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[String]]"
       );
     });
 
@@ -59,7 +59,7 @@ describe("Scala code generation: Types", function() {
           new GraphQLList(new GraphQLNonNull(GraphQLString))
         )
       ).toBe(
-        "com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[String]]"
+        "com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[String]]"
       );
     });
 
@@ -79,7 +79,7 @@ describe("Scala code generation: Types", function() {
           new GraphQLList(new GraphQLList(GraphQLString))
         )
       ).toBe(
-        "com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[String]]]]]"
+        "com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[String]]]]]"
       );
     });
 
@@ -90,31 +90,31 @@ describe("Scala code generation: Types", function() {
           new GraphQLList(new GraphQLNonNull(new GraphQLList(GraphQLString)))
         )
       ).toBe(
-        "com.apollographql.scalajs.OptionalResult[scala.scalajs.js.Array[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalResult[String]]]]"
+        "com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[String]]]]"
       );
     });
 
     test("should return OptionalResult[Int] for GraphQLInt", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLInt)).toBe(
-        "com.apollographql.scalajs.OptionalResult[Int]"
+        "com.apollographql.scalajs.OptionalValue[Int]"
       );
     });
 
     test("should return OptionalResult[Double] for GraphQLFloat", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLFloat)).toBe(
-        "com.apollographql.scalajs.OptionalResult[Double]"
+        "com.apollographql.scalajs.OptionalValue[Double]"
       );
     });
 
     test("should return OptionalResult[Boolean] for GraphQLBoolean", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLBoolean)).toBe(
-        "com.apollographql.scalajs.OptionalResult[Boolean]"
+        "com.apollographql.scalajs.OptionalValue[Boolean]"
       );
     });
 
     test("should return OptionalResult[String] for GraphQLID", function() {
       expect(typeNameFromGraphQLType({ options: {} }, GraphQLID)).toBe(
-        "com.apollographql.scalajs.OptionalResult[String]"
+        "com.apollographql.scalajs.OptionalValue[String]"
       );
     });
 
@@ -124,7 +124,7 @@ describe("Scala code generation: Types", function() {
           { options: {} },
           new GraphQLScalarType({ name: "CustomScalarType", serialize: String })
         )
-      ).toBe("com.apollographql.scalajs.OptionalResult[String]");
+      ).toBe("com.apollographql.scalajs.OptionalValue[String]");
     });
 
     test("should return a passed through custom scalar type with the passthroughCustomScalars OptionalResult", function() {
@@ -135,7 +135,7 @@ describe("Scala code generation: Types", function() {
           },
           new GraphQLScalarType({ name: "CustomScalarType", serialize: String })
         )
-      ).toBe("com.apollographql.scalajs.OptionalResult[CustomScalarType]");
+      ).toBe("com.apollographql.scalajs.OptionalValue[CustomScalarType]");
     });
 
     test("should return a passed through custom scalar type with a prefix with the customScalarsPrefix OptionalResult", function() {
@@ -149,7 +149,7 @@ describe("Scala code generation: Types", function() {
           },
           new GraphQLScalarType({ name: "CustomScalarType", serialize: String })
         )
-      ).toBe("com.apollographql.scalajs.OptionalResult[MyCustomScalarType]");
+      ).toBe("com.apollographql.scalajs.OptionalValue[MyCustomScalarType]");
     });
   });
 });
