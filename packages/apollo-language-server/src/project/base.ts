@@ -92,7 +92,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     this.config = config;
     this.fileSet = fileSet;
     this.loadingHandler = loadingHandler;
-    this.schemaProvider = schemaProviderFromConfig(config);
+    this.schemaProvider = schemaProviderFromConfig(config, clientIdentity);
     const { engine } = config;
     if (engine.apiKey) {
       this.engineClient = new ApolloEngineClient(
