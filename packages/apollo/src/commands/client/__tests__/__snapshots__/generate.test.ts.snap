@@ -283,12 +283,12 @@ object SimpleQueryQuery extends com.apollographql.scalajs.GraphQLQuery {
   type Variables = Unit
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hello: String
+    @scala.scalajs.js.annotation.JSName(\\"hello\\") val hello: String
   }
 
   object Data {
     def apply(hello: String) = {
-      scala.scalajs.js.Dynamic.literal(hello = hello).asInstanceOf[Data]
+      scala.scalajs.js.Dynamic.literal(\\"hello\\" -> hello).asInstanceOf[Data]
     }
 
     def unapply(value: Data) = {
@@ -297,7 +297,7 @@ object SimpleQueryQuery extends com.apollographql.scalajs.GraphQLQuery {
 
     implicit class CopyExtensions(private val orig: Data) extends AnyVal {
       def copy(hello: String = orig.hello) = {
-        scala.scalajs.js.Dynamic.literal(hello = hello).asInstanceOf[Data]
+        scala.scalajs.js.Dynamic.literal(\\"hello\\" -> hello).asInstanceOf[Data]
       }
     }
 

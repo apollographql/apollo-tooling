@@ -443,7 +443,7 @@ function dataContainerDeclaration(
     insideCompanion
   }: {
     name: string;
-    properties: Property[];
+    properties: (Property & ({ name: string } | { responseName: string }))[];
     extraSuperClasses?: string[];
     description?: string;
     insideCompanion?: () => void;
@@ -460,6 +460,7 @@ function dataContainerDeclaration(
     () => {
       properties.forEach(p => {
         propertyDeclaration(generator, {
+          jsName: (p as any).name || (p as any).responseName,
           propertyName: p.propertyName,
           typeName: p.typeName
         });
@@ -489,7 +490,12 @@ function dataContainerDeclaration(
         },
         () => {
           const propertiesIn = properties
-            .map(p => `${p.propertyName} = ${p.propertyName}`)
+            .map(
+              p =>
+                `"${(p as any).name || (p as any).responseName}" -> ${
+                  p.propertyName
+                }`
+            )
             .join(", ");
           generator.printOnNewline(
             `scala.scalajs.js.Dynamic.literal(${propertiesIn}).asInstanceOf[${name}]`
@@ -536,7 +542,12 @@ function dataContainerDeclaration(
           },
           () => {
             const propertiesIn = properties
-              .map(p => `${p.propertyName} = ${p.propertyName}`)
+              .map(
+                p =>
+                  `"${(p as any).name || (p as any).responseName}" -> ${
+                    p.propertyName
+                  }`
+              )
               .join(", ");
             generator.printOnNewline(
               `scala.scalajs.js.Dynamic.literal(${propertiesIn}).asInstanceOf[${name}]`
