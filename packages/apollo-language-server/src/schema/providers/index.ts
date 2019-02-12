@@ -13,6 +13,7 @@ import {
 import { IntrospectionSchemaProvider } from "./introspection";
 import { EngineSchemaProvider } from "./engine";
 import { FileSchemaProvider } from "./file";
+import { ClientIdentity } from "../../engine";
 
 export {
   GraphQLSchemaProvider,
@@ -21,7 +22,8 @@ export {
 };
 
 export function schemaProviderFromConfig(
-  config: ApolloConfig
+  config: ApolloConfig,
+  clientIdentity?: ClientIdentity // engine provider needs this
 ): GraphQLSchemaProvider {
   if (isServiceConfig(config)) {
     if (config.service.localSchemaFile) {
@@ -35,7 +37,7 @@ export function schemaProviderFromConfig(
 
   if (isClientConfig(config)) {
     if (typeof config.client.service === "string") {
-      return new EngineSchemaProvider(config);
+      return new EngineSchemaProvider(config, clientIdentity);
     }
 
     if (config.client.service) {

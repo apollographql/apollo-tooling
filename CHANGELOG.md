@@ -7,8 +7,10 @@
   - Leverage nullability of validation parameters [#1006](https://github.com/apollographql/apollo-tooling/pull/1006)
 - `apollo-language-server`
   - Better error handling in ApolloEngineClient [#953](https://github.com/apollographql/apollo-tooling/pull/953)
+  - Fix language server mis-reporting client identity for schema loading operation [#940](https://github.com/apollographql/apollo-tooling/pull/940)
 - `vscode-apollo`
   - Fix inline graphql highlighting in Vue `<script>` tags [#981](https://github.com/apollographql/apollo-tooling/pull/981)
+  - Fix graphql comments not being highlighted correctly [#907](https://github.com/apollographql/apollo-tooling/pull/907)
 
 ## `apollo@2.4.4`, `apollo-codegen-scala@0.33.0`
 
