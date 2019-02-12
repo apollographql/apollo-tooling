@@ -65,7 +65,7 @@
     "@types/lodash": "4.14.120",
     "@types/minimatch": "3.0.3",
     "@types/nock": "9.3.1",
-    "@types/node": "10.12.24",
+    "@types/node": "10.12.25",
     "@types/node-fetch": "2.1.6",
     "@types/react": "16.8.2",
     "@types/react-dom": "16.8.0",
