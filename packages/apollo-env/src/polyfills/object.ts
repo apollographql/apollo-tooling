@@ -1,4 +1,4 @@
-import "core-js/proposals/object-from-entries";
+import "core-js/features/object/from-entries";
 
 declare global {
   interface ObjectConstructor {
