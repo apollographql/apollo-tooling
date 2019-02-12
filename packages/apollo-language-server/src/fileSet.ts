@@ -51,24 +51,18 @@ export class FileSet {
   }
 
   includesFile(filePath: string): boolean {
-    filePath = relative(this.rootURI.fsPath, filePath);
-
-    return (
-      this.includes.some(include => minimatch(filePath, include)) &&
-      !this.excludes.some(exclude => minimatch(filePath, exclude))
-    );
+    return this.allFiles().includes(relative(this.rootURI.fsPath, filePath));
   }
 
   allFiles(): string[] {
-    return this.includes
-      .flatMap(include =>
-        glob.sync(include, { cwd: this.rootURI.fsPath, absolute: true })
-      )
-      .filter(
-        filePath =>
-          !this.excludes.some(exclude =>
-            minimatch(relative(this.rootURI.fsPath, filePath), exclude)
-          )
-      );
+    // since glob.sync takes a single patttern, but we allow an array of `includes`, we can join all the
+    // `includes` globs into a single pattern and pass to glob.sync The `ignore` option does, however, allow
+    // an array of globs to ignore, so we can pass it in directly
+    const joinedIncludes = `{${this.includes.join(",")}}`;
+    return glob.sync(joinedIncludes, {
+      cwd: this.rootURI.fsPath,
+      absolute: true,
+      ignore: this.excludes
+    });
   }
 }

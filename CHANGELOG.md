@@ -7,6 +7,7 @@
 - `apollo-language-server`
   - Better error handling in ApolloEngineClient [#953](https://github.com/apollographql/apollo-tooling/pull/953)
   - Added a warning when there are 0 files found in a project [#1007](https://github.com/apollographql/apollo-tooling/pull/1007)
+  - Allow relative paths in includes/excludes globs [#1007](https://github.com/apollographql/apollo-tooling/pull/1007)
 - `vscode-apollo`
   - Fix inline graphql highlighting in Vue `<script>` tags [#981](https://github.com/apollographql/apollo-tooling/pull/981)
 
