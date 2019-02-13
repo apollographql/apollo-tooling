@@ -31,7 +31,7 @@
     "posttest": "npm run lint",
     "release": "npm run clean && npm ci && lerna publish --exact",
     "package-extension": "npm run clean && npm ci && lerna run package-extension --stream --scope=vscode-apollo",
-    "client:codegen": "npx apollo client:codegen --target=typescript --outputFlat ./packages/apollo-language-server/src/graphqlTypes.ts"
+    "client:codegen": "node ./packages/apollo/bin/run client:codegen --target=typescript --outputFlat ./packages/apollo-language-server/src/graphqlTypes.ts"
   },
   "engines": {
     "node": ">=8",
