@@ -2,15 +2,17 @@
 
 ## Upcoming
 
-- `apollo`
+## `apollo@2.5.0`, `apollo-language-server@1.5.0`, `vscode-apollo@1.5.0`
+
+- `apollo@2.5.0`
   - Support validation parameters for service:check [#953](https://github.com/apollographql/apollo-tooling/pull/953)
   - Leverage nullability of validation parameters [#1006](https://github.com/apollographql/apollo-tooling/pull/1006)
   - Unpin graphql version [#1010](https://github.com/apollographql/apollo-tooling/pull/1010)
-- `apollo-language-server`
+- `apollo-language-server@1.5.0`
   - Better error handling in ApolloEngineClient [#953](https://github.com/apollographql/apollo-tooling/pull/953)
   - Fix language server mis-reporting client identity for schema loading operation [#940](https://github.com/apollographql/apollo-tooling/pull/940)
   - Unpin graphql version [#1010](https://github.com/apollographql/apollo-tooling/pull/1010)
-- `vscode-apollo`
+- `vscode-apollo@1.5.0`
   - Fix inline graphql highlighting in Vue `<script>` tags [#981](https://github.com/apollographql/apollo-tooling/pull/981)
   - Fix graphql comments not being highlighted correctly [#907](https://github.com/apollographql/apollo-tooling/pull/907)
 
