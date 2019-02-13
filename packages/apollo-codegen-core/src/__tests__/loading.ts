@@ -76,10 +76,7 @@ describe("Validation", () => {
 describe("loadQueryDocuments", () => {
   test(`should load a schema document from a .graphqls file`, () => {
     const inputPaths = [
-      path.join(
-        __dirname,
-        "../../../common-test/fixtures/starwars/schema.graphqls"
-      )
+      path.join(__dirname, "../../../../__fixtures__/starwars/schema.graphqls")
     ];
 
     const document = loadQueryDocuments(inputPaths);
