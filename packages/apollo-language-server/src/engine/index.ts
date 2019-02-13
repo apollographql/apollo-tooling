@@ -19,35 +19,13 @@ import {
   REGISTER_OPERATIONS,
   RegisterOperationsVariables
 } from "./operations/registerOperations";
+import { SCHEMA_TAGS_AND_FIELD_STATS } from "./operations/schemaTagsAndFieldStats";
 
 export interface ClientIdentity {
   name?: string;
   version?: string;
   referenceID?: string;
 }
-
-// XXX move to its own file
-const SCHEMA_TAGS_AND_FIELD_STATS = gql`
-  query SchemaTagsAndFieldStats($id: ID!) {
-    service(id: $id) {
-      schemaTags {
-        tag
-      }
-      stats(from: "-86400", to: "-0") {
-        fieldStats {
-          groupBy {
-            field
-          }
-          metrics {
-            fieldHistogram {
-              durationMs(percentile: 0.95)
-            }
-          }
-        }
-      }
-    }
-  }
-`;
 
 interface FieldStat {
   groupBy: {
