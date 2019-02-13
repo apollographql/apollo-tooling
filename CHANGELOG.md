@@ -2,6 +2,9 @@
 
 ## Upcoming
 
+- `apollo-codegen-typescript`
+  - Add `/* eslint-disable */` in generated files header [#1017](https://github.com/apollographql/apollo-tooling/pull/1017)
+
 ## `apollo@2.5.0`, `apollo-language-server@1.5.0`, `vscode-apollo@1.5.0`
 
 - `apollo@2.5.0`
