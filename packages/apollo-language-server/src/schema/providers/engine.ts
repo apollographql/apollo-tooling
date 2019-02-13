@@ -88,6 +88,7 @@ export const SCHEMA_QUERY = gql`
   query GetSchemaByTag($tag: String!) {
     service: me {
       ... on Service {
+        __typename
         schema(tag: $tag) {
           hash
           __schema: introspection {
