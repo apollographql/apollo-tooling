@@ -4,7 +4,7 @@ import serializeToJSON from "../serializeToJSON";
 
 import { loadSchema } from "../loading";
 const starWarsSchema = loadSchema(
-  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+  require.resolve("../../../../__fixtures__/starwars/schema.json")
 );
 
 function compileFromSource(

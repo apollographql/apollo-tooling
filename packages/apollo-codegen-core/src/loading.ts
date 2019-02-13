@@ -1,5 +1,4 @@
-// provides flatMap
-import "./polyfills";
+import "apollo-env";
 
 import { fs } from "./localfs";
 import { stripIndents } from "common-tags";
@@ -19,7 +18,7 @@ import {
   FragmentDefinitionNode
 } from "graphql";
 
-import { ToolError } from "./errors";
+import { ToolError } from "apollo-language-server";
 
 export function loadSchema(schemaPath: string): GraphQLSchema {
   if (!fs.existsSync(schemaPath)) {
@@ -190,7 +189,11 @@ export function loadQueryDocuments(
     .map(source => {
       try {
         return parse(source!);
-      } catch {
+      } catch (e) {
+        const name = (source && source.name) || "";
+        console.warn(stripIndents`
+        Warning: error parsing GraphQL file ${name}
+        ${e.stack}`);
         return null;
       }
     })

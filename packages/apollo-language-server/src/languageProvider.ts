@@ -6,9 +6,11 @@ import {
   Hover,
   Definition,
   CodeLens,
-  Command,
   ReferenceContext,
-  InsertTextFormat
+  InsertTextFormat,
+  DocumentSymbol,
+  SymbolKind,
+  SymbolInformation
 } from "vscode-languageserver";
 
 // should eventually be moved into this package, since we're overriding a lot of the existing behavior here
@@ -19,51 +21,86 @@ import {
 } from "@apollographql/graphql-language-service-interface/dist/getAutocompleteSuggestions";
 
 import { GraphQLWorkspace } from "./workspace";
-import { DocumentUri, GraphQLProject } from "./project";
+import { DocumentUri } from "./project/base";
 
 import {
   positionFromPositionInContainingDocument,
   rangeForASTNode,
-  getASTNodeAndTypeInfoAtPosition
+  getASTNodeAndTypeInfoAtPosition,
+  positionToOffset
 } from "./utilities/source";
 
 import {
   GraphQLNamedType,
   Kind,
-  visit,
-  FragmentSpreadNode,
   GraphQLField,
   GraphQLNonNull,
   isAbstractType,
   TypeNameMetaFieldDef,
   SchemaMetaFieldDef,
-  TypeMetaFieldDef
+  TypeMetaFieldDef,
+  typeFromAST,
+  GraphQLType,
+  isObjectType,
+  isListType,
+  GraphQLList,
+  isNonNullType,
+  ASTNode,
+  FieldDefinitionNode,
+  visit,
+  isExecutableDefinitionNode,
+  isTypeSystemDefinitionNode,
+  isTypeSystemExtensionNode
 } from "graphql";
 import { highlightNodeForNode } from "./utilities/graphql";
-import * as graphql from "graphql";
 
-import Uri from "vscode-uri";
-import { resolve } from "path";
+import { GraphQLClientProject, isClientProject } from "./project/client";
+import { isNotNullOrUndefined } from "@apollographql/apollo-tools";
 
-function hasFields(type: graphql.GraphQLType): boolean {
+function hasFields(type: GraphQLType): boolean {
   return (
-    graphql.isObjectType(type) ||
-    (graphql.isListType(type) &&
-      hasFields((type as graphql.GraphQLList<any>).ofType)) ||
-    (graphql.isNonNullType(type) &&
-      hasFields((type as GraphQLNonNull<any>).ofType))
+    isObjectType(type) ||
+    (isListType(type) && hasFields((type as GraphQLList<any>).ofType)) ||
+    (isNonNullType(type) && hasFields((type as GraphQLNonNull<any>).ofType))
   );
 }
 
-function convertToURI(filePath: string, project: GraphQLProject) {
-  return filePath.startsWith("file:/") ||
-    filePath.startsWith("graphql-schema:/")
-    ? filePath
-    : `file://${resolve(project.config.projectFolder, filePath)}`;
+function uriForASTNode(node: ASTNode): DocumentUri | null {
+  const uri = node.loc && node.loc.source && node.loc.source.name;
+  if (!uri || uri === "GraphQL") {
+    return null;
+  }
+  return uri;
+}
+
+function locationForASTNode(node: ASTNode): Location | null {
+  const uri = uriForASTNode(node);
+  if (!uri) return null;
+  return Location.create(uri, rangeForASTNode(node));
+}
+
+function symbolForFieldDefinition(
+  definition: FieldDefinitionNode
+): DocumentSymbol {
+  return {
+    name: definition.name.value,
+    kind: SymbolKind.Field,
+    range: rangeForASTNode(definition),
+    selectionRange: rangeForASTNode(definition)
+  };
 }
 
 export class GraphQLLanguageProvider {
   constructor(public workspace: GraphQLWorkspace) {}
+
+  async provideStats(uri?: DocumentUri) {
+    if (this.workspace.projects.length && uri) {
+      const project = this.workspace.projectForFile(uri);
+      return project ? project.getProjectStats() : { loaded: false };
+    }
+
+    return { loaded: false };
+  }
 
   async provideCompletionItems(
     uri: DocumentUri,
@@ -71,23 +108,21 @@ export class GraphQLLanguageProvider {
     _token: CancellationToken
   ): Promise<CompletionItem[]> {
     const project = this.workspace.projectForFile(uri);
-    if (!project) return [];
+    if (!(project && project instanceof GraphQLClientProject)) return [];
 
-    const docAndSet = project.documentAt(uri, position);
-    if (!docAndSet) return [];
+    const document = project.documentAt(uri, position);
+    if (!document) return [];
 
-    const { doc, set } = docAndSet;
-
-    if (!set.schema) return [];
+    if (!project.schema) return [];
 
     const positionInDocument = positionFromPositionInContainingDocument(
-      doc.source,
+      document.source,
       position
     );
-    const token = getTokenAtPosition(doc.source.body, positionInDocument);
+    const token = getTokenAtPosition(document.source.body, positionInDocument);
     const state =
       token.state.kind === "Invalid" ? token.state.prevState : token.state;
-    const typeInfo = getTypeInfo(set.schema, token.state);
+    const typeInfo = getTypeInfo(project.schema, token.state);
 
     if (
       state.kind === "SelectionSet" ||
@@ -105,14 +140,14 @@ export class GraphQLLanguageProvider {
         parentFields[TypeNameMetaFieldDef.name] = TypeNameMetaFieldDef;
       }
 
-      if (parentType === set.schema.getQueryType()) {
+      if (parentType === project.schema.getQueryType()) {
         parentFields[SchemaMetaFieldDef.name] = SchemaMetaFieldDef;
         parentFields[TypeMetaFieldDef.name] = TypeMetaFieldDef;
       }
 
       return getAutocompleteSuggestions(
-        set.schema,
-        doc.source.body,
+        project.schema,
+        document.source.body,
         positionInDocument
       ).map(suggest => {
         // when code completing fields, expand out required variables and open braces
@@ -146,8 +181,8 @@ export class GraphQLLanguageProvider {
       });
     } else {
       return getAutocompleteSuggestions(
-        set.schema,
-        doc.source.body,
+        project.schema,
+        document.source.body,
         positionInDocument
       );
     }
@@ -159,25 +194,23 @@ export class GraphQLLanguageProvider {
     _token: CancellationToken
   ): Promise<Hover | null> {
     const project = this.workspace.projectForFile(uri);
-    if (!project) return null;
+    if (!(project && project instanceof GraphQLClientProject)) return null;
 
-    const docAndSet = project.documentAt(uri, position);
-    if (!(docAndSet && docAndSet.doc.ast)) return null;
+    const document = project.documentAt(uri, position);
+    if (!(document && document.ast)) return null;
 
-    const { doc, set } = docAndSet;
-
-    if (!set.schema) return null;
+    if (!project.schema) return null;
 
     const positionInDocument = positionFromPositionInContainingDocument(
-      doc.source,
+      document.source,
       position
     );
 
     const nodeAndTypeInfo = getASTNodeAndTypeInfoAtPosition(
-      doc.source,
+      document.source,
       positionInDocument,
-      doc.ast!,
-      set.schema
+      document.ast,
+      project.schema
     );
 
     if (nodeAndTypeInfo) {
@@ -216,7 +249,7 @@ export class GraphQLLanguageProvider {
 \`\`\`graphql
 ${parentType}.${fieldDef.name}${argsString}: ${fieldDef.type}
 \`\`\`
-${fieldDef.description}
+${fieldDef.description ? fieldDef.description : ""}
 `,
               range: rangeForASTNode(highlightNodeForNode(node))
             };
@@ -226,7 +259,7 @@ ${fieldDef.description}
         }
 
         case Kind.NAMED_TYPE: {
-          const type = set.schema.getType(
+          const type = project.schema.getType(
             node.name.value
           ) as GraphQLNamedType | void;
           if (!type) break;
@@ -236,7 +269,7 @@ ${fieldDef.description}
 \`\`\`graphql
 ${String(type)}
 \`\`\`
-${type.description}
+${type.description ? type.description : ""}
 `,
             range: rangeForASTNode(highlightNodeForNode(node))
           };
@@ -249,7 +282,7 @@ ${type.description}
 \`\`\`graphql
 ${argumentNode.name}: ${argumentNode.type}
 \`\`\`
-${argumentNode.description}
+${argumentNode.description ? argumentNode.description : ""}
 `,
             range: rangeForASTNode(highlightNodeForNode(node))
           };
@@ -263,27 +296,25 @@ ${argumentNode.description}
     uri: DocumentUri,
     position: Position,
     _token: CancellationToken
-  ): Promise<Definition> {
+  ): Promise<Definition | null> {
     const project = this.workspace.projectForFile(uri);
-    if (!project) return null;
+    if (!(project && project instanceof GraphQLClientProject)) return null;
 
-    const docAndSet = project.documentAt(uri, position);
-    if (!(docAndSet && docAndSet.doc.ast)) return null;
+    const document = project.documentAt(uri, position);
+    if (!(document && document.ast)) return null;
 
-    const { doc, set } = docAndSet;
-
-    if (!set.schema) return null;
+    if (!project.schema) return null;
 
     const positionInDocument = positionFromPositionInContainingDocument(
-      doc.source,
+      document.source,
       position
     );
 
     const nodeAndTypeInfo = getASTNodeAndTypeInfoAtPosition(
-      doc.source,
+      document.source,
       positionInDocument,
-      doc.ast!,
-      set.schema
+      document.ast,
+      project.schema
     );
 
     if (nodeAndTypeInfo) {
@@ -294,31 +325,23 @@ ${argumentNode.description}
           const fragmentName = node.name.value;
           const fragment = project.fragments[fragmentName];
           if (fragment && fragment.loc) {
-            return {
-              uri: convertToURI(fragment.loc.source.name, project),
-              range: rangeForASTNode(fragment)
-            };
+            return locationForASTNode(fragment);
           }
           break;
+
         case Kind.FIELD: {
           const fieldDef = typeInfo.getFieldDef();
 
           if (!(fieldDef && fieldDef.astNode && fieldDef.astNode.loc)) break;
 
-          return {
-            uri: convertToURI(fieldDef.astNode.loc.source.name, project),
-            range: rangeForASTNode(fieldDef.astNode)
-          };
+          return locationForASTNode(fieldDef.astNode);
         }
         case Kind.NAMED_TYPE: {
-          const type = graphql.typeFromAST(set.schema!, node);
+          const type = typeFromAST(project.schema, node);
 
           if (!(type && type.astNode && type.astNode.loc)) break;
 
-          return {
-            uri: convertToURI(type.astNode.loc.source.name, project),
-            range: rangeForASTNode(type.astNode)
-          };
+          return locationForASTNode(type.astNode);
         }
       }
     }
@@ -333,44 +356,72 @@ ${argumentNode.description}
   ): Promise<Location[] | null> {
     const project = this.workspace.projectForFile(uri);
     if (!project) return null;
+    const document = project.documentAt(uri, position);
+    if (!(document && document.ast)) return null;
 
-    const docAndSet = project.documentAt(uri, position);
-    if (!(docAndSet && docAndSet.doc.ast)) return null;
-
-    const { doc, set } = docAndSet;
-
-    if (!set.schema) return null;
+    if (!project.schema) return null;
 
     const positionInDocument = positionFromPositionInContainingDocument(
-      doc.source,
+      document.source,
       position
     );
 
     const nodeAndTypeInfo = getASTNodeAndTypeInfoAtPosition(
-      doc.source,
+      document.source,
       positionInDocument,
-      doc.ast!,
-      set.schema
+      document.ast,
+      project.schema
     );
 
     if (nodeAndTypeInfo) {
-      const [node] = nodeAndTypeInfo;
+      const [node, typeInfo] = nodeAndTypeInfo;
 
       switch (node.kind) {
         case Kind.FRAGMENT_DEFINITION: {
+          if (!isClientProject(project)) return null;
           const fragmentName = node.name.value;
-          return project.fragmentSpreadsForFragment(fragmentName).reduce(
-            (locations, fragmentSpread) => {
-              if (fragmentSpread.loc) {
-                locations.push({
-                  uri: convertToURI(fragmentSpread.loc.source.name, project),
-                  range: rangeForASTNode(fragmentSpread)
-                });
+          return project
+            .fragmentSpreadsForFragment(fragmentName)
+            .map(fragmentSpread => locationForASTNode(fragmentSpread))
+            .filter(isNotNullOrUndefined);
+        }
+        // TODO(jbaxleyiii): manage no parent type references (unions + scalars)
+        // TODO(jbaxleyiii): support more than fields
+        case Kind.FIELD_DEFINITION: {
+          // case Kind.ENUM_VALUE_DEFINITION:
+          // case Kind.INPUT_OBJECT_TYPE_DEFINITION:
+          // case Kind.INPUT_OBJECT_TYPE_EXTENSION: {
+          if (!isClientProject(project)) return null;
+          const offset = positionToOffset(document.source, positionInDocument);
+          // withWithTypeInfo doesn't suppport SDL so we instead
+          // write our own visitor methods here to collect the fields that we
+          // care about
+          let parent: ASTNode | null = null;
+          visit(document.ast, {
+            enter(node: ASTNode) {
+              // the parent types we care about
+              if (
+                node.loc &&
+                node.loc.start <= offset &&
+                offset <= node.loc.end &&
+                (node.kind === Kind.OBJECT_TYPE_DEFINITION ||
+                  node.kind === Kind.OBJECT_TYPE_EXTENSION ||
+                  node.kind === Kind.INTERFACE_TYPE_DEFINITION ||
+                  node.kind === Kind.INTERFACE_TYPE_EXTENSION ||
+                  node.kind === Kind.INPUT_OBJECT_TYPE_DEFINITION ||
+                  node.kind === Kind.INPUT_OBJECT_TYPE_EXTENSION ||
+                  node.kind === Kind.ENUM_TYPE_DEFINITION ||
+                  node.kind === Kind.ENUM_TYPE_EXTENSION)
+              ) {
+                parent = node;
               }
-              return locations;
-            },
-            [] as Location[]
-          );
+              return;
+            }
+          });
+          return project
+            .getOperationFieldsFromFieldDefinition(node.name.value, parent)
+            .map(fieldNode => locationForASTNode(fieldNode))
+            .filter(isNotNullOrUndefined);
         }
       }
     }
@@ -378,25 +429,99 @@ ${argumentNode.description}
     return null;
   }
 
+  async provideDocumentSymbol(
+    uri: DocumentUri,
+    _token: CancellationToken
+  ): Promise<DocumentSymbol[]> {
+    const project = this.workspace.projectForFile(uri);
+    if (!project) return [];
+
+    const definitions = project.definitionsAt(uri);
+
+    const symbols: DocumentSymbol[] = [];
+
+    for (const definition of definitions) {
+      if (isExecutableDefinitionNode(definition)) {
+        if (!definition.name) continue;
+        const location = locationForASTNode(definition);
+        if (!location) continue;
+        symbols.push({
+          name: definition.name.value,
+          kind: SymbolKind.Function,
+          range: rangeForASTNode(definition),
+          selectionRange: rangeForASTNode(highlightNodeForNode(definition))
+        });
+      } else if (
+        isTypeSystemDefinitionNode(definition) ||
+        isTypeSystemExtensionNode(definition)
+      ) {
+        if (
+          definition.kind === Kind.SCHEMA_DEFINITION ||
+          definition.kind === Kind.SCHEMA_EXTENSION
+        ) {
+          continue;
+        }
+        symbols.push({
+          name: definition.name.value,
+          kind: SymbolKind.Class,
+          range: rangeForASTNode(definition),
+          selectionRange: rangeForASTNode(highlightNodeForNode(definition)),
+          children:
+            definition.kind === Kind.OBJECT_TYPE_DEFINITION ||
+            definition.kind === Kind.OBJECT_TYPE_EXTENSION
+              ? (definition.fields || []).map(symbolForFieldDefinition)
+              : undefined
+        });
+      }
+    }
+
+    return symbols;
+  }
+
+  async provideWorkspaceSymbol(
+    query: string,
+    _token: CancellationToken
+  ): Promise<SymbolInformation[]> {
+    const symbols: SymbolInformation[] = [];
+    for (const project of this.workspace.projects) {
+      for (const definition of project.definitions) {
+        if (isExecutableDefinitionNode(definition)) {
+          if (!definition.name) continue;
+          const location = locationForASTNode(definition);
+          if (!location) continue;
+          symbols.push({
+            name: definition.name.value,
+            kind: SymbolKind.Function,
+            location
+          });
+        }
+      }
+    }
+    return symbols;
+  }
+
   async provideCodeLenses(
     uri: DocumentUri,
     _token: CancellationToken
   ): Promise<CodeLens[]> {
     const project = this.workspace.projectForFile(uri);
-    if (!project) return [];
+    if (!(project && project instanceof GraphQLClientProject)) return [];
 
-    await project.readyPromise;
+    // Wait for the project to be fully initialized, so we always provide code lenses for open files, even
+    // if we receive the request before the project is ready.
+    await project.whenReady;
 
-    const docsAndSets = project.documentsAt(uri);
-    if (!docsAndSets) return [];
+    const documents = project.documentsAt(uri);
+    if (!documents) return [];
 
     let codeLenses: CodeLens[] = [];
 
-    for (const { doc, set } of docsAndSets) {
-      if (!doc.ast) continue;
+    for (const document of documents) {
+      if (!document.ast) continue;
 
-      for (const definition of doc.ast.definitions) {
+      for (const definition of document.ast.definitions) {
         if (definition.kind === Kind.OPERATION_DEFINITION) {
+          /*
           if (set.endpoint) {
             const fragmentSpreads: Set<
               graphql.FragmentDefinitionNode
@@ -435,45 +560,25 @@ ${argumentNode.description}
               )
             });
           }
+          */
         } else if (definition.kind === Kind.FRAGMENT_DEFINITION) {
-          const references = project.fragmentSpreadsForFragment(
-            definition.name.value
-          );
-          const locs = references.reduce(
-            (locations, fragmentSpread) => {
-              if (fragmentSpread.loc) {
-                locations.push({
-                  uri: Uri.parse(
-                    convertToURI(fragmentSpread.loc.source.name, project)
-                  ) as any,
-                  range: {
-                    startLineNumber:
-                      rangeForASTNode(fragmentSpread).start.line + 1,
-                    startColumn: rangeForASTNode(fragmentSpread).start
-                      .character,
-                    endLineNumber: rangeForASTNode(fragmentSpread).end.line + 1,
-                    endColumn: rangeForASTNode(fragmentSpread).end.character
-                  } as any
-                });
-              }
-              return locations;
-            },
-            [] as Location[]
-          );
-
-          codeLenses.push({
-            range: rangeForASTNode(definition),
-            command: Command.create(
-              `${references.length} references`,
-              "editor.action.showReferences",
-              Uri.parse(uri),
-              {
-                lineNumber: rangeForASTNode(definition).start.line + 1,
-                column: rangeForASTNode(definition).start.character
-              },
-              locs
-            )
-          });
+          // remove project references for fragment now
+          // const fragmentName = definition.name.value;
+          // const locations = project
+          //   .fragmentSpreadsForFragment(fragmentName)
+          //   .map(fragmentSpread => locationForASTNode(fragmentSpread))
+          //   .filter(isNotNullOrUndefined);
+          // const command = Command.create(
+          //   `${locations.length} references`,
+          //   "editor.action.showReferences",
+          //   uri,
+          //   rangeForASTNode(definition).start,
+          //   locations
+          // );
+          // codeLenses.push({
+          //   range: rangeForASTNode(definition),
+          //   command
+          // });
         }
       }
     }

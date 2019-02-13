@@ -1,145 +1,114 @@
+import "apollo-env";
+// FIXME: The global fetch dependency comes from `apollo-link-http` and should be removed there.
+import "apollo-env/lib/fetch/global";
 import {
   createConnection,
   ProposedFeatures,
   TextDocuments,
   FileChangeType,
-  NotificationType
+  ServerCapabilities
 } from "vscode-languageserver";
-
+import { QuickPickItem } from "vscode";
 import { GraphQLWorkspace } from "./workspace";
 import { GraphQLLanguageProvider } from "./languageProvider";
-
-import { execute, DocumentNode } from "apollo-link";
-import { createHttpLink } from "apollo-link-http";
-import fetch from "node-fetch";
-import { OperationDefinitionNode } from "graphql";
-
-import { WebSocketLink } from "apollo-link-ws";
-import { SubscriptionClient } from "subscriptions-transport-ws";
-
-import Uri from "vscode-uri";
-
-import * as ws from "ws";
-
-import { dirname } from "path";
-import { findAndLoadConfig } from "apollo/lib/config";
+import { LanguageServerLoadingHandler } from "./loadingHandler";
 
 const connection = createConnection(ProposedFeatures.all);
 
 let hasWorkspaceFolderCapability = false;
 
-export class LoadingHandler {
-  private latestLoadingToken = 0;
-  async handle<T>(message: string, value: Promise<T>): Promise<T> {
-    const token = this.latestLoadingToken;
-    this.latestLoadingToken += 1;
-    connection.sendNotification(
-      new NotificationType<any, void>("apollographql/loading"),
-      { message, token }
-    );
+// Awaitable promise for sending messages before the connection is initialized
+let initializeConnection: () => void;
+const whenConnectionInitialized: Promise<void> = new Promise(
+  resolve => (initializeConnection = resolve)
+);
 
-    try {
-      const ret = await value;
-      connection.sendNotification(
-        new NotificationType<any, void>("apollographql/loadingComplete"),
-        token
-      );
-      return ret;
-    } catch (e) {
-      connection.sendNotification(
-        new NotificationType<any, void>("apollographql/loadingComplete"),
-        token
-      );
-      connection.window.showErrorMessage(`Error in "${message}": ${e}`);
-      throw e;
+const workspace = new GraphQLWorkspace(
+  new LanguageServerLoadingHandler(connection),
+  {
+    clientIdentity: {
+      name: process.env["APOLLO_CLIENT_NAME"],
+      version: process.env["APOLLO_CLIENT_VERSION"],
+      referenceID: process.env["APOLLO_CLIENT_REFERENCE_ID"]
     }
   }
-
-  handleSync<T>(message: string, value: () => T): T {
-    const token = this.latestLoadingToken;
-    this.latestLoadingToken += 1;
-    connection.sendNotification(
-      new NotificationType<any, void>("apollographql/loading"),
-      { message, token }
-    );
-
-    try {
-      const ret = value();
-      connection.sendNotification(
-        new NotificationType<any, void>("apollographql/loadingComplete"),
-        token
-      );
-      return ret;
-    } catch (e) {
-      connection.sendNotification(
-        new NotificationType<any, void>("apollographql/loadingComplete"),
-        token
-      );
-      connection.window.showErrorMessage(`Error in "${message}": ${e}`);
-      throw e;
-    }
-  }
-}
-
-const workspace = new GraphQLWorkspace(new LoadingHandler());
+);
 
 workspace.onDiagnostics(params => {
   connection.sendDiagnostics(params);
 });
 
-workspace.onDecorations(decs => {
-  connection.sendNotification("apollographql/engineDecorations", decs);
+workspace.onDecorations(params => {
+  connection.sendNotification("apollographql/engineDecorations", params);
 });
 
-const hasInitializedPromise = new Promise(resolve => {
-  connection.onInitialized(async () => {
-    resolve();
-
-    if (hasWorkspaceFolderCapability) {
-      connection.workspace.onDidChangeWorkspaceFolders(event => {
-        event.removed.forEach(folder =>
-          workspace.removeProjectsInFolder(folder)
-        );
-        event.added.forEach(folder => workspace.addProjectsInFolder(folder));
-      });
-    }
-  });
+workspace.onSchemaTags(params => {
+  connection.sendNotification(
+    "apollographql/tagsLoaded",
+    JSON.stringify(params)
+  );
 });
 
-connection.onInitialize(async params => {
-  let capabilities = params.capabilities;
+workspace.onConfigFilesFound(async params => {
+  await whenConnectionInitialized;
+
+  connection.sendNotification(
+    "apollographql/configFilesFound",
+    params instanceof Error
+      ? // Can't stringify Errors, just results in "{}"
+        JSON.stringify({ message: params.message, stack: params.stack })
+      : JSON.stringify(params)
+  );
+});
+
+connection.onInitialize(async ({ capabilities, workspaceFolders }) => {
   hasWorkspaceFolderCapability = !!(
     capabilities.workspace && capabilities.workspace.workspaceFolders
   );
 
-  const workspaceFolders = params.workspaceFolders;
   if (workspaceFolders) {
-    hasInitializedPromise.then(() => {
-      workspaceFolders.forEach(folder => workspace.addProjectsInFolder(folder));
-    });
+    // We wait until all projects are added, because after `initialize` returns we can get additional requests
+    // like `textDocument/codeLens`, and that way these can await `GraphQLProject#whenReady` to make sure
+    // we provide them eventually.
+    await Promise.all(
+      workspaceFolders.map(folder => workspace.addProjectsInFolder(folder))
+    );
   }
 
   return {
     capabilities: {
       hoverProvider: true,
-      definitionProvider: true,
-      referencesProvider: true,
       completionProvider: {
         resolveProvider: false,
         triggerCharacters: ["..."]
       },
+      definitionProvider: true,
+      referencesProvider: true,
+      documentSymbolProvider: true,
+      workspaceSymbolProvider: true,
       codeLensProvider: {
         resolveProvider: false
       },
       executeCommandProvider: {
-        commands: [
-          "apollographql.runQuery",
-          "apollographql.runQueryWithVariables"
-        ]
+        commands: []
       },
       textDocumentSync: documents.syncKind
-    }
+    } as ServerCapabilities
   };
+});
+
+connection.onInitialized(async () => {
+  initializeConnection();
+  if (hasWorkspaceFolderCapability) {
+    connection.workspace.onDidChangeWorkspaceFolders(async event => {
+      await Promise.all([
+        ...event.removed.map(folder =>
+          workspace.removeProjectsInFolder(folder)
+        ),
+        ...event.added.map(folder => workspace.addProjectsInFolder(folder))
+      ]);
+    });
+  }
 });
 
 const documents: TextDocuments = new TextDocuments();
@@ -156,45 +125,21 @@ documents.onDidChangeContent(params => {
 });
 
 connection.onDidChangeWatchedFiles(params => {
-  for (const change of params.changes) {
-    const uri = change.uri;
-
-    const filePath = Uri.parse(change.uri).fsPath;
-    if (
-      filePath.endsWith("apollo.config.js") ||
-      filePath.endsWith("package.json")
-    ) {
-      const projectForConfig = Array.from(
-        workspace.projectsByFolderUri.values()
-      )
-        .flatMap(arr => arr)
-        .find(proj => {
-          return proj.configFile === filePath;
-        });
-
-      if (projectForConfig) {
-        const newConfig = findAndLoadConfig(
-          dirname(projectForConfig.configFile),
-          false,
-          true
-        );
-
-        if (newConfig) {
-          projectForConfig.updateConfig(newConfig);
-        }
-      }
+  for (const { uri, type } of params.changes) {
+    if (uri.endsWith("apollo.config.js") || uri.endsWith(".env")) {
+      workspace.reloadProjectForConfig(uri);
     }
 
     // Don't respond to changes in files that are currently open,
     // because we'll get content change notifications instead
-    if (change.type === FileChangeType.Changed) {
+    if (type === FileChangeType.Changed) {
       continue;
     }
 
     const project = workspace.projectForFile(uri);
     if (!project) continue;
 
-    switch (change.type) {
+    switch (type) {
       case FileChangeType.Created:
         project.fileDidChange(uri);
         break;
@@ -207,161 +152,59 @@ connection.onDidChangeWatchedFiles(params => {
 
 const languageProvider = new GraphQLLanguageProvider(workspace);
 
-connection.onHover((params, token) => {
-  return languageProvider.provideHover(
+connection.onHover((params, token) =>
+  languageProvider.provideHover(params.textDocument.uri, params.position, token)
+);
+
+connection.onDefinition((params, token) =>
+  languageProvider.provideDefinition(
     params.textDocument.uri,
     params.position,
     token
-  );
-});
+  )
+);
 
-connection.onDefinition((params, token) => {
-  return languageProvider.provideDefinition(
-    params.textDocument.uri,
-    params.position,
-    token
-  );
-});
-
-connection.onReferences((params, token) => {
-  return languageProvider.provideReferences(
+connection.onReferences((params, token) =>
+  languageProvider.provideReferences(
     params.textDocument.uri,
     params.position,
     params.context,
     token
-  );
-});
+  )
+);
 
-connection.onCompletion((params, token) => {
-  return languageProvider.provideCompletionItems(
+connection.onDocumentSymbol((params, token) =>
+  languageProvider.provideDocumentSymbol(params.textDocument.uri, token)
+);
+
+connection.onWorkspaceSymbol((params, token) =>
+  languageProvider.provideWorkspaceSymbol(params.query, token)
+);
+
+connection.onCompletion((params, token) =>
+  languageProvider.provideCompletionItems(
     params.textDocument.uri,
     params.position,
     token
-  );
-});
-
-connection.onCodeLens((params, token) => {
-  return languageProvider.provideCodeLenses(params.textDocument.uri, token);
-});
-
-const createSubscriptionLink = (endpoint: string) => {
-  const client = new SubscriptionClient(
-    endpoint,
-    {
-      reconnect: true
-    },
-    ws
-  );
-
-  return new WebSocketLink(client);
-};
-
-const cancellationFunctions: { [id: number]: () => void } = {};
-let nextCancellationID = 1;
-
-export const executeAndNotify = (
-  query: DocumentNode,
-  endpoint: string,
-  headers: any,
-  variables: any
-) => {
-  const operation = query.definitions[0] as OperationDefinitionNode;
-  const link =
-    operation.operation === "subscription"
-      ? createSubscriptionLink(endpoint)
-      : createHttpLink({ uri: endpoint, fetch } as any);
-
-  const cancellationID = nextCancellationID;
-  nextCancellationID++;
-
-  const sub = execute(link, {
-    query,
-    variables,
-    context: { headers }
-  }).subscribe(
-    value => {
-      connection.sendNotification(
-        new NotificationType<any, void>("apollographql/queryResult"),
-        { result: value, cancellationID }
-      );
-    },
-    error => {
-      if (error.result) {
-        connection.sendNotification(
-          new NotificationType<any, void>("apollographql/queryResult"),
-          { result: error.result, cancellationID }
-        );
-      } else {
-        connection.sendNotification(
-          new NotificationType<any, void>("apollographql/queryResult"),
-          { result: { errors: [error] }, cancellationID }
-        );
-      }
-    }
-  );
-
-  connection.sendNotification(
-    new NotificationType<any, void>("apollographql/queryResult"),
-    { result: "Loading...", cancellationID }
-  );
-
-  cancellationFunctions[cancellationID] = () => {
-    sub.unsubscribe();
-  };
-};
-
-const operationHasVariables = (operation: OperationDefinitionNode) => {
-  return (
-    operation.variableDefinitions && operation.variableDefinitions.length > 0
-  );
-};
-
-connection.onExecuteCommand(params => {
-  switch (params.command) {
-    case "apollographql.runQuery":
-      const operation = (params.arguments![0] as DocumentNode)
-        .definitions[0] as OperationDefinitionNode;
-      if (operationHasVariables(operation)) {
-        connection.sendNotification(
-          new NotificationType<any, void>("apollographql/requestVariables"),
-          {
-            query: params.arguments![0],
-            endpoint: params.arguments![1],
-            headers: params.arguments![2],
-            schema: params.arguments![3],
-            requestedVariables: operation.variableDefinitions!.map(v => {
-              return {
-                name: v.variable.name.value,
-                typeNode: v.type
-              };
-            })
-          }
-        );
-      } else {
-        executeAndNotify(
-          params.arguments![0],
-          params.arguments![1],
-          params.arguments![2],
-          {}
-        );
-      }
-
-      break;
-
-    default:
-  }
-});
-
-connection.onNotification(
-  "apollographql/runQueryWithVariables",
-  ({ query, endpoint, headers, variables }) => {
-    executeAndNotify(query, endpoint, headers, variables);
-  }
+  )
 );
 
-connection.onNotification("apollographql/cancelQuery", ({ cancellationID }) => {
-  cancellationFunctions[cancellationID]();
-  delete cancellationFunctions[cancellationID];
+connection.onCodeLens((params, token) =>
+  languageProvider.provideCodeLenses(params.textDocument.uri, token)
+);
+
+connection.onNotification("apollographql/reloadService", () =>
+  workspace.reloadService()
+);
+
+connection.onNotification(
+  "apollographql/tagSelected",
+  (selection: QuickPickItem) => workspace.updateSchemaTag(selection)
+);
+
+connection.onNotification("apollographql/getStats", async ({ uri }) => {
+  const status = await languageProvider.provideStats(uri);
+  connection.sendNotification("apollographql/statsLoaded", status);
 });
 
 // Listen on the connection

@@ -64,10 +64,7 @@ describe("extractDocumentFromJavascript", () => {
 describe("Validation", () => {
   test(`should extract gql snippet from javascript file`, () => {
     const inputPaths = [
-      path.join(
-        __dirname,
-        "../../../common-test/fixtures/starwars/gqlQueries.js"
-      )
+      path.join(__dirname, "../../../../__fixtures__/starwars/gqlQueries.js")
     ];
 
     const document = loadAndMergeQueryDocuments(inputPaths);

@@ -4,11 +4,11 @@ import {
   GraphQLFloat,
   GraphQLBoolean,
   GraphQLID,
-  GraphQLList,
-  GraphQLNonNull,
   GraphQLScalarType,
   GraphQLEnumType,
-  isAbstractType
+  isAbstractType,
+  isNonNullType,
+  isListType
 } from "graphql";
 import { LegacyCompilerContext } from "apollo-codegen-core/lib/compiler/legacyIR";
 import { GraphQLType } from "graphql";
@@ -39,23 +39,43 @@ export function typeNameFromGraphQLType(
   isOptional?: boolean,
   isInputObject?: boolean
 ): string {
-  if (type instanceof GraphQLNonNull) {
+  if (isNonNullType(type)) {
     return typeNameFromGraphQLType(
       context,
       type.ofType,
       bareTypeName,
-      isOptional || false
+      isOptional || false,
+      isInputObject
     );
   } else if (isOptional === undefined) {
     isOptional = true;
   }
 
   let typeName;
-  if (type instanceof GraphQLList) {
-    typeName =
-      "Seq[" +
-      typeNameFromGraphQLType(context, type.ofType, bareTypeName) +
-      "]";
+  if (isListType(type)) {
+    if (isInputObject) {
+      typeName =
+        "Seq[" +
+        typeNameFromGraphQLType(
+          context,
+          type.ofType,
+          bareTypeName,
+          undefined,
+          isInputObject
+        ) +
+        "]";
+    } else {
+      typeName =
+        "scala.scalajs.js.Array[" +
+        typeNameFromGraphQLType(
+          context,
+          type.ofType,
+          bareTypeName,
+          undefined,
+          isInputObject
+        ) +
+        "]";
+    }
   } else if (type instanceof GraphQLScalarType) {
     typeName = typeNameForScalarType(context, type);
   } else if (type instanceof GraphQLEnumType) {
@@ -65,9 +85,7 @@ export function typeNameFromGraphQLType(
   }
 
   return isOptional
-    ? isInputObject
-      ? `scala.scalajs.js.UndefOr[${typeName}]`
-      : `Option[${typeName}]`
+    ? `com.apollographql.scalajs.OptionalValue[${typeName}]`
     : typeName;
 }
 

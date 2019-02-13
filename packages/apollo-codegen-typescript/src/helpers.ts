@@ -3,11 +3,11 @@ import {
   GraphQLFloat,
   GraphQLInt,
   GraphQLID,
-  GraphQLList,
-  GraphQLNonNull,
   GraphQLScalarType,
   GraphQLString,
-  GraphQLType
+  GraphQLType,
+  isListType,
+  isNonNullType
 } from "graphql";
 
 import * as t from "@babel/types";
@@ -29,7 +29,7 @@ export function createTypeFromGraphQLTypeFunction(
     graphQLType: GraphQLType,
     typeName?: string
   ): t.TSType {
-    if (graphQLType instanceof GraphQLList) {
+    if (isListType(graphQLType)) {
       const elementType = typeFromGraphQLType(graphQLType.ofType, typeName);
       return t.TSArrayType(
         t.isTSUnionType(elementType)
@@ -49,7 +49,7 @@ export function createTypeFromGraphQLTypeFunction(
       } else {
         return t.TSAnyKeyword();
       }
-    } else if (graphQLType instanceof GraphQLNonNull) {
+    } else if (isNonNullType(graphQLType)) {
       // This won't happen; but for TypeScript completeness:
       return typeFromGraphQLType(graphQLType.ofType, typeName);
     } else {
@@ -61,7 +61,7 @@ export function createTypeFromGraphQLTypeFunction(
     graphQLType: GraphQLType,
     typeName?: string
   ): t.TSType {
-    if (graphQLType instanceof GraphQLNonNull) {
+    if (isNonNullType(graphQLType)) {
       return nonNullableTypeFromGraphQLType(graphQLType.ofType, typeName);
     } else {
       const type = nonNullableTypeFromGraphQLType(graphQLType, typeName);

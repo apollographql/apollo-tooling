@@ -1,15 +1,16 @@
 {
   "name": "apollo",
   "description": "Command line tool for Apollo GraphQL",
-  "version": "1.9.2",
+  "version": "2.5.0",
+  "referenceID": "21ad0845-c235-422e-be7d-a998310df972",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/apollographql/apollo-cli.git"
+    "url": "git+https://github.com/apollographql/apollo-tooling.git"
   },
-  "homepage": "https://github.com/apollographql/apollo-cli",
-  "bugs": "https://github.com/apollographql/apollo-cli/issues",
+  "homepage": "https://github.com/apollographql/apollo-tooling",
+  "bugs": "https://github.com/apollographql/apollo-tooling/issues",
   "files": [
     "/bin",
     "/lib",
@@ -21,10 +22,6 @@
     "apollo": "./bin/run"
   },
   "scripts": {
-    "clean": "rm -rf lib",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "prepare": "npm run build",
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "postpack": "rm -f oclif.manifest.json",
     "version": "oclif-dev readme && git add README.md"
@@ -34,46 +31,39 @@
     "npm": ">=6"
   },
   "dependencies": {
+    "@apollographql/apollo-tools": "file:../apollo-tools",
     "@oclif/command": "^1.4.21",
-    "@oclif/config": "^1.6.17",
+    "@oclif/config": "1.12.0",
+    "@oclif/plugin-autocomplete": "^0.1.0",
     "@oclif/plugin-help": "^1.2.11",
     "@oclif/plugin-not-found": "^1.0.9",
+    "@oclif/plugin-plugins": "^1.7.2",
     "@oclif/plugin-warn-if-update-available": "^1.3.9",
-    "@types/globby": "^8.0.0",
-    "@types/lodash": "^4.14.109",
-    "@types/react": "^16.3.14",
-    "@types/react-dom": "^16.0.5",
-    "@types/rimraf": "^2.0.2",
     "apollo-codegen-core": "file:../apollo-codegen-core",
     "apollo-codegen-flow": "file:../apollo-codegen-flow",
-    "apollo-codegen-flow-legacy": "file:../apollo-codegen-flow-legacy",
     "apollo-codegen-scala": "file:../apollo-codegen-scala",
     "apollo-codegen-swift": "file:../apollo-codegen-swift",
     "apollo-codegen-typescript": "file:../apollo-codegen-typescript",
-    "apollo-codegen-typescript-legacy": "file:../apollo-codegen-typescript-legacy",
-    "apollo-engine-reporting": "0.0.2",
-    "apollo-link": "^1.2.2",
-    "apollo-link-http": "^1.5.4",
+    "apollo-engine-reporting": "0.2.2",
+    "apollo-env": "file:../apollo-env",
+    "apollo-language-server": "file:../apollo-language-server",
     "chalk": "^2.4.1",
     "cli-ux": "^4.3.0",
-    "decode-html": "^2.0.0",
-    "env-ci": "^2.1.0",
+    "env-ci": "^3.0.0",
     "gaze": "^1.1.3",
     "git-parse": "^1.0.3",
     "git-rev-sync": "^1.12.0",
     "glob": "^7.1.2",
-    "graphql": "^0.13.2",
+    "graphql": "^14.0.2",
     "graphql-tag": "^2.9.2",
     "heroku-cli-util": "^8.0.9",
     "listr": "^0.14.1",
     "lodash": "^4.17.10",
-    "node-fetch": "^2.1.2",
-    "react": "^16.4.0",
-    "react-dom": "^16.4.0",
-    "rimraf": "^2.6.2"
+    "tty": "^1.0.1",
+    "vscode-uri": "^1.0.6"
   },
   "devDependencies": {
-    "typescript": "^3.0.3"
+    "typescript": "3.1.6"
   },
   "oclif": {
     "commands": "./lib/commands",
@@ -81,14 +71,18 @@
     "plugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-not-found",
+      "@oclif/plugin-plugins",
       "@oclif/plugin-warn-if-update-available"
     ],
     "repositoryPrefix": "<%- repo %>/blob/master/packages/apollo/<%- commandPath %>"
   },
   "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
+    "preset": "ts-jest",
+    "transformIgnorePatterns": [
+      "/node_modules/",
+      "/apollo-env/"
+    ],
+    "testMatch": null,
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "testPathIgnorePatterns": [
       "node_modules",
@@ -102,6 +96,12 @@
       "json",
       "node"
     ],
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "<rootDir>/tsconfig.test.json",
+        "diagnostics": false
+      }
+    }
   }
 }

@@ -105,6 +105,7 @@ Object {
       "variableDefinitions": Array [
         Object {
           "defaultValue": undefined,
+          "directives": Array [],
           "kind": "VariableDefinition",
           "loc": Object {
             "end": 41,

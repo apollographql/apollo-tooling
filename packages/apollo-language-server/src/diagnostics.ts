@@ -2,7 +2,8 @@ import {
   GraphQLSchema,
   GraphQLError,
   FragmentDefinitionNode,
-  findDeprecatedUsages
+  findDeprecatedUsages,
+  isExecutableDefinitionNode
 } from "graphql";
 
 import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver";
@@ -11,25 +12,41 @@ import { GraphQLDocument } from "./document";
 import { highlightNodeForNode } from "./utilities/graphql";
 import { rangeForASTNode } from "./utilities/source";
 
-import { getValidationErrors } from "apollo/lib/validation";
+import { getValidationErrors } from "./errors/validation";
+import { DocumentUri } from "./project/base";
 
-export function collectDiagnostics(
+/**
+ * Build an array of code diagnostics for all executable definitions in a document.
+ */
+export function collectExecutableDefinitionDiagnositics(
   schema: GraphQLSchema,
   queryDocument: GraphQLDocument,
-  fragments: { [fragmentName: string]: FragmentDefinitionNode }
+  fragments: { [fragmentName: string]: FragmentDefinitionNode } = {}
 ): Diagnostic[] {
   const ast = queryDocument.ast;
   if (!ast) return queryDocument.syntaxErrors;
 
+  const astWithExecutableDefinitions = {
+    ...ast,
+    definitions: ast.definitions.filter(isExecutableDefinitionNode)
+  };
+
   const diagnostics = [];
 
-  for (const error of getValidationErrors(schema, ast, fragments)) {
+  for (const error of getValidationErrors(
+    schema,
+    astWithExecutableDefinitions,
+    fragments
+  )) {
     diagnostics.push(
       ...diagnosticsFromError(error, DiagnosticSeverity.Error, "Validation")
     );
   }
 
-  for (const error of findDeprecatedUsages(schema, ast)) {
+  for (const error of findDeprecatedUsages(
+    schema,
+    astWithExecutableDefinitions
+  )) {
     diagnostics.push(
       ...diagnosticsFromError(error, DiagnosticSeverity.Warning, "Deprecation")
     );
@@ -38,7 +55,7 @@ export function collectDiagnostics(
   return diagnostics;
 }
 
-function diagnosticsFromError(
+export function diagnosticsFromError(
   error: GraphQLError,
   severity: DiagnosticSeverity,
   type: string
@@ -55,4 +72,21 @@ function diagnosticsFromError(
       range: rangeForASTNode(highlightNodeForNode(node) || node)
     };
   });
+}
+
+export class DiagnosticSet {
+  private diagnosticsByFile = new Map<DocumentUri, Diagnostic[]>();
+
+  entries() {
+    return this.diagnosticsByFile.entries();
+  }
+
+  addDiagnostics(uri: DocumentUri, diagnostics: Diagnostic[]) {
+    const existingDiagnostics = this.diagnosticsByFile.get(uri);
+    if (!existingDiagnostics) {
+      this.diagnosticsByFile.set(uri, diagnostics);
+    } else {
+      existingDiagnostics.push(...diagnostics);
+    }
+  }
 }

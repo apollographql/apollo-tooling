@@ -1,5 +1,1 @@
-# CHANGELOG
-
-## 1.0.5
-- improved handling of missing git context
-- improved error handling from server
+To see release notes and changes for `apollo`, See the [apollo-tooling changelog](https://github.com/apollographql/apollo-tooling/blob/master/CHANGELOG.md)

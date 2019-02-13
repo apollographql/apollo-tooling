@@ -4,7 +4,7 @@ import { LegacyCompilerContext } from "apollo-codegen-core/lib/compiler/legacyIR
 export interface Property {
   propertyName: string;
   typeName: string;
-  caseClassName?: string;
+  traitName?: string;
   isOptional?: boolean;
   isList?: boolean;
   description?: string;
@@ -31,7 +31,6 @@ export function packageDeclaration(
 ) {
   generator.printNewlineIfNeeded();
   generator.printOnNewline(`package ${pkg}`);
-  generator.popScope();
 }
 
 export function objectDeclaration(
@@ -56,17 +55,47 @@ export function objectDeclaration(
   generator.popScope();
 }
 
-export function caseClassDeclaration(
+export function traitDeclaration(
   generator: CodeGenerator<LegacyCompilerContext, any>,
   {
-    caseClassName,
+    traitName,
+    annotations,
+    superclasses,
+    description
+  }: {
+    traitName: string;
+    annotations?: string[];
+    superclasses?: string[];
+    description?: string;
+  },
+  closure?: () => void
+) {
+  generator.printNewlineIfNeeded();
+
+  if (description) {
+    comment(generator, description);
+  }
+
+  generator.printOnNewline(
+    `${(annotations || []).map(a => "@" + a).join(" ")} trait ${traitName}` +
+      (superclasses ? ` extends ${superclasses.join(" with ")}` : "")
+  );
+  generator.pushScope({ typeName: traitName });
+  if (closure) {
+    generator.withinBlock(closure);
+  }
+  generator.popScope();
+}
+
+export function methodDeclaration(
+  generator: CodeGenerator<LegacyCompilerContext, any>,
+  {
+    methodName,
     description,
-    superclass,
     params
   }: {
-    caseClassName: string;
+    methodName: string;
     description?: string;
-    superclass?: string;
     params?: {
       name: string;
       type: string;
@@ -90,31 +119,38 @@ export function caseClassDeclaration(
     .join(", ");
 
   generator.printOnNewline(
-    `case class ${caseClassName}(${paramsSection})` +
-      (superclass ? ` extends ${superclass}` : "")
+    `def ${methodName}(${paramsSection})` + (closure ? " =" : "")
   );
-  generator.pushScope({ typeName: caseClassName });
+
   if (closure) {
     generator.withinBlock(closure);
   }
-  generator.popScope();
 }
 
 export function propertyDeclaration(
   generator: CodeGenerator<LegacyCompilerContext, any>,
   {
+    jsName,
     propertyName,
     typeName,
     description
   }: {
+    jsName?: string;
     propertyName: string;
     typeName: string;
-    description: string;
+    description?: string;
   },
   closure?: () => void
 ) {
-  comment(generator, description);
-  generator.printOnNewline(`val ${propertyName}: ${typeName} =`);
+  if (description) {
+    comment(generator, description);
+  }
+
+  generator.printOnNewline(
+    (jsName ? `@scala.scalajs.js.annotation.JSName("${jsName}") ` : "") +
+      `val ${propertyName}: ${typeName}` +
+      (closure ? ` =` : "")
+  );
 
   if (closure) {
     generator.withinBlock(closure);

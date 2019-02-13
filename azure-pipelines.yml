@@ -1,0 +1,101 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+jobs:
+  # - job: Linux_Node8
+
+  #   pool:
+  #     vmImage: "ubuntu 16.04"
+
+  #   steps:
+  #     - task: NodeTool@0
+  #       inputs:
+  #         versionSpec: "8.x"
+  #       displayName: "Install Node.js"
+
+  #     - script: |
+  #         npm run azure
+  #       displayName: "npm ci && test"
+
+  #     - script: |
+  #         npm run lint
+  #       displayName: "npm run lint"
+
+  #     - script: |
+  #         ENGINE_API_KEY=$(CHECKS_API_KEY) ./packages/apollo/bin/run client:check
+  #       displayName: "Query Check"
+
+  # - job: Linux_Node10
+
+  #   pool:
+  #     vmImage: "ubuntu 16.04"
+
+  #   steps:
+  #     - task: NodeTool@0
+  #       inputs:
+  #         versionSpec: "10.x"
+  #       displayName: "Install Node.js"
+
+  #     - script: |
+  #         npm run azure
+  #       displayName: "npm ci && test"
+
+  - job: Windows_Node8
+
+    pool:
+      vmImage: "vs2017-win2016"
+
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "8.14"
+        displayName: "Install Node.js"
+
+      - script: |
+          npm run azure
+        displayName: "npm ci && test"
+
+  - job: Windows_Node10
+
+    pool:
+      vmImage: "vs2017-win2016"
+
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "10.x"
+        displayName: "Install Node.js"
+
+      - script: |
+          npm run azure
+        displayName: "npm ci && test"
+
+  - job: Build_VSCode
+
+    pool:
+      vmImage: "ubuntu 16.04"
+
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "10.x"
+        displayName: "Install Node.js"
+
+      - script: |
+          npm run package-extension
+        displayName: "package-extension"
+
+      - task: CopyFiles@2
+        inputs:
+          sourceFolder: "./packages/vscode-apollo"
+          contents: "*.vsix"
+          targetFolder: "$(Build.ArtifactStagingDirectory)"
+        condition: succeededOrFailed()
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: "$(Build.ArtifactStagingDirectory)"
+          artifactName: "vsix"
+        condition: succeededOrFailed()

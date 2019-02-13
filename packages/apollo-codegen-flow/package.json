@@ -1,40 +1,40 @@
 {
   "name": "apollo-codegen-flow",
   "description": "Flow generator module for Apollo Codegen",
-  "version": "0.28.1",
+  "version": "0.32.6",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/apollographql/apollo-cli.git"
+    "url": "git+https://github.com/apollographql/apollo-tooling.git"
   },
-  "homepage": "https://github.com/apollographql/apollo-cli",
-  "bugs": "https://github.com/apollographql/apollo-cli/issues",
+  "homepage": "https://github.com/apollographql/apollo-tooling",
+  "bugs": "https://github.com/apollographql/apollo-tooling/issues",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "scripts": {
-    "clean": "rm -rf lib",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "prepare": "npm run build"
-  },
   "engines": {
     "node": ">=8",
     "npm": ">=6"
   },
   "dependencies": {
-    "@babel/types": "7.0.0-beta.38",
+    "@babel/types": "7.3.2",
     "apollo-codegen-core": "file:../apollo-codegen-core",
+    "apollo-env": "file:../apollo-env",
     "change-case": "^3.0.1",
     "inflected": "^2.0.3"
   },
   "jest": {
+    "preset": "ts-jest",
+    "transformIgnorePatterns": [
+      "/node_modules/",
+      "/apollo-env/"
+    ],
     "testEnvironment": "node",
     "testMatch": [
       "**/__tests__/*.(js|ts)"
     ],
     "setupFiles": [
-      "<rootDir>/../apollo-codegen-core/src/polyfills.ts"
+      "<rootDir>/../apollo-env/lib/index.js"
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
@@ -42,16 +42,14 @@
       "<rootDir>/test/fixtures/",
       "<rootDir>/test/test-utils"
     ],
-    "transform": {
-      "^.+\\.(ts|js)x?$": "<rootDir>../../node_modules/ts-jest/preprocessor.js"
-    },
     "moduleFileExtensions": [
       "ts",
       "js"
     ],
     "globals": {
       "ts-jest": {
-        "skipBabel": true
+        "tsConfig": "<rootDir>/tsconfig.test.json",
+        "diagnostics": false
       }
     }
   }

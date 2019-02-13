@@ -1,17 +1,25 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "composite": true,
+    "target": "es2017",
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
-    "lib": ["es2017", "esnext.asynciterable", "dom"],
+    "declaration": true,
+    "declarationMap": true,
     "removeComments": true,
     "strict": true,
+    "noImplicitAny": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noUnusedParameters": true,
-    "noUnusedLocals": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["es2017", "esnext.asynciterable"],
+    "types": ["node", "apollo-env"],
+    "baseUrl": ".",
+    "paths": {
+      "*": ["types/*"]
+    }
   }
 }

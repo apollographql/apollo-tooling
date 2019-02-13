@@ -1,9 +1,10 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
-    "declaration": true,
-    "outDir": "lib"
+    "rootDir": "./src",
+    "outDir": "./lib"
   },
-  "include" : [ "src/**/*" ],
-  "exclude": [ "**/__tests__/*" ]
+  "include": ["./src/**/*"],
+  "exclude": ["**/__tests__/*", "**/__mocks__/*"],
+  "references": [{ "path": "../apollo-language-server" }]
 }

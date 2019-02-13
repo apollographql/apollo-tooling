@@ -22,13 +22,13 @@ common_test_steps: &common_test_steps
     - restore_cache:
         keys:
           # When lock file changes, use increasingly general patterns to restore cache
-          - npm-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          - npm-v1-{{ .Branch }}-
-          - npm-v1-
+          - npm-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          - npm-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+          - npm-{{ .Environment.CACHE_VERSION }}-
     - run: npm --version
     - run: npm ci
     - save_cache:
-        key: npm-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+        key: npm-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
         paths:
           # This should cache the npm cache instead of node_modules, which is needed because
           # npm ci actually removes node_modules before installing to guarantee a clean slate.
@@ -49,6 +49,37 @@ jobs:
     docker: [{ image: "circleci/node:10" }]
     <<: *common_test_steps
 
+  VSCode:
+    docker: [{ image: "circleci/node:10" }]
+    steps:
+      - run:
+          name: Install deps for VSCode / GUI
+          command: sudo apt-get update && sudo apt-get install -y nodejs libgtk3.0 libxss1 libgconf-2-4 libasound2 libnss3 x11-xserver-utils xvfb
+      - *run_install_desired_npm
+      - checkout
+      - restore_cache:
+          keys:
+            # When lock file changes, use increasingly general patterns to restore cache
+            - npm-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - npm-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+            - npm-{{ .Environment.CACHE_VERSION }}-
+      - run: npm --version
+      - run: npm ci
+      - save_cache:
+          key: npm-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            # This should cache the npm cache instead of node_modules, which is needed because
+            # npm ci actually removes node_modules before installing to guarantee a clean slate.
+            - ~/.npm
+      - run:
+          name: Initialize false display for headless env
+          command: Xvfb :99
+          background: true
+      - run:
+          name: Run VSCode tests
+          command: npm run test:vscode
+          environment:
+            DISPLAY: :99
   # Other tests, unrelated to typical code tests.
   Linting:
     docker: [{ image: "circleci/node:8" }]
@@ -67,34 +98,25 @@ jobs:
       - restore_cache:
           keys:
             # When lock file changes, use increasingly general patterns to restore cache
-            - npm-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - npm-v1-{{ .Branch }}-
-            - npm-v1-
+            - npm-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - npm-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+            - npm-{{ .Environment.CACHE_VERSION }}-
       - run: npm --version
       - run: npm ci
       - save_cache:
-          key: npm-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: npm-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
           paths:
             # This should cache the npm cache instead of node_modules, which is needed because
             # npm ci actually removes node_modules before installing to guarantee a clean slate.
             - ~/.npm
-      - run: ./packages/apollo/bin/run queries:check --queries="packages/apollo/src/operations/*" --key=$STAGING_API_KEY --engine=https://engine-staging-graphql.apollographql.com/api/graphql
-
-ignore_doc_branches: &ignore_doc_branches
-  filters:
-    branches:
-      # If 'docs' is found, with word boundaries on either side, skip.
-      ignore: /.*?\bdocs\b.*/
+      - run: ENGINE_API_KEY=$CHECKS_API_KEY ./packages/apollo/bin/run client:check
 
 workflows:
   version: 2
   Build and Test:
     jobs:
-      - Node.js 8:
-          <<: *ignore_doc_branches
-      - Node.js 10:
-          <<: *ignore_doc_branches
-      - Linting:
-          <<: *ignore_doc_branches
-      - Query Check:
-          <<: *ignore_doc_branches
+      - Node.js 8
+      - Node.js 10
+      - VSCode
+      - Linting
+      - Query Check

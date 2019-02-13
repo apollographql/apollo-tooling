@@ -1,18 +1,22 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
-    "declaration": true,
-    "jsx": "react",
-    "importHelpers": true,
-    "outDir": "lib",
-    "pretty": true,
-    "lib": ["es2017", "esnext.asynciterable"],
-    "target": "es2017",
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "noImplicitAny": false,
     "baseUrl": ".",
     "paths": {
-      "*": ["./@types/*"]
+      "*": ["./@types/*", "../../types/*"]
     }
   },
   "include": ["./src/**/*"],
-  "exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
+  "exclude": ["**/__tests__/*", "**/__mocks__/*"],
+  "references": [
+    { "path": "../apollo-codegen-flow" },
+    { "path": "../apollo-codegen-scala" },
+    { "path": "../apollo-codegen-swift" },
+    { "path": "../apollo-codegen-typescript" },
+    { "path": "../apollo-language-server" },
+    { "path": "../apollo-tools" }
+  ]
 }

@@ -1,6 +1,11 @@
 node_modules
 lib
 
+# Only the top-level of the monorepo should govern package locks,
+# not the individual package directories. (Keep in mind that currently
+# `npm install` should not be run within the `packages/*` directories.)
+packages/*/package-lock.json
+
 # Visual Studio Code workspace settings
 .vscode/*
 !.vscode/settings.json
@@ -10,9 +15,12 @@ lib
 
 .DS_Store
 
-yarn.lock
 lerna-debug.log
 
-packages/apollo-vscode/server
-packages/apollo-vscode/webview-content
-**/*.vsix
+vscode-apollo-*.vsix
+
+.env
+
+# files generated from tests
+__tmp__*
+.vscode-test

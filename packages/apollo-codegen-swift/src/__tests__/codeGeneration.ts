@@ -8,7 +8,7 @@ import {
 
 import { loadSchema } from "apollo-codegen-core/lib/loading";
 const schema = loadSchema(
-  require.resolve("../../../common-test/fixtures/starwars/schema.json")
+  require.resolve("../../../../__fixtures__/starwars/schema.json")
 );
 
 import {

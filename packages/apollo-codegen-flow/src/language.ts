@@ -36,8 +36,7 @@ export default class FlowGenerator {
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
     const unionValues = sortEnumValues(type.getValues()).map(({ value }) => {
-      const type = t.stringLiteralTypeAnnotation();
-      type.value = value;
+      const type = t.stringLiteralTypeAnnotation(value);
 
       return type;
     });

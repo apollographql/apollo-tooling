@@ -1,0 +1,19 @@
+{
+  "extends": ["apollo-open-source"],
+  "packageRules": [
+    {
+      "paths": ["packages/apollo/package.json"],
+      "rangeStrategy": "pin"
+    },
+    {
+      "packageNames": ["@oclif/config"],
+      "rangeStrategy": "pin",
+      "allowedVersions": ["=1.12.0"]
+    },
+    {
+      "packageNames": ["core-js"],
+      "rangeStrategy": "pin",
+      "allowedVersions": ["=3.0.0-beta.13"]
+    }
+  ]
+}

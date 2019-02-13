@@ -3,85 +3,210 @@ import {
   NotificationHandler,
   PublishDiagnosticsParams
 } from "vscode-languageserver";
-import Uri from "vscode-uri";
-
-import { GraphQLProject, DocumentUri } from "./project";
+import { QuickPickItem } from "vscode";
+import { GraphQLProject, DocumentUri } from "./project/base";
 import { dirname } from "path";
 import * as fg from "glob";
-import { findAndLoadConfig } from "apollo/lib/config";
-import { GraphQLDocument } from "./document";
-import { Source, buildSchema } from "graphql";
-import { LoadingHandler } from "./server";
+import {
+  loadConfig,
+  ApolloConfig,
+  isClientConfig,
+  ServiceConfig
+} from "./config";
+import { LanguageServerLoadingHandler } from "./loadingHandler";
+import { ServiceID, SchemaTag, ClientIdentity } from "./engine";
+import { GraphQLClientProject, isClientProject } from "./project/client";
+import { GraphQLServiceProject } from "./project/service";
+import URI from "vscode-uri";
+
+export interface WorkspaceConfig {
+  clientIdentity?: ClientIdentity;
+}
 
 export class GraphQLWorkspace {
   private _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
-  private _onDecorations?: (any: any) => void;
-  public projectsByFolderUri: Map<string, GraphQLProject[]> = new Map();
+  private _onDecorations?: NotificationHandler<any>;
+  private _onSchemaTags?: NotificationHandler<[ServiceID, SchemaTag[]]>;
+  private _onConfigFilesFound?: NotificationHandler<ApolloConfig[]>;
 
-  constructor(private loadingHandler: LoadingHandler) {}
+  private projectsByFolderUri: Map<string, GraphQLProject[]> = new Map();
+
+  constructor(
+    private LanguageServerLoadingHandler: LanguageServerLoadingHandler,
+    private config: WorkspaceConfig
+  ) {}
 
   onDiagnostics(handler: NotificationHandler<PublishDiagnosticsParams>) {
     this._onDiagnostics = handler;
   }
 
-  onDecorations(handler: (any: any) => void) {
+  onDecorations(handler: NotificationHandler<any>) {
     this._onDecorations = handler;
   }
 
-  addProjectsInFolder(folder: WorkspaceFolder) {
-    const apolloConfigFiles: string[] = fg.sync("**/apollo.config.js", {
-      cwd: Uri.parse(folder.uri).fsPath,
-      absolute: true,
-      ignore: "**/node_modules/**"
+  onSchemaTags(handler: NotificationHandler<[ServiceID, SchemaTag[]]>) {
+    this._onSchemaTags = handler;
+  }
+
+  onConfigFilesFound(handler: NotificationHandler<ApolloConfig[]>) {
+    this._onConfigFilesFound = handler;
+  }
+
+  private createProject({
+    config,
+    folder
+  }: {
+    config: ApolloConfig;
+    folder: WorkspaceFolder;
+  }) {
+    const { clientIdentity } = this.config;
+    const project = isClientConfig(config)
+      ? new GraphQLClientProject({
+          config,
+          loadingHandler: this.LanguageServerLoadingHandler,
+          rootURI: URI.parse(folder.uri),
+          clientIdentity
+        })
+      : new GraphQLServiceProject({
+          config: config as ServiceConfig,
+          loadingHandler: this.LanguageServerLoadingHandler,
+          rootURI: URI.parse(folder.uri),
+          clientIdentity
+        });
+
+    project.onDiagnostics(params => {
+      this._onDiagnostics && this._onDiagnostics(params);
     });
 
-    apolloConfigFiles.push(
-      ...fg.sync("**/package.json", {
-        cwd: Uri.parse(folder.uri).fsPath,
-        absolute: true,
-        ignore: "**/node_modules/**"
-      })
-    );
-
-    const apolloConfigFolders = new Set<string>(
-      apolloConfigFiles.map(f => dirname(f))
-    );
-
-    const projectConfigs = Array.from(apolloConfigFolders).flatMap(
-      configFolder => {
-        return this.loadingHandler.handleSync(
-          `Loading Apollo Config in folder ${configFolder}`,
-          () => {
-            try {
-              return [findAndLoadConfig(configFolder, false, true)];
-            } catch (e) {
-              console.error(e);
-              return [];
-            }
-          }
-        );
-      }
-    );
-
-    const projects = projectConfigs.map(projectConfig => {
-      const project = new GraphQLProject(
-        projectConfig,
-        projectConfig.configFile,
-        this.loadingHandler
-      );
-
-      project.onDiagnostics(params => {
-        this._onDiagnostics && this._onDiagnostics(params);
-      });
-
+    if (isClientProject(project)) {
       project.onDecorations(params => {
         this._onDecorations && this._onDecorations(params);
       });
 
-      return project;
+      project.onSchemaTags(tags => {
+        this._onSchemaTags && this._onSchemaTags(tags);
+      });
+    }
+
+    return project;
+  }
+
+  async addProjectsInFolder(folder: WorkspaceFolder) {
+    // load all possible workspace projects (contains possible config)
+    // see if we can move this detection to cosmiconfig
+    /*
+
+      - monorepo (GraphQLWorkspace) as WorkspaceFolder
+        -- engine-api (GraphQLProject)
+        -- engine-frontend (GraphQLProject)
+
+      OR
+
+      - vscode workspace (fullstack)
+        -- ~/:user/client (GraphQLProject) as WorkspaceFolder
+        -- ~/:user/server (GraphQLProject) as WorkspaceFolder
+
+    */
+    const apolloConfigFiles: string[] = fg.sync("**/apollo.config.@(js|ts)", {
+      cwd: URI.parse(folder.uri).fsPath,
+      absolute: true,
+      ignore: "**/node_modules/**"
     });
 
-    this.projectsByFolderUri.set(folder.uri, projects);
+    // only have unique possible folders
+    const apolloConfigFolders = new Set<string>(apolloConfigFiles.map(dirname));
+
+    // go from possible folders to known array of configs
+    const projectConfigs = Array.from(apolloConfigFolders).map(configFolder =>
+      loadConfig({ configPath: configFolder, requireConfig: true })
+    );
+
+    let foundConfigs: ApolloConfig[] | Error = [];
+    await Promise.all(projectConfigs)
+      .then(configs => {
+        foundConfigs = configs;
+        return configs.flatMap(projectConfig =>
+          // we create a GraphQLProject for each kind of project
+          projectConfig.projects.map(config =>
+            this.createProject({ config, folder })
+          )
+        );
+      })
+      .then(projects => this.projectsByFolderUri.set(folder.uri, projects))
+      .catch(error => {
+        foundConfigs = error;
+      });
+
+    if (this._onConfigFilesFound) {
+      this._onConfigFilesFound(foundConfigs);
+    }
+  }
+
+  reloadService() {
+    this.projectsByFolderUri.forEach((projects, uri) => {
+      this.projectsByFolderUri.set(
+        uri,
+        projects.map(project => {
+          project.clearAllDiagnostics();
+          return this.createProject({
+            config: project.config,
+            folder: { uri } as WorkspaceFolder
+          });
+        })
+      );
+    });
+  }
+
+  async reloadProjectForConfig(configUri: DocumentUri) {
+    const configPath = dirname(URI.parse(configUri).fsPath);
+
+    let config, error;
+    try {
+      config = await loadConfig({ configPath, requireConfig: true });
+    } catch (e) {
+      error = e;
+    }
+
+    const project = this.projectForFile(configUri);
+
+    if (!config && this._onConfigFilesFound) {
+      this._onConfigFilesFound(error);
+    }
+    // If project exists, update the config
+    if (project && config) {
+      await Promise.all(project.updateConfig(config));
+      this.reloadService();
+    }
+
+    // If project doesn't exist (new config file), create the project and add to workspace
+    if (!project && config) {
+      const folderUri = URI.file(configPath).toString();
+
+      const newProject = this.createProject({
+        config,
+        folder: { uri: folderUri } as WorkspaceFolder
+      });
+
+      const existingProjects = this.projectsByFolderUri.get(folderUri) || [];
+      this.projectsByFolderUri.set(folderUri, [
+        ...existingProjects,
+        newProject
+      ]);
+      this.reloadService();
+    }
+  }
+
+  updateSchemaTag(selection: QuickPickItem) {
+    const serviceID = selection.detail;
+    if (!serviceID) return;
+
+    this.projectsByFolderUri.forEach(projects => {
+      projects.forEach(project => {
+        if (isClientProject(project) && project.serviceID === serviceID) {
+          project.updateSchemaTag(selection.label);
+        }
+      });
+    });
   }
 
   removeProjectsInFolder(folder: WorkspaceFolder) {
@@ -92,22 +217,11 @@ export class GraphQLWorkspace {
     }
   }
 
-  projectForFile(uri: DocumentUri): GraphQLProject | undefined {
-    if (uri.startsWith("graphql-schema")) {
-      return ({
-        documentAt(uri: string, _: any) {
-          return {
-            doc: new GraphQLDocument(new Source(Uri.parse(uri).query, uri)),
-            set: {
-              schema: buildSchema(new Source(Uri.parse(uri).query, uri))
-            }
-          };
-        },
-        documentDidChange() {},
-        documentsAt() {}
-      } as any) as GraphQLProject;
-    }
+  get projects(): GraphQLProject[] {
+    return Array.from(this.projectsByFolderUri.values()).flat();
+  }
 
+  projectForFile(uri: DocumentUri): GraphQLProject | undefined {
     for (const projects of this.projectsByFolderUri.values()) {
       const project = projects.find(project => project.includesFile(uri));
       if (project) {

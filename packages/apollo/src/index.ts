@@ -1,8 +1,8 @@
 // run the CLI
 export { run } from "@oclif/command";
 
-// export utils for usage
-export * from "./printer/ast";
+// export Command base for plugins
+export * from "./Command";
 
-export { printFromSchemas, printChanges } from "./printer/print";
-export { diffSchemas } from "./printer/diff";
+// export git utils
+export * from "./git";

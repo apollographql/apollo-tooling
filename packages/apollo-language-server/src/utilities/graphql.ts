@@ -12,8 +12,10 @@ import {
   ASTNode,
   Kind,
   NameNode,
-  TypeSystemDefinitionNode,
-  TypeSystemExtensionNode
+  visit,
+  DirectiveNode,
+  OperationDefinitionNode,
+  SelectionSetNode
 } from "graphql";
 
 export function isNode(maybeNode: any): maybeNode is ASTNode {
@@ -26,41 +28,6 @@ export type NamedNode = ASTNode & {
 
 export function isNamedNode(node: ASTNode): node is NamedNode {
   return "name" in node;
-}
-
-export function isTypeSystemDefinitionNode(
-  node: ASTNode
-): node is TypeSystemDefinitionNode {
-  switch (node.kind) {
-    case Kind.SCHEMA_DEFINITION:
-    case Kind.SCALAR_TYPE_DEFINITION:
-    case Kind.OBJECT_TYPE_DEFINITION:
-    case Kind.INTERFACE_TYPE_DEFINITION:
-    case Kind.UNION_TYPE_DEFINITION:
-    case Kind.ENUM_TYPE_DEFINITION:
-    case Kind.INPUT_OBJECT_TYPE_DEFINITION:
-    case Kind.DIRECTIVE_DEFINITION:
-      return true;
-    default:
-      return false;
-  }
-}
-
-export function isTypeSystemExtensionNode(
-  node: ASTNode
-): node is TypeSystemExtensionNode {
-  switch (node.kind) {
-    // case Kind.SCHEMA_EXTENSION:
-    case Kind.SCALAR_TYPE_EXTENSION:
-    case Kind.OBJECT_TYPE_EXTENSION:
-    case Kind.INTERFACE_TYPE_EXTENSION:
-    case Kind.UNION_TYPE_EXTENSION:
-    case Kind.ENUM_TYPE_EXTENSION:
-    case Kind.INPUT_OBJECT_TYPE_EXTENSION:
-      return true;
-    default:
-      return false;
-  }
 }
 
 export function highlightNodeForNode(node: ASTNode): ASTNode {
@@ -108,4 +75,82 @@ export function getFieldDef(
   }
 
   return undefined;
+}
+
+export function removeDirectives(ast: ASTNode, directiveNames: string[]) {
+  if (!directiveNames.length) return ast;
+  return visit(ast, {
+    Directive(node: DirectiveNode): DirectiveNode | null {
+      if (!!directiveNames.find(name => name === node.name.value)) return null;
+      return node;
+    }
+  });
+}
+
+// remove fields where a given directive is found
+export function removeDirectiveAnnotatedFields(
+  ast: ASTNode,
+  directiveNames: string[]
+) {
+  if (!directiveNames.length) return ast;
+  return visit(ast, {
+    Field(node: FieldNode): FieldNode | null {
+      if (
+        node.directives &&
+        node.directives.find(
+          directive =>
+            !!directiveNames.find(name => name === directive.name.value)
+        )
+      )
+        return null;
+      return node;
+    },
+    OperationDefinition: {
+      leave(node: OperationDefinitionNode): OperationDefinitionNode | null {
+        if (!node.selectionSet.selections.length) return null;
+        return node;
+      }
+    }
+  });
+}
+
+const typenameField = {
+  kind: Kind.FIELD,
+  name: { kind: Kind.NAME, value: "__typename" }
+};
+
+export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
+  return visit(ast, {
+    enter: {
+      SelectionSet(node: SelectionSetNode) {
+        return {
+          ...node,
+          selections: node.selections.filter(
+            selection =>
+              !(
+                selection.kind === "Field" &&
+                (selection as FieldNode).name.value === "__typename"
+              )
+          )
+        };
+      }
+    },
+    leave(node: ASTNode) {
+      if (!(node.kind === "Field" || node.kind === "FragmentDefinition"))
+        return undefined;
+      if (!node.selectionSet) return undefined;
+
+      if (true) {
+        return {
+          ...node,
+          selectionSet: {
+            ...node.selectionSet,
+            selections: [typenameField, ...node.selectionSet.selections]
+          }
+        };
+      } else {
+        return undefined;
+      }
+    }
+  });
 }

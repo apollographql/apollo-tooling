@@ -3,11 +3,11 @@ import {
   GraphQLFloat,
   GraphQLInt,
   GraphQLID,
-  GraphQLList,
-  GraphQLNonNull,
   GraphQLScalarType,
   GraphQLString,
-  GraphQLType
+  GraphQLType,
+  isListType,
+  isNonNullType
 } from "graphql";
 
 import * as t from "@babel/types";
@@ -37,7 +37,7 @@ export function createTypeAnnotationFromGraphQLTypeFunction(
     type: GraphQLType,
     typeName?: string
   ): t.FlowTypeAnnotation {
-    if (type instanceof GraphQLList) {
+    if (isListType(type)) {
       return t.genericTypeAnnotation(
         t.identifier(arrayType),
         t.typeParameterInstantiation([
@@ -58,7 +58,7 @@ export function createTypeAnnotationFromGraphQLTypeFunction(
       } else {
         return t.anyTypeAnnotation();
       }
-    } else if (type instanceof GraphQLNonNull) {
+    } else if (isNonNullType(type)) {
       // This won't happen; but for TypeScript completeness:
       return typeAnnotationFromGraphQLType(type.ofType, typeName);
     } else {
@@ -70,7 +70,7 @@ export function createTypeAnnotationFromGraphQLTypeFunction(
     type: GraphQLType,
     typeName?: string
   ): t.FlowTypeAnnotation {
-    if (type instanceof GraphQLNonNull) {
+    if (isNonNullType(type)) {
       return nonNullableTypeAnnotationFromGraphQLType(type.ofType, typeName);
     } else {
       return t.nullableTypeAnnotation(
