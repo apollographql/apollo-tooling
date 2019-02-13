@@ -130,13 +130,12 @@ jobs:
             # This should cache the npm cache instead of node_modules, which is needed because
             # npm ci actually removes node_modules before installing to guarantee a clean slate.
             - ~/.npm
-       - run:
-            name: Generate types locally
-            command: npx apollo client:codegen --outputFlat --target=typescript currentTypes.ts
-        - run:
-            name: Compare type files
-            command: cmp --silent currentTypes.ts ./packages/apollo-language-server/src/graphqlTypes.ts || (echo "Type check failed. Run 'npm run client:codegen'" && exit 1)
-
+      - run:
+          name: Generate types locally
+          command: npx apollo client:codegen --outputFlat --target=typescript currentTypes.ts
+      - run:
+          name: Compare type files
+          command: cmp --silent currentTypes.ts ./packages/apollo-language-server/src/graphqlTypes.ts || (echo "Type check failed. Run 'npm run client:codegen'" && exit 1)
 
 workflows:
   version: 2
@@ -147,3 +146,4 @@ workflows:
       - VSCode
       - Linting
       - Query Check
+      - Generated Types Check
