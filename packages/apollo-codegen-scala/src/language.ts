@@ -130,10 +130,12 @@ export function methodDeclaration(
 export function propertyDeclaration(
   generator: CodeGenerator<LegacyCompilerContext, any>,
   {
+    jsName,
     propertyName,
     typeName,
     description
   }: {
+    jsName?: string;
     propertyName: string;
     typeName: string;
     description?: string;
@@ -145,7 +147,9 @@ export function propertyDeclaration(
   }
 
   generator.printOnNewline(
-    `val ${propertyName}: ${typeName}` + (closure ? ` =` : "")
+    (jsName ? `@scala.scalajs.js.annotation.JSName("${jsName}") ` : "") +
+      `val ${propertyName}: ${typeName}` +
+      (closure ? ` =` : "")
   );
 
   if (closure) {

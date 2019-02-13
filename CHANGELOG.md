@@ -15,6 +15,8 @@
 - `vscode-apollo@1.5.0`
   - Fix inline graphql highlighting in Vue `<script>` tags [#981](https://github.com/apollographql/apollo-tooling/pull/981)
   - Fix graphql comments not being highlighted correctly [#907](https://github.com/apollographql/apollo-tooling/pull/907)
+- `apollo-codegen-scala`
+  - Fix types sometimes being emitted with fields that don't match the underlying data [#1008](https://github.com/apollographql/apollo-tooling/pull/1008)
 
 ## `apollo@2.4.4`, `apollo-codegen-scala@0.33.0`
 
