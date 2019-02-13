@@ -82,6 +82,8 @@ describe("loadQueryDocuments", () => {
     const document = loadQueryDocuments(inputPaths);
 
     expect(document.length).toEqual(1);
-    expect(document[0]).toMatchSnapshot();
+    expect(document[0].definitions).toHaveLength(16);
+    expect(document[0].kind).toEqual("Document");
+    expect(document[0].loc).toBeDefined();
   });
 });
