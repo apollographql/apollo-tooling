@@ -1,4 +1,4 @@
-import { visit } from 'graphql/language/visitor';
+import { visit } from "graphql/language/visitor";
 import {
   DocumentNode,
   FloatValueNode,
@@ -12,15 +12,15 @@ import {
   FieldNode,
   FragmentDefinitionNode,
   ObjectValueNode,
-  ListValueNode,
-} from 'graphql/language/ast';
-import { print } from 'graphql/language/printer';
-import { separateOperations } from 'graphql/utilities';
+  ListValueNode
+} from "graphql/language/ast";
+import { print } from "graphql/language/printer";
+import { separateOperations } from "graphql/utilities";
 // We'll only fetch the `ListIteratee` type from the `@types/lodash`, but get
 // `sortBy` from the modularized version of the package to avoid bringing in
 // all of `lodash`.
-import { ListIteratee } from 'lodash';
-import sortBy from 'lodash.sortby';
+import { ListIteratee } from "lodash";
+import sortBy from "lodash.sortby";
 
 // Replace numeric, string, list, and object literals with "empty"
 // values. Leaves enums alone (since there's no consistent "zero" enum). This
@@ -31,20 +31,20 @@ import sortBy from 'lodash.sortby';
 export function hideLiterals(ast: DocumentNode): DocumentNode {
   return visit(ast, {
     IntValue(node: IntValueNode): IntValueNode {
-      return { ...node, value: '0' };
+      return { ...node, value: "0" };
     },
     FloatValue(node: FloatValueNode): FloatValueNode {
-      return { ...node, value: '0' };
+      return { ...node, value: "0" };
     },
     StringValue(node: StringValueNode): StringValueNode {
-      return { ...node, value: '', block: false };
+      return { ...node, value: "", block: false };
     },
     ListValue(node: ListValueNode): ListValueNode {
       return { ...node, values: [] };
     },
     ObjectValue(node: ObjectValueNode): ObjectValueNode {
       return { ...node, fields: [] };
-    },
+    }
   });
 }
 
@@ -53,14 +53,14 @@ export function hideLiterals(ast: DocumentNode): DocumentNode {
 export function hideStringAndNumericLiterals(ast: DocumentNode): DocumentNode {
   return visit(ast, {
     IntValue(node: IntValueNode): IntValueNode {
-      return { ...node, value: '0' };
+      return { ...node, value: "0" };
     },
     FloatValue(node: FloatValueNode): FloatValueNode {
-      return { ...node, value: '0' };
+      return { ...node, value: "0" };
     },
     StringValue(node: StringValueNode): StringValueNode {
-      return { ...node, value: '', block: false };
-    },
+      return { ...node, value: "", block: false };
+    }
   });
 }
 
@@ -71,7 +71,7 @@ export function hideStringAndNumericLiterals(ast: DocumentNode): DocumentNode {
 // the client before sending to the server to save bandwidth and parsing time.)
 export function dropUnusedDefinitions(
   ast: DocumentNode,
-  operationName: string,
+  operationName: string
 ): DocumentNode {
   const separated = separateOperations(ast)[operationName];
   if (!separated) {
@@ -102,14 +102,14 @@ function sorted<T>(
 export function sortAST(ast: DocumentNode): DocumentNode {
   return visit(ast, {
     OperationDefinition(
-      node: OperationDefinitionNode,
+      node: OperationDefinitionNode
     ): OperationDefinitionNode {
       return {
         ...node,
         variableDefinitions: sorted(
           node.variableDefinitions,
-          'variable.name.value',
-        ),
+          "variable.name.value"
+        )
       };
     },
     SelectionSet(node: SelectionSetNode): SelectionSetNode {
@@ -119,34 +119,34 @@ export function sortAST(ast: DocumentNode): DocumentNode {
         // then FragmentSpread, then InlineFragment.  By a lovely coincidence,
         // the order we want them to appear in is alphabetical by node.kind.
         // Use sortBy instead of sorted because 'selections' is not optional.
-        selections: sortBy(node.selections, 'kind', 'name.value'),
+        selections: sortBy(node.selections, "kind", "name.value")
       };
     },
     Field(node: FieldNode): FieldNode {
       return {
         ...node,
-        arguments: sorted(node.arguments, 'name.value'),
+        arguments: sorted(node.arguments, "name.value")
       };
     },
     FragmentSpread(node: FragmentSpreadNode): FragmentSpreadNode {
-      return { ...node, directives: sorted(node.directives, 'name.value') };
+      return { ...node, directives: sorted(node.directives, "name.value") };
     },
     InlineFragment(node: InlineFragmentNode): InlineFragmentNode {
-      return { ...node, directives: sorted(node.directives, 'name.value') };
+      return { ...node, directives: sorted(node.directives, "name.value") };
     },
     FragmentDefinition(node: FragmentDefinitionNode): FragmentDefinitionNode {
       return {
         ...node,
-        directives: sorted(node.directives, 'name.value'),
+        directives: sorted(node.directives, "name.value"),
         variableDefinitions: sorted(
           node.variableDefinitions,
-          'variable.name.value',
-        ),
+          "variable.name.value"
+        )
       };
     },
     Directive(node: DirectiveNode): DirectiveNode {
-      return { ...node, arguments: sorted(node.arguments, 'name.value') };
-    },
+      return { ...node, arguments: sorted(node.arguments, "name.value") };
+    }
   });
 }
 
@@ -159,9 +159,9 @@ export function removeAliases(ast: DocumentNode): DocumentNode {
     Field(node: FieldNode): FieldNode {
       return {
         ...node,
-        alias: undefined,
+        alias: undefined
       };
-    },
+    }
   });
 }
 
@@ -183,17 +183,17 @@ export function printWithReducedWhitespace(ast: DocumentNode): string {
     StringValue(node: StringValueNode): StringValueNode {
       return {
         ...node,
-        value: Buffer.from(node.value, 'utf8').toString('hex'),
-        block: false,
+        value: Buffer.from(node.value, "utf8").toString("hex"),
+        block: false
       };
-    },
+    }
   });
   const withWhitespace = print(sanitizedAST);
   const minimizedButStillHex = withWhitespace
-    .replace(/\s+/g, ' ')
+    .replace(/\s+/g, " ")
     .replace(/([^_a-zA-Z0-9]) /g, (_, c) => c)
     .replace(/ ([^_a-zA-Z0-9])/g, (_, c) => c);
   return minimizedButStillHex.replace(/"([a-f0-9]+)"/g, (_, hex) =>
-    JSON.stringify(Buffer.from(hex, 'hex').toString('utf8')),
+    JSON.stringify(Buffer.from(hex, "hex").toString("utf8"))
   );
 }

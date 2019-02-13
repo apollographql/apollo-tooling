@@ -45,6 +45,7 @@
     "apollo-codegen-swift": "file:packages/apollo-codegen-swift",
     "apollo-codegen-typescript": "file:packages/apollo-codegen-typescript",
     "apollo-env": "file:packages/apollo-env",
+    "apollo-graphql": "file:packages/apollo-graphql",
     "apollo-language-server": "file:packages/apollo-language-server",
     "vscode-apollo": "file:packages/vscode-apollo"
   },

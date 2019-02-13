@@ -1,32 +1,32 @@
-import { DocumentNode } from 'graphql';
-import { default as gql, disableFragmentWarnings } from 'graphql-tag';
+import { DocumentNode } from "graphql";
+import { default as gql, disableFragmentWarnings } from "graphql-tag";
 
 import {
   printWithReducedWhitespace,
   hideLiterals,
   dropUnusedDefinitions,
   sortAST,
-  removeAliases,
-} from '../transforms';
+  removeAliases
+} from "../transforms";
 
 // The gql duplicate fragment warning feature really is just warnings; nothing
 // breaks if you turn it off in tests.
 disableFragmentWarnings();
 
-describe('aggressive signature', () => {
+describe("aggressive signature", () => {
   function aggressive(ast: DocumentNode, operationName: string): string {
     return printWithReducedWhitespace(
       removeAliases(
-        hideLiterals(sortAST(dropUnusedDefinitions(ast, operationName))),
-      ),
+        hideLiterals(sortAST(dropUnusedDefinitions(ast, operationName)))
+      )
     );
   }
 
   const cases = [
     // Test cases borrowed from optics-agent-js.
     {
-      name: 'basic test',
-      operationName: '',
+      name: "basic test",
+      operationName: "",
       input: gql`
         {
           user {
@@ -34,11 +34,11 @@ describe('aggressive signature', () => {
           }
         }
       `,
-      output: '{user{name}}',
+      output: "{user{name}}"
     },
     {
-      name: 'basic test with query',
-      operationName: '',
+      name: "basic test with query",
+      operationName: "",
       input: gql`
         query {
           user {
@@ -46,11 +46,11 @@ describe('aggressive signature', () => {
           }
         }
       `,
-      output: '{user{name}}',
+      output: "{user{name}}"
     },
     {
-      name: 'basic with operation name',
-      operationName: 'OpName',
+      name: "basic with operation name",
+      operationName: "OpName",
       input: gql`
         query OpName {
           user {
@@ -58,11 +58,11 @@ describe('aggressive signature', () => {
           }
         }
       `,
-      output: 'query OpName{user{name}}',
+      output: "query OpName{user{name}}"
     },
     {
-      name: 'with various inline types',
-      operationName: 'OpName',
+      name: "with various inline types",
+      operationName: "OpName",
       input: gql`
         query OpName {
           user {
@@ -70,11 +70,11 @@ describe('aggressive signature', () => {
           }
         }
       `,
-      output: 'query OpName{user{name(apple:[],bag:{},cat:ENUM_VALUE)}}',
+      output: "query OpName{user{name(apple:[],bag:{},cat:ENUM_VALUE)}}"
     },
     {
-      name: 'with various argument types',
-      operationName: 'OpName',
+      name: "with various argument types",
+      operationName: "OpName",
       input: gql`
         query OpName($c: Int!, $a: [[Boolean!]!], $b: EnumType) {
           user {
@@ -83,11 +83,11 @@ describe('aggressive signature', () => {
         }
       `,
       output:
-        'query OpName($a:[[Boolean!]!],$b:EnumType,$c:Int!){user{name(apple:$a,bag:$b,cat:$c)}}',
+        "query OpName($a:[[Boolean!]!],$b:EnumType,$c:Int!){user{name(apple:$a,bag:$b,cat:$c)}}"
     },
     {
-      name: 'fragment',
-      operationName: '',
+      name: "fragment",
+      operationName: "",
       input: gql`
         {
           user {
@@ -104,11 +104,11 @@ describe('aggressive signature', () => {
           jkl
         }
       `,
-      output: '{user{name...Bar}}fragment Bar on User{asd}',
+      output: "{user{name...Bar}}fragment Bar on User{asd}"
     },
     {
-      name: 'full test',
-      operationName: 'Foo',
+      name: "full test",
+      operationName: "Foo",
       input: gql`
         query Foo($b: Int, $a: Boolean) {
           user(name: "hello", age: 5) {
@@ -137,8 +137,8 @@ describe('aggressive signature', () => {
       `,
       output:
         'query Foo($a:Boolean,$b:Int){user(age:0,name:""){name tz...Bar...on User{bee hello}}}' +
-        'fragment Bar on User{age@skip(if:$a)...Nested}fragment Nested on User{blah}',
-    },
+        "fragment Bar on User{age@skip(if:$a)...Nested}fragment Nested on User{blah}"
+    }
   ];
   cases.forEach(({ name, operationName, input, output }) => {
     test(name, () => {

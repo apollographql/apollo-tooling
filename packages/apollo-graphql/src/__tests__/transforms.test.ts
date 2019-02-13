@@ -1,15 +1,15 @@
-import { default as gql, disableFragmentWarnings } from 'graphql-tag';
+import { default as gql, disableFragmentWarnings } from "graphql-tag";
 
-import { printWithReducedWhitespace, hideLiterals } from '../transforms';
+import { printWithReducedWhitespace, hideLiterals } from "../transforms";
 
 // The gql duplicate fragment warning feature really is just warnings; nothing
 // breaks if you turn it off in tests.
 disableFragmentWarnings();
 
-describe('printWithReducedWhitespace', () => {
+describe("printWithReducedWhitespace", () => {
   const cases = [
     {
-      name: 'lots of whitespace',
+      name: "lots of whitespace",
       // Note: there's a tab after "tab->", which prettier wants to keep as a
       // literal tab rather than \t.  In the output, there should be a literal
       // backslash-t.
@@ -28,8 +28,8 @@ describe('printWithReducedWhitespace', () => {
         }
       `,
       output:
-        'query Foo($a:Int){user(name:"   tab->\\tyay",other:"apple\\n   bag\\ncat"){name}}',
-    },
+        'query Foo($a:Int){user(name:"   tab->\\tyay",other:"apple\\n   bag\\ncat"){name}}'
+    }
   ];
   cases.forEach(({ name, input, output }) => {
     test(name, () => {
@@ -38,10 +38,10 @@ describe('printWithReducedWhitespace', () => {
   });
 });
 
-describe('hideLiterals', () => {
+describe("hideLiterals", () => {
   const cases = [
     {
-      name: 'full test',
+      name: "full test",
       input: gql`
         query Foo($b: Int, $a: Boolean) {
           user(name: "hello", age: 5) {
@@ -66,8 +66,8 @@ describe('hideLiterals', () => {
       `,
       output:
         'query Foo($b:Int,$a:Boolean){user(name:"",age:0){...Bar...on User{hello bee}tz aliased:name}}' +
-        'fragment Bar on User{age@skip(if:$a)...Nested}fragment Nested on User{blah}',
-    },
+        "fragment Bar on User{age@skip(if:$a)...Nested}fragment Nested on User{blah}"
+    }
   ];
   cases.forEach(({ name, input, output }) => {
     test(name, () => {

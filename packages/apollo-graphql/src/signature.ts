@@ -44,25 +44,25 @@
 // algorithm on it, and the details of the signature algorithm are now up to the
 // reporting agent.
 
-import { DocumentNode } from 'graphql';
+import { DocumentNode } from "graphql";
 import {
   printWithReducedWhitespace,
   dropUnusedDefinitions,
   removeAliases,
   sortAST,
-  hideLiterals,
-} from './transforms';
+  hideLiterals
+} from "./transforms";
 
 // The default signature function consists of removing unused definitions
 // and whitespace.
 // XXX consider caching somehow
 export function defaultEngineReportingSignature(
   ast: DocumentNode,
-  operationName: string,
+  operationName: string
 ): string {
   return printWithReducedWhitespace(
     sortAST(
-      removeAliases(hideLiterals(dropUnusedDefinitions(ast, operationName))),
-    ),
+      removeAliases(hideLiterals(dropUnusedDefinitions(ast, operationName)))
+    )
   );
 }
