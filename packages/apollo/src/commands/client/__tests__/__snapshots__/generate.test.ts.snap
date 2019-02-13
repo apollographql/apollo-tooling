@@ -2,6 +2,7 @@
 
 exports[`client:codegen extracts queries with a custom tagName provided as a flag 1`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -16,6 +17,7 @@ export interface SimpleQuery {
 
 exports[`client:codegen extracts queries with a custom tagName provided in the config 1`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -240,6 +242,7 @@ public final class SimpleQueryQuery: GraphQLQuery {
 
 exports[`client:codegen writes types for query with only client-side data 1`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -257,6 +260,7 @@ export interface SimpleQuery {
 }
 
 /* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -311,6 +315,7 @@ object SimpleQueryQuery extends com.apollographql.scalajs.GraphQLQuery {
 
 exports[`client:codegen writes types for typescript 1`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -322,6 +327,7 @@ export interface SimpleQuery {
 }
 
 /* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -336,6 +342,7 @@ export interface SimpleQuery {
 
 exports[`client:codegen writes typescript types for query with client-side data when client schema in graphql file 1`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -367,6 +374,7 @@ export interface SimpleQuery {
 }
 
 /* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -381,6 +389,7 @@ export interface SimpleQuery {
 
 exports[`client:codegen writes typescript types for query with client-side data when client schema in js file 1`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -412,6 +421,7 @@ export interface SimpleQuery {
 }
 
 /* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
