@@ -81,6 +81,8 @@ export default class ServiceCheck extends ProjectCommand {
 
             ctx.checkSchemaResult = await project.engine.checkSchema({
               id: config.name,
+              // @ts-ignore
+              // XXX Looks like TS should be generating ReadonlyArrays instead
               schema: introspectionFromSchema(schema).__schema,
               tag: flags.tag,
               gitContext: ctx.gitContext,

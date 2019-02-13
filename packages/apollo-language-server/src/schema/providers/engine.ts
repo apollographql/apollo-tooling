@@ -3,7 +3,12 @@ import { NotificationHandler } from "vscode-languageserver";
 
 import gql from "graphql-tag";
 
-import { GraphQLSchema, buildClientSchema } from "graphql";
+import {
+  GraphQLSchema,
+  buildClientSchema,
+  IntrospectionSchema,
+  IntrospectionQuery
+} from "graphql";
 
 import { ApolloEngineClient, ClientIdentity } from "../../engine";
 import { ClientConfig, parseServiceSpecifier } from "../../config";
@@ -12,6 +17,8 @@ import {
   SchemaChangeUnsubscribeHandler,
   SchemaResolveConfig
 } from "./base";
+
+import { GetSchemaByTag } from "../../graphqlTypes";
 
 export class EngineSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
@@ -45,7 +52,7 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
     }
 
     const [id, tag = "current"] = parseServiceSpecifier(client.service);
-    const { data, errors } = await this.client.execute({
+    const { data, errors } = await this.client.execute<GetSchemaByTag>({
       query: SCHEMA_QUERY,
       variables: {
         id,
@@ -57,12 +64,14 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
       throw new Error(errors.map(({ message }: Error) => message).join("\n"));
     }
 
-    if (!data || !data.service.schema) {
+    if (!(data && data.service && data.service.__typename === "Service")) {
       throw new Error(
         `Unable to get schema from Apollo Engine for service ${id}`
       );
     }
 
+    // @ts-ignore
+    // XXX Types of `data.service.schema` won't match closely enough with `IntrospectionQuery`
     this.schema = buildClientSchema(data.service.schema);
     return this.schema;
   }

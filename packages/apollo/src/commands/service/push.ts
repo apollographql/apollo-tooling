@@ -37,6 +37,8 @@ export default class ServicePush extends ProjectCommand {
 
           const { tag, code } = await project.engine.uploadSchema({
             id: config.name,
+            // @ts-ignore
+            // XXX Looks like TS should be generating ReadonlyArrays instead
             schema: introspectionFromSchema(schema).__schema,
             tag: flags.tag,
             gitContext

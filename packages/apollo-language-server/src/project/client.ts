@@ -237,10 +237,10 @@ export class GraphQLClientProject extends GraphQLProject {
     await this.loadingHandler.handle(
       `Loading Engine data for ${this.displayName}`,
       (async () => {
-        const [
+        const {
           schemaTags,
           fieldStats
-        ] = await engineClient.loadSchemaTagsAndFieldStats(serviceID);
+        } = await engineClient.loadSchemaTagsAndFieldStats(serviceID);
         this._onSchemaTags && this._onSchemaTags([serviceID, schemaTags]);
         this.fieldStats = fieldStats;
         this.lastLoadDate = +new Date();

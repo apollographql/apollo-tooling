@@ -1,41 +1,29 @@
-import gql from "graphql-tag";
 import { GraphQLDataSource } from "./GraphQLDataSource";
-import { GraphQLRequest } from "apollo-link";
-
 import { DefaultEngineConfig, getServiceFromKey } from "../config";
-import { CHECK_SCHEMA, CheckSchemaVariables } from "./operations/checkSchema";
-import {
-  UPLOAD_SCHEMA,
-  UploadSchemaVariables
-} from "./operations/uploadSchema";
-
-import {
-  VALIDATE_OPERATIONS,
-  ValidateOperationsVariables,
-  ValidationResult
-} from "./operations/validateOperations";
-
-import {
-  REGISTER_OPERATIONS,
-  RegisterOperationsVariables
-} from "./operations/registerOperations";
+import { CHECK_SCHEMA } from "./operations/checkSchema";
+import { UPLOAD_SCHEMA } from "./operations/uploadSchema";
+import { VALIDATE_OPERATIONS } from "./operations/validateOperations";
+import { REGISTER_OPERATIONS } from "./operations/registerOperations";
 import { SCHEMA_TAGS_AND_FIELD_STATS } from "./operations/schemaTagsAndFieldStats";
+import {
+  CheckSchema,
+  CheckSchemaVariables,
+  UploadSchema,
+  UploadSchemaVariables,
+  RegisterOperations,
+  RegisterOperationsVariables,
+  ValidateOperations,
+  ValidateOperationsVariables,
+  SchemaTagsAndFieldStats,
+  SchemaTagInfo,
+  SchemaTagInfoVariables
+} from "../graphqlTypes";
+import { SCHEMA_TAG_INFO_QUERY } from "./operations/schemaTagInfo";
 
 export interface ClientIdentity {
   name?: string;
   version?: string;
   referenceID?: string;
-}
-
-interface FieldStat {
-  groupBy: {
-    field: string;
-  };
-  metrics: {
-    fieldHistogram: {
-      durationMs: number;
-    };
-  };
 }
 
 export type ServiceID = string;
@@ -44,7 +32,7 @@ export type SchemaTag = string;
 export type ServiceIDAndTag = [ServiceID, SchemaTag?];
 export type ServiceSpecifier = string;
 export type StatsWindowSize = number;
-export type FieldStats = Map<string, Map<string, number>>;
+export type FieldStats = Map<string, Map<string, number | null>>;
 
 export function noServiceError(service: string | undefined, endpoint?: string) {
   return `Could not find service ${
@@ -84,15 +72,8 @@ export class ApolloEngineClient extends GraphQLDataSource {
     ] = require("../../package.json").version;
   }
 
-  // ad-hoc typings
-  // XXX fix typings on base package
-  public async execute(options: GraphQLRequest) {
-    return super.query(options.query, options).then(result => result || {});
-  }
-
-  // XXX can we use codegen for these types?
   public async checkSchema(variables: CheckSchemaVariables) {
-    return this.execute({
+    return this.execute<CheckSchema>({
       query: CHECK_SCHEMA,
       variables
     }).then(({ data, errors }) => {
@@ -107,7 +88,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
         );
       }
 
-      if (!data) {
+      if (!(data && data.service)) {
         throw new Error("Error in request from Engine");
       }
       return data.service.checkSchema;
@@ -115,7 +96,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
   }
 
   public async uploadSchema(variables: UploadSchemaVariables) {
-    return this.execute({
+    return this.execute<UploadSchema>({
       query: UPLOAD_SCHEMA,
       variables
     }).then(({ data, errors }) => {
@@ -130,7 +111,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
         );
       }
 
-      if (!data) {
+      if (!(data && data.service)) {
         throw new Error("Error in request from Engine");
       }
       return data.service.uploadSchema;
@@ -138,86 +119,93 @@ export class ApolloEngineClient extends GraphQLDataSource {
   }
 
   public async validateOperations(variables: ValidateOperationsVariables) {
-    return this.execute({ query: VALIDATE_OPERATIONS, variables }).then(
-      ({ data, errors }) => {
-        // use error logger
-        if (errors) {
-          throw new Error(errors.map(error => error.message).join("\n"));
-        }
-
-        if (data && !data.service) {
-          throw new Error(
-            noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
-          );
-        }
-
-        if (!data) {
-          throw new Error("Error in request from Engine");
-        }
-
-        return data.service.validateOperations
-          .validationResults as ValidationResult[];
+    return this.execute<ValidateOperations>({
+      query: VALIDATE_OPERATIONS,
+      variables
+    }).then(({ data, errors }) => {
+      // use error logger
+      if (errors) {
+        throw new Error(errors.map(error => error.message).join("\n"));
       }
-    );
+
+      if (data && !data.service) {
+        throw new Error(
+          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+        );
+      }
+
+      if (!(data && data.service)) {
+        throw new Error("Error in request from Engine");
+      }
+
+      return data.service.validateOperations.validationResults;
+    });
   }
 
   public async registerOperations(variables: RegisterOperationsVariables) {
-    return this.execute({ query: REGISTER_OPERATIONS, variables }).then(
-      ({ data, errors }) => {
-        // use error logger
-        if (errors) {
-          throw new Error(errors.map(error => error.message).join("\n"));
-        }
-
-        if (data && !data.service) {
-          throw new Error(
-            noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
-          );
-        }
-
-        if (!data) {
-          throw new Error("Error in request from Engine");
-        }
-        return data.service.registerOperations;
+    return this.execute<RegisterOperations>({
+      query: REGISTER_OPERATIONS,
+      variables
+    }).then(({ data, errors }) => {
+      // use error logger
+      if (errors) {
+        throw new Error(errors.map(error => error.message).join("\n"));
       }
-    );
+
+      if (data && !data.service) {
+        throw new Error(
+          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+        );
+      }
+
+      if (!(data && data.service)) {
+        throw new Error("Error in request from Engine");
+      }
+      return data.service.registerOperations;
+    });
   }
 
-  async loadSchemaTagsAndFieldStats(
-    serviceID: string
-  ): Promise<[SchemaTag[], FieldStats]> {
-    const result = await this.execute({
+  async loadSchemaTagsAndFieldStats(serviceID: string) {
+    const { data, errors } = await this.execute<SchemaTagsAndFieldStats>({
       query: SCHEMA_TAGS_AND_FIELD_STATS,
       variables: {
         id: serviceID
       }
     });
 
-    if (!result.data) {
+    if (!(data && data.service)) {
       throw new Error();
     }
 
-    const schemaTags: string[] = result.data.service.schemaTags.map(
+    const schemaTags: string[] = data.service.schemaTags.map(
       ({ tag }: { tag: string }) => tag
     );
 
-    const fieldStats: FieldStats = new Map<string, Map<string, number>>();
+    const fieldStats: FieldStats = new Map();
 
-    result.data.service.stats.fieldStats.forEach((fieldStat: FieldStat) => {
+    data.service.stats.fieldStats.forEach(fieldStat => {
       // Parse field "ParentType.fieldName:FieldType" into ["ParentType", "fieldName", "FieldType"]
-      const [parentType = null, fieldName = null] =
-        fieldStat.groupBy.field.split(/\.|:/) || [];
+      const [parentType = null, fieldName = null] = fieldStat.groupBy.field
+        ? fieldStat.groupBy.field.split(/\.|:/)
+        : [];
 
       if (!parentType || !fieldName) {
         return;
       }
       const fieldsMap =
         fieldStats.get(parentType) ||
-        fieldStats.set(parentType, new Map<string, number>()).get(parentType)!;
+        fieldStats.set(parentType, new Map()).get(parentType)!;
 
       fieldsMap.set(fieldName, fieldStat.metrics.fieldHistogram.durationMs);
     });
 
-    return [schemaTags, fieldStats];
+    return { schemaTags, fieldStats };
+  }
+
+  public async schemaTagInfo(variables: SchemaTagInfoVariables) {
+    return this.execute<SchemaTagInfo>({
+      query: SCHEMA_TAG_INFO_QUERY,
+      variables
+    });
   }
 }

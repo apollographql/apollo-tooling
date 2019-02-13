@@ -7,9 +7,9 @@ import { ClientCommand } from "../../Command";
 import URI from "vscode-uri";
 import { relative } from "path";
 import {
-  ValidationResult,
+  ValidateOperations_service_validateOperations_validationResults as ValidationResult,
   ValidationErrorType
-} from "apollo-language-server/lib/engine/operations/validateOperations";
+} from "apollo-language-server/src/graphqlTypes";
 import chalk from "chalk";
 
 interface Operation {
@@ -23,12 +23,6 @@ interface LocationOffset {
   line: number;
 }
 
-// Priority order for displaying error messages
-const errorPriority = {
-  [ValidationErrorType.INVALID]: 0,
-  [ValidationErrorType.FAILURE]: 1,
-  [ValidationErrorType.WARNING]: 2
-};
 export default class ClientCheck extends ClientCommand {
   static description = "Check a client project against a pushed service";
   static flags = {

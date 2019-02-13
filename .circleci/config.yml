@@ -111,6 +111,33 @@ jobs:
             - ~/.npm
       - run: ENGINE_API_KEY=$CHECKS_API_KEY ./packages/apollo/bin/run client:check
 
+  Generated Types Check:
+    docker: [{ image: "circleci/node:8" }]
+    steps:
+      - *run_install_desired_npm
+      - checkout
+      - restore_cache:
+          keys:
+            # When lock file changes, use increasingly general patterns to restore cache
+            - npm-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - npm-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+            - npm-{{ .Environment.CACHE_VERSION }}-
+      - run: npm --version
+      - run: npm ci
+      - save_cache:
+          key: npm-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            # This should cache the npm cache instead of node_modules, which is needed because
+            # npm ci actually removes node_modules before installing to guarantee a clean slate.
+            - ~/.npm
+       - run:
+            name: Generate types locally
+            command: npx apollo client:codegen --outputFlat --target=typescript currentTypes.ts
+        - run:
+            name: Compare type files
+            command: cmp --silent currentTypes.ts ./packages/apollo-language-server/src/graphqlTypes.ts || (echo "Type check failed. Run 'npm run client:codegen'" && exit 1)
+
+
 workflows:
   version: 2
   Build and Test:

@@ -2,70 +2,6 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: SchemaTagsAndFieldStats
-// ====================================================
-
-export interface SchemaTagsAndFieldStats_service_schemaTags {
-  __typename: "SchemaTag";
-  tag: string;
-}
-
-export interface SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy {
-  __typename: "ServiceFieldStatsDimensions";
-  field: string | null;
-}
-
-export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics_fieldHistogram {
-  __typename: "DurationHistogram";
-  durationMs: number | null;
-}
-
-export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics {
-  __typename: "ServiceFieldStatsMetrics";
-  fieldHistogram: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics_fieldHistogram;
-}
-
-export interface SchemaTagsAndFieldStats_service_stats_fieldStats {
-  __typename: "ServiceFieldStatsRecord";
-  /**
-   * Dimensions of ServiceFieldStats that can be grouped by.
-   */
-  groupBy: SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy;
-  /**
-   * Metrics of ServiceFieldStats that can be aggregated over.
-   */
-  metrics: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics;
-}
-
-export interface SchemaTagsAndFieldStats_service_stats {
-  __typename: "ServiceStatsWindow";
-  fieldStats: SchemaTagsAndFieldStats_service_stats_fieldStats[];
-}
-
-export interface SchemaTagsAndFieldStats_service {
-  __typename: "Service";
-  /**
-   * Get schema tags, with optional filtering to a set of tags. Always sorted by creation date in reverse chronological order.
-   */
-  schemaTags: SchemaTagsAndFieldStats_service_schemaTags[];
-  stats: SchemaTagsAndFieldStats_service_stats;
-}
-
-export interface SchemaTagsAndFieldStats {
-  /**
-   * Service by ID
-   */
-  service: SchemaTagsAndFieldStats_service | null;
-}
-
-export interface SchemaTagsAndFieldStatsVariables {
-  id: string;
-}
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL mutation operation: CheckSchema
 // ====================================================
 
@@ -162,6 +98,117 @@ export interface RegisterOperationsVariables {
   id: string;
   clientIdentity: RegisteredClientIdentityInput;
   operations: RegisteredOperationInput[];
+}
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SchemaTagInfo
+// ====================================================
+
+export interface SchemaTagInfo_service_schema_gitContext {
+  __typename: "GitContext";
+  committer: string | null;
+  commit: string;
+}
+
+export interface SchemaTagInfo_service_schema_introspection {
+  __typename: "IntrospectionSchema";
+  fieldCount: number | null;
+  typeCount: number | null;
+}
+
+export interface SchemaTagInfo_service_schema {
+  __typename: "Schema";
+  hash: string;
+  gitContext: SchemaTagInfo_service_schema_gitContext | null;
+  introspection: SchemaTagInfo_service_schema_introspection;
+  createdAt: any;
+}
+
+export interface SchemaTagInfo_service {
+  __typename: "Service";
+  /**
+   * Get a schema by hash OR current tag
+   */
+  schema: SchemaTagInfo_service_schema | null;
+}
+
+export interface SchemaTagInfo {
+  /**
+   * Service by ID
+   */
+  service: SchemaTagInfo_service | null;
+}
+
+export interface SchemaTagInfoVariables {
+  service: string;
+  tag?: string | null;
+}
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SchemaTagsAndFieldStats
+// ====================================================
+
+export interface SchemaTagsAndFieldStats_service_schemaTags {
+  __typename: "SchemaTag";
+  tag: string;
+}
+
+export interface SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy {
+  __typename: "ServiceFieldStatsDimensions";
+  field: string | null;
+}
+
+export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics_fieldHistogram {
+  __typename: "DurationHistogram";
+  durationMs: number | null;
+}
+
+export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics {
+  __typename: "ServiceFieldStatsMetrics";
+  fieldHistogram: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics_fieldHistogram;
+}
+
+export interface SchemaTagsAndFieldStats_service_stats_fieldStats {
+  __typename: "ServiceFieldStatsRecord";
+  /**
+   * Dimensions of ServiceFieldStats that can be grouped by.
+   */
+  groupBy: SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy;
+  /**
+   * Metrics of ServiceFieldStats that can be aggregated over.
+   */
+  metrics: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics;
+}
+
+export interface SchemaTagsAndFieldStats_service_stats {
+  __typename: "ServiceStatsWindow";
+  fieldStats: SchemaTagsAndFieldStats_service_stats_fieldStats[];
+}
+
+export interface SchemaTagsAndFieldStats_service {
+  __typename: "Service";
+  /**
+   * Get schema tags, with optional filtering to a set of tags. Always sorted by creation date in reverse chronological order.
+   */
+  schemaTags: SchemaTagsAndFieldStats_service_schemaTags[];
+  stats: SchemaTagsAndFieldStats_service_stats;
+}
+
+export interface SchemaTagsAndFieldStats {
+  /**
+   * Service by ID
+   */
+  service: SchemaTagsAndFieldStats_service | null;
+}
+
+export interface SchemaTagsAndFieldStatsVariables {
+  id: string;
 }
 
 /* tslint:disable */

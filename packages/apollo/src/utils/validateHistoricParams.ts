@@ -1,5 +1,5 @@
-import { HistoricQueryParameters } from "apollo-language-server/lib/engine/operations/checkSchema";
 import { duration } from "moment";
+import { HistoricQueryParameters } from "apollo-language-server/lib/graphqlTypes";
 
 export function validateHistoricParams({
   validationPeriod,
