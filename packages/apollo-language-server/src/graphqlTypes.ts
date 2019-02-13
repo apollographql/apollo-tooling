@@ -656,18 +656,10 @@ export interface GetSchemaByTag_service_Service_schema___schema_types {
   name: string | null;
   description: string | null;
   fields: GetSchemaByTag_service_Service_schema___schema_types_fields[] | null;
-  inputFields:
-    | GetSchemaByTag_service_Service_schema___schema_types_inputFields[]
-    | null;
-  interfaces:
-    | GetSchemaByTag_service_Service_schema___schema_types_interfaces[]
-    | null;
-  enumValues:
-    | GetSchemaByTag_service_Service_schema___schema_types_enumValues[]
-    | null;
-  possibleTypes:
-    | GetSchemaByTag_service_Service_schema___schema_types_possibleTypes[]
-    | null;
+  inputFields: GetSchemaByTag_service_Service_schema___schema_types_inputFields[] | null;
+  interfaces: GetSchemaByTag_service_Service_schema___schema_types_interfaces[] | null;
+  enumValues: GetSchemaByTag_service_Service_schema___schema_types_enumValues[] | null;
+  possibleTypes: GetSchemaByTag_service_Service_schema___schema_types_possibleTypes[] | null;
 }
 
 export interface GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
@@ -764,9 +756,7 @@ export interface GetSchemaByTag_service_Service {
   schema: GetSchemaByTag_service_Service_schema | null;
 }
 
-export type GetSchemaByTag_service =
-  | GetSchemaByTag_service_User
-  | GetSchemaByTag_service_Service;
+export type GetSchemaByTag_service = GetSchemaByTag_service_User | GetSchemaByTag_service_Service;
 
 export interface GetSchemaByTag {
   /**
@@ -1249,7 +1239,7 @@ export interface IntrospectionTypeRef {
 export enum ChangeType {
   FAILURE = "FAILURE",
   NOTICE = "NOTICE",
-  WARNING = "WARNING"
+  WARNING = "WARNING",
 }
 
 /**
@@ -1273,7 +1263,7 @@ export enum IntrospectionDirectiveLocation {
   SCALAR = "SCALAR",
   SCHEMA = "SCHEMA",
   SUBSCRIPTION = "SUBSCRIPTION",
-  UNION = "UNION"
+  UNION = "UNION",
 }
 
 export enum IntrospectionTypeKind {
@@ -1284,19 +1274,19 @@ export enum IntrospectionTypeKind {
   NON_NULL = "NON_NULL",
   OBJECT = "OBJECT",
   SCALAR = "SCALAR",
-  UNION = "UNION"
+  UNION = "UNION",
 }
 
 export enum ValidationErrorCode {
   DEPRECATED_FIELD = "DEPRECATED_FIELD",
   INVALID_OPERATION = "INVALID_OPERATION",
-  NON_PARSEABLE_DOCUMENT = "NON_PARSEABLE_DOCUMENT"
+  NON_PARSEABLE_DOCUMENT = "NON_PARSEABLE_DOCUMENT",
 }
 
 export enum ValidationErrorType {
   FAILURE = "FAILURE",
   INVALID = "INVALID",
-  WARNING = "WARNING"
+  WARNING = "WARNING",
 }
 
 /**
