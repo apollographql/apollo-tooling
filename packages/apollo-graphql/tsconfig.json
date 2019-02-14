@@ -2,7 +2,9 @@
   "extends": "../../tsconfig.base",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./lib"
+    "outDir": "./lib",
+    "esModuleInterop": true,
+    "target": "es2016"
   },
   "include": ["src/**/*"],
   "exclude": ["**/__tests__", "**/__mocks__"],
