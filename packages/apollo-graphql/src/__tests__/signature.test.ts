@@ -17,8 +17,7 @@ describe("defaultEngineReportingSignature", () => {
             name
           }
         }
-      `,
-      output: "{user{name}}"
+      `
     },
     {
       name: "basic test with query",
@@ -29,8 +28,7 @@ describe("defaultEngineReportingSignature", () => {
             name
           }
         }
-      `,
-      output: "{user{name}}"
+      `
     },
     {
       name: "basic with operation name",
@@ -41,8 +39,7 @@ describe("defaultEngineReportingSignature", () => {
             name
           }
         }
-      `,
-      output: "query OpName{user{name}}"
+      `
     },
     {
       name: "with various inline types",
@@ -53,8 +50,7 @@ describe("defaultEngineReportingSignature", () => {
             name(apple: [[10]], cat: ENUM_VALUE, bag: { input: "value" })
           }
         }
-      `,
-      output: "query OpName{user{name(apple:[],bag:{},cat:ENUM_VALUE)}}"
+      `
     },
     {
       name: "with various argument types",
@@ -65,9 +61,7 @@ describe("defaultEngineReportingSignature", () => {
             name(apple: $a, cat: $c, bag: $b)
           }
         }
-      `,
-      output:
-        "query OpName($a:[[Boolean!]!],$b:EnumType,$c:Int!){user{name(apple:$a,bag:$b,cat:$c)}}"
+      `
     },
     {
       name: "fragment",
@@ -87,8 +81,27 @@ describe("defaultEngineReportingSignature", () => {
         fragment Baz on User {
           jkl
         }
-      `,
-      output: "fragment Bar on User{asd}{user{name...Bar}}"
+      `
+    },
+    {
+      name: "fragments in various order",
+      operationName: "",
+      input: gql`
+        fragment Bar on User {
+          asd
+        }
+
+        {
+          user {
+            name
+            ...Bar
+          }
+        }
+
+        fragment Baz on User {
+          jkl
+        }
+      `
     },
     {
       name: "full test",
@@ -118,17 +131,14 @@ describe("defaultEngineReportingSignature", () => {
         fragment Nested on User {
           blah
         }
-      `,
-      output:
-        "fragment Bar on User{age@skip(if:$a)...Nested}fragment Nested on User{blah}" +
-        'query Foo($a:Boolean,$b:Int){user(age:0,name:""){name tz...Bar...on User{bee hello}}}'
+      `
     }
   ];
-  cases.forEach(({ name, operationName, input, output }) => {
+  cases.forEach(({ name, operationName, input }) => {
     test(name, () => {
-      expect(defaultEngineReportingSignature(input, operationName)).toEqual(
-        output
-      );
+      expect(
+        defaultEngineReportingSignature(input, operationName)
+      ).toMatchSnapshot();
     });
   });
 });
