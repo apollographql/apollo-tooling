@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getOperationManifestFromProject builds an operation manifest 1`] = `
+Array [
+  Object {
+    "document": "query SchemaTagsAndFieldStats($id:ID!){service(id:$id){__typename schemaTags{__typename tag}stats(from:\\"\\",to:\\"\\"){__typename fieldStats{__typename groupBy{__typename field}metrics{__typename fieldHistogram{__typename durationMs(percentile:0)}}}}}}",
+    "metadata": Object {
+      "engineSignature": "query SchemaTagsAndFieldStats($id:ID!){service(id:$id){__typename schemaTags{__typename tag}stats(from:\\"\\",to:\\"\\"){__typename fieldStats{__typename groupBy{__typename field}metrics{__typename fieldHistogram{__typename durationMs(percentile:0)}}}}}}",
+    },
+    "signature": "135e8314de0c2f23f4a2be87b20e59f30ecf2cbcdfad6676a46aad21d29cdb5b",
+  },
+  Object {
+    "document": "mutation CheckSchema($frontend:String,$gitContext:GitContextInput,$historicParameters:HistoricQueryParameters,$id:ID!,$schema:IntrospectionSchemaInput!,$tag:String){service(id:$id){__typename checkSchema(baseSchemaTag:$tag,frontend:$frontend,gitContext:$gitContext,historicParameters:$historicParameters,proposedSchema:$schema){__typename diffToPrevious{__typename changes{__typename code description type}type validationConfig{__typename from queryCountThreshold queryCountThresholdPercentage to}}targetUrl}}}",
+    "metadata": Object {
+      "engineSignature": "mutation CheckSchema($frontend:String,$gitContext:GitContextInput,$historicParameters:HistoricQueryParameters,$id:ID!,$schema:IntrospectionSchemaInput!,$tag:String){service(id:$id){__typename checkSchema(baseSchemaTag:$tag,frontend:$frontend,gitContext:$gitContext,historicParameters:$historicParameters,proposedSchema:$schema){__typename diffToPrevious{__typename changes{__typename code description type}type validationConfig{__typename from queryCountThreshold queryCountThresholdPercentage to}}targetUrl}}}",
+    },
+    "signature": "3fd18a0f0369d801024bb42268bc4d4d1f6edd84a412923c4678c026bc1bdc62",
+  },
+  Object {
+    "document": "mutation RegisterOperations($clientIdentity:RegisteredClientIdentityInput!,$id:ID!,$operations:[RegisteredOperationInput!]!){service(id:$id){__typename registerOperations(clientIdentity:$clientIdentity,operations:$operations)}}",
+    "metadata": Object {
+      "engineSignature": "mutation RegisterOperations($clientIdentity:RegisteredClientIdentityInput!,$id:ID!,$operations:[RegisteredOperationInput!]!){service(id:$id){__typename registerOperations(clientIdentity:$clientIdentity,operations:$operations)}}",
+    },
+    "signature": "1428ab44b0f2f4ea25bc28c08b5a7235cb96a2d535d1a15e0edd5f0695a4903f",
+  },
+  Object {
+    "document": "mutation UploadSchema($gitContext:GitContextInput,$id:ID!,$schema:IntrospectionSchemaInput!,$tag:String!){service(id:$id){__typename uploadSchema(gitContext:$gitContext,schema:$schema,tag:$tag){__typename code message success tag{__typename schema{__typename hash}tag}}}}",
+    "metadata": Object {
+      "engineSignature": "mutation UploadSchema($gitContext:GitContextInput,$id:ID!,$schema:IntrospectionSchemaInput!,$tag:String!){service(id:$id){__typename uploadSchema(gitContext:$gitContext,schema:$schema,tag:$tag){__typename code message success tag{__typename schema{__typename hash}tag}}}}",
+    },
+    "signature": "a2497bb8c32f97870dfc58823b1377f6339c3e5ba53010b2a6b1e5d8fa8b8634",
+  },
+  Object {
+    "document": "mutation ValidateOperations($gitContext:GitContextInput,$id:ID!,$operations:[OperationDocumentInput!]!,$tag:String){service(id:$id){__typename validateOperations(gitContext:$gitContext,operations:$operations,tag:$tag){__typename validationResults{__typename code description operation{__typename name}type}}}}",
+    "metadata": Object {
+      "engineSignature": "mutation ValidateOperations($gitContext:GitContextInput,$id:ID!,$operations:[OperationDocumentInput!]!,$tag:String){service(id:$id){__typename validateOperations(gitContext:$gitContext,operations:$operations,tag:$tag){__typename validationResults{__typename code description operation{__typename name}type}}}}",
+    },
+    "signature": "600e261efe1f25ee30c53edd0b2b83c7eb6691ef5ae1c8f460ace2d303ad053d",
+  },
+  Object {
+    "document": "fragment IntrospectionFullType on IntrospectionType{__typename description enumValues(includeDeprecated:true){__typename depreactionReason description isDeprecated name}fields{__typename args{__typename...IntrospectionInputValue}deprecationReason description isDeprecated name type{__typename...IntrospectionTypeRef}}inputFields{__typename...IntrospectionInputValue}interfaces{__typename...IntrospectionTypeRef}kind name possibleTypes{__typename...IntrospectionTypeRef}}fragment IntrospectionInputValue on IntrospectionInputValue{__typename defaultValue description name type{__typename...IntrospectionTypeRef}}fragment IntrospectionTypeRef on IntrospectionType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name}}}}}}}}query GetSchemaByTag($tag:String!){service:me{__typename...on Service{schema(tag:$tag){__typename hash __schema:introspection{__typename directives{__typename args{__typename...IntrospectionInputValue}description locations name}mutationType{__typename name}queryType{__typename name}subscriptionType{__typename name}types{__typename...IntrospectionFullType}}}}}}",
+    "metadata": Object {
+      "engineSignature": "fragment IntrospectionFullType on IntrospectionType{__typename description enumValues(includeDeprecated:true){__typename depreactionReason description isDeprecated name}fields{__typename args{__typename...IntrospectionInputValue}deprecationReason description isDeprecated name type{__typename...IntrospectionTypeRef}}inputFields{__typename...IntrospectionInputValue}interfaces{__typename...IntrospectionTypeRef}kind name possibleTypes{__typename...IntrospectionTypeRef}}fragment IntrospectionInputValue on IntrospectionInputValue{__typename defaultValue description name type{__typename...IntrospectionTypeRef}}fragment IntrospectionTypeRef on IntrospectionType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name}}}}}}}}query GetSchemaByTag($tag:String!){me{__typename...on Service{schema(tag:$tag){__typename hash introspection{__typename directives{__typename args{__typename...IntrospectionInputValue}description locations name}mutationType{__typename name}queryType{__typename name}subscriptionType{__typename name}types{__typename...IntrospectionFullType}}}}}}",
+    },
+    "signature": "f7f71dac7423a856fcc1b05a944e92247d0bba4beafd508410890242d4cf6d5f",
+  },
+]
+`;
