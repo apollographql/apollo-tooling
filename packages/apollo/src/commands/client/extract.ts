@@ -42,7 +42,7 @@ export default class ClientExtract extends ClientCommand {
           ctx.filename = filename;
           writeFileSync(
             filename,
-            JSON.stringify({ version: 1, operations: ctx.operations }, null, 2)
+            JSON.stringify({ version: 2, operations: ctx.operations }, null, 2)
           );
         }
       }
