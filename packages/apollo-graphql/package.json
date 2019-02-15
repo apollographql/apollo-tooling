@@ -1,27 +1,20 @@
 {
-  "name": "apollo-codegen-typescript",
-  "description": "TypeScript generator module for Apollo Codegen",
-  "version": "0.32.7",
-  "author": "Apollo GraphQL <opensource@apollographql.com>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/apollographql/apollo-tooling.git"
-  },
-  "homepage": "https://github.com/apollographql/apollo-tooling",
-  "bugs": "https://github.com/apollographql/apollo-tooling/issues",
+  "name": "apollo-graphql",
+  "version": "0.1.1",
+  "description": "Apollo GraphQL utility library",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "keywords": [],
+  "author": "Apollo <opensource@apollographql.com>",
+  "license": "MIT",
   "engines": {
-    "node": ">=8",
-    "npm": ">=6"
+    "node": ">=6"
   },
   "dependencies": {
-    "@babel/types": "7.3.2",
-    "apollo-codegen-core": "file:../apollo-codegen-core",
-    "apollo-env": "file:../apollo-env",
-    "change-case": "^3.0.1",
-    "inflected": "^2.0.3"
+    "lodash.sortby": "^4.7.0"
+  },
+  "peerDependencies": {
+    "graphql": "^14.0.2"
   },
   "jest": {
     "preset": "ts-jest",

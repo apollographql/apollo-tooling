@@ -13,12 +13,12 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
 
   @scala.scalajs.js.native trait Variables extends scala.scalajs.js.Object {
-    val episode: com.apollographql.scalajs.OptionalValue[String]
+    @scala.scalajs.js.annotation.JSName(\\"episode\\") val episode: com.apollographql.scalajs.OptionalValue[String]
   }
 
   object Variables {
     def apply(episode: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
-      scala.scalajs.js.Dynamic.literal(episode = episode).asInstanceOf[Variables]
+      scala.scalajs.js.Dynamic.literal(\\"episode\\" -> episode).asInstanceOf[Variables]
     }
 
     def unapply(value: Variables) = {
@@ -27,18 +27,18 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
     implicit class CopyExtensions(private val orig: Variables) extends AnyVal {
       def copy(episode: com.apollographql.scalajs.OptionalValue[String] = orig.episode) = {
-        scala.scalajs.js.Dynamic.literal(episode = episode).asInstanceOf[Variables]
+        scala.scalajs.js.Dynamic.literal(\\"episode\\" -> episode).asInstanceOf[Variables]
       }
     }
   }
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val createReview: com.apollographql.scalajs.OptionalValue[Data.CreateReview]
+    @scala.scalajs.js.annotation.JSName(\\"createReview\\") val createReview: com.apollographql.scalajs.OptionalValue[Data.CreateReview]
   }
 
   object Data {
     def apply(createReview: com.apollographql.scalajs.OptionalValue[Data.CreateReview] = com.apollographql.scalajs.OptionalValue.empty) = {
-      scala.scalajs.js.Dynamic.literal(createReview = createReview).asInstanceOf[Data]
+      scala.scalajs.js.Dynamic.literal(\\"createReview\\" -> createReview).asInstanceOf[Data]
     }
 
     def unapply(value: Data) = {
@@ -47,7 +47,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
     implicit class CopyExtensions(private val orig: Data) extends AnyVal {
       def copy(createReview: com.apollographql.scalajs.OptionalValue[Data.CreateReview] = orig.createReview) = {
-        scala.scalajs.js.Dynamic.literal(createReview = createReview).asInstanceOf[Data]
+        scala.scalajs.js.Dynamic.literal(\\"createReview\\" -> createReview).asInstanceOf[Data]
       }
     }
 
@@ -57,13 +57,13 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
     }
 
     @scala.scalajs.js.native trait CreateReview extends scala.scalajs.js.Object {
-      val stars: Int
-      val commentary: com.apollographql.scalajs.OptionalValue[String]
+      @scala.scalajs.js.annotation.JSName(\\"stars\\") val stars: Int
+      @scala.scalajs.js.annotation.JSName(\\"commentary\\") val commentary: com.apollographql.scalajs.OptionalValue[String]
     }
 
     object CreateReview {
       def apply(stars: Int, commentary: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
-        scala.scalajs.js.Dynamic.literal(stars = stars, commentary = commentary).asInstanceOf[CreateReview]
+        scala.scalajs.js.Dynamic.literal(\\"stars\\" -> stars, \\"commentary\\" -> commentary).asInstanceOf[CreateReview]
       }
 
       def unapply(value: CreateReview) = {
@@ -72,7 +72,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
       implicit class CopyExtensions(private val orig: CreateReview) extends AnyVal {
         def copy(stars: Int = orig.stars, commentary: com.apollographql.scalajs.OptionalValue[String] = orig.commentary) = {
-          scala.scalajs.js.Dynamic.literal(stars = stars, commentary = commentary).asInstanceOf[CreateReview]
+          scala.scalajs.js.Dynamic.literal(\\"stars\\" -> stars, \\"commentary\\" -> commentary).asInstanceOf[CreateReview]
         }
       }
 
@@ -100,12 +100,12 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   type Variables = Unit
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
+    @scala.scalajs.js.annotation.JSName(\\"hero\\") val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
   }
 
   object Data {
     def apply(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = com.apollographql.scalajs.OptionalValue.empty) = {
-      scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+      scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
     }
 
     def unapply(value: Data) = {
@@ -114,7 +114,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
     implicit class CopyExtensions(private val orig: Data) extends AnyVal {
       def copy(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = orig.hero) = {
-        scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+        scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
       }
     }
 
@@ -124,13 +124,13 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
     }
 
     @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object with HeroDetails {
-      val name: String
-      val friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[Hero.Friend]]]
+      @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
+      @scala.scalajs.js.annotation.JSName(\\"friends\\") val friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[Hero.Friend]]]
     }
 
     object Hero {
       def apply(name: String, friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[Hero.Friend]]] = com.apollographql.scalajs.OptionalValue.empty) = {
-        scala.scalajs.js.Dynamic.literal(name = name, friends = friends).asInstanceOf[Hero]
+        scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"friends\\" -> friends).asInstanceOf[Hero]
       }
 
       def unapply(value: Hero) = {
@@ -139,7 +139,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
       implicit class CopyExtensions(private val orig: Hero) extends AnyVal {
         def copy(name: String = orig.name, friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[Hero.Friend]]] = orig.friends) = {
-          scala.scalajs.js.Dynamic.literal(name = name, friends = friends).asInstanceOf[Hero]
+          scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"friends\\" -> friends).asInstanceOf[Hero]
         }
       }
 
@@ -149,12 +149,12 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
       }
 
       @scala.scalajs.js.native trait Friend extends scala.scalajs.js.Object with HeroDetails.Friend {
-        val name: String
+        @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
       }
 
       object Friend {
         def apply(name: String) = {
-          scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Friend]
+          scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Friend]
         }
 
         def unapply(value: Friend) = {
@@ -163,7 +163,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
         implicit class CopyExtensions(private val orig: Friend) extends AnyVal {
           def copy(name: String = orig.name) = {
-            scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Friend]
+            scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Friend]
           }
         }
 
@@ -177,13 +177,13 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 }
 
 @scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object {
-  val name: String
-  val friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[HeroDetails.Friend]]]
+  @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
+  @scala.scalajs.js.annotation.JSName(\\"friends\\") val friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[HeroDetails.Friend]]]
 }
 
 object HeroDetails {
   def apply(name: String, friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[HeroDetails.Friend]]] = com.apollographql.scalajs.OptionalValue.empty) = {
-    scala.scalajs.js.Dynamic.literal(name = name, friends = friends).asInstanceOf[HeroDetails]
+    scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"friends\\" -> friends).asInstanceOf[HeroDetails]
   }
 
   def unapply(value: HeroDetails) = {
@@ -192,7 +192,7 @@ object HeroDetails {
 
   implicit class CopyExtensions(private val orig: HeroDetails) extends AnyVal {
     def copy(name: String = orig.name, friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[HeroDetails.Friend]]] = orig.friends) = {
-      scala.scalajs.js.Dynamic.literal(name = name, friends = friends).asInstanceOf[HeroDetails]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"friends\\" -> friends).asInstanceOf[HeroDetails]
     }
   }
 
@@ -202,12 +202,12 @@ object HeroDetails {
   }
 
   @scala.scalajs.js.native trait Friend extends scala.scalajs.js.Object {
-    val name: String
+    @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
   }
 
   object Friend {
     def apply(name: String) = {
-      scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Friend]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Friend]
     }
 
     def unapply(value: Friend) = {
@@ -216,7 +216,7 @@ object HeroDetails {
 
     implicit class CopyExtensions(private val orig: Friend) extends AnyVal {
       def copy(name: String = orig.name) = {
-        scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Friend]
+        scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Friend]
       }
     }
 
@@ -252,12 +252,12 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   type Variables = Unit
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
+    @scala.scalajs.js.annotation.JSName(\\"hero\\") val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
   }
 
   object Data {
     def apply(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = com.apollographql.scalajs.OptionalValue.empty) = {
-      scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+      scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
     }
 
     def unapply(value: Data) = {
@@ -266,7 +266,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
     implicit class CopyExtensions(private val orig: Data) extends AnyVal {
       def copy(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = orig.hero) = {
-        scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+        scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
       }
     }
 
@@ -276,12 +276,12 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
     }
 
     @scala.scalajs.js.native trait AsDroid extends scala.scalajs.js.Object with Hero with HeroDetails {
-      val name: String
+      @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
     }
 
     object AsDroid {
       def apply(name: String) = {
-        scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[AsDroid]
+        scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[AsDroid]
       }
 
       def unapply(value: AsDroid) = {
@@ -290,7 +290,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
       implicit class CopyExtensions(private val orig: AsDroid) extends AnyVal {
         def copy(name: String = orig.name) = {
-          scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[AsDroid]
+          scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[AsDroid]
         }
       }
 
@@ -345,12 +345,12 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   type Variables = Unit
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
+    @scala.scalajs.js.annotation.JSName(\\"hero\\") val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
   }
 
   object Data {
     def apply(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = com.apollographql.scalajs.OptionalValue.empty) = {
-      scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+      scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
     }
 
     def unapply(value: Data) = {
@@ -359,7 +359,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
     implicit class CopyExtensions(private val orig: Data) extends AnyVal {
       def copy(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = orig.hero) = {
-        scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+        scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
       }
     }
 
@@ -369,12 +369,12 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
     }
 
     @scala.scalajs.js.native trait AsDroid extends scala.scalajs.js.Object with Hero with DroidDetails {
-      val primaryFunction: com.apollographql.scalajs.OptionalValue[String]
+      @scala.scalajs.js.annotation.JSName(\\"primaryFunction\\") val primaryFunction: com.apollographql.scalajs.OptionalValue[String]
     }
 
     object AsDroid {
       def apply(primaryFunction: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
-        scala.scalajs.js.Dynamic.literal(primaryFunction = primaryFunction).asInstanceOf[AsDroid]
+        scala.scalajs.js.Dynamic.literal(\\"primaryFunction\\" -> primaryFunction).asInstanceOf[AsDroid]
       }
 
       def unapply(value: AsDroid) = {
@@ -383,7 +383,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
       implicit class CopyExtensions(private val orig: AsDroid) extends AnyVal {
         def copy(primaryFunction: com.apollographql.scalajs.OptionalValue[String] = orig.primaryFunction) = {
-          scala.scalajs.js.Dynamic.literal(primaryFunction = primaryFunction).asInstanceOf[AsDroid]
+          scala.scalajs.js.Dynamic.literal(\\"primaryFunction\\" -> primaryFunction).asInstanceOf[AsDroid]
         }
       }
 
@@ -441,12 +441,12 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
   type Variables = Unit
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
+    @scala.scalajs.js.annotation.JSName(\\"hero\\") val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
   }
 
   object Data {
     def apply(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = com.apollographql.scalajs.OptionalValue.empty) = {
-      scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+      scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
     }
 
     def unapply(value: Data) = {
@@ -455,7 +455,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
     implicit class CopyExtensions(private val orig: Data) extends AnyVal {
       def copy(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = orig.hero) = {
-        scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+        scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
       }
     }
 
@@ -465,12 +465,12 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
     }
 
     @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object with HeroDetails {
-      val name: String
+      @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
     }
 
     object Hero {
       def apply(name: String) = {
-        scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+        scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
       }
 
       def unapply(value: Hero) = {
@@ -479,7 +479,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
       implicit class CopyExtensions(private val orig: Hero) extends AnyVal {
         def copy(name: String = orig.name) = {
-          scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+          scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
         }
       }
 
@@ -504,12 +504,12 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
 
   @scala.scalajs.js.native trait Variables extends scala.scalajs.js.Object {
-    val episode: com.apollographql.scalajs.OptionalValue[String]
+    @scala.scalajs.js.annotation.JSName(\\"episode\\") val episode: com.apollographql.scalajs.OptionalValue[String]
   }
 
   object Variables {
     def apply(episode: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
-      scala.scalajs.js.Dynamic.literal(episode = episode).asInstanceOf[Variables]
+      scala.scalajs.js.Dynamic.literal(\\"episode\\" -> episode).asInstanceOf[Variables]
     }
 
     def unapply(value: Variables) = {
@@ -518,18 +518,18 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
     implicit class CopyExtensions(private val orig: Variables) extends AnyVal {
       def copy(episode: com.apollographql.scalajs.OptionalValue[String] = orig.episode) = {
-        scala.scalajs.js.Dynamic.literal(episode = episode).asInstanceOf[Variables]
+        scala.scalajs.js.Dynamic.literal(\\"episode\\" -> episode).asInstanceOf[Variables]
       }
     }
   }
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
+    @scala.scalajs.js.annotation.JSName(\\"hero\\") val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
   }
 
   object Data {
     def apply(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = com.apollographql.scalajs.OptionalValue.empty) = {
-      scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+      scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
     }
 
     def unapply(value: Data) = {
@@ -538,7 +538,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
     implicit class CopyExtensions(private val orig: Data) extends AnyVal {
       def copy(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = orig.hero) = {
-        scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+        scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
       }
     }
 
@@ -548,12 +548,12 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
     }
 
     @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
-      val name: String
+      @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
     }
 
     object Hero {
       def apply(name: String) = {
-        scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+        scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
       }
 
       def unapply(value: Hero) = {
@@ -562,7 +562,7 @@ exports[`Scala code generation #classDeclarationForOperation() should generate a
 
       implicit class CopyExtensions(private val orig: Hero) extends AnyVal {
         def copy(name: String = orig.name) = {
-          scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+          scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
         }
       }
 
@@ -592,12 +592,12 @@ exports[`Scala code generation #classDeclarationForOperation() when generateOper
   type Variables = Unit
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
+    @scala.scalajs.js.annotation.JSName(\\"hero\\") val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
   }
 
   object Data {
     def apply(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = com.apollographql.scalajs.OptionalValue.empty) = {
-      scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+      scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
     }
 
     def unapply(value: Data) = {
@@ -606,7 +606,7 @@ exports[`Scala code generation #classDeclarationForOperation() when generateOper
 
     implicit class CopyExtensions(private val orig: Data) extends AnyVal {
       def copy(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = orig.hero) = {
-        scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+        scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
       }
     }
 
@@ -616,12 +616,12 @@ exports[`Scala code generation #classDeclarationForOperation() when generateOper
     }
 
     @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object with HeroDetails {
-      val name: String
+      @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
     }
 
     object Hero {
       def apply(name: String) = {
-        scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+        scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
       }
 
       def unapply(value: Hero) = {
@@ -630,7 +630,7 @@ exports[`Scala code generation #classDeclarationForOperation() when generateOper
 
       implicit class CopyExtensions(private val orig: Hero) extends AnyVal {
         def copy(name: String = orig.name) = {
-          scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+          scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
         }
       }
 
@@ -694,12 +694,12 @@ object HeroNameQuery extends com.apollographql.scalajs.GraphQLQuery {
 
 
   @scala.scalajs.js.native trait Variables extends scala.scalajs.js.Object {
-    val episode: com.apollographql.scalajs.OptionalValue[String]
+    @scala.scalajs.js.annotation.JSName(\\"episode\\") val episode: com.apollographql.scalajs.OptionalValue[String]
   }
 
   object Variables {
     def apply(episode: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
-      scala.scalajs.js.Dynamic.literal(episode = episode).asInstanceOf[Variables]
+      scala.scalajs.js.Dynamic.literal(\\"episode\\" -> episode).asInstanceOf[Variables]
     }
 
     def unapply(value: Variables) = {
@@ -708,18 +708,18 @@ object HeroNameQuery extends com.apollographql.scalajs.GraphQLQuery {
 
     implicit class CopyExtensions(private val orig: Variables) extends AnyVal {
       def copy(episode: com.apollographql.scalajs.OptionalValue[String] = orig.episode) = {
-        scala.scalajs.js.Dynamic.literal(episode = episode).asInstanceOf[Variables]
+        scala.scalajs.js.Dynamic.literal(\\"episode\\" -> episode).asInstanceOf[Variables]
       }
     }
   }
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
+    @scala.scalajs.js.annotation.JSName(\\"hero\\") val hero: com.apollographql.scalajs.OptionalValue[Data.Hero]
   }
 
   object Data {
     def apply(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = com.apollographql.scalajs.OptionalValue.empty) = {
-      scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+      scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
     }
 
     def unapply(value: Data) = {
@@ -728,7 +728,7 @@ object HeroNameQuery extends com.apollographql.scalajs.GraphQLQuery {
 
     implicit class CopyExtensions(private val orig: Data) extends AnyVal {
       def copy(hero: com.apollographql.scalajs.OptionalValue[Data.Hero] = orig.hero) = {
-        scala.scalajs.js.Dynamic.literal(hero = hero).asInstanceOf[Data]
+        scala.scalajs.js.Dynamic.literal(\\"hero\\" -> hero).asInstanceOf[Data]
       }
     }
 
@@ -738,12 +738,12 @@ object HeroNameQuery extends com.apollographql.scalajs.GraphQLQuery {
     }
 
     @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
-      val name: String
+      @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
     }
 
     object Hero {
       def apply(name: String) = {
-        scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+        scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
       }
 
       def unapply(value: Hero) = {
@@ -752,7 +752,7 @@ object HeroNameQuery extends com.apollographql.scalajs.GraphQLQuery {
 
       implicit class CopyExtensions(private val orig: Hero) extends AnyVal {
         def copy(name: String = orig.name) = {
-          scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+          scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
         }
       }
 
@@ -767,13 +767,13 @@ object HeroNameQuery extends com.apollographql.scalajs.GraphQLQuery {
 
 exports[`Scala code generation #traitDeclarationForFragment() should generate a trait declaration for a fragment that includes a fragment spread 1`] = `
 "@scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object with MoreHeroDetails {
-  val name: String
-  val appearsIn: scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[String]]
+  @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
+  @scala.scalajs.js.annotation.JSName(\\"appearsIn\\") val appearsIn: scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[String]]
 }
 
 object HeroDetails {
   def apply(name: String, appearsIn: scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[String]]) = {
-    scala.scalajs.js.Dynamic.literal(name = name, appearsIn = appearsIn).asInstanceOf[HeroDetails]
+    scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"appearsIn\\" -> appearsIn).asInstanceOf[HeroDetails]
   }
 
   def unapply(value: HeroDetails) = {
@@ -782,7 +782,7 @@ object HeroDetails {
 
   implicit class CopyExtensions(private val orig: HeroDetails) extends AnyVal {
     def copy(name: String = orig.name, appearsIn: scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[String]] = orig.appearsIn) = {
-      scala.scalajs.js.Dynamic.literal(name = name, appearsIn = appearsIn).asInstanceOf[HeroDetails]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"appearsIn\\" -> appearsIn).asInstanceOf[HeroDetails]
     }
   }
 
@@ -800,13 +800,13 @@ object HeroDetails {
 
 exports[`Scala code generation #traitDeclarationForFragment() should generate a trait declaration for a fragment with a concrete type condition 1`] = `
 "@scala.scalajs.js.native trait DroidDetails extends scala.scalajs.js.Object {
-  val name: String
-  val primaryFunction: com.apollographql.scalajs.OptionalValue[String]
+  @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
+  @scala.scalajs.js.annotation.JSName(\\"primaryFunction\\") val primaryFunction: com.apollographql.scalajs.OptionalValue[String]
 }
 
 object DroidDetails {
   def apply(name: String, primaryFunction: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
-    scala.scalajs.js.Dynamic.literal(name = name, primaryFunction = primaryFunction).asInstanceOf[DroidDetails]
+    scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"primaryFunction\\" -> primaryFunction).asInstanceOf[DroidDetails]
   }
 
   def unapply(value: DroidDetails) = {
@@ -815,7 +815,7 @@ object DroidDetails {
 
   implicit class CopyExtensions(private val orig: DroidDetails) extends AnyVal {
     def copy(name: String = orig.name, primaryFunction: com.apollographql.scalajs.OptionalValue[String] = orig.primaryFunction) = {
-      scala.scalajs.js.Dynamic.literal(name = name, primaryFunction = primaryFunction).asInstanceOf[DroidDetails]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"primaryFunction\\" -> primaryFunction).asInstanceOf[DroidDetails]
     }
   }
 
@@ -833,13 +833,13 @@ object DroidDetails {
 
 exports[`Scala code generation #traitDeclarationForFragment() should generate a trait declaration for a fragment with a subselection 1`] = `
 "@scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object {
-  val name: String
-  val friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[HeroDetails.Friend]]]
+  @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
+  @scala.scalajs.js.annotation.JSName(\\"friends\\") val friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[HeroDetails.Friend]]]
 }
 
 object HeroDetails {
   def apply(name: String, friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[HeroDetails.Friend]]] = com.apollographql.scalajs.OptionalValue.empty) = {
-    scala.scalajs.js.Dynamic.literal(name = name, friends = friends).asInstanceOf[HeroDetails]
+    scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"friends\\" -> friends).asInstanceOf[HeroDetails]
   }
 
   def unapply(value: HeroDetails) = {
@@ -848,7 +848,7 @@ object HeroDetails {
 
   implicit class CopyExtensions(private val orig: HeroDetails) extends AnyVal {
     def copy(name: String = orig.name, friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[HeroDetails.Friend]]] = orig.friends) = {
-      scala.scalajs.js.Dynamic.literal(name = name, friends = friends).asInstanceOf[HeroDetails]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"friends\\" -> friends).asInstanceOf[HeroDetails]
     }
   }
 
@@ -858,12 +858,12 @@ object HeroDetails {
   }
 
   @scala.scalajs.js.native trait Friend extends scala.scalajs.js.Object {
-    val name: String
+    @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
   }
 
   object Friend {
     def apply(name: String) = {
-      scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Friend]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Friend]
     }
 
     def unapply(value: Friend) = {
@@ -872,7 +872,7 @@ object HeroDetails {
 
     implicit class CopyExtensions(private val orig: Friend) extends AnyVal {
       def copy(name: String = orig.name) = {
-        scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Friend]
+        scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Friend]
       }
     }
 
@@ -893,13 +893,13 @@ object HeroDetails {
 
 exports[`Scala code generation #traitDeclarationForFragment() should generate a trait declaration for a fragment with an abstract type condition 1`] = `
 "@scala.scalajs.js.native trait HeroDetails extends scala.scalajs.js.Object {
-  val name: String
-  val appearsIn: scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[String]]
+  @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
+  @scala.scalajs.js.annotation.JSName(\\"appearsIn\\") val appearsIn: scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[String]]
 }
 
 object HeroDetails {
   def apply(name: String, appearsIn: scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[String]]) = {
-    scala.scalajs.js.Dynamic.literal(name = name, appearsIn = appearsIn).asInstanceOf[HeroDetails]
+    scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"appearsIn\\" -> appearsIn).asInstanceOf[HeroDetails]
   }
 
   def unapply(value: HeroDetails) = {
@@ -908,7 +908,7 @@ object HeroDetails {
 
   implicit class CopyExtensions(private val orig: HeroDetails) extends AnyVal {
     def copy(name: String = orig.name, appearsIn: scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[String]] = orig.appearsIn) = {
-      scala.scalajs.js.Dynamic.literal(name = name, appearsIn = appearsIn).asInstanceOf[HeroDetails]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"appearsIn\\" -> appearsIn).asInstanceOf[HeroDetails]
     }
   }
 
@@ -926,12 +926,12 @@ object HeroDetails {
 
 exports[`Scala code generation #traitDeclarationForSelectionSet() should escape reserved keywords in a trait declaration for a selection set 1`] = `
 "@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
-  val private: com.apollographql.scalajs.OptionalValue[String]
+  @scala.scalajs.js.annotation.JSName(\\"private\\") val private: com.apollographql.scalajs.OptionalValue[String]
 }
 
 object Hero {
   def apply(private: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
-    scala.scalajs.js.Dynamic.literal(private = private).asInstanceOf[Hero]
+    scala.scalajs.js.Dynamic.literal(\\"private\\" -> private).asInstanceOf[Hero]
   }
 
   def unapply(value: Hero) = {
@@ -940,7 +940,7 @@ object Hero {
 
   implicit class CopyExtensions(private val orig: Hero) extends AnyVal {
     def copy(private: com.apollographql.scalajs.OptionalValue[String] = orig.private) = {
-      scala.scalajs.js.Dynamic.literal(private = private).asInstanceOf[Hero]
+      scala.scalajs.js.Dynamic.literal(\\"private\\" -> private).asInstanceOf[Hero]
     }
   }
 
@@ -953,12 +953,12 @@ object Hero {
 
 exports[`Scala code generation #traitDeclarationForSelectionSet() should generate a nested trait declaration for a selection set with subselections 1`] = `
 "@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
-  val friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[Hero.Friend]]]
+  @scala.scalajs.js.annotation.JSName(\\"friends\\") val friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[Hero.Friend]]]
 }
 
 object Hero {
   def apply(friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[Hero.Friend]]] = com.apollographql.scalajs.OptionalValue.empty) = {
-    scala.scalajs.js.Dynamic.literal(friends = friends).asInstanceOf[Hero]
+    scala.scalajs.js.Dynamic.literal(\\"friends\\" -> friends).asInstanceOf[Hero]
   }
 
   def unapply(value: Hero) = {
@@ -967,7 +967,7 @@ object Hero {
 
   implicit class CopyExtensions(private val orig: Hero) extends AnyVal {
     def copy(friends: com.apollographql.scalajs.OptionalValue[scala.scalajs.js.Array[com.apollographql.scalajs.OptionalValue[Hero.Friend]]] = orig.friends) = {
-      scala.scalajs.js.Dynamic.literal(friends = friends).asInstanceOf[Hero]
+      scala.scalajs.js.Dynamic.literal(\\"friends\\" -> friends).asInstanceOf[Hero]
     }
   }
 
@@ -977,12 +977,12 @@ object Hero {
   }
 
   @scala.scalajs.js.native trait Friend extends scala.scalajs.js.Object {
-    val name: com.apollographql.scalajs.OptionalValue[String]
+    @scala.scalajs.js.annotation.JSName(\\"name\\") val name: com.apollographql.scalajs.OptionalValue[String]
   }
 
   object Friend {
     def apply(name: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
-      scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Friend]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Friend]
     }
 
     def unapply(value: Friend) = {
@@ -991,7 +991,7 @@ object Hero {
 
     implicit class CopyExtensions(private val orig: Friend) extends AnyVal {
       def copy(name: com.apollographql.scalajs.OptionalValue[String] = orig.name) = {
-        scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Friend]
+        scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Friend]
       }
     }
 
@@ -1058,12 +1058,12 @@ object Hero {
 
 exports[`Scala code generation #traitDeclarationForSelectionSet() should generate a trait declaration for a selection set 1`] = `
 "@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
-  val name: com.apollographql.scalajs.OptionalValue[String]
+  @scala.scalajs.js.annotation.JSName(\\"name\\") val name: com.apollographql.scalajs.OptionalValue[String]
 }
 
 object Hero {
   def apply(name: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
-    scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+    scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
   }
 
   def unapply(value: Hero) = {
@@ -1072,7 +1072,7 @@ object Hero {
 
   implicit class CopyExtensions(private val orig: Hero) extends AnyVal {
     def copy(name: com.apollographql.scalajs.OptionalValue[String] = orig.name) = {
-      scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
     }
   }
 
@@ -1085,12 +1085,12 @@ object Hero {
 
 exports[`Scala code generation #traitDeclarationForSelectionSet() should generate a trait declaration for a selection set with a fragment spread that matches the parent type 1`] = `
 "@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object with HeroDetails {
-  val name: com.apollographql.scalajs.OptionalValue[String]
+  @scala.scalajs.js.annotation.JSName(\\"name\\") val name: com.apollographql.scalajs.OptionalValue[String]
 }
 
 object Hero {
   def apply(name: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
-    scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+    scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
   }
 
   def unapply(value: Hero) = {
@@ -1099,7 +1099,7 @@ object Hero {
 
   implicit class CopyExtensions(private val orig: Hero) extends AnyVal {
     def copy(name: com.apollographql.scalajs.OptionalValue[String] = orig.name) = {
-      scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
     }
   }
 
@@ -1112,12 +1112,12 @@ object Hero {
 
 exports[`Scala code generation #traitDeclarationForSelectionSet() should generate a trait declaration for a selection set with a fragment spread with a more specific type condition 1`] = `
 "@scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
-  val name: com.apollographql.scalajs.OptionalValue[String]
+  @scala.scalajs.js.annotation.JSName(\\"name\\") val name: com.apollographql.scalajs.OptionalValue[String]
 }
 
 object Hero {
   def apply(name: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
-    scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+    scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
   }
 
   def unapply(value: Hero) = {
@@ -1126,7 +1126,7 @@ object Hero {
 
   implicit class CopyExtensions(private val orig: Hero) extends AnyVal {
     def copy(name: com.apollographql.scalajs.OptionalValue[String] = orig.name) = {
-      scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
     }
   }
 
@@ -1142,13 +1142,13 @@ object Hero {
 
 exports[`Scala code generation #traitDeclarationForSelectionSet() should generate a trait declaration for a selection set with an inline fragment 1`] = `
 "@scala.scalajs.js.native trait AsDroid extends scala.scalajs.js.Object with Hero {
-  val name: String
-  val primaryFunction: com.apollographql.scalajs.OptionalValue[String]
+  @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
+  @scala.scalajs.js.annotation.JSName(\\"primaryFunction\\") val primaryFunction: com.apollographql.scalajs.OptionalValue[String]
 }
 
 object AsDroid {
   def apply(name: String, primaryFunction: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
-    scala.scalajs.js.Dynamic.literal(name = name, primaryFunction = primaryFunction).asInstanceOf[AsDroid]
+    scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"primaryFunction\\" -> primaryFunction).asInstanceOf[AsDroid]
   }
 
   def unapply(value: AsDroid) = {
@@ -1157,7 +1157,7 @@ object AsDroid {
 
   implicit class CopyExtensions(private val orig: AsDroid) extends AnyVal {
     def copy(name: String = orig.name, primaryFunction: com.apollographql.scalajs.OptionalValue[String] = orig.primaryFunction) = {
-      scala.scalajs.js.Dynamic.literal(name = name, primaryFunction = primaryFunction).asInstanceOf[AsDroid]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name, \\"primaryFunction\\" -> primaryFunction).asInstanceOf[AsDroid]
     }
   }
 
@@ -1168,12 +1168,12 @@ object AsDroid {
 }
 
 @scala.scalajs.js.native trait Hero extends scala.scalajs.js.Object {
-  val name: String
+  @scala.scalajs.js.annotation.JSName(\\"name\\") val name: String
 }
 
 object Hero {
   def apply(name: String) = {
-    scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+    scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
   }
 
   def unapply(value: Hero) = {
@@ -1182,7 +1182,7 @@ object Hero {
 
   implicit class CopyExtensions(private val orig: Hero) extends AnyVal {
     def copy(name: String = orig.name) = {
-      scala.scalajs.js.Dynamic.literal(name = name).asInstanceOf[Hero]
+      scala.scalajs.js.Dynamic.literal(\\"name\\" -> name).asInstanceOf[Hero]
     }
   }
 
@@ -1192,6 +1192,56 @@ object Hero {
     def asDroid: Option[AsDroid] = {
       if (AsDroid.possibleTypes.contains(orig.asInstanceOf[scala.scalajs.js.Dynamic].__typename.asInstanceOf[String])) Some(orig.asInstanceOf[AsDroid]) else None
     }
+  }
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForSelectionSet() should handle escaped values in a trait declaration for a selection set 1`] = `
+"@scala.scalajs.js.native trait TypeWithUnderscore extends scala.scalajs.js.Object {
+  @scala.scalajs.js.annotation.JSName(\\"class\\") val \`class\`: com.apollographql.scalajs.OptionalValue[String]
+}
+
+object TypeWithUnderscore {
+  def apply(\`class\`: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
+    scala.scalajs.js.Dynamic.literal(\\"class\\" -> \`class\`).asInstanceOf[TypeWithUnderscore]
+  }
+
+  def unapply(value: TypeWithUnderscore) = {
+    Some((value.\`class\`))
+  }
+
+  implicit class CopyExtensions(private val orig: TypeWithUnderscore) extends AnyVal {
+    def copy(\`class\`: com.apollographql.scalajs.OptionalValue[String] = orig.\`class\`) = {
+      scala.scalajs.js.Dynamic.literal(\\"class\\" -> \`class\`).asInstanceOf[TypeWithUnderscore]
+    }
+  }
+
+  implicit class ViewExtensions(private val orig: TypeWithUnderscore) extends AnyVal {
+  }
+}"
+`;
+
+exports[`Scala code generation #traitDeclarationForSelectionSet() should handle underscores in a trait declaration for a selection set 1`] = `
+"@scala.scalajs.js.native trait TypeWithUnderscore extends scala.scalajs.js.Object {
+  @scala.scalajs.js.annotation.JSName(\\"_id\\") val _id: com.apollographql.scalajs.OptionalValue[String]
+}
+
+object TypeWithUnderscore {
+  def apply(_id: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty) = {
+    scala.scalajs.js.Dynamic.literal(\\"_id\\" -> _id).asInstanceOf[TypeWithUnderscore]
+  }
+
+  def unapply(value: TypeWithUnderscore) = {
+    Some((value._id))
+  }
+
+  implicit class CopyExtensions(private val orig: TypeWithUnderscore) extends AnyVal {
+    def copy(_id: com.apollographql.scalajs.OptionalValue[String] = orig._id) = {
+      scala.scalajs.js.Dynamic.literal(\\"_id\\" -> _id).asInstanceOf[TypeWithUnderscore]
+    }
+  }
+
+  implicit class ViewExtensions(private val orig: TypeWithUnderscore) extends AnyVal {
   }
 }"
 `;
@@ -1209,14 +1259,14 @@ exports[`Scala code generation #typeDeclarationForGraphQLType() should generate 
  * The input object sent when someone is creating a new review
  */
 @scala.scalajs.js.native trait ReviewInput extends scala.scalajs.js.Object {
-  val stars: Int
-  val commentary: com.apollographql.scalajs.OptionalValue[String]
-  val favoriteColor: com.apollographql.scalajs.OptionalValue[ColorInput]
+  @scala.scalajs.js.annotation.JSName(\\"stars\\") val stars: Int
+  @scala.scalajs.js.annotation.JSName(\\"commentary\\") val commentary: com.apollographql.scalajs.OptionalValue[String]
+  @scala.scalajs.js.annotation.JSName(\\"favorite_color\\") val favoriteColor: com.apollographql.scalajs.OptionalValue[ColorInput]
 }
 
 object ReviewInput {
   def apply(stars: Int, commentary: com.apollographql.scalajs.OptionalValue[String] = com.apollographql.scalajs.OptionalValue.empty, favoriteColor: com.apollographql.scalajs.OptionalValue[ColorInput] = com.apollographql.scalajs.OptionalValue.empty) = {
-    scala.scalajs.js.Dynamic.literal(stars = stars, commentary = commentary, favoriteColor = favoriteColor).asInstanceOf[ReviewInput]
+    scala.scalajs.js.Dynamic.literal(\\"stars\\" -> stars, \\"commentary\\" -> commentary, \\"favorite_color\\" -> favoriteColor).asInstanceOf[ReviewInput]
   }
 
   def unapply(value: ReviewInput) = {
@@ -1225,7 +1275,7 @@ object ReviewInput {
 
   implicit class CopyExtensions(private val orig: ReviewInput) extends AnyVal {
     def copy(stars: Int = orig.stars, commentary: com.apollographql.scalajs.OptionalValue[String] = orig.commentary, favoriteColor: com.apollographql.scalajs.OptionalValue[ColorInput] = orig.favoriteColor) = {
-      scala.scalajs.js.Dynamic.literal(stars = stars, commentary = commentary, favoriteColor = favoriteColor).asInstanceOf[ReviewInput]
+      scala.scalajs.js.Dynamic.literal(\\"stars\\" -> stars, \\"commentary\\" -> commentary, \\"favorite_color\\" -> favoriteColor).asInstanceOf[ReviewInput]
     }
   }
 }"

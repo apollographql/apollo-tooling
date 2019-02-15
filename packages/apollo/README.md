@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.4.4 darwin-x64 node-v10.10.0
+apollo/2.5.1 darwin-x64 node-v8.15.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -285,7 +285,7 @@ EXAMPLE
   $ apollo plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.6/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.7/src/commands/plugins/index.ts)_
 
 ## `apollo plugins:install PLUGIN...`
 
@@ -321,7 +321,7 @@ EXAMPLES
   $ apollo plugins:install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.6/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.7/src/commands/plugins/install.ts)_
 
 ## `apollo plugins:link PLUGIN`
 
@@ -348,7 +348,7 @@ EXAMPLE
   $ apollo plugins:link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.6/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.7/src/commands/plugins/link.ts)_
 
 ## `apollo plugins:uninstall PLUGIN...`
 
@@ -370,7 +370,7 @@ ALIASES
   $ apollo plugins:remove
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.6/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.7/src/commands/plugins/uninstall.ts)_
 
 ## `apollo plugins:update`
 
@@ -385,7 +385,7 @@ OPTIONS
   -v, --verbose
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.6/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.7/src/commands/plugins/update.ts)_
 
 ## `apollo service:check`
 
@@ -396,11 +396,27 @@ USAGE
   $ apollo service:check
 
 OPTIONS
-  -c, --config=config  Path to your Apollo config file
-  -t, --tag=tag        [default: current] The published tag to check this service against
-  --endpoint=endpoint  The url of your service
-  --header=header      Additional headers to send to server for introspectionQuery
-  --key=key            The API key for the Apollo Engine service
+  -c, --config=config                                            Path to your Apollo config file
+  -t, --tag=tag                                                  The published tag to check this service against
+  --endpoint=endpoint                                            The url of your service
+
+  --header=header                                                Additional headers to send to server for
+                                                                 introspectionQuery
+
+  --key=key                                                      The API key for the Apollo Engine service
+
+  --queryCountThreshold=queryCountThreshold                      Minimum number of requests within the requested time
+                                                                 window for a query to be considered.
+
+  --queryCountThresholdPercentage=queryCountThresholdPercentage  Number of requests within the requested time window for
+                                                                 a query to be considered, relative to total request
+                                                                 count. Expected values are between 0 and 0.05 (minimum
+                                                                 5% of total request volume)
+
+  --validationPeriod=validationPeriod                            The size of the time window with which to validate the
+                                                                 schema against. You may provide a number (in seconds),
+                                                                 or an ISO8601 format duration for more granularity
+                                                                 (see: https://en.wikipedia.org/wiki/ISO_8601#Durations)
 
 ALIASES
   $ apollo schema:check

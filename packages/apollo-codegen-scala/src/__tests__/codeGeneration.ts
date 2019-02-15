@@ -453,6 +453,38 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
+    test(`should handle underscores in a trait declaration for a selection set`, function() {
+      traitDeclarationForSelectionSet(generator, {
+        traitName: "TypeWithUnderscore",
+        parentType: undefined,
+        fields: [
+          {
+            responseName: "_id",
+            fieldName: "_id",
+            type: GraphQLString
+          }
+        ]
+      });
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
+    test(`should handle escaped values in a trait declaration for a selection set`, function() {
+      traitDeclarationForSelectionSet(generator, {
+        traitName: "TypeWithUnderscore",
+        parentType: undefined,
+        fields: [
+          {
+            responseName: "class",
+            fieldName: "class",
+            type: GraphQLString
+          }
+        ]
+      });
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
     test(`should generate a nested trait declaration for a selection set with subselections`, function() {
       traitDeclarationForSelectionSet(generator, {
         traitName: "Hero",

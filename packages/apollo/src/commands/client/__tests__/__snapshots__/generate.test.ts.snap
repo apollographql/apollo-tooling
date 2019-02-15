@@ -2,6 +2,7 @@
 
 exports[`client:codegen extracts queries with a custom tagName provided as a flag 1`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -16,6 +17,7 @@ export interface SimpleQuery {
 
 exports[`client:codegen extracts queries with a custom tagName provided in the config 1`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -240,6 +242,7 @@ public final class SimpleQueryQuery: GraphQLQuery {
 
 exports[`client:codegen writes types for query with only client-side data 1`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -257,6 +260,7 @@ export interface SimpleQuery {
 }
 
 /* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -283,12 +287,12 @@ object SimpleQueryQuery extends com.apollographql.scalajs.GraphQLQuery {
   type Variables = Unit
 
   @scala.scalajs.js.native trait Data extends scala.scalajs.js.Object {
-    val hello: String
+    @scala.scalajs.js.annotation.JSName(\\"hello\\") val hello: String
   }
 
   object Data {
     def apply(hello: String) = {
-      scala.scalajs.js.Dynamic.literal(hello = hello).asInstanceOf[Data]
+      scala.scalajs.js.Dynamic.literal(\\"hello\\" -> hello).asInstanceOf[Data]
     }
 
     def unapply(value: Data) = {
@@ -297,7 +301,7 @@ object SimpleQueryQuery extends com.apollographql.scalajs.GraphQLQuery {
 
     implicit class CopyExtensions(private val orig: Data) extends AnyVal {
       def copy(hello: String = orig.hello) = {
-        scala.scalajs.js.Dynamic.literal(hello = hello).asInstanceOf[Data]
+        scala.scalajs.js.Dynamic.literal(\\"hello\\" -> hello).asInstanceOf[Data]
       }
     }
 
@@ -311,6 +315,7 @@ object SimpleQueryQuery extends com.apollographql.scalajs.GraphQLQuery {
 
 exports[`client:codegen writes types for typescript 1`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -322,6 +327,7 @@ export interface SimpleQuery {
 }
 
 /* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -336,6 +342,7 @@ export interface SimpleQuery {
 
 exports[`client:codegen writes typescript types for query with client-side data when client schema in graphql file 1`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -367,6 +374,7 @@ export interface SimpleQuery {
 }
 
 /* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -381,6 +389,7 @@ export interface SimpleQuery {
 
 exports[`client:codegen writes typescript types for query with client-side data when client schema in js file 1`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -412,6 +421,7 @@ export interface SimpleQuery {
 }
 
 /* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
