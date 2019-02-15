@@ -55,7 +55,7 @@ export class FileSet {
   }
 
   allFiles(): string[] {
-    // since glob.sync takes a single patttern, but we allow an array of `includes`, we can join all the
+    // since glob.sync takes a single pattern, but we allow an array of `includes`, we can join all the
     // `includes` globs into a single pattern and pass to glob.sync. The `ignore` option does, however, allow
     // an array of globs to ignore, so we can pass it in directly
     const joinedIncludes = `{${this.includes.join(",")}}`;
