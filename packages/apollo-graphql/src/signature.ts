@@ -66,3 +66,9 @@ export function defaultEngineReportingSignature(
     )
   );
 }
+
+export function hashForOperationSignature(operationSignature: string): string {
+  return createHash("sha256")
+    .update(operationSignature)
+    .digest("hex");
+}

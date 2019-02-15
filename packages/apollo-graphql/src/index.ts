@@ -1,1 +1,4 @@
-export { defaultEngineReportingSignature } from "./signature";
+export {
+  defaultEngineReportingSignature,
+  hashForOperationSignature
+} from "./signature";
