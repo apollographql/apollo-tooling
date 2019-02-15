@@ -2,6 +2,10 @@
 
 ## Upcoming
 
+- `apollo-language-server`
+  - Added a warning when there are 0 files found in a project [#1007](https://github.com/apollographql/apollo-tooling/pull/1007)
+  - Allow relative paths in includes/excludes globs [#1007](https://github.com/apollographql/apollo-tooling/pull/1007)
+
 ## `apollo-codegen-typescript@0.32.7`, `apollo-codegen-scala@0.33.2`, `apollo-graphql@1.0.2`
 
 - `apollo-codegen-typescript@0.32.7`
