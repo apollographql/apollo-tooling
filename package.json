@@ -45,6 +45,7 @@
     "apollo-codegen-swift": "file:packages/apollo-codegen-swift",
     "apollo-codegen-typescript": "file:packages/apollo-codegen-typescript",
     "apollo-env": "file:packages/apollo-env",
+    "apollo-graphql": "file:packages/apollo-graphql",
     "apollo-language-server": "file:packages/apollo-language-server",
     "vscode-apollo": "file:packages/vscode-apollo"
   },
@@ -63,6 +64,7 @@
     "@types/jest": "23.3.14",
     "@types/listr": "0.13.0",
     "@types/lodash": "4.14.121",
+    "@types/lodash.sortby": "^4.7.5",
     "@types/minimatch": "3.0.3",
     "@types/nock": "9.3.1",
     "@types/node": "10.12.26",
