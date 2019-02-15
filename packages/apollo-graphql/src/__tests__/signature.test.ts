@@ -88,7 +88,7 @@ describe("defaultEngineReportingSignature", () => {
           jkl
         }
       `,
-      output: "{user{name...Bar}}fragment Bar on User{asd}"
+      output: "fragment Bar on User{asd}{user{name...Bar}}"
     },
     {
       name: "full test",
@@ -120,8 +120,8 @@ describe("defaultEngineReportingSignature", () => {
         }
       `,
       output:
-        'query Foo($a:Boolean,$b:Int){user(age:0,name:""){name tz...Bar...on User{bee hello}}}' +
-        "fragment Bar on User{age@skip(if:$a)...Nested}fragment Nested on User{blah}"
+        "fragment Bar on User{age@skip(if:$a)...Nested}fragment Nested on User{blah}" +
+        'query Foo($a:Boolean,$b:Int){user(age:0,name:""){name tz...Bar...on User{bee hello}}}'
     }
   ];
   cases.forEach(({ name, operationName, input, output }) => {
