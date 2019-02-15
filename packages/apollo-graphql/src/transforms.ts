@@ -101,6 +101,13 @@ function sorted<T>(
 // order, it can make sure the queries are treated as identical.
 export function sortAST(ast: DocumentNode): DocumentNode {
   return visit(ast, {
+    Document(node: DocumentNode) {
+      return {
+        ...node,
+        // Use sortBy because 'definitions' is not optional.
+        definitions: sortBy(node.definitions, "kind", "name.value")
+      };
+    },
     OperationDefinition(
       node: OperationDefinitionNode
     ): OperationDefinitionNode {
