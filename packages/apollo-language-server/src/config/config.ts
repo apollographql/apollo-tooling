@@ -10,7 +10,7 @@ import {
   ClientID,
   StatsWindowSize,
   ServiceIDAndTag
-} from "./engine";
+} from "../engine";
 import URI from "vscode-uri";
 
 export interface EngineStatsWindow {
