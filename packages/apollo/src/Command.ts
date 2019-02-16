@@ -10,7 +10,8 @@ import {
   loadConfig,
   isClientConfig,
   isServiceConfig,
-  ApolloConfig
+  ApolloConfig,
+  getServiceFromKey
 } from "apollo-language-server";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 import URI from "vscode-uri";
@@ -53,12 +54,6 @@ const headersArrayToObject = (
   return arr
     .map(val => JSON.parse(val))
     .reduce((pre, next) => ({ ...pre, ...next }), {});
-};
-
-const getServiceFromKey = (key): string | undefined => {
-  const [type, service] = key.split(":");
-  if (type === "service") return service;
-  return;
 };
 
 export abstract class ProjectCommand extends Command {

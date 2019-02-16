@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 import { GraphQLDataSource } from "./GraphQLDataSource";
 import { GraphQLRequest } from "apollo-link";
 
-import { DefaultEngineConfig } from "../config";
+import { DefaultEngineConfig, getServiceFromKey } from "../config";
 import { CHECK_SCHEMA, CheckSchemaVariables } from "./operations/checkSchema";
 import {
   UPLOAD_SCHEMA,
@@ -73,13 +73,6 @@ export function noServiceError(service: string | undefined, endpoint?: string) {
     service ? service : ""
   } from Engine at ${endpoint}. Please check your API key and service name`;
 }
-
-const getServiceFromKey = (key: string | undefined): string | undefined => {
-  if (!key) return "";
-  const [type, service] = key.split(":");
-  if (type === "service") return service;
-  return;
-};
 
 export class ApolloEngineClient extends GraphQLDataSource {
   constructor(
