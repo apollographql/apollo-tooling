@@ -4,7 +4,8 @@ import {
   ClientServiceConfig,
   LocalServiceConfig,
   ServiceConfig,
-  ApolloConfigFormat
+  ApolloConfigFormat,
+  RemoteServiceConfig
 } from "./config";
 import { ServiceSpecifier, ServiceIDAndTag } from "../engine";
 
@@ -17,6 +18,12 @@ export function isLocalServiceConfig(
   config: ClientServiceConfig
 ): config is LocalServiceConfig {
   return !!(config as LocalServiceConfig).localSchemaFile;
+}
+
+export function isRemoteServiceConfig(
+  config: ClientServiceConfig
+): config is RemoteServiceConfig {
+  return !!(config as RemoteServiceConfig).url;
 }
 
 export function isServiceConfig(config: ApolloConfig): config is ServiceConfig {

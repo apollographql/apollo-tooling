@@ -3,8 +3,8 @@ import merge from "lodash.merge";
 import { ServiceID, ServiceSpecifier, ClientID } from "../engine";
 import URI from "vscode-uri";
 import { WithRequired } from "apollo-env";
-import { getServiceName, parseServiceSpecifier } from "./utils";
 import { ValidationRule } from "graphql/validation/ValidationContext";
+import { getServiceName, parseServiceSpecifier } from "./utils";
 
 export interface EngineStatsWindow {
   to: number;
