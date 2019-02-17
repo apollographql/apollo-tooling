@@ -68,7 +68,6 @@ export interface ClientConfigFormat extends ConfigBase {
   clientOnlyDirectives?: string[];
   clientSchemaDirectives?: string[];
   addTypename?: boolean;
-
   tagName?: string;
   // stats window config
   statsWindow?: StatsWindowSize;
