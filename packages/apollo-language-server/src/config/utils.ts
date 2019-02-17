@@ -35,7 +35,7 @@ export function getServiceName(config: ApolloConfigFormat) {
   if (config.service) return config.service.name;
   if (config.client) {
     if (typeof config.client.service === "string") {
-      return parseServiceSpecificer(config.client
+      return parseServiceSpecifier(config.client
         .service as ServiceSpecifier)[0];
     }
     return config.client.service && config.client.service.name;
@@ -44,20 +44,7 @@ export function getServiceName(config: ApolloConfigFormat) {
   }
 }
 
-export function parseServiceSpecificer(specifier: ServiceSpecifier) {
+export function parseServiceSpecifier(specifier: ServiceSpecifier) {
   const [id, tag] = specifier.split("@").map(x => x.trim());
   return [id, tag] as ServiceIDAndTag;
-}
-
-// take a config with multiple project types and return
-// an array of individual types
-export function projectsFromConfig(
-  config: ApolloConfigFormat,
-  configURI?: URI
-) {
-  const configs = [];
-  const { client, service } = config;
-  if (client) configs.push(new ClientConfig(config, configURI));
-  if (service) configs.push(new ServiceConfig(config, configURI));
-  return configs;
 }
