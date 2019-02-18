@@ -13,6 +13,7 @@ export function isClientConfig(config: ApolloConfig): config is ClientConfig {
   return config.isClient;
 }
 
+// checks the `config.client.service` object for a localSchemaFile
 export function isLocalServiceConfig(
   config: ClientServiceConfig
 ): config is LocalServiceConfig {
