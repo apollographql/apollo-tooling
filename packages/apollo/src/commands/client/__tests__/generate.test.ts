@@ -68,7 +68,7 @@ const defaultConfig = `
 const defaultFiles = {
   "./schema.json": fullSchemaJsonString,
   "./queryOne.graphql": simpleQuery.toString(),
-  "./apollo.config.js": defaultConfig
+  "./my.config.js": defaultConfig
 };
 
 jest.setTimeout(25000);
@@ -79,7 +79,7 @@ describe("client:codegen", () => {
     .command([
       "client:codegen",
       "API.swift",
-      "--config=apollo.config.js",
+      "--config=my.config.js",
       "--target=swift"
     ])
     .it("writes swift types from local schema", () => {
@@ -90,7 +90,7 @@ describe("client:codegen", () => {
     .fs({
       "schema.graphql": graphQLSchema,
       "queryOne.graphql": simpleQuery.toString(),
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./queryOne.graphql"],
@@ -102,7 +102,7 @@ describe("client:codegen", () => {
     .command([
       "client:codegen",
       "API.swift",
-      "--config=apollo.config.js",
+      "--config=my.config.js",
       "--target=swift"
     ])
     .it("writes swift types from local schema in a graphql file", () => {
@@ -113,7 +113,7 @@ describe("client:codegen", () => {
     .fs({
       "schema.json": fullSchemaJsonString,
       "queryOne.graphql": simpleQuery.toString(),
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./queryOne.graphql"],
@@ -125,6 +125,7 @@ describe("client:codegen", () => {
     .command([
       "client:codegen",
       "API.swift",
+      "--config=my.config.js",
       "--target=swift",
       "--operationIdsPath=myOperationIDs.json"
     ])
@@ -141,10 +142,11 @@ describe("client:codegen", () => {
       "schema.json": fullSchemaJsonString,
       "queryOne.graphql": simpleQuery.toString(),
       "queryTwo.graphql": otherQuery.toString(),
-      "apollo.config.js": defaultConfig
+      "my.config.js": defaultConfig
     })
     .command([
       "client:codegen",
+      "--config=my.config.js",
       "--only=queryTwo.graphql",
       "--target=swift",
       "outDirectory"
@@ -160,9 +162,14 @@ describe("client:codegen", () => {
     .fs({
       "schema.json": fullSchemaJsonString,
       "queryOne.graphql": simpleQuery.toString(),
-      "apollo.config.js": defaultConfig
+      "my.config.js": defaultConfig
     })
-    .command(["client:codegen", "--target=scala", "API.scala"])
+    .command([
+      "client:codegen",
+      "--target=scala",
+      "API.scala",
+      "--config=my.config.js"
+    ])
     .it("writes types for scala", () => {
       expect(fs.readFileSync("API.scala").toString()).toMatchSnapshot();
     });
@@ -171,10 +178,11 @@ describe("client:codegen", () => {
     .fs({
       "schema.json": fullSchemaJsonString,
       "queryOne.graphql": simpleQuery.toString(),
-      "apollo.config.js": defaultConfig
+      "my.config.js": defaultConfig
     })
     .command([
       "client:codegen",
+      "--config=my.config.js",
       "--target=typescript",
       "--outputFlat",
       "API.ts"
@@ -188,10 +196,11 @@ describe("client:codegen", () => {
       "schema.json": fullSchemaJsonString,
       "clientSideSchema.graphql": clientSideSchema.toString(),
       "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString(),
-      "apollo.config.js": defaultConfig
+      "my.config.js": defaultConfig
     })
     .command([
       "client:codegen",
+      "--config=my.config.js",
       "--target=typescript",
       "--outputFlat",
       "__tmp__API.ts" // for some reason, this gets moved to root dir. naming __tmp__ to get .gitignore'd
@@ -208,7 +217,7 @@ describe("client:codegen", () => {
       "schema.json": fullSchemaJsonString,
       "clientSideSchemaTag.js": clientSideSchemaTag.toString(),
       "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString(),
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./**.graphql", "./**.js"], // include js file with schema in it
@@ -219,6 +228,7 @@ describe("client:codegen", () => {
     })
     .command([
       "client:codegen",
+      "--config=my.config.js",
       "--target=typescript",
       "--outputFlat",
       "__tmp__API.ts" // for some reason, this gets moved to root dir. naming __tmp__ to get .gitignore'd
@@ -269,7 +279,7 @@ describe("client:codegen", () => {
     .fs({
       "clientSideOnlySchema.graphql": clientSideOnlySchema.toString(),
       "clientSideOnlyQuery.graphql": clientSideOnlyQuery.toString(),
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./clientSideOnlyQuery.graphql"], // queries
@@ -280,6 +290,7 @@ describe("client:codegen", () => {
     })
     .command([
       "client:codegen",
+      "--config=my.config.js",
       "--target=typescript",
       "--outputFlat",
       "__tmp__API.ts"
@@ -292,10 +303,11 @@ describe("client:codegen", () => {
     .fs({
       "schema.json": fullSchemaJsonString,
       "queryOne.graphql": simpleQuery.toString(),
-      "apollo.config.js": defaultConfig
+      "my.config.js": defaultConfig
     })
     .command([
       "client:codegen",
+      "--config=my.config.js",
       "--target=flow",
       "--outputFlat",
       "__tmp__API.js"
@@ -308,10 +320,11 @@ describe("client:codegen", () => {
     .fs({
       "schema.json": fullSchemaJsonString,
       "queryOne.graphql": simpleQuery.toString(),
-      "apollo.config.js": defaultConfig
+      "my.config.js": defaultConfig
     })
     .command([
       "client:codegen",
+      "--config=my.config.js",
       "--target=flow",
       "--outputFlat",
       "--useFlowExactObjects",
@@ -328,10 +341,11 @@ describe("client:codegen", () => {
     .fs({
       "schema.json": fullSchemaJsonString,
       "queryOne.graphql": simpleQuery.toString(),
-      "apollo.config.js": defaultConfig
+      "my.config.js": defaultConfig
     })
     .command([
       "client:codegen",
+      "--config=my.config.js",
       "--target=flow",
       "--outputFlat",
       "--useFlowReadOnlyTypes",
@@ -345,9 +359,14 @@ describe("client:codegen", () => {
     .fs({
       "schema.json": fullSchemaJsonString,
       "queryOne.graphql": simpleQuery.toString(),
-      "apollo.config.js": defaultConfig
+      "my.config.js": defaultConfig
     })
-    .command(["client:codegen", "--target=json", "__tmp__operations.json"])
+    .command([
+      "client:codegen",
+      "--target=json",
+      "--config=my.config.js",
+      "__tmp__operations.json"
+    ])
     .it("writes json operations", () => {
       const output = JSON.parse(
         fs.readFileSync("__tmp__operations.json").toString()
@@ -369,7 +388,7 @@ describe("client:codegen", () => {
           }
         \`;
       `,
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./**.graphql", "./**/*.tsx"],
@@ -378,7 +397,7 @@ describe("client:codegen", () => {
         }
       `
     })
-    .command(["client:codegen", "--target=typescript"])
+    .command(["client:codegen", "--target=typescript", "--config=my.config.js"])
     .it(
       "writes TypeScript types into a __generated__ directory next to sources when no output is set",
       () => {
@@ -405,7 +424,7 @@ describe("client:codegen", () => {
           }
         \`;
       `,
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./**.graphql", "./**/*.jsx"],
@@ -414,7 +433,7 @@ describe("client:codegen", () => {
         }
       `
     })
-    .command(["client:codegen", "--target=flow"])
+    .command(["client:codegen", "--target=flow", "--config=my.config.js"])
     .it(
       "writes flow types into a __generated__ directory next to sources when no output is set",
       () => {
@@ -438,7 +457,7 @@ describe("client:codegen", () => {
           }
         \`;
       `,
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./**.graphql", "./**/*.tsx"],
@@ -447,7 +466,12 @@ describe("client:codegen", () => {
         }
       `
     })
-    .command(["client:codegen", "--target=typescript", "__foo__"])
+    .command([
+      "client:codegen",
+      "--config=my.config.js",
+      "--target=typescript",
+      "__foo__"
+    ])
     .it(
       "writes TypeScript types to a custom directory next to sources when output is set",
       () => {
@@ -470,7 +494,7 @@ describe("client:codegen", () => {
           }
         \`;
       `,
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./**.graphql", "./**/*.tsx"],
@@ -481,6 +505,7 @@ describe("client:codegen", () => {
     })
     .command([
       "client:codegen",
+      "--config=my.config.js",
       "--target=typescript",
       "--globalTypesFile=__foo__/bar.ts"
     ])
@@ -506,7 +531,7 @@ describe("client:codegen", () => {
           }
         \`;
       `,
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./**.graphql", "./**/*.jsx"],
@@ -515,7 +540,12 @@ describe("client:codegen", () => {
         }
     `
     })
-    .command(["client:codegen", "--target=flow", "__foo__"])
+    .command([
+      "client:codegen",
+      "--config=my.config.js",
+      "--target=flow",
+      "__foo__"
+    ])
     .it(
       "writes Flow types to a custom directory next to sources when output is set",
       () => {
@@ -537,7 +567,7 @@ describe("client:codegen", () => {
           }
         \`;
       `,
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./**.graphql", "./**/*.tsx"],
@@ -546,7 +576,12 @@ describe("client:codegen", () => {
         }
       `
     })
-    .command(["client:codegen", "--target=typescript", ""])
+    .command([
+      "client:codegen",
+      "--config=my.config.js",
+      "--target=typescript",
+      ""
+    ])
     .it(
       "writes TypeScript types next to sources when output is set to empty string",
       () => {
@@ -569,7 +604,7 @@ describe("client:codegen", () => {
           }
         \`;
       `,
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./**.graphql", "./**/*.jsx"],
@@ -578,7 +613,7 @@ describe("client:codegen", () => {
         }
       `
     })
-    .command(["client:codegen", "--target=flow", ""])
+    .command(["client:codegen", "--config=my.config.js", "--target=flow", ""])
     .it(
       "writes flow types next to sources when output is set to empty string",
       () => {
@@ -598,7 +633,7 @@ describe("client:codegen", () => {
           }
         \`;
       `,
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./**/*.tsx"],
@@ -609,6 +644,7 @@ describe("client:codegen", () => {
     })
     .command([
       "client:codegen",
+      "--config=my.config.js",
       "--target=typescript",
       "--tagName=customGraphQLTag",
       "--outputFlat"
@@ -629,7 +665,7 @@ describe("client:codegen", () => {
           }
         \`;
       `,
-      "apollo.config.js": `
+      "my.config.js": `
         module.exports = {
           client: {
             includes: ["./**/*.tsx"],
@@ -639,7 +675,12 @@ describe("client:codegen", () => {
         }
     `
     })
-    .command(["client:codegen", "--target=typescript", "--outputFlat"])
+    .command([
+      "client:codegen",
+      "--config=my.config.js",
+      "--target=typescript",
+      "--outputFlat"
+    ])
     .it("extracts queries with a custom tagName provided in the config", () => {
       expect(
         fs.readFileSync("__generated__/SimpleQuery.ts").toString()
@@ -650,13 +691,13 @@ describe("client:codegen", () => {
 describe("error handling", () => {
   test
     .fs(defaultFiles)
-    .command(["client:codegen", "--target=foobar"])
+    .command(["client:codegen", "--config=my.config.js", "--target=foobar"])
     .catch(err => expect(err.message).toMatch(/Unsupported target: foobar/))
     .it("errors with an unsupported target");
 
   test
     .fs(defaultFiles)
-    .command(["client:codegen", "--target=swift"])
+    .command(["client:codegen", "--config=my.config.js", "--target=swift"])
     .catch(err =>
       expect(err.message).toMatch(/The output path must be specified/)
     )
@@ -664,7 +705,7 @@ describe("error handling", () => {
 
   test
     .fs(defaultFiles)
-    .command(["client:codegen", "output-file"])
+    .command(["client:codegen", "--config=my.config.js", "output-file"])
     .catch(err => expect(err.message).toMatch(/Missing required flag/))
     .it("errors when no target specified");
 });

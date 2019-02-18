@@ -6,7 +6,7 @@ import gql from "graphql-tag";
 import { GraphQLSchema, buildClientSchema } from "graphql";
 
 import { ApolloEngineClient, ClientIdentity } from "../../engine";
-import { ClientConfig, parseServiceSpecificer } from "../../config";
+import { ClientConfig, parseServiceSpecifier } from "../../config";
 import {
   GraphQLSchemaProvider,
   SchemaChangeUnsubscribeHandler,
@@ -44,7 +44,7 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
       );
     }
 
-    const [id, tag = "current"] = parseServiceSpecificer(client.service);
+    const [id, tag = "current"] = parseServiceSpecifier(client.service);
     const { data, errors } = await this.client.execute({
       query: SCHEMA_QUERY,
       variables: {
