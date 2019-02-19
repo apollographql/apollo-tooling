@@ -24,10 +24,10 @@ const defaultSearchPlaces = [
 ];
 
 // Based on order, a provided config file will take precedence over the defaults
-const getSearchPlaces = (configFile?: string) => [
-  ...(configFile ? [configFile] : []),
-  ...defaultSearchPlaces
-];
+const getSearchPlaces = (configFile?: string, loadExactOnly?: boolean) =>
+  loadExactOnly && configFile
+    ? [configFile]
+    : [...(configFile ? [configFile] : []), ...defaultSearchPlaces];
 
 const loaders = {
   // XXX improve types for config
@@ -47,12 +47,12 @@ export interface LoadConfigSettings {
   requireConfig?: boolean;
   name?: string;
   type?: "service" | "client";
+  loadExactOnly?: boolean; // match the configFileName EXACTLY. Don't allow defaults
 }
 
 export type ConfigResult<T> = {
   config: T;
   filepath: string;
-  isEmpty?: boolean;
 } | null;
 
 // XXX load .env files automatically
@@ -61,16 +61,28 @@ export async function loadConfig({
   configFileName,
   requireConfig = false,
   name,
-  type
+  type,
+  loadExactOnly
 }: LoadConfigSettings) {
   const explorer = cosmiconfig(MODULE_NAME, {
-    searchPlaces: getSearchPlaces(configFileName),
+    searchPlaces: getSearchPlaces(configFileName, loadExactOnly),
     loaders
   });
 
-  let loadedConfig = (await explorer.search(configPath)) as ConfigResult<
-    ApolloConfigFormat
-  >;
+  // search can fail if a file can't be parsed (ex: a nonsense js file)
+  let loadedConfig;
+  try {
+    loadedConfig = (await explorer.search(configPath)) as ConfigResult<
+      ApolloConfigFormat
+    >;
+  } catch (error) {
+    throw new Error(
+      `A config file failed to load with options: ${JSON.stringify(
+        arguments[0]
+      )}.
+      The error was: ${error}`
+    );
+  }
 
   if (configPath && !loadedConfig) {
     throw new Error(
@@ -143,7 +155,6 @@ export async function loadConfig({
   // if there's no config file, it uses the `DefaultConfigBase` to fill these in.
   if (!loadedConfig || resolvedName) {
     loadedConfig = {
-      isEmpty: false,
       filepath: configPath || process.cwd(),
       config: {
         ...(loadedConfig && loadedConfig.config),
@@ -166,13 +177,7 @@ export async function loadConfig({
     };
   }
 
-  let { config, filepath, isEmpty } = loadedConfig;
-
-  if (isEmpty) {
-    throw new Error(
-      `Apollo config found at ${filepath} is empty. Please add either a client or service config`
-    );
-  }
+  let { config, filepath } = loadedConfig;
 
   // selectivly apply defaults when loading the config
   if (config.client) config = merge({ client: DefaultClientConfig }, config);
