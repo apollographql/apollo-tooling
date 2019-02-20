@@ -1,7 +1,11 @@
 # Changelog
 
 ## Upcoming
-- Fix a bug where tagging a build will cause the tool to not be able to figure out where the git repo is [#944](https://github.com/apollographql/apollo-tooling/pull/944)
+
+- `apollo`
+
+  - Fix a bug where tagging a build will cause the tool to not be able to figure out where the git repo is [#944](https://github.com/apollographql/apollo-tooling/pull/944)
+  - Apollo Init - Config builder [#921](https://github.com/apollographql/apollo-tooling/pull/921)
 
 - `apollo-language-server`
   - Added a warning when there are 0 files found in a project [#1007](https://github.com/apollographql/apollo-tooling/pull/1007)
