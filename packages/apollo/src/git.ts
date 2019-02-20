@@ -81,7 +81,7 @@ export const gitInfo = async (): Promise<GitContext | undefined> => {
     // See https://github.com/pvdlg/env-ci#caveats for a detailed list of when
     // branch can be undefined
     if (!branch) {
-      branch = git.branch();
+      branch = git.branch([gitLoc]);
     }
   }
 
