@@ -69,7 +69,7 @@
     "@types/nock": "9.3.1",
     "@types/node": "10.12.26",
     "@types/node-fetch": "2.1.6",
-    "@types/react": "16.8.3",
+    "@types/react": "16.8.4",
     "@types/react-dom": "16.8.2",
     "@types/recursive-readdir": "2.2.0",
     "@types/ws": "6.0.1",
