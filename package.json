@@ -86,7 +86,7 @@
     "prettier": "1.16.4",
     "symlink-dir": "2.0.2",
     "ts-jest": "23.10.5",
-    "ts-node": "7.0.1",
+    "ts-node": "8.0.2",
     "tslib": "1.9.3",
     "typescript": "3.1.6",
     "vsce": "1.57.1",
