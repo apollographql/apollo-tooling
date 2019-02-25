@@ -36,7 +36,7 @@ export default class Generate extends ClientCommand {
     // general
     target: flags.string({
       description:
-        "Type of code generator to use (swift | typescript | flow | scala), inferred from output",
+        "Type of code generator to use (swift | typescript | flow | scala)",
       required: true
     }),
     localSchemaFile: flags.string({
