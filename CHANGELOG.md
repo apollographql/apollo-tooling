@@ -2,6 +2,8 @@
 
 ## Upcoming
 
+- Handle `subscribe` in `buildServiceDefinition` and add type in `resolverMap` [#1047](https://github.com/apollographql/apollo-tooling/pull/1047)
+
 - `apollo`
   - Relax graphql version, resolve missing types "Boolean", "String" [#1355](https://github.com/apollographql/apollo-tooling/pull/1355)
   - Add `service:list` and tests [#1358](https://github.com/apollographql/apollo-tooling/pull/1358) and header [#1377](https://github.com/apollographql/apollo-tooling/pull/1377)
