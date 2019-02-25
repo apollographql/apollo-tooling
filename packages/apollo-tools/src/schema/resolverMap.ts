@@ -7,6 +7,17 @@ export interface GraphQLResolverMap<TContext> {
       | {
           requires?: string;
           resolve: GraphQLFieldResolver<any, TContext>;
+          subscribe?: undefined;
+        }
+      | {
+          requires?: string;
+          resolve?: undefined;
+          subscribe: GraphQLFieldResolver<any, TContext>;
+        }
+      | {
+          requires?: string;
+          resolve: GraphQLFieldResolver<any, TContext>;
+          subscribe: GraphQLFieldResolver<any, TContext>;
         };
   };
 }
