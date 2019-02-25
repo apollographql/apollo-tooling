@@ -390,5 +390,44 @@ type MutationRoot {
 
       expect(nameField.resolve).toEqual(name);
     });
+
+    it(`should handle subscriptions`, () => {
+      const commentAddedSubscription = () =>
+        async function*() {
+          yield "111";
+          yield "222";
+          yield "333";
+        };
+
+      const service = buildServiceDefinition([
+        {
+          typeDefs: gql`
+            type Subscription {
+              commentAdded: String
+            }
+          `,
+          resolvers: {
+            Subscription: {
+              commentAdded: {
+                subscribe: commentAddedSubscription
+              }
+            }
+          }
+        }
+      ]);
+
+      expect(service.schema).toBeDefined();
+      const schema = service.schema!;
+
+      const subscriptionType = schema.getType("Subscription");
+      expect(subscriptionType).toBeDefined();
+
+      const commentAdded = (subscriptionType! as GraphQLObjectType).getFields()[
+        "commentAdded"
+      ];
+      expect(commentAdded).toBeDefined();
+
+      expect(commentAdded.subscribe).toEqual(commentAddedSubscription);
+    });
   });
 });
