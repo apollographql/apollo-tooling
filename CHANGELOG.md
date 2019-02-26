@@ -8,6 +8,8 @@
 - `apollo-language-server`
   - Added a warning when there are 0 files found in a project [#1007](https://github.com/apollographql/apollo-tooling/pull/1007)
   - Allow relative paths in includes/excludes globs [#1007](https://github.com/apollographql/apollo-tooling/pull/1007)
+- `vscode-apollo`
+  - Updated marketplace readme, color schemes, and icon to be prettier [#942](https://github.com/apollographql/apollo-tooling/pull/942)
 
 ## `apollo-codegen-typescript@0.32.7`, `apollo-codegen-scala@0.33.2`, `apollo-graphql@1.0.2`
 
