@@ -51,7 +51,7 @@ export class FileSet {
   }
 
   includesFile(filePath: string): boolean {
-    return this.allFiles().includes(relative(this.rootURI.fsPath, filePath));
+    return this.allFiles().includes(filePath);
   }
 
   allFiles(): string[] {
