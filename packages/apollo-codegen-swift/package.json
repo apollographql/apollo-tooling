@@ -1,7 +1,7 @@
 {
   "name": "apollo-codegen-swift",
   "description": "Swift generator module for Apollo Codegen",
-  "version": "0.32.6",
+  "version": "0.32.7",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {
