@@ -2,6 +2,10 @@
 
 ## Upcoming
 
+- `apollo-language-server`
+  - fix single apollo.config breaking others loaded at the same time [#1055](https://github.com/apollographql/apollo-tooling/pull/1055)
+  - Fix broken fileSet.includesFile to use full filepath [#1055](https://github.com/apollographql/apollo-tooling/pull/1055)
+
 ## `apollo@2.5.2`
 
 - `apollo@2.5.2`

@@ -117,25 +117,26 @@ export class GraphQLWorkspace {
     const apolloConfigFolders = new Set<string>(apolloConfigFiles.map(dirname));
 
     // go from possible folders to known array of configs
+    let foundConfigs: ApolloConfig[] = [];
+
     const projectConfigs = Array.from(apolloConfigFolders).map(configFolder =>
       loadConfig({ configPath: configFolder, requireConfig: true })
-    );
-
-    let foundConfigs: ApolloConfig[] | Error = [];
-    await Promise.all(projectConfigs)
-      .then(configs => {
-        foundConfigs = configs;
-        return configs.flatMap(projectConfig =>
-          // we create a GraphQLProject for each kind of project
-          projectConfig.projects.map(config =>
+        .then(config => {
+          foundConfigs.push(config);
+          const projectsForConfig = config.projects.map(projectConfig =>
             this.createProject({ config, folder })
-          )
-        );
-      })
-      .then(projects => this.projectsByFolderUri.set(folder.uri, projects))
-      .catch(error => {
-        foundConfigs = error;
-      });
+          );
+
+          const existingProjects =
+            this.projectsByFolderUri.get(folder.uri) || [];
+
+          this.projectsByFolderUri.set(folder.uri, [
+            ...existingProjects,
+            ...projectsForConfig
+          ]);
+        })
+        .catch(error => console.error(error))
+    );
 
     if (this._onConfigFilesFound) {
       this._onConfigFilesFound(foundConfigs);
