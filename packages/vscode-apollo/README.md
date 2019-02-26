@@ -8,7 +8,7 @@ The Apollo GraphQL extension for VS Code brings an all-in-one tooling experience
 
 - Add [syntax highlighting](#syntax) for GraphQL files and gql templates inside JavaScript files
 - Get instant feedback and [intelligent autocomplete](#autocomplete) for fields, arguments, types, and variables as you write queries
-- Seamlessly manage your client side schema alongside your remote one
+- Seamlessly manage your client-side schema alongside your remote one
 - [See performance information](#performance-insights) inline with your query definitions
 - Validate field and argument usage in operations
 - [Navigate projects](#navigating-projects) easier with jump-to and peek-at definitions and more
@@ -17,7 +17,7 @@ The Apollo GraphQL extension for VS Code brings an all-in-one tooling experience
 
 <h2 id="getting-started">Getting started</h2>
 
-Some features of this extension (like syntax highlighting) will work without any configuration, but to get all of the benefits of the VS Code experience, its best to link the schema that is being developed against **before** installing the extension. The best way to do that is by [publishing a schema](https://www.apollographql.com/docs/platform/schema-registry.html#setup) to the Apollo schema registry. Once that is done, two steps are needed:
+Some features of this extension (like syntax highlighting) will work without any configuration, but to get all of the benefits of the VS Code experience, it's best to link the schema that is being developed against **before** installing the extension. The best way to do that is by [publishing a schema](https://www.apollographql.com/docs/platform/schema-registry.html#setup) to the Apollo schema registry. Once that is done, two steps are needed:
 
 1. Create an `apollo.config.js` at the root of the project
 2. Copy an API key from the Engine dashboard of the published service
@@ -36,7 +36,7 @@ module.exports = {
 
 The service name is the id of the service created in Engine and can be found in the services dashboard of [Engine](https://engine.apollographql.com)
 
-> Important note: If the name of the service in Engine is changed, this value should be the service id. This can be found in the url when browsing the service in Engine. This will be easier to manage in the near future
+> Important note: If the name of the service in Engine is changed, this value should be the service id. This can be found in the url when browsing the service in Engine.
 
 <h3 id="api-key">Setting up an API key</h3>
 To authenticate with Engine to pull down the schema, create a file next to the `apollo.config.js` called `.env`. This should be an untraced file (i.e. don't push it to GitHub). Go to the settings page of the published service and create a new API key.
@@ -74,7 +74,7 @@ More information about configuring an Apollo project can be found [here](https:/
 
 One of the best features of the VS Code extension is the automatic merging of remote schemas and local ones when using integrated state management with Apollo Client. This happens automatically whenever schema definitions are found within a client project. By default, the VS Code extension will look for all files under `./src` to find both the operations and schema definitions for building a complete schema for the application.
 
-Client side schema definitions can be spread throughout the client app project and will be merged together to create one single schema. If the default behavior isn't ideal, this can be controlled through the `apollo.config.js` at the root of the project:
+Client-side schema definitions can be spread throughout the client app project and will be merged together to create one single schema. If the default behavior isn't ideal, this can be controlled through the `apollo.config.js` at the root of the project:
 
 ```js
 module.exports = {
@@ -122,7 +122,7 @@ GraphQL's flexibility can make it difficult to predict the cost of an operation.
 
 To turn on tracing for your GraphQL server, please visit our [guide](https://www.apollographql.com/docs/platform/setup-analytics.html).
 
-The VS Code extension will show inline performance diagnostics when connected to a service with reported metrics in Engine. As operations are typed, any fields that take longer than 1ms to respond will be annoated to the right of the field inline! This gives team members a picture of how long the operation will take as more and more fields are added to operations or fragments.
+The VS Code extension will show inline performance diagnostics when connected to a service with reported metrics in Engine. As operations are typed, any fields that take longer than 1ms to respond will be annotated to the right of the field inline! This gives team members a picture of how long the operation will take as more and more fields are added to operations or fragments.
 
 <img src="./images/marketplace/perf-annotation.png"  style="max-width:800px;" alt="Performance annotation next to a field">
 
@@ -147,7 +147,7 @@ There is more information about configuring an Apollo projects [here](https://ww
 
 Other errors may be caused from an old version of a published schema. To reload a schema, open the Command Palette (`cmd + shift + p` on mac), search "Apollo" and choose the "Apollo: Reload Schema" option.
 
-Sometimes errors will show up as a notification at the bottom of your editor. Other, less critical, messages may be shown in the output pane of the editor. To open the output pane and get diagnostic information about the extension and the current service loaded (if working with a client project), just click the "Apollo GraphQL" icon in the status bar at the bottom.
+Sometimes errors will show up as a notification at the bottom of your editor. Other, less critical messages may be shown in the output pane of the editor. To open the output pane and get diagnostic information about the extension and the current service loaded (if working with a client project), just click the "Apollo GraphQL" icon in the status bar at the bottom.
 
 <img src="./images/marketplace/stats.gif"  alt="Clicking the status bar icon to open the output pane">
 
