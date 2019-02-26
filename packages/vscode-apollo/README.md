@@ -41,7 +41,7 @@ The service name is the id of the service created in Engine and can be found in 
 <h3 id="api-key">Setting up an API key</h3>
 To authenticate with Engine to pull down the schema, create a file next to the `apollo.config.js` called `.env`. This should be an untraced file (i.e. don't push it to GitHub). Go to the settings page of the published service and create a new API key.
 
-> It is best practice to create a new API key for each member of the team and name the key so its easy to find and revoke if needed
+> It is best practice to create a new API key for each member of the team and name the key so it's easy to find and revoke if needed
 
 After the key is found, add the following line to the `.env` file:
 
@@ -49,7 +49,7 @@ After the key is found, add the following line to the `.env` file:
 ENGINE_API_KEY=<enter copied key here>
 ```
 
-After this is done, VS Code can be restarted and the editor integration will start providing autocomplete, validation, and more!
+After this is done, VS Code should automatically update and start providing autocomplete, validation, and more!
 
 <h3 id="local-schemas">Local schemas</h3>
 
