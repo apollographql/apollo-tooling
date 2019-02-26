@@ -138,6 +138,8 @@ export class GraphQLWorkspace {
         .catch(error => console.error(error))
     );
 
+    await Promise.all(projectConfigs);
+
     if (this._onConfigFilesFound) {
       this._onConfigFilesFound(foundConfigs);
     }
