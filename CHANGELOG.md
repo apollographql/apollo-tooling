@@ -2,13 +2,15 @@
 
 ## Upcoming
 
-- `apollo`
+## `apollo@2.5.2`
+
+- `apollo@2.5.2`
   - Fix a bug where tagging a build will cause the tool to not be able to figure out where the git repo is [#944](https://github.com/apollographql/apollo-tooling/pull/944)
   - Re-enable logging for codegen when in watch mode [#1039](https://github.com/apollographql/apollo-tooling/pull/1039)
-- `apollo-language-server`
+- `apollo-language-server@1.5.1`
   - Added a warning when there are 0 files found in a project [#1007](https://github.com/apollographql/apollo-tooling/pull/1007)
   - Allow relative paths in includes/excludes globs [#1007](https://github.com/apollographql/apollo-tooling/pull/1007)
-- `vscode-apollo`
+- `vscode-apollo@1.5.1`
   - Updated marketplace readme, color schemes, and icon to be prettier [#942](https://github.com/apollographql/apollo-tooling/pull/942)
 
 ## `apollo-codegen-typescript@0.32.7`, `apollo-codegen-scala@0.33.2`, `apollo-graphql@1.0.2`
