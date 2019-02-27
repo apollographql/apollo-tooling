@@ -4,25 +4,6 @@ import gql from "graphql-tag";
 
 import { ProjectCommand } from "../../Command";
 
-const INFO_QUERY = gql`
-  query GetSchemaTagInfo($service: ID!, $tag: String = "current") {
-    service(id: $service) {
-      schema(tag: $tag) {
-        hash
-        gitContext {
-          committer
-          commit
-        }
-        introspection {
-          fieldCount
-          typeCount
-        }
-        createdAt
-      }
-    }
-  }
-`;
-
 export default class ServiceDownload extends ProjectCommand {
   static description = "Download the info of your service from Engine";
   static hidden = true;
@@ -40,14 +21,23 @@ export default class ServiceDownload extends ProjectCommand {
       {
         title: `Getting information about service`,
         task: async ctx => {
-          const { data, errors } = await project.engine.execute({
-            query: INFO_QUERY,
-            variables: { tag: flags.tag, service: project.config.name }
-          });
-          if (errors || !data) {
-            this.error(`Error loading service information`);
-            return;
+          if (!project.config.name) {
+            throw new Error("A service name is required but wasn't found");
           }
+
+          const { data, errors } = await project.engine.schemaTagInfo({
+            tag: flags.tag,
+            service: project.config.name
+          });
+
+          if (errors) {
+            throw new Error(errors.map(error => error.message).join("\n"));
+          }
+
+          if (!(data && data.service)) {
+            throw new Error(`Error loading service information`);
+          }
+
           ctx.results = data.service.schema;
         }
       }

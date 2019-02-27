@@ -7,7 +7,6 @@ import {
   ApolloConfigFormat
 } from "./config";
 import { ServiceSpecifier, ServiceIDAndTag } from "../engine";
-import URI from "vscode-uri";
 
 export function isClientConfig(config: ApolloConfig): config is ClientConfig {
   return config.isClient;
@@ -24,7 +23,7 @@ export function isServiceConfig(config: ApolloConfig): config is ServiceConfig {
   return config.isService;
 }
 
-export function getServiceFromKey(key: string | undefined) {
+export function getServiceFromKey(key?: string) {
   if (key) {
     const [type, service] = key.split(":");
     if (type === "service") return service;

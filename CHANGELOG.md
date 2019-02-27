@@ -2,6 +2,9 @@
 
 ## Upcoming
 
+- `apollo`
+  - Use generated Typescript types via client:codegen [#1016](https://github.com/apollographql/apollo-tooling/pull/1016)
+
 # `apollo@2.5.3`
 
 - `apollo-language-server@1.5.2`

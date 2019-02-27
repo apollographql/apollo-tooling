@@ -20,3 +20,7 @@ export * from "./engine";
 
 // Config
 export * from "./config";
+
+// Generated types
+import * as graphqlTypes from "./graphqlTypes";
+export { graphqlTypes };

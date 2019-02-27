@@ -1,5 +1,5 @@
-import { HistoricQueryParameters } from "apollo-language-server/lib/engine/operations/checkSchema";
 import { duration } from "moment";
+import { graphqlTypes } from "apollo-language-server";
 
 export function validateHistoricParams({
   validationPeriod,
@@ -9,7 +9,7 @@ export function validateHistoricParams({
   validationPeriod: string;
   queryCountThreshold: number;
   queryCountThresholdPercentage: number;
-}>): Partial<HistoricQueryParameters> | null {
+}>): Partial<graphqlTypes.HistoricQueryParameters> | null {
   if (
     !validationPeriod &&
     !queryCountThreshold &&
