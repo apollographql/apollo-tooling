@@ -3,7 +3,6 @@
 ## Upcoming
 
 - `apollo`
-  - Fix a bug where tagging a build will cause the tool to not be able to figure out where the git repo is [#944](https://github.com/apollographql/apollo-tooling/pull/944)
   - Use generated Typescript types via client:codegen [#1016](https://github.com/apollographql/apollo-tooling/pull/1016)
 
 # `apollo@2.5.3`
