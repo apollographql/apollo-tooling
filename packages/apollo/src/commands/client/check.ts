@@ -1,16 +1,14 @@
 import { flags } from "@oclif/command";
-import { table } from "heroku-cli-util";
 import { print } from "graphql";
-
 import { gitInfo } from "../../git";
 import { ClientCommand } from "../../Command";
 import URI from "vscode-uri";
 import { relative } from "path";
-import {
-  ValidateOperations_service_validateOperations_validationResults as ValidationResult,
-  ValidationErrorType
-} from "apollo-language-server/src/graphqlTypes";
+import { graphqlTypes } from "apollo-language-server";
 import chalk from "chalk";
+
+const { ValidationErrorType } = graphqlTypes;
+type ValidationResult = graphqlTypes.ValidateOperations_service_validateOperations_validationResults;
 
 interface Operation {
   body: string;
@@ -157,7 +155,8 @@ export default class ClientCheck extends ClientCommand {
         [ValidationErrorType.INVALID]: [],
         [ValidationErrorType.FAILURE]: [],
         [ValidationErrorType.WARNING]: []
-      } as { [key in ValidationErrorType]: ValidationResult[] }
+        // XXX TS doesn't recognize ValidationErrorType as a type unless prefixed with graphqlTypes
+      } as { [key in graphqlTypes.ValidationErrorType]: ValidationResult[] }
     );
 
     Object.values(byErrorType).map(validations => {
