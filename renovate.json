@@ -1,5 +1,9 @@
 {
   "extends": ["apollo-open-source"],
+  "engines": {
+    "node": ">=8",
+    "npm": ">=6"
+  },
   "packageRules": [
     {
       "paths": ["packages/apollo/package.json"],
