@@ -27,8 +27,8 @@
     "version": "oclif-dev readme && git add README.md"
   },
   "engines": {
-    "node": "11.10.0",
-    "npm": "6.8.0"
+    "node": ">=8",
+    "npm": ">=6"
   },
   "dependencies": {
     "@apollographql/apollo-tools": "file:../apollo-tools",
@@ -54,7 +54,7 @@
     "git-parse": "1.0.3",
     "git-rev-sync": "1.12.0",
     "glob": "7.1.3",
-    "graphql": "14.1.1",
+    "graphql": "^14.0.2",
     "graphql-tag": "2.10.1",
     "heroku-cli-util": "8.0.11",
     "listr": "0.14.3",
