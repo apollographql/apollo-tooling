@@ -105,6 +105,7 @@ export function sortAST(ast: DocumentNode): DocumentNode {
       return {
         ...node,
         // Use sortBy because 'definitions' is not optional.
+        // The sort on "kind" places fragments before operations within the document
         definitions: sortBy(node.definitions, "kind", "name.value")
       };
     },
