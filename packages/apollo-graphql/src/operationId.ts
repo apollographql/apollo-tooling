@@ -19,15 +19,14 @@
 
 // - dropUnusedDefinitions, which removes operations and fragments that
 //   aren't going to be used in execution
-// - hideLiterals, which replaces all numeric and string literals as well
-//   as list and object input values with "empty" values
-// - removeAliases, which removes field aliasing from the query
+// - hideStringAndNumericLiterals, which replaces all numeric and string literals
+//   with "empty" values
 // - sortAST, which sorts the children of most multi-child nodes
 //   consistently
 // - printWithReducedWhitespace, a variant on graphql-js's 'print'
 //   which gets rid of unneeded whitespace
 //
-// defaultSignature consists of applying all of these building blocks.
+// defaultEngineReportingSignature consists of applying all of these building blocks.
 //
 // Historical note: the default signature algorithm of the Go engineproxy
 // performed all of the above operations, and the Engine servers then re-ran a
@@ -48,21 +47,27 @@ import { createHash } from "apollo-env";
 import {
   printWithReducedWhitespace,
   dropUnusedDefinitions,
-  removeAliases,
   sortAST,
-  hideLiterals
+  hideStringAndNumericLiterals
 } from "./transforms";
 
-// The default signature function consists of removing unused definitions
-// and whitespace.
-// XXX consider caching somehow
+// The default signature function consists of removing extra whitespace,
+// sorting the AST in a deterministic manner, hiding string and numeric literals,
+// and removing unused definitions.
+//
+// XXX
+// The hiding of literals is currently being discussed. This behavior
+// should not be depended on in the future, as it's likely we will choose not
+// to hide them at all. The rationale being, if queries are being shipped to
+// a client bundle, exposing PII via this signature is a very small concern,
+// relatively speaking.
 export function defaultEngineReportingSignature(
   ast: DocumentNode,
   operationName: string
 ): string {
   return printWithReducedWhitespace(
     sortAST(
-      removeAliases(hideLiterals(dropUnusedDefinitions(ast, operationName)))
+      hideStringAndNumericLiterals(dropUnusedDefinitions(ast, operationName))
     )
   );
 }
