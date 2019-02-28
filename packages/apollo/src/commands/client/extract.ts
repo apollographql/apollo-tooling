@@ -27,8 +27,6 @@ export default class ClientExtract extends ClientCommand {
   static flags = {
     ...ClientCommand.flags
   };
-  // not a public feature for now
-  // static hidden = true;
 
   static args = [
     {
