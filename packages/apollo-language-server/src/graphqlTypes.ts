@@ -9,7 +9,7 @@
 export interface CheckSchema_service_checkSchema_diffToPrevious_changes {
   __typename: "Change";
   /**
-   * Indication of the success of the change, either failure, warning, or notice.
+   * Indication of the success of the overall change, either failure, warning, or notice.
    */
   type: ChangeType;
   /**
@@ -39,10 +39,7 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_validationConfig
 
 export interface CheckSchema_service_checkSchema_diffToPrevious {
   __typename: "SchemaDiff";
-  /**
-   * Indication of the most frequently occurring ChangeType in the list of changes from this diff.
-   */
-  type: ChangeType | null;
+  type: ChangeType;
   changes: CheckSchema_service_checkSchema_diffToPrevious_changes[];
   validationConfig: CheckSchema_service_checkSchema_diffToPrevious_validationConfig | null;
 }
