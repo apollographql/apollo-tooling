@@ -3,7 +3,7 @@ import { LoaderEntry } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
 import { resolve } from "path";
 import { readFileSync, existsSync } from "fs";
-import { merge } from "lodash/fp";
+import { merge, get } from "lodash/fp";
 import {
   ApolloConfig,
   ApolloConfigFormat,
@@ -17,17 +17,11 @@ import URI from "vscode-uri";
 
 // config settings
 const MODULE_NAME = "apollo";
-const defaultSearchPlaces = [
+const defaultFileNames = [
   "package.json",
   `${MODULE_NAME}.config.js`,
   `${MODULE_NAME}.config.ts`
 ];
-
-// Based on order, a provided config file will take precedence over the defaults
-const getSearchPlaces = (configFile?: string, loadExactOnly?: boolean) =>
-  loadExactOnly && configFile
-    ? [configFile]
-    : [...(configFile ? [configFile] : []), ...defaultSearchPlaces];
 
 const loaders = {
   // XXX improve types for config
@@ -42,12 +36,23 @@ export interface LoadConfigSettings {
   // the current working directory to start looking for the config
   // config loading only works on node so we default to
   // process.cwd()
+
+  // configPath and fileName are used in conjunction with one another.
+  // i.e. /User/myProj/my.config.js
+  //    => { configPath: '/User/myProj/', configFileName: 'my.config.js' }
   configPath?: string;
+
+  // if a configFileName is passed in, loadConfig won't accept any other
+  // configs as a fallback.
   configFileName?: string;
+
+  // used when run by a `Workspace` where we _know_ a config file should be present.
   requireConfig?: boolean;
+
+  // for CLI usage, we don't _require_ a config file for everything. This allows us to pass in
+  // options to build one at runtime
   name?: string;
   type?: "service" | "client";
-  loadExactOnly?: boolean; // match the configFileName EXACTLY. Don't allow defaults
 }
 
 export type ConfigResult<T> = {
@@ -61,15 +66,14 @@ export async function loadConfig({
   configFileName,
   requireConfig = false,
   name,
-  type,
-  loadExactOnly
+  type
 }: LoadConfigSettings) {
   const explorer = cosmiconfig(MODULE_NAME, {
-    searchPlaces: getSearchPlaces(configFileName, loadExactOnly),
+    searchPlaces: configFileName ? [configFileName] : defaultFileNames,
     loaders
   });
 
-  // search can fail if a file can't be parsed (ex: a nonsense js file)
+  // search can fail if a file can't be parsed (ex: a nonsense js file) so we wrap in a try/catch
   let loadedConfig;
   try {
     loadedConfig = (await explorer.search(configPath)) as ConfigResult<
@@ -103,9 +107,11 @@ export async function loadConfig({
     );
   }
 
-  // add API to the env
+  // add API key from the env
   let engineConfig = {},
     nameFromKey;
+
+  // if there's a .env file, load it and parse for key and service name
   const dotEnvPath = configPath
     ? resolve(configPath, ".env")
     : resolve(process.cwd(), ".env");
@@ -114,63 +120,57 @@ export async function loadConfig({
     const env: { [key: string]: string } = require("dotenv").parse(
       readFileSync(dotEnvPath)
     );
-
     if (env["ENGINE_API_KEY"]) {
       engineConfig = { engine: { apiKey: env["ENGINE_API_KEY"] } };
       nameFromKey = getServiceFromKey(env["ENGINE_API_KEY"]);
     }
   }
 
-  let resolvedName = name || nameFromKey;
-
+  // DETERMINE PROJECT TYPE
   // The CLI passes in a type when loading config. The editor extension
   // does not. So we determine the type of the config here, and use it if
   // the type wasn't explicitly passed in.
-  let resolvedType: "client" | "service";
-  if (type) {
-    resolvedType = type;
-    if (
-      loadedConfig &&
-      loadedConfig.config.client &&
-      typeof loadedConfig.config.client.service === "string"
-    ) {
-      resolvedName = loadedConfig.config.client.service;
-    }
-  } else if (loadedConfig && loadedConfig.config.client) {
-    resolvedType = "client";
-    resolvedName =
-      typeof loadedConfig.config.client.service === "string"
-        ? loadedConfig.config.client.service
-        : resolvedName;
-  } else if (loadedConfig && loadedConfig.config.service) {
-    resolvedType = "service";
-  } else {
+  let projectType: "client" | "service";
+  if (type) projectType = type;
+  else if (loadedConfig && loadedConfig.config.client) projectType = "client";
+  else if (loadedConfig && loadedConfig.config.service) projectType = "service";
+  else
     throw new Error(
       "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
     );
+
+  // DETERMINE SERVICE NAME
+  // precedence: 1. (highest) config.js (client only) 2. name passed into loadConfig 3. name from api key
+  let serviceName = name || nameFromKey;
+  if (
+    projectType === "client" &&
+    loadedConfig &&
+    loadedConfig.config.client &&
+    typeof loadedConfig.config.client.service === "string"
+  ) {
+    serviceName = loadedConfig.config.client.service;
   }
 
-  // If there's a name passed in (from env/flag), it merges with the config file, to
-  // overwrite either the client's service (if a client project), or the service's name.
-  // if there's no config file, it uses the `DefaultConfigBase` to fill these in.
-  if (!loadedConfig || resolvedName) {
+  // if there wasn't a config loaded from a file, build one.
+  // if there was a service name found in the env, merge it with the new/existing config object.
+  if (!loadedConfig || serviceName) {
     loadedConfig = {
       filepath: configPath || process.cwd(),
       config: {
         ...(loadedConfig && loadedConfig.config),
-        ...(resolvedType === "client"
+        ...(projectType === "client"
           ? {
               client: {
                 ...DefaultConfigBase,
                 ...(loadedConfig && loadedConfig.config.client),
-                service: resolvedName
+                service: serviceName
               }
             }
           : {
               service: {
                 ...DefaultConfigBase,
                 ...(loadedConfig && loadedConfig.config.service),
-                name: resolvedName
+                name: serviceName
               }
             })
       }
@@ -180,6 +180,8 @@ export async function loadConfig({
   let { config, filepath } = loadedConfig;
 
   // selectivly apply defaults when loading the config
+  // this is just the includes/excludes defaults.
+  // These need to go on _all_ configs. That's why this is last.
   if (config.client) config = merge({ client: DefaultClientConfig }, config);
   if (config.service) config = merge({ service: DefaultServiceConfig }, config);
   if (engineConfig) config = merge(engineConfig, config);

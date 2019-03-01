@@ -55,22 +55,23 @@ describe("loadConfig", () => {
     dir = dirPath = undefined;
   });
 
-  it("loads with client defaults from different dir", async () => {
-    writeFilesToDir(dir, {
-      "my.config.js": `
-        module.exports = {
-          client: {
-            service: 'hello'
+  describe("finding files", () => {
+    it("loads with client defaults from different dir", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `
+          module.exports = {
+            client: {
+              service: 'hello'
+            }
           }
-        }
-      `
-    });
+        `
+      });
 
-    const config = await loadConfig({
-      configPath: dirPath,
-      configFileName: "my.config.js"
-    });
-    expect(config.rawConfig).toMatchInlineSnapshot(`
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+      expect(config.rawConfig).toMatchInlineSnapshot(`
 Object {
   "client": Object {
     "addTypename": true,
@@ -102,24 +103,24 @@ Object {
   },
 }
 `);
-  });
+    });
 
-  it("loads with service defaults from different dir", async () => {
-    writeFilesToDir(dir, {
-      "my.config.js": `
-        module.exports = {
-          service: {
-            name: 'hello'
+    it("loads with service defaults from different dir", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `
+          module.exports = {
+            service: {
+              name: 'hello'
+            }
           }
-        }
-      `
-    });
+        `
+      });
 
-    const config = await loadConfig({
-      configPath: dirPath,
-      configFileName: "my.config.js"
-    });
-    expect(config.rawConfig).toMatchInlineSnapshot(`
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+      expect(config.rawConfig).toMatchInlineSnapshot(`
 Object {
   "engine": Object {
     "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
@@ -140,24 +141,25 @@ Object {
   },
 }
 `);
-  });
-
-  it("[deprecated] loads config from package.json", async () => {
-    writeFilesToDir(dir, {
-      "package.json": `{"apollo":{"client": {"service": "hello"}} }`
     });
-    const config = await loadConfig({ configPath: dirPath });
 
-    expect(config.client.service).toEqual("hello");
-  });
+    it("[deprecated] loads config from package.json", async () => {
+      writeFilesToDir(dir, {
+        "package.json": `{"apollo":{"client": {"service": "hello"}} }`
+      });
+      const config = await loadConfig({ configPath: dirPath });
 
-  it("loads config from a ts file", async () => {
-    writeFilesToDir(dir, {
-      "apollo.config.ts": `module.exports = {"client": {"service": "hello"}`
+      expect(config.client.service).toEqual("hello");
     });
-    const config = await loadConfig({ configPath: dirPath });
 
-    expect(config.client.service).toEqual("hello");
+    it("loads config from a ts file", async () => {
+      writeFilesToDir(dir, {
+        "apollo.config.ts": `module.exports = {"client": {"service": "hello"}`
+      });
+      const config = await loadConfig({ configPath: dirPath });
+
+      expect(config.client.service).toEqual("hello");
+    });
   });
 
   describe("errors", () => {
@@ -166,8 +168,7 @@ Object {
 
       return loadConfig({
         configPath: dirPath,
-        configFileName: "my.config.js",
-        loadExactOnly: true
+        configFileName: "my.config.js"
       }).catch(err => {
         expect(err.message).toMatch(/.*A config file failed to load at.*/);
         done();
@@ -179,8 +180,7 @@ Object {
 
       return loadConfig({
         configPath: dirPath,
-        configFileName: "my.config.js",
-        loadExactOnly: true
+        configFileName: "my.config.js"
       }).catch(err => {
         expect(err.message).toMatch(
           /.*A config file failed to load with options.*/
@@ -198,8 +198,7 @@ Object {
 
       await loadConfig({
         configPath: dirPath,
-        configFileName: "package.json",
-        loadExactOnly: true
+        configFileName: "package.json"
       });
 
       expect(console.warn.mock.calls[0][0]).toMatchInlineSnapshot(
@@ -212,7 +211,6 @@ Object {
 
       return loadConfig({
         configFileName: "my.TYPO.js",
-        loadExactOnly: true,
         requireConfig: true // this is what we're testing
       }).catch(err => {
         expect(err.message).toMatch(/.*No Apollo config found for project*/);
@@ -235,5 +233,28 @@ Object {
         `[Error: Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj]`
       );
     });
+  });
+
+  describe("env loading", () => {
+    it("finds .env in config path", () => {});
+    it("finds .env in cwd", () => {});
+    it("parses .env for api key and service name", () => {});
+  });
+  describe("project type", () => {
+    it("uses passed in type as override", () => {});
+    it("infers client projects", () => {});
+    it("infers service projects", () => {});
+    it("throws if project type cant be inferred", () => {});
+  });
+  describe("service name", () => {
+    it("lets config service name take precedence for client project", () => {});
+    it("lets name passed in take precedence over env var", () => {});
+    it("uses env var to determine service name when no other options", () => {});
+  });
+  describe("default merging", () => {
+    it("merges service name and default config for client projects", () => {});
+    it("merges service name and default config for service projects", () => {});
+    it("merges engine config with projects", () => {});
+    it("merges defaults in at the end", () => {});
   });
 });
