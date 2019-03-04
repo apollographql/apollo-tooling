@@ -1,2 +1,2 @@
 export * from "./createHash";
-export * from "./isNode";
+export * from "./isNodeLike";
