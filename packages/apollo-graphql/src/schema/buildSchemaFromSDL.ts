@@ -128,19 +128,31 @@ export function buildSchemaFromSDL(
     }
   }
 
-  schema = extendSchema(schema, {
-    kind: Kind.DOCUMENT,
-    definitions: [
-      ...Object.values(definitionsMap).flat(),
-      ...missingTypeDefinitions,
-      ...directiveDefinitions
-    ]
-  });
+  schema = extendSchema(
+    schema,
+    {
+      kind: Kind.DOCUMENT,
+      definitions: [
+        ...Object.values(definitionsMap).flat(),
+        ...missingTypeDefinitions,
+        ...directiveDefinitions
+      ]
+    },
+    {
+      assumeValidSDL: true
+    }
+  );
 
-  schema = extendSchema(schema, {
-    kind: Kind.DOCUMENT,
-    definitions: Object.values(extensionsMap).flat()
-  });
+  schema = extendSchema(
+    schema,
+    {
+      kind: Kind.DOCUMENT,
+      definitions: Object.values(extensionsMap).flat()
+    },
+    {
+      assumeValidSDL: true
+    }
+  );
 
   let operationTypeMap: { [operation in OperationTypeNode]?: string };
 
