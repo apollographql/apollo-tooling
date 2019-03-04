@@ -1,79 +1,160 @@
-// import {
-//   GraphQLSchema,
-//   GraphQLNamedType,
-//   isIntrospectionType,
-//   isObjectType,
-//   GraphQLObjectType,
-//   GraphQLType,
-//   isListType,
-//   GraphQLList,
-//   isNonNullType,
-//   GraphQLNonNull,
-//   GraphQLFieldConfigMap,
-//   GraphQLFieldConfig,
-// } from 'graphql';
+import {
+  GraphQLSchema,
+  GraphQLNamedType,
+  isIntrospectionType,
+  isObjectType,
+  GraphQLObjectType,
+  GraphQLType,
+  isListType,
+  GraphQLList,
+  isNonNullType,
+  GraphQLNonNull,
+  GraphQLFieldConfigMap,
+  GraphQLFieldConfigArgumentMap,
+  GraphQLOutputType,
+  GraphQLInputType,
+  isInterfaceType,
+  GraphQLInterfaceType,
+  isUnionType,
+  GraphQLUnionType,
+  isInputObjectType,
+  GraphQLInputObjectType,
+  GraphQLInputFieldConfigMap
+} from "graphql";
 
-// function transformSchema(schema: GraphQLSchema): GraphQLSchema {
-//   const schemaConfig = schema.toConfig();
+type TypeTransformer = (
+  type: GraphQLNamedType
+) => GraphQLNamedType | null | undefined;
 
-//   const types = schemaConfig.types!;
-//   const typeMap = Object.fromEntries(
-//     types.map(
-//       type =>
-//         [type.name, transformNamedType(type)] as [string, GraphQLNamedType],
-//     ),
-//   );
+export function transformSchema(
+  schema: GraphQLSchema,
+  transformType: TypeTransformer
+): GraphQLSchema {
+  const typeMap: { [typeName: string]: GraphQLNamedType } = Object.create(null);
 
-//   function transformNamedType(type: GraphQLNamedType): GraphQLNamedType {
-//     if (isIntrospectionType(type)) return type;
+  for (const oldType of Object.values(schema.getTypeMap())) {
+    if (isIntrospectionType(oldType)) continue;
 
-//     if (isObjectType(type)) {
-//       const config = type.toConfig();
-//       return new GraphQLObjectType({
-//         ...config,
-//         interfaces: () => [...config.interfaces, EntityType],
-//         fields: () => ({
-//           ...replaceFields(config.fields),
-//         }),
-//       });
-//     }
+    const result = transformType(oldType);
 
-//     return type;
-//   }
+    // Returning `null` removes the type.
+    if (result === null) continue;
 
-//   function replaceType(type: GraphQLType): GraphQLType {
-//     if (isListType(type)) {
-//       return new GraphQLList(replaceType(type.ofType));
-//     } else if (isNonNullType(type)) {
-//       return new GraphQLNonNull(replaceType(type.ofType));
-//     }
-//     return replaceNamedType(type);
-//   }
+    // Returning `undefined` keeps the old type.
+    const newType = result || oldType;
+    typeMap[newType.name] = recreateNamedType(newType);
+  }
 
-//   function replaceNamedType(type: GraphQLNamedType): GraphQLNamedType {
-//     return typeMap[type.name];
-//   }
+  const schemaConfig = schema.toConfig();
 
-//   function replaceFields<TSource, TContext>(
-//     fieldsMap: GraphQLFieldConfigMap<TSource, TContext>,
-//   ): GraphQLFieldConfigMap<TSource, TContext> {
-//     return Object.fromEntries(
-//       Object.entries(fieldsMap).map(
-//         ([name, field]) =>
-//           [
-//             name,
-//             {
-//               ...field,
-//               type: replaceType(field.type),
-//               args: field.args,
-//             },
-//           ] as [string, GraphQLFieldConfig<TSource, TContext>],
-//       ),
-//     );
-//   }
+  return new GraphQLSchema({
+    ...schemaConfig,
+    types: Object.values(typeMap),
+    query: replaceMaybeType(schemaConfig.query),
+    mutation: replaceMaybeType(schemaConfig.mutation),
+    subscription: replaceMaybeType(schemaConfig.subscription)
+  });
 
-//   return new GraphQLSchema({
-//     ...schemaConfig,
-//     types: Object.values(typeMap),
-//   });
-// }
+  function recreateNamedType(type: GraphQLNamedType): GraphQLNamedType {
+    if (isObjectType(type)) {
+      const config = type.toConfig();
+
+      return new GraphQLObjectType({
+        ...config,
+        interfaces: () => config.interfaces.map(replaceNamedType),
+        fields: () => replaceFields(config.fields)
+      });
+    } else if (isInterfaceType(type)) {
+      const config = type.toConfig();
+
+      return new GraphQLInterfaceType({
+        ...config,
+        fields: () => replaceFields(config.fields)
+      });
+    } else if (isUnionType(type)) {
+      const config = type.toConfig();
+
+      return new GraphQLUnionType({
+        ...config,
+        types: () => config.types.map(replaceNamedType)
+      });
+    } else if (isInputObjectType(type)) {
+      const config = type.toConfig();
+
+      return new GraphQLInputObjectType({
+        ...config,
+        fields: () => replaceInputFields(config.fields)
+      });
+    }
+
+    return type;
+  }
+
+  function replaceType<T extends GraphQLType>(
+    type: GraphQLList<T>
+  ): GraphQLList<T>;
+  function replaceType<T extends GraphQLType>(
+    type: GraphQLNonNull<T>
+  ): GraphQLNonNull<T>;
+  function replaceType(type: GraphQLNamedType): GraphQLNamedType;
+  function replaceType(type: GraphQLOutputType): GraphQLOutputType;
+  function replaceType(type: GraphQLInputType): GraphQLInputType;
+  function replaceType(type: GraphQLType): GraphQLType {
+    if (isListType(type)) {
+      return new GraphQLList(replaceType(type.ofType));
+    } else if (isNonNullType(type)) {
+      return new GraphQLNonNull(replaceType(type.ofType));
+    }
+    return replaceNamedType(type);
+  }
+
+  function replaceNamedType<T extends GraphQLNamedType>(type: T): T {
+    const newType = typeMap[type.name] as T;
+    return newType ? newType : type;
+  }
+
+  function replaceMaybeType<T extends GraphQLNamedType>(
+    type: T | null | undefined
+  ): T | undefined {
+    return type ? replaceNamedType(type) : undefined;
+  }
+
+  function replaceFields<TSource, TContext>(
+    fieldsMap: GraphQLFieldConfigMap<TSource, TContext>
+  ): GraphQLFieldConfigMap<TSource, TContext> {
+    return mapValues(fieldsMap, field => ({
+      ...field,
+      type: replaceType(field.type),
+      args: field.args ? replaceArgs(field.args) : undefined
+    }));
+  }
+
+  function replaceInputFields(
+    fieldsMap: GraphQLInputFieldConfigMap
+  ): GraphQLInputFieldConfigMap {
+    return mapValues(fieldsMap, field => ({
+      ...field,
+      type: replaceType(field.type)
+    }));
+  }
+
+  function replaceArgs(args: GraphQLFieldConfigArgumentMap) {
+    return mapValues(args, arg => ({
+      ...arg,
+      type: replaceType(arg.type)
+    }));
+  }
+}
+
+function mapValues<V>(
+  object: Record<string, V>,
+  callback: (value: V) => V
+): Record<string, V> {
+  const result: Record<string, V> = Object.create(null);
+
+  for (const [key, value] of Object.entries(object)) {
+    result[key] = callback(value);
+  }
+
+  return result;
+}
