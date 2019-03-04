@@ -4,6 +4,7 @@
 
 - `apollo`
   - Use generated Typescript types via client:codegen [#1016](https://github.com/apollographql/apollo-tooling/pull/1016)
+  - Remove default `--tag=current` for some client commands that used it [#1062](https://github.com/apollographql/apollo-tooling/pull/1062)
 
 # `apollo@2.5.3`
 

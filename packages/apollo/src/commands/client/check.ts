@@ -24,11 +24,7 @@ interface LocationOffset {
 export default class ClientCheck extends ClientCommand {
   static description = "Check a client project against a pushed service";
   static flags = {
-    ...ClientCommand.flags,
-    tag: flags.string({
-      char: "t",
-      description: "The published tag to check this client against"
-    })
+    ...ClientCommand.flags
   };
 
   async run() {
