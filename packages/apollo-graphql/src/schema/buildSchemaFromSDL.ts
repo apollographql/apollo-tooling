@@ -20,43 +20,48 @@ import { isDocumentNode, isNode } from "../utilities/graphql";
 import { GraphQLResolverMap } from "./resolverMap";
 import { GraphQLSchemaValidationError } from "./GraphQLSchemaValidationError";
 import { specifiedSDLRules } from "graphql/validation/specifiedRules";
-import { mapValues, isNotNullOrUndefined } from "apollo-env";
+import { isNotNullOrUndefined } from "../utilities/predicates";
 
 export interface GraphQLSchemaModule {
   typeDefs: DocumentNode;
   resolvers?: GraphQLResolverMap<any>;
 }
 
-const skippedSDLRules = [
-  "PossibleTypeExtensions",
-  "KnownTypeNames",
-  "UniqueDirectivesPerLocation"
-];
+const skippedSDLRules = ["PossibleTypeExtensions", "KnownTypeNames"];
 
 const sdlRules = specifiedSDLRules.filter(
   rule => !skippedSDLRules.includes(rule.name)
 );
 
-export function buildSchemaFromSDL(
-  modulesOrSDL: (GraphQLSchemaModule | DocumentNode)[] | DocumentNode,
+export function buildSchemaFromModules(
+  modules: GraphQLSchemaModule[],
   schemaToExtend?: GraphQLSchema
 ): GraphQLSchema {
-  let modules: GraphQLSchemaModule[];
+  modules = modules.map(module => {
+    if (isNode(module) && isDocumentNode(module)) {
+      return { typeDefs: module };
+    } else {
+      return module;
+    }
+  });
 
-  if (Array.isArray(modulesOrSDL)) {
-    modules = modulesOrSDL.map(moduleOrSDL => {
-      if (isNode(moduleOrSDL) && isDocumentNode(moduleOrSDL)) {
-        return { typeDefs: moduleOrSDL };
-      } else {
-        return moduleOrSDL;
-      }
-    });
-  } else {
-    modules = [{ typeDefs: modulesOrSDL }];
+  const asts = modules.map(module => module.typeDefs);
+  const documentAST = concatAST(asts);
+
+  const schema = buildSchemaFromSDL(documentAST, schemaToExtend);
+
+  for (const module of modules) {
+    if (!module.resolvers) continue;
+    addResolversToSchema(schema, module.resolvers);
   }
 
-  const documentAST = concatAST(modules.map(module => module.typeDefs));
+  return schema;
+}
 
+export function buildSchemaFromSDL(
+  documentAST: DocumentNode,
+  schemaToExtend?: GraphQLSchema
+): GraphQLSchema {
   const errors = validateSDL(documentAST, schemaToExtend, sdlRules);
   if (errors.length > 0) {
     throw new GraphQLSchemaValidationError(errors);
@@ -123,31 +128,19 @@ export function buildSchemaFromSDL(
     }
   }
 
-  schema = extendSchema(
-    schema,
-    {
-      kind: Kind.DOCUMENT,
-      definitions: [
-        ...Object.values(definitionsMap).flat(),
-        ...missingTypeDefinitions,
-        ...directiveDefinitions
-      ]
-    },
-    {
-      assumeValidSDL: true
-    }
-  );
+  schema = extendSchema(schema, {
+    kind: Kind.DOCUMENT,
+    definitions: [
+      ...Object.values(definitionsMap).flat(),
+      ...missingTypeDefinitions,
+      ...directiveDefinitions
+    ]
+  });
 
-  schema = extendSchema(
-    schema,
-    {
-      kind: Kind.DOCUMENT,
-      definitions: Object.values(extensionsMap).flat()
-    },
-    {
-      assumeValidSDL: true
-    }
-  );
+  schema = extendSchema(schema, {
+    kind: Kind.DOCUMENT,
+    definitions: Object.values(extensionsMap).flat()
+  });
 
   let operationTypeMap: { [operation in OperationTypeNode]?: string };
 
@@ -172,17 +165,10 @@ export function buildSchemaFromSDL(
 
   schema = new GraphQLSchema({
     ...schema.toConfig(),
-    ...mapValues(operationTypeMap, typeName =>
-      typeName
-        ? (schema.getType(typeName) as GraphQLObjectType<any, any>)
-        : undefined
-    )
+    query: operationTypeMap.query
+      ? (schema.getType(operationTypeMap.query) as GraphQLObjectType<any, any>)
+      : undefined
   });
-
-  for (const module of modules) {
-    if (!module.resolvers) continue;
-    addResolversToSchema(schema, module.resolvers);
-  }
 
   return schema;
 }

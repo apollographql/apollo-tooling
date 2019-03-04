@@ -1,11 +1,6 @@
 import gql from "graphql-tag";
 import { buildSchemaFromSDL } from "../buildSchemaFromSDL";
-import {
-  GraphQLSchema,
-  GraphQLDirective,
-  DirectiveLocation,
-  GraphQLObjectType
-} from "graphql";
+import { GraphQLSchema, GraphQLDirective, DirectiveLocation } from "graphql";
 
 import astSerializer from "./snapshotSerializers/astSerializer";
 import graphQLTypeSerializer from "./snapshotSerializers/graphQLTypeSerializer";
@@ -213,7 +208,6 @@ type QueryRoot {
   rootField: String
 }
 `);
-        expect(schema.getQueryType()).toEqual(schema.getType("QueryRoot"));
       });
 
       it(`should be allowed with a non-default name specified in a schema extension`, () => {
@@ -240,10 +234,6 @@ type MutationRoot {
   rootField: String
 }
 `);
-        expect(schema.getQueryType()).toEqual(schema.getType("QueryRoot"));
-        expect(schema.getMutationType()).toEqual(
-          schema.getType("MutationRoot")
-        );
       });
     });
   });
@@ -343,34 +333,6 @@ type MutationRoot {
       ).toThrowErrorMatchingInlineSnapshot(
         `"Unknown directive \\"something\\"."`
       );
-    });
-  });
-  describe(`resolvers`, () => {
-    it(`should add a resolver for a field`, () => {
-      const name = () => {};
-
-      const schema = buildSchemaFromSDL([
-        {
-          typeDefs: gql`
-            type User {
-              name: String
-            }
-          `,
-          resolvers: {
-            User: {
-              name
-            }
-          }
-        }
-      ]);
-
-      const userType = schema.getType("User");
-      expect(userType).toBeDefined();
-
-      const nameField = (userType! as GraphQLObjectType).getFields()["name"];
-      expect(nameField).toBeDefined();
-
-      expect(nameField.resolve).toEqual(name);
     });
   });
 });
