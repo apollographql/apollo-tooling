@@ -17,10 +17,12 @@
     "npm": ">=6"
   },
   "dependencies": {
+    "@babel/generator": "7.1.3",
     "@babel/types": "7.3.4",
     "apollo-codegen-core": "file:../apollo-codegen-core",
     "apollo-env": "file:../apollo-env",
     "change-case": "^3.0.1",
+    "common-tags": "^1.5.1",
     "inflected": "^2.0.3"
   },
   "jest": {
