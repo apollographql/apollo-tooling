@@ -3,3 +3,4 @@ export {
   defaultOperationRegistrySignature,
   operationHash
 } from "./operationId";
+export * from "./schema";

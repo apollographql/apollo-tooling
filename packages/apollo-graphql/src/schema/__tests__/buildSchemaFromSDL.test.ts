@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { buildSchema } from "../buildSchema";
+import { buildSchemaFromSDL } from "../buildSchemaFromSDL";
 import { GraphQLSchema, GraphQLDirective, DirectiveLocation } from "graphql";
 
 import astSerializer from "./snapshotSerializers/astSerializer";
@@ -10,10 +10,10 @@ expect.addSnapshotSerializer(astSerializer);
 expect.addSnapshotSerializer(graphQLTypeSerializer);
 expect.addSnapshotSerializer(selectionSetSerializer);
 
-describe("buildSchema", () => {
+describe("buildSchemaFromSDL", () => {
   describe(`type definitions`, () => {
     it(`should construct types from definitions`, () => {
-      const schema = buildSchema(
+      const schema = buildSchemaFromSDL(
         gql`
           type User {
             name: String
@@ -40,7 +40,7 @@ type Post {
 
     it(`should not allow multiple type definitions with the same name`, () => {
       expect(() =>
-        buildSchema(
+        buildSchemaFromSDL(
           gql`
             type User {
               name: String
@@ -59,7 +59,7 @@ type Post {
 
   describe(`type extension`, () => {
     it(`should allow extending a type defined in the same document`, () => {
-      const schema = buildSchema(
+      const schema = buildSchemaFromSDL(
         gql`
           type User {
             name: String
@@ -80,7 +80,7 @@ type User {
     });
 
     it(`should allow extending a non-existent type`, () => {
-      const schema = buildSchema(
+      const schema = buildSchemaFromSDL(
         gql`
           extend type User {
             email: String
@@ -97,7 +97,7 @@ type User {
 
     it.skip(`should report an error when extending a non-existent type`, () => {
       expect(() =>
-        buildSchema(
+        buildSchemaFromSDL(
           gql`
             extend type User {
               email: String
@@ -112,7 +112,7 @@ type User {
 
   describe(`root operation types`, () => {
     it(`should include a root type with a default type name`, () => {
-      const schema = buildSchema(
+      const schema = buildSchemaFromSDL(
         gql`
           type Query {
             rootField: String
@@ -130,7 +130,7 @@ type Query {
     });
 
     it(`should include a root type with a non-default type name`, () => {
-      const schema = buildSchema(
+      const schema = buildSchemaFromSDL(
         gql`
           schema {
             query: Query
@@ -152,7 +152,7 @@ type Query {
     });
 
     it(`should include a root type with a non-default type name specified in a schema extension`, () => {
-      const schema = buildSchema(
+      const schema = buildSchemaFromSDL(
         gql`
           extend schema {
             query: Query
@@ -175,7 +175,7 @@ type Query {
 
     describe(`extending root operation types that aren't defined elsewhere`, () => {
       it(`should be allowed`, () => {
-        const schema = buildSchema(
+        const schema = buildSchemaFromSDL(
           gql`
             extend type Query {
               rootField: String
@@ -192,7 +192,7 @@ type Query {
       });
 
       it(`should be allowed with a non-default type name`, () => {
-        const schema = buildSchema(
+        const schema = buildSchemaFromSDL(
           gql`
             schema {
               query: QueryRoot
@@ -211,7 +211,7 @@ type QueryRoot {
       });
 
       it(`should be allowed with a non-default name specified in a schema extension`, () => {
-        const schema = buildSchema(
+        const schema = buildSchemaFromSDL(
           gql`
             schema {
               query: QueryRoot
@@ -240,7 +240,7 @@ type MutationRoot {
 
   describe(`directives`, () => {
     it(`should construct directives from definitions`, () => {
-      const schema = buildSchema(
+      const schema = buildSchemaFromSDL(
         gql`
           directive @something on FIELD_DEFINITION
           directive @another on FIELD_DEFINITION
@@ -258,7 +258,7 @@ type MutationRoot {
 
     it(`should not allow multiple directive definitions with the same name`, () => {
       expect(() =>
-        buildSchema(
+        buildSchemaFromSDL(
           gql`
             directive @something on FIELD_DEFINITION
             directive @something on FIELD_DEFINITION
@@ -271,7 +271,7 @@ type MutationRoot {
 
     it(`should not allow a directive definition with the same name as a predefined schema directive`, () => {
       expect(() =>
-        buildSchema(
+        buildSchemaFromSDL(
           gql`
             directive @something on FIELD_DEFINITION
           `,
@@ -291,7 +291,7 @@ type MutationRoot {
     });
 
     it(`should allow predefined schema directives to be used`, () => {
-      const schema = buildSchema(
+      const schema = buildSchemaFromSDL(
         gql`
           type User {
             name: String @something
@@ -310,7 +310,7 @@ type MutationRoot {
     });
 
     it(`should allow schema directives to be used in the same document they are defined in`, () => {
-      const schema = buildSchema(
+      const schema = buildSchemaFromSDL(
         gql`
           directive @something on FIELD_DEFINITION
 
@@ -323,7 +323,7 @@ type MutationRoot {
 
     it(`should report an error for unknown schema directives`, () => {
       expect(() =>
-        buildSchema(
+        buildSchemaFromSDL(
           gql`
             type User {
               name: String @something

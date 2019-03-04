@@ -48,7 +48,7 @@ export function buildSchemaFromModules(
   const asts = modules.map(module => module.typeDefs);
   const documentAST = concatAST(asts);
 
-  const schema = buildSchema(documentAST, schemaToExtend);
+  const schema = buildSchemaFromSDL(documentAST, schemaToExtend);
 
   for (const module of modules) {
     if (!module.resolvers) continue;
@@ -58,7 +58,7 @@ export function buildSchemaFromModules(
   return schema;
 }
 
-export function buildSchema(
+export function buildSchemaFromSDL(
   documentAST: DocumentNode,
   schemaToExtend?: GraphQLSchema
 ): GraphQLSchema {
