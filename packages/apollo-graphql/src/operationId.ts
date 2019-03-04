@@ -19,8 +19,9 @@
 
 // - dropUnusedDefinitions, which removes operations and fragments that
 //   aren't going to be used in execution
-// - hideStringAndNumericLiterals, which replaces all numeric and string literals
-//   with "empty" values
+// - hideLiterals, which replaces all numeric and string literals as well
+//   as list and object input values with "empty" values
+// - removeAliases, which removes field aliasing from the query
 // - sortAST, which sorts the children of most multi-child nodes
 //   consistently
 // - printWithReducedWhitespace, a variant on graphql-js's 'print'
@@ -48,12 +49,29 @@ import {
   printWithReducedWhitespace,
   dropUnusedDefinitions,
   sortAST,
-  hideStringAndNumericLiterals
+  hideStringAndNumericLiterals,
+  removeAliases,
+  hideLiterals
 } from "./transforms";
 
-// The default signature function consists of removing extra whitespace,
+// The engine reporting signature function consists of removing extra whitespace,
+// sorting the AST in a deterministic manner, hiding literals, and removing
+// unused definitions.
+export function defaultEngineReportingSignature(
+  ast: DocumentNode,
+  operationName: string
+): string {
+  return printWithReducedWhitespace(
+    sortAST(
+      removeAliases(hideLiterals(dropUnusedDefinitions(ast, operationName)))
+    )
+  );
+}
+
+// The operation registry signature function consists of removing extra whitespace,
 // sorting the AST in a deterministic manner, hiding string and numeric literals,
-// and removing unused definitions.
+// and removing unused definitions. This is a less aggressive transform than its
+// engine reporting signature counterpart.
 //
 // XXX
 // The hiding of literals is currently being discussed. This behavior
@@ -61,7 +79,7 @@ import {
 // to hide them at all. The rationale being, if queries are being shipped to
 // a client bundle, exposing PII via this signature is a very small concern,
 // relatively speaking.
-export function defaultEngineReportingSignature(
+export function defaultOperationRegistrySignature(
   ast: DocumentNode,
   operationName: string
 ): string {
