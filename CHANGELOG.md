@@ -8,6 +8,7 @@
   - Add missing dependency `@oclif/errors` [#1068](https://github.com/apollographql/apollo-tooling/pull/1068)
   - The keyword "type" is escaped when generating scala.js via client:codegen [#1066](https://github.com/apollographql/apollo-tooling/pull/1066)
   - Include targetUrl in the output of the `service:check` command [#1072](https://github.com/apollographql/apollo-tooling/pull/1072)
+  - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
 
 # `apollo@2.5.3`
 
