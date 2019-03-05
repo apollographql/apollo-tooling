@@ -2,26 +2,28 @@
 
 ## Upcoming
 
-- `apollo`
+## `apollo@2.6.0`, `apollo-env@0.3.4`, `apollo-language-server@1.5.3`, `apollo-codegen-flow@0.32.9`, `apollo-codegen-scala@0.33.5`, `apollo-codegen-swift@0.32.9`, `apollo-codegen-typescript@0.32.10`, `apollo-graphql@0.1.2`
+
+- `apollo@2.6.0`
   - Use generated Typescript types via client:codegen [#1016](https://github.com/apollographql/apollo-tooling/pull/1016)
   - Remove default `--tag=current` for some client commands that used it [#1062](https://github.com/apollographql/apollo-tooling/pull/1062)
   - Add missing dependency `@oclif/errors` [#1068](https://github.com/apollographql/apollo-tooling/pull/1068)
   - Include targetUrl in the output of the `service:check` command [#1072](https://github.com/apollographql/apollo-tooling/pull/1072)
   - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
-- `apollo-env`
+- `apollo-env@0.3.4`
   - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
-- `apollo-language-server`
+- `apollo-language-server@1.5.3`
   - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
-- `apollo-codegen-flow`
+- `apollo-codegen-flow@0.32.9`
   - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
-- `apollo-codegen-scala`
+- `apollo-codegen-scala@0.33.5`
   - The keyword "type" is escaped when generating scala.js via client:codegen [#1066](https://github.com/apollographql/apollo-tooling/pull/1066)
   - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
-- `apollo-codegen-swift`
+- `apollo-codegen-swift@0.32.9`
   - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
-- `apollo-codegen-typescript`
+- `apollo-codegen-typescript@0.32.10`
   - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
-- `apollo-graphql`
+- `apollo-graphql@0.1.2`
   - Expand the `graphql` peer dependency range of `apollo-graphql` to also include `0.13.x` and `0.12.x` in addition to `14.x`, since the `apollo-graphql` package is relied upon by `apollo-server-core` which specifies those requirements itself. [#1076](https://github.com/apollographql/apollo-tooling/pull/1076)
 
 # `apollo-language-server@1.5.2`, `vscode-apollo@1.5.2`
