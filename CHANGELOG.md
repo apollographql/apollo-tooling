@@ -9,6 +9,14 @@
   - The keyword "type" is escaped when generating scala.js via client:codegen [#1066](https://github.com/apollographql/apollo-tooling/pull/1066)
   - Include targetUrl in the output of the `service:check` command [#1072](https://github.com/apollographql/apollo-tooling/pull/1072)
   - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
+- `apollo-codegen-flow`
+  - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
+- `apollo-codegen-scala`
+  - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
+- `apollo-codegen-swift`
+  - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
+- `apollo-codegen-typescript`
+  - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
 
 # `apollo@2.5.3`
 
