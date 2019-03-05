@@ -27,6 +27,8 @@
 
 ## `apollo@2.11.1`, `apollo-language-server@1.8.1`, `vscode-apollo@1.6.9`
 
+- `apollo@2.11.1`
+  - Document engine requirements in client:check and client:push [#1077](https://github.com/apollographql/apollo-tooling/pull/1077)
 - `apollo-language-server@1.8.1`
   - Fix windows file paths by normalizing all URIs to a consistent format [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
   - Fix positionToOffset to consider windows line endings [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
