@@ -8,7 +8,7 @@
   - Add missing dependency `@oclif/errors` [#1068](https://github.com/apollographql/apollo-tooling/pull/1068)
   - The keyword "type" is escaped when generating scala.js via client:codegen [#1066](https://github.com/apollographql/apollo-tooling/pull/1066)
   - Include targetUrl in the output of the `service:check` command [#1072](https://github.com/apollographql/apollo-tooling/pull/1072)
-  - Relax `apollo-graphql` graphql peer dependency range to include 0.13.0
+  - Expand the `graphql` peer dependency range of `apollo-graphql` to also include `0.13.x` and `0.12.x` in addition to `14.x`, since the `apollo-graphql` package is relied upon by `apollo-server-core` which specifies those requirements itself. [#1076](https://github.com/apollographql/apollo-tooling/pull/1076)
 
 # `apollo@2.5.3`
 
