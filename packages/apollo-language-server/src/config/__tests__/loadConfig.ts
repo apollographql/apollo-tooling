@@ -1,4 +1,5 @@
 import { loadConfig } from "../";
+import * as path from "path";
 import * as fs from "fs";
 
 const makeNestedDir = dir => {
@@ -236,21 +237,62 @@ Object {
   });
 
   describe("env loading", () => {
-    it("finds .env in config path", () => {});
-    it("finds .env in cwd", () => {});
-    it("parses .env for api key and service name", () => {});
+    it("finds .env in config path & parses for key", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: { name: 'hello' } }`,
+        ".env": `ENGINE_API_KEY=service:harambe:54378950jn`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.client.service).toEqual("harambe");
+    });
+
+    // this doesn't work right now :)
+    xit("finds .env in cwd & parses for key", async () => {
+      writeFilesToDir(dir, {
+        "dir/my.config.js": `module.exports = { client: { name: 'hello' } }`,
+        ".env": `ENGINE_API_KEY=service:harambe:54378950jn`
+      });
+      process.chdir(dir);
+      const config = await loadConfig({
+        configPath: "dir/",
+        configFileName: "my.config.js"
+      });
+
+      process.chdir("../");
+      expect(config.client.service).toEqual("harambe");
+    });
   });
+
   describe("project type", () => {
-    it("uses passed in type as override", () => {});
+    it("uses passed in type as override", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { engine: { endpoint: 'http://a.a' } }`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js",
+        type: "client"
+      });
+
+      expect(config.isClient).toEqual(true);
+    });
     it("infers client projects", () => {});
     it("infers service projects", () => {});
     it("throws if project type cant be inferred", () => {});
   });
+
   describe("service name", () => {
     it("lets config service name take precedence for client project", () => {});
     it("lets name passed in take precedence over env var", () => {});
     it("uses env var to determine service name when no other options", () => {});
   });
+
   describe("default merging", () => {
     it("merges service name and default config for client projects", () => {});
     it("merges service name and default config for service projects", () => {});
