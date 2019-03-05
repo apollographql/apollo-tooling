@@ -1,8 +1,7 @@
 {
   "extends": ["apollo-open-source"],
   "engines": {
-    "node": ">=8",
-    "npm": ">=6"
+    "node": { "supportPolicy": ["lts_active"] }
   },
   "packageRules": [
     {
