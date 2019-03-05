@@ -189,6 +189,7 @@ const reservedKeywords = new Set([
   "trait",
   "true",
   "try",
+  "type",
   "until",
   "val",
   "var",
