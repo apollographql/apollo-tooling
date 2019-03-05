@@ -26,6 +26,24 @@ declare module "graphql/type/definition" {
     };
   }
 
+  interface GraphQLInterfaceType {
+    toConfig(): GraphQLInterfaceTypeConfig<any, any> & {
+      fields: GraphQLFieldConfigMap<any, any>;
+    };
+  }
+
+  interface GraphQLUnionType {
+    toConfig(): GraphQLUnionTypeConfig<any, any> & {
+      types: GraphQLObjectType[];
+    };
+  }
+
+  interface GraphQLInputObjectType {
+    toConfig(): GraphQLInputObjectTypeConfig & {
+      fields: GraphQLInputFieldConfigMap;
+    };
+  }
+
   interface GraphQLField<TSource, TContext, TArgs = { [key: string]: any }> {
     toConfig(): GraphQLFieldConfig<TSource, TContext, TArgs>;
   }
