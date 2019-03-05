@@ -7,7 +7,10 @@
   - Remove default `--tag=current` for some client commands that used it [#1062](https://github.com/apollographql/apollo-tooling/pull/1062)
   - Add missing dependency `@oclif/errors` [#1068](https://github.com/apollographql/apollo-tooling/pull/1068)
   - Include targetUrl in the output of the `service:check` command [#1072](https://github.com/apollographql/apollo-tooling/pull/1072)
-  - Expand the `graphql` peer dependency range of `apollo-graphql` to also include `0.13.x` and `0.12.x` in addition to `14.x`, since the `apollo-graphql` package is relied upon by `apollo-server-core` which specifies those requirements itself. [#1076](https://github.com/apollographql/apollo-tooling/pull/1076)
+  - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
+- `apollo-env`
+  - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
+- `apollo-language-server`
   - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
 - `apollo-codegen-flow`
   - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
@@ -18,15 +21,17 @@
   - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
 - `apollo-codegen-typescript`
   - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
+- `apollo-graphql`
+  - Expand the `graphql` peer dependency range of `apollo-graphql` to also include `0.13.x` and `0.12.x` in addition to `14.x`, since the `apollo-graphql` package is relied upon by `apollo-server-core` which specifies those requirements itself. [#1076](https://github.com/apollographql/apollo-tooling/pull/1076)
 
-# `apollo@2.5.3`
+# `apollo-language-server@1.5.2`, `vscode-apollo@1.5.2`
 
 - `apollo-language-server@1.5.2`
   - fix single apollo.config breaking others loaded at the same time [#1055](https://github.com/apollographql/apollo-tooling/pull/1055)
   - Fix broken fileSet.includesFile to use full filepath [#1055](https://github.com/apollographql/apollo-tooling/pull/1055)
 - `vscode-apollo@1.5.2`
 
-## `apollo@2.5.2`
+## `apollo@2.5.2`, `apollo-language-server@1.5.1`, `vscode-apollo@1.5.1`
 
 - `apollo@2.5.2`
   - Fix a bug where tagging a build will cause the tool to not be able to figure out where the git repo is [#944](https://github.com/apollographql/apollo-tooling/pull/944)
