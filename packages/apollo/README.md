@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.5.3 darwin-x64 node-v8.11.1
+apollo/2.6.0 darwin-x64 node-v10.10.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -56,7 +56,7 @@ USAGE
 
 OPTIONS
   -c, --config=config                    Path to your Apollo config file
-  -t, --tag=tag                          The published tag to check this client against
+  -t, --tag=tag                          The published service tag for this client
   --clientName=clientName                Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
@@ -96,16 +96,16 @@ ARGUMENTS
   OUTPUT
       Directory to which generated files will be written.
       - For TypeScript/Flow generators, this specifies a directory relative to each source file by default.
-      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a
+      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a 
       file or directory (absolute or relative to the current working directory) to which:
          - a file will be written for each query (if "output" is a directory)
          - all generated types will be written
-      - For all other types, this defines a file (absolute or relative to the current working directory) to which all
+      - For all other types, this defines a file (absolute or relative to the current working directory) to which all 
       generated types are written.
 
 OPTIONS
   -c, --config=config                        Path to your Apollo config file
-  -t, --tag=tag                              [default: current] The published service tag for this client
+  -t, --tag=tag                              The published service tag for this client
 
   --[no-]addTypename                         [default: true] Automatically add __typename to your queries, can be unset
                                              with --no-addTypename
@@ -187,7 +187,7 @@ ARGUMENTS
 
 OPTIONS
   -c, --config=config                    Path to your Apollo config file
-  -t, --tag=tag                          [default: current] The published service tag for this client
+  -t, --tag=tag                          The published service tag for this client
   --clientName=clientName                Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
@@ -225,7 +225,7 @@ USAGE
 
 OPTIONS
   -c, --config=config                    Path to your Apollo config file
-  -t, --tag=tag                          [default: current] The published service tag for this client
+  -t, --tag=tag                          The published service tag for this client
   --clientName=clientName                Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
@@ -308,15 +308,15 @@ DESCRIPTION
 
   Installation of a user-installed plugin will override a core plugin.
 
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
+  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command 
+  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in 
   the CLI without the need to patch and update the whole CLI.
 
 ALIASES
   $ apollo plugins:add
 
 EXAMPLES
-  $ apollo plugins:install myplugin
+  $ apollo plugins:install myplugin 
   $ apollo plugins:install https://github.com/someuser/someplugin
   $ apollo plugins:install someuser/someplugin
 ```
@@ -341,7 +341,7 @@ OPTIONS
 DESCRIPTION
   Installation of a linked plugin will override a user-installed or core plugin.
 
-  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
+  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello' 
   command will override the user-installed or core plugin implementation. This is useful for development work.
 
 EXAMPLE
