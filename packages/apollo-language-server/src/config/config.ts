@@ -7,6 +7,7 @@ import {
   StatsWindowSize
 } from "../engine";
 import URI from "vscode-uri";
+import { WithRequired } from "apollo-env";
 import { getServiceName, parseServiceSpecifier } from "./utils";
 
 export interface EngineStatsWindow {
