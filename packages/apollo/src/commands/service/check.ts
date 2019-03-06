@@ -2,24 +2,16 @@ import { flags } from "@oclif/command";
 import { table } from "heroku-cli-util";
 import { introspectionFromSchema } from "graphql";
 import chalk from "chalk";
-import { gitInfo } from "../../git";
+import { gitInfo, GitContext } from "../../git";
 import { ProjectCommand } from "../../Command";
 import { validateHistoricParams } from "../../utils";
+import {
+  CheckSchema_service_checkSchema,
+  CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
+  ChangeType
+} from "apollo-language-server/lib/graphqlTypes";
 
-// TODO These types can/should be generated from the engine schema when we
-// dogfood codegen inside of the apollo-tooling repo
-interface SchemaChange {
-  type: ChangeType;
-  code: string;
-  description: string;
-}
-enum ChangeType {
-  FAILURE = "FAILURE",
-  WARNING = "WARNING",
-  NOTICE = "NOTICE"
-}
-
-const formatChange = (change: SchemaChange) => {
+const formatChange = (change: Change) => {
   let color = (x: string): string => x;
   if (change.type === ChangeType.FAILURE) {
     color = chalk.red;
@@ -56,49 +48,67 @@ export default class ServiceCheck extends ProjectCommand {
     queryCountThresholdPercentage: flags.integer({
       description:
         "Number of requests within the requested time window for a query to be considered, relative to total request count. Expected values are between 0 and 0.05 (minimum 5% of total request volume)"
+    }),
+    json: flags.boolean({
+      description:
+        "Output result in json, which can then be parsed by CLI tools such as jq."
     })
   };
 
   async run() {
-    const { gitContext, checkSchemaResult }: any = await this.runTasks(
-      ({ config, flags, project }) => [
-        {
-          title: "Checking service for changes",
-          task: async ctx => {
-            if (!config.name) {
-              throw new Error("No service found to link to Engine");
-            }
-
-            const tag = flags.tag || config.tag || "current";
-            const schema = await project.resolveSchema({ tag });
-            ctx.gitContext = await gitInfo();
-
-            const historicParameters = validateHistoricParams({
-              validationPeriod: flags.validationPeriod,
-              queryCountThreshold: flags.queryCountThreshold,
-              queryCountThresholdPercentage: flags.queryCountThresholdPercentage
-            });
-
-            ctx.checkSchemaResult = await project.engine.checkSchema({
-              id: config.name,
-              // @ts-ignore
-              // XXX Looks like TS should be generating ReadonlyArrays instead
-              schema: introspectionFromSchema(schema).__schema,
-              tag: flags.tag,
-              gitContext: ctx.gitContext,
-              frontend: flags.frontend || config.engine.frontend,
-              ...(historicParameters && { historicParameters })
-            });
+    const {
+      gitContext,
+      checkSchemaResult,
+      shouldOutputJson
+    } = await this.runTasks<{
+      gitContext?: GitContext;
+      checkSchemaResult: CheckSchema_service_checkSchema;
+      shouldOutputJson: boolean;
+    }>(({ config, flags, project }) => [
+      {
+        title: "Checking service for changes",
+        task: async ctx => {
+          if (!config.name) {
+            throw new Error("No service found to link to Engine");
           }
-        }
-      ]
-    );
 
-    const { targetUrl, diffToPrevious } = checkSchemaResult;
-    const { changes /*, type, validationConfig */ } = diffToPrevious;
-    const failures = changes.filter(
-      ({ type }: SchemaChange) => type === ChangeType.FAILURE
-    );
+          const tag = flags.tag || config.tag || "current";
+          const schema = await project.resolveSchema({ tag });
+          ctx.gitContext = await gitInfo();
+
+          const historicParameters = validateHistoricParams({
+            validationPeriod: flags.validationPeriod,
+            queryCountThreshold: flags.queryCountThreshold,
+            queryCountThresholdPercentage: flags.queryCountThresholdPercentage
+          });
+
+          ctx.checkSchemaResult = await project.engine.checkSchema({
+            id: config.name,
+            // @ts-ignore
+            // XXX Looks like TS should be generating ReadonlyArrays instead
+            schema: introspectionFromSchema(schema).__schema,
+            tag: flags.tag,
+            gitContext: ctx.gitContext,
+            frontend: flags.frontend || config.engine.frontend,
+            ...(historicParameters && { historicParameters })
+          });
+
+          ctx.shouldOutputJson = flags.json;
+        }
+      }
+    ]);
+
+    const {
+      targetUrl,
+      diffToPrevious: { changes, validationConfig }
+    } = checkSchemaResult;
+    const failures = changes.filter(({ type }) => type === ChangeType.FAILURE);
+
+    if (shouldOutputJson) {
+      return this.log(
+        JSON.stringify({ targetUrl, changes, validationConfig }, null, 2)
+      );
+    }
 
     if (changes.length === 0) {
       return this.log("\nNo changes present between schemas\n");
