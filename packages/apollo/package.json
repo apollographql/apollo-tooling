@@ -39,7 +39,7 @@
     "@oclif/plugin-help": "1.2.11",
     "@oclif/plugin-not-found": "1.2.2",
     "@oclif/plugin-plugins": "1.7.7",
-    "@oclif/plugin-warn-if-update-available": "1.5.4",
+    "@oclif/plugin-warn-if-update-available": "1.7.0",
     "apollo-codegen-core": "file:../apollo-codegen-core",
     "apollo-codegen-flow": "file:../apollo-codegen-flow",
     "apollo-codegen-scala": "file:../apollo-codegen-scala",
