@@ -27,7 +27,11 @@ export interface GraphQLSchemaModule {
   resolvers?: GraphQLResolverMap<any>;
 }
 
-const skippedSDLRules = ["PossibleTypeExtensions", "KnownTypeNames"];
+const skippedSDLRules = [
+  "PossibleTypeExtensions",
+  "KnownTypeNames",
+  "UniqueDirectivesPerLocation"
+];
 
 const sdlRules = specifiedSDLRules.filter(
   rule => !skippedSDLRules.includes(rule.name)
