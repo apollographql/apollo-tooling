@@ -122,7 +122,9 @@ export default class ServiceCheck extends ProjectCommand {
       ]
     });
     this.log("\n");
-    this.log(`View full details at: ${targetUrl}`);
+    if (targetUrl) {
+      this.log(`View full details at: ${targetUrl}`);
+    }
     // exit with failing status if we have failures
     if (failures.length > 0) {
       this.exit();
