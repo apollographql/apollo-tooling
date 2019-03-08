@@ -1,12 +1,9 @@
 {
   "extends": ["apollo-open-source"],
-  "engines": {
-    "node": { "supportPolicy": ["lts_active"] }
-  },
   "packageRules": [
     {
       "paths": ["packages/apollo/package.json"],
-      "rangeStrategy": "pin"
+      "extends": [":pinAllExceptPeerDependencies"]
     },
     {
       "packageNames": ["@oclif/config"],
