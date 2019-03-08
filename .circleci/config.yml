@@ -84,7 +84,7 @@ jobs:
   Linting:
     docker: [{ image: "circleci/node:8" }]
     steps:
-      # (speed) Intentionally omitted, unnecessary, run_install_desired_npm.
+      - *run_install_desired_npm
       - checkout
       # (speed) --ignore-scripts to skip unnecessary Lerna build during linting.
       - run: npm install --ignore-scripts
