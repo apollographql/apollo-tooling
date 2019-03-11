@@ -3,7 +3,14 @@
   "packageRules": [
     {
       "paths": ["packages/apollo/package.json"],
-      "extends": [":pinAllExceptPeerDependencies"]
+      "extends": [":pinAllExceptPeerDependencies"],
+      "packageRules": [
+        {
+          "packageNames": ["graphql"],
+          "rangeStrategy": "widen",
+          "allowedVersions": "^14.0.0"
+        }
+      ]
     },
     {
       "packageNames": ["@oclif/config"],
