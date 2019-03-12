@@ -47,7 +47,7 @@ export default class ServiceDownload extends ProjectCommand {
             if (e.code == "ECONNREFUSED") {
               console.error(
                 `❌ ERROR: Connection refused. You may not be running a service locally, or your endpoint url is incorrect.\n` +
-                  "If you're trying to download a schema from Apollo Engine, use the `client:download schema` command instead."
+                  "If you're trying to download a schema from Apollo Engine, use the `client:download-schema` command instead."
               );
             }
             throw e;
