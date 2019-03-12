@@ -21,6 +21,7 @@ import { GraphQLResolverMap } from "./resolverMap";
 import { GraphQLSchemaValidationError } from "./GraphQLSchemaValidationError";
 import { specifiedSDLRules } from "graphql/validation/specifiedRules";
 import { isNotNullOrUndefined } from "../utilities/predicates";
+import { mapValues } from "../utilities/mapValues";
 
 export interface GraphQLSchemaModule {
   typeDefs: DocumentNode;
@@ -179,9 +180,11 @@ export function buildSchemaFromSDL(
 
   schema = new GraphQLSchema({
     ...schema.toConfig(),
-    query: operationTypeMap.query
-      ? (schema.getType(operationTypeMap.query) as GraphQLObjectType<any, any>)
-      : undefined
+    ...mapValues(operationTypeMap, typeName =>
+      typeName
+        ? (schema.getType(typeName) as GraphQLObjectType<any, any>)
+        : undefined
+    )
   });
 
   return schema;
