@@ -38,20 +38,18 @@ const sdlRules = specifiedSDLRules.filter(
 );
 
 export function buildSchemaFromModules(
-  modules: GraphQLSchemaModule[],
+  modulesOrSDL: (GraphQLSchemaModule | DocumentNode)[],
   schemaToExtend?: GraphQLSchema
 ): GraphQLSchema {
-  modules = modules.map(module => {
-    if (isNode(module) && isDocumentNode(module)) {
-      return { typeDefs: module };
+  const modules = modulesOrSDL.map(moduleOrSDL => {
+    if (isNode(moduleOrSDL) && isDocumentNode(moduleOrSDL)) {
+      return { typeDefs: moduleOrSDL };
     } else {
-      return module;
+      return moduleOrSDL;
     }
   });
 
-  const asts = modules.map(module => module.typeDefs);
-  const documentAST = concatAST(asts);
-
+  const documentAST = concatAST(modules.map(module => module.typeDefs));
   const schema = buildSchemaFromSDL(documentAST, schemaToExtend);
 
   for (const module of modules) {
