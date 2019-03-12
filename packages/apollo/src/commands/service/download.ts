@@ -1,6 +1,7 @@
 import { flags } from "@oclif/command";
 import { introspectionFromSchema } from "graphql";
 import { writeFileSync } from "fs";
+import chalk from "chalk";
 import { ProjectCommand } from "../../Command";
 
 export default class ServiceDownload extends ProjectCommand {
@@ -45,9 +46,16 @@ export default class ServiceDownload extends ProjectCommand {
             );
           } catch (e) {
             if (e.code == "ECONNREFUSED") {
-              console.error(
-                `❌ ERROR: Connection refused. You may not be running a service locally, or your endpoint url is incorrect.\n` +
+              this.log(chalk.red("ERROR: Connection refused."));
+              this.log(
+                chalk.red(
+                  "You may not be running a service locally, or your endpoint url is incorrect."
+                )
+              );
+              this.log(
+                chalk.red(
                   "If you're trying to download a schema from Apollo Engine, use the `client:download-schema` command instead."
+                )
               );
             }
             throw e;
