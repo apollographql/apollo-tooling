@@ -1,4 +1,4 @@
-import * as cosmiconfig from "cosmiconfig";
+import cosmiconfig from "cosmiconfig";
 import { LoaderEntry } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
 import { resolve } from "path";

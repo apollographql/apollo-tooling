@@ -1,5 +1,5 @@
-import * as fs from "fs";
-import * as path from "path";
+import fs from "fs";
+import path from "path";
 import Nock from "@fancy-test/nock";
 import * as Test from "@oclif/test";
 export { expect } from "@oclif/test";

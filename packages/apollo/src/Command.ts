@@ -1,5 +1,5 @@
 import Command, { flags } from "@oclif/command";
-import * as Listr from "listr";
+import Listr from "listr";
 import { ListrTask } from "listr";
 import { parse, resolve } from "path";
 
