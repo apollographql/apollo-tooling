@@ -21,6 +21,7 @@ import {
   GraphQLInputObjectType,
   GraphQLInputFieldConfigMap
 } from "graphql";
+import { mapValues } from "../utilities/mapValues";
 
 type TypeTransformer = (
   type: GraphQLNamedType
@@ -144,17 +145,4 @@ export function transformSchema(
       type: replaceType(arg.type)
     }));
   }
-}
-
-function mapValues<V>(
-  object: Record<string, V>,
-  callback: (value: V) => V
-): Record<string, V> {
-  const result: Record<string, V> = Object.create(null);
-
-  for (const [key, value] of Object.entries(object)) {
-    result[key] = callback(value);
-  }
-
-  return result;
 }
