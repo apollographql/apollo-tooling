@@ -208,6 +208,7 @@ type QueryRoot {
   rootField: String
 }
 `);
+        expect(schema.getQueryType()).toEqual(schema.getType("QueryRoot"));
       });
 
       it(`should be allowed with a non-default name specified in a schema extension`, () => {
@@ -234,6 +235,10 @@ type MutationRoot {
   rootField: String
 }
 `);
+        expect(schema.getQueryType()).toEqual(schema.getType("QueryRoot"));
+        expect(schema.getMutationType()).toEqual(
+          schema.getType("MutationRoot")
+        );
       });
     });
   });
