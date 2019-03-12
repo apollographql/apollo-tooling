@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { buildSchemaFromModules } from "../buildSchema";
+import { buildSchemaFromModules } from "../buildSchemaFromSDL";
 
 import astSerializer from "./snapshotSerializers/astSerializer";
 import graphQLTypeSerializer from "./snapshotSerializers/graphQLTypeSerializer";
