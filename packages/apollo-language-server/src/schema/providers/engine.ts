@@ -34,26 +34,27 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
 
   async resolveSchema(override: SchemaResolveConfig) {
     if (this.schema && (!override || !override.force)) return this.schema;
-    const { engine, client, service } = this.config;
-
+    const { engine } = this.config;
     let serviceName;
 
     if (isClientConfig(this.config)) {
-      if (typeof client!.service !== "string") {
+      const client = this.config.client;
+      if (typeof client.service !== "string") {
         throw new Error(
           `Service name not found for client, found ${client!.service}`
         );
       }
 
-      serviceName = client!.service as string;
+      serviceName = client.service as string;
     } else if (isServiceConfig(this.config)) {
-      if (typeof service!.name !== "string") {
+      const service = this.config.service;
+      if (typeof service.name !== "string") {
         throw new Error(
           `Service name not found for service, found ${service!.name}`
         );
       }
 
-      serviceName = service!.name;
+      serviceName = service.name;
     }
 
     // create engine client
