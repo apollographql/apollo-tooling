@@ -36,7 +36,9 @@
     "setupFiles": [
       "<rootDir>/../apollo-env/lib/index.js"
     ],
-    "setupTestFrameworkScriptFile": "<rootDir>/test-utils/matchers.ts",
+    "setupFilesAfterEnv": [
+      "<rootDir>/test-utils/matchers.ts"
+    ],
     "testMatch": [
       "**/__tests__/*.(js|ts)"
     ],
