@@ -15,10 +15,13 @@ export interface ManifestEntry {
 export function getOperationManifestFromProject(
   project: GraphQLClientProject
 ): ManifestEntry[] {
-  const manifest = Object.values(
+  const manifest = Object.entries(
     project.mergedOperationsAndFragmentsForService
-  ).map(operationAST => {
-    const printed = defaultOperationRegistrySignature(operationAST, "");
+  ).map(([operationName, operationAST]) => {
+    const printed = defaultOperationRegistrySignature(
+      operationAST,
+      operationName
+    );
 
     return {
       signature: operationHash(printed),
