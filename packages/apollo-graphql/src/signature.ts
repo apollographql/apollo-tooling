@@ -43,8 +43,8 @@
 // the server no longer needs to parse the signature or run its own signature
 // algorithm on it, and the details of the signature algorithm are now up to the
 // reporting agent.
-
 import { DocumentNode } from "graphql";
+import { createHash } from "apollo-env";
 import {
   printWithReducedWhitespace,
   dropUnusedDefinitions,
