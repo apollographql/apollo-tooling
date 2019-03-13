@@ -2,9 +2,11 @@
 
 ## Upcoming
 
-- apollo
+## `apollo@2.6.1`, `apollo-env@0.4.0`
+
+- `apollo@2.6.1`
   - JSON flag for service:check output [#1079](https://github.com/apollographql/apollo-tooling/pull/1079)
-- apollo-env
+- `apollo-env@0.4.0`
   - Add environment-aware createHash function to apollo-env [#1110](https://github.com/apollographql/apollo-tooling/pull/1110)
 
 ## `apollo@2.6.0`, `apollo-env@0.3.4`, `apollo-language-server@1.5.3`, `apollo-codegen-flow@0.32.9`, `apollo-codegen-scala@0.33.5`, `apollo-codegen-swift@0.32.9`, `apollo-codegen-typescript@0.32.10`, `apollo-graphql@0.1.2`
