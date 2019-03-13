@@ -2,9 +2,9 @@
 
 ## Upcoming
 
-## `apollo-graphql@0.2.0`
+## `apollo-graphql@0.2.1`
 
-- `apollo-graphql@0.2.0`
+- `apollo-graphql@0.2.1`
   - Change the `sortAST` algorithm to sort fragments at the top-level of the `DocumentNode`, providing a more deterministic normalization of the operation for use by `apollo-engine-reporting` (which consumes this package's `defaultOperationRegistrySignature` function). This will more correctly combine operations for Engine reporting. This also adds a `defaultOperationRegistrySignature` function for use by the `apollo-server-plugin-operation-registry` plugin to eventually consume. [#1112](https://github.com/apollographql/apollo-tooling/pull/1112)
 
 ## `apollo@2.6.1`, `apollo-env@0.4.0`

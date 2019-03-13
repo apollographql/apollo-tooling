@@ -79,14 +79,9 @@ export function defaultEngineReportingSignature(
 // to hide them at all. The rationale being, if queries are being shipped to
 // a client bundle, exposing PII via this signature is a very small concern,
 // relatively speaking.
-export function defaultOperationRegistrySignature(
-  ast: DocumentNode,
-  operationName: string
-): string {
+export function defaultOperationRegistrySignature(ast: DocumentNode): string {
   return printWithReducedWhitespace(
-    sortAST(
-      hideStringAndNumericLiterals(dropUnusedDefinitions(ast, operationName))
-    )
+    sortAST(hideStringAndNumericLiterals(dropUnusedDefinitions(ast, "")))
   );
 }
 

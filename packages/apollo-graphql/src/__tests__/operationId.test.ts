@@ -275,11 +275,9 @@ describe("defaultOperationRegistrySignature", () => {
       `
     }
   ];
-  cases.forEach(({ name, operationName, input }) => {
+  cases.forEach(({ name, input }) => {
     test(name, () => {
-      expect(
-        defaultOperationRegistrySignature(input, operationName)
-      ).toMatchSnapshot();
+      expect(defaultOperationRegistrySignature(input)).toMatchSnapshot();
     });
   });
 });
