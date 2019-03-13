@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.6.0 darwin-x64 node-v10.10.0
+apollo/2.6.1 darwin-x64 node-v10.10.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -268,7 +268,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v1.2.11/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.1.6/src/commands/help.ts)_
 
 ## `apollo plugins`
 
@@ -402,6 +402,9 @@ OPTIONS
 
   --header=header                                                Additional headers to send to server for
                                                                  introspectionQuery
+
+  --json                                                         Output result in json, which can then be parsed by CLI
+                                                                 tools such as jq.
 
   --key=key                                                      The API key for the Apollo Engine service
 
