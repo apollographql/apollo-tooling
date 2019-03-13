@@ -13,6 +13,10 @@
       ]
     },
     {
+      "packageNames": ["@types/node"],
+      "allowedVersions": "8.x"
+    },
+    {
       "packageNames": ["@oclif/config"],
       "rangeStrategy": "pin",
       "allowedVersions": ["=1.12.0"]
