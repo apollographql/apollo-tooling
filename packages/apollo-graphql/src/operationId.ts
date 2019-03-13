@@ -27,7 +27,7 @@
 // - printWithReducedWhitespace, a variant on graphql-js's 'print'
 //   which gets rid of unneeded whitespace
 //
-// defaultSignature consists of applying all of these building blocks.
+// defaultEngineReportingSignature consists of applying all of these building blocks.
 //
 // Historical note: the default signature algorithm of the Go engineproxy
 // performed all of the above operations, and the Engine servers then re-ran a
@@ -48,14 +48,15 @@ import { createHash } from "apollo-env";
 import {
   printWithReducedWhitespace,
   dropUnusedDefinitions,
-  removeAliases,
   sortAST,
+  hideStringAndNumericLiterals,
+  removeAliases,
   hideLiterals
 } from "./transforms";
 
-// The default signature function consists of removing unused definitions
-// and whitespace.
-// XXX consider caching somehow
+// The engine reporting signature function consists of removing extra whitespace,
+// sorting the AST in a deterministic manner, hiding literals, and removing
+// unused definitions.
 export function defaultEngineReportingSignature(
   ast: DocumentNode,
   operationName: string
@@ -65,4 +66,32 @@ export function defaultEngineReportingSignature(
       removeAliases(hideLiterals(dropUnusedDefinitions(ast, operationName)))
     )
   );
+}
+
+// The operation registry signature function consists of removing extra whitespace,
+// sorting the AST in a deterministic manner, hiding string and numeric literals,
+// and removing unused definitions. This is a less aggressive transform than its
+// engine reporting signature counterpart.
+//
+// XXX
+// The hiding of literals is currently being discussed. This behavior
+// should not be depended on in the future, as it's likely we will choose not
+// to hide them at all. The rationale being, if queries are being shipped to
+// a client bundle, exposing PII via this signature is a very small concern,
+// relatively speaking.
+export function defaultOperationRegistrySignature(
+  ast: DocumentNode,
+  operationName: string
+): string {
+  return printWithReducedWhitespace(
+    sortAST(
+      hideStringAndNumericLiterals(dropUnusedDefinitions(ast, operationName))
+    )
+  );
+}
+
+export function operationHash(operation: string): string {
+  return createHash("sha256")
+    .update(operation)
+    .digest("hex");
 }
