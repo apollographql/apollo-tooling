@@ -52,6 +52,10 @@ export default class ServiceCheck extends ProjectCommand {
     json: flags.boolean({
       description:
         "Output result in json, which can then be parsed by CLI tools such as jq."
+    }),
+    localSchemaFile: flags.string({
+      description:
+        "Path to your local GraphQL schema file (introspection result or SDL)"
     })
   };
 
