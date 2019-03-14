@@ -97,6 +97,7 @@ export interface RegisterOperationsVariables {
   id: string;
   clientIdentity: RegisteredClientIdentityInput;
   operations: RegisteredOperationInput[];
+  manifestVersion: number;
 }
 
 /* tslint:disable */
@@ -136,9 +137,6 @@ export interface SchemaTagInfo_service {
 }
 
 export interface SchemaTagInfo {
-  /**
-   * Service by ID
-   */
   service: SchemaTagInfo_service | null;
 }
 
@@ -177,13 +175,7 @@ export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics {
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats {
   __typename: "ServiceFieldStatsRecord";
-  /**
-   * Dimensions of ServiceFieldStats that can be grouped by.
-   */
   groupBy: SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy;
-  /**
-   * Metrics of ServiceFieldStats that can be aggregated over.
-   */
   metrics: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics;
 }
 
@@ -202,9 +194,6 @@ export interface SchemaTagsAndFieldStats_service {
 }
 
 export interface SchemaTagsAndFieldStats {
-  /**
-   * Service by ID
-   */
   service: SchemaTagsAndFieldStats_service | null;
 }
 
@@ -763,9 +752,6 @@ export interface GetSchemaByTag_service_Service {
 export type GetSchemaByTag_service = GetSchemaByTag_service_User | GetSchemaByTag_service_Service;
 
 export interface GetSchemaByTag {
-  /**
-   * Current identity, null if not authenticated
-   */
   service: GetSchemaByTag_service | null;
 }
 
