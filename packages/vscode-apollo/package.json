@@ -63,8 +63,9 @@
       {
         "id": "graphql",
         "extensions": [
+          ".gql",
           ".graphql",
-          ".gql"
+          ".graphqls"
         ],
         "aliases": [
           "GraphQL"
