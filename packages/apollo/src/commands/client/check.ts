@@ -38,7 +38,7 @@ export default class ClientCheck extends ClientCommand {
           if (!config.name) {
             throw new Error("No service found to link to Engine");
           }
-          ctx.gitContext = await gitInfo();
+          ctx.gitContext = await gitInfo(this.log);
 
           ctx.operations = Object.entries(
             this.project.mergedOperationsAndFragmentsForService

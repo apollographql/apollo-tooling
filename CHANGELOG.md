@@ -2,6 +2,9 @@
 
 ## Upcoming
 
+- `apollo`
+  - fix remoteUrl(remove slug) for service:check [#1121](https://github.com/apollographql/apollo-tooling/pull/1121)
+
 ## `apollo-graphql@0.2.0`
 
 - `apollo-graphql@0.2.0`

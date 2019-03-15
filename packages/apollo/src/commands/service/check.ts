@@ -74,7 +74,7 @@ export default class ServiceCheck extends ProjectCommand {
 
           const tag = flags.tag || config.tag || "current";
           const schema = await project.resolveSchema({ tag });
-          ctx.gitContext = await gitInfo();
+          ctx.gitContext = await gitInfo(this.log);
 
           const historicParameters = validateHistoricParams({
             validationPeriod: flags.validationPeriod,
