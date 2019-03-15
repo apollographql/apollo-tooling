@@ -4,6 +4,7 @@ import * as ci from "env-ci";
 import { gitToJs } from "git-parse";
 import * as git from "git-rev-sync";
 import { pickBy, identity } from "lodash";
+import Command from "@oclif/command";
 
 const findGitRoot = (start?: string | string[]): string | void => {
   start = start || process.cwd();
@@ -34,14 +35,14 @@ export interface GitContext {
   branch?: string;
 }
 
-export const gitInfo = async (): Promise<GitContext | undefined> => {
+export const gitInfo = async (
+  log: Command["log"]
+): Promise<GitContext | undefined> => {
   // Occasionally `branch` will be undefined depending on the environment, so
   // we need to fallback on `prBranch`. However in some cases, we are not able
   // to get to the branch at all. For more information, see
   // https://github.com/pvdlg/env-ci#caveats
-  //
-  // slug is formatted as follows: ${organization}/${repository name}
-  const { isCi, commit, branch: ciBranch, slug, root, prBranch } = ci();
+  const { commit, branch: ciBranch, root, prBranch } = ci();
   const gitLoc = root ? root : findGitRoot();
 
   if (!commit) return;
@@ -49,7 +50,7 @@ export const gitInfo = async (): Promise<GitContext | undefined> => {
   let committer;
   let branch = ciBranch || prBranch;
   // BUILD_REPOSITORY_ID is for azure pipelines
-  let remoteUrl = slug || process.env.BUILD_REPOSITORY_ID;
+  let remoteUrl = process.env.BUILD_REPOSITORY_ID;
   let message;
 
   // In order to use git-parse and git-rev-sync, we must ensure that a git context is
@@ -69,10 +70,12 @@ export const gitInfo = async (): Promise<GitContext | undefined> => {
 
     message = commit.message;
 
-    if (!isCi) {
-      try {
-        remoteUrl = git.remoteUrl();
-      } catch (e) {}
+    // The remoteUrl call can fail and throw an error
+    // https://github.com/kurttheviking/git-rev-sync-js#gitremoteurl--string
+    try {
+      remoteUrl = git.remoteUrl();
+    } catch (e) {
+      log(["Unable to retrieve remote url, failed with:", e].join("\n\n"));
     }
 
     // The ci and pr branches pulled from the ci's environment can be undefined,
