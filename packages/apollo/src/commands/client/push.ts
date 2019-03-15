@@ -40,7 +40,8 @@ export default class ServicePush extends ClientCommand {
               version
             },
             id: config.name,
-            operations: operationManifest
+            operations: operationManifest,
+            manifestVersion: 2
           };
 
           await project.engine.registerOperations(variables);
