@@ -86,7 +86,7 @@
     "nock": "10.0.6",
     "prettier": "1.16.4",
     "symlink-dir": "3.0.0",
-    "ts-jest": "23.10.5",
+    "ts-jest": "24.0.0",
     "ts-node": "8.0.3",
     "tslib": "1.9.3",
     "typescript": "3.1.6",
