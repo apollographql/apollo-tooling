@@ -5,18 +5,35 @@ import { stripIndent } from "common-tags";
 
 type Printable = t.Node | string;
 
+function trimLeadingEmptyLines(result: string) {
+  let hasSeenContent = false;
+  return result
+    .split("\n")
+    .filter(line => {
+      if (!hasSeenContent && line.trim() === "") {
+        return false;
+      }
+      hasSeenContent = true;
+      return true;
+    })
+    .join("\n");
+}
+
 export default class Printer {
   private printQueue: Printable[] = [];
 
   public print(): string {
-    return this.printQueue.reduce((document: string, printable) => {
-      if (typeof printable === "string") {
-        return document + printable;
-      } else {
-        const documentPart = generate(printable).code;
-        return document + this.fixCommas(documentPart);
-      }
-    }, "") as string;
+    return trimLeadingEmptyLines(this.printQueue.reduce(
+      (document: string, printable) => {
+        if (typeof printable === "string") {
+          return document + printable;
+        } else {
+          const documentPart = generate(printable).code;
+          return document + this.fixCommas(documentPart);
+        }
+      },
+      ""
+    ) as string);
   }
 
   public enqueue(printable: Printable) {
