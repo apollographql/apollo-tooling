@@ -2,6 +2,11 @@
 
 ## Upcoming
 
+## `apollo-codegen-flow@0.32.11`
+
+- `apollo-codegen-flow@0.32.11`
+  - remove leading empty lines from generated code [#1127](https://github.com/apollographql/apollo-tooling/pull/1127)
+
 ## `apollo@2.6.2`
 
 - `apollo@2.6.2`
