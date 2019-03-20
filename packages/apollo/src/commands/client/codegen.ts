@@ -36,7 +36,7 @@ export default class Generate extends ClientCommand {
     // general
     target: flags.string({
       description:
-        "Type of code generator to use (swift | typescript | flow | scala), inferred from output",
+        "Type of code generator to use (swift | typescript | flow | scala)",
       required: true
     }),
     localSchemaFile: flags.string({
@@ -215,7 +215,7 @@ export default class Generate extends ClientCommand {
       await run().catch(() => {});
       const watcher = new Gaze(this.project.config.client.includes);
       watcher.on("all", (event, file) => {
-        // console.log("\nChange detected, generating types...");
+        console.log("\nChange detected, generating types...");
         this.project.fileDidChange(URI.file(file).toString());
       });
       if (tty.isatty((process.stdin as any).fd)) {

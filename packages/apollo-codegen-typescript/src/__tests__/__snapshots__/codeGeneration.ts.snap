@@ -3,6 +3,7 @@
 exports[`Typescript codeGeneration fragment spreads with inline fragments 1`] = `
 Object {
   "common": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -26,6 +27,7 @@ export enum Episode {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -103,6 +105,7 @@ export interface HeroNameVariables {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -146,6 +149,7 @@ export interface humanFragment {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -171,6 +175,7 @@ export interface droidFragment {
 exports[`Typescript codeGeneration fragment with fragment spreads 1`] = `
 Object {
   "common": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -185,6 +190,7 @@ Object {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -206,6 +212,7 @@ export interface simpleFragment {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -235,6 +242,7 @@ export interface anotherFragment {
 exports[`Typescript codeGeneration fragment with fragment spreads with inline fragment 1`] = `
 Object {
   "common": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -258,6 +266,7 @@ export enum Episode {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -279,6 +288,7 @@ export interface simpleFragment {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -326,6 +336,7 @@ export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
 exports[`Typescript codeGeneration handles multiline graphql comments 1`] = `
 Object {
   "common": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -340,6 +351,7 @@ Object {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -371,6 +383,7 @@ export interface CustomScalar {
 exports[`Typescript codeGeneration inline fragment 1`] = `
 Object {
   "common": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -394,6 +407,7 @@ export enum Episode {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -431,6 +445,7 @@ export interface HeroInlineFragmentVariables {
 exports[`Typescript codeGeneration inline fragment on type conditions 1`] = `
 Object {
   "common": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -454,6 +469,7 @@ export enum Episode {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -525,6 +541,7 @@ export interface HeroNameVariables {
 exports[`Typescript codeGeneration inline fragment on type conditions with differing inner fields 1`] = `
 Object {
   "common": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -548,6 +565,7 @@ export enum Episode {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -633,6 +651,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import { EnumCommentTestCase, Duplicate } from \\"./../../__generated__/globalTypes\\";
@@ -667,6 +686,7 @@ export interface duplicatesVariables {
 exports[`Typescript codeGeneration local / global duplicates 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -695,6 +715,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"./../../__generated__/globalTypes\\";
@@ -774,6 +795,7 @@ export interface HeroNameVariables {
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -817,6 +839,7 @@ export interface humanFragment {
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"./../../__generated__/globalTypes\\";
@@ -843,6 +866,7 @@ export interface droidFragment {
 exports[`Typescript codeGeneration local / global fragment spreads with inline fragments 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -870,6 +894,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -891,6 +916,7 @@ export interface simpleFragment {
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -919,6 +945,7 @@ export interface anotherFragment {
 exports[`Typescript codeGeneration local / global fragment with fragment spreads 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -937,6 +964,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -958,6 +986,7 @@ export interface simpleFragment {
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"./../../__generated__/globalTypes\\";
@@ -1006,6 +1035,7 @@ export type anotherFragment = anotherFragment_Droid | anotherFragment_Human;
 exports[`Typescript codeGeneration local / global fragment with fragment spreads with inline fragment 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1033,6 +1063,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1063,6 +1094,7 @@ export interface CustomScalar {
 exports[`Typescript codeGeneration local / global handles multiline graphql comments 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1081,6 +1113,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"./../../__generated__/globalTypes\\";
@@ -1119,6 +1152,7 @@ export interface HeroInlineFragmentVariables {
 exports[`Typescript codeGeneration local / global inline fragment 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1146,6 +1180,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"./../../__generated__/globalTypes\\";
@@ -1218,6 +1253,7 @@ export interface HeroNameVariables {
 exports[`Typescript codeGeneration local / global inline fragment on type conditions 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1245,6 +1281,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"./../../__generated__/globalTypes\\";
@@ -1329,6 +1366,7 @@ export interface HeroNameVariables {
 exports[`Typescript codeGeneration local / global inline fragment on type conditions with differing inner fields 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1356,6 +1394,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import { EnumCommentTestCase } from \\"./../../__generated__/globalTypes\\";
@@ -1383,6 +1422,7 @@ export interface nesting {
 exports[`Typescript codeGeneration local / global multiple nested list enum 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1406,6 +1446,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import { EnumCommentTestCase } from \\"./../../__generated__/globalTypes\\";
@@ -1433,6 +1474,7 @@ export interface nesting {
 exports[`Typescript codeGeneration local / global multiple nested non-null list enum 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1456,6 +1498,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"./../../__generated__/globalTypes\\";
@@ -1491,6 +1534,7 @@ export interface HeroFragmentVariables {
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1515,6 +1559,7 @@ export interface simpleFragment {
 exports[`Typescript codeGeneration local / global query with fragment spreads 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1542,6 +1587,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1566,6 +1612,7 @@ export interface SimpleFragment {
 exports[`Typescript codeGeneration local / global simple fragment 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1584,6 +1631,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode } from \\"./../../__generated__/globalTypes\\";
@@ -1622,6 +1670,7 @@ export interface HeroNameVariables {
 exports[`Typescript codeGeneration local / global simple hero query 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1649,6 +1698,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 import { Episode, ReviewInput } from \\"./../../__generated__/globalTypes\\";
@@ -1688,6 +1738,7 @@ export interface ReviewMovieVariables {
 exports[`Typescript codeGeneration local / global simple mutation 2`] = `
 TypescriptGeneratedFile {
   "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1735,6 +1786,7 @@ Array [
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1768,6 +1820,7 @@ export interface HeroNameVariables {
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1801,6 +1854,7 @@ export interface SomeOtherVariables {
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1835,6 +1889,7 @@ export interface ReviewMovieVariables {
   Object {
     "content": TypescriptGeneratedFile {
       "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1860,6 +1915,7 @@ exports[`Typescript codeGeneration multiple files 3`] = `"common"`;
 
 exports[`Typescript codeGeneration multiple files 4`] = `
 "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1902,6 +1958,7 @@ export interface ReviewInput {
 exports[`Typescript codeGeneration query with fragment spreads 1`] = `
 Object {
   "common": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1925,6 +1982,7 @@ export enum Episode {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1958,6 +2016,7 @@ export interface HeroFragmentVariables {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1983,6 +2042,7 @@ export interface simpleFragment {
 exports[`Typescript codeGeneration simple fragment 1`] = `
 Object {
   "common": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1997,6 +2057,7 @@ Object {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -2022,6 +2083,7 @@ export interface SimpleFragment {
 exports[`Typescript codeGeneration simple hero query 1`] = `
 Object {
   "common": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -2045,6 +2107,7 @@ export enum Episode {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -2082,6 +2145,7 @@ export interface HeroNameVariables {
 exports[`Typescript codeGeneration simple mutation 1`] = `
 Object {
   "common": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -2123,6 +2187,7 @@ export interface ReviewInput {
     Object {
       "content": TypescriptGeneratedFile {
         "fileContents": "/* tslint:disable */
+/* eslint-disable */
 // This file was automatically generated and should not be edited.
 
 // ====================================================

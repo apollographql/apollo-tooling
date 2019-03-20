@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.5.0 darwin-x64 node-v10.10.0
+apollo/2.6.2 darwin-x64 node-v10.14.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -56,7 +56,7 @@ USAGE
 
 OPTIONS
   -c, --config=config                    Path to your Apollo config file
-  -t, --tag=tag                          The published tag to check this client against
+  -t, --tag=tag                          The published service tag for this client
   --clientName=clientName                Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
@@ -105,7 +105,7 @@ ARGUMENTS
 
 OPTIONS
   -c, --config=config                        Path to your Apollo config file
-  -t, --tag=tag                              [default: current] The published service tag for this client
+  -t, --tag=tag                              The published service tag for this client
 
   --[no-]addTypename                         [default: true] Automatically add __typename to your queries, can be unset
                                              with --no-addTypename
@@ -160,7 +160,7 @@ OPTIONS
                                              containing GraphQL queries in Javascript/Typescript code
 
   --target=target                            (required) Type of code generator to use (swift | typescript | flow |
-                                             scala), inferred from output
+                                             scala)
 
   --useFlowExactObjects                      Use Flow exact objects for generated types [flow only]
 
@@ -187,7 +187,7 @@ ARGUMENTS
 
 OPTIONS
   -c, --config=config                    Path to your Apollo config file
-  -t, --tag=tag                          [default: current] The published service tag for this client
+  -t, --tag=tag                          The published service tag for this client
   --clientName=clientName                Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
@@ -225,7 +225,7 @@ USAGE
 
 OPTIONS
   -c, --config=config                    Path to your Apollo config file
-  -t, --tag=tag                          [default: current] The published service tag for this client
+  -t, --tag=tag                          The published service tag for this client
   --clientName=clientName                Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
@@ -268,7 +268,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v1.2.11/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.1.6/src/commands/help.ts)_
 
 ## `apollo plugins`
 
@@ -402,6 +402,9 @@ OPTIONS
 
   --header=header                                                Additional headers to send to server for
                                                                  introspectionQuery
+
+  --json                                                         Output result in json, which can then be parsed by CLI
+                                                                 tools such as jq.
 
   --key=key                                                      The API key for the Apollo Engine service
 
@@ -611,6 +614,8 @@ npm test
 ```
 
 You can also run `npm` commands within package folders after you have bootstrapped the repository (part of `npm install`).
+
+> Note: if you have issues, try `npm run clean && npm i` to get a fresh install of the packages. Occasionally problems arise when removed dependencies stay around
 
 ## Nock tests
 

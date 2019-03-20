@@ -10,8 +10,10 @@ import {
   loadConfig,
   isClientConfig,
   isServiceConfig,
-  ApolloConfig
+  ApolloConfig,
+  getServiceFromKey
 } from "apollo-language-server";
+import { WithRequired, DeepPartial } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 import URI from "vscode-uri";
 
@@ -53,12 +55,6 @@ const headersArrayToObject = (
   return arr
     .map(val => JSON.parse(val))
     .reduce((pre, next) => ({ ...pre, ...next }), {});
-};
-
-const getServiceFromKey = (key): string | undefined => {
-  const [type, service] = key.split(":");
-  if (type === "service") return service;
-  return;
 };
 
 export abstract class ProjectCommand extends Command {
@@ -248,8 +244,7 @@ export abstract class ClientCommand extends ProjectCommand {
     }),
     tag: flags.string({
       char: "t",
-      description: "The published service tag for this client",
-      default: "current"
+      description: "The published service tag for this client"
     }),
     queries: flags.string({
       description: "Deprecated in favor of the includes flag"

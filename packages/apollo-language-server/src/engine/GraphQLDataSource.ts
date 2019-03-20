@@ -9,9 +9,13 @@ import {
   ForbiddenError
 } from "apollo-server-errors";
 import to from "await-to-js";
-import { DocumentNode } from "graphql";
+import { GraphQLError } from "graphql";
 import { fetch } from "apollo-env";
 
+export interface GraphQLResponse<T> {
+  data?: T;
+  errors?: GraphQLError[];
+}
 export class GraphQLDataSource<TContext = any> {
   public baseURL!: string;
   public context!: TContext;
@@ -20,13 +24,13 @@ export class GraphQLDataSource<TContext = any> {
     this.context = config.context;
   }
 
-  public async mutation(mutation: DocumentNode, options: GraphQLRequest) {
-    // GraphQL request requires the DocumentNode property to be named query
-    return this.executeSingleOperation({ ...options, query: mutation });
-  }
-
-  public async query(query: DocumentNode, options: GraphQLRequest) {
-    return this.executeSingleOperation({ ...options, query });
+  // XXX can we kill the casting here?
+  public async execute<T>(
+    operation: GraphQLRequest
+  ): Promise<GraphQLResponse<T>> {
+    return this.executeSingleOperation(operation) as Promise<
+      GraphQLResponse<T>
+    >;
   }
 
   protected willSendRequest?(request: any): any;

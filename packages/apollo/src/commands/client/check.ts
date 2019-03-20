@@ -1,16 +1,14 @@
 import { flags } from "@oclif/command";
-import { table } from "heroku-cli-util";
 import { print } from "graphql";
-
 import { gitInfo } from "../../git";
 import { ClientCommand } from "../../Command";
 import URI from "vscode-uri";
 import { relative } from "path";
-import {
-  ValidationResult,
-  ValidationErrorType
-} from "apollo-language-server/lib/engine/operations/validateOperations";
+import { graphqlTypes } from "apollo-language-server";
 import chalk from "chalk";
+
+const { ValidationErrorType } = graphqlTypes;
+type ValidationResult = graphqlTypes.ValidateOperations_service_validateOperations_validationResults;
 
 interface Operation {
   body: string;
@@ -23,20 +21,10 @@ interface LocationOffset {
   line: number;
 }
 
-// Priority order for displaying error messages
-const errorPriority = {
-  [ValidationErrorType.INVALID]: 0,
-  [ValidationErrorType.FAILURE]: 1,
-  [ValidationErrorType.WARNING]: 2
-};
 export default class ClientCheck extends ClientCommand {
   static description = "Check a client project against a pushed service";
   static flags = {
-    ...ClientCommand.flags,
-    tag: flags.string({
-      char: "t",
-      description: "The published tag to check this client against"
-    })
+    ...ClientCommand.flags
   };
 
   async run() {
@@ -50,7 +38,7 @@ export default class ClientCheck extends ClientCommand {
           if (!config.name) {
             throw new Error("No service found to link to Engine");
           }
-          ctx.gitContext = await gitInfo();
+          ctx.gitContext = await gitInfo(this.log);
 
           ctx.operations = Object.entries(
             this.project.mergedOperationsAndFragmentsForService
@@ -163,7 +151,8 @@ export default class ClientCheck extends ClientCommand {
         [ValidationErrorType.INVALID]: [],
         [ValidationErrorType.FAILURE]: [],
         [ValidationErrorType.WARNING]: []
-      } as { [key in ValidationErrorType]: ValidationResult[] }
+        // XXX TS doesn't recognize ValidationErrorType as a type unless prefixed with graphqlTypes
+      } as { [key in graphqlTypes.ValidationErrorType]: ValidationResult[] }
     );
 
     Object.values(byErrorType).map(validations => {

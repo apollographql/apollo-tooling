@@ -1,6 +1,6 @@
 {
   "name": "apollo-env",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "author": "opensource@apollographql.com",
   "license": "MIT",
   "repository": {
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "core-js": "3.0.0-beta.13",
-    "node-fetch": "^2.2.0"
+    "node-fetch": "^2.2.0",
+    "sha.js": "^2.4.11"
   }
 }

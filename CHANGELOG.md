@@ -2,6 +2,79 @@
 
 ## Upcoming
 
+## `apollo-codegen-flow@0.32.11`
+
+- `apollo-codegen-flow@0.32.11`
+  - remove leading empty lines from generated code [#1127](https://github.com/apollographql/apollo-tooling/pull/1127)
+
+## `apollo@2.6.2`
+
+- `apollo@2.6.2`
+  - fix remoteUrl(remove slug) for service:check [#1121](https://github.com/apollographql/apollo-tooling/pull/1121)
+
+## `apollo-graphql@0.2.0`
+
+- `apollo-graphql@0.2.0`
+  - Change the `sortAST` algorithm to sort fragments at the top-level of the `DocumentNode`, providing a more deterministic normalization of the operation for use by `apollo-engine-reporting` (which consumes this package's `defaultOperationRegistrySignature` function). This will more correctly combine operations for Engine reporting. This also adds a `defaultOperationRegistrySignature` function for use by the `apollo-server-plugin-operation-registry` plugin to eventually consume. [#1112](https://github.com/apollographql/apollo-tooling/pull/1112)
+
+## `apollo@2.6.1`, `apollo-env@0.4.0`
+
+- `apollo@2.6.1`
+  - JSON flag for service:check output [#1079](https://github.com/apollographql/apollo-tooling/pull/1079)
+- `apollo-env@0.4.0`
+  - Add environment-aware createHash function to apollo-env [#1110](https://github.com/apollographql/apollo-tooling/pull/1110)
+
+## `apollo@2.6.0`, `apollo-env@0.3.4`, `apollo-language-server@1.5.3`, `apollo-codegen-flow@0.32.9`, `apollo-codegen-scala@0.33.5`, `apollo-codegen-swift@0.32.9`, `apollo-codegen-typescript@0.32.10`, `apollo-graphql@0.1.2`
+
+- `apollo@2.6.0`
+  - Use generated Typescript types via client:codegen [#1016](https://github.com/apollographql/apollo-tooling/pull/1016)
+  - Remove default `--tag=current` for some client commands that used it [#1062](https://github.com/apollographql/apollo-tooling/pull/1062)
+  - Add missing dependency `@oclif/errors` [#1068](https://github.com/apollographql/apollo-tooling/pull/1068)
+  - Include targetUrl in the output of the `service:check` command [#1072](https://github.com/apollographql/apollo-tooling/pull/1072)
+  - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
+- `apollo-env@0.3.4`
+  - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
+- `apollo-language-server@1.5.3`
+  - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
+- `apollo-codegen-flow@0.32.9`
+  - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
+- `apollo-codegen-scala@0.33.5`
+  - The keyword "type" is escaped when generating scala.js via client:codegen [#1066](https://github.com/apollographql/apollo-tooling/pull/1066)
+  - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
+- `apollo-codegen-swift@0.32.9`
+  - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
+- `apollo-codegen-typescript@0.32.10`
+  - Add missing dependencies `@babel/generator`, `common-tags` [#1071](https://github.com/apollographql/apollo-tooling/pull/1071)
+- `apollo-graphql@0.1.2`
+  - Expand the `graphql` peer dependency range of `apollo-graphql` to also include `0.13.x` and `0.12.x` in addition to `14.x`, since the `apollo-graphql` package is relied upon by `apollo-server-core` which specifies those requirements itself. [#1076](https://github.com/apollographql/apollo-tooling/pull/1076)
+
+# `apollo-language-server@1.5.2`, `vscode-apollo@1.5.2`
+
+- `apollo-language-server@1.5.2`
+  - fix single apollo.config breaking others loaded at the same time [#1055](https://github.com/apollographql/apollo-tooling/pull/1055)
+  - Fix broken fileSet.includesFile to use full filepath [#1055](https://github.com/apollographql/apollo-tooling/pull/1055)
+- `vscode-apollo@1.5.2`
+
+## `apollo@2.5.2`, `apollo-language-server@1.5.1`, `vscode-apollo@1.5.1`
+
+- `apollo@2.5.2`
+  - Fix a bug where tagging a build will cause the tool to not be able to figure out where the git repo is [#944](https://github.com/apollographql/apollo-tooling/pull/944)
+  - Re-enable logging for codegen when in watch mode [#1039](https://github.com/apollographql/apollo-tooling/pull/1039)
+- `apollo-language-server@1.5.1`
+  - Added a warning when there are 0 files found in a project [#1007](https://github.com/apollographql/apollo-tooling/pull/1007)
+  - Allow relative paths in includes/excludes globs [#1007](https://github.com/apollographql/apollo-tooling/pull/1007)
+- `vscode-apollo@1.5.1`
+  - Updated marketplace readme, color schemes, and icon to be prettier [#942](https://github.com/apollographql/apollo-tooling/pull/942)
+
+## `apollo-codegen-typescript@0.32.7`, `apollo-codegen-scala@0.33.2`, `apollo-graphql@1.0.2`
+
+- `apollo-codegen-typescript@0.32.7`
+  - Add `/* eslint-disable */` in generated files header [#1017](https://github.com/apollographql/apollo-tooling/pull/1017)
+- `apollo-codegen-scala@0.33.2`
+  - Fix types sometimes being emitted with fields that don't match the underlying data [#1008](https://github.com/apollographql/apollo-tooling/pull/1008)
+- `apollo-graphql@1.0.2`
+  - Move apollo-graphql package from apollo-server to apollo-tooling
+
 ## `apollo@2.5.0`, `apollo-language-server@1.5.0`, `vscode-apollo@1.5.0`
 
 - `apollo@2.5.0`
@@ -15,8 +88,6 @@
 - `vscode-apollo@1.5.0`
   - Fix inline graphql highlighting in Vue `<script>` tags [#981](https://github.com/apollographql/apollo-tooling/pull/981)
   - Fix graphql comments not being highlighted correctly [#907](https://github.com/apollographql/apollo-tooling/pull/907)
-- `apollo-codegen-scala`
-  - Fix types sometimes being emitted with fields that don't match the underlying data [#1008](https://github.com/apollographql/apollo-tooling/pull/1008)
 
 ## `apollo@2.4.4`, `apollo-codegen-scala@0.33.0`
 

@@ -237,6 +237,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     this.printer.enqueue(
       stripIndent`
         /* tslint:disable */
+        /* eslint-disable */
         // This file was automatically generated and should not be edited.
       `
     );
