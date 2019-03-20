@@ -96,7 +96,7 @@
   },
   "jest": {
     "projects": [
-      "<rootDir>/packages/*"
+      "<rootDir>/packages/!(vscode-apollo)"
     ]
   },
   "lint-staged": {
