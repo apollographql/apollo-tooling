@@ -25,6 +25,7 @@ import { generateSource as generateScalaSource } from "apollo-codegen-scala";
 
 import { FlowCompilerOptions } from "../../apollo-codegen-flow/lib/language";
 import { validateQueryDocument } from "apollo-language-server/lib/errors/validation";
+import { DEFAULT_FILE_EXTENSION as TYPESCRIPT_DEFAULT_FILE_EXTENSION } from "apollo-codegen-typescript/lib/helpers";
 
 export type TargetType =
   | "json"
@@ -38,6 +39,7 @@ export type GenerationOptions = CompilerOptions &
   LegacyCompilerOptions &
   FlowCompilerOptions & {
     globalTypesFile?: string;
+    fileExtension?: string;
     rootPath?: string;
   };
 
@@ -154,7 +156,12 @@ export default function generate(
       }
 
       const globalSourcePath =
-        options.globalTypesFile || path.join(outputPath, "globalTypes.ts");
+        options.globalTypesFile ||
+        path.join(
+          outputPath,
+          `globalTypes${options.fileExtension ||
+            TYPESCRIPT_DEFAULT_FILE_EXTENSION}`
+        );
       outFiles[globalSourcePath] = {
         output: generatedGlobalFile.fileContents
       };

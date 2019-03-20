@@ -42,6 +42,7 @@ export interface CompilerOptions {
   namespace?: string;
   generateOperationIds?: boolean;
   operationIdsPath?: string;
+  fileExtension?: string;
 }
 
 export interface CompilerContext {

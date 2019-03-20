@@ -14,6 +14,8 @@ import * as t from "@babel/types";
 
 import { CompilerOptions } from "apollo-codegen-core/lib/compiler";
 
+const DEFAULT_FILE_EXTENSION = ".ts";
+
 const builtInScalarMap = {
   [GraphQLString.name]: t.TSStringKeyword(),
   [GraphQLInt.name]: t.TSNumberKeyword(),
@@ -71,3 +73,5 @@ export function createTypeFromGraphQLTypeFunction(
 
   return typeFromGraphQLType;
 }
+
+export { DEFAULT_FILE_EXTENSION };
