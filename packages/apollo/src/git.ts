@@ -1,8 +1,8 @@
-import * as path from "path";
-import * as fs from "fs";
-import * as ci from "env-ci";
+import path from "path";
+import fs from "fs";
+import ci from "env-ci";
 import { gitToJs } from "git-parse";
-import * as git from "git-rev-sync";
+import git from "git-rev-sync";
 import { pickBy, identity } from "lodash";
 import Command from "@oclif/command";
 

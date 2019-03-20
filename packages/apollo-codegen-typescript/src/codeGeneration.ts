@@ -1,4 +1,4 @@
-import * as path from "path";
+import path from "path";
 import * as t from "@babel/types";
 import { stripIndent } from "common-tags";
 import { GraphQLEnumType, GraphQLInputObjectType } from "graphql";

@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import * as path from "path";
+import path from "path";
 
 // ToolError is used for errors that are part of the expected flow
 // and for which a stack trace should not be printed
