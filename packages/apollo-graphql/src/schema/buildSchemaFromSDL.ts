@@ -37,33 +37,26 @@ const sdlRules = specifiedSDLRules.filter(
   rule => !skippedSDLRules.includes(rule.name)
 );
 
-export function buildSchemaFromModules(
-  modulesOrSDL: (GraphQLSchemaModule | DocumentNode)[],
+export function buildSchemaFromSDL(
+  modulesOrSDL: (GraphQLSchemaModule | DocumentNode)[] | DocumentNode,
   schemaToExtend?: GraphQLSchema
 ): GraphQLSchema {
-  const modules = modulesOrSDL.map(moduleOrSDL => {
-    if (isNode(moduleOrSDL) && isDocumentNode(moduleOrSDL)) {
-      return { typeDefs: moduleOrSDL };
-    } else {
-      return moduleOrSDL;
-    }
-  });
+  let modules: GraphQLSchemaModule[];
 
-  const documentAST = concatAST(modules.map(module => module.typeDefs));
-  const schema = buildSchemaFromSDL(documentAST, schemaToExtend);
-
-  for (const module of modules) {
-    if (!module.resolvers) continue;
-    addResolversToSchema(schema, module.resolvers);
+  if (Array.isArray(modulesOrSDL)) {
+    modules = modulesOrSDL.map(moduleOrSDL => {
+      if (isNode(moduleOrSDL) && isDocumentNode(moduleOrSDL)) {
+        return { typeDefs: moduleOrSDL };
+      } else {
+        return moduleOrSDL;
+      }
+    });
+  } else {
+    modules = [{ typeDefs: modulesOrSDL }];
   }
 
-  return schema;
-}
+  const documentAST = concatAST(modules.map(module => module.typeDefs));
 
-export function buildSchemaFromSDL(
-  documentAST: DocumentNode,
-  schemaToExtend?: GraphQLSchema
-): GraphQLSchema {
   const errors = validateSDL(documentAST, schemaToExtend, sdlRules);
   if (errors.length > 0) {
     throw new GraphQLSchemaValidationError(errors);
@@ -185,6 +178,11 @@ export function buildSchemaFromSDL(
         : undefined
     )
   });
+
+  for (const module of modules) {
+    if (!module.resolvers) continue;
+    addResolversToSchema(schema, module.resolvers);
+  }
 
   return schema;
 }
