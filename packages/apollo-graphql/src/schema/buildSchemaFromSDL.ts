@@ -20,8 +20,7 @@ import { isDocumentNode, isNode } from "../utilities/graphql";
 import { GraphQLResolverMap } from "./resolverMap";
 import { GraphQLSchemaValidationError } from "./GraphQLSchemaValidationError";
 import { specifiedSDLRules } from "graphql/validation/specifiedRules";
-import { isNotNullOrUndefined } from "../utilities/predicates";
-import { mapValues } from "../utilities/mapValues";
+import { mapValues, isNotNullOrUndefined } from "apollo-env";
 
 export interface GraphQLSchemaModule {
   typeDefs: DocumentNode;
