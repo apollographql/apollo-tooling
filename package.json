@@ -74,7 +74,7 @@
     "@types/react-dom": "16.8.3",
     "@types/recursive-readdir": "2.2.0",
     "@types/ws": "6.0.1",
-    "babel-preset-react-app": "3.1.2",
+    "babel-preset-react-app": "7.0.2",
     "chai": "4.2.0",
     "husky": "1.3.1",
     "jest": "24.5.0",
