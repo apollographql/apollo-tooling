@@ -28,7 +28,7 @@
   "dependencies": {
     "apollo-env": "file:../apollo-env",
     "apollo-language-server": "file:../apollo-language-server",
-    "dotenv": "^6.1.0",
+    "dotenv": "^7.0.0",
     "event-stream": "=3.3.4",
     "vscode-languageclient": "^5.2.1"
   },
