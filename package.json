@@ -71,7 +71,7 @@
     "@types/node": "8.10.45",
     "@types/node-fetch": "2.1.7",
     "@types/react": "16.8.8",
-    "@types/react-dom": "16.8.2",
+    "@types/react-dom": "16.8.3",
     "@types/recursive-readdir": "2.2.0",
     "@types/ws": "6.0.1",
     "babel-preset-react-app": "3.1.2",
