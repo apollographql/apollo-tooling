@@ -27,6 +27,11 @@ const formatChange = (change: Change) => {
   };
 };
 
+interface TasksOutput {
+  gitContext?: GitContext;
+  checkSchemaResult: CheckSchema_service_checkSchema;
+  shouldOutputJson: boolean;
+}
 export default class ServiceCheck extends ProjectCommand {
   static aliases = ["schema:check"];
   static description =
@@ -60,14 +65,10 @@ export default class ServiceCheck extends ProjectCommand {
       gitContext,
       checkSchemaResult,
       shouldOutputJson
-    } = await this.runTasks<{
-      gitContext?: GitContext;
-      checkSchemaResult: CheckSchema_service_checkSchema;
-      shouldOutputJson: boolean;
-    }>(({ config, flags, project }) => [
+    } = await this.runTasks<TasksOutput>(({ config, flags, project }) => [
       {
         title: "Checking service for changes",
-        task: async ctx => {
+        task: async (ctx: TasksOutput) => {
           if (!config.name) {
             throw new Error("No service found to link to Engine");
           }
