@@ -1,6 +1,11 @@
 import { loadConfig } from "../";
 import * as path from "path";
 import * as fs from "fs";
+import {
+  DefaultClientConfig,
+  DefaultServiceConfig,
+  DefaultEngineConfig
+} from "../config";
 
 const makeNestedDir = dir => {
   if (fs.existsSync(dir)) return;
@@ -269,7 +274,7 @@ Object {
   });
 
   describe("project type", () => {
-    it("uses passed in type as override", async () => {
+    it("uses passed in type when config doesnt have client/service", async () => {
       writeFilesToDir(dir, {
         "my.config.js": `module.exports = { engine: { endpoint: 'http://a.a' } }`
       });
@@ -282,21 +287,138 @@ Object {
 
       expect(config.isClient).toEqual(true);
     });
-    it("infers client projects", () => {});
-    it("infers service projects", () => {});
-    it("throws if project type cant be inferred", () => {});
+
+    it("infers client projects from config", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: { service: 'hello' } }`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.isClient).toEqual(true);
+    });
+
+    it("infers service projects from config", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { service: 'wow' }`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.isService).toEqual(true);
+    });
+
+    it("throws if project type cant be inferred", done => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { engine: { endpoint: 'http://a.a' } }`
+      });
+
+      return loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      }).catch(err => {
+        expect(err.message).toMatch(/.*Unable to resolve project type.*/);
+        done();
+      });
+    });
   });
 
   describe("service name", () => {
-    it("lets config service name take precedence for client project", () => {});
-    it("lets name passed in take precedence over env var", () => {});
-    it("uses env var to determine service name when no other options", () => {});
+    it("lets config service name take precedence for client project", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: { service: 'hello' } }`,
+        ".env": `ENGINE_API_KEY=service:harambe:54378950jn`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js",
+        name: "not-it"
+      });
+
+      expect(config.client.service).toEqual("hello");
+    });
+
+    it("lets name passed in take precedence over env var", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: {  } }`,
+        ".env": `ENGINE_API_KEY=service:harambe:54378950jn`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js",
+        name: "hello"
+      });
+
+      expect(config.client.service).toEqual("hello");
+    });
+
+    it("uses env var to determine service name when no other options", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: {  } }`,
+        ".env": `ENGINE_API_KEY=service:harambe:54378950jn`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.client.service).toEqual("harambe");
+    });
   });
 
   describe("default merging", () => {
-    it("merges service name and default config for client projects", () => {});
-    it("merges service name and default config for service projects", () => {});
-    it("merges engine config with projects", () => {});
-    it("merges defaults in at the end", () => {});
+    it("merges service name and default config for client projects", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: { service: 'hello' } }`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.rawConfig.client.includes).toEqual(
+        DefaultClientConfig.includes
+      );
+    });
+
+    it("merges service name and default config for service projects", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { service: { name: 'wow' } }`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.rawConfig.service.includes).toEqual(
+        DefaultServiceConfig.includes
+      );
+    });
+
+    it("merges engine config defaults", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: { service: 'wow' } }`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.rawConfig.engine.endpoint).toEqual(
+        DefaultEngineConfig.endpoint
+      );
+    });
   });
 });

@@ -2,7 +2,7 @@ import cosmiconfig from "cosmiconfig";
 import { LoaderEntry } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
 import { resolve } from "path";
-import { readFileSync, existsSync } from "fs";
+import { readFileSync, existsSync, lstatSync } from "fs";
 import { merge, get } from "lodash/fp";
 import {
   ApolloConfig,
@@ -116,7 +116,7 @@ export async function loadConfig({
     ? resolve(configPath, ".env")
     : resolve(process.cwd(), ".env");
 
-  if (existsSync(dotEnvPath)) {
+  if (existsSync(dotEnvPath) && lstatSync(dotEnvPath).isFile()) {
     const env: { [key: string]: string } = require("dotenv").parse(
       readFileSync(dotEnvPath)
     );
@@ -153,7 +153,12 @@ export async function loadConfig({
 
   // if there wasn't a config loaded from a file, build one.
   // if there was a service name found in the env, merge it with the new/existing config object.
-  if (!loadedConfig || serviceName) {
+  // if the config loaded doesn't have a client/service key, add one based on projectType
+  if (
+    !loadedConfig ||
+    serviceName ||
+    !(loadedConfig.config.client || loadedConfig.config.service)
+  ) {
     loadedConfig = {
       filepath: configPath || process.cwd(),
       config: {
