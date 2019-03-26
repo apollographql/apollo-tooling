@@ -2,6 +2,10 @@
 
 ## Upcoming
 
+- apollo-language-server
+  - Stop loadConfig from looking up the tree when a --config location is defined [#1059](https://github.com/apollographql/apollo-tooling/pull/1059)
+  - Refactored/documented/tested loadConfig [#1059](https://github.com/apollographql/apollo-tooling/pull/1059)
+
 ## `apollo-codegen-flow@0.32.11`
 
 - `apollo-codegen-flow@0.32.11`
