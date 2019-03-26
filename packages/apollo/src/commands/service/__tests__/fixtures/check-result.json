@@ -1,0 +1,124 @@
+{
+  "gitContext": {
+    "committer": "Evans Hauser <evanshauser@gmail.com>",
+    "commit": "d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68",
+    "remoteUrl": "git@github.com:mdg-private/monorepo.git",
+    "message": "apigateway: diff tests use writeable introspection type (#1908)\n* apigateway: diff tests use writeable introspection type\n* apigateway: expand on Writable generic names",
+    "branch": "Detached: d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68"
+  },
+  "checkSchemaResult": {
+    "targetUrl": "https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z",
+    "diffToPrevious": {
+      "type": "FAILURE",
+      "affectedQueries": [
+        {
+          "id": "4e760101a68d79a28cb9a387b51e477642b397c1"
+        },
+        {
+          "id": "5e5c7c88bb99742ec13ecbceec919ebca699aa36"
+        },
+        {
+          "id": "b28103d833ecc88ce8c24c7ca2cfaa399a840562"
+        }
+      ],
+      "changes": [
+        {
+          "type": "FAILURE",
+          "code": "FIELD_CHANGED_TYPE",
+          "description": "`Change.argNode` changed type from `NamedIntrospectionArg` to `NamedIntrospectionValue`"
+        },
+        {
+          "type": "NOTICE",
+          "code": "ARG_REMOVED",
+          "description": "`ServiceMutation.registerOperations` arg `manifestVersion` was removed"
+        },
+        {
+          "type": "NOTICE",
+          "code": "ARG_REMOVED",
+          "description": "`ServiceMutation.uploadSchema` arg `historicParameters` was removed"
+        },
+        {
+          "type": "FAILURE",
+          "code": "ARG_REMOVED",
+          "description": "`ServiceMutation.uploadSchema` arg `gitContext` was removed"
+        },
+        {
+          "type": "FAILURE",
+          "code": "ARG_REMOVED",
+          "description": "`ServiceMutation.uploadSchema` arg `tag` was removed"
+        },
+        {
+          "type": "NOTICE",
+          "code": "FIELD_REMOVED",
+          "description": "`SchemaDiff.numberOfCheckedOperations` was removed"
+        },
+        {
+          "type": "FAILURE",
+          "code": "FIELD_REMOVED",
+          "description": "`Change.affectedClients` was removed"
+        },
+        {
+          "type": "NOTICE",
+          "code": "FIELD_REMOVED",
+          "description": "`Change.affectedClientReferenceIds` was removed"
+        },
+        {
+          "type": "NOTICE",
+          "code": "FIELD_REMOVED",
+          "description": "`Change.affectedClientIdVersionPairs` was removed"
+        },
+        {
+          "type": "FAILURE",
+          "code": "ARG_REMOVED",
+          "description": "`ServiceMutation.uploadSchema` arg `schema` was removed"
+        },
+        {
+          "type": "NOTICE",
+          "code": "FIELD_REMOVED",
+          "description": "`AffectedClient.clientReferenceId` was removed"
+        },
+        {
+          "type": "FAILURE",
+          "code": "FIELD_REMOVED",
+          "description": "`NamedIntrospectionValue.printedType` was removed"
+        },
+        {
+          "type": "FAILURE",
+          "code": "TYPE_REMOVED",
+          "description": "`NamedIntrospectionArg` removed"
+        },
+        {
+          "type": "NOTICE",
+          "code": "FIELD_DEPRECATION_REMOVED",
+          "description": "`Change.description` is no longer deprecated"
+        },
+        {
+          "type": "NOTICE",
+          "code": "FIELD_ADDED",
+          "description": "`ServiceMutation.deregisterSchemaNotificationChannel` was added"
+        },
+        {
+          "type": "NOTICE",
+          "code": "FIELD_ADDED",
+          "description": "`ServiceMutation.registerSchemaNotificationChannel` was added"
+        },
+        {
+          "type": "NOTICE",
+          "code": "FIELD_DEPRECATION_REMOVED",
+          "description": "`AffectedClient.clientId` is no longer deprecated"
+        },
+        {
+          "type": "NOTICE",
+          "code": "FIELD_ADDED",
+          "description": "`Service.schemaNotificationChannels` was added"
+        }
+      ],
+      "validationConfig": {
+        "from": "-86400",
+        "to": "-0",
+        "queryCountThreshold": 1,
+        "queryCountThresholdPercentage": 0
+      }
+    }
+  }
+}
