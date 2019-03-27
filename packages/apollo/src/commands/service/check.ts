@@ -10,6 +10,7 @@ import {
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
   ChangeType
 } from "apollo-language-server/lib/graphqlTypes";
+import { ApolloConfig } from "apollo-language-server";
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
@@ -28,6 +29,7 @@ const formatChange = (change: Change) => {
 };
 
 interface TasksOutput {
+  config: ApolloConfig;
   gitContext?: GitContext;
   checkSchemaResult: CheckSchema_service_checkSchema;
   shouldOutputJson: boolean;
@@ -95,6 +97,7 @@ export default class ServiceCheck extends ProjectCommand {
           });
 
           ctx.shouldOutputJson = flags.json;
+          ctx.config = config;
         }
       }
     ]);
