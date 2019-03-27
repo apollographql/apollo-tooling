@@ -214,10 +214,14 @@ export abstract class ProjectCommand extends Command {
   }
 
   async runTasks<Result>(
-    generateTasks: (context: ProjectContext) => ListrTask[]
+    generateTasks: (context: ProjectContext) => ListrTask[],
+    options?: Listr.ListrOptions | ((ctx: ProjectContext) => Listr.ListrOptions)
   ): Promise<Result> {
     const tasks = await generateTasks(this.ctx!);
-    return new Listr([...this.tasks, ...tasks]).run();
+    return new Listr(
+      [...this.tasks, ...tasks],
+      typeof options === "function" ? options(ctx) : options
+    ).run();
   }
   async catch(err) {
     // handle any error from the command
