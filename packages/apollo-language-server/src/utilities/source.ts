@@ -4,7 +4,6 @@ import {
   Kind,
   visit,
   BREAK,
-  getVisitFn,
   TypeInfo,
   GraphQLSchema
 } from "graphql";
@@ -12,7 +11,7 @@ import { SourceLocation, getLocation } from "graphql/language/location";
 
 import { Position, Range } from "vscode-languageserver";
 
-import { isNode } from "./graphql";
+import { visitWithTypeInfo } from "graphql";
 
 export function positionFromPositionInContainingDocument(
   source: Source,
@@ -127,38 +126,4 @@ export function getASTNodeAndTypeInfoAtPosition(
   } else {
     return null;
   }
-}
-
-/**
- * Creates a new visitor instance which maintains a provided TypeInfo instance
- * along with visiting visitor.
- */
-export function visitWithTypeInfo(typeInfo: TypeInfo, visitor: any): any {
-  return {
-    enter(node: ASTNode) {
-      typeInfo.enter(node);
-      const fn = getVisitFn(visitor, node.kind, /* isLeaving */ false);
-      if (fn) {
-        const result = fn.apply(visitor, arguments);
-        if (result !== undefined) {
-          typeInfo.leave(node);
-          if (isNode(result)) {
-            typeInfo.enter(result);
-          }
-        }
-        return result;
-      }
-    },
-    leave(node: ASTNode) {
-      const fn = getVisitFn(visitor, node.kind, /* isLeaving */ true);
-      let result;
-      if (fn) {
-        result = fn.apply(visitor, arguments);
-      }
-      if (result !== BREAK) {
-        typeInfo.leave(node);
-      }
-      return result;
-    }
-  };
 }

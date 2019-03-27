@@ -84,7 +84,7 @@
     "ts-jest": "24.0.0",
     "ts-node": "8.0.3",
     "tslib": "1.9.3",
-    "typescript": "3.1.6",
+    "typescript": "3.3.4000",
     "vsce": "1.58.0",
     "vscode": "1.1.33",
     "yarn": "1.13.0"
