@@ -49,6 +49,10 @@ export interface CheckSchema_service_checkSchema_diffToPrevious {
    */
   affectedQueries: CheckSchema_service_checkSchema_diffToPrevious_affectedQueries[] | null;
   /**
+   * Number of operations that were validated during schema diff
+   */
+  numberOfCheckedOperations: number | null;
+  /**
    * List of schema changes with associated affected clients and operations
    */
   changes: CheckSchema_service_checkSchema_diffToPrevious_changes[];
