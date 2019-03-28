@@ -6,6 +6,10 @@
 // GraphQL mutation operation: CheckSchema
 // ====================================================
 
+export interface CheckSchema_service_checkSchema_diffToPrevious_affectedQueries {
+  __typename: "AffectedQuery";
+}
+
 export interface CheckSchema_service_checkSchema_diffToPrevious_changes {
   __typename: "Change";
   /**
@@ -40,6 +44,10 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_validationConfig
 export interface CheckSchema_service_checkSchema_diffToPrevious {
   __typename: "SchemaDiff";
   type: ChangeType;
+  /**
+   * Operations affected by all changes in diff
+   */
+  affectedQueries: CheckSchema_service_checkSchema_diffToPrevious_affectedQueries[] | null;
   /**
    * List of schema changes with associated affected clients and operations
    */
