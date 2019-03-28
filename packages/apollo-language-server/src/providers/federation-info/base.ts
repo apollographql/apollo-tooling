@@ -14,7 +14,7 @@ export interface FederationInfo {
   url?: string;
 }
 
-export interface GraphQLFederationInfoProvider {
+export interface ApolloFederationInfoProvider {
   resolveFederationInfo(): Promise<FederationInfo>;
   // onSchemaChange(
   //   handler: NotificationHandler<string>

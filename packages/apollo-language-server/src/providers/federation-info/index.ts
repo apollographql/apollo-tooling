@@ -1,5 +1,5 @@
 import {
-  GraphQLFederationInfoProvider
+  ApolloFederationInfoProvider
   // SchemaChangeUnsubscribeHandler,
   // SchemaResolveConfig
 } from "./base";
@@ -16,7 +16,7 @@ import { EndpointFederationInfoProvider } from "./endpoint";
 // import { ClientIdentity } from "../../engine";
 
 export {
-  GraphQLFederationInfoProvider
+  ApolloFederationInfoProvider
   // SchemaChangeUnsubscribeHandler,
   // SchemaResolveConfig
 };
@@ -24,7 +24,7 @@ export {
 export function federationInfoProviderFromConfig(
   config: ApolloConfig
   // clientIdentity?: ClientIdentity // engine provider needs this
-): GraphQLFederationInfoProvider {
+): ApolloFederationInfoProvider {
   if (isServiceConfig(config)) {
     // if (config.service.localSchemaFile) {
     //   return new FileSchemaProvider({ path: config.service.localSchemaFile });

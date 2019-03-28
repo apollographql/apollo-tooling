@@ -6,7 +6,7 @@ import { ClientIdentity } from "../engine";
 import URI from "vscode-uri";
 
 import {
-  GraphQLFederationInfoProvider,
+  ApolloFederationInfoProvider,
   federationInfoProviderFromConfig
 } from "../providers/federation-info";
 
@@ -23,7 +23,7 @@ export interface GraphQLServiceProjectConfig {
   loadingHandler: LoadingHandler;
 }
 export class GraphQLServiceProject extends GraphQLProject {
-  public federationInfoProvider: GraphQLFederationInfoProvider;
+  public federationInfoProvider: ApolloFederationInfoProvider;
 
   constructor({
     clientIdentity,
