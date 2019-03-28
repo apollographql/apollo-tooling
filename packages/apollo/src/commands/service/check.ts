@@ -97,6 +97,40 @@ ${
 `;
 }
 
+export function formatHumanReadable({
+  checkSchemaResult
+}: {
+  checkSchemaResult: CheckSchema_service_checkSchema;
+}): string {
+  const {
+    targetUrl,
+    diffToPrevious: { changes, validationConfig }
+  } = checkSchemaResult;
+  let result = "";
+  const failures = changes.filter(({ type }) => type === ChangeType.FAILURE);
+
+  if (changes.length === 0) {
+    return "No changes present between schemas";
+  }
+
+  table(changes.map(formatChange), {
+    columns: [
+      { key: "type", label: "Change" },
+      { key: "code", label: "Code" },
+      { key: "description", label: "Description" }
+    ],
+    printLine: line => {
+      result += `\n${line}`;
+    }
+  });
+
+  if (targetUrl) {
+    result += `\n\nView full details at: ${targetUrl}`;
+  }
+
+  return result;
+}
+
 export default class ServiceCheck extends ProjectCommand {
   static aliases = ["schema:check"];
   static description =
@@ -193,15 +227,17 @@ export default class ServiceCheck extends ProjectCommand {
       );
     }
 
-    const {
-      targetUrl,
-      diffToPrevious: { changes, validationConfig }
-    } = checkSchemaResult;
-    const failures = changes.filter(({ type }) => type === ChangeType.FAILURE);
-
     if (shouldOutputJson) {
       return this.log(
-        JSON.stringify({ targetUrl, changes, validationConfig }, null, 2)
+        JSON.stringify(
+          {
+            targetUrl: checkSchemaResult.targetUrl,
+            changes: checkSchemaResult.diffToPrevious.changes,
+            validationConfig: checkSchemaResult.diffToPrevious.validationConfig
+          },
+          null,
+          2
+        )
       );
     } else if (shouldOutputMarkdown) {
       const serviceName = config.service && config.service.name;
@@ -221,25 +257,15 @@ export default class ServiceCheck extends ProjectCommand {
       );
     }
 
-    if (changes.length === 0) {
-      return this.log("\nNo changes present between schemas\n");
-    }
-    this.log("\n");
-    table(changes.map(formatChange), {
-      columns: [
-        { key: "type", label: "Change" },
-        { key: "code", label: "Code" },
-        { key: "description", label: "Description" }
-      ]
-    });
-    this.log("\n");
-    if (targetUrl) {
-      this.log(`View full details at: ${targetUrl}`);
-    }
+    this.log(formatHumanReadable({ checkSchemaResult }));
+
     // exit with failing status if we have failures
-    if (failures.length > 0) {
+    if (
+      checkSchemaResult.diffToPrevious.changes.find(
+        ({ type }) => type === ChangeType.FAILURE
+      )
+    ) {
       this.exit();
     }
-    return;
   }
 }
