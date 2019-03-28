@@ -16,12 +16,12 @@ import { RemoteServiceConfig } from "../../config";
 import {
   // GraphQLSchemaProvider,
   // SchemaChangeUnsubscribeHandler
-  GraphQLFederationInfoProvider,
+  ApolloFederationInfoProvider,
   FederationInfo
 } from "./base";
 
 export class EndpointFederationInfoProvider
-  implements GraphQLFederationInfoProvider {
+  implements ApolloFederationInfoProvider {
   private info?: FederationInfo;
 
   constructor(private config: Exclude<RemoteServiceConfig, "name">) {}
