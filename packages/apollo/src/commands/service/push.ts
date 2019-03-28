@@ -4,6 +4,7 @@ import { introspectionFromSchema } from "graphql";
 
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
+import { GraphQLServiceProject } from "apollo-language-server";
 
 export default class ServicePush extends ProjectCommand {
   static aliases = ["schema:publish"];
@@ -18,6 +19,12 @@ export default class ServicePush extends ProjectCommand {
     localSchemaFile: flags.string({
       description:
         "Path to your local GraphQL schema file (introspection result or SDL)"
+    }),
+    federated: flags.boolean({
+      char: "f",
+      default: false,
+      description:
+        "Indicates that the schema is a partial schema from a federated service"
     })
   };
 
@@ -28,6 +35,13 @@ export default class ServicePush extends ProjectCommand {
       {
         title: "Uploading service to Engine",
         task: async () => {
+          // handle partial schema uploading
+          if (flags.federated) {
+            const info = await (project as GraphQLServiceProject).resolveFederationInfo();
+            this.log(JSON.stringify(info));
+            return;
+          }
+
           if (!config.name) {
             throw new Error("No service found to link to Engine");
           }
