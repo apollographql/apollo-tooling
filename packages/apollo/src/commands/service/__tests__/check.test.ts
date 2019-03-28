@@ -2,15 +2,16 @@ import { formatMarkdown } from "../check";
 import checkSchemaResult from "./fixtures/check-schema-result.json";
 import { ChangeType } from "apollo-language-server/lib/graphqlTypes";
 
-describe("markdown formatting", () => {
-  it("is correct with breaking changes", () => {
-    expect(
-      formatMarkdown({
-        serviceName: "engine",
-        tag: "staging",
-        checkSchemaResult
-      })
-    ).toMatchInlineSnapshot(`
+describe("service:check", () => {
+  describe("markdown formatting", () => {
+    it("is correct with breaking changes", () => {
+      expect(
+        formatMarkdown({
+          serviceName: "engine",
+          tag: "staging",
+          checkSchemaResult
+        })
+      ).toMatchInlineSnapshot(`
 "
 ### Apollo Service Check
 🔄 Validated your local schema against schema tag 'staging' on service 'engine'.
@@ -20,24 +21,24 @@ describe("markdown formatting", () => {
 🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
 "
 `);
-  });
+    });
 
-  it("is correct with no breaking changes", () => {
-    expect(
-      formatMarkdown({
-        serviceName: "engine",
-        tag: "staging",
-        checkSchemaResult: {
-          ...checkSchemaResult,
-          diffToPrevious: {
-            ...checkSchemaResult.diffToPrevious,
-            type: ChangeType.NOTICE,
-            affectedQueries: [],
-            changes: []
+    it("is correct with no breaking changes", () => {
+      expect(
+        formatMarkdown({
+          serviceName: "engine",
+          tag: "staging",
+          checkSchemaResult: {
+            ...checkSchemaResult,
+            diffToPrevious: {
+              ...checkSchemaResult.diffToPrevious,
+              type: ChangeType.NOTICE,
+              affectedQueries: [],
+              changes: []
+            }
           }
-        }
-      })
-    ).toMatchInlineSnapshot(`
+        })
+      ).toMatchInlineSnapshot(`
 "
 ### Apollo Service Check
 🔄 Validated your local schema against schema tag 'staging' on service 'engine'.
@@ -47,6 +48,7 @@ describe("markdown formatting", () => {
 🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
 "
 `);
+    });
   });
 });
 
