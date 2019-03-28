@@ -1,4 +1,8 @@
-import { formatHumanReadable, formatMarkdown } from "../check";
+import {
+  formatHumanReadable,
+  formatMarkdown,
+  formatTimePeriod
+} from "../check";
 import checkSchemaResult from "./fixtures/check-schema-result.json";
 import { ChangeType } from "apollo-language-server/lib/graphqlTypes";
 
@@ -15,7 +19,7 @@ describe("service:check", () => {
 "
 ### Apollo Service Check
 🔄 Validated your local schema against schema tag 'staging' on service 'engine'.
-🔢 Compared **18 schema changes** against operations seen over the **last day**.
+🔢 Compared **18 schema changes** against operations seen over the **last 24 hours**.
 ❌ Found **7 breaking changes** that would affect **3 operations**
 
 🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
@@ -42,12 +46,30 @@ describe("service:check", () => {
 "
 ### Apollo Service Check
 🔄 Validated your local schema against schema tag 'staging' on service 'engine'.
-🔢 Compared **0 schema changes** against operations seen over the **last day**.
+🔢 Compared **0 schema changes** against operations seen over the **last 24 hours**.
 ✅ Found **no breaking changes**.
 
 🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
 "
 `);
+    });
+  });
+
+  describe("formatTimePeriod", () => {
+    it("should show current result for 12 hours", () => {
+      expect(formatTimePeriod(12)).toMatchInlineSnapshot(`"12 hours"`);
+    });
+
+    it("should show current result for 24 hours", () => {
+      expect(formatTimePeriod(24)).toMatchInlineSnapshot(`"24 hours"`);
+    });
+
+    it("should show current result for 36 hours", () => {
+      expect(formatTimePeriod(36)).toMatchInlineSnapshot(`"1 day"`);
+    });
+
+    it("should show current result for 48 hours", () => {
+      expect(formatTimePeriod(48)).toMatchInlineSnapshot(`"2 days"`);
     });
   });
 

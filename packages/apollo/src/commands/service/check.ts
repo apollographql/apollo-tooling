@@ -30,6 +30,16 @@ const formatChange = (change: Change) => {
   };
 };
 
+export function formatTimePeriod(hours: number): string {
+  if (hours <= 24) {
+    return hours === 1 ? "hour" : `${hours} hours`;
+  }
+
+  const days = Math.floor(hours / 24);
+
+  return days === 1 ? `${days} day` : `${days} days`;
+}
+
 interface TasksOutput {
   config: ApolloConfig;
   gitContext?: GitContext;
@@ -62,9 +72,11 @@ export function formatMarkdown({
   }
 
   // This will always return a negative number of days. Use `-` to make it positive.
-  const days = -moment()
-    .add(validationConfig.from, "second")
-    .diff(moment().add(validationConfig.to, "second"), "days");
+  const hours = Math.abs(
+    moment()
+      .add(validationConfig.from, "second")
+      .diff(moment().add(validationConfig.to, "second"), "hours")
+  );
 
   const breakingChanges = diffToPrevious.changes.filter(
     change => change.type === "FAILURE"
@@ -75,9 +87,9 @@ export function formatMarkdown({
 🔄 Validated your local schema against schema tag \'${tag}\' on service \'${serviceName}\'.
 🔢 Compared **${
     diffToPrevious.changes.length
-  } schema changes** against operations seen over the **last ${
-    days === 1 ? "day" : `${days} days`
-  }**.
+  } schema changes** against operations seen over the **last ${formatTimePeriod(
+    hours
+  )}**.
 ${
   breakingChanges.length > 0
     ? `❌ Found **${
@@ -165,56 +177,147 @@ export default class ServiceCheck extends ProjectCommand {
   };
 
   async run() {
+    // @ts-ignore we're goign to populate `taskOutput` later
+    const taskOutput: TasksOutput = {};
+
+    try {
+      await this.runTasks<TasksOutput>(
+        ({ config, flags, project }) => [
+          {
+            title: "Checking service for changes",
+            task: async (ctx: TasksOutput, task) => {
+              if (!config.name) {
+                throw new Error("No service found to link to Engine");
+              }
+              const tag = flags.tag || config.tag || "current";
+
+              task.title = `Validating local schema against tag ${chalk.blue(
+                tag
+              )} on service ${chalk.blue(config.name)}`;
+
+              task.output = "Resolving schema";
+
+              const schema = await project.resolveSchema({ tag });
+
+              const historicParameters = validateHistoricParams({
+                validationPeriod: flags.validationPeriod,
+                queryCountThreshold: flags.queryCountThreshold,
+                queryCountThresholdPercentage:
+                  flags.queryCountThresholdPercentage
+              });
+
+              task.output = "Validating schema";
+
+              const newContext: typeof ctx = {
+                checkSchemaResult: await project.engine.checkSchema({
+                  id: config.name,
+                  // @ts-ignore
+                  // XXX Looks like TS should be generating ReadonlyArrays instead
+                  schema: introspectionFromSchema(schema).__schema,
+                  tag: flags.tag,
+                  gitContext: ctx.gitContext,
+                  frontend: flags.frontend || config.engine.frontend,
+                  ...(historicParameters && { historicParameters })
+                }),
+                config,
+                gitContext: await gitInfo(this.log),
+                shouldOutputJson: !!flags.json,
+                shouldOutputMarkdown: !!flags.markdown
+              };
+
+              Object.assign(ctx, newContext);
+
+              // Save the output because we're going to use it even if we throw. `runTasks` won't return
+              // anything if we throw.
+              Object.assign(taskOutput, ctx);
+
+              task.title = `Validated local schema against tag ${chalk.blue(
+                tag
+              )} on service ${chalk.blue(config.name)}`;
+            }
+          },
+          {
+            title: "Comparing schema changes",
+            task: async (ctx: TasksOutput, task) => {
+              const schemaChanges =
+                ctx.checkSchemaResult.diffToPrevious.changes;
+              const numberOfCheckedOperations =
+                ctx.checkSchemaResult.diffToPrevious
+                  .numberOfCheckedOperations || 0;
+
+              const validationConfig =
+                ctx.checkSchemaResult.diffToPrevious.validationConfig;
+
+              const days = validationConfig
+                ? Math.abs(
+                    moment()
+                      .add(validationConfig.from, "second")
+                      .diff(moment().add(validationConfig.to, "second"), "days")
+                  )
+                : null;
+
+              task.title = `Compared ${chalk.blue(
+                schemaChanges.length.toString()
+              )} schema ${
+                schemaChanges.length === 1 ? "change" : "changes"
+              } against ${chalk.blue(numberOfCheckedOperations.toString())} ${
+                numberOfCheckedOperations === 1 ? "operation" : "operations"
+              }${
+                days
+                  ? ` seen in the past ${chalk.blue(
+                      days === 1 ? "24 hours" : `${days} days`
+                    )}`
+                  : ""
+              }`;
+            }
+          },
+          {
+            title: "Reporting result",
+            task: async (ctx: TasksOutput, task) => {
+              const breakingSchemaChangeCount = ctx.checkSchemaResult.diffToPrevious.changes.filter(
+                change => change.type === ChangeType.FAILURE
+              ).length;
+              const nonBreakingSchemaChangeCount =
+                ctx.checkSchemaResult.diffToPrevious.changes.length -
+                breakingSchemaChangeCount;
+
+              task.title = `Found ${chalk.blue(
+                breakingSchemaChangeCount.toString()
+              )} breaking ${
+                breakingSchemaChangeCount === 1 ? "change" : "changes"
+              } and ${chalk.blue(
+                nonBreakingSchemaChangeCount.toString()
+              )} compatible ${
+                nonBreakingSchemaChangeCount === 1 ? "change" : "changes"
+              }`;
+
+              if (breakingSchemaChangeCount) {
+                throw new Error("breaking changes found");
+              }
+            }
+          }
+        ],
+        context => ({
+          // It would be better here to use a custom renderer that will output the `Listr` output to stderr and
+          // the `this.log` output to `stdout`.
+          //
+          // @see https://github.com/SamVerschueren/listr#renderer
+          renderer: context.flags.markdown ? "silent" : "default"
+        })
+      );
+    } catch (error) {
+      if (error.message !== "breaking changes found") {
+        throw error;
+      }
+    }
+
     const {
       gitContext,
       checkSchemaResult,
       config,
       shouldOutputJson,
       shouldOutputMarkdown
-    } = await this.runTasks<TasksOutput>(
-      ({ config, flags, project }) => [
-        {
-          title: "Checking service for changes",
-          task: async (ctx: TasksOutput) => {
-            if (!config.name) {
-              throw new Error("No service found to link to Engine");
-            }
-
-            const tag = flags.tag || config.tag || "current";
-            const schema = await project.resolveSchema({ tag });
-            ctx.gitContext = await gitInfo(this.log);
-
-            const historicParameters = validateHistoricParams({
-              validationPeriod: flags.validationPeriod,
-              queryCountThreshold: flags.queryCountThreshold,
-              queryCountThresholdPercentage: flags.queryCountThresholdPercentage
-            });
-
-            ctx.checkSchemaResult = await project.engine.checkSchema({
-              id: config.name,
-              // @ts-ignore
-              // XXX Looks like TS should be generating ReadonlyArrays instead
-              schema: introspectionFromSchema(schema).__schema,
-              tag: flags.tag,
-              gitContext: ctx.gitContext,
-              frontend: flags.frontend || config.engine.frontend,
-              ...(historicParameters && { historicParameters })
-            });
-
-            ctx.shouldOutputJson = !!flags.json;
-            ctx.shouldOutputMarkdown = !!flags.markdown;
-            ctx.config = config;
-          }
-        }
-      ],
-      context => ({
-        // It would be better here to use a custom renderer that will output the `Listr` output to stderr and
-        // the `this.log` output to `stdout`.
-        //
-        // @see https://github.com/SamVerschueren/listr#renderer
-        renderer: context.flags.markdown ? "silent" : "default"
-      })
-    );
+    } = taskOutput;
 
     // This _should_ always be here; but TypeScript tells us that's optional. If we check it here, then
     // passing `config` to any other function will signify that `config.service` might now be null or
