@@ -12,6 +12,7 @@ import {
 } from "apollo-language-server/lib/graphqlTypes";
 import { ApolloConfig } from "apollo-language-server";
 import moment from "moment";
+import sortBy from "lodash.sortby";
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
@@ -23,8 +24,14 @@ const formatChange = (change: Change) => {
     color = chalk.yellow;
   }
 
+  const changeDictionary: Record<ChangeType, string> = {
+    [ChangeType.FAILURE]: "FAIL",
+    [ChangeType.WARNING]: "WARN",
+    [ChangeType.NOTICE]: "PASS"
+  };
+
   return {
-    type: color(change.type),
+    type: color(changeDictionary[change.type]),
     code: color(change.code),
     description: color(change.description)
   };
@@ -122,19 +129,38 @@ export function formatHumanReadable({
   const failures = changes.filter(({ type }) => type === ChangeType.FAILURE);
 
   if (changes.length === 0) {
-    return "No changes present between schemas";
-  }
+    result = "\nNo changes present between schemas";
+  } else {
+    const breakingChanges = changes.filter(
+      change => change.type === ChangeType.FAILURE
+    );
+    sortBy(breakingChanges, change => change.type);
 
-  table(changes.map(formatChange), {
-    columns: [
-      { key: "type", label: "Change" },
-      { key: "code", label: "Code" },
-      { key: "description", label: "Description" }
-    ],
-    printLine: line => {
-      result += `\n${line}`;
-    }
-  });
+    const nonBreakingChanges = changes.filter(
+      change => change.type !== ChangeType.FAILURE
+    );
+    sortBy(nonBreakingChanges, change => change.type);
+
+    table(
+      [
+        ...nonBreakingChanges.map(formatChange),
+        // Add an empty line between, but only if there are both breaking changes and non-breaking changes.
+        nonBreakingChanges.length && breakingChanges.length ? {} : null,
+        ...breakingChanges.map(formatChange)
+      ].filter(Boolean),
+      {
+        columns: [
+          { key: "type", label: "Change" },
+          { key: "code", label: "Code" },
+          { key: "description", label: "Description" }
+        ],
+        printHeader: () => {},
+        printLine: line => {
+          result += `\n${line}`;
+        }
+      }
+    );
+  }
 
   if (targetUrl) {
     result += `\n\nView full details at: ${targetUrl}`;
@@ -241,6 +267,7 @@ export default class ServiceCheck extends ProjectCommand {
             task: async (ctx: TasksOutput, task) => {
               const schemaChanges =
                 ctx.checkSchemaResult.diffToPrevious.changes;
+
               const numberOfCheckedOperations =
                 ctx.checkSchemaResult.diffToPrevious
                   .numberOfCheckedOperations || 0;

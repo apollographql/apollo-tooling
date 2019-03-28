@@ -93,32 +93,31 @@ describe("service:check", () => {
         })
       ).toMatchInlineSnapshot(`
 "
-Change   Code                       Description
-───────  ─────────────────────────  ───────────────────────────────────────────────────────────────────────────────────────
-[31mFAILURE[39m  [31mFIELD_CHANGED_TYPE[39m         [31m\`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`[39m
-NOTICE   ARG_REMOVED                \`ServiceMutation.registerOperations\` arg \`manifestVersion\` was removed
-NOTICE   ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`historicParameters\` was removed
-[31mFAILURE[39m  [31mARG_REMOVED[39m                [31m\`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed[39m
-[31mFAILURE[39m  [31mARG_REMOVED[39m                [31m\`ServiceMutation.uploadSchema\` arg \`tag\` was removed[39m
-NOTICE   FIELD_REMOVED              \`SchemaDiff.numberOfCheckedOperations\` was removed
-[31mFAILURE[39m  [31mFIELD_REMOVED[39m              [31m\`Change.affectedClients\` was removed[39m
-NOTICE   FIELD_REMOVED              \`Change.affectedClientReferenceIds\` was removed
-NOTICE   FIELD_REMOVED              \`Change.affectedClientIdVersionPairs\` was removed
-[31mFAILURE[39m  [31mARG_REMOVED[39m                [31m\`ServiceMutation.uploadSchema\` arg \`schema\` was removed[39m
-NOTICE   FIELD_REMOVED              \`AffectedClient.clientReferenceId\` was removed
-[31mFAILURE[39m  [31mFIELD_REMOVED[39m              [31m\`NamedIntrospectionValue.printedType\` was removed[39m
-[31mFAILURE[39m  [31mTYPE_REMOVED[39m               [31m\`NamedIntrospectionArg\` removed[39m
-NOTICE   FIELD_DEPRECATION_REMOVED  \`Change.description\` is no longer deprecated
-NOTICE   FIELD_ADDED                \`ServiceMutation.deregisterSchemaNotificationChannel\` was added
-NOTICE   FIELD_ADDED                \`ServiceMutation.registerSchemaNotificationChannel\` was added
-NOTICE   FIELD_DEPRECATION_REMOVED  \`AffectedClient.clientId\` is no longer deprecated
-NOTICE   FIELD_ADDED                \`Service.schemaNotificationChannels\` was added
+PASS    ARG_REMOVED                \`ServiceMutation.registerOperations\` arg \`manifestVersion\` was removed
+PASS    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`historicParameters\` was removed
+PASS    FIELD_REMOVED              \`SchemaDiff.numberOfCheckedOperations\` was removed
+PASS    FIELD_REMOVED              \`Change.affectedClientReferenceIds\` was removed
+PASS    FIELD_REMOVED              \`Change.affectedClientIdVersionPairs\` was removed
+PASS    FIELD_REMOVED              \`AffectedClient.clientReferenceId\` was removed
+PASS    FIELD_DEPRECATION_REMOVED  \`Change.description\` is no longer deprecated
+PASS    FIELD_ADDED                \`ServiceMutation.deregisterSchemaNotificationChannel\` was added
+PASS    FIELD_ADDED                \`ServiceMutation.registerSchemaNotificationChannel\` was added
+PASS    FIELD_DEPRECATION_REMOVED  \`AffectedClient.clientId\` is no longer deprecated
+PASS    FIELD_ADDED                \`Service.schemaNotificationChannels\` was added
+
+FAIL    FIELD_CHANGED_TYPE         \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
+FAIL    FIELD_REMOVED              \`Change.affectedClients\` was removed
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
+FAIL    FIELD_REMOVED              \`NamedIntrospectionValue.printedType\` was removed
+FAIL    TYPE_REMOVED               \`NamedIntrospectionArg\` removed
 
 View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
 `);
     });
 
-    it("is correct with no breaking changes", () => {
+    it("should have correct output with only non-breaking changes", () => {
       expect(
         formatHumanReadable({
           checkSchemaResult: {
@@ -131,7 +130,41 @@ View full details at: https://engine-dev.apollographql.com/service/engine/checks
             }
           }
         })
-      ).toMatchInlineSnapshot(`"No changes present between schemas"`);
+      ).toMatchInlineSnapshot(`
+"
+No changes present between schemas
+
+View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
+`);
+    });
+
+    it("should have correct output with only breaking changes", () => {
+      expect(
+        formatHumanReadable({
+          checkSchemaResult: {
+            ...checkSchemaResult,
+            diffToPrevious: {
+              ...checkSchemaResult.diffToPrevious,
+              type: ChangeType.NOTICE,
+              affectedQueries: [],
+              changes: checkSchemaResult.diffToPrevious.changes.filter(
+                change => change.type === ChangeType.FAILURE
+              )
+            }
+          }
+        })
+      ).toMatchInlineSnapshot(`
+"
+FAIL    FIELD_CHANGED_TYPE  \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
+FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
+FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
+FAIL    FIELD_REMOVED       \`Change.affectedClients\` was removed
+FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
+FAIL    FIELD_REMOVED       \`NamedIntrospectionValue.printedType\` was removed
+FAIL    TYPE_REMOVED        \`NamedIntrospectionArg\` removed
+
+View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
+`);
     });
   });
 });
