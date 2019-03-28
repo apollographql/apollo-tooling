@@ -23,6 +23,7 @@ export const CHECK_SCHEMA = gql`
           affectedQueries {
             __typename
           }
+          numberOfCheckedOperations
           changes {
             type
             code
