@@ -4,6 +4,7 @@ import Nock from "@fancy-test/nock";
 import * as Test from "@oclif/test";
 export { expect } from "@oclif/test";
 import { mockConsole } from "heroku-cli-util";
+import { deleteFolderRecursive, makeNestedDir } from "../src/utils";
 
 const time = label => {
   let start = +new Date();
@@ -23,38 +24,6 @@ const debug = fn => {
     },
     finally() {}
   };
-};
-
-const deleteFolderRecursive = path => {
-  // don't relete files on azure CI
-  if (process.env.AZURE_HTTP_USER_AGENT) return;
-
-  if (fs.existsSync(path)) {
-    fs.readdirSync(path).forEach(function(file, index) {
-      var curPath = path + "/" + file;
-      if (fs.lstatSync(curPath).isDirectory()) {
-        // recurse
-        deleteFolderRecursive(curPath);
-      } else {
-        // delete file
-        fs.unlinkSync(curPath);
-      }
-    });
-    fs.rmdirSync(path);
-  }
-};
-
-const makeNestedDir = dir => {
-  if (fs.existsSync(dir)) return;
-
-  try {
-    fs.mkdirSync(dir);
-  } catch (err) {
-    if (err.code == "ENOENT") {
-      makeNestedDir(path.dirname(dir)); //create parent dir
-      makeNestedDir(dir); //create dir
-    }
-  }
 };
 
 const setupFS = (files: Record<string, string>) => {

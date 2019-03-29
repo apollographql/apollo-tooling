@@ -1,6 +1,6 @@
 import { fs } from "apollo-codegen-core/lib/localfs";
 import path from "path";
-import { GraphQLSchema, DocumentNode, print } from "graphql";
+import { GraphQLSchema, DocumentNode } from "graphql";
 import URI from "vscode-uri";
 
 import {
@@ -25,6 +25,7 @@ import { generateSource as generateScalaSource } from "apollo-codegen-scala";
 
 import { FlowCompilerOptions } from "../../apollo-codegen-flow/lib/language";
 import { validateQueryDocument } from "apollo-language-server/lib/errors/validation";
+import { makeNestedDir } from "./utils";
 
 export type TargetType =
   | "json"
@@ -60,7 +61,7 @@ export default function generate(
 
   const { rootPath = process.cwd() } = options;
   if (outputPath.split(".").length <= 1 && !fs.existsSync(outputPath)) {
-    fs.mkdirSync(outputPath);
+    makeNestedDir(outputPath);
   }
 
   if (target === "swift") {
@@ -98,9 +99,8 @@ export default function generate(
           path.dirname(path.posix.relative(rootPath, toPath(sourcePath))),
           outputPath
         );
-        if (!fs.existsSync(dir)) {
-          fs.mkdirSync(dir);
-        }
+
+        makeNestedDir(dir);
 
         outFiles[path.join(dir, fileName)] = {
           output: content.fileContents + common
@@ -147,10 +147,10 @@ export default function generate(
       if (options.globalTypesFile) {
         const globalTypesDir = path.dirname(options.globalTypesFile);
         if (!fs.existsSync(globalTypesDir)) {
-          fs.mkdirSync(globalTypesDir);
+          makeNestedDir(globalTypesDir);
         }
       } else if (nextToSources && !fs.existsSync(outputPath)) {
-        fs.mkdirSync(outputPath);
+        makeNestedDir(outputPath);
       }
 
       const globalSourcePath =
@@ -166,9 +166,8 @@ export default function generate(
             path.dirname(path.relative(rootPath, toPath(sourcePath))),
             dir
           );
-          if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-          }
+
+          makeNestedDir(dir);
         }
 
         const outFilePath = path.join(dir, fileName);

@@ -376,9 +376,7 @@ describe("client:codegen", () => {
       expect(output).toMatchSnapshot();
     });
 
-  // TODO: fix UnhandledPromiseRejection
   test
-    .skip()
     .fs({
       "schema.json": fullSchemaJsonString,
       "components/component.tsx": `
@@ -412,9 +410,7 @@ describe("client:codegen", () => {
       }
     );
 
-  // TODO: fix
   test
-    .skip()
     .fs({
       "schema.json": fullSchemaJsonString,
       "components/component.jsx": `
@@ -445,9 +441,7 @@ describe("client:codegen", () => {
       }
     );
 
-  // TODO: fix
   test
-    .skip()
     .fs({
       "schema.json": fullSchemaJsonString,
       "components/component.tsx": `
@@ -477,14 +471,14 @@ describe("client:codegen", () => {
       () => {
         expect(
           fs.readFileSync("components/__foo__/SimpleQuery.ts").toString()
-        ).toEqual();
-        expect(fs.readFileSync("__foo__/globalTypes.ts").toString()).toEqual();
+        ).toMatchSnapshot();
+        expect(
+          fs.readFileSync("__foo__/globalTypes.ts").toString()
+        ).toMatchSnapshot();
       }
     );
 
-  // TODO: fix unhandled rejection
   test
-    .skip()
     .fs({
       "schema.json": fullSchemaJsonString,
       "components/component.tsx": `
@@ -519,9 +513,7 @@ describe("client:codegen", () => {
       }
     );
 
-  // fix
   test
-    .skip()
     .fs({
       "schema.json": fullSchemaJsonString,
       "components/component.jsx": `
@@ -555,9 +547,7 @@ describe("client:codegen", () => {
       }
     );
 
-  // fix
   test
-    .skip()
     .fs({
       "schema.json": fullSchemaJsonString,
       "components/component.tsx": `
@@ -592,9 +582,7 @@ describe("client:codegen", () => {
       }
     );
 
-  // fix
   test
-    .skip()
     .fs({
       "schema.json": fullSchemaJsonString,
       "components/component.jsx": `

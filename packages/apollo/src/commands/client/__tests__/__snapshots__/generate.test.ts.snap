@@ -39,6 +39,157 @@ exports[`client:codegen generates operation IDs for swift files when flag is set
 }"
 `;
 
+exports[`client:codegen writes Flow types to a custom directory next to sources when output is set 1`] = `
+"/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export type SimpleQuery = {
+  hello: string
+};/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`client:codegen writes TypeScript global types to a custom path when globalTypesFile is set 1`] = `
+"/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+import { SomeEnum } from \\"./../../__foo__/bar\\";
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  someEnum: SomeEnum;
+}
+"
+`;
+
+exports[`client:codegen writes TypeScript global types to a custom path when globalTypesFile is set 2`] = `
+"/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+export enum SomeEnum {
+  bar = \\"bar\\",
+  foo = \\"foo\\",
+}
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================
+"
+`;
+
+exports[`client:codegen writes TypeScript types into a __generated__ directory next to sources when no output is set 1`] = `
+"/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+}
+"
+`;
+
+exports[`client:codegen writes TypeScript types into a __generated__ directory next to sources when no output is set 2`] = `
+"/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================
+"
+`;
+
+exports[`client:codegen writes TypeScript types next to sources when output is set to empty string 1`] = `
+"/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+}
+"
+`;
+
+exports[`client:codegen writes TypeScript types next to sources when output is set to empty string 2`] = `
+"/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================
+"
+`;
+
+exports[`client:codegen writes TypeScript types to a custom directory next to sources when output is set 1`] = `
+"/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+}
+"
+`;
+
+exports[`client:codegen writes TypeScript types to a custom directory next to sources when output is set 2`] = `
+"/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================
+"
+`;
+
 exports[`client:codegen writes exact Flow types when the useFlowExactObjects flag is set 1`] = `
 "/* @flow */
 /* eslint-disable */
@@ -64,6 +215,54 @@ export type SimpleQuery = {|
 `;
 
 exports[`client:codegen writes flow types 1`] = `
+"/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export type SimpleQuery = {
+  hello: string
+};/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`client:codegen writes flow types into a __generated__ directory next to sources when no output is set 1`] = `
+"/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export type SimpleQuery = {
+  hello: string
+};/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
+exports[`client:codegen writes flow types next to sources when output is set to empty string 1`] = `
 "/* @flow */
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
