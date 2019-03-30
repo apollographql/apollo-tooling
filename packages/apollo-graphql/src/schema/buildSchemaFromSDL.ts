@@ -37,14 +37,11 @@ const sdlRules = specifiedSDLRules.filter(
   rule => !skippedSDLRules.includes(rule.name)
 );
 
-export function buildSchemaFromSDL(
-  modulesOrSDL: (GraphQLSchemaModule | DocumentNode)[] | DocumentNode,
-  schemaToExtend?: GraphQLSchema
-): GraphQLSchema {
-  let modules: GraphQLSchemaModule[];
-
+export function modulesFromSDL(
+  modulesOrSDL: (GraphQLSchemaModule | DocumentNode)[] | DocumentNode
+): GraphQLSchemaModule[] {
   if (Array.isArray(modulesOrSDL)) {
-    modules = modulesOrSDL.map(moduleOrSDL => {
+    return modulesOrSDL.map(moduleOrSDL => {
       if (isNode(moduleOrSDL) && isDocumentNode(moduleOrSDL)) {
         return { typeDefs: moduleOrSDL };
       } else {
@@ -52,8 +49,15 @@ export function buildSchemaFromSDL(
       }
     });
   } else {
-    modules = [{ typeDefs: modulesOrSDL }];
+    return [{ typeDefs: modulesOrSDL }];
   }
+}
+
+export function buildSchemaFromSDL(
+  modulesOrSDL: (GraphQLSchemaModule | DocumentNode)[] | DocumentNode,
+  schemaToExtend?: GraphQLSchema
+): GraphQLSchema {
+  const modules = modulesFromSDL(modulesOrSDL);
 
   const documentAST = concatAST(modules.map(module => module.typeDefs));
 
@@ -196,7 +200,7 @@ const extKindToDefKind = {
   [Kind.INPUT_OBJECT_TYPE_EXTENSION]: Kind.INPUT_OBJECT_TYPE_DEFINITION
 };
 
-function addResolversToSchema(
+export function addResolversToSchema(
   schema: GraphQLSchema,
   resolvers: GraphQLResolverMap<any>
 ) {
