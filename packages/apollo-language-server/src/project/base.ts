@@ -39,6 +39,7 @@ const fileAssociations: { [extension: string]: string } = {
   ".ts": "typescript",
   ".jsx": "javascriptreact",
   ".tsx": "typescriptreact",
+  ".vue": "vue",
   ".py": "python"
 };
 
