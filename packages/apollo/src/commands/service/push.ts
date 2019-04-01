@@ -35,15 +35,37 @@ export default class ServicePush extends ProjectCommand {
       {
         title: "Uploading service to Engine",
         task: async () => {
-          // handle partial schema uploading
-          if (flags.federated) {
-            const info = await (project as GraphQLServiceProject).resolveFederationInfo();
-            this.log(JSON.stringify(info));
-            return;
-          }
-
           if (!config.name) {
             throw new Error("No service found to link to Engine");
+          }
+
+          // handle partial schema uploading
+          if (flags.federated) {
+            this.log("Fetching info from federated service");
+            const info = await (project as GraphQLServiceProject).resolveFederationInfo();
+
+            if (!info.sdl)
+              throw new Error("No SDL found for federated service");
+
+            if (!info.url)
+              throw new Error("No URL found for federated service");
+
+            const {
+              schemaHash
+            } = await project.engine.uploadAndComposePartialSchema({
+              id: config.name,
+              graphVariant: config.name,
+              name: config.name,
+              url: info.url,
+              sha: "",
+              activePartialSchema: {
+                sdl: info.sdl
+              }
+            });
+
+            console.log({ schemaHash });
+
+            return;
           }
 
           const schema = await project.resolveSchema({ tag: flags.tag });

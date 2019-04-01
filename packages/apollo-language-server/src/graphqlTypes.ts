@@ -252,6 +252,50 @@ export interface SchemaTagsAndFieldStatsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: UploadAndComposePartialSchema
+// ====================================================
+
+export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition {
+  __typename: "CompositionResult";
+  /**
+   * Hash of the composed schema
+   */
+  schemaHash: string;
+}
+
+export interface UploadAndComposePartialSchema_service {
+  __typename: "ServiceMutation";
+  /**
+   * Creates or updates an implementing service of a given "name" on the graph variant, then
+   * updates the graph variant's composition configs/artifacts to reflect these changes.
+   * 
+   * An enriched SDL of the implementing service can be uploaded
+   * via "implementingServiceConfiguration.partialSchema.partialSchemaSDL".
+   * 
+   * Alternatively, previously uploaded partial schema could be re-associated with the
+   * implementing service via "implementingServiceConfiguration.partialSchema.partialSchemaHash".
+   */
+  upsertImplementingServiceAndTriggerComposition: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition;
+}
+
+export interface UploadAndComposePartialSchema {
+  service: UploadAndComposePartialSchema_service | null;
+}
+
+export interface UploadAndComposePartialSchemaVariables {
+  id: string;
+  graphVariant: string;
+  name: string;
+  url: string;
+  sha: string;
+  activePartialSchema: PartialSchemaInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: UploadSchema
 // ====================================================
 
@@ -1426,6 +1470,21 @@ export interface IntrospectionTypeRefInput {
 export interface OperationDocumentInput {
   body: string;
   name?: string | null;
+}
+
+/**
+ * Input for registering a partial schema to an implementing service.
+ * One of the fields must be specified (validated server-side).
+ * 
+ * If a new partialSchemaSDL is passed in, this operation will store it before
+ * creating the association.
+ * 
+ * If both the sdl and hash are specified, an error will be thrown if the provided
+ * hash doesn't match our hash of the sdl contents
+ */
+export interface PartialSchemaInput {
+  sdl?: string | null;
+  hash?: string | null;
 }
 
 export interface RegisteredClientIdentityInput {
