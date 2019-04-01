@@ -45,6 +45,7 @@ export function getLanguageServerClient(
       "typescript",
       "javascriptreact",
       "typescriptreact",
+      "vue",
       "python"
     ],
     synchronize: {
