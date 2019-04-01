@@ -9,9 +9,6 @@ import {
 } from "fs";
 
 export const deleteFolderRecursive = path => {
-  // don't relete files on azure CI
-  if (process.env.AZURE_HTTP_USER_AGENT) return;
-
   if (existsSync(path)) {
     readdirSync(path).forEach(function(file, index) {
       var curPath = path + "/" + file;
