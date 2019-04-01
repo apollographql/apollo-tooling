@@ -32,13 +32,13 @@
   },
   "dependencies": {
     "@apollographql/apollo-tools": "file:../apollo-tools",
-    "@oclif/command": "1.5.11",
-    "@oclif/config": "1.12.0",
+    "@oclif/command": "1.5.12",
+    "@oclif/config": "1.12.12",
     "@oclif/errors": "1.2.2",
     "@oclif/plugin-autocomplete": "0.1.0",
     "@oclif/plugin-help": "2.1.6",
     "@oclif/plugin-not-found": "1.2.2",
-    "@oclif/plugin-plugins": "1.7.7",
+    "@oclif/plugin-plugins": "1.7.8",
     "@oclif/plugin-warn-if-update-available": "1.7.0",
     "apollo-codegen-core": "file:../apollo-codegen-core",
     "apollo-codegen-flow": "file:../apollo-codegen-flow",
@@ -64,7 +64,7 @@
     "vscode-uri": "1.0.6"
   },
   "devDependencies": {
-    "typescript": "3.1.6"
+    "typescript": "3.4.1"
   },
   "oclif": {
     "commands": "./lib/commands",

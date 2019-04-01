@@ -8,7 +8,7 @@
 // The `.default` in this case doesn't exist. Interop issue with the built
 // version of the package?
 const NodeEnvironment = require("jest-environment-node");
-import * as vscode from "vscode";
+import vscode from "vscode";
 
 class VsCodeEnvironment extends NodeEnvironment {
   public async setup() {

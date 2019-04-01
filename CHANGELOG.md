@@ -2,6 +2,20 @@
 
 ## Upcoming
 
+- apollo-language-server
+  - Stop loadConfig from looking up the tree when a --config location is defined [#1059](https://github.com/apollographql/apollo-tooling/pull/1059)
+  - Refactored/documented/tested loadConfig [#1059](https://github.com/apollographql/apollo-tooling/pull/1059)
+
+## `apollo-codegen-flow@0.32.11`
+
+- `apollo-codegen-flow@0.32.11`
+  - remove leading empty lines from generated code [#1127](https://github.com/apollographql/apollo-tooling/pull/1127)
+
+## `apollo@2.6.2`
+
+- `apollo@2.6.2`
+  - fix remoteUrl(remove slug) for service:check [#1121](https://github.com/apollographql/apollo-tooling/pull/1121)
+
 ## `apollo-graphql@0.2.0`
 
 - `apollo-graphql@0.2.0`
@@ -22,6 +36,7 @@
   - Add missing dependency `@oclif/errors` [#1068](https://github.com/apollographql/apollo-tooling/pull/1068)
   - Include targetUrl in the output of the `service:check` command [#1072](https://github.com/apollographql/apollo-tooling/pull/1072)
   - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
+  - Add `--markdown` output option to `service:check` [#1072](https://github.com/apollographql/apollo-tooling/pull/1072)
 - `apollo-env@0.3.4`
   - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
 - `apollo-language-server@1.5.3`
