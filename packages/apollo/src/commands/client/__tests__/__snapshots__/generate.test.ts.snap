@@ -154,6 +154,7 @@ import Apollo
 public final class SimpleQueryQuery: GraphQLQuery {
   public let operationDefinition =
     \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
+  public let operationName: String? = \\"SimpleQuery\\"
 
   public init() {
   }
@@ -195,6 +196,7 @@ import Apollo
 public final class SimpleQueryQuery: GraphQLQuery {
   public let operationDefinition =
     \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
+  public let operationName: String? = \\"SimpleQuery\\"
 
   public init() {
   }

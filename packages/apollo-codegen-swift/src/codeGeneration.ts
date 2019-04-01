@@ -187,6 +187,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.context.fragments
         );
 
+        const { operationName } = operation;
+        this.printOnNewline(
+          `public let operationName: String? = "${operationName}"`
+        );
+
         if (this.context.options.generateOperationIds) {
           const { operationId } = generateOperationId(
             operation,

@@ -4,6 +4,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 "public final class CreateReviewMutation: GraphQLMutation {
   public let operationDefinition =
     \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"Wow!\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
+  public let operationName: String? = \\"CreateReview\\"
 
   public var episode: Episode?
 
@@ -87,6 +88,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 "public final class HeroQuery: GraphQLQuery {
   public let operationDefinition =
     \\"query Hero {\\\\n  hero {\\\\n    ... on Droid {\\\\n      ...HeroDetails\\\\n    }\\\\n  }\\\\n}\\"
+  public let operationName: String? = \\"Hero\\"
 
   public var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
 
@@ -217,6 +219,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 "public final class HeroQuery: GraphQLQuery {
   public let operationDefinition =
     \\"query Hero {\\\\n  hero {\\\\n    ...DroidDetails\\\\n  }\\\\n}\\"
+  public let operationName: String? = \\"Hero\\"
 
   public var queryDocument: String { return operationDefinition.appending(DroidDetails.fragmentDefinition) }
 
@@ -375,6 +378,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 "public final class HeroQuery: GraphQLQuery {
   public let operationDefinition =
     \\"query Hero {\\\\n  hero {\\\\n    ...HeroDetails\\\\n  }\\\\n}\\"
+  public let operationName: String? = \\"Hero\\"
 
   public var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
 
@@ -472,6 +476,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 "public final class HeroNameQuery: GraphQLQuery {
   public let operationDefinition =
     \\"query HeroName($episode: Episode) {\\\\n  hero(episode: $episode) {\\\\n    name\\\\n  }\\\\n}\\"
+  public let operationName: String? = \\"HeroName\\"
 
   public var episode: Episode?
 
@@ -548,6 +553,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 "public final class HeroQuery: GraphQLQuery {
   public let operationDefinition =
     \\"query Hero {\\\\n  hero {\\\\n    ...HeroDetails\\\\n  }\\\\n}\\"
+  public let operationName: String? = \\"Hero\\"
 
   public let operationIdentifier: String? = \\"90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4\\"
 
@@ -636,6 +642,79 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
           set {
             resultMap += newValue.resultMap
           }
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation #classDeclarationForOperation() should generate a operationName matching operation name case 1`] = `
+"public final class CreateEpReviewMutation: GraphQLMutation {
+  public let operationDefinition =
+    \\"mutation createEPReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"Wow!\\\\\\"}) {\\\\n    stars\\\\n  }\\\\n}\\"
+  public let operationName: String? = \\"createEPReview\\"
+
+  public var episode: Episode?
+
+  public init(episode: Episode? = nil) {
+    self.episode = episode
+  }
+
+  public var variables: GraphQLMap? {
+    return [\\"episode\\": episode]
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes = [\\"Mutation\\"]
+
+    public static let selections: [GraphQLSelection] = [
+      GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\"]], type: .object(CreateReview.selections)),
+    ]
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(createReview: CreateReview? = nil) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Mutation\\", \\"createReview\\": createReview.flatMap { (value: CreateReview) -> ResultMap in value.resultMap }])
+    }
+
+    public var createReview: CreateReview? {
+      get {
+        return (resultMap[\\"createReview\\"] as? ResultMap).flatMap { CreateReview(unsafeResultMap: $0) }
+      }
+      set {
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"createReview\\")
+      }
+    }
+
+    public struct CreateReview: GraphQLSelectionSet {
+      public static let possibleTypes = [\\"Review\\"]
+
+      public static let selections: [GraphQLSelection] = [
+        GraphQLField(\\"stars\\", type: .nonNull(.scalar(Int.self))),
+      ]
+
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      public init(stars: Int) {
+        self.init(unsafeResultMap: [\\"__typename\\": \\"Review\\", \\"stars\\": stars])
+      }
+
+      /// The number of stars this review gave, 1-5
+      public var stars: Int {
+        get {
+          return resultMap[\\"stars\\"]! as! Int
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: \\"stars\\")
         }
       }
     }

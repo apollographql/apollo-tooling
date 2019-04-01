@@ -125,6 +125,20 @@ describe("Swift code generation", () => {
       expect(generator.output).toMatchSnapshot();
     });
 
+    test(`should generate a operationName matching operation name case`, function() {
+      const { operations } = compile(`
+        mutation createEPReview($episode: Episode) {
+          createReview(episode: $episode, review: { stars: 5, commentary: "Wow!" }) {
+            stars
+          }
+        }
+      `);
+
+      generator.classDeclarationForOperation(operations["createEPReview"]);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
     it(`should generate a class declaration with an operationIdentifier property when generateOperationIds is specified`, () => {
       const { operations } = compile(
         `
