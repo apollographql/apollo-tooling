@@ -114,6 +114,7 @@ export interface RegisterOperationsVariables {
   id: string;
   clientIdentity: RegisteredClientIdentityInput;
   operations: RegisteredOperationInput[];
+  manifestVersion: number;
 }
 
 /* tslint:disable */

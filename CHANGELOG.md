@@ -2,6 +2,11 @@
 
 ## Upcoming
 
+## `apollo`
+
+- `apollo`
+  - Update operation normalization technique to deterministically order fragments within operations.  This update affects those users of the [operation registry](https://www.apollographql.com/docs/platform/operation-registry.html) feature of the Apollo Platform.  Anyone using the operation registry should re-register their operations with this new version of the `apollo` CLI via the `apollo client:push` command.  Once all client operations are re-registered, the `apollo-server-plugin-operation-manifest` plugin within Apollo Server (which reads the manifest published with `apollo client:push`) should be updated to `0.1.0-alpha.1`. [#1158](https://github.com/apollographql/apollo-tooling/pull/1158)
+
 ## `apollo-language-server`
 
 - apollo-language-server
