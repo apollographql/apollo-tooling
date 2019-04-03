@@ -78,7 +78,7 @@ export function formatMarkdown({
     );
   }
 
-  // This will always return a negative number of days. Use `-` to make it positive.
+  // This will always return a negative number. Use Math.abs to make it positive.
   const hours = Math.abs(
     moment()
       .add(validationConfig.from, "second")
