@@ -37,6 +37,36 @@ describe("service:check", () => {
 🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
 "
 `);
+      // Check when all the values are singluar
+      expect(
+        formatMarkdown({
+          serviceName: "engine",
+          tag: "staging",
+          checkSchemaResult: {
+            ...checkSchemaResult,
+            diffToPrevious: {
+              ...checkSchemaResult.diffToPrevious,
+              affectedQueries: [
+                checkSchemaResult.diffToPrevious.affectedQueries[0]
+              ],
+              changes: [
+                checkSchemaResult.diffToPrevious.changes.find(
+                  change => change.type === ChangeType.FAILURE
+                )
+              ]
+            }
+          }
+        })
+      ).toMatchInlineSnapshot(`
+"
+### Apollo Service Check
+🔄 Validated your local schema against schema tag 'staging' on service 'engine'.
+🔢 Compared **1 schema change** against operations seen over the **last 24 hours**.
+❌ Found **1 breaking change** that would affect **1 operation**
+
+🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
+"
+`);
     });
 
     it("is correct with no breaking changes", () => {
