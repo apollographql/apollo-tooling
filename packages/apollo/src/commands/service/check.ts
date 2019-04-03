@@ -39,7 +39,7 @@ const formatChange = (change: Change) => {
 
 export function formatTimePeriod(hours: number): string {
   if (hours <= 24) {
-    return hours === 1 ? "hour" : `${hours} hours`;
+    return hours === 1 ? `${hours} hour` : `${hours} hours`;
   }
 
   const days = Math.floor(hours / 24);

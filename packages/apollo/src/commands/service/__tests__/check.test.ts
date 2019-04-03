@@ -68,6 +68,10 @@ describe("service:check", () => {
   });
 
   describe("formatTimePeriod", () => {
+    it("should show current result for 1 hour", () => {
+      expect(formatTimePeriod(1)).toMatchInlineSnapshot(`"1 hour"`);
+    });
+
     it("should show current result for 12 hours", () => {
       expect(formatTimePeriod(12)).toMatchInlineSnapshot(`"12 hours"`);
     });
