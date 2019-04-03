@@ -404,7 +404,7 @@ export default class ServiceCheck extends ProjectCommand {
         ({ type }) => type === ChangeType.FAILURE
       )
     ) {
-      this.exit();
+      this.exit(1);
     }
   }
 }
