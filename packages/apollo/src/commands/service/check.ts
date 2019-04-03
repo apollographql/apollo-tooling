@@ -278,11 +278,14 @@ export default class ServiceCheck extends ProjectCommand {
               const validationConfig =
                 ctx.checkSchemaResult.diffToPrevious.validationConfig;
 
-              const days = validationConfig
+              const hours = validationConfig
                 ? Math.abs(
                     moment()
                       .add(validationConfig.from, "second")
-                      .diff(moment().add(validationConfig.to, "second"), "days")
+                      .diff(
+                        moment().add(validationConfig.to, "second"),
+                        "hours"
+                      )
                   )
                 : null;
 
@@ -293,10 +296,8 @@ export default class ServiceCheck extends ProjectCommand {
               } against ${chalk.blue(numberOfCheckedOperations.toString())} ${
                 numberOfCheckedOperations === 1 ? "operation" : "operations"
               }${
-                days
-                  ? ` seen in the past ${chalk.blue(
-                      days === 1 ? "24 hours" : `${days} days`
-                    )}`
+                hours
+                  ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
                   : ""
               }`;
             }
