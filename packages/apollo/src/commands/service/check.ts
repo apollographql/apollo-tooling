@@ -100,7 +100,7 @@ export function formatMarkdown({
 
   return `
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \'${tag}\' on service \'${serviceName}\'.
+🔄 Validated your local schema against schema tag \`${tag}\` on service \`${serviceName}\`.
 🔢 Compared **${pluralize(
     diffToPrevious.changes.length,
     "schema change"
