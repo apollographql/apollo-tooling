@@ -209,6 +209,9 @@ export default class ServiceCheck extends ProjectCommand {
     // @ts-ignore we're goign to populate `taskOutput` later
     const taskOutput: TasksOutput = {};
 
+    // Define this constant so we can throw it and compare against the same value.
+    const breakingChangesErrorMessage = "breaking changes found";
+
     try {
       await this.runTasks<TasksOutput>(
         ({ config, flags, project }) => [
@@ -323,7 +326,9 @@ export default class ServiceCheck extends ProjectCommand {
               }`;
 
               if (breakingSchemaChangeCount) {
-                throw new Error("breaking changes found");
+                // Throw an error here to produce a red X in the list of steps being taken. We're going to
+                // `catch` this error below and proceed with the reporting.
+                throw new Error(breakingChangesErrorMessage);
               }
             }
           }
@@ -337,7 +342,7 @@ export default class ServiceCheck extends ProjectCommand {
         })
       );
     } catch (error) {
-      if (error.message !== "breaking changes found") {
+      if (error.message !== breakingChangesErrorMessage) {
         throw error;
       }
     }
