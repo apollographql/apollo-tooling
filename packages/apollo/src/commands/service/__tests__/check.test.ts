@@ -31,8 +31,8 @@ describe("service:check", () => {
 "
 ### Apollo Service Check
 🔄 Validated your local schema against schema tag 'staging' on service 'engine'.
-🔢 Compared **18 schema changes** against operations seen over the **last 24 hours**.
-❌ Found **7 breaking changes** that would affect **3 operations**
+🔢 Compared **18 schema changes** against **100 operations** seen over the **last 24 hours**.
+❌ Found **7 breaking changes** that would affect **3 operations** across **2 clients**
 
 🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
 "
@@ -88,7 +88,7 @@ describe("service:check", () => {
 "
 ### Apollo Service Check
 🔄 Validated your local schema against schema tag 'staging' on service 'engine'.
-🔢 Compared **0 schema changes** against operations seen over the **last 24 hours**.
+🔢 Compared **0 schema changes** against **100 operations** seen over the **last 24 hours**.
 ✅ Found **no breaking changes**.
 
 🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
