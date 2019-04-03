@@ -2,6 +2,17 @@
 
 ## Upcoming
 
+## `apollo@2.7.0`, `apollo-vscode@1.6.0`
+- `apollo@2.7.0`
+  - Update operation normalization technique to deterministically order fragments within operations.  This update affects those users of the [operation registry](https://www.apollographql.com/docs/platform/operation-registry.html) feature of the Apollo Platform.  Anyone using the operation registry should re-register their operations with this new version of the `apollo` CLI via the `apollo client:push` command.  Once all client operations are re-registered, the `apollo-server-plugin-operation-manifest` plugin within Apollo Server (which reads the manifest published with `apollo client:push`) should be updated to `0.1.0-alpha.1`. [#1158](https://github.com/apollographql/apollo-tooling/pull/1158)
+
+## `apollo-language-server`
+
+- apollo-language-server
+  - Stop loadConfig from looking up the tree when a --config location is defined [#1059](https://github.com/apollographql/apollo-tooling/pull/1059)
+  - Refactored/documented/tested loadConfig [#1059](https://github.com/apollographql/apollo-tooling/pull/1059)
+  - Add `.vue` file support for codegen:generate [#1160](https://github.com/apollographql/apollo-tooling/pull/1160)
+
 ## `apollo-codegen-flow@0.32.11`
 
 - `apollo-codegen-flow@0.32.11`
@@ -32,6 +43,7 @@
   - Add missing dependency `@oclif/errors` [#1068](https://github.com/apollographql/apollo-tooling/pull/1068)
   - Include targetUrl in the output of the `service:check` command [#1072](https://github.com/apollographql/apollo-tooling/pull/1072)
   - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
+  - Add `--markdown` output option to `service:check` [#1072](https://github.com/apollographql/apollo-tooling/pull/1072)
 - `apollo-env@0.3.4`
   - Import apollo-env utility types directly instead of treating them as globals [#1074](https://github.com/apollographql/apollo-tooling/pull/1074)
 - `apollo-language-server@1.5.3`
