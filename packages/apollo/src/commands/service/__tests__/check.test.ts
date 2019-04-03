@@ -30,7 +30,7 @@ describe("service:check", () => {
       ).toMatchInlineSnapshot(`
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag 'staging' on service 'engine'.
+🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
 🔢 Compared **18 schema changes** against **100 operations** seen over the **last 24 hours**.
 ❌ Found **7 breaking changes** that would affect **3 operations** across **2 clients**
 
@@ -64,7 +64,7 @@ describe("service:check", () => {
       ).toMatchInlineSnapshot(`
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag 'staging' on service 'engine'.
+🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
 🔢 Compared **1 schema change** against **1 operation** seen over the **last 24 hours**.
 ❌ Found **1 breaking change** that would affect **1 operation** across **1 client**
 
@@ -92,7 +92,7 @@ describe("service:check", () => {
       ).toMatchInlineSnapshot(`
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag 'staging' on service 'engine'.
+🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
 🔢 Compared **0 schema changes** against **100 operations** seen over the **last 24 hours**.
 ✅ Found **no breaking changes**.
 
