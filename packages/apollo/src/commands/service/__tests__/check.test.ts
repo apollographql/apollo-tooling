@@ -1,52 +1,175 @@
-import { formatMarkdown } from "../check";
+import {
+  formatHumanReadable,
+  formatMarkdown,
+  formatTimePeriod
+} from "../check";
 import checkSchemaResult from "./fixtures/check-schema-result.json";
 import { ChangeType } from "apollo-language-server/lib/graphqlTypes";
+import chalk from "chalk";
 
-describe("markdown formatting", () => {
-  it("is correct with breaking changes", () => {
-    expect(
-      formatMarkdown({
-        serviceName: "engine",
-        tag: "staging",
-        checkSchemaResult
-      })
-    ).toMatchInlineSnapshot(`
+describe("service:check", () => {
+  let originalChalkEnabled;
+
+  beforeEach(() => {
+    originalChalkEnabled = chalk.enabled;
+    chalk.enabled = false;
+  });
+
+  afterEach(() => {
+    chalk.enabled = originalChalkEnabled;
+  });
+
+  describe("markdown formatting", () => {
+    it("is correct with breaking changes", () => {
+      expect(
+        formatMarkdown({
+          serviceName: "engine",
+          tag: "staging",
+          checkSchemaResult
+        })
+      ).toMatchInlineSnapshot(`
 "
 ### Apollo Service Check
 🔄 Validated your local schema against schema tag 'staging' on service 'engine'.
-🔢 Compared **18 schema changes** against operations seen over the **last day**.
+🔢 Compared **18 schema changes** against operations seen over the **last 24 hours**.
 ❌ Found **7 breaking changes** that would affect **3 operations**
 
 🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
 "
 `);
-  });
+    });
 
-  it("is correct with no breaking changes", () => {
-    expect(
-      formatMarkdown({
-        serviceName: "engine",
-        tag: "staging",
-        checkSchemaResult: {
-          ...checkSchemaResult,
-          diffToPrevious: {
-            ...checkSchemaResult.diffToPrevious,
-            type: ChangeType.NOTICE,
-            affectedQueries: [],
-            changes: []
+    it("is correct with no breaking changes", () => {
+      expect(
+        formatMarkdown({
+          serviceName: "engine",
+          tag: "staging",
+          checkSchemaResult: {
+            ...checkSchemaResult,
+            diffToPrevious: {
+              ...checkSchemaResult.diffToPrevious,
+              type: ChangeType.NOTICE,
+              affectedQueries: [],
+              changes: []
+            }
           }
-        }
-      })
-    ).toMatchInlineSnapshot(`
+        })
+      ).toMatchInlineSnapshot(`
 "
 ### Apollo Service Check
 🔄 Validated your local schema against schema tag 'staging' on service 'engine'.
-🔢 Compared **0 schema changes** against operations seen over the **last day**.
+🔢 Compared **0 schema changes** against operations seen over the **last 24 hours**.
 ✅ Found **no breaking changes**.
 
 🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
 "
 `);
+    });
+  });
+
+  describe("formatTimePeriod", () => {
+    it("should show current result for 1 hour", () => {
+      expect(formatTimePeriod(1)).toMatchInlineSnapshot(`"1 hour"`);
+    });
+
+    it("should show current result for 12 hours", () => {
+      expect(formatTimePeriod(12)).toMatchInlineSnapshot(`"12 hours"`);
+    });
+
+    it("should show current result for 24 hours", () => {
+      expect(formatTimePeriod(24)).toMatchInlineSnapshot(`"24 hours"`);
+    });
+
+    it("should show current result for 36 hours", () => {
+      expect(formatTimePeriod(36)).toMatchInlineSnapshot(`"1 day"`);
+    });
+
+    it("should show current result for 48 hours", () => {
+      expect(formatTimePeriod(48)).toMatchInlineSnapshot(`"2 days"`);
+    });
+  });
+
+  describe("formatHumanReadable", () => {
+    it("should have correct output with breaking and non-breaking changes", () => {
+      expect(
+        formatHumanReadable({
+          checkSchemaResult
+        })
+      ).toMatchInlineSnapshot(`
+"
+PASS    ARG_REMOVED                \`ServiceMutation.registerOperations\` arg \`manifestVersion\` was removed
+PASS    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`historicParameters\` was removed
+PASS    FIELD_ADDED                \`Service.schemaNotificationChannels\` was added
+PASS    FIELD_ADDED                \`ServiceMutation.deregisterSchemaNotificationChannel\` was added
+PASS    FIELD_ADDED                \`ServiceMutation.registerSchemaNotificationChannel\` was added
+PASS    FIELD_DEPRECATION_REMOVED  \`AffectedClient.clientId\` is no longer deprecated
+PASS    FIELD_DEPRECATION_REMOVED  \`Change.description\` is no longer deprecated
+PASS    FIELD_REMOVED              \`AffectedClient.clientReferenceId\` was removed
+PASS    FIELD_REMOVED              \`Change.affectedClientIdVersionPairs\` was removed
+PASS    FIELD_REMOVED              \`Change.affectedClientReferenceIds\` was removed
+PASS    FIELD_REMOVED              \`SchemaDiff.numberOfCheckedOperations\` was removed
+
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
+FAIL    FIELD_CHANGED_TYPE         \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
+FAIL    FIELD_REMOVED              \`Change.affectedClients\` was removed
+FAIL    FIELD_REMOVED              \`NamedIntrospectionValue.printedType\` was removed
+FAIL    TYPE_REMOVED               \`NamedIntrospectionArg\` removed
+
+View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
+`);
+    });
+
+    it("should have correct output with only non-breaking changes", () => {
+      expect(
+        formatHumanReadable({
+          checkSchemaResult: {
+            ...checkSchemaResult,
+            diffToPrevious: {
+              ...checkSchemaResult.diffToPrevious,
+              type: ChangeType.NOTICE,
+              affectedQueries: [],
+              changes: []
+            }
+          }
+        })
+      ).toMatchInlineSnapshot(`
+"
+No changes present between schemas
+
+View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
+`);
+    });
+
+    it("should have correct output with only breaking changes", () => {
+      expect(
+        formatHumanReadable({
+          checkSchemaResult: {
+            ...checkSchemaResult,
+            diffToPrevious: {
+              ...checkSchemaResult.diffToPrevious,
+              type: ChangeType.NOTICE,
+              affectedQueries: [],
+              changes: checkSchemaResult.diffToPrevious.changes.filter(
+                change => change.type === ChangeType.FAILURE
+              )
+            }
+          }
+        })
+      ).toMatchInlineSnapshot(`
+"
+FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
+FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
+FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
+FAIL    FIELD_CHANGED_TYPE  \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
+FAIL    FIELD_REMOVED       \`Change.affectedClients\` was removed
+FAIL    FIELD_REMOVED       \`NamedIntrospectionValue.printedType\` was removed
+FAIL    TYPE_REMOVED        \`NamedIntrospectionArg\` removed
+
+View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
+`);
+    });
   });
 });
 

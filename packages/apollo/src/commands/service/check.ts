@@ -12,6 +12,7 @@ import {
 } from "apollo-language-server/lib/graphqlTypes";
 import { ApolloConfig } from "apollo-language-server";
 import moment from "moment";
+import sortBy from "lodash.sortby";
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
@@ -23,12 +24,28 @@ const formatChange = (change: Change) => {
     color = chalk.yellow;
   }
 
+  const changeDictionary: Record<ChangeType, string> = {
+    [ChangeType.FAILURE]: "FAIL",
+    [ChangeType.WARNING]: "WARN",
+    [ChangeType.NOTICE]: "PASS"
+  };
+
   return {
-    type: color(change.type),
+    type: color(changeDictionary[change.type]),
     code: color(change.code),
     description: color(change.description)
   };
 };
+
+export function formatTimePeriod(hours: number): string {
+  if (hours <= 24) {
+    return hours === 1 ? `${hours} hour` : `${hours} hours`;
+  }
+
+  const days = Math.floor(hours / 24);
+
+  return days === 1 ? `${days} day` : `${days} days`;
+}
 
 interface TasksOutput {
   config: ApolloConfig;
@@ -61,10 +78,12 @@ export function formatMarkdown({
     );
   }
 
-  // This will always return a negative number of days. Use `-` to make it positive.
-  const days = -moment()
-    .add(validationConfig.from, "second")
-    .diff(moment().add(validationConfig.to, "second"), "days");
+  // This will always return a negative number. Use Math.abs to make it positive.
+  const hours = Math.abs(
+    moment()
+      .add(validationConfig.from, "second")
+      .diff(moment().add(validationConfig.to, "second"), "hours")
+  );
 
   const breakingChanges = diffToPrevious.changes.filter(
     change => change.type === "FAILURE"
@@ -75,9 +94,9 @@ export function formatMarkdown({
 🔄 Validated your local schema against schema tag \'${tag}\' on service \'${serviceName}\'.
 🔢 Compared **${
     diffToPrevious.changes.length
-  } schema changes** against operations seen over the **last ${
-    days === 1 ? "day" : `${days} days`
-  }**.
+  } schema changes** against operations seen over the **last ${formatTimePeriod(
+    hours
+  )}**.
 ${
   breakingChanges.length > 0
     ? `❌ Found **${
@@ -95,6 +114,69 @@ ${
 
 🔗 [View your service check details](${checkSchemaResult.targetUrl}).
 `;
+}
+
+export function formatHumanReadable({
+  checkSchemaResult
+}: {
+  checkSchemaResult: CheckSchema_service_checkSchema;
+}): string {
+  const {
+    targetUrl,
+    diffToPrevious: { changes, validationConfig }
+  } = checkSchemaResult;
+  let result = "";
+  const failures = changes.filter(({ type }) => type === ChangeType.FAILURE);
+
+  if (changes.length === 0) {
+    result = "\nNo changes present between schemas";
+  } else {
+    // Create a sorted list of the changes. We'll then filter values from the sorted list, resulting in sorted
+    // filtered lists.
+    const sortedChanges = sortBy<typeof changes[0]>(changes, [
+      change => change.code,
+      change => change.description
+    ]);
+
+    const breakingChanges = sortedChanges.filter(
+      change => change.type === ChangeType.FAILURE
+    );
+
+    sortBy(breakingChanges, change => change.type);
+
+    const nonBreakingChanges = sortedChanges.filter(
+      change => change.type !== ChangeType.FAILURE
+    );
+
+    table(
+      [
+        ...nonBreakingChanges.map(formatChange),
+        // Add an empty line between, but only if there are both breaking changes and non-breaking changes.
+        nonBreakingChanges.length && breakingChanges.length ? {} : null,
+        ...breakingChanges.map(formatChange)
+      ].filter(Boolean),
+      {
+        columns: [
+          { key: "type", label: "Change" },
+          { key: "code", label: "Code" },
+          { key: "description", label: "Description" }
+        ],
+        // Override `printHeader` so we don't print a header
+        printHeader: () => {},
+        // The default `printLine` will output to the console; we want to capture the output so we can test
+        // it.
+        printLine: line => {
+          result += `\n${line}`;
+        }
+      }
+    );
+  }
+
+  if (targetUrl) {
+    result += `\n\nView full details at: ${targetUrl}`;
+  }
+
+  return result;
 }
 
 export default class ServiceCheck extends ProjectCommand {
@@ -131,56 +213,154 @@ export default class ServiceCheck extends ProjectCommand {
   };
 
   async run() {
+    // @ts-ignore we're goign to populate `taskOutput` later
+    const taskOutput: TasksOutput = {};
+
+    // Define this constant so we can throw it and compare against the same value.
+    const breakingChangesErrorMessage = "breaking changes found";
+
+    try {
+      await this.runTasks<TasksOutput>(
+        ({ config, flags, project }) => [
+          {
+            title: "Checking service for changes",
+            task: async (ctx: TasksOutput, task) => {
+              if (!config.name) {
+                throw new Error("No service found to link to Engine");
+              }
+              const tag = flags.tag || config.tag || "current";
+
+              task.title = `Validating local schema against tag ${chalk.blue(
+                tag
+              )} on service ${chalk.blue(config.name)}`;
+
+              task.output = "Resolving schema";
+
+              const schema = await project.resolveSchema({ tag });
+
+              const historicParameters = validateHistoricParams({
+                validationPeriod: flags.validationPeriod,
+                queryCountThreshold: flags.queryCountThreshold,
+                queryCountThresholdPercentage:
+                  flags.queryCountThresholdPercentage
+              });
+
+              task.output = "Validating schema";
+
+              const newContext: typeof ctx = {
+                checkSchemaResult: await project.engine.checkSchema({
+                  id: config.name,
+                  // @ts-ignore
+                  // XXX Looks like TS should be generating ReadonlyArrays instead
+                  schema: introspectionFromSchema(schema).__schema,
+                  tag: flags.tag,
+                  gitContext: ctx.gitContext,
+                  frontend: flags.frontend || config.engine.frontend,
+                  ...(historicParameters && { historicParameters })
+                }),
+                config,
+                gitContext: await gitInfo(this.log),
+                shouldOutputJson: !!flags.json,
+                shouldOutputMarkdown: !!flags.markdown
+              };
+
+              Object.assign(ctx, newContext);
+
+              // Save the output because we're going to use it even if we throw. `runTasks` won't return
+              // anything if we throw.
+              Object.assign(taskOutput, ctx);
+
+              task.title = `Validated local schema against tag ${chalk.blue(
+                tag
+              )} on service ${chalk.blue(config.name)}`;
+            }
+          },
+          {
+            title: "Comparing schema changes",
+            task: async (ctx: TasksOutput, task) => {
+              const schemaChanges =
+                ctx.checkSchemaResult.diffToPrevious.changes;
+
+              const numberOfCheckedOperations =
+                ctx.checkSchemaResult.diffToPrevious
+                  .numberOfCheckedOperations || 0;
+
+              const validationConfig =
+                ctx.checkSchemaResult.diffToPrevious.validationConfig;
+
+              const hours = validationConfig
+                ? Math.abs(
+                    moment()
+                      .add(validationConfig.from, "second")
+                      .diff(
+                        moment().add(validationConfig.to, "second"),
+                        "hours"
+                      )
+                  )
+                : null;
+
+              task.title = `Compared ${chalk.blue(
+                schemaChanges.length.toString()
+              )} schema ${
+                schemaChanges.length === 1 ? "change" : "changes"
+              } against ${chalk.blue(numberOfCheckedOperations.toString())} ${
+                numberOfCheckedOperations === 1 ? "operation" : "operations"
+              }${
+                hours
+                  ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
+                  : ""
+              }`;
+            }
+          },
+          {
+            title: "Reporting result",
+            task: async (ctx: TasksOutput, task) => {
+              const breakingSchemaChangeCount = ctx.checkSchemaResult.diffToPrevious.changes.filter(
+                change => change.type === ChangeType.FAILURE
+              ).length;
+              const nonBreakingSchemaChangeCount =
+                ctx.checkSchemaResult.diffToPrevious.changes.length -
+                breakingSchemaChangeCount;
+
+              task.title = `Found ${chalk.blue(
+                breakingSchemaChangeCount.toString()
+              )} breaking ${
+                breakingSchemaChangeCount === 1 ? "change" : "changes"
+              } and ${chalk.blue(
+                nonBreakingSchemaChangeCount.toString()
+              )} compatible ${
+                nonBreakingSchemaChangeCount === 1 ? "change" : "changes"
+              }`;
+
+              if (breakingSchemaChangeCount) {
+                // Throw an error here to produce a red X in the list of steps being taken. We're going to
+                // `catch` this error below and proceed with the reporting.
+                throw new Error(breakingChangesErrorMessage);
+              }
+            }
+          }
+        ],
+        context => ({
+          // It would be better here to use a custom renderer that will output the `Listr` output to stderr and
+          // the `this.log` output to `stdout`.
+          //
+          // @see https://github.com/SamVerschueren/listr#renderer
+          renderer: context.flags.markdown ? "silent" : "default"
+        })
+      );
+    } catch (error) {
+      if (error.message !== breakingChangesErrorMessage) {
+        throw error;
+      }
+    }
+
     const {
       gitContext,
       checkSchemaResult,
       config,
       shouldOutputJson,
       shouldOutputMarkdown
-    } = await this.runTasks<TasksOutput>(
-      ({ config, flags, project }) => [
-        {
-          title: "Checking service for changes",
-          task: async (ctx: TasksOutput) => {
-            if (!config.name) {
-              throw new Error("No service found to link to Engine");
-            }
-
-            const tag = flags.tag || config.tag || "current";
-            const schema = await project.resolveSchema({ tag });
-            ctx.gitContext = await gitInfo(this.log);
-
-            const historicParameters = validateHistoricParams({
-              validationPeriod: flags.validationPeriod,
-              queryCountThreshold: flags.queryCountThreshold,
-              queryCountThresholdPercentage: flags.queryCountThresholdPercentage
-            });
-
-            ctx.checkSchemaResult = await project.engine.checkSchema({
-              id: config.name,
-              // @ts-ignore
-              // XXX Looks like TS should be generating ReadonlyArrays instead
-              schema: introspectionFromSchema(schema).__schema,
-              tag: flags.tag,
-              gitContext: ctx.gitContext,
-              frontend: flags.frontend || config.engine.frontend,
-              ...(historicParameters && { historicParameters })
-            });
-
-            ctx.shouldOutputJson = !!flags.json;
-            ctx.shouldOutputMarkdown = !!flags.markdown;
-            ctx.config = config;
-          }
-        }
-      ],
-      context => ({
-        // It would be better here to use a custom renderer that will output the `Listr` output to stderr and
-        // the `this.log` output to `stdout`.
-        //
-        // @see https://github.com/SamVerschueren/listr#renderer
-        renderer: context.flags.markdown ? "silent" : "default"
-      })
-    );
+    } = taskOutput;
 
     // This _should_ always be here; but TypeScript tells us that's optional. If we check it here, then
     // passing `config` to any other function will signify that `config.service` might now be null or
@@ -193,15 +373,17 @@ export default class ServiceCheck extends ProjectCommand {
       );
     }
 
-    const {
-      targetUrl,
-      diffToPrevious: { changes, validationConfig }
-    } = checkSchemaResult;
-    const failures = changes.filter(({ type }) => type === ChangeType.FAILURE);
-
     if (shouldOutputJson) {
       return this.log(
-        JSON.stringify({ targetUrl, changes, validationConfig }, null, 2)
+        JSON.stringify(
+          {
+            targetUrl: checkSchemaResult.targetUrl,
+            changes: checkSchemaResult.diffToPrevious.changes,
+            validationConfig: checkSchemaResult.diffToPrevious.validationConfig
+          },
+          null,
+          2
+        )
       );
     } else if (shouldOutputMarkdown) {
       const serviceName = config.service && config.service.name;
@@ -221,25 +403,15 @@ export default class ServiceCheck extends ProjectCommand {
       );
     }
 
-    if (changes.length === 0) {
-      return this.log("\nNo changes present between schemas\n");
-    }
-    this.log("\n");
-    table(changes.map(formatChange), {
-      columns: [
-        { key: "type", label: "Change" },
-        { key: "code", label: "Code" },
-        { key: "description", label: "Description" }
-      ]
-    });
-    this.log("\n");
-    if (targetUrl) {
-      this.log(`View full details at: ${targetUrl}`);
-    }
+    this.log(formatHumanReadable({ checkSchemaResult }));
+
     // exit with failing status if we have failures
-    if (failures.length > 0) {
-      this.exit();
+    if (
+      checkSchemaResult.diffToPrevious.changes.find(
+        ({ type }) => type === ChangeType.FAILURE
+      )
+    ) {
+      this.exit(1);
     }
-    return;
   }
 }
