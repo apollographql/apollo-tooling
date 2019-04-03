@@ -131,15 +131,22 @@ export function formatHumanReadable({
   if (changes.length === 0) {
     result = "\nNo changes present between schemas";
   } else {
-    const breakingChanges = changes.filter(
+    // Create a sorted list of the changes. We'll then filter values from the sorted list, resulting in sorted
+    // filtered lists.
+    const sortedChanges = sortBy<typeof changes[0]>(changes, [
+      change => change.code,
+      change => change.description
+    ]);
+
+    const breakingChanges = sortedChanges.filter(
       change => change.type === ChangeType.FAILURE
     );
+
     sortBy(breakingChanges, change => change.type);
 
-    const nonBreakingChanges = changes.filter(
+    const nonBreakingChanges = sortedChanges.filter(
       change => change.type !== ChangeType.FAILURE
     );
-    sortBy(nonBreakingChanges, change => change.type);
 
     table(
       [
