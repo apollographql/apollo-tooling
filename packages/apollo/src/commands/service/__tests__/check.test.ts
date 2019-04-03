@@ -99,21 +99,21 @@ describe("service:check", () => {
 "
 PASS    ARG_REMOVED                \`ServiceMutation.registerOperations\` arg \`manifestVersion\` was removed
 PASS    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`historicParameters\` was removed
-PASS    FIELD_REMOVED              \`SchemaDiff.numberOfCheckedOperations\` was removed
-PASS    FIELD_REMOVED              \`Change.affectedClientReferenceIds\` was removed
-PASS    FIELD_REMOVED              \`Change.affectedClientIdVersionPairs\` was removed
-PASS    FIELD_REMOVED              \`AffectedClient.clientReferenceId\` was removed
-PASS    FIELD_DEPRECATION_REMOVED  \`Change.description\` is no longer deprecated
+PASS    FIELD_ADDED                \`Service.schemaNotificationChannels\` was added
 PASS    FIELD_ADDED                \`ServiceMutation.deregisterSchemaNotificationChannel\` was added
 PASS    FIELD_ADDED                \`ServiceMutation.registerSchemaNotificationChannel\` was added
 PASS    FIELD_DEPRECATION_REMOVED  \`AffectedClient.clientId\` is no longer deprecated
-PASS    FIELD_ADDED                \`Service.schemaNotificationChannels\` was added
+PASS    FIELD_DEPRECATION_REMOVED  \`Change.description\` is no longer deprecated
+PASS    FIELD_REMOVED              \`AffectedClient.clientReferenceId\` was removed
+PASS    FIELD_REMOVED              \`Change.affectedClientIdVersionPairs\` was removed
+PASS    FIELD_REMOVED              \`Change.affectedClientReferenceIds\` was removed
+PASS    FIELD_REMOVED              \`SchemaDiff.numberOfCheckedOperations\` was removed
 
-FAIL    FIELD_CHANGED_TYPE         \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
 FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
-FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
-FAIL    FIELD_REMOVED              \`Change.affectedClients\` was removed
 FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
+FAIL    FIELD_CHANGED_TYPE         \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
+FAIL    FIELD_REMOVED              \`Change.affectedClients\` was removed
 FAIL    FIELD_REMOVED              \`NamedIntrospectionValue.printedType\` was removed
 FAIL    TYPE_REMOVED               \`NamedIntrospectionArg\` removed
 
@@ -159,11 +159,11 @@ View full details at: https://engine-dev.apollographql.com/service/engine/checks
         })
       ).toMatchInlineSnapshot(`
 "
-FAIL    FIELD_CHANGED_TYPE  \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
 FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
-FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
-FAIL    FIELD_REMOVED       \`Change.affectedClients\` was removed
 FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
+FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
+FAIL    FIELD_CHANGED_TYPE  \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
+FAIL    FIELD_REMOVED       \`Change.affectedClients\` was removed
 FAIL    FIELD_REMOVED       \`NamedIntrospectionValue.printedType\` was removed
 FAIL    TYPE_REMOVED        \`NamedIntrospectionArg\` removed
 
