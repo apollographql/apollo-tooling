@@ -154,7 +154,10 @@ export function formatHumanReadable({
           { key: "code", label: "Code" },
           { key: "description", label: "Description" }
         ],
+        // Override `printHeader` so we don't print a header
         printHeader: () => {},
+        // The default `printLine` will output to the console; we want to capture the output so we can test
+        // it.
         printLine: line => {
           result += `\n${line}`;
         }
