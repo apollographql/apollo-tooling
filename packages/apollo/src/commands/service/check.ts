@@ -104,14 +104,23 @@ export function formatMarkdown({
 🔢 Compared **${pluralize(
     diffToPrevious.changes.length,
     "schema change"
-  )}** against operations seen over the **last ${formatTimePeriod(hours)}**.
+  )}** against **${pluralize(
+    diffToPrevious.numberOfCheckedOperations,
+    "operation"
+  )}** seen over the **last ${formatTimePeriod(hours)}**.
 ${
   breakingChanges.length > 0
     ? `❌ Found **${pluralize(
         diffToPrevious.changes.filter(change => change.type === "FAILURE")
           .length,
         "breaking change"
-      )}** that would affect **${pluralize(affectedQueryCount, "operation")}**`
+      )}** that would affect **${pluralize(
+        affectedQueryCount,
+        "operation"
+      )}** across **${pluralize(
+        diffToPrevious.affectedClients && diffToPrevious.affectedClients.length,
+        "client"
+      )}**`
     : `✅ Found **no breaking changes**.`
 }
 
