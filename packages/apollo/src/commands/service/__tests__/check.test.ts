@@ -5,8 +5,20 @@ import {
 } from "../check";
 import checkSchemaResult from "./fixtures/check-schema-result.json";
 import { ChangeType } from "apollo-language-server/lib/graphqlTypes";
+import chalk from "chalk";
 
 describe("service:check", () => {
+  let originalChalkEnabled;
+
+  beforeEach(() => {
+    originalChalkEnabled = chalk.enabled;
+    chalk.enabled = false;
+  });
+
+  afterEach(() => {
+    chalk.enabled = originalChalkEnabled;
+  });
+
   describe("markdown formatting", () => {
     it("is correct with breaking changes", () => {
       expect(
