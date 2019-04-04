@@ -77,9 +77,14 @@ export interface CheckSchema_service_checkSchema {
 export interface CheckSchema_service {
   __typename: "ServiceMutation";
   /**
-   * Validate, diff, and store a schema so the diff
-   * can be viewed by users in the UI. This mutation
-   * will not mark the schema as "published"
+   * Validate, diff, and store a schema so the diff can be viewed by users in the UI.
+   * This mutation will not mark the schema as "published".
+   * 
+   * One of "proposedSchema" or "proposedSchemaHash" must be provided.
+   * If both are provided, the computed schema hash will be compared with the input hash,
+   * an error will be returned if the hashes don't match.
+   * 
+   * If the "proposedSchemaHash" is specified, the already stored schema will be loaded.
    */
   checkSchema: CheckSchema_service_checkSchema;
 }
