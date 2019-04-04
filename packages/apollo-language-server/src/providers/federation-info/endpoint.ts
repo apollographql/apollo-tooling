@@ -1,24 +1,10 @@
-// IntrospectionSchemaProvider (http => IntrospectionResult => schema)
-// import { NotificationHandler } from "vscode-languageserver";
-import { execute as linkExecute, toPromise } from "apollo-link";
+import { execute as linkExecute, toPromise, from } from "apollo-link";
 import { createHttpLink, HttpLink } from "apollo-link-http";
-import {
-  GraphQLSchema,
-  buildClientSchema,
-  getIntrospectionQuery,
-  ExecutionResult,
-  IntrospectionQuery,
-  parse
-} from "graphql";
+import { ExecutionResult, parse } from "graphql";
 import { Agent } from "http";
 import { fetch } from "apollo-env";
 import { RemoteServiceConfig } from "../../config";
-import {
-  // GraphQLSchemaProvider,
-  // SchemaChangeUnsubscribeHandler
-  ApolloFederationInfoProvider,
-  FederationInfo
-} from "./base";
+import { ApolloFederationInfoProvider, FederationInfo } from "./base";
 
 export class EndpointFederationInfoProvider
   implements ApolloFederationInfoProvider {
@@ -44,14 +30,12 @@ export class EndpointFederationInfoProvider
       }
     `;
 
-    // TODO: fix return type
     const { data, errors } = (await toPromise(
       linkExecute(createHttpLink(options), {
         query: parse(getFederationInfoQuery),
         context: { headers }
       })
-    )) as any;
-    // as ExecutionResult<IntrospectionQuery>;
+    )) as ExecutionResult<{ _service: FederationInfo }>;
 
     if (errors && errors.length) {
       // XXX better error handling of GraphQL errors
@@ -64,21 +48,16 @@ export class EndpointFederationInfoProvider
       );
     }
 
-    this.info = data._service;
+    return data._service;
   }
 
   async resolveFederationInfo() {
-    if (!this.info) await this.getFederationInfo();
+    if (!this.info) {
+      this.info = await this.getFederationInfo();
+    }
 
-    if (!this.info) throw new Error("No service info available");
+    if (!this.info) throw new Error("No service info returned by service");
 
     return this.info;
   }
-
-  // onSchemaChange(
-  //   _handler: NotificationHandler<GraphQLSchema>
-  // ): SchemaChangeUnsubscribeHandler {
-  //   throw new Error("Polling of endpoint not implemented yet");
-  //   return () => {};
-  // }
 }

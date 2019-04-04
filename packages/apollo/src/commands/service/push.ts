@@ -50,21 +50,28 @@ export default class ServicePush extends ProjectCommand {
             if (!info.url)
               throw new Error("No URL found for federated service");
 
+            /**
+             * id: service id for root mutation (graph id)
+             * variant: like a tag. prod/staging/etc
+             * name: implementing service name inside of the graph
+             * sha: git commit hash/docker id. placeholder for now
+             */
             const {
               schemaHash
             } = await project.engine.uploadAndComposePartialSchema({
               id: config.name,
               graphVariant: config.name,
-              name: config.name,
+              name: info.name,
               url: info.url,
-              sha: "",
+              sha: Math.random()
+                .toString()
+                .replace(".", ""),
               activePartialSchema: {
                 sdl: info.sdl
               }
             });
 
             console.log({ schemaHash });
-
             return;
           }
 

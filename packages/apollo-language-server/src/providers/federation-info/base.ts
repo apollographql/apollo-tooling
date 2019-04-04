@@ -1,22 +1,12 @@
-// import { GraphQLSchema } from "graphql";
-// import { NotificationHandler } from "vscode-languageserver";
-
-// export interface SchemaResolveConfig {
-//   tag?: string;
-//   force?: boolean;
-// }
-
-// export type SchemaChangeUnsubscribeHandler = () => void;
-
+// These fields must exist for a service to be a proper
+// federated service
 export interface FederationInfo {
-  sdl?: string;
-  name?: string;
-  url?: string;
+  sdl: string;
+  name: string;
+  url: string;
 }
 
 export interface ApolloFederationInfoProvider {
   resolveFederationInfo(): Promise<FederationInfo>;
-  // onSchemaChange(
-  //   handler: NotificationHandler<string>
-  // ): SchemaChangeUnsubscribeHandler;
+  // TODO: onSchemaChange
 }
