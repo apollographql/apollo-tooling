@@ -1,8 +1,4 @@
-import {
-  ApolloFederationInfoProvider
-  // SchemaChangeUnsubscribeHandler,
-  // SchemaResolveConfig
-} from "./base";
+import { ApolloFederationInfoProvider } from "./base";
 import {
   ApolloConfig,
   isClientConfig,
@@ -11,24 +7,14 @@ import {
 } from "../../config";
 
 import { EndpointFederationInfoProvider } from "./endpoint";
-// import { EngineSchemaProvider } from "./engine";
-// import { FileSchemaProvider } from "./file";
-// import { ClientIdentity } from "../../engine";
 
-export {
-  ApolloFederationInfoProvider
-  // SchemaChangeUnsubscribeHandler,
-  // SchemaResolveConfig
-};
+export { ApolloFederationInfoProvider };
 
 export function federationInfoProviderFromConfig(
   config: ApolloConfig
-  // clientIdentity?: ClientIdentity // engine provider needs this
 ): ApolloFederationInfoProvider {
   if (isServiceConfig(config)) {
-    // if (config.service.localSchemaFile) {
-    //   return new FileSchemaProvider({ path: config.service.localSchemaFile });
-    // }
+    // TODO: support files for federation info
     if (config.service.endpoint) {
       return new EndpointFederationInfoProvider(config.service.endpoint);
     }
