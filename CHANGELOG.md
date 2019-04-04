@@ -2,7 +2,9 @@
 
 ## Upcoming
 
-- `apollo`
+## `apollo@2.8.1`
+
+- `apollo@2.8.1`
   - Add git info back to `checkSchema` to fix detail links[#1165](https://github.com/apollographql/apollo-tooling/pull/1165)
 
 ## `apollo@2.8.0`
