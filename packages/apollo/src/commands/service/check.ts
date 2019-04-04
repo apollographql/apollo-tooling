@@ -49,7 +49,6 @@ export function formatTimePeriod(hours: number): string {
 
 interface TasksOutput {
   config: ApolloConfig;
-  gitContext?: GitContext;
   checkSchemaResult: CheckSchema_service_checkSchema;
   shouldOutputJson: boolean;
   shouldOutputMarkdown: boolean;
@@ -237,6 +236,7 @@ export default class ServiceCheck extends ProjectCommand {
               task.output = "Resolving schema";
 
               const schema = await project.resolveSchema({ tag });
+              await gitInfo(this.log);
 
               const historicParameters = validateHistoricParams({
                 validationPeriod: flags.validationPeriod,
@@ -254,12 +254,11 @@ export default class ServiceCheck extends ProjectCommand {
                   // XXX Looks like TS should be generating ReadonlyArrays instead
                   schema: introspectionFromSchema(schema).__schema,
                   tag: flags.tag,
-                  gitContext: ctx.gitContext,
+                  gitContext: await gitInfo(this.log),
                   frontend: flags.frontend || config.engine.frontend,
                   ...(historicParameters && { historicParameters })
                 }),
                 config,
-                gitContext: await gitInfo(this.log),
                 shouldOutputJson: !!flags.json,
                 shouldOutputMarkdown: !!flags.markdown
               };
@@ -355,7 +354,6 @@ export default class ServiceCheck extends ProjectCommand {
     }
 
     const {
-      gitContext,
       checkSchemaResult,
       config,
       shouldOutputJson,
