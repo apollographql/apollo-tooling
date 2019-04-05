@@ -14,6 +14,14 @@ import { ApolloConfig } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 
+function pluralize(
+  quantity: number | null,
+  singular: string,
+  plural: string = `${singular}s`
+) {
+  return `${quantity} ${quantity === 1 ? singular : plural}`;
+}
+
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
   if (change.type === ChangeType.FAILURE) {
@@ -39,12 +47,10 @@ const formatChange = (change: Change) => {
 
 export function formatTimePeriod(hours: number): string {
   if (hours <= 24) {
-    return hours === 1 ? `${hours} hour` : `${hours} hours`;
+    return pluralize(hours, "hour");
   }
 
-  const days = Math.floor(hours / 24);
-
-  return days === 1 ? `${days} day` : `${days} days`;
+  return pluralize(Math.floor(hours / 24), "day");
 }
 
 interface TasksOutput {
@@ -88,26 +94,33 @@ export function formatMarkdown({
     change => change.type === "FAILURE"
   );
 
+  const affectedQueryCount = diffToPrevious.affectedQueries
+    ? diffToPrevious.affectedQueries.length
+    : 0;
+
   return `
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \'${tag}\' on service \'${serviceName}\'.
-🔢 Compared **${
-    diffToPrevious.changes.length
-  } schema changes** against operations seen over the **last ${formatTimePeriod(
-    hours
-  )}**.
+🔄 Validated your local schema against schema tag \`${tag}\` on service \`${serviceName}\`.
+🔢 Compared **${pluralize(
+    diffToPrevious.changes.length,
+    "schema change"
+  )}** against **${pluralize(
+    diffToPrevious.numberOfCheckedOperations,
+    "operation"
+  )}** seen over the **last ${formatTimePeriod(hours)}**.
 ${
   breakingChanges.length > 0
-    ? `❌ Found **${
+    ? `❌ Found **${pluralize(
         diffToPrevious.changes.filter(change => change.type === "FAILURE")
-          .length
-      } breaking changes** that would affect **${
-        diffToPrevious.affectedQueries
-          ? // Our schema allows `affectedQueries` to be `null` even if we have `breakingChanges`, so we have to
-            // check for it :shrug:
-            diffToPrevious.affectedQueries.length
-          : "no"
-      } operations**`
+          .length,
+        "breaking change"
+      )}** that would affect **${pluralize(
+        affectedQueryCount,
+        "operation"
+      )}** across **${pluralize(
+        diffToPrevious.affectedClients && diffToPrevious.affectedClients.length,
+        "client"
+      )}**`
     : `✅ Found **no breaking changes**.`
 }
 
@@ -300,11 +313,12 @@ export default class ServiceCheck extends ProjectCommand {
 
               task.title = `Compared ${chalk.blue(
                 schemaChanges.length.toString()
-              )} schema ${
-                schemaChanges.length === 1 ? "change" : "changes"
-              } against ${chalk.blue(numberOfCheckedOperations.toString())} ${
-                numberOfCheckedOperations === 1 ? "operation" : "operations"
-              }${
+              )} schema ${pluralize(
+                schemaChanges.length,
+                "change"
+              )} against ${chalk.blue(
+                numberOfCheckedOperations.toString()
+              )} ${pluralize(numberOfCheckedOperations, "operation")}${
                 hours
                   ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
                   : ""
@@ -323,13 +337,15 @@ export default class ServiceCheck extends ProjectCommand {
 
               task.title = `Found ${chalk.blue(
                 breakingSchemaChangeCount.toString()
-              )} breaking ${
-                breakingSchemaChangeCount === 1 ? "change" : "changes"
-              } and ${chalk.blue(
+              )} breaking ${pluralize(
+                breakingSchemaChangeCount,
+                "change"
+              )} and ${chalk.blue(
                 nonBreakingSchemaChangeCount.toString()
-              )} compatible ${
-                nonBreakingSchemaChangeCount === 1 ? "change" : "changes"
-              }`;
+              )} compatible ${pluralize(
+                nonBreakingSchemaChangeCount,
+                "change"
+              )}`;
 
               if (breakingSchemaChangeCount) {
                 // Throw an error here to produce a red X in the list of steps being taken. We're going to
