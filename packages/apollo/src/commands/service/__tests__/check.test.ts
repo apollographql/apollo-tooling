@@ -132,6 +132,14 @@ describe("service:check", () => {
         })
       ).toMatchInlineSnapshot(`
 "
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
+FAIL    FIELD_CHANGED_TYPE         \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
+FAIL    FIELD_REMOVED              \`Change.affectedClients\` was removed
+FAIL    FIELD_REMOVED              \`NamedIntrospectionValue.printedType\` was removed
+FAIL    TYPE_REMOVED               \`NamedIntrospectionArg\` removed
+
 PASS    ARG_REMOVED                \`ServiceMutation.registerOperations\` arg \`manifestVersion\` was removed
 PASS    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`historicParameters\` was removed
 PASS    FIELD_ADDED                \`Service.schemaNotificationChannels\` was added
@@ -143,14 +151,6 @@ PASS    FIELD_REMOVED              \`AffectedClient.clientReferenceId\` was remo
 PASS    FIELD_REMOVED              \`Change.affectedClientIdVersionPairs\` was removed
 PASS    FIELD_REMOVED              \`Change.affectedClientReferenceIds\` was removed
 PASS    FIELD_REMOVED              \`SchemaDiff.numberOfCheckedOperations\` was removed
-
-FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
-FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
-FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
-FAIL    FIELD_CHANGED_TYPE         \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
-FAIL    FIELD_REMOVED              \`Change.affectedClients\` was removed
-FAIL    FIELD_REMOVED              \`NamedIntrospectionValue.printedType\` was removed
-FAIL    TYPE_REMOVED               \`NamedIntrospectionArg\` removed
 
 View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
 `);
