@@ -162,10 +162,10 @@ export function formatHumanReadable({
 
     table(
       [
-        ...nonBreakingChanges.map(formatChange),
+        ...breakingChanges.map(formatChange),
         // Add an empty line between, but only if there are both breaking changes and non-breaking changes.
         nonBreakingChanges.length && breakingChanges.length ? {} : null,
-        ...breakingChanges.map(formatChange)
+        ...nonBreakingChanges.map(formatChange)
       ].filter(Boolean),
       {
         columns: [
