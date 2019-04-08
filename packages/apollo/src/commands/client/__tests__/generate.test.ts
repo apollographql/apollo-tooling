@@ -194,6 +194,26 @@ describe("client:codegen", () => {
   test
     .fs({
       "schema.json": fullSchemaJsonString,
+      "queryOne.graphql": simpleQuery.toString(),
+      "my.config.js": defaultConfig
+    })
+    .command([
+      "client:codegen",
+      "--config=my.config.js",
+      "--target=typescript",
+      "--fileExtension=.d.ts",
+      "outDirectory"
+    ])
+    .it("writes types for typescript with a custom extension", () => {
+      const [filePath] = fs.readdirSync("./outDirectory");
+      const file = fs.readFileSync(`./outDirectory/${filePath}`).toString();
+
+      expect(file).toMatchSnapshot();
+    });
+
+  test
+    .fs({
+      "schema.json": fullSchemaJsonString,
       "clientSideSchema.graphql": clientSideSchema.toString(),
       "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString(),
       "my.config.js": defaultConfig
