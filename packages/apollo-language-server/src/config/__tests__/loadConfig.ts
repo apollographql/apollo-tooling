@@ -78,37 +78,37 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
       expect(config.rawConfig).toMatchInlineSnapshot(`
-Object {
-  "client": Object {
-    "addTypename": true,
-    "clientOnlyDirectives": Array [
-      "connection",
-      "type",
-    ],
-    "clientSchemaDirectives": Array [
-      "client",
-      "rest",
-    ],
-    "excludes": Array [
-      "**/node_modules",
-      "**/__tests__",
-    ],
-    "includes": Array [
-      "src/**/*.{ts,tsx,js,jsx,graphql}",
-    ],
-    "service": "hello",
-    "statsWindow": Object {
-      "from": -86400,
-      "to": -0,
-    },
-    "tagName": "gql",
-  },
-  "engine": Object {
-    "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
-    "frontend": "https://engine.apollographql.com",
-  },
-}
-`);
+        Object {
+          "client": Object {
+            "addTypename": true,
+            "clientOnlyDirectives": Array [
+              "connection",
+              "type",
+            ],
+            "clientSchemaDirectives": Array [
+              "client",
+              "rest",
+            ],
+            "excludes": Array [
+              "**/node_modules",
+              "**/__tests__",
+            ],
+            "includes": Array [
+              "src/**/*.{ts,tsx,js,jsx,graphql,gql}",
+            ],
+            "service": "hello",
+            "statsWindow": Object {
+              "from": -86400,
+              "to": -0,
+            },
+            "tagName": "gql",
+          },
+          "engine": Object {
+            "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
+            "frontend": "https://engine.apollographql.com",
+          },
+        }
+      `);
     });
 
     it("loads with service defaults from different dir", async () => {
@@ -127,26 +127,26 @@ Object {
         configFileName: "my.config.js"
       });
       expect(config.rawConfig).toMatchInlineSnapshot(`
-Object {
-  "engine": Object {
-    "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
-    "frontend": "https://engine.apollographql.com",
-  },
-  "service": Object {
-    "endpoint": Object {
-      "url": "http://localhost:4000/graphql",
-    },
-    "excludes": Array [
-      "**/node_modules",
-      "**/__tests__",
-    ],
-    "includes": Array [
-      "src/**/*.{ts,tsx,js,jsx,graphql}",
-    ],
-    "name": "hello",
-  },
-}
-`);
+        Object {
+          "engine": Object {
+            "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
+            "frontend": "https://engine.apollographql.com",
+          },
+          "service": Object {
+            "endpoint": Object {
+              "url": "http://localhost:4000/graphql",
+            },
+            "excludes": Array [
+              "**/node_modules",
+              "**/__tests__",
+            ],
+            "includes": Array [
+              "src/**/*.{ts,tsx,js,jsx,graphql,gql}",
+            ],
+            "name": "hello",
+          },
+        }
+      `);
     });
 
     it("[deprecated] loads config from package.json", async () => {
