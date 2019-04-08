@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Update `service:check` output for errors and correct pluralization [#1178](https://github.com/apollographql/apollo-tooling/pull/1178)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
