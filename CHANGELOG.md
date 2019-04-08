@@ -2,7 +2,32 @@
 
 ## Upcoming
 
-- apollo
+- `apollo`
+  - <First `apollo` related entry goes here>
+- `apollo-codegen-core`
+  - <First `apollo-codegen-core` related entry goes here>
+- `apollo-codegen-flow`
+  - <First `apollo-codegen-flow` related entry goes here>
+- `apollo-codegen-scala`
+  - <First `apollo-codegen-scala` related entry goes here>
+- `apollo-codegen-swift`
+  - <First `apollo-codegen-swift` related entry goes here>
+- `apollo-codegen-typescript`
+  - <First `apollo-codegen-typescript` related entry goes here>
+- `apollo-env`
+  - <First `apollo-env` related entry goes here>
+- `apollo-graphql`
+  - <First `apollo-graphql` related entry goes here>
+- `apollo-language-server`
+  - <First `apollo-language-server` related entry goes here>
+- `apollo-tools`
+  - <First `apollo-tools` related entry goes here>
+- `vscode-apollo`
+  - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.8.2`
+
+- `apollo@2.8.2`
   - Update `service:check`'s `--markdown` output to include clients affected, number of operations checked, pluralization improvements, and backticks around service and schema variant [#1164](https://github.com/apollographql/apollo-tooling/pull/1164)
   - Update `service:check` output to show failures before passes [#1168](https://github.com/apollographql/apollo-tooling/pull/1168)
 
