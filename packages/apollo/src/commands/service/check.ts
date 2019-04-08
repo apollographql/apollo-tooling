@@ -235,20 +235,18 @@ export default class ServiceCheck extends ProjectCommand {
       await this.runTasks<TasksOutput>(
         ({ config, flags, project }) => {
           const configName = config.name;
+          const tag = flags.tag || config.tag || "current";
+
           if (!configName) {
             throw new Error("No service found to link to Engine");
           }
 
           return [
             {
-              title: "Checking service for changes",
+              title: `Validating local schema against tag ${chalk.blue(
+                tag
+              )} on service ${chalk.blue(configName)}`,
               task: async (ctx: TasksOutput, task) => {
-                const tag = flags.tag || config.tag || "current";
-
-                task.title = `Validating local schema against tag ${chalk.blue(
-                  tag
-                )} on service ${chalk.blue(configName)}`;
-
                 task.output = "Resolving schema";
 
                 const schema = await project.resolveSchema({ tag });
@@ -285,9 +283,7 @@ export default class ServiceCheck extends ProjectCommand {
                 // anything if we throw.
                 Object.assign(taskOutput, ctx);
 
-                task.title = `Validated local schema against tag ${chalk.blue(
-                  tag
-                )} on service ${chalk.blue(configName)}`;
+                task.title = task.title.replace("Validating", "Validated");
               }
             },
             {
