@@ -315,14 +315,11 @@ export default class ServiceCheck extends ProjectCommand {
                     )
                   : null;
 
-                task.title = `Compared ${chalk.blue(
+                task.title = `Compared ${pluralize(chalk.blue(
                   schemaChanges.length.toString()
-                )} schema ${pluralize(
-                  schemaChanges.length,
-                  "change"
-                )} against ${chalk.blue(
+                ), 'schema change')} against ${pluralize(chalk.blue(
                   numberOfCheckedOperations.toString()
-                )} ${pluralize(numberOfCheckedOperations, "operation")}${
+                ), 'operation')}${
                   hours
                     ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
                     : ""
@@ -339,17 +336,11 @@ export default class ServiceCheck extends ProjectCommand {
                   ctx.checkSchemaResult.diffToPrevious.changes.length -
                   breakingSchemaChangeCount;
 
-                task.title = `Found ${chalk.blue(
+                task.title = `Found ${pluralize(chalk.blue(
                   breakingSchemaChangeCount.toString()
-                )} breaking ${pluralize(
-                  breakingSchemaChangeCount,
-                  "change"
-                )} and ${chalk.blue(
+                ), 'breaking change')} and ${pluralize(chalk.blue(
                   nonBreakingSchemaChangeCount.toString()
-                )} compatible ${pluralize(
-                  nonBreakingSchemaChangeCount,
-                  "change"
-                )}`;
+                ), 'compatible change')}`;
 
                 if (breakingSchemaChangeCount) {
                   // Throw an error here to produce a red X in the list of steps being taken. We're going to
