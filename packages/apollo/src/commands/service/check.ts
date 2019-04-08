@@ -315,11 +315,13 @@ export default class ServiceCheck extends ProjectCommand {
                     )
                   : null;
 
-                task.title = `Compared ${pluralize(chalk.blue(
-                  schemaChanges.length.toString()
-                ), 'schema change')} against ${pluralize(chalk.blue(
-                  numberOfCheckedOperations.toString()
-                ), 'operation')}${
+                task.title = `Compared ${pluralize(
+                  chalk.blue(schemaChanges.length.toString()),
+                  "schema change"
+                )} against ${pluralize(
+                  chalk.blue(numberOfCheckedOperations.toString()),
+                  "operation"
+                )}${
                   hours
                     ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
                     : ""
@@ -336,11 +338,13 @@ export default class ServiceCheck extends ProjectCommand {
                   ctx.checkSchemaResult.diffToPrevious.changes.length -
                   breakingSchemaChangeCount;
 
-                task.title = `Found ${pluralize(chalk.blue(
-                  breakingSchemaChangeCount.toString()
-                ), 'breaking change')} and ${pluralize(chalk.blue(
-                  nonBreakingSchemaChangeCount.toString()
-                ), 'compatible change')}`;
+                task.title = `Found ${pluralize(
+                  chalk.blue(breakingSchemaChangeCount.toString()),
+                  "breaking change"
+                )} and ${pluralize(
+                  chalk.blue(nonBreakingSchemaChangeCount.toString()),
+                  "compatible change"
+                )}`;
 
                 if (breakingSchemaChangeCount) {
                   // Throw an error here to produce a red X in the list of steps being taken. We're going to
@@ -360,6 +364,12 @@ export default class ServiceCheck extends ProjectCommand {
         })
       );
     } catch (error) {
+      if (error.message.includes("/upgrade")) {
+        this.exit(1);
+
+        return;
+      }
+
       if (error.message !== breakingChangesErrorMessage) {
         throw error;
       }
