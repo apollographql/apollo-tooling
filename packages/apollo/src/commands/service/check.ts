@@ -10,7 +10,7 @@ import {
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
   ChangeType
 } from "apollo-language-server/lib/graphqlTypes";
-import { ApolloConfig } from "apollo-language-server";
+import { ApolloConfig, GraphQLServiceProject } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 
@@ -221,6 +221,12 @@ export default class ServiceCheck extends ProjectCommand {
     markdown: flags.boolean({
       description: "Output result in markdown.",
       exclusive: ["json"]
+    }),
+    federated: flags.boolean({
+      char: "f",
+      default: false,
+      description:
+        "Indicates that the schema is a partial schema from a federated service"
     })
   };
 
@@ -240,6 +246,36 @@ export default class ServiceCheck extends ProjectCommand {
               if (!config.name) {
                 throw new Error("No service found to link to Engine");
               }
+
+              if (flags.federated) {
+                this.log("Fetching info from federated service");
+                const info = await (project as GraphQLServiceProject).resolveFederationInfo();
+
+                if (!info.sdl)
+                  throw new Error("No SDL found for federated service");
+
+                if (!info.url)
+                  throw new Error("No URL found for federated service");
+
+                /**
+                 * id: service id for root mutation (graph id)
+                 * variant: like a tag. prod/staging/etc
+                 * name: implementing service name inside of the graph
+                 * sha: git commit hash/docker id. placeholder for now
+                 */
+                const { schemaHash } = await project.engine.checkPartialSchema({
+                  id: config.name,
+                  graphVariant: config.name,
+                  implementingServiceName: info.name,
+                  partialSchema: {
+                    sdl: info.sdl
+                  }
+                });
+
+                console.log({ schemaHash });
+                return;
+              }
+
               const tag = flags.tag || config.tag || "current";
 
               task.title = `Validating local schema against tag ${chalk.blue(

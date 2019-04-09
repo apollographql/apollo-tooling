@@ -3,6 +3,47 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: CheckPartialSchema
+// ====================================================
+
+export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph {
+  __typename: "CompositionResult";
+  /**
+   * Hash of the composed schema
+   */
+  schemaHash: string;
+}
+
+export interface CheckPartialSchema_service {
+  __typename: "ServiceMutation";
+  /**
+   * This mutation will not result in any changes to the implementing service
+   * 
+   * Run composition with the Implementing Service's partial schema replaced with the one provided
+   * in the mutation's input. Store the composed schema, return the hash of the composed schema,
+   * and any warnings and errors pertaining to composition.
+   * 
+   * This mutation will not run validation against operations.
+   */
+  validatePartialSchemaOfImplementingServiceAgainstGraph: CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph;
+}
+
+export interface CheckPartialSchema {
+  service: CheckPartialSchema_service | null;
+}
+
+export interface CheckPartialSchemaVariables {
+  id: string;
+  graphVariant: string;
+  implementingServiceName: string;
+  partialSchema: PartialSchemaInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: CheckSchema
 // ====================================================
 
