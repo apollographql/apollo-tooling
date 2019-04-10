@@ -14,7 +14,7 @@ import * as t from "@babel/types";
 
 import { CompilerOptions } from "apollo-codegen-core/lib/compiler";
 
-const DEFAULT_FILE_EXTENSION = ".ts";
+const DEFAULT_FILE_EXTENSION = "ts";
 
 const builtInScalarMap = {
   [GraphQLString.name]: t.TSStringKeyword(),

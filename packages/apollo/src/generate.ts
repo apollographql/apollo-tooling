@@ -159,7 +159,7 @@ export default function generate(
         options.globalTypesFile ||
         path.join(
           outputPath,
-          `globalTypes${options.fileExtension ||
+          `globalTypes.${options.fileExtension ||
             TYPESCRIPT_DEFAULT_FILE_EXTENSION}`
         );
       outFiles[globalSourcePath] = {

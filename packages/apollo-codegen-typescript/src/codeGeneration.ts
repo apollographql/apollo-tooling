@@ -93,7 +93,7 @@ function printGlobalImport(
       path.dirname(outputPath),
       path.join(
         path.dirname(globalSourcePath),
-        path.basename(globalSourcePath, fileExtension)
+        path.basename(globalSourcePath, `.${fileExtension}`)
       )
     );
 
@@ -120,7 +120,7 @@ export function generateSource(context: CompilerContext) {
 
     generatedFiles.push({
       sourcePath: operation.filePath,
-      fileName: `${operation.operationName}${context.options.fileExtension ||
+      fileName: `${operation.operationName}.${context.options.fileExtension ||
         DEFAULT_FILE_EXTENSION}`,
       content: new TypescriptGeneratedFile(output)
     });
@@ -167,7 +167,7 @@ export function generateLocalSource(
 
   const operations = Object.values(context.operations).map(operation => ({
     sourcePath: operation.filePath,
-    fileName: `${operation.operationName}${context.options.fileExtension ||
+    fileName: `${operation.operationName}.${context.options.fileExtension ||
       DEFAULT_FILE_EXTENSION}`,
     content: (options?: IGeneratedFileOptions) => {
       generator.fileHeader();
@@ -188,7 +188,7 @@ export function generateLocalSource(
 
   const fragments = Object.values(context.fragments).map(fragment => ({
     sourcePath: fragment.filePath,
-    fileName: `${fragment.fragmentName}${context.options.fileExtension ||
+    fileName: `${fragment.fragmentName}.${context.options.fileExtension ||
       DEFAULT_FILE_EXTENSION}`,
     content: (options?: IGeneratedFileOptions) => {
       generator.fileHeader();

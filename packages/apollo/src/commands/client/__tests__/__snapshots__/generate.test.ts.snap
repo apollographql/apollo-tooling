@@ -421,3 +421,50 @@ export interface SimpleQuery {
 //==============================================================
 "
 `;
+
+exports[`client:codegen writes typescript types for query with client-side data when client schema in js file 2`] = `
+"/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery_complexLocalState {
+  __typename: \\"LocalType\\";
+  someData: string;
+}
+
+export interface SimpleQuery_serverSideField {
+  __typename: \\"ServerField\\";
+  serverData: string;
+  addedLocalData: string;
+}
+
+export interface SimpleQuery_localServerModel {
+  __typename: \\"ServerField\\";
+  serverData: string;
+}
+
+export interface SimpleQuery {
+  hello: string;
+  localState: string;
+  complexLocalState: SimpleQuery_complexLocalState;
+  serverSideField: SimpleQuery_serverSideField;
+  localServerModel: SimpleQuery_localServerModel;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================
+"
+`;
