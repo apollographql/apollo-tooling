@@ -201,11 +201,12 @@ describe("client:codegen", () => {
       "client:codegen",
       "--config=my.config.js",
       "--target=typescript",
-      "--fileExtension=.d.ts",
+      "--fileExtension=d.ts",
       "outDirectory"
     ])
     .it("writes types for typescript with a custom extension", () => {
       const [filePath] = fs.readdirSync("./outDirectory");
+      expect(filePath.endsWith(".d.ts")).toBeTruthy();
       const file = fs.readFileSync(`./outDirectory/${filePath}`).toString();
 
       expect(file).toMatchSnapshot();

@@ -90,11 +90,11 @@ export default class Generate extends ClientCommand {
     // typescript
     globalTypesFile: flags.string({
       description:
-        'By default, TypeScript will put a file named "globalTypes.ts" inside the "output" directory. Set "globalTypesFile" to specify a different path. Alternatively, set "fileExtension" to modify the extension of the file'
+        'By default, TypeScript will put a file named "globalTypes.ts" inside the "output" directory. Set "globalTypesFile" to specify a different path. Alternatively, set "fileExtension" to modify the extension of the file, for example "d.ts" will output "globalTypes.d.ts"'
     }),
     fileExtension: flags.string({
       description:
-        'By default, TypeScript will output ".ts" files. Set "fileExtension" to specify a different file extension'
+        'By default, TypeScript will output "ts" files. Set "fileExtension" to specify a different file extension, for example "d.ts"'
     })
   };
 
