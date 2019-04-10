@@ -197,7 +197,8 @@ export default class Generate extends ClientCommand {
                       flags.mergeInFieldsFromFragmentSpreads,
                     useFlowExactObjects: flags.useFlowExactObjects,
                     useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes,
-                    globalTypesFile: flags.globalTypesFile
+                    globalTypesFile: flags.globalTypesFile,
+                    fileExtension: flags.fileExtension
                   }
                 );
               };
