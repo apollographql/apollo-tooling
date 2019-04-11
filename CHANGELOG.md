@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Update `service:check` output for errors and correct pluralization [#1178](https://github.com/apollographql/apollo-tooling/pull/1178)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -24,6 +24,11 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.8.3`
+
+- `apollo@2.8.3`
+  - Update `service:check` output for errors and correct pluralization [#1178](https://github.com/apollographql/apollo-tooling/pull/1178)
 
 ## `apollo@2.8.2`
 
