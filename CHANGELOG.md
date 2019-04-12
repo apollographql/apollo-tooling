@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Update `client:codegen` to only write generated files once [#1180](https://github.com/apollographql/apollo-tooling/issues/1180) and [#1183](https://github.com/apollographql/apollo-tooling/pull/1183)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
