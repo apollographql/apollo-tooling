@@ -211,7 +211,7 @@ export default class Generate extends ClientCommand {
       const watcher = new Gaze(this.project.config.client.includes);
       watcher.on("all", (event, file) => {
         console.log("\nChange detected, generating types...");
-        this.project.fileDidChange(URI.file(file).toString());
+        run();
       });
       if (tty.isatty((process.stdin as any).fd)) {
         await waitForKey();
