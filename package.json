@@ -80,7 +80,7 @@
     "lint-staged": "8.1.5",
     "memfs": "2.15.2",
     "nock": "10.0.6",
-    "prettier": "1.16.4",
+    "prettier": "1.17.0",
     "symlink-dir": "3.0.2",
     "ts-jest": "24.0.2",
     "ts-node": "8.0.3",
