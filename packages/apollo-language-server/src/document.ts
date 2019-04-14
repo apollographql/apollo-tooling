@@ -14,6 +14,7 @@ import {
   positionFromSourceLocation,
   rangeInContainingDocument
 } from "./utilities/source";
+import { extractTemplateLiterals } from "./utilities/typescript/extraction";
 
 export class GraphQLDocument {
   ast?: DocumentNode;
@@ -79,21 +80,18 @@ function extractGraphQLDocumentsFromJSTemplateLiterals(
 ): GraphQLDocument[] | null {
   const text = document.getText();
 
-  const documents: GraphQLDocument[] = [];
+  const literalTemplates = extractTemplateLiterals(tagName, text);
 
-  const regExp = new RegExp(`${tagName}\\s*\`([\\s\\S]+?)\``, "gm");
-
-  let result;
-  while ((result = regExp.exec(text)) !== null) {
-    const contents = replacePlaceholdersWithWhiteSpace(result[1]);
-    const position = document.positionAt(result.index + 4);
+  const documents = literalTemplates.map(code => {
+    const contents = replacePlaceholdersWithWhiteSpace(code);
+    const position = document.positionAt(text.indexOf(code));
     const locationOffset: SourceLocation = {
-      line: position.line + 1,
-      column: position.character + 1
+      line: position.line,
+      column: position.character
     };
     const source = new Source(contents, document.uri, locationOffset);
-    documents.push(new GraphQLDocument(source));
-  }
+    return new GraphQLDocument(source);
+  });
 
   if (documents.length < 1) return null;
 

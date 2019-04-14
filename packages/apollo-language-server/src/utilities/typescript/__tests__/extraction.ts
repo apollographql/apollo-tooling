@@ -26,7 +26,7 @@ describe("Typescript code extraction", () => {
       expect(templates[0]).toBe("considered");
     });
 
-    it("processes anonymously declared documents ", () => {
+    it("processes anonymously declared documents", () => {
       const source = `
         bar(foo\`foo in function call\`);
 
