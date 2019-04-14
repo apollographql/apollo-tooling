@@ -104,7 +104,8 @@ export class GraphQLDataSource<TContext = any> {
   }
 
   private onErrorLink() {
-    return onError(({ graphQLErrors, networkError }) => {
+    return onError(({ graphQLErrors, networkError, operation }) => {
+      const { result, response } = operation.getContext();
       if (graphQLErrors) {
         graphQLErrors.map(graphqlError =>
           console.error(`[GraphQL error]: ${graphqlError.message}`)
@@ -113,6 +114,10 @@ export class GraphQLDataSource<TContext = any> {
 
       if (networkError) {
         console.log(`[Network Error]: ${networkError}`);
+      }
+
+      if (response && response.status >= 400) {
+        console.log(`[Network Error] ${response.bodyText}`);
       }
     });
   }

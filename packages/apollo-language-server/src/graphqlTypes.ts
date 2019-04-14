@@ -6,12 +6,48 @@
 // GraphQL mutation operation: CheckPartialSchema
 // ====================================================
 
-export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph {
-  __typename: "CompositionResult";
+export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_compositionConfig {
+  __typename: "CompositionConfig";
   /**
    * Hash of the composed schema
    */
   schemaHash: string;
+}
+
+export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_errors {
+  __typename: "SchemaCompositionError";
+  message: string;
+}
+
+export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_warnings {
+  __typename: "SchemaCompositionWarning";
+  message: string;
+}
+
+export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph {
+  __typename: "CompositionResult";
+  /**
+   * The produced composition config. Will be null if there are any errors
+   */
+  compositionConfig: CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_compositionConfig | null;
+  /**
+   * List of errors during composition. Errors mean that Apollo was unable to compose the
+   * graph's implementing services into a GraphQL schema. This partial schema should not be
+   * published to the implementing service if there were any errors encountered
+   */
+  errors: (CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_errors | null)[];
+  /**
+   * List of warnings encountered during composing implementing services into a complete schema.
+   * Though a schema was composed for the graph with the proposed partial schema,
+   * these warnings may indicate undesired behavior or lost information. We recommend that no service
+   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
+   * in its composition result will result in updating the composition config.
+   */
+  warnings: (CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_warnings | null)[];
+  /**
+   * Whether the gateway link was updated.
+   */
+  didUpdateGateway: boolean;
 }
 
 export interface CheckPartialSchema_service {
@@ -60,7 +96,7 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_changes {
   /**
    * Indication of the success of the overall change, either failure, warning, or notice.
    */
-  type: ChangeType;
+  type: ChangeSeverity;
   /**
    * Indication of the kind of target and action of the change, e.g. 'TYPE_REMOVED'.
    */
@@ -88,7 +124,10 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_validationConfig
 
 export interface CheckSchema_service_checkSchema_diffToPrevious {
   __typename: "SchemaDiff";
-  type: ChangeType;
+  /**
+   * Indication of the success of the change, either failure, warning, or notice.
+   */
+  type: ChangeSeverity;
   /**
    * Clients affected by all changes in diff
    */
@@ -296,12 +335,52 @@ export interface SchemaTagsAndFieldStatsVariables {
 // GraphQL mutation operation: UploadAndComposePartialSchema
 // ====================================================
 
-export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition {
-  __typename: "CompositionResult";
+export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_compositionConfig {
+  __typename: "CompositionConfig";
   /**
    * Hash of the composed schema
    */
   schemaHash: string;
+}
+
+export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_errors {
+  __typename: "SchemaCompositionError";
+  message: string;
+}
+
+export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_warnings {
+  __typename: "SchemaCompositionWarning";
+  message: string;
+}
+
+export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition {
+  __typename: "CompositionAndUpsertResult";
+  /**
+   * The produced composition config. Will be null if there are any errors
+   */
+  compositionConfig: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_compositionConfig | null;
+  /**
+   * List of errors during composition. Errors mean that Apollo was unable to compose the
+   * graph's implementing services into a GraphQL schema. This partial schema should not be
+   * published to the implementing service if there were any errors encountered
+   */
+  errors: (UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_errors | null)[];
+  /**
+   * List of warnings encountered during composing implementing services into a complete schema.
+   * Though a schema was composed for the graph with the proposed partial schema,
+   * these warnings may indicate undesired behavior or lost information. We recommend that no service
+   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
+   * in its composition result will result in updating the composition config.
+   */
+  warnings: (UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_warnings | null)[];
+  /**
+   * Whether the gateway link was updated.
+   */
+  didUpdateGateway: boolean;
+  /**
+   * Whether an implementingService was created as part of this mutation
+   */
+  serviceWasCreated: boolean;
 }
 
 export interface UploadAndComposePartialSchema_service {
@@ -328,7 +407,7 @@ export interface UploadAndComposePartialSchemaVariables {
   graphVariant: string;
   name: string;
   url: string;
-  sha: string;
+  revision: string;
   activePartialSchema: PartialSchemaInput;
 }
 
@@ -1364,7 +1443,7 @@ export interface IntrospectionTypeRef {
 // START Enums and Input Objects
 //==============================================================
 
-export enum ChangeType {
+export enum ChangeSeverity {
   FAILURE = "FAILURE",
   NOTICE = "NOTICE",
   WARNING = "WARNING",

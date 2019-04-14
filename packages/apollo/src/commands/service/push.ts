@@ -25,6 +25,18 @@ export default class ServicePush extends ProjectCommand {
       default: false,
       description:
         "Indicates that the schema is a partial schema from a federated service"
+    }),
+    serviceName: flags.string({
+      description:
+        "Provides the name of the implementing service for a federated graph"
+    }),
+    serviceURL: flags.string({
+      description:
+        "Provides the url to the location of the implementing service for a federated graph"
+    }),
+    serviceRevision: flags.string({
+      description:
+        "Provides a unique revision identifier for a change to an implementing service on a federated service push. The default of this is a git sha"
     })
   };
 
@@ -39,6 +51,8 @@ export default class ServicePush extends ProjectCommand {
             throw new Error("No service found to link to Engine");
           }
 
+          gitContext = await gitInfo(this.log);
+
           // handle partial schema uploading
           if (flags.federated) {
             this.log("Fetching info from federated service");
@@ -47,36 +61,48 @@ export default class ServicePush extends ProjectCommand {
             if (!info.sdl)
               throw new Error("No SDL found for federated service");
 
-            if (!info.url)
+            if (!flags.serviceURL && !info.url)
               throw new Error("No URL found for federated service");
 
             /**
              * id: service id for root mutation (graph id)
              * variant: like a tag. prod/staging/etc
              * name: implementing service name inside of the graph
-             * sha: git commit hash/docker id. placeholder for now
+             * revision: git commit hash/docker id. placeholder for now
              */
+
             const {
-              schemaHash
+              compositionConfig,
+              errors,
+              warnings,
+              didUpdateGateway,
+              serviceWasCreated
             } = await project.engine.uploadAndComposePartialSchema({
               id: config.name,
-              graphVariant: config.name,
-              name: info.name,
-              url: info.url,
-              sha: Math.random()
-                .toString()
-                .replace(".", ""),
+              graphVariant: config.tag,
+              name: flags.serviceName || info.name,
+              url: flags.serviceURL || info.url,
+              revision: flags.serviceRevision || gitContext.commit,
               activePartialSchema: {
                 sdl: info.sdl
               }
             });
 
-            console.log({ schemaHash });
+            result = {
+              service: flags.serviceName || info.name,
+              hash: compositionConfig && compositionConfig.schemaHash,
+              tag: config.tag,
+              warnings,
+              errors,
+              serviceWasCreated,
+              didUpdateGateway,
+              graphName: config.name
+            };
+
             return;
           }
 
           const schema = await project.resolveSchema({ tag: flags.tag });
-          gitContext = await gitInfo(this.log);
 
           const { tag, code } = await project.engine.uploadSchema({
             id: config.name,
@@ -101,6 +127,33 @@ export default class ServicePush extends ProjectCommand {
     if (result.code === "NO_CHANGES") {
       this.log("No change in schema from previous version\n");
     }
+    if (result.errors && result.errors.length) {
+      this.error(result.errors.join("\n"));
+    }
+
+    if (result.warnings && result.warnings.length) {
+      this.warn(result.warnings.join("\n"));
+    }
+
+    if (result.serviceWasCreated) {
+      this.log(
+        `A new service called ${result.service} for the graph ${
+          result.graphName
+        } was created`
+      );
+      this.log("\n");
+    }
+
+    if (result.didUpdateGateway) {
+      this.log(
+        `The gateway for the ${
+          result.graphName
+        } graph was updated with a new schema`
+      );
+      this.log("\n");
+      this.log("\n");
+    }
+
     table([result], {
       columns: [
         {

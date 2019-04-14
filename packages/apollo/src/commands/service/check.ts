@@ -8,7 +8,7 @@ import { validateHistoricParams } from "../../utils";
 import {
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
-  ChangeType
+  ChangeSeverity as ChangeType
 } from "apollo-language-server/lib/graphqlTypes";
 import { ApolloConfig, GraphQLServiceProject } from "apollo-language-server";
 import moment from "moment";
@@ -263,7 +263,11 @@ export default class ServiceCheck extends ProjectCommand {
                  * name: implementing service name inside of the graph
                  * sha: git commit hash/docker id. placeholder for now
                  */
-                const { schemaHash } = await project.engine.checkPartialSchema({
+                const {
+                  errors,
+                  warnings,
+                  compositionConfig
+                } = await project.engine.checkPartialSchema({
                   id: config.name,
                   graphVariant: config.name,
                   implementingServiceName: info.name,
@@ -272,7 +276,14 @@ export default class ServiceCheck extends ProjectCommand {
                   }
                 });
 
-                console.log({ schemaHash });
+                if (errors.length) {
+                  this.error(errors.join("\n"));
+                  return;
+                }
+                if (warnings.length) {
+                  this.warn(warnings.join("\n"));
+                }
+
                 return;
               }
 
