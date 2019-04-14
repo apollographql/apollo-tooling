@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.8.4-alpha.0 darwin-x64 node-v10.10.0
+apollo/2.8.4-alpha.1 linux-x64 node-v11.2.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -397,7 +397,12 @@ USAGE
 
 OPTIONS
   -c, --config=config                                            Path to your Apollo config file
+
+  -f, --federated                                                Indicates that the schema is a partial schema from a
+                                                                 federated service
+
   -t, --tag=tag                                                  The published tag to check this service against
+
   --endpoint=endpoint                                            The url of your service
 
   --header=header                                                Additional headers to send to server for
@@ -464,11 +469,18 @@ USAGE
 
 OPTIONS
   -c, --config=config                Path to your Apollo config file
+  -f, --federated                    Indicates that the schema is a partial schema from a federated service
   -t, --tag=tag                      [default: current] The tag to publish this service to
   --endpoint=endpoint                The url of your service
   --header=header                    Additional headers to send to server for introspectionQuery
   --key=key                          The API key for the Apollo Engine service
   --localSchemaFile=localSchemaFile  Path to your local GraphQL schema file (introspection result or SDL)
+  --serviceName=serviceName          Provides the name of the implementing service for a federated graph
+
+  --serviceRevision=serviceRevision  Provides a unique revision identifier for a change to an implementing service on a
+                                     federated service push. The default of this is a git sha
+
+  --serviceURL=serviceURL            Provides the url to the location of the implementing service for a federated graph
 
 ALIASES
   $ apollo schema:publish
