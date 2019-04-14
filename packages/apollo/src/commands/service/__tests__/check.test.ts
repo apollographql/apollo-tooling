@@ -4,7 +4,7 @@ import {
   formatTimePeriod
 } from "../check";
 import checkSchemaResult from "./fixtures/check-schema-result.json";
-import { ChangeType } from "apollo-language-server/lib/graphqlTypes";
+import { ChangeSeverity as ChangeType } from "apollo-language-server/lib/graphqlTypes";
 import chalk from "chalk";
 
 describe("service:check", () => {
