@@ -24,8 +24,6 @@ export class EndpointFederationInfoProvider
       query getFederationInfo {
         _service {
           sdl
-          name
-          url
         }
       }
     `;

@@ -6,18 +6,28 @@ export const UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA = gql`
     $graphVariant: String!
     $name: String!
     $url: String!
-    $sha: String!
+    $revision: String!
     $activePartialSchema: PartialSchemaInput!
   ) {
     service(id: $id) {
       upsertImplementingServiceAndTriggerComposition(
         name: $name
         url: $url
-        sha: $sha
+        revision: $revision
         activePartialSchema: $activePartialSchema
         graphVariant: $graphVariant
       ) {
-        schemaHash
+        compositionConfig {
+          schemaHash
+        }
+        errors {
+          message
+        }
+        warnings {
+          message
+        }
+        didUpdateGateway: updatedGateway
+        serviceWasCreated: wasCreated
       }
     }
   }

@@ -19,7 +19,7 @@ export const CHECK_SCHEMA = gql`
       ) {
         targetUrl
         diffToPrevious {
-          type
+          type: severity
           affectedClients {
             __typename
           }
@@ -28,7 +28,7 @@ export const CHECK_SCHEMA = gql`
           }
           numberOfCheckedOperations
           changes {
-            type
+            type: severity
             code
             description
           }
