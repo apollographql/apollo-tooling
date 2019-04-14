@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Add ability to ignore some inline documents in typescript codegen by prefixing with a `// @codegen-ignore` comment. [#1191](https://github.com/apollographql/apollo-tooling/pull/1191)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
