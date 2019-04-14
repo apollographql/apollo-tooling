@@ -41,6 +41,7 @@
     "moment": "^2.22.2",
     "recursive-readdir": "^2.2.2",
     "subscriptions-transport-ws": "^0.9.15",
+    "typescript": "^3.4.3",
     "vscode-languageserver": "^5.1.0",
     "vscode-uri": "^1.0.6",
     "ws": "^6.1.0"
