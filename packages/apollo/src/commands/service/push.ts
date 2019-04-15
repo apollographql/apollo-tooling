@@ -5,6 +5,7 @@ import { introspectionFromSchema } from "graphql";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
 import { GraphQLServiceProject } from "apollo-language-server";
+import chalk from "chalk";
 
 export default class ServicePush extends ProjectCommand {
   static aliases = ["schema:publish"];
@@ -42,6 +43,7 @@ export default class ServicePush extends ProjectCommand {
 
   async run() {
     let result;
+    let isFederated;
     let gitContext;
     await this.runTasks(({ flags, project, config }) => [
       {
@@ -50,6 +52,8 @@ export default class ServicePush extends ProjectCommand {
           if (!config.name) {
             throw new Error("No service found to link to Engine");
           }
+
+          isFederated = flags.federated;
 
           gitContext = await gitInfo(this.log);
 
@@ -127,20 +131,39 @@ export default class ServicePush extends ProjectCommand {
     if (result.code === "NO_CHANGES") {
       this.log("No change in schema from previous version\n");
     }
-    if (result.errors && result.errors.length) {
-      this.error(result.errors.join("\n"));
-    }
 
-    if (result.warnings && result.warnings.length) {
-      this.warn(result.warnings.join("\n"));
-    }
+    const { errors, warnings } = result;
+    if ((errors && errors.length) || (warnings && warnings.length)) {
+      let printed = "";
 
-    if (result.serviceWasCreated) {
-      this.log(
-        `A new service called ${result.service} for the graph ${
-          result.graphName
-        } was created`
-      );
+      const messages = [
+        ...errors.map(({ message }) => ({
+          type: chalk.red("Error"),
+          description: message
+        })),
+        // Add an empty line between, but only if there are both breaking changes and non-breaking changes.
+        warnings.length && errors.length ? {} : null,
+        ...warnings.map(({ message }) => ({
+          type: chalk.yellow("Warning"),
+          description: message
+        }))
+      ].filter(x => x !== null);
+
+      table(messages, {
+        columns: [
+          { key: "type", label: "Change" },
+          { key: "description", label: "Description" }
+        ],
+        // Override `printHeader` so we don't print a header
+        printHeader: () => {},
+        // The default `printLine` will output to the console; we want to capture the output so we can test
+        // it.
+        printLine: line => {
+          printed += `\n${line}`;
+        }
+      });
+
+      this.log(printed);
       this.log("\n");
     }
 
@@ -148,23 +171,31 @@ export default class ServicePush extends ProjectCommand {
       this.log(
         `The gateway for the ${
           result.graphName
-        } graph was updated with a new schema`
+        } graph was updated with a new schema\n`
       );
-      this.log("\n");
-      this.log("\n");
     }
 
-    table([result], {
-      columns: [
-        {
-          key: "hash",
-          label: "id",
-          format: (hash: string) => hash.slice(0, 6)
-        },
-        { key: "service", label: "schema" },
-        { key: "tag" }
-      ]
-    });
-    this.log("\n");
+    if (result.serviceWasCreated) {
+      this.log(
+        `A new service called ${result.service} for the graph ${
+          result.graphName
+        } was created\n`
+      );
+    }
+
+    if (!isFederated) {
+      table([result], {
+        columns: [
+          {
+            key: "hash",
+            label: "id",
+            format: (hash: string) => hash.slice(0, 6)
+          },
+          { key: "service", label: "schema" },
+          { key: "tag" }
+        ]
+      });
+      this.log("\n");
+    }
   }
 }

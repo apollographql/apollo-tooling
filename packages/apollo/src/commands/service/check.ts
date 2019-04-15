@@ -227,6 +227,10 @@ export default class ServiceCheck extends ProjectCommand {
       default: false,
       description:
         "Indicates that the schema is a partial schema from a federated service"
+    }),
+    serviceName: flags.string({
+      description:
+        "Provides the name of the implementing service for a federated graph"
     })
   };
 
@@ -254,9 +258,6 @@ export default class ServiceCheck extends ProjectCommand {
                 if (!info.sdl)
                   throw new Error("No SDL found for federated service");
 
-                if (!info.url)
-                  throw new Error("No URL found for federated service");
-
                 /**
                  * id: service id for root mutation (graph id)
                  * variant: like a tag. prod/staging/etc
@@ -269,16 +270,16 @@ export default class ServiceCheck extends ProjectCommand {
                   compositionConfig
                 } = await project.engine.checkPartialSchema({
                   id: config.name,
-                  graphVariant: config.name,
-                  implementingServiceName: info.name,
+                  graphVariant: config.tag,
+                  implementingServiceName: flags.serviceName || info.name,
                   partialSchema: {
                     sdl: info.sdl
                   }
                 });
 
+                // FIXME: reformat to match other check results
                 if (errors.length) {
                   this.error(errors.join("\n"));
-                  return;
                 }
                 if (warnings.length) {
                   this.warn(warnings.join("\n"));
