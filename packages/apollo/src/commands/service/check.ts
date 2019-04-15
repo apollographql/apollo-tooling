@@ -13,13 +13,18 @@ import {
 import { ApolloConfig, GraphQLServiceProject } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
+import stripANSI from "strip-ansi";
 
 function pluralize(
-  quantity: number | null,
+  quantity: string | number | null,
   singular: string,
   plural: string = `${singular}s`
 ) {
-  return `${quantity} ${quantity === 1 ? singular : plural}`;
+  // Strip ansi color from `quantity` if it's a string
+  const strippedQuantity =
+    typeof quantity === "string" ? parseInt(stripANSI(quantity), 0) : quantity;
+
+  return `${quantity} ${strippedQuantity === 1 ? singular : plural}`;
 }
 
 const formatChange = (change: Change) => {
