@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.8.4-alpha.2 linux-x64 node-v11.2.0
+apollo/2.8.4-alpha.3 linux-x64 node-v11.2.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -422,6 +422,9 @@ OPTIONS
                                                                  a query to be considered, relative to total request
                                                                  count. Expected values are between 0 and 0.05 (minimum
                                                                  5% of total request volume)
+
+  --serviceName=serviceName                                      Provides the name of the implementing service for a
+                                                                 federated graph
 
   --validationPeriod=validationPeriod                            The size of the time window with which to validate the
                                                                  schema against. You may provide a number (in seconds),
