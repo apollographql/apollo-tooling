@@ -11,7 +11,7 @@ export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingS
   /**
    * Hash of the composed schema
    */
-  schemaHash: string;
+  schemaHash: string | null;
 }
 
 export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_errors {
@@ -52,11 +52,11 @@ export interface CheckPartialSchema_service {
   __typename: "ServiceMutation";
   /**
    * This mutation will not result in any changes to the implementing service
-   *
+   * 
    * Run composition with the Implementing Service's partial schema replaced with the one provided
    * in the mutation's input. Store the composed schema, return the hash of the composed schema,
    * and any warnings and errors pertaining to composition.
-   *
+   * 
    * This mutation will not run validation against operations.
    */
   validatePartialSchemaOfImplementingServiceAgainstGraph: CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph;
@@ -165,11 +165,11 @@ export interface CheckSchema_service {
   /**
    * Validate, diff, and store a schema so the diff can be viewed by users in the UI.
    * This mutation will not mark the schema as "published".
-   *
+   * 
    * One of "proposedSchema" or "proposedSchemaHash" must be provided.
    * If both are provided, the computed schema hash will be compared with the input hash,
    * an error will be returned if the hashes don't match.
-   *
+   * 
    * If the "proposedSchemaHash" is specified, the already stored schema will be loaded.
    */
   checkSchema: CheckSchema_service_checkSchema;
@@ -220,19 +220,15 @@ export interface RegisterOperationsVariables {
 // GraphQL mutation operation: RemoveServiceAndCompose
 // ====================================================
 
-export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServices {
-  __typename: "FederatedImplementingService";
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServiceLocations {
+  __typename: "ImplementingServiceLocation";
   /**
-   * Identifies which graph this implementing service belongs to.
-   * Formerly known as "service_id"
+   * The name of the implementing service
    */
-  graphID: string;
-  /**
-   * Specifies which variant of a graph this implementing service belongs to".
-   * Formerly known as "tag"
-   */
-  graphVariant: string;
   name: string;
+  /**
+   * The path in storage to access the implementing service config file
+   */
   path: string;
 }
 
@@ -241,10 +237,10 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
   /**
    * List of implementing services that comprise a composed graph
    */
-  implementingServices: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServices[];
+  implementingServiceLocations: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServiceLocations[];
 }
 
-export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors_location {
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors_locations {
   __typename: "SourceLocation";
   column: number;
   line: number;
@@ -252,11 +248,11 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
 
 export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors {
   __typename: "SchemaCompositionError";
-  location: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors_location;
+  locations: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors_locations | null)[];
   message: string;
 }
 
-export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_location {
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_locations {
   __typename: "SourceLocation";
   column: number;
   line: number;
@@ -264,12 +260,12 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
 
 export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings {
   __typename: "SchemaCompositionWarning";
-  location: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_location;
+  locations: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_locations | null)[];
   message: string;
 }
 
 export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition {
-  __typename: "CompositionResult";
+  __typename: "CompositionAndRemoveResult";
   /**
    * The produced composition config. Will be null if there are any errors
    */
@@ -486,10 +482,10 @@ export interface UploadAndComposePartialSchema_service {
   /**
    * Creates or updates an implementing service of a given "name" on the graph variant, then
    * updates the graph variant's composition configs/artifacts to reflect these changes.
-   *
+   * 
    * An enriched SDL of the implementing service can be uploaded
    * via "implementingServiceConfiguration.partialSchema.partialSchemaSDL".
-   *
+   * 
    * Alternatively, previously uploaded partial schema could be re-associated with the
    * implementing service via "implementingServiceConfiguration.partialSchema.partialSchemaHash".
    */
@@ -1693,10 +1689,10 @@ export interface OperationDocumentInput {
 /**
  * Input for registering a partial schema to an implementing service.
  * One of the fields must be specified (validated server-side).
- *
+ * 
  * If a new partialSchemaSDL is passed in, this operation will store it before
  * creating the association.
- *
+ * 
  * If both the sdl and hash are specified, an error will be thrown if the provided
  * hash doesn't match our hash of the sdl contents
  */

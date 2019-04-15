@@ -9,8 +9,7 @@ export default class ServiceDelete extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The variant of the service to delete",
-      default: "current"
+      description: "The variant of the service to delete"
     }),
     federated: flags.boolean({
       char: "f",
@@ -41,20 +40,21 @@ export default class ServiceDelete extends ProjectCommand {
             );
           }
 
+          const graphVariant = flags.tag || config.tag || "current";
+
           const {
-            // compositionConfig,
             errors,
             warnings,
             updatedGateway
           } = await project.engine.removeServiceAndCompose({
             id: config.name,
-            graphVariant: flags.tag || config.tag,
-            name: flags.serviceName // XXX should this also use queried service info?
+            graphVariant,
+            name: flags.serviceName
           });
 
           result = {
             serviceName: flags.serviceName,
-            graphVariant: config.tag,
+            graphVariant,
             graphName: config.name,
             warnings,
             errors,
@@ -69,11 +69,11 @@ export default class ServiceDelete extends ProjectCommand {
     this.log("\n");
 
     if (result.errors && result.errors.length) {
-      this.error(result.errors.join("\n"));
+      this.error(result.errors.map(error => error.message).join("\n"));
     }
 
     if (result.warnings && result.warnings.length) {
-      this.warn(result.warnings.join("\n"));
+      this.warn(result.warnings.map(warning => warning.message).join("\n"));
     }
 
     if (result.updatedGateway) {

@@ -18,14 +18,14 @@ export const REMOVE_SERVICE_AND_COMPOSE = gql`
           }
         }
         errors {
-          location {
+          locations {
             column
             line
           }
           message
         }
         warnings {
-          location {
+          locations {
             column
             line
           }
