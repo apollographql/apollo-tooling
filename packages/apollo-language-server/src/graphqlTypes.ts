@@ -52,11 +52,11 @@ export interface CheckPartialSchema_service {
   __typename: "ServiceMutation";
   /**
    * This mutation will not result in any changes to the implementing service
-   * 
+   *
    * Run composition with the Implementing Service's partial schema replaced with the one provided
    * in the mutation's input. Store the composed schema, return the hash of the composed schema,
    * and any warnings and errors pertaining to composition.
-   * 
+   *
    * This mutation will not run validation against operations.
    */
   validatePartialSchemaOfImplementingServiceAgainstGraph: CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph;
@@ -165,11 +165,11 @@ export interface CheckSchema_service {
   /**
    * Validate, diff, and store a schema so the diff can be viewed by users in the UI.
    * This mutation will not mark the schema as "published".
-   * 
+   *
    * One of "proposedSchema" or "proposedSchemaHash" must be provided.
    * If both are provided, the computed schema hash will be compared with the input hash,
    * an error will be returned if the hashes don't match.
-   * 
+   *
    * If the "proposedSchemaHash" is specified, the already stored schema will be loaded.
    */
   checkSchema: CheckSchema_service_checkSchema;
@@ -210,6 +210,106 @@ export interface RegisterOperationsVariables {
   clientIdentity: RegisteredClientIdentityInput;
   operations: RegisteredOperationInput[];
   manifestVersion: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: RemoveServiceAndCompose
+// ====================================================
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServices {
+  __typename: "FederatedImplementingService";
+  /**
+   * Identifies which graph this implementing service belongs to.
+   * Formerly known as "service_id"
+   */
+  graphID: string;
+  /**
+   * Specifies which variant of a graph this implementing service belongs to".
+   * Formerly known as "tag"
+   */
+  graphVariant: string;
+  name: string;
+  path: string;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig {
+  __typename: "CompositionConfig";
+  /**
+   * List of implementing services that comprise a composed graph
+   */
+  implementingServices: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServices[];
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors_location {
+  __typename: "SourceLocation";
+  column: number;
+  line: number;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors {
+  __typename: "SchemaCompositionError";
+  location: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors_location;
+  message: string;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_location {
+  __typename: "SourceLocation";
+  column: number;
+  line: number;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings {
+  __typename: "SchemaCompositionWarning";
+  location: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_location;
+  message: string;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition {
+  __typename: "CompositionResult";
+  /**
+   * The produced composition config. Will be null if there are any errors
+   */
+  compositionConfig: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig | null;
+  /**
+   * List of errors during composition. Errors mean that Apollo was unable to compose the
+   * graph's implementing services into a GraphQL schema. This partial schema should not be
+   * published to the implementing service if there were any errors encountered
+   */
+  errors: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors | null)[];
+  /**
+   * List of warnings encountered during composing implementing services into a complete schema.
+   * Though a schema was composed for the graph with the proposed partial schema,
+   * these warnings may indicate undesired behavior or lost information. We recommend that no service
+   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
+   * in its composition result will result in updating the composition config.
+   */
+  warnings: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings | null)[];
+  /**
+   * Whether the gateway link was updated.
+   */
+  updatedGateway: boolean;
+}
+
+export interface RemoveServiceAndCompose_service {
+  __typename: "ServiceMutation";
+  /**
+   * Remove an implementing service from a graph and update its service list manifest
+   */
+  removeImplementingServiceAndTriggerComposition: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition;
+}
+
+export interface RemoveServiceAndCompose {
+  service: RemoveServiceAndCompose_service | null;
+}
+
+export interface RemoveServiceAndComposeVariables {
+  id: string;
+  graphVariant: string;
+  name: string;
 }
 
 /* tslint:disable */
@@ -386,10 +486,10 @@ export interface UploadAndComposePartialSchema_service {
   /**
    * Creates or updates an implementing service of a given "name" on the graph variant, then
    * updates the graph variant's composition configs/artifacts to reflect these changes.
-   * 
+   *
    * An enriched SDL of the implementing service can be uploaded
    * via "implementingServiceConfiguration.partialSchema.partialSchemaSDL".
-   * 
+   *
    * Alternatively, previously uploaded partial schema could be re-associated with the
    * implementing service via "implementingServiceConfiguration.partialSchema.partialSchemaHash".
    */
@@ -1593,10 +1693,10 @@ export interface OperationDocumentInput {
 /**
  * Input for registering a partial schema to an implementing service.
  * One of the fields must be specified (validated server-side).
- * 
+ *
  * If a new partialSchemaSDL is passed in, this operation will store it before
  * creating the association.
- * 
+ *
  * If both the sdl and hash are specified, an error will be thrown if the provided
  * hash doesn't match our hash of the sdl contents
  */

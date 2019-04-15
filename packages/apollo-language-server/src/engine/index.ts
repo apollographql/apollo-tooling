@@ -7,6 +7,7 @@ import { REGISTER_OPERATIONS } from "./operations/registerOperations";
 import { SCHEMA_TAGS_AND_FIELD_STATS } from "./operations/schemaTagsAndFieldStats";
 import { UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA } from "./operations/uploadAndComposePartialSchema";
 import { CHECK_PARTIAL_SCHEMA } from "./operations/checkPartialSchema";
+import { REMOVE_SERVICE_AND_COMPOSE } from "./operations/removeServiceAndCompose";
 import {
   CheckSchema,
   CheckSchemaVariables,
@@ -22,7 +23,9 @@ import {
   SchemaTagInfo,
   SchemaTagInfoVariables,
   CheckPartialSchema,
-  CheckPartialSchemaVariables
+  CheckPartialSchemaVariables,
+  RemoveServiceAndCompose,
+  RemoveServiceAndComposeVariables
 } from "../graphqlTypes";
 import { SCHEMA_TAG_INFO_QUERY } from "./operations/schemaTagInfo";
 
@@ -170,6 +173,25 @@ export class ApolloEngineClient extends GraphQLDataSource {
       }
       return data.service
         .validatePartialSchemaOfImplementingServiceAgainstGraph;
+    });
+  }
+
+  public async removeServiceAndCompose(
+    variables: RemoveServiceAndComposeVariables
+  ) {
+    return this.execute<RemoveServiceAndCompose>({
+      query: REMOVE_SERVICE_AND_COMPOSE,
+      variables
+    }).then(({ data, errors }) => {
+      if (errors) {
+        throw new Error(errors.map(error => error.message).join("\n"));
+      }
+
+      if (!data || !data.service) {
+        throw new Error("Error in request from Engine");
+      }
+
+      return data.service.removeImplementingServiceAndTriggerComposition;
     });
   }
 
