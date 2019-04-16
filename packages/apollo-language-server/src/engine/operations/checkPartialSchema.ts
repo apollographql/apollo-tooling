@@ -13,7 +13,7 @@ export const CHECK_PARTIAL_SCHEMA = gql`
         implementingServiceName: $implementingServiceName
         partialSchema: $partialSchema
       ) {
-        compositionConfig {
+        compositionValidationDetails {
           schemaHash
         }
         errors {
@@ -22,7 +22,6 @@ export const CHECK_PARTIAL_SCHEMA = gql`
         warnings {
           message
         }
-        didUpdateGateway: updatedGateway
       }
     }
   }
