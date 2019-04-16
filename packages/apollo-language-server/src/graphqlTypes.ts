@@ -181,7 +181,8 @@ export interface CheckSchema {
 
 export interface CheckSchemaVariables {
   id: string;
-  schema: IntrospectionSchemaInput;
+  schema?: IntrospectionSchemaInput | null;
+  schemaHash?: string | null;
   tag?: string | null;
   gitContext?: GitContextInput | null;
   historicParameters?: HistoricQueryParameters | null;
