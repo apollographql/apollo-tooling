@@ -86,7 +86,10 @@ export default class ServicePush extends ProjectCommand {
               graphVariant: config.tag,
               name: flags.serviceName || info.name,
               url: flags.serviceURL || info.url,
-              revision: flags.serviceRevision || gitContext.commit,
+              revision:
+                flags.serviceRevision ||
+                (gitContext && gitContext.commit) ||
+                "",
               activePartialSchema: {
                 sdl: info.sdl
               }

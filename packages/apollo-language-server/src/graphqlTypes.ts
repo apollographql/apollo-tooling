@@ -11,7 +11,7 @@ export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingS
   /**
    * Hash of the composed schema
    */
-  schemaHash: string;
+  schemaHash: string | null;
 }
 
 export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_errors {
@@ -224,6 +224,102 @@ export interface RegisterOperationsVariables {
   clientIdentity: RegisteredClientIdentityInput;
   operations: RegisteredOperationInput[];
   manifestVersion: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: RemoveServiceAndCompose
+// ====================================================
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServiceLocations {
+  __typename: "ImplementingServiceLocation";
+  /**
+   * The name of the implementing service
+   */
+  name: string;
+  /**
+   * The path in storage to access the implementing service config file
+   */
+  path: string;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig {
+  __typename: "CompositionConfig";
+  /**
+   * List of implementing services that comprise a composed graph
+   */
+  implementingServiceLocations: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServiceLocations[];
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors_locations {
+  __typename: "SourceLocation";
+  column: number;
+  line: number;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors {
+  __typename: "SchemaCompositionError";
+  locations: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors_locations | null)[];
+  message: string;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_locations {
+  __typename: "SourceLocation";
+  column: number;
+  line: number;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings {
+  __typename: "SchemaCompositionWarning";
+  locations: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_locations | null)[];
+  message: string;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition {
+  __typename: "CompositionAndRemoveResult";
+  /**
+   * The produced composition config. Will be null if there are any errors
+   */
+  compositionConfig: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig | null;
+  /**
+   * List of errors during composition. Errors mean that Apollo was unable to compose the
+   * graph's implementing services into a GraphQL schema. This partial schema should not be
+   * published to the implementing service if there were any errors encountered
+   */
+  errors: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors | null)[];
+  /**
+   * List of warnings encountered during composing implementing services into a complete schema.
+   * Though a schema was composed for the graph with the proposed partial schema,
+   * these warnings may indicate undesired behavior or lost information. We recommend that no service
+   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
+   * in its composition result will result in updating the composition config.
+   */
+  warnings: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings | null)[];
+  /**
+   * Whether the gateway link was updated.
+   */
+  updatedGateway: boolean;
+}
+
+export interface RemoveServiceAndCompose_service {
+  __typename: "ServiceMutation";
+  /**
+   * Remove an implementing service from a graph and update its service list manifest
+   */
+  removeImplementingServiceAndTriggerComposition: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition;
+}
+
+export interface RemoveServiceAndCompose {
+  service: RemoveServiceAndCompose_service | null;
+}
+
+export interface RemoveServiceAndComposeVariables {
+  id: string;
+  graphVariant: string;
+  name: string;
 }
 
 /* tslint:disable */
