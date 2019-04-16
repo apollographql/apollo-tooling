@@ -6,8 +6,8 @@
 // GraphQL mutation operation: CheckPartialSchema
 // ====================================================
 
-export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_compositionConfig {
-  __typename: "CompositionConfig";
+export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_compositionValidationDetails {
+  __typename: "CompositionValidationDetails";
   /**
    * Hash of the composed schema
    */
@@ -25,11 +25,13 @@ export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingS
 }
 
 export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph {
-  __typename: "CompositionResult";
+  __typename: "CompositionValidationResult";
   /**
-   * The produced composition config. Will be null if there are any errors
+   * Akin to a composition config, represents the partial schemas and implementing services that were used
+   * in running composition. Will be null if any errors are encountered. Also may contain a schema hash if
+   * one could be computed, which can be used for schema validation.
    */
-  compositionConfig: CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_compositionConfig | null;
+  compositionValidationDetails: CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_compositionValidationDetails | null;
   /**
    * List of errors during composition. Errors mean that Apollo was unable to compose the
    * graph's implementing services into a GraphQL schema. This partial schema should not be
@@ -44,10 +46,6 @@ export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingS
    * in its composition result will result in updating the composition config.
    */
   warnings: (CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_warnings | null)[];
-  /**
-   * Whether the gateway link was updated.
-   */
-  didUpdateGateway: boolean;
 }
 
 export interface CheckPartialSchema_service {
