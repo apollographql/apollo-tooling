@@ -88,7 +88,7 @@ interface TasksOutput {
   federation?: {
     errors: ({ message: string } | null)[];
     warnings: ({ message: string } | null)[];
-    schemaHash?: string;
+    schemaHash?: string | null;
   };
 }
 
