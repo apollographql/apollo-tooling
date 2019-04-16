@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.8.4-alpha.3 linux-x64 node-v11.2.0
+apollo/2.8.4-alpha.4 darwin-x64 node-v8.11.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -43,6 +43,7 @@ USAGE
 * [`apollo plugins:uninstall PLUGIN...`](#apollo-pluginsuninstall-plugin)
 * [`apollo plugins:update`](#apollo-pluginsupdate)
 * [`apollo service:check`](#apollo-servicecheck)
+* [`apollo service:delete`](#apollo-servicedelete)
 * [`apollo service:download OUTPUT`](#apollo-servicedownload-output)
 * [`apollo service:push`](#apollo-servicepush)
 
@@ -436,6 +437,26 @@ ALIASES
 ```
 
 _See code: [src/commands/service/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/check.ts)_
+
+## `apollo service:delete`
+
+Delete a federated service from Engine and recompose remaining services
+
+```
+USAGE
+  $ apollo service:delete
+
+OPTIONS
+  -c, --config=config        Path to your Apollo config file
+  -f, --federated            Indicates that the schema is a partial schema from a federated service
+  -t, --tag=tag              The variant of the service to delete
+  --endpoint=endpoint        The url of your service
+  --header=header            Additional headers to send to server for introspectionQuery
+  --key=key                  The API key for the Apollo Engine service
+  --serviceName=serviceName  (required) Provides the name of the implementing service for a federated graph
+```
+
+_See code: [src/commands/service/delete.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/delete.ts)_
 
 ## `apollo service:download OUTPUT`
 
