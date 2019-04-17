@@ -55,6 +55,9 @@ export function visitWithTypeInfo(
       if (fn) {
         result = fn.apply(visitor, (arguments as unknown) as applyArg);
       }
+      // XXX we can't replace this function until we handle this
+      // case better. If we replace with the function in `graphql-js`,
+      // it breaks onHover types
       if (result !== BREAK) {
         typeInfo.leave(node);
       }
