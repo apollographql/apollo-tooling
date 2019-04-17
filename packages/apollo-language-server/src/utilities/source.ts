@@ -5,13 +5,63 @@ import {
   visit,
   BREAK,
   TypeInfo,
-  GraphQLSchema
+  GraphQLSchema,
+  getVisitFn,
+  GraphQLType,
+  Visitor,
+  ASTKindToNode
 } from "graphql";
 import { SourceLocation, getLocation } from "graphql/language/location";
 
 import { Position, Range } from "vscode-languageserver";
 
-import { visitWithTypeInfo } from "graphql";
+import { isNode } from "./graphql";
+
+// XXX temp fix to silence ts errors with `apply`
+type applyArg = [
+  any,
+  string | number | undefined,
+  any,
+  readonly (string | number)[],
+  readonly any[]
+];
+
+/**
+ * Creates a new visitor instance which maintains a provided TypeInfo instance
+ * along with visiting visitor.
+ */
+export function visitWithTypeInfo(
+  typeInfo: TypeInfo,
+  visitor: Visitor<ASTKindToNode>
+): Visitor<ASTKindToNode> {
+  return {
+    enter(node: ASTNode) {
+      typeInfo.enter(node);
+      const fn = getVisitFn(visitor, node.kind, /* isLeaving */ false);
+      if (fn) {
+        const result = fn.apply(visitor, (arguments as unknown) as applyArg);
+        if (result !== undefined) {
+          typeInfo.leave(node);
+          if (isNode(result)) {
+            typeInfo.enter(result);
+          }
+        }
+        return result;
+      }
+    },
+    leave(node: ASTNode) {
+      const fn = getVisitFn(visitor, node.kind, /* isLeaving */ true);
+      let result;
+      if (fn) {
+        result = fn.apply(visitor, (arguments as unknown) as applyArg);
+      }
+      if (result !== BREAK) {
+        typeInfo.leave(node);
+      }
+      return result;
+    }
+  };
+}
 
 export function positionFromPositionInContainingDocument(
   source: Source,
