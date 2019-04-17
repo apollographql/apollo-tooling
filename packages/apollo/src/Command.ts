@@ -71,7 +71,8 @@ export abstract class ProjectCommand extends Command {
         const value = header.substring(separatorIndex + 1).trim();
         return JSON.stringify({ [key]: value });
       },
-      description: "Additional headers to send to server for introspectionQuery"
+      description:
+        "Additional header to send to server for introspectionQuery. May be used multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag."
     }),
     endpoint: flags.string({
       description: "The url of your service"
