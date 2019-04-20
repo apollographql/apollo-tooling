@@ -68,7 +68,7 @@
     "@types/lodash.sortby": "4.7.6",
     "@types/minimatch": "3.0.3",
     "@types/nock": "9.3.1",
-    "@types/node": "8.10.45",
+    "@types/node": "8.10.46",
     "@types/node-fetch": "2.3.2",
     "@types/recursive-readdir": "2.2.0",
     "@types/ws": "6.0.1",
