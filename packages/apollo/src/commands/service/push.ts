@@ -51,7 +51,9 @@ export default class ServicePush extends ProjectCommand {
         title: "Uploading service to Engine",
         task: async () => {
           if (!config.name) {
-            throw new Error("No service found to link to Engine");
+            throw new Error(
+              "Cannot find a service name. Try adding a service name or API key."
+            );
           }
 
           if (flags.federated) {

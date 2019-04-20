@@ -42,7 +42,7 @@ export default class ClientCheck extends ClientCommand {
           task: async ctx => {
             if (!config.name) {
               throw new Error(
-                "No service found to link to Engine. Engine is required for this command."
+                "Cannot find a service name. Try adding a service name or API key."
               );
             }
             ctx.gitContext = await gitInfo(this.log);

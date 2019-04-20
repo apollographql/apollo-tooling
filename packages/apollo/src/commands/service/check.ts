@@ -308,7 +308,9 @@ export default class ServiceCheck extends ProjectCommand {
           const serviceName: string | undefined = flags.serviceName;
 
           if (!graphName) {
-            throw new Error("No service found to link to Engine");
+            throw new Error(
+              "Cannot find service name. Try adding a service name or API key."
+            );
           }
 
           // Add some fields to output that are required for producing
