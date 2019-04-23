@@ -59,7 +59,7 @@
     "@types/babel__generator": "7.0.2",
     "@types/common-tags": "1.8.0",
     "@types/cosmiconfig": "5.0.3",
-    "@types/glob": "^7.1.1",
+    "@types/glob": "7.1.1",
     "@types/graphql": "14.2.0",
     "@types/inflected": "1.1.29",
     "@types/jest": "24.0.11",
