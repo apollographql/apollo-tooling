@@ -221,7 +221,7 @@ export default class ServiceCheck extends ProjectCommand {
     json: flags.boolean({
       description:
         "Output result in json, which can then be parsed by CLI tools such as jq.",
-        exclusive: ["markdown"]
+      exclusive: ["markdown"]
     }),
     localSchemaFile: flags.string({
       description:
