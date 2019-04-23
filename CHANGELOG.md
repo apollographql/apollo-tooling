@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Support local schema files in service:check [#1118](https://github.com/apollographql/apollo-tooling/pull/1116)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -78,7 +78,6 @@
 
 - `apollo@2.6.1`
   - JSON flag for service:check output [#1079](https://github.com/apollographql/apollo-tooling/pull/1079)
-  - Support local schema files in service:check [#1118](https://github.com/apollographql/apollo-tooling/pull/1116)
 - `apollo-env@0.4.0`
   - Add environment-aware createHash function to apollo-env [#1110](https://github.com/apollographql/apollo-tooling/pull/1110)
 
