@@ -348,7 +348,7 @@ describe("client:codegen", () => {
       "--config=my.config.js",
       "--target=flow",
       "--outputFlat",
-      "--useFlowReadOnlyTypes",
+      "--useReadOnlyTypes",
       "__tmp__API.js"
     ])
     .it("writes read-only Flow types when the flag is set", () => {

@@ -17,7 +17,7 @@ export type ObjectProperty = {
 };
 
 export interface TypescriptCompilerOptions extends CompilerOptions {
-  // Leaving this open for Typescript only compiler options
+  useReadOnlyTypes: boolean;
 }
 
 export default class TypescriptGenerator {
@@ -105,6 +105,10 @@ export default class TypescriptGenerator {
       // TODO: Check if this works
       propertySignatureType.optional =
         keyInheritsNullability && this.isNullableType(type);
+
+      if (this.options.useReadOnlyTypes) {
+        propertySignatureType.readonly = true;
+      }
 
       if (description) {
         propertySignatureType.leadingComments = [

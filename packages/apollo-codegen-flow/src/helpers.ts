@@ -23,13 +23,13 @@ const builtInScalarMap = {
 };
 
 export interface FlowCompilerOptions extends CompilerOptions {
-  useFlowReadOnlyTypes: boolean;
+  useReadOnlyTypes: boolean;
 }
 
 export function createTypeAnnotationFromGraphQLTypeFunction(
   compilerOptions: FlowCompilerOptions
 ): Function {
-  const arrayType = compilerOptions.useFlowReadOnlyTypes
+  const arrayType = compilerOptions.useReadOnlyTypes
     ? "$ReadOnlyArray"
     : "Array";
 

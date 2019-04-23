@@ -25,13 +25,21 @@ const builtInScalarMap = {
 export function createTypeFromGraphQLTypeFunction(
   compilerOptions: CompilerOptions
 ): (graphQLType: GraphQLType, typeName?: string) => t.TSType {
+  const ArrayType = compilerOptions.useReadOnlyTypes
+    ? (e: t.TSType) =>
+        t.TSTypeReference(
+          t.identifier("ReadonlyArray"),
+          t.TSTypeParameterInstantiation([e])
+        )
+    : (e: t.TSType) => t.TSArrayType(e);
+
   function nonNullableTypeFromGraphQLType(
     graphQLType: GraphQLType,
     typeName?: string
   ): t.TSType {
     if (isListType(graphQLType)) {
       const elementType = typeFromGraphQLType(graphQLType.ofType, typeName);
-      return t.TSArrayType(
+      return ArrayType(
         t.isTSUnionType(elementType)
           ? t.TSParenthesizedType(elementType)
           : elementType
