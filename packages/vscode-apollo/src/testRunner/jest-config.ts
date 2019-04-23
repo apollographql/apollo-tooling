@@ -7,10 +7,7 @@ export const config = {
   moduleFileExtensions: ["ts", "js"],
   rootDir: resolve(__dirname, "..", "..", "src"),
   testEnvironment: resolve(__dirname, "jest-vscode-environment.js"),
-  setupTestFrameworkScriptFile: resolve(
-    __dirname,
-    "jest-vscode-framework-setup.js"
-  ),
+  setupFilesAfterEnv: [resolve(__dirname, "jest-vscode-framework-setup.js")],
   globals: {
     "ts-jest": {
       tsConfig: resolve(__dirname, "..", "..", "tsconfig.test.json"),

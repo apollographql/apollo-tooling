@@ -13,9 +13,8 @@
       ]
     },
     {
-      "packageNames": ["@oclif/config"],
-      "rangeStrategy": "pin",
-      "allowedVersions": ["=1.12.0"]
+      "packageNames": ["@types/node"],
+      "allowedVersions": "8.x"
     },
     {
       "packageNames": ["core-js"],

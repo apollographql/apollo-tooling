@@ -20,6 +20,13 @@ export const CHECK_SCHEMA = gql`
         targetUrl
         diffToPrevious {
           type
+          affectedClients {
+            __typename
+          }
+          affectedQueries {
+            __typename
+          }
+          numberOfCheckedOperations
           changes {
             type
             code

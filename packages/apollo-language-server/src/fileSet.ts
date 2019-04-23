@@ -1,6 +1,6 @@
 import { relative } from "path";
 import minimatch = require("minimatch");
-import * as glob from "glob";
+import glob from "glob";
 import { invariant } from "@apollographql/apollo-tools";
 import URI from "vscode-uri";
 

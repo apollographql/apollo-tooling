@@ -1,5 +1,5 @@
 import Command, { flags } from "@oclif/command";
-import * as Listr from "listr";
+import Listr from "listr";
 import { ListrTask } from "listr";
 import { parse, resolve } from "path";
 
@@ -71,7 +71,8 @@ export abstract class ProjectCommand extends Command {
         const value = header.substring(separatorIndex + 1).trim();
         return JSON.stringify({ [key]: value });
       },
-      description: "Additional headers to send to server for introspectionQuery"
+      description:
+        "Additional header to send to server for introspectionQuery. May be used multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag."
     }),
     endpoint: flags.string({
       description: "The url of your service"
@@ -214,10 +215,19 @@ export abstract class ProjectCommand extends Command {
   }
 
   async runTasks<Result>(
-    generateTasks: (context: ProjectContext) => ListrTask[]
+    generateTasks: (context: ProjectContext) => ListrTask[],
+    options?: Listr.ListrOptions | ((ctx: ProjectContext) => Listr.ListrOptions)
   ): Promise<Result> {
-    const tasks = await generateTasks(this.ctx!);
-    return new Listr([...this.tasks, ...tasks]).run();
+    const { ctx } = this;
+    if (!ctx) {
+      throw new Error("init must be called before trying to access this.ctx");
+    }
+
+    const tasks = await generateTasks(ctx);
+    return new Listr(
+      [...this.tasks, ...tasks],
+      typeof options === "function" ? options(ctx) : options
+    ).run();
   }
   async catch(err) {
     // handle any error from the command

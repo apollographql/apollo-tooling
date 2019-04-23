@@ -11,6 +11,7 @@ const cp = spawn(
     "bin",
     "test"
   )}`,
+  [],
   {
     shell: true,
     env: {

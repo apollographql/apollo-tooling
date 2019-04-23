@@ -40,9 +40,7 @@ exports[`client:codegen generates operation IDs for swift files when flag is set
 `;
 
 exports[`client:codegen writes exact Flow types when the useFlowExactObjects flag is set 1`] = `
-"
-
-/* @flow */
+"/* @flow */
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
@@ -52,9 +50,7 @@ exports[`client:codegen writes exact Flow types when the useFlowExactObjects fla
 
 export type SimpleQuery = {|
   hello: string
-|};
-
-/* @flow */
+|};/* @flow */
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
@@ -68,9 +64,7 @@ export type SimpleQuery = {|
 `;
 
 exports[`client:codegen writes flow types 1`] = `
-"
-
-/* @flow */
+"/* @flow */
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
@@ -80,9 +74,7 @@ exports[`client:codegen writes flow types 1`] = `
 
 export type SimpleQuery = {
   hello: string
-};
-
-/* @flow */
+};/* @flow */
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
@@ -131,9 +123,7 @@ Object {
 `;
 
 exports[`client:codegen writes read-only Flow types when the flag is set 1`] = `
-"
-
-/* @flow */
+"/* @flow */
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
@@ -143,9 +133,7 @@ exports[`client:codegen writes read-only Flow types when the flag is set 1`] = `
 
 export type SimpleQuery = {
   +hello: string
-};
-
-/* @flow */
+};/* @flow */
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 

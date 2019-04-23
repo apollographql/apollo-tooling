@@ -64,6 +64,7 @@ export function extractGraphQLDocuments(
     case "javascriptreact":
     case "typescript":
     case "typescriptreact":
+    case "vue":
       return extractGraphQLDocumentsFromJSTemplateLiterals(document, tagName);
     case "python":
       return extractGraphQLDocumentsFromPythonStrings(document, tagName);

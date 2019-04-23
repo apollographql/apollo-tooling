@@ -3,6 +3,7 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./lib",
+    "esModuleInterop": true,
     "noImplicitAny": false,
     "baseUrl": ".",
     "paths": {
@@ -16,6 +17,7 @@
     { "path": "../apollo-codegen-scala" },
     { "path": "../apollo-codegen-swift" },
     { "path": "../apollo-codegen-typescript" },
+    { "path": "../apollo-graphql" },
     { "path": "../apollo-language-server" },
     { "path": "../apollo-tools" }
   ]

@@ -1,6 +1,9 @@
 node_modules
 lib
 
+# TypeScript incremental compilation cache
+*.tsbuildinfo
+
 # Only the top-level of the monorepo should govern package locks,
 # not the individual package directories. (Keep in mind that currently
 # `npm install` should not be run within the `packages/*` directories.)

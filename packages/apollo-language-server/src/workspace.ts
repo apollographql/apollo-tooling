@@ -6,7 +6,7 @@ import {
 import { QuickPickItem } from "vscode";
 import { GraphQLProject, DocumentUri } from "./project/base";
 import { dirname } from "path";
-import * as fg from "glob";
+import fg from "glob";
 import {
   loadConfig,
   ApolloConfig,

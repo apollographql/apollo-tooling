@@ -1,0 +1,3022 @@
+{
+  "SchemaTagsAndFieldStats": {
+    "kind": "Document",
+    "definitions": [
+      {
+        "kind": "OperationDefinition",
+        "operation": "query",
+        "name": {
+          "kind": "Name",
+          "value": "SchemaTagsAndFieldStats",
+          "loc": { "start": 9, "end": 32 }
+        },
+        "variableDefinitions": [
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "id",
+                "loc": { "start": 34, "end": 36 }
+              },
+              "loc": { "start": 33, "end": 36 }
+            },
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "ID",
+                  "loc": { "start": 38, "end": 40 }
+                },
+                "loc": { "start": 38, "end": 40 }
+              },
+              "loc": { "start": 38, "end": 41 }
+            },
+            "directives": [],
+            "loc": { "start": 33, "end": 41 }
+          }
+        ],
+        "directives": [],
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "service",
+                "loc": { "start": 49, "end": 56 }
+              },
+              "arguments": [
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "id",
+                    "loc": { "start": 57, "end": 59 }
+                  },
+                  "value": {
+                    "kind": "Variable",
+                    "name": {
+                      "kind": "Name",
+                      "value": "id",
+                      "loc": { "start": 62, "end": 64 }
+                    },
+                    "loc": { "start": 61, "end": 64 }
+                  },
+                  "loc": { "start": 57, "end": 64 }
+                }
+              ],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "schemaTags",
+                      "loc": { "start": 74, "end": 84 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "selectionSet": {
+                      "kind": "SelectionSet",
+                      "selections": [
+                        {
+                          "kind": "Field",
+                          "name": { "kind": "Name", "value": "__typename" }
+                        },
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "tag",
+                            "loc": { "start": 95, "end": 98 }
+                          },
+                          "arguments": [],
+                          "directives": [],
+                          "loc": { "start": 95, "end": 98 }
+                        }
+                      ],
+                      "loc": { "start": 85, "end": 106 }
+                    },
+                    "loc": { "start": 74, "end": 106 }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "stats",
+                      "loc": { "start": 113, "end": 118 }
+                    },
+                    "arguments": [
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "from",
+                          "loc": { "start": 119, "end": 123 }
+                        },
+                        "value": {
+                          "kind": "StringValue",
+                          "value": "-86400",
+                          "block": false,
+                          "loc": { "start": 125, "end": 133 }
+                        },
+                        "loc": { "start": 119, "end": 133 }
+                      },
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "to",
+                          "loc": { "start": 135, "end": 137 }
+                        },
+                        "value": {
+                          "kind": "StringValue",
+                          "value": "-0",
+                          "block": false,
+                          "loc": { "start": 139, "end": 143 }
+                        },
+                        "loc": { "start": 135, "end": 143 }
+                      }
+                    ],
+                    "directives": [],
+                    "selectionSet": {
+                      "kind": "SelectionSet",
+                      "selections": [
+                        {
+                          "kind": "Field",
+                          "name": { "kind": "Name", "value": "__typename" }
+                        },
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "fieldStats",
+                            "loc": { "start": 155, "end": 165 }
+                          },
+                          "arguments": [],
+                          "directives": [],
+                          "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "__typename"
+                                }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "groupBy",
+                                  "loc": { "start": 178, "end": 185 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "selectionSet": {
+                                  "kind": "SelectionSet",
+                                  "selections": [
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "__typename"
+                                      }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "field",
+                                        "loc": { "start": 200, "end": 205 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "loc": { "start": 200, "end": 205 }
+                                    }
+                                  ],
+                                  "loc": { "start": 186, "end": 217 }
+                                },
+                                "loc": { "start": 178, "end": 217 }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "metrics",
+                                  "loc": { "start": 228, "end": 235 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "selectionSet": {
+                                  "kind": "SelectionSet",
+                                  "selections": [
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "__typename"
+                                      }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "fieldHistogram",
+                                        "loc": { "start": 250, "end": 264 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "selectionSet": {
+                                        "kind": "SelectionSet",
+                                        "selections": [
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "__typename"
+                                            }
+                                          },
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "durationMs",
+                                              "loc": {
+                                                "start": 281,
+                                                "end": 291
+                                              }
+                                            },
+                                            "arguments": [
+                                              {
+                                                "kind": "Argument",
+                                                "name": {
+                                                  "kind": "Name",
+                                                  "value": "percentile",
+                                                  "loc": {
+                                                    "start": 292,
+                                                    "end": 302
+                                                  }
+                                                },
+                                                "value": {
+                                                  "kind": "FloatValue",
+                                                  "value": "0.95",
+                                                  "loc": {
+                                                    "start": 304,
+                                                    "end": 308
+                                                  }
+                                                },
+                                                "loc": {
+                                                  "start": 292,
+                                                  "end": 308
+                                                }
+                                              }
+                                            ],
+                                            "directives": [],
+                                            "loc": { "start": 281, "end": 309 }
+                                          }
+                                        ],
+                                        "loc": { "start": 265, "end": 323 }
+                                      },
+                                      "loc": { "start": 250, "end": 323 }
+                                    }
+                                  ],
+                                  "loc": { "start": 236, "end": 335 }
+                                },
+                                "loc": { "start": 228, "end": 335 }
+                              }
+                            ],
+                            "loc": { "start": 166, "end": 345 }
+                          },
+                          "loc": { "start": 155, "end": 345 }
+                        }
+                      ],
+                      "loc": { "start": 145, "end": 353 }
+                    },
+                    "loc": { "start": 113, "end": 353 }
+                  }
+                ],
+                "loc": { "start": 66, "end": 359 }
+              },
+              "loc": { "start": 49, "end": 359 }
+            }
+          ],
+          "loc": { "start": 43, "end": 363 }
+        },
+        "loc": { "start": 3, "end": 363 }
+      }
+    ]
+  },
+  "CheckSchema": {
+    "kind": "Document",
+    "definitions": [
+      {
+        "kind": "OperationDefinition",
+        "operation": "mutation",
+        "name": {
+          "kind": "Name",
+          "value": "CheckSchema",
+          "loc": { "start": 12, "end": 23 }
+        },
+        "variableDefinitions": [
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "id",
+                "loc": { "start": 30, "end": 32 }
+              },
+              "loc": { "start": 29, "end": 32 }
+            },
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "ID",
+                  "loc": { "start": 34, "end": 36 }
+                },
+                "loc": { "start": 34, "end": 36 }
+              },
+              "loc": { "start": 34, "end": 37 }
+            },
+            "directives": [],
+            "loc": { "start": 29, "end": 37 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "schema",
+                "loc": { "start": 43, "end": 49 }
+              },
+              "loc": { "start": 42, "end": 49 }
+            },
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "IntrospectionSchemaInput",
+                  "loc": { "start": 51, "end": 75 }
+                },
+                "loc": { "start": 51, "end": 75 }
+              },
+              "loc": { "start": 51, "end": 76 }
+            },
+            "directives": [],
+            "loc": { "start": 42, "end": 76 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "tag",
+                "loc": { "start": 82, "end": 85 }
+              },
+              "loc": { "start": 81, "end": 85 }
+            },
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "String",
+                "loc": { "start": 87, "end": 93 }
+              },
+              "loc": { "start": 87, "end": 93 }
+            },
+            "directives": [],
+            "loc": { "start": 81, "end": 93 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "gitContext",
+                "loc": { "start": 99, "end": 109 }
+              },
+              "loc": { "start": 98, "end": 109 }
+            },
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "GitContextInput",
+                "loc": { "start": 111, "end": 126 }
+              },
+              "loc": { "start": 111, "end": 126 }
+            },
+            "directives": [],
+            "loc": { "start": 98, "end": 126 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "historicParameters",
+                "loc": { "start": 132, "end": 150 }
+              },
+              "loc": { "start": 131, "end": 150 }
+            },
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "HistoricQueryParameters",
+                "loc": { "start": 152, "end": 175 }
+              },
+              "loc": { "start": 152, "end": 175 }
+            },
+            "directives": [],
+            "loc": { "start": 131, "end": 175 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "frontend",
+                "loc": { "start": 181, "end": 189 }
+              },
+              "loc": { "start": 180, "end": 189 }
+            },
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "String",
+                "loc": { "start": 191, "end": 197 }
+              },
+              "loc": { "start": 191, "end": 197 }
+            },
+            "directives": [],
+            "loc": { "start": 180, "end": 197 }
+          }
+        ],
+        "directives": [],
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "service",
+                "loc": { "start": 208, "end": 215 }
+              },
+              "arguments": [
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "id",
+                    "loc": { "start": 216, "end": 218 }
+                  },
+                  "value": {
+                    "kind": "Variable",
+                    "name": {
+                      "kind": "Name",
+                      "value": "id",
+                      "loc": { "start": 221, "end": 223 }
+                    },
+                    "loc": { "start": 220, "end": 223 }
+                  },
+                  "loc": { "start": 216, "end": 223 }
+                }
+              ],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "checkSchema",
+                      "loc": { "start": 233, "end": 244 }
+                    },
+                    "arguments": [
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "proposedSchema",
+                          "loc": { "start": 254, "end": 268 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "schema",
+                            "loc": { "start": 271, "end": 277 }
+                          },
+                          "loc": { "start": 270, "end": 277 }
+                        },
+                        "loc": { "start": 254, "end": 277 }
+                      },
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "baseSchemaTag",
+                          "loc": { "start": 286, "end": 299 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "tag",
+                            "loc": { "start": 302, "end": 305 }
+                          },
+                          "loc": { "start": 301, "end": 305 }
+                        },
+                        "loc": { "start": 286, "end": 305 }
+                      },
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "gitContext",
+                          "loc": { "start": 314, "end": 324 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "gitContext",
+                            "loc": { "start": 327, "end": 337 }
+                          },
+                          "loc": { "start": 326, "end": 337 }
+                        },
+                        "loc": { "start": 314, "end": 337 }
+                      },
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "historicParameters",
+                          "loc": { "start": 346, "end": 364 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "historicParameters",
+                            "loc": { "start": 367, "end": 385 }
+                          },
+                          "loc": { "start": 366, "end": 385 }
+                        },
+                        "loc": { "start": 346, "end": 385 }
+                      },
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "frontend",
+                          "loc": { "start": 394, "end": 402 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "frontend",
+                            "loc": { "start": 405, "end": 413 }
+                          },
+                          "loc": { "start": 404, "end": 413 }
+                        },
+                        "loc": { "start": 394, "end": 413 }
+                      }
+                    ],
+                    "directives": [],
+                    "selectionSet": {
+                      "kind": "SelectionSet",
+                      "selections": [
+                        {
+                          "kind": "Field",
+                          "name": { "kind": "Name", "value": "__typename" }
+                        },
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "targetUrl",
+                            "loc": { "start": 432, "end": 441 }
+                          },
+                          "arguments": [],
+                          "directives": [],
+                          "loc": { "start": 432, "end": 441 }
+                        },
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "diffToPrevious",
+                            "loc": { "start": 450, "end": 464 }
+                          },
+                          "arguments": [],
+                          "directives": [],
+                          "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "__typename"
+                                }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "type",
+                                  "loc": { "start": 477, "end": 481 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "loc": { "start": 477, "end": 481 }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "changes",
+                                  "loc": { "start": 492, "end": 499 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "selectionSet": {
+                                  "kind": "SelectionSet",
+                                  "selections": [
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "__typename"
+                                      }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "type",
+                                        "loc": { "start": 514, "end": 518 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "loc": { "start": 514, "end": 518 }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "code",
+                                        "loc": { "start": 531, "end": 535 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "loc": { "start": 531, "end": 535 }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "description",
+                                        "loc": { "start": 548, "end": 559 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "loc": { "start": 548, "end": 559 }
+                                    }
+                                  ],
+                                  "loc": { "start": 500, "end": 571 }
+                                },
+                                "loc": { "start": 492, "end": 571 }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "validationConfig",
+                                  "loc": { "start": 582, "end": 598 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "selectionSet": {
+                                  "kind": "SelectionSet",
+                                  "selections": [
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "__typename"
+                                      }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "from",
+                                        "loc": { "start": 613, "end": 617 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "loc": { "start": 613, "end": 617 }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "to",
+                                        "loc": { "start": 630, "end": 632 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "loc": { "start": 630, "end": 632 }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "queryCountThreshold",
+                                        "loc": { "start": 645, "end": 664 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "loc": { "start": 645, "end": 664 }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "queryCountThresholdPercentage",
+                                        "loc": { "start": 677, "end": 706 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "loc": { "start": 677, "end": 706 }
+                                    }
+                                  ],
+                                  "loc": { "start": 599, "end": 718 }
+                                },
+                                "loc": { "start": 582, "end": 718 }
+                              }
+                            ],
+                            "loc": { "start": 465, "end": 728 }
+                          },
+                          "loc": { "start": 450, "end": 728 }
+                        }
+                      ],
+                      "loc": { "start": 422, "end": 736 }
+                    },
+                    "loc": { "start": 233, "end": 736 }
+                  }
+                ],
+                "loc": { "start": 225, "end": 742 }
+              },
+              "loc": { "start": 208, "end": 742 }
+            }
+          ],
+          "loc": { "start": 202, "end": 746 }
+        },
+        "loc": { "start": 3, "end": 746 }
+      }
+    ]
+  },
+  "RegisterOperations": {
+    "kind": "Document",
+    "definitions": [
+      {
+        "kind": "OperationDefinition",
+        "operation": "mutation",
+        "name": {
+          "kind": "Name",
+          "value": "RegisterOperations",
+          "loc": { "start": 12, "end": 30 }
+        },
+        "variableDefinitions": [
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "id",
+                "loc": { "start": 37, "end": 39 }
+              },
+              "loc": { "start": 36, "end": 39 }
+            },
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "ID",
+                  "loc": { "start": 41, "end": 43 }
+                },
+                "loc": { "start": 41, "end": 43 }
+              },
+              "loc": { "start": 41, "end": 44 }
+            },
+            "directives": [],
+            "loc": { "start": 36, "end": 44 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "clientIdentity",
+                "loc": { "start": 50, "end": 64 }
+              },
+              "loc": { "start": 49, "end": 64 }
+            },
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "RegisteredClientIdentityInput",
+                  "loc": { "start": 66, "end": 95 }
+                },
+                "loc": { "start": 66, "end": 95 }
+              },
+              "loc": { "start": 66, "end": 96 }
+            },
+            "directives": [],
+            "loc": { "start": 49, "end": 96 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "operations",
+                "loc": { "start": 102, "end": 112 }
+              },
+              "loc": { "start": 101, "end": 112 }
+            },
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "ListType",
+                "type": {
+                  "kind": "NonNullType",
+                  "type": {
+                    "kind": "NamedType",
+                    "name": {
+                      "kind": "Name",
+                      "value": "RegisteredOperationInput",
+                      "loc": { "start": 115, "end": 139 }
+                    },
+                    "loc": { "start": 115, "end": 139 }
+                  },
+                  "loc": { "start": 115, "end": 140 }
+                },
+                "loc": { "start": 114, "end": 141 }
+              },
+              "loc": { "start": 114, "end": 142 }
+            },
+            "directives": [],
+            "loc": { "start": 101, "end": 142 }
+          }
+        ],
+        "directives": [],
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "service",
+                "loc": { "start": 153, "end": 160 }
+              },
+              "arguments": [
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "id",
+                    "loc": { "start": 161, "end": 163 }
+                  },
+                  "value": {
+                    "kind": "Variable",
+                    "name": {
+                      "kind": "Name",
+                      "value": "id",
+                      "loc": { "start": 166, "end": 168 }
+                    },
+                    "loc": { "start": 165, "end": 168 }
+                  },
+                  "loc": { "start": 161, "end": 168 }
+                }
+              ],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "registerOperations",
+                      "loc": { "start": 178, "end": 196 }
+                    },
+                    "arguments": [
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "clientIdentity",
+                          "loc": { "start": 206, "end": 220 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "clientIdentity",
+                            "loc": { "start": 223, "end": 237 }
+                          },
+                          "loc": { "start": 222, "end": 237 }
+                        },
+                        "loc": { "start": 206, "end": 237 }
+                      },
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "operations",
+                          "loc": { "start": 246, "end": 256 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "operations",
+                            "loc": { "start": 259, "end": 269 }
+                          },
+                          "loc": { "start": 258, "end": 269 }
+                        },
+                        "loc": { "start": 246, "end": 269 }
+                      }
+                    ],
+                    "directives": [],
+                    "loc": { "start": 178, "end": 277 }
+                  }
+                ],
+                "loc": { "start": 170, "end": 283 }
+              },
+              "loc": { "start": 153, "end": 283 }
+            }
+          ],
+          "loc": { "start": 147, "end": 287 }
+        },
+        "loc": { "start": 3, "end": 287 }
+      }
+    ]
+  },
+  "UploadSchema": {
+    "kind": "Document",
+    "definitions": [
+      {
+        "kind": "OperationDefinition",
+        "operation": "mutation",
+        "name": {
+          "kind": "Name",
+          "value": "UploadSchema",
+          "loc": { "start": 12, "end": 24 }
+        },
+        "variableDefinitions": [
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "id",
+                "loc": { "start": 31, "end": 33 }
+              },
+              "loc": { "start": 30, "end": 33 }
+            },
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "ID",
+                  "loc": { "start": 35, "end": 37 }
+                },
+                "loc": { "start": 35, "end": 37 }
+              },
+              "loc": { "start": 35, "end": 38 }
+            },
+            "directives": [],
+            "loc": { "start": 30, "end": 38 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "schema",
+                "loc": { "start": 44, "end": 50 }
+              },
+              "loc": { "start": 43, "end": 50 }
+            },
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "IntrospectionSchemaInput",
+                  "loc": { "start": 52, "end": 76 }
+                },
+                "loc": { "start": 52, "end": 76 }
+              },
+              "loc": { "start": 52, "end": 77 }
+            },
+            "directives": [],
+            "loc": { "start": 43, "end": 77 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "tag",
+                "loc": { "start": 83, "end": 86 }
+              },
+              "loc": { "start": 82, "end": 86 }
+            },
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "String",
+                  "loc": { "start": 88, "end": 94 }
+                },
+                "loc": { "start": 88, "end": 94 }
+              },
+              "loc": { "start": 88, "end": 95 }
+            },
+            "directives": [],
+            "loc": { "start": 82, "end": 95 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "gitContext",
+                "loc": { "start": 101, "end": 111 }
+              },
+              "loc": { "start": 100, "end": 111 }
+            },
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "GitContextInput",
+                "loc": { "start": 113, "end": 128 }
+              },
+              "loc": { "start": 113, "end": 128 }
+            },
+            "directives": [],
+            "loc": { "start": 100, "end": 128 }
+          }
+        ],
+        "directives": [],
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "service",
+                "loc": { "start": 139, "end": 146 }
+              },
+              "arguments": [
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "id",
+                    "loc": { "start": 147, "end": 149 }
+                  },
+                  "value": {
+                    "kind": "Variable",
+                    "name": {
+                      "kind": "Name",
+                      "value": "id",
+                      "loc": { "start": 152, "end": 154 }
+                    },
+                    "loc": { "start": 151, "end": 154 }
+                  },
+                  "loc": { "start": 147, "end": 154 }
+                }
+              ],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "uploadSchema",
+                      "loc": { "start": 164, "end": 176 }
+                    },
+                    "arguments": [
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "schema",
+                          "loc": { "start": 177, "end": 183 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "schema",
+                            "loc": { "start": 186, "end": 192 }
+                          },
+                          "loc": { "start": 185, "end": 192 }
+                        },
+                        "loc": { "start": 177, "end": 192 }
+                      },
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "tag",
+                          "loc": { "start": 194, "end": 197 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "tag",
+                            "loc": { "start": 200, "end": 203 }
+                          },
+                          "loc": { "start": 199, "end": 203 }
+                        },
+                        "loc": { "start": 194, "end": 203 }
+                      },
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "gitContext",
+                          "loc": { "start": 205, "end": 215 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "gitContext",
+                            "loc": { "start": 218, "end": 228 }
+                          },
+                          "loc": { "start": 217, "end": 228 }
+                        },
+                        "loc": { "start": 205, "end": 228 }
+                      }
+                    ],
+                    "directives": [],
+                    "selectionSet": {
+                      "kind": "SelectionSet",
+                      "selections": [
+                        {
+                          "kind": "Field",
+                          "name": { "kind": "Name", "value": "__typename" }
+                        },
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "code",
+                            "loc": { "start": 240, "end": 244 }
+                          },
+                          "arguments": [],
+                          "directives": [],
+                          "loc": { "start": 240, "end": 244 }
+                        },
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "message",
+                            "loc": { "start": 253, "end": 260 }
+                          },
+                          "arguments": [],
+                          "directives": [],
+                          "loc": { "start": 253, "end": 260 }
+                        },
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "success",
+                            "loc": { "start": 269, "end": 276 }
+                          },
+                          "arguments": [],
+                          "directives": [],
+                          "loc": { "start": 269, "end": 276 }
+                        },
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "tag",
+                            "loc": { "start": 285, "end": 288 }
+                          },
+                          "arguments": [],
+                          "directives": [],
+                          "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "__typename"
+                                }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "tag",
+                                  "loc": { "start": 301, "end": 304 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "loc": { "start": 301, "end": 304 }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "schema",
+                                  "loc": { "start": 315, "end": 321 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "selectionSet": {
+                                  "kind": "SelectionSet",
+                                  "selections": [
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "__typename"
+                                      }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "hash",
+                                        "loc": { "start": 336, "end": 340 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "loc": { "start": 336, "end": 340 }
+                                    }
+                                  ],
+                                  "loc": { "start": 322, "end": 352 }
+                                },
+                                "loc": { "start": 315, "end": 352 }
+                              }
+                            ],
+                            "loc": { "start": 289, "end": 362 }
+                          },
+                          "loc": { "start": 285, "end": 362 }
+                        }
+                      ],
+                      "loc": { "start": 230, "end": 370 }
+                    },
+                    "loc": { "start": 164, "end": 370 }
+                  }
+                ],
+                "loc": { "start": 156, "end": 376 }
+              },
+              "loc": { "start": 139, "end": 376 }
+            }
+          ],
+          "loc": { "start": 133, "end": 380 }
+        },
+        "loc": { "start": 3, "end": 380 }
+      }
+    ]
+  },
+  "ValidateOperations": {
+    "kind": "Document",
+    "definitions": [
+      {
+        "kind": "OperationDefinition",
+        "operation": "mutation",
+        "name": {
+          "kind": "Name",
+          "value": "ValidateOperations",
+          "loc": { "start": 12, "end": 30 }
+        },
+        "variableDefinitions": [
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "id",
+                "loc": { "start": 37, "end": 39 }
+              },
+              "loc": { "start": 36, "end": 39 }
+            },
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "ID",
+                  "loc": { "start": 41, "end": 43 }
+                },
+                "loc": { "start": 41, "end": 43 }
+              },
+              "loc": { "start": 41, "end": 44 }
+            },
+            "directives": [],
+            "loc": { "start": 36, "end": 44 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "operations",
+                "loc": { "start": 50, "end": 60 }
+              },
+              "loc": { "start": 49, "end": 60 }
+            },
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "ListType",
+                "type": {
+                  "kind": "NonNullType",
+                  "type": {
+                    "kind": "NamedType",
+                    "name": {
+                      "kind": "Name",
+                      "value": "OperationDocumentInput",
+                      "loc": { "start": 63, "end": 85 }
+                    },
+                    "loc": { "start": 63, "end": 85 }
+                  },
+                  "loc": { "start": 63, "end": 86 }
+                },
+                "loc": { "start": 62, "end": 87 }
+              },
+              "loc": { "start": 62, "end": 88 }
+            },
+            "directives": [],
+            "loc": { "start": 49, "end": 88 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "tag",
+                "loc": { "start": 94, "end": 97 }
+              },
+              "loc": { "start": 93, "end": 97 }
+            },
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "String",
+                "loc": { "start": 99, "end": 105 }
+              },
+              "loc": { "start": 99, "end": 105 }
+            },
+            "directives": [],
+            "loc": { "start": 93, "end": 105 }
+          },
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "gitContext",
+                "loc": { "start": 111, "end": 121 }
+              },
+              "loc": { "start": 110, "end": 121 }
+            },
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "GitContextInput",
+                "loc": { "start": 123, "end": 138 }
+              },
+              "loc": { "start": 123, "end": 138 }
+            },
+            "directives": [],
+            "loc": { "start": 110, "end": 138 }
+          }
+        ],
+        "directives": [],
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "service",
+                "loc": { "start": 149, "end": 156 }
+              },
+              "arguments": [
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "id",
+                    "loc": { "start": 157, "end": 159 }
+                  },
+                  "value": {
+                    "kind": "Variable",
+                    "name": {
+                      "kind": "Name",
+                      "value": "id",
+                      "loc": { "start": 162, "end": 164 }
+                    },
+                    "loc": { "start": 161, "end": 164 }
+                  },
+                  "loc": { "start": 157, "end": 164 }
+                }
+              ],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "validateOperations",
+                      "loc": { "start": 174, "end": 192 }
+                    },
+                    "arguments": [
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "tag",
+                          "loc": { "start": 202, "end": 205 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "tag",
+                            "loc": { "start": 208, "end": 211 }
+                          },
+                          "loc": { "start": 207, "end": 211 }
+                        },
+                        "loc": { "start": 202, "end": 211 }
+                      },
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "operations",
+                          "loc": { "start": 220, "end": 230 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "operations",
+                            "loc": { "start": 233, "end": 243 }
+                          },
+                          "loc": { "start": 232, "end": 243 }
+                        },
+                        "loc": { "start": 220, "end": 243 }
+                      },
+                      {
+                        "kind": "Argument",
+                        "name": {
+                          "kind": "Name",
+                          "value": "gitContext",
+                          "loc": { "start": 252, "end": 262 }
+                        },
+                        "value": {
+                          "kind": "Variable",
+                          "name": {
+                            "kind": "Name",
+                            "value": "gitContext",
+                            "loc": { "start": 265, "end": 275 }
+                          },
+                          "loc": { "start": 264, "end": 275 }
+                        },
+                        "loc": { "start": 252, "end": 275 }
+                      }
+                    ],
+                    "directives": [],
+                    "selectionSet": {
+                      "kind": "SelectionSet",
+                      "selections": [
+                        {
+                          "kind": "Field",
+                          "name": { "kind": "Name", "value": "__typename" }
+                        },
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "validationResults",
+                            "loc": { "start": 294, "end": 311 }
+                          },
+                          "arguments": [],
+                          "directives": [],
+                          "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "__typename"
+                                }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "type",
+                                  "loc": { "start": 324, "end": 328 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "loc": { "start": 324, "end": 328 }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "code",
+                                  "loc": { "start": 339, "end": 343 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "loc": { "start": 339, "end": 343 }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "description",
+                                  "loc": { "start": 354, "end": 365 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "loc": { "start": 354, "end": 365 }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "operation",
+                                  "loc": { "start": 376, "end": 385 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "selectionSet": {
+                                  "kind": "SelectionSet",
+                                  "selections": [
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "__typename"
+                                      }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "name",
+                                        "loc": { "start": 400, "end": 404 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "loc": { "start": 400, "end": 404 }
+                                    }
+                                  ],
+                                  "loc": { "start": 386, "end": 416 }
+                                },
+                                "loc": { "start": 376, "end": 416 }
+                              }
+                            ],
+                            "loc": { "start": 312, "end": 426 }
+                          },
+                          "loc": { "start": 294, "end": 426 }
+                        }
+                      ],
+                      "loc": { "start": 284, "end": 434 }
+                    },
+                    "loc": { "start": 174, "end": 434 }
+                  }
+                ],
+                "loc": { "start": 166, "end": 440 }
+              },
+              "loc": { "start": 149, "end": 440 }
+            }
+          ],
+          "loc": { "start": 143, "end": 444 }
+        },
+        "loc": { "start": 3, "end": 444 }
+      }
+    ]
+  },
+  "GetSchemaByTag": {
+    "kind": "Document",
+    "definitions": [
+      {
+        "kind": "FragmentDefinition",
+        "name": {
+          "kind": "Name",
+          "value": "IntrospectionFullType",
+          "loc": { "start": 688, "end": 709 }
+        },
+        "typeCondition": {
+          "kind": "NamedType",
+          "name": {
+            "kind": "Name",
+            "value": "IntrospectionType",
+            "loc": { "start": 713, "end": 730 }
+          },
+          "loc": { "start": 713, "end": 730 }
+        },
+        "directives": [],
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [
+            {
+              "kind": "Field",
+              "name": { "kind": "Name", "value": "__typename" }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "kind",
+                "loc": { "start": 738, "end": 742 }
+              },
+              "arguments": [],
+              "directives": [],
+              "loc": { "start": 738, "end": 742 }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "name",
+                "loc": { "start": 748, "end": 752 }
+              },
+              "arguments": [],
+              "directives": [],
+              "loc": { "start": 748, "end": 752 }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "description",
+                "loc": { "start": 758, "end": 769 }
+              },
+              "arguments": [],
+              "directives": [],
+              "loc": { "start": 758, "end": 769 }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "fields",
+                "loc": { "start": 775, "end": 781 }
+              },
+              "arguments": [],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "name",
+                      "loc": { "start": 791, "end": 795 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "loc": { "start": 791, "end": 795 }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "description",
+                      "loc": { "start": 803, "end": 814 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "loc": { "start": 803, "end": 814 }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "args",
+                      "loc": { "start": 822, "end": 826 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "selectionSet": {
+                      "kind": "SelectionSet",
+                      "selections": [
+                        {
+                          "kind": "Field",
+                          "name": { "kind": "Name", "value": "__typename" }
+                        },
+                        {
+                          "kind": "FragmentSpread",
+                          "name": {
+                            "kind": "Name",
+                            "value": "IntrospectionInputValue",
+                            "loc": { "start": 841, "end": 864 }
+                          },
+                          "directives": [],
+                          "loc": { "start": 838, "end": 864 }
+                        }
+                      ],
+                      "loc": { "start": 827, "end": 873 }
+                    },
+                    "loc": { "start": 822, "end": 873 }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "type",
+                      "loc": { "start": 881, "end": 885 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "selectionSet": {
+                      "kind": "SelectionSet",
+                      "selections": [
+                        {
+                          "kind": "Field",
+                          "name": { "kind": "Name", "value": "__typename" }
+                        },
+                        {
+                          "kind": "FragmentSpread",
+                          "name": {
+                            "kind": "Name",
+                            "value": "IntrospectionTypeRef",
+                            "loc": { "start": 900, "end": 920 }
+                          },
+                          "directives": [],
+                          "loc": { "start": 897, "end": 920 }
+                        }
+                      ],
+                      "loc": { "start": 886, "end": 929 }
+                    },
+                    "loc": { "start": 881, "end": 929 }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "isDeprecated",
+                      "loc": { "start": 937, "end": 949 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "loc": { "start": 937, "end": 949 }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "deprecationReason",
+                      "loc": { "start": 957, "end": 974 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "loc": { "start": 957, "end": 974 }
+                  }
+                ],
+                "loc": { "start": 782, "end": 981 }
+              },
+              "loc": { "start": 775, "end": 981 }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "inputFields",
+                "loc": { "start": 987, "end": 998 }
+              },
+              "arguments": [],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "FragmentSpread",
+                    "name": {
+                      "kind": "Name",
+                      "value": "IntrospectionInputValue",
+                      "loc": { "start": 1011, "end": 1034 }
+                    },
+                    "directives": [],
+                    "loc": { "start": 1008, "end": 1034 }
+                  }
+                ],
+                "loc": { "start": 999, "end": 1041 }
+              },
+              "loc": { "start": 987, "end": 1041 }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "interfaces",
+                "loc": { "start": 1047, "end": 1057 }
+              },
+              "arguments": [],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "FragmentSpread",
+                    "name": {
+                      "kind": "Name",
+                      "value": "IntrospectionTypeRef",
+                      "loc": { "start": 1070, "end": 1090 }
+                    },
+                    "directives": [],
+                    "loc": { "start": 1067, "end": 1090 }
+                  }
+                ],
+                "loc": { "start": 1058, "end": 1097 }
+              },
+              "loc": { "start": 1047, "end": 1097 }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "enumValues",
+                "loc": { "start": 1103, "end": 1113 }
+              },
+              "arguments": [
+                {
+                  "kind": "Argument",
+                  "name": {
+                    "kind": "Name",
+                    "value": "includeDeprecated",
+                    "loc": { "start": 1114, "end": 1131 }
+                  },
+                  "value": {
+                    "kind": "BooleanValue",
+                    "value": true,
+                    "loc": { "start": 1133, "end": 1137 }
+                  },
+                  "loc": { "start": 1114, "end": 1137 }
+                }
+              ],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "name",
+                      "loc": { "start": 1148, "end": 1152 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "loc": { "start": 1148, "end": 1152 }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "description",
+                      "loc": { "start": 1160, "end": 1171 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "loc": { "start": 1160, "end": 1171 }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "isDeprecated",
+                      "loc": { "start": 1179, "end": 1191 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "loc": { "start": 1179, "end": 1191 }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "depreactionReason",
+                      "loc": { "start": 1199, "end": 1216 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "loc": { "start": 1199, "end": 1216 }
+                  }
+                ],
+                "loc": { "start": 1139, "end": 1223 }
+              },
+              "loc": { "start": 1103, "end": 1223 }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "possibleTypes",
+                "loc": { "start": 1229, "end": 1242 }
+              },
+              "arguments": [],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "FragmentSpread",
+                    "name": {
+                      "kind": "Name",
+                      "value": "IntrospectionTypeRef",
+                      "loc": { "start": 1255, "end": 1275 }
+                    },
+                    "directives": [],
+                    "loc": { "start": 1252, "end": 1275 }
+                  }
+                ],
+                "loc": { "start": 1243, "end": 1282 }
+              },
+              "loc": { "start": 1229, "end": 1282 }
+            }
+          ],
+          "loc": { "start": 731, "end": 1287 }
+        },
+        "loc": { "start": 679, "end": 1287 }
+      },
+      {
+        "kind": "FragmentDefinition",
+        "name": {
+          "kind": "Name",
+          "value": "IntrospectionInputValue",
+          "loc": { "start": 1302, "end": 1325 }
+        },
+        "typeCondition": {
+          "kind": "NamedType",
+          "name": {
+            "kind": "Name",
+            "value": "IntrospectionInputValue",
+            "loc": { "start": 1329, "end": 1352 }
+          },
+          "loc": { "start": 1329, "end": 1352 }
+        },
+        "directives": [],
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [
+            {
+              "kind": "Field",
+              "name": { "kind": "Name", "value": "__typename" }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "name",
+                "loc": { "start": 1360, "end": 1364 }
+              },
+              "arguments": [],
+              "directives": [],
+              "loc": { "start": 1360, "end": 1364 }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "description",
+                "loc": { "start": 1370, "end": 1381 }
+              },
+              "arguments": [],
+              "directives": [],
+              "loc": { "start": 1370, "end": 1381 }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "type",
+                "loc": { "start": 1387, "end": 1391 }
+              },
+              "arguments": [],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "FragmentSpread",
+                    "name": {
+                      "kind": "Name",
+                      "value": "IntrospectionTypeRef",
+                      "loc": { "start": 1404, "end": 1424 }
+                    },
+                    "directives": [],
+                    "loc": { "start": 1401, "end": 1424 }
+                  }
+                ],
+                "loc": { "start": 1392, "end": 1431 }
+              },
+              "loc": { "start": 1387, "end": 1431 }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "defaultValue",
+                "loc": { "start": 1437, "end": 1449 }
+              },
+              "arguments": [],
+              "directives": [],
+              "loc": { "start": 1437, "end": 1449 }
+            }
+          ],
+          "loc": { "start": 1353, "end": 1454 }
+        },
+        "loc": { "start": 1293, "end": 1454 }
+      },
+      {
+        "kind": "FragmentDefinition",
+        "name": {
+          "kind": "Name",
+          "value": "IntrospectionTypeRef",
+          "loc": { "start": 1469, "end": 1489 }
+        },
+        "typeCondition": {
+          "kind": "NamedType",
+          "name": {
+            "kind": "Name",
+            "value": "IntrospectionType",
+            "loc": { "start": 1493, "end": 1510 }
+          },
+          "loc": { "start": 1493, "end": 1510 }
+        },
+        "directives": [],
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [
+            {
+              "kind": "Field",
+              "name": { "kind": "Name", "value": "__typename" }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "kind",
+                "loc": { "start": 1518, "end": 1522 }
+              },
+              "arguments": [],
+              "directives": [],
+              "loc": { "start": 1518, "end": 1522 }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "name",
+                "loc": { "start": 1528, "end": 1532 }
+              },
+              "arguments": [],
+              "directives": [],
+              "loc": { "start": 1528, "end": 1532 }
+            },
+            {
+              "kind": "Field",
+              "name": {
+                "kind": "Name",
+                "value": "ofType",
+                "loc": { "start": 1538, "end": 1544 }
+              },
+              "arguments": [],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "kind",
+                      "loc": { "start": 1554, "end": 1558 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "loc": { "start": 1554, "end": 1558 }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "name",
+                      "loc": { "start": 1566, "end": 1570 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "loc": { "start": 1566, "end": 1570 }
+                  },
+                  {
+                    "kind": "Field",
+                    "name": {
+                      "kind": "Name",
+                      "value": "ofType",
+                      "loc": { "start": 1578, "end": 1584 }
+                    },
+                    "arguments": [],
+                    "directives": [],
+                    "selectionSet": {
+                      "kind": "SelectionSet",
+                      "selections": [
+                        {
+                          "kind": "Field",
+                          "name": { "kind": "Name", "value": "__typename" }
+                        },
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "kind",
+                            "loc": { "start": 1596, "end": 1600 }
+                          },
+                          "arguments": [],
+                          "directives": [],
+                          "loc": { "start": 1596, "end": 1600 }
+                        },
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "name",
+                            "loc": { "start": 1610, "end": 1614 }
+                          },
+                          "arguments": [],
+                          "directives": [],
+                          "loc": { "start": 1610, "end": 1614 }
+                        },
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "ofType",
+                            "loc": { "start": 1624, "end": 1630 }
+                          },
+                          "arguments": [],
+                          "directives": [],
+                          "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "__typename"
+                                }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "kind",
+                                  "loc": { "start": 1644, "end": 1648 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "loc": { "start": 1644, "end": 1648 }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "name",
+                                  "loc": { "start": 1660, "end": 1664 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "loc": { "start": 1660, "end": 1664 }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "ofType",
+                                  "loc": { "start": 1676, "end": 1682 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "selectionSet": {
+                                  "kind": "SelectionSet",
+                                  "selections": [
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "__typename"
+                                      }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "kind",
+                                        "loc": { "start": 1698, "end": 1702 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "loc": { "start": 1698, "end": 1702 }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "name",
+                                        "loc": { "start": 1716, "end": 1720 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "loc": { "start": 1716, "end": 1720 }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "ofType",
+                                        "loc": { "start": 1734, "end": 1740 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "selectionSet": {
+                                        "kind": "SelectionSet",
+                                        "selections": [
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "__typename"
+                                            }
+                                          },
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "kind",
+                                              "loc": {
+                                                "start": 1758,
+                                                "end": 1762
+                                              }
+                                            },
+                                            "arguments": [],
+                                            "directives": [],
+                                            "loc": {
+                                              "start": 1758,
+                                              "end": 1762
+                                            }
+                                          },
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "name",
+                                              "loc": {
+                                                "start": 1778,
+                                                "end": 1782
+                                              }
+                                            },
+                                            "arguments": [],
+                                            "directives": [],
+                                            "loc": {
+                                              "start": 1778,
+                                              "end": 1782
+                                            }
+                                          },
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "ofType",
+                                              "loc": {
+                                                "start": 1798,
+                                                "end": 1804
+                                              }
+                                            },
+                                            "arguments": [],
+                                            "directives": [],
+                                            "selectionSet": {
+                                              "kind": "SelectionSet",
+                                              "selections": [
+                                                {
+                                                  "kind": "Field",
+                                                  "name": {
+                                                    "kind": "Name",
+                                                    "value": "__typename"
+                                                  }
+                                                },
+                                                {
+                                                  "kind": "Field",
+                                                  "name": {
+                                                    "kind": "Name",
+                                                    "value": "kind",
+                                                    "loc": {
+                                                      "start": 1824,
+                                                      "end": 1828
+                                                    }
+                                                  },
+                                                  "arguments": [],
+                                                  "directives": [],
+                                                  "loc": {
+                                                    "start": 1824,
+                                                    "end": 1828
+                                                  }
+                                                },
+                                                {
+                                                  "kind": "Field",
+                                                  "name": {
+                                                    "kind": "Name",
+                                                    "value": "name",
+                                                    "loc": {
+                                                      "start": 1846,
+                                                      "end": 1850
+                                                    }
+                                                  },
+                                                  "arguments": [],
+                                                  "directives": [],
+                                                  "loc": {
+                                                    "start": 1846,
+                                                    "end": 1850
+                                                  }
+                                                },
+                                                {
+                                                  "kind": "Field",
+                                                  "name": {
+                                                    "kind": "Name",
+                                                    "value": "ofType",
+                                                    "loc": {
+                                                      "start": 1868,
+                                                      "end": 1874
+                                                    }
+                                                  },
+                                                  "arguments": [],
+                                                  "directives": [],
+                                                  "selectionSet": {
+                                                    "kind": "SelectionSet",
+                                                    "selections": [
+                                                      {
+                                                        "kind": "Field",
+                                                        "name": {
+                                                          "kind": "Name",
+                                                          "value": "__typename"
+                                                        }
+                                                      },
+                                                      {
+                                                        "kind": "Field",
+                                                        "name": {
+                                                          "kind": "Name",
+                                                          "value": "kind",
+                                                          "loc": {
+                                                            "start": 1896,
+                                                            "end": 1900
+                                                          }
+                                                        },
+                                                        "arguments": [],
+                                                        "directives": [],
+                                                        "loc": {
+                                                          "start": 1896,
+                                                          "end": 1900
+                                                        }
+                                                      },
+                                                      {
+                                                        "kind": "Field",
+                                                        "name": {
+                                                          "kind": "Name",
+                                                          "value": "name",
+                                                          "loc": {
+                                                            "start": 1920,
+                                                            "end": 1924
+                                                          }
+                                                        },
+                                                        "arguments": [],
+                                                        "directives": [],
+                                                        "loc": {
+                                                          "start": 1920,
+                                                          "end": 1924
+                                                        }
+                                                      }
+                                                    ],
+                                                    "loc": {
+                                                      "start": 1875,
+                                                      "end": 1943
+                                                    }
+                                                  },
+                                                  "loc": {
+                                                    "start": 1868,
+                                                    "end": 1943
+                                                  }
+                                                }
+                                              ],
+                                              "loc": {
+                                                "start": 1805,
+                                                "end": 1960
+                                              }
+                                            },
+                                            "loc": {
+                                              "start": 1798,
+                                              "end": 1960
+                                            }
+                                          }
+                                        ],
+                                        "loc": { "start": 1741, "end": 1975 }
+                                      },
+                                      "loc": { "start": 1734, "end": 1975 }
+                                    }
+                                  ],
+                                  "loc": { "start": 1683, "end": 1988 }
+                                },
+                                "loc": { "start": 1676, "end": 1988 }
+                              }
+                            ],
+                            "loc": { "start": 1631, "end": 1999 }
+                          },
+                          "loc": { "start": 1624, "end": 1999 }
+                        }
+                      ],
+                      "loc": { "start": 1585, "end": 2008 }
+                    },
+                    "loc": { "start": 1578, "end": 2008 }
+                  }
+                ],
+                "loc": { "start": 1545, "end": 2015 }
+              },
+              "loc": { "start": 1538, "end": 2015 }
+            }
+          ],
+          "loc": { "start": 1511, "end": 2020 }
+        },
+        "loc": { "start": 1460, "end": 2020 }
+      },
+      {
+        "kind": "OperationDefinition",
+        "operation": "query",
+        "name": {
+          "kind": "Name",
+          "value": "GetSchemaByTag",
+          "loc": { "start": 10, "end": 24 }
+        },
+        "variableDefinitions": [
+          {
+            "kind": "VariableDefinition",
+            "variable": {
+              "kind": "Variable",
+              "name": {
+                "kind": "Name",
+                "value": "tag",
+                "loc": { "start": 26, "end": 29 }
+              },
+              "loc": { "start": 25, "end": 29 }
+            },
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "String",
+                  "loc": { "start": 31, "end": 37 }
+                },
+                "loc": { "start": 31, "end": 37 }
+              },
+              "loc": { "start": 31, "end": 38 }
+            },
+            "directives": [],
+            "loc": { "start": 25, "end": 38 }
+          }
+        ],
+        "directives": [],
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [
+            {
+              "kind": "Field",
+              "alias": {
+                "kind": "Name",
+                "value": "service",
+                "loc": { "start": 47, "end": 54 }
+              },
+              "name": {
+                "kind": "Name",
+                "value": "me",
+                "loc": { "start": 56, "end": 58 }
+              },
+              "arguments": [],
+              "directives": [],
+              "selectionSet": {
+                "kind": "SelectionSet",
+                "selections": [
+                  {
+                    "kind": "Field",
+                    "name": { "kind": "Name", "value": "__typename" }
+                  },
+                  {
+                    "kind": "InlineFragment",
+                    "typeCondition": {
+                      "kind": "NamedType",
+                      "name": {
+                        "kind": "Name",
+                        "value": "Service",
+                        "loc": { "start": 75, "end": 82 }
+                      },
+                      "loc": { "start": 75, "end": 82 }
+                    },
+                    "directives": [],
+                    "selectionSet": {
+                      "kind": "SelectionSet",
+                      "selections": [
+                        {
+                          "kind": "Field",
+                          "name": {
+                            "kind": "Name",
+                            "value": "schema",
+                            "loc": { "start": 94, "end": 100 }
+                          },
+                          "arguments": [
+                            {
+                              "kind": "Argument",
+                              "name": {
+                                "kind": "Name",
+                                "value": "tag",
+                                "loc": { "start": 101, "end": 104 }
+                              },
+                              "value": {
+                                "kind": "Variable",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "tag",
+                                  "loc": { "start": 107, "end": 110 }
+                                },
+                                "loc": { "start": 106, "end": 110 }
+                              },
+                              "loc": { "start": 101, "end": 110 }
+                            }
+                          ],
+                          "directives": [],
+                          "selectionSet": {
+                            "kind": "SelectionSet",
+                            "selections": [
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "__typename"
+                                }
+                              },
+                              {
+                                "kind": "Field",
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "hash",
+                                  "loc": { "start": 125, "end": 129 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "loc": { "start": 125, "end": 129 }
+                              },
+                              {
+                                "kind": "Field",
+                                "alias": {
+                                  "kind": "Name",
+                                  "value": "__schema",
+                                  "loc": { "start": 141, "end": 149 }
+                                },
+                                "name": {
+                                  "kind": "Name",
+                                  "value": "introspection",
+                                  "loc": { "start": 151, "end": 164 }
+                                },
+                                "arguments": [],
+                                "directives": [],
+                                "selectionSet": {
+                                  "kind": "SelectionSet",
+                                  "selections": [
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "__typename"
+                                      }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "queryType",
+                                        "loc": { "start": 180, "end": 189 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "selectionSet": {
+                                        "kind": "SelectionSet",
+                                        "selections": [
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "__typename"
+                                            }
+                                          },
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "name",
+                                              "loc": {
+                                                "start": 207,
+                                                "end": 211
+                                              }
+                                            },
+                                            "arguments": [],
+                                            "directives": [],
+                                            "loc": { "start": 207, "end": 211 }
+                                          }
+                                        ],
+                                        "loc": { "start": 190, "end": 226 }
+                                      },
+                                      "loc": { "start": 180, "end": 226 }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "mutationType",
+                                        "loc": { "start": 240, "end": 252 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "selectionSet": {
+                                        "kind": "SelectionSet",
+                                        "selections": [
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "__typename"
+                                            }
+                                          },
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "name",
+                                              "loc": {
+                                                "start": 270,
+                                                "end": 274
+                                              }
+                                            },
+                                            "arguments": [],
+                                            "directives": [],
+                                            "loc": { "start": 270, "end": 274 }
+                                          }
+                                        ],
+                                        "loc": { "start": 253, "end": 289 }
+                                      },
+                                      "loc": { "start": 240, "end": 289 }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "subscriptionType",
+                                        "loc": { "start": 303, "end": 319 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "selectionSet": {
+                                        "kind": "SelectionSet",
+                                        "selections": [
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "__typename"
+                                            }
+                                          },
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "name",
+                                              "loc": {
+                                                "start": 337,
+                                                "end": 341
+                                              }
+                                            },
+                                            "arguments": [],
+                                            "directives": [],
+                                            "loc": { "start": 337, "end": 341 }
+                                          }
+                                        ],
+                                        "loc": { "start": 320, "end": 356 }
+                                      },
+                                      "loc": { "start": 303, "end": 356 }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "types",
+                                        "loc": { "start": 370, "end": 375 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "selectionSet": {
+                                        "kind": "SelectionSet",
+                                        "selections": [
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "__typename"
+                                            }
+                                          },
+                                          {
+                                            "kind": "FragmentSpread",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "IntrospectionFullType",
+                                              "loc": {
+                                                "start": 396,
+                                                "end": 417
+                                              }
+                                            },
+                                            "directives": [],
+                                            "loc": { "start": 393, "end": 417 }
+                                          }
+                                        ],
+                                        "loc": { "start": 376, "end": 432 }
+                                      },
+                                      "loc": { "start": 370, "end": 432 }
+                                    },
+                                    {
+                                      "kind": "Field",
+                                      "name": {
+                                        "kind": "Name",
+                                        "value": "directives",
+                                        "loc": { "start": 446, "end": 456 }
+                                      },
+                                      "arguments": [],
+                                      "directives": [],
+                                      "selectionSet": {
+                                        "kind": "SelectionSet",
+                                        "selections": [
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "__typename"
+                                            }
+                                          },
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "name",
+                                              "loc": {
+                                                "start": 474,
+                                                "end": 478
+                                              }
+                                            },
+                                            "arguments": [],
+                                            "directives": [],
+                                            "loc": { "start": 474, "end": 478 }
+                                          },
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "description",
+                                              "loc": {
+                                                "start": 494,
+                                                "end": 505
+                                              }
+                                            },
+                                            "arguments": [],
+                                            "directives": [],
+                                            "loc": { "start": 494, "end": 505 }
+                                          },
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "locations",
+                                              "loc": {
+                                                "start": 521,
+                                                "end": 530
+                                              }
+                                            },
+                                            "arguments": [],
+                                            "directives": [],
+                                            "loc": { "start": 521, "end": 530 }
+                                          },
+                                          {
+                                            "kind": "Field",
+                                            "name": {
+                                              "kind": "Name",
+                                              "value": "args",
+                                              "loc": {
+                                                "start": 546,
+                                                "end": 550
+                                              }
+                                            },
+                                            "arguments": [],
+                                            "directives": [],
+                                            "selectionSet": {
+                                              "kind": "SelectionSet",
+                                              "selections": [
+                                                {
+                                                  "kind": "Field",
+                                                  "name": {
+                                                    "kind": "Name",
+                                                    "value": "__typename"
+                                                  }
+                                                },
+                                                {
+                                                  "kind": "FragmentSpread",
+                                                  "name": {
+                                                    "kind": "Name",
+                                                    "value": "IntrospectionInputValue",
+                                                    "loc": {
+                                                      "start": 573,
+                                                      "end": 596
+                                                    }
+                                                  },
+                                                  "directives": [],
+                                                  "loc": {
+                                                    "start": 570,
+                                                    "end": 596
+                                                  }
+                                                }
+                                              ],
+                                              "loc": {
+                                                "start": 551,
+                                                "end": 613
+                                              }
+                                            },
+                                            "loc": { "start": 546, "end": 613 }
+                                          }
+                                        ],
+                                        "loc": { "start": 457, "end": 628 }
+                                      },
+                                      "loc": { "start": 446, "end": 628 }
+                                    }
+                                  ],
+                                  "loc": { "start": 165, "end": 641 }
+                                },
+                                "loc": { "start": 141, "end": 641 }
+                              }
+                            ],
+                            "loc": { "start": 112, "end": 652 }
+                          },
+                          "loc": { "start": 94, "end": 652 }
+                        }
+                      ],
+                      "loc": { "start": 83, "end": 661 }
+                    },
+                    "loc": { "start": 68, "end": 661 }
+                  }
+                ],
+                "loc": { "start": 59, "end": 668 }
+              },
+              "loc": { "start": 47, "end": 668 }
+            }
+          ],
+          "loc": { "start": 40, "end": 673 }
+        },
+        "loc": { "start": 4, "end": 673 }
+      }
+    ]
+  }
+}
