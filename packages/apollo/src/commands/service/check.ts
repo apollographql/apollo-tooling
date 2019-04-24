@@ -538,6 +538,8 @@ export default class ServiceCheck extends ProjectCommand {
                   "compatible change"
                 )}`;
 
+                throw new Error(task.title);
+
                 if (breakingSchemaChangeCount) {
                   // Throw an error here to produce a red X in the list of steps being taken. We're going to
                   // `catch` this error below and proceed with the reporting.

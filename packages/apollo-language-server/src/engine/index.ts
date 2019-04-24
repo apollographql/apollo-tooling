@@ -105,6 +105,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
   }
 
   public async checkSchema(variables: CheckSchemaVariables) {
+    // throw new Error(JSON.stringify({ ...variables, schema: "REDACTED" }));
     return this.execute<CheckSchema>({
       query: CHECK_SCHEMA,
       variables

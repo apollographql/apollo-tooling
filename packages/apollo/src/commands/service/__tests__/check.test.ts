@@ -838,114 +838,100 @@ describe("service:check", () => {
 // });
 
 // // this is because of herkou-cli-utils hacky mocking system on their console logger
-// import { stdout, captureApplicationOutput } from "heroku-cli-util";
-// import path from "path";
-// import fs from "fs";
-// import { test as setup } from "apollo-cli-test";
-// import { introspectionQuery, print, execute, buildSchema } from "graphql";
-// import gql from "graphql-tag";
-// import { ENGINE_URI } from "../../../engine";
-// import { VALIDATE_SCHEMA } from "../../../operations/validateSchema";
+import { stdout, mockConsole } from "heroku-cli-util";
+import path from "path";
+import fs from "fs";
+import { test as setup } from "apollo-cli-test";
+import { introspectionQuery, print, execute, buildSchema } from "graphql";
+import gql from "graphql-tag";
+import { CHECK_SCHEMA } from "../../../../../apollo-language-server/src/engine/operations/checkSchema";
 
 // import { vol, fs as mockFS } from "apollo-codegen-core/lib/localfs";
 
-// const test = setup.do(() => captureApplicationOutput());
-// const ENGINE_API_KEY = "service:test:1234";
-// const hash = "12345";
-// const schemaContents = fs.readFileSync(
-//   path.resolve(__dirname, "./fixtures/schema.graphql"),
-//   {
-//     encoding: "utf-8"
-//   }
-// );
+const test = setup.do(() => mockConsole());
+const ENGINE_URI = "https://engine-graphql.apollographql.com/api/graphql";
+const ENGINE_API_KEY = "service:test:1234";
+const hash = "12345";
+const schemaContents = fs.readFileSync(
+  path.resolve(__dirname, "./fixtures/schema.graphql"),
+  {
+    encoding: "utf-8"
+  }
+);
 
-// const fullSchema = execute(buildSchema(schemaContents), gql(introspectionQuery))
-//   .data;
+const fullSchema = execute(buildSchema(schemaContents), gql(introspectionQuery))
+  .data;
 
-// const localSuccess = nock => {
-//   nock
-//     .post("/graphql", {
-//       query: print(gql(introspectionQuery)),
-//       operationName: "IntrospectionQuery",
-//       variables: {}
-//     })
-//     .reply(200, { data: fullSchema });
-// };
+const localSuccess = nock => {
+  nock
+    .post("/graphql", {
+      query: print(gql(introspectionQuery)),
+      operationName: "IntrospectionQuery",
+      variables: {}
+    })
+    .reply(200, { data: fullSchema });
+};
 
-// const engineSuccess = ({ schema, tag, results } = {}) => nock => {
-//   nock
-//     .matchHeader("x-api-key", ENGINE_API_KEY)
-//     .post("/", {
-//       operationName: "CheckSchema",
-//       variables: {
-//         id: "test",
-//         schema: schema || fullSchema.__schema,
-//         tag: tag || "current",
-//         gitContext: {
-//           commit: /.+/i,
-//           remoteUrl: /apollo-tooling/i,
-//           committer: /@/i
-//         }
-//       },
-//       query: print(VALIDATE_SCHEMA)
-//     })
-//     .reply(200, {
-//       data: {
-//         service: {
-//           schema: {
-//             checkSchema: {
-//               changes: results || [
-//                 {
-//                   severity: "NOTICE",
-//                   code: "DEPRECATION_ADDED",
-//                   description: "Field `User.lastName` was deprecated"
-//                 },
-//                 {
-//                   severity: "WARNING",
-//                   code: "FIELD_REMOVED",
-//                   description: "Field `User.firstName` removed"
-//                 },
-//                 {
-//                   severity: "FAILURE",
-//                   code: "ARG_CHANGE_TYPE",
-//                   description: "Argument id on `Query.user` changed to ID!"
-//                 },
-//                 {
-//                   severity: "NOTICE",
-//                   code: "FIELD_ADDED",
-//                   description: "Field `User.fullName` was added"
-//                 }
-//               ]
-//             }
-//           }
-//         }
-//       }
-//     });
-// };
+const engineSuccess = ({
+  schema,
+  tag,
+  results,
+  resultFilter = () => true
+} = {}) => nock => {
+  nock
+    .matchHeader("x-api-key", ENGINE_API_KEY)
+    .post(
+      /.*/,
+      // this is a matcher function
+      ({
+        operationName,
+        query,
+        variables: { id, schema, gitContext, frontend }
+      }) =>
+        operationName === "CheckSchema" &&
+        query === print(CHECK_SCHEMA) &&
+        id === "test" &&
+        gitContext &&
+        JSON.stringify(schema) === JSON.stringify(fullSchema.__schema) &&
+        frontend === "https://engine.apollographql.com"
+    )
+    .reply(200, {
+      data: {
+        service: {
+          checkSchema: {
+            ...checkSchemaResult,
+            diffToPrevious: {
+              ...checkSchemaResult.diffToPrevious,
+              changes: (
+                results || checkSchemaResult.diffToPrevious.changes
+              ).filter(resultFilter)
+            }
+          }
+        }
+      }
+    });
+};
 
-// jest.setTimeout(25000);
+jest.setTimeout(25000);
 
-// beforeEach(() => {
-//   vol.reset();
-//   vol.fromJSON({
-//     __blankFileSoDirectoryExists: ""
-//   });
-// });
+describe("successful checks", () => {
+  const noFailures = change => change.type !== "FAILURE";
 
-// describe("successful checks", () => {
-//   test
-//     .nock("http://localhost:4000", localSuccess)
-//     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
-//     .stdout()
-//     .command(["schema:check"])
-//     .exit(1)
-//     .it("compares against the latest uploaded schema", () => {
-//       expect(stdout).toContain("FAILURE");
-//       expect(stdout).toContain("NOTICE");
-//       expect(stdout).toContain("WARNING");
-//     });
-
+  test
+    .fs({ "my.config.js": "module.exports = { }" })
+    .nock("http://localhost:4000", localSuccess)
+    .nock(ENGINE_URI, engineSuccess({ resultFilter: noFailures }))
+    .env({ ENGINE_API_KEY })
+    .stdout()
+    .command(["service:check", "--config=my.config.js"])
+    // .exit(1)
+    .it("compares against the latest uploaded schema", () => {
+      // throw new Error(stdout);
+      expect(stdout).toContain("FAIL");
+      // expect(stdout).toContain("NOTICE");
+      // expect(stdout).toContain("WARNING");
+    });
+});
 //   test
 //     .nock("http://localhost:4000", localSuccess)
 //     .nock(ENGINE_URI, engineSuccess())
