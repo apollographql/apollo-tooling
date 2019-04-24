@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Support local schema files in service:check [#1118](https://github.com/apollographql/apollo-tooling/pull/1116)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -19,7 +19,7 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Fix on-hover bugs introduced by replacing visitWithTypeInfo [#1196](https://github.com/apollographql/apollo-tooling/pull/1196)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
@@ -35,27 +35,26 @@
 - `apollo@2.8.2`
   - Update `service:check`'s `--markdown` output to include clients affected, number of operations checked, pluralization improvements, and backticks around service and schema variant [#1164](https://github.com/apollographql/apollo-tooling/pull/1164)
   - Update `service:check` output to show failures before passes [#1168](https://github.com/apollographql/apollo-tooling/pull/1168)
+- `apollo-language-server@1.6.3`
 
 ## `apollo@2.8.1`
 
 - `apollo@2.8.1`
   - Add git info back to `checkSchema` to fix detail links[#1165](https://github.com/apollographql/apollo-tooling/pull/1165)
+- `apollo-language-server@1.6.2`
 
 ## `apollo@2.8.0`
 
 - `apollo@2.8.0`
   - Add `--markdown` output option to `service:check` [#1072](https://github.com/apollographql/apollo-tooling/pull/1072)
   - Enhance formatting for `service:check` output [#1146](https://github.com/apollographql/apollo-tooling/pull/1146)
+- `apollo-language-server@1.6.1`
 
 ## `apollo@2.7.0`, `apollo-vscode@1.6.0`
 
 - `apollo@2.7.0`
   - Update operation normalization technique to deterministically order fragments within operations. This update affects those users of the [operation registry](https://www.apollographql.com/docs/platform/operation-registry.html) feature of the Apollo Platform. Anyone using the operation registry should re-register their operations with this new version of the `apollo` CLI via the `apollo client:push` command. Once all client operations are re-registered, the `apollo-server-plugin-operation-manifest` plugin within Apollo Server (which reads the manifest published with `apollo client:push`) should be updated to `0.1.0-alpha.1`. [#1158](https://github.com/apollographql/apollo-tooling/pull/1158)
-
-## `apollo-language-server`
-
-- apollo-language-server
-
+- `apollo-language-server@1.6.0`
   - Stop loadConfig from looking up the tree when a --config location is defined [#1059](https://github.com/apollographql/apollo-tooling/pull/1059)
   - Refactored/documented/tested loadConfig [#1059](https://github.com/apollographql/apollo-tooling/pull/1059)
   - Add `.vue` file support for codegen:generate [#1160](https://github.com/apollographql/apollo-tooling/pull/1160)
