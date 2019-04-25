@@ -20,6 +20,7 @@
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
   - Fix on-hover bugs introduced by replacing visitWithTypeInfo [#1196](https://github.com/apollographql/apollo-tooling/pull/1196)
+  - Add `gql` extension to the default `includes` configuration [#1176](https://github.com/apollographql/apollo-tooling/pull/1176)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
@@ -35,7 +36,6 @@
 - `apollo@2.8.2`
   - Update `service:check`'s `--markdown` output to include clients affected, number of operations checked, pluralization improvements, and backticks around service and schema variant [#1164](https://github.com/apollographql/apollo-tooling/pull/1164)
   - Update `service:check` output to show failures before passes [#1168](https://github.com/apollographql/apollo-tooling/pull/1168)
-- `apollo-language-server@1.6.3`
 
 ## `apollo@2.8.1`
 
