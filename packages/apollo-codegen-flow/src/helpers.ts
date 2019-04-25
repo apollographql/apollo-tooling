@@ -22,12 +22,8 @@ const builtInScalarMap = {
   [GraphQLID.name]: t.stringTypeAnnotation()
 };
 
-export interface FlowCompilerOptions extends CompilerOptions {
-  useReadOnlyTypes: boolean;
-}
-
 export function createTypeAnnotationFromGraphQLTypeFunction(
-  compilerOptions: FlowCompilerOptions
+  compilerOptions: CompilerOptions
 ): Function {
   const arrayType = compilerOptions.useReadOnlyTypes
     ? "$ReadOnlyArray"

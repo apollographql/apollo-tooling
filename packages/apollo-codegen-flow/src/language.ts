@@ -18,7 +18,6 @@ export type ObjectProperty = {
 
 export interface FlowCompilerOptions extends CompilerOptions {
   useFlowExactObjects: boolean;
-  useReadOnlyTypes: boolean;
 }
 
 export default class FlowGenerator {
