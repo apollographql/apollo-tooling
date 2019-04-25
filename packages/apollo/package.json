@@ -1,7 +1,7 @@
 {
   "name": "apollo",
   "description": "Command line tool for Apollo GraphQL",
-  "version": "2.8.1",
+  "version": "2.8.3",
   "referenceID": "21ad0845-c235-422e-be7d-a998310df972",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@apollographql/apollo-tools": "file:../apollo-tools",
-    "@oclif/command": "1.5.12",
+    "@oclif/command": "1.5.13",
     "@oclif/config": "1.12.12",
     "@oclif/errors": "1.2.2",
     "@oclif/plugin-autocomplete": "0.1.0",
@@ -64,7 +64,7 @@
     "vscode-uri": "1.0.6"
   },
   "devDependencies": {
-    "typescript": "3.4.2"
+    "typescript": "3.4.4"
   },
   "oclif": {
     "commands": "./lib/commands",
