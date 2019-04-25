@@ -28,6 +28,7 @@ export class GraphQLWorkspace {
   private _onDecorations?: NotificationHandler<any>;
   private _onSchemaTags?: NotificationHandler<[ServiceID, SchemaTag[]]>;
   private _onConfigFilesFound?: NotificationHandler<ApolloConfig[]>;
+  private _projectForFileCache: Map<string, GraphQLProject> = new Map();
 
   private projectsByFolderUri: Map<string, GraphQLProject[]> = new Map();
 
@@ -225,9 +226,15 @@ export class GraphQLWorkspace {
   }
 
   projectForFile(uri: DocumentUri): GraphQLProject | undefined {
+    const cachedResult = this._projectForFileCache.get(uri);
+    if (cachedResult) {
+      return cachedResult;
+    }
+
     for (const projects of this.projectsByFolderUri.values()) {
       const project = projects.find(project => project.includesFile(uri));
       if (project) {
+        this._projectForFileCache.set(uri, project);
         return project;
       }
     }

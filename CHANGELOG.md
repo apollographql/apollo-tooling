@@ -21,6 +21,7 @@
 - `apollo-language-server`
   - Fix on-hover bugs introduced by replacing visitWithTypeInfo [#1196](https://github.com/apollographql/apollo-tooling/pull/1196)
   - Add `gql` extension to the default `includes` configuration [#1176](https://github.com/apollographql/apollo-tooling/pull/1176)
+  - Simple perf improvements (debouncer + cache) [#1206](https://github.com/apollographql/apollo-tooling/pull/1206)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
