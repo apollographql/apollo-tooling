@@ -140,12 +140,9 @@ export function formatHumanReadable({
 }): string {
   const {
     targetUrl,
-    diffToPrevious: { changes, validationConfig }
+    diffToPrevious: { changes }
   } = checkSchemaResult;
   let result = "";
-  const failures = changes.filter(
-    ({ severity }) => severity === ChangeSeverity.FAILURE
-  );
 
   if (changes.length === 0) {
     result = "\nNo changes present between schemas";
