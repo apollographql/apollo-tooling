@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.8.3 darwin-x64 node-v10.14.1
+apollo/2.9.0 darwin-x64 node-v11.14.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -69,7 +69,9 @@ OPTIONS
   --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
                                          work in watch mode
 
-  --header=header                        Additional headers to send to server for introspectionQuery
+  --header=header                        Additional header to send to server for introspectionQuery. May be used
+                                         multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
+                                         if using the `--header` flag.
 
   --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
                                          queries *and* any client schema extensions
@@ -127,7 +129,9 @@ OPTIONS
   --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
                                              "output" directory. Set "globalTypesFile" to specify a different path.
 
-  --header=header                            Additional headers to send to server for introspectionQuery
+  --header=header                            Additional header to send to server for introspectionQuery. May be used
+                                             multiple times to add multiple headers. NOTE: The `--endpoint` flag is
+                                             REQUIRED if using the `--header` flag.
 
   --includes=includes                        Glob of files to search for GraphQL operations. This should be used to find
                                              queries *and* any client schema extensions
@@ -200,7 +204,9 @@ OPTIONS
   --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
                                          work in watch mode
 
-  --header=header                        Additional headers to send to server for introspectionQuery
+  --header=header                        Additional header to send to server for introspectionQuery. May be used
+                                         multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
+                                         if using the `--header` flag.
 
   --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
                                          queries *and* any client schema extensions
@@ -238,7 +244,9 @@ OPTIONS
   --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
                                          work in watch mode
 
-  --header=header                        Additional headers to send to server for introspectionQuery
+  --header=header                        Additional header to send to server for introspectionQuery. May be used
+                                         multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
+                                         if using the `--header` flag.
 
   --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
                                          queries *and* any client schema extensions
@@ -400,13 +408,18 @@ OPTIONS
   -t, --tag=tag                                                  The published tag to check this service against
   --endpoint=endpoint                                            The url of your service
 
-  --header=header                                                Additional headers to send to server for
-                                                                 introspectionQuery
+  --header=header                                                Additional header to send to server for
+                                                                 introspectionQuery. May be used multiple times to add
+                                                                 multiple headers. NOTE: The `--endpoint` flag is
+                                                                 REQUIRED if using the `--header` flag.
 
   --json                                                         Output result in json, which can then be parsed by CLI
                                                                  tools such as jq.
 
   --key=key                                                      The API key for the Apollo Engine service
+
+  --localSchemaFile=localSchemaFile                              Path to your local GraphQL schema file (introspection
+                                                                 result or SDL)
 
   --markdown                                                     Output result in markdown.
 
@@ -445,7 +458,10 @@ OPTIONS
   -k, --skipSSLValidation  Allow connections to an SSL site without certs
   -t, --tag=tag            [default: current] The published tag to check this service against
   --endpoint=endpoint      The url of your service
-  --header=header          Additional headers to send to server for introspectionQuery
+
+  --header=header          Additional header to send to server for introspectionQuery. May be used multiple times to add
+                           multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag.
+
   --key=key                The API key for the Apollo Engine service
 
 ALIASES
@@ -466,8 +482,13 @@ OPTIONS
   -c, --config=config                Path to your Apollo config file
   -t, --tag=tag                      [default: current] The tag to publish this service to
   --endpoint=endpoint                The url of your service
-  --header=header                    Additional headers to send to server for introspectionQuery
+
+  --header=header                    Additional header to send to server for introspectionQuery. May be used multiple
+                                     times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the
+                                     `--header` flag.
+
   --key=key                          The API key for the Apollo Engine service
+
   --localSchemaFile=localSchemaFile  Path to your local GraphQL schema file (introspection result or SDL)
 
 ALIASES
