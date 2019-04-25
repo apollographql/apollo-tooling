@@ -4,7 +4,7 @@ import {
   formatTimePeriod
 } from "../check";
 import checkSchemaResult from "./fixtures/check-schema-result.json";
-import { ChangeType } from "apollo-language-server/lib/graphqlTypes";
+import { ChangeSeverity } from "apollo-language-server/lib/graphqlTypes";
 import chalk from "chalk";
 
 describe("service:check", () => {
@@ -54,7 +54,7 @@ describe("service:check", () => {
               ],
               changes: [
                 checkSchemaResult.diffToPrevious.changes.find(
-                  change => change.type === ChangeType.FAILURE
+                  change => change.type === ChangeSeverity.FAILURE
                 )
               ],
               numberOfCheckedOperations: 1
@@ -82,7 +82,7 @@ describe("service:check", () => {
             ...checkSchemaResult,
             diffToPrevious: {
               ...checkSchemaResult.diffToPrevious,
-              type: ChangeType.NOTICE,
+              type: ChangeSeverity.NOTICE,
               affectedClients: [],
               affectedQueries: [],
               changes: []
@@ -163,7 +163,7 @@ View full details at: https://engine-dev.apollographql.com/service/engine/checks
             ...checkSchemaResult,
             diffToPrevious: {
               ...checkSchemaResult.diffToPrevious,
-              type: ChangeType.NOTICE,
+              type: ChangeSeverity.NOTICE,
               affectedQueries: [],
               changes: []
             }
@@ -184,10 +184,10 @@ View full details at: https://engine-dev.apollographql.com/service/engine/checks
             ...checkSchemaResult,
             diffToPrevious: {
               ...checkSchemaResult.diffToPrevious,
-              type: ChangeType.NOTICE,
+              type: ChangeSeverity.NOTICE,
               affectedQueries: [],
               changes: checkSchemaResult.diffToPrevious.changes.filter(
-                change => change.type === ChangeType.FAILURE
+                change => change.type === ChangeSeverity.FAILURE
               )
             }
           }
