@@ -9,10 +9,8 @@ export const SCHEMA_TAG_INFO_QUERY = gql`
           committer
           commit
         }
-        introspection {
-          fieldCount
-          typeCount
-        }
+        fieldCount
+        typeCount
         createdAt
       }
     }
