@@ -1,4 +1,5 @@
 import { relative } from "path";
+import * as path from "path";
 import minimatch = require("minimatch");
 import glob from "glob";
 import { invariant } from "@apollographql/apollo-tools";
@@ -50,8 +51,20 @@ export class FileSet {
     }
   }
 
+  /**
+   * NOTE: We have to normalize the file path because they can vary
+   * depending on where they come from, especially on windows. For example...
+   * status bar action format: \users\MyUser\...
+   * Other extension notifications: c:\users\MyUser\...
+   * glob lookup in allFiles: c:/users/MyUser/...
+   */
+  private drivePrefix = /^.:/;
   includesFile(filePath: string): boolean {
-    return this.allFiles().includes(filePath);
+    const windowsSafeFilePath = filePath
+      .replace(this.drivePrefix, "") // remove drive prefix (windows)
+      .split("\\") // replace \ and \\ with /
+      .join("/");
+    return this.allFiles().includes(windowsSafeFilePath);
   }
 
   allFiles(): string[] {
@@ -59,10 +72,12 @@ export class FileSet {
     // `includes` globs into a single pattern and pass to glob.sync. The `ignore` option does, however, allow
     // an array of globs to ignore, so we can pass it in directly
     const joinedIncludes = `{${this.includes.join(",")}}`;
-    return glob.sync(joinedIncludes, {
-      cwd: this.rootURI.fsPath,
-      absolute: true,
-      ignore: this.excludes
-    });
+    return glob
+      .sync(joinedIncludes, {
+        cwd: this.rootURI.fsPath,
+        absolute: true,
+        ignore: this.excludes
+      })
+      .map(filePath => filePath.replace(this.drivePrefix, "")); // windows drive letter
   }
 }

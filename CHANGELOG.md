@@ -19,7 +19,7 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Fix fileSet.includesFile to work properly with windows paths []().
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
