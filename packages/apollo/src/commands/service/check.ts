@@ -44,7 +44,7 @@ const formatChange = (change: Change) => {
   };
 
   return {
-    type: color(changeDictionary[change.severity]),
+    severity: color(changeDictionary[change.severity]),
     code: color(change.code),
     description: color(change.description)
   };
@@ -173,7 +173,7 @@ export function formatHumanReadable({
       ].filter(Boolean),
       {
         columns: [
-          { key: "type", label: "Change" },
+          { key: "severity", label: "Change" },
           { key: "code", label: "Code" },
           { key: "description", label: "Description" }
         ],
