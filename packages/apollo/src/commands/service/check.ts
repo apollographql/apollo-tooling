@@ -8,7 +8,7 @@ import { validateHistoricParams } from "../../utils";
 import {
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
-  ChangeType
+  ChangeSeverity
 } from "apollo-language-server/lib/graphqlTypes";
 import { ApolloConfig } from "apollo-language-server";
 import moment from "moment";
@@ -29,22 +29,22 @@ function pluralize(
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
-  if (change.type === ChangeType.FAILURE) {
+  if (change.severity === ChangeSeverity.FAILURE) {
     color = chalk.red;
   }
 
-  if (change.type === ChangeType.WARNING) {
+  if (change.severity === ChangeSeverity.WARNING) {
     color = chalk.yellow;
   }
 
-  const changeDictionary: Record<ChangeType, string> = {
-    [ChangeType.FAILURE]: "FAIL",
-    [ChangeType.WARNING]: "WARN",
-    [ChangeType.NOTICE]: "PASS"
+  const changeDictionary: Record<ChangeSeverity, string> = {
+    [ChangeSeverity.FAILURE]: "FAIL",
+    [ChangeSeverity.WARNING]: "WARN",
+    [ChangeSeverity.NOTICE]: "PASS"
   };
 
   return {
-    type: color(changeDictionary[change.type]),
+    severity: color(changeDictionary[change.severity]),
     code: color(change.code),
     description: color(change.description)
   };
@@ -96,7 +96,7 @@ export function formatMarkdown({
   );
 
   const breakingChanges = diffToPrevious.changes.filter(
-    change => change.type === "FAILURE"
+    change => change.severity === "FAILURE"
   );
 
   const affectedQueryCount = diffToPrevious.affectedQueries
@@ -116,7 +116,7 @@ export function formatMarkdown({
 ${
   breakingChanges.length > 0
     ? `❌ Found **${pluralize(
-        diffToPrevious.changes.filter(change => change.type === "FAILURE")
+        diffToPrevious.changes.filter(change => change.severity === "FAILURE")
           .length,
         "breaking change"
       )}** that would affect **${pluralize(
@@ -140,10 +140,9 @@ export function formatHumanReadable({
 }): string {
   const {
     targetUrl,
-    diffToPrevious: { changes, validationConfig }
+    diffToPrevious: { changes }
   } = checkSchemaResult;
   let result = "";
-  const failures = changes.filter(({ type }) => type === ChangeType.FAILURE);
 
   if (changes.length === 0) {
     result = "\nNo changes present between schemas";
@@ -156,13 +155,13 @@ export function formatHumanReadable({
     ]);
 
     const breakingChanges = sortedChanges.filter(
-      change => change.type === ChangeType.FAILURE
+      change => change.severity === ChangeSeverity.FAILURE
     );
 
-    sortBy(breakingChanges, change => change.type);
+    sortBy(breakingChanges, change => change.severity);
 
     const nonBreakingChanges = sortedChanges.filter(
-      change => change.type !== ChangeType.FAILURE
+      change => change.severity !== ChangeSeverity.FAILURE
     );
 
     table(
@@ -174,7 +173,7 @@ export function formatHumanReadable({
       ].filter(Boolean),
       {
         columns: [
-          { key: "type", label: "Change" },
+          { key: "severity", label: "Change" },
           { key: "code", label: "Code" },
           { key: "description", label: "Description" }
         ],
@@ -336,7 +335,7 @@ export default class ServiceCheck extends ProjectCommand {
               title: "Reporting result",
               task: async (ctx: TasksOutput, task) => {
                 const breakingSchemaChangeCount = ctx.checkSchemaResult.diffToPrevious.changes.filter(
-                  change => change.type === ChangeType.FAILURE
+                  change => change.severity === ChangeSeverity.FAILURE
                 ).length;
                 const nonBreakingSchemaChangeCount =
                   ctx.checkSchemaResult.diffToPrevious.changes.length -
@@ -432,7 +431,7 @@ export default class ServiceCheck extends ProjectCommand {
     // exit with failing status if we have failures
     if (
       checkSchemaResult.diffToPrevious.changes.find(
-        ({ type }) => type === ChangeType.FAILURE
+        ({ severity }) => severity === ChangeSeverity.FAILURE
       )
     ) {
       this.exit(1);
