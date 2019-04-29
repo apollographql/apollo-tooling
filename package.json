@@ -77,7 +77,7 @@
     "jest": "24.7.1",
     "jest-environment-node": "24.7.1",
     "jest-matcher-utils": "24.7.0",
-    "lerna": "3.13.3",
+    "lerna": "3.13.4",
     "lint-staged": "8.1.5",
     "memfs": "2.15.2",
     "nock": "10.0.6",
