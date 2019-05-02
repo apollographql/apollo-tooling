@@ -7,7 +7,7 @@
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
-  - <First `apollo-codegen-flow` related entry goes here>
+  - Add support for `globalTypesFile` option [#1224](https://github.com/apollographql/apollo-tooling/pull/1224)
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
