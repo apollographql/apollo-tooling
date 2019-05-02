@@ -128,6 +128,7 @@ OPTIONS
 
   --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
                                              "output" directory. Set "globalTypesFile" to specify a different path.
+                                             Similarly, Flow will put common types in a global file, only if this option is set.
 
   --header=header                            Additional header to send to server for introspectionQuery. May be used
                                              multiple times to add multiple headers. NOTE: The `--endpoint` flag is
