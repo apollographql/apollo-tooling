@@ -54,7 +54,11 @@ export class FileSet {
   includesFile(filePath: string): boolean {
     // use URI.file to format filepath the same as glob.sync below does
     const parsed = URI.file(filePath).fsPath;
-    return this.allFiles().includes(parsed);
+    // URI.parse has to be used for file:/// URIs
+    const parsed2 = URI.parse(filePath).fsPath;
+    return (
+      this.allFiles().includes(parsed) || this.allFiles().includes(parsed2)
+    );
   }
 
   allFiles(): string[] {
