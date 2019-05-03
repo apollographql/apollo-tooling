@@ -164,7 +164,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   }
 
   includesFile(uri: DocumentUri) {
-    return this.fileSet.includesFile(URI.parse(uri).fsPath);
+    return this.fileSet.includesFile(uri);
   }
 
   async scanAllIncludedFiles() {

@@ -51,20 +51,10 @@ export class FileSet {
     }
   }
 
-  /**
-   * NOTE: We have to normalize the file path because they can vary
-   * depending on where they come from, especially on windows. For example...
-   * status bar action format: \users\MyUser\...
-   * Other extension notifications: c:\users\MyUser\...
-   * glob lookup in allFiles: c:/users/MyUser/...
-   */
-  private drivePrefix = /^.:/;
   includesFile(filePath: string): boolean {
-    const windowsSafeFilePath = filePath
-      .replace(this.drivePrefix, "") // remove drive prefix (windows)
-      .split("\\") // replace \ and \\ with /
-      .join("/");
-    return this.allFiles().includes(windowsSafeFilePath);
+    // use URI.file to format filepath the same as glob.sync below does
+    const parsed = URI.file(filePath).fsPath;
+    return this.allFiles().includes(parsed);
   }
 
   allFiles(): string[] {
@@ -78,6 +68,6 @@ export class FileSet {
         absolute: true,
         ignore: this.excludes
       })
-      .map(filePath => filePath.replace(this.drivePrefix, "")); // windows drive letter
+      .map(filePath => URI.file(filePath).fsPath);
   }
 }
