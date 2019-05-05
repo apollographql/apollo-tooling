@@ -75,7 +75,7 @@
     "@types/ws": "6.0.1",
     "husky": "2.2.0",
     "jest": "24.8.0",
-    "jest-environment-node": "24.7.1",
+    "jest-environment-node": "24.8.0",
     "jest-matcher-utils": "24.7.0",
     "lerna": "3.13.4",
     "lint-staged": "8.1.6",
