@@ -1,6 +1,9 @@
 import { normalizeURI } from "../uri";
 
 describe("Unix URIs", () => {
+  // this is the format that `glob` returns on unix
+  const uriToMatchForUnix = "/test/myFile.js";
+
   // single forward slash (unix)
   it("handles /Users/me URIs", () => {
     const uri = "/test/myFile.js";
@@ -16,9 +19,6 @@ describe("Unix URIs", () => {
     expect(parsed).toEqual(uriToMatchForUnix);
   });
 });
-
-// this is the format that `glob` returns on unix
-const uriToMatchForUnix = "/test/myFile.js";
 
 describe("Windows URIs", () => {
   // this is the format that `glob` returns for windows
