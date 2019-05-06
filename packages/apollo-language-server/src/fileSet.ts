@@ -72,6 +72,10 @@ export class FileSet {
         absolute: true,
         ignore: this.excludes
       })
+      .map(f => {
+        console.log({ f });
+        return f;
+      })
       .map(filePath => URI.file(filePath).fsPath);
   }
 }
