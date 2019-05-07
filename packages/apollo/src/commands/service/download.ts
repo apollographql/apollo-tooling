@@ -6,8 +6,7 @@ import { ProjectCommand } from "../../Command";
 
 export default class ServiceDownload extends ProjectCommand {
   static aliases = ["schema:download"];
-  static description =
-    "Download a schema from a locally running GraphQL endpoint.";
+  static description = "Download the schema from your GraphQL endpoint.";
 
   static flags = {
     ...ProjectCommand.flags,
