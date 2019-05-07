@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.9.0 darwin-x64 node-v11.14.0
+apollo/2.10.0 darwin-x64 node-v8.11.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -34,6 +34,7 @@ USAGE
 <!-- commands -->
 * [`apollo client:check`](#apollo-clientcheck)
 * [`apollo client:codegen [OUTPUT]`](#apollo-clientcodegen-output)
+* [`apollo client:download-schema OUTPUT`](#apollo-clientdownload-schema-output)
 * [`apollo client:extract OUTPUT`](#apollo-clientextract-output)
 * [`apollo client:push`](#apollo-clientpush)
 * [`apollo help [COMMAND]`](#apollo-help-command)
@@ -177,6 +178,49 @@ ALIASES
 ```
 
 _See code: [src/commands/client/codegen.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/codegen.ts)_
+
+## `apollo client:download-schema OUTPUT`
+
+Download a schema from engine or a GraphQL endpoint.
+
+```
+USAGE
+  $ apollo client:download-schema OUTPUT
+
+ARGUMENTS
+  OUTPUT  [default: schema.json] Path to write the introspection result to
+
+OPTIONS
+  -c, --config=config                    Path to your Apollo config file
+  -t, --tag=tag                          The published service tag for this client
+  --clientName=clientName                Name of the client that the queries will be attached to
+
+  --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
+                                         clientName if not provided
+
+  --clientVersion=clientVersion          The version of the client that the queries will be attached to
+
+  --endpoint=endpoint                    The url of your service
+
+  --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
+                                         work in watch mode
+
+  --header=header                        Additional header to send to server for introspectionQuery. May be used
+                                         multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
+                                         if using the `--header` flag.
+
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
+                                         queries *and* any client schema extensions
+
+  --key=key                              The API key for the Apollo Engine service
+
+  --queries=queries                      Deprecated in favor of the includes flag
+
+  --tagName=tagName                      Name of the template literal tag used to identify template literals containing
+                                         GraphQL queries in Javascript/Typescript code
+```
+
+_See code: [src/commands/client/download-schema.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/download-schema.ts)_
 
 ## `apollo client:extract OUTPUT`
 
