@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Add `client:download-schema` command to download schemas from engine to an output file [#1108](https://github.com/apollographql/apol    lo-tooling/pull/1108)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
