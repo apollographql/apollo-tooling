@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Add `client:download-schema` command to download schemas from engine to an output file [#1108](https://github.com/apollographql/apol    lo-tooling/pull/1108)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -24,6 +24,11 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.10.0`
+
+- `apollo@2.10.0`
+  - Add `client:download-schema` command to download schemas from engine to an output file [#1108](https://github.com/apollographql/apollo-tooling/pull/1108)
 
 ## `apollo@2.9.0`, `apollo-language-server@1.7.0`
 
