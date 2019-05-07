@@ -29,6 +29,26 @@ describe("Swift code generation: Basic language constructs", () => {
     `);
   });
 
+  it(`should generate a class declaration matching modifiers`, () => {
+    generator.classDeclaration(
+      { className: "Hero", modifiers: ["final"] },
+      () => {
+        generator.propertyDeclaration({
+          propertyName: "name",
+          typeName: "String"
+        });
+        generator.propertyDeclaration({ propertyName: "age", typeName: "Int" });
+      }
+    );
+
+    expect(generator.output).toBe(stripIndent`
+      final class Hero {
+        public var name: String
+        public var age: Int
+      }
+    `);
+  });
+
   it(`should generate a struct declaration`, () => {
     generator.structDeclaration({ structName: "Hero" }, () => {
       generator.propertyDeclaration({
@@ -40,6 +60,30 @@ describe("Swift code generation: Basic language constructs", () => {
 
     expect(generator.output).toBe(stripIndent`
       public struct Hero {
+        public var name: String
+        public var age: Int
+      }
+    `);
+  });
+
+  it(`should generate a namespaced fragment`, () => {
+    generator.structDeclaration(
+      {
+        structName: "Hero",
+        adoptedProtocols: ["GraphQLFragment"],
+        namespace: "StarWars"
+      },
+      () => {
+        generator.propertyDeclaration({
+          propertyName: "name",
+          typeName: "String"
+        });
+        generator.propertyDeclaration({ propertyName: "age", typeName: "Int" });
+      }
+    );
+
+    expect(generator.output).toBe(stripIndent`
+      struct Hero: GraphQLFragment {
         public var name: String
         public var age: Int
       }

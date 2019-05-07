@@ -13,6 +13,7 @@ export interface Struct {
   structName: string;
   adoptedProtocols?: string[];
   description?: string;
+  namespace?: string;
 }
 
 export interface Protocol {
@@ -136,13 +137,23 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   }
 
   structDeclaration(
-    { structName, description, adoptedProtocols = [] }: Struct,
+    {
+      structName,
+      description,
+      adoptedProtocols = [],
+      namespace = undefined
+    }: Struct,
     closure: Function
   ) {
     this.printNewlineIfNeeded();
     this.comment(description);
+
+    const isRedundant =
+      adoptedProtocols.includes("GraphQLFragment") && !!namespace;
+    const modifier = isRedundant ? "" : "public ";
+
     this.printOnNewline(
-      `public struct ${escapeIdentifierIfNeeded(structName)}`
+      `${modifier}struct ${escapeIdentifierIfNeeded(structName)}`
     );
     this.print(wrap(": ", join(adoptedProtocols, ", ")));
     this.pushScope({ typeName: structName });
