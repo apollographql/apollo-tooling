@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Add service:check debuggability [#1250](https://github.com/apollographql/apollo-tooling/pull/1250)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
