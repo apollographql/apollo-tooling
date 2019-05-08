@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Add service:check debuggability [#1250](https://github.com/apollographql/apollo-tooling/pull/1250)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -24,6 +24,16 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.10.3`
+
+- `apollo@2.10.3`
+  - Add service:check debuggability [#1250](https://github.com/apollographql/apollo-tooling/pull/1250)
+
+## `apollo@2.10.2`
+
+- `apollo@2.10.2`
+  - Relocate debug statements [#1245](https://github.com/apollographql/apollo-tooling/pull/1245)
 
 ## `apollo@2.10.1`
 
