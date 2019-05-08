@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Support local schema files in service:check [#1118](https://github.com/apollographql/apollo-tooling/pull/1116)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -19,11 +19,30 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Fix on-hover bugs introduced by replacing visitWithTypeInfo [#1196](https://github.com/apollographql/apollo-tooling/pull/1196)
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.10.1`
+
+- `apollo@2.10.1`
+  - Add service:push debuggability [#1244](https://github.com/apollographql/apollo-tooling/pull/1244)
+
+## `apollo@2.10.0`
+
+- `apollo@2.10.0`
+  - Add `client:download-schema` command to download schemas from engine to an output file [#1108](https://github.com/apollographql/apollo-tooling/pull/1108)
+
+## `apollo@2.9.0`, `apollo-language-server@1.7.0`
+
+- `apollo@2.9.0`
+  - Support local schema files in service:check [#1118](https://github.com/apollographql/apollo-tooling/pull/1116)
+- `apollo-language-server@1.7.0`
+  - Fix on-hover bugs introduced by replacing visitWithTypeInfo [#1196](https://github.com/apollographql/apollo-tooling/pull/1196)
+  - Add `gql` extension to the default `includes` configuration [#1176](https://github.com/apollographql/apollo-tooling/pull/1176)
+  - Simple perf improvements (debouncer + cache) [#1206](https://github.com/apollographql/apollo-tooling/pull/1206)
 
 ## `apollo@2.8.3`
 
@@ -35,7 +54,6 @@
 - `apollo@2.8.2`
   - Update `service:check`'s `--markdown` output to include clients affected, number of operations checked, pluralization improvements, and backticks around service and schema variant [#1164](https://github.com/apollographql/apollo-tooling/pull/1164)
   - Update `service:check` output to show failures before passes [#1168](https://github.com/apollographql/apollo-tooling/pull/1168)
-- `apollo-language-server@1.6.3`
 
 ## `apollo@2.8.1`
 

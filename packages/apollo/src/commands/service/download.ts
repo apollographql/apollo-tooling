@@ -1,7 +1,7 @@
 import { flags } from "@oclif/command";
 import { introspectionFromSchema } from "graphql";
 import { writeFileSync } from "fs";
-
+import chalk from "chalk";
 import { ProjectCommand } from "../../Command";
 
 export default class ServiceDownload extends ProjectCommand {
@@ -37,11 +37,28 @@ export default class ServiceDownload extends ProjectCommand {
       {
         title: `Saving schema to ${args.output}`,
         task: async () => {
-          const schema = await project.resolveSchema({ tag: flags.tag });
-          writeFileSync(
-            args.output,
-            JSON.stringify(introspectionFromSchema(schema), null, 2)
-          );
+          try {
+            const schema = await project.resolveSchema({ tag: flags.tag });
+            writeFileSync(
+              args.output,
+              JSON.stringify(introspectionFromSchema(schema), null, 2)
+            );
+          } catch (e) {
+            if (e.code == "ECONNREFUSED") {
+              this.log(chalk.red("ERROR: Connection refused."));
+              this.log(
+                chalk.red(
+                  "You may not be running a service locally, or your endpoint url is incorrect."
+                )
+              );
+              this.log(
+                chalk.red(
+                  "If you're trying to download a schema from Apollo Engine, use the `client:download-schema` command instead."
+                )
+              );
+            }
+            throw e;
+          }
         }
       }
     ]);
