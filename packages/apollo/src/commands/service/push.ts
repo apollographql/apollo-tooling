@@ -1,11 +1,11 @@
 import { flags } from "@oclif/command";
 import { table } from "heroku-cli-util";
-import { introspectionFromSchema } from "graphql";
-
+import { introspectionFromSchema, printSchema } from "graphql";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
 import { GraphQLServiceProject } from "apollo-language-server";
 import chalk from "chalk";
+import { UploadSchemaVariables } from "apollo-language-server/lib/graphqlTypes";
 
 export default class ServicePush extends ProjectCommand {
   static aliases = ["schema:publish"];
@@ -111,21 +111,30 @@ export default class ServicePush extends ProjectCommand {
 
           const schema = await project.resolveSchema({ tag: flags.tag });
 
-          const { tag, code } = await project.engine.uploadSchema({
+          const variables: UploadSchemaVariables = {
             id: config.name,
             // @ts-ignore
             // XXX Looks like TS should be generating ReadonlyArrays instead
             schema: introspectionFromSchema(schema).__schema,
             tag: flags.tag,
             gitContext
-          });
-
-          result = {
-            service: config.name,
-            hash: tag.schema.hash,
-            tag: tag.tag,
-            code
           };
+
+          const { schema: _, ...restVariables } = variables;
+          this.debug("Variables sent to Engine:");
+          this.debug(restVariables);
+          this.debug("SDL of introspection sent to Engine:");
+          this.debug(printSchema(schema));
+
+          const response = await project.engine.uploadSchema(variables);
+          if (response) {
+            result = {
+              service: config.name,
+              hash: response.tag ? response.tag.schema.hash : null,
+              tag: response.tag ? response.tag.tag : null,
+              code: response.code
+            };
+          }
         }
       }
     ]);

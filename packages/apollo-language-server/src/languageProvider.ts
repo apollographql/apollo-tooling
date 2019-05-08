@@ -19,7 +19,6 @@ import {
   getTokenAtPosition,
   getTypeInfo
 } from "@apollographql/graphql-language-service-interface/dist/getAutocompleteSuggestions";
-
 import { GraphQLWorkspace } from "./workspace";
 import { DocumentUri } from "./project/base";
 

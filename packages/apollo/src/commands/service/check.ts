@@ -8,7 +8,7 @@ import { validateHistoricParams } from "../../utils";
 import {
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
-  ChangeSeverity as ChangeType,
+  ChangeSeverity,
   IntrospectionSchemaInput
 } from "apollo-language-server/lib/graphqlTypes";
 import { ApolloConfig, GraphQLServiceProject } from "apollo-language-server";
@@ -30,34 +30,34 @@ function pluralize(
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
-  if (change.type === ChangeType.FAILURE) {
+  if (change.severity === ChangeSeverity.FAILURE) {
     color = chalk.red;
   }
 
-  if (change.type === ChangeType.WARNING) {
+  if (change.severity === ChangeSeverity.WARNING) {
     color = chalk.yellow;
   }
 
-  const changeDictionary: Record<ChangeType, string> = {
-    [ChangeType.FAILURE]: "FAIL",
-    [ChangeType.WARNING]: "WARN",
-    [ChangeType.NOTICE]: "PASS"
+  const changeDictionary: Record<ChangeSeverity, string> = {
+    [ChangeSeverity.FAILURE]: "FAIL",
+    [ChangeSeverity.WARNING]: "WARN",
+    [ChangeSeverity.NOTICE]: "PASS"
   };
 
   return {
-    type: color(changeDictionary[change.type]),
+    severity: color(changeDictionary[change.severity]),
     code: color(change.code),
     description: color(change.description)
   };
 };
 
 const reshapeGraphQLErrorToChange = (
-  type: ChangeType,
+  severity: ChangeSeverity,
   message: string
 ): Change => {
   return {
-    type,
-    code: `FEDERATION_VALIDATION_${type}`,
+    severity,
+    code: `FEDERATION_VALIDATION_${severity}`,
     description: message,
     __typename: "Change"
   };
@@ -114,7 +114,7 @@ export function formatMarkdown({
   );
 
   const breakingChanges = diffToPrevious.changes.filter(
-    change => change.type === "FAILURE"
+    change => change.severity === "FAILURE"
   );
 
   const affectedQueryCount = diffToPrevious.affectedQueries
@@ -134,7 +134,7 @@ export function formatMarkdown({
 ${
   breakingChanges.length > 0
     ? `❌ Found **${pluralize(
-        diffToPrevious.changes.filter(change => change.type === "FAILURE")
+        diffToPrevious.changes.filter(change => change.severity === "FAILURE")
           .length,
         "breaking change"
       )}** that would affect **${pluralize(
@@ -158,10 +158,9 @@ export function formatHumanReadable({
 }): string {
   const {
     targetUrl,
-    diffToPrevious: { changes, validationConfig }
+    diffToPrevious: { changes }
   } = checkSchemaResult;
   let result = "";
-  const failures = changes.filter(({ type }) => type === ChangeType.FAILURE);
 
   if (changes.length === 0) {
     result = "\nNo changes present between schemas";
@@ -174,13 +173,13 @@ export function formatHumanReadable({
     ]);
 
     const breakingChanges = sortedChanges.filter(
-      change => change.type === ChangeType.FAILURE
+      change => change.severity === ChangeSeverity.FAILURE
     );
 
-    sortBy(breakingChanges, change => change.type);
+    sortBy(breakingChanges, change => change.severity);
 
     const nonBreakingChanges = sortedChanges.filter(
-      change => change.type !== ChangeType.FAILURE
+      change => change.severity !== ChangeSeverity.FAILURE
     );
 
     table(
@@ -192,7 +191,7 @@ export function formatHumanReadable({
       ].filter(Boolean),
       {
         columns: [
-          { key: "type", label: "Change" },
+          { key: "severity", label: "Change" },
           { key: "code", label: "Code" },
           { key: "description", label: "Description" }
         ],
@@ -269,6 +268,7 @@ export default class ServiceCheck extends ProjectCommand {
     const breakingChangesErrorMessage = "breaking changes found";
     const compositionErrorMessage = "composition errors found";
 
+    let schema, schemaHash;
     try {
       await this.runTasks<TasksOutput>(
         ({ config, flags, project }) => [
@@ -292,7 +292,6 @@ export default class ServiceCheck extends ProjectCommand {
                 throw new Error("No service found to link to Engine");
               }
 
-              let schema, schemaHash;
               if (flags.federated) {
                 const info = await (project as GraphQLServiceProject).resolveFederationInfo();
                 if (!info.sdl)
@@ -333,8 +332,71 @@ export default class ServiceCheck extends ProjectCommand {
   ${errors && errors.map(err => (err && err.message) || "").join("\n")}
                   `);
                 }
+                task.title = task.title.replace("Validating", "Validated");
+              }
+            }
+          },
+          {
+            title: "Comparing schema changes",
+            task: async (ctx: TasksOutput, task) => {
+              const schemaChanges =
+                ctx.checkSchemaResult.diffToPrevious.changes;
+
+              const numberOfCheckedOperations =
+                ctx.checkSchemaResult.diffToPrevious
+                  .numberOfCheckedOperations || 0;
+
+              const validationConfig =
+                ctx.checkSchemaResult.diffToPrevious.validationConfig;
+
+              const hours = validationConfig
+                ? Math.abs(
+                    moment()
+                      .add(validationConfig.from, "second")
+                      .diff(
+                        moment().add(validationConfig.to, "second"),
+                        "hours"
+                      )
+                  )
+                : null;
+
+              task.title = `Compared ${pluralize(
+                chalk.blue(schemaChanges.length.toString()),
+                "schema change"
+              )} against ${pluralize(
+                chalk.blue(numberOfCheckedOperations.toString()),
+                "operation"
+              )}${
+                hours
+                  ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
+                  : ""
+              }`;
+            }
+          },
+          {
+            title: "Reporting result",
+            task: async (ctx: TasksOutput, task) => {
+              const breakingSchemaChangeCount = ctx.checkSchemaResult.diffToPrevious.changes.filter(
+                change => change.severity === ChangeSeverity.FAILURE
+              ).length;
+              const nonBreakingSchemaChangeCount =
+                ctx.checkSchemaResult.diffToPrevious.changes.length -
+                breakingSchemaChangeCount;
+
+              task.title = `Found ${pluralize(
+                chalk.blue(breakingSchemaChangeCount.toString()),
+                "breaking change"
+              )} and ${pluralize(
+                chalk.blue(nonBreakingSchemaChangeCount.toString()),
+                "compatible change"
+              )}`;
+
+              if (breakingSchemaChangeCount) {
+                // Throw an error here to produce a red X in the list of steps being taken. We're going to
+                // `catch` this error below and proceed with the reporting.
+                throw new Error(breakingChangesErrorMessage);
               } else {
-                schema = await project.resolveSchema({ tag });
+                schema = await project.resolveSchema({ tag: config.tag });
               }
               await gitInfo(this.log);
 
@@ -346,6 +408,11 @@ export default class ServiceCheck extends ProjectCommand {
               });
 
               task.output = "Validating schema";
+
+              if (!config.name) {
+                throw new Error("No service found to link to Engine");
+              }
+
               const newContext: typeof ctx = {
                 checkSchemaResult: await project.engine.checkSchema({
                   id: config.name,
@@ -373,7 +440,7 @@ export default class ServiceCheck extends ProjectCommand {
               Object.assign(taskOutput, ctx);
 
               task.title = `Validated local schema against tag ${chalk.blue(
-                tag
+                config.tag
               )} on service ${chalk.blue(config.name)}`;
             }
           },
@@ -419,7 +486,7 @@ export default class ServiceCheck extends ProjectCommand {
             title: "Reporting result",
             task: async (ctx: TasksOutput, task) => {
               const breakingSchemaChangeCount = ctx.checkSchemaResult.diffToPrevious.changes.filter(
-                change => change.type === ChangeType.FAILURE
+                change => change.severity === ChangeSeverity.FAILURE
               ).length;
               const nonBreakingSchemaChangeCount =
                 ctx.checkSchemaResult.diffToPrevious.changes.length -
@@ -484,13 +551,13 @@ export default class ServiceCheck extends ProjectCommand {
     if (taskOutput.federation) {
       const errors = taskOutput.federation.errors.map(error =>
         reshapeGraphQLErrorToChange(
-          ChangeType.FAILURE,
+          ChangeSeverity.FAILURE,
           error ? error.message : ""
         )
       );
       const warnings = taskOutput.federation.warnings.map(error =>
         reshapeGraphQLErrorToChange(
-          ChangeType.WARNING,
+          ChangeSeverity.WARNING,
           error ? error.message : ""
         )
       );
@@ -498,9 +565,9 @@ export default class ServiceCheck extends ProjectCommand {
       // if we had composition errors, set the change type to failure if it isn't already
       if (
         errors.length &&
-        checkSchemaResult.diffToPrevious.type !== ChangeType.FAILURE
+        checkSchemaResult.diffToPrevious.severity !== ChangeSeverity.FAILURE
       ) {
-        checkSchemaResult.diffToPrevious.type = ChangeType.FAILURE;
+        checkSchemaResult.diffToPrevious.severity = ChangeSeverity.FAILURE;
       }
 
       checkSchemaResult.diffToPrevious.changes.push(...errors);
@@ -542,7 +609,7 @@ export default class ServiceCheck extends ProjectCommand {
     // exit with failing status if we have failures
     if (
       checkSchemaResult.diffToPrevious.changes.find(
-        ({ type }) => type === ChangeType.FAILURE
+        ({ severity }) => severity === ChangeSeverity.FAILURE
       )
     ) {
       this.exit(1);

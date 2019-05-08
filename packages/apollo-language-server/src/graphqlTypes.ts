@@ -94,7 +94,7 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_changes {
   /**
    * Indication of the success of the overall change, either failure, warning, or notice.
    */
-  type: ChangeSeverity;
+  severity: ChangeSeverity;
   /**
    * Indication of the kind of target and action of the change, e.g. 'TYPE_REMOVED'.
    */
@@ -139,7 +139,7 @@ export interface CheckSchema_service_checkSchema_diffToPrevious {
   /**
    * Indication of the success of the change, either failure, warning, or notice.
    */
-  type: ChangeSeverity;
+  severity: ChangeSeverity;
   /**
    * Clients affected by all changes in diff
    */
@@ -337,17 +337,18 @@ export interface SchemaTagInfo_service_schema_gitContext {
   commit: string;
 }
 
-export interface SchemaTagInfo_service_schema_introspection {
-  __typename: "IntrospectionSchema";
-  fieldCount: number | null;
-  typeCount: number | null;
-}
-
 export interface SchemaTagInfo_service_schema {
   __typename: "Schema";
   hash: string;
   gitContext: SchemaTagInfo_service_schema_gitContext | null;
-  introspection: SchemaTagInfo_service_schema_introspection;
+  /**
+   * The number of fields; this includes user defined fields only, excluding built-in types and fields
+   */
+  fieldCount: number;
+  /**
+   * The number of types; this includes user defined types only, excluding built-in types
+   */
+  typeCount: number;
   createdAt: any;
 }
 
