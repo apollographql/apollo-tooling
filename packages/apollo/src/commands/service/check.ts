@@ -1,6 +1,6 @@
 import { flags } from "@oclif/command";
 import { table } from "heroku-cli-util";
-import { introspectionFromSchema, GraphQLError } from "graphql";
+import { introspectionFromSchema } from "graphql";
 import chalk from "chalk";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
