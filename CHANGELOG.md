@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Add service:push debuggability [#1244](https://github.com/apollographql/apollo-tooling/pull/1244)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -24,6 +24,11 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.10.1`
+
+- `apollo@2.10.1`
+  - Add service:push debuggability [#1244](https://github.com/apollographql/apollo-tooling/pull/1244)
 
 ## `apollo@2.10.0`
 
