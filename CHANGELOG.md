@@ -3,7 +3,8 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Leverage updates to apollo-language-server to support federated services [#1189](https://github.com/apollographql/apollo-tooling/pull/1189)
+  - Add `service:delete` command for deleting federated services [#1189](https://github.com/apollographql/apollo-tooling/pull/1189)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -15,11 +16,16 @@
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
-  - <First `apollo-env` related entry goes here>
+  - Add new utils and predicates [#1189](https://github.com/apollographql/apollo-tooling/pull/1189)
 - `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
+  - Require graphql@^14.2.1 [#1189](https://github.com/apollographql/apollo-tooling/pull/1189)
+  - Add buildSchemaFromSDL and related utilities for constructing partial schemas
+    [#1189](https://github.com/apollographql/apollo-tooling/pull/1189)
+  - Add transformSchema and related utilities for easily transforming schemas
+    [#1189](https://github.com/apollographql/apollo-tooling/pull/1189)
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Extend Engine API for federated schema uploads and checks [#1189](https://github.com/apollographql/apollo-tooling/pull/1189)
+  - Reorganize files and exports [#1189](https://github.com/apollographql/apollo-tooling/pull/1189)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
