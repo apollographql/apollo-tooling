@@ -1,14 +1,15 @@
 import { flags } from "@oclif/command";
 import { table } from "heroku-cli-util";
-import { introspectionFromSchema } from "graphql";
+import { introspectionFromSchema, printSchema } from "graphql";
 import chalk from "chalk";
-import { gitInfo, GitContext } from "../../git";
+import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
 import { validateHistoricParams } from "../../utils";
 import {
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
-  ChangeSeverity
+  ChangeSeverity,
+  CheckSchemaVariables
 } from "apollo-language-server/lib/graphqlTypes";
 import { ApolloConfig } from "apollo-language-server";
 import moment from "moment";
@@ -268,18 +269,26 @@ export default class ServiceCheck extends ProjectCommand {
                 });
 
                 task.output = "Validating schema";
+                const variables: CheckSchemaVariables = {
+                  id: configName,
+                  // @ts-ignore
+                  // XXX Looks like TS should be generating ReadonlyArrays instead
+                  schema: introspectionFromSchema(schema).__schema,
+                  tag: flags.tag,
+                  gitContext: await gitInfo(this.log),
+                  frontend: flags.frontend || config.engine.frontend,
+                  ...(historicParameters && { historicParameters })
+                };
+                const { schema: _, ...restVariables } = variables;
+                this.debug("Variables sent to Engine:");
+                this.debug(restVariables);
+                this.debug("SDL of introspection sent to Engine:");
+                this.debug(printSchema(schema));
 
                 const newContext: typeof ctx = {
-                  checkSchemaResult: await project.engine.checkSchema({
-                    id: configName,
-                    // @ts-ignore
-                    // XXX Looks like TS should be generating ReadonlyArrays instead
-                    schema: introspectionFromSchema(schema).__schema,
-                    tag: flags.tag,
-                    gitContext: await gitInfo(this.log),
-                    frontend: flags.frontend || config.engine.frontend,
-                    ...(historicParameters && { historicParameters })
-                  }),
+                  checkSchemaResult: await project.engine.checkSchema(
+                    variables
+                  ),
                   config,
                   shouldOutputJson: !!flags.json,
                   shouldOutputMarkdown: !!flags.markdown
