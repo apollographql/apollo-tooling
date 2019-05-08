@@ -44,6 +44,12 @@ export default class ServicePush extends ProjectCommand {
             gitContext
           };
 
+          const { schema: _, ...restVariables } = variables;
+          this.debug("Variables sent to Engine:");
+          this.debug(restVariables);
+          this.debug("SDL of introspection sent to Engine:");
+          this.debug(printSchema(schema));
+
           const response = await project.engine.uploadSchema(variables);
           if (response) {
             result = {
@@ -53,12 +59,6 @@ export default class ServicePush extends ProjectCommand {
               code: response.code
             };
           }
-
-          const { schema: _, ...restVariables } = variables;
-          this.debug("Variables sent to Engine:");
-          this.debug(restVariables);
-          this.debug("SDL of introspection sent to Engine:");
-          this.debug(printSchema(schema));
         }
       }
     ]);
