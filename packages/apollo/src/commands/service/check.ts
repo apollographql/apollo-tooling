@@ -271,254 +271,247 @@ export default class ServiceCheck extends ProjectCommand {
     let schema, schemaHash;
     try {
       await this.runTasks<TasksOutput>(
-        ({ config, flags, project }) => [
-          {
-            title: "Checking service for changes",
-            task: async (ctx: TasksOutput, task) => {
-              if (!config.name) {
-                throw new Error("No service found to link to Engine");
-              }
+        ({ config, flags, project }) => {
+          const configName = config.name;
+          const tag = flags.tag || config.tag || "current";
 
-              const tag = flags.tag || config.tag || "current";
+          if (!configName) {
+            throw new Error("No service found to link to Engine");
+          }
 
-              task.title = `Validating local schema against tag ${chalk.blue(
-                tag
-              )} on service ${chalk.blue(config.name)}`;
+          return [
+            {
+              title: "Checking service for changes",
+              task: async (ctx: TasksOutput, task) => {
+                task.title = `Validating local schema against tag ${chalk.blue(
+                  tag
+                )} on service ${chalk.blue(configName)}`;
 
-              task.output = "Resolving schema";
-              taskOutput.shouldOutputJson = flags.json;
+                task.output = "Resolving schema";
+                taskOutput.shouldOutputJson = flags.json;
 
-              if (!config.name) {
-                throw new Error("No service found to link to Engine");
-              }
+                if (flags.federated) {
+                  const info = await (project as GraphQLServiceProject).resolveFederationInfo();
+                  if (!info.sdl)
+                    throw new Error("No SDL found for federated service");
 
-              if (flags.federated) {
-                const info = await (project as GraphQLServiceProject).resolveFederationInfo();
-                if (!info.sdl)
-                  throw new Error("No SDL found for federated service");
+                  /**
+                   * id: service id for root mutation (graph id)
+                   * variant: like a tag. prod/staging/etc
+                   * name: implementing service name inside of the graph
+                   * sha: git commit hash/docker id. placeholder for now
+                   */
+                  task.output = "Creating composed schema against the graph";
+                  const {
+                    errors,
+                    warnings,
+                    compositionValidationDetails
+                  } = await project.engine.checkPartialSchema({
+                    id: configName,
+                    graphVariant: tag,
+                    implementingServiceName: flags.serviceName || info.name,
+                    partialSchema: {
+                      sdl: info.sdl
+                    }
+                  });
 
-                /**
-                 * id: service id for root mutation (graph id)
-                 * variant: like a tag. prod/staging/etc
-                 * name: implementing service name inside of the graph
-                 * sha: git commit hash/docker id. placeholder for now
-                 */
-                task.output = "Creating composed schema against the graph";
-                const {
-                  errors,
-                  warnings,
-                  compositionValidationDetails
-                } = await project.engine.checkPartialSchema({
-                  id: config.name,
-                  graphVariant: config.tag,
-                  implementingServiceName: flags.serviceName || info.name,
-                  partialSchema: {
-                    sdl: info.sdl
-                  }
-                });
+                  // FIXME: reformat to match other check results
 
-                // FIXME: reformat to match other check results
+                  taskOutput.federation = {
+                    errors,
+                    warnings
+                  };
 
-                taskOutput.federation = {
-                  errors,
-                  warnings
-                };
-
-                if (compositionValidationDetails) {
-                  schemaHash = compositionValidationDetails.schemaHash;
-                } else {
-                  // FIXME: We should provide some better error handling at the GraphQL layer for this
-                  throw new Error(`Federated service could not be composed due to the following errors:
+                  if (compositionValidationDetails) {
+                    schemaHash = compositionValidationDetails.schemaHash;
+                  } else {
+                    // FIXME: We should provide some better error handling at the GraphQL layer for this
+                    throw new Error(`Federated service could not be composed due to the following errors:
   ${errors && errors.map(err => (err && err.message) || "").join("\n")}
                   `);
+                  }
+                  task.title = task.title.replace("Validating", "Validated");
                 }
-                task.title = task.title.replace("Validating", "Validated");
+              }
+            },
+            {
+              title: "Comparing schema changes",
+              task: async (ctx: TasksOutput, task) => {
+                const schemaChanges =
+                  ctx.checkSchemaResult.diffToPrevious.changes;
+
+                const numberOfCheckedOperations =
+                  ctx.checkSchemaResult.diffToPrevious
+                    .numberOfCheckedOperations || 0;
+
+                const validationConfig =
+                  ctx.checkSchemaResult.diffToPrevious.validationConfig;
+
+                const hours = validationConfig
+                  ? Math.abs(
+                      moment()
+                        .add(validationConfig.from, "second")
+                        .diff(
+                          moment().add(validationConfig.to, "second"),
+                          "hours"
+                        )
+                    )
+                  : null;
+
+                task.title = `Compared ${pluralize(
+                  chalk.blue(schemaChanges.length.toString()),
+                  "schema change"
+                )} against ${pluralize(
+                  chalk.blue(numberOfCheckedOperations.toString()),
+                  "operation"
+                )}${
+                  hours
+                    ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
+                    : ""
+                }`;
+              }
+            },
+            {
+              title: "Reporting result",
+              task: async (ctx: TasksOutput, task) => {
+                const breakingSchemaChangeCount = ctx.checkSchemaResult.diffToPrevious.changes.filter(
+                  change => change.severity === ChangeSeverity.FAILURE
+                ).length;
+                const nonBreakingSchemaChangeCount =
+                  ctx.checkSchemaResult.diffToPrevious.changes.length -
+                  breakingSchemaChangeCount;
+
+                task.title = `Found ${pluralize(
+                  chalk.blue(breakingSchemaChangeCount.toString()),
+                  "breaking change"
+                )} and ${pluralize(
+                  chalk.blue(nonBreakingSchemaChangeCount.toString()),
+                  "compatible change"
+                )}`;
+
+                if (breakingSchemaChangeCount) {
+                  // Throw an error here to produce a red X in the list of steps being taken. We're going to
+                  // `catch` this error below and proceed with the reporting.
+                  throw new Error(breakingChangesErrorMessage);
+                } else {
+                  schema = await project.resolveSchema({ tag: config.tag });
+                }
+                await gitInfo(this.log);
+
+                const historicParameters = validateHistoricParams({
+                  validationPeriod: flags.validationPeriod,
+                  queryCountThreshold: flags.queryCountThreshold,
+                  queryCountThresholdPercentage:
+                    flags.queryCountThresholdPercentage
+                });
+
+                const variables: CheckSchemaVariables = {
+                  id: configName,
+                  // @ts-ignore
+                  // XXX Looks like TS should be generating ReadonlyArrays instead
+                  schema: introspectionFromSchema(schema).__schema,
+                  tag,
+                  gitContext: await gitInfo(this.log),
+                  frontend: flags.frontend || config.engine.frontend,
+                  ...(historicParameters && { historicParameters })
+                };
+                const { schema: _, ...restVariables } = variables;
+                this.debug("Variables sent to Engine:");
+                this.debug(restVariables);
+                this.debug("SDL of introspection sent to Engine:");
+                this.debug(printSchema(schema));
+
+                task.output = "Validating schema";
+
+                const newContext: typeof ctx = {
+                  checkSchemaResult: await project.engine.checkSchema(
+                    variables
+                  ),
+                  config,
+                  shouldOutputJson: !!flags.json,
+                  shouldOutputMarkdown: !!flags.markdown
+                };
+
+                Object.assign(ctx, newContext);
+
+                // Save the output because we're going to use it even if we throw. `runTasks` won't return
+                // anything if we throw.
+                Object.assign(taskOutput, ctx);
+
+                task.title = `Validated local schema against tag ${chalk.blue(
+                  tag
+                )} on service ${chalk.blue(configName)}`;
+              }
+            },
+            {
+              title: "Comparing schema changes",
+              task: async (ctx: TasksOutput, task) => {
+                const schemaChanges =
+                  ctx.checkSchemaResult.diffToPrevious.changes;
+
+                const numberOfCheckedOperations =
+                  ctx.checkSchemaResult.diffToPrevious
+                    .numberOfCheckedOperations || 0;
+
+                const validationConfig =
+                  ctx.checkSchemaResult.diffToPrevious.validationConfig;
+
+                const hours = validationConfig
+                  ? Math.abs(
+                      moment()
+                        .add(validationConfig.from, "second")
+                        .diff(
+                          moment().add(validationConfig.to, "second"),
+                          "hours"
+                        )
+                    )
+                  : null;
+
+                task.title = `Compared ${chalk.blue(
+                  schemaChanges.length.toString()
+                )} schema ${pluralize(
+                  schemaChanges.length,
+                  "change"
+                )} against ${chalk.blue(
+                  numberOfCheckedOperations.toString()
+                )} ${pluralize(numberOfCheckedOperations, "operation")}${
+                  hours
+                    ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
+                    : ""
+                }`;
+              }
+            },
+            {
+              title: "Reporting result",
+              task: async (ctx: TasksOutput, task) => {
+                const breakingSchemaChangeCount = ctx.checkSchemaResult.diffToPrevious.changes.filter(
+                  change => change.severity === ChangeSeverity.FAILURE
+                ).length;
+                const nonBreakingSchemaChangeCount =
+                  ctx.checkSchemaResult.diffToPrevious.changes.length -
+                  breakingSchemaChangeCount;
+
+                task.title = `Found ${chalk.blue(
+                  breakingSchemaChangeCount.toString()
+                )} breaking ${pluralize(
+                  breakingSchemaChangeCount,
+                  "change"
+                )} and ${chalk.blue(
+                  nonBreakingSchemaChangeCount.toString()
+                )} compatible ${pluralize(
+                  nonBreakingSchemaChangeCount,
+                  "change"
+                )}`;
+
+                if (breakingSchemaChangeCount) {
+                  // Throw an error here to produce a red X in the list of steps being taken. We're going to
+                  // `catch` this error below and proceed with the reporting.
+                  throw new Error(breakingChangesErrorMessage);
+                }
               }
             }
-          },
-          {
-            title: "Comparing schema changes",
-            task: async (ctx: TasksOutput, task) => {
-              const schemaChanges =
-                ctx.checkSchemaResult.diffToPrevious.changes;
-
-              const numberOfCheckedOperations =
-                ctx.checkSchemaResult.diffToPrevious
-                  .numberOfCheckedOperations || 0;
-
-              const validationConfig =
-                ctx.checkSchemaResult.diffToPrevious.validationConfig;
-
-              const hours = validationConfig
-                ? Math.abs(
-                    moment()
-                      .add(validationConfig.from, "second")
-                      .diff(
-                        moment().add(validationConfig.to, "second"),
-                        "hours"
-                      )
-                  )
-                : null;
-
-              task.title = `Compared ${pluralize(
-                chalk.blue(schemaChanges.length.toString()),
-                "schema change"
-              )} against ${pluralize(
-                chalk.blue(numberOfCheckedOperations.toString()),
-                "operation"
-              )}${
-                hours
-                  ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
-                  : ""
-              }`;
-            }
-          },
-          {
-            title: "Reporting result",
-            task: async (ctx: TasksOutput, task) => {
-              const breakingSchemaChangeCount = ctx.checkSchemaResult.diffToPrevious.changes.filter(
-                change => change.severity === ChangeSeverity.FAILURE
-              ).length;
-              const nonBreakingSchemaChangeCount =
-                ctx.checkSchemaResult.diffToPrevious.changes.length -
-                breakingSchemaChangeCount;
-
-              task.title = `Found ${pluralize(
-                chalk.blue(breakingSchemaChangeCount.toString()),
-                "breaking change"
-              )} and ${pluralize(
-                chalk.blue(nonBreakingSchemaChangeCount.toString()),
-                "compatible change"
-              )}`;
-
-              if (breakingSchemaChangeCount) {
-                // Throw an error here to produce a red X in the list of steps being taken. We're going to
-                // `catch` this error below and proceed with the reporting.
-                throw new Error(breakingChangesErrorMessage);
-              } else {
-                schema = await project.resolveSchema({ tag: config.tag });
-              }
-              await gitInfo(this.log);
-
-              const historicParameters = validateHistoricParams({
-                validationPeriod: flags.validationPeriod,
-                queryCountThreshold: flags.queryCountThreshold,
-                queryCountThresholdPercentage:
-                  flags.queryCountThresholdPercentage
-              });
-
-              if (!config.name) {
-                throw new Error("No service found to link to Engine");
-              }
-
-              const variables: CheckSchemaVariables = {
-                id: config.name,
-                // @ts-ignore
-                // XXX Looks like TS should be generating ReadonlyArrays instead
-                schema: introspectionFromSchema(schema).__schema,
-                tag: flags.tag,
-                gitContext: await gitInfo(this.log),
-                frontend: flags.frontend || config.engine.frontend,
-                ...(historicParameters && { historicParameters })
-              };
-              const { schema: _, ...restVariables } = variables;
-              this.debug("Variables sent to Engine:");
-              this.debug(restVariables);
-              this.debug("SDL of introspection sent to Engine:");
-              this.debug(printSchema(schema));
-
-              task.output = "Validating schema";
-
-              if (!config.name) {
-                throw new Error("No service found to link to Engine");
-              }
-
-              const newContext: typeof ctx = {
-                checkSchemaResult: await project.engine.checkSchema(variables),
-                config,
-                shouldOutputJson: !!flags.json,
-                shouldOutputMarkdown: !!flags.markdown
-              };
-
-              Object.assign(ctx, newContext);
-
-              // Save the output because we're going to use it even if we throw. `runTasks` won't return
-              // anything if we throw.
-              Object.assign(taskOutput, ctx);
-
-              task.title = `Validated local schema against tag ${chalk.blue(
-                config.tag
-              )} on service ${chalk.blue(config.name)}`;
-            }
-          },
-          {
-            title: "Comparing schema changes",
-            task: async (ctx: TasksOutput, task) => {
-              const schemaChanges =
-                ctx.checkSchemaResult.diffToPrevious.changes;
-
-              const numberOfCheckedOperations =
-                ctx.checkSchemaResult.diffToPrevious
-                  .numberOfCheckedOperations || 0;
-
-              const validationConfig =
-                ctx.checkSchemaResult.diffToPrevious.validationConfig;
-
-              const hours = validationConfig
-                ? Math.abs(
-                    moment()
-                      .add(validationConfig.from, "second")
-                      .diff(
-                        moment().add(validationConfig.to, "second"),
-                        "hours"
-                      )
-                  )
-                : null;
-
-              task.title = `Compared ${chalk.blue(
-                schemaChanges.length.toString()
-              )} schema ${pluralize(
-                schemaChanges.length,
-                "change"
-              )} against ${chalk.blue(
-                numberOfCheckedOperations.toString()
-              )} ${pluralize(numberOfCheckedOperations, "operation")}${
-                hours
-                  ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
-                  : ""
-              }`;
-            }
-          },
-          {
-            title: "Reporting result",
-            task: async (ctx: TasksOutput, task) => {
-              const breakingSchemaChangeCount = ctx.checkSchemaResult.diffToPrevious.changes.filter(
-                change => change.severity === ChangeSeverity.FAILURE
-              ).length;
-              const nonBreakingSchemaChangeCount =
-                ctx.checkSchemaResult.diffToPrevious.changes.length -
-                breakingSchemaChangeCount;
-
-              task.title = `Found ${chalk.blue(
-                breakingSchemaChangeCount.toString()
-              )} breaking ${pluralize(
-                breakingSchemaChangeCount,
-                "change"
-              )} and ${chalk.blue(
-                nonBreakingSchemaChangeCount.toString()
-              )} compatible ${pluralize(
-                nonBreakingSchemaChangeCount,
-                "change"
-              )}`;
-
-              if (breakingSchemaChangeCount) {
-                // Throw an error here to produce a red X in the list of steps being taken. We're going to
-                // `catch` this error below and proceed with the reporting.
-                throw new Error(breakingChangesErrorMessage);
-              }
-            }
-          }
-        ],
+          ];
+        },
         context => ({
           // It would be better here to use a custom renderer that will output the `Listr` output to stderr and
           // the `this.log` output to `stdout`.
