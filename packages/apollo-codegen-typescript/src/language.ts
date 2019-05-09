@@ -17,7 +17,7 @@ export type ObjectProperty = {
 };
 
 export interface TypescriptCompilerOptions extends CompilerOptions {
-  // Leaving this open for Typescript only compiler options
+  enums?: { [enumName: string]: string };
 }
 
 export default class TypescriptGenerator {
@@ -34,6 +34,19 @@ export default class TypescriptGenerator {
 
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
+    if (this.options.enums && name in this.options.enums) {
+      const [importPath, importName] = this.options.enums[name].split("#");
+      return t.exportNamedDeclaration(
+        undefined,
+        [
+          t.exportSpecifier(
+            t.identifier(importName || "default"),
+            t.identifier(name)
+          )
+        ],
+        t.stringLiteral(importPath)
+      );
+    }
     const enumMembers = sortEnumValues(type.getValues()).map(({ value }) => {
       return t.TSEnumMember(t.identifier(value), t.stringLiteral(value));
     });

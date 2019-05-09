@@ -103,6 +103,19 @@ export default class Generate extends ClientCommand {
   - a file will be written for each query (if "output" is a directory)
   - all generated types will be written
 - For all other types, this defines a file (absolute or relative to the current working directory) to which all generated types are written.`
+    },
+    {
+      name: "enums",
+      description: `Tell codegen where to find existing TypeScript enums. e.g.
+
+  --enums '{"MyEnum": "types#MyE"}'
+
+woulrd result in
+
+  export {MyE as MyEnum} from 'types';
+
+instead of generating a "MyEnum" type from the GraphQL schema. This is useful because TypeScript treates identical enums as different types.
+`
     }
   ];
 
@@ -193,7 +206,11 @@ export default class Generate extends ClientCommand {
                       flags.mergeInFieldsFromFragmentSpreads,
                     useFlowExactObjects: flags.useFlowExactObjects,
                     useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes,
-                    globalTypesFile: flags.globalTypesFile
+                    globalTypesFile: flags.globalTypesFile,
+                    enums:
+                      args.enums && typeof args.enums === "string"
+                        ? JSON.parse(args.enums)
+                        : args.enums
                   }
                 );
               };

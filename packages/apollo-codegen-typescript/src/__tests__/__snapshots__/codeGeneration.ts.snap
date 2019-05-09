@@ -646,6 +646,66 @@ export interface HeroNameVariables {
 }
 `;
 
+exports[`Typescript codeGeneration local / global custom enum 1`] = `
+Array [
+  Object {
+    "content": TypescriptGeneratedFile {
+      "fileContents": "/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+import { EnumCommentTestCase, Duplicate } from \\"./../../__generated__/globalTypes\\";
+
+// ====================================================
+// GraphQL mutation operation: duplicates
+// ====================================================
+
+export interface duplicates_duplicates {
+  propA: EnumCommentTestCase[][];
+  propB: ((EnumCommentTestCase | null)[] | null)[] | null;
+}
+
+export interface duplicates {
+  duplicates: duplicates_duplicates;
+}
+
+export interface duplicatesVariables {
+  a: EnumCommentTestCase;
+  b: EnumCommentTestCase;
+  c: Duplicate;
+}
+",
+    },
+    "fileName": "duplicates.ts",
+    "sourcePath": "GraphQL request",
+  },
+]
+`;
+
+exports[`Typescript codeGeneration local / global custom enum 2`] = `
+TypescriptGeneratedFile {
+  "fileContents": "/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+export { EnumCommentTestCase } from \\"my-types-lib\\";
+
+export interface Duplicate {
+  propA: EnumCommentTestCase;
+  propB: EnumCommentTestCase[];
+}
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================
+",
+}
+`;
+
 exports[`Typescript codeGeneration local / global duplicates 1`] = `
 Array [
   Object {

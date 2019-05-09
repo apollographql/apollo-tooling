@@ -19,6 +19,7 @@ import {
   generateLocalSource,
   generateGlobalSource
 } from "../codeGeneration";
+import { TypescriptCompilerOptions } from "../language";
 
 function compile(
   source: string,
@@ -33,7 +34,7 @@ function compile(
 
 function compileMisc(
   source: string,
-  options: CompilerOptions = {
+  options: TypescriptCompilerOptions = {
     mergeInFieldsFromFragmentSpreads: true,
     addTypename: true
   }
@@ -623,6 +624,34 @@ describe("Typescript codeGeneration local / global", () => {
         }
       }
     `);
+
+    const output = generateLocalSource(context).map(f => ({
+      ...f,
+      content: f.content({
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
+    }));
+    expect(output).toMatchSnapshot();
+    expect(generateGlobalSource(context)).toMatchSnapshot();
+  });
+
+  test("custom enum", () => {
+    const context = compileMisc(
+      `
+    mutation duplicates($a: EnumCommentTestCase!, $b: EnumCommentTestCase!, $c: Duplicate!) {
+      duplicates(a: $a, b: $b, c: $c) {
+        propA
+        propB
+      }
+    }
+    `,
+      {
+        enums: {
+          EnumCommentTestCase: "my-types-lib#EnumCommentTestCase"
+        }
+      }
+    );
 
     const output = generateLocalSource(context).map(f => ({
       ...f,
