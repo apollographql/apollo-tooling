@@ -13,6 +13,7 @@
 - `apollo-codegen-swift`
   - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
+  - Allow referring to existing enum instead of generating new one [#1253](https://github.com/apollographql/apollo-tooling/pull/1253)
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
