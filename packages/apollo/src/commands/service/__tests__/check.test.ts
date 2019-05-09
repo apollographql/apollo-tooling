@@ -33,7 +33,7 @@ describe("service:check", () => {
         🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
         🔢 Compared **18 schema changes** against **100 operations** seen over the **last 24 hours**.
         ❌ Found **7 breaking changes** that would affect **3 operations** across **2 clients**
-        
+
         🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
         "
       `);
@@ -67,7 +67,7 @@ describe("service:check", () => {
         🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
         🔢 Compared **1 schema change** against **1 operation** seen over the **last 24 hours**.
         ❌ Found **1 breaking change** that would affect **1 operation** across **1 client**
-        
+
         🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
         "
       `);
@@ -95,7 +95,7 @@ describe("service:check", () => {
         🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
         🔢 Compared **0 schema changes** against **100 operations** seen over the **last 24 hours**.
         ✅ Found **no breaking changes**.
-        
+
         🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
         "
       `);
@@ -139,7 +139,7 @@ describe("service:check", () => {
         FAIL    FIELD_REMOVED              \`Change.affectedClients\` was removed
         FAIL    FIELD_REMOVED              \`NamedIntrospectionValue.printedType\` was removed
         FAIL    TYPE_REMOVED               \`NamedIntrospectionArg\` removed
-        
+
         PASS    ARG_REMOVED                \`ServiceMutation.registerOperations\` arg \`manifestVersion\` was removed
         PASS    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`historicParameters\` was removed
         PASS    FIELD_ADDED                \`Service.schemaNotificationChannels\` was added
@@ -151,7 +151,7 @@ describe("service:check", () => {
         PASS    FIELD_REMOVED              \`Change.affectedClientIdVersionPairs\` was removed
         PASS    FIELD_REMOVED              \`Change.affectedClientReferenceIds\` was removed
         PASS    FIELD_REMOVED              \`SchemaDiff.numberOfCheckedOperations\` was removed
-        
+
         View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
       `);
     });
@@ -172,7 +172,7 @@ describe("service:check", () => {
       ).toMatchInlineSnapshot(`
         "
         No changes present between schemas
-        
+
         View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
       `);
     });
@@ -201,7 +201,7 @@ describe("service:check", () => {
         FAIL    FIELD_REMOVED       \`Change.affectedClients\` was removed
         FAIL    FIELD_REMOVED       \`NamedIntrospectionValue.printedType\` was removed
         FAIL    TYPE_REMOVED        \`NamedIntrospectionArg\` removed
-        
+
         View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
       `);
     });
