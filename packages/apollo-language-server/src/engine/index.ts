@@ -5,18 +5,27 @@ import { UPLOAD_SCHEMA } from "./operations/uploadSchema";
 import { VALIDATE_OPERATIONS } from "./operations/validateOperations";
 import { REGISTER_OPERATIONS } from "./operations/registerOperations";
 import { SCHEMA_TAGS_AND_FIELD_STATS } from "./operations/schemaTagsAndFieldStats";
+import { UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA } from "./operations/uploadAndComposePartialSchema";
+import { CHECK_PARTIAL_SCHEMA } from "./operations/checkPartialSchema";
+import { REMOVE_SERVICE_AND_COMPOSE } from "./operations/removeServiceAndCompose";
 import {
   CheckSchema,
   CheckSchemaVariables,
   UploadSchema,
   UploadSchemaVariables,
+  UploadAndComposePartialSchema,
+  UploadAndComposePartialSchemaVariables,
   RegisterOperations,
   RegisterOperationsVariables,
   ValidateOperations,
   ValidateOperationsVariables,
   SchemaTagsAndFieldStats,
   SchemaTagInfo,
-  SchemaTagInfoVariables
+  SchemaTagInfoVariables,
+  CheckPartialSchema,
+  CheckPartialSchemaVariables,
+  RemoveServiceAndCompose,
+  RemoveServiceAndComposeVariables
 } from "../graphqlTypes";
 import { SCHEMA_TAG_INFO_QUERY } from "./operations/schemaTagInfo";
 
@@ -115,6 +124,74 @@ export class ApolloEngineClient extends GraphQLDataSource {
         throw new Error("Error in request from Engine");
       }
       return data.service.uploadSchema;
+    });
+  }
+
+  public async uploadAndComposePartialSchema(
+    variables: UploadAndComposePartialSchemaVariables
+  ) {
+    return this.execute<UploadAndComposePartialSchema>({
+      query: UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA,
+      variables
+    }).then(({ data, errors }) => {
+      // use error logger
+      if (errors) {
+        throw new Error(errors.map(error => error.message).join("\n"));
+      }
+
+      if (data && !data.service) {
+        throw new Error(
+          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+        );
+      }
+
+      if (!(data && data.service)) {
+        throw new Error("Error in request from Engine");
+      }
+      return data.service.upsertImplementingServiceAndTriggerComposition;
+    });
+  }
+
+  public async checkPartialSchema(variables: CheckPartialSchemaVariables) {
+    return this.execute<CheckPartialSchema>({
+      query: CHECK_PARTIAL_SCHEMA,
+      variables
+    }).then(({ data, errors }) => {
+      // use error logger
+      if (errors) {
+        throw new Error(errors.map(error => error.message).join("\n"));
+      }
+
+      if (data && !data.service) {
+        throw new Error(
+          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+        );
+      }
+
+      if (!(data && data.service)) {
+        throw new Error("Error in request from Engine");
+      }
+      return data.service
+        .validatePartialSchemaOfImplementingServiceAgainstGraph;
+    });
+  }
+
+  public async removeServiceAndCompose(
+    variables: RemoveServiceAndComposeVariables
+  ) {
+    return this.execute<RemoveServiceAndCompose>({
+      query: REMOVE_SERVICE_AND_COMPOSE,
+      variables
+    }).then(({ data, errors }) => {
+      if (errors) {
+        throw new Error(errors.map(error => error.message).join("\n"));
+      }
+
+      if (!data || !data.service) {
+        throw new Error("Error in request from Engine");
+      }
+
+      return data.service.removeImplementingServiceAndTriggerComposition;
     });
   }
 
