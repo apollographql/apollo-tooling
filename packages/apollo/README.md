@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.10.3 darwin-x64 node-v11.14.0
+apollo/2.10.4-register.0 darwin-x64 node-v11.14.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -44,6 +44,7 @@ USAGE
 * [`apollo plugins:uninstall PLUGIN...`](#apollo-pluginsuninstall-plugin)
 * [`apollo plugins:update`](#apollo-pluginsupdate)
 * [`apollo service:check`](#apollo-servicecheck)
+* [`apollo service:delete`](#apollo-servicedelete)
 * [`apollo service:download OUTPUT`](#apollo-servicedownload-output)
 * [`apollo service:push`](#apollo-servicepush)
 
@@ -449,7 +450,12 @@ USAGE
 
 OPTIONS
   -c, --config=config                                            Path to your Apollo config file
+
+  -f, --federated                                                Indicates that the schema is a partial schema from a
+                                                                 federated service
+
   -t, --tag=tag                                                  The published tag to check this service against
+
   --endpoint=endpoint                                            The url of your service
 
   --header=header                                                Additional header to send to server for
@@ -475,6 +481,9 @@ OPTIONS
                                                                  count. Expected values are between 0 and 0.05 (minimum
                                                                  5% of total request volume)
 
+  --serviceName=serviceName                                      Provides the name of the implementing service for a
+                                                                 federated graph
+
   --validationPeriod=validationPeriod                            The size of the time window with which to validate the
                                                                  schema against. You may provide a number (in seconds),
                                                                  or an ISO8601 format duration for more granularity
@@ -485,6 +494,30 @@ ALIASES
 ```
 
 _See code: [src/commands/service/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/check.ts)_
+
+## `apollo service:delete`
+
+Delete a federated service from Engine and recompose remaining services
+
+```
+USAGE
+  $ apollo service:delete
+
+OPTIONS
+  -c, --config=config        Path to your Apollo config file
+  -f, --federated            Indicates that the schema is a partial schema from a federated service
+  -t, --tag=tag              The variant of the service to delete
+  --endpoint=endpoint        The url of your service
+
+  --header=header            Additional header to send to server for introspectionQuery. May be used multiple times to
+                             add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag.
+
+  --key=key                  The API key for the Apollo Engine service
+
+  --serviceName=serviceName  (required) Provides the name of the implementing service for a federated graph
+```
+
+_See code: [src/commands/service/delete.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/delete.ts)_
 
 ## `apollo service:download OUTPUT`
 
@@ -524,6 +557,7 @@ USAGE
 
 OPTIONS
   -c, --config=config                Path to your Apollo config file
+  -f, --federated                    Indicates that the schema is a partial schema from a federated service
   -t, --tag=tag                      [default: current] The tag to publish this service to
   --endpoint=endpoint                The url of your service
 
@@ -534,6 +568,13 @@ OPTIONS
   --key=key                          The API key for the Apollo Engine service
 
   --localSchemaFile=localSchemaFile  Path to your local GraphQL schema file (introspection result or SDL)
+
+  --serviceName=serviceName          Provides the name of the implementing service for a federated graph
+
+  --serviceRevision=serviceRevision  Provides a unique revision identifier for a change to an implementing service on a
+                                     federated service push. The default of this is a git sha
+
+  --serviceURL=serviceURL            Provides the url to the location of the implementing service for a federated graph
 
 ALIASES
   $ apollo schema:publish
