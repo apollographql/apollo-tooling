@@ -44,7 +44,7 @@
     "subscriptions-transport-ws": "^0.9.15",
     "vscode-languageserver": "^5.1.0",
     "vscode-uri": "^1.0.6",
-    "ws": "^6.1.0"
+    "ws": "^7.0.0"
   },
   "jest": {
     "preset": "ts-jest",
