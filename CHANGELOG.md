@@ -19,7 +19,8 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Fix fileSet.includesFile to work properly with windows paths []().
+  - Fix fileSet.includesFile to work properly with windows paths [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
+  - Fix positionToOffset to consider windows line endings [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
