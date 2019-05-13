@@ -3,7 +3,8 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Leverage updates to apollo-language-server to support federated services [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - Add `service:delete` command for deleting federated services [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -15,16 +16,42 @@
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
-  - <First `apollo-env` related entry goes here>
+  - Add new utils and predicates [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
 - `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
+  - Require graphql@^14.2.1 [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - Add buildSchemaFromSDL and related utilities for constructing partial schemas
+    [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - Add transformSchema and related utilities for easily transforming schemas
+    [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
 - `apollo-language-server`
-  - Fix fileSet.includesFile to work properly with windows paths [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
+  - Fix windows file paths by normalizing all URIs to a consistent format [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
   - Fix positionToOffset to consider windows line endings [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
+  - Extend Engine API for federated schema uploads and checks [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - Reorganize files and exports [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.10.3`
+
+- `apollo@2.10.3`
+  - Add service:check debuggability [#1250](https://github.com/apollographql/apollo-tooling/pull/1250)
+
+## `apollo@2.10.2`
+
+- `apollo@2.10.2`
+  - Relocate debug statements [#1245](https://github.com/apollographql/apollo-tooling/pull/1245)
+
+## `apollo@2.10.1`
+
+- `apollo@2.10.1`
+  - Add service:push debuggability [#1244](https://github.com/apollographql/apollo-tooling/pull/1244)
+
+## `apollo@2.10.0`
+
+- `apollo@2.10.0`
+  - Add `client:download-schema` command to download schemas from engine to an output file [#1108](https://github.com/apollographql/apollo-tooling/pull/1108)
 
 ## `apollo@2.9.0`, `apollo-language-server@1.7.0`
 

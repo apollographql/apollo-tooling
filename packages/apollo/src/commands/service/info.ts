@@ -1,8 +1,7 @@
 import { flags } from "@oclif/command";
 import { table } from "heroku-cli-util";
-import gql from "graphql-tag";
-
 import { ProjectCommand } from "../../Command";
+import { SchemaTagInfo_service_schema } from "apollo-language-server/lib/graphqlTypes";
 
 export default class ServiceDownload extends ProjectCommand {
   static description = "Download the info of your service from Engine";
@@ -17,7 +16,9 @@ export default class ServiceDownload extends ProjectCommand {
   };
 
   async run() {
-    const { results }: any = await this.runTasks(({ args, project, flags }) => [
+    const { schema } = await this.runTasks<{
+      schema: SchemaTagInfo_service_schema;
+    }>(({ args, project, flags }) => [
       {
         title: `Getting information about service`,
         task: async ctx => {
@@ -38,12 +39,11 @@ export default class ServiceDownload extends ProjectCommand {
             throw new Error(`Error loading service information`);
           }
 
-          ctx.results = data.service.schema;
+          ctx.schema = data.service.schema;
         }
       }
     ]);
-    const { hash, introspection, createdAt } = results;
-    const { fieldCount, typeCount } = introspection;
+    const { hash, fieldCount, typeCount, createdAt } = schema;
     this.log("\n");
     table([{ hash, types: typeCount, fields: fieldCount, createdAt }], {
       columns: [

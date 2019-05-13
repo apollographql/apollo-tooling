@@ -1,6 +1,6 @@
 # Apollo CLI
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg?maxAge=2592000)](https://raw.githubusercontent.com/apollographql/apollo-tooling/master/LICENSE) [![npm](https://img.shields.io/npm/v/apollo.svg)](https://www.npmjs.com/package/apollo) [![Get on Slack](https://img.shields.io/badge/slack-join-orange.svg)](http://www.apollostack.com/#slack)
+[![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg?maxAge=2592000)](https://raw.githubusercontent.com/apollographql/apollo-tooling/master/LICENSE) [![npm](https://img.shields.io/npm/v/apollo.svg)](https://www.npmjs.com/package/apollo) [![Get on Slack](https://img.shields.io/badge/spectrum-join-orange.svg)](https://spectrum.chat/apollo?tab=posts)
 
 Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
 
@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.9.0 darwin-x64 node-v11.14.0
+apollo/2.11.0 darwin-x64 node-v11.14.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -34,6 +34,7 @@ USAGE
 <!-- commands -->
 * [`apollo client:check`](#apollo-clientcheck)
 * [`apollo client:codegen [OUTPUT]`](#apollo-clientcodegen-output)
+* [`apollo client:download-schema OUTPUT`](#apollo-clientdownload-schema-output)
 * [`apollo client:extract OUTPUT`](#apollo-clientextract-output)
 * [`apollo client:push`](#apollo-clientpush)
 * [`apollo help [COMMAND]`](#apollo-help-command)
@@ -43,6 +44,7 @@ USAGE
 * [`apollo plugins:uninstall PLUGIN...`](#apollo-pluginsuninstall-plugin)
 * [`apollo plugins:update`](#apollo-pluginsupdate)
 * [`apollo service:check`](#apollo-servicecheck)
+* [`apollo service:delete`](#apollo-servicedelete)
 * [`apollo service:download OUTPUT`](#apollo-servicedownload-output)
 * [`apollo service:push`](#apollo-servicepush)
 
@@ -177,6 +179,49 @@ ALIASES
 ```
 
 _See code: [src/commands/client/codegen.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/codegen.ts)_
+
+## `apollo client:download-schema OUTPUT`
+
+Download a schema from engine or a GraphQL endpoint.
+
+```
+USAGE
+  $ apollo client:download-schema OUTPUT
+
+ARGUMENTS
+  OUTPUT  [default: schema.json] Path to write the introspection result to
+
+OPTIONS
+  -c, --config=config                    Path to your Apollo config file
+  -t, --tag=tag                          The published service tag for this client
+  --clientName=clientName                Name of the client that the queries will be attached to
+
+  --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
+                                         clientName if not provided
+
+  --clientVersion=clientVersion          The version of the client that the queries will be attached to
+
+  --endpoint=endpoint                    The url of your service
+
+  --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
+                                         work in watch mode
+
+  --header=header                        Additional header to send to server for introspectionQuery. May be used
+                                         multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
+                                         if using the `--header` flag.
+
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
+                                         queries *and* any client schema extensions
+
+  --key=key                              The API key for the Apollo Engine service
+
+  --queries=queries                      Deprecated in favor of the includes flag
+
+  --tagName=tagName                      Name of the template literal tag used to identify template literals containing
+                                         GraphQL queries in Javascript/Typescript code
+```
+
+_See code: [src/commands/client/download-schema.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/download-schema.ts)_
 
 ## `apollo client:extract OUTPUT`
 
@@ -405,7 +450,12 @@ USAGE
 
 OPTIONS
   -c, --config=config                                            Path to your Apollo config file
+
+  -f, --federated                                                Indicates that the schema is a partial schema from a
+                                                                 federated service
+
   -t, --tag=tag                                                  The published tag to check this service against
+
   --endpoint=endpoint                                            The url of your service
 
   --header=header                                                Additional header to send to server for
@@ -431,6 +481,9 @@ OPTIONS
                                                                  count. Expected values are between 0 and 0.05 (minimum
                                                                  5% of total request volume)
 
+  --serviceName=serviceName                                      Provides the name of the implementing service for a
+                                                                 federated graph
+
   --validationPeriod=validationPeriod                            The size of the time window with which to validate the
                                                                  schema against. You may provide a number (in seconds),
                                                                  or an ISO8601 format duration for more granularity
@@ -441,6 +494,30 @@ ALIASES
 ```
 
 _See code: [src/commands/service/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/check.ts)_
+
+## `apollo service:delete`
+
+Delete a federated service from Engine and recompose remaining services
+
+```
+USAGE
+  $ apollo service:delete
+
+OPTIONS
+  -c, --config=config        Path to your Apollo config file
+  -f, --federated            Indicates that the schema is a partial schema from a federated service
+  -t, --tag=tag              The variant of the service to delete
+  --endpoint=endpoint        The url of your service
+
+  --header=header            Additional header to send to server for introspectionQuery. May be used multiple times to
+                             add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag.
+
+  --key=key                  The API key for the Apollo Engine service
+
+  --serviceName=serviceName  (required) Provides the name of the implementing service for a federated graph
+```
+
+_See code: [src/commands/service/delete.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/delete.ts)_
 
 ## `apollo service:download OUTPUT`
 
@@ -480,6 +557,7 @@ USAGE
 
 OPTIONS
   -c, --config=config                Path to your Apollo config file
+  -f, --federated                    Indicates that the schema is a partial schema from a federated service
   -t, --tag=tag                      [default: current] The tag to publish this service to
   --endpoint=endpoint                The url of your service
 
@@ -490,6 +568,13 @@ OPTIONS
   --key=key                          The API key for the Apollo Engine service
 
   --localSchemaFile=localSchemaFile  Path to your local GraphQL schema file (introspection result or SDL)
+
+  --serviceName=serviceName          Provides the name of the implementing service for a federated graph
+
+  --serviceRevision=serviceRevision  Provides a unique revision identifier for a change to an implementing service on a
+                                     federated service push. The default of this is a git sha
+
+  --serviceURL=serviceURL            Provides the url to the location of the implementing service for a federated graph
 
 ALIASES
   $ apollo schema:publish

@@ -1,16 +1,17 @@
 import { flags } from "@oclif/command";
 import { table } from "heroku-cli-util";
-import { introspectionFromSchema } from "graphql";
+import { introspectionFromSchema, printSchema } from "graphql";
 import chalk from "chalk";
-import { gitInfo, GitContext } from "../../git";
+import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
 import { validateHistoricParams } from "../../utils";
 import {
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
-  ChangeType
+  ChangeSeverity,
+  CheckSchemaVariables
 } from "apollo-language-server/lib/graphqlTypes";
-import { ApolloConfig } from "apollo-language-server";
+import { ApolloConfig, GraphQLServiceProject } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 import stripANSI from "strip-ansi";
@@ -29,24 +30,36 @@ function pluralize(
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
-  if (change.type === ChangeType.FAILURE) {
+  if (change.severity === ChangeSeverity.FAILURE) {
     color = chalk.red;
   }
 
-  if (change.type === ChangeType.WARNING) {
+  if (change.severity === ChangeSeverity.WARNING) {
     color = chalk.yellow;
   }
 
-  const changeDictionary: Record<ChangeType, string> = {
-    [ChangeType.FAILURE]: "FAIL",
-    [ChangeType.WARNING]: "WARN",
-    [ChangeType.NOTICE]: "PASS"
+  const changeDictionary: Record<ChangeSeverity, string> = {
+    [ChangeSeverity.FAILURE]: "FAIL",
+    [ChangeSeverity.WARNING]: "WARN",
+    [ChangeSeverity.NOTICE]: "PASS"
   };
 
   return {
-    type: color(changeDictionary[change.type]),
+    severity: color(changeDictionary[change.severity]),
     code: color(change.code),
     description: color(change.description)
+  };
+};
+
+const reshapeGraphQLErrorToChange = (
+  severity: ChangeSeverity,
+  message: string
+): Change => {
+  return {
+    severity,
+    code: `FEDERATION_VALIDATION_${severity}`,
+    description: message,
+    __typename: "Change"
   };
 };
 
@@ -63,6 +76,11 @@ interface TasksOutput {
   checkSchemaResult: CheckSchema_service_checkSchema;
   shouldOutputJson: boolean;
   shouldOutputMarkdown: boolean;
+  federation?: {
+    errors: ({ message: string } | null)[];
+    warnings: ({ message: string } | null)[];
+    schemaHash?: string | null;
+  };
 }
 
 export function formatMarkdown({
@@ -96,7 +114,7 @@ export function formatMarkdown({
   );
 
   const breakingChanges = diffToPrevious.changes.filter(
-    change => change.type === "FAILURE"
+    change => change.severity === "FAILURE"
   );
 
   const affectedQueryCount = diffToPrevious.affectedQueries
@@ -116,7 +134,7 @@ export function formatMarkdown({
 ${
   breakingChanges.length > 0
     ? `❌ Found **${pluralize(
-        diffToPrevious.changes.filter(change => change.type === "FAILURE")
+        diffToPrevious.changes.filter(change => change.severity === "FAILURE")
           .length,
         "breaking change"
       )}** that would affect **${pluralize(
@@ -140,10 +158,9 @@ export function formatHumanReadable({
 }): string {
   const {
     targetUrl,
-    diffToPrevious: { changes, validationConfig }
+    diffToPrevious: { changes }
   } = checkSchemaResult;
   let result = "";
-  const failures = changes.filter(({ type }) => type === ChangeType.FAILURE);
 
   if (changes.length === 0) {
     result = "\nNo changes present between schemas";
@@ -156,13 +173,13 @@ export function formatHumanReadable({
     ]);
 
     const breakingChanges = sortedChanges.filter(
-      change => change.type === ChangeType.FAILURE
+      change => change.severity === ChangeSeverity.FAILURE
     );
 
-    sortBy(breakingChanges, change => change.type);
+    sortBy(breakingChanges, change => change.severity);
 
     const nonBreakingChanges = sortedChanges.filter(
-      change => change.type !== ChangeType.FAILURE
+      change => change.severity !== ChangeSeverity.FAILURE
     );
 
     table(
@@ -174,7 +191,7 @@ export function formatHumanReadable({
       ].filter(Boolean),
       {
         columns: [
-          { key: "type", label: "Change" },
+          { key: "severity", label: "Change" },
           { key: "code", label: "Code" },
           { key: "description", label: "Description" }
         ],
@@ -230,6 +247,16 @@ export default class ServiceCheck extends ProjectCommand {
     markdown: flags.boolean({
       description: "Output result in markdown.",
       exclusive: ["json"]
+    }),
+    federated: flags.boolean({
+      char: "f",
+      default: false,
+      description:
+        "Indicates that the schema is a partial schema from a federated service"
+    }),
+    serviceName: flags.string({
+      description:
+        "Provides the name of the implementing service for a federated graph"
     })
   };
 
@@ -239,7 +266,9 @@ export default class ServiceCheck extends ProjectCommand {
 
     // Define this constant so we can throw it and compare against the same value.
     const breakingChangesErrorMessage = "breaking changes found";
+    const compositionErrorMessage = "composition errors found";
 
+    let schema, schemaHash;
     try {
       await this.runTasks<TasksOutput>(
         ({ config, flags, project }) => {
@@ -257,21 +286,62 @@ export default class ServiceCheck extends ProjectCommand {
               )} on service ${chalk.blue(configName)}`,
               task: async (ctx: TasksOutput, task) => {
                 task.output = "Resolving schema";
+                taskOutput.shouldOutputJson = flags.json;
 
-                const schema = await project.resolveSchema({ tag });
-                await gitInfo(this.log);
+                if (flags.federated) {
+                  const info = await (project as GraphQLServiceProject).resolveFederationInfo();
+                  if (!info.sdl)
+                    throw new Error("No SDL found for federated service");
 
-                const historicParameters = validateHistoricParams({
-                  validationPeriod: flags.validationPeriod,
-                  queryCountThreshold: flags.queryCountThreshold,
-                  queryCountThresholdPercentage:
-                    flags.queryCountThresholdPercentage
-                });
+                  /**
+                   * id: service id for root mutation (graph id)
+                   * variant: like a tag. prod/staging/etc
+                   * name: implementing service name inside of the graph
+                   * sha: git commit hash/docker id. placeholder for now
+                   */
+                  task.output = "Creating composed schema against the graph";
+                  const {
+                    errors,
+                    warnings,
+                    compositionValidationDetails
+                  } = await project.engine.checkPartialSchema({
+                    id: configName,
+                    graphVariant: tag,
+                    implementingServiceName: flags.serviceName || info.name,
+                    partialSchema: {
+                      sdl: info.sdl
+                    }
+                  });
 
-                task.output = "Validating schema";
+                  // FIXME: reformat to match other check results
 
-                const newContext: typeof ctx = {
-                  checkSchemaResult: await project.engine.checkSchema({
+                  taskOutput.federation = {
+                    errors,
+                    warnings
+                  };
+
+                  if (compositionValidationDetails) {
+                    schemaHash = compositionValidationDetails.schemaHash;
+                  } else {
+                    // FIXME: We should provide some better error handling at the GraphQL layer for this
+                    throw new Error(`Federated service could not be composed due to the following errors:
+  ${errors && errors.map(err => (err && err.message) || "").join("\n")}
+                  `);
+                  }
+                } else {
+                  schema = await project.resolveSchema({ tag: config.tag });
+
+                  await gitInfo(this.log);
+
+                  const historicParameters = validateHistoricParams({
+                    validationPeriod: flags.validationPeriod,
+                    queryCountThreshold: flags.queryCountThreshold,
+                    queryCountThresholdPercentage:
+                      flags.queryCountThresholdPercentage
+                  });
+
+                  task.output = "Validating schema";
+                  const variables: CheckSchemaVariables = {
                     id: configName,
                     // @ts-ignore
                     // XXX Looks like TS should be generating ReadonlyArrays instead
@@ -280,17 +350,28 @@ export default class ServiceCheck extends ProjectCommand {
                     gitContext: await gitInfo(this.log),
                     frontend: flags.frontend || config.engine.frontend,
                     ...(historicParameters && { historicParameters })
-                  }),
-                  config,
-                  shouldOutputJson: !!flags.json,
-                  shouldOutputMarkdown: !!flags.markdown
-                };
+                  };
+                  const { schema: _, ...restVariables } = variables;
+                  this.debug("Variables sent to Engine:");
+                  this.debug(restVariables);
+                  this.debug("SDL of introspection sent to Engine:");
+                  this.debug(printSchema(schema));
 
-                Object.assign(ctx, newContext);
+                  const newContext: typeof ctx = {
+                    checkSchemaResult: await project.engine.checkSchema(
+                      variables
+                    ),
+                    config,
+                    shouldOutputJson: !!flags.json,
+                    shouldOutputMarkdown: !!flags.markdown
+                  };
 
-                // Save the output because we're going to use it even if we throw. `runTasks` won't return
-                // anything if we throw.
-                Object.assign(taskOutput, ctx);
+                  Object.assign(ctx, newContext);
+
+                  // Save the output because we're going to use it even if we throw. `runTasks` won't return
+                  // anything if we throw.
+                  Object.assign(taskOutput, ctx);
+                }
 
                 task.title = task.title.replace("Validating", "Validated");
               }
@@ -336,7 +417,7 @@ export default class ServiceCheck extends ProjectCommand {
               title: "Reporting result",
               task: async (ctx: TasksOutput, task) => {
                 const breakingSchemaChangeCount = ctx.checkSchemaResult.diffToPrevious.changes.filter(
-                  change => change.type === ChangeType.FAILURE
+                  change => change.severity === ChangeSeverity.FAILURE
                 ).length;
                 const nonBreakingSchemaChangeCount =
                   ctx.checkSchemaResult.diffToPrevious.changes.length -
@@ -364,7 +445,8 @@ export default class ServiceCheck extends ProjectCommand {
           // the `this.log` output to `stdout`.
           //
           // @see https://github.com/SamVerschueren/listr#renderer
-          renderer: context.flags.markdown ? "silent" : "default"
+          renderer:
+            context.flags.markdown || context.flags.json ? "silent" : "default"
         })
       );
     } catch (error) {
@@ -374,7 +456,10 @@ export default class ServiceCheck extends ProjectCommand {
         return;
       }
 
-      if (error.message !== breakingChangesErrorMessage) {
+      if (
+        error.message !== breakingChangesErrorMessage &&
+        error.message !== compositionErrorMessage
+      ) {
         throw error;
       }
     }
@@ -395,6 +480,32 @@ export default class ServiceCheck extends ProjectCommand {
       throw new Error(
         "Service mising from config. This should have been validated elsewhere"
       );
+    }
+
+    if (taskOutput.federation) {
+      const errors = taskOutput.federation.errors.map(error =>
+        reshapeGraphQLErrorToChange(
+          ChangeSeverity.FAILURE,
+          error ? error.message : ""
+        )
+      );
+      const warnings = taskOutput.federation.warnings.map(error =>
+        reshapeGraphQLErrorToChange(
+          ChangeSeverity.WARNING,
+          error ? error.message : ""
+        )
+      );
+
+      // if we had composition errors, set the change type to failure if it isn't already
+      if (
+        errors.length &&
+        checkSchemaResult.diffToPrevious.severity !== ChangeSeverity.FAILURE
+      ) {
+        checkSchemaResult.diffToPrevious.severity = ChangeSeverity.FAILURE;
+      }
+
+      checkSchemaResult.diffToPrevious.changes.push(...errors);
+      checkSchemaResult.diffToPrevious.changes.push(...warnings);
     }
 
     if (shouldOutputJson) {
@@ -432,7 +543,7 @@ export default class ServiceCheck extends ProjectCommand {
     // exit with failing status if we have failures
     if (
       checkSchemaResult.diffToPrevious.changes.find(
-        ({ type }) => type === ChangeType.FAILURE
+        ({ severity }) => severity === ChangeSeverity.FAILURE
       )
     ) {
       this.exit(1);

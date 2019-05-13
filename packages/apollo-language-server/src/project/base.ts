@@ -27,7 +27,7 @@ import {
   schemaProviderFromConfig,
   GraphQLSchemaProvider,
   SchemaResolveConfig
-} from "../schema/providers";
+} from "../providers/schema";
 import { ApolloEngineClient, ClientIdentity } from "../engine";
 
 export type DocumentUri = string;
