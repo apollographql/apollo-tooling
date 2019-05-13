@@ -31,7 +31,7 @@
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Add env variable to silence TLS errors [#1212](https://github.com/apollographql/apollo-tooling/pull/1212) 
 
 ## `apollo@2.10.3`
 
