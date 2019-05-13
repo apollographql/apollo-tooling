@@ -1,5 +1,4 @@
 import { relative } from "path";
-import * as path from "path";
 import minimatch = require("minimatch");
 import glob from "glob";
 import { invariant } from "@apollographql/apollo-tools";
