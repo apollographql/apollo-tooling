@@ -1,6 +1,7 @@
 import URI from "vscode-uri";
 
-const withUnixSeparator = uriString => uriString.split(/[\/\\]/).join("/");
+const withUnixSeparator = (uriString: string) =>
+  uriString.split(/[\/\\]/).join("/");
 
 export const normalizeURI = (uriString: string) => {
   let parsed;
