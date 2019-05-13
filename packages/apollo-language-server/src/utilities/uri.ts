@@ -1,14 +1,18 @@
 import URI from "vscode-uri";
 
+const withUnixSeparator = uriString => uriString.split(/[\/\\]/).join("/");
+
 export const normalizeURI = (uriString: string) => {
+  let parsed;
   if (uriString.indexOf("file:///") === 0) {
-    return URI.file(URI.parse(uriString).fsPath).fsPath;
-  } else if (uriString.match(/^[a-zA-Z]:(\/|\\).*/)) {
+    parsed = URI.file(URI.parse(uriString).fsPath);
+  } else if (uriString.match(/^[a-zA-Z]:[\/\\].*/)) {
     // uri with a drive prefix but not file:///
-    const withUnixSeparator = uriString.split("\\").join("/");
-    // throw new Error(withUnixSeparator);
-    return URI.file(URI.parse("file:///" + withUnixSeparator).fsPath).fsPath;
+    parsed = URI.file(
+      URI.parse("file:///" + withUnixSeparator(uriString)).fsPath
+    );
+  } else {
+    parsed = URI.parse(withUnixSeparator(uriString));
   }
-  const withUnixSeparator = uriString.split("\\").join("/");
-  return URI.parse(withUnixSeparator).fsPath;
+  return withUnixSeparator(parsed.fsPath);
 };
