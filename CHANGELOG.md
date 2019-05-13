@@ -24,6 +24,8 @@
   - Add transformSchema and related utilities for easily transforming schemas
     [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
 - `apollo-language-server`
+  - Fix windows file paths by normalizing all URIs to a consistent format [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
+  - Fix positionToOffset to consider windows line endings [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
   - Extend Engine API for federated schema uploads and checks [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
   - Reorganize files and exports [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
 - `apollo-tools`
