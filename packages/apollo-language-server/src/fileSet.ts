@@ -4,6 +4,7 @@ import minimatch = require("minimatch");
 import glob from "glob";
 import { invariant } from "@apollographql/apollo-tools";
 import URI from "vscode-uri";
+import { normalizeURI } from "./utilities";
 
 export class FileSet {
   private rootURI: URI;
@@ -52,13 +53,7 @@ export class FileSet {
   }
 
   includesFile(filePath: string): boolean {
-    // use URI.file to format filepath the same as glob.sync below does
-    const parsed = URI.file(filePath).fsPath;
-    // URI.parse has to be used for file:/// URIs
-    const parsed2 = URI.parse(filePath).fsPath;
-    return (
-      this.allFiles().includes(parsed) || this.allFiles().includes(parsed2)
-    );
+    return this.allFiles().includes(normalizeURI(filePath));
   }
 
   allFiles(): string[] {
@@ -72,10 +67,6 @@ export class FileSet {
         absolute: true,
         ignore: this.excludes
       })
-      .map(f => {
-        console.log({ f });
-        return f;
-      })
-      .map(filePath => URI.file(filePath).fsPath);
+      .map(normalizeURI);
   }
 }
