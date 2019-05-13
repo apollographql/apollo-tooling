@@ -17,6 +17,7 @@
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
   - Add new utils and predicates [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - Update core-js package from `3.0.0-beta.3` to `~3.0.0` [#1263](https://github.com/apollographql/apollo-tooling/pull/1263)
 - `apollo-graphql`
   - Require graphql@^14.2.1 [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
   - Add buildSchemaFromSDL and related utilities for constructing partial schemas
