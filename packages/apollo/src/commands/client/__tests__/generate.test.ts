@@ -201,7 +201,8 @@ describe("client:codegen", () => {
       "client:codegen",
       "--config=my.config.js",
       "--target=typescript",
-      "--fileExtension=d.ts",
+      "--fileExtension=.d.ts",
+      "--outputFlat",
       "outDirectory"
     ])
     .it("writes types for typescript with a custom extension", () => {
