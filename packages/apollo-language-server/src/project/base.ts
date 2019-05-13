@@ -27,7 +27,7 @@ import {
   schemaProviderFromConfig,
   GraphQLSchemaProvider,
   SchemaResolveConfig
-} from "../schema/providers";
+} from "../providers/schema";
 import { ApolloEngineClient, ClientIdentity } from "../engine";
 
 export type DocumentUri = string;
@@ -39,6 +39,7 @@ const fileAssociations: { [extension: string]: string } = {
   ".ts": "typescript",
   ".jsx": "javascriptreact",
   ".tsx": "typescriptreact",
+  ".vue": "vue",
   ".py": "python"
 };
 

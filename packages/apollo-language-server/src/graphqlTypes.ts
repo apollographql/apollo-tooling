@@ -3,15 +3,98 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: CheckPartialSchema
+// ====================================================
+
+export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_compositionValidationDetails {
+  __typename: "CompositionValidationDetails";
+  /**
+   * Hash of the composed schema
+   */
+  schemaHash: string | null;
+}
+
+export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_errors {
+  __typename: "SchemaCompositionError";
+  message: string;
+}
+
+export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_warnings {
+  __typename: "SchemaCompositionWarning";
+  message: string;
+}
+
+export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph {
+  __typename: "CompositionValidationResult";
+  /**
+   * Akin to a composition config, represents the partial schemas and implementing services that were used
+   * in running composition. Will be null if any errors are encountered. Also may contain a schema hash if
+   * one could be computed, which can be used for schema validation.
+   */
+  compositionValidationDetails: CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_compositionValidationDetails | null;
+  /**
+   * List of errors during composition. Errors mean that Apollo was unable to compose the
+   * graph's implementing services into a GraphQL schema. This partial schema should not be
+   * published to the implementing service if there were any errors encountered
+   */
+  errors: (CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_errors | null)[];
+  /**
+   * List of warnings encountered during composing implementing services into a complete schema.
+   * Though a schema was composed for the graph with the proposed partial schema,
+   * these warnings may indicate undesired behavior or lost information. We recommend that no service
+   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
+   * in its composition result will result in updating the composition config.
+   */
+  warnings: (CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_warnings | null)[];
+}
+
+export interface CheckPartialSchema_service {
+  __typename: "ServiceMutation";
+  /**
+   * This mutation will not result in any changes to the implementing service
+   * 
+   * Run composition with the Implementing Service's partial schema replaced with the one provided
+   * in the mutation's input. Store the composed schema, return the hash of the composed schema,
+   * and any warnings and errors pertaining to composition.
+   * 
+   * This mutation will not run validation against operations.
+   */
+  validatePartialSchemaOfImplementingServiceAgainstGraph: CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph;
+}
+
+export interface CheckPartialSchema {
+  service: CheckPartialSchema_service | null;
+}
+
+export interface CheckPartialSchemaVariables {
+  id: string;
+  graphVariant: string;
+  implementingServiceName: string;
+  partialSchema: PartialSchemaInput;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: CheckSchema
 // ====================================================
+
+export interface CheckSchema_service_checkSchema_diffToPrevious_affectedClients {
+  __typename: "AffectedClient";
+}
+
+export interface CheckSchema_service_checkSchema_diffToPrevious_affectedQueries {
+  __typename: "AffectedQuery";
+}
 
 export interface CheckSchema_service_checkSchema_diffToPrevious_changes {
   __typename: "Change";
   /**
    * Indication of the success of the overall change, either failure, warning, or notice.
    */
-  type: ChangeType;
+  severity: ChangeSeverity;
   /**
    * Indication of the kind of target and action of the change, e.g. 'TYPE_REMOVED'.
    */
@@ -24,7 +107,21 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_changes {
 
 export interface CheckSchema_service_checkSchema_diffToPrevious_validationConfig {
   __typename: "SchemaDiffValidationConfig";
+  /**
+   * delta in seconds from current time that determines the start of the
+   * window for reported metrics included in a schema diff. A day window
+   * from the present day would have a \`from\` value of -86400. In rare
+   * cases, this could be an ISO timestamp if the user passed one in on diff
+   * creation
+   */
   from: any | null;
+  /**
+   * delta in seconds from current time that determines the end of the
+   * window for reported metrics included in a schema diff. A day window
+   * from the present day would have a \`to\` value of -0. In rare
+   * cases, this could be an ISO timestamp if the user passed one in on diff
+   * creation
+   */
   to: any | null;
   /**
    * Minimum number of requests within the window for a query to be considered.
@@ -39,26 +136,55 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_validationConfig
 
 export interface CheckSchema_service_checkSchema_diffToPrevious {
   __typename: "SchemaDiff";
-  type: ChangeType;
+  /**
+   * Indication of the success of the change, either failure, warning, or notice.
+   */
+  severity: ChangeSeverity;
+  /**
+   * Clients affected by all changes in diff
+   */
+  affectedClients: CheckSchema_service_checkSchema_diffToPrevious_affectedClients[] | null;
+  /**
+   * Operations affected by all changes in diff
+   */
+  affectedQueries: CheckSchema_service_checkSchema_diffToPrevious_affectedQueries[] | null;
+  /**
+   * Number of operations that were validated during schema diff
+   */
+  numberOfCheckedOperations: number | null;
+  /**
+   * List of schema changes with associated affected clients and operations
+   */
   changes: CheckSchema_service_checkSchema_diffToPrevious_changes[];
+  /**
+   * Configuration of validation
+   */
   validationConfig: CheckSchema_service_checkSchema_diffToPrevious_validationConfig | null;
 }
 
 export interface CheckSchema_service_checkSchema {
   __typename: "CheckSchemaResult";
   /**
-   * generated url to view schema diff in Engine
+   * Generated url to view schema diff in Engine
    */
   targetUrl: string | null;
+  /**
+   * Schema diff and affected operations generated by the schema check
+   */
   diffToPrevious: CheckSchema_service_checkSchema_diffToPrevious;
 }
 
 export interface CheckSchema_service {
   __typename: "ServiceMutation";
   /**
-   * Validate, diff, and store a schema so the diff
-   * can be viewed by users in the UI. This mutation
-   * will not mark the schema as "published"
+   * Validate, diff, and store a schema so the diff can be viewed by users in the UI.
+   * This mutation will not mark the schema as "published".
+   * 
+   * One of "proposedSchema" or "proposedSchemaHash" must be provided.
+   * If both are provided, the computed schema hash will be compared with the input hash,
+   * an error will be returned if the hashes don't match.
+   * 
+   * If the "proposedSchemaHash" is specified, the already stored schema will be loaded.
    */
   checkSchema: CheckSchema_service_checkSchema;
 }
@@ -69,7 +195,8 @@ export interface CheckSchema {
 
 export interface CheckSchemaVariables {
   id: string;
-  schema: IntrospectionSchemaInput;
+  schema?: IntrospectionSchemaInput | null;
+  schemaHash?: string | null;
   tag?: string | null;
   gitContext?: GitContextInput | null;
   historicParameters?: HistoricQueryParameters | null;
@@ -97,6 +224,103 @@ export interface RegisterOperationsVariables {
   id: string;
   clientIdentity: RegisteredClientIdentityInput;
   operations: RegisteredOperationInput[];
+  manifestVersion: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: RemoveServiceAndCompose
+// ====================================================
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServiceLocations {
+  __typename: "ImplementingServiceLocation";
+  /**
+   * The name of the implementing service
+   */
+  name: string;
+  /**
+   * The path in storage to access the implementing service config file
+   */
+  path: string;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig {
+  __typename: "CompositionConfig";
+  /**
+   * List of implementing services that comprise a composed graph
+   */
+  implementingServiceLocations: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServiceLocations[];
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors_locations {
+  __typename: "SourceLocation";
+  column: number;
+  line: number;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors {
+  __typename: "SchemaCompositionError";
+  locations: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors_locations | null)[];
+  message: string;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_locations {
+  __typename: "SourceLocation";
+  column: number;
+  line: number;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings {
+  __typename: "SchemaCompositionWarning";
+  locations: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_locations | null)[];
+  message: string;
+}
+
+export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition {
+  __typename: "CompositionAndRemoveResult";
+  /**
+   * The produced composition config. Will be null if there are any errors
+   */
+  compositionConfig: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig | null;
+  /**
+   * List of errors during composition. Errors mean that Apollo was unable to compose the
+   * graph's implementing services into a GraphQL schema. This partial schema should not be
+   * published to the implementing service if there were any errors encountered
+   */
+  errors: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors | null)[];
+  /**
+   * List of warnings encountered during composing implementing services into a complete schema.
+   * Though a schema was composed for the graph with the proposed partial schema,
+   * these warnings may indicate undesired behavior or lost information. We recommend that no service
+   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
+   * in its composition result will result in updating the composition config.
+   */
+  warnings: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings | null)[];
+  /**
+   * Whether the gateway link was updated.
+   */
+  updatedGateway: boolean;
+}
+
+export interface RemoveServiceAndCompose_service {
+  __typename: "ServiceMutation";
+  /**
+   * Remove an implementing service from a graph and update its service list manifest
+   */
+  removeImplementingServiceAndTriggerComposition: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition;
+}
+
+export interface RemoveServiceAndCompose {
+  service: RemoveServiceAndCompose_service | null;
+}
+
+export interface RemoveServiceAndComposeVariables {
+  id: string;
+  graphVariant: string;
+  name: string;
 }
 
 /* tslint:disable */
@@ -113,17 +337,18 @@ export interface SchemaTagInfo_service_schema_gitContext {
   commit: string;
 }
 
-export interface SchemaTagInfo_service_schema_introspection {
-  __typename: "IntrospectionSchema";
-  fieldCount: number | null;
-  typeCount: number | null;
-}
-
 export interface SchemaTagInfo_service_schema {
   __typename: "Schema";
   hash: string;
   gitContext: SchemaTagInfo_service_schema_gitContext | null;
-  introspection: SchemaTagInfo_service_schema_introspection;
+  /**
+   * The number of fields; this includes user defined fields only, excluding built-in types and fields
+   */
+  fieldCount: number;
+  /**
+   * The number of types; this includes user defined types only, excluding built-in types
+   */
+  typeCount: number;
   createdAt: any;
 }
 
@@ -210,6 +435,90 @@ export interface SchemaTagsAndFieldStats {
 
 export interface SchemaTagsAndFieldStatsVariables {
   id: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UploadAndComposePartialSchema
+// ====================================================
+
+export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_compositionConfig {
+  __typename: "CompositionConfig";
+  /**
+   * Hash of the composed schema
+   */
+  schemaHash: string;
+}
+
+export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_errors {
+  __typename: "SchemaCompositionError";
+  message: string;
+}
+
+export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_warnings {
+  __typename: "SchemaCompositionWarning";
+  message: string;
+}
+
+export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition {
+  __typename: "CompositionAndUpsertResult";
+  /**
+   * The produced composition config. Will be null if there are any errors
+   */
+  compositionConfig: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_compositionConfig | null;
+  /**
+   * List of errors during composition. Errors mean that Apollo was unable to compose the
+   * graph's implementing services into a GraphQL schema. This partial schema should not be
+   * published to the implementing service if there were any errors encountered
+   */
+  errors: (UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_errors | null)[];
+  /**
+   * List of warnings encountered during composing implementing services into a complete schema.
+   * Though a schema was composed for the graph with the proposed partial schema,
+   * these warnings may indicate undesired behavior or lost information. We recommend that no service
+   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
+   * in its composition result will result in updating the composition config.
+   */
+  warnings: (UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_warnings | null)[];
+  /**
+   * Whether the gateway link was updated.
+   */
+  didUpdateGateway: boolean;
+  /**
+   * Whether an implementingService was created as part of this mutation
+   */
+  serviceWasCreated: boolean;
+}
+
+export interface UploadAndComposePartialSchema_service {
+  __typename: "ServiceMutation";
+  /**
+   * Creates or updates an implementing service of a given "name" on the graph variant, then
+   * updates the graph variant's composition configs/artifacts to reflect these changes.
+   * 
+   * An enriched SDL of the implementing service can be uploaded
+   * via "implementingServiceConfiguration.partialSchema.partialSchemaSDL".
+   * 
+   * Alternatively, previously uploaded partial schema could be re-associated with the
+   * implementing service via "implementingServiceConfiguration.partialSchema.partialSchemaHash".
+   */
+  upsertImplementingServiceAndTriggerComposition: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition;
+}
+
+export interface UploadAndComposePartialSchema {
+  service: UploadAndComposePartialSchema_service | null;
+}
+
+export interface UploadAndComposePartialSchemaVariables {
+  id: string;
+  graphVariant: string;
+  name: string;
+  url: string;
+  revision: string;
+  activePartialSchema: PartialSchemaInput;
 }
 
 /* tslint:disable */
@@ -1244,7 +1553,7 @@ export interface IntrospectionTypeRef {
 // START Enums and Input Objects
 //==============================================================
 
-export enum ChangeType {
+export enum ChangeSeverity {
   FAILURE = "FAILURE",
   NOTICE = "NOTICE",
   WARNING = "WARNING",
@@ -1391,6 +1700,21 @@ export interface IntrospectionTypeRefInput {
 export interface OperationDocumentInput {
   body: string;
   name?: string | null;
+}
+
+/**
+ * Input for registering a partial schema to an implementing service.
+ * One of the fields must be specified (validated server-side).
+ * 
+ * If a new partialSchemaSDL is passed in, this operation will store it before
+ * creating the association.
+ * 
+ * If both the sdl and hash are specified, an error will be thrown if the provided
+ * hash doesn't match our hash of the sdl contents
+ */
+export interface PartialSchemaInput {
+  sdl?: string | null;
+  hash?: string | null;
 }
 
 export interface RegisteredClientIdentityInput {

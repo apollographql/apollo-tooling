@@ -2,6 +2,97 @@
 
 ## Upcoming
 
+- `apollo`
+  - Leverage updates to apollo-language-server to support federated services [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - Add `service:delete` command for deleting federated services [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+- `apollo-codegen-core`
+  - <First `apollo-codegen-core` related entry goes here>
+- `apollo-codegen-flow`
+  - <First `apollo-codegen-flow` related entry goes here>
+- `apollo-codegen-scala`
+  - <First `apollo-codegen-scala` related entry goes here>
+- `apollo-codegen-swift`
+  - <First `apollo-codegen-swift` related entry goes here>
+- `apollo-codegen-typescript`
+  - <First `apollo-codegen-typescript` related entry goes here>
+- `apollo-env`
+  - Add new utils and predicates [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+- `apollo-graphql`
+  - Require graphql@^14.2.1 [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - Add buildSchemaFromSDL and related utilities for constructing partial schemas
+    [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - Add transformSchema and related utilities for easily transforming schemas
+    [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+- `apollo-language-server`
+  - Extend Engine API for federated schema uploads and checks [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - Reorganize files and exports [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+- `apollo-tools`
+  - <First `apollo-tools` related entry goes here>
+- `vscode-apollo`
+  - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.10.3`
+
+- `apollo@2.10.3`
+  - Add service:check debuggability [#1250](https://github.com/apollographql/apollo-tooling/pull/1250)
+
+## `apollo@2.10.2`
+
+- `apollo@2.10.2`
+  - Relocate debug statements [#1245](https://github.com/apollographql/apollo-tooling/pull/1245)
+
+## `apollo@2.10.1`
+
+- `apollo@2.10.1`
+  - Add service:push debuggability [#1244](https://github.com/apollographql/apollo-tooling/pull/1244)
+
+## `apollo@2.10.0`
+
+- `apollo@2.10.0`
+  - Add `client:download-schema` command to download schemas from engine to an output file [#1108](https://github.com/apollographql/apollo-tooling/pull/1108)
+
+## `apollo@2.9.0`, `apollo-language-server@1.7.0`
+
+- `apollo@2.9.0`
+  - Support local schema files in service:check [#1118](https://github.com/apollographql/apollo-tooling/pull/1116)
+- `apollo-language-server@1.7.0`
+  - Fix on-hover bugs introduced by replacing visitWithTypeInfo [#1196](https://github.com/apollographql/apollo-tooling/pull/1196)
+  - Add `gql` extension to the default `includes` configuration [#1176](https://github.com/apollographql/apollo-tooling/pull/1176)
+  - Simple perf improvements (debouncer + cache) [#1206](https://github.com/apollographql/apollo-tooling/pull/1206)
+
+## `apollo@2.8.3`
+
+- `apollo@2.8.3`
+  - Update `service:check` output for errors and correct pluralization [#1178](https://github.com/apollographql/apollo-tooling/pull/1178)
+
+## `apollo@2.8.2`
+
+- `apollo@2.8.2`
+  - Update `service:check`'s `--markdown` output to include clients affected, number of operations checked, pluralization improvements, and backticks around service and schema variant [#1164](https://github.com/apollographql/apollo-tooling/pull/1164)
+  - Update `service:check` output to show failures before passes [#1168](https://github.com/apollographql/apollo-tooling/pull/1168)
+
+## `apollo@2.8.1`
+
+- `apollo@2.8.1`
+  - Add git info back to `checkSchema` to fix detail links[#1165](https://github.com/apollographql/apollo-tooling/pull/1165)
+- `apollo-language-server@1.6.2`
+
+## `apollo@2.8.0`
+
+- `apollo@2.8.0`
+  - Add `--markdown` output option to `service:check` [#1072](https://github.com/apollographql/apollo-tooling/pull/1072)
+  - Enhance formatting for `service:check` output [#1146](https://github.com/apollographql/apollo-tooling/pull/1146)
+- `apollo-language-server@1.6.1`
+
+## `apollo@2.7.0`, `apollo-vscode@1.6.0`
+
+- `apollo@2.7.0`
+  - Update operation normalization technique to deterministically order fragments within operations. This update affects those users of the [operation registry](https://www.apollographql.com/docs/platform/operation-registry.html) feature of the Apollo Platform. Anyone using the operation registry should re-register their operations with this new version of the `apollo` CLI via the `apollo client:push` command. Once all client operations are re-registered, the `apollo-server-plugin-operation-manifest` plugin within Apollo Server (which reads the manifest published with `apollo client:push`) should be updated to `0.1.0-alpha.1`. [#1158](https://github.com/apollographql/apollo-tooling/pull/1158)
+- `apollo-language-server@1.6.0`
+  - Stop loadConfig from looking up the tree when a --config location is defined [#1059](https://github.com/apollographql/apollo-tooling/pull/1059)
+  - Refactored/documented/tested loadConfig [#1059](https://github.com/apollographql/apollo-tooling/pull/1059)
+  - Add `.vue` file support for codegen:generate [#1160](https://github.com/apollographql/apollo-tooling/pull/1160)
+
 ## `apollo-codegen-flow@0.32.11`
 
 - `apollo-codegen-flow@0.32.11`
