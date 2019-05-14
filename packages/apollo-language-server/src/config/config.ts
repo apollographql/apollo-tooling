@@ -1,5 +1,5 @@
 import { dirname } from "path";
-import { merge } from "lodash/fp";
+import merge from "lodash.merge";
 import {
   ServiceID,
   ServiceSpecifier,
