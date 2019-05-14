@@ -3,7 +3,7 @@ import { LoaderEntry } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
 import { resolve } from "path";
 import { readFileSync, existsSync, lstatSync } from "fs";
-import { merge, get } from "lodash/fp";
+import merge from "lodash.merge";
 import {
   ApolloConfig,
   ApolloConfigFormat,

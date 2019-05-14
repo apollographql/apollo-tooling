@@ -28,7 +28,6 @@
   "dependencies": {
     "apollo-env": "file:../apollo-env",
     "apollo-language-server": "file:../apollo-language-server",
-    "event-stream": "=3.3.4",
     "vscode-languageclient": "^5.2.1"
   },
   "publisher": "apollographql",

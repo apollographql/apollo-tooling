@@ -3,7 +3,8 @@ import fs from "fs";
 import ci from "env-ci";
 import { gitToJs } from "git-parse";
 import git from "git-rev-sync";
-import { pickBy, identity } from "lodash";
+import pickBy from "lodash.pickby";
+import identity from "lodash.identity";
 import Command from "@oclif/command";
 
 const findGitRoot = (start?: string | string[]): string | void => {
