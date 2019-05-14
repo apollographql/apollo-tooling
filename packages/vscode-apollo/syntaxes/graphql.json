@@ -267,7 +267,7 @@
     },
     "graphql-variable-assignment": {
       "begin": "\\s(=)",
-      "end": "(?=[\n.])",
+      "end": "(?=[\n,)])",
       "applyEndPatternLast": 1,
       "beginCaptures": {
         "1": { "name": "punctuation.assignment.graphql" }
