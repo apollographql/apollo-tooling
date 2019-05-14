@@ -3,8 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Leverage updates to apollo-language-server to support federated services [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
-  - Add `service:delete` command for deleting federated services [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -16,20 +15,44 @@
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
-  - Add new utils and predicates [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
+  - <First `apollo-graphql` related entry goes here>
+- `apollo-language-server`
+  - <First `apollo-language-server` related entry goes here>
+- `apollo-tools`
+  - <First `apollo-tools` related entry goes here>
+- `vscode-apollo`
+  - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.11.1`, `apollo-language-server@1.8.1`, `vscode-apollo@1.6.9`
+
+- `apollo@2.11.1`
+  - Document engine requirements in client:check and client:push [#1077](https://github.com/apollographql/apollo-tooling/pull/1077)
+- `apollo-language-server@1.8.1`
+  - Fix windows file paths by normalizing all URIs to a consistent format [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
+  - Fix positionToOffset to consider windows line endings [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
+- `vscode-apollo@1.6.9`
+  - Add env variable to silence TLS errors [#1212](https://github.com/apollographql/apollo-tooling/pull/1212)
+
+## `apollo@2.11.0`, `apollo-language-server@1.8.0`, `apollo-graphql@0.3.0`, `apollo-language-server@1.8.0`, `apollo-env@0.5.0`
+
+- `apollo@2.11.0`
+  - Leverage updates to apollo-language-server to support federated services [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - Add `service:delete` command for deleting federated services [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+- `apollo-env@0.5.0`
+  - Add new utils and predicates [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+- `apollo-graphql@0.3.0`
   - Require graphql@^14.2.1 [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
   - Add buildSchemaFromSDL and related utilities for constructing partial schemas
     [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
   - Add transformSchema and related utilities for easily transforming schemas
     [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
-- `apollo-language-server`
+- `apollo-language-server@1.8.0`
+  - Fix windows file paths by normalizing all URIs to a consistent format [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
+  - Fix positionToOffset to consider windows line endings [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
   - Extend Engine API for federated schema uploads and checks [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
   - Reorganize files and exports [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
-- `apollo-tools`
-  - <First `apollo-tools` related entry goes here>
-- `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
 
 ## `apollo@2.10.3`
 
