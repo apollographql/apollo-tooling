@@ -24,6 +24,7 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - Fix defaultValue syntax highlighting [#1269](https://github.com/apollographql/apollo-tooling/pull/1269)
+  - Fix single quote syntax highlighting [#1270](https://github.com/apollographql/apollo-tooling/pull/1269)
 
 ## `apollo@2.11.1`, `apollo-language-server@1.8.1`, `vscode-apollo@1.6.9`
 
