@@ -188,6 +188,14 @@
           "beginCaptures": {
             "1": { "name": "punctuation.whitespace.comment.leading.graphql" }
           }
+        },
+        {
+          "name": "comment.line.graphql.js",
+          "begin": "(\")",
+          "end": "(\")",
+          "beginCaptures": {
+            "1": { "name": "punctuation.whitespace.comment.leading.graphql" }
+          }
         }
       ]
     },
