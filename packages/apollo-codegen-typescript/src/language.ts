@@ -16,15 +16,11 @@ export type ObjectProperty = {
   type: t.TSType;
 };
 
-export interface TypescriptCompilerOptions extends CompilerOptions {
-  useReadOnlyTypes: boolean;
-}
-
 export default class TypescriptGenerator {
-  options: TypescriptCompilerOptions;
+  options: CompilerOptions;
   typeFromGraphQLType: Function;
 
-  constructor(compilerOptions: TypescriptCompilerOptions) {
+  constructor(compilerOptions: CompilerOptions) {
     this.options = compilerOptions;
 
     this.typeFromGraphQLType = createTypeFromGraphQLTypeFunction(

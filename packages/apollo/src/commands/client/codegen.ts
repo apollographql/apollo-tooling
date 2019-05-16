@@ -78,6 +78,11 @@ export default class Generate extends ClientCommand {
       description: "Use Flow exact objects for generated types [flow only]"
     }),
 
+    useFlowReadOnlyTypes: flags.boolean({
+      description:
+        "Use read only types for generated types [flow only]. **Deprecated in favor of `useReadOnlyTypes`.**"
+    }),
+
     // flow / TS
     useReadOnlyTypes: flags.boolean({
       description: "Use read only types for generated types [flow | typescript]"
@@ -193,7 +198,8 @@ export default class Generate extends ClientCommand {
                     mergeInFieldsFromFragmentSpreads:
                       flags.mergeInFieldsFromFragmentSpreads,
                     useFlowExactObjects: flags.useFlowExactObjects,
-                    useReadOnlyTypes: flags.useReadOnlyTypes,
+                    useReadOnlyTypes:
+                      flags.useReadOnlyTypes || flags.useFlowReadOnlyTypes,
                     globalTypesFile: flags.globalTypesFile
                   }
                 );

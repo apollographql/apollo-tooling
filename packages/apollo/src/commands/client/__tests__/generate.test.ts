@@ -348,6 +348,24 @@ describe("client:codegen", () => {
       "--config=my.config.js",
       "--target=flow",
       "--outputFlat",
+      "--useFlowReadOnlyTypes",
+      "__tmp__API.js"
+    ])
+    .it("writes read-only Flow types when the flag is set", () => {
+      expect(fs.readFileSync("__tmp__API.js").toString()).toMatchSnapshot();
+    });
+
+  test
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "queryOne.graphql": simpleQuery.toString(),
+      "my.config.js": defaultConfig
+    })
+    .command([
+      "client:codegen",
+      "--config=my.config.js",
+      "--target=flow",
+      "--outputFlat",
       "--useReadOnlyTypes",
       "__tmp__API.js"
     ])
