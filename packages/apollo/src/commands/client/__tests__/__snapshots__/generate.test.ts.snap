@@ -122,7 +122,7 @@ Object {
 }
 `;
 
-exports[`writes read-only Flow types when the deprecated useFlowReadOnlyTypes flag is set 1`] = `
+exports[`client:codegen writes read-only Flow types when the deprecated flag is set 1`] = `
 "/* @flow */
 /* eslint-disable */
 // This file was automatically generated and should not be edited.

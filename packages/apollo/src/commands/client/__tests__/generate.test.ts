@@ -351,7 +351,7 @@ describe("client:codegen", () => {
       "--useFlowReadOnlyTypes",
       "__tmp__API.js"
     ])
-    .it("writes read-only Flow types when the flag is set", () => {
+    .it("writes read-only Flow types when the deprecated flag is set", () => {
       expect(fs.readFileSync("__tmp__API.js").toString()).toMatchSnapshot();
     });
 
