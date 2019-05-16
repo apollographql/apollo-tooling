@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.11.1 darwin-x64 node-v8.11.1
+apollo/2.12.0 darwin-x64 node-v11.14.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -170,7 +170,10 @@ OPTIONS
 
   --useFlowExactObjects                      Use Flow exact objects for generated types [flow only]
 
-  --useFlowReadOnlyTypes                     Use Flow read only types for generated types [flow only]
+  --useFlowReadOnlyTypes                     Use read only types for generated types [flow only]. **Deprecated in favor
+                                             of `useReadOnlyTypes`.**
+
+  --useReadOnlyTypes                         Use read only types for generated types [flow | typescript]
 
   --watch                                    Watch for file changes and reload codegen
 

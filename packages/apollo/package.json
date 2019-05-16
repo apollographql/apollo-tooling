@@ -1,7 +1,7 @@
 {
   "name": "apollo",
   "description": "Command line tool for Apollo GraphQL",
-  "version": "2.11.1",
+  "version": "2.12.0",
   "referenceID": "21ad0845-c235-422e-be7d-a998310df972",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -58,8 +58,8 @@
     "graphql-tag": "2.10.1",
     "heroku-cli-util": "8.0.11",
     "listr": "0.14.3",
-    "lodash.pickby": "4.6.0",
     "lodash.identity": "3.0.0",
+    "lodash.pickby": "4.6.0",
     "moment": "2.24.0",
     "strip-ansi": "5.2.0",
     "tty": "1.0.1",
