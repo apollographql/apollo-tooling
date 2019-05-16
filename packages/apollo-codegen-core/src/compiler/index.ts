@@ -42,6 +42,7 @@ export interface CompilerOptions {
   namespace?: string;
   generateOperationIds?: boolean;
   operationIdsPath?: string;
+  useReadOnlyTypes?: boolean;
 }
 
 export interface CompilerContext {

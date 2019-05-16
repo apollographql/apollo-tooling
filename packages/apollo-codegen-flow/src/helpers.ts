@@ -12,7 +12,7 @@ import {
 
 import * as t from "@babel/types";
 
-import { CompilerOptions } from "apollo-codegen-core/lib/compiler";
+import { FlowCompilerOptions } from "./language";
 
 const builtInScalarMap = {
   [GraphQLString.name]: t.stringTypeAnnotation(),
@@ -22,14 +22,10 @@ const builtInScalarMap = {
   [GraphQLID.name]: t.stringTypeAnnotation()
 };
 
-export interface FlowCompilerOptions extends CompilerOptions {
-  useFlowReadOnlyTypes: boolean;
-}
-
 export function createTypeAnnotationFromGraphQLTypeFunction(
   compilerOptions: FlowCompilerOptions
 ): Function {
-  const arrayType = compilerOptions.useFlowReadOnlyTypes
+  const arrayType = compilerOptions.useReadOnlyTypes
     ? "$ReadOnlyArray"
     : "Array";
 

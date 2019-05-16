@@ -7,13 +7,13 @@
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
-  - <First `apollo-codegen-flow` related entry goes here>
+  - Renamed `useFlowReadOnlyTypes` option to `useReadOnlyTypes` [#1205](https://github.com/apollographql/apollo-tooling/pull/1205)
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
   - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
-  - <First `apollo-codegen-typescript` related entry goes here>
+  - Added `useReadOnlyTypes` option to use readonly types [#1205](https://github.com/apollographql/apollo-tooling/pull/1205)
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
