@@ -66,6 +66,7 @@ export interface Operation {
   }[];
   filePath: string;
   source: string;
+  sourceWithFragments?: string;
   rootType: GraphQLObjectType;
   selectionSet: SelectionSet;
 }

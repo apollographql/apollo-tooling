@@ -245,7 +245,7 @@ function writeOperationIdsMap(context: CompilerContext) {
     .forEach(operation => {
       operationIdsMap[operation.operationId!] = {
         name: operation.operationName,
-        source: operation.source
+        source: operation.sourceWithFragments!
       };
     });
   fs.writeFileSync(
