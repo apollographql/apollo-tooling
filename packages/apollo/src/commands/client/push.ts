@@ -43,6 +43,11 @@ export default class ServicePush extends ClientCommand {
             operations: operationManifest,
             manifestVersion: 2
           };
+          const { operations: _, ...restVariables } = variables;
+          this.debug("Variables sent to Engine:");
+          this.debug(restVariables);
+          this.debug("Operations sent to Engine:");
+          this.debug(operations);
 
           await project.engine.registerOperations(variables);
 
