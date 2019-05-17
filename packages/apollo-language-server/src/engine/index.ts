@@ -20,14 +20,11 @@ import {
   ValidateOperations,
   ValidateOperationsVariables,
   SchemaTagsAndFieldStats,
-  SchemaTagInfo,
-  SchemaTagInfoVariables,
   CheckPartialSchema,
   CheckPartialSchemaVariables,
   RemoveServiceAndCompose,
   RemoveServiceAndComposeVariables
 } from "../graphqlTypes";
-import { SCHEMA_TAG_INFO_QUERY } from "./operations/schemaTagInfo";
 
 export interface ClientIdentity {
   name?: string;
@@ -277,12 +274,5 @@ export class ApolloEngineClient extends GraphQLDataSource {
     });
 
     return { schemaTags, fieldStats };
-  }
-
-  public async schemaTagInfo(variables: SchemaTagInfoVariables) {
-    return this.execute<SchemaTagInfo>({
-      query: SCHEMA_TAG_INFO_QUERY,
-      variables
-    });
   }
 }
