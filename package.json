@@ -72,7 +72,7 @@
     "@types/minimatch": "3.0.3",
     "@types/nock": "10.0.2",
     "@types/node": "8.10.48",
-    "@types/node-fetch": "2.3.3",
+    "@types/node-fetch": "2.3.4",
     "husky": "2.2.0",
     "jest": "24.8.0",
     "jest-environment-node": "24.8.0",
