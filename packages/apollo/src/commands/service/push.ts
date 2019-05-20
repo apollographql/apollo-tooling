@@ -134,6 +134,8 @@ export default class ServicePush extends ProjectCommand {
               tag: response.tag ? response.tag.tag : null,
               code: response.code
             };
+            this.debug("Result received from Engine:");
+            this.debug(result);
           }
         }
       }
