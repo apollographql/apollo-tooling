@@ -328,55 +328,6 @@ export interface RemoveServiceAndComposeVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: SchemaTagInfo
-// ====================================================
-
-export interface SchemaTagInfo_service_schema_gitContext {
-  __typename: "GitContext";
-  committer: string | null;
-  commit: string;
-}
-
-export interface SchemaTagInfo_service_schema {
-  __typename: "Schema";
-  hash: string;
-  gitContext: SchemaTagInfo_service_schema_gitContext | null;
-  /**
-   * The number of fields; this includes user defined fields only, excluding built-in types and fields
-   */
-  fieldCount: number;
-  /**
-   * The number of types; this includes user defined types only, excluding built-in types
-   */
-  typeCount: number;
-  createdAt: any;
-}
-
-export interface SchemaTagInfo_service {
-  __typename: "Service";
-  /**
-   * Get a schema by hash OR current tag
-   */
-  schema: SchemaTagInfo_service_schema | null;
-}
-
-export interface SchemaTagInfo {
-  /**
-   * Service by ID
-   */
-  service: SchemaTagInfo_service | null;
-}
-
-export interface SchemaTagInfoVariables {
-  service: string;
-  tag?: string | null;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: SchemaTagsAndFieldStats
 // ====================================================
 
