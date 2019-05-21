@@ -3,8 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Add debugging logs to `apollo client:push` and `apollo service:push` [# 1273](https://github.com/apollographql/apollo-tooling/pull/1273)
-  - remove `apollo service:info` command, since it's undocumented and unused [#1274](https://github.com/apollographql/apollo-tooling/pull/1274)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -20,11 +19,19 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Fix \_\_typename addition for InlineFragments [#1286](https://github.com/apollographql/apollo-tooling/pull/1286)
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.12.1`, `apollo-language-server@1.8.3`
+
+- `apollo@2.12.1`
+  - Add debugging logs to `apollo client:push` and `apollo service:push` [# 1273](https://github.com/apollographql/apollo-tooling/pull/1273)
+  - remove `apollo service:info` command, since it's undocumented and unused [#1274](https://github.com/apollographql/apollo-tooling/pull/1274)
+- `apollo-language-server@1.8.3`
+  - Fix \_\_typename addition for InlineFragments [#1286](https://github.com/apollographql/apollo-tooling/pull/1286)
 
 ## `apollo-codegen-flow@0.33.10`, `apollo-codegen-typescript@0.34.0`, `vscode-apollo@1.6.10`
 
