@@ -49,7 +49,7 @@ export default class ServicePush extends ClientCommand {
           this.debug("Variables sent to Engine:");
           this.debug(restVariables);
           this.debug("Operations sent to Engine:");
-          this.debug(operations);
+          this.debug(operationManifest);
 
           await project.engine.registerOperations(variables);
 
