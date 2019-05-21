@@ -138,9 +138,9 @@ export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
     leave(node: ASTNode) {
       if (
         !(
-          node.kind === "Field" ||
-          node.kind === "FragmentDefinition" ||
-          node.kind === "InlineFragment"
+          node.kind === Kind.FIELD ||
+          node.kind === Kind.FRAGMENT_DEFINITION ||
+          node.kind === Kind.INLINE_FRAGMENT
         )
       ) {
         return undefined;
