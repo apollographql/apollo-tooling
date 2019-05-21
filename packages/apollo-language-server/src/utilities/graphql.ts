@@ -136,8 +136,15 @@ export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
       }
     },
     leave(node: ASTNode) {
-      if (!(node.kind === "Field" || node.kind === "FragmentDefinition"))
+      if (
+        !(
+          node.kind === Kind.FIELD ||
+          node.kind === Kind.FRAGMENT_DEFINITION ||
+          node.kind === Kind.INLINE_FRAGMENT
+        )
+      ) {
         return undefined;
+      }
       if (!node.selectionSet) return undefined;
 
       if (true) {
