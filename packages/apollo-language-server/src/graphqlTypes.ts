@@ -211,9 +211,56 @@ export interface CheckSchemaVariables {
 // GraphQL mutation operation: RegisterOperations
 // ====================================================
 
+export interface RegisterOperations_service_registerOperationsWithResponse_invalidOperations_errors {
+  __typename: "OperationValidationError";
+  /**
+   * Reason for validation failure
+   */
+  message: string;
+}
+
+export interface RegisterOperations_service_registerOperationsWithResponse_invalidOperations {
+  __typename: "InvalidOperation";
+  /**
+   * Validation errors
+   */
+  errors: RegisterOperations_service_registerOperationsWithResponse_invalidOperations_errors[] | null;
+  /**
+   * Signature of operation sent by the client
+   */
+  signature: string;
+}
+
+export interface RegisterOperations_service_registerOperationsWithResponse_newOperations {
+  __typename: "RegisteredOperation";
+  /**
+   * Signature of operation sent by the client
+   */
+  signature: string;
+}
+
+export interface RegisterOperations_service_registerOperationsWithResponse {
+  __typename: "RegisterOperationsMutationResponse";
+  /**
+   * Operations that failed to validate against the schema
+   */
+  invalidOperations: RegisterOperations_service_registerOperationsWithResponse_invalidOperations[] | null;
+  /**
+   * New operations added to the registry(subset of input operations)
+   */
+  newOperations: RegisterOperations_service_registerOperationsWithResponse_newOperations[] | null;
+  /**
+   * True if operations were registered, false if not
+   */
+  registrationSuccess: boolean;
+}
+
 export interface RegisterOperations_service {
   __typename: "ServiceMutation";
-  registerOperations: any | null;
+  /**
+   * Register operations with diagnostic information about the result of the mutation
+   */
+  registerOperationsWithResponse: RegisterOperations_service_registerOperationsWithResponse | null;
 }
 
 export interface RegisterOperations {

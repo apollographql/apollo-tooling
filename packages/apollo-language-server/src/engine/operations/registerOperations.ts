@@ -8,11 +8,22 @@ export const REGISTER_OPERATIONS = gql`
     $manifestVersion: Int!
   ) {
     service(id: $id) {
-      registerOperations(
+      registerOperationsWithResponse(
         clientIdentity: $clientIdentity
         operations: $operations
         manifestVersion: $manifestVersion
-      )
+      ) {
+        invalidOperations {
+          errors {
+            message
+          }
+          signature
+        }
+        newOperations {
+          signature
+        }
+        registrationSuccess
+      }
     }
   }
 `;
