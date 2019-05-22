@@ -1,11 +1,6 @@
 import { dirname } from "path";
 import merge from "lodash.merge";
-import {
-  ServiceID,
-  ServiceSpecifier,
-  ClientID,
-  StatsWindowSize
-} from "../engine";
+import { ServiceID, ServiceSpecifier, ClientID } from "../engine";
 import URI from "vscode-uri";
 import { WithRequired } from "apollo-env";
 import { getServiceName, parseServiceSpecifier } from "./utils";
@@ -71,7 +66,7 @@ export interface ClientConfigFormat extends ConfigBase {
   addTypename?: boolean;
   tagName?: string;
   // stats window config
-  statsWindow?: StatsWindowSize;
+  statsWindow?: EngineStatsWindow;
 }
 
 export const DefaultClientConfig = {
