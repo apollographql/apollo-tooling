@@ -4,7 +4,7 @@ import { introspectionFromSchema, printSchema } from "graphql";
 import chalk from "chalk";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
-import { validateHistoricParams } from "../../utils";
+import { validateHistoricParams, pluralize } from "../../utils";
 import {
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
@@ -14,19 +14,6 @@ import {
 import { ApolloConfig, GraphQLServiceProject } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
-import stripANSI from "strip-ansi";
-
-function pluralize(
-  quantity: string | number | null,
-  singular: string,
-  plural: string = `${singular}s`
-) {
-  // Strip ansi color from `quantity` if it's a string
-  const strippedQuantity =
-    typeof quantity === "string" ? parseInt(stripANSI(quantity), 0) : quantity;
-
-  return `${quantity} ${strippedQuantity === 1 ? singular : plural}`;
-}
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;

@@ -7,6 +7,7 @@ import {
   operationHash,
   defaultOperationRegistrySignature
 } from "apollo-graphql";
+import { pluralize } from "../../utils";
 import chalk from "chalk";
 
 export default class ClientPush extends ClientCommand {
@@ -38,9 +39,10 @@ export default class ClientPush extends ClientCommand {
                 this.project
               );
               ctx.operationManifest = operationManifest;
-              task.title = `Extracted ${
-                operationManifest.length
-              } operations from client, ${clientBundleInfo}`;
+              task.title = `Extracted ${pluralize(
+                operationManifest.length,
+                "operation"
+              )} from client, ${clientBundleInfo}`;
             }
           },
           {
@@ -136,9 +138,10 @@ export default class ClientPush extends ClientCommand {
                         ({ message }) => (result += `\n\t${message}`)
                       );
                   });
-                  task.title = `Failed to push operations, due to ${
-                    invalidOperations.length
-                  } invalid operations`;
+                  task.title = `Failed to push operations, due to ${pluralize(
+                    invalidOperations.length,
+                    "invalid operation"
+                  )}`;
                   throw new Error(invalidOperationsErrorMessage);
                 } else {
                   task.title = `Failed to register operations`;
@@ -152,9 +155,10 @@ export default class ClientPush extends ClientCommand {
                 }
               } else {
                 if (newOperations && newOperations.length) {
-                  task.title = `Successfully pushed ${
-                    newOperations.length
-                  } operations to the operation registry`;
+                  task.title = `Successfully pushed ${pluralize(
+                    newOperations.length,
+                    "operation"
+                  )} to the operation registry`;
 
                   table(
                     newOperations.map(operation => {
