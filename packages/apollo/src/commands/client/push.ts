@@ -6,7 +6,7 @@ import { getOperationManifestFromProject } from "../../utils/getOperationManifes
 import {
   operationHash,
   defaultOperationRegistrySignature
-} from "../../../../apollo-graphql/lib";
+} from "apollo-graphql";
 import chalk from "chalk";
 
 export default class ClientPush extends ClientCommand {
