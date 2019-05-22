@@ -37,7 +37,6 @@ export type ClientID = string;
 export type SchemaTag = string;
 export type ServiceIDAndTag = [ServiceID, SchemaTag?];
 export type ServiceSpecifier = string;
-export type StatsWindowSize = number;
 export type FieldStats = Map<string, Map<string, number | null>>;
 
 export function noServiceError(service: string | undefined, endpoint?: string) {
