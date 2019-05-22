@@ -50,7 +50,7 @@ export default class ClientPush extends ClientCommand {
             task: async () => {}
           },
           {
-            title: "Adding operations to Apollo Platform",
+            title: "Pushing operations to operation registry",
             task: async (_, task) => {
               if (!config.name) {
                 throw new Error(
@@ -136,16 +136,25 @@ export default class ClientPush extends ClientCommand {
                         ({ message }) => (result += `\n\t${message}`)
                       );
                   });
-                  task.title = `Failed to register operations, due to ${
+                  task.title = `Failed to push operations, due to ${
                     invalidOperations.length
                   } invalid operations`;
-                  throw Error(invalidOperationsErrorMessage);
+                  throw new Error(invalidOperationsErrorMessage);
+                } else {
+                  task.title = `Failed to register operations`;
+                  throw new Error(
+                    [
+                      "Registration failed and did not receive invalid operations.",
+                      "This should not occur, so please open a GitHub issue on:",
+                      "https://github.com/apollographql/apollo-tooling/"
+                    ].join("\n")
+                  );
                 }
               } else {
                 if (newOperations && newOperations.length) {
-                  task.title = `Added ${
+                  task.title = `Successfully pushed ${
                     newOperations.length
-                  } to Apollo Platform`;
+                  } operations to the operation registry`;
 
                   table(
                     newOperations.map(operation => {
@@ -175,7 +184,7 @@ export default class ClientPush extends ClientCommand {
                     }
                   );
                 } else {
-                  task.title = `All operations already registered with Apollo Platform`;
+                  task.title = `All operations were already found in the operation registry`;
                 }
               }
             }
