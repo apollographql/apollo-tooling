@@ -25,6 +25,13 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
+## `apollo@2.12.3`, `apollo-language-server@1.8.4`
+
+- `apollo@2.12.3`
+  - Pin graphql to the ~14.2.x range (#1291)[https://github.com/apollographql/apollo-tooling/pull/1291]
+- `apollo-language-server@1.8.4`
+  - Pin graphql to the ~14.2.x range (#1291)[https://github.com/apollographql/apollo-tooling/pull/1291]
+
 ## `apollo@2.12.1`, `apollo-language-server@1.8.3`
 
 - `apollo@2.12.1`
