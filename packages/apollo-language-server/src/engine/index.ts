@@ -231,10 +231,12 @@ export class ApolloEngineClient extends GraphQLDataSource {
         );
       }
 
-      if (!(data && data.service)) {
+      if (
+        !(data && data.service && data.service.registerOperationsWithResponse)
+      ) {
         throw new Error("Error in request from Engine");
       }
-      return data.service.registerOperations;
+      return data.service.registerOperationsWithResponse;
     });
   }
 
