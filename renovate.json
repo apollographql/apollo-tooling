@@ -15,6 +15,10 @@
     {
       "packageNames": ["@types/node"],
       "allowedVersions": "8.x"
+    },
+    {
+      "packageNames": ["lerna"],
+      "allowedVersions": "=3.13.4"
     }
   ]
 }
