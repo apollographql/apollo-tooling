@@ -9,6 +9,11 @@ import {
 } from "apollo-graphql";
 import { pluralize } from "../../utils";
 import chalk from "chalk";
+import {
+  GraphQLClientProject,
+  ApolloConfig,
+  graphqlTypes
+} from "apollo-language-server";
 
 export default class ClientPush extends ClientCommand {
   static description =
@@ -64,37 +69,9 @@ export default class ClientPush extends ClientCommand {
                 this.project
               );
 
-              const signatureToOperation = Object.fromEntries(
-                Object.entries(
-                  this.project.mergedOperationsAndFragmentsForService
-                ).map(([operationName, document]) => {
-                  const operationDefinition = document.definitions.find(
-                    ({ kind }) => kind === "OperationDefinition"
-                  );
-                  const relativePath =
-                    operationDefinition &&
-                    operationDefinition.loc &&
-                    relative(
-                      config.configURI ? config.configURI.fsPath : "",
-                      URI.parse(operationDefinition.loc.source.name).fsPath
-                    );
-                  const line =
-                    operationDefinition &&
-                    operationDefinition.loc &&
-                    operationDefinition.loc.source.locationOffset.line;
-                  return [
-                    operationHash(
-                      defaultOperationRegistrySignature(document, operationName)
-                    ),
-                    {
-                      operationName,
-                      document,
-                      file: line
-                        ? `${relativePath}:${line}`
-                        : relativePath || ""
-                    }
-                  ];
-                })
+              const signatureToOperation = generateSignatureToOperationMap(
+                this.project,
+                config
               );
 
               const { name, referenceID, version } = config.client!;
@@ -113,16 +90,22 @@ export default class ClientPush extends ClientCommand {
                 manifestVersion: 2
               };
               const { operations: _op, ...restVariables } = variables;
-              this.debug("Variables sent to Engine:");
+              this.debug("Variables sent to Apollo");
               this.debug(restVariables);
-              this.debug("Operations sent to Engine:");
+              this.debug("Operations sent to Apollo");
               this.debug(operationManifest);
 
+              let response: graphqlTypes.RegisterOperations_service_registerOperationsWithResponse;
               const {
                 invalidOperations,
                 newOperations,
                 registrationSuccess
-              } = await project.engine.registerOperations(variables);
+              } = (response = await project.engine.registerOperations(
+                variables
+              ));
+
+              this.debug("Results received from Apollo");
+              this.debug(response);
 
               if (!registrationSuccess) {
                 if (invalidOperations) {
@@ -196,7 +179,7 @@ export default class ClientPush extends ClientCommand {
         ];
       });
     } catch (e) {
-      // Print operation registry
+      // Print results when we have an expected error message
       if (e.message === invalidOperationsErrorMessage) {
         this.log(result);
         this.exit(1);
@@ -205,4 +188,40 @@ export default class ClientPush extends ClientCommand {
     }
     this.log(result);
   }
+}
+
+function generateSignatureToOperationMap(
+  project: GraphQLClientProject,
+  config: ApolloConfig
+) {
+  return Object.fromEntries(
+    Object.entries(project.mergedOperationsAndFragmentsForService).map(
+      ([operationName, document]) => {
+        const operationDefinition = document.definitions.find(
+          ({ kind }) => kind === "OperationDefinition"
+        );
+        const relativePath =
+          operationDefinition &&
+          operationDefinition.loc &&
+          relative(
+            config.configURI ? config.configURI.fsPath : "",
+            URI.parse(operationDefinition.loc.source.name).fsPath
+          );
+        const line =
+          operationDefinition &&
+          operationDefinition.loc &&
+          operationDefinition.loc.source.locationOffset.line;
+        return [
+          operationHash(
+            defaultOperationRegistrySignature(document, operationName)
+          ),
+          {
+            operationName,
+            document,
+            file: line ? `${relativePath}:${line}` : relativePath || ""
+          }
+        ];
+      }
+    )
+  );
 }
