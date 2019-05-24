@@ -14,6 +14,7 @@ import { rangeForASTNode } from "./utilities/source";
 
 import { getValidationErrors } from "./errors/validation";
 import { DocumentUri } from "./project/base";
+import { ValidationRule } from "graphql/validation/ValidationContext";
 
 /**
  * Build an array of code diagnostics for all executable definitions in a document.
@@ -21,7 +22,8 @@ import { DocumentUri } from "./project/base";
 export function collectExecutableDefinitionDiagnositics(
   schema: GraphQLSchema,
   queryDocument: GraphQLDocument,
-  fragments: { [fragmentName: string]: FragmentDefinitionNode } = {}
+  fragments: { [fragmentName: string]: FragmentDefinitionNode } = {},
+  rules?: ValidationRule[]
 ): Diagnostic[] {
   const ast = queryDocument.ast;
   if (!ast) return queryDocument.syntaxErrors;
@@ -36,7 +38,8 @@ export function collectExecutableDefinitionDiagnositics(
   for (const error of getValidationErrors(
     schema,
     astWithExecutableDefinitions,
-    fragments
+    fragments,
+    rules
   )) {
     diagnostics.push(
       ...diagnosticsFromError(error, DiagnosticSeverity.Error, "Validation")

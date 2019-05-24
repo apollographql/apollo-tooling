@@ -237,7 +237,8 @@ export class GraphQLClientProject extends GraphQLProject {
           collectExecutableDefinitionDiagnositics(
             this.schema,
             document,
-            fragments
+            fragments,
+            this.config.client.validationRules
           )
         );
       }

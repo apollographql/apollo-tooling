@@ -4,6 +4,7 @@ import { ServiceID, ServiceSpecifier, ClientID } from "../engine";
 import URI from "vscode-uri";
 import { WithRequired } from "apollo-env";
 import { getServiceName, parseServiceSpecifier } from "./utils";
+import { ValidationRule } from "graphql/validation/ValidationContext";
 
 export interface EngineStatsWindow {
   to: number;
@@ -67,6 +68,17 @@ export interface ClientConfigFormat extends ConfigBase {
   tagName?: string;
   // stats window config
   statsWindow?: EngineStatsWindow;
+
+  /**
+   * Rules that will be applied when validating GraphQL documents.
+   *
+   * If you wish to modify the default list of validation rules, import them from the apollo package:
+   *
+   * ```js
+   * const { defaultValidationRules } = require("apollo/lib/defaultValidationRules");
+   * ```
+   */
+  validationRules?: ValidationRule[];
 }
 
 export const DefaultClientConfig = {
