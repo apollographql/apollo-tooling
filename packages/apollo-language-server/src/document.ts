@@ -131,7 +131,7 @@ function extractGraphQLDocumentsFromPythonStrings(
 }
 
 function replacePlaceholdersWithWhiteSpace(content: string) {
-  return content.replace(/\$\{(.+)?\}/g, match => {
+  return content.replace(/\$\{([\s\S]+?)\}/gm, match => {
     return Array(match.length).join(" ");
   });
 }
