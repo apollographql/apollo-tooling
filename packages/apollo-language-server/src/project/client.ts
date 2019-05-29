@@ -18,6 +18,7 @@ import {
   FieldNode,
   ObjectTypeDefinitionNode
 } from "graphql";
+import { ValidationRule } from "graphql/validation/ValidationContext";
 
 import { NotificationHandler, DiagnosticSeverity } from "vscode-languageserver";
 
@@ -33,6 +34,7 @@ import {
   removeDirectiveAnnotatedFields,
   withTypenameFieldAddedWhereNeeded
 } from "../utilities/graphql";
+import { defaultValidationRules } from "../errors/validation";
 
 import {
   collectExecutableDefinitionDiagnositics,
@@ -84,6 +86,8 @@ export class GraphQLClientProject extends GraphQLProject {
 
   private fieldStats?: FieldStats;
 
+  private _validationRules?: ValidationRule[];
+
   constructor({
     config,
     loadingHandler,
@@ -123,6 +127,13 @@ export class GraphQLClientProject extends GraphQLProject {
           "fields are configured incorrectly, and Apollo can't find your files. " +
           "For help configuring Apollo projects, see this guide: https://bit.ly/2ByILPj"
       );
+    }
+
+    const { validationRules } = this.config.client;
+    if (typeof validationRules === "function") {
+      this._validationRules = defaultValidationRules.filter(validationRules);
+    } else {
+      this._validationRules = validationRules;
     }
 
     this.loadEngineData();
@@ -238,7 +249,7 @@ export class GraphQLClientProject extends GraphQLProject {
             this.schema,
             document,
             fragments,
-            this.config.client.validationRules
+            this._validationRules
           )
         );
       }

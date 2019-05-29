@@ -72,13 +72,28 @@ export interface ClientConfigFormat extends ConfigBase {
   /**
    * Rules that will be applied when validating GraphQL documents.
    *
-   * If you wish to modify the default list of validation rules, import them from the apollo package:
+   * If you wish to modify the default list of validation rules, import them from the apollo package and
+   * assign your custom list:
    *
    * ```js
    * const { defaultValidationRules } = require("apollo/lib/defaultValidationRules");
+   *
+   * module.exports = {
+   *   // ...
+   *   validationRules: [...defaultValidationRules, ...customRules]
+   * }
+   * ```
+   *
+   * Or, if you simply wish to filter out some rules from the default list, you can specify a filter function:
+   *
+   * ```js
+   * module.exports = {
+   *   // ...
+   *   validationRules: rule => rule.name !== "NoAnonymousQueries"
+   * }
    * ```
    */
-  validationRules?: ValidationRule[];
+  validationRules?: ValidationRule[] | ((rule: ValidationRule) => boolean);
 }
 
 export const DefaultClientConfig = {
