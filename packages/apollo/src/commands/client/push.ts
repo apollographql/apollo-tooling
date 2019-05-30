@@ -14,6 +14,7 @@ import {
   ApolloConfig,
   graphqlTypes
 } from "apollo-language-server";
+import { DiagnosticSeverity } from "vscode-languageserver";
 
 export default class ClientPush extends ClientCommand {
   static description =
@@ -44,6 +45,13 @@ export default class ClientPush extends ClientCommand {
                 this.project
               );
               ctx.operationManifest = operationManifest;
+
+              const syntaxFailures = checkForSyntaxErrors(this.project);
+              if (syntaxFailures !== "") {
+                result += syntaxFailures;
+                throw new Error(invalidOperationsErrorMessage);
+              }
+
               task.title = `Extracted ${pluralize(
                 operationManifest.length,
                 "operation"
@@ -51,10 +59,16 @@ export default class ClientPush extends ClientCommand {
             }
           },
           {
-            title: `Checked operations against ${chalk.blue(
+            title: `Checking operations against ${chalk.blue(
               config.name || ""
             )}@${chalk.blue(config.tag)}`,
-            task: async () => {}
+            task: async (_, task) => {
+              // If the previous tasks fail, then the titles are printed out, however the
+              // tasks are not run, so we update the title here to get the language correct
+              task.title = `Checked operations against ${chalk.blue(
+                config.name || ""
+              )}@${chalk.blue(config.tag)}`;
+            }
           },
           {
             title: "Pushing operations to operation registry",
@@ -224,4 +238,36 @@ function generateSignatureToOperationMap(
       }
     )
   );
+}
+
+function checkForSyntaxErrors(project: GraphQLClientProject) {
+  let result = "";
+  project.onDiagnostics(d => {
+    const syntaxErrors = d.diagnostics.filter(
+      ({ severity, source }) =>
+        severity === DiagnosticSeverity.Error && source === "GraphQL: Syntax"
+    );
+    if (syntaxErrors.length) {
+      const file = relative(
+        project.config.configURI ? project.config.configURI.fsPath : "",
+        URI.parse(d.uri).fsPath
+      );
+      result += `${d.diagnostics
+        .map(
+          ({
+            range: {
+              start: { line }
+            },
+            message
+          }) =>
+            `\n${chalk.red("FAIL")} ${chalk.blue(
+              `${file}:${line}`
+            )} \t ${message}`
+        )
+        .join()}`;
+    }
+  });
+  // checks operations for syntax errors and validation errors, which are emitted as diagnostics
+  project.validate();
+  return result;
 }

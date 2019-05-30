@@ -4,6 +4,7 @@
 
 - `apollo`
   - Update client:push command with new resolver and more output [#1290](https://github.com/apollographql/apollo-tooling/pull/1290)
+  - Update client:push command to fail on parse errors [#1294](https://github.com/apollographql/apollo-tooling/pull/1294)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
