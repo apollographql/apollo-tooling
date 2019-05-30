@@ -123,6 +123,147 @@ function mockIntrospectionQuery() {
 }
 
 /**
+ * Mock the network requests for a composition failure.
+ */
+function mockCompositionFailure() {
+  mockIntrospectionQuery();
+
+  nock(localURL, {
+    encodedQueryParams: true
+  })
+    .post(
+      "/graphql",
+      ({ operationName }) => operationName === "getFederationInfo"
+    )
+    .reply(200, {
+      data: {
+        _service: {
+          sdl:
+            'extend type Query {\n  me: User\n}\n\ntype User @key(fields: "id") {\n  name: String\n  username: String\n  birthDate: String\n}\n'
+        }
+      }
+    });
+
+  nock("https://engine-staging-graphql.apollographql.com:443", {
+    encodedQueryParams: true
+  })
+    .post(
+      "/api/graphql",
+      ({ operationName }) => operationName === "CheckPartialSchema"
+    )
+    .reply(200, {
+      data: {
+        service: {
+          validatePartialSchemaOfImplementingServiceAgainstGraph: {
+            compositionValidationDetails: {
+              schemaHash: null
+            },
+            warnings: [],
+            errors: [
+              {
+                message:
+                  "[reviews] User.id -> marked @external but it does not have a matching field on on the base service (accounts)"
+              },
+              {
+                message:
+                  "[reviews] User -> A @key selects id, but User.id could not be found"
+              },
+              {
+                message:
+                  "[accounts] User -> A @key selects id, but User.id could not be found"
+              }
+            ]
+          }
+        }
+      }
+    });
+}
+
+/**
+ * Mock network requests for a successful schema composition. This includes the subsequent `CheckSchema`
+ * request that will be made.
+ */
+function mockCompositionSuccess() {
+  mockIntrospectionQuery();
+
+  nock(localURL, {
+    encodedQueryParams: true
+  })
+    .post(
+      "/graphql",
+      ({ operationName }) => operationName === "getFederationInfo"
+    )
+    .reply(200, {
+      data: {
+        _service: {
+          sdl:
+            'extend type Query {\n  me: User\n}\n\ntype User @key(fields: "id") {\n  name: String\n  username: String\n  birthDate: String\n}\n'
+        }
+      }
+    });
+
+  nock("https://engine-staging-graphql.apollographql.com:443", {
+    encodedQueryParams: true
+  })
+    .post(
+      "/api/graphql",
+      ({ operationName }) => operationName === "CheckPartialSchema"
+    )
+    .reply(200, {
+      data: {
+        service: {
+          validatePartialSchemaOfImplementingServiceAgainstGraph: {
+            compositionValidationDetails: {
+              schemaHash:
+                "645fdd4b789fffb5c5b59443a12e6f575e61345e95fe9e1dae3fe9acb23c68efa8ac31ea657892f0a85d1c90d8503fe9e482f520fe8d9786ae26948de10ce4a6"
+            },
+            warnings: [],
+            errors: []
+          }
+        }
+      }
+    });
+
+  nock("https://engine-staging-graphql.apollographql.com:443", {
+    encodedQueryParams: true
+  })
+    .post(
+      "/api/graphql",
+      ({ operationName }) => operationName === "CheckSchema"
+    )
+    .reply(200, {
+      data: {
+        service: {
+          checkSchema: {
+            targetUrl:
+              "https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc",
+            diffToPrevious: {
+              severity: "NOTICE",
+              affectedClients: [],
+              affectedQueries: [],
+              numberOfCheckedOperations: 0,
+              changes: [
+                {
+                  severity: "NOTICE",
+                  code: "ARG_CHANGED_TYPE",
+                  description:
+                    "`Query.launches` argument `after` has changed type from `String` to `String!`"
+                }
+              ],
+              validationConfig: {
+                from: "-47347200",
+                to: "-0",
+                queryCountThreshold: 1,
+                queryCountThresholdPercentage: 0
+              }
+            }
+          }
+        }
+      }
+    });
+}
+
+/**
  * Mock network requests for a non-federated schema check that produces errors.
  */
 function mockNonFederatedFailure() {
@@ -238,6 +379,136 @@ describe("service:check", () => {
 
   // These are integration tests and not e2e tests because these don't actually hit the remote server.
   describe("integration", () => {
+    describe("federated", () => {
+      describe("should report composition errors correctly", () => {
+        it("vanilla", async () => {
+          captureApplicationOutput();
+          mockCompositionFailure();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`
+            ])
+          ).rejects.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        // This feature is not yet available. Adding markdown and json output support for federated services
+        // will require a minor refactor. Work can be tracked at
+        // https://apollographql.atlassian.net/browse/AP-491
+        it.skip("--markdown", async () => {
+          captureApplicationOutput();
+          mockCompositionFailure();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              "--markdown"
+            ])
+          ).rejects.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        // This feature is not yet available. Adding markdown and json output support for federated services
+        // will require a minor refactor. Work can be tracked at
+        // https://apollographql.atlassian.net/browse/AP-491
+        it.skip("--json", async () => {
+          captureApplicationOutput();
+          mockCompositionFailure();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              "--json"
+            ])
+          ).rejects.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+      });
+
+      describe("should report composition success correctly", () => {
+        it("vanilla", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`
+            ])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        // This feature is not yet available. Adding markdown and json output support for federated services
+        // will require a minor refactor. Work can be tracked at
+        // https://apollographql.atlassian.net/browse/AP-491
+        it.skip("--markdown", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              "--markdown"
+            ])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        // This feature is not yet available. Adding markdown and json output support for federated services
+        // will require a minor refactor. Work can be tracked at
+        // https://apollographql.atlassian.net/browse/AP-491
+        it.skip("--json", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              "--json"
+            ])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+      });
+    });
+
     describe("non-federated", () => {
       describe("should report traffic errors correctly", () => {
         it("vanilla", async () => {

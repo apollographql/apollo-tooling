@@ -45,6 +45,49 @@ No changes present between schemas
 View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
 `;
 
+exports[`service:check integration federated should report composition errors correctly vanilla 1`] = `
+"Loading Apollo Project [started]
+Loading Apollo Project [completed]
+Validate graph composition for service accounts on graph engine [started]
+→ Fetching local service's partial schema
+→ Attempting to compose graph with accounts service's partial schema
+Found 3 graph composition errors for service accounts on graph engine [title changed]
+Found 3 graph composition errors for service accounts on graph engine [failed]
+→ Federated service composition was unsuccessful. Please see the reasons below.
+
+Service   Field    Message
+────────  ───────  ────────────────────────────────────────────────────────────────────────────────────────
+reviews   User.id  marked @external but it does not have a matching field on on the base service (accounts)
+reviews   User     A @key selects id, but User.id could not be found
+accounts  User     A @key selects id, but User.id could not be found
+"
+`;
+
+exports[`service:check integration federated should report composition success correctly vanilla 1`] = `
+"Loading Apollo Project [started]
+Loading Apollo Project [completed]
+Validate graph composition for service accounts on graph engine [started]
+→ Fetching local service's partial schema
+→ Attempting to compose graph with accounts service's partial schema
+Found 0 graph composition errors for service accounts on graph engine [title changed]
+Found 0 graph composition errors for service accounts on graph engine [completed]
+Validating composed schema against tag master on graph engine [started]
+→ Validating schema
+Validated composed schema against tag master on graph engine [title changed]
+Validated composed schema against tag master on graph engine [completed]
+Comparing schema changes [started]
+Compared 1 schema change against 0 operations over the last 548 days [title changed]
+Compared 1 schema change against 0 operations over the last 548 days [completed]
+Reporting result [started]
+Found 0 breaking changes and 1 compatible change [title changed]
+Found 0 breaking changes and 1 compatible change [completed]
+
+PASS    ARG_CHANGED_TYPE  \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`
+
+View full details at: https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc
+"
+`;
+
 exports[`service:check integration non-federated should report traffic errors correctly --json 1`] = `
 "{
   \\"targetUrl\\": \\"https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc\\",
@@ -68,7 +111,7 @@ exports[`service:check integration non-federated should report traffic errors co
 exports[`service:check integration non-federated should report traffic errors correctly --markdown 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`master\` on service \`engine\`.
+🔄 Validated your local schema against schema tag \`master\` on graph \`engine\`.
 🔢 Compared **1 schema change** against **0 operations** seen over the **last 548 days**.
 ❌ Found **1 breaking change** that would affect **0 operations** across **0 clients**
 
@@ -80,11 +123,11 @@ exports[`service:check integration non-federated should report traffic errors co
 exports[`service:check integration non-federated should report traffic errors correctly vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
-Validating local schema against tag master on graph engine [started]
+Validating schema against tag master on graph engine [started]
 → Resolving schema
 → Validating schema
-Validated local schema against tag master on graph engine [title changed]
-Validated local schema against tag master on graph engine [completed]
+Validated schema against tag master on graph engine [title changed]
+Validated schema against tag master on graph engine [completed]
 Comparing schema changes [started]
 Compared 1 schema change against 0 operations over the last 548 days [title changed]
 Compared 1 schema change against 0 operations over the last 548 days [completed]
@@ -122,7 +165,7 @@ exports[`service:check integration non-federated should report traffic non-error
 exports[`service:check integration non-federated should report traffic non-errors correctly --markdown 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`master\` on service \`engine\`.
+🔄 Validated your local schema against schema tag \`master\` on graph \`engine\`.
 🔢 Compared **1 schema change** against **0 operations** seen over the **last 548 days**.
 ✅ Found **no breaking changes**.
 
@@ -134,11 +177,11 @@ exports[`service:check integration non-federated should report traffic non-error
 exports[`service:check integration non-federated should report traffic non-errors correctly vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
-Validating local schema against tag master on graph engine [started]
+Validating schema against tag master on graph engine [started]
 → Resolving schema
 → Validating schema
-Validated local schema against tag master on graph engine [title changed]
-Validated local schema against tag master on graph engine [completed]
+Validated schema against tag master on graph engine [title changed]
+Validated schema against tag master on graph engine [completed]
 Comparing schema changes [started]
 Compared 1 schema change against 0 operations over the last 548 days [title changed]
 Compared 1 schema change against 0 operations over the last 548 days [completed]

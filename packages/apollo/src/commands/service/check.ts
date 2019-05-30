@@ -1,6 +1,6 @@
 import { flags } from "@oclif/command";
 import { table } from "heroku-cli-util";
-import { introspectionFromSchema, printSchema } from "graphql";
+import { introspectionFromSchema, printSchema, GraphQLSchema } from "graphql";
 import chalk from "chalk";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
@@ -9,7 +9,9 @@ import {
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
   ChangeSeverity,
-  CheckSchemaVariables
+  CheckSchemaVariables,
+  IntrospectionSchemaInput,
+  IntrospectionTypeInput
 } from "apollo-language-server/lib/graphqlTypes";
 import {
   ApolloConfig,
@@ -18,6 +20,8 @@ import {
 } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
+import cli from "cli-ux";
+import { isNotNullOrUndefined } from "apollo-env";
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
@@ -67,10 +71,12 @@ interface TasksOutput {
   checkSchemaResult: CheckSchema_service_checkSchema;
   shouldOutputJson: boolean;
   shouldOutputMarkdown: boolean;
-  federation?: {
-    errors: ({ message: string } | null)[];
-    schemaHash?: string | null;
-  };
+  federationSchemaHash?: string;
+  compositionErrors?: Array<{
+    service?: string;
+    field?: string;
+    message: string;
+  }>;
 }
 
 export function formatMarkdown({
@@ -238,15 +244,13 @@ export default class ServiceCheck extends ProjectCommand {
       description: "Output result in markdown.",
       exclusive: ["json"]
     }),
-    federated: flags.boolean({
-      char: "f",
-      default: false,
-      description:
-        "Indicates that the schema is a partial schema from a federated service"
-    }),
     serviceName: flags.string({
       description:
-        "Provides the name of the implementing service for a federated graph"
+        "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service",
+      dependsOn: ["endpoint"],
+      // JSON and markdown outputs have not yet been developed for federated service checks. @see
+      // https://apollographql.atlassian.net/browse/AP-491
+      exclusive: ["json", "markdown"]
     })
   };
 
@@ -259,7 +263,7 @@ export default class ServiceCheck extends ProjectCommand {
     const federatedServiceCompositionUnsuccessfulErrorMessage =
       "Federated service composition was unsuccessful. Please see the reasons below.";
 
-    let schema, schemaHash;
+    let schema: GraphQLSchema | undefined;
     try {
       await this.runTasks<TasksOutput>(
         ({ config, flags, project }) => {
@@ -277,101 +281,173 @@ export default class ServiceCheck extends ProjectCommand {
           const graphName = config.name;
           const tag = flags.tag || config.tag || "current";
 
+          /**
+           * Name of the implementing service being checked.
+           *
+           * This is optional because this check can be run on a graph or on an implementing service.
+           */
+          const serviceName: string | undefined = flags.serviceName;
+
           if (!graphName) {
             throw new Error("No service found to link to Engine");
           }
 
           return [
             {
-              title: `Validating local schema against tag ${chalk.blue(
-                tag
+              enabled: () => !!serviceName,
+              title: `Validate graph composition for service ${chalk.blue(
+                serviceName || ""
               )} on graph ${chalk.blue(graphName)}`,
               task: async (ctx: TasksOutput, task) => {
-                task.output = "Resolving schema";
+                if (!serviceName) {
+                  throw new Error(
+                    "This task should not be run without a `serviceName`. Check the `enabled` function."
+                  );
+                }
+                task.output = "Fetching local service's partial schema";
+
+                const info = await project.resolveFederationInfo();
+                if (!info.sdl) {
+                  throw new Error("No SDL found for federated service");
+                }
+
+                task.output = `Attempting to compose graph with ${chalk.blue(
+                  serviceName
+                )} service's partial schema`;
+
+                const {
+                  errors,
+                  compositionValidationDetails
+                } = await project.engine.checkPartialSchema({
+                  id: graphName,
+                  graphVariant: tag,
+                  implementingServiceName: serviceName,
+                  partialSchema: {
+                    sdl: info.sdl
+                  }
+                });
+
+                if (
+                  compositionValidationDetails &&
+                  compositionValidationDetails.schemaHash
+                ) {
+                  ctx.federationSchemaHash =
+                    compositionValidationDetails.schemaHash;
+                }
+
+                task.title = `Found ${pluralize(
+                  errors.length,
+                  "graph composition error"
+                )} for service ${chalk.blue(serviceName)} on graph ${chalk.blue(
+                  graphName
+                )}`;
+
+                if (errors.length > 0) {
+                  const decodedErrors = errors
+                    .filter(isNotNullOrUndefined)
+                    .map(error => {
+                      const match = error.message.match(
+                        /^\[([^\[]+)\]\s+(\S+)\ ->\ (.+)/
+                      );
+
+                      if (!match) {
+                        // If we can't match the errors, that means they're in a format we don't recognize.
+                        // Report the entire string as the user will see the raw message.
+                        return { message: error.message };
+                      }
+
+                      // Regular expression matches return `[entireStringMatched, ...eachGroup]`; we don't
+                      // care about the entire string match, only the groups, so ignore the first value in the
+                      // tuple.
+                      const [, service, field, message] = match;
+                      return { service, field, message };
+                    });
+
+                  taskOutput.compositionErrors = decodedErrors;
+
+                  this.error(
+                    federatedServiceCompositionUnsuccessfulErrorMessage
+                  );
+                }
+              }
+            },
+            {
+              title: `Validating ${
+                serviceName ? "composed " : ""
+              }schema against tag ${chalk.blue(tag)} on graph ${chalk.blue(
+                graphName
+              )}`,
+              task: async (ctx: TasksOutput, task) => {
                 taskOutput.shouldOutputJson = flags.json;
 
-                if (flags.federated) {
-                  const info = await project.resolveFederationInfo();
-                  if (!info.sdl)
-                    throw new Error("No SDL found for federated service");
+                let schemaCheckSchemaVariables:
+                  | { schemaHash: string }
+                  | { schema: IntrospectionSchemaInput }
+                  | undefined;
 
-                  /**
-                   * id: service id for root mutation (graph id)
-                   * variant: like a tag. prod/staging/etc
-                   * name: implementing service name inside of the graph
-                   * sha: git commit hash/docker id. placeholder for now
-                   */
-                  task.output = "Creating composed schema against the graph";
-                  const {
-                    errors,
-                    compositionValidationDetails
-                  } = await project.engine.checkPartialSchema({
-                    id: graphName,
-                    graphVariant: tag,
-                    implementingServiceName: flags.serviceName || info.name,
-                    partialSchema: {
-                      sdl: info.sdl
-                    }
-                  });
-
-                  // FIXME: reformat to match other check results
-
-                  taskOutput.federation = {
-                    errors
+                // If we're `federated`, then run composition validation. When we're using composition
+                // validation we'll receive a schema has that represents the composed schema.
+                if (ctx.federationSchemaHash) {
+                  schemaCheckSchemaVariables = {
+                    schemaHash: ctx.federationSchemaHash
                   };
-
-                  if (compositionValidationDetails) {
-                    schemaHash = compositionValidationDetails.schemaHash;
-                  } else {
-                    // FIXME: We should provide some better error handling at the GraphQL layer for this
-                    throw new Error(`Federated service could not be composed due to the following errors:
-  ${errors && errors.map(err => (err && err.message) || "").join("\n")}
-                  `);
-                  }
                 } else {
+                  // This is _not_ a `federated` schema. Resolve the schema given `config.tag`.
+                  task.output = "Resolving schema";
                   schema = await project.resolveSchema({ tag: config.tag });
+                  if (!schema) {
+                    throw new Error("Failed to resolve schema");
+                  }
 
-                  await gitInfo(this.log);
-
-                  const historicParameters = validateHistoricParams({
-                    validationPeriod: flags.validationPeriod,
-                    queryCountThreshold: flags.queryCountThreshold,
-                    queryCountThresholdPercentage:
-                      flags.queryCountThresholdPercentage
-                  });
-
-                  task.output = "Validating schema";
-                  const variables: CheckSchemaVariables = {
-                    id: graphName,
-                    // @ts-ignore
-                    // XXX Looks like TS should be generating ReadonlyArrays instead
-                    schema: introspectionFromSchema(schema).__schema,
-                    tag: flags.tag,
-                    gitContext: await gitInfo(this.log),
-                    frontend: flags.frontend || config.engine.frontend,
-                    ...(historicParameters && { historicParameters })
+                  schemaCheckSchemaVariables = {
+                    schema: introspectionFromSchema(schema)
+                      .__schema as IntrospectionSchemaInput
                   };
-                  const { schema: _, ...restVariables } = variables;
-                  this.debug("Variables sent to Engine:");
-                  this.debug(restVariables);
+                }
+
+                await gitInfo(this.log);
+
+                const historicParameters = validateHistoricParams({
+                  validationPeriod: flags.validationPeriod,
+                  queryCountThreshold: flags.queryCountThreshold,
+                  queryCountThresholdPercentage:
+                    flags.queryCountThresholdPercentage
+                });
+
+                task.output = "Validating schema";
+
+                const variables: CheckSchemaVariables = {
+                  id: graphName,
+                  tag: flags.tag,
+                  gitContext: await gitInfo(this.log),
+                  frontend: flags.frontend || config.engine.frontend,
+                  ...(historicParameters && { historicParameters }),
+                  // `variables` will either contain `schemaHash` or `schema`, not both.
+                  ...schemaCheckSchemaVariables
+                };
+
+                const { schema: _, ...restVariables } = variables;
+                this.debug("Variables sent to Engine:");
+                this.debug(restVariables);
+                if (schema) {
                   this.debug("SDL of introspection sent to Engine:");
                   this.debug(printSchema(schema));
-
-                  const newContext: typeof ctx = {
-                    checkSchemaResult: await project.engine.checkSchema(
-                      variables
-                    ),
-                    config,
-                    shouldOutputJson: !!flags.json,
-                    shouldOutputMarkdown: !!flags.markdown
-                  };
-
-                  Object.assign(ctx, newContext);
-
-                  // Save the output because we're going to use it even if we throw. `runTasks` won't return
-                  // anything if we throw.
-                  Object.assign(taskOutput, ctx);
                 }
+
+                const newContext: typeof ctx = {
+                  checkSchemaResult: await project.engine.checkSchema(
+                    variables
+                  ),
+                  config,
+                  shouldOutputJson: !!flags.json,
+                  shouldOutputMarkdown: !!flags.markdown
+                };
+
+                Object.assign(ctx, newContext);
+
+                // Save the output because we're going to use it even if we throw. `runTasks` won't return
+                // anything if we throw.
+                Object.assign(taskOutput, ctx);
 
                 task.title = task.title.replace("Validating", "Validated");
               }
@@ -468,8 +544,37 @@ export default class ServiceCheck extends ProjectCommand {
       checkSchemaResult,
       config,
       shouldOutputJson,
-      shouldOutputMarkdown
+      shouldOutputMarkdown,
+      compositionErrors
     } = taskOutput;
+
+    if (compositionErrors) {
+      if (shouldOutputJson) {
+        throw new Error(
+          "Federated service check does not yet support JSON output formatting"
+        );
+      } else if (shouldOutputMarkdown) {
+        throw new Error(
+          "Federated service check does not yet support markdown output formatting"
+        );
+      }
+
+      // Add a cosmetic line break
+      console.log("");
+
+      cli.table(compositionErrors, {
+        columns: [
+          { key: "service", label: "Service" },
+          { key: "field", label: "Field" },
+          { key: "message", label: "Message" }
+        ]
+      });
+
+      // Return a non-zero error code
+      this.exit(1);
+
+      return;
+    }
 
     // This _should_ always be here; but TypeScript tells us that's optional. If we check it here, then
     // passing `config` to any other function will signify that `config.service` might now be null or
