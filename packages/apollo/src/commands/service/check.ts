@@ -250,7 +250,7 @@ export default class ServiceCheck extends ProjectCommand {
   async run() {
     // @ts-ignore we're goign to populate `taskOutput` later
     const taskOutput: TasksOutput = {};
-
+    // nock.recorder.rec();
     // Define this constant so we can throw it and compare against the same value.
     const breakingChangesErrorMessage = "breaking changes found";
     const compositionErrorMessage = "composition errors found";
