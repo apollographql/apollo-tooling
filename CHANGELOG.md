@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Update client:push command with new resolver and more output [#1290](https://github.com/apollographql/apollo-tooling/pull/1290)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -19,12 +19,21 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - update stats window types [#1292](https://github.com/apollographql/apollo-tooling/pull/1292)
-  - Allow configuration of validation rules [#1288](https://github.com/apollographql/apollo-tooling/pull/1288)
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.12.4`, `apollo-language-server@1.9.0`, `vscode-apollo@1.7.0`
+
+- `apollo@2.12.4`
+  - Update client:push command with new resolver and more output [#1290](https://github.com/apollographql/apollo-tooling/pull/1290)
+- `apollo-language-server@1.9.0`
+  - update stats window types [#1292](https://github.com/apollographql/apollo-tooling/pull/1292)
+  - Allow configuration of validation rules [#1288](https://github.com/apollographql/apollo-tooling/pull/1288)
+- `vscode-apollo@1.7.0`
+  - Allow configuration of validation rules [#1288](https://github.com/apollographql/apollo-tooling/pull/1288)
 
 ## `apollo@2.12.3`, `apollo-language-server@1.8.4`
 
