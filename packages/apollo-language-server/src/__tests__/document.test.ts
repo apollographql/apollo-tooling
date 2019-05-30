@@ -1,13 +1,9 @@
-import { Source } from "graphql";
-import { loadSchema } from "apollo-codegen-core/lib/loading";
-import { GraphQLDocument, extractGraphQLDocuments } from "../document";
-import { collectExecutableDefinitionDiagnositics } from "../diagnostics";
+import { extractGraphQLDocuments } from "../document";
 import { TextDocument, Position } from "vscode-languageserver";
-import { stripIndent } from "common-tags";
 
 describe("extractGraphQLDocuments", () => {
-  describe("extracting docuemnts from JavaScript template literals", () => {
-    const mockTextDocument = (text): TextDocument => ({
+  describe("extracting documents from JavaScript template literals", () => {
+    const mockTextDocument = (text: string): TextDocument => ({
       getText: jest.fn().mockReturnValue(text),
       offsetAt(): number {
         return 0;
@@ -54,14 +50,14 @@ describe("extractGraphQLDocuments", () => {
         }
 
         \${Hero.fragments.character}
-          
+
         {
           reviews(episode: NEWHOPE) {
             ...ReviewList_reviews
           }
         }
-        
-        \${ReviewList.fragments.reviews}                  
+
+        \${ReviewList.fragments.reviews}
       \`
     `);
       const documents = extractGraphQLDocuments(textDocument);
