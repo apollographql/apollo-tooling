@@ -69,6 +69,7 @@
     "typescript": "3.4.5"
   },
   "bundledDependencies": [
+    "apollo-language-server",
     "graphql"
   ],
   "oclif": {
