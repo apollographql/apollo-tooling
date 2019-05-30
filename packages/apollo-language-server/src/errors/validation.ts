@@ -16,23 +16,22 @@ import {
 } from "graphql";
 
 import { ToolError, logError } from "./logger";
+import { ValidationRule } from "graphql/validation/ValidationContext";
+
+const specifiedRulesToBeRemoved = [NoUnusedFragmentsRule, KnownDirectivesRule];
+
+export const defaultValidationRules: ValidationRule[] = [
+  NoAnonymousQueries,
+  NoTypenameAlias,
+  ...specifiedRules.filter(rule => !specifiedRulesToBeRemoved.includes(rule))
+];
 
 export function getValidationErrors(
   schema: GraphQLSchema,
   document: DocumentNode,
-  fragments?: { [fragmentName: string]: FragmentDefinitionNode }
+  fragments?: { [fragmentName: string]: FragmentDefinitionNode },
+  rules: ValidationRule[] = defaultValidationRules
 ) {
-  const specifiedRulesToBeRemoved = [
-    NoUnusedFragmentsRule,
-    KnownDirectivesRule
-  ];
-
-  const rules = [
-    NoAnonymousQueries,
-    NoTypenameAlias,
-    ...specifiedRules.filter(rule => !specifiedRulesToBeRemoved.includes(rule))
-  ];
-
   const typeInfo = new TypeInfo(schema);
   const context = new ValidationContext(schema, document, typeInfo);
 

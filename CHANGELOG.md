@@ -20,6 +20,7 @@
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
   - update stats window types [#1292](https://github.com/apollographql/apollo-tooling/pull/1292)
+  - Allow configuration of validation rules [#1288](https://github.com/apollographql/apollo-tooling/pull/1288)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`

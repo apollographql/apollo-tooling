@@ -4,6 +4,7 @@ import { ServiceID, ServiceSpecifier, ClientID } from "../engine";
 import URI from "vscode-uri";
 import { WithRequired } from "apollo-env";
 import { getServiceName, parseServiceSpecifier } from "./utils";
+import { ValidationRule } from "graphql/validation/ValidationContext";
 
 export interface EngineStatsWindow {
   to: number;
@@ -67,6 +68,32 @@ export interface ClientConfigFormat extends ConfigBase {
   tagName?: string;
   // stats window config
   statsWindow?: EngineStatsWindow;
+
+  /**
+   * Rules that will be applied when validating GraphQL documents.
+   *
+   * If you wish to modify the default list of validation rules, import them from the apollo package and
+   * assign your custom list:
+   *
+   * ```js
+   * const { defaultValidationRules } = require("apollo/lib/defaultValidationRules");
+   *
+   * module.exports = {
+   *   // ...
+   *   validationRules: [...defaultValidationRules, ...customRules]
+   * }
+   * ```
+   *
+   * Or, if you simply wish to filter out some rules from the default list, you can specify a filter function:
+   *
+   * ```js
+   * module.exports = {
+   *   // ...
+   *   validationRules: rule => rule.name !== "NoAnonymousQueries"
+   * }
+   * ```
+   */
+  validationRules?: ValidationRule[] | ((rule: ValidationRule) => boolean);
 }
 
 export const DefaultClientConfig = {

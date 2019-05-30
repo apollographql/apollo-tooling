@@ -184,7 +184,7 @@ export async function loadConfig({
 
   let { config, filepath } = loadedConfig;
 
-  // selectivly apply defaults when loading the config
+  // selectively apply defaults when loading the config
   // this is just the includes/excludes defaults.
   // These need to go on _all_ configs. That's why this is last.
   if (config.client) config = merge({ client: DefaultClientConfig }, config);
