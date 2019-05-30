@@ -19,6 +19,10 @@
     {
       "packageNames": ["lerna"],
       "allowedVersions": "=3.13.4"
+    },
+    {
+      "packageNames": ["vscode-uri"],
+      "allowedVersions": "=1.0.6"
     }
   ]
 }
