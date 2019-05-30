@@ -1,4 +1,4 @@
-import {
+import ServiceCheck, {
   formatHumanReadable,
   formatMarkdown,
   formatTimePeriod
@@ -6,6 +6,205 @@ import {
 import checkSchemaResult from "../../../../__fixtures__/check-schema-result";
 import { ChangeSeverity } from "apollo-language-server/lib/graphqlTypes";
 import chalk from "chalk";
+import nock = require("nock");
+import { stdout, stderr } from "stdout-stderr";
+import * as graphql from "graphql";
+
+/**
+ * Single URL for all local requests to be mocked
+ */
+const localURL = "http://localhost:4000";
+
+/**
+ * Default API key. This is not an actual API key but a randomly generated string.
+ *
+ * If you need to use the `nock` recorder, then this will not work because we won't be able to access engine
+ * with a fake API key.
+ */
+const fakeApiKey = "service:engine:9YC5AooMa2yO11eFlZat11";
+
+/**
+ * Engine API key we're using.
+ *
+ * We should use the `fakeApiKey` whenever possible to ensure we can't accidentally access real APIs.
+ */
+const apiKey = process.env.ENGINE_API_KEY || fakeApiKey;
+
+/**
+ * An array that we'll spread into all CLI commands to pass the engine api key.
+ */
+const cliKeyParameter = [`--key=${apiKey}`];
+
+/**
+ * The original `console.log` being mocked.
+ *
+ * We save it so we can restore it after a test.
+ */
+let mockedConsoleLogOriginal: Console["log"] | null = null;
+
+/**
+ * Array of intercepted console values.
+ */
+let mockedConsoleLogValues: string[] | null = null;
+
+/**
+ * Mock and capture `console.log` and `stdout.write`s. Return them in that order as a single string.
+ *
+ * This will emulate what the output of running the CLI would look like.
+ *
+ * Call `uncaptureApplicationOutput` to reverse the effects of this function.
+ */
+function captureApplicationOutput() {
+  mockedConsoleLogOriginal = console["log"];
+  mockedConsoleLogValues = [];
+  console["log"] = jest.fn((...items) => {
+    if (!mockedConsoleLogValues) {
+      throw new Error(
+        "mockedConsoleLogValues is not prepared but we're still capturing console.log. This means there's a bug somewhere."
+      );
+    }
+
+    mockedConsoleLogValues.push(items.join(" "));
+  });
+
+  stdout.start();
+}
+
+/**
+ * Reverse mocking of `console.log` and `stdout.write`. If they weren't mocked to begin with, this will do
+ * nothing and return null.
+ */
+function uncaptureApplicationOutput(): string | null {
+  // These will be `null` if we haven't mocked `console.log`.
+  if (!mockedConsoleLogOriginal || !mockedConsoleLogValues) {
+    return null;
+  }
+
+  const result = mockedConsoleLogValues.concat(stdout.output).join("\n");
+  mockedConsoleLogValues = null;
+
+  // Restore `console.log`
+  console["log"] = mockedConsoleLogOriginal;
+
+  // Stop capturing `stdout`.
+  stdout.stop();
+
+  return result;
+}
+
+/**
+ * Convert a schema SDL to an introspection query result.
+ *
+ * @see https://blog.apollographql.com/three-ways-to-represent-your-graphql-schema-a41f4175100d
+ *
+ * @param schemaSdl string Schema in SDL form
+ */
+function sdlToIntrospectionQueryResult(schemaSdl: string) {
+  return graphql.graphqlSync(
+    graphql.buildSchema(schemaSdl),
+    graphql.introspectionQuery
+  ).data;
+}
+
+/**
+ * Use `nock` to mock an `IntrospectionQuery`
+ *
+ * @param url string Root of the URL to mock; `/graphql` will automatically be appended
+ * @param sdl SDL of the schema to mock
+ */
+function mockIntrospectionQuery() {
+  nock(localURL, { encodedQueryParams: true })
+    .post("/graphql", request => request.operationName === "IntrospectionQuery")
+    .reply(200, {
+      // The SDL doesn't actually get used because we'll be simulating network responses regardless of input,
+      // so we just use a fake SDL.
+      data: sdlToIntrospectionQueryResult(`type Query { me: ID }`)
+    });
+}
+
+/**
+ * Mock network requests for a non-federated schema check that produces errors.
+ */
+function mockNonFederatedFailure() {
+  mockIntrospectionQuery();
+
+  nock("https://engine-staging-graphql.apollographql.com:443", {
+    encodedQueryParams: true
+  })
+    .post("/api/graphql", () => true)
+    .reply(200, {
+      data: {
+        service: {
+          checkSchema: {
+            targetUrl:
+              "https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc",
+            diffToPrevious: {
+              severity: "FAILURE",
+              affectedClients: [],
+              affectedQueries: [],
+              numberOfCheckedOperations: 0,
+              changes: [
+                {
+                  severity: "FAILURE",
+                  code: "ARG_CHANGED_TYPE",
+                  description:
+                    "`Query.launches` argument `after` has changed type from `String` to `String!`"
+                }
+              ],
+              validationConfig: {
+                from: "-47347200",
+                to: "-0",
+                queryCountThreshold: 1,
+                queryCountThresholdPercentage: 0
+              }
+            }
+          }
+        }
+      }
+    });
+}
+
+/**
+ * Mock network requests for a non-federated schema check that produces no errors.
+ */
+function mockNonFederatedSuccess() {
+  mockIntrospectionQuery();
+
+  nock("https://engine-staging-graphql.apollographql.com:443", {
+    encodedQueryParams: true
+  })
+    .post("/api/graphql", () => true)
+    .reply(200, {
+      data: {
+        service: {
+          checkSchema: {
+            targetUrl:
+              "https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc",
+            diffToPrevious: {
+              severity: "NOTICE",
+              affectedClients: [],
+              affectedQueries: [],
+              numberOfCheckedOperations: 0,
+              changes: [
+                {
+                  severity: "NOTICE",
+                  code: "ARG_CHANGED_TYPE",
+                  description:
+                    "`Query.launches` argument `after` has changed type from `String` to `String!`"
+                }
+              ],
+              validationConfig: {
+                from: "-47347200",
+                to: "-0",
+                queryCountThreshold: 1,
+                queryCountThresholdPercentage: 0
+              }
+            }
+          }
+        }
+      }
+    });
+}
 
 describe("service:check", () => {
   let originalChalkEnabled;
@@ -13,10 +212,117 @@ describe("service:check", () => {
   beforeEach(() => {
     originalChalkEnabled = chalk.enabled;
     chalk.enabled = false;
+
+    // Clean console log capturing before tests in the event that `afterEach` was not run successfully.
+    uncaptureApplicationOutput();
+
+    // Clean up all network mocks before tests in the event that `afterEach` was not run successfully.
+    nock.cleanAll();
+
+    nock.disableNetConnect();
+
+    // Set the jest timeout to be longer than the default 5000ms to compensate for slow CI.
+    jest.setTimeout(15000);
   });
 
   afterEach(() => {
     chalk.enabled = originalChalkEnabled;
+
+    // Clean up console log mocking
+    uncaptureApplicationOutput();
+
+    // Clean up all network mocks and restore original functionality
+    nock.cleanAll();
+    nock.enableNetConnect();
+  });
+
+  // These are integration tests and not e2e tests because these don't actually hit the remote server.
+  describe("integration", () => {
+    describe("non-federated", () => {
+      describe("should report traffic errors correctly", () => {
+        it("vanilla", async () => {
+          captureApplicationOutput();
+          mockNonFederatedFailure();
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([...cliKeyParameter])
+          ).rejects.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("--markdown", async () => {
+          captureApplicationOutput();
+          mockNonFederatedFailure();
+          expect.assertions(2);
+
+          // markdown formatted output should not throw
+          await expect(
+            ServiceCheck.run([...cliKeyParameter, "--markdown"])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("--json", async () => {
+          captureApplicationOutput();
+          mockNonFederatedFailure();
+          expect.assertions(2);
+
+          // JSON formatted output should not throw
+          await expect(
+            ServiceCheck.run([...cliKeyParameter, "--json"])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+      });
+
+      describe("should report traffic non-errors correctly", () => {
+        it("vanilla", async () => {
+          captureApplicationOutput();
+          mockNonFederatedSuccess();
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([...cliKeyParameter])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("--markdown", async () => {
+          captureApplicationOutput();
+          mockNonFederatedSuccess();
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([...cliKeyParameter, "--markdown"])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("--json", async () => {
+          captureApplicationOutput();
+          mockNonFederatedSuccess();
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([...cliKeyParameter, "--json"])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+      });
+    });
   });
 
   describe("markdown formatting", () => {
@@ -148,7 +454,7 @@ describe("service:check", () => {
 // });
 
 // // this is because of herkou-cli-utils hacky mocking system on their console logger
-// import { stdout, mockConsole } from "heroku-cli-util";
+// import { stdout, captureApplicationOutput } from "heroku-cli-util";
 // import path from "path";
 // import fs from "fs";
 // import { test as setup } from "apollo-cli-test";
@@ -159,7 +465,7 @@ describe("service:check", () => {
 
 // import { vol, fs as mockFS } from "apollo-codegen-core/lib/localfs";
 
-// const test = setup.do(() => mockConsole());
+// const test = setup.do(() => captureApplicationOutput());
 // const ENGINE_API_KEY = "service:test:1234";
 // const hash = "12345";
 // const schemaContents = fs.readFileSync(
