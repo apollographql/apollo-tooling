@@ -224,10 +224,11 @@ export abstract class ProjectCommand extends Command {
     }
 
     const tasks = await generateTasks(ctx);
-    return new Listr(
-      [...this.tasks, ...tasks],
-      typeof options === "function" ? options(ctx) : options
-    ).run();
+    return new Listr([...this.tasks, ...tasks], {
+      ...(options && typeof options === "function" ? options(ctx) : options),
+      // @ts-ignore This option is added by https://github.com/SamVerschueren/listr-verbose-renderer#options
+      dateFormat: false
+    }).run();
   }
   async catch(err) {
     // handle any error from the command
