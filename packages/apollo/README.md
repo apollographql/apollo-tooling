@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.12.3 darwin-x64 node-v11.14.0
+apollo/2.12.4 darwin-x64 node-v11.14.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -271,7 +271,7 @@ _See code: [src/commands/client/extract.ts](https://github.com/apollographql/apo
 
 ## `apollo client:push`
 
-Push a service to Engine
+Register operations with Apollo, adding them to the safelist
 
 ```
 USAGE
