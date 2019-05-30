@@ -68,6 +68,9 @@
   "devDependencies": {
     "typescript": "3.4.5"
   },
+  "bundledDependencies": [
+    "graphql"
+  ],
   "oclif": {
     "commands": "./lib/commands",
     "bin": "apollo",
