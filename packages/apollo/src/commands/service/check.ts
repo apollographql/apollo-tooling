@@ -11,7 +11,11 @@ import {
   ChangeSeverity,
   CheckSchemaVariables
 } from "apollo-language-server/lib/graphqlTypes";
-import { ApolloConfig, GraphQLServiceProject } from "apollo-language-server";
+import {
+  ApolloConfig,
+  GraphQLServiceProject,
+  isServiceProject
+} from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 
@@ -258,6 +262,12 @@ export default class ServiceCheck extends ProjectCommand {
     try {
       await this.runTasks<TasksOutput>(
         ({ config, flags, project }) => {
+          if (!isServiceProject(project)) {
+            throw new Error(
+              "This project needs to be configured as a service project but is configured as a client project. Please see bit.ly/2ByILPj for help regarding configuration."
+            );
+          }
+
           const configName = config.name;
           const tag = flags.tag || config.tag || "current";
 
@@ -275,7 +285,7 @@ export default class ServiceCheck extends ProjectCommand {
                 taskOutput.shouldOutputJson = flags.json;
 
                 if (flags.federated) {
-                  const info = await (project as GraphQLServiceProject).resolveFederationInfo();
+                  const info = await project.resolveFederationInfo();
                   if (!info.sdl)
                     throw new Error("No SDL found for federated service");
 
