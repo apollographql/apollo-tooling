@@ -451,10 +451,7 @@ export default class ServiceCheck extends ProjectCommand {
         return;
       }
 
-      if (
-        error.message !== breakingChangesErrorMessage &&
-        error.message !== compositionErrorMessage
-      ) {
+      if (error.message !== breakingChangesErrorMessage) {
         throw error;
       }
     }
