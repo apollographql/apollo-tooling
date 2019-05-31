@@ -256,7 +256,8 @@ export default class ServiceCheck extends ProjectCommand {
 
     // Define this constant so we can throw it and compare against the same value.
     const breakingChangesErrorMessage = "breaking changes found";
-    const compositionErrorMessage = "composition errors found";
+    const federatedServiceCompositionUnsuccessfulErrorMessage =
+      "Federated service composition was unsuccessful. Please see the reasons below.";
 
     let schema, schemaHash;
     try {
@@ -457,7 +458,7 @@ export default class ServiceCheck extends ProjectCommand {
 
       if (
         error.message !== breakingChangesErrorMessage &&
-        error.message !== compositionErrorMessage
+        error.message !== federatedServiceCompositionUnsuccessfulErrorMessage
       ) {
         throw error;
       }
