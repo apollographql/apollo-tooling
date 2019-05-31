@@ -19,6 +19,9 @@ import {
 import moment from "moment";
 import sortBy from "lodash.sortby";
 
+export const federatedServiceCompositionUnsuccessfulErrorMessage =
+  "Federated service composition was unsuccessful. Please see the reasons below.";
+
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
   if (change.severity === ChangeSeverity.FAILURE) {
@@ -257,7 +260,6 @@ export default class ServiceCheck extends ProjectCommand {
     // nock.recorder.rec();
     // Define this constant so we can throw it and compare against the same value.
     const breakingChangesErrorMessage = "breaking changes found";
-    const compositionErrorMessage = "composition errors found";
 
     let schema, schemaHash;
     try {
