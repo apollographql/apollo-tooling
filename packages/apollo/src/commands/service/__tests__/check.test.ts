@@ -27,16 +27,7 @@ describe("service:check", () => {
           tag: "staging",
           checkSchemaResult
         })
-      ).toMatchInlineSnapshot(`
-        "
-        ### Apollo Service Check
-        🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
-        🔢 Compared **18 schema changes** against **100 operations** seen over the **last 24 hours**.
-        ❌ Found **7 breaking changes** that would affect **3 operations** across **2 clients**
-
-        🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
-        "
-      `);
+      ).toMatchSnapshot();
       // Check when all the values are singluar
       expect(
         formatMarkdown({
@@ -61,16 +52,7 @@ describe("service:check", () => {
             }
           }
         })
-      ).toMatchInlineSnapshot(`
-        "
-        ### Apollo Service Check
-        🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
-        🔢 Compared **1 schema change** against **1 operation** seen over the **last 24 hours**.
-        ❌ Found **1 breaking change** that would affect **1 operation** across **1 client**
-
-        🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
-        "
-      `);
+      ).toMatchSnapshot();
     });
 
     it("is correct with no breaking changes", () => {
@@ -89,16 +71,7 @@ describe("service:check", () => {
             }
           }
         })
-      ).toMatchInlineSnapshot(`
-        "
-        ### Apollo Service Check
-        🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
-        🔢 Compared **0 schema changes** against **100 operations** seen over the **last 24 hours**.
-        ✅ Found **no breaking changes**.
-
-        🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
-        "
-      `);
+      ).toMatchSnapshot();
     });
   });
 
@@ -130,30 +103,7 @@ describe("service:check", () => {
         formatHumanReadable({
           checkSchemaResult
         })
-      ).toMatchInlineSnapshot(`
-        "
-        FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
-        FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
-        FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
-        FAIL    FIELD_CHANGED_TYPE         \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
-        FAIL    FIELD_REMOVED              \`Change.affectedClients\` was removed
-        FAIL    FIELD_REMOVED              \`NamedIntrospectionValue.printedType\` was removed
-        FAIL    TYPE_REMOVED               \`NamedIntrospectionArg\` removed
-
-        PASS    ARG_REMOVED                \`ServiceMutation.registerOperations\` arg \`manifestVersion\` was removed
-        PASS    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`historicParameters\` was removed
-        PASS    FIELD_ADDED                \`Service.schemaNotificationChannels\` was added
-        PASS    FIELD_ADDED                \`ServiceMutation.deregisterSchemaNotificationChannel\` was added
-        PASS    FIELD_ADDED                \`ServiceMutation.registerSchemaNotificationChannel\` was added
-        PASS    FIELD_DEPRECATION_REMOVED  \`AffectedClient.clientId\` is no longer deprecated
-        PASS    FIELD_DEPRECATION_REMOVED  \`Change.description\` is no longer deprecated
-        PASS    FIELD_REMOVED              \`AffectedClient.clientReferenceId\` was removed
-        PASS    FIELD_REMOVED              \`Change.affectedClientIdVersionPairs\` was removed
-        PASS    FIELD_REMOVED              \`Change.affectedClientReferenceIds\` was removed
-        PASS    FIELD_REMOVED              \`SchemaDiff.numberOfCheckedOperations\` was removed
-
-        View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
-      `);
+      ).toMatchSnapshot();
     });
 
     it("should have correct output with only non-breaking changes", () => {
@@ -169,12 +119,7 @@ describe("service:check", () => {
             }
           }
         })
-      ).toMatchInlineSnapshot(`
-        "
-        No changes present between schemas
-
-        View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
-      `);
+      ).toMatchSnapshot();
     });
 
     it("should have correct output with only breaking changes", () => {
@@ -192,18 +137,7 @@ describe("service:check", () => {
             }
           }
         })
-      ).toMatchInlineSnapshot(`
-        "
-        FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
-        FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
-        FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
-        FAIL    FIELD_CHANGED_TYPE  \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
-        FAIL    FIELD_REMOVED       \`Change.affectedClients\` was removed
-        FAIL    FIELD_REMOVED       \`NamedIntrospectionValue.printedType\` was removed
-        FAIL    TYPE_REMOVED        \`NamedIntrospectionArg\` removed
-
-        View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
-      `);
+      ).toMatchSnapshot();
     });
   });
 });
