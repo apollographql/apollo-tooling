@@ -80,11 +80,11 @@ exports[`service:check integration non-federated should report traffic errors co
 exports[`service:check integration non-federated should report traffic errors correctly vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
-Validating local schema against tag master on service engine [started]
+Validating local schema against tag master on graph engine [started]
 → Resolving schema
 → Validating schema
-Validated local schema against tag master on service engine [title changed]
-Validated local schema against tag master on service engine [completed]
+Validated local schema against tag master on graph engine [title changed]
+Validated local schema against tag master on graph engine [completed]
 Comparing schema changes [started]
 Compared 1 schema change against 0 operations over the last 548 days [title changed]
 Compared 1 schema change against 0 operations over the last 548 days [completed]
@@ -134,11 +134,11 @@ exports[`service:check integration non-federated should report traffic non-error
 exports[`service:check integration non-federated should report traffic non-errors correctly vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
-Validating local schema against tag master on service engine [started]
+Validating local schema against tag master on graph engine [started]
 → Resolving schema
 → Validating schema
-Validated local schema against tag master on service engine [title changed]
-Validated local schema against tag master on service engine [completed]
+Validated local schema against tag master on graph engine [title changed]
+Validated local schema against tag master on graph engine [completed]
 Comparing schema changes [started]
 Compared 1 schema change against 0 operations over the last 548 days [title changed]
 Compared 1 schema change against 0 operations over the last 548 days [completed]
@@ -155,7 +155,7 @@ View full details at: https://engine-staging.apollographql.com/service/justin-fu
 exports[`service:check markdown formatting is correct with breaking changes 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
+🔄 Validated your local schema against schema tag \`staging\` on graph \`engine\`.
 🔢 Compared **18 schema changes** against **100 operations** seen over the **last 24 hours**.
 ❌ Found **7 breaking changes** that would affect **3 operations** across **2 clients**
 
@@ -166,7 +166,7 @@ exports[`service:check markdown formatting is correct with breaking changes 1`] 
 exports[`service:check markdown formatting is correct with breaking changes 2`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
+🔄 Validated your local schema against schema tag \`staging\` on graph \`engine\`.
 🔢 Compared **1 schema change** against **1 operation** seen over the **last 24 hours**.
 ❌ Found **1 breaking change** that would affect **1 operation** across **1 client**
 
@@ -177,7 +177,7 @@ exports[`service:check markdown formatting is correct with breaking changes 2`] 
 exports[`service:check markdown formatting is correct with no breaking changes 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
+🔄 Validated your local schema against schema tag \`staging\` on graph \`engine\`.
 🔢 Compared **0 schema changes** against **100 operations** seen over the **last 24 hours**.
 ✅ Found **no breaking changes**.
 
