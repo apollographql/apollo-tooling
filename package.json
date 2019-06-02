@@ -71,7 +71,7 @@
     "@types/lodash.sortby": "4.7.6",
     "@types/minimatch": "3.0.3",
     "@types/nock": "10.0.3",
-    "@types/node": "8.10.48",
+    "@types/node": "8.10.49",
     "@types/node-fetch": "2.3.4",
     "husky": "2.3.0",
     "jest": "24.8.0",
