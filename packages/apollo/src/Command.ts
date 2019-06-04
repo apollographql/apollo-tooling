@@ -225,6 +225,12 @@ export abstract class ProjectCommand extends Command {
 
     const tasks = await generateTasks(ctx);
     return new Listr([...this.tasks, ...tasks], {
+      // Use the `verbose` renderer for tests. We need this for two reasons:
+      // 1. We don't want to show a spinner in tests
+      // 2. We want to see individual changes to titles and output lines; this is accomplished with the
+      //    verbose renderer. Note that this _must_ be override-able because some functions require the
+      //    `silent` renderer.
+      ...(process.env.NODE_ENV === "test" && { renderer: "verbose" }),
       ...(options && typeof options === "function" ? options(ctx) : options),
       // @ts-ignore This option is added by https://github.com/SamVerschueren/listr-verbose-renderer#options
       dateFormat: false
