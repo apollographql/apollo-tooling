@@ -3,7 +3,8 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Add integration tests to `service:check` [#1308](https://github.com/apollographql/apollo-tooling/pull/1308)
+  - Add support for federated service to `service:check` [#1308](https://github.com/apollographql/apollo-tooling/pull/1308)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
