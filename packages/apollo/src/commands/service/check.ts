@@ -587,25 +587,6 @@ export default class ServiceCheck extends ProjectCommand {
       );
     }
 
-    if (taskOutput.federation) {
-      const errors = taskOutput.federation.errors.map(error =>
-        reshapeGraphQLErrorToChange(
-          ChangeSeverity.FAILURE,
-          error ? error.message : ""
-        )
-      );
-
-      // if we had composition errors, set the change type to failure if it isn't already
-      if (
-        errors.length &&
-        checkSchemaResult.diffToPrevious.severity !== ChangeSeverity.FAILURE
-      ) {
-        checkSchemaResult.diffToPrevious.severity = ChangeSeverity.FAILURE;
-      }
-
-      checkSchemaResult.diffToPrevious.changes.push(...errors);
-    }
-
     if (shouldOutputJson) {
       return this.log(
         JSON.stringify(
