@@ -86,7 +86,7 @@ function extractGraphQLDocumentsFromJSTemplateLiterals(
   let result;
   while ((result = regExp.exec(text)) !== null) {
     const contents = replacePlaceholdersWithWhiteSpace(result[1]);
-    const position = document.positionAt(result.index + 4);
+    const position = document.positionAt(result.index + (tagName.length + 1));
     const locationOffset: SourceLocation = {
       line: position.line + 1,
       column: position.character + 1
