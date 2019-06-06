@@ -87,7 +87,7 @@ describe("extractGraphQLDocuments", () => {
         \${ReviewList.fragments.reviews}
       \`
     `);
-      const documents = extractGraphQLDocuments(textDocument);
+      const documents = extractGraphQLDocuments(textDocument, "gqltag");
 
       expect(documents.length).toEqual(1);
       expect(documents[0].syntaxErrors.length).toBe(0);
