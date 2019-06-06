@@ -23,9 +23,6 @@ export const UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA = gql`
         errors {
           message
         }
-        warnings {
-          message
-        }
         didUpdateGateway: updatedGateway
         serviceWasCreated: wasCreated
       }

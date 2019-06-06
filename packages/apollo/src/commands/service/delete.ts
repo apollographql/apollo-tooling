@@ -70,10 +70,6 @@ export default class ServiceDelete extends ProjectCommand {
       this.error(result.errors.map(error => error.message).join("\n"));
     }
 
-    if (result.warnings && result.warnings.length) {
-      this.warn(result.warnings.map(warning => warning.message).join("\n"));
-    }
-
     if (result.updatedGateway) {
       this.log(
         `The ${result.serviceName} service with ${
