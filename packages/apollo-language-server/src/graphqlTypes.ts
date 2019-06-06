@@ -19,11 +19,6 @@ export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingS
   message: string;
 }
 
-export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_warnings {
-  __typename: "SchemaCompositionWarning";
-  message: string;
-}
-
 export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph {
   __typename: "CompositionValidationResult";
   /**
@@ -38,14 +33,6 @@ export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingS
    * published to the implementing service if there were any errors encountered
    */
   errors: (CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_errors | null)[];
-  /**
-   * List of warnings encountered during composing implementing services into a complete schema.
-   * Though a schema was composed for the graph with the proposed partial schema,
-   * these warnings may indicate undesired behavior or lost information. We recommend that no service
-   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
-   * in its composition result will result in updating the composition config.
-   */
-  warnings: (CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_warnings | null)[];
 }
 
 export interface CheckPartialSchema_service {
@@ -55,7 +42,7 @@ export interface CheckPartialSchema_service {
    *
    * Run composition with the Implementing Service's partial schema replaced with the one provided
    * in the mutation's input. Store the composed schema, return the hash of the composed schema,
-   * and any warnings and errors pertaining to composition.
+   * and any errors pertaining to composition.
    *
    * This mutation will not run validation against operations.
    */
@@ -313,12 +300,6 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
   __typename: "SchemaCompositionError";
   locations: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors_locations | null)[];
   message: string;
-}
-
-export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_locations {
-  __typename: "SourceLocation";
-  column: number;
-  line: number;
 }
 
 export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition {
