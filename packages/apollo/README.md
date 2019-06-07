@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.12.5 darwin-x64 node-v11.14.0
+apollo/2.13.0 darwin-x64 node-v10.14.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -324,7 +324,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.1.6/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.0/src/commands/help.ts)_
 
 ## `apollo plugins`
 
