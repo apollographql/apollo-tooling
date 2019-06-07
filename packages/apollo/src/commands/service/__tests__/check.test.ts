@@ -26,9 +26,12 @@ const fakeApiKey = "service:engine:9YC5AooMa2yO11eFlZat11";
 /**
  * Engine API key we're using.
  *
- * We should use the `fakeApiKey` whenever possible to ensure we can't accidentally access real APIs.
+ * This is hard-coded to `fakeApiKey` because this is out day-to-day usage should be. If we're going to be
+ * updating the mocked data; we'll need to use a real API key (see [README#Regenerating Mocked Network
+ * Data](https://github.com/apollographql/apollo-tooling#regenerating-mocked-network-data)); which will be
+ * placed here.
  */
-const apiKey = process.env.ENGINE_API_KEY || fakeApiKey;
+const apiKey = fakeApiKey;
 
 /**
  * An array that we'll spread into all CLI commands to pass the engine api key.
