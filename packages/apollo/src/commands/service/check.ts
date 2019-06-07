@@ -268,10 +268,15 @@ export default class ServiceCheck extends ProjectCommand {
             );
           }
 
-          const configName = config.name;
+          /**
+           * Name of the graph being checked. `engine` is an example of a graph.
+           *
+           * A graph can be either a monolithic schema or the result of composition a federated schema.
+           */
+          const graphName = config.name;
           const tag = flags.tag || config.tag || "current";
 
-          if (!configName) {
+          if (!graphName) {
             throw new Error("No service found to link to Engine");
           }
 
@@ -279,7 +284,7 @@ export default class ServiceCheck extends ProjectCommand {
             {
               title: `Validating local schema against tag ${chalk.blue(
                 tag
-              )} on service ${chalk.blue(configName)}`,
+              )} on service ${chalk.blue(graphName)}`,
               task: async (ctx: TasksOutput, task) => {
                 task.output = "Resolving schema";
                 taskOutput.shouldOutputJson = flags.json;
@@ -300,7 +305,7 @@ export default class ServiceCheck extends ProjectCommand {
                     errors,
                     compositionValidationDetails
                   } = await project.engine.checkPartialSchema({
-                    id: configName,
+                    id: graphName,
                     graphVariant: tag,
                     implementingServiceName: flags.serviceName || info.name,
                     partialSchema: {
@@ -336,7 +341,7 @@ export default class ServiceCheck extends ProjectCommand {
 
                   task.output = "Validating schema";
                   const variables: CheckSchemaVariables = {
-                    id: configName,
+                    id: graphName,
                     // @ts-ignore
                     // XXX Looks like TS should be generating ReadonlyArrays instead
                     schema: introspectionFromSchema(schema).__schema,
