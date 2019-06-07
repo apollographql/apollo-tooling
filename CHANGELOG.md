@@ -1,9 +1,8 @@
 # Changelog
 
 ## Upcoming
-
 - `apollo`
-  - update `client:push` to pass the tag / graphVariant [#1307](https://github.com/apollographql/apollo-tooling/pull/1307)
+  - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -19,12 +18,19 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Use offset equal to length of tagname when parsing JS documents[#1050](https://github.com/apollographql/apollo-tooling/issues/1050)
-  - Allow template literal placeholders that span multiple rows[#1299](https://github.com/apollographql/apollo-tooling/pull/1299)
+  - <First `apollo-codegen-core` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.13.0`, `apollo-language-server@1.10.0`
+
+- `apollo@2.13.0`
+  - update `client:push` to pass the tag / graphVariant [#1307](https://github.com/apollographql/apollo-tooling/pull/1307)
+- `apollo-language-server@1.10.0`
+  - Use offset equal to length of tagname when parsing JS documents[#1050](https://github.com/apollographql/apollo-tooling/issues/1050)
+  - Allow template literal placeholders that span multiple rows[#1299](https://github.com/apollographql/apollo-tooling/pull/1299)
 
 ## `apollo@2.12.4`, `apollo-language-server@1.9.0`, `vscode-apollo@1.7.0`
 
