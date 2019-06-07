@@ -272,6 +272,7 @@ export interface RegisterOperationsVariables {
   clientIdentity: RegisteredClientIdentityInput;
   operations: RegisteredOperationInput[];
   manifestVersion: number;
+  graphVariant?: string | null;
 }
 
 /* tslint:disable */
