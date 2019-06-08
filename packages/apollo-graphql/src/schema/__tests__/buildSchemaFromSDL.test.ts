@@ -4,7 +4,8 @@ import {
   GraphQLSchema,
   GraphQLDirective,
   DirectiveLocation,
-  GraphQLObjectType
+  GraphQLObjectType,
+  GraphQLAbstractType
 } from "graphql";
 
 import astSerializer from "./snapshotSerializers/astSerializer";
@@ -345,6 +346,7 @@ type MutationRoot {
       );
     });
   });
+
   describe(`resolvers`, () => {
     it(`should add a resolver for a field`, () => {
       const name = () => {};
@@ -371,6 +373,54 @@ type MutationRoot {
       expect(nameField).toBeDefined();
 
       expect(nameField.resolve).toEqual(name);
+    });
+
+    it(`should add meta fields to abstract types`, () => {
+      const typeDefs = gql`
+        union Animal = Dog
+
+        interface Creature {
+          name: String!
+          legs: Int!
+        }
+
+        type Dog {
+          id: ID!
+        }
+
+        type Cat implements Creature {
+          meow: Boolean!
+        }
+      `;
+
+      const resolveTypeUnion = (obj: any) => {
+        return "Dog";
+      };
+
+      const resolveTypeInterface = (obj: any) => {
+        if (obj.meow) {
+          return "Cat";
+        }
+        throw Error("Couldn't resolve interface");
+      };
+
+      const resolvers = {
+        Animal: {
+          __resolveType: resolveTypeUnion
+        },
+        Creature: {
+          __resolveType: resolveTypeInterface
+        }
+      };
+
+      const schema = buildSchemaFromSDL([{ typeDefs, resolvers }]);
+      const animalUnion = schema.getType("Animal") as GraphQLAbstractType;
+      const creatureInterface = schema.getType(
+        "Creature"
+      ) as GraphQLAbstractType;
+
+      expect(animalUnion.resolveType).toBe(resolveTypeUnion);
+      expect(creatureInterface.resolveType).toBe(resolveTypeInterface);
     });
   });
 });

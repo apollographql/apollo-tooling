@@ -13,7 +13,8 @@ import {
   SchemaDefinitionNode,
   SchemaExtensionNode,
   OperationTypeNode,
-  GraphQLObjectType
+  GraphQLObjectType,
+  isAbstractType
 } from "graphql";
 import { validateSDL } from "graphql/validation/validate";
 import { isDocumentNode, isNode } from "../utilities/graphql";
@@ -206,6 +207,15 @@ export function addResolversToSchema(
 ) {
   for (const [typeName, fieldConfigs] of Object.entries(resolvers)) {
     const type = schema.getType(typeName);
+
+    if (isAbstractType(type)) {
+      for (const [fieldName, fieldConfig] of Object.entries(fieldConfigs)) {
+        if (fieldName.startsWith("__")) {
+          (type as any)[fieldName.substring(2)] = fieldConfig;
+        }
+      }
+    }
+
     if (!isObjectType(type)) continue;
 
     const fieldMap = type.getFields();
