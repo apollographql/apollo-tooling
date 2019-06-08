@@ -19,9 +19,6 @@ export const CHECK_PARTIAL_SCHEMA = gql`
         errors {
           message
         }
-        warnings {
-          message
-        }
       }
     }
   }

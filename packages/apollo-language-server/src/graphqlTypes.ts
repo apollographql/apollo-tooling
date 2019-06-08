@@ -19,11 +19,6 @@ export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingS
   message: string;
 }
 
-export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_warnings {
-  __typename: "SchemaCompositionWarning";
-  message: string;
-}
-
 export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph {
   __typename: "CompositionValidationResult";
   /**
@@ -38,14 +33,6 @@ export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingS
    * published to the implementing service if there were any errors encountered
    */
   errors: (CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_errors | null)[];
-  /**
-   * List of warnings encountered during composing implementing services into a complete schema.
-   * Though a schema was composed for the graph with the proposed partial schema,
-   * these warnings may indicate undesired behavior or lost information. We recommend that no service
-   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
-   * in its composition result will result in updating the composition config.
-   */
-  warnings: (CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_warnings | null)[];
 }
 
 export interface CheckPartialSchema_service {
@@ -315,18 +302,6 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
   message: string;
 }
 
-export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_locations {
-  __typename: "SourceLocation";
-  column: number;
-  line: number;
-}
-
-export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings {
-  __typename: "SchemaCompositionWarning";
-  locations: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_locations | null)[];
-  message: string;
-}
-
 export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition {
   __typename: "CompositionAndRemoveResult";
   /**
@@ -339,14 +314,6 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
    * published to the implementing service if there were any errors encountered
    */
   errors: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors | null)[];
-  /**
-   * List of warnings encountered during composing implementing services into a complete schema.
-   * Though a schema was composed for the graph with the proposed partial schema,
-   * these warnings may indicate undesired behavior or lost information. We recommend that no service
-   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
-   * in its composition result will result in updating the composition config.
-   */
-  warnings: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings | null)[];
   /**
    * Whether the gateway link was updated.
    */
@@ -457,11 +424,6 @@ export interface UploadAndComposePartialSchema_service_upsertImplementingService
   message: string;
 }
 
-export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_warnings {
-  __typename: "SchemaCompositionWarning";
-  message: string;
-}
-
 export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition {
   __typename: "CompositionAndUpsertResult";
   /**
@@ -474,14 +436,6 @@ export interface UploadAndComposePartialSchema_service_upsertImplementingService
    * published to the implementing service if there were any errors encountered
    */
   errors: (UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_errors | null)[];
-  /**
-   * List of warnings encountered during composing implementing services into a complete schema.
-   * Though a schema was composed for the graph with the proposed partial schema,
-   * these warnings may indicate undesired behavior or lost information. We recommend that no service
-   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
-   * in its composition result will result in updating the composition config.
-   */
-  warnings: (UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_warnings | null)[];
   /**
    * Whether the gateway link was updated.
    */

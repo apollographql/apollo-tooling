@@ -65,7 +65,6 @@ interface TasksOutput {
   shouldOutputMarkdown: boolean;
   federation?: {
     errors: ({ message: string } | null)[];
-    warnings: ({ message: string } | null)[];
     schemaHash?: string | null;
   };
 }
@@ -289,7 +288,6 @@ export default class ServiceCheck extends ProjectCommand {
                   task.output = "Creating composed schema against the graph";
                   const {
                     errors,
-                    warnings,
                     compositionValidationDetails
                   } = await project.engine.checkPartialSchema({
                     id: configName,
@@ -303,8 +301,7 @@ export default class ServiceCheck extends ProjectCommand {
                   // FIXME: reformat to match other check results
 
                   taskOutput.federation = {
-                    errors,
-                    warnings
+                    errors
                   };
 
                   if (compositionValidationDetails) {
@@ -476,12 +473,6 @@ export default class ServiceCheck extends ProjectCommand {
           error ? error.message : ""
         )
       );
-      const warnings = taskOutput.federation.warnings.map(error =>
-        reshapeGraphQLErrorToChange(
-          ChangeSeverity.WARNING,
-          error ? error.message : ""
-        )
-      );
 
       // if we had composition errors, set the change type to failure if it isn't already
       if (
@@ -492,7 +483,6 @@ export default class ServiceCheck extends ProjectCommand {
       }
 
       checkSchemaResult.diffToPrevious.changes.push(...errors);
-      checkSchemaResult.diffToPrevious.changes.push(...warnings);
     }
 
     if (shouldOutputJson) {
