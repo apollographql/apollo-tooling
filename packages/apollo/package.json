@@ -35,7 +35,7 @@
     "@oclif/command": "1.5.14",
     "@oclif/config": "1.13.0",
     "@oclif/errors": "1.2.2",
-    "@oclif/plugin-autocomplete": "0.1.0",
+    "@oclif/plugin-autocomplete": "0.1.1",
     "@oclif/plugin-help": "2.2.0",
     "@oclif/plugin-not-found": "1.2.2",
     "@oclif/plugin-plugins": "1.7.8",
