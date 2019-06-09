@@ -1,8 +1,9 @@
 # Changelog
 
 ## Upcoming
+
 - `apollo`
-  - <First `apollo-codegen-core` related entry goes here>
+  - Remove federation warnings and update types [#1332](https://github.com/apollographql/apollo-tooling/pull/1332)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
