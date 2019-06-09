@@ -145,14 +145,14 @@ export default class ServicePush extends ProjectCommand {
     }
 
     const { errors } = result;
-    if ((errors && errors.length)) {
+    if (errors && errors.length) {
       let printed = "";
 
       const messages = [
         ...errors.map(({ message }) => ({
           type: chalk.red("Error"),
           description: message
-        })),
+        }))
       ].filter(x => x !== null);
 
       table(messages, {
