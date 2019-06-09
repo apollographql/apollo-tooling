@@ -78,7 +78,6 @@ export default class ServicePush extends ProjectCommand {
             const {
               compositionConfig,
               errors,
-              warnings,
               didUpdateGateway,
               serviceWasCreated
             } = await project.engine.uploadAndComposePartialSchema({
@@ -99,7 +98,6 @@ export default class ServicePush extends ProjectCommand {
               service: flags.serviceName || info.name,
               hash: compositionConfig && compositionConfig.schemaHash,
               tag: config.tag,
-              warnings,
               errors,
               serviceWasCreated,
               didUpdateGateway,
@@ -146,19 +144,13 @@ export default class ServicePush extends ProjectCommand {
       this.log("No change in schema from previous version\n");
     }
 
-    const { errors, warnings } = result;
-    if ((errors && errors.length) || (warnings && warnings.length)) {
+    const { errors } = result;
+    if (errors && errors.length) {
       let printed = "";
 
       const messages = [
         ...errors.map(({ message }) => ({
           type: chalk.red("Error"),
-          description: message
-        })),
-        // Add an empty line between, but only if there are both breaking changes and non-breaking changes.
-        warnings.length && errors.length ? {} : null,
-        ...warnings.map(({ message }) => ({
-          type: chalk.yellow("Warning"),
           description: message
         }))
       ].filter(x => x !== null);
