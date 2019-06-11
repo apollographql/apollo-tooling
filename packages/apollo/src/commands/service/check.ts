@@ -422,7 +422,6 @@ export default class ServiceCheck extends ProjectCommand {
                   gitContext: await gitInfo(this.log),
                   frontend: flags.frontend || config.engine.frontend,
                   ...(historicParameters && { historicParameters }),
-                  // `variables` will either contain `schemaHash` or `schema`, not both.
                   ...schemaCheckSchemaVariables
                 };
 
@@ -432,6 +431,9 @@ export default class ServiceCheck extends ProjectCommand {
                 if (schema) {
                   this.debug("SDL of introspection sent to Engine:");
                   this.debug(printSchema(schema));
+                } else {
+                  this.debug("Schema hash generated:");
+                  this.debug(schemaCheckSchemaVariables);
                 }
 
                 const newContext: typeof ctx = {
