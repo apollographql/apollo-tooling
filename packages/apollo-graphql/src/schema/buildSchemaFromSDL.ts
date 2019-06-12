@@ -14,7 +14,8 @@ import {
   SchemaExtensionNode,
   OperationTypeNode,
   GraphQLObjectType,
-  isAbstractType
+  isAbstractType,
+  isEnumType
 } from "graphql";
 import { validateSDL } from "graphql/validation/validate";
 import { isDocumentNode, isNode } from "../utilities/graphql";
@@ -214,6 +215,22 @@ export function addResolversToSchema(
           (type as any)[fieldName.substring(2)] = fieldConfig;
         }
       }
+    }
+
+    if (isEnumType(type)) {
+      let getValue = type.getValue.bind(type);
+      type.getValue = x => {
+        if (x in fieldConfigs) {
+          let old = getValue(x);
+          if (!old) {
+            return old;
+          }
+          old.value = fieldConfigs[x];
+          return old;
+        } else {
+          return getValue(x);
+        }
+      };
     }
 
     if (!isObjectType(type)) continue;
