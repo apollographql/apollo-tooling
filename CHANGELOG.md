@@ -17,7 +17,7 @@
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
+  - buildSchemaFromSDL - support custom scalar resolvers [#1343](https://github.com/apollographql/apollo-tooling/pull/1343)
 - `apollo-language-server`
   - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
