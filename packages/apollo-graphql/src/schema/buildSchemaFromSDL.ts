@@ -14,7 +14,9 @@ import {
   SchemaExtensionNode,
   OperationTypeNode,
   GraphQLObjectType,
-  isAbstractType
+  isAbstractType,
+  isScalarType,
+  isEnumType
 } from "graphql";
 import { validateSDL } from "graphql/validation/validate";
 import { isDocumentNode, isNode } from "../utilities/graphql";
@@ -213,6 +215,12 @@ export function addResolversToSchema(
         if (fieldName.startsWith("__")) {
           (type as any)[fieldName.substring(2)] = fieldConfig;
         }
+      }
+    }
+
+    if (isScalarType(type)) {
+      for (const fn in fieldConfigs) {
+        (type as any)[fn] = (fieldConfigs as any)[fn];
       }
     }
 
