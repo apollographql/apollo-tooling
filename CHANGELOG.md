@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Remove federation warnings and update types [#1332](https://github.com/apollographql/apollo-tooling/pull/1332)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -17,13 +17,20 @@
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - buildSchemaFromSDL - support meta fields on abstract types [#1330](https://github.com/apollographql/apollo-tooling/pull/1330)
+  - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-codegen-core` related entry goes here>
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.13.1`, `apollo-graphql@0.3.2`
+
+- `apollo@2.13.1`
+  - Remove federation warnings and update types [#1332](https://github.com/apollographql/apollo-tooling/pull/1332)
+- `apollo-graphql@0.3.2`
+  - buildSchemaFromSDL - support meta fields on abstract types [#1330](https://github.com/apollographql/apollo-tooling/pull/1330)
 
 ## `apollo@2.13.0`, `apollo-language-server@1.10.0`
 
