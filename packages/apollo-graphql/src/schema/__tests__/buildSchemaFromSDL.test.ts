@@ -5,7 +5,10 @@ import {
   GraphQLDirective,
   DirectiveLocation,
   GraphQLObjectType,
-  GraphQLAbstractType
+  GraphQLAbstractType,
+  GraphQLScalarType,
+  GraphQLScalarTypeConfig,
+  Kind
 } from "graphql";
 
 import astSerializer from "./snapshotSerializers/astSerializer";
@@ -421,6 +424,35 @@ type MutationRoot {
 
       expect(animalUnion.resolveType).toBe(resolveTypeUnion);
       expect(creatureInterface.resolveType).toBe(resolveTypeInterface);
+    });
+
+    it(`should add resolvers for scalar types`, () => {
+      const typeDefs = gql`
+        scalar Custom
+      `;
+
+      const customTypeConfig: GraphQLScalarTypeConfig<string, string> = {
+        name: "Custom",
+        serialize: value => value,
+        parseValue: value => value,
+        parseLiteral: input => {
+          if (input.kind !== Kind.STRING) {
+            throw new Error("Expected value to be string");
+          }
+          return input.value;
+        }
+      };
+
+      const CustomType = new GraphQLScalarType(customTypeConfig);
+
+      const resolvers = { Custom: CustomType };
+
+      const schema = buildSchemaFromSDL([{ typeDefs, resolvers }]);
+      const custom = schema.getType("Custom") as GraphQLScalarType;
+
+      expect(custom.parseLiteral).toBe(CustomType.parseLiteral);
+      expect(custom.parseValue).toBe(CustomType.parseValue);
+      expect(custom.serialize).toBe(CustomType.serialize);
     });
   });
 });
