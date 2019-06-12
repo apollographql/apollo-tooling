@@ -31,6 +31,7 @@
   - Remove federation warnings and update types [#1332](https://github.com/apollographql/apollo-tooling/pull/1332)
 - `apollo-graphql@0.3.2`
   - buildSchemaFromSDL - support meta fields on abstract types [#1330](https://github.com/apollographql/apollo-tooling/pull/1330)
+  - buildSchemaFromSDL - Add enum renaming ability to federated services. [#1344](https://github.com/apollographql/apollo-tooling/pull/1344)
 
 ## `apollo@2.13.0`, `apollo-language-server@1.10.0`
 
