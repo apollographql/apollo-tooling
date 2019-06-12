@@ -8,7 +8,9 @@ import {
   GraphQLAbstractType,
   GraphQLScalarType,
   GraphQLScalarTypeConfig,
-  Kind
+  GraphQLEnumType,
+  Kind,
+  execute
 } from "graphql";
 
 import astSerializer from "./snapshotSerializers/astSerializer";
@@ -453,6 +455,50 @@ type MutationRoot {
       expect(custom.parseLiteral).toBe(CustomType.parseLiteral);
       expect(custom.parseValue).toBe(CustomType.parseValue);
       expect(custom.serialize).toBe(CustomType.serialize);
+    });
+
+    it(`should add resolvers to enum types`, () => {
+      const typeDefs = gql`
+        enum AllowedColor {
+          RED
+          GREEN
+          BLUE
+        }
+
+        type Query {
+          favoriteColor: AllowedColor
+          avatar(borderColor: AllowedColor): String # As an argument
+        }
+      `;
+
+      const mockResolver = jest.fn();
+
+      const resolvers = {
+        AllowedColor: {
+          RED: "#f00",
+          GREEN: "#0f0",
+          BLUE: "#00f"
+        },
+        Query: {
+          favoriteColor: () => "#f00",
+          avatar: (_: any, params: any) => mockResolver(_, params)
+        }
+      };
+
+      const schema = buildSchemaFromSDL([{ typeDefs, resolvers }]);
+      const colorEnum = schema.getType("AllowedColor") as GraphQLEnumType;
+
+      execute(
+        schema,
+        gql`
+          query {
+            avatar(borderColor: RED)
+          }
+        `
+      );
+
+      expect(colorEnum.getValue("RED")!.value).toBe("#f00");
+      expect(mockResolver).toBeCalledWith(undefined, { borderColor: "#f00" });
     });
   });
 });

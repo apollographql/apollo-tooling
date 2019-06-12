@@ -224,6 +224,22 @@ export function addResolversToSchema(
       }
     }
 
+    if (isEnumType(type)) {
+      let getValue = type.getValue.bind(type);
+      type.getValue = x => {
+        if (x in fieldConfigs) {
+          let old = getValue(x);
+          if (!old) {
+            return old;
+          }
+          old.value = (fieldConfigs as any)[x];
+          return old;
+        } else {
+          return getValue(x);
+        }
+      };
+    }
+
     if (!isObjectType(type)) continue;
 
     const fieldMap = type.getFields();
