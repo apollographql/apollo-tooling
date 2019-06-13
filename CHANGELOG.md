@@ -18,7 +18,7 @@
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
+  - buildSchemaFromSDL - Add support for merging Scalar and Enum resolvers to schema [#1345](https://github.com/apollographql/apollo-tooling/pull/1345)
 - `apollo-language-server`
   - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`

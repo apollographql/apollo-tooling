@@ -10,7 +10,8 @@ import {
   GraphQLScalarTypeConfig,
   GraphQLEnumType,
   Kind,
-  execute
+  execute,
+  ExecutionResult
 } from "graphql";
 
 import astSerializer from "./snapshotSerializers/astSerializer";
@@ -467,7 +468,7 @@ type MutationRoot {
 
         type Query {
           favoriteColor: AllowedColor
-          avatar(borderColor: AllowedColor): String # As an argument
+          avatar(borderColor: AllowedColor): String
         }
       `;
 
@@ -488,15 +489,17 @@ type MutationRoot {
       const schema = buildSchemaFromSDL([{ typeDefs, resolvers }]);
       const colorEnum = schema.getType("AllowedColor") as GraphQLEnumType;
 
-      execute(
+      let result = execute(
         schema,
         gql`
           query {
+            favoriteColor
             avatar(borderColor: RED)
           }
         `
       );
 
+      expect((result as ExecutionResult).data!.favoriteColor).toBe("RED");
       expect(colorEnum.getValue("RED")!.value).toBe("#f00");
       expect(mockResolver).toBeCalledWith(undefined, { borderColor: "#f00" });
     });
