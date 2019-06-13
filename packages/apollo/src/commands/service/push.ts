@@ -25,19 +25,23 @@ export default class ServicePush extends ProjectCommand {
       char: "f",
       default: false,
       description:
-        "Indicates that the schema is a partial schema from a federated service"
+        "Indicates that the schema is a partial schema from a federated service",
+      dependsOn: ["serviceName", "serviceURL", "endpoint"]
     }),
     serviceName: flags.string({
       description:
-        "Provides the name of the implementing service for a federated graph"
+        "Provides the name of the implementing service for a federated graph",
+      dependsOn: ["federated"]
     }),
     serviceURL: flags.string({
       description:
-        "Provides the url to the location of the implementing service for a federated graph"
+        "Provides the url to the location of the implementing service for a federated graph",
+      dependsOn: ["federated"]
     }),
     serviceRevision: flags.string({
       description:
-        "Provides a unique revision identifier for a change to an implementing service on a federated service push. The default of this is a git sha"
+        "Provides a unique revision identifier for a change to an implementing service on a federated service push. The default of this is a git sha",
+      dependsOn: ["federated"]
     })
   };
 
