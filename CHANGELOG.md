@@ -5,6 +5,7 @@
 - `apollo`
   - Relax graphql version, resolve missing types "Boolean", "String" [#1355](https://github.com/apollographql/apollo-tooling/pull/1355)
   - Add `service:list` and tests [#1358](https://github.com/apollographql/apollo-tooling/pull/1358)
+  - Add `dependsOn` for required fields with federated `service:push` [#1346](https://github.com/apollographql/apollo-tooling/pull/1346)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
