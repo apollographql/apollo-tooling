@@ -14,6 +14,7 @@ import {
   SchemaExtensionNode,
   OperationTypeNode,
   GraphQLObjectType,
+  GraphQLEnumType,
   isAbstractType,
   isScalarType,
   isEnumType
@@ -207,6 +208,8 @@ export function addResolversToSchema(
   schema: GraphQLSchema,
   resolvers: GraphQLResolverMap<any>
 ) {
+  const enumValueMap = Object.create(null);
+
   for (const [typeName, fieldConfigs] of Object.entries(resolvers)) {
     const type = schema.getType(typeName);
 
@@ -225,19 +228,29 @@ export function addResolversToSchema(
     }
 
     if (isEnumType(type)) {
-      let getValue = type.getValue.bind(type);
-      type.getValue = x => {
-        if (x in fieldConfigs) {
-          let old = getValue(x);
-          if (!old) {
-            return old;
-          }
-          old.value = (fieldConfigs as any)[x];
-          return old;
-        } else {
-          return getValue(x);
-        }
-      };
+      const values = type.getValues();
+      const newValues = {};
+      values.forEach(value => {
+        const newValue = (fieldConfigs as any)[value.name] || value.name;
+        (newValues as any)[value.name] = {
+          value: newValue,
+          deprecationReason: value.deprecationReason,
+          description: value.description,
+          astNode: value.astNode
+        };
+      });
+
+      // In place updating hack to get around pulling in the full
+      // schema walking and immutable updating machinery from graphql-tools
+      Object.assign(
+        type,
+        new GraphQLEnumType({
+          name: type.name,
+          description: type.description,
+          astNode: type.astNode,
+          values: newValues
+        })
+      );
     }
 
     if (!isObjectType(type)) continue;
