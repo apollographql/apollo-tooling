@@ -17,7 +17,8 @@ import {
   GraphQLEnumType,
   isAbstractType,
   isScalarType,
-  isEnumType
+  isEnumType,
+  GraphQLEnumValue
 } from "graphql";
 import { validateSDL } from "graphql/validation/validate";
 import { isDocumentNode, isNode } from "../utilities/graphql";
@@ -208,8 +209,6 @@ export function addResolversToSchema(
   schema: GraphQLSchema,
   resolvers: GraphQLResolverMap<any>
 ) {
-  const enumValueMap = Object.create(null);
-
   for (const [typeName, fieldConfigs] of Object.entries(resolvers)) {
     const type = schema.getType(typeName);
 
@@ -229,14 +228,15 @@ export function addResolversToSchema(
 
     if (isEnumType(type)) {
       const values = type.getValues();
-      const newValues = {};
+      const newValues: { [key: string]: GraphQLEnumValue } = {};
       values.forEach(value => {
         const newValue = (fieldConfigs as any)[value.name] || value.name;
-        (newValues as any)[value.name] = {
+        newValues[value.name] = {
           value: newValue,
           deprecationReason: value.deprecationReason,
           description: value.description,
-          astNode: value.astNode
+          astNode: value.astNode,
+          name: value.name
         };
       });
 
