@@ -245,9 +245,7 @@ export function addResolversToSchema(
       Object.assign(
         type,
         new GraphQLEnumType({
-          name: type.name,
-          description: type.description,
-          astNode: type.astNode,
+          ...type.toConfig(),
           values: newValues
         })
       );
