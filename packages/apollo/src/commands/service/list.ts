@@ -4,39 +4,27 @@ import { GraphQLSchema } from "graphql";
 import sortBy from "lodash.sortby";
 import { table } from "heroku-cli-util";
 import moment from "moment";
-import {
-  ApolloConfig,
-  GraphQLServiceProject,
-  isServiceProject
-} from "apollo-language-server";
+import { ApolloConfig, isServiceProject } from "apollo-language-server";
 import chalk from "chalk";
-import { pluralize } from "../../utils";
-import { isNotNullOrUndefined } from "apollo-env";
 import {
   ListServices_service_implementingServices,
   ListServices_service_implementingServices_FederatedImplementingServices_services
 } from "apollo-language-server/lib/graphqlTypes";
-import { format } from "url";
 
 interface TasksOutput {
   config: ApolloConfig;
   implementingServices: ListServices_service_implementingServices | null;
-  errors?: Array<string>;
 }
 
 const formatImplementingService = (
   implementingService: ListServices_service_implementingServices_FederatedImplementingServices_services
 ) => {
-  let color = (x: string): string => x;
-
   return {
-    name: color(implementingService.name),
-    url: color(implementingService.url || ""),
-    updatedAt: color(
-      `${moment(implementingService.updatedAt).format("D MMMM YYYY")} (${moment(
-        implementingService.updatedAt
-      ).fromNow()})`
-    )
+    name: implementingService.name,
+    url: implementingService.url || "",
+    updatedAt: `${moment(implementingService.updatedAt).format(
+      "D MMMM YYYY"
+    )} (${moment(implementingService.updatedAt).fromNow()})`
   };
 };
 
@@ -83,13 +71,12 @@ function formatHumanReadable({
         }
       }
     );
+    const serviceListUrlEnding = `/service/${graphName}/service-list`;
+    const targetUrl = frontendUrl
+      ? `${frontendUrl}${serviceListUrlEnding}`
+      : `https://engine.apollographql.com${serviceListUrlEnding}`;
+    result += `\n\nView full details at: ${targetUrl}`;
   }
-  const serviceListUrlEnding = `/service/${graphName}/service-list`;
-  const targetUrl = frontendUrl
-    ? `${frontendUrl}${serviceListUrlEnding}`
-    : `https://engine.apollographql.com${serviceListUrlEnding}`;
-  result += `\n\nView full details at: ${targetUrl}`;
-
   return result;
 }
 
