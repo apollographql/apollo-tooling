@@ -255,7 +255,7 @@ export default class ServiceCheck extends ProjectCommand {
   };
 
   async run() {
-    // @ts-ignore we're goign to populate `taskOutput` later
+    // @ts-ignore we're going to populate `taskOutput` later
     const taskOutput: TasksOutput = {};
 
     // Define this constant so we can throw it and compare against the same value.

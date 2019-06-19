@@ -8,7 +8,10 @@ import { SCHEMA_TAGS_AND_FIELD_STATS } from "./operations/schemaTagsAndFieldStat
 import { UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA } from "./operations/uploadAndComposePartialSchema";
 import { CHECK_PARTIAL_SCHEMA } from "./operations/checkPartialSchema";
 import { REMOVE_SERVICE_AND_COMPOSE } from "./operations/removeServiceAndCompose";
+import { LIST_SERVICES } from "./operations/listServices";
 import {
+  ListServices,
+  ListServicesVariables,
   CheckSchema,
   CheckSchemaVariables,
   UploadSchema,
@@ -75,6 +78,29 @@ export class ApolloEngineClient extends GraphQLDataSource {
     request.headers[
       "apollo-client-version"
     ] = require("../../package.json").version;
+  }
+
+  public async listServices(variables: ListServicesVariables) {
+    return this.execute<ListServices>({
+      query: LIST_SERVICES,
+      variables
+    }).then(({ data, errors }) => {
+      // use error logger
+      if (errors) {
+        throw new Error(errors.map(error => error.message).join("\n"));
+      }
+
+      if (data && !data.service) {
+        throw new Error(
+          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+        );
+      }
+
+      if (!(data && data.service)) {
+        throw new Error("Error in request from Engine");
+      }
+      return data.service;
+    });
   }
 
   public async checkSchema(variables: CheckSchemaVariables) {
