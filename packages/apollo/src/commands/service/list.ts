@@ -71,7 +71,7 @@ function formatHumanReadable({
         }
       }
     );
-    const serviceListUrlEnding = `/service/${graphName}/service-list`;
+    const serviceListUrlEnding = `/graph/${graphName}/service-list`;
     const targetUrl = frontendUrl
       ? `${frontendUrl}${serviceListUrlEnding}`
       : `https://engine.apollographql.com${serviceListUrlEnding}`;
@@ -114,7 +114,7 @@ export default class ServiceList extends ProjectCommand {
          * A graph can be either a monolithic schema or the result of composition a federated schema.
          */
         const graphName = config.name;
-        const tag = flags.tag || "current"; //|| config.tag || "current";
+        const tag = flags.tag || config.tag || "current";
 
         if (!graphName) {
           throw new Error("No service found to link to Engine");
