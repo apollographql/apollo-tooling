@@ -24,7 +24,7 @@
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Fix bug causing some editor features to sometimes give stale results [#1361](https://github.com/apollographql/apollo-tooling/pull/1361)
 
 ## `apollo@2.13.1`, `apollo-graphql@0.3.2`
 
