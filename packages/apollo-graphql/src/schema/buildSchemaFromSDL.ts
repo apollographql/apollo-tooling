@@ -14,7 +14,11 @@ import {
   SchemaExtensionNode,
   OperationTypeNode,
   GraphQLObjectType,
-  isAbstractType
+  GraphQLEnumType,
+  isAbstractType,
+  isScalarType,
+  isEnumType,
+  GraphQLEnumValue
 } from "graphql";
 import { validateSDL } from "graphql/validation/validate";
 import { isDocumentNode, isNode } from "../utilities/graphql";
@@ -214,6 +218,37 @@ export function addResolversToSchema(
           (type as any)[fieldName.substring(2)] = fieldConfig;
         }
       }
+    }
+
+    if (isScalarType(type)) {
+      for (const fn in fieldConfigs) {
+        (type as any)[fn] = (fieldConfigs as any)[fn];
+      }
+    }
+
+    if (isEnumType(type)) {
+      const values = type.getValues();
+      const newValues: { [key: string]: GraphQLEnumValue } = {};
+      values.forEach(value => {
+        const newValue = (fieldConfigs as any)[value.name] || value.name;
+        newValues[value.name] = {
+          value: newValue,
+          deprecationReason: value.deprecationReason,
+          description: value.description,
+          astNode: value.astNode,
+          name: value.name
+        };
+      });
+
+      // In place updating hack to get around pulling in the full
+      // schema walking and immutable updating machinery from graphql-tools
+      Object.assign(
+        type,
+        new GraphQLEnumType({
+          ...type.toConfig(),
+          values: newValues
+        })
+      );
     }
 
     if (!isObjectType(type)) continue;
