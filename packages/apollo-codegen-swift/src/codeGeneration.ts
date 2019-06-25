@@ -207,9 +207,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           );
           fragmentsReferenced.forEach(fragmentName => {
             this.print(
-              `.appending(${this.helpers.structNameForFragmentName(
+              `.appending("\n\(${this.helpers.structNameForFragmentName(
                 fragmentName
-              )}.fragmentDefinition)`
+              )}.fragmentDefinition)")`
             );
           });
           this.print(" }");
