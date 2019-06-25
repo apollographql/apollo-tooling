@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.13.1 darwin-x64 node-v11.14.0
+apollo/2.14.0 darwin-x64 node-v10.16.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -453,12 +453,7 @@ USAGE
 
 OPTIONS
   -c, --config=config                                            Path to your Apollo config file
-
-  -f, --federated                                                Indicates that the schema is a partial schema from a
-                                                                 federated service
-
   -t, --tag=tag                                                  The published tag to check this service against
-
   --endpoint=endpoint                                            The url of your service
 
   --header=header                                                Additional header to send to server for
@@ -485,7 +480,8 @@ OPTIONS
                                                                  5% of total request volume)
 
   --serviceName=serviceName                                      Provides the name of the implementing service for a
-                                                                 federated graph
+                                                                 federated graph. This flag will indicate that the
+                                                                 schema is a partial schema from a federated service
 
   --validationPeriod=validationPeriod                            The size of the time window with which to validate the
                                                                  schema against. You may provide a number (in seconds),
