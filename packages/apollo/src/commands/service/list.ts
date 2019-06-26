@@ -59,7 +59,7 @@ function formatHumanReadable({
       {
         columns: [
           { key: "name", label: "Name" },
-          { key: "url", label: "Url" },
+          { key: "url", label: "URL" },
           { key: "updatedAt", label: "Last Updated At" }
         ],
         // Override `printHeader` so we don't print a header
@@ -88,11 +88,6 @@ export default class ServiceList extends ProjectCommand {
       char: "t",
       description: "The published tag to list the services from"
     })
-    // json: flags.boolean({
-    //   description:
-    //     "Output result in json, which can then be parsed by CLI tools such as jq.",
-    //   exclusive: ["markdown"]
-    // }),
   };
 
   async run() {
@@ -114,7 +109,7 @@ export default class ServiceList extends ProjectCommand {
          * A graph can be either a monolithic schema or the result of composition a federated schema.
          */
         const graphName = config.name;
-        const tag = flags.tag || config.tag || "current";
+        const variant = flags.tag || config.tag || "current";
 
         if (!graphName) {
           throw new Error("No service found to link to Engine");
@@ -130,7 +125,7 @@ export default class ServiceList extends ProjectCommand {
                 implementingServices
               } = await project.engine.listServices({
                 id: graphName,
-                graphVariant: tag
+                graphVariant: variant
               });
               const newContext: typeof ctx = {
                 implementingServices,
