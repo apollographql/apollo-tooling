@@ -4,7 +4,11 @@ import { GraphQLSchema } from "graphql";
 import sortBy from "lodash.sortby";
 import { table } from "heroku-cli-util";
 import moment from "moment";
-import { ApolloConfig, isServiceProject } from "apollo-language-server";
+import {
+  ApolloConfig,
+  isServiceProject,
+  DefaultEngineConfig
+} from "apollo-language-server";
 import chalk from "chalk";
 import {
   ListServices_service_implementingServices,
@@ -53,9 +57,7 @@ function formatHumanReadable({
     >(implementingServices.services, [service => service.name.toUpperCase()]);
 
     table(
-      [...sortedImplementingServices.map(formatImplementingService)].filter(
-        Boolean
-      ),
+      sortedImplementingServices.map(formatImplementingService).filter(Boolean),
       {
         columns: [
           { key: "name", label: "Name" },
@@ -72,9 +74,7 @@ function formatHumanReadable({
       }
     );
     const serviceListUrlEnding = `/graph/${graphName}/service-list`;
-    const targetUrl = frontendUrl
-      ? `${frontendUrl}${serviceListUrlEnding}`
-      : `https://engine.apollographql.com${serviceListUrlEnding}`;
+    const targetUrl = `${frontendUrl}${serviceListUrlEnding}`;
     result += `\n\nView full details at: ${targetUrl}`;
   }
   return result;
@@ -161,7 +161,8 @@ export default class ServiceList extends ProjectCommand {
       formatHumanReadable({
         implementingServices: taskOutput.implementingServices,
         graphName: taskOutput.config.name,
-        frontendUrl: taskOutput.config.engine.frontend
+        frontendUrl:
+          taskOutput.config.engine.frontend || DefaultEngineConfig.frontend
       })
     );
   }

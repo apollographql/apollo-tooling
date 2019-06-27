@@ -50,6 +50,10 @@ let mockedConsoleLogOriginal: Console["log"] | null = null;
  */
 let mockedConsoleLogValues: string[] | null = null;
 
+// TODO: the following two functions are identical to the ones found in list.test.ts
+// we are choosing to duplicate them for now, because with a shared helper function,
+// jest overwrites console log output as the tests are run in parallel
+
 /**
  * Mock and capture `console.log` and `stdout.write`s. Return them in that order as a single string.
  *

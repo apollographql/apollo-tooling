@@ -9,7 +9,6 @@ export const LIST_SERVICES = gql`
           services {
             graphID
             graphVariant
-            __typename
             name
             url
             updatedAt
