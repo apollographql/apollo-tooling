@@ -21,14 +21,15 @@ interface TasksOutput {
 }
 
 const formatImplementingService = (
-  implementingService: ListServices_service_implementingServices_FederatedImplementingServices_services
+  implementingService: ListServices_service_implementingServices_FederatedImplementingServices_services,
+  effectiveDate: Date = new Date()
 ) => {
   return {
     name: implementingService.name,
     url: implementingService.url || "",
     updatedAt: `${moment(implementingService.updatedAt).format(
       "D MMMM YYYY"
-    )} (${moment(implementingService.updatedAt).fromNow()})`
+    )} (${moment(implementingService.updatedAt).from(effectiveDate)})`
   };
 };
 
@@ -57,7 +58,16 @@ function formatHumanReadable({
     >(implementingServices.services, [service => service.name.toUpperCase()]);
 
     table(
-      sortedImplementingServices.map(formatImplementingService).filter(Boolean),
+      sortedImplementingServices
+        .map(sortedImplementingService =>
+          formatImplementingService(
+            sortedImplementingService,
+            // Force the time to a specific value if we're running tests. Otherwise the snapshots will break
+            // when the relative time changes.
+            process.env.NODE_ENV === "test" ? new Date("2019-06-13") : undefined
+          )
+        )
+        .filter(Boolean),
       {
         columns: [
           { key: "name", label: "Name" },
