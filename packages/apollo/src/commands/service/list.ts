@@ -70,9 +70,9 @@ function formatHumanReadable({
         .filter(Boolean),
       {
         columns: [
-          { key: "name", label: "Name" },
+          { key: "name", label: "name" },
           { key: "url", label: "URL" },
-          { key: "updatedAt", label: "Last Updated At" }
+          { key: "updatedAt", label: "last updated" }
         ],
         // The default `printLine` will output to the console; we want to capture the output so we can test
         // it.
