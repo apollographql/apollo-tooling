@@ -4,7 +4,7 @@
 
 - `apollo`
   - Relax graphql version, resolve missing types "Boolean", "String" [#1355](https://github.com/apollographql/apollo-tooling/pull/1355)
-  - Add `service:list` and tests [#1358](https://github.com/apollographql/apollo-tooling/pull/1358)
+  - Add `service:list` and tests [#1358](https://github.com/apollographql/apollo-tooling/pull/1358) and header [#1377](https://github.com/apollographql/apollo-tooling/pull/1377)
   - Update `service:list` test to use a simulated time to prevent relative dates causing snapshot failures [#1374](https://github.com/apollographql/apollo-tooling/pull/1374)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
