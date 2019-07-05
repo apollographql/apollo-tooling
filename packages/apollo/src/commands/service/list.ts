@@ -74,8 +74,6 @@ function formatHumanReadable({
           { key: "url", label: "URL" },
           { key: "updatedAt", label: "Last Updated At" }
         ],
-        // Override `printHeader` so we don't print a header
-        printHeader: () => {},
         // The default `printLine` will output to the console; we want to capture the output so we can test
         // it.
         printLine: line => {
