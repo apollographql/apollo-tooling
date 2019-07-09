@@ -67,15 +67,16 @@ function formatHumanReadable({
             process.env.NODE_ENV === "test" ? new Date("2019-06-13") : undefined
           )
         )
+        .sort((s1, s2) =>
+          s1.name.toUpperCase() > s2.name.toUpperCase() ? 1 : -1
+        )
         .filter(Boolean),
       {
         columns: [
-          { key: "name", label: "Name" },
+          { key: "name", label: "name" },
           { key: "url", label: "URL" },
-          { key: "updatedAt", label: "Last Updated At" }
+          { key: "updatedAt", label: "last updated" }
         ],
-        // Override `printHeader` so we don't print a header
-        printHeader: () => {},
         // The default `printLine` will output to the console; we want to capture the output so we can test
         // it.
         printLine: line => {

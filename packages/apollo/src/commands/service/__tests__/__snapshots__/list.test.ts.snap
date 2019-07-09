@@ -16,6 +16,8 @@ Loading Apollo Project [completed]
 Fetching list of services for graph engine [started]
 Fetching list of services for graph engine [completed]
 
+name       URL                            last updated
+─────────  ─────────────────────────────  ─────────────────────────
 accounts   http://localhost:4001/graphql  13 May 2019 (a month ago)
 inventory  http://localhost:4002/graphql  16 May 2019 (a month ago)
 products   http://localhost:4003/graphql  16 May 2019 (a month ago)
