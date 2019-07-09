@@ -67,6 +67,9 @@ function formatHumanReadable({
             process.env.NODE_ENV === "test" ? new Date("2019-06-13") : undefined
           )
         )
+        .sort((s1, s2) =>
+          s1.name.toUpperCase() > s2.name.toUpperCase() ? 1 : -1
+        )
         .filter(Boolean),
       {
         columns: [
