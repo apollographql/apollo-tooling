@@ -1,4 +1,4 @@
-import {
+import ServiceCheck, {
   formatHumanReadable,
   formatMarkdown,
   formatTimePeriod
@@ -6,6 +6,353 @@ import {
 import checkSchemaResult from "../../../../__fixtures__/check-schema-result";
 import { ChangeSeverity } from "apollo-language-server/lib/graphqlTypes";
 import chalk from "chalk";
+import nock = require("nock");
+import { stdout, stderr } from "stdout-stderr";
+import * as graphql from "graphql";
+
+/**
+ * Single URL for all local requests to be mocked
+ */
+const localURL = "http://localhost:4000";
+
+/**
+ * Default API key. This is not an actual API key but a randomly generated string.
+ *
+ * If you need to use the `nock` recorder, then this will not work because we won't be able to access engine
+ * with a fake API key.
+ */
+const fakeApiKey = "service:engine:9YC5AooMa2yO11eFlZat11";
+
+/**
+ * Engine API key we're using.
+ *
+ * This is hard-coded to `fakeApiKey` because this is out day-to-day usage should be. If we're going to be
+ * updating the mocked data; we'll need to use a real API key (see [README#Regenerating Mocked Network
+ * Data](https://github.com/apollographql/apollo-tooling#regenerating-mocked-network-data)); which will be
+ * placed here.
+ */
+const apiKey = fakeApiKey;
+
+/**
+ * An array that we'll spread into all CLI commands to pass the engine api key.
+ */
+const cliKeyParameter = [`--key=${apiKey}`];
+
+/**
+ * The original `console.log` being mocked.
+ *
+ * We save it so we can restore it after a test.
+ */
+let mockedConsoleLogOriginal: Console["log"] | null = null;
+
+/**
+ * Array of intercepted console values.
+ */
+let mockedConsoleLogValues: string[] | null = null;
+
+// TODO: the following two functions are identical to the ones found in list.test.ts
+// we are choosing to duplicate them for now, because with a shared helper function,
+// jest overwrites console log output as the tests are run in parallel
+
+/**
+ * Mock and capture `console.log` and `stdout.write`s. Return them in that order as a single string.
+ *
+ * This will emulate what the output of running the CLI would look like.
+ *
+ * Call `uncaptureApplicationOutput` to reverse the effects of this function.
+ */
+function captureApplicationOutput() {
+  mockedConsoleLogOriginal = console["log"];
+  mockedConsoleLogValues = [];
+  console["log"] = jest.fn((...items) => {
+    if (!mockedConsoleLogValues) {
+      throw new Error(
+        "mockedConsoleLogValues is not prepared but we're still capturing console.log. This means there's a bug somewhere."
+      );
+    }
+
+    mockedConsoleLogValues.push(items.join(" "));
+  });
+
+  stdout.start();
+}
+
+/**
+ * Reverse mocking of `console.log` and `stdout.write`. If they weren't mocked to begin with, this will do
+ * nothing and return null.
+ */
+function uncaptureApplicationOutput(): string | null {
+  // These will be `null` if we haven't mocked `console.log`.
+  if (!mockedConsoleLogOriginal || !mockedConsoleLogValues) {
+    return null;
+  }
+
+  const result = mockedConsoleLogValues.concat(stdout.output).join("\n");
+  mockedConsoleLogValues = null;
+
+  // Restore `console.log`
+  console["log"] = mockedConsoleLogOriginal;
+
+  // Stop capturing `stdout`.
+  stdout.stop();
+
+  return result;
+}
+
+/**
+ * Convert a schema SDL to an introspection query result.
+ *
+ * @see https://blog.apollographql.com/three-ways-to-represent-your-graphql-schema-a41f4175100d
+ *
+ * @param schemaSdl string Schema in SDL form
+ */
+function sdlToIntrospectionQueryResult(schemaSdl: string) {
+  return graphql.graphqlSync(
+    graphql.buildSchema(schemaSdl),
+    graphql.introspectionQuery
+  ).data;
+}
+
+/**
+ * Use `nock` to mock an `IntrospectionQuery`
+ *
+ * @param url string Root of the URL to mock; `/graphql` will automatically be appended
+ * @param sdl SDL of the schema to mock
+ */
+function mockIntrospectionQuery() {
+  nock(localURL, { encodedQueryParams: true })
+    .post("/graphql", request => request.operationName === "IntrospectionQuery")
+    .reply(200, {
+      // The SDL doesn't actually get used because we'll be simulating network responses regardless of input,
+      // so we just use a fake SDL.
+      data: sdlToIntrospectionQueryResult(`type Query { me: ID }`)
+    });
+}
+
+/**
+ * Mock the network requests for a composition failure.
+ */
+function mockCompositionFailure() {
+  mockIntrospectionQuery();
+
+  nock(localURL, {
+    encodedQueryParams: true
+  })
+    .post(
+      "/graphql",
+      ({ operationName }) => operationName === "getFederationInfo"
+    )
+    .reply(200, {
+      data: {
+        _service: {
+          sdl:
+            'extend type Query {\n  me: User\n}\n\ntype User @key(fields: "id") {\n  name: String\n  username: String\n  birthDate: String\n}\n'
+        }
+      }
+    });
+
+  nock("https://engine-staging-graphql.apollographql.com:443", {
+    encodedQueryParams: true
+  })
+    .post(
+      "/api/graphql",
+      ({ operationName }) => operationName === "CheckPartialSchema"
+    )
+    .reply(200, {
+      data: {
+        service: {
+          validatePartialSchemaOfImplementingServiceAgainstGraph: {
+            compositionValidationDetails: {
+              schemaHash: null
+            },
+            warnings: [],
+            errors: [
+              {
+                message:
+                  "[reviews] User.id -> marked @external but it does not have a matching field on on the base service (accounts)"
+              },
+              {
+                message:
+                  "[reviews] User -> A @key selects id, but User.id could not be found"
+              },
+              {
+                message:
+                  "[accounts] User -> A @key selects id, but User.id could not be found"
+              }
+            ]
+          }
+        }
+      }
+    });
+}
+
+/**
+ * Mock network requests for a successful schema composition. This includes the subsequent `CheckSchema`
+ * request that will be made.
+ */
+function mockCompositionSuccess() {
+  mockIntrospectionQuery();
+
+  nock(localURL, {
+    encodedQueryParams: true
+  })
+    .post(
+      "/graphql",
+      ({ operationName }) => operationName === "getFederationInfo"
+    )
+    .reply(200, {
+      data: {
+        _service: {
+          sdl:
+            'extend type Query {\n  me: User\n}\n\ntype User @key(fields: "id") {\n  name: String\n  username: String\n  birthDate: String\n}\n'
+        }
+      }
+    });
+
+  nock("https://engine-staging-graphql.apollographql.com:443", {
+    encodedQueryParams: true
+  })
+    .post(
+      "/api/graphql",
+      ({ operationName }) => operationName === "CheckPartialSchema"
+    )
+    .reply(200, {
+      data: {
+        service: {
+          validatePartialSchemaOfImplementingServiceAgainstGraph: {
+            compositionValidationDetails: {
+              schemaHash:
+                "645fdd4b789fffb5c5b59443a12e6f575e61345e95fe9e1dae3fe9acb23c68efa8ac31ea657892f0a85d1c90d8503fe9e482f520fe8d9786ae26948de10ce4a6"
+            },
+            warnings: [],
+            errors: []
+          }
+        }
+      }
+    });
+
+  nock("https://engine-staging-graphql.apollographql.com:443", {
+    encodedQueryParams: true
+  })
+    .post(
+      "/api/graphql",
+      ({ operationName }) => operationName === "CheckSchema"
+    )
+    .reply(200, {
+      data: {
+        service: {
+          checkSchema: {
+            targetUrl:
+              "https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc",
+            diffToPrevious: {
+              severity: "NOTICE",
+              affectedClients: [],
+              affectedQueries: [],
+              numberOfCheckedOperations: 0,
+              changes: [
+                {
+                  severity: "NOTICE",
+                  code: "ARG_CHANGED_TYPE",
+                  description:
+                    "`Query.launches` argument `after` has changed type from `String` to `String!`"
+                }
+              ],
+              validationConfig: {
+                from: "-47347200",
+                to: "-0",
+                queryCountThreshold: 1,
+                queryCountThresholdPercentage: 0
+              }
+            }
+          }
+        }
+      }
+    });
+}
+
+/**
+ * Mock network requests for a non-federated schema check that produces errors.
+ */
+function mockNonFederatedFailure() {
+  mockIntrospectionQuery();
+
+  nock("https://engine-staging-graphql.apollographql.com:443", {
+    encodedQueryParams: true
+  })
+    .post("/api/graphql", () => true)
+    .reply(200, {
+      data: {
+        service: {
+          checkSchema: {
+            targetUrl:
+              "https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc",
+            diffToPrevious: {
+              severity: "FAILURE",
+              affectedClients: [],
+              affectedQueries: [],
+              numberOfCheckedOperations: 0,
+              changes: [
+                {
+                  severity: "FAILURE",
+                  code: "ARG_CHANGED_TYPE",
+                  description:
+                    "`Query.launches` argument `after` has changed type from `String` to `String!`"
+                }
+              ],
+              validationConfig: {
+                from: "-47347200",
+                to: "-0",
+                queryCountThreshold: 1,
+                queryCountThresholdPercentage: 0
+              }
+            }
+          }
+        }
+      }
+    });
+}
+
+/**
+ * Mock network requests for a non-federated schema check that produces no errors.
+ */
+function mockNonFederatedSuccess() {
+  mockIntrospectionQuery();
+
+  nock("https://engine-staging-graphql.apollographql.com:443", {
+    encodedQueryParams: true
+  })
+    .post("/api/graphql", () => true)
+    .reply(200, {
+      data: {
+        service: {
+          checkSchema: {
+            targetUrl:
+              "https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc",
+            diffToPrevious: {
+              severity: "NOTICE",
+              affectedClients: [],
+              affectedQueries: [],
+              numberOfCheckedOperations: 0,
+              changes: [
+                {
+                  severity: "NOTICE",
+                  code: "ARG_CHANGED_TYPE",
+                  description:
+                    "`Query.launches` argument `after` has changed type from `String` to `String!`"
+                }
+              ],
+              validationConfig: {
+                from: "-47347200",
+                to: "-0",
+                queryCountThreshold: 1,
+                queryCountThresholdPercentage: 0
+              }
+            }
+          }
+        }
+      }
+    });
+}
 
 describe("service:check", () => {
   let originalChalkEnabled;
@@ -13,10 +360,247 @@ describe("service:check", () => {
   beforeEach(() => {
     originalChalkEnabled = chalk.enabled;
     chalk.enabled = false;
+
+    // Clean console log capturing before tests in the event that `afterEach` was not run successfully.
+    uncaptureApplicationOutput();
+
+    // Clean up all network mocks before tests in the event that `afterEach` was not run successfully.
+    nock.cleanAll();
+
+    nock.disableNetConnect();
+
+    // Set the jest timeout to be longer than the default 5000ms to compensate for slow CI.
+    jest.setTimeout(15000);
   });
 
   afterEach(() => {
     chalk.enabled = originalChalkEnabled;
+
+    // Clean up console log mocking
+    uncaptureApplicationOutput();
+
+    // Clean up all network mocks and restore original functionality
+    nock.cleanAll();
+    nock.enableNetConnect();
+  });
+
+  // These are integration tests and not e2e tests because these don't actually hit the remote server.
+  describe("integration", () => {
+    describe("federated", () => {
+      describe("should report composition errors correctly", () => {
+        it("vanilla", async () => {
+          captureApplicationOutput();
+          mockCompositionFailure();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`
+            ])
+          ).rejects.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        // This feature is not yet available. Adding markdown and json output support for federated services
+        // will require a minor refactor. Work can be tracked at
+        // https://apollographql.atlassian.net/browse/AP-491
+        it.skip("--markdown", async () => {
+          captureApplicationOutput();
+          mockCompositionFailure();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              "--markdown"
+            ])
+          ).rejects.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        // This feature is not yet available. Adding markdown and json output support for federated services
+        // will require a minor refactor. Work can be tracked at
+        // https://apollographql.atlassian.net/browse/AP-491
+        it.skip("--json", async () => {
+          captureApplicationOutput();
+          mockCompositionFailure();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              "--json"
+            ])
+          ).rejects.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+      });
+
+      describe("should report composition success correctly", () => {
+        it("vanilla", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`
+            ])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        // This feature is not yet available. Adding markdown and json output support for federated services
+        // will require a minor refactor. Work can be tracked at
+        // https://apollographql.atlassian.net/browse/AP-491
+        it.skip("--markdown", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              "--markdown"
+            ])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        // This feature is not yet available. Adding markdown and json output support for federated services
+        // will require a minor refactor. Work can be tracked at
+        // https://apollographql.atlassian.net/browse/AP-491
+        it.skip("--json", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              "--json"
+            ])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+      });
+    });
+
+    describe("non-federated", () => {
+      describe("should report traffic errors correctly", () => {
+        it("vanilla", async () => {
+          captureApplicationOutput();
+          mockNonFederatedFailure();
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([...cliKeyParameter])
+          ).rejects.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("--markdown", async () => {
+          captureApplicationOutput();
+          mockNonFederatedFailure();
+          expect.assertions(2);
+
+          // markdown formatted output should not throw
+          await expect(
+            ServiceCheck.run([...cliKeyParameter, "--markdown"])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("--json", async () => {
+          captureApplicationOutput();
+          mockNonFederatedFailure();
+          expect.assertions(2);
+
+          // JSON formatted output should not throw
+          await expect(
+            ServiceCheck.run([...cliKeyParameter, "--json"])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+      });
+
+      describe("should report traffic non-errors correctly", () => {
+        it("vanilla", async () => {
+          captureApplicationOutput();
+          mockNonFederatedSuccess();
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([...cliKeyParameter])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("--markdown", async () => {
+          captureApplicationOutput();
+          mockNonFederatedSuccess();
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([...cliKeyParameter, "--markdown"])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("--json", async () => {
+          captureApplicationOutput();
+          mockNonFederatedSuccess();
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([...cliKeyParameter, "--json"])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+      });
+    });
   });
 
   describe("markdown formatting", () => {
@@ -27,16 +611,7 @@ describe("service:check", () => {
           tag: "staging",
           checkSchemaResult
         })
-      ).toMatchInlineSnapshot(`
-        "
-        ### Apollo Service Check
-        🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
-        🔢 Compared **18 schema changes** against **100 operations** seen over the **last 24 hours**.
-        ❌ Found **7 breaking changes** that would affect **3 operations** across **2 clients**
-
-        🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
-        "
-      `);
+      ).toMatchSnapshot();
       // Check when all the values are singluar
       expect(
         formatMarkdown({
@@ -61,16 +636,7 @@ describe("service:check", () => {
             }
           }
         })
-      ).toMatchInlineSnapshot(`
-        "
-        ### Apollo Service Check
-        🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
-        🔢 Compared **1 schema change** against **1 operation** seen over the **last 24 hours**.
-        ❌ Found **1 breaking change** that would affect **1 operation** across **1 client**
-
-        🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
-        "
-      `);
+      ).toMatchSnapshot();
     });
 
     it("is correct with no breaking changes", () => {
@@ -89,16 +655,7 @@ describe("service:check", () => {
             }
           }
         })
-      ).toMatchInlineSnapshot(`
-        "
-        ### Apollo Service Check
-        🔄 Validated your local schema against schema tag \`staging\` on service \`engine\`.
-        🔢 Compared **0 schema changes** against **100 operations** seen over the **last 24 hours**.
-        ✅ Found **no breaking changes**.
-
-        🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z).
-        "
-      `);
+      ).toMatchSnapshot();
     });
   });
 
@@ -130,30 +687,7 @@ describe("service:check", () => {
         formatHumanReadable({
           checkSchemaResult
         })
-      ).toMatchInlineSnapshot(`
-        "
-        FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
-        FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
-        FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
-        FAIL    FIELD_CHANGED_TYPE         \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
-        FAIL    FIELD_REMOVED              \`Change.affectedClients\` was removed
-        FAIL    FIELD_REMOVED              \`NamedIntrospectionValue.printedType\` was removed
-        FAIL    TYPE_REMOVED               \`NamedIntrospectionArg\` removed
-
-        PASS    ARG_REMOVED                \`ServiceMutation.registerOperations\` arg \`manifestVersion\` was removed
-        PASS    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`historicParameters\` was removed
-        PASS    FIELD_ADDED                \`Service.schemaNotificationChannels\` was added
-        PASS    FIELD_ADDED                \`ServiceMutation.deregisterSchemaNotificationChannel\` was added
-        PASS    FIELD_ADDED                \`ServiceMutation.registerSchemaNotificationChannel\` was added
-        PASS    FIELD_DEPRECATION_REMOVED  \`AffectedClient.clientId\` is no longer deprecated
-        PASS    FIELD_DEPRECATION_REMOVED  \`Change.description\` is no longer deprecated
-        PASS    FIELD_REMOVED              \`AffectedClient.clientReferenceId\` was removed
-        PASS    FIELD_REMOVED              \`Change.affectedClientIdVersionPairs\` was removed
-        PASS    FIELD_REMOVED              \`Change.affectedClientReferenceIds\` was removed
-        PASS    FIELD_REMOVED              \`SchemaDiff.numberOfCheckedOperations\` was removed
-
-        View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
-      `);
+      ).toMatchSnapshot();
     });
 
     it("should have correct output with only non-breaking changes", () => {
@@ -169,12 +703,7 @@ describe("service:check", () => {
             }
           }
         })
-      ).toMatchInlineSnapshot(`
-        "
-        No changes present between schemas
-
-        View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
-      `);
+      ).toMatchSnapshot();
     });
 
     it("should have correct output with only breaking changes", () => {
@@ -192,18 +721,7 @@ describe("service:check", () => {
             }
           }
         })
-      ).toMatchInlineSnapshot(`
-        "
-        FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
-        FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
-        FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
-        FAIL    FIELD_CHANGED_TYPE  \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
-        FAIL    FIELD_REMOVED       \`Change.affectedClients\` was removed
-        FAIL    FIELD_REMOVED       \`NamedIntrospectionValue.printedType\` was removed
-        FAIL    TYPE_REMOVED        \`NamedIntrospectionArg\` removed
-
-        View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
-      `);
+      ).toMatchSnapshot();
     });
   });
 });
@@ -214,7 +732,7 @@ describe("service:check", () => {
 // });
 
 // // this is because of herkou-cli-utils hacky mocking system on their console logger
-// import { stdout, mockConsole } from "heroku-cli-util";
+// import { stdout, captureApplicationOutput } from "heroku-cli-util";
 // import path from "path";
 // import fs from "fs";
 // import { test as setup } from "apollo-cli-test";
@@ -225,7 +743,7 @@ describe("service:check", () => {
 
 // import { vol, fs as mockFS } from "apollo-codegen-core/lib/localfs";
 
-// const test = setup.do(() => mockConsole());
+// const test = setup.do(() => captureApplicationOutput());
 // const ENGINE_API_KEY = "service:test:1234";
 // const hash = "12345";
 // const schemaContents = fs.readFileSync(

@@ -44,7 +44,6 @@ export default class ServiceDelete extends ProjectCommand {
 
           const {
             errors,
-            warnings,
             updatedGateway
           } = await project.engine.removeServiceAndCompose({
             id: config.name,
@@ -56,7 +55,6 @@ export default class ServiceDelete extends ProjectCommand {
             serviceName: flags.serviceName,
             graphVariant,
             graphName: config.name,
-            warnings,
             errors,
             updatedGateway
           };
@@ -70,10 +68,6 @@ export default class ServiceDelete extends ProjectCommand {
 
     if (result.errors && result.errors.length) {
       this.error(result.errors.map(error => error.message).join("\n"));
-    }
-
-    if (result.warnings && result.warnings.length) {
-      this.warn(result.warnings.map(warning => warning.message).join("\n"));
     }
 
     if (result.updatedGateway) {

@@ -43,6 +43,7 @@ export interface CompilerOptions {
   generateOperationIds?: boolean;
   operationIdsPath?: string;
   fileExtension?: string;
+  useReadOnlyTypes?: boolean;
 }
 
 export interface CompilerContext {

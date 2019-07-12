@@ -21,10 +21,8 @@ import {
 import { collectAndMergeFields } from "apollo-codegen-core/lib/compiler/visitors/collectAndMergeFields";
 
 import { BasicGeneratedFile } from "apollo-codegen-core/lib/utilities/CodeGenerator";
-import TypescriptGenerator, {
-  ObjectProperty,
-  TypescriptCompilerOptions
-} from "./language";
+import { CompilerOptions } from "apollo-codegen-core/lib/compiler";
+import TypescriptGenerator, { ObjectProperty } from "./language";
 import Printer from "./printer";
 import { DEFAULT_FILE_EXTENSION } from "./helpers";
 import { GraphQLType, isListType } from "graphql/type/definition";
@@ -226,7 +224,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
   scopeStack: string[];
 
   constructor(context: CompilerContext) {
-    super(context.options as TypescriptCompilerOptions);
+    super(context.options as CompilerOptions);
 
     this.context = context;
     this.printer = new Printer();

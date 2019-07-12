@@ -4,7 +4,14 @@ import {
   GraphQLSchema,
   GraphQLDirective,
   DirectiveLocation,
-  GraphQLObjectType
+  GraphQLObjectType,
+  GraphQLAbstractType,
+  GraphQLScalarType,
+  GraphQLScalarTypeConfig,
+  GraphQLEnumType,
+  Kind,
+  execute,
+  ExecutionResult
 } from "graphql";
 
 import astSerializer from "./snapshotSerializers/astSerializer";
@@ -345,6 +352,7 @@ type MutationRoot {
       );
     });
   });
+
   describe(`resolvers`, () => {
     it(`should add a resolver for a field`, () => {
       const name = () => {};
@@ -371,6 +379,129 @@ type MutationRoot {
       expect(nameField).toBeDefined();
 
       expect(nameField.resolve).toEqual(name);
+    });
+
+    it(`should add meta fields to abstract types`, () => {
+      const typeDefs = gql`
+        union Animal = Dog
+
+        interface Creature {
+          name: String!
+          legs: Int!
+        }
+
+        type Dog {
+          id: ID!
+        }
+
+        type Cat implements Creature {
+          meow: Boolean!
+        }
+      `;
+
+      const resolveTypeUnion = (obj: any) => {
+        return "Dog";
+      };
+
+      const resolveTypeInterface = (obj: any) => {
+        if (obj.meow) {
+          return "Cat";
+        }
+        throw Error("Couldn't resolve interface");
+      };
+
+      const resolvers = {
+        Animal: {
+          __resolveType: resolveTypeUnion
+        },
+        Creature: {
+          __resolveType: resolveTypeInterface
+        }
+      };
+
+      const schema = buildSchemaFromSDL([{ typeDefs, resolvers }]);
+      const animalUnion = schema.getType("Animal") as GraphQLAbstractType;
+      const creatureInterface = schema.getType(
+        "Creature"
+      ) as GraphQLAbstractType;
+
+      expect(animalUnion.resolveType).toBe(resolveTypeUnion);
+      expect(creatureInterface.resolveType).toBe(resolveTypeInterface);
+    });
+
+    it(`should add resolvers for scalar types`, () => {
+      const typeDefs = gql`
+        scalar Custom
+      `;
+
+      const customTypeConfig: GraphQLScalarTypeConfig<string, string> = {
+        name: "Custom",
+        serialize: value => value,
+        parseValue: value => value,
+        parseLiteral: input => {
+          if (input.kind !== Kind.STRING) {
+            throw new Error("Expected value to be string");
+          }
+          return input.value;
+        }
+      };
+
+      const CustomType = new GraphQLScalarType(customTypeConfig);
+
+      const resolvers = { Custom: CustomType };
+
+      const schema = buildSchemaFromSDL([{ typeDefs, resolvers }]);
+      const custom = schema.getType("Custom") as GraphQLScalarType;
+
+      expect(custom.parseLiteral).toBe(CustomType.parseLiteral);
+      expect(custom.parseValue).toBe(CustomType.parseValue);
+      expect(custom.serialize).toBe(CustomType.serialize);
+    });
+
+    it(`should add resolvers to enum types`, () => {
+      const typeDefs = gql`
+        enum AllowedColor {
+          RED
+          GREEN
+          BLUE
+        }
+
+        type Query {
+          favoriteColor: AllowedColor
+          avatar(borderColor: AllowedColor): String
+        }
+      `;
+
+      const mockResolver = jest.fn();
+
+      const resolvers = {
+        AllowedColor: {
+          RED: "#f00",
+          GREEN: "#0f0",
+          BLUE: "#00f"
+        },
+        Query: {
+          favoriteColor: () => "#f00",
+          avatar: (_: any, params: any) => mockResolver(_, params)
+        }
+      };
+
+      const schema = buildSchemaFromSDL([{ typeDefs, resolvers }]);
+      const colorEnum = schema.getType("AllowedColor") as GraphQLEnumType;
+
+      let result = execute(
+        schema,
+        gql`
+          query {
+            favoriteColor
+            avatar(borderColor: RED)
+          }
+        `
+      );
+
+      expect((result as ExecutionResult).data!.favoriteColor).toBe("RED");
+      expect(colorEnum.getValue("RED")!.value).toBe("#f00");
+      expect(mockResolver).toBeCalledWith(undefined, { borderColor: "#f00" });
     });
   });
 });

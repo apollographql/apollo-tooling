@@ -77,11 +77,17 @@ export default class Generate extends ClientCommand {
     useFlowExactObjects: flags.boolean({
       description: "Use Flow exact objects for generated types [flow only]"
     }),
+
     useFlowReadOnlyTypes: flags.boolean({
-      description: "Use Flow read only types for generated types [flow only]"
+      description:
+        "Use read only types for generated types [flow only]. **Deprecated in favor of `useReadOnlyTypes`.**"
     }),
 
     // flow / TS
+    useReadOnlyTypes: flags.boolean({
+      description: "Use read only types for generated types [flow | typescript]"
+    }),
+
     outputFlat: flags.boolean({
       description:
         'By default, TypeScript/Flow will put each generated file in a directory next to its source file using the value of the "output" as the directory name. Set "outputFlat" to put all generated files in the directory relative to the current working directory defined by "output".'
@@ -196,7 +202,8 @@ export default class Generate extends ClientCommand {
                     mergeInFieldsFromFragmentSpreads:
                       flags.mergeInFieldsFromFragmentSpreads,
                     useFlowExactObjects: flags.useFlowExactObjects,
-                    useFlowReadOnlyTypes: flags.useFlowReadOnlyTypes,
+                    useReadOnlyTypes:
+                      flags.useReadOnlyTypes || flags.useFlowReadOnlyTypes,
                     globalTypesFile: flags.globalTypesFile,
                     fileExtension: flags.fileExtension
                   }

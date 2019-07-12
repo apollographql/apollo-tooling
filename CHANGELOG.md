@@ -3,8 +3,9 @@
 ## Upcoming
 
 - `apollo`
-  - Leverage updates to apollo-language-server to support federated services [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
-  - Add `service:delete` command for deleting federated services [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - Relax graphql version, resolve missing types "Boolean", "String" [#1355](https://github.com/apollographql/apollo-tooling/pull/1355)
+  - Add `service:list` and tests [#1358](https://github.com/apollographql/apollo-tooling/pull/1358) and header [#1377](https://github.com/apollographql/apollo-tooling/pull/1377)
+  - Update `service:list` test to use a simulated time to prevent relative dates causing snapshot failures [#1374](https://github.com/apollographql/apollo-tooling/pull/1374)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -16,20 +17,109 @@
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
-  - Add new utils and predicates [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
+  - <First `apollo-graphql` related entry goes here>
+- `apollo-language-server`
+  - <First `apollo-language-server` related entry goes here>
+- `apollo-tools`
+  - <First `apollo-tools` related entry goes here>
+- `vscode-apollo`
+  - <First `vscode-apollo` related entry goes here>
+
+## `apollo-graphql@0.3.3`
+
+- `apollo-graphql@0.3.3`
+  - buildSchemaFromSDL - Add support for merging Scalar and Enum resolvers to schema [#1345](https://github.com/apollographql/apollo-tooling/pull/1345)
+
+## `apollo@2.14.0`, `apollo-language-server@1.11.0`, `vscode-apollo@1.7.4`
+
+- `apollo@2.14.0`
+  - Add integration tests to `service:check` [#1308](https://github.com/apollographql/apollo-tooling/pull/1308)
+  - Add support for federated service to `service:check` [#1308](https://github.com/apollographql/apollo-tooling/pull/1308)
+- `apollo-language-server@1.11.0`
+  - Add support for federated service to `service:check` [#1308](https://github.com/apollographql/apollo-tooling/pull/1308)
+- `vscode-apollo@1.7.4`
+  - Fix bug causing some editor features to sometimes give stale results [#1361](https://github.com/apollographql/apollo-tooling/pull/1361)
+
+## `apollo@2.13.1`, `apollo-graphql@0.3.2`
+
+- `apollo@2.13.1`
+  - Remove federation warnings and update types [#1332](https://github.com/apollographql/apollo-tooling/pull/1332)
+- `apollo-graphql@0.3.2`
+  - buildSchemaFromSDL - support meta fields on abstract types [#1330](https://github.com/apollographql/apollo-tooling/pull/1330)
+
+## `apollo@2.13.0`, `apollo-language-server@1.10.0`
+
+- `apollo@2.13.0`
+  - update `client:push` to pass the tag / graphVariant [#1307](https://github.com/apollographql/apollo-tooling/pull/1307)
+- `apollo-language-server@1.10.0`
+  - Use offset equal to length of tagname when parsing JS documents[#1050](https://github.com/apollographql/apollo-tooling/issues/1050)
+  - Allow template literal placeholders that span multiple rows[#1299](https://github.com/apollographql/apollo-tooling/pull/1299)
+
+## `apollo@2.12.4`, `apollo-language-server@1.9.0`, `vscode-apollo@1.7.0`
+
+- `apollo@2.12.4`
+  - Update client:push command with new resolver and more output [#1290](https://github.com/apollographql/apollo-tooling/pull/1290)
+- `apollo-language-server@1.9.0`
+  - update stats window types [#1292](https://github.com/apollographql/apollo-tooling/pull/1292)
+  - Allow configuration of validation rules [#1288](https://github.com/apollographql/apollo-tooling/pull/1288)
+- `vscode-apollo@1.7.0`
+  - Allow configuration of validation rules [#1288](https://github.com/apollographql/apollo-tooling/pull/1288)
+
+## `apollo@2.12.3`, `apollo-language-server@1.8.4`
+
+- `apollo@2.12.3`
+  - Pin graphql to the ~14.2.x range (#1291)[https://github.com/apollographql/apollo-tooling/pull/1291]
+- `apollo-language-server@1.8.4`
+  - Pin graphql to the ~14.2.x range (#1291)[https://github.com/apollographql/apollo-tooling/pull/1291]
+
+## `apollo@2.12.1`, `apollo-language-server@1.8.3`
+
+- `apollo@2.12.1`
+  - Add debugging logs to `apollo client:push` and `apollo service:push` [# 1273](https://github.com/apollographql/apollo-tooling/pull/1273)
+  - remove `apollo service:info` command, since it's undocumented and unused [#1274](https://github.com/apollographql/apollo-tooling/pull/1274)
+- `apollo-language-server@1.8.3`
+  - Fix \_\_typename addition for InlineFragments [#1286](https://github.com/apollographql/apollo-tooling/pull/1286)
+
+## `apollo-codegen-flow@0.33.10`, `apollo-codegen-typescript@0.34.0`, `vscode-apollo@1.6.10`
+
+- `apollo-codegen-flow@0.33.10`
+  - Renamed `useFlowReadOnlyTypes` option to `useReadOnlyTypes` [#1205](https://github.com/apollographql/apollo-tooling/pull/1205)
+- `apollo-codegen-typescript@0.34.0`
+  - Added `useReadOnlyTypes` option to use readonly types [#1205](https://github.com/apollographql/apollo-tooling/pull/1205)
+- `vscode-apollo@1.6.10`
+  - Fix defaultValue syntax highlighting [#1269](https://github.com/apollographql/apollo-tooling/pull/1269)
+  - Fix single quote syntax highlighting [#1270](https://github.com/apollographql/apollo-tooling/pull/1269)
+
+## `apollo@2.11.1`, `apollo-language-server@1.8.1`, `vscode-apollo@1.6.9`
+
+- `apollo@2.11.1`
+  - Document engine requirements in client:check and client:push [#1077](https://github.com/apollographql/apollo-tooling/pull/1077)
+- `apollo-language-server@1.8.1`
+  - Fix windows file paths by normalizing all URIs to a consistent format [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
+  - Fix positionToOffset to consider windows line endings [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
+- `vscode-apollo@1.6.9`
+  - Add env variable to silence TLS errors [#1212](https://github.com/apollographql/apollo-tooling/pull/1212)
+
+## `apollo@2.11.0`, `apollo-language-server@1.8.0`, `apollo-graphql@0.3.0`, `apollo-language-server@1.8.0`, `apollo-env@0.5.0`
+
+- `apollo@2.11.0`
+  - Leverage updates to apollo-language-server to support federated services [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+  - Add `service:delete` command for deleting federated services [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+- `apollo-env@0.5.0`
+  - Add new utils and predicates [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
+- `apollo-graphql@0.3.0`
   - Require graphql@^14.2.1 [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
   - Add buildSchemaFromSDL and related utilities for constructing partial schemas
     [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
   - Add transformSchema and related utilities for easily transforming schemas
     [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
-- `apollo-language-server`
+- `apollo-language-server@1.8.0`
+  - Fix windows file paths by normalizing all URIs to a consistent format [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
+  - Fix positionToOffset to consider windows line endings [#1213](https://github.com/apollographql/apollo-tooling/pull/1213).
   - Extend Engine API for federated schema uploads and checks [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
   - Reorganize files and exports [#1251](https://github.com/apollographql/apollo-tooling/pull/1251)
-- `apollo-tools`
-  - <First `apollo-tools` related entry goes here>
-- `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
 
 ## `apollo@2.10.3`
 

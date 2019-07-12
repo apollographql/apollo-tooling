@@ -87,7 +87,7 @@ function extractDocumentsWithAST(
         // This currently ignores the anti-pattern of including an interpolated
         // string as anything other than a fragment definition, for example a
         // literal(these cases could be covered during the replacement of
-        // literals in the signature calcluation)
+        // literals in the signature calculation)
         finished.push(
           (path.value.quasi.quasis as Array<{
             value: { cooked: string; raw: string };

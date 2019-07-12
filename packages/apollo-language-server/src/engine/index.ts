@@ -8,7 +8,10 @@ import { SCHEMA_TAGS_AND_FIELD_STATS } from "./operations/schemaTagsAndFieldStat
 import { UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA } from "./operations/uploadAndComposePartialSchema";
 import { CHECK_PARTIAL_SCHEMA } from "./operations/checkPartialSchema";
 import { REMOVE_SERVICE_AND_COMPOSE } from "./operations/removeServiceAndCompose";
+import { LIST_SERVICES } from "./operations/listServices";
 import {
+  ListServices,
+  ListServicesVariables,
   CheckSchema,
   CheckSchemaVariables,
   UploadSchema,
@@ -20,14 +23,11 @@ import {
   ValidateOperations,
   ValidateOperationsVariables,
   SchemaTagsAndFieldStats,
-  SchemaTagInfo,
-  SchemaTagInfoVariables,
   CheckPartialSchema,
   CheckPartialSchemaVariables,
   RemoveServiceAndCompose,
   RemoveServiceAndComposeVariables
 } from "../graphqlTypes";
-import { SCHEMA_TAG_INFO_QUERY } from "./operations/schemaTagInfo";
 
 export interface ClientIdentity {
   name?: string;
@@ -40,7 +40,6 @@ export type ClientID = string;
 export type SchemaTag = string;
 export type ServiceIDAndTag = [ServiceID, SchemaTag?];
 export type ServiceSpecifier = string;
-export type StatsWindowSize = number;
 export type FieldStats = Map<string, Map<string, number | null>>;
 
 export function noServiceError(service: string | undefined, endpoint?: string) {
@@ -79,6 +78,29 @@ export class ApolloEngineClient extends GraphQLDataSource {
     request.headers[
       "apollo-client-version"
     ] = require("../../package.json").version;
+  }
+
+  public async listServices(variables: ListServicesVariables) {
+    return this.execute<ListServices>({
+      query: LIST_SERVICES,
+      variables
+    }).then(({ data, errors }) => {
+      // use error logger
+      if (errors) {
+        throw new Error(errors.map(error => error.message).join("\n"));
+      }
+
+      if (data && !data.service) {
+        throw new Error(
+          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+        );
+      }
+
+      if (!(data && data.service)) {
+        throw new Error("Error in request from Engine");
+      }
+      return data.service;
+    });
   }
 
   public async checkSchema(variables: CheckSchemaVariables) {
@@ -235,10 +257,12 @@ export class ApolloEngineClient extends GraphQLDataSource {
         );
       }
 
-      if (!(data && data.service)) {
+      if (
+        !(data && data.service && data.service.registerOperationsWithResponse)
+      ) {
         throw new Error("Error in request from Engine");
       }
-      return data.service.registerOperations;
+      return data.service.registerOperationsWithResponse;
     });
   }
 
@@ -277,12 +301,5 @@ export class ApolloEngineClient extends GraphQLDataSource {
     });
 
     return { schemaTags, fieldStats };
-  }
-
-  public async schemaTagInfo(variables: SchemaTagInfoVariables) {
-    return this.execute<SchemaTagInfo>({
-      query: SCHEMA_TAG_INFO_QUERY,
-      variables
-    });
   }
 }

@@ -86,7 +86,7 @@ function extractGraphQLDocumentsFromJSTemplateLiterals(
   let result;
   while ((result = regExp.exec(text)) !== null) {
     const contents = replacePlaceholdersWithWhiteSpace(result[1]);
-    const position = document.positionAt(result.index + 4);
+    const position = document.positionAt(result.index + (tagName.length + 1));
     const locationOffset: SourceLocation = {
       line: position.line + 1,
       column: position.character + 1
@@ -131,7 +131,7 @@ function extractGraphQLDocumentsFromPythonStrings(
 }
 
 function replacePlaceholdersWithWhiteSpace(content: string) {
-  return content.replace(/\$\{(.+)?\}/g, match => {
+  return content.replace(/\$\{([\s\S]+?)\}/gm, match => {
     return Array(match.length).join(" ");
   });
 }

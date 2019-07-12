@@ -19,11 +19,6 @@ export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingS
   message: string;
 }
 
-export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_warnings {
-  __typename: "SchemaCompositionWarning";
-  message: string;
-}
-
 export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph {
   __typename: "CompositionValidationResult";
   /**
@@ -38,14 +33,6 @@ export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingS
    * published to the implementing service if there were any errors encountered
    */
   errors: (CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_errors | null)[];
-  /**
-   * List of warnings encountered during composing implementing services into a complete schema.
-   * Though a schema was composed for the graph with the proposed partial schema,
-   * these warnings may indicate undesired behavior or lost information. We recommend that no service
-   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
-   * in its composition result will result in updating the composition config.
-   */
-  warnings: (CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_warnings | null)[];
 }
 
 export interface CheckPartialSchema_service {
@@ -208,12 +195,125 @@ export interface CheckSchemaVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: ListServices
+// ====================================================
+
+export interface ListServices_service_implementingServices_NonFederatedImplementingService {
+  __typename: "NonFederatedImplementingService";
+}
+
+export interface ListServices_service_implementingServices_FederatedImplementingServices_services {
+  __typename: "FederatedImplementingService";
+  /**
+   * Identifies which graph this implementing service belongs to.
+   * Formerly known as "service_id"
+   */
+  graphID: string;
+  /**
+   * Specifies which variant of a graph this implementing service belongs to".
+   * Formerly known as "tag"
+   */
+  graphVariant: string;
+  /**
+   * Name of the implementing service
+   */
+  name: string;
+  /**
+   * URL of the graphql endpoint of the implementing service
+   */
+  url: string | null;
+  /**
+   * Timestamp for when this implementing service was updated
+   */
+  updatedAt: any;
+}
+
+export interface ListServices_service_implementingServices_FederatedImplementingServices {
+  __typename: "FederatedImplementingServices";
+  services: ListServices_service_implementingServices_FederatedImplementingServices_services[];
+}
+
+export type ListServices_service_implementingServices = ListServices_service_implementingServices_NonFederatedImplementingService | ListServices_service_implementingServices_FederatedImplementingServices;
+
+export interface ListServices_service {
+  __typename: "Service";
+  /**
+   * Implementing services that comprise a graph.
+   * Set includeDeleted to see deleted implementing services
+   */
+  implementingServices: ListServices_service_implementingServices | null;
+}
+
+export interface ListServices {
+  /**
+   * Service by ID
+   */
+  service: ListServices_service | null;
+}
+
+export interface ListServicesVariables {
+  id: string;
+  graphVariant: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: RegisterOperations
 // ====================================================
 
+export interface RegisterOperations_service_registerOperationsWithResponse_invalidOperations_errors {
+  __typename: "OperationValidationError";
+  /**
+   * Reason for validation failure
+   */
+  message: string;
+}
+
+export interface RegisterOperations_service_registerOperationsWithResponse_invalidOperations {
+  __typename: "InvalidOperation";
+  /**
+   * Validation errors
+   */
+  errors: RegisterOperations_service_registerOperationsWithResponse_invalidOperations_errors[] | null;
+  /**
+   * Signature of operation sent by the client
+   */
+  signature: string;
+}
+
+export interface RegisterOperations_service_registerOperationsWithResponse_newOperations {
+  __typename: "RegisteredOperation";
+  /**
+   * Signature of operation sent by the client
+   */
+  signature: string;
+}
+
+export interface RegisterOperations_service_registerOperationsWithResponse {
+  __typename: "RegisterOperationsMutationResponse";
+  /**
+   * Operations that failed to validate against the schema
+   */
+  invalidOperations: RegisterOperations_service_registerOperationsWithResponse_invalidOperations[] | null;
+  /**
+   * New operations added to the registry(subset of input operations)
+   */
+  newOperations: RegisterOperations_service_registerOperationsWithResponse_newOperations[] | null;
+  /**
+   * True if operations were registered, false if not
+   */
+  registrationSuccess: boolean;
+}
+
 export interface RegisterOperations_service {
   __typename: "ServiceMutation";
-  registerOperations: any | null;
+  /**
+   * Register operations with diagnostic information about the result of the mutation
+   */
+  registerOperationsWithResponse: RegisterOperations_service_registerOperationsWithResponse | null;
 }
 
 export interface RegisterOperations {
@@ -225,6 +325,7 @@ export interface RegisterOperationsVariables {
   clientIdentity: RegisteredClientIdentityInput;
   operations: RegisteredOperationInput[];
   manifestVersion: number;
+  graphVariant?: string | null;
 }
 
 /* tslint:disable */
@@ -267,18 +368,6 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
   message: string;
 }
 
-export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_locations {
-  __typename: "SourceLocation";
-  column: number;
-  line: number;
-}
-
-export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings {
-  __typename: "SchemaCompositionWarning";
-  locations: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings_locations | null)[];
-  message: string;
-}
-
 export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition {
   __typename: "CompositionAndRemoveResult";
   /**
@@ -291,14 +380,6 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
    * published to the implementing service if there were any errors encountered
    */
   errors: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors | null)[];
-  /**
-   * List of warnings encountered during composing implementing services into a complete schema.
-   * Though a schema was composed for the graph with the proposed partial schema,
-   * these warnings may indicate undesired behavior or lost information. We recommend that no service
-   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
-   * in its composition result will result in updating the composition config.
-   */
-  warnings: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_warnings | null)[];
   /**
    * Whether the gateway link was updated.
    */
@@ -321,55 +402,6 @@ export interface RemoveServiceAndComposeVariables {
   id: string;
   graphVariant: string;
   name: string;
-}
-
-/* tslint:disable */
-/* eslint-disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: SchemaTagInfo
-// ====================================================
-
-export interface SchemaTagInfo_service_schema_gitContext {
-  __typename: "GitContext";
-  committer: string | null;
-  commit: string;
-}
-
-export interface SchemaTagInfo_service_schema {
-  __typename: "Schema";
-  hash: string;
-  gitContext: SchemaTagInfo_service_schema_gitContext | null;
-  /**
-   * The number of fields; this includes user defined fields only, excluding built-in types and fields
-   */
-  fieldCount: number;
-  /**
-   * The number of types; this includes user defined types only, excluding built-in types
-   */
-  typeCount: number;
-  createdAt: any;
-}
-
-export interface SchemaTagInfo_service {
-  __typename: "Service";
-  /**
-   * Get a schema by hash OR current tag
-   */
-  schema: SchemaTagInfo_service_schema | null;
-}
-
-export interface SchemaTagInfo {
-  /**
-   * Service by ID
-   */
-  service: SchemaTagInfo_service | null;
-}
-
-export interface SchemaTagInfoVariables {
-  service: string;
-  tag?: string | null;
 }
 
 /* tslint:disable */
@@ -458,11 +490,6 @@ export interface UploadAndComposePartialSchema_service_upsertImplementingService
   message: string;
 }
 
-export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_warnings {
-  __typename: "SchemaCompositionWarning";
-  message: string;
-}
-
 export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition {
   __typename: "CompositionAndUpsertResult";
   /**
@@ -475,14 +502,6 @@ export interface UploadAndComposePartialSchema_service_upsertImplementingService
    * published to the implementing service if there were any errors encountered
    */
   errors: (UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_errors | null)[];
-  /**
-   * List of warnings encountered during composing implementing services into a complete schema.
-   * Though a schema was composed for the graph with the proposed partial schema,
-   * these warnings may indicate undesired behavior or lost information. We recommend that no service
-   * is pushed with warnings that are not fully understood. Pushing an implementing service with warnings
-   * in its composition result will result in updating the composition config.
-   */
-  warnings: (UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_warnings | null)[];
   /**
    * Whether the gateway link was updated.
    */

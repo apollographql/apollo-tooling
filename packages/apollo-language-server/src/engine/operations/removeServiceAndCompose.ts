@@ -24,13 +24,6 @@ export const REMOVE_SERVICE_AND_COMPOSE = gql`
           }
           message
         }
-        warnings {
-          locations {
-            column
-            line
-          }
-          message
-        }
         updatedGateway
       }
     }

@@ -124,6 +124,7 @@ export function positionFromSourceLocation(
 
 export function positionToOffset(source: Source, position: Position): number {
   const lineRegexp = /\r\n|[\n\r]/g;
+  const lineEndingLength = /\r\n/g.test(source.body) ? 2 : 1;
 
   const linesUntilPosition = source.body
     .split(lineRegexp)
@@ -132,7 +133,7 @@ export function positionToOffset(source: Source, position: Position): number {
     position.character +
     linesUntilPosition
       .map(
-        line => line.length + 1 // count EOL
+        line => line.length + lineEndingLength // count EOL
       )
       .reduce((a, b) => a + b, 0)
   );

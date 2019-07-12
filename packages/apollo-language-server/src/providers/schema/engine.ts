@@ -1,15 +1,7 @@
 // EngineSchemaProvider (engine schema reg => schema)
 import { NotificationHandler } from "vscode-languageserver";
-
 import gql from "graphql-tag";
-
-import {
-  GraphQLSchema,
-  buildClientSchema,
-  IntrospectionSchema,
-  IntrospectionQuery
-} from "graphql";
-
+import { GraphQLSchema, buildClientSchema } from "graphql";
 import { ApolloEngineClient, ClientIdentity } from "../../engine";
 import { ClientConfig, parseServiceSpecifier } from "../../config";
 import {
@@ -101,7 +93,7 @@ export const SCHEMA_QUERY = gql`
             subscriptionType {
               name
             }
-            types {
+            types(filter: { includeBuiltInTypes: true }) {
               ...IntrospectionFullType
             }
             directives {
