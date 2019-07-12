@@ -23,6 +23,8 @@ import sortBy from "lodash.sortby";
 import cli from "cli-ux";
 import { isNotNullOrUndefined } from "apollo-env";
 
+// this comment is only here for experimentation to see if the tests will pass with any change
+
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
   if (change.severity === ChangeSeverity.FAILURE) {
