@@ -73,10 +73,10 @@ export default function generate(
     const generator = generateSwiftSource(context, outputIndividualFiles, only);
 
     if (outputIndividualFiles) {
-      writeGeneratedFiles(generator.generatedFiles, outputPath);
+      writeGeneratedFiles(generator.generatedFiles, outputPath, "\n");
       writtenFiles += Object.keys(generator.generatedFiles).length;
     } else {
-      fs.writeFileSync(outputPath, generator.output);
+      fs.writeFileSync(outputPath, generator.output.concat("\n"));
       writtenFiles += 1;
     }
 
@@ -215,12 +215,13 @@ export default function generate(
 
 function writeGeneratedFiles(
   generatedFiles: { [fileName: string]: BasicGeneratedFile },
-  outputDirectory: string
+  outputDirectory: string,
+  terminator: string = ""
 ) {
   for (const [fileName, generatedFile] of Object.entries(generatedFiles)) {
     fs.writeFileSync(
       path.join(outputDirectory, fileName),
-      generatedFile.output
+      generatedFile.output.concat(terminator)
     );
   }
 }
