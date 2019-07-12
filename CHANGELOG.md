@@ -2,8 +2,6 @@
 
 ## Upcoming
 
-- Handle `subscribe` in `buildServiceDefinition` and add type in `resolverMap` [#1047](https://github.com/apollographql/apollo-tooling/pull/1047)
-
 - `apollo`
   - Relax graphql version, resolve missing types "Boolean", "String" [#1355](https://github.com/apollographql/apollo-tooling/pull/1355)
   - Add `service:list` and tests [#1358](https://github.com/apollographql/apollo-tooling/pull/1358) and header [#1377](https://github.com/apollographql/apollo-tooling/pull/1377)
@@ -23,14 +21,10 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-<<<<<<< HEAD
-  - <First `apollo-language-server` related entry goes here>
-=======
   - Allow template literal placeholders that span multiple rows[#1299](https://github.com/apollographql/apollo-tooling/pull/1299)
   - Add support for extracting GraphQL documents from Ruby source files using `<<-GRAPHQL...GRAPHQL` heredoc. [#1304](https://github.com/apollographql/apollo-tooling/pull/1304)
->>>>>>> [language server] Extract GraphQL documents from Ruby source
 - `apollo-tools`
-  - <First `apollo-tools` related entry goes here>
+  - Handle `subscribe` in `buildServiceDefinition` and add type in `resolverMap` [#1047](https://github.com/apollographql/apollo-tooling/pull/1047)
 - `vscode-apollo`
   - Add support for Ruby source files using `<<-GRAPHQL...GRAPHQL` heredoc. [#1304](https://github.com/apollographql/apollo-tooling/pull/1304)
 
