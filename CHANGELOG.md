@@ -21,7 +21,12 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
+<<<<<<< HEAD
   - <First `apollo-language-server` related entry goes here>
+=======
+  - Allow template literal placeholders that span multiple rows[#1299](https://github.com/apollographql/apollo-tooling/pull/1299)
+  - Add support for extracting GraphQL documents from Ruby source files using `<<-GRAPHQL...GRAPHQL` heredoc. [#1304](https://github.com/apollographql/apollo-tooling/pull/1304)
+>>>>>>> [language server] Extract GraphQL documents from Ruby source
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`

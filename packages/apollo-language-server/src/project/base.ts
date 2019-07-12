@@ -40,7 +40,8 @@ const fileAssociations: { [extension: string]: string } = {
   ".jsx": "javascriptreact",
   ".tsx": "typescriptreact",
   ".vue": "vue",
-  ".py": "python"
+  ".py": "python",
+  ".rb": "ruby"
 };
 
 export interface GraphQLProjectConfig {
