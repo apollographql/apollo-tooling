@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@apollographql/apollo-tools": "file:../apollo-tools",
-    "@oclif/command": "1.5.14",
+    "@oclif/command": "1.5.15",
     "@oclif/config": "1.13.0",
     "@oclif/errors": "1.2.2",
     "@oclif/plugin-autocomplete": "0.1.1",

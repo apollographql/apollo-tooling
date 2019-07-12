@@ -4,7 +4,8 @@
 
 - `apollo`
   - Relax graphql version, resolve missing types "Boolean", "String" [#1355](https://github.com/apollographql/apollo-tooling/pull/1355)
-  - Add `service:list` and tests [#1358](https://github.com/apollographql/apollo-tooling/pull/1358)
+  - Add `service:list` and tests [#1358](https://github.com/apollographql/apollo-tooling/pull/1358) and header [#1377](https://github.com/apollographql/apollo-tooling/pull/1377)
+  - Update `service:list` test to use a simulated time to prevent relative dates causing snapshot failures [#1374](https://github.com/apollographql/apollo-tooling/pull/1374)
   - Add `dependsOn` for required fields with federated `service:push` [#1346](https://github.com/apollographql/apollo-tooling/pull/1346)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
@@ -21,11 +22,12 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Allow template literal placeholders that span multiple rows[#1299](https://github.com/apollographql/apollo-tooling/pull/1299)
+  - Add support for extracting GraphQL documents from Ruby source files using `<<-GRAPHQL...GRAPHQL` heredoc. [#1304](https://github.com/apollographql/apollo-tooling/pull/1304)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Add support for Ruby source files using `<<-GRAPHQL...GRAPHQL` heredoc. [#1304](https://github.com/apollographql/apollo-tooling/pull/1304)
 
 ## `apollo-graphql@0.3.3`
 

@@ -21,14 +21,15 @@ interface TasksOutput {
 }
 
 const formatImplementingService = (
-  implementingService: ListServices_service_implementingServices_FederatedImplementingServices_services
+  implementingService: ListServices_service_implementingServices_FederatedImplementingServices_services,
+  effectiveDate: Date = new Date()
 ) => {
   return {
     name: implementingService.name,
     url: implementingService.url || "",
     updatedAt: `${moment(implementingService.updatedAt).format(
       "D MMMM YYYY"
-    )} (${moment(implementingService.updatedAt).fromNow()})`
+    )} (${moment(implementingService.updatedAt).from(effectiveDate)})`
   };
 };
 
@@ -57,15 +58,25 @@ function formatHumanReadable({
     >(implementingServices.services, [service => service.name.toUpperCase()]);
 
     table(
-      sortedImplementingServices.map(formatImplementingService).filter(Boolean),
+      sortedImplementingServices
+        .map(sortedImplementingService =>
+          formatImplementingService(
+            sortedImplementingService,
+            // Force the time to a specific value if we're running tests. Otherwise the snapshots will break
+            // when the relative time changes.
+            process.env.NODE_ENV === "test" ? new Date("2019-06-13") : undefined
+          )
+        )
+        .sort((s1, s2) =>
+          s1.name.toUpperCase() > s2.name.toUpperCase() ? 1 : -1
+        )
+        .filter(Boolean),
       {
         columns: [
-          { key: "name", label: "Name" },
+          { key: "name", label: "name" },
           { key: "url", label: "URL" },
-          { key: "updatedAt", label: "Last Updated At" }
+          { key: "updatedAt", label: "last updated" }
         ],
-        // Override `printHeader` so we don't print a header
-        printHeader: () => {},
         // The default `printLine` will output to the console; we want to capture the output so we can test
         // it.
         printLine: line => {
