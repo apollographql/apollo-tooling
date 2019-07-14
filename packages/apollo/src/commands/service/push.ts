@@ -143,9 +143,7 @@ export default class ServicePush extends ProjectCommand {
       }
     ]);
 
-    const graphString = `${result.graphId}@${
-      result.graphVariant ? result.graphVariant : "current"
-    }`;
+    const graphString = `${result.graphId}@${result.graphVariant}`;
 
     this.log("\n");
     if (result.code === "NO_CHANGES") {
