@@ -53,20 +53,24 @@ export default class ServicePush extends ProjectCommand {
             throw new Error("No service found to link to Engine");
           }
 
-          isFederated = flags.federated;
+          isFederated = flags.federated || flags.serviceName;
 
           gitContext = await gitInfo(this.log);
 
           // handle partial schema uploading
-          if (flags.federated) {
+          if (isFederated) {
             this.log("Fetching info from federated service");
             const info = await (project as GraphQLServiceProject).resolveFederationInfo();
 
             if (!info.sdl)
-              throw new Error("No SDL found for federated service");
+              throw new Error(
+                "No SDL found in response from federated service. This means that the federated service exposed a `__service` field that did not emit errors, but that did not contain a spec-compliant `sdl` field."
+              );
 
             if (!flags.serviceURL && !info.url)
-              throw new Error("No URL found for federated service");
+              throw new Error(
+                "No URL found for federated service. Please provide the URL for the gateway to reach the service via the --serviceURL flag"
+              );
 
             /**
              * id: service id for root mutation (graph id)
@@ -95,13 +99,13 @@ export default class ServicePush extends ProjectCommand {
             });
 
             result = {
-              service: flags.serviceName || info.name,
+              implementingServiceName: flags.serviceName || info.name,
               hash: compositionConfig && compositionConfig.schemaHash,
-              tag: config.tag,
-              errors,
+              compositionErrors: errors,
               serviceWasCreated,
               didUpdateGateway,
-              graphName: config.name
+              graphId: config.name,
+              graphVariant: config.tag || "current"
             };
 
             return;
@@ -127,9 +131,9 @@ export default class ServicePush extends ProjectCommand {
           const response = await project.engine.uploadSchema(variables);
           if (response) {
             result = {
-              service: config.name,
+              graphId: config.name,
+              graphVariant: response.tag ? response.tag.tag : "current",
               hash: response.tag ? response.tag.schema.hash : null,
-              tag: response.tag ? response.tag.tag : null,
               code: response.code
             };
             this.debug("Result received from Engine:");
@@ -139,17 +143,36 @@ export default class ServicePush extends ProjectCommand {
       }
     ]);
 
+    const graphString = `${result.graphId}@${result.graphVariant}`;
+
     this.log("\n");
     if (result.code === "NO_CHANGES") {
       this.log("No change in schema from previous version\n");
     }
 
-    const { errors } = result;
-    if (errors && errors.length) {
+    if (result.serviceWasCreated) {
+      this.log(
+        `A new service called '${
+          result.implementingServiceName
+        }' for the '${graphString}' graph was created\n`
+      );
+    } else if (result.implementingServiceName && isFederated) {
+      this.log(
+        `The '${
+          result.implementingServiceName
+        }' service for the '${graphString}' graph was updated\n`
+      );
+    }
+
+    const { compositionErrors } = result;
+    if (compositionErrors && compositionErrors.length) {
+      this.log(
+        `*THE SERVICE UPDATE RESULTED IN COMPOSITION ERRORS.*\n\nComposition errors must be resolved before the graph's schema or corresponding gateway can be updated.\nFor more information, see https://www.apollographql.com/docs/apollo-server/federation/errors/\n`
+      );
       let printed = "";
 
       const messages = [
-        ...errors.map(({ message }) => ({
+        ...compositionErrors.map(({ message }) => ({
           type: chalk.red("Error"),
           description: message
         }))
@@ -175,21 +198,17 @@ export default class ServicePush extends ProjectCommand {
 
     if (result.didUpdateGateway) {
       this.log(
-        `The gateway for the ${
-          result.graphName
-        } graph was updated with a new schema\n`
+        `The gateway for the '${graphString}' graph was updated with a new schema, composed from the updated '${
+          result.implementingServiceName
+        }' service\n`
       );
-    }
-
-    if (result.serviceWasCreated) {
+    } else if (isFederated) {
       this.log(
-        `A new service called ${result.service} for the graph ${
-          result.graphName
-        } was created\n`
+        `The gateway for the '${graphString}' graph was NOT updated with a new schema\n`
       );
     }
 
-    if (!isFederated) {
+    if (!isFederated || result.didUpdateGateway) {
       table([result], {
         columns: [
           {
@@ -197,8 +216,8 @@ export default class ServicePush extends ProjectCommand {
             label: "id",
             format: (hash: string) => hash.slice(0, 6)
           },
-          { key: "service", label: "schema" },
-          { key: "tag" }
+          { key: "graphId", label: "graph" },
+          { key: "graphVariant", label: "variant" }
         ]
       });
       this.log("\n");

@@ -107,6 +107,7 @@ export abstract class ProjectCommand extends Command {
     this.ctx.config = config;
 
     // make sure this the first item in the task list
+    // XXX Somehow this task gets pushed onto the stack multiple times sometimes
     this.tasks.push({
       title: "Loading Apollo Project",
       task: async ctx => {
