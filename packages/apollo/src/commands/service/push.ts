@@ -200,9 +200,9 @@ export default class ServicePush extends ProjectCommand {
 
     if (result.didUpdateGateway) {
       this.log(
-        `The gateway for the ${graphString} graph was updated with a new schema, composed from the updated ${
+        `The gateway for the ${graphString} graph was updated with a new schema, composed from the updated '${
           result.implementingServiceName
-        } service\n`
+        }' service\n`
       );
     } else if (isFederated) {
       this.log(
