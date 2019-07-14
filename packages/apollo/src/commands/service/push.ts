@@ -99,13 +99,12 @@ export default class ServicePush extends ProjectCommand {
             });
 
             result = {
-              service: flags.serviceName || info.name,
+              implementingServiceName: flags.serviceName || info.name,
               hash: compositionConfig && compositionConfig.schemaHash,
-              tag: config.tag,
               compositionErrors: errors,
               serviceWasCreated,
               didUpdateGateway,
-              graphName: config.name,
+              graphId: config.name,
               graphVariant: config.tag || "current"
             };
 
@@ -132,11 +131,9 @@ export default class ServicePush extends ProjectCommand {
           const response = await project.engine.uploadSchema(variables);
           if (response) {
             result = {
-              service: config.name,
-              graphName: config.name,
+              graphId: config.name,
               graphVariant: response.tag ? response.tag.tag : "current",
               hash: response.tag ? response.tag.schema.hash : null,
-              tag: response.tag ? response.tag.tag : "current",
               code: response.code
             };
             this.debug("Result received from Engine:");
@@ -146,7 +143,7 @@ export default class ServicePush extends ProjectCommand {
       }
     ]);
 
-    const graphString = `${result.graphName}@${
+    const graphString = `${result.graphId}@${
       result.graphVariant ? result.graphVariant : "current"
     }`;
 
@@ -158,13 +155,13 @@ export default class ServicePush extends ProjectCommand {
     if (result.serviceWasCreated) {
       this.log(
         `A new service called ${
-          result.service
+          result.implementingServiceName
         } for the ${graphString} graph was created\n`
       );
-    } else if (result.service && isFederated) {
+    } else if (result.implementingServiceName && isFederated) {
       this.log(
         `The '${
-          result.service
+          result.implementingServiceName
         }' service for the ${graphString} graph was updated\n`
       );
     }
@@ -204,7 +201,7 @@ export default class ServicePush extends ProjectCommand {
     if (result.didUpdateGateway) {
       this.log(
         `The gateway for the ${graphString} graph was updated with a new schema, composed from the updated ${
-          result.service
+          result.implementingServiceName
         } service\n`
       );
     } else if (isFederated) {
@@ -221,7 +218,7 @@ export default class ServicePush extends ProjectCommand {
             label: "id",
             format: (hash: string) => hash.slice(0, 6)
           },
-          { key: "graphName", label: "graph" },
+          { key: "graphId", label: "graph" },
           { key: "graphVariant", label: "variant" }
         ]
       });
