@@ -154,15 +154,15 @@ export default class ServicePush extends ProjectCommand {
 
     if (result.serviceWasCreated) {
       this.log(
-        `A new service called ${
+        `A new service called '${
           result.implementingServiceName
-        } for the ${graphString} graph was created\n`
+        }' for the '${graphString}' graph was created\n`
       );
     } else if (result.implementingServiceName && isFederated) {
       this.log(
         `The '${
           result.implementingServiceName
-        }' service for the ${graphString} graph was updated\n`
+        }' service for the '${graphString}' graph was updated\n`
       );
     }
 
@@ -200,13 +200,13 @@ export default class ServicePush extends ProjectCommand {
 
     if (result.didUpdateGateway) {
       this.log(
-        `The gateway for the ${graphString} graph was updated with a new schema, composed from the updated '${
+        `The gateway for the '${graphString}' graph was updated with a new schema, composed from the updated '${
           result.implementingServiceName
         }' service\n`
       );
     } else if (isFederated) {
       this.log(
-        `The gateway for the ${graphString} graph was NOT updated with a new schema\n`
+        `The gateway for the '${graphString}' graph was NOT updated with a new schema\n`
       );
     }
 
