@@ -102,10 +102,11 @@ export default class ServicePush extends ProjectCommand {
               service: flags.serviceName || info.name,
               hash: compositionConfig && compositionConfig.schemaHash,
               tag: config.tag,
-              errors,
+              compositionErrors: errors,
               serviceWasCreated,
               didUpdateGateway,
-              graphName: config.name
+              graphName: config.name,
+              graphVariant: config.tag || "current"
             };
 
             return;
@@ -132,8 +133,10 @@ export default class ServicePush extends ProjectCommand {
           if (response) {
             result = {
               service: config.name,
+              graphName: config.name,
+              graphVariant: response.tag ? response.tag.tag : "current",
               hash: response.tag ? response.tag.schema.hash : null,
-              tag: response.tag ? response.tag.tag : null,
+              tag: response.tag ? response.tag.tag : "current",
               code: response.code
             };
             this.debug("Result received from Engine:");
@@ -143,17 +146,38 @@ export default class ServicePush extends ProjectCommand {
       }
     ]);
 
+    const graphString = `${result.graphName}@${
+      result.graphVariant ? result.graphVariant : "current"
+    }`;
+
     this.log("\n");
     if (result.code === "NO_CHANGES") {
       this.log("No change in schema from previous version\n");
     }
 
-    const { errors } = result;
-    if (errors && errors.length) {
+    if (result.serviceWasCreated) {
+      this.log(
+        `A new service called ${
+          result.service
+        } for the ${graphString} graph was created\n`
+      );
+    } else if (result.service && isFederated) {
+      this.log(
+        `The '${
+          result.service
+        }' service for the ${graphString} graph was updated\n`
+      );
+    }
+
+    const { compositionErrors } = result;
+    if (compositionErrors && compositionErrors.length) {
+      this.log(
+        `*THE SERVICE UPDATE RESULTED IN COMPOSITION ERRORS.*\n\nComposition errors must be resolved before the graph's schema or corresponding gateway can be updated.\nFor more information, see https://www.apollographql.com/docs/apollo-server/federation/errors/\n`
+      );
       let printed = "";
 
       const messages = [
-        ...errors.map(({ message }) => ({
+        ...compositionErrors.map(({ message }) => ({
           type: chalk.red("Error"),
           description: message
         }))
@@ -179,21 +203,17 @@ export default class ServicePush extends ProjectCommand {
 
     if (result.didUpdateGateway) {
       this.log(
-        `The gateway for the ${
-          result.graphName
-        } graph was updated with a new schema\n`
+        `The gateway for the ${graphString} graph was updated with a new schema, composed from the updated ${
+          result.service
+        } service\n`
       );
-    }
-
-    if (result.serviceWasCreated) {
+    } else if (isFederated) {
       this.log(
-        `A new service called ${result.service} for the graph ${
-          result.graphName
-        } was created\n`
+        `The gateway for the ${graphString} graph was NOT updated with a new schema\n`
       );
     }
 
-    if (!isFederated) {
+    if (!isFederated || result.didUpdateGateway) {
       table([result], {
         columns: [
           {
@@ -201,8 +221,8 @@ export default class ServicePush extends ProjectCommand {
             label: "id",
             format: (hash: string) => hash.slice(0, 6)
           },
-          { key: "service", label: "schema" },
-          { key: "tag" }
+          { key: "graphName", label: "graph" },
+          { key: "graphVariant", label: "variant" }
         ]
       });
       this.log("\n");
