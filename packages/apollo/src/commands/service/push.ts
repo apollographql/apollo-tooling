@@ -53,20 +53,24 @@ export default class ServicePush extends ProjectCommand {
             throw new Error("No service found to link to Engine");
           }
 
-          isFederated = flags.federated;
+          isFederated = flags.federated || flags.serviceName;
 
           gitContext = await gitInfo(this.log);
 
           // handle partial schema uploading
-          if (flags.federated) {
+          if (isFederated) {
             this.log("Fetching info from federated service");
             const info = await (project as GraphQLServiceProject).resolveFederationInfo();
 
             if (!info.sdl)
-              throw new Error("No SDL found for federated service");
+              throw new Error(
+                "No SDL found in response from federated service. This means that the federated service exposed a `__service` field that did not emit errors, but that did not contain a spec-compliant `sdl` field."
+              );
 
             if (!flags.serviceURL && !info.url)
-              throw new Error("No URL found for federated service");
+              throw new Error(
+                "No URL found for federated service. Please provide the URL for the gateway to reach the service via the --serviceURL flag"
+              );
 
             /**
              * id: service id for root mutation (graph id)
