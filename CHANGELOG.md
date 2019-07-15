@@ -13,6 +13,7 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
+  - Update Swift codegen to add operation name to generated query classes [#1386](https://github.com/apollographql/apollo-tooling/pull/1386)
   - Append terminating newline character to generated files [#531](https://github.com/apollographql/apollo-ios/issues/531)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>

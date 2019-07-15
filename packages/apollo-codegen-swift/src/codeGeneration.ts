@@ -182,6 +182,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           });
         }
 
+        this.printNewlineIfNeeded();
+        this.printOnNewline(`public let operationName = "${operationName}"`);
+
         const fragmentsReferenced = collectFragmentsReferenced(
           operation.selectionSet,
           this.context.fragments
