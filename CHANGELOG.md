@@ -7,6 +7,7 @@
   - Add `service:list` and tests [#1358](https://github.com/apollographql/apollo-tooling/pull/1358) and header [#1377](https://github.com/apollographql/apollo-tooling/pull/1377)
   - Update `service:list` test to use a simulated time to prevent relative dates causing snapshot failures [#1374](https://github.com/apollographql/apollo-tooling/pull/1374)
   - Update `service:check` to support `--markdown` and `--json` flags for federated schema [#1378](https://github.com/apollographql/apollo-tooling/pull/1378)
+  - Exit status code 1 after composition errors in service:push [#1403](https://github.com/apollographql/apollo-tooling/pull/1403)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
