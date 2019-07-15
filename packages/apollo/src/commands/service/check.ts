@@ -80,18 +80,22 @@ interface TasksOutput {
   federationSchemaHash?: string;
   serviceName: string | undefined;
   compositionErrors?: CompositionErrors;
+  graphCompositionID?: string;
 }
 
 export function formatMarkdown({
   checkSchemaResult,
   graphName,
   serviceName,
-  tag
+  tag,
+  graphCompositionID
 }: {
   checkSchemaResult: CheckSchema_service_checkSchema;
   graphName: string;
   serviceName?: string | undefined;
   tag: string;
+  // this will only exist for federated schema check
+  graphCompositionID: string | undefined;
 }): string {
   const { diffToPrevious } = checkSchemaResult;
 
@@ -150,7 +154,8 @@ ${
     : `✅ Found **no breaking changes**.`
 }
 
-🔗 [View your service check details](${checkSchemaResult.targetUrl}).
+🔗 [View your service check details](${checkSchemaResult.targetUrl +
+    (graphCompositionID ? `?graphCompositionId=${graphCompositionID}` : ``)}.
 `;
 }
 
@@ -181,9 +186,12 @@ ${compositionErrors
 }
 
 export function formatHumanReadable({
-  checkSchemaResult
+  checkSchemaResult,
+  graphCompositionID
 }: {
   checkSchemaResult: CheckSchema_service_checkSchema;
+  // this will only exist for federated schema check
+  graphCompositionID: string | undefined;
 }): string {
   const {
     targetUrl,
@@ -236,7 +244,9 @@ export function formatHumanReadable({
   }
 
   if (targetUrl) {
-    result += `\n\nView full details at: ${targetUrl}`;
+    result += `\n\nView full details at: ${targetUrl}${
+      graphCompositionID ? `?graphCompositionId=${graphCompositionID}` : ``
+    }`;
   }
 
   return result;
@@ -354,7 +364,8 @@ export default class ServiceCheck extends ProjectCommand {
 
                 const {
                   errors,
-                  compositionValidationDetails
+                  compositionValidationDetails,
+                  graphCompositionID
                 } = await project.engine.checkPartialSchema({
                   id: graphName,
                   graphVariant: tag,
@@ -370,6 +381,10 @@ export default class ServiceCheck extends ProjectCommand {
                 ) {
                   ctx.federationSchemaHash =
                     compositionValidationDetails.schemaHash;
+                }
+
+                if (graphCompositionID) {
+                  ctx.graphCompositionID = graphCompositionID;
                 }
 
                 task.title = `Found ${pluralize(
@@ -401,6 +416,7 @@ export default class ServiceCheck extends ProjectCommand {
                     });
 
                   taskOutput.compositionErrors = decodedErrors;
+                  taskOutput.graphCompositionID = graphCompositionID;
 
                   this.error(
                     federatedServiceCompositionUnsuccessfulErrorMessage
@@ -577,7 +593,8 @@ export default class ServiceCheck extends ProjectCommand {
       shouldOutputJson,
       shouldOutputMarkdown,
       serviceName,
-      compositionErrors
+      compositionErrors,
+      graphCompositionID
     } = taskOutput;
 
     if (shouldOutputJson) {
@@ -588,7 +605,11 @@ export default class ServiceCheck extends ProjectCommand {
       return this.log(
         JSON.stringify(
           {
-            targetUrl: checkSchemaResult.targetUrl,
+            targetUrl:
+              checkSchemaResult.targetUrl +
+              (graphCompositionID
+                ? `?graphCompositionId=${graphCompositionID}`
+                : ``),
             changes: checkSchemaResult.diffToPrevious.changes,
             validationConfig: checkSchemaResult.diffToPrevious.validationConfig
           },
@@ -638,7 +659,8 @@ export default class ServiceCheck extends ProjectCommand {
           checkSchemaResult,
           graphName,
           serviceName,
-          tag: config.tag
+          tag: config.tag,
+          graphCompositionID
         })
       );
     }
@@ -658,7 +680,7 @@ export default class ServiceCheck extends ProjectCommand {
       // Return a non-zero error code
       this.exit(1);
     } else {
-      this.log(formatHumanReadable({ checkSchemaResult }));
+      this.log(formatHumanReadable({ checkSchemaResult, graphCompositionID }));
 
       // exit with failing status if we have failures
       if (

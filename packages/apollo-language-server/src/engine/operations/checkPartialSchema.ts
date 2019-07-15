@@ -16,6 +16,7 @@ export const CHECK_PARTIAL_SCHEMA = gql`
         compositionValidationDetails {
           schemaHash
         }
+        graphCompositionID
         errors {
           message
         }
