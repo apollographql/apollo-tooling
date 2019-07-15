@@ -217,7 +217,7 @@ export default class ServicePush extends ProjectCommand {
             format: (hash: string) => hash.slice(0, 6)
           },
           { key: "graphId", label: "graph" },
-          { key: "graphVariant", label: "variant" }
+          { key: "graphVariant", label: "tag" }
         ]
       });
       this.log("\n");
