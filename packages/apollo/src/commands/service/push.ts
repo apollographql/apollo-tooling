@@ -15,7 +15,15 @@ export default class ServicePush extends ProjectCommand {
     tag: flags.string({
       char: "t",
       description: "The tag to publish this service to",
-      default: "current"
+      default: "current",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The variant to publish this service to",
+      default: "current",
+      exclusive: ["tag"]
     }),
     localSchemaFile: flags.string({
       description:
@@ -24,8 +32,9 @@ export default class ServicePush extends ProjectCommand {
     federated: flags.boolean({
       char: "f",
       default: false,
+      hidden: true,
       description:
-        "Indicates that the schema is a partial schema from a federated service"
+        "[Deprecated: use --serviceName to indicate a federated service] Indicates that the schema is a partial schema from a federated service"
     }),
     serviceName: flags.string({
       description:
