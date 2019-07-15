@@ -28,6 +28,10 @@ export interface CheckPartialSchema_service_validatePartialSchemaOfImplementingS
    */
   compositionValidationDetails: CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph_compositionValidationDetails | null;
   /**
+   * ID that points to the results of this composition.
+   */
+  graphCompositionID: string;
+  /**
    * List of errors during composition. Errors mean that Apollo was unable to compose the
    * graph's implementing services into a GraphQL schema. This partial schema should not be
    * published to the implementing service if there were any errors encountered

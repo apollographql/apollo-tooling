@@ -599,7 +599,8 @@ describe("service:check", () => {
         formatMarkdown({
           graphName: "engine",
           tag: "staging",
-          checkSchemaResult
+          checkSchemaResult,
+          graphCompositionID: "fff"
         })
       ).toMatchSnapshot();
       // Check when all the values are singluar
@@ -624,7 +625,8 @@ describe("service:check", () => {
               ],
               numberOfCheckedOperations: 1
             }
-          }
+          },
+          graphCompositionID: "fff"
         })
       ).toMatchSnapshot();
     });
@@ -643,7 +645,8 @@ describe("service:check", () => {
               affectedQueries: [],
               changes: []
             }
-          }
+          },
+          graphCompositionID: "fff"
         })
       ).toMatchSnapshot();
     });
@@ -675,7 +678,8 @@ describe("service:check", () => {
     it("should have correct output with breaking and non-breaking changes", () => {
       expect(
         formatHumanReadable({
-          checkSchemaResult
+          checkSchemaResult,
+          graphCompositionID: "fff"
         })
       ).toMatchSnapshot();
     });
@@ -691,7 +695,8 @@ describe("service:check", () => {
               affectedQueries: [],
               changes: []
             }
-          }
+          },
+          graphCompositionID: "fff"
         })
       ).toMatchSnapshot();
     });
@@ -709,7 +714,8 @@ describe("service:check", () => {
                 change => change.severity === ChangeSeverity.FAILURE
               )
             }
-          }
+          },
+          graphCompositionID: "fff"
         })
       ).toMatchSnapshot();
     });
