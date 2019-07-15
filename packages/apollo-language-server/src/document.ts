@@ -68,6 +68,8 @@ export function extractGraphQLDocuments(
       return extractGraphQLDocumentsFromJSTemplateLiterals(document, tagName);
     case "python":
       return extractGraphQLDocumentsFromPythonStrings(document, tagName);
+    case "ruby":
+      return extractGraphQLDocumentsFromRubyStrings(document, tagName);
     default:
       return null;
   }
@@ -116,6 +118,33 @@ function extractGraphQLDocumentsFromPythonStrings(
   let result;
   while ((result = regExp.exec(text)) !== null) {
     const contents = replacePlaceholdersWithWhiteSpace(result[3]);
+    const position = document.positionAt(result.index + result[1].length);
+    const locationOffset: SourceLocation = {
+      line: position.line + 1,
+      column: position.character + 1
+    };
+    const source = new Source(contents, document.uri, locationOffset);
+    documents.push(new GraphQLDocument(source));
+  }
+
+  if (documents.length < 1) return null;
+
+  return documents;
+}
+
+function extractGraphQLDocumentsFromRubyStrings(
+  document: TextDocument,
+  tagName: string
+): GraphQLDocument[] | null {
+  const text = document.getText();
+
+  const documents: GraphQLDocument[] = [];
+
+  const regExp = new RegExp(`(<<-${tagName})([\\s\\S]+?)${tagName}`, "gm");
+
+  let result;
+  while ((result = regExp.exec(text)) !== null) {
+    const contents = replacePlaceholdersWithWhiteSpace(result[2]);
     const position = document.positionAt(result.index + result[1].length);
     const locationOffset: SourceLocation = {
       line: position.line + 1,

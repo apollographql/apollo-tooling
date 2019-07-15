@@ -210,7 +210,8 @@ public final class SimpleQueryQuery: GraphQLQuery {
       }
     }
   }
-}"
+}
+"
 `;
 
 exports[`client:codegen writes swift types from local schema in a graphql file 1`] = `
@@ -253,7 +254,8 @@ public final class SimpleQueryQuery: GraphQLQuery {
       }
     }
   }
-}"
+}
+"
 `;
 
 exports[`client:codegen writes types for query with only client-side data 1`] = `

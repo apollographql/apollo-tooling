@@ -14,6 +14,7 @@
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
   - Add operation name to generated classes
+  - Append terminating newline character to generated files [#531](https://github.com/apollographql/apollo-ios/issues/531)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
@@ -21,11 +22,12 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Allow template literal placeholders that span multiple rows[#1299](https://github.com/apollographql/apollo-tooling/pull/1299)
+  - Add support for extracting GraphQL documents from Ruby source files using `<<-GRAPHQL...GRAPHQL` heredoc. [#1304](https://github.com/apollographql/apollo-tooling/pull/1304)
 - `apollo-tools`
-  - <First `apollo-tools` related entry goes here>
+  - Handle `subscribe` in `buildServiceDefinition` and add type in `resolverMap` [#1047](https://github.com/apollographql/apollo-tooling/pull/1047)
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Add support for Ruby source files using `<<-GRAPHQL...GRAPHQL` heredoc. [#1304](https://github.com/apollographql/apollo-tooling/pull/1304)
 
 ## `apollo-graphql@0.3.3`
 

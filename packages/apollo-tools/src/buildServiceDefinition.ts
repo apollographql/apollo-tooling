@@ -229,7 +229,12 @@ function addResolversToSchema(
       if (typeof fieldConfig === "function") {
         field.resolve = fieldConfig;
       } else {
-        field.resolve = fieldConfig.resolve;
+        if (fieldConfig.resolve) {
+          field.resolve = fieldConfig.resolve;
+        }
+        if (fieldConfig.subscribe) {
+          field.subscribe = fieldConfig.subscribe;
+        }
       }
     }
   }
