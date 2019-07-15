@@ -260,7 +260,16 @@ export default class ServiceCheck extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The published tag to check this service against"
+      description: "The published tag to check this service against",
+      default: "current",
+      exclusive: ["variant"],
+      hidden: true
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The published tag to check this service against",
+      default: "current",
+      exclusive: ["tag"]
     }),
     validationPeriod: flags.string({
       description:

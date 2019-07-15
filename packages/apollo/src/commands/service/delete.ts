@@ -9,7 +9,16 @@ export default class ServiceDelete extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The variant of the service to delete"
+      hidden: true,
+      description: "The variant of the service to delete",
+      default: "current",
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The variant of the service to delete",
+      default: "current",
+      exclusive: ["tag"]
     }),
     federated: flags.boolean({
       char: "f",

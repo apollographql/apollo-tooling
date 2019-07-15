@@ -13,7 +13,15 @@ export default class ServiceDownload extends ProjectCommand {
     tag: flags.string({
       char: "t",
       description: "The published tag to check this service against",
-      default: "current"
+      default: "current",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The published tag to check this service against",
+      default: "current",
+      exclusive: ["tag"]
     }),
     skipSSLValidation: flags.boolean({
       char: "k",

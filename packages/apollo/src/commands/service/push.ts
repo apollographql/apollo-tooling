@@ -15,7 +15,15 @@ export default class ServicePush extends ProjectCommand {
     tag: flags.string({
       char: "t",
       description: "The tag to publish this service to",
-      default: "current"
+      default: "current",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The variant to publish this service to",
+      default: "current",
+      exclusive: ["tag"]
     }),
     localSchemaFile: flags.string({
       description:
