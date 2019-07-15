@@ -13,7 +13,6 @@ export default class ServiceDownload extends ProjectCommand {
     tag: flags.string({
       char: "t",
       description: "The published tag to check this service against",
-      default: "current",
       hidden: true,
       exclusive: ["variant"]
     }),

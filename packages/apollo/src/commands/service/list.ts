@@ -97,7 +97,6 @@ export default class ServiceList extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      default: "current",
       description: "The published tag to list the implementing services from",
       exclusive: ["variant"],
       hidden: true
