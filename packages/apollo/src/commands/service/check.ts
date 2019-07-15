@@ -621,7 +621,7 @@ export default class ServiceCheck extends ProjectCommand {
         formatMarkdown({
           checkSchemaResult,
           serviceName,
-          tag
+          tag: config.tag
         })
       );
     }
