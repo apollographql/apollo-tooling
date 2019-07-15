@@ -262,7 +262,16 @@ export abstract class ClientCommand extends ProjectCommand {
     }),
     tag: flags.string({
       char: "t",
-      description: "The published service tag for this client"
+      description: "The published graph variant for this client",
+      default: "current",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The published graph variant for this client",
+      default: "current",
+      exclusive: ["tag"]
     }),
     queries: flags.string({
       description: "Deprecated in favor of the includes flag"
