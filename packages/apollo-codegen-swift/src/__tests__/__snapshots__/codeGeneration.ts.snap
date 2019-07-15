@@ -5,6 +5,8 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public let operationDefinition =
     \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"Wow!\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
 
+  public let operationName = \\"CreateReview\\"
+
   public var episode: Episode?
 
   public init(episode: Episode? = nil) {
@@ -87,6 +89,8 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 "public final class HeroQuery: GraphQLQuery {
   public let operationDefinition =
     \\"query Hero {\\\\n  hero {\\\\n    ... on Droid {\\\\n      ...HeroDetails\\\\n    }\\\\n  }\\\\n}\\"
+
+  public let operationName = \\"Hero\\"
 
   public var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
 
@@ -217,6 +221,8 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 "public final class HeroQuery: GraphQLQuery {
   public let operationDefinition =
     \\"query Hero {\\\\n  hero {\\\\n    ...DroidDetails\\\\n  }\\\\n}\\"
+
+  public let operationName = \\"Hero\\"
 
   public var queryDocument: String { return operationDefinition.appending(DroidDetails.fragmentDefinition) }
 
@@ -376,6 +382,8 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public let operationDefinition =
     \\"query Hero {\\\\n  hero {\\\\n    ...HeroDetails\\\\n  }\\\\n}\\"
 
+  public let operationName = \\"Hero\\"
+
   public var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
 
   public init() {
@@ -473,6 +481,8 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public let operationDefinition =
     \\"query HeroName($episode: Episode) {\\\\n  hero(episode: $episode) {\\\\n    name\\\\n  }\\\\n}\\"
 
+  public let operationName = \\"HeroName\\"
+
   public var episode: Episode?
 
   public init(episode: Episode? = nil) {
@@ -548,6 +558,8 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 "public final class HeroQuery: GraphQLQuery {
   public let operationDefinition =
     \\"query Hero {\\\\n  hero {\\\\n    ...HeroDetails\\\\n  }\\\\n}\\"
+
+  public let operationName = \\"Hero\\"
 
   public let operationIdentifier: String? = \\"90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4\\"
 
