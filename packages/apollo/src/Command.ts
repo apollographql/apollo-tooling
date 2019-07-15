@@ -263,7 +263,6 @@ export abstract class ClientCommand extends ProjectCommand {
     tag: flags.string({
       char: "t",
       description: "The published graph variant for this client",
-      default: "current",
       hidden: true,
       exclusive: ["variant"]
     }),

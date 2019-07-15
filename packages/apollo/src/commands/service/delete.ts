@@ -11,7 +11,6 @@ export default class ServiceDelete extends ProjectCommand {
       char: "t",
       hidden: true,
       description: "The variant of the service to delete",
-      default: "current",
       exclusive: ["variant"]
     }),
     variant: flags.string({
