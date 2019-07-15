@@ -17,14 +17,14 @@ export default class ServiceDelete extends ProjectCommand {
     variant: flags.string({
       char: "v",
       description: "The variant of the service to delete",
-      default: "current",
       exclusive: ["tag"]
     }),
     federated: flags.boolean({
       char: "f",
       default: false,
+      hidden: true,
       description:
-        "Indicates that the schema is a partial schema from a federated service"
+        "[Deprecated: use serviceName to indicate that this is deleting a federated service] Indicates that the schema is a partial schema from a federated service"
     }),
     serviceName: flags.string({
       required: true,
@@ -43,13 +43,13 @@ export default class ServiceDelete extends ProjectCommand {
             throw new Error("No service found to link to Engine");
           }
 
-          if (!flags.federated) {
+          if (!flags.federated && !flags.serviceName) {
             this.error(
-              "Deleting a service is only supported for federated services. Use the --federated flag if this is a federated service."
+              "Deleting a service is only supported for federated services. Use the --serviceName flag if this is a federated service."
             );
           }
 
-          const graphVariant = flags.tag || config.tag || "current";
+          const graphVariant = config.tag || flags.variant;
 
           const {
             errors,
