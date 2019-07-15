@@ -155,7 +155,7 @@ ${
 }
 
 🔗 [View your service check details](${checkSchemaResult.targetUrl +
-    (graphCompositionID ? `?graphCompositionId=${graphCompositionID}` : ``)}.
+    (graphCompositionID ? `?graphCompositionId=${graphCompositionID})` : `)`)}.
 `;
 }
 
