@@ -66,26 +66,31 @@ export function formatTimePeriod(hours: number): string {
   return pluralize(Math.floor(hours / 24), "day");
 }
 
+type CompositionErrors = Array<{
+  service?: string;
+  field?: string;
+  message: string;
+}>;
+
 interface TasksOutput {
   config: ApolloConfig;
   checkSchemaResult: CheckSchema_service_checkSchema;
   shouldOutputJson: boolean;
   shouldOutputMarkdown: boolean;
   federationSchemaHash?: string;
-  compositionErrors?: Array<{
-    service?: string;
-    field?: string;
-    message: string;
-  }>;
+  serviceName: string | undefined;
+  compositionErrors?: CompositionErrors;
 }
 
 export function formatMarkdown({
   checkSchemaResult,
+  graphName,
   serviceName,
   tag
 }: {
   checkSchemaResult: CheckSchema_service_checkSchema;
-  serviceName: string;
+  graphName: string;
+  serviceName?: string | undefined;
   tag: string;
 }): string {
   const { diffToPrevious } = checkSchemaResult;
@@ -119,7 +124,9 @@ export function formatMarkdown({
 
   return `
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`${tag}\` on graph \`${serviceName}\`.
+🔄 Validated your local schema against schema tag \`${tag}\` ${
+    serviceName ? `for service \`${serviceName}\` ` : ""
+  }on graph \`${graphName}\`.
 🔢 Compared **${pluralize(
     diffToPrevious.changes.length,
     "schema change"
@@ -144,6 +151,32 @@ ${
 }
 
 🔗 [View your service check details](${checkSchemaResult.targetUrl}).
+`;
+}
+
+export function formatCompositionErrorsMarkdown({
+  compositionErrors,
+  graphName,
+  serviceName,
+  tag
+}: {
+  compositionErrors: CompositionErrors;
+  graphName: string;
+  serviceName: string;
+  tag: string;
+}): string {
+  return `
+### Apollo Service Check
+🔄 Validated graph composition on schema tag \`${tag}\` for service \`${serviceName}\` on graph \`${graphName}\`.
+❌ Found **${compositionErrors.length} composition errors**
+
+| Service   | Field     | Message   |
+| --------- | --------- | --------- |
+${compositionErrors
+  .map(
+    ({ service, field, message }) => `| ${service} | ${field} | ${message} |`
+  )
+  .join("\n")}
 `;
 }
 
@@ -247,10 +280,7 @@ export default class ServiceCheck extends ProjectCommand {
     serviceName: flags.string({
       description:
         "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service",
-      dependsOn: ["endpoint"],
-      // JSON and markdown outputs have not yet been developed for federated service checks. @see
-      // https://apollographql.atlassian.net/browse/AP-491
-      exclusive: ["json", "markdown"]
+      dependsOn: ["endpoint"]
     })
   };
 
@@ -291,6 +321,13 @@ export default class ServiceCheck extends ProjectCommand {
           if (!graphName) {
             throw new Error("No service found to link to Engine");
           }
+
+          // Add some fields to output that are required for producing
+          // markdown and json output
+          taskOutput.shouldOutputJson = !!flags.json;
+          taskOutput.shouldOutputMarkdown = !!flags.markdown;
+          taskOutput.serviceName = flags.serviceName;
+          taskOutput.config = config;
 
           return [
             {
@@ -378,8 +415,6 @@ export default class ServiceCheck extends ProjectCommand {
                 graphName
               )}`,
               task: async (ctx: TasksOutput, task) => {
-                taskOutput.shouldOutputJson = flags.json;
-
                 let schemaCheckSchemaVariables:
                   | { schemaHash: string }
                   | { schema: IntrospectionSchemaInput }
@@ -436,20 +471,14 @@ export default class ServiceCheck extends ProjectCommand {
                   this.debug(schemaCheckSchemaVariables);
                 }
 
-                const newContext: typeof ctx = {
-                  checkSchemaResult: await project.engine.checkSchema(
-                    variables
-                  ),
-                  config,
-                  shouldOutputJson: !!flags.json,
-                  shouldOutputMarkdown: !!flags.markdown
-                };
-
-                Object.assign(ctx, newContext);
-
+                const checkSchemaResult = await project.engine.checkSchema(
+                  variables
+                );
+                // Attach to ctx as this will be used in later steps.
+                ctx.checkSchemaResult = checkSchemaResult;
                 // Save the output because we're going to use it even if we throw. `runTasks` won't return
                 // anything if we throw.
-                Object.assign(taskOutput, ctx);
+                taskOutput.checkSchemaResult = checkSchemaResult;
 
                 task.title = task.title.replace("Validating", "Validated");
               }
@@ -547,20 +576,74 @@ export default class ServiceCheck extends ProjectCommand {
       config,
       shouldOutputJson,
       shouldOutputMarkdown,
+      serviceName,
       compositionErrors
     } = taskOutput;
 
-    if (compositionErrors) {
-      if (shouldOutputJson) {
+    if (shouldOutputJson) {
+      if (compositionErrors) {
+        return this.log(JSON.stringify({ errors: compositionErrors }, null, 2));
+      }
+
+      return this.log(
+        JSON.stringify(
+          {
+            targetUrl: checkSchemaResult.targetUrl,
+            changes: checkSchemaResult.diffToPrevious.changes,
+            validationConfig: checkSchemaResult.diffToPrevious.validationConfig
+          },
+          null,
+          2
+        )
+      );
+    } else if (shouldOutputMarkdown) {
+      // This _should_ always be here; but TypeScript tells us that's optional. If we check it here, then
+      // passing `config` to any other function will signify that `config.service` might now be null or
+      // undefined. Save it as a const to tell TypeScript `service` can't be changed.
+
+      const { service } = config;
+      if (!service) {
         throw new Error(
-          "Federated service check does not yet support JSON output formatting"
-        );
-      } else if (shouldOutputMarkdown) {
-        throw new Error(
-          "Federated service check does not yet support markdown output formatting"
+          "Service mising from config. This should have been validated elsewhere"
         );
       }
 
+      const graphName = config.service && config.service.name;
+
+      if (!graphName) {
+        throw new Error(
+          "The graph name should have been defined in the Apollo config and validated when the config was loaded. Please file an issue if you're seeing this error."
+        );
+      }
+
+      if (compositionErrors) {
+        if (!serviceName) {
+          throw new Error(
+            "Composition errors should only occur when `serviceName` is present. Please file an issue if you're seeing this error."
+          );
+        }
+
+        return this.log(
+          formatCompositionErrorsMarkdown({
+            compositionErrors,
+            graphName,
+            serviceName,
+            tag: config.tag
+          })
+        );
+      }
+
+      return this.log(
+        formatMarkdown({
+          checkSchemaResult,
+          graphName,
+          serviceName,
+          tag: config.tag
+        })
+      );
+    }
+
+    if (compositionErrors) {
       // Add a cosmetic line break
       console.log("");
 
@@ -574,60 +657,17 @@ export default class ServiceCheck extends ProjectCommand {
 
       // Return a non-zero error code
       this.exit(1);
+    } else {
+      this.log(formatHumanReadable({ checkSchemaResult }));
 
-      return;
-    }
-
-    // This _should_ always be here; but TypeScript tells us that's optional. If we check it here, then
-    // passing `config` to any other function will signify that `config.service` might now be null or
-    // undefined. Save it as a const to tell TypeScript `service` can't be changed.
-
-    const { service } = config;
-    if (!service) {
-      throw new Error(
-        "Service mising from config. This should have been validated elsewhere"
-      );
-    }
-
-    if (shouldOutputJson) {
-      return this.log(
-        JSON.stringify(
-          {
-            targetUrl: checkSchemaResult.targetUrl,
-            changes: checkSchemaResult.diffToPrevious.changes,
-            validationConfig: checkSchemaResult.diffToPrevious.validationConfig
-          },
-          null,
-          2
+      // exit with failing status if we have failures
+      if (
+        checkSchemaResult.diffToPrevious.changes.find(
+          ({ severity }) => severity === ChangeSeverity.FAILURE
         )
-      );
-    } else if (shouldOutputMarkdown) {
-      const serviceName = config.service && config.service.name;
-
-      if (!serviceName) {
-        throw new Error(
-          "The service name should have been defined in the Apollo config and validated when the config was loaded. Please file an issue if you're seeing this error."
-        );
+      ) {
+        this.exit(1);
       }
-
-      return this.log(
-        formatMarkdown({
-          checkSchemaResult,
-          serviceName,
-          tag: config.tag
-        })
-      );
-    }
-
-    this.log(formatHumanReadable({ checkSchemaResult }));
-
-    // exit with failing status if we have failures
-    if (
-      checkSchemaResult.diffToPrevious.changes.find(
-        ({ severity }) => severity === ChangeSeverity.FAILURE
-      )
-    ) {
-      this.exit(1);
     }
   }
 }
