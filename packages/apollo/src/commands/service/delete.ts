@@ -17,7 +17,6 @@ export default class ServiceDelete extends ProjectCommand {
     variant: flags.string({
       char: "v",
       description: "The variant of the service to delete",
-      default: "current",
       exclusive: ["tag"]
     }),
     federated: flags.boolean({
@@ -50,7 +49,7 @@ export default class ServiceDelete extends ProjectCommand {
             );
           }
 
-          const graphVariant = flags.tag || config.tag || "current";
+          const graphVariant = config.tag || flags.variant;
 
           const {
             errors,
