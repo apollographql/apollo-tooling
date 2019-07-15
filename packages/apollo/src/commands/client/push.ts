@@ -88,7 +88,8 @@ export default class ClientPush extends ClientCommand {
                 id: config.name,
                 operations: operationManifest,
                 manifestVersion: 2,
-                graphVariant: config.tag
+                graphVariant:
+                  flags.variant || flags.tag || config.tag || "current"
               };
               const { operations: _op, ...restVariables } = variables;
               this.debug("Variables sent to Apollo");

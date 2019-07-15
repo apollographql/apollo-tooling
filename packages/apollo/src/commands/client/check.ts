@@ -31,7 +31,7 @@ export default class ClientCheck extends ClientCommand {
     const { validationResults, operations } = await this.runTasks<{
       operations: Operation[];
       validationResults: ValidationResult[];
-    }>(({ project, config }) => [
+    }>(({ project, config, flags }) => [
       {
         title: "Checking client compatibility with service",
         task: async ctx => {
@@ -56,7 +56,7 @@ export default class ClientCheck extends ClientCommand {
 
           ctx.validationResults = await project.engine.validateOperations({
             id: config.name,
-            tag: config.tag,
+            tag: flags.variant || flags.tag || config.tag || "current",
             operations: ctx.operations.map(({ body, name }) => ({
               body,
               name

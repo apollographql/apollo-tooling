@@ -326,7 +326,7 @@ export default class ServiceCheck extends ProjectCommand {
            * A graph can be either a monolithic schema or the result of composition a federated schema.
            */
           const graphName = config.name;
-          const tag = flags.tag || config.tag || "current";
+          const tag = flags.variant || flags.tag || config.tag || "current";
 
           /**
            * Name of the implementing service being checked.
@@ -434,7 +434,7 @@ export default class ServiceCheck extends ProjectCommand {
             {
               title: `Validating ${
                 serviceName ? "composed " : ""
-              }schema against tag ${chalk.blue(tag)} on graph ${chalk.blue(
+              }schema against variant ${chalk.blue(tag)} on graph ${chalk.blue(
                 graphName
               )}`,
               task: async (ctx: TasksOutput, task) => {
@@ -452,7 +452,7 @@ export default class ServiceCheck extends ProjectCommand {
                 } else {
                   // This is _not_ a `federated` schema. Resolve the schema given `config.tag`.
                   task.output = "Resolving schema";
-                  schema = await project.resolveSchema({ tag: config.tag });
+                  schema = await project.resolveSchema({ tag: tag });
                   if (!schema) {
                     throw new Error("Failed to resolve schema");
                   }
@@ -476,7 +476,7 @@ export default class ServiceCheck extends ProjectCommand {
 
                 const variables: CheckSchemaVariables = {
                   id: graphName,
-                  tag: flags.tag,
+                  tag: tag,
                   gitContext: await gitInfo(this.log),
                   frontend: flags.frontend || config.engine.frontend,
                   ...(historicParameters && { historicParameters }),

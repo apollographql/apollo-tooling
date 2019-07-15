@@ -48,7 +48,8 @@ export default class ServiceDelete extends ProjectCommand {
             );
           }
 
-          const graphVariant = config.tag || flags.variant;
+          const graphVariant =
+            flags.variant || flags.tag || config.tag || "current";
 
           const {
             errors,

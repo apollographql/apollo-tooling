@@ -112,8 +112,6 @@ export default class ServiceList extends ProjectCommand {
   async run() {
     // @ts-ignore we're going to populate `taskOutput` later
     const taskOutput: TasksOutput = {};
-
-    let schema: GraphQLSchema | undefined;
     try {
       await this.runTasks<TasksOutput>(({ config, flags, project }) => {
         if (!isServiceProject(project)) {
@@ -128,7 +126,7 @@ export default class ServiceList extends ProjectCommand {
          * A graph can be either a monolithic schema or the result of composition a federated schema.
          */
         const graphName = config.name;
-        const variant = flags.tag || config.tag || "current";
+        const variant = flags.variant || flags.tag || config.tag || "current";
 
         if (!graphName) {
           throw new Error("No service found to link to Engine");
