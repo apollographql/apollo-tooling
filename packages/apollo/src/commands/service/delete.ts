@@ -15,7 +15,7 @@ export default class ServiceDelete extends ProjectCommand {
       char: "f",
       default: false,
       description:
-        "Indicates that the schema is a partial schema from a federated service"
+        "[Deprecated: use --serviceName to indicate federation] Indicates that the schema is a partial schema from a federated service"
     }),
     serviceName: flags.string({
       required: true,
@@ -34,9 +34,9 @@ export default class ServiceDelete extends ProjectCommand {
             throw new Error("No service found to link to Engine");
           }
 
-          if (!flags.federated) {
+          if (!flags.federated && !flags.serviceName) {
             this.error(
-              "Deleting a service is only supported for federated services. Use the --federated flag if this is a federated service."
+              "Deleting a service is only supported for federated services. Use the --serviceName flag if this is a federated service."
             );
           }
 

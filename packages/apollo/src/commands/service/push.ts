@@ -24,8 +24,9 @@ export default class ServicePush extends ProjectCommand {
     federated: flags.boolean({
       char: "f",
       default: false,
+      hidden: true,
       description:
-        "Indicates that the schema is a partial schema from a federated service"
+        "[Deprecated: use --serviceName to indicate federation] Indicates that the schema is a partial schema from a federated service"
     }),
     serviceName: flags.string({
       description:
