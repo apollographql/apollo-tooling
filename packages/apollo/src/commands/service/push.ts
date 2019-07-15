@@ -194,6 +194,8 @@ export default class ServicePush extends ProjectCommand {
 
       this.log(printed);
       this.log("\n");
+
+      this.exit(1);
     }
 
     if (result.didUpdateGateway) {
