@@ -3,11 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Add `service:list` and tests [#1358](https://github.com/apollographql/apollo-tooling/pull/1358) and header [#1377](https://github.com/apollographql/apollo-tooling/pull/1377)
-  - Update `service:list` test to use a simulated time to prevent relative dates causing snapshot failures [#1374](https://github.com/apollographql/apollo-tooling/pull/1374)
-  - Update `service:check` to support `--markdown` and `--json` flags for federated schema [#1378](https://github.com/apollographql/apollo-tooling/pull/1378)
-  - Exit status code 1 after composition errors in service:push [#1403](https://github.com/apollographql/apollo-tooling/pull/1403)
-  - Update `service:check` to include `graphCompositionId` in query params for UI [#1401](https://github.com/apollographql/apollo-tooling/pull/1401)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -15,8 +11,7 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Update Swift codegen to add operation name to generated query classes [#1386](https://github.com/apollographql/apollo-tooling/pull/1386)
-  - Append terminating newline character to generated files [#531](https://github.com/apollographql/apollo-ios/issues/531)
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
@@ -24,11 +19,29 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
+  - <First `apollo-language-server` related entry goes here>
+- `apollo-tools`
+  - <First `apollo-tools` related entry goes here>
+- `vscode-apollo`
+  - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.16.0`, `apollo-codegen-swift@0.34.0`, `apollo-language-server@1.13.0`, `apollo-tools@0.4.0`, `vscode-apollo@1.8.0`
+
+- `apollo@2.16.0`
+  - Add `service:list` and tests [#1358](https://github.com/apollographql/apollo-tooling/pull/1358) and header [#1377](https://github.com/apollographql/apollo-tooling/pull/1377)
+  - Update `service:list` test to use a simulated time to prevent relative dates causing snapshot failures [#1374](https://github.com/apollographql/apollo-tooling/pull/1374)
+  - Update `service:check` to support `--markdown` and `--json` flags for federated schema [#1378](https://github.com/apollographql/apollo-tooling/pull/1378)
+  - Exit status code 1 after composition errors in service:push [#1403](https://github.com/apollographql/apollo-tooling/pull/1403)
+  - Update `service:check` to include `graphCompositionId` in query params for UI [#1401](https://github.com/apollographql/apollo-tooling/pull/1401)
+- `apollo-codegen-swift@0.34.0`
+  - Update Swift codegen to add operation name to generated query classes [#1386](https://github.com/apollographql/apollo-tooling/pull/1386)
+  - Append terminating newline character to generated files [#531](https://github.com/apollographql/apollo-ios/issues/531)
+- `apollo-language-server@1.13.0`
   - Allow template literal placeholders that span multiple rows[#1299](https://github.com/apollographql/apollo-tooling/pull/1299)
   - Add support for extracting GraphQL documents from Ruby source files using `<<-GRAPHQL...GRAPHQL` heredoc. [#1304](https://github.com/apollographql/apollo-tooling/pull/1304)
-- `apollo-tools`
+- `apollo-tools@0.4.0`
   - Handle `subscribe` in `buildServiceDefinition` and add type in `resolverMap` [#1047](https://github.com/apollographql/apollo-tooling/pull/1047)
-- `vscode-apollo`
+- `vscode-apollo@1.8.0`
   - Add support for Ruby source files using `<<-GRAPHQL...GRAPHQL` heredoc. [#1304](https://github.com/apollographql/apollo-tooling/pull/1304)
 
 ## `apollo@2.15.0`, `apollo-language-server@1.12.0`
