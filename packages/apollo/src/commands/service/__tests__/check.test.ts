@@ -406,6 +406,25 @@ describe("service:check", () => {
           expect(uncaptureApplicationOutput()).toMatchSnapshot();
         });
 
+        it("--compactOutput", async () => {
+          captureApplicationOutput();
+          mockCompositionFailure();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              "--compactOutput"
+            ])
+          ).rejects.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
         it("--markdown", async () => {
           captureApplicationOutput();
           mockCompositionFailure();
@@ -459,6 +478,25 @@ describe("service:check", () => {
               ...cliKeyParameter,
               "--serviceName=accounts",
               `--endpoint=${localURL}/graphql`
+            ])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("--compactOutput", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              "--compactOutput"
             ])
           ).resolves.not.toThrow();
 

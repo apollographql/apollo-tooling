@@ -4,7 +4,11 @@ import { introspectionFromSchema, printSchema, GraphQLSchema } from "graphql";
 import chalk from "chalk";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
-import { validateHistoricParams, pluralize } from "../../utils";
+import {
+  validateHistoricParams,
+  pluralize,
+  CompactRenderer
+} from "../../utils";
 import {
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
@@ -277,7 +281,7 @@ export default class ServiceCheck extends ProjectCommand {
     json: flags.boolean({
       description:
         "Output result in json, which can then be parsed by CLI tools such as jq.",
-      exclusive: ["markdown"]
+      exclusive: ["markdown", "compactOutput"]
     }),
     localSchemaFile: flags.string({
       description:
@@ -285,12 +289,17 @@ export default class ServiceCheck extends ProjectCommand {
     }),
     markdown: flags.boolean({
       description: "Output result in markdown.",
-      exclusive: ["json"]
+      exclusive: ["json", "compactOutput"]
     }),
     serviceName: flags.string({
       description:
         "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service",
       dependsOn: ["endpoint"]
+    }),
+    compactOutput: flags.boolean({
+      description:
+        "Only output final results of tasks, do not print intermediate steps.",
+      exclusive: ["json", "markdown"]
     })
   };
 
@@ -568,8 +577,11 @@ export default class ServiceCheck extends ProjectCommand {
           // the `this.log` output to `stdout`.
           //
           // @see https://github.com/SamVerschueren/listr#renderer
-          renderer:
-            context.flags.markdown || context.flags.json ? "silent" : "default"
+          renderer: context.flags.compactOutput
+            ? CompactRenderer
+            : context.flags.markdown || context.flags.json
+            ? "silent"
+            : "default"
         })
       );
     } catch (error) {

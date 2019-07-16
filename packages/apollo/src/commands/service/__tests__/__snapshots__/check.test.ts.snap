@@ -45,6 +45,18 @@ No changes present between schemas
 View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z?graphCompositionId=fff"
 `;
 
+exports[`service:check integration federated should report composition errors correctly --compactOutput 1`] = `
+"Loading Apollo Project
+Found 3 graph composition errors for service accounts on graph engine
+
+Service   Field    Message
+────────  ───────  ────────────────────────────────────────────────────────────────────────────────────────
+reviews   User.id  marked @external but it does not have a matching field on on the base service (accounts)
+reviews   User     A @key selects id, but User.id could not be found
+accounts  User     A @key selects id, but User.id could not be found
+"
+`;
+
 exports[`service:check integration federated should report composition errors correctly --json 1`] = `
 "{
   \\"errors\\": [
@@ -98,6 +110,19 @@ Service   Field    Message
 reviews   User.id  marked @external but it does not have a matching field on on the base service (accounts)
 reviews   User     A @key selects id, but User.id could not be found
 accounts  User     A @key selects id, but User.id could not be found
+"
+`;
+
+exports[`service:check integration federated should report composition success correctly --compactOutput 1`] = `
+"Loading Apollo Project
+Found 0 graph composition errors for service accounts on graph engine
+Validated composed schema against tag master on graph engine
+Compared 1 schema change against 0 operations over the last 548 days
+Found 0 breaking changes and 1 compatible change
+
+PASS    ARG_CHANGED_TYPE  \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`
+
+View full details at: https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc
 "
 `;
 
