@@ -24,8 +24,9 @@ export default class ServicePush extends ProjectCommand {
     federated: flags.boolean({
       char: "f",
       default: false,
+      hidden: true,
       description:
-        "Indicates that the schema is a partial schema from a federated service"
+        "[Deprecated: use --serviceName to indicate federation] Indicates that the schema is a partial schema from a federated service"
     }),
     serviceName: flags.string({
       description:
@@ -53,7 +54,13 @@ export default class ServicePush extends ProjectCommand {
             throw new Error("No service found to link to Engine");
           }
 
-          isFederated = flags.federated || flags.serviceName;
+          if (flags.federated) {
+            this.log(
+              "The --federated flag is no longer required when running federated commands. Use of the flag will not be supported in future versions of the CLI."
+            );
+          }
+
+          isFederated = flags.serviceName;
 
           gitContext = await gitInfo(this.log);
 
