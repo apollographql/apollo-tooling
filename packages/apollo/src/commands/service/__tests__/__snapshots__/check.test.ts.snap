@@ -45,6 +45,44 @@ No changes present between schemas
 View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z"
 `;
 
+exports[`service:check integration federated should report composition errors correctly --json 1`] = `
+"{
+  \\"errors\\": [
+    {
+      \\"service\\": \\"reviews\\",
+      \\"field\\": \\"User.id\\",
+      \\"message\\": \\"marked @external but it does not have a matching field on on the base service (accounts)\\"
+    },
+    {
+      \\"service\\": \\"reviews\\",
+      \\"field\\": \\"User\\",
+      \\"message\\": \\"A @key selects id, but User.id could not be found\\"
+    },
+    {
+      \\"service\\": \\"accounts\\",
+      \\"field\\": \\"User\\",
+      \\"message\\": \\"A @key selects id, but User.id could not be found\\"
+    }
+  ]
+}
+"
+`;
+
+exports[`service:check integration federated should report composition errors correctly --markdown 1`] = `
+"
+### Apollo Service Check
+🔄 Validated graph composition on schema tag \`master\` for service \`accounts\` on graph \`engine\`.
+❌ Found **3 composition errors**
+
+| Service   | Field     | Message   |
+| --------- | --------- | --------- |
+| reviews | User.id | marked @external but it does not have a matching field on on the base service (accounts) |
+| reviews | User | A @key selects id, but User.id could not be found |
+| accounts | User | A @key selects id, but User.id could not be found |
+
+"
+`;
+
 exports[`service:check integration federated should report composition errors correctly vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
@@ -60,6 +98,38 @@ Service   Field    Message
 reviews   User.id  marked @external but it does not have a matching field on on the base service (accounts)
 reviews   User     A @key selects id, but User.id could not be found
 accounts  User     A @key selects id, but User.id could not be found
+"
+`;
+
+exports[`service:check integration federated should report composition success correctly --json 1`] = `
+"{
+  \\"targetUrl\\": \\"https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc\\",
+  \\"changes\\": [
+    {
+      \\"severity\\": \\"NOTICE\\",
+      \\"code\\": \\"ARG_CHANGED_TYPE\\",
+      \\"description\\": \\"\`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`\\"
+    }
+  ],
+  \\"validationConfig\\": {
+    \\"from\\": \\"-47347200\\",
+    \\"to\\": \\"-0\\",
+    \\"queryCountThreshold\\": 1,
+    \\"queryCountThresholdPercentage\\": 0
+  }
+}
+"
+`;
+
+exports[`service:check integration federated should report composition success correctly --markdown 1`] = `
+"
+### Apollo Service Check
+🔄 Validated your local schema against schema tag \`master\` for service \`accounts\` on graph \`engine\`.
+🔢 Compared **1 schema change** against **0 operations** seen over the **last 548 days**.
+✅ Found **no breaking changes**.
+
+🔗 [View your service check details](https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc).
+
 "
 `;
 

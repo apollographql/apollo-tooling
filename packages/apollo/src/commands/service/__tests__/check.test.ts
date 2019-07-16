@@ -406,15 +406,13 @@ describe("service:check", () => {
           expect(uncaptureApplicationOutput()).toMatchSnapshot();
         });
 
-        // This feature is not yet available. Adding markdown and json output support for federated services
-        // will require a minor refactor. Work can be tracked at
-        // https://apollographql.atlassian.net/browse/AP-491
-        it.skip("--markdown", async () => {
+        it("--markdown", async () => {
           captureApplicationOutput();
           mockCompositionFailure();
 
           expect.assertions(2);
 
+          // markdown formatted output should not throw
           await expect(
             ServiceCheck.run([
               ...cliKeyParameter,
@@ -422,21 +420,19 @@ describe("service:check", () => {
               `--endpoint=${localURL}/graphql`,
               "--markdown"
             ])
-          ).rejects.toThrow();
+          ).resolves.not.toThrow();
 
           // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
           expect(uncaptureApplicationOutput()).toMatchSnapshot();
         });
 
-        // This feature is not yet available. Adding markdown and json output support for federated services
-        // will require a minor refactor. Work can be tracked at
-        // https://apollographql.atlassian.net/browse/AP-491
-        it.skip("--json", async () => {
+        it("--json", async () => {
           captureApplicationOutput();
           mockCompositionFailure();
 
           expect.assertions(2);
 
+          // JSON formatted output should not throw
           await expect(
             ServiceCheck.run([
               ...cliKeyParameter,
@@ -444,7 +440,7 @@ describe("service:check", () => {
               `--endpoint=${localURL}/graphql`,
               "--json"
             ])
-          ).rejects.toThrow();
+          ).resolves.not.toThrow();
 
           // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
           expect(uncaptureApplicationOutput()).toMatchSnapshot();
@@ -470,10 +466,7 @@ describe("service:check", () => {
           expect(uncaptureApplicationOutput()).toMatchSnapshot();
         });
 
-        // This feature is not yet available. Adding markdown and json output support for federated services
-        // will require a minor refactor. Work can be tracked at
-        // https://apollographql.atlassian.net/browse/AP-491
-        it.skip("--markdown", async () => {
+        it("--markdown", async () => {
           captureApplicationOutput();
           mockCompositionSuccess();
 
@@ -492,10 +485,7 @@ describe("service:check", () => {
           expect(uncaptureApplicationOutput()).toMatchSnapshot();
         });
 
-        // This feature is not yet available. Adding markdown and json output support for federated services
-        // will require a minor refactor. Work can be tracked at
-        // https://apollographql.atlassian.net/browse/AP-491
-        it.skip("--json", async () => {
+        it("--json", async () => {
           captureApplicationOutput();
           mockCompositionSuccess();
 
@@ -607,7 +597,7 @@ describe("service:check", () => {
     it("is correct with breaking changes", () => {
       expect(
         formatMarkdown({
-          serviceName: "engine",
+          graphName: "engine",
           tag: "staging",
           checkSchemaResult
         })
@@ -615,7 +605,7 @@ describe("service:check", () => {
       // Check when all the values are singluar
       expect(
         formatMarkdown({
-          serviceName: "engine",
+          graphName: "engine",
           tag: "staging",
           checkSchemaResult: {
             ...checkSchemaResult,
@@ -642,7 +632,7 @@ describe("service:check", () => {
     it("is correct with no breaking changes", () => {
       expect(
         formatMarkdown({
-          serviceName: "engine",
+          graphName: "engine",
           tag: "staging",
           checkSchemaResult: {
             ...checkSchemaResult,
