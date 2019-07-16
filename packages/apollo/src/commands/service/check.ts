@@ -578,7 +578,7 @@ export default class ServiceCheck extends ProjectCommand {
           //
           // @see https://github.com/SamVerschueren/listr#renderer
           renderer: context.flags.compactOutput
-            ? <any>CompactRenderer
+            ? CompactRenderer
             : context.flags.markdown || context.flags.json
             ? "silent"
             : "default"

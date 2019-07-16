@@ -1,6 +1,5 @@
 import Command, { flags } from "@oclif/command";
 import Listr from "listr";
-import { ListrTask } from "listr";
 import { parse, resolve } from "path";
 
 import {
@@ -93,7 +92,7 @@ export abstract class ProjectCommand extends Command {
   };
 
   public project!: GraphQLProject;
-  public tasks: ListrTask[] = [];
+  public tasks: Listr.ListrRawTask[] = [];
 
   protected type: "service" | "client" = "service";
   protected configMap?: (flags: any) => DeepPartial<ApolloConfig>;
@@ -236,7 +235,7 @@ export abstract class ProjectCommand extends Command {
   }
 
   async runTasks<Result>(
-    generateTasks: (context: ProjectContext) => ListrTask[],
+    generateTasks: (context: ProjectContext) => Listr.ListrRawTask[],
     options?: Listr.ListrOptions | ((ctx: ProjectContext) => Listr.ListrOptions)
   ): Promise<Result> {
     const { ctx } = this;

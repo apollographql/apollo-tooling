@@ -1,9 +1,9 @@
-import { ListrOptions } from "listr";
+import { ListrTask, ListrOptions, ListrError } from "listr";
 
 export class CompactRenderer {
-  _tasks: ReadonlyArray<any>;
+  _tasks: ReadonlyArray<ListrTask>;
 
-  constructor(tasks: ReadonlyArray<any>, options: ListrOptions) {
+  constructor(tasks: ReadonlyArray<ListrTask>, options: ListrOptions) {
     this._tasks = tasks;
   }
 
@@ -24,5 +24,5 @@ export class CompactRenderer {
     });
   }
 
-  end(err) {}
+  end(err: ListrError) {}
 }
