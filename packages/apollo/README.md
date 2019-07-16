@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.15.0 darwin-x64 node-v11.14.0
+apollo/2.16.0 darwin-x64 node-v11.14.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -46,6 +46,7 @@ USAGE
 * [`apollo service:check`](#apollo-servicecheck)
 * [`apollo service:delete`](#apollo-servicedelete)
 * [`apollo service:download OUTPUT`](#apollo-servicedownload-output)
+* [`apollo service:list`](#apollo-servicelist)
 * [`apollo service:push`](#apollo-servicepush)
 
 ## `apollo client:check`
@@ -504,7 +505,6 @@ USAGE
 
 OPTIONS
   -c, --config=config        Path to your Apollo config file
-  -f, --federated            Indicates that the schema is a partial schema from a federated service
   -t, --tag=tag              The variant of the service to delete
   --endpoint=endpoint        The url of your service
 
@@ -546,6 +546,27 @@ ALIASES
 
 _See code: [src/commands/service/download.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/download.ts)_
 
+## `apollo service:list`
+
+List the services in a graph
+
+```
+USAGE
+  $ apollo service:list
+
+OPTIONS
+  -c, --config=config  Path to your Apollo config file
+  -t, --tag=tag        The published tag to list the services from
+  --endpoint=endpoint  The url of your service
+
+  --header=header      Additional header to send to server for introspectionQuery. May be used multiple times to add
+                       multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag.
+
+  --key=key            The API key for the Apollo Engine service
+```
+
+_See code: [src/commands/service/list.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/list.ts)_
+
 ## `apollo service:push`
 
 Push a service to Engine
@@ -556,7 +577,6 @@ USAGE
 
 OPTIONS
   -c, --config=config                Path to your Apollo config file
-  -f, --federated                    Indicates that the schema is a partial schema from a federated service
   -t, --tag=tag                      [default: current] The tag to publish this service to
   --endpoint=endpoint                The url of your service
 
