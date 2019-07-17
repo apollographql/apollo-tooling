@@ -2,7 +2,7 @@
   "compilerOptions": {
     "composite": true,
     "target": "es2017",
-    "module": "commonjs",
+    "module": "es2015",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "sourceMap": true,
