@@ -199,6 +199,33 @@ export interface CheckSchemaVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: DeleteSchemaTag
+// ====================================================
+
+export interface DeleteSchemaTag_service_deleteSchemaTag {
+  __typename: "DeleteSchemaTagResult";
+  deleted: boolean;
+}
+
+export interface DeleteSchemaTag_service {
+  __typename: "ServiceMutation";
+  deleteSchemaTag: DeleteSchemaTag_service_deleteSchemaTag;
+}
+
+export interface DeleteSchemaTag {
+  service: DeleteSchemaTag_service | null;
+}
+
+export interface DeleteSchemaTagVariables {
+  id: string;
+  tag: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: ListServices
 // ====================================================
 

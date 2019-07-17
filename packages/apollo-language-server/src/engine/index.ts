@@ -8,6 +8,7 @@ import { SCHEMA_TAGS_AND_FIELD_STATS } from "./operations/schemaTagsAndFieldStat
 import { UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA } from "./operations/uploadAndComposePartialSchema";
 import { CHECK_PARTIAL_SCHEMA } from "./operations/checkPartialSchema";
 import { REMOVE_SERVICE_AND_COMPOSE } from "./operations/removeServiceAndCompose";
+import { DELETE_SCHEMA_TAG } from "./operations/deleteSchemaTag";
 import { LIST_SERVICES } from "./operations/listServices";
 import {
   ListServices,
@@ -26,7 +27,9 @@ import {
   CheckPartialSchema,
   CheckPartialSchemaVariables,
   RemoveServiceAndCompose,
-  RemoveServiceAndComposeVariables
+  RemoveServiceAndComposeVariables,
+  DeleteSchemaTag,
+  DeleteSchemaTagVariables
 } from "../graphqlTypes";
 
 export interface ClientIdentity {
@@ -263,6 +266,30 @@ export class ApolloEngineClient extends GraphQLDataSource {
         throw new Error("Error in request from Engine");
       }
       return data.service.registerOperationsWithResponse;
+    });
+  }
+
+  public async deleteSchemaTag(variables: DeleteSchemaTagVariables) {
+    return this.execute<DeleteSchemaTag>({
+      query: DELETE_SCHEMA_TAG,
+      variables
+    }).then(({ data, errors }) => {
+      // use error logger
+      if (errors) {
+        throw new Error(errors.map(error => error.message).join("\n"));
+      }
+
+      if (data && !data.service) {
+        throw new Error(
+          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+        );
+      }
+
+      if (!(data && data.service && data.service.deleteSchemaTag)) {
+        throw new Error("Error in request from Engine");
+      }
+
+      return data.service.deleteSchemaTag;
     });
   }
 
