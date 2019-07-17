@@ -16,7 +16,11 @@ import {
   extendSchema,
   DocumentNode,
   FieldNode,
-  ObjectTypeDefinitionNode
+  ObjectTypeDefinitionNode,
+  ObjectTypeExtensionNode,
+  isTypeExtensionNode,
+  GraphQLInputObjectType,
+  DefinitionNode
 } from "graphql";
 import { ValidationRule } from "graphql/validation/ValidationContext";
 
@@ -32,9 +36,11 @@ import { ClientConfig } from "../config";
 import {
   removeDirectives,
   removeDirectiveAnnotatedFields,
-  withTypenameFieldAddedWhereNeeded
+  withTypenameFieldAddedWhereNeeded,
+  ClientSchemaInfo
 } from "../utilities/graphql";
 import { defaultValidationRules } from "../errors/validation";
+import { GraphQLDocument } from "../document";
 
 import {
   collectExecutableDefinitionDiagnositics,
@@ -87,6 +93,8 @@ export class GraphQLClientProject extends GraphQLProject {
   private fieldStats?: FieldStats;
 
   private _validationRules?: ValidationRule[];
+
+  public diagnosticSet?: DiagnosticSet;
 
   constructor({
     config,
@@ -211,8 +219,91 @@ export class GraphQLClientProject extends GraphQLProject {
   get clientSchema(): DocumentNode {
     return {
       kind: Kind.DOCUMENT,
-      definitions: this.typeSystemDefinitionsAndExtensions
+      definitions: [
+        ...this.defaultClientDefinitions,
+        ...this.typeSystemDefinitionsAndExtensions
+      ]
     };
+  }
+
+  get defaultClientDefinitions(): readonly DefinitionNode[] {
+    return new GraphQLDocument(
+      new Source(`
+      """
+      Direct the client to resolve this field locally, either from the cache or local resolvers.
+      """
+      directive @client(
+        """
+        When true, the client will never use the cache for this value. See
+        https://www.apollographql.com/docs/react/essentials/local-state/#forcing-resolvers-with-clientalways-true
+        """
+        always: Boolean
+      ) on FIELD
+
+      """
+      Export this locally resolved field as a variable.
+      """
+      directive @export(
+        """
+        The variable name to export this field as.
+        """
+        as: String!
+      ) on FIELD
+    `)
+    ).ast!.definitions;
+  }
+
+  private addClientMetadataToSchemaNodes(schema: GraphQLSchema) {
+    const definitionsAndExtensions = this.typeSystemDefinitionsAndExtensions;
+
+    // Sort nodes so that definitions are first. This makes it easier to deal
+    // with extensions on client-defined types in the code below.
+    definitionsAndExtensions.sort((a, b) => {
+      const aIsExt = isTypeExtensionNode(a);
+      const bIsExt = isTypeExtensionNode(b);
+
+      if (aIsExt === bIsExt) return 0;
+
+      return aIsExt ? 1 : -1;
+    });
+
+    for (const defOrExtension of definitionsAndExtensions) {
+      if (
+        defOrExtension.kind === Kind.SCHEMA_DEFINITION ||
+        defOrExtension.kind === Kind.SCHEMA_EXTENSION
+      ) {
+        continue;
+      }
+
+      if (defOrExtension.kind === Kind.DIRECTIVE_DEFINITION) {
+        const directive = schema.getDirective(defOrExtension.name.value);
+        if (!directive) continue;
+        // TODO: add metadata to directive?
+        continue;
+      }
+
+      const type = schema.getType(defOrExtension.name.value);
+      if (!type || type instanceof GraphQLInputObjectType) continue;
+
+      const localInfo: ClientSchemaInfo = type.clientSchema || {
+        isLocal: !isTypeExtensionNode(defOrExtension)
+      };
+
+      switch (defOrExtension.kind) {
+        case Kind.OBJECT_TYPE_EXTENSION: {
+          const { fields } = defOrExtension;
+          if (fields) {
+            localInfo.localFields = [
+              ...(localInfo.localFields || []),
+              ...fields.map(field => field.name.value)
+            ];
+          }
+          break;
+        }
+      }
+
+      type.clientSchema = localInfo;
+    }
   }
 
   async validate() {
@@ -224,6 +315,7 @@ export class GraphQLClientProject extends GraphQLProject {
 
     try {
       this.schema = extendSchema(this.serviceSchema, this.clientSchema);
+      this.addClientMetadataToSchemaNodes(this.schema);
     } catch (error) {
       if (error instanceof GraphQLError) {
         const uri = error.source && error.source.name;
@@ -257,6 +349,8 @@ export class GraphQLClientProject extends GraphQLProject {
     for (const [uri, diagnostics] of diagnosticSet.entries()) {
       this._onDiagnostics({ uri, diagnostics });
     }
+
+    this.diagnosticSet = diagnosticSet;
 
     this.generateDecorations();
   }

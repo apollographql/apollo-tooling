@@ -2,6 +2,7 @@ import {
   CancellationToken,
   Position,
   Location,
+  Range,
   CompletionItem,
   Hover,
   Definition,
@@ -10,7 +11,10 @@ import {
   InsertTextFormat,
   DocumentSymbol,
   SymbolKind,
-  SymbolInformation
+  SymbolInformation,
+  CodeAction,
+  CodeActionKind,
+  MarkupKind
 } from "vscode-languageserver";
 
 // should eventually be moved into this package, since we're overriding a lot of the existing behavior here
@@ -26,7 +30,8 @@ import {
   positionFromPositionInContainingDocument,
   rangeForASTNode,
   getASTNodeAndTypeInfoAtPosition,
-  positionToOffset
+  positionToOffset,
+  isFieldResolvedLocally
 } from "./utilities/source";
 
 import {
@@ -49,12 +54,15 @@ import {
   visit,
   isExecutableDefinitionNode,
   isTypeSystemDefinitionNode,
-  isTypeSystemExtensionNode
+  isTypeSystemExtensionNode,
+  GraphQLError
 } from "graphql";
 import { highlightNodeForNode } from "./utilities/graphql";
 
 import { GraphQLClientProject, isClientProject } from "./project/client";
 import { isNotNullOrUndefined } from "@apollographql/apollo-tools";
+import { CodeActionInfo } from "./errors/validation";
+import { GraphQLDiagnostic } from "./diagnostics";
 
 function hasFields(type: GraphQLType): boolean {
   return (
@@ -123,6 +131,12 @@ export class GraphQLLanguageProvider {
       token.state.kind === "Invalid" ? token.state.prevState : token.state;
     const typeInfo = getTypeInfo(project.schema, token.state);
 
+    const suggestions = getAutocompleteSuggestions(
+      project.schema,
+      document.source.body,
+      positionInDocument
+    );
+
     if (
       state.kind === "SelectionSet" ||
       state.kind === "Field" ||
@@ -144,11 +158,7 @@ export class GraphQLLanguageProvider {
         parentFields[TypeMetaFieldDef.name] = TypeMetaFieldDef;
       }
 
-      return getAutocompleteSuggestions(
-        project.schema,
-        document.source.body,
-        positionInDocument
-      ).map(suggest => {
+      return suggestions.map(suggest => {
         // when code completing fields, expand out required variables and open braces
         const suggestedField = parentFields[suggest.label] as GraphQLField<
           void,
@@ -167,9 +177,15 @@ export class GraphQLLanguageProvider {
                   .join(", ")})`
               : ``;
 
+          const isClientType =
+            parentType.clientSchema &&
+            parentType.clientSchema.localFields &&
+            parentType.clientSchema.localFields.includes(suggestedField.name);
+          const directives = isClientType ? " @client" : "";
+
           const snippet = hasFields(suggestedField.type)
-            ? `${suggest.label}${paramsSection} {\n\t$0\n}`
-            : `${suggest.label}${paramsSection}`;
+            ? `${suggest.label}${paramsSection}${directives} {\n\t$0\n}`
+            : `${suggest.label}${paramsSection}${directives}`;
 
           return {
             ...suggest,
@@ -178,13 +194,61 @@ export class GraphQLLanguageProvider {
           };
         }
       });
-    } else {
-      return getAutocompleteSuggestions(
-        project.schema,
-        document.source.body,
-        positionInDocument
-      );
     }
+
+    if (state.kind === "Directive") {
+      return suggestions.map(suggest => {
+        const directive = project.schema!.getDirective(suggest.label);
+        if (!directive) {
+          return suggest;
+        }
+
+        const requiredArgs = directive.args.filter(
+          a => a.type instanceof GraphQLNonNull
+        );
+        const paramsSection =
+          requiredArgs.length > 0
+            ? `(${requiredArgs
+                .map((a, i) => `${a.name}: $${i + 1}`)
+                .join(", ")})`
+            : ``;
+
+        const snippet = `${suggest.label}${paramsSection}`;
+
+        const argsString =
+          directive.args.length > 0
+            ? `(${directive.args.map(a => `${a.name}: ${a.type}`).join(", ")})`
+            : "";
+
+        const content = [
+          [`\`\`\`graphql`, `@${suggest.label}${argsString}`, `\`\`\``].join(
+            "\n"
+          )
+        ];
+
+        if (suggest.documentation) {
+          if (typeof suggest.documentation === "string") {
+            content.push(suggest.documentation);
+          } else {
+            content.push(suggest.documentation.value);
+          }
+        }
+
+        const doc = {
+          kind: MarkupKind.Markdown,
+          value: content.join("\n\n")
+        };
+
+        return {
+          ...suggest,
+          documentation: doc,
+          insertText: snippet,
+          insertTextFormat: InsertTextFormat.Snippet
+        };
+      });
+    }
+
+    return suggestions;
   }
 
   async provideHover(
@@ -223,7 +287,9 @@ export class GraphQLLanguageProvider {
             return {
               contents: {
                 language: "graphql",
-                value: `fragment ${fragmentName} on ${fragment.typeCondition.name.value}`
+                value: `fragment ${fragmentName} on ${
+                  fragment.typeCondition.name.value
+                }`
               }
             };
           }
@@ -241,13 +307,44 @@ export class GraphQLLanguageProvider {
                     .map(a => `${a.name}: ${a.type}`)
                     .join(", ")})`
                 : "";
+            const isClientType =
+              parentType.clientSchema &&
+              parentType.clientSchema.localFields &&
+              parentType.clientSchema.localFields.includes(fieldDef.name);
+
+            const isResolvedLocally = isFieldResolvedLocally(
+              document.source,
+              node,
+              document.ast,
+              project.schema
+            );
+
+            const content = [
+              [
+                `\`\`\`graphql`,
+                `${parentType}.${fieldDef.name}${argsString}: ${fieldDef.type}`,
+                `\`\`\``
+              ].join("\n")
+            ];
+
+            const info: string[] = [];
+            if (isClientType) {
+              info.push("`Client-Only Field`");
+            }
+            if (isResolvedLocally) {
+              info.push("`Resolved locally`");
+            }
+
+            if (info.length !== 0) {
+              content.push(info.join(" "));
+            }
+
+            if (fieldDef.description) {
+              content.push(fieldDef.description);
+            }
+
             return {
-              contents: `
-\`\`\`graphql
-${parentType}.${fieldDef.name}${argsString}: ${fieldDef.type}
-\`\`\`
-${fieldDef.description ? fieldDef.description : ""}
-`,
+              contents: content.join("\n\n---\n\n"),
               range: rangeForASTNode(highlightNodeForNode(node))
             };
           }
@@ -261,26 +358,59 @@ ${fieldDef.description ? fieldDef.description : ""}
           ) as GraphQLNamedType | void;
           if (!type) break;
 
+          const content = [
+            [`\`\`\`graphql`, `${String(type)}`, `\`\`\``].join("\n")
+          ];
+
+          if (type.description) {
+            content.push(type.description);
+          }
+
           return {
-            contents: `
-\`\`\`graphql
-${String(type)}
-\`\`\`
-${type.description ? type.description : ""}
-`,
+            contents: content.join("\n\n---\n\n"),
             range: rangeForASTNode(highlightNodeForNode(node))
           };
         }
 
         case Kind.ARGUMENT: {
           const argumentNode = typeInfo.getArgument()!;
+          const content = [
+            [
+              `\`\`\`graphql`,
+              `${argumentNode.name}: ${argumentNode.type}`,
+              `\`\`\``
+            ].join("\n")
+          ];
+          if (argumentNode.description) {
+            content.push(argumentNode.description);
+          }
           return {
-            contents: `
-\`\`\`graphql
-${argumentNode.name}: ${argumentNode.type}
-\`\`\`
-${argumentNode.description ? argumentNode.description : ""}
-`,
+            contents: content.join("\n\n---\n\n"),
+            range: rangeForASTNode(highlightNodeForNode(node))
+          };
+        }
+
+        case Kind.DIRECTIVE: {
+          const directiveNode = typeInfo.getDirective();
+          if (!directiveNode) break;
+          const argsString =
+            directiveNode.args.length > 0
+              ? `(${directiveNode.args
+                  .map(a => `${a.name}: ${a.type}`)
+                  .join(", ")})`
+              : "";
+          const content = [
+            [
+              `\`\`\`graphql`,
+              `@${directiveNode.name}${argsString}`,
+              `\`\`\``
+            ].join("\n")
+          ];
+          if (directiveNode.description) {
+            content.push(directiveNode.description);
+          }
+          return {
+            contents: content.join("\n\n---\n\n"),
             range: rangeForASTNode(highlightNodeForNode(node))
           };
         }
@@ -318,14 +448,14 @@ ${argumentNode.description ? argumentNode.description : ""}
       const [node, typeInfo] = nodeAndTypeInfo;
 
       switch (node.kind) {
-        case Kind.FRAGMENT_SPREAD:
+        case Kind.FRAGMENT_SPREAD: {
           const fragmentName = node.name.value;
           const fragment = project.fragments[fragmentName];
           if (fragment && fragment.loc) {
             return locationForASTNode(fragment);
           }
           break;
-
+        }
         case Kind.FIELD: {
           const fieldDef = typeInfo.getFieldDef();
 
@@ -339,6 +469,13 @@ ${argumentNode.description ? argumentNode.description : ""}
           if (!(type && type.astNode && type.astNode.loc)) break;
 
           return locationForASTNode(type.astNode);
+        }
+        case Kind.DIRECTIVE: {
+          const directive = project.schema.getDirective(node.name.value);
+
+          if (!(directive && directive.astNode && directive.astNode.loc)) break;
+
+          return locationForASTNode(directive.astNode);
         }
       }
     }
@@ -580,5 +717,68 @@ ${argumentNode.description ? argumentNode.description : ""}
       }
     }
     return codeLenses;
+  }
+
+  async provideCodeAction(
+    uri: DocumentUri,
+    range: Range,
+    _token: CancellationToken
+  ): Promise<CodeAction[]> {
+    function isPositionLessThanOrEqual(a: Position, b: Position) {
+      return a.line !== b.line ? a.line < b.line : a.character <= b.character;
+    }
+
+    const project = this.workspace.projectForFile(uri);
+    if (
+      !(
+        project &&
+        project instanceof GraphQLClientProject &&
+        project.diagnosticSet
+      )
+    )
+      return [];
+
+    await project.whenReady;
+
+    const documents = project.documentsAt(uri);
+    if (!documents) return [];
+
+    const errors: Set<GraphQLError> = new Set();
+
+    for (const [
+      diagnosticUri,
+      diagnostics
+    ] of project.diagnosticSet.entries()) {
+      if (diagnosticUri !== uri) continue;
+
+      for (const diagnostic of diagnostics) {
+        if (
+          GraphQLDiagnostic.is(diagnostic) &&
+          isPositionLessThanOrEqual(range.start, diagnostic.range.end) &&
+          isPositionLessThanOrEqual(diagnostic.range.start, range.end)
+        ) {
+          errors.add(diagnostic.error);
+        }
+      }
+    }
+
+    const result: CodeAction[] = [];
+
+    for (const error of errors) {
+      const { extensions } = error;
+      if (!extensions || !extensions.codeAction) continue;
+
+      const { message, edits }: CodeActionInfo = extensions.codeAction;
+
+      const codeAction = CodeAction.create(
+        message,
+        { changes: { [uri]: edits } },
+        CodeActionKind.QuickFix
+      );
+
+      result.push(codeAction);
+    }
+
+    return result;
   }
 }

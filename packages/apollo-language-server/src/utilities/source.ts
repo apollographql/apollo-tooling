@@ -9,7 +9,8 @@ import {
   getVisitFn,
   GraphQLType,
   Visitor,
-  ASTKindToNode
+  ASTKindToNode,
+  FieldNode
 } from "graphql";
 import { SourceLocation, getLocation } from "graphql/language/location";
 
@@ -180,4 +181,47 @@ export function getASTNodeAndTypeInfoAtPosition(
   } else {
     return null;
   }
+}
+
+export function isFieldResolvedLocally(
+  source: Source,
+  fieldNode: FieldNode,
+  root: ASTNode,
+  schema: GraphQLSchema
+): boolean | null {
+  const { loc } = fieldNode;
+  if (!loc) return null;
+
+  let underClientDirective: boolean = false;
+
+  const typeInfo = new TypeInfo(schema);
+  visit(
+    root,
+    visitWithTypeInfo(typeInfo, {
+      enter(node: ASTNode) {
+        if (
+          node.kind !== Kind.NAME && // We're usually interested in their parents
+          node.loc &&
+          node.loc.start <= loc.start &&
+          loc.end <= node.loc.end
+        ) {
+          if (
+            node.kind === Kind.FIELD &&
+            node.directives &&
+            node.directives.find(
+              directive => directive.name.value === "client"
+            ) != null
+          ) {
+            underClientDirective = true;
+            return BREAK;
+          }
+        } else {
+          return false;
+        }
+        return;
+      }
+    })
+  );
+
+  return underClientDirective;
 }

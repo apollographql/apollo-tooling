@@ -161,3 +161,30 @@ export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
     }
   });
 }
+
+export interface ClientSchemaInfo {
+  isLocal?: boolean;
+  localFields?: string[];
+}
+
+declare module "graphql/type/definition" {
+  interface GraphQLScalarType {
+    clientSchema?: ClientSchemaInfo;
+  }
+
+  interface GraphQLObjectType {
+    clientSchema?: ClientSchemaInfo;
+  }
+
+  interface GraphQLInterfaceType {
+    clientSchema?: ClientSchemaInfo;
+  }
+
+  interface GraphQLUnionType {
+    clientSchema?: ClientSchemaInfo;
+  }
+
+  interface GraphQLEnumType {
+    clientSchema?: ClientSchemaInfo;
+  }
+}

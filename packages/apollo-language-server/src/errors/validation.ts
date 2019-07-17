@@ -12,17 +12,28 @@ import {
   FragmentDefinitionNode,
   visit,
   visitWithTypeInfo,
-  visitInParallel
+  visitInParallel,
+  getLocation
 } from "graphql";
+
+import { TextEdit } from "vscode-languageserver";
 
 import { ToolError, logError } from "./logger";
 import { ValidationRule } from "graphql/validation/ValidationContext";
+import { ClientSchemaInfo } from "../utilities/graphql";
+import { positionFromSourceLocation } from "../utilities/source";
 
-const specifiedRulesToBeRemoved = [NoUnusedFragmentsRule, KnownDirectivesRule];
+export interface CodeActionInfo {
+  message: string;
+  edits: TextEdit[];
+}
+
+const specifiedRulesToBeRemoved = [NoUnusedFragmentsRule];
 
 export const defaultValidationRules: ValidationRule[] = [
   NoAnonymousQueries,
   NoTypenameAlias,
+  NoMissingClientDirectives,
   ...specifiedRules.filter(rule => !specifiedRulesToBeRemoved.includes(rule))
 ];
 
@@ -90,6 +101,70 @@ export function NoTypenameAlias(context: ValidationContext) {
           )
         );
       }
+    }
+  };
+}
+
+export function NoMissingClientDirectives(context: ValidationContext) {
+  return {
+    Field(node: FieldNode) {
+      const parentType = context.getParentType();
+      const fieldDef = context.getFieldDef();
+
+      if (!parentType || !fieldDef) return;
+
+      const isClientType =
+        parentType.clientSchema &&
+        parentType.clientSchema.localFields &&
+        parentType.clientSchema.localFields.includes(fieldDef.name);
+
+      const hasClientDirective =
+        node.directives &&
+        node.directives.find(value => value.name.value === "client") != null;
+
+      if (isClientType && !hasClientDirective) {
+        let extensions: { [key: string]: any } | null = null;
+        const nameLoc = node.name.loc;
+        if (nameLoc) {
+          let { source, end: locToInsertDirective } = nameLoc;
+          if (node.arguments && node.arguments.length !== 0) {
+            // must insert directive after field arguments
+            const endOfArgs = source.body.indexOf(")", locToInsertDirective);
+            locToInsertDirective = endOfArgs + 1;
+          }
+          const codeAction: CodeActionInfo = {
+            message: `Add @client directive to "${node.name.value}"`,
+            edits: [
+              TextEdit.insert(
+                positionFromSourceLocation(
+                  source,
+                  getLocation(source, locToInsertDirective)
+                ),
+                " @client"
+              )
+            ]
+          };
+          extensions = { codeAction };
+        }
+
+        context.reportError(
+          new GraphQLError(
+            `Local field "${node.name.value}" must have a @client directive`,
+            [node],
+            null,
+            null,
+            null,
+            null,
+            extensions
+          )
+        );
+      }
+
+      if (isClientType) {
+        return false;
+      }
+
+      return;
     }
   };
 }
