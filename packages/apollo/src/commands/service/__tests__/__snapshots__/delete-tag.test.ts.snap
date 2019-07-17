@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service:remove-tag integration should fail if tag does not exist 1`] = `
+"Loading Apollo Project [started]
+Loading Apollo Project [completed]
+Deleting schema tag bar [started]
+Deleting schema tag bar [failed]
+→ Could not delete schema tag bar
+"
+`;
+
+exports[`service:remove-tag integration should successfully delete tag if exists 1`] = `
+"Loading Apollo Project [started]
+Loading Apollo Project [completed]
+Deleting schema tag foo [started]
+Deleting schema tag foo [completed]
+Successfully deleted schema tag foo
+"
+`;
