@@ -169,7 +169,8 @@ export class GraphQLClientProject extends GraphQLProject {
         total: totalTypes
       },
       tag: this.config.tag,
-      loaded: this.serviceID ? true : false,
+      loaded:
+        this.serviceID && (this.schema || this.serviceSchema) ? true : false,
       lastFetch: this.lastLoadDate
     };
   }
@@ -271,15 +272,19 @@ export class GraphQLClientProject extends GraphQLProject {
     await this.loadingHandler.handle(
       `Loading Engine data for ${this.displayName}`,
       (async () => {
-        const {
-          schemaTags,
-          fieldStats
-        } = await engineClient.loadSchemaTagsAndFieldStats(serviceID);
-        this._onSchemaTags && this._onSchemaTags([serviceID, schemaTags]);
-        this.fieldStats = fieldStats;
-        this.lastLoadDate = +new Date();
+        try {
+          const {
+            schemaTags,
+            fieldStats
+          } = await engineClient.loadSchemaTagsAndFieldStats(serviceID);
+          this._onSchemaTags && this._onSchemaTags([serviceID, schemaTags]);
+          this.fieldStats = fieldStats;
+          this.lastLoadDate = +new Date();
 
-        this.generateDecorations();
+          this.generateDecorations();
+        } catch (e) {
+          console.error(e);
+        }
       })()
     );
   }
