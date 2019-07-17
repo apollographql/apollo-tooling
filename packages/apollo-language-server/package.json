@@ -4,6 +4,9 @@
   "version": "1.13.0",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
+  "scripts": {
+    "bundle": "../../node_modules/rollup/bin/rollup -c rollup.config.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/apollographql/apollo-tooling.git"

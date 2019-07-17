@@ -51,6 +51,8 @@
     "vscode-apollo": "file:packages/vscode-apollo"
   },
   "devDependencies": {
+    "@babel/core": "^7.5.4",
+    "@babel/plugin-transform-modules-commonjs": "^7.5.0",
     "@fancy-test/nock": "0.1.1",
     "@oclif/dev-cli": "1.22.0",
     "@oclif/test": "1.2.4",
@@ -82,6 +84,11 @@
     "memfs": "2.15.4",
     "nock": "10.0.6",
     "prettier": "1.17.1",
+    "rollup": "^1.17.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-plugin-terser": "^5.1.1",
+    "rollup-plugin-typescript2": "^0.22.0",
     "stdout-stderr": "^0.1.9",
     "symlink-dir": "3.1.0",
     "ts-jest": "24.0.2",
