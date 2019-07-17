@@ -54,7 +54,7 @@ export function rollup({
       plugins: [
         nodeResolve({
           extensions: [".ts", ".tsx"],
-          module: true
+          mainFields: ["main", "module"]
         }),
         typescriptPlugin({ typescript, tsconfig })
       ],
