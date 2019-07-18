@@ -5,6 +5,7 @@
 - `apollo`
   - Shorten `client:check` and `service:check` output in CI [#1404](https://github.com/apollographql/apollo-tooling/pull/1404)
   - service:check add null check for validation config [#1471](https://github.com/apollographql/apollo-tooling/pull/1471)
+  - `service:push` add `overrideComposedSchema` option, which allows schemas to be force-pushed directly to federated graphs
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
