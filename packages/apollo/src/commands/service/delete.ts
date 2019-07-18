@@ -73,7 +73,11 @@ export default class ServiceDelete extends ProjectCommand {
 
     if (result.updatedGateway) {
       this.log(
-        `The ${result.serviceName} service with ${result.graphVariant} tag was removed from ${result.graphName}. Remaining services were composed.`
+        `The ${result.serviceName} service with ${
+          result.graphVariant
+        } tag was removed from ${
+          result.graphName
+        }. Remaining services were composed.`
       );
       this.log("\n");
     }

@@ -28,7 +28,15 @@ export default class ServicePush extends ProjectCommand {
       description:
         "[Deprecated: use --serviceName to indicate federation] Indicates that the schema is a partial schema from a federated service"
     }),
+    overrideComposedSchema: flags.boolean({
+      description:
+        "Force-publish a schema to a federated graph. By default, federated graphs have their schemas published automatically after pushing a federated service.",
+      default: false,
+      hidden: false,
+      exclusive: ["serviceName"]
+    }),
     serviceName: flags.string({
+      exclusive: ["overrideComposedSchema"],
       description:
         "Provides the name of the implementing service for a federated graph"
     }),
@@ -99,7 +107,7 @@ export default class ServicePush extends ProjectCommand {
               revision:
                 flags.serviceRevision ||
                 (gitContext && gitContext.commit) ||
-                "",
+                "[UNKNOWN]",
               activePartialSchema: {
                 sdl: info.sdl
               }
@@ -126,7 +134,8 @@ export default class ServicePush extends ProjectCommand {
             // XXX Looks like TS should be generating ReadonlyArrays instead
             schema: introspectionFromSchema(schema).__schema,
             tag: flags.tag,
-            gitContext
+            gitContext,
+            overrideComposedSchema: flags.overrideComposedSchema
           };
 
           const { schema: _, ...restVariables } = variables;
@@ -159,11 +168,15 @@ export default class ServicePush extends ProjectCommand {
 
     if (result.serviceWasCreated) {
       this.log(
-        `A new service called '${result.implementingServiceName}' for the '${graphString}' graph was created\n`
+        `A new service called '${
+          result.implementingServiceName
+        }' for the '${graphString}' graph was created\n`
       );
     } else if (result.implementingServiceName && isFederated) {
       this.log(
-        `The '${result.implementingServiceName}' service for the '${graphString}' graph was updated\n`
+        `The '${
+          result.implementingServiceName
+        }' service for the '${graphString}' graph was updated\n`
       );
     }
 
@@ -203,7 +216,9 @@ export default class ServicePush extends ProjectCommand {
 
     if (result.didUpdateGateway) {
       this.log(
-        `The gateway for the '${graphString}' graph was updated with a new schema, composed from the updated '${result.implementingServiceName}' service\n`
+        `The gateway for the '${graphString}' graph was updated with a new schema, composed from the updated '${
+          result.implementingServiceName
+        }' service\n`
       );
     } else if (isFederated) {
       this.log(

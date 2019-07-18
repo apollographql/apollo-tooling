@@ -117,7 +117,9 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
       .catch(error => {
         console.error(error);
         this.loadingHandler.showError(
-          `Error initializing Apollo GraphQL project "${this.displayName}": ${error}`
+          `Error initializing Apollo GraphQL project "${
+            this.displayName
+          }": ${error}`
         );
       });
   }

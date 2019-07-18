@@ -6,9 +6,15 @@ export const UPLOAD_SCHEMA = gql`
     $schema: IntrospectionSchemaInput!
     $tag: String!
     $gitContext: GitContextInput
+    $overrideComposedSchema: Boolean
   ) {
     service(id: $id) {
-      uploadSchema(schema: $schema, tag: $tag, gitContext: $gitContext) {
+      uploadSchema(
+        schema: $schema
+        tag: $tag
+        gitContext: $gitContext
+        overrideComposedSchema: $overrideComposedSchema
+      ) {
         code
         message
         success

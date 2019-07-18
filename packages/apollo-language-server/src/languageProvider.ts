@@ -296,7 +296,9 @@ export class GraphQLLanguageProvider {
             return {
               contents: {
                 language: "graphql",
-                value: `fragment ${fragmentName} on ${fragment.typeCondition.name.value}`
+                value: `fragment ${fragmentName} on ${
+                  fragment.typeCondition.name.value
+                }`
               }
             };
           }

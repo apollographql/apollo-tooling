@@ -231,7 +231,9 @@ export function extractOperationsAndFragments(
 
         if (fragments[node.name.value]) {
           (errorLogger || console.warn)(
-            `Duplicate definition of fragment ${node.name.value}. Please rename one of them or use the same fragment`
+            `Duplicate definition of fragment ${
+              node.name.value
+            }. Please rename one of them or use the same fragment`
           );
         }
         fragments[node.name.value] = node;
@@ -285,7 +287,9 @@ function getNestedFragments(
       }
       if (!fragments[node.name.value]) {
         (errorLogger || console.warn)(
-          `Fragment ${node.name.value} is not defined. Please add the file containing the fragment to the set of included paths`
+          `Fragment ${
+            node.name.value
+          } is not defined. Please add the file containing the fragment to the set of included paths`
         );
       }
       Object.assign(
