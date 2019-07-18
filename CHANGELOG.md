@@ -24,6 +24,7 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - Only activate extension on apollo.config.js/ts [#1411](https://github.com/apollographql/apollo-tooling/pull/1411)
+  - Changed the status bar title to be "Apollo" to save space.
 
 ## `apollo@2.16.0`, `apollo-codegen-swift@0.34.0`, `apollo-language-server@1.13.0`, `apollo-tools@0.4.0`, `vscode-apollo@1.8.0`
 
