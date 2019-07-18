@@ -16,6 +16,9 @@
     "node": ">=8",
     "npm": ">=6"
   },
+  "scripts": {
+    "bundle": "../../node_modules/.bin/parcel ./src/index.html"
+  },
   "dependencies": {
     "@apollographql/apollo-tools": "file:../apollo-tools",
     "@apollographql/graphql-language-service-interface": "^2.0.2",

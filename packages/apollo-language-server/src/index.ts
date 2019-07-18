@@ -24,3 +24,8 @@ export * from "./config";
 // Generated types
 import * as graphqlTypes from "./graphqlTypes";
 export { graphqlTypes };
+
+// just to make sure it's being bundled properly
+if (window) {
+  window.isLocalServiceConfig = require("./config").isLocalServiceConfig;
+}

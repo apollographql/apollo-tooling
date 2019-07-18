@@ -27,3 +27,7 @@ vscode-apollo-*.vsix
 # files generated from tests
 __tmp__*
 .vscode-test
+
+# bundler
+.cache
+dist
