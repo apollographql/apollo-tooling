@@ -274,8 +274,12 @@ export class ApolloEngineClient extends GraphQLDataSource {
       }
     });
 
-    if (!(data && data.service)) {
-      throw new Error();
+    if (!(data && data.service) || errors) {
+      throw new Error(
+        errors
+          ? errors.map(error => error.message).join("\n")
+          : "No service returned. Make sure your service name and API key match"
+      );
     }
 
     const schemaTags: string[] = data.service.schemaTags.map(
