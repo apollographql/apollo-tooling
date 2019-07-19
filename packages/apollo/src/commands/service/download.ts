@@ -45,7 +45,7 @@ export default class ServiceDownload extends ProjectCommand {
         task: async () => {
           try {
             const schema = await project.resolveSchema({
-              tag: flags.variant || flags.tag || config.tag || "current"
+              tag: flags.variant || flags.tag || config.tag
             });
             writeFileSync(
               args.output,

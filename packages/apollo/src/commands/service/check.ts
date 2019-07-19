@@ -77,6 +77,7 @@ interface TasksOutput {
   checkSchemaResult: CheckSchema_service_checkSchema;
   shouldOutputJson: boolean;
   shouldOutputMarkdown: boolean;
+  graphVariant: string;
   federationSchemaHash?: string;
   serviceName: string | undefined;
   compositionErrors?: CompositionErrors;
@@ -87,13 +88,13 @@ export function formatMarkdown({
   checkSchemaResult,
   graphName,
   serviceName,
-  tag,
+  graphVariant,
   graphCompositionID
 }: {
   checkSchemaResult: CheckSchema_service_checkSchema;
   graphName: string;
   serviceName?: string | undefined;
-  tag: string;
+  graphVariant: string;
   // this will only exist for federated schema check
   graphCompositionID: string | undefined;
 }): string {
@@ -128,7 +129,7 @@ export function formatMarkdown({
 
   return `
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`${tag}\` ${
+🔄 Validated your local schema against schema variant \`${graphVariant}\` ${
     serviceName ? `for service \`${serviceName}\` ` : ""
   }on graph \`${graphName}\`.
 🔢 Compared **${pluralize(
@@ -163,16 +164,16 @@ export function formatCompositionErrorsMarkdown({
   compositionErrors,
   graphName,
   serviceName,
-  tag
+  graphVariant
 }: {
   compositionErrors: CompositionErrors;
   graphName: string;
   serviceName: string;
-  tag: string;
+  graphVariant: string;
 }): string {
   return `
 ### Apollo Service Check
-🔄 Validated graph composition on schema tag \`${tag}\` for service \`${serviceName}\` on graph \`${graphName}\`.
+🔄 Validated graph composition on schema variant \`${graphVariant}\` for service \`${serviceName}\` on graph \`${graphName}\`.
 ❌ Found **${compositionErrors.length} composition errors**
 
 | Service   | Field     | Message   |
@@ -326,7 +327,7 @@ export default class ServiceCheck extends ProjectCommand {
            * A graph can be either a monolithic schema or the result of composition a federated schema.
            */
           const graphName = config.name;
-          const tag = flags.variant || flags.tag || config.tag || "current";
+          const graphVariant = flags.variant || flags.tag || config.tag;
 
           /**
            * Name of the implementing service being checked.
@@ -344,6 +345,7 @@ export default class ServiceCheck extends ProjectCommand {
           taskOutput.shouldOutputJson = !!flags.json;
           taskOutput.shouldOutputMarkdown = !!flags.markdown;
           taskOutput.serviceName = flags.serviceName;
+          taskOutput.graphVariant = graphVariant;
           taskOutput.config = config;
 
           return [
@@ -375,7 +377,7 @@ export default class ServiceCheck extends ProjectCommand {
                   graphCompositionID
                 } = await project.engine.checkPartialSchema({
                   id: graphName,
-                  graphVariant: tag,
+                  graphVariant,
                   implementingServiceName: serviceName,
                   partialSchema: {
                     sdl: info.sdl
@@ -434,9 +436,9 @@ export default class ServiceCheck extends ProjectCommand {
             {
               title: `Validating ${
                 serviceName ? "composed " : ""
-              }schema against variant ${chalk.blue(tag)} on graph ${chalk.blue(
-                graphName
-              )}`,
+              }schema against variant ${chalk.blue(
+                graphVariant
+              )} on graph ${chalk.blue(graphName)}`,
               task: async (ctx: TasksOutput, task) => {
                 let schemaCheckSchemaVariables:
                   | { schemaHash: string }
@@ -452,7 +454,7 @@ export default class ServiceCheck extends ProjectCommand {
                 } else {
                   // This is _not_ a `federated` schema. Resolve the schema given `config.tag`.
                   task.output = "Resolving schema";
-                  schema = await project.resolveSchema({ tag: tag });
+                  schema = await project.resolveSchema({ tag: graphVariant });
                   if (!schema) {
                     throw new Error("Failed to resolve schema");
                   }
@@ -476,7 +478,7 @@ export default class ServiceCheck extends ProjectCommand {
 
                 const variables: CheckSchemaVariables = {
                   id: graphName,
-                  tag: tag,
+                  tag: graphVariant,
                   gitContext: await gitInfo(this.log),
                   frontend: flags.frontend || config.engine.frontend,
                   ...(historicParameters && { historicParameters }),
@@ -599,6 +601,7 @@ export default class ServiceCheck extends ProjectCommand {
       config,
       shouldOutputJson,
       shouldOutputMarkdown,
+      graphVariant,
       serviceName,
       compositionErrors,
       graphCompositionID
@@ -656,7 +659,7 @@ export default class ServiceCheck extends ProjectCommand {
             compositionErrors,
             graphName,
             serviceName,
-            tag: config.tag
+            graphVariant
           })
         );
       }
@@ -666,7 +669,7 @@ export default class ServiceCheck extends ProjectCommand {
           checkSchemaResult,
           graphName,
           serviceName,
-          tag: config.tag,
+          graphVariant,
           graphCompositionID
         })
       );

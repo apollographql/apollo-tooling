@@ -262,7 +262,7 @@ export abstract class ClientCommand extends ProjectCommand {
     }),
     tag: flags.string({
       char: "t",
-      description: "The published graph variant for this client",
+      description: "[Deprecated] Use --variant or -v instead",
       hidden: true,
       exclusive: ["variant"]
     }),
