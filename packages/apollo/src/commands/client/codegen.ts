@@ -118,7 +118,7 @@ export default class Generate extends ClientCommand {
     } = this.parse(Generate);
 
     const run = () =>
-      this.runTasks(({ flags, args, project }) => {
+      this.runTasks(({ flags, args, project, config }) => {
         let inferredTarget: TargetType = "" as TargetType;
         if (
           ["json", "swift", "typescript", "flow", "scala"].includes(
@@ -158,7 +158,7 @@ export default class Generate extends ClientCommand {
             task: async (ctx, task) => {
               task.title = `Generating query files with '${inferredTarget}' target`;
               const schema = await project.resolveSchema({
-                tag: flags.variant || flags.tag || "current"
+                tag: config.variant
               });
 
               if (!schema) throw new Error("Error loading schema");

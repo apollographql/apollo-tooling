@@ -117,7 +117,7 @@ export default class ServiceList extends ProjectCommand {
          * A graph can be either a monolithic schema or the result of composition a federated schema.
          */
         const graphName = config.name;
-        const variant = flags.variant || flags.tag || config.tag;
+        const graphVariant = config.variant;
 
         if (!graphName) {
           throw new Error("No service found to link to Engine");
@@ -133,7 +133,7 @@ export default class ServiceList extends ProjectCommand {
                 implementingServices
               } = await project.engine.listServices({
                 id: graphName,
-                graphVariant: variant
+                graphVariant
               });
               const newContext: typeof ctx = {
                 implementingServices,

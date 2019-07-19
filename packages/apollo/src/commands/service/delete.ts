@@ -38,8 +38,7 @@ export default class ServiceDelete extends ProjectCommand {
             );
           }
 
-          const graphVariant =
-            flags.variant || flags.tag || config.tag || "current";
+          const graphVariant = config.variant;
 
           const {
             errors,
@@ -73,7 +72,7 @@ export default class ServiceDelete extends ProjectCommand {
       this.log(
         `The ${result.serviceName} service with ${
           result.graphVariant
-        } tag was removed from ${
+        } variant was removed from ${
           result.graphName
         }. Remaining services were composed.`
       );

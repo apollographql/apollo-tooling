@@ -46,8 +46,7 @@ export default class ServicePush extends ProjectCommand {
       {
         title: "Uploading service to Engine",
         task: async () => {
-          const graphVariant =
-            flags.variant || flags.tag || config.tag || "current";
+          const graphVariant = config.variant;
           if (!config.name) {
             throw new Error("No service found to link to Engine");
           }
@@ -79,7 +78,7 @@ export default class ServicePush extends ProjectCommand {
 
             /**
              * id: service id for root mutation (graph id)
-             * variant: like a tag. prod/staging/etc
+             * variant: prod/staging/etc
              * name: implementing service name inside of the graph
              * revision: git commit hash/docker id. placeholder for now
              */

@@ -145,7 +145,7 @@ export abstract class ProjectCommand extends Command {
       type: this.type
     });
 
-    config.variant = flags.variant || flags.tag || config.tag;
+    config.variant = flags.variant || flags.tag || config.variant;
 
     //  flag overides
     config.setDefaults({

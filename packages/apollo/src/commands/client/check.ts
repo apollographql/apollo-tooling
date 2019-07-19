@@ -56,7 +56,7 @@ export default class ClientCheck extends ClientCommand {
 
           ctx.validationResults = await project.engine.validateOperations({
             id: config.name,
-            tag: flags.variant || flags.tag || config.tag,
+            tag: config.variant,
             operations: ctx.operations.map(({ body, name }) => ({
               body,
               name

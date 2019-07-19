@@ -317,7 +317,7 @@ export default class ServiceCheck extends ProjectCommand {
            * A graph can be either a monolithic schema or the result of composition a federated schema.
            */
           const graphName = config.name;
-          const graphVariant = flags.variant || flags.tag || config.tag;
+          const graphVariant = config.variant;
 
           /**
            * Name of the implementing service being checked.
@@ -442,7 +442,7 @@ export default class ServiceCheck extends ProjectCommand {
                     schemaHash: ctx.federationSchemaHash
                   };
                 } else {
-                  // This is _not_ a `federated` schema. Resolve the schema given `config.tag`.
+                  // This is _not_ a `federated` schema. Resolve the schema given `config.variant`.
                   task.output = "Resolving schema";
                   schema = await project.resolveSchema({ tag: graphVariant });
                   if (!schema) {
