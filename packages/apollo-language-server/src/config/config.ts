@@ -135,7 +135,7 @@ export class ApolloConfig {
   public name?: string;
   public service?: ServiceConfigFormat;
   public client?: ClientConfigFormat;
-  private _tag?: string;
+  private _variant?: string;
 
   constructor(public rawConfig: ApolloConfigFormat, public configURI?: URI) {
     this.isService = !!rawConfig.service;
@@ -161,19 +161,28 @@ export class ApolloConfig {
     return configs;
   }
 
+  set variant(variant: string) {
+    this._variant = variant;
+  }
+
+  get variant(): string {
+    if (this._variant) return this._variant;
+    let variant: string = "current";
+    if (this.client && typeof this.client.service === "string") {
+      const specifierVariant = parseServiceSpecifier(this.client
+        .service as ServiceSpecifier)[1];
+      if (specifierVariant) variant = specifierVariant;
+    }
+    return variant;
+  }
+
+  // TODO tag has been renamed to variant, use that instead
   set tag(tag: string) {
-    this._tag = tag;
+    this.variant = tag;
   }
 
   get tag(): string {
-    if (this._tag) return this._tag;
-    let tag: string = "current";
-    if (this.client && typeof this.client.service === "string") {
-      const specifierTag = parseServiceSpecifier(this.client
-        .service as ServiceSpecifier)[1];
-      if (specifierTag) tag = specifierTag;
-    }
-    return tag;
+    return this.variant;
   }
 
   // this type needs to be an "EveryKeyIsOptionalApolloConfig"

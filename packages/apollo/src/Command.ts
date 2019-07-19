@@ -34,7 +34,11 @@ export interface Flags {
   key?: string;
   engine?: string;
   frontend?: string;
+  // The three flags below are not part of ProjectCommand.flags,
+  // but are used in ProjectCommand.createConfig so will stay
+  // optional on this type.
   tag?: string;
+  variant?: string;
   skipSSLValidation?: boolean;
 }
 
@@ -141,7 +145,8 @@ export abstract class ProjectCommand extends Command {
       type: this.type
     });
 
-    config.tag = flags.tag || config.tag || "current";
+    config.variant = flags.variant || flags.tag || config.tag;
+
     //  flag overides
     config.setDefaults({
       engine: {
