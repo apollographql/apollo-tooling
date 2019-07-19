@@ -4,7 +4,7 @@ import { ProjectCommand } from "../../Command";
 
 export default class ServiceDelete extends ProjectCommand {
   static description =
-    "Delete an implementing service from Platform and recompose remaining implementating services";
+    "Delete an implementing service from a Graph in the Apollo Platform and recompose remaining implementing services";
   static flags = {
     ...ProjectCommand.flags,
     ...ProjectCommand.variantFlags,
@@ -26,7 +26,7 @@ export default class ServiceDelete extends ProjectCommand {
     let result;
     await this.runTasks(({ flags, project, config }) => [
       {
-        title: `Removing implementing service ${config.variant} from graph ${config.name}`,
+        title: `Removing implementing service ${flags.serviceName} from graph ${config.name}`,
         task: async () => {
           if (!config.name) {
             throw new Error("No graph found in Apollo config");

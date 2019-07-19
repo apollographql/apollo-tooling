@@ -23,7 +23,7 @@ interface LocationOffset {
 
 export default class ClientCheck extends ClientCommand {
   static description =
-    "Check a client project's operations against a variant for a graph";
+    "Check a client project's operations against a published graph";
   static flags = {
     ...ClientCommand.flags
   };

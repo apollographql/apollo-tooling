@@ -51,7 +51,7 @@ export default class ServiceDownload extends ProjectCommand {
               );
               this.log(
                 chalk.red(
-                  "If you're trying to download a schema from Apollo Platform, use the `client:download-schema` command instead."
+                  "If you're trying to download a schema from the Apollo Platform, use the `client:download-schema` command instead."
                 )
               );
             }
