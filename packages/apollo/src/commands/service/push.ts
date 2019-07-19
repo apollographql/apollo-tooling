@@ -9,7 +9,7 @@ import chalk from "chalk";
 
 export default class ServicePush extends ProjectCommand {
   static aliases = ["schema:publish"];
-  static description = "Push a service to Engine";
+  static description = "Push a service to Platform";
   static flags = {
     ...ProjectCommand.flags,
     ...ProjectCommand.variantFlags,
@@ -44,7 +44,7 @@ export default class ServicePush extends ProjectCommand {
     let gitContext;
     await this.runTasks(({ flags, project, config }) => [
       {
-        title: "Uploading service to Engine",
+        title: "Uploading service to Platform",
         task: async () => {
           const graphVariant = config.variant;
           if (!config.name) {
@@ -127,9 +127,9 @@ export default class ServicePush extends ProjectCommand {
           };
 
           const { schema: _, ...restVariables } = variables;
-          this.debug("Variables sent to Engine:");
+          this.debug("Variables sent to Platform:");
           this.debug(restVariables);
-          this.debug("SDL of introspection sent to Engine:");
+          this.debug("SDL of introspection sent to Platform:");
           this.debug(printSchema(schema));
 
           const response = await project.engine.uploadSchema(variables);
@@ -140,7 +140,7 @@ export default class ServicePush extends ProjectCommand {
               hash: response.tag ? response.tag.schema.hash : null,
               code: response.code
             };
-            this.debug("Result received from Engine:");
+            this.debug("Result received from Platform:");
             this.debug(result);
           }
         }

@@ -476,10 +476,10 @@ export default class ServiceCheck extends ProjectCommand {
                 };
 
                 const { schema: _, ...restVariables } = variables;
-                this.debug("Variables sent to Engine:");
+                this.debug("Variables sent to Platform:");
                 this.debug(restVariables);
                 if (schema) {
-                  this.debug("SDL of introspection sent to Engine:");
+                  this.debug("SDL of introspection sent to Platform:");
                   this.debug(printSchema(schema));
                 } else {
                   this.debug("Schema hash generated:");

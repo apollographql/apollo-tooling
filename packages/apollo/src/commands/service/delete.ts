@@ -4,7 +4,7 @@ import { ProjectCommand } from "../../Command";
 
 export default class ServiceDelete extends ProjectCommand {
   static description =
-    "Delete an implementing service from Engine and recompose remaining implementating services";
+    "Delete an implementing service from Platform and recompose remaining implementating services";
   static flags = {
     ...ProjectCommand.flags,
     ...ProjectCommand.variantFlags,

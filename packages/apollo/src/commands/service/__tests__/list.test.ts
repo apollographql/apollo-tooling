@@ -14,7 +14,7 @@ const stagingAPI = "https://engine-staging-graphql.apollographql.com:443";
 const fakeApiKey = "service:engine:9YC5AooMa2yO11eFlZat11";
 
 /**
- * Engine API key we're using.
+ * Platform API key we're using.
  *
  * This is hard-coded to `fakeApiKey` because this is out day-to-day usage should be. If we're going to be
  * updating the mocked data; we'll need to use a real API key (see [README#Regenerating Mocked Network
