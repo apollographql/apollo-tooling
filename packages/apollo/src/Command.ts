@@ -92,7 +92,7 @@ export abstract class ProjectCommand extends Command {
   };
 
   public project!: GraphQLProject;
-  public tasks: Listr.ListrRawTask[] = [];
+  public tasks: Listr.ListrTask[] = [];
 
   protected type: "service" | "client" = "service";
   protected configMap?: (flags: any) => DeepPartial<ApolloConfig>;
@@ -235,7 +235,7 @@ export abstract class ProjectCommand extends Command {
   }
 
   async runTasks<Result>(
-    generateTasks: (context: ProjectContext) => Listr.ListrRawTask[],
+    generateTasks: (context: ProjectContext) => Listr.ListrTask[],
     options?: Listr.ListrOptions | ((ctx: ProjectContext) => Listr.ListrOptions)
   ): Promise<Result> {
     const { ctx } = this;
