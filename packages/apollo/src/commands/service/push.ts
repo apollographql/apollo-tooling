@@ -48,7 +48,7 @@ export default class ServicePush extends ProjectCommand {
         task: async () => {
           const graphVariant = config.variant;
           if (!config.name) {
-            throw new Error("No graph found in Apollo config");
+            throw new Error("No graph name found in Apollo config");
           }
 
           if (flags.federated) {

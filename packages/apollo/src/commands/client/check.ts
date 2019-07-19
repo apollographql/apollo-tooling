@@ -39,7 +39,7 @@ export default class ClientCheck extends ClientCommand {
         task: async ctx => {
           if (!config.name) {
             throw new Error(
-              "No graph found in Apollo config. Platform is required for this command."
+              "No graph name found in Apollo config. Platform must be configured for this command to run."
             );
           }
 

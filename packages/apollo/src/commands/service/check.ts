@@ -327,7 +327,7 @@ export default class ServiceCheck extends ProjectCommand {
           const serviceName: string | undefined = flags.serviceName;
 
           if (!graphName) {
-            throw new Error("No graph found in Apollo config");
+            throw new Error("No graph name found in Apollo config");
           }
 
           // Add some fields to output that are required for producing

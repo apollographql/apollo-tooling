@@ -29,7 +29,7 @@ export default class ServiceDelete extends ProjectCommand {
         title: `Removing implementing service ${flags.serviceName} from graph ${config.name}`,
         task: async () => {
           if (!config.name) {
-            throw new Error("No graph found in Apollo config");
+            throw new Error("No graph name found in Apollo config");
           }
 
           if (flags.federated) {

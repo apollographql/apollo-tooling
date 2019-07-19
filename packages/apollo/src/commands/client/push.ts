@@ -61,7 +61,7 @@ export default class ClientPush extends ClientCommand {
             task: async (_, task) => {
               if (!config.name) {
                 throw new Error(
-                  "No graph found in Apollo config. Platform is required for this command."
+                  "No graph name found in Apollo config. Platform must be configured for this command to run."
                 );
               }
 
