@@ -12,18 +12,7 @@ export default class ServicePush extends ProjectCommand {
   static description = "Push a service to Engine";
   static flags = {
     ...ProjectCommand.flags,
-    tag: flags.string({
-      char: "t",
-      description: "The tag to publish this service to",
-      default: "current",
-      hidden: true,
-      exclusive: ["variant"]
-    }),
-    variant: flags.string({
-      char: "v",
-      description: "The variant to publish this service to",
-      exclusive: ["tag"]
-    }),
+    ...ProjectCommand.variantFlags,
     localSchemaFile: flags.string({
       description:
         "Path to your local GraphQL schema file (introspection result or SDL)"

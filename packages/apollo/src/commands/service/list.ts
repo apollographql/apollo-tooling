@@ -95,18 +95,7 @@ export default class ServiceList extends ProjectCommand {
   static description = "List the services in a graph";
   static flags = {
     ...ProjectCommand.flags,
-    tag: flags.string({
-      char: "t",
-      description: "The published tag to list the implementing services from",
-      exclusive: ["variant"],
-      hidden: true
-    }),
-    variant: flags.string({
-      char: "v",
-      description:
-        "The published variant to list the implementing services from",
-      exclusive: ["tag"]
-    })
+    ...ProjectCommand.variantFlags
   };
 
   async run() {

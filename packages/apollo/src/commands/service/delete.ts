@@ -7,17 +7,7 @@ export default class ServiceDelete extends ProjectCommand {
     "Delete a federated service from Engine and recompose remaining services";
   static flags = {
     ...ProjectCommand.flags,
-    tag: flags.string({
-      char: "t",
-      hidden: true,
-      description: "The variant of the service to delete",
-      exclusive: ["variant"]
-    }),
-    variant: flags.string({
-      char: "v",
-      description: "The variant of the service to delete",
-      exclusive: ["tag"]
-    }),
+    ...ProjectCommand.variantFlags,
     federated: flags.boolean({
       char: "f",
       default: false,
@@ -81,7 +71,11 @@ export default class ServiceDelete extends ProjectCommand {
 
     if (result.updatedGateway) {
       this.log(
-        `The ${result.serviceName} service with ${result.graphVariant} tag was removed from ${result.graphName}. Remaining services were composed.`
+        `The ${result.serviceName} service with ${
+          result.graphVariant
+        } tag was removed from ${
+          result.graphName
+        }. Remaining services were composed.`
       );
       this.log("\n");
     }

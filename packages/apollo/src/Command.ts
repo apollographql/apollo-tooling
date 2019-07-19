@@ -91,6 +91,21 @@ export abstract class ProjectCommand extends Command {
     })
   };
 
+  static variantFlags = {
+    // The --tag has been deprecated in favor of --variant
+    tag: flags.string({
+      char: "t",
+      description: "[Deprecated] Use --variant or -v instead",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The published graph variant for this client",
+      exclusive: ["tag"]
+    })
+  };
+
   public project!: GraphQLProject;
   public tasks: ListrTask[] = [];
 
@@ -249,6 +264,7 @@ export abstract class ProjectCommand extends Command {
 export abstract class ClientCommand extends ProjectCommand {
   static flags = {
     ...ProjectCommand.flags,
+    ...ProjectCommand.variantFlags,
     clientReferenceId: flags.string({
       description:
         "Reference id for the client which will match ids from client traces, will use clientName if not provided"
@@ -259,17 +275,6 @@ export abstract class ClientCommand extends ProjectCommand {
     clientVersion: flags.string({
       description:
         "The version of the client that the queries will be attached to"
-    }),
-    tag: flags.string({
-      char: "t",
-      description: "[Deprecated] Use --variant or -v instead",
-      hidden: true,
-      exclusive: ["variant"]
-    }),
-    variant: flags.string({
-      char: "v",
-      description: "The published graph variant for this client",
-      exclusive: ["tag"]
     }),
     queries: flags.string({
       description: "Deprecated in favor of the includes flag"

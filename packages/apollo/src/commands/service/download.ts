@@ -10,17 +10,7 @@ export default class ServiceDownload extends ProjectCommand {
 
   static flags = {
     ...ProjectCommand.flags,
-    tag: flags.string({
-      char: "t",
-      description: "The published tag to check this service against",
-      hidden: true,
-      exclusive: ["variant"]
-    }),
-    variant: flags.string({
-      char: "v",
-      description: "The published tag to check this service against",
-      exclusive: ["tag"]
-    }),
+    ...ProjectCommand.variantFlags,
     skipSSLValidation: flags.boolean({
       char: "k",
       description: "Allow connections to an SSL site without certs"

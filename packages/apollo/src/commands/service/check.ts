@@ -259,17 +259,7 @@ export default class ServiceCheck extends ProjectCommand {
     "Check a service against known operation workloads to find breaking changes";
   static flags = {
     ...ProjectCommand.flags,
-    tag: flags.string({
-      char: "t",
-      description: "The published tag to check this service against",
-      exclusive: ["variant"],
-      hidden: true
-    }),
-    variant: flags.string({
-      char: "v",
-      description: "The published tag to check this service against",
-      exclusive: ["tag"]
-    }),
+    ...ProjectCommand.variantFlags,
     validationPeriod: flags.string({
       description:
         "The size of the time window with which to validate the schema against. You may provide a number (in seconds), or an ISO8601 format duration for more granularity (see: https://en.wikipedia.org/wiki/ISO_8601#Durations)"
