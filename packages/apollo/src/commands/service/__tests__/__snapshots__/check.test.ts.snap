@@ -71,7 +71,7 @@ exports[`service:check integration federated should report composition errors co
 exports[`service:check integration federated should report composition errors correctly --markdown 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated graph composition on schema tag \`master\` for service \`accounts\` on graph \`engine\`.
+🔄 Validated graph composition on schema variant \`master\` for service \`accounts\` on graph \`engine\`.
 ❌ Found **3 composition errors**
 
 | Service   | Field     | Message   |
@@ -124,7 +124,7 @@ exports[`service:check integration federated should report composition success c
 exports[`service:check integration federated should report composition success correctly --markdown 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`master\` for service \`accounts\` on graph \`engine\`.
+🔄 Validated your local schema against schema variant \`master\` for service \`accounts\` on graph \`engine\`.
 🔢 Compared **1 schema change** against **0 operations** seen over the **last 548 days**.
 ✅ Found **no breaking changes**.
 
@@ -141,10 +141,10 @@ Validate graph composition for service accounts on graph engine [started]
 → Attempting to compose graph with accounts service's partial schema
 Found 0 graph composition errors for service accounts on graph engine [title changed]
 Found 0 graph composition errors for service accounts on graph engine [completed]
-Validating composed schema against tag master on graph engine [started]
+Validating composed schema against variant master on graph engine [started]
 → Validating schema
-Validated composed schema against tag master on graph engine [title changed]
-Validated composed schema against tag master on graph engine [completed]
+Validated composed schema against variant master on graph engine [title changed]
+Validated composed schema against variant master on graph engine [completed]
 Comparing schema changes [started]
 Compared 1 schema change against 0 operations over the last 548 days [title changed]
 Compared 1 schema change against 0 operations over the last 548 days [completed]
@@ -181,7 +181,7 @@ exports[`service:check integration non-federated should report traffic errors co
 exports[`service:check integration non-federated should report traffic errors correctly --markdown 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`master\` on graph \`engine\`.
+🔄 Validated your local schema against schema variant \`master\` on graph \`engine\`.
 🔢 Compared **1 schema change** against **0 operations** seen over the **last 548 days**.
 ❌ Found **1 breaking change** that would affect **0 operations** across **0 clients**
 
@@ -193,11 +193,11 @@ exports[`service:check integration non-federated should report traffic errors co
 exports[`service:check integration non-federated should report traffic errors correctly vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
-Validating schema against tag master on graph engine [started]
+Validating schema against variant master on graph engine [started]
 → Resolving schema
 → Validating schema
-Validated schema against tag master on graph engine [title changed]
-Validated schema against tag master on graph engine [completed]
+Validated schema against variant master on graph engine [title changed]
+Validated schema against variant master on graph engine [completed]
 Comparing schema changes [started]
 Compared 1 schema change against 0 operations over the last 548 days [title changed]
 Compared 1 schema change against 0 operations over the last 548 days [completed]
@@ -235,7 +235,7 @@ exports[`service:check integration non-federated should report traffic non-error
 exports[`service:check integration non-federated should report traffic non-errors correctly --markdown 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`master\` on graph \`engine\`.
+🔄 Validated your local schema against schema variant \`master\` on graph \`engine\`.
 🔢 Compared **1 schema change** against **0 operations** seen over the **last 548 days**.
 ✅ Found **no breaking changes**.
 
@@ -247,11 +247,11 @@ exports[`service:check integration non-federated should report traffic non-error
 exports[`service:check integration non-federated should report traffic non-errors correctly vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
-Validating schema against tag master on graph engine [started]
+Validating schema against variant master on graph engine [started]
 → Resolving schema
 → Validating schema
-Validated schema against tag master on graph engine [title changed]
-Validated schema against tag master on graph engine [completed]
+Validated schema against variant master on graph engine [title changed]
+Validated schema against variant master on graph engine [completed]
 Comparing schema changes [started]
 Compared 1 schema change against 0 operations over the last 548 days [title changed]
 Compared 1 schema change against 0 operations over the last 548 days [completed]
@@ -268,7 +268,7 @@ View full details at: https://engine-staging.apollographql.com/service/justin-fu
 exports[`service:check markdown formatting is correct with breaking changes 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`staging\` on graph \`engine\`.
+🔄 Validated your local schema against schema variant \`staging\` on graph \`engine\`.
 🔢 Compared **18 schema changes** against **100 operations** seen over the **last 24 hours**.
 ❌ Found **7 breaking changes** that would affect **3 operations** across **2 clients**
 
@@ -279,7 +279,7 @@ exports[`service:check markdown formatting is correct with breaking changes 1`] 
 exports[`service:check markdown formatting is correct with breaking changes 2`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`staging\` on graph \`engine\`.
+🔄 Validated your local schema against schema variant \`staging\` on graph \`engine\`.
 🔢 Compared **1 schema change** against **1 operation** seen over the **last 24 hours**.
 ❌ Found **1 breaking change** that would affect **1 operation** across **1 client**
 
@@ -290,7 +290,7 @@ exports[`service:check markdown formatting is correct with breaking changes 2`] 
 exports[`service:check markdown formatting is correct with no breaking changes 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`staging\` on graph \`engine\`.
+🔄 Validated your local schema against schema variant \`staging\` on graph \`engine\`.
 🔢 Compared **0 schema changes** against **100 operations** seen over the **last 24 hours**.
 ✅ Found **no breaking changes**.
 

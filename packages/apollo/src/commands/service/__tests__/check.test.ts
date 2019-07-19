@@ -598,7 +598,7 @@ describe("service:check", () => {
       expect(
         formatMarkdown({
           graphName: "engine",
-          tag: "staging",
+          graphVariant: "staging",
           checkSchemaResult,
           graphCompositionID: "fff"
         })
@@ -607,7 +607,7 @@ describe("service:check", () => {
       expect(
         formatMarkdown({
           graphName: "engine",
-          tag: "staging",
+          graphVariant: "staging",
           checkSchemaResult: {
             ...checkSchemaResult,
             diffToPrevious: {
@@ -635,7 +635,7 @@ describe("service:check", () => {
       expect(
         formatMarkdown({
           graphName: "engine",
-          tag: "staging",
+          graphVariant: "staging",
           checkSchemaResult: {
             ...checkSchemaResult,
             diffToPrevious: {
