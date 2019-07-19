@@ -79,18 +79,18 @@ export abstract class ProjectCommand extends Command {
         "Additional header to send to server for introspectionQuery. May be used multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag."
     }),
     endpoint: flags.string({
-      description: "The url of your service"
+      description: "The url of your GraphQL server"
     }),
     key: flags.string({
-      description: "The API key for the Apollo Engine service",
+      description: "The API key for the Apollo Platform Graph",
       default: () => process.env.ENGINE_API_KEY
     }),
     engine: flags.string({
-      description: "Reporting URL for a custom Apollo Engine deployment",
+      description: "Reporting URL for a custom Apollo Platform deployment",
       hidden: true
     }),
     frontend: flags.string({
-      description: "URL for a custom Apollo Engine frontend",
+      description: "URL for a custom Apollo Platform frontend",
       hidden: true
     })
   };
@@ -99,7 +99,8 @@ export abstract class ProjectCommand extends Command {
     // The --tag has been deprecated in favor of --variant
     tag: flags.string({
       char: "t",
-      description: "[Deprecated] Use --variant or -v instead",
+      description:
+        "[Deprecated: use --variant] The published graph variant for this client",
       hidden: true,
       exclusive: ["variant"]
     }),

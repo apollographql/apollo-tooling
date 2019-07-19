@@ -22,24 +22,27 @@ interface LocationOffset {
 }
 
 export default class ClientCheck extends ClientCommand {
-  static description = "Check a client project against a pushed service";
+  static description =
+    "Check a client project's operations against a variant for a graph";
   static flags = {
     ...ClientCommand.flags
   };
 
   async run() {
+    let result;
     const { validationResults, operations } = await this.runTasks<{
       operations: Operation[];
       validationResults: ValidationResult[];
-    }>(({ project, config, flags }) => [
+    }>(({ project, config }) => [
       {
-        title: "Checking client compatibility with service",
+        title: `Checking client compatibility against variant ${config.variant} on graph ${config.name}`,
         task: async ctx => {
           if (!config.name) {
             throw new Error(
-              "No service found to link to Engine. Engine is required for this command."
+              "No graph found in Apollo config. Engine is required for this command."
             );
           }
+
           ctx.gitContext = await gitInfo(this.log);
 
           ctx.operations = Object.entries(
@@ -63,6 +66,11 @@ export default class ClientCheck extends ClientCommand {
             })),
             gitContext: ctx.gitContext
           });
+
+          result = {
+            graphName: config.name,
+            graphVariant: config.variant
+          };
         }
       }
     ]);
@@ -79,9 +87,12 @@ export default class ClientCheck extends ClientCommand {
       this.logMessagesForOperation
     );
 
+    const { graphName, graphVariant } = result;
     if (validationResults.length === 0) {
       return this.log(
-        chalk.green("\nAll operations are valid against service\n")
+        chalk.green(
+          `\nAll operations are valid against variant ${graphVariant} on graph ${graphName}\n`
+        )
       );
     }
 

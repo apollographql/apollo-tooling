@@ -4,7 +4,7 @@ import { ProjectCommand } from "../../Command";
 
 export default class ServiceDelete extends ProjectCommand {
   static description =
-    "Delete a federated service from Engine and recompose remaining services";
+    "Delete an implementing service from Engine and recompose remaining implementating services";
   static flags = {
     ...ProjectCommand.flags,
     ...ProjectCommand.variantFlags,
@@ -13,7 +13,7 @@ export default class ServiceDelete extends ProjectCommand {
       default: false,
       hidden: true,
       description:
-        "[Deprecated: use --serviceName to indicate federation] Indicates that the schema is a partial schema from a federated service"
+        "[Deprecated: use --serviceName to indicate federation] Indicates that the schema is a partial schema from an implementing service"
     }),
     serviceName: flags.string({
       required: true,
@@ -26,10 +26,10 @@ export default class ServiceDelete extends ProjectCommand {
     let result;
     await this.runTasks(({ flags, project, config }) => [
       {
-        title: "Removing service from Engine",
+        title: `Removing implementing service ${config.variant} from graph ${config.name}`,
         task: async () => {
           if (!config.name) {
-            throw new Error("No service found to link to Engine");
+            throw new Error("No graph found in Apollo config");
           }
 
           if (flags.federated) {
@@ -70,11 +70,7 @@ export default class ServiceDelete extends ProjectCommand {
 
     if (result.updatedGateway) {
       this.log(
-        `The ${result.serviceName} service with ${
-          result.graphVariant
-        } variant was removed from ${
-          result.graphName
-        }. Remaining services were composed.`
+        `The ${result.serviceName} implementing service with ${result.graphVariant} variant was removed from graph ${result.graphName}. Remaining implementing services were composed.`
       );
       this.log("\n");
     }

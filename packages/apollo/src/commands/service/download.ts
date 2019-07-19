@@ -46,7 +46,7 @@ export default class ServiceDownload extends ProjectCommand {
               this.log(chalk.red("ERROR: Connection refused."));
               this.log(
                 chalk.red(
-                  "You may not be running a service locally, or your endpoint url is incorrect."
+                  "You may not be running a GraphQL server locally, or your endpoint url is incorrect."
                 )
               );
               this.log(

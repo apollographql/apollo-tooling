@@ -5,7 +5,8 @@ import { writeFileSync } from "fs";
 import { ClientCommand } from "../../Command";
 
 export default class SchemaDownload extends ClientCommand {
-  static description = "Download a schema from engine or a GraphQL endpoint.";
+  static description =
+    "Download schema from Apollo Platform or a GraphQL endpoint";
 
   static flags = {
     ...ClientCommand.flags

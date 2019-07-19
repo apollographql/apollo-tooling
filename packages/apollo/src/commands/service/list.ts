@@ -120,7 +120,7 @@ export default class ServiceList extends ProjectCommand {
         const graphVariant = config.variant;
 
         if (!graphName) {
-          throw new Error("No service found to link to Engine");
+          throw new Error("No graph found in Apollo config");
         }
 
         return [

@@ -48,7 +48,7 @@ export default class ServicePush extends ProjectCommand {
         task: async () => {
           const graphVariant = config.variant;
           if (!config.name) {
-            throw new Error("No service found to link to Engine");
+            throw new Error("No graph found in Apollo config");
           }
 
           if (flags.federated) {
@@ -156,15 +156,11 @@ export default class ServicePush extends ProjectCommand {
 
     if (result.serviceWasCreated) {
       this.log(
-        `A new service called '${
-          result.implementingServiceName
-        }' for the '${graphString}' graph was created\n`
+        `A new service called '${result.implementingServiceName}' for the '${graphString}' graph was created\n`
       );
     } else if (result.implementingServiceName && isFederated) {
       this.log(
-        `The '${
-          result.implementingServiceName
-        }' service for the '${graphString}' graph was updated\n`
+        `The '${result.implementingServiceName}' service for the '${graphString}' graph was updated\n`
       );
     }
 
@@ -204,9 +200,7 @@ export default class ServicePush extends ProjectCommand {
 
     if (result.didUpdateGateway) {
       this.log(
-        `The gateway for the '${graphString}' graph was updated with a new schema, composed from the updated '${
-          result.implementingServiceName
-        }' service\n`
+        `The gateway for the '${graphString}' graph was updated with a new schema, composed from the updated '${result.implementingServiceName}' service\n`
       );
     } else if (isFederated) {
       this.log(

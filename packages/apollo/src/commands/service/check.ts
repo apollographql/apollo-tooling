@@ -287,7 +287,7 @@ export default class ServiceCheck extends ProjectCommand {
     }),
     serviceName: flags.string({
       description:
-        "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service",
+        "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from an implementing service",
       dependsOn: ["endpoint"]
     })
   };
@@ -299,7 +299,7 @@ export default class ServiceCheck extends ProjectCommand {
     // Define this constant so we can throw it and compare against the same value.
     const breakingChangesErrorMessage = "breaking changes found";
     const federatedServiceCompositionUnsuccessfulErrorMessage =
-      "Federated service composition was unsuccessful. Please see the reasons below.";
+      "Implementing service composition was unsuccessful. Please see the reasons below.";
 
     let schema: GraphQLSchema | undefined;
     try {
@@ -327,7 +327,7 @@ export default class ServiceCheck extends ProjectCommand {
           const serviceName: string | undefined = flags.serviceName;
 
           if (!graphName) {
-            throw new Error("No service found to link to Engine");
+            throw new Error("No graph found in Apollo config");
           }
 
           // Add some fields to output that are required for producing
@@ -354,7 +354,7 @@ export default class ServiceCheck extends ProjectCommand {
 
                 const info = await project.resolveFederationInfo();
                 if (!info.sdl) {
-                  throw new Error("No SDL found for federated service");
+                  throw new Error("No SDL found for implementing service");
                 }
 
                 task.output = `Attempting to compose graph with ${chalk.blue(
@@ -624,9 +624,7 @@ export default class ServiceCheck extends ProjectCommand {
 
       const { service } = config;
       if (!service) {
-        throw new Error(
-          "Service mising from config. This should have been validated elsewhere"
-        );
+        throw new Error("Graph missing from config");
       }
 
       const graphName = config.service && config.service.name;

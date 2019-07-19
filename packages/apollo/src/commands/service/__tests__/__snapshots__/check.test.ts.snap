@@ -91,7 +91,7 @@ Validate graph composition for service accounts on graph engine [started]
 → Attempting to compose graph with accounts service's partial schema
 Found 3 graph composition errors for service accounts on graph engine [title changed]
 Found 3 graph composition errors for service accounts on graph engine [failed]
-→ Federated service composition was unsuccessful. Please see the reasons below.
+→ Implementing service composition was unsuccessful. Please see the reasons below.
 
 Service   Field    Message
 ────────  ───────  ────────────────────────────────────────────────────────────────────────────────────────
