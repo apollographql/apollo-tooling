@@ -18,6 +18,7 @@
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
   - Adds support for ReasonML to the language server [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
+  - Fix "Find All References" when run on a FragmentDefinition inside a server project by iterating over all projects in the workspace [#1420](https://github.com/apollographql/apollo-tooling/pull/1420)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
