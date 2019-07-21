@@ -93,6 +93,11 @@ _See code: [src/commands/client/check.ts](https://github.com/apollographql/apoll
 
 Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.
 
+Important usage notes:
+
+- Codegen requires GQL query/mutation/subscription names for a project to be unique. At the moment, if two seperate GQL queries are defined with the same name, type generation for the second query will be silently skipped.
+- Codegen does not formally support a monorepo structure. If used in a monorepo, codegen should be set up for each project separately (including seperate `apollo.config.js` files) and the `apollo client:codegen` command should be run for each project individually.
+
 ```
 USAGE
   $ apollo client:codegen [OUTPUT]
