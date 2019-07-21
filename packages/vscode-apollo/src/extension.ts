@@ -13,11 +13,12 @@ import {
 } from "vscode";
 import StatusBar from "./statusBar";
 import { getLanguageServerClient } from "./languageServerClient";
-import { LanguageClient } from "vscode-languageclient";
+import { LanguageClient, NotificationType } from "vscode-languageclient";
 import {
   printNoFileOpenMessage,
   printStatsToClientOutputChannel
 } from "./utils";
+import { Debug } from "./debug";
 
 const { version } = require("../package.json");
 
@@ -54,13 +55,36 @@ export function activate(context: ExtensionContext) {
     hasActiveTextEditor: Boolean(window.activeTextEditor)
   });
   outputChannel = window.createOutputChannel("Apollo GraphQL");
+  Debug.SetOutputConsole(outputChannel);
   clientDisposable = client.start();
 
   // Handoff disposables for cleanup
   context.subscriptions.push(statusBar, outputChannel, clientDisposable);
 
+  var serverDebugMessage: NotificationType<
+    { type: string; message: string },
+    any
+  > = new NotificationType("serverDebugMessage");
+
   // Once client is ready, we can send messages and add listeners for various notifications
   client.onReady().then(() => {
+    client.onNotification(serverDebugMessage, message => {
+      switch (message.type) {
+        case "info":
+          Debug.info(message.message);
+          break;
+        case "error":
+          Debug.error(message.message);
+          break;
+        case "warning":
+          Debug.warning(message.message);
+          break;
+        default:
+          Debug.info(message.message);
+          break;
+      }
+    });
+
     commands.registerCommand("apollographql/showStats", () => {
       const fileUri = window.activeTextEditor
         ? window.activeTextEditor.document.uri.fsPath
@@ -116,7 +140,7 @@ export function activate(context: ExtensionContext) {
             statusBar.showLoadedState({ hasActiveTextEditor });
           }
         } else {
-          throw TypeError(
+          Debug.error(
             `Invalid response type in message apollographql/configFilesFound:\n${JSON.stringify(
               response
             )}`
