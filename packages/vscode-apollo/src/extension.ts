@@ -62,7 +62,7 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(statusBar, outputChannel, clientDisposable);
 
   var serverDebugMessage: NotificationType<
-    { type: string; message: string },
+    { type: string; message: string; stack?: string },
     any
   > = new NotificationType("serverDebugMessage");
 
@@ -71,16 +71,16 @@ export function activate(context: ExtensionContext) {
     client.onNotification(serverDebugMessage, message => {
       switch (message.type) {
         case "info":
-          Debug.info(message.message);
+          Debug.info(message.message, message.stack);
           break;
         case "error":
-          Debug.error(message.message);
+          Debug.error(message.message, message.stack);
           break;
         case "warning":
-          Debug.warning(message.message);
+          Debug.warning(message.message, message.stack);
           break;
         default:
-          Debug.info(message.message);
+          Debug.info(message.message, message.stack);
           break;
       }
     });
