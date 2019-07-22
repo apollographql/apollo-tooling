@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Add `ApolloConfig` type to exports from `apollo` [#1413](https://github.com/apollographql/apollo-tooling/pull/1413)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -19,10 +19,19 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Add error message for service lookup failure [#1413](https://github.com/apollographql/apollo-tooling/pull/1413)
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
+  - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.16.1`, `apollo-language-server@1.13.1`, `vscode-apollo@1.8.1`
+
+- `apollo@2.16.1`
+  - Add `ApolloConfig` type to exports from `apollo` [#1413](https://github.com/apollographql/apollo-tooling/pull/1413)
+- `apollo-language-server@1.13.1`
+  - Add error message for service lookup failure [#1413](https://github.com/apollographql/apollo-tooling/pull/1413)
+- `vscode-apollo@1.8.1`
   - Only activate extension on apollo.config.js/ts [#1411](https://github.com/apollographql/apollo-tooling/pull/1411)
   - Changed the status bar title to be "Apollo" to save space. [#1415](https://github.com/apollographql/apollo-tooling/pull/1415)
 
