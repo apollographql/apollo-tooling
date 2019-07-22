@@ -40,6 +40,7 @@
     "@oclif/plugin-not-found": "1.2.2",
     "@oclif/plugin-plugins": "1.7.8",
     "@oclif/plugin-warn-if-update-available": "1.7.0",
+    "apollo-server-codegen": "file:../apollo-server-codegen",
     "apollo-codegen-core": "file:../apollo-codegen-core",
     "apollo-codegen-flow": "file:../apollo-codegen-flow",
     "apollo-codegen-scala": "file:../apollo-codegen-scala",

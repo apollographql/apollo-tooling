@@ -40,6 +40,7 @@
   "dependencies": {
     "@apollographql/apollo-tools": "file:packages/apollo-tools",
     "apollo": "file:packages/apollo",
+    "apollo-server-codegen": "file:packages/apollo-server-codegen",
     "apollo-codegen-core": "file:packages/apollo-codegen-core",
     "apollo-codegen-flow": "file:packages/apollo-codegen-flow",
     "apollo-codegen-scala": "file:packages/apollo-codegen-scala",

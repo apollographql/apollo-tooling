@@ -6,6 +6,7 @@
   "include": [],
   "references": [
     { "path": "./packages/apollo" },
+    { "path": "./packages/apollo-server-codegen" },
     { "path": "./packages/apollo-codegen-core" },
     { "path": "./packages/apollo-codegen-flow" },
     { "path": "./packages/apollo-codegen-scala" },

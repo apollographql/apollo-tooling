@@ -13,6 +13,7 @@
   "include": ["./src/**/*"],
   "exclude": ["**/__tests__/*", "**/__mocks__/*"],
   "references": [
+    { "path": "../apollo-server-codegen" },
     { "path": "../apollo-codegen-flow" },
     { "path": "../apollo-codegen-scala" },
     { "path": "../apollo-codegen-swift" },

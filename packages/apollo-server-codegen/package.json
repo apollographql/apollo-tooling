@@ -1,0 +1,54 @@
+{
+  "name": "apollo-server-codegen",
+  "version": "0.1.0",
+  "description": "Generate TypeScript type definitions for your Apollo Server resolvers from your existing SDL.",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ApolloGraphQL/apollo-tooling.git"
+  },
+  "files": [
+    "lib/**/*"
+  ],
+  "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ApolloGraphQL/apollo-tooling/issues"
+  },
+  "homepage": "https://github.com/ApolloGraphQL/apollo-tooling#readme",
+  "dependencies": {
+    "graphql-tag": "^2.7.0"
+  },
+  "peerDependencies": {
+    "graphql": "^14.2.1"
+  },
+  "devDependencies": {
+    "@types/graphql": "^14.2.2",
+    "@types/jest": "^24.0.15",
+    "prettier": "^1.18.2",
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.3"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "**/*.test.ts",
+      "**/*.integration.ts",
+      "**/*.spec.ts"
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "<rootDir>/tsconfig.test.json",
+        "diagnostics": false
+      }
+    }
+  }
+}
