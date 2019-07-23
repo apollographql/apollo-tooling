@@ -2,7 +2,40 @@ import { translateAndIndent, Translator } from ".";
 import * as IR from "../IR";
 
 export class TypeScriptTranslator extends Translator {
-  public generateHeader() {
+  public generate(
+    objects: IR.ObjectDefinition[],
+    enums: IR.EnumDefinition[],
+    scalars: IR.ScalarDefinition[]
+  ): string {
+    const header = this.generateHeader();
+    const resolvers = this.generateTopLevelResolvers(
+      objects.map(d => d.name),
+      enums.map(e => e.name),
+      scalars.map(s => s.name)
+    );
+
+    const translatedObjectDefinitions = objects
+      .map(definition => definition.translate(this))
+      .join("\n");
+
+    const translatedEnumDefinitions = enums
+      .map(definition => definition.translate(this))
+      .join("\n");
+
+    const translatedScalarDefinitions = scalars
+      .map(definition => definition.translate(this))
+      .join("\n");
+
+    return [
+      header,
+      resolvers,
+      translatedObjectDefinitions,
+      translatedEnumDefinitions,
+      translatedScalarDefinitions
+    ].join("\n");
+  }
+
+  private generateHeader() {
     // Generate some utility higher order types that we'll reference later on.
     return `// This is a machine generated file.
 // Use "apollo service:codegen" to regenerate.
@@ -12,7 +45,7 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
 `;
   }
 
-  public generateTopLevelResolvers(
+  private generateTopLevelResolvers(
     types: string[],
     enums: string[],
     scalars: string[]

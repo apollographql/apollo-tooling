@@ -28,28 +28,9 @@ export const translate = (
     docNode
   );
 
-  const header = translator.generateHeader();
-  const resolvers = translator.generateTopLevelResolvers(
-    objectDefinitions.map(d => d.name),
-    enumDefinitions.map(e => e.name),
-    scalarDefinitions.map(s => s.name)
+  return translator.generate(
+    objectDefinitions,
+    enumDefinitions,
+    scalarDefinitions
   );
-  const translatedObjectDefinitions = objectDefinitions
-    .map(definition => definition.translate(translator))
-    .join("\n");
-  const translatedEnumDefinitions = enumDefinitions
-    .map(definition => definition.translate(translator))
-    .join("\n");
-
-  const translatedScalarDefinitions = scalarDefinitions
-    .map(definition => definition.translate(translator))
-    .join("\n");
-
-  return [
-    header,
-    resolvers,
-    translatedObjectDefinitions,
-    translatedEnumDefinitions,
-    translatedScalarDefinitions
-  ].join("\n");
 };
