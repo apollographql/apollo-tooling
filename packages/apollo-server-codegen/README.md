@@ -9,7 +9,7 @@ Currently, the only target language supported is TypeScript, but the project is 
 The main export of the generated file is the `Resolvers` type definition, which has two type parameters, `TContext` and `TInternalReps`. Both default to `{}`. If provided, `TContext` will be the type of the `context` parameter in resolvers. `TInternalReps` is helpful when your internal objects use fields not present in the graphql schema:
 
 ```gql
-type Query {
+type User {
   me(token: String): String!
 }
 ```
@@ -27,6 +27,8 @@ const resolvers: Resolvers<
   }
 };
 ```
+
+If you use the `rootValue` configuration option in Apollo Server, the typing for the `parent` property of `Query` and `Mutation` can be passed similarly, by using `{ Query: { ... }, Mutation: { ... }, ... }` as `TInternalReps`.
 
 ### Objects
 

@@ -125,11 +125,10 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
       ? `{\n${translateAndIndent(t.arguments, this)}\n}`
       : "{}";
 
-    const parentType = t.queryOrMutation
-      ? "any"
-      : t.parent.name +
-        "Representation<TInternalReps>" +
-        (t.requires.types.length ? " & " + t.requires.translate(this) : "");
+    const parentType =
+      t.parent.name +
+      "Representation<TInternalReps>" +
+      (t.requires.types.length ? " & " + t.requires.translate(this) : "");
     const returnType = t.type.translate(this);
 
     return [
@@ -151,11 +150,12 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
 
   public translateObjectDefinition(t: IR.ObjectDefinition): string {
     return [
+      `type ${t.name}Representation<TInternalReps extends Record<string, any>> = Index<TInternalReps, "${t.name}", any>\n`,
+
       // If its the Query or Mutation type, don't bother exporting the base type
       ...(t.isQueryOrMutation
         ? []
         : [
-            `type ${t.name}Representation<TInternalReps extends Record<string, any>> = Index<TInternalReps, "${t.name}", any>\n`,
             t.description.translate(this),
             `export interface ${t.name} {\n`,
             translateAndIndent(t.fields, this),
@@ -166,7 +166,6 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
       t.description.translate(this),
       `export interface ${t.name}Resolver<TContext = {}, TInternalReps = {}> {\n`,
       translateAndIndent(t.resolvers, this),
-
       `\n}\n`
     ].join("");
   }
