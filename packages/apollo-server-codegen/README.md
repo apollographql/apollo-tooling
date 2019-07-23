@@ -32,6 +32,8 @@ const resolvers: Resolvers<
 
 SDL object types are converted into two separate TS types. For instance, in the case of `type User`, the base `User` and a separate `UserRepresentation` will both be created.
 
+The base type simply contains all the specified fields, nullable as appropriate, and is set as the return value of all functions that return that type in the SDL. As GraphQL functions may always return partials that will be recursively fulfilled by later resolvers, the base type definitions are also always `Partial`s.
+
 The `[...]Representation` type defaults to `any` in non-federated contexts (see below for federation), and is passed as the `parent` property in resolver functions. If the user would like more type safety, they can pass an object to the second type parameter of the emitted `Resolvers` definition, specifying the object name, and the internal representation resolvers will have access to when filling values for that object:
 
 ```ts
