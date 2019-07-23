@@ -30,9 +30,9 @@ const resolvers: Resolvers<
 
 ### Objects
 
-SDL object types are converted into two separate TS types, the base, `User`, and a separate `UserRepresentation`.
+SDL object types are converted into two separate TS types. For instance, in the case of `type User`, the base `User` and a separate `UserRepresentation` will both be created.
 
-The `Representation` type defaults to `any` in non-federated contexts, and is passed as the `parent` property in resolver functions. If the user would like more type safety, they can pass an object to the second type parameter of the emitted `Resolvers` definition, specifying the object name, and the internal representation resolvers will have access to when filling values for that object:
+The `[...]Representation` type defaults to `any` in non-federated contexts (see below for federation), and is passed as the `parent` property in resolver functions. If the user would like more type safety, they can pass an object to the second type parameter of the emitted `Resolvers` definition, specifying the object name, and the internal representation resolvers will have access to when filling values for that object:
 
 ```ts
 const resolvers: Resolvers<{}, User: {internalID: number}> {
@@ -44,11 +44,11 @@ const resolvers: Resolvers<{}, User: {internalID: number}> {
 
 ### Scalars
 
-Scalars are simply converted to type `any`, though if there is sufficient community demand, these could be specified in a manner similar to the "_internalRepresentation_ type parameter" strategy above.
+Scalars are simply converted to type `any`, though if there is sufficient community demand, these could be specified in a manner similar to the `TInternalReps` strategy above.
 
 ### Enums
 
-Enums are by default converted to a basic `or` of all their type options. It is possible to set the `__experimentalInternalEnumSupport` flag to remove type errors when using internal enum values, by simply treating enums as `any`. If there is sufficient community demand, these could be better typed in a manner similar to the "_internalRepresentation_ type parameter" strategy above.
+Enums are by default converted to a basic `or` of all their type options. It is possible to set the `__experimentalInternalEnumSupport` flag to remove type errors when using internal enum values, by simply treating enums as `any`. If there is sufficient community demand, these could be better typed in a manner similar to the `TInternalReps` strategy above.
 
 ### Federation Directives
 
