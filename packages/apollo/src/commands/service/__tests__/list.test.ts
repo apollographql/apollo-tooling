@@ -184,7 +184,7 @@ describe("service:list", () => {
     nock.disableNetConnect();
 
     // Set the jest timeout to be longer than the default 5000ms to compensate for slow CI.
-    jest.setTimeout(15000);
+    jest.setTimeout(25000);
   });
 
   afterEach(() => {
