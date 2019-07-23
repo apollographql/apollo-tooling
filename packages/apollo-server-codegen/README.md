@@ -6,6 +6,28 @@ Currently, the only target language supported is TypeScript, but the project is 
 
 ## Translation Strategy (TypeScript)
 
+The main export of the generated file is the `Resolvers` type definition, which has two type parameters, `TContext` and `TInternalReps`. Both default to `{}`. If provided, `TContext` will be the type of the `context` parameter in resolvers. `TInternalReps` is helpful when your internal objects use fields not present in the graphql schema:
+
+```gql
+type Query {
+  me(token: String): String!
+}
+```
+
+```ts
+const resolvers: Resolvers<
+  { datasources: MyAPI },
+  { User: { internalID: string } }
+> = {
+  User: {
+    // All these destructurings will typecheck as expected!
+    name({ internalID }, { token }, { datasources }) {
+      ...
+    }
+  }
+};
+```
+
 ### Objects
 
 SDL object types are converted into two separate TS types, the base, `User`, and a separate `UserRepresentation`.
