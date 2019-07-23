@@ -12,6 +12,10 @@ import {
   DefaultServiceConfig,
   DefaultEngineConfig
 } from "./config";
+import {
+  ExperimentalApolloConfigFormat,
+  ExperimentalApolloConfig
+} from "./experimentalConfig";
 import { getServiceFromKey } from "./utils";
 import URI from "vscode-uri";
 
@@ -124,6 +128,19 @@ export async function loadConfig({
       engineConfig = { engine: { apiKey: env["ENGINE_API_KEY"] } };
       nameFromKey = getServiceFromKey(env["ENGINE_API_KEY"]);
     }
+  }
+
+  if (
+    loadedConfig &&
+    ((loadedConfig.config as unknown) as ExperimentalApolloConfigFormat)
+      .__experimentalConfig
+  ) {
+    const experimentalConfig = new ExperimentalApolloConfig(
+      (loadedConfig.config as unknown) as ExperimentalApolloConfigFormat
+    );
+    throw new Error(
+      "Using the experimental config option is not yet supported"
+    );
   }
 
   // DETERMINE PROJECT TYPE
