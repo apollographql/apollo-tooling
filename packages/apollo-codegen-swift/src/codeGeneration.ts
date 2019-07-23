@@ -168,10 +168,17 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         throw new GraphQLError(`Unsupported operation type "${operationType}"`);
     }
 
+    const {
+      options: { namespace },
+      fragments
+    } = this.context;
+    const isRedundant = !!namespace;
+    const modifiers = isRedundant ? ["final"] : ["public", "final"];
+
     this.classDeclaration(
       {
         className,
-        modifiers: ["public", "final"],
+        modifiers,
         adoptedProtocols: [protocol]
       },
       () => {
@@ -187,13 +194,13 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         const fragmentsReferenced = collectFragmentsReferenced(
           operation.selectionSet,
-          this.context.fragments
+          fragments
         );
 
         if (this.context.options.generateOperationIds) {
           const { operationId } = generateOperationId(
             operation,
-            this.context.fragments,
+            fragments,
             fragmentsReferenced
           );
           operation.operationId = operationId;
@@ -346,7 +353,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     before?: Function,
     after?: Function
   ) {
-    this.structDeclaration({ structName, adoptedProtocols }, () => {
+    const {
+      options: { namespace, mergeInFieldsFromFragmentSpreads }
+    } = this.context;
+
+    this.structDeclaration({ structName, adoptedProtocols, namespace }, () => {
       if (before) {
         before();
       }
@@ -386,7 +397,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
       const fields = collectAndMergeFields(
         variant,
-        !!this.context.options.mergeInFieldsFromFragmentSpreads
+        !!mergeInFieldsFromFragmentSpreads
       ).map(field => this.helpers.propertyFromField(field as Field));
 
       const fragmentSpreads = variant.fragmentSpreads.map(fragmentSpread => {
