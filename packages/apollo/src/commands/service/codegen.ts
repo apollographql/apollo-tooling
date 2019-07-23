@@ -29,7 +29,7 @@ const fileTypesMapping = {
 
 export default class ServiceCodegen extends Command {
   static description =
-    "Generate resolver typings from a local schema file. This can be either a schema embedded in gql tags in a JavaScript or TypeScript file, or a `.graphql` file containing the service's SDL.";
+    "Generate resolver typings from a local schema file. This can be either a schema embedded in `gql` tags in a JavaScript or TypeScript file, or a `.graphql` file containing the service's SDL.";
   static flags = {
     watch: flags.boolean({
       char: "w",

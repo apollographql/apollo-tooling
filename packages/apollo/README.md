@@ -498,7 +498,7 @@ _See code: [src/commands/service/check.ts](https://github.com/apollographql/apol
 
 ## `apollo service:codegen INPUT`
 
-Generate resolver typings from a local schema file. This can be either a schema embedded in gql tags in a JavaScript or TypeScript file, or a `.graphql` file containing the service's SDL.
+Generate resolver typings from a local schema file. This can be either a schema embedded in `gql` tags in a JavaScript or TypeScript file, or a `.graphql` file containing the service's SDL.
 
 ```
 USAGE
