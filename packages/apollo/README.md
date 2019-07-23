@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.16.1 darwin-x64 node-v11.14.0
+apollo/2.16.1 darwin-x64 node-v10.16.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -44,6 +44,7 @@ USAGE
 * [`apollo plugins:uninstall PLUGIN...`](#apollo-pluginsuninstall-plugin)
 * [`apollo plugins:update`](#apollo-pluginsupdate)
 * [`apollo service:check`](#apollo-servicecheck)
+* [`apollo service:codegen INPUT`](#apollo-servicecodegen-input)
 * [`apollo service:delete`](#apollo-servicedelete)
 * [`apollo service:download OUTPUT`](#apollo-servicedownload-output)
 * [`apollo service:list`](#apollo-servicelist)
@@ -494,6 +495,26 @@ ALIASES
 ```
 
 _See code: [src/commands/service/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/check.ts)_
+
+## `apollo service:codegen INPUT`
+
+Generate resolver typings from a local schema file. This can be either a schema embedded in gql tags in a JavaScript or TypeScript file, or a `.graphql` file containing the service's SDL.
+
+```
+USAGE
+  $ apollo service:codegen INPUT
+
+OPTIONS
+  -o, --output=output  [default: resolver-types] Name of the file to write generated typings to
+  -t, --target=target  [default: typescript] Language to build typings for (currently only typescript is supported)
+  -w, --watch          Watch the specified file for changes
+
+EXAMPLES
+  apollo service:codegen schema.ts -o schema.d.ts
+  apollo service:codegen schema.gql -o schema.d.ts
+```
+
+_See code: [src/commands/service/codegen.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/codegen.ts)_
 
 ## `apollo service:delete`
 

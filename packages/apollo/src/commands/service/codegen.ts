@@ -28,16 +28,17 @@ const fileTypesMapping = {
 };
 
 export default class ServiceCodegen extends Command {
-  static description = "Generate resolver typings from a local schema file";
+  static description =
+    "Generate resolver typings from a local schema file. This can be either a schema embedded in gql tags in a JavaScript or TypeScript file, or a `.graphql` file containing the service's SDL.";
   static flags = {
-    ...ProjectCommand.flags,
     watch: flags.boolean({
       char: "w",
       description: "Watch the specified file for changes"
     }),
     target: flags.string({
       char: "t",
-      description: "Language to build typings for [typescript]",
+      description:
+        "Language to build typings for (currently only typescript is supported)",
       default: "typescript"
     }),
     output: flags.string({
@@ -46,6 +47,11 @@ export default class ServiceCodegen extends Command {
       default: "resolver-types"
     })
   };
+
+  static examples = [
+    "apollo service:codegen schema.ts -o schema.d.ts",
+    "apollo service:codegen schema.gql -o schema.d.ts"
+  ];
 
   static args = [{ name: "input", required: true }];
 
