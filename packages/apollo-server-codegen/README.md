@@ -30,6 +30,10 @@ const resolvers: Resolvers<
 
 If you use the `rootValue` configuration option in Apollo Server, the typing for the `parent` property of `Query` and `Mutation` can be passed similarly, by using `{ Query: { ... }, Mutation: { ... }, ... }` as `TInternalReps`.
 
+## Nullability
+
+Nullable fields generally use a `Nullable` wrapper, defined as `Nullable<T> = T | null | undefined`. This seems to work best for the real-world scenarios tested against, with the one exception that nullable arguments are simply treated as optional, as this allows for a better experience in TS when setting default values while destructuring.
+
 ### Objects
 
 SDL object types are converted into two separate TS types. For instance, in the case of `type User`, the base `User` and a separate `UserRepresentation` will both be created.
@@ -64,14 +68,14 @@ Fields specified as `@key`s will be provided in the `parent` parameter of the ea
 
 ```gql
 type Review @key(fields: "timestamp author { id }") @key(fields: "id") {
-  author: User
-  id: ID
-  timestamp: Int
+  author: User!
+  id: ID!
+  timestamp: Int!
 }
 
 type User @key(fields: "id") {
-  id: ID
-  name: String
+  id: ID!
+  name: String!
 }
 ```
 
@@ -121,9 +125,9 @@ Fields with a `@requires` directive will have access to the given fields in thei
 ```gql
 extend type Product @key(fields: "upc") {
   upc: String! @external
-  weight: Int @external
-  price: Int @external
-  inStock: Boolean
+  weight: Int! @external
+  price: Int! @external
+  inStock!: Boolean
   shippingEstimate: Int @requires(fields: "price weight")
 }
 ```
