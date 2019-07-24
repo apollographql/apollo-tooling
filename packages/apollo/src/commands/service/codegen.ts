@@ -3,6 +3,7 @@ import { ProjectCommand } from "../../Command";
 import { translate, Language } from "apollo-server-codegen";
 import { readFile, writeFile, watch } from "fs";
 import { join, extname } from "path";
+import chalk from "chalk";
 
 const namesMapping: Record<
   Language,
@@ -80,7 +81,12 @@ export default class ServiceCodegen extends Command {
     );
 
     const inputPath = join(process.cwd(), input);
-    await this.executeCodegen(inputPath, target, output);
+
+    try {
+      await this.executeCodegen(inputPath, target, output);
+    } catch (e) {
+      this.error(chalk.red(e.message));
+    }
 
     if (flags.watch) {
       this.log(`Watching for changes...`);
@@ -89,7 +95,7 @@ export default class ServiceCodegen extends Command {
         try {
           await this.executeCodegen(inputPath, target, output);
         } catch (e) {
-          this.warn("Unable to run codegen: " + e.message);
+          this.warn(chalk.yellow("Unable to run codegen: " + e.message));
         }
       });
     }
@@ -98,7 +104,7 @@ export default class ServiceCodegen extends Command {
   private async executeCodegen(path: string, target: Language, output: string) {
     const inputText = await new Promise<string>(resolve =>
       readFile(path, (err, data) => {
-        if (err) throw new Error(JSON.stringify(err));
+        if (err) throw Error(err.message);
         resolve(data.toString());
       })
     );
@@ -123,7 +129,16 @@ export default class ServiceCodegen extends Command {
       }
     };
     const sdl = getSDL();
-    const translated = translate(sdl, target);
-    await new Promise(resolve => writeFile(output, translated, resolve));
+    try {
+      const translated = translate(sdl, target);
+      await new Promise(resolve => writeFile(output, translated, resolve));
+    } catch (e) {
+      if (e.message && e.message.includes("Syntax Error")) {
+        // error in gql parse. Are they maybe passing an introspection result?
+        e.message +=
+          ".\nIs this file in SDL format?\nSee https://bit.ly/2SzrSMk for help with schema formats";
+      }
+      throw e;
+    }
   }
 }

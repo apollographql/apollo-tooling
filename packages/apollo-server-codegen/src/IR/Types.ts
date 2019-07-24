@@ -47,16 +47,31 @@ export class CompoundType implements Translatable {
   ) {
     this.types = [];
     fields.forEach(node => {
-      const fieldType = base.fields.find(
-        field => field.name === node.name.value
-      )!.type;
+      const field = base.fields.find(field => field.name === node.name.value);
+
+      if (!field) {
+        throw Error(
+          `Could not find field "${node.name.value}" on type "${base.name}".`
+        );
+      }
+      const fieldType = field.type;
 
       if (node.selectionSet) {
+        const baseType = types.find(
+          type => type.name === findRootType(fieldType)
+        );
+        if (!baseType) {
+          throw Error(
+            `Could not find definition for type "${findRootType(
+              fieldType
+            )}" referenced in schema.`
+          );
+        }
         this.types.push({
           name: node.name.value,
           type: new CompoundType(
             node.selectionSet.selections as FieldNode[],
-            types.find(type => type.name === findRootType(fieldType))!,
+            baseType,
             types
           )
         });
