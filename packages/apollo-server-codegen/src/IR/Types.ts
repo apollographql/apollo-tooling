@@ -1,4 +1,4 @@
-import { FieldNode, TypeNode } from "graphql";
+import { FieldNode, TypeNode, Kind } from "graphql";
 import { Translatable, Translator } from "../Translators";
 import { TypelessObjectDefinition } from "./Objects";
 
@@ -91,11 +91,11 @@ export class CompoundType implements Translatable {
 
 export const makeType = (sdlVal: TypeNode): TypeDefinition => {
   switch (sdlVal.kind) {
-    case "NamedType":
+    case Kind.NAMED_TYPE:
       return new NamedType(sdlVal.name.value);
-    case "ListType":
+    case Kind.LIST_TYPE:
       return new ListType(makeType(sdlVal.type));
-    case "NonNullType":
+    case Kind.NON_NULL_TYPE:
       return new NonNullType(makeType(sdlVal.type));
   }
 };

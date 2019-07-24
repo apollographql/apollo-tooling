@@ -88,20 +88,4 @@ export interface Translatable {
   translate(t: Translator): string | undefined;
 }
 
-// Helper for indenting while translating and one or many Translatable's
-export const translateAndIndent = (
-  v: Translatable | Translatable[],
-  t: Translator
-) =>
-  "  " +
-  (Array.isArray(v)
-    ? v
-        .map(v => v.translate(t))
-        .filter(t => t !== undefined)
-        .join("\n")
-    : v.translate(t) || ""
-  )
-    .split("\n")
-    .join("\n" + "  ");
-
 export { TypeScriptTranslator } from "./TypeScriptTranslator";

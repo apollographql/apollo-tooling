@@ -32,19 +32,22 @@ describe("translating to typescript", () => {
 
       type QueryRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, \\"Query\\", any>
       export interface QueryResolver<TContext = {}, TInternalReps = {}> {
-        me: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<User>>
+      me: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<User>>
+
       }
 
       type UserRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, \\"User\\", any>
       export interface User {
-        firstName?: Nullable<string>
-        lastName?: string
-        age?: Nullable<number>
+      firstName?: Nullable<string>
+      lastName?: string
+      age?: Nullable<number>
+
       }
       export interface UserResolver<TContext = {}, TInternalReps = {}> {
-        firstName?: (parent: UserRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<string>>
-        lastName?: (parent: UserRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<string>
-        age?: (parent: UserRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<number>>
+      firstName?: (parent: UserRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<string>>
+      lastName?: (parent: UserRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<string>
+      age?: (parent: UserRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<number>>
+
       }
 
 
@@ -76,12 +79,13 @@ describe("translating to typescript", () => {
 
       type QueryRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, \\"Query\\", any>
       export interface QueryResolver<TContext = {}, TInternalReps = {}> {
-        base: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<number>>
-        nonNull: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<number>
-        list: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<Array<Nullable<number>>>>
-        nonNullList: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Array<Nullable<number>>>
-        listNonNull: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<Array<number>>>
-        nonNullListNonNull: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Array<number>>
+      base: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<number>>
+      nonNull: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<number>
+      list: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<Array<Nullable<number>>>>
+      nonNullList: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Array<Nullable<number>>>
+      listNonNull: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<Array<number>>>
+      nonNullListNonNull: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Array<number>>
+
       }
 
 
@@ -126,19 +130,20 @@ describe("translating to typescript", () => {
        * This it the base type
        */
       export interface QueryResolver<TContext = {}, TInternalReps = {}> {
-        /**
-         * Current User
-         */
-        me: (parent: QueryRepresentation<TInternalReps>, args: {
-          /**
-           * Authorization
-           */
-          token?: string
-          /**
-           * Also auth
-           */
-          other?: string
-        }, context: TContext, info: any) => PromiseOrValue<Nullable<string>>
+      /**
+       * Current User
+       */
+      me: (parent: QueryRepresentation<TInternalReps>, args: {
+      /**
+       * Authorization
+       */
+      token?: string
+      /**
+       * Also auth
+       */
+      other?: string
+      }, context: TContext, info: any) => PromiseOrValue<Nullable<string>>
+
       }
 
 
@@ -359,7 +364,8 @@ describe("translating to typescript", () => {
 
       type QueryRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, \\"Query\\", any>
       export interface QueryResolver<TContext = {}, TInternalReps = {}> {
-        me: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<string>
+      me: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<string>
+
       }
 
 

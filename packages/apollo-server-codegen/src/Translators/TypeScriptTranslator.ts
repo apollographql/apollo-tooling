@@ -1,4 +1,4 @@
-import { translateAndIndent, Translator } from ".";
+import { Translator } from ".";
 import * as IR from "../IR";
 
 export class TypeScriptTranslator extends Translator {
@@ -126,7 +126,7 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
     }
 
     const argsType = t.arguments.length
-      ? `{\n${translateAndIndent(t.arguments, this)}\n}`
+      ? `{\n${t.arguments.map(arg => arg.translate(this)).join("\n")}\n}`
       : "{}";
 
     const parentType =
@@ -162,14 +162,14 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
         : [
             t.description.translate(this),
             `export interface ${t.name} {\n`,
-            translateAndIndent(t.fields, this),
+            ...t.fields.map(field => field.translate(this) + "\n"),
             "\n}\n"
           ]),
 
       // Make the actual Resolver type.
       t.description.translate(this),
       `export interface ${t.name}Resolver<TContext = {}, TInternalReps = {}> {\n`,
-      translateAndIndent(t.resolvers, this),
+      ...t.resolvers.map(resolver => resolver.translate(this) + "\n"),
       `\n}\n`
     ].join("");
   }
@@ -184,13 +184,13 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
       // Make the root type. This is what __resolveRepresentation is expected to return.
       t.description.translate(this),
       `export type ${t.name}<TInternalReps = {}> = ${t.name}Representation<TInternalReps> & {\n`,
-      translateAndIndent(t.fields, this),
+      ...t.fields.map(field => field.translate(this) + "\n"),
       "\n}\n",
 
       t.description.translate(this),
       `export interface ${t.name}Resolver<TContext = {}, TInternalReps = {}> {\n`,
       `  __resolveReference?: (parent: ${t.name}Representation<{ /* explicity don't pass TInternalReps */ }>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<${t.name}>>\n`,
-      translateAndIndent(t.resolvers, this),
+      ...t.resolvers.map(resolver => resolver.translate(this) + "\n"),
       `\n}\n`
     ].join("");
   }
