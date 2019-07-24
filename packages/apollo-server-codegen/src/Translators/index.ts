@@ -104,5 +104,4 @@ export const translateAndIndent = (
     .split("\n")
     .join("\n" + "  ");
 
-import { TypeScriptTranslator } from "./TypeScriptTranslator";
-export { TypeScriptTranslator };
+export { TypeScriptTranslator } from "./TypeScriptTranslator";

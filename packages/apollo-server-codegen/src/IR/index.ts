@@ -1,28 +1,16 @@
 import { DocumentNode } from "graphql";
-import { Description } from "./Descriptions";
 import { EnumDefinition } from "./Enums";
 import {
   FieldDefinition,
   ObjectDefinition,
   TypelessObjectDefinition
 } from "./Objects";
-import { ArgumentDefinition, ResolverDefinition } from "./Resolvers";
 import { ScalarDefinition } from "./Scalars";
-import { CompoundType, ListType, NamedType, NonNullType } from "./Types";
 
-export {
-  ResolverDefinition,
-  ArgumentDefinition,
-  Description,
-  FieldDefinition,
-  ObjectDefinition,
-  CompoundType,
-  ListType,
-  NamedType,
-  NonNullType,
-  EnumDefinition,
-  ScalarDefinition
-};
+export { Description } from "./Descriptions";
+export { ArgumentDefinition, ResolverDefinition } from "./Resolvers";
+export { CompoundType, ListType, NamedType, NonNullType } from "./Types";
+export { FieldDefinition, ObjectDefinition, EnumDefinition, ScalarDefinition };
 
 export function sdlToIR(
   sdl: DocumentNode
