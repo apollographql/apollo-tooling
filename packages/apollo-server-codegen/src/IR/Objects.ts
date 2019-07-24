@@ -5,7 +5,8 @@ import {
   ObjectTypeExtensionNode,
   OperationDefinitionNode,
   parse,
-  StringValueNode
+  StringValueNode,
+  isTypeExtensionNode
 } from "graphql";
 
 import { Translatable, Translator } from "../Translators";
@@ -86,7 +87,7 @@ export class ObjectDefinition implements Translatable {
     provided: string[]
   ) {
     this.name = definition.name.value;
-    this.isTypeExtension = definition.kind === "ObjectTypeExtension";
+    this.isTypeExtension = isTypeExtensionNode(definition);
     this.description = new Description(definition as any);
     this.isRootType = typeless.isRootType;
 
