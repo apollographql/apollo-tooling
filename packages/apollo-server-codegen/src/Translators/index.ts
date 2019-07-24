@@ -60,10 +60,7 @@ export abstract class Translator {
   /**
    * Translate the type definition for the resolver of a field
    */
-  public abstract translateResolverDefinition(
-    t: IR.ResolverDefinition,
-    nonProvidedExternal: boolean
-  ): string;
+  public abstract translateResolverDefinition(t: IR.ResolverDefinition): string;
   /**
    * Translate an object's field. Be sure to translate the description!
    */

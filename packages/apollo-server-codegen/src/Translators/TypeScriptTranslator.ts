@@ -120,11 +120,8 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
     ].join("");
   }
 
-  public translateResolverDefinition(
-    t: IR.ResolverDefinition,
-    nonProvidedExternal: boolean
-  ): string {
-    if (nonProvidedExternal) {
+  public translateResolverDefinition(t: IR.ResolverDefinition): string {
+    if (t.isNotProvidedAndExternal) {
       return `${t.name}: never // non-resolvable: marked @external and not @provide'd by any fields`;
     }
 

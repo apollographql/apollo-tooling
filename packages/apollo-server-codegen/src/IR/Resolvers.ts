@@ -69,9 +69,9 @@ export class TypelessResolverDefinition {
 
   public applyGlobalTypeKnowledge(
     types: TypelessObjectDefinition[],
-    provided: boolean
+    isProvided: boolean
   ) {
-    return new ResolverDefinition(this, types, provided);
+    return new ResolverDefinition(this, types, isProvided);
   }
 }
 
@@ -80,7 +80,7 @@ export class ResolverDefinition implements Translatable {
   public name: string;
   public type: TypeDefinition;
   public description: Description;
-  public external: boolean;
+  public isNotProvidedAndExternal: boolean;
   public requires: CompoundType;
   public parent: TypelessObjectDefinition;
   public isRootType: boolean;
@@ -88,14 +88,16 @@ export class ResolverDefinition implements Translatable {
   constructor(
     typeless: TypelessResolverDefinition,
     types: TypelessObjectDefinition[],
-    public provided: boolean
+    public isProvided: boolean
   ) {
     this.arguments = (typeless.fieldDefinition.arguments || []).map(
       argumentDefinition => new ArgumentDefinition(argumentDefinition)
     );
-    this.external = !!(typeless.fieldDefinition.directives || []).find(
+    const isExternal = (typeless.fieldDefinition.directives || []).some(
       directive => directive.name.value === "external"
     );
+
+    this.isNotProvidedAndExternal = !isProvided && isExternal;
 
     this.isRootType = typeless.isRootType;
     this.name = typeless.fieldDefinition.name.value;
@@ -121,9 +123,6 @@ export class ResolverDefinition implements Translatable {
   }
 
   public translate(translator: Translator) {
-    return translator.translateResolverDefinition(
-      this,
-      this.external && !this.provided
-    );
+    return translator.translateResolverDefinition(this);
   }
 }
