@@ -39,7 +39,7 @@ The base type simply contains all the specified fields, nullable as appropriate,
 The `[...]Representation` type defaults to `any` in non-federated contexts (see below for federation), and is passed as the `parent` property in resolver functions. If the user would like more type safety, they can pass an object to the second type parameter of the emitted `Resolvers` definition, specifying the object name, and the internal representation resolvers will have access to when filling values for that object:
 
 ```ts
-const resolvers: Resolvers<{}, User: {internalID: number}> {
+const resolvers: Resolvers<{}, { User: {internalID: number} }> {
   User: {
     name({ internalID }) => ... // id will be of type `number`
   }
