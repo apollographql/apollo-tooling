@@ -53,7 +53,7 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
     return [
       `export interface Resolvers<TContext = {}, TInternalReps = {}> {`,
       ...types.map(type =>
-        type === "Query"
+        type === "Query" || type === "Mutation" || type === "Subscription"
           ? `  ${type}: ${type}Resolver<TContext, TInternalReps>`
           : `  ${type}?: ${type}Resolver<TContext, TInternalReps>`
       ),
@@ -141,7 +141,7 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
     return [
       t.description.translate(this),
       t.name,
-      t.queryOrMutation ? ": " : "?: ",
+      t.isRootType ? ": " : "?: ",
       `(parent: ${parentType}, args: ${argsType}, context: TContext, info: any) => PromiseOrValue<${returnType}>`
     ].join("");
   }
@@ -159,8 +159,8 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
     return [
       `type ${t.name}Representation<TInternalReps extends Record<string, any>> = Index<TInternalReps, "${t.name}", any>\n`,
 
-      // If its the Query or Mutation type, don't bother exporting the base type
-      ...(t.isQueryOrMutation
+      // If its a Base type (query, mutation, or subscription), don't bother exporting the base type
+      ...(t.isRootType
         ? []
         : [
             t.description.translate(this),

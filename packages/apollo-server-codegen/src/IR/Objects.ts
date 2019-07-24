@@ -24,7 +24,7 @@ export class FieldDefinition implements Translatable {
 
   constructor(
     fieldDefinition: FieldDefinitionNode,
-    public queryOrMutation: boolean
+    public isRootType: boolean
   ) {
     this.name = fieldDefinition.name.value;
     this.type = makeType(fieldDefinition.type);
@@ -43,17 +43,22 @@ export class TypelessObjectDefinition {
   public resolvers: TypelessResolverDefinition[];
   public fields: FieldDefinition[];
   public name: string;
+  public isRootType: boolean;
 
   constructor(
     private definition: ObjectTypeDefinitionNode | ObjectTypeExtensionNode
   ) {
     this.name = definition.name.value;
-    const isQueryOrMutation = this.name === "Query" || this.name === "Mutation";
+    this.isRootType =
+      this.name === "Query" ||
+      this.name === "Mutation" ||
+      this.name === "Subscription";
+
     this.resolvers = (definition.fields || []).map(
-      field => new TypelessResolverDefinition(field, this, isQueryOrMutation)
+      field => new TypelessResolverDefinition(field, this, this.isRootType)
     );
     this.fields = (definition.fields || []).map(
-      field => new FieldDefinition(field, isQueryOrMutation)
+      field => new FieldDefinition(field, this.isRootType)
     );
   }
 
@@ -66,7 +71,7 @@ export class TypelessObjectDefinition {
 }
 
 export class ObjectDefinition implements Translatable {
-  public isQueryOrMutation: boolean;
+  public isRootType: boolean;
   public description: Description;
   public resolvers: ResolverDefinition[];
   public fields: FieldDefinition[];
@@ -83,7 +88,7 @@ export class ObjectDefinition implements Translatable {
     this.name = definition.name.value;
     this.isTypeExtension = definition.kind === "ObjectTypeExtension";
     this.description = new Description(definition as any);
-    this.isQueryOrMutation = this.name === "Query" || this.name === "Mutation";
+    this.isRootType = typeless.isRootType;
 
     this.keys = (definition.directives || [])
       .filter(

@@ -42,7 +42,7 @@ export class TypelessResolverDefinition {
   constructor(
     public fieldDefinition: FieldDefinitionNode,
     public parent: TypelessObjectDefinition,
-    public queryOrMutation: boolean
+    public isRootType: boolean
   ) {}
 
   public getName() {
@@ -83,7 +83,7 @@ export class ResolverDefinition implements Translatable {
   public external: boolean;
   public requires: CompoundType;
   public parent: TypelessObjectDefinition;
-  public queryOrMutation: boolean;
+  public isRootType: boolean;
 
   constructor(
     typeless: TypelessResolverDefinition,
@@ -97,7 +97,7 @@ export class ResolverDefinition implements Translatable {
       directive => directive.name.value === "external"
     );
 
-    this.queryOrMutation = typeless.queryOrMutation;
+    this.isRootType = typeless.isRootType;
     this.name = typeless.fieldDefinition.name.value;
     this.type = makeType(typeless.fieldDefinition.type);
     this.description = new Description(typeless.fieldDefinition);
