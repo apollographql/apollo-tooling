@@ -121,7 +121,9 @@ export class ResolverDefinition implements Translatable {
   }
 
   public translate(translator: Translator) {
-    if (this.external && !this.provided) return undefined;
-    return translator.translateResolverDefinition(this);
+    return translator.translateResolverDefinition(
+      this,
+      this.external && !this.provided
+    );
   }
 }

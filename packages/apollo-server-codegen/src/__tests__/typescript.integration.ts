@@ -216,11 +216,7 @@ describe("translating to typescript", () => {
     expect(typings).toEqual(
       expect.stringContaining("username?: (parent: UserRepresentation")
     );
-    expect(typings).not.toEqual(
-      expect.stringContaining(
-        "numberOfReviews?: (parent: UserRepresentation, args: {}, context: TContext, info: any)"
-      )
-    );
+    expect(typings).toEqual(expect.stringContaining("numberOfReviews: never"));
   });
 
   it("Places @require'd members on the resolver's working object", () => {
