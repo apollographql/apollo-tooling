@@ -54,8 +54,8 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
       `export interface Resolvers<TContext = {}, TInternalReps = {}> {`,
       ...types.map(type =>
         type === "Query" || type === "Mutation" || type === "Subscription"
-          ? `  ${type}: ${type}Resolver<TContext, TInternalReps>`
-          : `  ${type}?: ${type}Resolver<TContext, TInternalReps>`
+          ? `${type}: ${type}Resolver<TContext, TInternalReps>`
+          : `${type}?: ${type}Resolver<TContext, TInternalReps>`
       ),
       ...scalars.map(scalar => `  ${scalar}: any`),
       ...(this.options.__experimentalInternalEnumValueSupport
@@ -152,46 +152,134 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
     ].join("");
   }
 
+  /**
+   * Translate Basic objects (and interfaces) that are non-federated, with any number of interfaces. Example:
+   *
+   * GraphQL:
+   * ```gql
+   * interface MyInterface {
+   *   thing: String!
+   * }
+   *
+   * type User implements MyInterface {
+   *   name(locale: String): String!
+   * }
+   * ```
+   *
+   * TS:
+   * ```ts
+   * type MyInterfaceRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, "MyInterface", any>;
+   * export interface MyInterface { thing?: string; }
+   * export interface MyInterfaceResolver<TContext = {}, TInternalReps = {}> {
+   *   thing?: ( parent: MyInterfaceRepresentation<TInternalReps>, args: {}, context: TContext, info: any ) => PromiseOrValue<string>;
+   * }
+   *
+   * type UserRepresentation<TInternalReps extends Record<string, any>> =
+   *     MyInterfaceRepresentation<TInternalReps> & Index<TInternalReps, "User", {}>;
+   * export interface User extends MyInterface { name?: string;  }
+   * export interface UserResolver<TContext = {}, TInternalReps = {}> extends MyInterfaceResolver<TContext, TInternalReps> {
+   *   name?: (parent: UserRepresentation<TInternalReps>, args: { locale?: string; }, context: TContext, info: any) => PromiseOrValue<string>;
+   * }
+   * ```
+   */
   public translateObjectDefinition(t: IR.ObjectDefinition): string {
+    const representation = t.interfaces.length
+      ? t.interfaces
+          .map(iface => `${iface}Representation<TInternalReps> &`)
+          .join("") + `Index<TInternalReps, "${t.name}", {}>`
+      : `Index<TInternalReps, "${t.name}", any>`;
+
+    const { extending, extendingResolvers } = generateInterfaceImplementations(
+      t
+    );
+
     return [
-      `type ${t.name}Representation<TInternalReps extends Record<string, any>> = Index<TInternalReps, "${t.name}", any>\n`,
+      `type ${t.name}Representation<TInternalReps extends Record<string, any>> = ${representation}\n`,
 
       // If its a Base type (query, mutation, or subscription), don't bother exporting the base type
       ...(t.isRootType
         ? []
         : [
             t.description.translate(this),
-            `export interface ${t.name} {\n`,
+            `export interface ${t.name} ${extending}{\n`,
             ...t.fields.map(field => field.translate(this) + "\n"),
-            "\n}\n"
+            "}\n"
           ]),
 
       // Make the actual Resolver type.
       t.description.translate(this),
-      `export interface ${t.name}Resolver<TContext = {}, TInternalReps = {}> {\n`,
+      `export interface ${t.name}Resolver<TContext = {}, TInternalReps = {}> ${extendingResolvers}{\n`,
       ...t.resolvers.map(resolver => resolver.translate(this) + "\n"),
-      `\n}\n`
+      `}\n`
     ].join("");
   }
 
+  /**
+   * Translate federated types and interfaces. Example:
+   *
+   * GraphQL:
+   * ```gql
+   * interface MyInterface @key(fields: "thing") {
+   *   thing: String!
+   * }
+   *
+   * type User implements MyInterface @key(fields: "name") {
+   *   name(locale: String): String!
+   * }
+   * ```
+   *
+   * TS:
+   * ```ts
+   * type MyInterfaceRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, "MyInterface", {}> & ({ thing: string });
+   *
+   * export interface MyInterface { thing?: string; }
+   * export interface MyInterfaceResolver<TContext = {}, TInternalReps = {}> {
+   *   __resolveReference?: ( parent: MyInterfaceRepresentation<{ }>, args: {}, context: TContext, info: any ) => PromiseOrValue<Nullable<MyInterface>>;
+   *   thing?: ( parent: MyInterfaceRepresentation<TInternalReps>, args: {}, context: TContext, info: any ) => PromiseOrValue<string>;
+   * }
+   *
+   * type UserRepresentation<TInternalReps extends Record<string, any>> =
+   *   MyInterfaceRepresentation<TInternalReps>
+   *      & Index<TInternalReps, "User", {}>
+   *      & ({ name: string });
+   *
+   * export interface User extends MyInterface { name?: string; }
+   * export interface UserResolver<TContext = {}, TInternalReps = {}>
+   *   extends MyInterfaceResolver<TContext, TInternalReps> {
+   *   __resolveReference?: ( parent: UserRepresentation<{ }>, args: {}, context: TContext, info: any ) => PromiseOrValue<Nullable<User>>;
+   *   name?: ( parent: UserRepresentation<TInternalReps>, args: { locale?: string; }, context: TContext, info: any
+   *   ) => PromiseOrValue<string>;
+   * }
+   * ```
+   *
+   */
   public translateEntityDefinition(t: IR.ObjectDefinition): string {
+    const representation =
+      t.interfaces
+        .map(iface => `${iface}Representation<TInternalReps> &`)
+        .join("") + `Index<TInternalReps, "${t.name}", {}>`;
+
+    const { extending, extendingResolvers } = generateInterfaceImplementations(
+      t
+    );
+
     return [
       // Make the Representation type. This is what gets passed to __resolveReference, and what TParent gets set to in resolvers.
-      `type ${t.name}Representation<TInternalReps extends Record<string, any>> = Index<TInternalReps, "${t.name}", {}> & (`,
+      `type ${t.name}Representation<TInternalReps extends Record<string, any>> = ${representation} & (`,
       t.keys.map(key => key.translate(this)).join(" | "),
       ")\n\n",
 
       // Make the root type. This is what __resolveRepresentation is expected to return.
       t.description.translate(this),
-      `export type ${t.name}<TInternalReps = {}> = ${t.name}Representation<TInternalReps> & {\n`,
+      `export interface ${t.name} ${extending} {\n`,
       ...t.fields.map(field => field.translate(this) + "\n"),
-      "\n}\n",
+      "}\n",
 
       t.description.translate(this),
-      `export interface ${t.name}Resolver<TContext = {}, TInternalReps = {}> {\n`,
-      `  __resolveReference?: (parent: ${t.name}Representation<{ /* explicity don't pass TInternalReps */ }>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<${t.name}>>\n`,
+      `export interface ${t.name}Resolver<TContext = {}, TInternalReps = {}> ${extendingResolvers} {\n`,
+      `__resolveReference?: (parent: ${t.name}Representation<{ /* explicity don't pass TInternalReps */ }>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<${t.name}>>\n`,
       ...t.resolvers.map(resolver => resolver.translate(this) + "\n"),
-      `\n}\n`
+      `}\n`
     ].join("");
   }
 
@@ -199,16 +287,69 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
     // punt internal enum values to `any` for now. Wait for feedback about how people use it.
     const options = t.values.map(value => `"${value}"`).join(" | ");
 
-    return this.options.__experimentalInternalEnumValueSupport
-      ? [
-          `export type ${t.name}External = ${options}`,
-          `export type ${t.name} = any`
-        ].join("\n")
-      : `export type ${t.name} = ${options}`;
+    return (
+      t.description.translate(this) +
+      (this.options.__experimentalInternalEnumValueSupport
+        ? [
+            `export type ${t.name}External = ${options}`,
+            `export type ${t.name} = any`
+          ].join("\n")
+        : `export type ${t.name} = ${options}`)
+    );
   }
 
   public translateScalarDefinition(t: IR.ScalarDefinition): string {
     // punt scalars to `any` for now. Wait for feedback about how people use it.
-    return `export type ${t.name} = any`;
+    return t.description.translate(this) + `export type ${t.name} = any`;
   }
+
+  public translateUnionDefinition(t: IR.UnionDefinition): string {
+    return (
+      t.description.translate(this) +
+      ["type ", t.name, " = ", t.types.join(" | "), "\n"].join("")
+    );
+  }
+
+  public translateInputObjectDefinition(t: IR.InputObjectDefinition): string {
+    return (
+      t.description.translate(this) +
+      [
+        "export type ",
+        t.name,
+        "= { \n",
+        t.args.map(arg => arg.translate(this)).join("\n"),
+        " } \n"
+      ].join("")
+    );
+  }
+}
+
+/**
+ * When t implements:
+ *
+ *  0 interfaces:
+ *
+ *    {extending: '', extendingResolvers: ''}
+ *
+ *  1 interface:
+ *
+ *    {extending: 'extends MyInterface',
+ *     extendingResolvers: 'extends MyInterface<TContext, TInternalReps>'}
+ *
+ *  2+ interfaces:
+ *
+ *    {extending: 'extends MyInterface1, MyInterface2',
+ *     extendingResolvers: 'extends MyInterface1<TContext, TInternalReps>, MyInterface2<TContext, TInternalReps>'}
+ */
+function generateInterfaceImplementations(t: IR.ObjectDefinition) {
+  const extending = t.interfaces.length
+    ? "extends " + t.interfaces.map(iface => `${iface}`).join(", ")
+    : "";
+  const extendingResolvers = t.interfaces.length
+    ? "extends " +
+      t.interfaces
+        .map(iface => `${iface}Resolver<TContext, TInternalReps>`)
+        .join(", ")
+    : "";
+  return { extending, extendingResolvers };
 }

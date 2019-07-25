@@ -1,4 +1,4 @@
-import { DocumentNode } from "graphql";
+import { DocumentNode, Kind } from "graphql";
 import { EnumDefinition } from "./Enums";
 import {
   FieldDefinition,
@@ -6,43 +6,53 @@ import {
   TypelessObjectDefinition
 } from "./Objects";
 import { ScalarDefinition } from "./Scalars";
-
-export { Description } from "./Descriptions";
-export { ArgumentDefinition, ResolverDefinition } from "./Resolvers";
-export { CompoundType, ListType, NamedType, NonNullType } from "./Types";
-export { FieldDefinition, ObjectDefinition, EnumDefinition, ScalarDefinition };
+import { UnionDefinition } from "./Unions";
+import { InputObjectDefinition } from "./InputObjects";
 
 export function sdlToIR(
   sdl: DocumentNode
-): [ObjectDefinition[], EnumDefinition[], ScalarDefinition[]] {
+): [
+  ObjectDefinition[],
+  EnumDefinition[],
+  ScalarDefinition[],
+  UnionDefinition[],
+  InputObjectDefinition[]
+] {
   const objectDefinitions: TypelessObjectDefinition[] = [];
   const enumDefinitions = [];
   const scalarDefinitions = [];
+  const unionDefinitions = [];
+  const interfaceDefinitions = [];
+  const inputObjectDefinitions = [];
+
   for (const definition of sdl.definitions) {
     switch (definition.kind) {
-      case "ObjectTypeDefinition":
-      case "ObjectTypeExtension":
+      case Kind.OBJECT_TYPE_DEFINITION:
+      case Kind.OBJECT_TYPE_EXTENSION:
+      case Kind.INTERFACE_TYPE_DEFINITION:
         objectDefinitions.push(new TypelessObjectDefinition(definition));
         break;
-      case "ScalarTypeDefinition":
+      case Kind.SCALAR_TYPE_DEFINITION:
         scalarDefinitions.push(new ScalarDefinition(definition));
         break;
-      case "EnumTypeDefinition":
+      case Kind.ENUM_TYPE_DEFINITION:
         enumDefinitions.push(new EnumDefinition(definition));
         break;
+      case Kind.UNION_TYPE_DEFINITION:
+        unionDefinitions.push(new UnionDefinition(definition));
+        break;
+      case Kind.INPUT_OBJECT_TYPE_DEFINITION:
+        inputObjectDefinitions.push(new InputObjectDefinition(definition));
+        break;
+        break;
       default:
-        console.log(
+        console.warn(
           `Ignoring value of type ${definition.kind}: ${JSON.stringify(
             definition
           )}`
         );
     }
   }
-
-  const flatMap = <T, E>(
-    array: readonly T[],
-    callback: (e: T) => readonly E[]
-  ) => ([] as E[]).concat.apply([], array.map(callback));
 
   const providedFields = flatMap(objectDefinitions, def =>
     flatMap(def.resolvers, resolver => resolver.getProvides())
@@ -58,6 +68,23 @@ export function sdlToIR(
       )
     ),
     enumDefinitions,
-    scalarDefinitions
+    scalarDefinitions,
+    unionDefinitions,
+    inputObjectDefinitions
   ];
 }
+
+const flatMap = <T, E>(array: readonly T[], callback: (e: T) => readonly E[]) =>
+  ([] as E[]).concat.apply([], array.map(callback));
+
+export { Description } from "./Descriptions";
+export { ArgumentDefinition, ResolverDefinition } from "./Resolvers";
+export { CompoundType, ListType, NamedType, NonNullType } from "./Types";
+export {
+  FieldDefinition,
+  ObjectDefinition,
+  EnumDefinition,
+  ScalarDefinition,
+  UnionDefinition,
+  InputObjectDefinition
+};

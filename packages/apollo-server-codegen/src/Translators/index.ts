@@ -66,11 +66,11 @@ export abstract class Translator {
    */
   public abstract translateFieldDefinition(t: IR.FieldDefinition): string;
   /**
-   * Translate an entity (federated object). `__resolveReferences` and `Representation` definitions go here!
+   * Translate an entity (federated object/interface). `__resolveReferences` and `Representation` definitions go here!
    */
   public abstract translateEntityDefinition(t: IR.ObjectDefinition): string;
   /**
-   * Translate a simple (non-federated) object.
+   * Translate a simple (non-federated) object/interface.
    */
   public abstract translateObjectDefinition(t: IR.ObjectDefinition): string;
   /**
@@ -81,6 +81,16 @@ export abstract class Translator {
    * Translate a scalar type
    */
   public abstract translateScalarDefinition(t: IR.ScalarDefinition): string;
+  /**
+   * Translate a union type
+   */
+  public abstract translateUnionDefinition(t: IR.UnionDefinition): string;
+  /**
+   * Translate an input object type
+   */
+  public abstract translateInputObjectDefinition(
+    t: IR.InputObjectDefinition
+  ): string;
 }
 
 // All IR components are Translatable

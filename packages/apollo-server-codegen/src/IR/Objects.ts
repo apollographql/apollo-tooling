@@ -6,7 +6,9 @@ import {
   OperationDefinitionNode,
   parse,
   StringValueNode,
-  isTypeExtensionNode
+  isTypeExtensionNode,
+  InterfaceTypeDefinitionNode,
+  InterfaceTypeExtensionNode
 } from "graphql";
 
 import { Translatable, Translator } from "../Translators";
@@ -47,7 +49,11 @@ export class TypelessObjectDefinition {
   public isRootType: boolean;
 
   constructor(
-    private definition: ObjectTypeDefinitionNode | ObjectTypeExtensionNode
+    private definition:
+      | ObjectTypeDefinitionNode
+      | ObjectTypeExtensionNode
+      | InterfaceTypeDefinitionNode
+      | InterfaceTypeExtensionNode
   ) {
     this.name = definition.name.value;
     this.isRootType =
@@ -79,9 +85,14 @@ export class ObjectDefinition implements Translatable {
   public name: string;
   public keys: Translatable[];
   public isTypeExtension: boolean;
+  public interfaces: string[];
 
   constructor(
-    definition: ObjectTypeDefinitionNode | ObjectTypeExtensionNode,
+    definition:
+      | ObjectTypeDefinitionNode
+      | ObjectTypeExtensionNode
+      | InterfaceTypeDefinitionNode
+      | InterfaceTypeExtensionNode,
     typeless: TypelessObjectDefinition,
     types: TypelessObjectDefinition[],
     provided: string[]
@@ -90,6 +101,11 @@ export class ObjectDefinition implements Translatable {
     this.isTypeExtension = isTypeExtensionNode(definition);
     this.description = new Description(definition as any);
     this.isRootType = typeless.isRootType;
+
+    this.interfaces = ("interfaces" in definition
+      ? definition.interfaces || []
+      : []
+    ).map(name => name.name.value);
 
     this.keys = (definition.directives || [])
       .filter(
