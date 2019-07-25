@@ -46,8 +46,6 @@ describe("translating to typescript", () => {
       lastName?: (parent: UserRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<string>
       age?: (parent: UserRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<number>>
       }
-
-
       "
     `);
   });
@@ -83,8 +81,6 @@ describe("translating to typescript", () => {
       listNonNull: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<Array<number>>>
       nonNullListNonNull: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Array<number>>
       }
-
-
       "
     `);
   });
@@ -140,8 +136,6 @@ describe("translating to typescript", () => {
       other?: string
       }, context: TContext, info: any) => PromiseOrValue<Nullable<string>>
       }
-
-
       "
     `);
   });
@@ -361,8 +355,6 @@ describe("translating to typescript", () => {
       export interface QueryResolver<TContext = {}, TInternalReps = {}> {
       me: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<string>
       }
-
-
       "
     `);
   });
