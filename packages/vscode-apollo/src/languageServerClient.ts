@@ -48,13 +48,14 @@ export function getLanguageServerClient(
       "typescriptreact",
       "vue",
       "python",
-      "ruby"
+      "ruby",
+      "dart"
     ],
     synchronize: {
       fileEvents: [
         workspace.createFileSystemWatcher("**/.env"),
         workspace.createFileSystemWatcher(
-          "**/*.{graphql,js,ts,jsx,tsx,vue,py,rb}"
+          "**/*.{graphql,js,ts,jsx,tsx,vue,py,rb,dart}"
         )
       ]
     },

@@ -19,11 +19,11 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Add Dart operation extraction [#1385](https://github.com/apollographql/apollo-tooling/pull/1385)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Add Dart support for vscode [#1385](https://github.com/apollographql/apollo-tooling/pull/1385)
 
 ## `apollo@2.16.1`, `apollo-language-server@1.13.1`, `vscode-apollo@1.8.1`
 
