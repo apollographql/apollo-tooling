@@ -230,7 +230,8 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
    *
    * TS:
    * ```ts
-   * type MyInterfaceRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, "MyInterface", {}> & ({ thing: string });
+   * type MyInterfaceRepresentation<TInternalReps extends Record<string, any>> =
+   *     Index<TInternalReps, "MyInterface", {}> & ({ thing: string });
    *
    * export interface MyInterface { thing?: string; }
    * export interface MyInterfaceResolver<TContext = {}, TInternalReps = {}> {
@@ -283,6 +284,25 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
     ].join("");
   }
 
+  public translateInterfaceDefinition(t: IR.ObjectDefinition): string {
+    return [
+      `type ${t.name}Representation<TInternalReps extends Record<string, any>> = (`,
+      t.keys.length
+        ? t.keys.map(key => key.translate(this)).join(" | ")
+        : `t.name`,
+      `) & Index<TInternalReps, "${t.name}", {}> \n\n`,
+
+      t.description.translate(this),
+      `export interface ${t.name} {\n`,
+      ...t.fields.map(field => field.translate(this) + "\n"),
+
+      t.description.translate(this),
+      `export interface ${t.name}Resolver<TContext = {}, TInternalReps = {}> {\n`,
+      `__resolveType?: (parent: ${t.name}Representation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<string>>\n`,
+      "}\n"
+    ].join("");
+  }
+
   public translateEnumDefinition(t: IR.EnumDefinition): string {
     // punt internal enum values to `any` for now. Wait for feedback about how people use it.
     const options = t.values.map(value => `"${value}"`).join(" | ");
@@ -304,10 +324,13 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
   }
 
   public translateUnionDefinition(t: IR.UnionDefinition): string {
-    return (
-      t.description.translate(this) +
-      ["type ", t.name, " = ", t.types.join(" | "), "\n"].join("")
-    );
+    return [
+      t.description.translate(this),
+      `type ${t.name} = ${t.types.join(" | ")}\n`,
+      `export interface ${t.name}Resolver<TContext = {}, TInternalReps = {}> {\n`,
+      `__resolveType?: (parent: any, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<string>>\n`,
+      "}\n"
+    ].join("");
   }
 
   public translateInputObjectDefinition(t: IR.InputObjectDefinition): string {
@@ -331,15 +354,10 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
  *
  *    {extending: '', extendingResolvers: ''}
  *
- *  1 interface:
+ *  1+ interfaces:
  *
- *    {extending: 'extends MyInterface',
- *     extendingResolvers: 'extends MyInterface<TContext, TInternalReps>'}
- *
- *  2+ interfaces:
- *
- *    {extending: 'extends MyInterface1, MyInterface2',
- *     extendingResolvers: 'extends MyInterface1<TContext, TInternalReps>, MyInterface2<TContext, TInternalReps>'}
+ *    {extending: 'extends MyInterface[, ...]',
+ *     extendingResolvers: 'extends MyInterface<TContext, TInternalReps>[, ...]'}
  */
 function generateInterfaceImplementations(t: IR.ObjectDefinition) {
   const extending = t.interfaces.length

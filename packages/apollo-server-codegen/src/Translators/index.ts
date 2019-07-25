@@ -74,6 +74,10 @@ export abstract class Translator {
    */
   public abstract translateObjectDefinition(t: IR.ObjectDefinition): string;
   /**
+   * Translate an interface definition
+   */
+  public abstract translateInterfaceDefinition(t: IR.ObjectDefinition): string;
+  /**
    * Translate an enum
    */
   public abstract translateEnumDefinition(t: IR.EnumDefinition): string;

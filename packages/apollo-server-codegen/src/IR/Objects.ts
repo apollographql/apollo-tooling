@@ -8,7 +8,8 @@ import {
   StringValueNode,
   isTypeExtensionNode,
   InterfaceTypeDefinitionNode,
-  InterfaceTypeExtensionNode
+  InterfaceTypeExtensionNode,
+  Kind
 } from "graphql";
 
 import { Translatable, Translator } from "../Translators";
@@ -86,6 +87,7 @@ export class ObjectDefinition implements Translatable {
   public keys: Translatable[];
   public isTypeExtension: boolean;
   public interfaces: string[];
+  public isInterface: boolean;
 
   constructor(
     definition:
@@ -101,6 +103,10 @@ export class ObjectDefinition implements Translatable {
     this.isTypeExtension = isTypeExtensionNode(definition);
     this.description = new Description(definition as any);
     this.isRootType = typeless.isRootType;
+
+    this.isInterface =
+      definition.kind === Kind.INTERFACE_TYPE_DEFINITION ||
+      definition.kind === Kind.INTERFACE_TYPE_EXTENSION;
 
     this.interfaces = ("interfaces" in definition
       ? definition.interfaces || []
@@ -128,6 +134,7 @@ export class ObjectDefinition implements Translatable {
   }
 
   public translate(translator: Translator) {
+    if (this.isInterface) return translator.translateInterfaceDefinition(this);
     return this.keys.length
       ? translator.translateEntityDefinition(this)
       : translator.translateObjectDefinition(this);
