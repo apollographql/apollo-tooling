@@ -26,8 +26,8 @@ describe("translating to typescript", () => {
       type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map[Key] extends object ? Map[Key] : IfMissing
 
       export interface Resolvers<TContext = {}, TInternalReps = {}> {
-        Query: QueryResolver<TContext, TInternalReps>
-        User?: UserResolver<TContext, TInternalReps>
+      Query: QueryResolver<TContext, TInternalReps>
+      User?: UserResolver<TContext, TInternalReps>
       }
 
       type QueryRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, \\"Query\\", any>
@@ -71,7 +71,7 @@ describe("translating to typescript", () => {
       type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map[Key] extends object ? Map[Key] : IfMissing
 
       export interface Resolvers<TContext = {}, TInternalReps = {}> {
-        Query: QueryResolver<TContext, TInternalReps>
+      Query: QueryResolver<TContext, TInternalReps>
       }
 
       type QueryRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, \\"Query\\", any>
@@ -118,7 +118,7 @@ describe("translating to typescript", () => {
       type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map[Key] extends object ? Map[Key] : IfMissing
 
       export interface Resolvers<TContext = {}, TInternalReps = {}> {
-        Query: QueryResolver<TContext, TInternalReps>
+      Query: QueryResolver<TContext, TInternalReps>
       }
 
       type QueryRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, \\"Query\\", any>
@@ -354,7 +354,7 @@ describe("translating to typescript", () => {
       type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map[Key] extends object ? Map[Key] : IfMissing
 
       export interface Resolvers<TContext = {}, TInternalReps = {}> {
-        Query: QueryResolver<TContext, TInternalReps>
+      Query: QueryResolver<TContext, TInternalReps>
       }
 
       type QueryRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, \\"Query\\", any>
