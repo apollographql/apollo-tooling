@@ -228,7 +228,7 @@ export class GraphQLClientProject extends GraphQLProject {
 
   get defaultClientDefinitions(): readonly DefinitionNode[] {
     return new GraphQLDocument(
-      new Source(`
+      new Source(`#graphql
       """
       Direct the client to resolve this field locally, either from the cache or local resolvers.
       """

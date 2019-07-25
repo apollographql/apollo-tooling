@@ -1,7 +1,6 @@
 import {
   specifiedRules,
   NoUnusedFragmentsRule,
-  KnownDirectivesRule,
   GraphQLError,
   FieldNode,
   ValidationContext,
@@ -20,8 +19,10 @@ import { TextEdit } from "vscode-languageserver";
 
 import { ToolError, logError } from "./logger";
 import { ValidationRule } from "graphql/validation/ValidationContext";
-import { ClientSchemaInfo } from "../utilities/graphql";
-import { positionFromSourceLocation } from "../utilities/source";
+import {
+  positionFromSourceLocation,
+  isFieldResolvedLocally
+} from "../utilities/source";
 
 export interface CodeActionInfo {
   message: string;
@@ -106,6 +107,7 @@ export function NoTypenameAlias(context: ValidationContext) {
 }
 
 export function NoMissingClientDirectives(context: ValidationContext) {
+  const root = context.getDocument();
   return {
     Field(node: FieldNode) {
       const parentType = context.getParentType();
@@ -118,11 +120,9 @@ export function NoMissingClientDirectives(context: ValidationContext) {
         parentType.clientSchema.localFields &&
         parentType.clientSchema.localFields.includes(fieldDef.name);
 
-      const hasClientDirective =
-        node.directives &&
-        node.directives.find(value => value.name.value === "client") != null;
+      const isResolvedLocally = isFieldResolvedLocally(node, root);
 
-      if (isClientType && !hasClientDirective) {
+      if (isClientType && !isResolvedLocally) {
         let extensions: { [key: string]: any } | null = null;
         const nameLoc = node.name.loc;
         if (nameLoc) {

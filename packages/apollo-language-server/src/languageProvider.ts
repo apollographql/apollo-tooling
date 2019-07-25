@@ -287,9 +287,7 @@ export class GraphQLLanguageProvider {
             return {
               contents: {
                 language: "graphql",
-                value: `fragment ${fragmentName} on ${
-                  fragment.typeCondition.name.value
-                }`
+                value: `fragment ${fragmentName} on ${fragment.typeCondition.name.value}`
               }
             };
           }
@@ -313,10 +311,8 @@ export class GraphQLLanguageProvider {
               parentType.clientSchema.localFields.includes(fieldDef.name);
 
             const isResolvedLocally = isFieldResolvedLocally(
-              document.source,
               node,
-              document.ast,
-              project.schema
+              document.ast
             );
 
             const content = [
