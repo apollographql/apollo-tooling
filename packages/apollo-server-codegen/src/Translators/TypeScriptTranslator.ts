@@ -318,7 +318,9 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
       t.description.translate(this),
       `type ${t.name} = ${t.types.join(" | ")}\n`,
       `export interface ${t.name}Resolver<TContext = {}, TInternalReps = {}> {\n`,
-      `__resolveType?: (parent: any, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<string>>\n`,
+      `__resolveType?: (parent: any, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<${t.types
+        .map(t => `"${t}"`)
+        .join(" | ")}>>\n`,
       "}\n"
     ].join("");
   }
