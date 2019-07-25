@@ -110,6 +110,16 @@
         "embeddedLanguages": {
           "meta.embedded.block.graphql": "graphql"
         }
+      },
+      {
+        "injectTo": [
+          "source.dart"
+        ],
+        "scopeName": "inline.graphql.dart",
+        "path": "./syntaxes/graphql.dart.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.graphql": "graphql"
+        }
       }
     ],
     "commands": [
