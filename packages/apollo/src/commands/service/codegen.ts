@@ -1,9 +1,9 @@
 import Command, { flags } from "@oclif/command";
-import { ProjectCommand } from "../../Command";
 import { translate, Language } from "apollo-server-codegen";
 import { readFile, writeFile, watch } from "fs";
 import { join, extname } from "path";
 import chalk from "chalk";
+import prettier from "prettier";
 
 const namesMapping: Record<
   Language,
@@ -131,7 +131,14 @@ export default class ServiceCodegen extends Command {
     const sdl = getSDL();
     try {
       const translated = translate(sdl, target);
-      await new Promise(resolve => writeFile(output, translated, resolve));
+
+      const prettierOptions = await prettier.resolveConfig(output);
+      const formatted = prettier.format(translated, {
+        parser: "typescript",
+        ...prettierOptions
+      });
+
+      await new Promise(resolve => writeFile(output, formatted, resolve));
     } catch (e) {
       if (e.message && e.message.includes("Syntax Error")) {
         // error in gql parse. Are they maybe passing an introspection result?
