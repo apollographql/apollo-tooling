@@ -85,7 +85,8 @@ export default class ServiceCodegen extends Command {
     try {
       await this.executeCodegen(inputPath, target, output);
     } catch (e) {
-      this.error(chalk.red(e.message));
+      console.error(chalk.red(e));
+      process.exit(1);
     }
 
     if (flags.watch) {
@@ -102,9 +103,9 @@ export default class ServiceCodegen extends Command {
   }
 
   private async executeCodegen(path: string, target: Language, output: string) {
-    const inputText = await new Promise<string>(resolve =>
+    const inputText = await new Promise<string>((resolve, reject) =>
       readFile(path, (err, data) => {
-        if (err) throw Error(err.message);
+        if (err) return reject(err.message);
         resolve(data.toString());
       })
     );
@@ -143,7 +144,7 @@ export default class ServiceCodegen extends Command {
       if (e.message && e.message.includes("Syntax Error")) {
         // error in gql parse. Are they maybe passing an introspection result?
         e.message +=
-          ".\nIs this file in SDL format?\nSee https://bit.ly/2SzrSMk for help with schema formats";
+          ".\nIs the input in SDL format?\nSee https://bit.ly/2SzrSMk for help with schema formats";
       }
       throw e;
     }

@@ -24,13 +24,6 @@ export const translate = (
 ) => {
   const translator = new translatorForLanguage[language](options);
   const docNode: DocumentNode = typeof sdl === "string" ? gql(sdl) : sdl;
-  const [objectDefinitions, enumDefinitions, scalarDefinitions] = sdlToIR(
-    docNode
-  );
 
-  return translator.generate(
-    objectDefinitions,
-    enumDefinitions,
-    scalarDefinitions
-  );
+  return translator.generate(...sdlToIR(docNode));
 };

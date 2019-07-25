@@ -5,7 +5,9 @@ export class TypeScriptTranslator extends Translator {
   public generate(
     objects: IR.ObjectDefinition[],
     enums: IR.EnumDefinition[],
-    scalars: IR.ScalarDefinition[]
+    scalars: IR.ScalarDefinition[],
+    unions: IR.UnionDefinition[],
+    inputObjects: IR.InputObjectDefinition[]
   ): string {
     const header = this.generateHeader();
     const resolvers = this.generateTopLevelResolvers(
@@ -14,24 +16,12 @@ export class TypeScriptTranslator extends Translator {
       scalars.map(s => s.name)
     );
 
-    const translatedObjectDefinitions = objects
-      .map(definition => definition.translate(this))
-      .join("\n");
-
-    const translatedEnumDefinitions = enums
-      .map(definition => definition.translate(this))
-      .join("\n");
-
-    const translatedScalarDefinitions = scalars
-      .map(definition => definition.translate(this))
-      .join("\n");
-
     return [
       header,
       resolvers,
-      translatedObjectDefinitions,
-      translatedEnumDefinitions,
-      translatedScalarDefinitions
+      ...[...objects, ...enums, ...scalars, ...unions, ...inputObjects].map(
+        def => def.translate(this)
+      )
     ].join("\n");
   }
 
@@ -60,8 +50,7 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
       ...scalars.map(scalar => `  ${scalar}: any`),
       ...(this.options.__experimentalInternalEnumValueSupport
         ? enums.map(
-            enumName =>
-              `  ${enumName}: { [external: ${enumName}External]: any }`
+            enumName => `${enumName}: { [external: ${enumName}External]: any }`
           )
         : []),
       `}\n`
@@ -286,15 +275,16 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
 
   public translateInterfaceDefinition(t: IR.ObjectDefinition): string {
     return [
-      `type ${t.name}Representation<TInternalReps extends Record<string, any>> = (`,
+      `type ${t.name}Representation<TInternalReps extends Record<string, any>> = `,
       t.keys.length
-        ? t.keys.map(key => key.translate(this)).join(" | ")
-        : `t.name`,
-      `) & Index<TInternalReps, "${t.name}", {}> \n\n`,
+        ? "(" + t.keys.map(key => key.translate(this)).join(" | ") + ")"
+        : t.name,
+      ` & Index<TInternalReps, "${t.name}", {}> \n\n`,
 
       t.description.translate(this),
       `export interface ${t.name} {\n`,
       ...t.fields.map(field => field.translate(this) + "\n"),
+      `}\n`,
 
       t.description.translate(this),
       `export interface ${t.name}Resolver<TContext = {}, TInternalReps = {}> {\n`,

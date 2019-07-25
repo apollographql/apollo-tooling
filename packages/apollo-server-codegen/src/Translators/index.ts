@@ -23,7 +23,9 @@ export abstract class Translator {
   public abstract generate(
     objects: IR.ObjectDefinition[],
     enums: IR.EnumDefinition[],
-    scalars: IR.ScalarDefinition[]
+    scalars: IR.ScalarDefinition[],
+    unions: IR.UnionDefinition[],
+    inputObjects: IR.InputObjectDefinition[]
   ): string;
 
   /**
