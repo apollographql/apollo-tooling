@@ -23,11 +23,12 @@ const getAllMessageText = (
   );
 };
 
-export const typeCheck = async (sdl, code) => {
+export const typeCheck = async (sdl, code, debug = false) => {
   const tmp = await makeTmpFile("ts");
   const path = tmp.name;
   const source = translate(sdl, "ts") + code;
   await write(path, source);
+  if (debug) console.log(source);
 
   const program = ts.createProgram([path], {
     strict: true,
