@@ -11,9 +11,6 @@ import { Description } from "./Descriptions";
 import { TypelessObjectDefinition } from "./Objects";
 import { CompoundType, findRootType, makeType, TypeDefinition } from "./Types";
 
-const flatMap = <T, E>(array: readonly T[], callback: (e: T) => readonly E[]) =>
-  ([] as E[]).concat.apply([], array.map(callback));
-
 const parseSelections = (source: string) =>
   (parse(`query { ${source} }`).definitions[0] as OperationDefinitionNode)
     .selectionSet.selections as (readonly FieldNode[]);
@@ -49,22 +46,21 @@ export class TypelessResolverDefinition {
     return this.fieldDefinition.name.value;
   }
 
-  public getProvides() {
-    return flatMap(
-      (this.fieldDefinition.directives || [])
-        .filter(
-          directive =>
-            directive.name.value === "provides" &&
-            directive.arguments &&
-            directive.arguments.length
-        )
-        .map(key => (key.arguments![0].value as StringValueNode).value),
-      providedFields =>
+  public getProvides(types: TypelessObjectDefinition[]) {
+    return (this.fieldDefinition.directives || [])
+      .filter(
+        directive =>
+          directive.name.value === "provides" &&
+          directive.arguments &&
+          directive.arguments.length
+      )
+      .map(key => (key.arguments![0].value as StringValueNode).value)
+      .flatMap(providedFields =>
         providedFields.split(" ").map(field => ({
           field,
           type: findRootType(makeType(this.fieldDefinition.type))
         }))
-    );
+      );
   }
 
   public applyGlobalTypeKnowledge(
@@ -105,17 +101,18 @@ export class ResolverDefinition implements Translatable {
     this.description = new Description(typeless.fieldDefinition);
     this.parent = typeless.parent;
 
+    const requiresSelections = (typeless.fieldDefinition.directives || [])
+      .filter(
+        directive =>
+          directive.name.value === "requires" &&
+          directive.arguments &&
+          directive.arguments.length
+      )
+      .map(key => (key.arguments![0].value as StringValueNode).value);
+
     this.requires = new CompoundType(
-      flatMap(
-        (typeless.fieldDefinition.directives || [])
-          .filter(
-            directive =>
-              directive.name.value === "requires" &&
-              directive.arguments &&
-              directive.arguments.length
-          )
-          .map(key => (key.arguments![0].value as StringValueNode).value),
-        selectionString => parseSelections(selectionString)
+      requiresSelections.flatMap(selectionString =>
+        parseSelections(selectionString)
       ),
       typeless.parent,
       types

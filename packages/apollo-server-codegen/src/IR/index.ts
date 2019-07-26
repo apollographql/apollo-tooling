@@ -54,9 +54,9 @@ export function sdlToIR(
     }
   }
 
-  const providedFields = flatMap(objectDefinitions, def =>
-    flatMap(def.resolvers, resolver => resolver.getProvides())
-  );
+  const providedFields = objectDefinitions
+    .flatMap(def => def.resolvers)
+    .flatMap(resolver => resolver.getProvides(objectDefinitions));
 
   return [
     objectDefinitions.map(typeless =>
@@ -73,10 +73,6 @@ export function sdlToIR(
     inputObjectDefinitions
   ];
 }
-
-const flatMap = <T, E>(array: readonly T[], callback: (e: T) => readonly E[]) =>
-  ([] as E[]).concat.apply([], array.map(callback));
-
 export { Description } from "./Descriptions";
 export { ArgumentDefinition, ResolverDefinition } from "./Resolvers";
 export { CompoundType, ListType, NamedType, NonNullType } from "./Types";

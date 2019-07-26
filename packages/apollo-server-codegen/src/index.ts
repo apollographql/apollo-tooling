@@ -1,3 +1,4 @@
+import "apollo-env";
 import { DocumentNode } from "graphql";
 import gql from "graphql-tag";
 import { sdlToIR } from "./IR";
