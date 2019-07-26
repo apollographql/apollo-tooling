@@ -6,8 +6,8 @@ import { typeCheck } from "./codegen-test-utils";
 // Keep an eye out for drift before committing.
 
 describe("translating to typescript", () => {
-  it("translates basic object types", () => {
-    const typeDefs = gql`
+  it("translates basic object types", async () => {
+    const typeDefs = `#graphql
       type Query {
         me: User
       }
@@ -19,68 +19,30 @@ describe("translating to typescript", () => {
       }
     `;
 
-    expect(translate(typeDefs, "ts")).toMatchInlineSnapshot(`
-      "// This is a machine generated file.
-      // Use \\"apollo service:codegen\\" to regenerate.
-      type PromiseOrValue<T> = Promise<T> | T
-      type Nullable<T> = T | null | undefined
-      type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map[Key] extends object ? Map[Key] : IfMissing
+    const resolvers = `const r: Resolvers<{/*Context*/ getID: (i: number) => number }, {/* internalReps*/ Query: {root: number}, User: {id: number} }> = {
+      Query: {
+        me({root}, {}, {getID}) {
+          const id: number = getID(root)
+          return {id} as User
+        }
+      },
+      User: {
+        firstName({id}, {}, {getID}) {
+          return 10 // err
+        }
+      }
+    }`;
 
-      export interface Resolvers<TContext = {}, TInternalReps = {}> {
-      Query: QueryResolver<TContext, TInternalReps>
-      User?: UserResolver<TContext, TInternalReps>
-      }
-
-      type QueryRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, \\"Query\\", any>
-      export interface QueryResolver<TContext = {}, TInternalReps = {}> {
-      me: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<User>>
-      }
-
-      type UserRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, \\"User\\", any>
-      export interface User {
-      firstName?: Nullable<string>
-      lastName?: string
-      age?: Nullable<number>
-      }
-      export interface UserResolver<TContext = {}, TInternalReps = {}> {
-      firstName?: (parent: UserRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<string>>
-      lastName?: (parent: UserRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<string>
-      age?: (parent: UserRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<number>>
-      }
-      "
+    const diagnostics = await typeCheck(typeDefs, resolvers);
+    expect(diagnostics).toMatchInlineSnapshot(`
+      Array [
+        "Type '{ firstName({ id }: { id: number; }, {}: {}, { getID }: { getID: (i: number) => number; }): number; }' is not assignable to type 'UserResolver<{ getID: (i: number) => number; }, { Query: { root: number; }; User: { id: number; }; }>'.Types of property 'firstName' are incompatible.Type '({ id }: { id: number; }, {}: {}, { getID }: { getID: (i: number) => number; }) => number' is not assignable to type '(parent: { id: number; }, args: {}, context: { getID: (i: number) => number; }, info: any) => PromiseOrValue<string | null | undefined>'.Type 'number' is not assignable to type 'PromiseOrValue<string | null | undefined>'.The expected type comes from property 'User' which is declared here on type 'Resolvers<{ getID: (i: number) => number; }, { Query: { root: number; }; User: { id: number; }; }>'",
+      ]
     `);
   });
 
-  it("translates strings as well as document nodes", () => {
-    const typeDefs = `
-      type Query {
-        me: String!
-      }
-    `;
-
-    const typings = translate(typeDefs, "ts");
-
-    expect(typings).toMatchInlineSnapshot(`
-      "// This is a machine generated file.
-      // Use \\"apollo service:codegen\\" to regenerate.
-      type PromiseOrValue<T> = Promise<T> | T
-      type Nullable<T> = T | null | undefined
-      type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map[Key] extends object ? Map[Key] : IfMissing
-
-      export interface Resolvers<TContext = {}, TInternalReps = {}> {
-      Query: QueryResolver<TContext, TInternalReps>
-      }
-
-      type QueryRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, \\"Query\\", any>
-      export interface QueryResolver<TContext = {}, TInternalReps = {}> {
-      me: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<string>
-      }
-      "
-    `);
-  });
-
-  it("translates nonnulls and lists into ts equivalent", () => {
-    const typeDefs = gql`
+  it("translates nonnulls and lists into ts equivalent", async () => {
+    const typeDefs = `#graphql
       type Query {
         base: Int
         nonNull: Int!
@@ -90,27 +52,38 @@ describe("translating to typescript", () => {
         nonNullListNonNull: [Int!]!
       }
     `;
-    expect(translate(typeDefs, "ts")).toMatchInlineSnapshot(`
-      "// This is a machine generated file.
-      // Use \\"apollo service:codegen\\" to regenerate.
-      type PromiseOrValue<T> = Promise<T> | T
-      type Nullable<T> = T | null | undefined
-      type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map[Key] extends object ? Map[Key] : IfMissing
 
-      export interface Resolvers<TContext = {}, TInternalReps = {}> {
-      Query: QueryResolver<TContext, TInternalReps>
+    const nullResolvers = `const r: Resolvers = {
+      Query: {
+        base: () => null, // ok
+        nonNull: () => null, // err
+        list: () => null, // ok
+        nonNullList: () => null, // err
+        listNonNull: () => null, // ok
+        nonNullListNonNull: () => null, // err
       }
+    }`;
+    expect(await typeCheck(typeDefs, nullResolvers)).toMatchInlineSnapshot(`
+      Array [
+        "Type 'null' is not assignable to type 'PromiseOrValue<number>'.The expected type comes from the return type of this signature.",
+        "Type 'null' is not assignable to type 'PromiseOrValue<(number | null | undefined)[]>'.The expected type comes from the return type of this signature.",
+        "Type 'null' is not assignable to type 'PromiseOrValue<number[]>'.The expected type comes from the return type of this signature.",
+      ]
+    `);
 
-      type QueryRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, \\"Query\\", any>
-      export interface QueryResolver<TContext = {}, TInternalReps = {}> {
-      base: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<number>>
-      nonNull: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<number>
-      list: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<Array<Nullable<number>>>>
-      nonNullList: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Array<Nullable<number>>>
-      listNonNull: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<Array<number>>>
-      nonNullListNonNull: (parent: QueryRepresentation<TInternalReps>, args: {}, context: TContext, info: any) => PromiseOrValue<Array<number>>
+    const listNullResolvers = `const r: Resolvers = {
+      Query: {
+        list: () => [null], // ok
+        nonNullList: () => [null], // ok
+        listNonNull: () => [null], // err
+        nonNullListNonNull: () => [null], // err
       }
-      "
+    }`;
+    expect(await typeCheck(typeDefs, listNullResolvers)).toMatchInlineSnapshot(`
+      Array [
+        "Type 'null[]' is not assignable to type 'PromiseOrValue<Nullable<number[]>>'.Type 'null[]' is not assignable to type 'number[]'.Type 'null' is not assignable to type 'number'.The expected type comes from the return type of this signature.",
+        "Type 'null[]' is not assignable to type 'PromiseOrValue<number[]>'.Type 'null[]' is not assignable to type 'number[]'.The expected type comes from the return type of this signature.",
+      ]
     `);
   });
 
