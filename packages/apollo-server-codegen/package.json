@@ -27,23 +27,12 @@
   "peerDependencies": {
     "graphql": "^14.2.1"
   },
-  "devDependencies": {
-    "@types/graphql": "^14.2.2",
-    "@types/jest": "^24.0.15",
-    "jest": "^24.8.0",
-    "prettier": "^1.18.2",
-    "tmp-promise": "^2.0.2",
-    "ts-jest": "^24.0.2",
-    "typescript": "^3.5.3"
-  },
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
     "testMatch": [
-      "**/*.test.ts",
-      "**/*.integration.ts",
-      "**/*.spec.ts"
+      "**/*.test.ts"
     ],
     "globals": {
       "ts-jest": {

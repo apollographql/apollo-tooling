@@ -40,7 +40,6 @@
   "dependencies": {
     "@apollographql/apollo-tools": "file:packages/apollo-tools",
     "apollo": "file:packages/apollo",
-    "apollo-server-codegen": "file:packages/apollo-server-codegen",
     "apollo-codegen-core": "file:packages/apollo-codegen-core",
     "apollo-codegen-flow": "file:packages/apollo-codegen-flow",
     "apollo-codegen-scala": "file:packages/apollo-codegen-scala",
@@ -49,6 +48,7 @@
     "apollo-env": "file:packages/apollo-env",
     "apollo-graphql": "file:packages/apollo-graphql",
     "apollo-language-server": "file:packages/apollo-language-server",
+    "apollo-server-codegen": "file:packages/apollo-server-codegen",
     "vscode-apollo": "file:packages/vscode-apollo"
   },
   "devDependencies": {
@@ -74,6 +74,7 @@
     "@types/nock": "10.0.3",
     "@types/node": "8.10.50",
     "@types/node-fetch": "2.3.7",
+    "@types/tmp": "^0.1.0",
     "husky": "2.7.0",
     "jest": "24.8.0",
     "jest-environment-node": "24.8.0",
@@ -85,7 +86,7 @@
     "prettier": "1.18.2",
     "stdout-stderr": "^0.1.9",
     "symlink-dir": "3.1.0",
-    "tmp-promise": "^2.0.2",
+    "tmp": "^0.1.0",
     "ts-jest": "24.0.2",
     "ts-node": "8.3.0",
     "tslib": "1.10.0",

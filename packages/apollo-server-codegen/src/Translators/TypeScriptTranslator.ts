@@ -111,7 +111,7 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
 
   public translateResolverDefinition(t: IR.ResolverDefinition): string {
     if (t.isNotProvidedAndExternal) {
-      return `${t.name}: never // non-resolvable: marked @external and not @provide'd by any fields`;
+      return `${t.name}?: never // non-resolvable: marked @external and not @provide'd by any fields`;
     }
 
     const argsType = t.arguments.length
@@ -302,9 +302,9 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
       (this.options.__experimentalInternalEnumValueSupport
         ? [
             `export type ${t.name}External = ${options}`,
-            `export type ${t.name} = any`
+            `export type ${t.name} = any\n`
           ].join("\n")
-        : `export type ${t.name} = ${options}`)
+        : `export type ${t.name} = ${options}\n`)
     );
   }
 
