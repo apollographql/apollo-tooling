@@ -4,6 +4,9 @@ import { readFile, writeFile, watch } from "fs";
 import { join, extname } from "path";
 import chalk from "chalk";
 import prettier from "prettier";
+import { parse } from "recast/parsers/typescript";
+import { visit, types } from "recast";
+const { Identifier } = types.namedTypes;
 
 const namesMapping: Record<
   Language,
@@ -123,8 +126,7 @@ export default class ServiceCodegen extends Command {
       const type = fileTypesMapping[inputFileType];
       switch (type) {
         case "javascript":
-          const getInnerSDL = /(?:(?:gql|graphql)`)((?:[^`\\]|\\`|\\n|\\r|\\\\)*)`/;
-          const sdl = inputText.match(getInnerSDL);
+          const sdl = getGQLTagsFromSource(inputText);
           if (!sdl)
             throw new Error(
               "Could not extract SDL from input file. Are you using `graphql-tag` as `gql`?"
@@ -162,3 +164,17 @@ export default class ServiceCodegen extends Command {
     }
   }
 }
+
+const getGQLTagsFromSource = (source: string) => {
+  let sdl = "";
+  visit(parse(source), {
+    visitTaggedTemplateExpression(path) {
+      this.traverse(path);
+      const expr = path.node;
+      if (Identifier.check(expr.tag) && expr.tag.name === "gql") {
+        expr.quasi.quasis.forEach(v => (sdl += v.value.raw));
+      }
+    }
+  });
+  return "";
+};
