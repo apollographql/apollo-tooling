@@ -1135,7 +1135,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           name,
           propertyName,
           typeName,
-          description
+          description,
+          isOptional
         } of properties) {
           this.printNewlineIfNeeded();
           this.comment(description || undefined);
@@ -1145,9 +1146,15 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.withinBlock(() => {
             this.printOnNewline("get");
             this.withinBlock(() => {
-              this.printOnNewline(
-                `return graphQLMap["${name}"] as! ${typeName}`
-              );
+              if (isOptional) {
+                this.printOnNewline(
+                  `return graphQLMap["${name}"] as? ${typeName}`
+                );
+              } else {
+                this.printOnNewline(
+                  `return graphQLMap["${name}"] as! ${typeName}`
+                );
+              }
             });
             this.printOnNewline("set");
             this.withinBlock(() => {
