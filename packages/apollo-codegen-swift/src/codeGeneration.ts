@@ -977,7 +977,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printNewlineIfNeeded();
     this.comment(description || undefined);
     this.printOnNewline(
-      `public enum ${name}: RawRepresentable, Equatable, Hashable, Apollo.JSONDecodable, Apollo.JSONEncodable`
+      `public enum ${name}: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable`
     );
     this.withinBlock(() => {
       this.printOnNewline("public typealias RawValue = String");
@@ -1048,6 +1048,21 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           );
           this.printOnNewline(`default: return false`);
         });
+      });
+
+      this.printNewlineIfNeeded();
+      this.printOnNewline(`public static var allCases: [${name}]`);
+      this.withinBlock(() => {
+        this.printOnNewline(`return [`);
+        values.forEach(value => {
+          const enumDotCaseName = escapeIdentifierIfNeeded(
+            this.helpers.enumDotCaseName(value.name)
+          );
+          this.withIndent(() => {
+            this.printOnNewline(`${enumDotCaseName},`);
+          });
+        });
+        this.printOnNewline(`]`);
       });
     });
   }

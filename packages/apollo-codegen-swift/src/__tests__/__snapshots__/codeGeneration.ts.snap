@@ -1649,7 +1649,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 `;
 
 exports[`Swift code generation #typeDeclarationForGraphQLType() should escape identifiers in cases of enum declaration for a GraphQLEnumType 1`] = `
-"public enum AlbumPrivacies: RawRepresentable, Equatable, Hashable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+"public enum AlbumPrivacies: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
   public typealias RawValue = String
   case \`public\`
   case \`private\`
@@ -1679,6 +1679,13 @@ exports[`Swift code generation #typeDeclarationForGraphQLType() should escape id
       case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
       default: return false
     }
+  }
+
+  public static var allCases: [AlbumPrivacies] {
+    return [
+      .public,
+      .private,
+    ]
   }
 }"
 `;
@@ -1726,7 +1733,7 @@ public struct ReviewInput: GraphQLMapConvertible {
 
 exports[`Swift code generation #typeDeclarationForGraphQLType() should generate an enum declaration for a GraphQLEnumType 1`] = `
 "/// The episodes in the Star Wars trilogy
-public enum Episode: RawRepresentable, Equatable, Hashable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+public enum Episode: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
   public typealias RawValue = String
   /// Star Wars Episode IV: A New Hope, released in 1977.
   case newhope
@@ -1763,6 +1770,14 @@ public enum Episode: RawRepresentable, Equatable, Hashable, Apollo.JSONDecodable
       case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
       default: return false
     }
+  }
+
+  public static var allCases: [Episode] {
+    return [
+      .newhope,
+      .empire,
+      .jedi,
+    ]
   }
 }"
 `;
