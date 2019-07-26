@@ -131,7 +131,7 @@ export default class ServiceCodegen extends Command {
             throw new Error(
               "Could not extract SDL from input file. Are you using `graphql-tag` as `gql`?"
             );
-          return sdl[1];
+          return sdl;
         case "graphql":
           return inputText;
         default:
@@ -176,5 +176,5 @@ const getGQLTagsFromSource = (source: string) => {
       }
     }
   });
-  return "";
+  return sdl;
 };
