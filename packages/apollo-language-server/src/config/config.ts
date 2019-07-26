@@ -43,7 +43,10 @@ export const DefaultEngineConfig = {
 };
 
 export const DefaultConfigBase = {
-  includes: ["src/**/*.{ts,tsx,js,jsx,graphql,gql}"],
+  includes: [
+    "src/**/*.{ts,tsx,js,jsx,graphql,gql}",
+    "node_modules/*/schema.graphql"
+  ],
   excludes: ["**/node_modules", "**/__tests__"]
 };
 
