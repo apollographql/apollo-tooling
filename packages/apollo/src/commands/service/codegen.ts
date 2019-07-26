@@ -46,6 +46,10 @@ export default class ServiceCodegen extends Command {
       char: "o",
       description: "Name of the file to write generated typings to",
       default: "resolver-types"
+    }),
+    experimentalInternalEnumValues: flags.boolean({
+      description:
+        "Use this flag if you use [internal enum values](https://www.apollographql.com/docs/apollo-server/features/scalars-enums/#internal-values) to silence warnings about incompatible enum types"
     })
   };
 
@@ -83,7 +87,7 @@ export default class ServiceCodegen extends Command {
     const inputPath = join(process.cwd(), input);
 
     try {
-      await this.executeCodegen(inputPath, target, output);
+      await this.executeCodegen(inputPath, target, output, flags);
     } catch (e) {
       console.error(chalk.red(e));
       process.exit(1);
@@ -94,7 +98,7 @@ export default class ServiceCodegen extends Command {
       watch(inputPath, async () => {
         this.log(`Change detected. Regenerating typings.`);
         try {
-          await this.executeCodegen(inputPath, target, output);
+          await this.executeCodegen(inputPath, target, output, flags);
         } catch (e) {
           this.warn(chalk.yellow("Unable to run codegen: " + e.message));
         }
@@ -102,7 +106,12 @@ export default class ServiceCodegen extends Command {
     }
   }
 
-  private async executeCodegen(path: string, target: Language, output: string) {
+  private async executeCodegen(
+    path: string,
+    target: Language,
+    output: string,
+    flags: any
+  ) {
     const inputText = await new Promise<string>((resolve, reject) =>
       readFile(path, (err, data) => {
         if (err) return reject(err.message);
@@ -131,7 +140,10 @@ export default class ServiceCodegen extends Command {
     };
     const sdl = getSDL();
     try {
-      const translated = translate(sdl, target);
+      const translated = translate(sdl, target, {
+        __experimentalInternalEnumValueSupport:
+          flags.experimentalInternalEnumValues
+      });
 
       const prettierOptions = await prettier.resolveConfig(output);
       const formatted = prettier.format(translated, {
