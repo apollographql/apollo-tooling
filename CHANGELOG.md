@@ -19,11 +19,16 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Fix cache invalidation bug for reload schema which caused outdated results in autocomplete [#1446](https://github.com/apollographql/apollo-tooling/pull/1446)
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `vscode-apollo@1.9.1`, `apollo-language-server@1.14.1`
+
+- `apollo-language-server@1.14.1`
+  - Fix cache invalidation bug for reload schema which caused outdated results in autocomplete [#1446](https://github.com/apollographql/apollo-tooling/pull/1446)
 
 ## `vscode-apollo@1.9.0`, `apollo-language-server@1.14.0`, `apollo-codegen-swift@0.34.2`
 
@@ -33,7 +38,6 @@
   - Add Dart operation extraction [#1385](https://github.com/apollographql/apollo-tooling/pull/1385)
 - `apollo-codegen-swift@0.34.2`
   - Prevent compiler warnings for redundant access-level modifiers when using `--namespace` [1241](https://github.com/apollographql/apollo-tooling/pull/1241)
-
 
 ## `apollo@2.16.1`, `apollo-language-server@1.13.1`, `vscode-apollo@1.8.1`
 
