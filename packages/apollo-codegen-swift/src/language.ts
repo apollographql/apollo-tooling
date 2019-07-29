@@ -72,6 +72,13 @@ export class SwiftGenerator<Context> extends CodeGenerator<
       });
   }
 
+  commentWithoutTrimming(comment?: string) {
+    comment &&
+      comment.split("\n").forEach(line => {
+        this.printOnNewline(`/// ${line}`);
+      });
+  }
+
   deprecationAttributes(
     isDeprecated: boolean | undefined,
     deprecationReason: string | undefined

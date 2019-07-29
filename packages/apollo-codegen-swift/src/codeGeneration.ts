@@ -202,6 +202,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       },
       () => {
         if (source) {
+          this.commentWithoutTrimming(source);
           this.printOnNewline("public let operationDefinition =");
           this.withIndent(() => {
             this.multilineString(source);
