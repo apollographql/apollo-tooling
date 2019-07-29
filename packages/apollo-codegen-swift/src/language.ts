@@ -29,7 +29,16 @@ export interface Property {
 }
 
 export function escapedString(string: string) {
-  return string.replace(/"/g, '\\"').replace(/\n/g, "\\n");
+  var lines = string
+    .split(/\n/g)
+    .map(line => {
+      return line.trim();
+    })
+    .map(line => {
+      return line.replace(/"/g, '\\"');
+    });
+
+  return lines.join("\\n ");
 }
 
 // prettier-ignore

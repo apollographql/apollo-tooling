@@ -179,7 +179,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   ///   }
   /// }
   public let operationDefinition =
-    \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"Wow!\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
+    \\"mutation CreateReview($episode: Episode) {\\\\n createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"Wow!\\\\\\"}) {\\\\n stars\\\\n commentary\\\\n }\\\\n }\\"
 
   public let operationName = \\"CreateReview\\"
 
@@ -271,7 +271,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   ///   }
   /// }
   public let operationDefinition =
-    \\"query Hero {\\\\n  hero {\\\\n    ... on Droid {\\\\n      ...HeroDetails\\\\n    }\\\\n  }\\\\n}\\"
+    \\"query Hero {\\\\n hero {\\\\n ... on Droid {\\\\n ...HeroDetails\\\\n }\\\\n }\\\\n }\\"
 
   public let operationName = \\"Hero\\"
 
@@ -408,7 +408,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   ///   }
   /// }
   public let operationDefinition =
-    \\"query Hero {\\\\n  hero {\\\\n    ...DroidDetails\\\\n  }\\\\n}\\"
+    \\"query Hero {\\\\n hero {\\\\n ...DroidDetails\\\\n }\\\\n }\\"
 
   public let operationName = \\"Hero\\"
 
@@ -573,7 +573,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   ///   }
   /// }
   public let operationDefinition =
-    \\"query Hero {\\\\n  hero {\\\\n    ...HeroDetails\\\\n  }\\\\n}\\"
+    \\"query Hero {\\\\n hero {\\\\n ...HeroDetails\\\\n }\\\\n }\\"
 
   public let operationName = \\"Hero\\"
 
@@ -677,7 +677,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   ///   }
   /// }
   public let operationDefinition =
-    \\"query HeroName($episode: Episode) {\\\\n  hero(episode: $episode) {\\\\n    name\\\\n  }\\\\n}\\"
+    \\"query HeroName($episode: Episode) {\\\\n hero(episode: $episode) {\\\\n name\\\\n }\\\\n }\\"
 
   public let operationName = \\"HeroName\\"
 
@@ -760,7 +760,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   ///   }
   /// }
   public let operationDefinition =
-    \\"query Hero {\\\\n  hero {\\\\n    ...HeroDetails\\\\n  }\\\\n}\\"
+    \\"query Hero {\\\\n hero {\\\\n ...HeroDetails\\\\n }\\\\n }\\"
 
   public let operationName = \\"Hero\\"
 
@@ -884,7 +884,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   ///   ...MoreHeroDetails
   /// }
   public static let fragmentDefinition =
-    \\"fragment HeroDetails on Character {\\\\n  name\\\\n  ...MoreHeroDetails\\\\n}\\"
+    \\"fragment HeroDetails on Character {\\\\n name\\\\n ...MoreHeroDetails\\\\n }\\"
 
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
@@ -962,7 +962,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   ///   primaryFunction
   /// }
   public static let fragmentDefinition =
-    \\"fragment DroidDetails on Droid {\\\\n  name\\\\n  primaryFunction\\\\n}\\"
+    \\"fragment DroidDetails on Droid {\\\\n name\\\\n primaryFunction\\\\n }\\"
 
   public static let possibleTypes = [\\"Droid\\"]
 
@@ -1012,7 +1012,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   ///   }
   /// }
   public static let fragmentDefinition =
-    \\"fragment HeroDetails on Character {\\\\n  name\\\\n  friends {\\\\n    name\\\\n  }\\\\n}\\"
+    \\"fragment HeroDetails on Character {\\\\n name\\\\n friends {\\\\n name\\\\n }\\\\n }\\"
 
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
@@ -1096,7 +1096,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   ///   appearsIn
   /// }
   public static let fragmentDefinition =
-    \\"fragment HeroDetails on Character {\\\\n  name\\\\n  appearsIn\\\\n}\\"
+    \\"fragment HeroDetails on Character {\\\\n name\\\\n appearsIn\\\\n }\\"
 
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
