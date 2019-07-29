@@ -38,47 +38,60 @@ export const findRootType = (t: TypeDefinition): string => {
 };
 
 export class CompoundType implements Translatable {
-  public types: Array<{ name: string; type: Translatable }>;
+  public types: Array<{
+    /** the field name */
+    name: string;
+    /** the type of the field */
+    type: Translatable;
+    /** the object the field is a member of */
+    baseType: TypelessObjectDefinition;
+  }>;
 
   constructor(
     fields: readonly FieldNode[],
-    base: TypelessObjectDefinition,
+    baseType: TypelessObjectDefinition,
     types: TypelessObjectDefinition[]
   ) {
     this.types = [];
+
     fields.forEach(node => {
-      const field = base.fields.find(field => field.name === node.name.value);
+      const field = baseType.fields.find(
+        field => field.name === node.name.value
+      );
 
       if (!field) {
         throw Error(
-          `Could not find field "${node.name.value}" on type "${base.name}".`
+          `Could not find field "${node.name.value}" on type "${baseType.name}".`
         );
       }
-      const fieldType = field.type;
 
       if (node.selectionSet) {
-        const baseType = types.find(
-          type => type.name === findRootType(fieldType)
+        const newBaseType = types.find(
+          type => type.name === findRootType(field.type)
         );
-        if (!baseType) {
+
+        if (!newBaseType) {
           throw Error(
             `Could not find definition for type "${findRootType(
-              fieldType
+              field.type
             )}" referenced in schema.`
           );
         }
+
         this.types.push({
           name: node.name.value,
           type: new CompoundType(
             node.selectionSet.selections as FieldNode[],
-            baseType,
+            newBaseType,
             types
-          )
+          ),
+          baseType
         });
       } else {
         this.types.push({
           name: node.name.value,
-          type: fieldType
+          type: field.type,
+          baseType
         });
       }
     });

@@ -63,8 +63,8 @@ export function sdlToIR(
       typeless.applyGlobalTypeKnowledge(
         objectDefinitions,
         providedFields
-          .filter(provided => provided.type === typeless.name)
-          .map(({ field }) => field)
+          .filter(provided => provided.objectName === typeless.name)
+          .map(({ fieldName }) => fieldName)
       )
     ),
     enumDefinitions,

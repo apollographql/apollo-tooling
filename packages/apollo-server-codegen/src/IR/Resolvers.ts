@@ -47,7 +47,7 @@ export class TypelessResolverDefinition {
   }
 
   public getProvides(types: TypelessObjectDefinition[]) {
-    return (this.fieldDefinition.directives || [])
+    const providedSelections = (this.fieldDefinition.directives || [])
       .filter(
         directive =>
           directive.name.value === "provides" &&
@@ -55,12 +55,31 @@ export class TypelessResolverDefinition {
           directive.arguments.length
       )
       .map(key => (key.arguments![0].value as StringValueNode).value)
-      .flatMap(providedFields =>
-        providedFields.split(" ").map(field => ({
-          field,
-          type: findRootType(makeType(this.fieldDefinition.type))
-        }))
-      );
+      .flatMap(selectionString => parseSelections(selectionString));
+
+    if (providedSelections.length === 0) return [];
+
+    const fieldType = findRootType(makeType(this.fieldDefinition.type));
+    const providedObject = types.find(type => type.name === fieldType);
+
+    if (!providedObject)
+      throw new Error(`@provides: Could not find type ${fieldType}.`);
+
+    const compound = new CompoundType(
+      providedSelections,
+      providedObject,
+      types
+    );
+
+    const provides = (
+      compound: CompoundType
+    ): { objectName: string; fieldName: string }[] =>
+      compound.types.flatMap(field => [
+        { fieldName: field.name, objectName: field.baseType.name },
+        ...(field.type instanceof CompoundType ? provides(field.type) : [])
+      ]);
+
+    return provides(compound);
   }
 
   public applyGlobalTypeKnowledge(
