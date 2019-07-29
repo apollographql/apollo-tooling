@@ -316,6 +316,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       outputIndividualFiles,
       () => {
         if (source) {
+          this.commentWithoutTrimming(source);
           this.printOnNewline("public static let fragmentDefinition =");
           this.withIndent(() => {
             this.multilineString(source);

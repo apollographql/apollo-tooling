@@ -879,6 +879,10 @@ exports[`Swift code generation #initializerDeclarationForProperties() should gen
 
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment that includes a fragment spread 1`] = `
 "public struct HeroDetails: GraphQLFragment {
+  /// fragment HeroDetails on Character {
+  ///   name
+  ///   ...MoreHeroDetails
+  /// }
   public static let fragmentDefinition =
     \\"fragment HeroDetails on Character {\\\\n  name\\\\n  ...MoreHeroDetails\\\\n}\\"
 
@@ -953,6 +957,10 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a concrete type condition 1`] = `
 "public struct DroidDetails: GraphQLFragment {
+  /// fragment DroidDetails on Droid {
+  ///   name
+  ///   primaryFunction
+  /// }
   public static let fragmentDefinition =
     \\"fragment DroidDetails on Droid {\\\\n  name\\\\n  primaryFunction\\\\n}\\"
 
@@ -997,6 +1005,12 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a subselection 1`] = `
 "public struct HeroDetails: GraphQLFragment {
+  /// fragment HeroDetails on Character {
+  ///   name
+  ///   friends {
+  ///     name
+  ///   }
+  /// }
   public static let fragmentDefinition =
     \\"fragment HeroDetails on Character {\\\\n  name\\\\n  friends {\\\\n    name\\\\n  }\\\\n}\\"
 
@@ -1077,6 +1091,10 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with an abstract type condition 1`] = `
 "public struct HeroDetails: GraphQLFragment {
+  /// fragment HeroDetails on Character {
+  ///   name
+  ///   appearsIn
+  /// }
   public static let fragmentDefinition =
     \\"fragment HeroDetails on Character {\\\\n  name\\\\n  appearsIn\\\\n}\\"
 
