@@ -9,7 +9,7 @@ export type TranslatorOptions = Partial<InternalTranslatorOptions>;
 // Each language Translator provides mechanisms for translating each IR component
 export abstract class Translator {
   public options: InternalTranslatorOptions;
-  constructor(options: TranslatorOptions) {
+  constructor(protected rootTypes: string[], options: TranslatorOptions) {
     const defaultOptions = {
       __experimentalInternalEnumValueSupport: false
     };
@@ -17,7 +17,7 @@ export abstract class Translator {
   }
 
   /**
-   * Build the full type declaration here! Call the #.translate function of each member with `this`
+   * Entry point! Call the #.translate function of each member with `this`
    * to recursively descend into the rest of the methods.
    */
   public abstract generate(

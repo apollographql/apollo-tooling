@@ -54,13 +54,11 @@ export class TypelessObjectDefinition {
       | ObjectTypeDefinitionNode
       | ObjectTypeExtensionNode
       | InterfaceTypeDefinitionNode
-      | InterfaceTypeExtensionNode
+      | InterfaceTypeExtensionNode,
+    private rootTypes: string[]
   ) {
     this.name = definition.name.value;
-    this.isRootType =
-      this.name === "Query" ||
-      this.name === "Mutation" ||
-      this.name === "Subscription";
+    this.isRootType = rootTypes.includes(this.name);
 
     this.resolvers = (definition.fields || []).map(
       field => new TypelessResolverDefinition(field, this, this.isRootType)

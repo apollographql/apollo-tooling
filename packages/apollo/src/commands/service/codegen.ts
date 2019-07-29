@@ -9,16 +9,18 @@ import { visit, types } from "recast";
 const { Identifier } = types.namedTypes;
 
 const namesMapping: Record<
-  Language,
-  { humanReadable: string; extension: string }
+  string,
+  { humanReadable: string; extension: string; language: Language }
 > = {
   typescript: {
     humanReadable: "TypeScript",
-    extension: "ts"
+    extension: "ts",
+    language: "typescript"
   },
   ts: {
     humanReadable: "TypeScript",
-    extension: "ts"
+    extension: "ts",
+    language: "typescript"
   }
 };
 
@@ -74,7 +76,7 @@ export default class ServiceCodegen extends Command {
         }. Supported values are: "${Object.keys(namesMapping).join(", ")}"`
       );
     }
-    const target = flags.target as Language;
+    const target = names.language;
 
     const input: string = args.input;
 

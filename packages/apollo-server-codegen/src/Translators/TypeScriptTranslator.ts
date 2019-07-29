@@ -43,7 +43,7 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
     return [
       `export interface Resolvers<TContext = {}, TInternalReps = {}> {`,
       ...types.map(type =>
-        type === "Query" || type === "Mutation" || type === "Subscription"
+        this.rootTypes.includes(type)
           ? `${type}: ${type}Resolver<TContext, TInternalReps>`
           : `${type}?: ${type}Resolver<TContext, TInternalReps>`
       ),

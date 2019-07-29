@@ -26,7 +26,7 @@ const getAllMessageText = (
 export const typeCheck = async (sdl, code, debug = false) => {
   const tmp = await makeTmpFile("ts");
   const path = tmp.name;
-  const source = translate(sdl, "ts") + code;
+  const source = translate(sdl, "typescript") + code;
   await write(path, source);
   if (debug) console.log(source);
 

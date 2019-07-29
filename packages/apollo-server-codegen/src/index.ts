@@ -8,13 +8,12 @@ import {
   TypeScriptTranslator
 } from "./Translators";
 
-export type Language = "ts" | "typescript";
+export type Language = "typescript";
 
 const translatorForLanguage: Record<
   Language,
-  new (...args: any[]) => Translator
+  new (...args: any[]) => Translator // TODO: how to type the constructor args?
 > = {
-  ts: TypeScriptTranslator,
   typescript: TypeScriptTranslator
 };
 
@@ -23,8 +22,12 @@ export const translate = (
   language: Language,
   options: TranslatorOptions = {}
 ) => {
-  const translator = new translatorForLanguage[language](options);
   const docNode: DocumentNode = typeof sdl === "string" ? gql(sdl) : sdl;
+  const { topLevelDefinitions, operationNames } = sdlToIR(docNode);
 
-  return translator.generate(...sdlToIR(docNode));
+  const translator = new translatorForLanguage[language](
+    Object.values(operationNames),
+    options
+  );
+  return translator.generate(...topLevelDefinitions);
 };
