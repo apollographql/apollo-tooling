@@ -147,6 +147,7 @@ export class GraphQLWorkspace {
   }
 
   reloadService() {
+    this._projectForFileCache.clear();
     this.projectsByFolderUri.forEach((projects, uri) => {
       this.projectsByFolderUri.set(
         uri,
