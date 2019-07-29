@@ -62,15 +62,7 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   }
 
   multilineString(string: string) {
-    this.printNewline();
-    this.print(`"""`);
-
-    string.split("\n").forEach(line => {
-      this.printNewline();
-      this.print(line);
-    });
-    this.printNewline();
-    this.print(`"""`);
+    this.printOnNewline(`"${escapedString(string)}"`);
   }
 
   comment(comment?: string) {

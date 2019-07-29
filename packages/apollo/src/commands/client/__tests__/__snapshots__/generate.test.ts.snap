@@ -177,11 +177,7 @@ import Apollo
 
 public final class SimpleQueryQuery: GraphQLQuery {
   public let operationDefinition =
-\\"\\"\\"
-query SimpleQuery {
-  hello
-}
-\\"\\"\\"
+    \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
 
   public let operationName = \\"SimpleQuery\\"
 
@@ -225,11 +221,7 @@ import Apollo
 
 public final class SimpleQueryQuery: GraphQLQuery {
   public let operationDefinition =
-\\"\\"\\"
-query SimpleQuery {
-  hello
-}
-\\"\\"\\"
+    \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
 
   public let operationName = \\"SimpleQuery\\"
 

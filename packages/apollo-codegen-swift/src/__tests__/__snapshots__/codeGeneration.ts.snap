@@ -173,14 +173,7 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a mutation with variables 1`] = `
 "public final class CreateReviewMutation: GraphQLMutation {
   public let operationDefinition =
-\\"\\"\\"
-mutation CreateReview($episode: Episode) {
-  createReview(episode: $episode, review: {stars: 5, commentary: \\"Wow!\\"}) {
-    stars
-    commentary
-  }
-}
-\\"\\"\\"
+    \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"Wow!\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
 
   public let operationName = \\"CreateReview\\"
 
@@ -265,15 +258,7 @@ mutation CreateReview($episode: Episode) {
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with a fragment spread nested in an inline fragment 1`] = `
 "public final class HeroQuery: GraphQLQuery {
   public let operationDefinition =
-\\"\\"\\"
-query Hero {
-  hero {
-    ... on Droid {
-      ...HeroDetails
-    }
-  }
-}
-\\"\\"\\"
+    \\"query Hero {\\\\n  hero {\\\\n    ... on Droid {\\\\n      ...HeroDetails\\\\n    }\\\\n  }\\\\n}\\"
 
   public let operationName = \\"Hero\\"
 
@@ -405,13 +390,7 @@ query Hero {
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with conditional fragment spreads 1`] = `
 "public final class HeroQuery: GraphQLQuery {
   public let operationDefinition =
-\\"\\"\\"
-query Hero {
-  hero {
-    ...DroidDetails
-  }
-}
-\\"\\"\\"
+    \\"query Hero {\\\\n  hero {\\\\n    ...DroidDetails\\\\n  }\\\\n}\\"
 
   public let operationName = \\"Hero\\"
 
@@ -571,13 +550,7 @@ query Hero {
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with fragment spreads 1`] = `
 "public final class HeroQuery: GraphQLQuery {
   public let operationDefinition =
-\\"\\"\\"
-query Hero {
-  hero {
-    ...HeroDetails
-  }
-}
-\\"\\"\\"
+    \\"query Hero {\\\\n  hero {\\\\n    ...HeroDetails\\\\n  }\\\\n}\\"
 
   public let operationName = \\"Hero\\"
 
@@ -676,13 +649,7 @@ query Hero {
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with variables 1`] = `
 "public final class HeroNameQuery: GraphQLQuery {
   public let operationDefinition =
-\\"\\"\\"
-query HeroName($episode: Episode) {
-  hero(episode: $episode) {
-    name
-  }
-}
-\\"\\"\\"
+    \\"query HeroName($episode: Episode) {\\\\n  hero(episode: $episode) {\\\\n    name\\\\n  }\\\\n}\\"
 
   public let operationName = \\"HeroName\\"
 
@@ -760,13 +727,7 @@ query HeroName($episode: Episode) {
 exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration with an operationIdentifier property when generateOperationIds is specified 1`] = `
 "public final class HeroQuery: GraphQLQuery {
   public let operationDefinition =
-\\"\\"\\"
-query Hero {
-  hero {
-    ...HeroDetails
-  }
-}
-\\"\\"\\"
+    \\"query Hero {\\\\n  hero {\\\\n    ...HeroDetails\\\\n  }\\\\n}\\"
 
   public let operationName = \\"Hero\\"
 
@@ -886,12 +847,7 @@ exports[`Swift code generation #initializerDeclarationForProperties() should gen
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment that includes a fragment spread 1`] = `
 "public struct HeroDetails: GraphQLFragment {
   public static let fragmentDefinition =
-\\"\\"\\"
-fragment HeroDetails on Character {
-  name
-  ...MoreHeroDetails
-}
-\\"\\"\\"
+    \\"fragment HeroDetails on Character {\\\\n  name\\\\n  ...MoreHeroDetails\\\\n}\\"
 
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
@@ -965,12 +921,7 @@ fragment HeroDetails on Character {
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a concrete type condition 1`] = `
 "public struct DroidDetails: GraphQLFragment {
   public static let fragmentDefinition =
-\\"\\"\\"
-fragment DroidDetails on Droid {
-  name
-  primaryFunction
-}
-\\"\\"\\"
+    \\"fragment DroidDetails on Droid {\\\\n  name\\\\n  primaryFunction\\\\n}\\"
 
   public static let possibleTypes = [\\"Droid\\"]
 
@@ -1014,14 +965,7 @@ fragment DroidDetails on Droid {
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a subselection 1`] = `
 "public struct HeroDetails: GraphQLFragment {
   public static let fragmentDefinition =
-\\"\\"\\"
-fragment HeroDetails on Character {
-  name
-  friends {
-    name
-  }
-}
-\\"\\"\\"
+    \\"fragment HeroDetails on Character {\\\\n  name\\\\n  friends {\\\\n    name\\\\n  }\\\\n}\\"
 
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
@@ -1101,12 +1045,7 @@ fragment HeroDetails on Character {
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with an abstract type condition 1`] = `
 "public struct HeroDetails: GraphQLFragment {
   public static let fragmentDefinition =
-\\"\\"\\"
-fragment HeroDetails on Character {
-  name
-  appearsIn
-}
-\\"\\"\\"
+    \\"fragment HeroDetails on Character {\\\\n  name\\\\n  appearsIn\\\\n}\\"
 
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
 
