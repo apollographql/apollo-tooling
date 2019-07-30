@@ -38,7 +38,7 @@ export function escapedString(string: string) {
       return line.replace(/"/g, '\\"');
     });
 
-  return lines.join("\\n ");
+  return lines.join(" ");
 }
 
 // prettier-ignore

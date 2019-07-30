@@ -180,7 +180,7 @@ public final class SimpleQueryQuery: GraphQLQuery {
   ///   hello
   /// }
   public let operationDefinition =
-    \\"query SimpleQuery {\\\\n hello\\\\n }\\"
+    \\"query SimpleQuery { hello }\\"
 
   public let operationName = \\"SimpleQuery\\"
 
@@ -227,7 +227,7 @@ public final class SimpleQueryQuery: GraphQLQuery {
   ///   hello
   /// }
   public let operationDefinition =
-    \\"query SimpleQuery {\\\\n hello\\\\n }\\"
+    \\"query SimpleQuery { hello }\\"
 
   public let operationName = \\"SimpleQuery\\"
 
