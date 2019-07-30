@@ -164,7 +164,9 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   propertyDeclaration({ propertyName, typeName, description }: Property) {
     this.comment(description);
     this.printOnNewline(
-      `public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`
+      `public var ${escapeIdentifierIfNeeded(
+        propertyName
+      )}: ${escapeIdentifierIfNeeded(typeName)}`
     );
   }
 

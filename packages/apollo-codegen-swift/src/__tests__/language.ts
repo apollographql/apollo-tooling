@@ -100,12 +100,17 @@ describe("Swift code generation: Basic language constructs", () => {
         propertyName: "yearOfBirth",
         typeName: "Int"
       });
+      generator.propertyDeclaration({
+        propertyName: "self",
+        typeName: "Self"
+      });
     });
 
     expect(generator.output).toBe(stripIndent`
       public struct \`Type\` {
         public var name: String
         public var yearOfBirth: Int
+        public var \`self\`: \`Self\`
       }
     `);
   });
