@@ -40,12 +40,22 @@ SDL object types are converted into two separate TS types. For instance, in the 
 
 The base type simply contains all the specified fields, nullable as appropriate, and is set as the return value of all functions that return that type in the SDL. As GraphQL functions may always return partials that will be recursively fulfilled by later resolvers, the base type definitions are also always `Partial`s.
 
-The `[...]Representation` type defaults to `any` in non-federated contexts (see below for federation), and is passed as the `parent` property in resolver functions. If the user would like more type safety, they can pass an object to the second type parameter of the emitted `Resolvers` definition, specifying the object name, and the internal representation resolvers will have access to when filling values for that object:
+The `[...]Representation` type defaults to `unknown` in non-federated contexts (see below for federation), and is passed as the `parent` property in resolver functions. If the user would like more type safety, they can pass an object to the second type parameter of the emitted `Resolvers` definition, specifying the object name, and the resolvers will have access to those properties when resolving values for that object:
 
 ```ts
-const resolvers: Resolvers<{}, { User: {internalID: number} }> {
+const resolvers: Resolvers<TContext, { User: {internalID: number} }> {
   User: {
     name({ internalID }) => ... // id will be of type `number`
+  }
+}
+```
+
+Alternatively, if the user would like more type freedom, they can pass `any` to the second type parameter of the emitted `Resolvers` definition, and the resolvers will use `any` as the type of their `parent` argument:
+
+```ts
+const resolvers: Resolvers<TContext, any> {
+  User: {
+    name({ foo, bar }) => ... // this is allowed. `foo` and `bar` will be type `any`.
   }
 }
 ```
@@ -82,11 +92,11 @@ type User @key(fields: "id") {
 ```ts
 {
   Review: {
-    // representation is type `{timestamp: number, author: {id: number}} | {id: string}`
+    // `representation` is type `{timestamp: number, author: {id: number}} | {id: string}`
     __resolveReference(representation) {...}
   }
   User: {
-    // representation is type `{id: string}`
+    // `representation` is type `{id: string}`
     __resolveReference(representation) {...}
     // parent is also {id: string}
     name(parent) {}

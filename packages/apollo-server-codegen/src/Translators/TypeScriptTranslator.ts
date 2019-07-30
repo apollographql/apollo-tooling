@@ -31,7 +31,7 @@ export class TypeScriptTranslator extends Translator {
 // Use "apollo service:codegen" to regenerate.
 type PromiseOrValue<T> = Promise<T> | T
 type Nullable<T> = T | null | undefined
-type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map[Key] extends object ? Map[Key] : IfMissing
+type Index<Map extends Record<string, any>, Key extends string> = Map[Key] extends object ? Map[Key] : unknown
 `;
   }
 
@@ -157,14 +157,14 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
    *
    * TS:
    * ```ts
-   * type MyInterfaceRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, "MyInterface", any>;
+   * type MyInterfaceRepresentation<TInternalReps extends Record<string, any>> = Index<TInternalReps, "MyInterface">;
    * export interface MyInterface { thing?: string; }
    * export interface MyInterfaceResolver<TContext = {}, TInternalReps = {}> {
    *   thing?: ( parent: MyInterfaceRepresentation<TInternalReps>, args: {}, context: TContext, info: any ) => PromiseOrValue<string>;
    * }
    *
    * type UserRepresentation<TInternalReps extends Record<string, any>> =
-   *     MyInterfaceRepresentation<TInternalReps> & Index<TInternalReps, "User", {}>;
+   *     MyInterfaceRepresentation<TInternalReps> & Index<TInternalReps, "User">;
    * export interface User extends MyInterface { name?: string;  }
    * export interface UserResolver<TContext = {}, TInternalReps = {}> extends MyInterfaceResolver<TContext, TInternalReps> {
    *   name?: (parent: UserRepresentation<TInternalReps>, args: { locale?: string; }, context: TContext, info: any) => PromiseOrValue<string>;
@@ -172,11 +172,10 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
    * ```
    */
   public translateObjectDefinition(t: IR.ObjectDefinition): string {
-    const representation = t.interfaces.length
-      ? t.interfaces
-          .map(iface => `${iface}Representation<TInternalReps> &`)
-          .join("") + `Index<TInternalReps, "${t.name}", {}>`
-      : `Index<TInternalReps, "${t.name}", any>`;
+    const representation =
+      t.interfaces
+        .map(iface => `${iface}Representation<TInternalReps> &`)
+        .join("") + `Index<TInternalReps, "${t.name}">`;
 
     const { extending, extendingResolvers } = generateInterfaceImplementations(
       t
@@ -220,7 +219,7 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
    * TS:
    * ```ts
    * type MyInterfaceRepresentation<TInternalReps extends Record<string, any>> =
-   *     Index<TInternalReps, "MyInterface", {}> & ({ thing: string });
+   *     Index<TInternalReps, "MyInterface"> & ({ thing: string });
    *
    * export interface MyInterface { thing?: string; }
    * export interface MyInterfaceResolver<TContext = {}, TInternalReps = {}> {
@@ -230,7 +229,7 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
    *
    * type UserRepresentation<TInternalReps extends Record<string, any>> =
    *   MyInterfaceRepresentation<TInternalReps>
-   *      & Index<TInternalReps, "User", {}>
+   *      & Index<TInternalReps, "User">
    *      & ({ name: string });
    *
    * export interface User extends MyInterface { name?: string; }
@@ -247,7 +246,7 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
     const representation =
       t.interfaces
         .map(iface => `${iface}Representation<TInternalReps> &`)
-        .join("") + `Index<TInternalReps, "${t.name}", {}>`;
+        .join("") + `Index<TInternalReps, "${t.name}">`;
 
     const { extending, extendingResolvers } = generateInterfaceImplementations(
       t
@@ -279,7 +278,7 @@ type Index<Map extends Record<string, any>, Key extends string, IfMissing> = Map
       t.keys.length
         ? "(" + t.keys.map(key => key.translate(this)).join(" | ") + ")"
         : t.name,
-      ` & Index<TInternalReps, "${t.name}", {}> \n\n`,
+      ` & Index<TInternalReps, "${t.name}"> \n\n`,
 
       t.description.translate(this),
       `export interface ${t.name} {\n`,
