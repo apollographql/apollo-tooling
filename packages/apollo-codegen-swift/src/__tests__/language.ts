@@ -49,6 +49,34 @@ describe("Swift code generation: Basic language constructs", () => {
     `);
   });
 
+  it(`should generate a class declaration with proper escaping`, () => {
+    generator.classDeclaration(
+      { className: "Type", modifiers: ["public", "final"] },
+      () => {
+        generator.propertyDeclaration({
+          propertyName: "name",
+          typeName: "String"
+        });
+        generator.propertyDeclaration({
+          propertyName: "age",
+          typeName: "Int"
+        });
+        generator.propertyDeclaration({
+          propertyName: "self",
+          typeName: "Self"
+        });
+      }
+    );
+
+    expect(generator.output).toBe(stripIndent`
+      public final class \`Type\` {
+        public var name: String
+        public var age: Int
+        public var \`self\`: \`Self\`
+      }
+    `);
+  });
+
   it(`should generate a struct declaration`, () => {
     generator.structDeclaration({ structName: "Hero" }, () => {
       generator.propertyDeclaration({

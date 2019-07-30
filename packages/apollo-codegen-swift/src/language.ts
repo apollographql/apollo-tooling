@@ -128,7 +128,8 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   ) {
     this.printNewlineIfNeeded();
     this.printOnNewline(
-      wrap("", join(modifiers, " "), " ") + `class ${className}`
+      wrap("", join(modifiers, " "), " ") +
+        `class ${escapeIdentifierIfNeeded(className)}`
     );
     this.print(wrap(": ", join([superClass, ...adoptedProtocols], ", ")));
     this.pushScope({ typeName: className });
