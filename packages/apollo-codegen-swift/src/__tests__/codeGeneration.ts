@@ -90,6 +90,48 @@ describe("Swift code generation", () => {
       expect(generator.output).toMatchSnapshot();
     });
 
+    it("should correctly escape a mutli-line string literal", () => {
+      const { operations } = compile(`
+        mutation CreateReview($episode: Episode) {
+          createReview(episode: $episode, review: {stars: 5, commentary:
+            """
+            Wow!
+
+              This movie ROCKED!
+            """
+          }) {
+            stars
+            commentary
+          }
+        }
+      `);
+
+      generator.classDeclarationForOperation(operations["CreateReview"]);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
+    it("should correctly escape a mutli-line string literal with backslashes", () => {
+      const { operations } = compile(`
+        mutation CreateReview($episode: Episode) {
+          createReview(episode: $episode, review: {stars: 5, commentary:
+            """
+            Wow!
+
+              This movie \\ ROCKED!
+            """
+          }) {
+            stars
+            commentary
+          }
+        }
+      `);
+
+      generator.classDeclarationForOperation(operations["CreateReview"]);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
     it(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, () => {
       const { operations } = compile(`
         query Hero {

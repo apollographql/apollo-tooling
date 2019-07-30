@@ -128,7 +128,8 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   ) {
     this.printNewlineIfNeeded();
     this.printOnNewline(
-      wrap("", join(modifiers, " "), " ") + `class ${className}`
+      wrap("", join(modifiers, " "), " ") +
+        `class ${escapeIdentifierIfNeeded(className)}`
     );
     this.print(wrap(": ", join([superClass, ...adoptedProtocols], ", ")));
     this.pushScope({ typeName: className });
@@ -164,7 +165,9 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   propertyDeclaration({ propertyName, typeName, description }: Property) {
     this.comment(description);
     this.printOnNewline(
-      `public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`
+      `public var ${escapeIdentifierIfNeeded(
+        propertyName
+      )}: ${escapeIdentifierIfNeeded(typeName)}`
     );
   }
 
@@ -186,7 +189,9 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   }
 
   protocolPropertyDeclaration({ propertyName, typeName }: Property) {
-    this.printOnNewline(`var ${propertyName}: ${typeName} { get }`);
+    this.printOnNewline(
+      `var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName} { get }`
+    );
   }
 
   protocolPropertyDeclarations(properties: Property[]) {
