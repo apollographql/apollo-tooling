@@ -175,7 +175,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       options: { namespace },
       fragments
     } = this.context;
-    const isRedundant = !!namespace;
+    const isRedundant = !!namespace && !outputIndividualFiles;
     const modifiers = isRedundant ? ["final"] : ["public", "final"];
 
     this.classDeclaration(
