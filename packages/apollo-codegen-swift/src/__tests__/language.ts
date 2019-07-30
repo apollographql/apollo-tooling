@@ -78,7 +78,7 @@ describe("Swift code generation: Basic language constructs", () => {
   });
 
   it(`should generate a struct declaration`, () => {
-    generator.structDeclaration({ structName: "Hero" }, () => {
+    generator.structDeclaration({ structName: "Hero" }, false, () => {
       generator.propertyDeclaration({
         propertyName: "name",
         typeName: "String"
@@ -101,6 +101,7 @@ describe("Swift code generation: Basic language constructs", () => {
         adoptedProtocols: ["GraphQLFragment"],
         namespace: "StarWars"
       },
+      false,
       () => {
         generator.propertyDeclaration({
           propertyName: "name",
@@ -119,7 +120,7 @@ describe("Swift code generation: Basic language constructs", () => {
   });
 
   it(`should generate an escaped struct declaration`, () => {
-    generator.structDeclaration({ structName: "Type" }, () => {
+    generator.structDeclaration({ structName: "Type" }, false, () => {
       generator.propertyDeclaration({
         propertyName: "name",
         typeName: "String"
@@ -144,7 +145,7 @@ describe("Swift code generation: Basic language constructs", () => {
   });
 
   it(`should generate nested struct declarations`, () => {
-    generator.structDeclaration({ structName: "Hero" }, () => {
+    generator.structDeclaration({ structName: "Hero" }, false, () => {
       generator.propertyDeclaration({
         propertyName: "name",
         typeName: "String"
@@ -154,7 +155,7 @@ describe("Swift code generation: Basic language constructs", () => {
         typeName: "[Friend]"
       });
 
-      generator.structDeclaration({ structName: "Friend" }, () => {
+      generator.structDeclaration({ structName: "Friend" }, false, () => {
         generator.propertyDeclaration({
           propertyName: "name",
           typeName: "String"
@@ -205,6 +206,7 @@ describe("Swift code generation: Basic language constructs", () => {
   it(`should handle multi-line descriptions`, () => {
     generator.structDeclaration(
       { structName: "Hero", description: "A hero" },
+      false,
       () => {
         generator.propertyDeclaration({
           propertyName: "name",

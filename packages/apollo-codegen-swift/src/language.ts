@@ -144,13 +144,16 @@ export class SwiftGenerator<Context> extends CodeGenerator<
       adoptedProtocols = [],
       namespace = undefined
     }: Struct,
+    outputIndividualFiles: boolean,
     closure: Function
   ) {
     this.printNewlineIfNeeded();
     this.comment(description);
 
     const isRedundant =
-      adoptedProtocols.includes("GraphQLFragment") && !!namespace;
+      adoptedProtocols.includes("GraphQLFragment") &&
+      !!namespace &&
+      !outputIndividualFiles;
     const modifier = isRedundant ? "" : "public ";
 
     this.printOnNewline(
