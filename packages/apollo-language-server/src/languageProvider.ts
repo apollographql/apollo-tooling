@@ -14,7 +14,8 @@ import {
   SymbolInformation,
   CodeAction,
   CodeActionKind,
-  MarkupKind
+  MarkupKind,
+  CompletionItemKind
 } from "vscode-languageserver";
 
 // should eventually be moved into this package, since we're overriding a lot of the existing behavior here
@@ -55,7 +56,8 @@ import {
   isExecutableDefinitionNode,
   isTypeSystemDefinitionNode,
   isTypeSystemExtensionNode,
-  GraphQLError
+  GraphQLError,
+  DirectiveLocation
 } from "graphql";
 import { highlightNodeForNode } from "./utilities/graphql";
 
@@ -63,6 +65,8 @@ import { GraphQLClientProject, isClientProject } from "./project/client";
 import { isNotNullOrUndefined } from "@apollographql/apollo-tools";
 import { CodeActionInfo } from "./errors/validation";
 import { GraphQLDiagnostic } from "./diagnostics";
+
+const DirectiveLocations = Object.keys(DirectiveLocation);
 
 function hasFields(type: GraphQLType): boolean {
   return (
@@ -246,6 +250,13 @@ export class GraphQLLanguageProvider {
           insertTextFormat: InsertTextFormat.Snippet
         };
       });
+    }
+
+    if (state.kind === "DirectiveLocation") {
+      return DirectiveLocations.map(location => ({
+        label: location,
+        kind: CompletionItemKind.Constant
+      }));
     }
 
     return suggestions;
