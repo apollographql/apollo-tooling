@@ -481,4 +481,28 @@ describe("translating to typescript", () => {
       ]
     `);
   });
+
+  it("understands default values", async () => {
+    const typeDefs = `#graphql
+
+      type Query {
+        defaulted(arg: Int = 5): Int!
+        normal(arg: Int): Int!
+      }
+    `;
+
+    const resolvers = `const r: Resolvers = {
+      Query: {
+        defaulted: (_, {arg}) => arg,
+        normal: (_, {arg}) => arg // err, arg is possibly undefined
+      },
+    }`;
+
+    const diagnostics = await typeCheck(typeDefs, resolvers);
+    expect(diagnostics).toMatchInlineSnapshot(`
+      Array [
+        "Type 'number | undefined' is not assignable to type 'PromiseOrValue<number>'.Type 'undefined' is not assignable to type 'PromiseOrValue<number>'.The expected type comes from the return type of this signature.",
+      ]
+    `);
+  });
 });

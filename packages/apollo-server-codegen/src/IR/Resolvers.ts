@@ -9,7 +9,13 @@ import {
 import { Translatable, Translator } from "../Translators";
 import { Description } from "./Descriptions";
 import { TypelessObjectDefinition } from "./Objects";
-import { CompoundType, findRootType, makeType, TypeDefinition } from "./Types";
+import {
+  CompoundType,
+  findRootType,
+  makeType,
+  TypeDefinition,
+  NonNullType
+} from "./Types";
 
 const parseSelections = (source: string) =>
   (parse(`query { ${source} }`).definitions[0] as OperationDefinitionNode)
@@ -24,6 +30,7 @@ export class ArgumentDefinition implements Translatable {
     this.description = new Description(argumentDefinition);
     this.name = argumentDefinition.name.value;
     this.type = makeType(argumentDefinition.type);
+    if (argumentDefinition.defaultValue) this.type = new NonNullType(this.type);
   }
 
   public translate(translator: Translator) {
