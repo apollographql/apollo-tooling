@@ -188,7 +188,9 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   }
 
   protocolPropertyDeclaration({ propertyName, typeName }: Property) {
-    this.printOnNewline(`var ${propertyName}: ${typeName} { get }`);
+    this.printOnNewline(
+      `var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName} { get }`
+    );
   }
 
   protocolPropertyDeclarations(properties: Property[]) {

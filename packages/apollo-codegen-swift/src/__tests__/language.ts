@@ -158,6 +158,10 @@ describe("Swift code generation: Basic language constructs", () => {
           propertyName: "age",
           typeName: "Int"
         });
+        generator.protocolPropertyDeclaration({
+          propertyName: "default",
+          typeName: "Boolean"
+        });
       }
     );
 
@@ -165,6 +169,7 @@ describe("Swift code generation: Basic language constructs", () => {
       public protocol HeroDetails: HasName {
         var name: String { get }
         var age: Int { get }
+        var \`default\`: Boolean { get }
       }
     `);
   });
