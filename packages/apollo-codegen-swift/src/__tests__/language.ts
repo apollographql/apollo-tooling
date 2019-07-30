@@ -119,6 +119,31 @@ describe("Swift code generation: Basic language constructs", () => {
     `);
   });
 
+  it(`should generate a namespaced fragment which is public for individual files`, () => {
+    generator.structDeclaration(
+      {
+        structName: "Hero",
+        adoptedProtocols: ["GraphQLFragment"],
+        namespace: "StarWars"
+      },
+      true,
+      () => {
+        generator.propertyDeclaration({
+          propertyName: "name",
+          typeName: "String"
+        });
+        generator.propertyDeclaration({ propertyName: "age", typeName: "Int" });
+      }
+    );
+
+    expect(generator.output).toBe(stripIndent`
+      public struct Hero: GraphQLFragment {
+        public var name: String
+        public var age: Int
+      }
+    `);
+  });
+
   it(`should generate an escaped struct declaration`, () => {
     generator.structDeclaration({ structName: "Type" }, false, () => {
       generator.propertyDeclaration({
