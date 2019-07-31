@@ -88,10 +88,10 @@ export function removeDirectives(ast: ASTNode, directiveNames: string[]) {
 }
 
 // remove fields where a given directive is found
-export function removeDirectiveAnnotatedFields(
-  ast: ASTNode,
+export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
+  ast: AST,
   directiveNames: string[]
-) {
+): AST {
   if (!directiveNames.length) return ast;
   return visit(ast, {
     Field(node: FieldNode): FieldNode | null {
