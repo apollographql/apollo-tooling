@@ -120,4 +120,73 @@ describe("removeDirectiveAnnotatedFields", () => {
       "
     `);
   });
+
+  it("should remove fragments that become unused when antecendant directives are removed", () => {
+    expect(
+      print(
+        removeDirectiveAnnotatedFields(
+          parse(`
+            fragment ClientObjectFragment on ClientObject {
+              string
+              number
+            }
+
+            fragment LaunchTile on Launch {
+              __typename
+              id
+              isBooked
+              rocket {
+                id
+                name
+              }
+              mission {
+                name
+                missionPatch
+              }
+            }
+
+            query LaunchDetails($launchId: ID!) {
+              launch(id: $launchId) {
+                isInCart @client
+                clientObject @client {
+                  ...ClientObjectFragment
+                }
+                site
+                rocket {
+                  type
+                }
+                ...LaunchTile
+              }
+            }
+          `),
+          ["client"]
+        )
+      )
+    ).toMatchInlineSnapshot(`
+      "fragment LaunchTile on Launch {
+        __typename
+        id
+        isBooked
+        rocket {
+          id
+          name
+        }
+        mission {
+          name
+          missionPatch
+        }
+      }
+
+      query LaunchDetails($launchId: ID!) {
+        launch(id: $launchId) {
+          site
+          rocket {
+            type
+          }
+          ...LaunchTile
+        }
+      }
+      "
+    `);
+  });
 });
