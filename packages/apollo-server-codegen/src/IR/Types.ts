@@ -1,7 +1,7 @@
 import { FieldNode, TypeNode, Kind } from "graphql";
 import { Translatable, Translator } from "../Translators";
 import { TypelessObjectDefinition } from "./Objects";
-import { SELECTION_OFFSET } from "./utils";
+import { SELECTION_OFFSET, makeVSCodeError } from "./utils";
 
 export const TypeKinds = {
   NamedType: "NAMED_TYPE",
@@ -77,10 +77,13 @@ export class CompoundType implements Translatable {
 
       const startLoc = node.loc!.start - SELECTION_OFFSET + errorLocationIndex;
       const endLoc = node.loc!.end - SELECTION_OFFSET + errorLocationIndex;
-      const adjustedErrorLocation = [startLoc, endLoc];
       if (!field) {
         errors.push(
-          `(${adjustedErrorLocation}) Could not find field "${node.name.value}" on type "${baseType.name}".`
+          makeVSCodeError(
+            startLoc,
+            endLoc,
+            `Could not find field "${node.name.value}" on type "${baseType.name}".`
+          )
         );
         return;
       }
@@ -92,9 +95,13 @@ export class CompoundType implements Translatable {
 
         if (!newBaseType) {
           errors.push(
-            `(${adjustedErrorLocation}) Could not find definition for type "${findRootType(
-              field.type
-            )}" referenced in FieldSet.`
+            makeVSCodeError(
+              startLoc,
+              endLoc,
+              `Could not find definition for type "${findRootType(
+                field.type
+              )}" referenced in FieldSet.`
+            )
           );
           return;
         }

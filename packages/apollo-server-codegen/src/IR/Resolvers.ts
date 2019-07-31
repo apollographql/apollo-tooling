@@ -13,7 +13,10 @@ import {
   TypeDefinition,
   NonNullType
 } from "./Types";
-import { findFederationDirectivesWithSelections } from "./utils";
+import {
+  findFederationDirectivesWithSelections,
+  makeVSCodeError
+} from "./utils";
 
 export class ArgumentDefinition implements Translatable {
   public description: Description;
@@ -65,7 +68,11 @@ export class TypelessResolverDefinition {
     if (!providedObject) {
       const loc = this.fieldDefinition.type.loc;
       errors.push(
-        `(${loc!.start},${loc!.end}) Could not find type ${fieldType}.`
+        makeVSCodeError(
+          loc!.start,
+          loc!.end,
+          `Could not find type ${fieldType}.`
+        )
       );
       return [];
     }

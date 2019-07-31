@@ -39,3 +39,16 @@ export const findFederationDirectivesWithSelections = (
         (directive.arguments![0].value as StringValueNode).value
       )
     }));
+
+/**
+ * Create an error in this specific format, so that
+ * in the driver code in `apollo/service/codegen`, we can
+ * easily parse this and write it to console in a way VSCode
+ * can recognize and provide in-editor support for.
+ * See VSCode "Problem Watchers" for more info.
+ */
+export const makeVSCodeError = (
+  startIndex: number,
+  endIndex: number,
+  message: string
+) => `(${startIndex},${endIndex}) ${message}`;
