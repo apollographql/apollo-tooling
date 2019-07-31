@@ -29,16 +29,23 @@ export interface Property {
 }
 
 export function escapedString(string: string) {
-  var lines = string
-    .split(/\n/g)
-    .map(line => {
-      return line.trim();
-    })
-    .map(line => {
-      return line.replace(/"/g, '\\"');
-    });
+  if (string.includes('"""')) {
+    // This includes a multi-line string literal, and we may strip out meaningful
+    // whitespace if we try to strip whitespace. Don't try.
+    return string.replace(/"/g, '\\"').replace(/\n/g, "\\n");
+  } else {
+    // Strip unnecessary whitespace.
+    var lines = string
+      .split(/\n/g)
+      .map(line => {
+        return line.trim();
+      })
+      .map(line => {
+        return line.replace(/"/g, '\\"');
+      });
 
-  return lines.join(" ");
+    return lines.join(" ");
+  }
 }
 
 // prettier-ignore
