@@ -99,7 +99,12 @@ export abstract class Translator {
   ): string;
 }
 
-// All IR components are Translatable
+/**
+ * `Translatable` classes are those which represent a structure that is able to be directly translated to any target language.
+ *
+ * They must implement a `translate(t: Translator)` method, which will generally simply call
+ * `t.translateMyType(this)`, where `MyType` is whatever type is implementing `Translatable`.
+ */
 export interface Translatable {
   translate(t: Translator): string | undefined;
 }

@@ -225,7 +225,7 @@ type Index<Map extends Record<string, any>, Key extends string> = Map[Key] exten
    *
    * export interface MyInterface { thing?: string; }
    * export interface MyInterfaceResolver<TContext = {}, TInternalReps = {}> {
-   *   __resolveReference?: ( parent: MyInterfaceRepresentation<{ }>, args: {}, context: TContext, info: any ) => PromiseOrValue<Nullable<MyInterface>>;
+   *   __resolveReference?: ( parent: MyInterfaceRepresentation<{ }>, context: TContext, info: any ) => PromiseOrValue<Nullable<MyInterface>>;
    *   thing?: ( parent: MyInterfaceRepresentation<TInternalReps>, args: {}, context: TContext, info: any ) => PromiseOrValue<string>;
    * }
    *
@@ -237,7 +237,7 @@ type Index<Map extends Record<string, any>, Key extends string> = Map[Key] exten
    * export interface User extends MyInterface { name?: string; }
    * export interface UserResolver<TContext = {}, TInternalReps = {}>
    *   extends MyInterfaceResolver<TContext, TInternalReps> {
-   *   __resolveReference?: ( parent: UserRepresentation<{ }>, args: {}, context: TContext, info: any ) => PromiseOrValue<Nullable<User>>;
+   *   __resolveReference?: ( parent: UserRepresentation<{ }>, context: TContext, info: any ) => PromiseOrValue<Nullable<User>>;
    *   name?: ( parent: UserRepresentation<TInternalReps>, args: { locale?: string; }, context: TContext, info: any
    *   ) => PromiseOrValue<string>;
    * }
@@ -268,7 +268,7 @@ type Index<Map extends Record<string, any>, Key extends string> = Map[Key] exten
 
       t.description.translate(this),
       `export interface ${t.name}Resolver<TContext = {}, TInternalReps = {}> ${extendingResolvers} {\n`,
-      `__resolveReference?: (parent: ${t.name}Representation<{ /* explicity don't pass TInternalReps */ }>, args: {}, context: TContext, info: any) => PromiseOrValue<Nullable<${t.name}>>\n`,
+      `__resolveReference?: (parent: ${t.name}Representation<{ /* explicity don't pass TInternalReps */ }>, context: TContext, info: any) => PromiseOrValue<Nullable<${t.name}>>\n`,
       ...t.resolvers.map(resolver => resolver.translate(this) + "\n"),
       `}\n`
     ].join("");
