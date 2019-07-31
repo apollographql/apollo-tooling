@@ -18,8 +18,8 @@ import { ResolverDefinition, TypelessResolverDefinition } from "./Resolvers";
 import { CompoundType, makeType, TypeDefinition } from "./Types";
 
 // number of chars added in the below parse(`query { ${source} }`) call.
-// This is needed for converting between location of errors in the source document
-// and the `loc` property `parse` will add to these FieldNode's.
+// This is needed for converting between the `loc` property `parse` will add to these FieldNode's,
+// and the real location of errors in the source document
 export const SELECTION_OFFSET = 7;
 const parseSelections = (source: string) =>
   (parse(`query { ${source} }`).definitions[0] as OperationDefinitionNode)
