@@ -1,8 +1,4 @@
-import {
-  FieldDefinitionNode,
-  InputValueDefinitionNode,
-  StringValueNode
-} from "graphql";
+import { FieldDefinitionNode, InputValueDefinitionNode } from "graphql";
 import { Translatable, Translator } from "../Translators";
 import { Description } from "./Descriptions";
 import { TypelessObjectDefinition } from "./Objects";
