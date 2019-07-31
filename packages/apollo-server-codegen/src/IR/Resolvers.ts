@@ -11,7 +11,8 @@ import {
 } from "./Types";
 import {
   findFederationDirectivesWithSelections,
-  makeVSCodeError
+  makeVSCodeError,
+  allElements
 } from "./utils";
 
 export class ArgumentDefinition implements Translatable {
@@ -51,16 +52,10 @@ export class TypelessResolverDefinition {
       this.fieldDefinition.directives,
       "provides"
     );
-
-    const providedSelections = provideDirectives.flatMap(
-      directive => directive.selections
-    );
-
-    if (providedSelections.length === 0) return [];
+    if (provideDirectives.length === 0) return [];
 
     const fieldType = findRootType(makeType(this.fieldDefinition.type));
     const providedObject = types.find(type => type.name === fieldType);
-
     if (!providedObject) {
       const loc = this.fieldDefinition.type.loc;
       errors.push(
@@ -73,32 +68,26 @@ export class TypelessResolverDefinition {
       return [];
     }
 
-    const loc = provideDirectives[0]!.arguments![0].value.loc!;
-    const compound = new CompoundType(
-      providedSelections,
-      providedObject,
-      types,
-      loc.start,
-      errors
+    const compounds = provideDirectives.flatMap(
+      compound =>
+        new CompoundType(
+          compound.selections,
+          providedObject,
+          types,
+          compound.arguments![0].value.loc!.start,
+          errors
+        )
     );
 
-    const provides = (
-      compound: CompoundType
-    ): { objectName: string; fieldName: string }[] =>
-      compound.types.flatMap(field => [
-        { fieldName: field.name, objectName: field.baseType.name },
-        ...(field.type instanceof CompoundType ? provides(field.type) : [])
-      ]);
-
-    return provides(compound);
+    return compounds.flatMap(allElements);
   }
 
   public applyGlobalTypeKnowledge(
     types: TypelessObjectDefinition[],
-    isProvided: boolean,
+    isResolvable: boolean,
     errors: string[]
   ) {
-    return new ResolverDefinition(this, types, isProvided, errors);
+    return new ResolverDefinition(this, types, isResolvable, errors);
   }
 }
 
@@ -107,7 +96,7 @@ export class ResolverDefinition implements Translatable {
   public name: string;
   public type: TypeDefinition;
   public description: Description;
-  public isNotProvidedAndExternal: boolean;
+  public isNonResolvableExternal: boolean;
   public requires: CompoundType;
   public parent: TypelessObjectDefinition;
   public isRootType: boolean;
@@ -115,7 +104,7 @@ export class ResolverDefinition implements Translatable {
   constructor(
     typeless: TypelessResolverDefinition,
     types: TypelessObjectDefinition[],
-    public isProvided: boolean,
+    public isResolvable: boolean,
     errors: string[]
   ) {
     this.arguments = (typeless.fieldDefinition.arguments || []).map(
@@ -125,7 +114,7 @@ export class ResolverDefinition implements Translatable {
       directive => directive.name.value === "external"
     );
 
-    this.isNotProvidedAndExternal = !isProvided && isExternal;
+    this.isNonResolvableExternal = !isResolvable && isExternal;
 
     this.isRootType = typeless.isRootType;
     this.name = typeless.fieldDefinition.name.value;

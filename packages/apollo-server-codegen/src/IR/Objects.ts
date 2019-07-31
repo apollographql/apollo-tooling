@@ -16,7 +16,7 @@ import { Translatable, Translator } from "../Translators";
 import { Description } from "./Descriptions";
 import { ResolverDefinition, TypelessResolverDefinition } from "./Resolvers";
 import { CompoundType, makeType, TypeDefinition } from "./Types";
-import { findFederationDirectivesWithSelections } from "./utils";
+import { findFederationDirectivesWithSelections, allElements } from "./utils";
 
 export class FieldDefinition implements Translatable {
   public name: string;
@@ -65,16 +65,34 @@ export class TypelessObjectDefinition {
     );
   }
 
+  public getKeys(types: TypelessObjectDefinition[], errors: string[]) {
+    return findFederationDirectivesWithSelections(
+      this.definition.directives,
+      "key"
+    )
+      .map(
+        key =>
+          new CompoundType(
+            key.selections,
+            this,
+            types,
+            key.arguments![0].value.loc!.start,
+            errors
+          )
+      )
+      .flatMap(allElements);
+  }
+
   public applyGlobalTypeKnowledge(
     types: TypelessObjectDefinition[],
-    providedFields: string[],
+    resolveableExternals: string[],
     errors: string[]
   ): ObjectDefinition {
     return new ObjectDefinition(
       this.definition,
       this,
       types,
-      providedFields,
+      resolveableExternals,
       errors
     );
   }
@@ -99,7 +117,7 @@ export class ObjectDefinition implements Translatable {
       | InterfaceTypeExtensionNode,
     typeless: TypelessObjectDefinition,
     types: TypelessObjectDefinition[],
-    provided: string[],
+    resolvableExternals: string[],
     errors: string[]
   ) {
     this.name = definition.name.value;
@@ -134,7 +152,7 @@ export class ObjectDefinition implements Translatable {
     this.resolvers = typeless.resolvers.map(typeless =>
       typeless.applyGlobalTypeKnowledge(
         types,
-        provided.indexOf(typeless.getName()) >= 0,
+        resolvableExternals.indexOf(typeless.getName()) >= 0,
         errors
       )
     );

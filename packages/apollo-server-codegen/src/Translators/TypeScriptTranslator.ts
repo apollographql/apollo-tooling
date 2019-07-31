@@ -112,8 +112,8 @@ type Index<Map extends Record<string, any>, Key extends string> = Map[Key] exten
   }
 
   public translateResolverDefinition(t: IR.ResolverDefinition): string {
-    if (t.isNotProvidedAndExternal) {
-      return `${t.name}?: never // non-resolvable: marked @external and not @provide'd by any fields`;
+    if (t.isNonResolvableExternal) {
+      return `${t.name}?: never // non-resolvable: marked @external and not @provide'd by any fields or used in any @key's`;
     }
 
     const argsType = t.arguments.length

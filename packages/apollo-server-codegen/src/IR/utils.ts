@@ -5,6 +5,7 @@ import {
   DirectiveNode,
   StringValueNode
 } from "graphql";
+import { CompoundType } from "./Types";
 
 // number of chars added before the source code in in the below parse(`query { ${source} }`) call.
 // This is needed for converting between the `loc` property `parse` will add to these FieldNode's,
@@ -39,6 +40,17 @@ export const findFederationDirectivesWithSelections = (
         (directive.arguments![0].value as StringValueNode).value
       )
     }));
+
+/**
+ * Get a list of [typeName, field] for each field referenced in the given compound type
+ */
+export const allElements = (
+  compound: CompoundType
+): { objectName: string; fieldName: string }[] =>
+  compound.types.flatMap(field => [
+    { fieldName: field.name, objectName: field.baseType.name },
+    ...(field.type instanceof CompoundType ? allElements(field.type) : [])
+  ]);
 
 /**
  * Create an error in this specific format, so that

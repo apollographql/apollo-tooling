@@ -82,12 +82,18 @@ export function sdlToIR(
     .flatMap(def => def.resolvers)
     .flatMap(resolver => resolver.getProvides(objectDefinitions, errors));
 
+  const keyFields = objectDefinitions.flatMap(object =>
+    object.getKeys(objectDefinitions, errors)
+  );
+
+  const resolveableExternals = [...providedFields, ...keyFields];
+
   return {
     topLevelDefinitions: [
       objectDefinitions.map(typeless =>
         typeless.applyGlobalTypeKnowledge(
           objectDefinitions,
-          providedFields
+          resolveableExternals
             .filter(provided => provided.objectName === typeless.name)
             .map(({ fieldName }) => fieldName),
           errors
