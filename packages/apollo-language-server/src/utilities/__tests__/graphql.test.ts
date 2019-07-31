@@ -1,6 +1,9 @@
 import gql from "graphql-tag";
-import { print } from "graphql";
-import { withTypenameFieldAddedWhereNeeded } from "../graphql";
+import { parse, print } from "graphql";
+import {
+  withTypenameFieldAddedWhereNeeded,
+  removeDirectiveAnnotatedFields
+} from "../graphql";
 
 describe("withTypenameFieldAddedWhereNeeded", () => {
   it("properly adds __typename to each selectionSet", () => {
@@ -68,6 +71,51 @@ describe("withTypenameFieldAddedWhereNeeded", () => {
             }
           }
         }
+      }
+      "
+    `);
+  });
+});
+
+describe("removeDirectiveAnnotatedFields", () => {
+  it("should be a function", () => {
+    expect(typeof removeDirectiveAnnotatedFields).toBe("function");
+  });
+
+  it("should remove fields with matching directives", () => {
+    expect(
+      print(
+        removeDirectiveAnnotatedFields(
+          parse(`query Query { fieldToKeep fieldToRemove @client }`),
+          ["client"]
+        )
+      )
+    ).toMatchInlineSnapshot(`
+            "query Query {
+              fieldToKeep
+            }
+            "
+        `);
+  });
+
+  it("should remove object fields with matching directives", () => {
+    expect(
+      print(
+        removeDirectiveAnnotatedFields(
+          parse(`
+            query Query {
+              fieldToKeep
+              fieldToRemove @client {
+                childField
+              }
+            }
+          `),
+          ["client"]
+        )
+      )
+    ).toMatchInlineSnapshot(`
+      "query Query {
+        fieldToKeep
       }
       "
     `);
