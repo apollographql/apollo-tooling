@@ -2,6 +2,16 @@
 
 exports[`Swift code generation #classDeclarationForOperation() should correctly escape a mutli-line string literal 1`] = `
 "public final class CreateReviewMutation: GraphQLMutation {
+  /// mutation CreateReview($episode: Episode) {
+  ///   createReview(episode: $episode, review: {stars: 5, commentary: """
+  ///     Wow!
+  ///     
+  ///       This movie ROCKED!
+  ///   """}) {
+  ///     stars
+  ///     commentary
+  ///   }
+  /// }
   public let operationDefinition =
     \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"\\\\\\"\\\\\\"\\\\n    Wow!\\\\n    \\\\n      This movie ROCKED!\\\\n  \\\\\\"\\\\\\"\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
 
@@ -87,6 +97,16 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
 
 exports[`Swift code generation #classDeclarationForOperation() should correctly escape a mutli-line string literal with backslashes 1`] = `
 "public final class CreateReviewMutation: GraphQLMutation {
+  /// mutation CreateReview($episode: Episode) {
+  ///   createReview(episode: $episode, review: {stars: 5, commentary: """
+  ///     Wow!
+  ///     
+  ///       This movie \\\\ ROCKED!
+  ///   """}) {
+  ///     stars
+  ///     commentary
+  ///   }
+  /// }
   public let operationDefinition =
     \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"\\\\\\"\\\\\\"\\\\n    Wow!\\\\n    \\\\n      This movie \\\\ ROCKED!\\\\n  \\\\\\"\\\\\\"\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
 
