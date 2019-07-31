@@ -97,7 +97,7 @@ export default class ServiceCodegen extends Command {
       await this.executeCodegen(inputPath, target, output, flags);
     } catch (e) {
       if (flags.watch) {
-        console.warn(e.message);
+        console.warn(chalk.yellow(e));
       } else {
         console.error(chalk.red(e));
         process.exit(1);
@@ -111,7 +111,7 @@ export default class ServiceCodegen extends Command {
         try {
           await this.executeCodegen(inputPath, target, output, flags);
         } catch (e) {
-          console.warn(e.message);
+          console.warn(chalk.yellow(e));
         }
         this.log(`Watching for changes...`);
       });
@@ -185,7 +185,7 @@ export default class ServiceCodegen extends Command {
           })
           .join("\n");
       }
-      throw Error(message);
+      throw message;
     }
   }
 }
