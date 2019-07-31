@@ -66,6 +66,8 @@ type Index<Map extends Record<string, any>, Key extends string> = Map[Key] exten
       switch (t.name) {
         case "Int":
           return "number";
+        case "Float":
+          return "number";
         case "Boolean":
           return "boolean";
         case "ID":
