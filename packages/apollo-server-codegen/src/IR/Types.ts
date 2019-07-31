@@ -52,7 +52,7 @@ export class CompoundType implements Translatable {
     fields: readonly FieldNode[],
     baseType: TypelessObjectDefinition,
     types: TypelessObjectDefinition[],
-    errorLocation: [number, number],
+    errorLocationIndex: number,
     errors: string[]
   ) {
     this.types = [];
@@ -62,8 +62,8 @@ export class CompoundType implements Translatable {
         field => field.name === node.name.value
       );
 
-      const startLoc = node.loc!.start - SELECTION_OFFSET + errorLocation[0];
-      const endLoc = node.loc!.end - SELECTION_OFFSET + errorLocation[0];
+      const startLoc = node.loc!.start - SELECTION_OFFSET + errorLocationIndex;
+      const endLoc = node.loc!.end - SELECTION_OFFSET + errorLocationIndex;
       const adjustedErrorLocation = [startLoc, endLoc];
       if (!field) {
         errors.push(
@@ -92,7 +92,7 @@ export class CompoundType implements Translatable {
             node.selectionSet.selections as FieldNode[],
             newBaseType,
             types,
-            errorLocation,
+            errorLocationIndex,
             errors
           ),
           baseType

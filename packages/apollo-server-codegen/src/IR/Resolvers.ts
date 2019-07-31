@@ -75,7 +75,7 @@ export class TypelessResolverDefinition {
       providedSelections,
       providedObject,
       types,
-      [loc.start, loc.end],
+      loc.start,
       errors
     );
 
@@ -143,7 +143,7 @@ export class ResolverDefinition implements Translatable {
       requiresSelections.flatMap(directive => directive.selections),
       typeless.parent,
       types,
-      [loc!.start, loc!.end],
+      loc!.start,
       errors
     );
   }
