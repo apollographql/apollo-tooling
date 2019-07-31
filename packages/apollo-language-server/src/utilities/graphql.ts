@@ -93,7 +93,17 @@ export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
   directiveNames: string[]
 ): AST {
   if (!directiveNames.length) return ast;
-  return visit(ast, {
+
+  /**
+   * List of names of all the `FragmentDefinition`s that we are going to keep.
+   *
+   * We store the names that we want to _keep_ instead of fields we want to _delete_ because it's possible
+   * that we're removing a `Fragment` from a `@client` field that is used in a non-`@client` field (if it's a
+   * fragment on an interface, for example).
+   */
+  const fragmentNamesToKeep = new Set<string>();
+
+  ast = visit(ast, {
     Field(node: FieldNode): FieldNode | null {
       if (
         node.directives &&
@@ -103,6 +113,18 @@ export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
         )
       )
         return null;
+
+      // We're keeping this field. Save the names of all fragment spreads that are in this field's selection
+      // set. This is intentionally _not_ recursive because descendents of this field may a directive that we
+      // want to remove; so we only know that this field's selection set is safe to keep.
+      if (node.selectionSet) {
+        node.selectionSet.selections.forEach(selection => {
+          if (selection.kind === "FragmentSpread") {
+            fragmentNamesToKeep.add(selection.name.value);
+          }
+        });
+      }
+
       return node;
     },
     OperationDefinition: {
@@ -110,6 +132,13 @@ export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
         if (!node.selectionSet.selections.length) return null;
         return node;
       }
+    }
+  });
+
+  // Remove all `FragmentDefinitions`s that have names _not_ stored in `fragmentNamesToKeep`.
+  return visit(ast, {
+    FragmentDefinition(node) {
+      return fragmentNamesToKeep.has(node.name.value) ? node : null;
     }
   });
 }
