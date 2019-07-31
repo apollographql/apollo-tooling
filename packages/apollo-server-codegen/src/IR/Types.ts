@@ -3,11 +3,18 @@ import { Translatable, Translator } from "../Translators";
 import { TypelessObjectDefinition } from "./Objects";
 import { SELECTION_OFFSET } from "./utils";
 
-export interface TypeDefinition extends Translatable {
-  translate(translator: Translator, nullable?: boolean): string;
-}
+export const TypeKinds = {
+  NamedType: "NAMED_TYPE",
+  NonNullType: "NON_NULL_TYPE",
+  ListType: "LIST_TYPE"
+};
+export type TypeDefinition = NamedType | NonNullType | ListType;
 
-export class NamedType implements TypeDefinition {
+export function isNamedType(t: TypeDefinition): t is NamedType {
+  return t.type === TypeKinds.NamedType;
+}
+export class NamedType {
+  type = TypeKinds.NamedType;
   constructor(public name: string) {}
 
   public translate(translator: Translator, nullable: boolean = true) {
@@ -15,7 +22,11 @@ export class NamedType implements TypeDefinition {
   }
 }
 
-export class NonNullType implements TypeDefinition {
+export function isNonNullType(t: TypeDefinition): t is NonNullType {
+  return t.type === TypeKinds.NonNullType;
+}
+export class NonNullType {
+  type = TypeKinds.NonNullType;
   constructor(public base: TypeDefinition) {}
 
   public translate(translator: Translator) {
@@ -23,7 +34,11 @@ export class NonNullType implements TypeDefinition {
   }
 }
 
-export class ListType implements TypeDefinition {
+export function isListType(t: TypeDefinition): t is ListType {
+  return t.type === TypeKinds.ListType;
+}
+export class ListType {
+  type = TypeKinds.ListType;
   constructor(public base: TypeDefinition) {}
 
   public translate(translator: Translator, nullable: boolean = true) {
@@ -32,10 +47,8 @@ export class ListType implements TypeDefinition {
 }
 
 export const findRootType = (t: TypeDefinition): string => {
-  if (t instanceof NamedType) return t.name;
-  if (t instanceof NonNullType) return findRootType(t.base);
-  if (t instanceof ListType) return findRootType(t.base);
-  throw new Error("Unreachable?");
+  if (isNamedType(t)) return t.name;
+  return findRootType(t.base);
 };
 
 export class CompoundType implements Translatable {
