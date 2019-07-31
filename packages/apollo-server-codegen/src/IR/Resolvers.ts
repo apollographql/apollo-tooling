@@ -1,9 +1,6 @@
 import {
   FieldDefinitionNode,
-  FieldNode,
   InputValueDefinitionNode,
-  OperationDefinitionNode,
-  parse,
   StringValueNode
 } from "graphql";
 import { Translatable, Translator } from "../Translators";
@@ -16,10 +13,7 @@ import {
   TypeDefinition,
   NonNullType
 } from "./Types";
-
-const parseSelections = (source: string) =>
-  (parse(`query { ${source} }`).definitions[0] as OperationDefinitionNode)
-    .selectionSet.selections as (readonly FieldNode[]);
+import { findFederationDirectivesWithSelections } from "./utils";
 
 export class ArgumentDefinition implements Translatable {
   public description: Description;
@@ -54,16 +48,14 @@ export class TypelessResolverDefinition {
   }
 
   public getProvides(types: TypelessObjectDefinition[], errors: string[]) {
-    const provideDirectives = (this.fieldDefinition.directives || []).filter(
-      directive =>
-        directive.name.value === "provides" &&
-        directive.arguments &&
-        directive.arguments.length
+    const provideDirectives = findFederationDirectivesWithSelections(
+      this.fieldDefinition.directives,
+      "provides"
     );
 
-    const providedSelections = provideDirectives
-      .map(key => (key.arguments![0].value as StringValueNode).value)
-      .flatMap(selectionString => parseSelections(selectionString));
+    const providedSelections = provideDirectives.flatMap(
+      directive => directive.selections
+    );
 
     if (providedSelections.length === 0) return [];
 
@@ -138,23 +130,17 @@ export class ResolverDefinition implements Translatable {
     this.description = new Description(typeless.fieldDefinition);
     this.parent = typeless.parent;
 
-    const requiresSelections = (typeless.fieldDefinition.directives || [])
-      .filter(
-        directive =>
-          directive.name.value === "requires" &&
-          directive.arguments &&
-          directive.arguments.length
-      )
-      .map(key => key.arguments![0].value as StringValueNode);
+    const requiresSelections = findFederationDirectivesWithSelections(
+      typeless.fieldDefinition.directives,
+      "requires"
+    );
 
     const loc = requiresSelections[0]
       ? requiresSelections[0].loc
       : { start: 0, end: 0 };
 
     this.requires = new CompoundType(
-      requiresSelections.flatMap(selectionString =>
-        parseSelections(selectionString.value)
-      ),
+      requiresSelections.flatMap(directive => directive.selections),
       typeless.parent,
       types,
       [loc!.start, loc!.end],

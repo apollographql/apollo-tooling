@@ -16,14 +16,7 @@ import { Translatable, Translator } from "../Translators";
 import { Description } from "./Descriptions";
 import { ResolverDefinition, TypelessResolverDefinition } from "./Resolvers";
 import { CompoundType, makeType, TypeDefinition } from "./Types";
-
-// number of chars added in the below parse(`query { ${source} }`) call.
-// This is needed for converting between the `loc` property `parse` will add to these FieldNode's,
-// and the real location of errors in the source document
-export const SELECTION_OFFSET = 7;
-const parseSelections = (source: string) =>
-  (parse(`query { ${source} }`).definitions[0] as OperationDefinitionNode)
-    .selectionSet.selections as (readonly FieldNode[]);
+import { findFederationDirectivesWithSelections } from "./utils";
 
 export class FieldDefinition implements Translatable {
   public name: string;
@@ -123,25 +116,19 @@ export class ObjectDefinition implements Translatable {
       : []
     ).map(name => name.name.value);
 
-    this.keys = (definition.directives || [])
-      .filter(
-        directive =>
-          directive.name.value === "key" &&
-          directive.arguments &&
-          directive.arguments.length
-      )
-      .map(directive => directive.arguments![0].value as StringValueNode)
-      .map(node => ({ selections: parseSelections(node.value), loc: node.loc }))
-      .map(
-        fieldSet =>
-          new CompoundType(
-            fieldSet.selections,
-            typeless,
-            types,
-            [fieldSet.loc!.start, fieldSet.loc!.end],
-            errors
-          )
-      );
+    this.keys = findFederationDirectivesWithSelections(
+      definition.directives,
+      "key"
+    ).map(
+      fieldSet =>
+        new CompoundType(
+          fieldSet.selections,
+          typeless,
+          types,
+          [fieldSet.loc!.start, fieldSet.loc!.end],
+          errors
+        )
+    );
 
     this.fields = typeless.fields;
     this.resolvers = typeless.resolvers.map(typeless =>

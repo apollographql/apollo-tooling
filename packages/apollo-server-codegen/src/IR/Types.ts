@@ -1,6 +1,7 @@
 import { FieldNode, TypeNode, Kind } from "graphql";
 import { Translatable, Translator } from "../Translators";
-import { TypelessObjectDefinition, SELECTION_OFFSET } from "./Objects";
+import { TypelessObjectDefinition } from "./Objects";
+import { SELECTION_OFFSET } from "./utils";
 
 export interface TypeDefinition extends Translatable {
   translate(translator: Translator, nullable?: boolean): string;
