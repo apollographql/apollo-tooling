@@ -116,14 +116,14 @@ type Index<Map extends Record<string, any>, Key extends string> = Map[Key] exten
       return `${t.name}?: never // non-resolvable: marked @external and not @provide'd by any fields or used in any @key's`;
     }
 
-    const argsType = t.arguments.length
-      ? `{\n${t.arguments.map(arg => arg.translate(this)).join("\n")}\n}`
-      : "{}";
+    const argsType =
+      "{" + t.arguments.map(arg => arg.translate(this)).join("\n") + "}";
 
     const parentType =
       t.parent.name +
       "Representation<TInternalReps>" +
       (t.requires.types.length ? " & " + t.requires.translate(this) : "");
+
     const returnType = t.type.translate(this);
 
     return [

@@ -127,16 +127,14 @@ describe("translating to typescript", () => {
       /**
        * Current User
        */
-      me: (parent: QueryRepresentation<TInternalReps>, args: {
-      /**
+      me: (parent: QueryRepresentation<TInternalReps>, args: {/**
        * Authorization
        */
       token?: string
       /**
        * Also auth
        */
-      other?: string
-      }, context: TContext, info: any) => PromiseOrValue<Nullable<string>>
+      other?: string}, context: TContext, info: any) => PromiseOrValue<Nullable<string>>
       }
       "
     `);
