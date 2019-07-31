@@ -17,7 +17,10 @@ describe("Swift code generation: Basic language constructs", () => {
           propertyName: "name",
           typeName: "String"
         });
-        generator.propertyDeclaration({ propertyName: "age", typeName: "Int" });
+        generator.propertyDeclaration({
+          propertyName: "age",
+          typeName: "Int"
+        });
       }
     );
 
@@ -37,7 +40,10 @@ describe("Swift code generation: Basic language constructs", () => {
           propertyName: "name",
           typeName: "String"
         });
-        generator.propertyDeclaration({ propertyName: "age", typeName: "Int" });
+        generator.propertyDeclaration({
+          propertyName: "age",
+          typeName: "Int"
+        });
       }
     );
 
@@ -83,7 +89,10 @@ describe("Swift code generation: Basic language constructs", () => {
         propertyName: "name",
         typeName: "String"
       });
-      generator.propertyDeclaration({ propertyName: "age", typeName: "Int" });
+      generator.propertyDeclaration({
+        propertyName: "age",
+        typeName: "Int"
+      });
     });
 
     expect(generator.output).toBe(stripIndent`
@@ -107,7 +116,10 @@ describe("Swift code generation: Basic language constructs", () => {
           propertyName: "name",
           typeName: "String"
         });
-        generator.propertyDeclaration({ propertyName: "age", typeName: "Int" });
+        generator.propertyDeclaration({
+          propertyName: "age",
+          typeName: "Int"
+        });
       }
     );
 
@@ -132,7 +144,10 @@ describe("Swift code generation: Basic language constructs", () => {
           propertyName: "name",
           typeName: "String"
         });
-        generator.propertyDeclaration({ propertyName: "age", typeName: "Int" });
+        generator.propertyDeclaration({
+          propertyName: "age",
+          typeName: "Int"
+        });
       }
     );
 
