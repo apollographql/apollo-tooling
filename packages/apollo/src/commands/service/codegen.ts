@@ -181,16 +181,6 @@ export default class ServiceCodegen extends Command {
             const [_, start, end, text] = message.match(/\((\d+),(\d+)\)(.*)/)!;
             const adjustedStart = finder.fromIndex(+loc + +start);
             const adjustedEnd = finder.fromIndex(+loc + +end);
-            console.log(
-              loc,
-              start,
-              end,
-              loc + start,
-              loc + end,
-              adjustedStart,
-              adjustedEnd,
-              inputText
-            );
             return `${path}:(${adjustedStart.line},${adjustedStart.col},${adjustedEnd.line},${adjustedEnd.col}) ${text}`;
           })
           .join("\n");
