@@ -139,7 +139,7 @@ export class ResolverDefinition implements Translatable {
     );
 
     const loc = requiresSelections[0]
-      ? requiresSelections[0].loc
+      ? requiresSelections[0].arguments![0].value.loc
       : { start: 0, end: 0 };
 
     this.requires = new CompoundType(

@@ -125,7 +125,7 @@ export class ObjectDefinition implements Translatable {
           fieldSet.selections,
           typeless,
           types,
-          fieldSet.loc!.start,
+          fieldSet.arguments![0].value.loc!.start,
           errors
         )
     );
