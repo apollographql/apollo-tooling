@@ -1,6 +1,6 @@
 import { FieldNode, TypeNode, Kind } from "graphql";
 import { Translatable, Translator } from "../Translators";
-import { TypelessObjectDefinition } from "./Objects";
+import { TypelessObjectDefinition, SELECTION_OFFSET } from "./Objects";
 
 export interface TypeDefinition extends Translatable {
   translate(translator: Translator, nullable?: boolean): string;
@@ -50,7 +50,9 @@ export class CompoundType implements Translatable {
   constructor(
     fields: readonly FieldNode[],
     baseType: TypelessObjectDefinition,
-    types: TypelessObjectDefinition[]
+    types: TypelessObjectDefinition[],
+    errorLocation: [number, number],
+    errors: string[]
   ) {
     this.types = [];
 
@@ -59,10 +61,14 @@ export class CompoundType implements Translatable {
         field => field.name === node.name.value
       );
 
+      const startLoc = node.loc!.start - SELECTION_OFFSET + errorLocation[0];
+      const endLoc = node.loc!.end - SELECTION_OFFSET + errorLocation[0];
+      const adjustedErrorLocation = [startLoc, endLoc];
       if (!field) {
-        throw Error(
-          `Could not find field "${node.name.value}" on type "${baseType.name}".`
+        errors.push(
+          `(${adjustedErrorLocation}) Could not find field "${node.name.value}" on type "${baseType.name}".`
         );
+        return;
       }
 
       if (node.selectionSet) {
@@ -71,11 +77,12 @@ export class CompoundType implements Translatable {
         );
 
         if (!newBaseType) {
-          throw Error(
-            `Could not find definition for type "${findRootType(
+          errors.push(
+            `(${adjustedErrorLocation}) Could not find definition for type "${findRootType(
               field.type
-            )}" referenced in schema.`
+            )}" referenced in FieldSet.`
           );
+          return;
         }
 
         this.types.push({
@@ -83,7 +90,9 @@ export class CompoundType implements Translatable {
           type: new CompoundType(
             node.selectionSet.selections as FieldNode[],
             newBaseType,
-            types
+            types,
+            errorLocation,
+            errors
           ),
           baseType
         });

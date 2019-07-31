@@ -17,6 +17,7 @@ import { Description } from "./Descriptions";
 import { ResolverDefinition, TypelessResolverDefinition } from "./Resolvers";
 import { CompoundType, makeType, TypeDefinition } from "./Types";
 
+export const SELECTION_OFFSET = 7; // number of chars added in the below parse(`query { ${source} }`) call
 const parseSelections = (source: string) =>
   (parse(`query { ${source} }`).definitions[0] as OperationDefinitionNode)
     .selectionSet.selections as (readonly FieldNode[]);
@@ -50,7 +51,7 @@ export class TypelessObjectDefinition {
   public isRootType: boolean;
 
   constructor(
-    private definition:
+    public definition:
       | ObjectTypeDefinitionNode
       | ObjectTypeExtensionNode
       | InterfaceTypeDefinitionNode
@@ -70,9 +71,16 @@ export class TypelessObjectDefinition {
 
   public applyGlobalTypeKnowledge(
     types: TypelessObjectDefinition[],
-    providedFields: string[]
+    providedFields: string[],
+    errors: string[]
   ): ObjectDefinition {
-    return new ObjectDefinition(this.definition, this, types, providedFields);
+    return new ObjectDefinition(
+      this.definition,
+      this,
+      types,
+      providedFields,
+      errors
+    );
   }
 }
 
@@ -95,7 +103,8 @@ export class ObjectDefinition implements Translatable {
       | InterfaceTypeExtensionNode,
     typeless: TypelessObjectDefinition,
     types: TypelessObjectDefinition[],
-    provided: string[]
+    provided: string[],
+    errors: string[]
   ) {
     this.name = definition.name.value;
     this.isTypeExtension = isTypeExtensionNode(definition);
@@ -118,15 +127,25 @@ export class ObjectDefinition implements Translatable {
           directive.arguments &&
           directive.arguments.length
       )
-      .map(key => (key.arguments![0].value as StringValueNode).value)
-      .map(selectionString => parseSelections(selectionString))
-      .map(compoundKey => new CompoundType(compoundKey, typeless, types));
+      .map(directive => directive.arguments![0].value as StringValueNode)
+      .map(node => ({ selections: parseSelections(node.value), loc: node.loc }))
+      .map(
+        fieldSet =>
+          new CompoundType(
+            fieldSet.selections,
+            typeless,
+            types,
+            [fieldSet.loc!.start, fieldSet.loc!.end],
+            errors
+          )
+      );
 
     this.fields = typeless.fields;
     this.resolvers = typeless.resolvers.map(typeless =>
       typeless.applyGlobalTypeKnowledge(
         types,
-        provided.indexOf(typeless.getName()) >= 0
+        provided.indexOf(typeless.getName()) >= 0,
+        errors
       )
     );
   }

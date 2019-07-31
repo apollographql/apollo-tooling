@@ -53,14 +53,15 @@ export class TypelessResolverDefinition {
     return this.fieldDefinition.name.value;
   }
 
-  public getProvides(types: TypelessObjectDefinition[]) {
-    const providedSelections = (this.fieldDefinition.directives || [])
-      .filter(
-        directive =>
-          directive.name.value === "provides" &&
-          directive.arguments &&
-          directive.arguments.length
-      )
+  public getProvides(types: TypelessObjectDefinition[], errors: string[]) {
+    const provideDirectives = (this.fieldDefinition.directives || []).filter(
+      directive =>
+        directive.name.value === "provides" &&
+        directive.arguments &&
+        directive.arguments.length
+    );
+
+    const providedSelections = provideDirectives
       .map(key => (key.arguments![0].value as StringValueNode).value)
       .flatMap(selectionString => parseSelections(selectionString));
 
@@ -69,13 +70,21 @@ export class TypelessResolverDefinition {
     const fieldType = findRootType(makeType(this.fieldDefinition.type));
     const providedObject = types.find(type => type.name === fieldType);
 
-    if (!providedObject)
-      throw new Error(`@provides: Could not find type ${fieldType}.`);
+    if (!providedObject) {
+      const loc = this.fieldDefinition.type.loc;
+      errors.push(
+        `(${loc!.start},${loc!.end}) Could not find type ${fieldType}.`
+      );
+      return [];
+    }
 
+    const loc = provideDirectives[0]!.arguments![0].value.loc!;
     const compound = new CompoundType(
       providedSelections,
       providedObject,
-      types
+      types,
+      [loc.start, loc.end],
+      errors
     );
 
     const provides = (
@@ -91,9 +100,10 @@ export class TypelessResolverDefinition {
 
   public applyGlobalTypeKnowledge(
     types: TypelessObjectDefinition[],
-    isProvided: boolean
+    isProvided: boolean,
+    errors: string[]
   ) {
-    return new ResolverDefinition(this, types, isProvided);
+    return new ResolverDefinition(this, types, isProvided, errors);
   }
 }
 
@@ -110,7 +120,8 @@ export class ResolverDefinition implements Translatable {
   constructor(
     typeless: TypelessResolverDefinition,
     types: TypelessObjectDefinition[],
-    public isProvided: boolean
+    public isProvided: boolean,
+    errors: string[]
   ) {
     this.arguments = (typeless.fieldDefinition.arguments || []).map(
       argumentDefinition => new ArgumentDefinition(argumentDefinition)
@@ -134,14 +145,20 @@ export class ResolverDefinition implements Translatable {
           directive.arguments &&
           directive.arguments.length
       )
-      .map(key => (key.arguments![0].value as StringValueNode).value);
+      .map(key => key.arguments![0].value as StringValueNode);
+
+    const loc = requiresSelections[0]
+      ? requiresSelections[0].loc
+      : { start: 0, end: 0 };
 
     this.requires = new CompoundType(
       requiresSelections.flatMap(selectionString =>
-        parseSelections(selectionString)
+        parseSelections(selectionString.value)
       ),
       typeless.parent,
-      types
+      types,
+      [loc!.start, loc!.end],
+      errors
     );
   }
 

@@ -8,10 +8,10 @@ import {
 import { ScalarDefinition } from "./Scalars";
 import { UnionDefinition } from "./Unions";
 import { InputObjectDefinition } from "./InputObjects";
-import { Translatable } from "../Translators";
 
 export function sdlToIR(
-  sdl: DocumentNode
+  sdl: DocumentNode,
+  errors: string[]
 ): {
   topLevelDefinitions: [
     ObjectDefinition[],
@@ -80,7 +80,7 @@ export function sdlToIR(
 
   const providedFields = objectDefinitions
     .flatMap(def => def.resolvers)
-    .flatMap(resolver => resolver.getProvides(objectDefinitions));
+    .flatMap(resolver => resolver.getProvides(objectDefinitions, errors));
 
   return {
     topLevelDefinitions: [
@@ -89,7 +89,8 @@ export function sdlToIR(
           objectDefinitions,
           providedFields
             .filter(provided => provided.objectName === typeless.name)
-            .map(({ fieldName }) => fieldName)
+            .map(({ fieldName }) => fieldName),
+          errors
         )
       ),
       enumDefinitions,

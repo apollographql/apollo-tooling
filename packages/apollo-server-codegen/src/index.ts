@@ -1,6 +1,5 @@
 import "apollo-env";
-import { DocumentNode } from "graphql";
-import gql from "graphql-tag";
+import { DocumentNode, parse } from "graphql";
 import { sdlToIR } from "./IR";
 import {
   Translator,
@@ -22,8 +21,12 @@ export const translate = (
   language: Language,
   options: TranslatorOptions = {}
 ) => {
-  const docNode: DocumentNode = typeof sdl === "string" ? gql(sdl) : sdl;
-  const { topLevelDefinitions, operationNames } = sdlToIR(docNode);
+  const docNode: DocumentNode = typeof sdl === "string" ? parse(sdl) : sdl;
+  const errors: string[] = [];
+  const { topLevelDefinitions, operationNames } = sdlToIR(docNode, errors);
+  if (errors.length) {
+    throw Error(errors.join("\n"));
+  }
 
   const translator = new translatorForLanguage[language](
     Object.values(operationNames),

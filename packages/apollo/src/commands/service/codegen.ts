@@ -6,6 +6,8 @@ import chalk from "chalk";
 import prettier from "prettier";
 import { parse } from "recast/parsers/typescript";
 import { visit, types } from "recast";
+import lineColumn from "line-column";
+
 const { Identifier } = types.namedTypes;
 
 const namesMapping: Record<
@@ -94,8 +96,12 @@ export default class ServiceCodegen extends Command {
     try {
       await this.executeCodegen(inputPath, target, output, flags);
     } catch (e) {
-      console.error(chalk.red(e));
-      process.exit(1);
+      if (flags.watch) {
+        console.warn(e.message);
+      } else {
+        console.error(chalk.red(e));
+        process.exit(1);
+      }
     }
 
     if (flags.watch) {
@@ -105,8 +111,9 @@ export default class ServiceCodegen extends Command {
         try {
           await this.executeCodegen(inputPath, target, output, flags);
         } catch (e) {
-          this.warn(chalk.yellow("Unable to run codegen: " + e.message));
+          console.warn(e.message);
         }
+        this.log(`Watching for changes...`);
       });
     }
   }
@@ -129,20 +136,22 @@ export default class ServiceCodegen extends Command {
       switch (type) {
         case "javascript":
           const sdl = getGQLTagsFromSource(inputText);
-          if (!sdl)
+          if (!sdl.sdl)
             throw new Error(
               "Could not extract SDL from input file. Are you using `graphql-tag` as `gql`?"
             );
           return sdl;
         case "graphql":
-          return inputText;
+          return { sdl: inputText, loc: 0 };
         default:
           throw new Error(
             `Unknown input file type ${inputFileType}, supported file types are: .js(x), .ts(x), .gql, or .graphql`
           );
       }
     };
-    const sdl = getSDL();
+
+    const { sdl, loc } = getSDL();
+
     try {
       const translated = translate(sdl, target, {
         __experimentalInternalEnumValueSupport:
@@ -157,26 +166,57 @@ export default class ServiceCodegen extends Command {
 
       await new Promise(resolve => writeFile(output, formatted, resolve));
     } catch (e) {
-      if (e.message && e.message.includes("Syntax Error")) {
+      let message: string = e.message;
+
+      if (message && message.includes("Syntax Error")) {
         // error in gql parse. Are they maybe passing an introspection result?
-        e.message +=
+        message +=
           ".\nIs the input in SDL format?\nSee https://bit.ly/2SzrSMk for help with schema formats";
+      } else if (message && message.match(/\(\d+,\d+\).*/)) {
+        message = message
+          .split("\n")
+          .map(message => {
+            const finder = lineColumn(inputText);
+
+            const [_, start, end, text] = message.match(/\((\d+),(\d+)\)(.*)/)!;
+            const adjustedStart = finder.fromIndex(+loc + +start);
+            const adjustedEnd = finder.fromIndex(+loc + +end);
+            console.log(
+              loc,
+              start,
+              end,
+              loc + start,
+              loc + end,
+              adjustedStart,
+              adjustedEnd,
+              inputText
+            );
+            return `${path}:(${adjustedStart.line},${adjustedStart.col},${adjustedEnd.line},${adjustedEnd.col}) ${text}`;
+          })
+          .join("\n");
       }
-      throw e;
+      throw Error(message);
     }
   }
 }
 
 const getGQLTagsFromSource = (source: string) => {
+  const finder = lineColumn(source);
   let sdl = "";
+  let loc;
+
   visit(parse(source), {
     visitTaggedTemplateExpression(path) {
       this.traverse(path);
       const expr = path.node;
       if (Identifier.check(expr.tag) && expr.tag.name === "gql") {
+        loc = finder.toIndex(expr.loc!.start.line, expr.loc!.start.column) + 5; // 5 = offset from the gql tag to SDL
         expr.quasi.quasis.forEach(v => (sdl += v.value.raw));
       }
     }
   });
-  return sdl;
+
+  // @ts-ignore Says `loc` is used before defined, but it isn't.
+  return { sdl, loc };
+  // return sdl;
 };
