@@ -6,7 +6,10 @@ export interface InternalTranslatorOptions {
 
 export type TranslatorOptions = Partial<InternalTranslatorOptions>;
 
-// Each language Translator provides mechanisms for translating each IR component
+/**
+ * A Translator describes how to translate from the IR to a specific target language.
+ * Each target language implements a Translator, which describes how to translate each IR element into the language.
+ */
 export abstract class Translator {
   public options: InternalTranslatorOptions;
   constructor(protected rootTypes: string[], options: TranslatorOptions) {
@@ -100,12 +103,18 @@ export abstract class Translator {
 }
 
 /**
- * `Translatable` classes are those which represent a structure that is able to be directly translated to any target language.
+ * `Translatable` classes are those which represent a structure that is able to be directly translated to any of the target languages.
  *
- * They must implement a `translate(t: Translator)` method, which will generally simply call
- * `t.translateMyType(this)`, where `MyType` is whatever type is implementing `Translatable`.
+ * They must implement a `translate(t: Translator)` method, which will generally just call `t.translateThisType(this)`
  */
 export interface Translatable {
+  /**
+   * Translate this structure, given the provided translator. This should be a simple call to
+   * ```ts
+   * t.translateMyThing(this)
+   * ```
+   * Where "translateMyThing" is a function specific to this particular structure, and will be implemented on each language's translator for each type of structure
+   */
   translate(t: Translator): string | undefined;
 }
 
