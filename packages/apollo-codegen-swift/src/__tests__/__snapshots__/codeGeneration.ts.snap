@@ -3,17 +3,17 @@
 exports[`Swift code generation #classDeclarationForOperation() should correctly escape a mutli-line string literal 1`] = `
 "public final class CreateReviewMutation: GraphQLMutation {
   /// mutation CreateReview($episode: Episode) {
-  ///   createReview(episode: $episode, review: {stars: 5, commentary: """
+  ///   createReview(episode: $episode, review: {stars: 5, commentary: \\"\\"\\"
   ///     Wow!
-  ///     
+  ///      I thought
   ///       This movie ROCKED!
-  ///   """}) {
+  ///   \\"\\"\\"}) {
   ///     stars
   ///     commentary
   ///   }
   /// }
   public let operationDefinition =
-    \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"\\\\\\"\\\\\\"\\\\n    Wow!\\\\n    \\\\n      This movie ROCKED!\\\\n  \\\\\\"\\\\\\"\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
+    \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"\\\\\\"\\\\\\"\\\\n    Wow!\\\\n     I thought\\\\n      This movie ROCKED!\\\\n  \\\\\\"\\\\\\"\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
 
   public let operationName = \\"CreateReview\\"
 
@@ -31,7 +31,7 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
     public static let possibleTypes = [\\"Mutation\\"]
 
     public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\\\n\\\\n  This movie ROCKED!\\"]], type: .object(CreateReview.selections)),
+      GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\\\n I thought\\\\n  This movie ROCKED!\\"]], type: .object(CreateReview.selections)),
     ]
 
     public private(set) var resultMap: ResultMap
@@ -98,17 +98,17 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
 exports[`Swift code generation #classDeclarationForOperation() should correctly escape a mutli-line string literal with backslashes 1`] = `
 "public final class CreateReviewMutation: GraphQLMutation {
   /// mutation CreateReview($episode: Episode) {
-  ///   createReview(episode: $episode, review: {stars: 5, commentary: """
+  ///   createReview(episode: $episode, review: {stars: 5, commentary: \\"\\"\\"
   ///     Wow!
-  ///     
+  ///      I thought
   ///       This movie \\\\ ROCKED!
-  ///   """}) {
+  ///   \\"\\"\\"}) {
   ///     stars
   ///     commentary
   ///   }
   /// }
   public let operationDefinition =
-    \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"\\\\\\"\\\\\\"\\\\n    Wow!\\\\n    \\\\n      This movie \\\\ ROCKED!\\\\n  \\\\\\"\\\\\\"\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
+    \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"\\\\\\"\\\\\\"\\\\n    Wow!\\\\n     I thought\\\\n      This movie \\\\ ROCKED!\\\\n  \\\\\\"\\\\\\"\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
 
   public let operationName = \\"CreateReview\\"
 
@@ -126,7 +126,7 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
     public static let possibleTypes = [\\"Mutation\\"]
 
     public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\\\n\\\\n  This movie \\\\\\\\ ROCKED!\\"]], type: .object(CreateReview.selections)),
+      GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\\\n I thought\\\\n  This movie \\\\\\\\ ROCKED!\\"]], type: .object(CreateReview.selections)),
     ]
 
     public private(set) var resultMap: ResultMap

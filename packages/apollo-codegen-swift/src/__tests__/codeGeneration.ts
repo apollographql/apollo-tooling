@@ -96,7 +96,7 @@ describe("Swift code generation", () => {
           createReview(episode: $episode, review: {stars: 5, commentary:
             """
             Wow!
-
+             I thought
               This movie ROCKED!
             """
           }) {
@@ -117,7 +117,7 @@ describe("Swift code generation", () => {
           createReview(episode: $episode, review: {stars: 5, commentary:
             """
             Wow!
-
+             I thought
               This movie \\ ROCKED!
             """
           }) {
