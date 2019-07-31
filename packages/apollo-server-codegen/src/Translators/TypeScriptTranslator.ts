@@ -144,7 +144,7 @@ type Index<Map extends Record<string, any>, Key extends string> = Map[Key] exten
   }
 
   /**
-   * Translate Basic objects (and interfaces) that are non-federated, with any number of interfaces. Example:
+   * Translate Basic object that are non-federated, with any number of interfaces. Example:
    *
    * GraphQL:
    * ```gql
