@@ -63,3 +63,5 @@ type ReviewRepresentation = { creationDate: string; author: { id: string } };
 to be created requires knowledge of the `Author` type, in particular that it's `id` field is type `string`.
 
 To solve this problem, the `IR` generator, [`getSDLFromIR`](/IR/index.md), works in two phases: it first compiles the SDL into a "typeless" representation, where the only basic type knowledge needed for the later construction of federation-aware types is created. Then, it injects that basic global type knowledge back into itself, to form the final, federation-aware `IR`.
+
+> Typically, `buildSchema` from `graphql-js` could be used to get the general type information, however in the case of Federation the SDL may be ill formed for `buildSchema` (undefined directives, extended classes that aren't otherwise defined, etc.), so that is not possible in this case.
