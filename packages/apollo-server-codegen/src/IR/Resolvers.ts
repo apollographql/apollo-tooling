@@ -33,9 +33,11 @@ export class ArgumentDefinition implements Translatable {
 }
 
 /**
- * Shell class to provide info on @provides directives until we can bootstrap with global type definitions.
- * Bootstrap into a `ResolverDefinition` by calling `applyGlobalTypeKnowledge` once all types are known.
- */
+ * `ResolverDefinition` without global knowledge of types,
+ * as such unable to properly translate because `@requires` types aren't known
+ *
+ * Convert to `ResolverDefinition` by providing array of all `TypelessObjectDefinition`'s to `applyGlobalTypeKnowledge`, along with whether this field can be resolved.
+ **/
 export class TypelessResolverDefinition {
   constructor(
     public fieldDefinition: FieldDefinitionNode,
@@ -82,6 +84,11 @@ export class TypelessResolverDefinition {
     return compounds.flatMap(allElements);
   }
 
+  /**
+   * @param types All types present in the schema
+   * @param isResolvable Whether this field can be resolved (not `external`, or `external` but used in a `key` or `provides`)
+   * @param errors Build errors will be pushed to this array in order to report all errors at once versus throwing on the first one.
+   */
   public applyGlobalTypeKnowledge(
     types: TypelessObjectDefinition[],
     isResolvable: boolean,

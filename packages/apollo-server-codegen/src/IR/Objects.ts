@@ -37,9 +37,12 @@ export class FieldDefinition implements Translatable {
   }
 }
 
-// ObjectDefinition without global knowledge of types,
-// as such unable to properly translate because `@key` types aren't known
-// Convert to ObjectDefinition by providing array of all TypelessObjectDefinition's to `applyGlobalTypeKnowledge`
+/**
+ * `ObjectDefinition` without global knowledge of types,
+ * as such unable to properly translate because `@key` types and `resolveableExternals` aren't known
+ *
+ * Convert to `ObjectDefinition` by providing array of all `TypelessObjectDefinition`'s to `applyGlobalTypeKnowledge`
+ **/
 export class TypelessObjectDefinition {
   public resolvers: TypelessResolverDefinition[];
   public fields: FieldDefinition[];
@@ -83,6 +86,11 @@ export class TypelessObjectDefinition {
       .flatMap(allElements);
   }
 
+  /**
+   * @param types All types present in the schema
+   * @param resolveableExternals A list of the fields on this object that may be resolved, even if they are marked `external` (fields used by a `key` or `requires` directive)
+   * @param errors Build errors will be pushed to this array in order to report all errors at once versus throwing on the first one.
+   */
   public applyGlobalTypeKnowledge(
     types: TypelessObjectDefinition[],
     resolveableExternals: string[],

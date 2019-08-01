@@ -9,6 +9,11 @@ import { ScalarDefinition } from "./Scalars";
 import { UnionDefinition } from "./Unions";
 import { InputObjectDefinition } from "./InputObjects";
 
+/**
+ * Given SDL as a Document Node, create IR nodes for all it's top-level definitions
+ *
+ * @param errors Build errors will be pushed to this array in order to report all errors at once versus throwing on the first one.
+ */
 export function sdlToIR(
   sdl: DocumentNode,
   errors: string[]
@@ -22,7 +27,7 @@ export function sdlToIR(
   ];
   operationNames: Record<string, string>;
 } {
-  const objectDefinitions: TypelessObjectDefinition[] = [];
+  const typelessObjectDefinitions: TypelessObjectDefinition[] = [];
   const enumDefinitions = [];
   const scalarDefinitions = [];
   const unionDefinitions = [];
@@ -34,6 +39,7 @@ export function sdlToIR(
     subscription: "Subscription"
   };
 
+  // Start by determining the root types, by checking each root level node if it is a SCHEMA_DEFINITION
   for (const definition of sdl.definitions) {
     if (definition.kind === Kind.SCHEMA_DEFINITION) {
       definition.operationTypes.forEach(opType => {
@@ -42,12 +48,13 @@ export function sdlToIR(
     }
   }
 
+  // Next, collect all the `typeless` IR objects, to for the typemap for later hydration
   for (const definition of sdl.definitions) {
     switch (definition.kind) {
       case Kind.OBJECT_TYPE_DEFINITION:
       case Kind.OBJECT_TYPE_EXTENSION:
       case Kind.INTERFACE_TYPE_DEFINITION:
-        objectDefinitions.push(
+        typelessObjectDefinitions.push(
           new TypelessObjectDefinition(
             definition,
             Object.values(operationNames)
@@ -78,27 +85,35 @@ export function sdlToIR(
     }
   }
 
-  const providedFields = objectDefinitions
+  // now, extract farious federation-specific features:
+  const providedFields = typelessObjectDefinitions
     .flatMap(def => def.resolvers)
-    .flatMap(resolver => resolver.getProvides(objectDefinitions, errors));
+    .flatMap(resolver =>
+      resolver.getProvides(typelessObjectDefinitions, errors)
+    );
 
-  const keyFields = objectDefinitions.flatMap(object =>
-    object.getKeys(objectDefinitions, errors)
+  const keyFields = typelessObjectDefinitions.flatMap(object =>
+    object.getKeys(typelessObjectDefinitions, errors)
   );
 
+  // `provided` fields and `key` fields may be resolved even when @external
   const resolveableExternals = [...providedFields, ...keyFields];
+
+  const typedObjectDefinitions = typelessObjectDefinitions.map(
+    typelessDefinition =>
+      typelessDefinition.applyGlobalTypeKnowledge(
+        typelessObjectDefinitions,
+        // filter for all the resolveableExternals on this object
+        resolveableExternals
+          .filter(provided => provided.objectName === typelessDefinition.name)
+          .map(({ fieldName }) => fieldName),
+        errors
+      )
+  );
 
   return {
     topLevelDefinitions: [
-      objectDefinitions.map(typeless =>
-        typeless.applyGlobalTypeKnowledge(
-          objectDefinitions,
-          resolveableExternals
-            .filter(provided => provided.objectName === typeless.name)
-            .map(({ fieldName }) => fieldName),
-          errors
-        )
-      ),
+      typedObjectDefinitions,
       enumDefinitions,
       scalarDefinitions,
       unionDefinitions,
@@ -107,6 +122,7 @@ export function sdlToIR(
     operationNames
   };
 }
+
 export { Description } from "./Descriptions";
 export { ArgumentDefinition, ResolverDefinition } from "./Resolvers";
 export { CompoundType, ListType, NamedType, NonNullType } from "./Types";
