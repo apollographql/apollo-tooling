@@ -21,9 +21,6 @@
     "url": "https://github.com/ApolloGraphQL/apollo-tooling/issues"
   },
   "homepage": "https://github.com/ApolloGraphQL/apollo-tooling#readme",
-  "dependencies": {
-    "graphql-tag": "^2.7.0"
-  },
   "peerDependencies": {
     "graphql": "^14.2.1"
   },
