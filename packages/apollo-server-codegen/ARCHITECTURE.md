@@ -38,7 +38,7 @@ This allows a `Translator`'s translation to recursively descend into the `IR` tr
 
 ### Generating IR
 
-Internally, the IR generation phase is a fair amount more complicated than existing projects, like as `graphql code generator` might need to be. This is because with the introduction of the Apollo Federation directives, especially `@key`,`@provides`, and `@requires`, the type generation requires global type knowledge and thuse cannot be completed in one pass. For instance, in the below SDL:
+Internally, the IR generation phase is a fair amount more complicated than existing projects, like as `graphql code generator` might need to be. This is because with the introduction of the Apollo Federation directives, especially `@key`,`@provides`, and `@requires`, the type generation requires global type knowledge and thus cannot be completed in one pass. For instance, in the below SDL:
 
 ```gql
 type Review @key(fields: "{creationDate author { id }}") {
@@ -62,4 +62,4 @@ type ReviewRepresentation = { creationDate: string; author: { id: string } };
 
 to be created requires knowledge of the `Author` type, in particular that it's `id` field is type `string`.
 
-To solve this problem, the `IR` generator, [`getSDLFromIR`](), works in two phases: it first compiles the SDL into a "typeless" representation, where the only basic type knowledge needed for the later construction of federation-aware types is created. Then, it injects that basic global type knowledge back into itself, to form the final, federation-aware `IR`.
+To solve this problem, the `IR` generator, [`getSDLFromIR`](/IR/index.md), works in two phases: it first compiles the SDL into a "typeless" representation, where the only basic type knowledge needed for the later construction of federation-aware types is created. Then, it injects that basic global type knowledge back into itself, to form the final, federation-aware `IR`.
