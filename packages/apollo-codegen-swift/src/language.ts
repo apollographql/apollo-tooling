@@ -41,7 +41,7 @@ export function escapedString(string: string) {
         return line.trim();
       })
       .map(line => {
-        line.replace(/"/g, '\\"');
+        return line.replace(/"/g, '\\"');
       })
       .join(" ");
   }
