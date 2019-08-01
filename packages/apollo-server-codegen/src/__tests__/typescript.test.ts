@@ -1,4 +1,3 @@
-import gql from "graphql-tag";
 import { translate } from "..";
 import { typeCheck } from "./codegen-test-utils";
 
@@ -88,7 +87,7 @@ describe("translating to typescript", () => {
   });
 
   it("translates descriptions into TSDoc", () => {
-    const typeDefs = gql`
+    const typeDefs = `#graphql
       """
       This it the base type
       """
@@ -266,7 +265,7 @@ describe("translating to typescript", () => {
   });
 
   it("translates enums to `any` when __experimentalInternalEnum support is enabled", () => {
-    const typeDefs = gql`
+    const typeDefs = `#graphql
       type Query {
         favoriteColor: AllowedColor # As a return value
         avatar(borderColor: AllowedColor): String # As an argument
@@ -305,7 +304,7 @@ describe("translating to typescript", () => {
   });
 
   it("translates custom scalars", () => {
-    const typeDefs = gql`
+    const typeDefs = `#graphql
       scalar JSON
 
       type Query {
