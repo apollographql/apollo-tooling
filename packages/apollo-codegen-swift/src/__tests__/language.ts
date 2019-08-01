@@ -124,14 +124,14 @@ describe("Swift code generation: Basic language constructs", () => {
     );
 
     expect(generator.output).toBe(stripIndent`
-      struct Hero: GraphQLFragment {
+      public struct Hero: GraphQLFragment {
         public var name: String
         public var age: Int
       }
     `);
   });
 
-  it(`should generate a namespaced fragment which is public for individual files`, () => {
+  it(`should generate a namespaced fragment which is not public for individual files`, () => {
     generator.structDeclaration(
       {
         structName: "Hero",
@@ -152,7 +152,7 @@ describe("Swift code generation: Basic language constructs", () => {
     );
 
     expect(generator.output).toBe(stripIndent`
-      public struct Hero: GraphQLFragment {
+      struct Hero: GraphQLFragment {
         public var name: String
         public var age: Int
       }

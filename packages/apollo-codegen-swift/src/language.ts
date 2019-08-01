@@ -153,7 +153,7 @@ export class SwiftGenerator<Context> extends CodeGenerator<
     const isRedundant =
       adoptedProtocols.includes("GraphQLFragment") &&
       !!namespace &&
-      !outputIndividualFiles;
+      outputIndividualFiles;
     const modifier = isRedundant ? "" : "public ";
 
     this.printOnNewline(
