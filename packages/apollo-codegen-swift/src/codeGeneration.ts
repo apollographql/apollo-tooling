@@ -47,6 +47,15 @@ export interface Options {
   customScalarsPrefix?: string;
 }
 
+/**
+ * The main method to call from outside this package to generate Swift code.
+ *
+ * @param context The `CompilerContext` to use to generate code.
+ * @param outputIndividualFiles Generates individual files per query/fragment if true,
+ *                              otherwise shoves everything into one giant file.
+ * @param only [optional] The path to a file which is the only file which should be regenerated.
+ *             If absent, all files will be regenerated.
+ */
 export function generateSource(
   context: CompilerContext,
   outputIndividualFiles: boolean,
@@ -137,6 +146,13 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printOnNewline("import Apollo");
   }
 
+  /**
+   * Generates the class declaration for an operation.
+   *
+   * @param operation The operaton to generate the class declaration for.
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   */
   classDeclarationForOperation(
     operation: Operation,
     outputIndividualFiles: boolean
@@ -277,6 +293,13 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     );
   }
 
+  /**
+   * Generates the struct declaration for a fragment.
+   *
+   * @param param0 The fragment name, selectionSet, and source to use to generate the struct
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   */
   structDeclarationForFragment(
     { fragmentName, selectionSet, source }: Fragment,
     outputIndividualFiles: boolean
@@ -301,6 +324,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     );
   }
 
+  /**
+   * Generates the struct declaration for a selection set.
+   *
+   * @param param0 The name, adoptedProtocols, and selectionSet to use to generate the struct
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   * @param before [optional] A function to execute before generating the struct declaration.
+   */
   structDeclarationForSelectionSet(
     {
       structName,
@@ -349,6 +380,15 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     );
   }
 
+  /**
+   * Generates the struct declaration for a variant
+   *
+   * @param param0 The structName, adoptedProtocols, variant, and typeCase to use to generate the struct
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   * @param before [optional] A function to execute before generating the struct declaration.
+   * @param after [optional] A function to execute after generating the struct declaration.
+   */
   structDeclarationForVariant(
     {
       structName,
@@ -912,6 +952,13 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printOnNewline("]");
   }
 
+  /**
+   * Generates a type declaration for the given `GraphQLType`
+   *
+   * @param type The graphQLType to generate a type declaration for.
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   */
   typeDeclarationForGraphQLType(
     type: GraphQLType,
     outputIndividualFiles: boolean
@@ -1005,6 +1052,13 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     });
   }
 
+  /**
+   * Generates a struct for a `GraphQLInputObjectType`.
+   *
+   * @param type The input type to generate code for
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   */
   structDeclarationForInputObjectType(
     type: GraphQLInputObjectType,
     outputIndividualFiles: boolean
