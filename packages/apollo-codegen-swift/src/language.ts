@@ -35,16 +35,15 @@ export function escapedString(string: string) {
     return string.replace(/"/g, '\\"').replace(/\n/g, "\\n");
   } else {
     // Strip unnecessary whitespace.
-    var lines = string
+    return string
       .split(/\n/g)
       .map(line => {
         return line.trim();
       })
       .map(line => {
-        return line.replace(/"/g, '\\"');
-      });
-
-    return lines.join(" ");
+        line.replace(/"/g, '\\"');
+      })
+      .join(" ");
   }
 }
 
