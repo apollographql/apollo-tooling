@@ -137,6 +137,14 @@ export class SwiftGenerator<Context> extends CodeGenerator<
     this.popScope();
   }
 
+  /**
+   * Generates the declaration for a struct
+   *
+   * @param param0 The struct name, description, adoptedProtocols, and namespace to use to generate the struct
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   * @param closure The closure to execute which generates the body of the struct.
+   */
   structDeclaration(
     {
       structName,
@@ -144,13 +152,16 @@ export class SwiftGenerator<Context> extends CodeGenerator<
       adoptedProtocols = [],
       namespace = undefined
     }: Struct,
+    outputIndividualFiles: boolean,
     closure: Function
   ) {
     this.printNewlineIfNeeded();
     this.comment(description);
 
     const isRedundant =
-      adoptedProtocols.includes("GraphQLFragment") && !!namespace;
+      adoptedProtocols.includes("GraphQLFragment") &&
+      !!namespace &&
+      outputIndividualFiles;
     const modifier = isRedundant ? "" : "public ";
 
     this.printOnNewline(

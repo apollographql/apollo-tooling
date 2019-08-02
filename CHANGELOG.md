@@ -12,6 +12,7 @@
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
   - Fix issue where type names were not being properly escaped [iOS 193](https://github.com/apollographql/apollo-ios/issues/193)
+  - Fix overcorrection on removing redundant modifiers [#1449](https://github.com/apollographql/apollo-tooling/issues/1449)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
