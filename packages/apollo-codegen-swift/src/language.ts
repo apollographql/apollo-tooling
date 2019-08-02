@@ -37,12 +37,8 @@ export function escapedString(string: string) {
     // Strip unnecessary whitespace.
     return string
       .split(/\n/g)
-      .map(line => {
-        return line.trim();
-      })
-      .map(line => {
-        return line.replace(/"/g, '\\"');
-      })
+      .map(line => line.trim())
+      .map(line => line.replace(/"/g, '\\"'))
       .join(" ");
   }
 }
