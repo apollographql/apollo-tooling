@@ -231,16 +231,6 @@ describe("translating to typescript", () => {
     `);
   });
 
-  const r = {
-    favoriteColor() {
-      return "PINK";
-    },
-    avatar(_, { borderColor }) {
-      let a: "PINK" = borderColor;
-      return "";
-    }
-  };
-
   it("translates enums", async () => {
     const typeDefs = `#graphql
       type Query {
