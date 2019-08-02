@@ -103,6 +103,13 @@ export abstract class ProjectCommand extends Command {
     this.ctx = { flags, args } as any;
 
     const config = await this.createConfig(flags);
+
+    if (!config) {
+      this.error("A config failed to load, so the command couldn't be run");
+      this.exit(1);
+      return;
+    }
+
     this.createService(config, flags);
     this.ctx.config = config;
 
@@ -125,6 +132,12 @@ export abstract class ProjectCommand extends Command {
       name: service,
       type: this.type
     });
+
+    if (!config) {
+      this.error("A config failed to load, so the command couldn't be run");
+      this.exit(1);
+      return;
+    }
 
     config.tag = flags.tag || config.tag || "current";
     //  flag overides
