@@ -13,9 +13,12 @@ import {
   Kind,
   NameNode,
   visit,
+  print,
   DirectiveNode,
   OperationDefinitionNode,
-  SelectionSetNode
+  SelectionSetNode,
+  FragmentDefinitionNode,
+  FragmentSpreadNode
 } from "graphql";
 
 export function isNode(maybeNode: any): maybeNode is ASTNode {
@@ -77,7 +80,10 @@ export function getFieldDef(
   return undefined;
 }
 
-export function removeDirectives(ast: ASTNode, directiveNames: string[]) {
+export function removeDirectives<AST extends ASTNode>(
+  ast: AST,
+  directiveNames: string[]
+): AST {
   if (!directiveNames.length) return ast;
   return visit(ast, {
     Directive(node: DirectiveNode): DirectiveNode | null {
@@ -87,60 +93,180 @@ export function removeDirectives(ast: ASTNode, directiveNames: string[]) {
   });
 }
 
-// remove fields where a given directive is found
+/**
+ * Recursively remove orphaned fragment definitions that have their names included in
+ * `fragmentNamesEligibleForRemoval`
+ *
+ * We expclitily require the fragments to be listed in `fragmentNamesEligibleForRemoval` so we only strip
+ * fragments that were orphaned by an operation, not fragments that started as oprhans
+ */
+function removeOrphanedFragmentDefinitions<AST extends ASTNode>(
+  ast: AST,
+  fragmentNamesEligibleForRemoval: Set<string>
+): AST {
+  /**
+   * Flag to keep track of removing any fragments
+   */
+  let anyFragmentsRemoved = false;
+
+  // Aquire names of all fragment spreads
+  const fragmentSpreadNodeNames = new Set<string>();
+  visit(ast, {
+    FragmentSpread(node) {
+      fragmentSpreadNodeNames.add(node.name.value);
+    }
+  });
+
+  // Strip unused fragment definitions. Flag if we've removed any so we know if we need to continue
+  // recursively checking.
+  ast = visit(ast, {
+    FragmentDefinition: {
+      enter(node) {
+        if (
+          fragmentNamesEligibleForRemoval.has(node.name.value) &&
+          !fragmentSpreadNodeNames.has(node.name.value)
+        ) {
+          // This definition is not used, remove it.
+          anyFragmentsRemoved = true;
+          return null;
+        }
+
+        return undefined;
+      }
+    },
+    FragmentSpread: {
+      leave(node) {
+        if (!fragmentSpreadNodeNames.has(node.name.value)) {
+          // This definition is not used, remove it.
+          anyFragmentsRemoved = true;
+          return null;
+        }
+
+        return undefined;
+      }
+    }
+  });
+
+  if (anyFragmentsRemoved) {
+    // We've removed fragments and might have orphaned more fragments, so recursively try to remove more
+    // orphaned fragments.
+    return removeOrphanedFragmentDefinitions(
+      ast,
+      fragmentNamesEligibleForRemoval
+    );
+  }
+
+  return ast;
+}
+
+/**
+ * Recursively remove nodes that have zero-length selection sets
+ */
+function removeNodesWithEmptySelectionSets<AST extends ASTNode>(ast: AST): AST {
+  /**
+   * Flag to know if we need to make another recursive pass
+   */
+  let anyNodesRemoved = false;
+
+  ast = visit(ast, {
+    enter(node) {
+      // If this node _has_ a `selectionSet` and it's zero-length, then remove it.
+      if (
+        "selectionSet" in node &&
+        node.selectionSet != null &&
+        node.selectionSet.selections.length === 0
+      ) {
+        anyNodesRemoved = true;
+        return null;
+      }
+
+      return undefined;
+    }
+  });
+
+  if (anyNodesRemoved) {
+    return removeNodesWithEmptySelectionSets(ast);
+  }
+
+  return ast;
+}
+
+/**
+ * Remove nodes from `ast` when they have a directive in `directiveNames`
+ * @param ast
+ * @param directiveNames
+ */
 export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
   ast: AST,
   directiveNames: string[]
 ): AST {
+  print;
   if (!directiveNames.length) return ast;
 
   /**
-   * List of names of all the `FragmentDefinition`s that we are going to keep.
+   * All fragment definition names we've removed due to a matching directive
    *
-   * We store the names that we want to _keep_ instead of fields we want to _delete_ because it's possible
-   * that we're removing a `Fragment` from a `@client` field that is used in a non-`@client` field (if it's a
-   * fragment on an interface, for example).
+   * We keep track of these so we can remove associated spreads
    */
-  const fragmentNamesToKeep = new Set<string>();
+  const removedFragmentDefinitionNames = new Set<string>();
 
+  /**
+   * All fragment spreads that have been removed
+   *
+   * We can only remove fragment definitions for fragment spreads that we've removed
+   */
+  const removedFragmentSpreadNames = new Set<string>();
+
+  // Remove all nodes with a matching directive in `directiveNames`. Also, remove any operations that now have
+  // no selection set
   ast = visit(ast, {
-    Field(node: FieldNode): FieldNode | null {
+    enter(node) {
+      // Strip all nodes that contain a directive we wish to remove
       if (
+        "directives" in node &&
         node.directives &&
-        node.directives.find(
-          directive =>
-            !!directiveNames.find(name => name === directive.name.value)
+        node.directives.find(directive =>
+          directiveNames.includes(directive.name.value)
         )
-      )
-        return null;
+      ) {
+        // If we're removing a fragment definition then save the name so we can remove anywhere this fragment
+        // was spread
+        if (node.kind === Kind.FRAGMENT_DEFINITION) {
+          removedFragmentDefinitionNames.add(node.name.value);
+        }
 
-      // We're keeping this field. Save the names of all fragment spreads that are in this field's selection
-      // set. This is intentionally _not_ recursive because descendents of this field may a directive that we
-      // want to remove; so we only know that this field's selection set is safe to keep.
-      if (node.selectionSet) {
-        node.selectionSet.selections.forEach(selection => {
-          if (selection.kind === "FragmentSpread") {
-            fragmentNamesToKeep.add(selection.name.value);
+        // All nested fragment spreads inside of this definition are now eligible to be removed
+        visit(ast, {
+          FragmentSpread(node) {
+            removedFragmentSpreadNames.add(node.name.value);
           }
         });
+
+        return null;
       }
 
-      return node;
-    },
-    OperationDefinition: {
-      leave(node: OperationDefinitionNode): OperationDefinitionNode | null {
-        if (!node.selectionSet.selections.length) return null;
-        return node;
-      }
+      return undefined;
     }
   });
 
-  // Remove all `FragmentDefinitions`s that have names _not_ stored in `fragmentNamesToKeep`.
-  return visit(ast, {
-    FragmentDefinition(node) {
-      return fragmentNamesToKeep.has(node.name.value) ? node : null;
+  // For all fragment definitions we removed, also remove the fragment spreads
+  ast = visit(ast, {
+    FragmentSpread(node) {
+      if (removedFragmentDefinitionNames.has(node.name.value)) {
+        removedFragmentSpreadNames.add(node.name.value);
+
+        return null;
+      }
+
+      return undefined;
     }
   });
+
+  // Remove all orphaned fragment definitions
+  ast = removeOrphanedFragmentDefinitions(ast, removedFragmentSpreadNames);
+
+  // Finally, remove nodes with empty selection sets
+  return removeNodesWithEmptySelectionSets(ast);
 }
 
 const typenameField = {

@@ -78,10 +78,6 @@ describe("withTypenameFieldAddedWhereNeeded", () => {
 });
 
 describe("removeDirectiveAnnotatedFields", () => {
-  it("should be a function", () => {
-    expect(typeof removeDirectiveAnnotatedFields).toBe("function");
-  });
-
   it("should remove fields with matching directives", () => {
     expect(
       print(
@@ -98,7 +94,7 @@ describe("removeDirectiveAnnotatedFields", () => {
         `);
   });
 
-  it("should remove object fields with matching directives", () => {
+  it("trim selections sets that are client only", () => {
     expect(
       print(
         removeDirectiveAnnotatedFields(
@@ -116,6 +112,83 @@ describe("removeDirectiveAnnotatedFields", () => {
     ).toMatchInlineSnapshot(`
       "query Query {
         fieldToKeep
+      }
+      "
+    `);
+  });
+
+  it("should remove fragments when a directive is used on a fragment spread", () => {
+    expect(
+      print(
+        removeDirectiveAnnotatedFields(
+          parse(`
+            {
+              me { name }
+              ...ClientFields @client
+            }
+            fragment ClientFields on Query {
+              hello
+            }
+          `),
+          ["client"]
+        )
+      )
+    ).toMatchInlineSnapshot(`
+        "{
+          me {
+            name
+          }
+        }
+        "
+    `);
+  });
+
+  it("should remove fragments when client directive is used inline", () => {
+    expect(
+      print(
+        removeDirectiveAnnotatedFields(
+          parse(`
+            {
+              me { name }
+              ... on Query @client {
+                hello
+              }
+            }
+          `),
+          ["client"]
+        )
+      )
+    ).toMatchInlineSnapshot(`
+            "{
+              me {
+                name
+              }
+            }
+            "
+        `);
+  });
+
+  it("should remove fragments when the client directive is on the definition", () => {
+    expect(
+      print(
+        removeDirectiveAnnotatedFields(
+          parse(`
+            fragment ClientObject on Query @client {
+              hello
+            }
+            {
+              me { name }
+              ... ClientObject
+            }
+          `),
+          ["client"]
+        )
+      )
+    ).toMatchInlineSnapshot(`
+      "{
+        me {
+          name
+        }
       }
       "
     `);
@@ -184,6 +257,152 @@ describe("removeDirectiveAnnotatedFields", () => {
             type
           }
           ...LaunchTile
+        }
+      }
+      "
+    `);
+  });
+
+  it("should recursively remove fragments that become unused when antecendant directives are removed", () => {
+    expect(
+      print(
+        removeDirectiveAnnotatedFields(
+          parse(`
+            fragment One on Node {
+              ...Two
+              user {
+                friends {
+                  name
+                  ...Two @client
+                }
+              }
+            }
+            fragment Two on Node {
+              id
+            }
+
+            query {
+              me {
+                ...One
+              }
+            }
+          `),
+          ["client"]
+        )
+      )
+    ).toMatchInlineSnapshot(`
+      "fragment One on Node {
+        ...Two
+        user {
+          friends {
+            name
+          }
+        }
+      }
+
+      fragment Two on Node {
+        id
+      }
+
+      {
+        me {
+          ...One
+        }
+      }
+      "
+    `);
+  });
+
+  it("should remove fragment spreads from @client fragment definitions", () => {
+    expect(
+      print(
+        removeDirectiveAnnotatedFields(
+          parse(`
+            fragment One on Node @client {
+              ...Two
+            }
+
+            fragment Two on Node {
+              id
+            }
+
+            query {
+              me {
+                name
+                ...One
+              }
+            }
+          `),
+          ["client"]
+        )
+      )
+    ).toMatchInlineSnapshot(`
+      "{
+        me {
+          name
+        }
+      }
+      "
+    `);
+  });
+
+  it("should remove all operations that have no selection set after fragments are removed", () => {
+    expect(
+      print(
+        removeDirectiveAnnotatedFields(
+          parse(`
+            fragment One on Node @client {
+              ...Two
+            }
+
+            fragment Two on Node {
+              id
+            }
+
+            {
+              name
+              me {
+                ...One
+              }
+            }
+          `),
+          ["client"]
+        )
+      )
+    ).toMatchInlineSnapshot(`
+      "{
+        name
+      }
+      "
+    `);
+  });
+
+  it("should not remove fragment definitions that weren't removed by `removeDirectiveAnnotatedFields`", () => {
+    expect(
+      print(
+        removeDirectiveAnnotatedFields(
+          parse(`
+            fragment One on Node {
+              id
+            }
+
+            {
+              me {
+                name
+              }
+            }
+          `),
+          ["client"]
+        )
+      )
+    ).toMatchInlineSnapshot(`
+      "fragment One on Node {
+        id
+      }
+
+      {
+        me {
+          name
         }
       }
       "
