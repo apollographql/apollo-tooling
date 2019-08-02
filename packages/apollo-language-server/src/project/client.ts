@@ -17,10 +17,8 @@ import {
   DocumentNode,
   FieldNode,
   ObjectTypeDefinitionNode,
-  ObjectTypeExtensionNode,
   isTypeExtensionNode,
-  GraphQLInputObjectType,
-  DefinitionNode
+  GraphQLInputObjectType
 } from "graphql";
 import { ValidationRule } from "graphql/validation/ValidationContext";
 
@@ -219,54 +217,8 @@ export class GraphQLClientProject extends GraphQLProject {
   get clientSchema(): DocumentNode {
     return {
       kind: Kind.DOCUMENT,
-      definitions: [
-        ...this.defaultClientDefinitions,
-        ...this.typeSystemDefinitionsAndExtensions
-      ]
+      definitions: this.typeSystemDefinitionsAndExtensions
     };
-  }
-
-  get defaultClientDefinitions(): readonly DefinitionNode[] {
-    return new GraphQLDocument(
-      new Source(`#graphql
-      """
-      Direct the client to resolve this field locally, either from the cache or local resolvers.
-      """
-      directive @client(
-        """
-        When true, the client will never use the cache for this value. See
-        https://www.apollographql.com/docs/react/essentials/local-state/#forcing-resolvers-with-clientalways-true
-        """
-        always: Boolean
-      ) on FIELD
-
-      """
-      Export this locally resolved field as a variable to be used in the remainder of this query. See
-      https://www.apollographql.com/docs/react/essentials/local-state/#using-client-fields-as-variables
-      """
-      directive @export(
-        """
-        The variable name to export this field as.
-        """
-        as: String!
-      ) on FIELD
-
-      """
-      Specify a custom store key for this result. See
-      https://www.apollographql.com/docs/react/advanced/caching/#the-connection-directive
-      """
-      directive @connection(
-        """
-        Specify the store key.
-        """
-        key: String!
-        """
-        An array of query argument names to include in the generated custom store key.
-        """
-        filter: [String!]
-      ) on FIELD
-    `)
-    ).ast!.definitions;
   }
 
   private addClientMetadataToSchemaNodes(schema: GraphQLSchema) {
