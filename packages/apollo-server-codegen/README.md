@@ -6,34 +6,46 @@ Currently, the only target language supported is TypeScript, but the project is 
 
 ## Translation Strategy (TypeScript)
 
-The main export of the generated file is the `Resolvers` type definition, which has a `TOptions` type parameter, which defaults to `{}`. It accepts four top level fields:
+The main export of the generated file is the `Resolvers` type definition, which has a `TOptions` type parameter which defaults to `{}`. It accepts four (optional) top level fields:
 
 - `Context`: This type is used as the `context` argument for all resolvers.
 - `InternalReps`: If you know a type in your schema will have a particular field internally, you can specify it here: `InternalReps: { User: { internalID: ID!}}`
 - `Enums`: Declare any [Internal Enum Values](https://www.apollographql.com/docs/graphql-tools/scalars/#internal-values) you use here.
 - `Scalars`: Declare the internal type of any [Custom Scalars](https://www.apollographql.com/docs/graphql-tools/scalars/#custom-scalars) you use here.
 
+In short:
+
 ```gql
+enum Color {
+  RED
+  GREEN
+}
+
+scalar Location
+
 type User {
-  me(token: String): String!
+  whereAmI(token: String, favColor: Color): Location!
 }
 ```
 
 ```ts
 const resolvers: Resolvers<{
-  Context: { datasources: MyAPI },
-  InternalReps: { User: { internalID: string } }
+  Context: { datasources: MyAPI };
+  InternalReps: { User: { internalID: string } };
+  Enums: { Color: "#0f0" | "#f00" };
+  Scalars: { Location: { lat: number; long: number } };
 }> = {
   User: {
     // All these destructurings will typecheck as expected!
-    name({ internalID }, { token }, { datasources }) {
-      ...
+    // favColor is type '#0f0' | '#f00'
+    whereAmI({ internalID }, { token, favColor }, { datasources }) {
+      return { lat: 0, long: 0 };
     }
   }
 };
 ```
 
-If you use the `rootValue` configuration option in Apollo Server, the typing for the `parent` property of `Query` and `Mutation` can be passed similarly, by using `{ Query: { ... }, Mutation: { ... }, ... }` as `TInternalReps`.
+If you use the `rootValue` configuration option in Apollo Server, the typing for the `parent` property of `Query` and `Mutation` can be passed similarly, by using `{ Query: { ... }, Mutation: { ... }, ... }` as `InternalReps`.
 
 ## Nullability
 
