@@ -29,7 +29,18 @@ export interface Property {
 }
 
 export function escapedString(string: string) {
-  return string.replace(/"/g, '\\"').replace(/\n/g, "\\n");
+  if (string.includes('"""')) {
+    // This includes a multi-line string literal, and we may strip out meaningful
+    // whitespace if we try to strip whitespace. Don't try.
+    return string.replace(/"/g, '\\"').replace(/\n/g, "\\n");
+  } else {
+    // Strip unnecessary whitespace.
+    return string
+      .split(/\n/g)
+      .map(line => line.trim())
+      .map(line => line.replace(/"/g, '\\"'))
+      .join(" ");
+  }
 }
 
 // prettier-ignore
@@ -69,6 +80,13 @@ export class SwiftGenerator<Context> extends CodeGenerator<
     comment &&
       comment.split("\n").forEach(line => {
         this.printOnNewline(`/// ${line.trim()}`);
+      });
+  }
+
+  commentWithoutTrimming(comment?: string) {
+    comment &&
+      comment.split("\n").forEach(line => {
+        this.printOnNewline(`/// ${line}`);
       });
   }
 
@@ -128,7 +146,8 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   ) {
     this.printNewlineIfNeeded();
     this.printOnNewline(
-      wrap("", join(modifiers, " "), " ") + `class ${className}`
+      wrap("", join(modifiers, " "), " ") +
+        `class ${escapeIdentifierIfNeeded(className)}`
     );
     this.print(wrap(": ", join([superClass, ...adoptedProtocols], ", ")));
     this.pushScope({ typeName: className });
@@ -136,6 +155,14 @@ export class SwiftGenerator<Context> extends CodeGenerator<
     this.popScope();
   }
 
+  /**
+   * Generates the declaration for a struct
+   *
+   * @param param0 The struct name, description, adoptedProtocols, and namespace to use to generate the struct
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   * @param closure The closure to execute which generates the body of the struct.
+   */
   structDeclaration(
     {
       structName,
@@ -143,13 +170,16 @@ export class SwiftGenerator<Context> extends CodeGenerator<
       adoptedProtocols = [],
       namespace = undefined
     }: Struct,
+    outputIndividualFiles: boolean,
     closure: Function
   ) {
     this.printNewlineIfNeeded();
     this.comment(description);
 
     const isRedundant =
-      adoptedProtocols.includes("GraphQLFragment") && !!namespace;
+      adoptedProtocols.includes("GraphQLFragment") &&
+      !!namespace &&
+      outputIndividualFiles;
     const modifier = isRedundant ? "" : "public ";
 
     this.printOnNewline(
@@ -164,7 +194,9 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   propertyDeclaration({ propertyName, typeName, description }: Property) {
     this.comment(description);
     this.printOnNewline(
-      `public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`
+      `public var ${escapeIdentifierIfNeeded(
+        propertyName
+      )}: ${escapeIdentifierIfNeeded(typeName)}`
     );
   }
 
@@ -186,7 +218,9 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   }
 
   protocolPropertyDeclaration({ propertyName, typeName }: Property) {
-    this.printOnNewline(`var ${propertyName}: ${typeName} { get }`);
+    this.printOnNewline(
+      `var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName} { get }`
+    );
   }
 
   protocolPropertyDeclarations(properties: Property[]) {

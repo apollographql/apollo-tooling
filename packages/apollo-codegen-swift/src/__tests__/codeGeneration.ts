@@ -49,7 +49,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["HeroName"]);
+      generator.classDeclarationForOperation(operations["HeroName"], false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -67,7 +67,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["Hero"]);
+      generator.classDeclarationForOperation(operations["Hero"], false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -85,7 +85,49 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["Hero"]);
+      generator.classDeclarationForOperation(operations["Hero"], false);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
+    it("should correctly escape a mutli-line string literal", () => {
+      const { operations } = compile(`
+        mutation CreateReview($episode: Episode) {
+          createReview(episode: $episode, review: {stars: 5, commentary:
+            """
+            Wow!
+             I thought
+              This movie ROCKED!
+            """
+          }) {
+            stars
+            commentary
+          }
+        }
+      `);
+
+      generator.classDeclarationForOperation(operations["CreateReview"]);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
+    it("should correctly escape a mutli-line string literal with backslashes", () => {
+      const { operations } = compile(`
+        mutation CreateReview($episode: Episode) {
+          createReview(episode: $episode, review: {stars: 5, commentary:
+            """
+            Wow!
+             I thought
+              This movie \\ ROCKED!
+            """
+          }) {
+            stars
+            commentary
+          }
+        }
+      `);
+
+      generator.classDeclarationForOperation(operations["CreateReview"], false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -105,7 +147,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["Hero"]);
+      generator.classDeclarationForOperation(operations["Hero"], false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -140,7 +182,7 @@ describe("Swift code generation", () => {
         { generateOperationIds: true, mergeInFieldsFromFragmentSpreads: true }
       );
 
-      generator.classDeclarationForOperation(operations["Hero"]);
+      generator.classDeclarationForOperation(operations["Hero"], false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -318,7 +360,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["HeroDetails"]);
+      generator.structDeclarationForFragment(fragments["HeroDetails"], false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -331,7 +373,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["DroidDetails"]);
+      generator.structDeclarationForFragment(fragments["DroidDetails"], false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -346,7 +388,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["HeroDetails"]);
+      generator.structDeclarationForFragment(fragments["HeroDetails"], false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -363,7 +405,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["HeroDetails"]);
+      generator.structDeclarationForFragment(fragments["HeroDetails"], false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -382,10 +424,13 @@ describe("Swift code generation", () => {
       const selectionSet = (operations["Hero"].selectionSet
         .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({
-        structName: "Hero",
-        selectionSet
-      });
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Hero",
+          selectionSet
+        },
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -402,10 +447,13 @@ describe("Swift code generation", () => {
       const selectionSet = (operations["Hero"].selectionSet
         .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({
-        structName: "Hero",
-        selectionSet
-      });
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Hero",
+          selectionSet
+        },
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -424,10 +472,13 @@ describe("Swift code generation", () => {
       const selectionSet = (operations["Hero"].selectionSet
         .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({
-        structName: "Hero",
-        selectionSet
-      });
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Hero",
+          selectionSet
+        },
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -449,10 +500,13 @@ describe("Swift code generation", () => {
       const selectionSet = (operations["Hero"].selectionSet
         .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({
-        structName: "Hero",
-        selectionSet
-      });
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Hero",
+          selectionSet
+        },
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -474,10 +528,13 @@ describe("Swift code generation", () => {
       const selectionSet = (operations["Hero"].selectionSet
         .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({
-        structName: "Hero",
-        selectionSet
-      });
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Hero",
+          selectionSet
+        },
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -497,10 +554,13 @@ describe("Swift code generation", () => {
       const selectionSet = (operations["Hero"].selectionSet
         .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({
-        structName: "Hero",
-        selectionSet
-      });
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Hero",
+          selectionSet
+        },
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -524,10 +584,13 @@ describe("Swift code generation", () => {
       const selectionSet = (operations["Hero"].selectionSet
         .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({
-        structName: "Hero",
-        selectionSet
-      });
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Hero",
+          selectionSet
+        },
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -544,10 +607,13 @@ describe("Swift code generation", () => {
       const selectionSet = (operations["Hero"].selectionSet
         .selections[0] as Field).selectionSet as SelectionSet;
 
-      generator.structDeclarationForSelectionSet({
-        structName: "Hero",
-        selectionSet
-      });
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Hero",
+          selectionSet
+        },
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -555,7 +621,7 @@ describe("Swift code generation", () => {
 
   describe("#typeDeclarationForGraphQLType()", () => {
     it("should generate an enum declaration for a GraphQLEnumType", () => {
-      generator.typeDeclarationForGraphQLType(schema.getType("Episode"));
+      generator.typeDeclarationForGraphQLType(schema.getType("Episode"), false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -566,13 +632,16 @@ describe("Swift code generation", () => {
         values: { PUBLIC: { value: "PUBLIC" }, PRIVATE: { value: "PRIVATE" } }
       });
 
-      generator.typeDeclarationForGraphQLType(albumPrivaciesEnum);
+      generator.typeDeclarationForGraphQLType(albumPrivaciesEnum, false);
 
       expect(generator.output).toMatchSnapshot();
     });
 
     it("should generate a struct declaration for a GraphQLInputObjectType", () => {
-      generator.typeDeclarationForGraphQLType(schema.getType("ReviewInput"));
+      generator.typeDeclarationForGraphQLType(
+        schema.getType("ReviewInput"),
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
