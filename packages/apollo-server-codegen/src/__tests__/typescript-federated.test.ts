@@ -17,10 +17,10 @@ describe("typescript - federated schemas", () => {
       const resolvers = `const r: ReviewResolver = { __resolveReference({ id }) { let a: number = id; return {} } }`;
       const diagnostics = await typeCheck(typeDefs, resolvers);
       expect(diagnostics).toMatchInlineSnapshot(`
-                Array [
-                  "Type 'string' is not assignable to type 'number'.",
-                ]
-            `);
+        Array [
+          "Type 'string' is not assignable to type 'number'.",
+        ]
+      `);
     });
 
     it("translates multiple @key directives into an OR of types", async () => {
@@ -35,11 +35,11 @@ describe("typescript - federated schemas", () => {
       const resolvers = `const r: ReviewResolver = { __resolveReference(rep) { rep.id; rep.author; return {}} }`;
       const diagnostics = await typeCheck(typeDefs, resolvers);
       expect(diagnostics).toMatchInlineSnapshot(`
-                Array [
-                  "Property 'id' does not exist on type '{ id: string; body: string | null | undefined; } | { author: string | null | undefined; }'.Property 'id' does not exist on type '{ author: string | null | undefined; }'.",
-                  "Property 'author' does not exist on type '{ id: string; body: string | null | undefined; } | { author: string | null | undefined; }'.Property 'author' does not exist on type '{ id: string; body: string | null | undefined; }'.",
-                ]
-            `);
+        Array [
+          "Property 'id' does not exist on type '{ id: string; body: string | null | undefined; } | { author: string | null | undefined; }'.Property 'id' does not exist on type '{ author: string | null | undefined; }'.",
+          "Property 'author' does not exist on type '{ id: string; body: string | null | undefined; } | { author: string | null | undefined; }'.Property 'author' does not exist on type '{ id: string; body: string | null | undefined; }'.",
+        ]
+      `);
     });
   });
 
@@ -62,7 +62,7 @@ describe("typescript - federated schemas", () => {
       const diagnostics = await typeCheck(typeDefs, resolvers);
       expect(diagnostics).toMatchInlineSnapshot(`
         Array [
-          "Type '() => number' is not assignable to type 'undefined'.The expected type comes from property 'numberOfReviews' which is declared here on type 'UserResolver<{}, {}, {}>'",
+          "Type '() => number' is not assignable to type 'undefined'.The expected type comes from property 'numberOfReviews' which is declared here on type 'UserResolver<{}>'",
         ]
       `);
     });
@@ -96,10 +96,10 @@ describe("typescript - federated schemas", () => {
       const resolvers = `const r: ProductResolver = {shippingEstimate: ({sku, size, weight, missing}) => ''}`;
       const diagnostics = await typeCheck(typeDefs, resolvers);
       expect(diagnostics).toMatchInlineSnapshot(`
-                Array [
-                  "Property 'missing' does not exist on type '{ sku: string; } & { size: number | null | undefined; weight: number | null | undefined; }'.",
-                ]
-            `);
+        Array [
+          "Property 'missing' does not exist on type '{ sku: string; } & { size: number | null | undefined; weight: number | null | undefined; }'.",
+        ]
+      `);
     });
   });
 
@@ -141,7 +141,7 @@ describe("typescript - federated schemas", () => {
       const diagnostics = await typeCheck(typeDefs, resolvers);
       expect(diagnostics).toMatchInlineSnapshot(`
         Array [
-          "Type '{ age: () => number; name: () => string; }' is not assignable to type 'UserResolver<{}, {}, {}>'.Types of property 'age' are incompatible.Type '() => number' is not assignable to type 'undefined'.The expected type comes from property 'User' which is declared here on type 'Resolvers<{}, {}, {}>'",
+          "Type '{ age: () => number; name: () => string; }' is not assignable to type 'UserResolver<{}>'.Types of property 'age' are incompatible.Type '() => number' is not assignable to type 'undefined'.The expected type comes from property 'User' which is declared here on type 'Resolvers<{}>'",
         ]
       `);
     });
