@@ -1150,7 +1150,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             this.withinBlock(() => {
               if (isOptional) {
                 this.printOnNewline(
-                  `return graphQLMap["${name}"] as? ${typeName}`
+                  `return graphQLMap["${name}"] as? ${typeName} ?? .none`
                 );
               } else {
                 this.printOnNewline(
