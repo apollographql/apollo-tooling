@@ -1068,7 +1068,9 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   /// The friends of the character, or an empty list if they have none
   public var friends: [Friend?]? {
     get {
-      return (resultMap[\\"friends\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [Friend?] in value.map { (value: ResultMap?) -> Friend? in value.flatMap { (value: ResultMap) -> Friend in Friend(unsafeResultMap: value) } } }
+      return (resultMap[\\"friends\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [Friend?] in value.map { (value: ResultMap?) -> Friend? in value.flatMap { (value: ResultMap) -> Friend in Friend(unsafeResultMap: value) } } }.filter({
+        Friend.possibleTypes.contains($0.__typename)
+      })
     }
     set {
       resultMap.updateValue(newValue.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }, forKey: \\"friends\\")
@@ -1220,7 +1222,9 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   /// The friends of the character, or an empty list if they have none
   public var friends: [Friend?]? {
     get {
-      return (resultMap[\\"friends\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [Friend?] in value.map { (value: ResultMap?) -> Friend? in value.flatMap { (value: ResultMap) -> Friend in Friend(unsafeResultMap: value) } } }
+      return (resultMap[\\"friends\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [Friend?] in value.map { (value: ResultMap?) -> Friend? in value.flatMap { (value: ResultMap) -> Friend in Friend(unsafeResultMap: value) } } }.filter({
+        Friend.possibleTypes.contains($0.__typename)
+      })
     }
     set {
       resultMap.updateValue(newValue.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }, forKey: \\"friends\\")
