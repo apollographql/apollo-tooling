@@ -240,7 +240,7 @@ type OptionTypes = { InternalReps?: Record<string, object>; Context?: Record<str
   public translateScalarDefinition(t: IR.ScalarDefinition): string {
     return (
       t.description.translate(this) +
-      `type ${t.name}<TOptions = {}> = Index<Index<TOptions,"Scalars", {}>, "${t.name}">`
+      `type ${t.name}<TOptions = {}> = Index<Index<TOptions,"Scalars", {}>, "${t.name}">\n`
     );
   }
 
