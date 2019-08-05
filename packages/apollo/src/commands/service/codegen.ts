@@ -53,10 +53,6 @@ export default class ServiceCodegen extends Command {
       char: "o",
       description: "Name of the file to write generated typings to",
       default: "resolver-types"
-    }),
-    experimentalInternalEnumValues: flags.boolean({
-      description:
-        "Use this flag if you use [internal enum values](https://www.apollographql.com/docs/apollo-server/features/scalars-enums/#internal-values) to silence warnings about incompatible enum types"
     })
   };
 
@@ -153,10 +149,7 @@ export default class ServiceCodegen extends Command {
     const { sdl, loc } = getSDL();
 
     try {
-      const translated = translate(sdl, target, {
-        __experimentalInternalEnumValueSupport:
-          flags.experimentalInternalEnumValues
-      });
+      const translated = translate(sdl, target);
 
       const prettierOptions = await prettier.resolveConfig(output);
       const formatted = prettier.format(translated, {

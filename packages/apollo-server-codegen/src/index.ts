@@ -1,11 +1,7 @@
 import "apollo-env";
 import { DocumentNode, parse } from "graphql";
 import { sdlToIR } from "./IR";
-import {
-  Translator,
-  TranslatorOptions,
-  TypeScriptTranslator
-} from "./Translators";
+import { Translator, TypeScriptTranslator } from "./Translators";
 
 export type Language = "typescript";
 
@@ -16,11 +12,7 @@ const translatorForLanguage: Record<
   typescript: TypeScriptTranslator
 };
 
-export const translate = (
-  sdl: string | DocumentNode,
-  language: Language,
-  options: TranslatorOptions = {}
-) => {
+export const translate = (sdl: string | DocumentNode, language: Language) => {
   const docNode: DocumentNode = typeof sdl === "string" ? parse(sdl) : sdl;
   const errors: string[] = [];
   const { topLevelDefinitions, operationNames } = sdlToIR(docNode, errors);
@@ -29,8 +21,7 @@ export const translate = (
   }
 
   const translator = new translatorForLanguage[language](
-    Object.values(operationNames),
-    options
+    Object.values(operationNames)
   );
   return translator.generate(...topLevelDefinitions);
 };

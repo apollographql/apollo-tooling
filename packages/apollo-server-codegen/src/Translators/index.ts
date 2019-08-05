@@ -1,23 +1,11 @@
 import * as IR from "../IR";
 
-export interface InternalTranslatorOptions {
-  __experimentalInternalEnumValueSupport: boolean;
-}
-
-export type TranslatorOptions = Partial<InternalTranslatorOptions>;
-
 /**
  * A Translator describes how to translate from the IR to a specific target language.
  * Each target language implements a Translator, which describes how to translate each IR element into the language.
  */
 export abstract class Translator {
-  public options: InternalTranslatorOptions;
-  constructor(protected rootTypes: string[], options: TranslatorOptions) {
-    const defaultOptions = {
-      __experimentalInternalEnumValueSupport: false
-    };
-    this.options = { ...defaultOptions, ...options };
-  }
+  constructor(protected rootTypes: string[]) {}
 
   /**
    * Entry point! Call the #.translate function of each member with `this`

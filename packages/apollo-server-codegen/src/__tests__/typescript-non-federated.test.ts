@@ -164,7 +164,7 @@ describe("typescript - non-federated schemas", () => {
     });
 
     // TODO when enums are better defined
-    it.skip("translates enums to `any` when __experimentalInternalEnum support is enabled", () => {
+    it.skip("translates enums with internal enum values", () => {
       const typeDefs = `#graphql
             type Query {
               favoriteColor: AllowedColor # As a return value
@@ -178,9 +178,7 @@ describe("typescript - non-federated schemas", () => {
             }
           `;
 
-      const typings = translate(typeDefs, "typescript", {
-        __experimentalInternalEnumValueSupport: true
-      });
+      const typings = translate(typeDefs, "typescript");
 
       expect(typings).toEqual(
         expect.stringContaining("export type AllowedColor = any")
