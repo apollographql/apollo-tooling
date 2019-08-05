@@ -6,7 +6,12 @@ Currently, the only target language supported is TypeScript, but the project is 
 
 ## Translation Strategy (TypeScript)
 
-The main export of the generated file is the `Resolvers` type definition, which has two type parameters, `TContext` and `TInternalReps`. Both default to `{}`. If provided, `TContext` will be the type of the `context` parameter in resolvers. `TInternalReps` is helpful when your internal objects use fields not present in the graphql schema:
+The main export of the generated file is the `Resolvers` type definition, which has a `TOptions` type parameter, which defaults to `{}`. It accepts four top level fields:
+
+- `Context`: This type is used as the `context` argument for all resolvers.
+- `InternalReps`: If you know a type in your schema will have a particular field internally, you can specify it here: `InternalReps: { User: { internalID: ID!}}`
+- `Enums`: Declare any [Internal Enum Values](https://www.apollographql.com/docs/graphql-tools/scalars/#internal-values) you use here.
+- `Scalars`: Declare the internal type of any [Custom Scalars](https://www.apollographql.com/docs/graphql-tools/scalars/#custom-scalars) you use here.
 
 ```gql
 type User {
@@ -15,10 +20,10 @@ type User {
 ```
 
 ```ts
-const resolvers: Resolvers<
-  { datasources: MyAPI },
-  { User: { internalID: string } }
-> = {
+const resolvers: Resolvers<{
+  Context: { datasources: MyAPI },
+  InternalReps: { User: { internalID: string } }
+}> = {
   User: {
     // All these destructurings will typecheck as expected!
     name({ internalID }, { token }, { datasources }) {
@@ -43,7 +48,7 @@ The base type simply contains all the specified fields, nullable as appropriate,
 The `[...]Representation` type defaults to `unknown` in non-federated contexts (see below for federation), and is passed as the `parent` property in resolver functions. If the user would like more type safety, they can pass an object to the second type parameter of the emitted `Resolvers` definition, specifying the object name, and the resolvers will have access to those properties when resolving values for that object:
 
 ```ts
-const resolvers: Resolvers<TContext, { User: {internalID: number} }> {
+const resolvers: Resolvers<{InternalReps: { User: {internalID: number} }}> {
   User: {
     name({ internalID }) => ... // id will be of type `number`
   }
@@ -53,7 +58,7 @@ const resolvers: Resolvers<TContext, { User: {internalID: number} }> {
 Alternatively, if the user would like more type freedom, they can pass `any` to the second type parameter of the emitted `Resolvers` definition, and the resolvers will use `any` as the type of their `parent` argument:
 
 ```ts
-const resolvers: Resolvers<TContext, any> {
+const resolvers: Resolvers<{InternalReps: any}> { // or {InternalReps: {User: any}}
   User: {
     name({ foo, bar }) => ... // this is allowed. `foo` and `bar` will be type `any`.
   }
@@ -62,11 +67,62 @@ const resolvers: Resolvers<TContext, any> {
 
 ### Scalars
 
-Scalars are simply converted to type `any`, though if there is sufficient community demand, these could be specified in a manner similar to the `TInternalReps` strategy above.
+Custom scalars can be used by declaring their internal type in the `Scalars` field of the resolver config object:
+
+```gql
+scalar JWT
+
+type Query {
+  me(token: JWT): User
+}
+```
+
+```ts
+const resolvers: Resolvers<{Scalars: {JWT: {header: {alg: string, type: string}}}> = {
+  Query: {
+    me(_, {header}) {
+      if (header.type === "HS256") {
+        // ...
+      }
+    }
+  }
+}
+```
+
+> You will still need to create your own implementation of the actual [`GraphQlScalarType`](https://graphql.org/graphql-js/type/#graphqlscalartype) object.
+
+If no declaration for a scalar type is provided in the options, it will default to `unknown`.
 
 ### Enums
 
-Enums are by default converted to a basic `or` of all their type options. It is possible to set the `__experimentalInternalEnumSupport` flag to remove type errors when using internal enum values, by simply treating enums as `any`. If there is sufficient community demand, these could be better typed in a manner similar to the `TInternalReps` strategy above.
+Enums are by default converted to a basic `or` of all their type options. If you are using [Internal Enum Values](), you can specify the possible internal values in the `Enums` field of the options object:
+
+```gql
+enum AllowedColor {
+  RED
+  GREEN
+  BLUE
+}
+
+type Query {
+  favoriteColor: AllowedColor
+}
+```
+
+```ts
+const resolvers: Resolvers<{Enums: {AllowedColor: '#f00' | '#0f0' | '#00f'}> = {
+  Query: {
+    favoriteColor(_) {
+      return 'RED' // err: 'RED' is not assignable to type "'#f00' | '#0f0' | '#00f'"
+    }
+  },
+  AllowedColor: {
+    RED: '#f00'
+    GREEN: '#0f0'
+    BLUE: '#0000ff' // err: '#0000ff' is not assignable to type "'#f00' | '#0f0' | '#00f'"
+  }
+}
+```
 
 ### Federation Directives
 
