@@ -1,7 +1,7 @@
 import { execute as linkExecute, toPromise, from } from "apollo-link";
 import { createHttpLink, HttpLink } from "apollo-link-http";
 import { ExecutionResult, parse } from "graphql";
-import { Agent } from "http";
+import { Agent as HTTPSAgent } from "https";
 import { fetch } from "apollo-env";
 import { RemoteServiceConfig } from "../../config";
 import { ApolloFederationInfoProvider, FederationInfo } from "./base";
@@ -16,9 +16,13 @@ export class EndpointFederationInfoProvider
     const { skipSSLValidation, url, headers } = this.config;
     const options: HttpLink.Options = {
       uri: url,
-      fetch,
-      ...(skipSSLValidation && { fetchOptions: { agent: new Agent() } })
+      fetch
     };
+    if (url.startsWith("https:") && skipSSLValidation) {
+      options.fetchOptions = {
+        agent: new HTTPSAgent({ rejectUnauthorized: false })
+      };
+    }
 
     const getFederationInfoQuery = `
       query getFederationInfo {
