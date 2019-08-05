@@ -11,12 +11,7 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Fix issue where type names were not being properly escaped [iOS 193](https://github.com/apollographql/apollo-ios/issues/193)
-  - Fix overcorrection on removing redundant modifiers [#1449](https://github.com/apollographql/apollo-tooling/issues/1449)
-  - Added `CaseIterable` conformance so all known cases can be easily iterated.
-  - Added comment to `operationDefinition` to show the original query
-  - Stripped excess whitespace out of `operationDefinition`
-  - Removed force-unwrap when the thing being unwrapped is a double optional
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
@@ -29,6 +24,16 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.17.0`, `apollo-codegen-swift@0.35.0`
+
+- `apollo-codegen-swift@0.35.0`
+  - Fix issue where type names were not being properly escaped [iOS 193](https://github.com/apollographql/apollo-ios/issues/193)
+  - Fix overcorrection on removing redundant modifiers [#1449](https://github.com/apollographql/apollo-tooling/issues/1449)
+  - Added `CaseIterable` conformance so all known cases can be easily iterated.
+  - Added comment to `operationDefinition` to show the original query
+  - Stripped excess whitespace out of `operationDefinition`
+  - Removed force-unwrap when the thing being unwrapped is a double optional
 
 ## `vscode-apollo@1.9.1`, `apollo-language-server@1.14.1`
 
