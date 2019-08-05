@@ -25,6 +25,11 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
+## `apollo@2.17.1`, `apollo-codegen-swift@0.35.1`
+
+- `apollo-codegen-swift@0.35.1`
+  - Fixes issue where a server adding a new type the client doesn't know about can cause a crash
+
 ## `apollo@2.17.0`, `apollo-codegen-swift@0.35.0`
 
 - `apollo-codegen-swift@0.35.0`
