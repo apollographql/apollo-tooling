@@ -168,35 +168,43 @@ describe("loadConfig", () => {
     });
   });
 
-  describe("errors", () => {
-    it("throws when config file is empty", done => {
+  fdescribe("errors", () => {
+    it("throws when config file is empty", async () => {
       writeFilesToDir(dir, { "my.config.js": `` });
 
-      return loadConfig({
+      const spy = jest.spyOn(console, "error");
+      // use this to keep the log quiet
+      spy.mockImplementation();
+
+      await loadConfig({
         configPath: dirPath,
         configFileName: "my.config.js"
-      }).catch(err => {
-        expect(err.message).toMatch(/.*A config file failed to load at.*/);
-        done();
       });
+
+      expect(
+        spy.mock.calls[0][0].includes("config file failed to load")
+      ).toBeTruthy();
     });
 
-    it("throws when explorer.search fails", done => {
+    it("throws when explorer.search fails", async () => {
       writeFilesToDir(dir, { "my.config.js": `* 98375^%*&^ its lit` });
 
-      return loadConfig({
+      const spy = jest.spyOn(console, "error");
+      // use this to keep the log quiet
+      spy.mockImplementation();
+
+      await loadConfig({
         configPath: dirPath,
         configFileName: "my.config.js"
-      }).catch(err => {
-        expect(err.message).toMatch(
-          /.*A config file failed to load with options.*/
-        );
-        done();
       });
+      expect(
+        spy.mock.calls[0][0].includes("config file failed to load")
+      ).toBeTruthy();
     });
 
     it("issues a deprecation warning when loading config from package.json", async () => {
-      jest.spyOn(global.console, "warn");
+      const spy = jest.spyOn(console, "warn");
+      spy.mockImplementation();
 
       writeFilesToDir(dir, {
         "package.json": `{"apollo":{"client": {"service": "hello"}} }`
@@ -207,37 +215,45 @@ describe("loadConfig", () => {
         configFileName: "package.json"
       });
 
-      expect(console.warn.mock.calls[0][0]).toMatchInlineSnapshot(
-        `"The \\"apollo\\" package.json configuration key will no longer be supported in Apollo v3. Please use the apollo.config.js file for Apollo project configuration. For more information, see: https://bit.ly/2ByILPj"`
-      );
+      expect(
+        spy.mock.calls[0][0].includes('The "apollo" package.json configuration')
+      ).toBeTruthy();
+
+      spy.mockRestore();
     });
 
-    it("throws if a config file was expected but not found", done => {
+    it("throws if a config file was expected but not found", async () => {
+      const spy = jest.spyOn(console, "error");
+      spy.mockImplementation();
+
       writeFilesToDir(dir, { "my.config.js": `module.exports = {}` });
 
-      return loadConfig({
+      await loadConfig({
         configFileName: "my.TYPO.js",
         requireConfig: true // this is what we're testing
-      }).catch(err => {
-        expect(err.message).toMatch(/.*No Apollo config found for project*/);
-        done();
       });
+
+      expect(spy.mock.calls[0][0].includes("No Apollo config")).toBeTruthy();
+      spy.mockRestore();
     });
 
-    it("throws if project type cant be resolved", () => {
+    it("throws if project type cant be resolved", async () => {
+      const spy = jest.spyOn(console, "error");
+      spy.mockImplementation();
+
       writeFilesToDir(dir, {
         "my.config.js": `module.exports = {}`
       });
 
-      const load = async () =>
-        await loadConfig({
-          configPath: dirPath,
-          configFileName: "my.config.js"
-        });
+      await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
 
-      return expect(load()).rejects.toMatchInlineSnapshot(
-        `[Error: Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj]`
-      );
+      expect(
+        spy.mock.calls[0][0].includes("Unable to resolve project type")
+      ).toBeTruthy();
+      spy.mockRestore();
     });
   });
 
