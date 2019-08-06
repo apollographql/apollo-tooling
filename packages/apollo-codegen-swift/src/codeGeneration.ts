@@ -730,10 +730,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
               )}?.filter`
             );
             this.withinBlock(
-              () =>
+              () => {
                 this.printOnNewline(
-                  `guard let type = $0 else { return false }; return ${structName}.possibleTypes.contains(type.__typename)`
-                ),
+                  `guard let type = $0 else { return false }`
+                );
+                this.printOnNewline(
+                  `return ${structName}.possibleTypes.contains(type.__typename)`
+                );
+              },
               "({",
               "})"
             );
