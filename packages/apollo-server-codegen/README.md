@@ -41,7 +41,9 @@ const resolvers: Resolvers<{
     whereAmI({ internalID }, { token, favColor }, { datasources }) {
       return { lat: 0, long: 0 };
     }
-  }
+  },
+  Location: {...},
+  Color: {RED: "#f00", GREEN: "#0f0"},
 };
 ```
 
