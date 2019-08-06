@@ -33,10 +33,10 @@ describe("typescript - non-federated schemas", () => {
 
     const diagnostics = await typeCheck(typeDefs, resolvers);
     expect(diagnostics).toMatchInlineSnapshot(`
-                        Array [
-                          "Type '{ firstName({ id }: { id: number; }, {}: {}, { getID }: { getID: (i: number) => number; }): number; }' is not assignable to type 'UserResolver<{ Context: { getID: (i: number) => number; }; InternalReps: { Query: { root: number; }; User: { id: number; }; }; }>'.Types of property 'firstName' are incompatible.Type '({ id }: { id: number; }, {}: {}, { getID }: { getID: (i: number) => number; }) => number' is not assignable to type '(parent: { id: number; }, args: {}, context: { getID: (i: number) => number; }, info: any) => PromiseOrValue<string | null | undefined>'.Type 'number' is not assignable to type 'PromiseOrValue<string | null | undefined>'.The expected type comes from property 'User' which is declared here on type 'Resolvers<{ Context: { getID: (i: number) => number; }; InternalReps: { Query: { root: number; }; User: { id: number; }; }; }>'",
-                        ]
-                `);
+      Array [
+        "Type '{ firstName({ id }: { id: number; }, {}: {}, { getID }: { getID: (i: number) => number; }): number; }' is not assignable to type 'UserResolver<{ Context: { getID: (i: number) => number; }; InternalReps: { Query: { root: number; }; User: { id: number; }; }; }>'.Types of property 'firstName' are incompatible.Type '({ id }: { id: number; }, {}: {}, { getID }: { getID: (i: number) => number; }) => number' is not assignable to type '(parent: { id: number; }, args: {}, context: { getID: (i: number) => number; }, info: any) => PromiseOrValue<string | null | undefined>'.Type 'number' is not assignable to type 'PromiseOrValue<string | null | undefined>'.The expected type comes from property 'User' which is declared here on type 'Resolvers<{ Context: { getID: (i: number) => number; }; InternalReps: { Query: { root: number; }; User: { id: number; }; }; }>'",
+      ]
+    `);
   });
 
   it("translates nonnulls and lists into ts equivalent", async () => {
@@ -62,12 +62,12 @@ describe("typescript - non-federated schemas", () => {
       }
     }`;
     expect(await typeCheck(typeDefs, nullResolvers)).toMatchInlineSnapshot(`
-                        Array [
-                          "Type 'null' is not assignable to type 'PromiseOrValue<number>'.The expected type comes from the return type of this signature.",
-                          "Type 'null' is not assignable to type 'PromiseOrValue<(number | null | undefined)[]>'.The expected type comes from the return type of this signature.",
-                          "Type 'null' is not assignable to type 'PromiseOrValue<number[]>'.The expected type comes from the return type of this signature.",
-                        ]
-                `);
+      Array [
+        "Type 'null' is not assignable to type 'PromiseOrValue<number>'.The expected type comes from the return type of this signature.",
+        "Type 'null' is not assignable to type 'PromiseOrValue<(number | null | undefined)[]>'.The expected type comes from the return type of this signature.",
+        "Type 'null' is not assignable to type 'PromiseOrValue<number[]>'.The expected type comes from the return type of this signature.",
+      ]
+    `);
 
     const listNullResolvers = `const r: Resolvers = {
       Query: {
@@ -78,11 +78,11 @@ describe("typescript - non-federated schemas", () => {
       }
     }`;
     expect(await typeCheck(typeDefs, listNullResolvers)).toMatchInlineSnapshot(`
-                        Array [
-                          "Type 'null[]' is not assignable to type 'PromiseOrValue<Nullable<number[]>>'.Type 'null[]' is not assignable to type 'number[]'.Type 'null' is not assignable to type 'number'.The expected type comes from the return type of this signature.",
-                          "Type 'null[]' is not assignable to type 'PromiseOrValue<number[]>'.Type 'null[]' is not assignable to type 'number[]'.The expected type comes from the return type of this signature.",
-                        ]
-                `);
+      Array [
+        "Type 'null[]' is not assignable to type 'PromiseOrValue<Nullable<number[]>>'.Type 'null[]' is not assignable to type 'number[]'.Type 'null' is not assignable to type 'number'.The expected type comes from the return type of this signature.",
+        "Type 'null[]' is not assignable to type 'PromiseOrValue<number[]>'.Type 'null[]' is not assignable to type 'number[]'.The expected type comes from the return type of this signature.",
+      ]
+    `);
   });
 
   it("translates descriptions into TSDoc", () => {
@@ -107,36 +107,36 @@ describe("typescript - non-federated schemas", () => {
       }
     `;
     expect(translate(typeDefs, "typescript")).toMatchInlineSnapshot(`
-                        "// This is a machine generated file.
-                        // Use \\"apollo service:codegen\\" to regenerate.
-                        type PromiseOrValue<T> = Promise<T> | T
-                        type Nullable<T> = T | null | undefined
-                        type Index<Map extends Record<string, any>, Key extends string, Else = unknown> = Map[Key] extends object | string | number ? Map[Key] : Else
-                        type OptionTypes = { InternalReps?: Record<string, object>; Context?: Record<string, any>; Scalars?: Record<string, any>; Enums?: Record<string, any>; }
+      "// This is a machine generated file.
+      // Use \\"apollo service:codegen\\" to regenerate.
+      type PromiseOrValue<T> = Promise<T> | T
+      type Nullable<T> = T | null | undefined
+      type Index<Map extends Record<string, any>, Key extends string, Else = unknown> = Map[Key] extends object | string | number ? Map[Key] : Else
+      type OptionTypes = { InternalReps?: Record<string, object>; Context?: Record<string, any>; Scalars?: Record<string, any>; Enums?: Record<string, any>; }
 
-                        export interface Resolvers<TOptions extends OptionTypes = {}> {
-                        Query: QueryResolver<TOptions>
-                        }
+      export interface Resolvers<TOptions extends OptionTypes = {}> {
+      Query: QueryResolver<TOptions>
+      }
 
-                        type QueryRepresentation<TOptions extends Record<string, any>> = Index<Index<TOptions, \\"InternalReps\\", {}>, \\"Query\\">
-                        /**
-                         * This it the base type
-                         */
-                        export interface QueryResolver<TOptions = {}> {
-                        /**
-                         * Current User
-                         */
-                        me: (parent: QueryRepresentation<TOptions>, args: {/**
-                         * Authorization
-                         */
-                        token?: string
-                        /**
-                         * Also auth
-                         */
-                        other?: string}, context: Index<TOptions, \\"Context\\">, info: any) => PromiseOrValue<Nullable<string>>
-                        }
-                        "
-                `);
+      type QueryRepresentation<TOptions extends Record<string, any>> = Index<Index<TOptions, \\"InternalReps\\", {}>, \\"Query\\">
+      /**
+       * This it the base type
+       */
+      export interface QueryResolver<TOptions = {}> {
+      /**
+       * Current User
+       */
+      me: (parent: QueryRepresentation<TOptions>, args: {/**
+       * Authorization
+       */
+      token?: string
+      /**
+       * Also auth
+       */
+      other?: string}, context: Index<TOptions, \\"Context\\">, info: any) => PromiseOrValue<Nullable<string>>
+      }
+      "
+    `);
   });
 
   describe("enums", () => {
@@ -156,11 +156,11 @@ describe("typescript - non-federated schemas", () => {
       const resolvers = `const r: QueryResolver = {favoriteColor() {return 'RED'}, avatar(_, {borderColor}) { let a: 'PINK' = borderColor; return a } }`;
       const diagnostics = await typeCheck(typeDefs, resolvers);
       expect(diagnostics).toMatchInlineSnapshot(`
-                                Array [
-                                  "Type '(_: unknown, { borderColor }: { borderColor?: \\"RED\\" | \\"GREEN\\" | \\"BLUE\\" | undefined; }) => \\"PINK\\"' is not assignable to type '(parent: unknown, args: { borderColor?: \\"RED\\" | \\"GREEN\\" | \\"BLUE\\" | undefined; }, context: unknown, info: any) => PromiseOrValue<Nullable<AllowedColorExternal>>'.Type '\\"PINK\\"' is not assignable to type 'PromiseOrValue<Nullable<AllowedColorExternal>>'.The expected type comes from property 'avatar' which is declared here on type 'QueryResolver<{}>'",
-                                  "Type '\\"RED\\" | \\"GREEN\\" | \\"BLUE\\" | undefined' is not assignable to type '\\"PINK\\"'.Type 'undefined' is not assignable to type '\\"PINK\\"'.",
-                                ]
-                        `);
+        Array [
+          "Type '(_: unknown, { borderColor }: { borderColor?: \\"RED\\" | \\"GREEN\\" | \\"BLUE\\" | undefined; }) => \\"PINK\\"' is not assignable to type '(parent: unknown, args: { borderColor?: \\"RED\\" | \\"GREEN\\" | \\"BLUE\\" | undefined; }, context: unknown, info: any) => PromiseOrValue<Nullable<AllowedColorExternal>>'.Type '\\"PINK\\"' is not assignable to type 'PromiseOrValue<Nullable<AllowedColorExternal>>'.The expected type comes from property 'avatar' which is declared here on type 'QueryResolver<{}>'",
+          "Type '\\"RED\\" | \\"GREEN\\" | \\"BLUE\\" | undefined' is not assignable to type '\\"PINK\\"'.Type 'undefined' is not assignable to type '\\"PINK\\"'.",
+        ]
+      `);
     });
 
     it("translates enums with internal enum values", async () => {
@@ -225,10 +225,10 @@ describe("typescript - non-federated schemas", () => {
 
     const diagnostics = await typeCheck(typeDefs, resolvers);
     expect(diagnostics).toMatchInlineSnapshot(`
-                        Array [
-                          "Type 'string' is not assignable to type 'number'.",
-                        ]
-                `);
+      Array [
+        "Type 'string' is not assignable to type 'number'.",
+      ]
+    `);
   });
 
   it("translates custom scalars", async () => {
@@ -252,11 +252,11 @@ describe("typescript - non-federated schemas", () => {
 
     const diagnostics = await typeCheck(typeDefs, resolvers);
     expect(diagnostics).toMatchInlineSnapshot(`
-                        Array [
-                          "Type '(_: unknown, { auth }: { auth: { me: number; you: number; }; }) => { me: number; you: string; }' is not assignable to type '(parent: unknown, args: { auth: { me: number; you: number; }; }, context: unknown, info: any) => PromiseOrValue<Nullable<{ me: number; you: number; }>>'.Type '{ me: number; you: string; }' is not assignable to type 'PromiseOrValue<Nullable<{ me: number; you: number; }>>'.Type '{ me: number; you: string; }' is not assignable to type '{ me: number; you: number; }'.Types of property 'you' are incompatible.Type 'string' is not assignable to type 'number'.The expected type comes from property 'me' which is declared here on type 'QueryResolver<{ Scalars: { MyScalar: { me: number; you: number; }; }; }>'",
-                          "Property 'them' does not exist on type '{ me: number; you: number; }'.",
-                        ]
-                `);
+      Array [
+        "Type '(_: unknown, { auth }: { auth: { me: number; you: number; }; }) => { me: number; you: string; }' is not assignable to type '(parent: unknown, args: { auth: { me: number; you: number; }; }, context: unknown, info: any) => PromiseOrValue<Nullable<{ me: number; you: number; }>>'.Type '{ me: number; you: string; }' is not assignable to type 'PromiseOrValue<Nullable<{ me: number; you: number; }>>'.Type '{ me: number; you: string; }' is not assignable to type '{ me: number; you: number; }'.Types of property 'you' are incompatible.Type 'string' is not assignable to type 'number'.The expected type comes from property 'me' which is declared here on type 'QueryResolver<{ Scalars: { MyScalar: { me: number; you: number; }; }; }>'",
+        "Property 'them' does not exist on type '{ me: number; you: number; }'.",
+      ]
+    `);
   });
 
   it("translates with differently named root operations", async () => {
@@ -281,10 +281,10 @@ describe("typescript - non-federated schemas", () => {
 
     const diagnostics = await typeCheck(typeDefs, resolvers);
     expect(diagnostics).toMatchInlineSnapshot(`
-                        Array [
-                          "Property 'field' is missing in type '{}' but required in type 'RQueryResolver<{}>'.'field' is declared here.,The expected type comes from property 'RQuery' which is declared here on type 'Resolvers<{}>'",
-                        ]
-                `);
+      Array [
+        "Property 'field' is missing in type '{}' but required in type 'RQueryResolver<{}>'.'field' is declared here.,The expected type comes from property 'RQuery' which is declared here on type 'Resolvers<{}>'",
+      ]
+    `);
   });
 
   it("understands default values", async () => {
@@ -305,9 +305,9 @@ describe("typescript - non-federated schemas", () => {
 
     const diagnostics = await typeCheck(typeDefs, resolvers);
     expect(diagnostics).toMatchInlineSnapshot(`
-                        Array [
-                          "Type 'number | undefined' is not assignable to type 'PromiseOrValue<number>'.Type 'undefined' is not assignable to type 'PromiseOrValue<number>'.The expected type comes from the return type of this signature.",
-                        ]
-                `);
+      Array [
+        "Type 'number | undefined' is not assignable to type 'PromiseOrValue<number>'.Type 'undefined' is not assignable to type 'PromiseOrValue<number>'.The expected type comes from the return type of this signature.",
+      ]
+    `);
   });
 });
