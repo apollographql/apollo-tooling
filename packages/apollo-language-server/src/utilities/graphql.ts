@@ -157,8 +157,26 @@ function removeOrphanedFragmentDefinitions<AST extends ASTNode>(
   });
 
   if (anyFragmentsRemoved) {
-    // We've removed fragments and might have orphaned more fragments, so recursively try to remove more
-    // orphaned fragments.
+    /* Handles the special case where a Fragment was not removed because it was not yet orphaned when being
+       `visit`ed. As an example:
+
+        ```jsx
+        fragment Two on Node {
+          id
+        }
+        fragment One on Query {
+          hero {
+            ...Two @client
+          }
+        }
+
+        { ...One }
+        ```
+
+        On the first visit, `Two` will not be removed. After `One` is removed, `Two` becomes orphaned. If any
+        nodes were removed on this pass; run another pass to see if there are more nodes that are now
+        orphaned.
+      */
     return removeOrphanedFragmentDefinitions(
       ast,
       fragmentNamesEligibleForRemoval
