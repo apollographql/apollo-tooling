@@ -10,7 +10,7 @@
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
-- `apollo-codegen-swift` 
+- `apollo-codegen-swift`
   - Revert changes from [#656](https://github.com/apollographql/apollo-tooling/pull/656) due to build issues not caught by tests.
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
@@ -21,10 +21,11 @@
 - `apollo-language-server`
   - Fix #735 caused #928 error implement [#1461](https://github.com/apollographql/apollo-tooling/pull/1461)
   - Fix dirname parsing for ts config files [#1463](https://github.com/apollographql/apollo-tooling/pull/1463)
+  - Add client schema support through autocomplete, hover information, validation rules, and code actions. [#1433](https://github.com/apollographql/apollo-tooling/pull/1433)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Improve the syntax highlighting of directives and their definitions. [#1433](https://github.com/apollographql/apollo-tooling/pull/1433)
 
 ## `apollo@2.17.1`, `apollo-codegen-swift@0.35.1`
 
