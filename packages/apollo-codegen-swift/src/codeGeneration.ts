@@ -727,12 +727,12 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                 expression,
                 "ResultMap",
                 structName
-              )}.filter`
+              )}?.filter`
             );
             this.withinBlock(
               () =>
                 this.printOnNewline(
-                  `${structName}.possibleTypes.contains($0.__typename)`
+                  `guard let type = $0 else { return false }; return ${structName}.possibleTypes.contains(type.__typename)`
                 ),
               "({",
               "})"
