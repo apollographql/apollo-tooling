@@ -147,7 +147,8 @@ export class ApolloConfig {
   }
 
   get configDirURI() {
-    return this.configURI && this.configURI.fsPath.includes(".js")
+    // if the filepath has a _file_ in it, then we get its dir
+    return this.configURI && this.configURI.fsPath.match(/\.(ts|js|json)$/i)
       ? URI.parse(dirname(this.configURI.fsPath))
       : this.configURI;
   }
