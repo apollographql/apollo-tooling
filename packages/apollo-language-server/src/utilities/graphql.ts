@@ -80,6 +80,12 @@ export function getFieldDef(
   return undefined;
 }
 
+/**
+ * Remove specific directives
+ *
+ * The `ast` param must extend ASTNode. We use a genetic to indicate that this function returns the same type
+ * of it's first parameter.
+ */
 export function removeDirectives<AST extends ASTNode>(
   ast: AST,
   directiveNames: string[]
@@ -99,6 +105,9 @@ export function removeDirectives<AST extends ASTNode>(
  *
  * We expclitily require the fragments to be listed in `fragmentNamesEligibleForRemoval` so we only strip
  * fragments that were orphaned by an operation, not fragments that started as oprhans
+ *
+ * The `ast` param must extend ASTNode. We use a genetic to indicate that this function returns the same type
+ * of it's first parameter.
  */
 function removeOrphanedFragmentDefinitions<AST extends ASTNode>(
   ast: AST,
@@ -161,6 +170,9 @@ function removeOrphanedFragmentDefinitions<AST extends ASTNode>(
 
 /**
  * Recursively remove nodes that have zero-length selection sets
+ *
+ * The `ast` param must extend ASTNode. We use a genetic to indicate that this function returns the same type
+ * of it's first parameter.
  */
 function removeNodesWithEmptySelectionSets<AST extends ASTNode>(ast: AST): AST {
   /**
@@ -184,17 +196,20 @@ function removeNodesWithEmptySelectionSets<AST extends ASTNode>(ast: AST): AST {
     }
   });
 
-  if (anyNodesRemoved) {
-    return removeNodesWithEmptySelectionSets(ast);
-  }
+  // if (anyNodesRemoved) {
+  //   console.group('check for children',);
+  //   return removeNodesWithEmptySelectionSets(ast);
+  //   console.groupEnd();
+  // }
 
   return ast;
 }
 
 /**
  * Remove nodes from `ast` when they have a directive in `directiveNames`
- * @param ast
- * @param directiveNames
+ *
+ * The `ast` param must extend ASTNode. We use a genetic to indicate that this function returns the same type
+ * of it's first parameter.
  */
 export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
   ast: AST,
