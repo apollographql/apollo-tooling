@@ -169,38 +169,22 @@ function removeOrphanedFragmentDefinitions<AST extends ASTNode>(
 }
 
 /**
- * Recursively remove nodes that have zero-length selection sets
+ * Remove nodes that have zero-length selection sets
  *
  * The `ast` param must extend ASTNode. We use a genetic to indicate that this function returns the same type
  * of it's first parameter.
  */
 function removeNodesWithEmptySelectionSets<AST extends ASTNode>(ast: AST): AST {
-  /**
-   * Flag to know if we need to make another recursive pass
-   */
-  let anyNodesRemoved = false;
-
   ast = visit(ast, {
     enter(node) {
       // If this node _has_ a `selectionSet` and it's zero-length, then remove it.
-      if (
-        "selectionSet" in node &&
+      return "selectionSet" in node &&
         node.selectionSet != null &&
         node.selectionSet.selections.length === 0
-      ) {
-        anyNodesRemoved = true;
-        return null;
-      }
-
-      return undefined;
+        ? null
+        : undefined;
     }
   });
-
-  // if (anyNodesRemoved) {
-  //   console.group('check for children',);
-  //   return removeNodesWithEmptySelectionSets(ast);
-  //   console.groupEnd();
-  // }
 
   return ast;
 }
