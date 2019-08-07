@@ -10,9 +10,8 @@
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
-- `apollo-codegen-swift`
-  - Fix issue where type names were not being properly escaped [iOS 193](https://github.com/apollographql/apollo-ios/issues/193)
-  - Fix overcorrection on removing redundant modifiers [#1449](https://github.com/apollographql/apollo-tooling/issues/1449)
+- `apollo-codegen-swift` 
+  - Revert changes from [#656](https://github.com/apollographql/apollo-tooling/pull/656) due to build issues not caught by tests.
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
@@ -20,11 +19,27 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Fix #735 caused #928 error implement [#928](https://github.com/apollographql/apollo-tooling/issues/928) [#1461](https://github.com/apollographql/apollo-tooling/pull/1461)
+  - Fix #735 caused #928 error implement [#1461](https://github.com/apollographql/apollo-tooling/pull/1461)
+  - Fix dirname parsing for ts config files [#1463](https://github.com/apollographql/apollo-tooling/pull/1463)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.17.1`, `apollo-codegen-swift@0.35.1`
+
+- `apollo-codegen-swift@0.35.1`
+  - Fixes issue where a server adding a new type the client doesn't know about can cause a crash
+
+## `apollo@2.17.0`, `apollo-codegen-swift@0.35.0`
+
+- `apollo-codegen-swift@0.35.0`
+  - Fix issue where type names were not being properly escaped [iOS 193](https://github.com/apollographql/apollo-ios/issues/193)
+  - Fix overcorrection on removing redundant modifiers [#1449](https://github.com/apollographql/apollo-tooling/issues/1449)
+  - Added `CaseIterable` conformance so all known cases can be easily iterated.
+  - Added comment to `operationDefinition` to show the original query
+  - Stripped excess whitespace out of `operationDefinition`
+  - Removed force-unwrap when the thing being unwrapped is a double optional
 
 ## `vscode-apollo@1.9.1`, `apollo-language-server@1.14.1`
 

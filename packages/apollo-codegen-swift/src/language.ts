@@ -29,7 +29,18 @@ export interface Property {
 }
 
 export function escapedString(string: string) {
-  return string.replace(/"/g, '\\"').replace(/\n/g, "\\n");
+  if (string.includes('"""')) {
+    // This includes a multi-line string literal, and we may strip out meaningful
+    // whitespace if we try to strip whitespace. Don't try.
+    return string.replace(/"/g, '\\"').replace(/\n/g, "\\n");
+  } else {
+    // Strip unnecessary whitespace.
+    return string
+      .split(/\n/g)
+      .map(line => line.trim())
+      .map(line => line.replace(/"/g, '\\"'))
+      .join(" ");
+  }
 }
 
 // prettier-ignore
@@ -69,6 +80,13 @@ export class SwiftGenerator<Context> extends CodeGenerator<
     comment &&
       comment.split("\n").forEach(line => {
         this.printOnNewline(`/// ${line.trim()}`);
+      });
+  }
+
+  commentWithoutTrimming(comment?: string) {
+    comment &&
+      comment.split("\n").forEach(line => {
+        this.printOnNewline(`/// ${line}`);
       });
   }
 

@@ -202,6 +202,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       },
       () => {
         if (source) {
+          this.commentWithoutTrimming(source);
           this.printOnNewline("public let operationDefinition =");
           this.withIndent(() => {
             this.multilineString(source);
@@ -315,6 +316,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       outputIndividualFiles,
       () => {
         if (source) {
+          this.commentWithoutTrimming(source);
           this.printOnNewline("public static let fragmentDefinition =");
           this.withIndent(() => {
             this.multilineString(source);
@@ -977,7 +979,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printNewlineIfNeeded();
     this.comment(description || undefined);
     this.printOnNewline(
-      `public enum ${name}: RawRepresentable, Equatable, Hashable, Apollo.JSONDecodable, Apollo.JSONEncodable`
+      `public enum ${name}: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable`
     );
     this.withinBlock(() => {
       this.printOnNewline("public typealias RawValue = String");
@@ -1048,6 +1050,21 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           );
           this.printOnNewline(`default: return false`);
         });
+      });
+
+      this.printNewlineIfNeeded();
+      this.printOnNewline(`public static var allCases: [${name}]`);
+      this.withinBlock(() => {
+        this.printOnNewline(`return [`);
+        values.forEach(value => {
+          const enumDotCaseName = escapeIdentifierIfNeeded(
+            this.helpers.enumDotCaseName(value.name)
+          );
+          this.withIndent(() => {
+            this.printOnNewline(`${enumDotCaseName},`);
+          });
+        });
+        this.printOnNewline(`]`);
       });
     });
   }
@@ -1120,7 +1137,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           name,
           propertyName,
           typeName,
-          description
+          description,
+          isOptional
         } of properties) {
           this.printNewlineIfNeeded();
           this.comment(description || undefined);
@@ -1130,9 +1148,15 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.withinBlock(() => {
             this.printOnNewline("get");
             this.withinBlock(() => {
-              this.printOnNewline(
-                `return graphQLMap["${name}"] as! ${typeName}`
-              );
+              if (isOptional) {
+                this.printOnNewline(
+                  `return graphQLMap["${name}"] as? ${typeName} ?? .none`
+                );
+              } else {
+                this.printOnNewline(
+                  `return graphQLMap["${name}"] as! ${typeName}`
+                );
+              }
             });
             this.printOnNewline("set");
             this.withinBlock(() => {
