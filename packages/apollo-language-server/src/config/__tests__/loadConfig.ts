@@ -181,9 +181,11 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
 
-      expect(
-        spy.mock.calls[0][0].includes("config file failed to load")
-      ).toBeTruthy();
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/config file failed to load/i)
+      );
+
+      spy.mockRestore();
     });
 
     it("throws when explorer.search fails", async () => {
@@ -197,9 +199,12 @@ describe("loadConfig", () => {
         configPath: dirPath,
         configFileName: "my.config.js"
       });
-      expect(
-        spy.mock.calls[0][0].includes("config file failed to load")
-      ).toBeTruthy();
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/config file failed to load/i)
+      );
+
+      spy.mockRestore();
     });
 
     it("issues a deprecation warning when loading config from package.json", async () => {
@@ -215,9 +220,9 @@ describe("loadConfig", () => {
         configFileName: "package.json"
       });
 
-      expect(
-        spy.mock.calls[0][0].includes('The "apollo" package.json configuration')
-      ).toBeTruthy();
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/The "apollo" package.json configuration/i)
+      );
 
       spy.mockRestore();
     });
@@ -233,7 +238,9 @@ describe("loadConfig", () => {
         requireConfig: true // this is what we're testing
       });
 
-      expect(spy.mock.calls[0][0].includes("No Apollo config")).toBeTruthy();
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/no apollo config/i)
+      );
       spy.mockRestore();
     });
 
@@ -250,9 +257,9 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
 
-      expect(
-        spy.mock.calls[0][0].includes("Unable to resolve project type")
-      ).toBeTruthy();
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/unable to resolve/i)
+      );
       spy.mockRestore();
     });
   });
