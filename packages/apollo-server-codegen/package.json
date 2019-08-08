@@ -17,6 +17,9 @@
   ],
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
+  "dependencies": {
+    "apollo-graphql": "file:../apollo-graphql"
+  },
   "bugs": {
     "url": "https://github.com/ApolloGraphQL/apollo-tooling/issues"
   },

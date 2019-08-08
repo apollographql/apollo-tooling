@@ -3,3 +3,4 @@ export * from "./GraphQLSchemaValidationError";
 export * from "./transformSchema";
 export * from "./resolverMap";
 export * from "./resolveObject";
+export * from "./parseSelectionSet";
