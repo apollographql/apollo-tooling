@@ -352,6 +352,11 @@ export class GraphQLClientProject extends GraphQLProject {
               [definition]
             );
           }
+          if (operations[definition.name.value]) {
+            console.warn(
+              `There are multiple definitions for the ${definition.name.value} operation. All operations in a project must have unique names. If generating types, only the types for the first definition found will be generated.`
+            );
+          }
           operations[definition.name.value] = definition;
         }
       }
