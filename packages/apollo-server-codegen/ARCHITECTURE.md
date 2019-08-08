@@ -24,7 +24,7 @@ The two layers interact via a [visitor pattern](https://en.wikipedia.org/wiki/Vi
   }
 ```
 
-Additionally, every node in the `IR` implements [`Translateable`](Translators/index.ts):
+Additionally, every node in the `IR` implements [`Translatable`](Translators/index.ts):
 
 ```ts
 export interface Translatable {
