@@ -4,11 +4,9 @@
 
 The code generator is a set of modules designed to accept a GraphQL schema, and from it generate type definitions in TypeScript format (other languages may be supported in the future).
 
-Similar to projects like [graphql code generator](https://graphql-code-generator.com), the generated type definitions describe both the type of the GraphQL objects represented in the schema, and the type of the `resolvers` function that an Apollo Server serving would require to serve the schema.
+Similar to projects like [graphql code generator](https://graphql-code-generator.com), the generated type definitions describe both the type of the GraphQL objects represented in the schema, and the type of the `resolvers` function that an Apollo Server serving would require to serve the schema. However, this project expands upon existing efforts by providing accurate type definitions for federated schemas, built using the Apollo Federation platform.
 
-However, this project expands upon existing efforts by providing accurate type definitions for federated schemas, built using the recently announced Apollo Federation platform.
-
-This package serves only as an API, to interface with it we suggest either the `Apollo CLI`, where it is available as `apollo server:codegen`, or the `[.....]` plugin we have built for `graphql-code-generator`.
+This package serves only as an API, to interface with it we suggest the `Apollo CLI`, where it is available as `apollo server:codegen`.
 
 ## Design
 
