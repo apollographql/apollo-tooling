@@ -129,30 +129,17 @@ function removeOrphanedFragmentDefinitions<AST extends ASTNode>(
   // Strip unused fragment definitions. Flag if we've removed any so we know if we need to continue
   // recursively checking.
   ast = visit(ast, {
-    FragmentDefinition: {
-      enter(node) {
-        if (
-          fragmentNamesEligibleForRemoval.has(node.name.value) &&
-          !fragmentSpreadNodeNames.has(node.name.value)
-        ) {
-          // This definition is not used, remove it.
-          anyFragmentsRemoved = true;
-          return null;
-        }
-
-        return undefined;
+    FragmentDefinition(node) {
+      if (
+        fragmentNamesEligibleForRemoval.has(node.name.value) &&
+        !fragmentSpreadNodeNames.has(node.name.value)
+      ) {
+        // This definition is not used, remove it.
+        anyFragmentsRemoved = true;
+        return null;
       }
-    },
-    FragmentSpread: {
-      leave(node) {
-        if (!fragmentSpreadNodeNames.has(node.name.value)) {
-          // This definition is not used, remove it.
-          anyFragmentsRemoved = true;
-          return null;
-        }
 
-        return undefined;
-      }
+      return undefined;
     }
   });
 
