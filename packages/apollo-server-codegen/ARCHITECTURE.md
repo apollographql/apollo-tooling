@@ -32,7 +32,7 @@ export interface Translatable {
 }
 ```
 
-This allows a `Translator`'s translation to recursively descend into the `IR` tree by simply calling `.translate(this)` on each IR node, and the node will handle delegation back to the `Translator`.
+This allows a `Translator`'s translation to recursively descend into the `IR` tree by simply calling `.translate(this)` on each IR node.
 
 ### Generating IR
 
