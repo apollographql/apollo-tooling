@@ -365,9 +365,7 @@ export class GraphQLLanguageProvider {
           ) as GraphQLNamedType | void;
           if (!type) break;
 
-          const content = [
-            [`\`\`\`graphql`, `${String(type)}`, `\`\`\``].join("\n")
-          ];
+          const content = [[`\`\`\`graphql`, `${type}`, `\`\`\``].join("\n")];
 
           if (type.description) {
             content.push(type.description);

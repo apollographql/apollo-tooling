@@ -62,7 +62,7 @@ export function diagnosticsFromError(
   error: GraphQLError,
   severity: DiagnosticSeverity,
   type: string
-): Diagnostic[] {
+): GraphQLDiagnostic[] {
   if (!error.nodes) {
     return [];
   }

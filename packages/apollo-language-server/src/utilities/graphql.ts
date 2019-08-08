@@ -163,7 +163,6 @@ export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
 }
 
 export interface ClientSchemaInfo {
-  isLocal?: boolean;
   localFields?: string[];
 }
 

@@ -17,10 +17,10 @@ import {
   DocumentNode,
   FieldNode,
   ObjectTypeDefinitionNode,
-  isTypeExtensionNode,
-  GraphQLInputObjectType
+  GraphQLObjectType
 } from "graphql";
 import { ValidationRule } from "graphql/validation/ValidationContext";
+import Maybe from "graphql/tsutils/Maybe";
 
 import { NotificationHandler, DiagnosticSeverity } from "vscode-languageserver";
 
@@ -38,7 +38,6 @@ import {
   ClientSchemaInfo
 } from "../utilities/graphql";
 import { defaultValidationRules } from "../errors/validation";
-import { GraphQLDocument } from "../document";
 
 import {
   collectExecutableDefinitionDiagnositics,
@@ -221,57 +220,28 @@ export class GraphQLClientProject extends GraphQLProject {
     };
   }
 
-  private addClientMetadataToSchemaNodes(schema: GraphQLSchema) {
-    const definitionsAndExtensions = this.typeSystemDefinitionsAndExtensions;
+  private addClientMetadataToSchemaNodes() {
+    const { schema, serviceSchema } = this;
+    if (!schema || !serviceSchema) return;
 
-    // Sort nodes so that definitions are first. This makes it easier to deal
-    // with extensions on client-defined types in the code below.
-    definitionsAndExtensions.sort((a, b) => {
-      const aIsExt = isTypeExtensionNode(a);
-      const bIsExt = isTypeExtensionNode(b);
+    visit(this.clientSchema, {
+      ObjectTypeExtension(node) {
+        const type = schema.getType(node.name.value) as Maybe<
+          GraphQLObjectType
+        >;
+        const { fields } = node;
+        if (!fields || !type) return;
 
-      if (aIsExt === bIsExt) return 0;
+        const localInfo: ClientSchemaInfo = type.clientSchema || {};
 
-      return aIsExt ? 1 : -1;
+        localInfo.localFields = [
+          ...(localInfo.localFields || []),
+          ...fields.map(field => field.name.value)
+        ];
+
+        type.clientSchema = localInfo;
+      }
     });
-
-    for (const defOrExtension of definitionsAndExtensions) {
-      if (
-        defOrExtension.kind === Kind.SCHEMA_DEFINITION ||
-        defOrExtension.kind === Kind.SCHEMA_EXTENSION
-      ) {
-        continue;
-      }
-
-      if (defOrExtension.kind === Kind.DIRECTIVE_DEFINITION) {
-        const directive = schema.getDirective(defOrExtension.name.value);
-        if (!directive) continue;
-        // TODO: add metadata to directive?
-        continue;
-      }
-
-      const type = schema.getType(defOrExtension.name.value);
-      if (!type || type instanceof GraphQLInputObjectType) continue;
-
-      const localInfo: ClientSchemaInfo = type.clientSchema || {
-        isLocal: !isTypeExtensionNode(defOrExtension)
-      };
-
-      switch (defOrExtension.kind) {
-        case Kind.OBJECT_TYPE_EXTENSION: {
-          const { fields } = defOrExtension;
-          if (fields) {
-            localInfo.localFields = [
-              ...(localInfo.localFields || []),
-              ...fields.map(field => field.name.value)
-            ];
-          }
-          break;
-        }
-      }
-
-      type.clientSchema = localInfo;
-    }
   }
 
   async validate() {
@@ -283,7 +253,7 @@ export class GraphQLClientProject extends GraphQLProject {
 
     try {
       this.schema = extendSchema(this.serviceSchema, this.clientSchema);
-      this.addClientMetadataToSchemaNodes(this.schema);
+      this.addClientMetadataToSchemaNodes();
     } catch (error) {
       if (error instanceof GraphQLError) {
         const uri = error.source && error.source.name;
