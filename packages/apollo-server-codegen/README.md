@@ -109,7 +109,7 @@ If no declaration for a scalar type is provided in the options, it will default 
 
 ### Enums
 
-Enums are by default converted to a basic `or` of all their type options. If you are using [Internal Enum Values](), you can specify the possible internal values in the `Enums` field of the options object:
+Enums are by default converted to a basic `or` of all their type options. If you are using [Internal Enum Values](https://www.apollographql.com/docs/apollo-server/features/scalars-enums/#internal-values), you can specify the possible internal values in the `Enums` field of the options object:
 
 ```gql
 enum AllowedColor {
