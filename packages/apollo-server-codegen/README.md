@@ -13,6 +13,8 @@ The main export of the generated file is the `Resolvers` type definition, which 
 - `Enums`: Declare any [Internal Enum Values](https://www.apollographql.com/docs/graphql-tools/scalars/#internal-values) you use here.
 - `Scalars`: Declare the internal type of any [Custom Scalars](https://www.apollographql.com/docs/graphql-tools/scalars/#custom-scalars) you use here.
 
+Additionally, a separate export is made for each type's resolvers (`UserResolvers<TOptions>`, `ProductResolvers<TOptions`, etc.) if the user prefers to define each type separately. In these cases, it can be helpful to create a type for the `TOptions` type so as to avoid rewriting it for every resolver.
+
 In short:
 
 ```gql
