@@ -2,6 +2,7 @@ import { flags } from "@oclif/command";
 import { table } from "heroku-cli-util";
 import { introspectionFromSchema, printSchema, GraphQLSchema } from "graphql";
 import chalk from "chalk";
+import envCi from "env-ci";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
 import {
@@ -281,7 +282,7 @@ export default class ServiceCheck extends ProjectCommand {
     json: flags.boolean({
       description:
         "Output result in json, which can then be parsed by CLI tools such as jq.",
-      exclusive: ["markdown", "compactOutput"]
+      exclusive: ["markdown"]
     }),
     localSchemaFile: flags.string({
       description:
@@ -289,17 +290,12 @@ export default class ServiceCheck extends ProjectCommand {
     }),
     markdown: flags.boolean({
       description: "Output result in markdown.",
-      exclusive: ["json", "compactOutput"]
+      exclusive: ["json"]
     }),
     serviceName: flags.string({
       description:
         "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service",
       dependsOn: ["endpoint"]
-    }),
-    compactOutput: flags.boolean({
-      description:
-        "Only output final results of tasks, do not print intermediate steps.",
-      exclusive: ["json", "markdown"]
     })
   };
 
@@ -311,6 +307,8 @@ export default class ServiceCheck extends ProjectCommand {
     const breakingChangesErrorMessage = "breaking changes found";
     const federatedServiceCompositionUnsuccessfulErrorMessage =
       "Federated service composition was unsuccessful. Please see the reasons below.";
+
+    const { isCi } = envCi();
 
     let schema: GraphQLSchema | undefined;
     try {
@@ -577,7 +575,7 @@ export default class ServiceCheck extends ProjectCommand {
           // the `this.log` output to `stdout`.
           //
           // @see https://github.com/SamVerschueren/listr#renderer
-          renderer: context.flags.compactOutput
+          renderer: isCi
             ? CompactRenderer
             : context.flags.markdown || context.flags.json
             ? "silent"
