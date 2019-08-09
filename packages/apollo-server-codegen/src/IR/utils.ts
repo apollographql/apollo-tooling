@@ -1,6 +1,7 @@
 import { DirectiveNode, StringValueNode } from "graphql";
 import { CompoundType } from "./Types";
 import { parseSelections } from "apollo-graphql";
+export { SELECTION_OFFSET } from "apollo-graphql";
 
 /**
  * Finds all directives of the specified kind and gathers their selection sets.

@@ -65,7 +65,6 @@ type OptionTypes = { InternalReps?: Record<string, object>; Context?: Record<str
     let name = (() => {
       switch (t.name) {
         case "Int":
-          return "number";
         case "Float":
           return "number";
         case "Boolean":
