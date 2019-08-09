@@ -69,7 +69,7 @@ const resolvers: Resolvers<{InternalReps: { User: {internalID: number} }}> {
 }
 ```
 
-Alternatively, if the user would like more type freedom, they can pass `any` to the second type parameter of the emitted `Resolvers` definition, and the resolvers will use `any` as the type of their `parent` argument:
+Alternatively, if the user would like more type freedom, they can pass `any` to the `InternalReps` field of the emitted `Resolvers` definition, and the resolvers will use `any` as the type of their `parent` argument:
 
 ```ts
 const resolvers: Resolvers<{InternalReps: any}> { // or {InternalReps: {User: any}}
