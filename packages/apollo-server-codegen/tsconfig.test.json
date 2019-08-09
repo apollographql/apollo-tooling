@@ -1,4 +1,5 @@
 {
   "extends": "../../tsconfig.test.base",
-  "include": ["**/__tests__/*"]
+  "include": ["**/__tests__/*"],
+  "references": [{ "path": "../apollo-graphql" }]
 }
