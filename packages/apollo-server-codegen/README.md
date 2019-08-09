@@ -176,7 +176,7 @@ type User @key(fields: "id") {
 
 #### @external, @provides
 
-Fields marked `@external` cannot have resolvers defined for them, unless they are also marked `@provided` by some other field:
+Fields marked `@external` cannot have resolvers defined for them, unless they are also marked `@provides` by some other field:
 
 ```gql
 type Review @key(...) {
