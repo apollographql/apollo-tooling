@@ -17,7 +17,9 @@ import {
   DocumentNode,
   FieldNode,
   ObjectTypeDefinitionNode,
-  GraphQLObjectType
+  GraphQLObjectType,
+  DefinitionNode,
+  DirectiveDefinitionNode
 } from "graphql";
 import { ValidationRule } from "graphql/validation/ValidationContext";
 import Maybe from "graphql/tsutils/Maybe";
@@ -28,6 +30,7 @@ import { rangeForASTNode } from "../utilities/source";
 import { formatMS } from "../format";
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
+import { apolloClientSchemaDocument } from "./defaultClientSchema";
 
 import { FieldStats, SchemaTag, ServiceID, ClientIdentity } from "../engine";
 import { ClientConfig } from "../config";
@@ -216,8 +219,43 @@ export class GraphQLClientProject extends GraphQLProject {
   get clientSchema(): DocumentNode {
     return {
       kind: Kind.DOCUMENT,
-      definitions: this.typeSystemDefinitionsAndExtensions
+      definitions: [
+        ...this.typeSystemDefinitionsAndExtensions,
+        ...this.missingApolloClientDirectives
+      ]
     };
+  }
+
+  get missingApolloClientDirectives(): readonly DefinitionNode[] {
+    const { serviceSchema } = this;
+
+    const serviceDirectives = serviceSchema
+      ? serviceSchema.getDirectives().map(directive => directive.name)
+      : [];
+
+    const clientDirectives = this.typeSystemDefinitionsAndExtensions
+      .filter(def => def.kind === Kind.DIRECTIVE_DEFINITION)
+      .map(def => (def as DirectiveDefinitionNode).name.value);
+
+    const existingDirectives = serviceDirectives.concat(clientDirectives);
+
+    const apolloAst = apolloClientSchemaDocument.ast;
+    if (!apolloAst) return [];
+
+    const apolloDirectives = apolloAst.definitions
+      .filter(def => def.kind === Kind.DIRECTIVE_DEFINITION)
+      .map(def => (def as DirectiveDefinitionNode).name.value);
+
+    // If there is overlap between existingDirectives and apolloDirectives,
+    // don't add apolloDirectives. This is in case someone is directly including
+    // the apollo directives or another framework's conflicting directives
+    for (const existingDirective of existingDirectives) {
+      if (apolloDirectives.includes(existingDirective)) {
+        return [];
+      }
+    }
+
+    return apolloAst.definitions;
   }
 
   private addClientMetadataToSchemaNodes() {
