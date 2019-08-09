@@ -153,8 +153,14 @@ describe("loadConfig", () => {
       writeFilesToDir(dir, {
         "package.json": `{"apollo":{"client": {"service": "hello"}} }`
       });
+
+      // silence the warning
+      const spy = jest.spyOn(console, "warn");
+      spy.mockImplementationOnce(() => {});
+
       const config = await loadConfig({ configPath: dirPath });
 
+      spy.mockRestore();
       expect(config.client.service).toEqual("hello");
     });
 
@@ -168,7 +174,7 @@ describe("loadConfig", () => {
     });
   });
 
-  fdescribe("errors", () => {
+  describe("errors", () => {
     it("throws when config file is empty", async () => {
       writeFilesToDir(dir, { "my.config.js": `` });
 
@@ -335,20 +341,6 @@ describe("loadConfig", () => {
       });
 
       expect(config.isService).toEqual(true);
-    });
-
-    it("throws if project type cant be inferred", done => {
-      writeFilesToDir(dir, {
-        "my.config.js": `module.exports = { engine: { endpoint: 'http://a.a' } }`
-      });
-
-      return loadConfig({
-        configPath: dirPath,
-        configFileName: "my.config.js"
-      }).catch(err => {
-        expect(err.message).toMatch(/.*Unable to resolve project type.*/);
-        done();
-      });
     });
   });
 
