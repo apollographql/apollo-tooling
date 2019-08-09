@@ -1,8 +1,11 @@
 import { window, workspace, OutputChannel } from "vscode";
 
-// for errors (and other logs in debug mode) we want to print a stack trace showing where they were thrown.
-// This uses an Error's stack trace, removes the three frames regarding this file (since they're useless) and
-// returns the rest of the trace.
+/**
+ * for errors (and other logs in debug mode) we want to print
+ * a stack trace showing where they were thrown. This uses an
+ * Error's stack trace, removes the three frames regarding
+ * this file (since they're useless) and returns the rest of the trace.
+ */
 const createAndTrimStackTrace = () => {
   let stack: string | undefined = new Error().stack;
   // remove the lines in the stack from _this_ function and the caller (in this file) and shorten the trace
@@ -15,7 +18,6 @@ const createAndTrimStackTrace = () => {
 };
 
 export class Debug {
-  private static calls: number = 0;
   private static outputConsole?: OutputChannel;
 
   public static SetOutputConsole(outputConsole: OutputChannel) {
@@ -44,6 +46,8 @@ export class Debug {
 
   /**
    * Displays and warning message prefixed with [WARN]
+   * Does not open the output window, since these
+   * are less urgent
    */
   public static warning(message: string, _stack?: string) {
     this.outputConsole && this.outputConsole.appendLine(`[WARN] ${message}`);
@@ -51,7 +55,6 @@ export class Debug {
 
   /**
    * TODO: enable error reporting and telemetry
-   * Displays and warning message prefixed with [WARN]
    */
   // public static sendErrorTelemetry(message: string) {
   //   if (Config.enableErrorTelemetry) {
