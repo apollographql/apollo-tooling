@@ -10,8 +10,8 @@
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
-- `apollo-codegen-swift` 
-  - Revert changes from [#656](https://github.com/apollographql/apollo-tooling/pull/656) due to build issues not caught by tests.
+- `apollo-codegen-swift`
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
@@ -25,6 +25,11 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo-codegen-swift@0.35.2`
+
+- `apollo-codegen-swift@0.35.2`
+  - Revert changes from [#656](https://github.com/apollographql/apollo-tooling/pull/656) due to build issues not caught by tests.
 
 ## `apollo@2.17.1`, `apollo-codegen-swift@0.35.1`
 
