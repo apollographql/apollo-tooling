@@ -28,7 +28,12 @@ export class Debug {
    * Displays an info message prefixed with [INFO]
    */
   public static info(message: string, _stack?: string) {
-    this.outputConsole && this.outputConsole.appendLine(`[INFO] ${message}`);
+    // we check for the output console in every function
+    // since these are static functions and can be
+    // theoretically called before the output console is set
+    // (although that shouldn't technically be possible)
+    if (!this.outputConsole) return;
+    this.outputConsole.appendLine(`[INFO] ${message}`);
   }
 
   /**
@@ -36,12 +41,11 @@ export class Debug {
    * Creates and shows a truncated stack trace
    */
   public static error(message: string, stack?: string) {
+    if (!this.outputConsole) return;
     const stackTrace = stack || createAndTrimStackTrace();
     Debug.showConsole();
-    this.outputConsole && this.outputConsole.appendLine(`[ERROR] ${message}`);
-    stackTrace &&
-      this.outputConsole &&
-      this.outputConsole.appendLine(stackTrace);
+    this.outputConsole.appendLine(`[ERROR] ${message}`);
+    stackTrace && this.outputConsole.appendLine(stackTrace);
   }
 
   /**
@@ -50,7 +54,8 @@ export class Debug {
    * are less urgent
    */
   public static warning(message: string, _stack?: string) {
-    this.outputConsole && this.outputConsole.appendLine(`[WARN] ${message}`);
+    if (!this.outputConsole) return;
+    this.outputConsole.appendLine(`[WARN] ${message}`);
   }
 
   /**
@@ -64,11 +69,13 @@ export class Debug {
   // }
 
   public static clear() {
-    this.outputConsole && this.outputConsole.clear();
-    this.outputConsole && this.outputConsole.dispose();
+    if (!this.outputConsole) return;
+    this.outputConsole.clear();
+    this.outputConsole.dispose();
   }
 
   private static showConsole() {
-    this.outputConsole && this.outputConsole.show();
+    if (!this.outputConsole) return;
+    this.outputConsole.show();
   }
 }

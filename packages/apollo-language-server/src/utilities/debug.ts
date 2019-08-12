@@ -18,7 +18,7 @@ const createAndTrimStackTrace = () => {
 };
 
 export class Debug {
-  public static connection?: IConnection;
+  private static connection?: IConnection;
 
   public static SetConnection(conn: IConnection) {
     Debug.connection = conn;
