@@ -83,7 +83,7 @@ export function getFieldDef(
 /**
  * Remove specific directives
  *
- * The `ast` param must extend ASTNode. We use a genetic to indicate that this function returns the same type
+ * The `ast` param must extend ASTNode. We use a generic to indicate that this function returns the same type
  * of it's first parameter.
  */
 export function removeDirectives<AST extends ASTNode>(
@@ -106,7 +106,7 @@ export function removeDirectives<AST extends ASTNode>(
  * We expclitily require the fragments to be listed in `fragmentNamesEligibleForRemoval` so we only strip
  * fragments that were orphaned by an operation, not fragments that started as oprhans
  *
- * The `ast` param must extend ASTNode. We use a genetic to indicate that this function returns the same type
+ * The `ast` param must extend ASTNode. We use a generic to indicate that this function returns the same type
  * of it's first parameter.
  */
 function removeOrphanedFragmentDefinitions<AST extends ASTNode>(
@@ -176,7 +176,7 @@ function removeOrphanedFragmentDefinitions<AST extends ASTNode>(
 /**
  * Remove nodes that have zero-length selection sets
  *
- * The `ast` param must extend ASTNode. We use a genetic to indicate that this function returns the same type
+ * The `ast` param must extend ASTNode. We use a generic to indicate that this function returns the same type
  * of it's first parameter.
  */
 function removeNodesWithEmptySelectionSets<AST extends ASTNode>(ast: AST): AST {
@@ -197,7 +197,7 @@ function removeNodesWithEmptySelectionSets<AST extends ASTNode>(ast: AST): AST {
 /**
  * Remove nodes from `ast` when they have a directive in `directiveNames`
  *
- * The `ast` param must extend ASTNode. We use a genetic to indicate that this function returns the same type
+ * The `ast` param must extend ASTNode. We use a generic to indicate that this function returns the same type
  * of it's first parameter.
  */
 export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
