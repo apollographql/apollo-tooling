@@ -15,7 +15,8 @@ import {
   visit,
   DirectiveNode,
   OperationDefinitionNode,
-  SelectionSetNode
+  SelectionSetNode,
+  DirectiveDefinitionNode
 } from "graphql";
 
 export function isNode(maybeNode: any): maybeNode is ASTNode {
@@ -28,6 +29,12 @@ export type NamedNode = ASTNode & {
 
 export function isNamedNode(node: ASTNode): node is NamedNode {
   return "name" in node;
+}
+
+export function isDirectiveDefinitionNode(
+  node: ASTNode
+): node is DirectiveDefinitionNode {
+  return node.kind === Kind.DIRECTIVE_DEFINITION;
 }
 
 export function highlightNodeForNode(node: ASTNode): ASTNode {

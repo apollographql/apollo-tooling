@@ -38,7 +38,8 @@ import {
   removeDirectives,
   removeDirectiveAnnotatedFields,
   withTypenameFieldAddedWhereNeeded,
-  ClientSchemaInfo
+  ClientSchemaInfo,
+  isDirectiveDefinitionNode
 } from "../utilities/graphql";
 import { defaultValidationRules } from "../errors/validation";
 
@@ -234,8 +235,8 @@ export class GraphQLClientProject extends GraphQLProject {
       : [];
 
     const clientDirectives = this.typeSystemDefinitionsAndExtensions
-      .filter(def => def.kind === Kind.DIRECTIVE_DEFINITION)
-      .map(def => (def as DirectiveDefinitionNode).name.value);
+      .filter(isDirectiveDefinitionNode)
+      .map(def => def.name.value);
 
     const existingDirectives = serviceDirectives.concat(clientDirectives);
 
@@ -243,8 +244,8 @@ export class GraphQLClientProject extends GraphQLProject {
     if (!apolloAst) return [];
 
     const apolloDirectives = apolloAst.definitions
-      .filter(def => def.kind === Kind.DIRECTIVE_DEFINITION)
-      .map(def => (def as DirectiveDefinitionNode).name.value);
+      .filter(isDirectiveDefinitionNode)
+      .map(def => def.name.value);
 
     // If there is overlap between existingDirectives and apolloDirectives,
     // don't add apolloDirectives. This is in case someone is directly including

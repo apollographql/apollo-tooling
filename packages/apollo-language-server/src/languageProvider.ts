@@ -135,6 +135,13 @@ export class GraphQLLanguageProvider {
       token.state.kind === "Invalid" ? token.state.prevState : token.state;
     const typeInfo = getTypeInfo(project.schema, token.state);
 
+    if (state.kind === "DirectiveLocation") {
+      return DirectiveLocations.map(location => ({
+        label: location,
+        kind: CompletionItemKind.Constant
+      }));
+    }
+
     const suggestions = getAutocompleteSuggestions(
       project.schema,
       document.source.body,
@@ -207,9 +214,7 @@ export class GraphQLLanguageProvider {
           return suggest;
         }
 
-        const requiredArgs = directive.args.filter(
-          a => a.type instanceof GraphQLNonNull
-        );
+        const requiredArgs = directive.args.filter(isNonNullType);
         const paramsSection =
           requiredArgs.length > 0
             ? `(${requiredArgs
@@ -250,13 +255,6 @@ export class GraphQLLanguageProvider {
           insertTextFormat: InsertTextFormat.Snippet
         };
       });
-    }
-
-    if (state.kind === "DirectiveLocation") {
-      return DirectiveLocations.map(location => ({
-        label: location,
-        kind: CompletionItemKind.Constant
-      }));
     }
 
     return suggestions;

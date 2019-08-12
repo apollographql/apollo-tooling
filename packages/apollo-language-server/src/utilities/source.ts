@@ -7,11 +7,9 @@ import {
   TypeInfo,
   GraphQLSchema,
   getVisitFn,
-  GraphQLType,
   Visitor,
   ASTKindToNode,
   FieldNode,
-  FragmentSpreadNode,
   InlineFragmentNode,
   FragmentDefinitionNode
 } from "graphql";
@@ -204,9 +202,11 @@ export function isFieldResolvedLocally(
       node.loc.start <= loc.start &&
       loc.end <= node.loc.end &&
       node.directives &&
-      node.directives.find(directive => directive.name.value === "client") !=
-        null
+      node.directives.some(directive => directive.name.value === "client")
     ) {
+      // If this node's location completely contains the target fieldNode's location,
+      // and this node has a @client directive, then the fieldNode must be resolved
+      // locally. We can then stop visiting by returning BREAK.
       underClientDirective = true;
       return BREAK;
     }
