@@ -233,19 +233,42 @@ export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
           directiveNames.includes(directive.name.value)
         )
       ) {
-        // If we're removing a fragment definition then save the name so we can remove anywhere this fragment
-        // was spread
+        /*
+        If we're removing a fragment definition then save the name so we can remove anywhere this fragment was
+        spread. This happens when a fragment definition itself has a matching directive on it, like this
+        (assuming that `@client` is a directive we want to remove):
+
+        ```graphql
+        fragment SomeFragmentDefinition on SomeType @client { fields }
+        ```
+        */
         if (node.kind === Kind.FRAGMENT_DEFINITION) {
           removedFragmentDefinitionNames.add(node.name.value);
         }
 
-        // All nested fragment spreads inside of this definition are now eligible to be removed
-        visit(ast, {
+        /*
+        This node is going to be removed. Mark all fragment spreads nested under this node as eligible for
+        removal from the document. For example, assuming `@client` is a directive we want to remove:
+
+        ```graphql
+        clientObject @client {
+          ...ClientObjectFragment
+        }
+        ```
+
+        We're going to remove `clientObject` here, which will also remove `ClientObjectFragment`. If there are
+        no other instances of `ClientObjectFragment`, we're goign to remove it's definition as well.
+
+        We only remove definitions for spreads we've removed so we don't remove fragment definitions that were
+        never spread; as this is the kind of error `client:check` is inteded to flag.
+        */
+        visit(node, {
           FragmentSpread(node) {
             removedFragmentSpreadNames.add(node.name.value);
           }
         });
 
+        // Remove this node
         return null;
       }
 
