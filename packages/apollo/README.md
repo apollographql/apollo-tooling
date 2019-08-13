@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.17.3 darwin-x64 node-v11.14.0
+apollo/2.17.4 darwin-x64 node-v8.15.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -79,7 +79,8 @@ OPTIONS
   --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
                                          queries *and* any client schema extensions
 
-  --key=key                              The API key for the Apollo Engine service
+  --key=key                              [default: service:engine:VCFWhxB5ESA0BNX5YfeP8A] The API key for the Apollo
+                                         Engine service
 
   --queries=queries                      Deprecated in favor of the includes flag
 
@@ -139,7 +140,8 @@ OPTIONS
   --includes=includes                        Glob of files to search for GraphQL operations. This should be used to find
                                              queries *and* any client schema extensions
 
-  --key=key                                  The API key for the Apollo Engine service
+  --key=key                                  [default: service:engine:VCFWhxB5ESA0BNX5YfeP8A] The API key for the Apollo
+                                             Engine service
 
   --localSchemaFile=localSchemaFile          Path to your local GraphQL schema file (introspection result or SDL)
 
@@ -217,7 +219,8 @@ OPTIONS
   --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
                                          queries *and* any client schema extensions
 
-  --key=key                              The API key for the Apollo Engine service
+  --key=key                              [default: service:engine:VCFWhxB5ESA0BNX5YfeP8A] The API key for the Apollo
+                                         Engine service
 
   --queries=queries                      Deprecated in favor of the includes flag
 
@@ -260,7 +263,8 @@ OPTIONS
   --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
                                          queries *and* any client schema extensions
 
-  --key=key                              The API key for the Apollo Engine service
+  --key=key                              [default: service:engine:VCFWhxB5ESA0BNX5YfeP8A] The API key for the Apollo
+                                         Engine service
 
   --queries=queries                      Deprecated in favor of the includes flag
 
@@ -300,7 +304,8 @@ OPTIONS
   --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
                                          queries *and* any client schema extensions
 
-  --key=key                              The API key for the Apollo Engine service
+  --key=key                              [default: service:engine:VCFWhxB5ESA0BNX5YfeP8A] The API key for the Apollo
+                                         Engine service
 
   --queries=queries                      Deprecated in favor of the includes flag
 
@@ -465,7 +470,8 @@ OPTIONS
   --json                                                         Output result in json, which can then be parsed by CLI
                                                                  tools such as jq.
 
-  --key=key                                                      The API key for the Apollo Engine service
+  --key=key                                                      [default: service:engine:VCFWhxB5ESA0BNX5YfeP8A] The
+                                                                 API key for the Apollo Engine service
 
   --localSchemaFile=localSchemaFile                              Path to your local GraphQL schema file (introspection
                                                                  result or SDL)
@@ -511,7 +517,7 @@ OPTIONS
   --header=header            Additional header to send to server for introspectionQuery. May be used multiple times to
                              add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag.
 
-  --key=key                  The API key for the Apollo Engine service
+  --key=key                  [default: service:engine:VCFWhxB5ESA0BNX5YfeP8A] The API key for the Apollo Engine service
 
   --serviceName=serviceName  (required) Provides the name of the implementing service for a federated graph
 ```
@@ -538,7 +544,7 @@ OPTIONS
   --header=header          Additional header to send to server for introspectionQuery. May be used multiple times to add
                            multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag.
 
-  --key=key                The API key for the Apollo Engine service
+  --key=key                [default: service:engine:VCFWhxB5ESA0BNX5YfeP8A] The API key for the Apollo Engine service
 
 ALIASES
   $ apollo schema:download
@@ -562,7 +568,7 @@ OPTIONS
   --header=header      Additional header to send to server for introspectionQuery. May be used multiple times to add
                        multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag.
 
-  --key=key            The API key for the Apollo Engine service
+  --key=key            [default: service:engine:VCFWhxB5ESA0BNX5YfeP8A] The API key for the Apollo Engine service
 ```
 
 _See code: [src/commands/service/list.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/list.ts)_
@@ -584,7 +590,8 @@ OPTIONS
                                      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the
                                      `--header` flag.
 
-  --key=key                          The API key for the Apollo Engine service
+  --key=key                          [default: service:engine:VCFWhxB5ESA0BNX5YfeP8A] The API key for the Apollo Engine
+                                     service
 
   --localSchemaFile=localSchemaFile  Path to your local GraphQL schema file (introspection result or SDL)
 
