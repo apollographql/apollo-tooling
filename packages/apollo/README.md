@@ -230,7 +230,7 @@ _See code: [src/commands/client/download-schema.ts](https://github.com/apollogra
 
 ## `apollo client:download-fragment-types OUTPUT`
 
-Download a schema from engine or a GraphQL endpoint.
+Download a fragment types from engine or a GraphQL endpoint.
 
 ```
 USAGE
