@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Add `client:download-fragment-types` command to download fragment types from engine to an output file
+  - Add `client:download-fragment-types` command to download fragment types from engine to an output file [#1469](https://github.com/apollographql/apollo-tooling/pull/1469)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
