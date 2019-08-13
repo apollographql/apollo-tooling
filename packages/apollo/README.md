@@ -35,6 +35,7 @@ USAGE
 * [`apollo client:check`](#apollo-clientcheck)
 * [`apollo client:codegen [OUTPUT]`](#apollo-clientcodegen-output)
 * [`apollo client:download-schema OUTPUT`](#apollo-clientdownload-schema-output)
+* [`apollo client:download-fragment-types OUTPUT`](#apollo-clientdownload-fragment-types-output)
 * [`apollo client:extract OUTPUT`](#apollo-clientextract-output)
 * [`apollo client:push`](#apollo-clientpush)
 * [`apollo help [COMMAND]`](#apollo-help-command)
@@ -101,11 +102,11 @@ ARGUMENTS
   OUTPUT
       Directory to which generated files will be written.
       - For TypeScript/Flow generators, this specifies a directory relative to each source file by default.
-      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a 
+      - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a
       file or directory (absolute or relative to the current working directory) to which:
          - a file will be written for each query (if "output" is a directory)
          - all generated types will be written
-      - For all other types, this defines a file (absolute or relative to the current working directory) to which all 
+      - For all other types, this defines a file (absolute or relative to the current working directory) to which all
       generated types are written.
 
 OPTIONS
@@ -226,6 +227,49 @@ OPTIONS
 ```
 
 _See code: [src/commands/client/download-schema.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/download-schema.ts)_
+
+## `apollo client:download-fragment-types OUTPUT`
+
+Download a schema from engine or a GraphQL endpoint.
+
+```
+USAGE
+  $ apollo client:download-fragment-types OUTPUT
+
+ARGUMENTS
+  OUTPUT  [default: fragment-types.json] Path to write the fragment types to
+
+OPTIONS
+  -c, --config=config                    Path to your Apollo config file
+  -t, --tag=tag                          The published service tag for this client
+  --clientName=clientName                Name of the client that the queries will be attached to
+
+  --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
+                                         clientName if not provided
+
+  --clientVersion=clientVersion          The version of the client that the queries will be attached to
+
+  --endpoint=endpoint                    The url of your service
+
+  --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
+                                         work in watch mode
+
+  --header=header                        Additional header to send to server for introspectionQuery. May be used
+                                         multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
+                                         if using the `--header` flag.
+
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
+                                         queries *and* any client schema extensions
+
+  --key=key                              The API key for the Apollo Engine service
+
+  --queries=queries                      Deprecated in favor of the includes flag
+
+  --tagName=tagName                      Name of the template literal tag used to identify template literals containing
+                                         GraphQL queries in Javascript/Typescript code
+```
+
+_See code: [src/commands/client/download-fragment-types.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/download-fragment-types.ts)_
 
 ## `apollo client:extract OUTPUT`
 
@@ -365,15 +409,15 @@ DESCRIPTION
 
   Installation of a user-installed plugin will override a core plugin.
 
-  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command 
-  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in 
+  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
+  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
   the CLI without the need to patch and update the whole CLI.
 
 ALIASES
   $ apollo plugins:add
 
 EXAMPLES
-  $ apollo plugins:install myplugin 
+  $ apollo plugins:install myplugin
   $ apollo plugins:install https://github.com/someuser/someplugin
   $ apollo plugins:install someuser/someplugin
 ```
@@ -398,7 +442,7 @@ OPTIONS
 DESCRIPTION
   Installation of a linked plugin will override a user-installed or core plugin.
 
-  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello' 
+  e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
   command will override the user-installed or core plugin implementation. This is useful for development work.
 
 EXAMPLE
