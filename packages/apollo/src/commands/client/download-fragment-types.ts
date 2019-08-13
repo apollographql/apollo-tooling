@@ -1,7 +1,9 @@
+import { flags } from "@oclif/command";
 import {
   introspectionFromSchema,
   IntrospectionInterfaceType,
-  IntrospectionUnionType
+  IntrospectionUnionType,
+  IntrospectionType
 } from "graphql";
 import { writeFileSync } from "fs";
 
@@ -49,6 +51,6 @@ export default class FragmentTypesDownload extends ClientCommand {
 }
 
 const isPossibleTypes = (
-  type: any
+  type: IntrospectionType
 ): type is IntrospectionInterfaceType | IntrospectionUnionType =>
-  type.possibleTypes !== null;
+  type.kind === "INTERFACE" || type.kind === "UNION";
