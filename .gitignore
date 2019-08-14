@@ -27,3 +27,6 @@ vscode-apollo-*.vsix
 # files generated from tests
 __tmp__*
 .vscode-test
+
+#idea folder
+.idea/

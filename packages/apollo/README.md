@@ -223,6 +223,8 @@ OPTIONS
 
   --tagName=tagName                      Name of the template literal tag used to identify template literals containing
                                          GraphQL queries in Javascript/Typescript code
+                                         
+  --target=format                        Format of schema to be downloaded. Currenlty supporting SDL & JSON
 ```
 
 _See code: [src/commands/client/download-schema.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/download-schema.ts)_
