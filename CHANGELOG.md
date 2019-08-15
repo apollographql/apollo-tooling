@@ -20,7 +20,7 @@
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
   - Add debugging util classes for better error/warning handling [#1429](https://github.com/apollographql/apollo-tooling/pull/1429)
-  - Add warning for duplicate client operation names [#1466](https://github.com/apollographql/apollo-tooling/pull/1466)
+  - Add error for duplicate client operation names [#1466](https://github.com/apollographql/apollo-tooling/pull/1466)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
