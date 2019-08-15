@@ -17,40 +17,69 @@ const createAndTrimStackTrace = () => {
     : stack;
 };
 
+type Logger = (message?: any) => void;
+
 export class Debug {
   private static connection?: IConnection;
+  private static infoLogger: Logger = message =>
+    console.log("[INFO] " + message);
+  private static warningLogger: Logger = message =>
+    console.warn("[WARNING] " + message);
+  private static errorLogger: Logger = message =>
+    console.error("[ERROR] " + message);
 
+  /**
+   * Setting a connection overrides the default info/warning/error
+   * loggers to pass a notification to the connection
+   */
   public static SetConnection(conn: IConnection) {
     Debug.connection = conn;
+    Debug.infoLogger = message =>
+      Debug.connection!.sendNotification("serverDebugMessage", {
+        type: "info",
+        message: message
+      });
+    Debug.warningLogger = message =>
+      Debug.connection!.sendNotification("serverDebugMessage", {
+        type: "warning",
+        message: message
+      });
+    Debug.errorLogger = message =>
+      Debug.connection!.sendNotification("serverDebugMessage", {
+        type: "error",
+        message: message
+      });
+  }
+
+  /**
+   * Allow callers to set their own error logging utils.
+   * These will default to console.log/warn/error
+   */
+  public static SetLoggers({
+    info,
+    warning,
+    error
+  }: {
+    info?: Logger;
+    warning?: Logger;
+    error?: Logger;
+  }) {
+    if (info) Debug.infoLogger = info;
+    if (warning) Debug.warningLogger = warning;
+    if (error) Debug.errorLogger = error;
   }
 
   public static info(message: string) {
-    Debug.connection
-      ? Debug.connection.sendNotification("serverDebugMessage", {
-          type: "info",
-          message: message
-        })
-      : console.log("[INFO] " + message);
+    Debug.infoLogger(message);
   }
 
   public static error(message: string) {
     const stack = createAndTrimStackTrace();
-    Debug.connection
-      ? Debug.connection.sendNotification("serverDebugMessage", {
-          type: "error",
-          message: message,
-          stack
-        })
-      : console.error(`[ERROR] ${message}\n${stack}`);
+    Debug.errorLogger(`${message}\n${stack}`);
   }
 
   public static warning(message: string) {
-    Debug.connection
-      ? Debug.connection.sendNotification("serverDebugMessage", {
-          type: "warning",
-          message: message
-        })
-      : console.warn("[WARNING] " + message);
+    Debug.warningLogger(message);
   }
 
   public static sendErrorTelemetry(message: string) {
