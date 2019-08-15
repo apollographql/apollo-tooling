@@ -19,11 +19,11 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Add debugging util classes for better error/warning handling [#1429](https://github.com/apollographql/apollo-tooling/pull/1429)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Add debugging util class for better logging in vs code [#1429](https://github.com/apollographql/apollo-tooling/pull/1429)
 
 ## `apollo-language-server@1.14.3`
 

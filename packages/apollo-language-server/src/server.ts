@@ -12,9 +12,10 @@ import { QuickPickItem } from "vscode";
 import { GraphQLWorkspace } from "./workspace";
 import { GraphQLLanguageProvider } from "./languageProvider";
 import { LanguageServerLoadingHandler } from "./loadingHandler";
-import { debounceHandler } from "./utilities";
+import { debounceHandler, Debug } from "./utilities";
 
 const connection = createConnection(ProposedFeatures.all);
+Debug.SetConnection(connection);
 
 let hasWorkspaceFolderCapability = false;
 
