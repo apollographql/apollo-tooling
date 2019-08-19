@@ -17,6 +17,7 @@ import {
   DirectiveNode,
   OperationDefinitionNode,
   SelectionSetNode,
+  DirectiveDefinitionNode,
   FragmentDefinitionNode,
   FragmentSpreadNode
 } from "graphql";
@@ -31,6 +32,12 @@ export type NamedNode = ASTNode & {
 
 export function isNamedNode(node: ASTNode): node is NamedNode {
   return "name" in node;
+}
+
+export function isDirectiveDefinitionNode(
+  node: ASTNode
+): node is DirectiveDefinitionNode {
+  return node.kind === Kind.DIRECTIVE_DEFINITION;
 }
 
 export function highlightNodeForNode(node: ASTNode): ASTNode {
@@ -342,4 +349,30 @@ export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
       }
     }
   });
+}
+
+export interface ClientSchemaInfo {
+  localFields?: string[];
+}
+
+declare module "graphql/type/definition" {
+  interface GraphQLScalarType {
+    clientSchema?: ClientSchemaInfo;
+  }
+
+  interface GraphQLObjectType {
+    clientSchema?: ClientSchemaInfo;
+  }
+
+  interface GraphQLInterfaceType {
+    clientSchema?: ClientSchemaInfo;
+  }
+
+  interface GraphQLUnionType {
+    clientSchema?: ClientSchemaInfo;
+  }
+
+  interface GraphQLEnumType {
+    clientSchema?: ClientSchemaInfo;
+  }
 }
