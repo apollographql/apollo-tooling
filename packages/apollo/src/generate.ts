@@ -39,7 +39,7 @@ export type GenerationOptions = CompilerOptions &
   LegacyCompilerOptions &
   FlowCompilerOptions & {
     globalTypesFile?: string;
-    fileExtension?: string;
+    tsFileExtension?: string;
     rootPath?: string;
   };
 
@@ -159,7 +159,7 @@ export default function generate(
         options.globalTypesFile ||
         path.join(
           outputPath,
-          `globalTypes.${options.fileExtension ||
+          `globalTypes.${options.tsFileExtension ||
             TYPESCRIPT_DEFAULT_FILE_EXTENSION}`
         );
       outFiles[globalSourcePath] = {
