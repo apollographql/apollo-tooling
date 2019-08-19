@@ -3,9 +3,9 @@
 ## Upcoming
 
 - `apollo`
-  - Add tsFileExtension flag to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
-  - Add tsFileExtension option to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
+  - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -13,18 +13,31 @@
 - `apollo-codegen-swift`
   - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
-  - Add tsFileExtension option to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
+  - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Add debugging util classes for better error/warning handling [#1429](https://github.com/apollographql/apollo-tooling/pull/1429)
-  - Add error for duplicate client operation names [#1466](https://github.com/apollographql/apollo-tooling/pull/1466)
-  - Add client schema support through autocomplete, hover information, validation rules, and code actions. [#1433](https://github.com/apollographql/apollo-tooling/pull/1433)
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
+  - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.18.0`, `apollo-language-server@1.15.0`, `apollo-codegen-core@0.35.0`, `apollo-codegen-typescript@0.35.0`, `vscode-apollo@1.10.0`
+
+- `apollo-codegen-core@0.35.0`
+  - Add tsFileExtension option to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
+- `apollo-codegen-typescript@0.35.0`
+  - Add tsFileExtension option to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
+- `apollo-language-server@1.15.0`
+  - Add debugging util classes for better error/warning handling [#1429](https://github.com/apollographql/apollo-tooling/pull/1429)
+  - Add error for duplicate client operation names [#1466](https://github.com/apollographql/apollo-tooling/pull/1466)
+  - Add client schema support through autocomplete, hover information, validation rules, and code actions. [#1433](https://github.com/apollographql/apollo-tooling/pull/1433)
+- `apollo@2.18.0`
+  - Add tsFileExtension flag to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
+- `vscode-apollo@1.10.0`
   - Improve the syntax highlighting of directives and their definitions. [#1433](https://github.com/apollographql/apollo-tooling/pull/1433)
   - Add debugging util class for better logging in vs code [#1429](https://github.com/apollographql/apollo-tooling/pull/1429)
 
