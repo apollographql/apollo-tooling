@@ -50,6 +50,9 @@ let mockedConsoleLogOriginal: Console["log"] | null = null;
  */
 let mockedConsoleLogValues: string[] | null = null;
 
+// Get original CI environment variables
+const { CI, CIRCLECI, GITHUB_ACTION, BUILD_BUILDURI } = process.env;
+
 // TODO: the following two functions are identical to the ones found in list.test.ts
 // we are choosing to duplicate them for now, because with a shared helper function,
 // jest overwrites console log output as the tests are run in parallel
@@ -369,6 +372,11 @@ describe("service:check", () => {
 
     nock.disableNetConnect();
 
+    delete process.env.CI;
+    delete process.env.CIRCLECI;
+    delete process.env.GITHUB_ACTION;
+    delete process.env.BUILD_BUILDURI;
+
     // Set the jest timeout to be longer than the default 5000ms to compensate for slow CI.
     jest.setTimeout(25000);
   });
@@ -382,6 +390,11 @@ describe("service:check", () => {
     // Clean up all network mocks and restore original functionality
     nock.cleanAll();
     nock.enableNetConnect();
+
+    process.env.CI = CI;
+    process.env.CIRCLECI = CIRCLECI;
+    process.env.GITHUB_ACTION = GITHUB_ACTION;
+    process.env.BUILD_BUILDURI = BUILD_BUILDURI;
   });
 
   // These are integration tests and not e2e tests because these don't actually hit the remote server.
@@ -393,6 +406,26 @@ describe("service:check", () => {
           mockCompositionFailure();
 
           expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`
+            ])
+          ).rejects.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("compacts output in CI", async () => {
+          captureApplicationOutput();
+          mockCompositionFailure();
+
+          expect.assertions(2);
+
+          process.env.CI = "true";
 
           await expect(
             ServiceCheck.run([
@@ -453,6 +486,26 @@ describe("service:check", () => {
           mockCompositionSuccess();
 
           expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`
+            ])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("compacts output in CI", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(2);
+
+          process.env.CI = "true";
 
           await expect(
             ServiceCheck.run([

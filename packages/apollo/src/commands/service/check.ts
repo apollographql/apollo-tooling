@@ -2,9 +2,14 @@ import { flags } from "@oclif/command";
 import { table } from "heroku-cli-util";
 import { introspectionFromSchema, printSchema, GraphQLSchema } from "graphql";
 import chalk from "chalk";
+import envCi from "env-ci";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
-import { validateHistoricParams, pluralize } from "../../utils";
+import {
+  validateHistoricParams,
+  pluralize,
+  CompactRenderer
+} from "../../utils";
 import {
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
@@ -303,6 +308,8 @@ export default class ServiceCheck extends ProjectCommand {
     const federatedServiceCompositionUnsuccessfulErrorMessage =
       "Federated service composition was unsuccessful. Please see the reasons below.";
 
+    const { isCi } = envCi();
+
     let schema: GraphQLSchema | undefined;
     try {
       await this.runTasks<TasksOutput>(
@@ -568,8 +575,11 @@ export default class ServiceCheck extends ProjectCommand {
           // the `this.log` output to `stdout`.
           //
           // @see https://github.com/SamVerschueren/listr#renderer
-          renderer:
-            context.flags.markdown || context.flags.json ? "silent" : "default"
+          renderer: isCi
+            ? CompactRenderer
+            : context.flags.markdown || context.flags.json
+            ? "silent"
+            : "default"
         })
       );
     } catch (error) {

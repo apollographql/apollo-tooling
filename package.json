@@ -48,6 +48,7 @@
     "apollo-env": "file:packages/apollo-env",
     "apollo-graphql": "file:packages/apollo-graphql",
     "apollo-language-server": "file:packages/apollo-language-server",
+    "env-ci": "^4.1.1",
     "vscode-apollo": "file:packages/vscode-apollo"
   },
   "devDependencies": {
