@@ -1,4 +1,8 @@
-import { GraphQLEnumType, GraphQLInputObjectType, GraphQLType } from "graphql";
+import {
+  GraphQLEnumType,
+  GraphQLInputObjectType,
+  GraphQLType
+} from "@apollo/graphql";
 
 import { CompilerOptions } from "apollo-codegen-core/lib/compiler";
 

@@ -12,8 +12,8 @@ import {
   FieldNode,
   InlineFragmentNode,
   FragmentDefinitionNode
-} from "graphql";
-import { SourceLocation, getLocation } from "graphql/language/location";
+} from "@apollo/graphql";
+import { SourceLocation, getLocation } from "@apollo/graphql/language/location";
 
 import { Position, Range } from "vscode-languageserver";
 

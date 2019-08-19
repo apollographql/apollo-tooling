@@ -9,7 +9,7 @@ it("is turned on after summit", () => {});
 // import path from "path";
 // import fs from "fs";
 // import { test as setup } from "apollo-cli-test";
-// import { introspectionQuery, print, execute, buildSchema } from "graphql";
+// import { introspectionQuery, print, execute, buildSchema } from "@apollo/graphql";
 // import gql from "graphql-tag";
 // import { fs as mockFS, vol } from "apollo-codegen-core/lib/localfs";
 

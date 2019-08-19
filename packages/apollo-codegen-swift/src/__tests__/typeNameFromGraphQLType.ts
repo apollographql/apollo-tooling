@@ -7,7 +7,7 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType
-} from "graphql";
+} from "@apollo/graphql";
 
 import { Helpers } from "../helpers";
 

@@ -9,9 +9,9 @@ import {
   isAbstractType,
   isNonNullType,
   isListType
-} from "graphql";
+} from "@apollo/graphql";
 import { LegacyCompilerContext } from "apollo-codegen-core/lib/compiler/legacyIR";
-import { GraphQLType } from "graphql";
+import { GraphQLType } from "@apollo/graphql";
 
 const builtInScalarMap = {
   [GraphQLString.name]: "String",

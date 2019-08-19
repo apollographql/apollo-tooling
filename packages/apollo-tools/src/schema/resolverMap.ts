@@ -1,4 +1,4 @@
-import { GraphQLFieldResolver } from "graphql";
+import { GraphQLFieldResolver } from "@apollo/graphql";
 
 export interface GraphQLResolverMap<TContext> {
   [typeName: string]: {

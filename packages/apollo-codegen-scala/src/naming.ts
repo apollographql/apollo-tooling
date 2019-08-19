@@ -12,13 +12,13 @@ import {
   GraphQLNonNull,
   getNamedType,
   isCompositeType
-} from "graphql";
+} from "@apollo/graphql";
 import {
   LegacyCompilerContext,
   LegacyField,
   LegacyInlineFragment
 } from "apollo-codegen-core/lib/compiler/legacyIR";
-import { GraphQLInputField } from "graphql";
+import { GraphQLInputField } from "@apollo/graphql";
 
 export function enumCaseName(name: string) {
   return camelCase(name);

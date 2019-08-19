@@ -10,7 +10,7 @@ import {
   DefinitionNode,
   GraphQLSchema,
   Kind
-} from "graphql";
+} from "@apollo/graphql";
 
 import {
   TextDocument,

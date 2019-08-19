@@ -5,7 +5,7 @@ import {
   GraphQLEnumType,
   GraphQLNonNull,
   GraphQLInputObjectType
-} from "graphql";
+} from "@apollo/graphql";
 
 import { isTypeProperSuperTypeOf } from "apollo-codegen-core/lib/utilities/graphql";
 
@@ -43,10 +43,10 @@ import {
   LegacyField,
   LegacyInlineFragment
 } from "apollo-codegen-core/lib/compiler/legacyIR";
-import { GraphQLType } from "graphql";
+import { GraphQLType } from "@apollo/graphql";
 import { Property } from "./language";
-import { GraphQLCompositeType } from "graphql";
-import { createLexer } from "graphql/language";
+import { GraphQLCompositeType } from "@apollo/graphql";
+import { createLexer } from "@apollo/graphql/language";
 
 export function generateSource(context: LegacyCompilerContext) {
   const generator = new CodeGenerator(context);

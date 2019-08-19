@@ -20,7 +20,7 @@ import {
   isInputObjectType,
   GraphQLInputObjectType,
   GraphQLInputFieldConfigMap
-} from "graphql";
+} from "@apollo/graphql";
 import { mapValues } from "apollo-env";
 
 type TypeTransformer = (

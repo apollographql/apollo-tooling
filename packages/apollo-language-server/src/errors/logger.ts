@@ -1,4 +1,4 @@
-import { GraphQLError } from "graphql";
+import { GraphQLError } from "@apollo/graphql";
 import path from "path";
 
 // ToolError is used for errors that are part of the expected flow

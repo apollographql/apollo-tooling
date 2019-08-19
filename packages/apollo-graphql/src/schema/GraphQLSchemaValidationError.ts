@@ -1,4 +1,4 @@
-import { GraphQLError } from "graphql";
+import { GraphQLError } from "@apollo/graphql";
 
 export class GraphQLSchemaValidationError extends Error {
   constructor(public errors: ReadonlyArray<GraphQLError>) {

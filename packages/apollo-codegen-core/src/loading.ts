@@ -16,7 +16,7 @@ import {
   Kind,
   OperationDefinitionNode,
   FragmentDefinitionNode
-} from "graphql";
+} from "@apollo/graphql";
 
 import { ToolError } from "apollo-language-server";
 

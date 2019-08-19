@@ -13,7 +13,7 @@ import {
   GraphQLInputField,
   isNonNullType,
   isListType
-} from "graphql";
+} from "@apollo/graphql";
 
 import { camelCase, pascalCase } from "change-case";
 import * as Inflector from "inflected";

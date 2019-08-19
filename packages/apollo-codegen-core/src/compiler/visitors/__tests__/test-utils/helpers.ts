@@ -1,4 +1,4 @@
-import { parse, GraphQLSchema } from "graphql";
+import { parse, GraphQLSchema } from "@apollo/graphql";
 import { compileToIR, CompilerOptions } from "../../..";
 import { loadSchema } from "../../../../loading";
 

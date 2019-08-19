@@ -20,9 +20,9 @@ import {
   GraphQLObjectType,
   DefinitionNode,
   DirectiveDefinitionNode
-} from "graphql";
-import { ValidationRule } from "graphql/validation/ValidationContext";
-import Maybe from "graphql/tsutils/Maybe";
+} from "@apollo/graphql";
+import { ValidationRule } from "@apollo/graphql/validation/ValidationContext";
+import Maybe from "@apollo/graphql/tsutils/Maybe";
 
 import { NotificationHandler, DiagnosticSeverity } from "vscode-languageserver";
 

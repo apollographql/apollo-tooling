@@ -16,6 +16,7 @@
     "npm": ">=6"
   },
   "dependencies": {
+    "@apollo/graphql": "^14.4.4",
     "apollo-env": "file:../apollo-env"
   },
   "jest": {

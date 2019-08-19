@@ -13,12 +13,12 @@ import {
   visitWithTypeInfo,
   visitInParallel,
   getLocation
-} from "graphql";
+} from "@apollo/graphql";
 
 import { TextEdit } from "vscode-languageserver";
 
 import { ToolError, logError } from "./logger";
-import { ValidationRule } from "graphql/validation/ValidationContext";
+import { ValidationRule } from "@apollo/graphql/validation/ValidationContext";
 import {
   positionFromSourceLocation,
   isFieldResolvedLocally

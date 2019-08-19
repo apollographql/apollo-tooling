@@ -7,7 +7,7 @@ it("is turned on after summit", () => {});
 // // this is because of herkou-cli-utils hacky mocking system on their console logger
 // import { stdout, mockConsole } from "heroku-cli-util";
 // import { test as setup } from "apollo-cli-test";
-// import { print, parse } from "graphql";
+// import { print, parse } from "@apollo/graphql";
 // import { ENGINE_URI } from "../../../engine";
 // import { VALIDATE_OPERATIONS } from "../../../operations/validateOperations";
 

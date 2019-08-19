@@ -17,6 +17,7 @@
     "npm": ">=6"
   },
   "dependencies": {
+    "@apollo/graphql": "^14.4.4",
     "apollo-codegen-core": "file:../apollo-codegen-core",
     "apollo-env": "file:../apollo-env",
     "change-case": "^3.0.1",

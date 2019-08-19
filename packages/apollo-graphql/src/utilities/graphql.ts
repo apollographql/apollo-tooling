@@ -1,4 +1,4 @@
-import { ASTNode, DocumentNode, Kind } from "graphql";
+import { ASTNode, DocumentNode, Kind } from "@apollo/graphql";
 
 export function isNode(maybeNode: any): maybeNode is ASTNode {
   return maybeNode && typeof maybeNode.kind === "string";

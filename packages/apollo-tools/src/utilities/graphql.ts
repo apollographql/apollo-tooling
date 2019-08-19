@@ -4,11 +4,11 @@ import {
   TypeExtensionNode,
   DocumentNode,
   Kind
-} from "graphql";
+} from "@apollo/graphql";
 
 // FIXME: We should add proper type guards for these predicate functions
 // to `@types/graphql`.
-declare module "graphql/language/predicates" {
+declare module "@apollo/graphql/language/predicates" {
   function isTypeDefinitionNode(node: ASTNode): node is TypeDefinitionNode;
   function isTypeExtensionNode(node: ASTNode): node is TypeExtensionNode;
 }

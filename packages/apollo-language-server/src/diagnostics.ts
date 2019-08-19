@@ -4,7 +4,7 @@ import {
   FragmentDefinitionNode,
   findDeprecatedUsages,
   isExecutableDefinitionNode
-} from "graphql";
+} from "@apollo/graphql";
 
 import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver";
 
@@ -14,7 +14,7 @@ import { rangeForASTNode } from "./utilities/source";
 
 import { getValidationErrors } from "./errors/validation";
 import { DocumentUri } from "./project/base";
-import { ValidationRule } from "graphql/validation/ValidationContext";
+import { ValidationRule } from "@apollo/graphql/validation/ValidationContext";
 
 /**
  * Build an array of code diagnostics for all executable definitions in a document.

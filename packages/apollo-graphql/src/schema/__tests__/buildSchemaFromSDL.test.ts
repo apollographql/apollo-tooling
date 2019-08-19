@@ -12,7 +12,7 @@ import {
   Kind,
   execute,
   ExecutionResult
-} from "graphql";
+} from "@apollo/graphql";
 
 import astSerializer from "./snapshotSerializers/astSerializer";
 import graphQLTypeSerializer from "./snapshotSerializers/graphQLTypeSerializer";

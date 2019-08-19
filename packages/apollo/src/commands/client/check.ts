@@ -1,5 +1,5 @@
 import { flags } from "@oclif/command";
-import { print } from "graphql";
+import { print } from "@apollo/graphql";
 import { gitInfo } from "../../git";
 import { ClientCommand } from "../../Command";
 import URI from "vscode-uri";

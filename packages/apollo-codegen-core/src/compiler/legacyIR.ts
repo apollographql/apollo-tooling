@@ -5,7 +5,7 @@ import {
   GraphQLCompositeType,
   GraphQLInputType,
   DocumentNode
-} from "graphql";
+} from "@apollo/graphql";
 
 import {
   compileToIR,

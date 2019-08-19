@@ -1,6 +1,6 @@
 import { execute as linkExecute, toPromise, from } from "apollo-link";
 import { createHttpLink, HttpLink } from "apollo-link-http";
-import { ExecutionResult, parse } from "graphql";
+import { ExecutionResult, parse } from "@apollo/graphql";
 import { Agent as HTTPSAgent } from "https";
 import { fetch } from "apollo-env";
 import { RemoteServiceConfig } from "../../config";

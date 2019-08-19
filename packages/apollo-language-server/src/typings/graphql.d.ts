@@ -4,11 +4,11 @@ import {
   TypeSystemExtensionNode,
   FragmentDefinitionNode,
   OperationDefinitionNode
-} from "graphql";
+} from "@apollo/graphql";
 
 // FIXME: We should add proper type guards for these predicate functions
 // to `@types/graphql`.
-declare module "graphql/language/predicates" {
+declare module "@apollo/graphql/language/predicates" {
   function isExecutableDefinitionNode(
     node: ASTNode
   ): node is OperationDefinitionNode | FragmentDefinitionNode;
@@ -20,7 +20,7 @@ declare module "graphql/language/predicates" {
   ): node is TypeSystemExtensionNode;
 }
 
-declare module "graphql/validation/validate" {
+declare module "@apollo/graphql/validation/validate" {
   interface ValidationContext {
     _fragments: { [fragmentName: string]: FragmentDefinitionNode };
   }

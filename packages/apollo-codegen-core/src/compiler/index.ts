@@ -23,7 +23,7 @@ import {
   isSpecifiedScalarType,
   NonNullTypeNode,
   GraphQLNonNull
-} from "graphql";
+} from "@apollo/graphql";
 
 import {
   getOperationRootType,

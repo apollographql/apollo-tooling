@@ -19,12 +19,12 @@ import {
   isScalarType,
   isEnumType,
   GraphQLEnumValue
-} from "graphql";
-import { validateSDL } from "graphql/validation/validate";
+} from "@apollo/graphql";
+import { validateSDL } from "@apollo/graphql/validation/validate";
 import { isDocumentNode, isNode } from "../utilities/graphql";
 import { GraphQLResolverMap } from "./resolverMap";
 import { GraphQLSchemaValidationError } from "./GraphQLSchemaValidationError";
-import { specifiedSDLRules } from "graphql/validation/specifiedRules";
+import { specifiedSDLRules } from "@apollo/graphql/validation/specifiedRules";
 import { mapValues, isNotNullOrUndefined } from "apollo-env";
 
 export interface GraphQLSchemaModule {

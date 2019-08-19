@@ -1,4 +1,4 @@
-import { GraphQLSchema } from "graphql";
+import { GraphQLSchema } from "@apollo/graphql";
 import { NotificationHandler } from "vscode-languageserver";
 
 export interface SchemaResolveConfig {

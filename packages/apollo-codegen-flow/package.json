@@ -17,6 +17,7 @@
     "npm": ">=6"
   },
   "dependencies": {
+    "@apollo/graphql": "^14.4.4",
     "@babel/generator": "7.5.5",
     "@babel/types": "7.5.5",
     "apollo-codegen-core": "file:../apollo-codegen-core",

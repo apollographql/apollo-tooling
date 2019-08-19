@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 import { buildServiceDefinition } from "../buildServiceDefinition";
-import { GraphQLObjectType } from "graphql";
+import { GraphQLObjectType } from "@apollo/graphql";
 
 describe("buildServiceDefinition", () => {
   describe(`type definitions`, () => {

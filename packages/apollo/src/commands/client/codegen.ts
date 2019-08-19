@@ -1,7 +1,7 @@
 import "apollo-env";
 import { flags } from "@oclif/command";
 import path from "path";
-import { Kind, DocumentNode } from "graphql";
+import { Kind, DocumentNode } from "@apollo/graphql";
 import tty from "tty";
 import { Gaze } from "gaze";
 import URI from "vscode-uri";

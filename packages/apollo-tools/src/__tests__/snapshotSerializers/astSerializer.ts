@@ -1,4 +1,4 @@
-import { ASTNode, print } from "graphql";
+import { ASTNode, print } from "@apollo/graphql";
 import { Plugin, Config, Refs, Printer } from "pretty-format";
 
 export = {

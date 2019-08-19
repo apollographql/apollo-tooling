@@ -1,4 +1,4 @@
-import { parse } from "graphql";
+import { parse } from "@apollo/graphql";
 
 import { loadSchema } from "apollo-codegen-core/lib/loading";
 const schema = loadSchema(

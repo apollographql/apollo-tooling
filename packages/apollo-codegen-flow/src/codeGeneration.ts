@@ -1,6 +1,6 @@
 import * as t from "@babel/types";
 import { stripIndent } from "common-tags";
-import { GraphQLEnumType, GraphQLInputObjectType } from "graphql";
+import { GraphQLEnumType, GraphQLInputObjectType } from "@apollo/graphql";
 
 import {
   CompilerContext,

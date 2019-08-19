@@ -1,4 +1,4 @@
-import { parseValue } from "graphql";
+import { parseValue } from "@apollo/graphql";
 
 import { valueFromValueNode } from "../utilities/graphql";
 

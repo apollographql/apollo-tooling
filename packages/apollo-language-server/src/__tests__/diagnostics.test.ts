@@ -1,4 +1,4 @@
-import { Source } from "graphql";
+import { Source } from "@apollo/graphql";
 import { loadSchema } from "apollo-codegen-core/lib/loading";
 import { GraphQLDocument } from "../document";
 import { collectExecutableDefinitionDiagnositics } from "../diagnostics";

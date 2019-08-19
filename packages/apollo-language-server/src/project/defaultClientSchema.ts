@@ -1,5 +1,5 @@
 import { GraphQLDocument } from "../document";
-import { Source } from "graphql";
+import { Source } from "@apollo/graphql";
 
 export const apolloClientSchema = `#graphql
 """

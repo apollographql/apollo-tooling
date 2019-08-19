@@ -9,7 +9,7 @@ import {
   execute,
   buildSchema,
   graphql
-} from "graphql";
+} from "@apollo/graphql";
 import gql from "graphql-tag";
 
 const test = setup.do(() => mockConsole());

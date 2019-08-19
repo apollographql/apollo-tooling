@@ -20,7 +20,7 @@ import {
   DirectiveDefinitionNode,
   FragmentDefinitionNode,
   FragmentSpreadNode
-} from "graphql";
+} from "@apollo/graphql";
 
 export function isNode(maybeNode: any): maybeNode is ASTNode {
   return maybeNode && typeof maybeNode.kind === "string";
@@ -355,7 +355,7 @@ export interface ClientSchemaInfo {
   localFields?: string[];
 }
 
-declare module "graphql/type/definition" {
+declare module "@apollo/graphql/type/definition" {
   interface GraphQLScalarType {
     clientSchema?: ClientSchemaInfo;
   }

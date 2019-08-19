@@ -9,7 +9,7 @@ import {
   ForbiddenError
 } from "apollo-server-errors";
 import to from "await-to-js";
-import { GraphQLError } from "graphql";
+import { GraphQLError } from "@apollo/graphql";
 import { fetch } from "apollo-env";
 
 export interface GraphQLResponse<T> {

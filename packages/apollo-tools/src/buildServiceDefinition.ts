@@ -14,7 +14,7 @@ import {
   SchemaDefinitionNode,
   OperationTypeNode,
   SchemaExtensionNode
-} from "graphql";
+} from "@apollo/graphql";
 import { isNode, isDocumentNode } from "./utilities/graphql";
 import { GraphQLResolverMap } from "./schema/resolverMap";
 import { isNotNullOrUndefined } from "./utilities/predicates";

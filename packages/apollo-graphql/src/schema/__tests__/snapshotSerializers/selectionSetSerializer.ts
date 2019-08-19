@@ -1,4 +1,4 @@
-import { print, SelectionNode, isSelectionNode } from "graphql";
+import { print, SelectionNode, isSelectionNode } from "@apollo/graphql";
 import { Plugin, Config, Refs, Printer } from "pretty-format";
 
 export = (({

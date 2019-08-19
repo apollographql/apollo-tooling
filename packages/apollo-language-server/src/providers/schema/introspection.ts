@@ -9,7 +9,7 @@ import {
   ExecutionResult,
   IntrospectionQuery,
   parse
-} from "graphql";
+} from "@apollo/graphql";
 import { Agent as HTTPSAgent } from "https";
 import { fetch } from "apollo-env";
 import { RemoteServiceConfig } from "../../config";

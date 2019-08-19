@@ -8,7 +8,7 @@ import {
   GraphQLType,
   isListType,
   isNonNullType
-} from "graphql";
+} from "@apollo/graphql";
 
 import * as t from "@babel/types";
 

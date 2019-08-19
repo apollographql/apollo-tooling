@@ -7,7 +7,7 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType
-} from "graphql";
+} from "@apollo/graphql";
 
 import { loadSchema } from "apollo-codegen-core/lib/loading";
 const schema = loadSchema(

@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo, FieldNode } from "graphql";
+import { GraphQLResolveInfo, FieldNode } from "@apollo/graphql";
 
 export type GraphQLObjectResolver<TSource, TContext> = (
   source: TSource,
@@ -7,7 +7,7 @@ export type GraphQLObjectResolver<TSource, TContext> = (
   info: GraphQLResolveInfo
 ) => any;
 
-declare module "graphql/type/definition" {
+declare module "@apollo/graphql/type/definition" {
   interface GraphQLObjectType {
     resolveObject?: GraphQLObjectResolver<any, any>;
   }

@@ -1,4 +1,4 @@
-import { GraphQLSchema, buildSchema, parse } from "graphql";
+import { GraphQLSchema, buildSchema, parse } from "@apollo/graphql";
 import { compileToLegacyIR } from "../compiler/legacyIR";
 import serializeToJSON from "../serializeToJSON";
 

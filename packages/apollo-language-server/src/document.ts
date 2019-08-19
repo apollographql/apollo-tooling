@@ -1,5 +1,5 @@
-import { parse, Source, DocumentNode } from "graphql";
-import { SourceLocation, getLocation } from "graphql/language/location";
+import { parse, Source, DocumentNode } from "@apollo/graphql";
+import { SourceLocation, getLocation } from "@apollo/graphql/language/location";
 
 import {
   TextDocument,

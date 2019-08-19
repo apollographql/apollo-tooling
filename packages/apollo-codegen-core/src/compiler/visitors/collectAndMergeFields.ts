@@ -1,5 +1,5 @@
 import { SelectionSet, Selection, Field, BooleanCondition } from "../";
-import { GraphQLObjectType } from "graphql";
+import { GraphQLObjectType } from "@apollo/graphql";
 
 // This is a temporary workaround to keep track of conditions on fields in the fields themselves.
 // It is only added here because we want to expose it to the Android target, which relies on the legacy IR.

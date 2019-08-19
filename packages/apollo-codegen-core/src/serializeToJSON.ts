@@ -4,7 +4,7 @@ import {
   GraphQLScalarType,
   GraphQLEnumType,
   GraphQLInputObjectType
-} from "graphql";
+} from "@apollo/graphql";
 
 import { LegacyCompilerContext } from "./compiler/legacyIR";
 

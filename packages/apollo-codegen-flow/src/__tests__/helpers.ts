@@ -7,7 +7,7 @@ import {
   GraphQLNonNull,
   GraphQLList,
   GraphQLScalarType
-} from "graphql";
+} from "@apollo/graphql";
 
 import * as t from "@babel/types";
 

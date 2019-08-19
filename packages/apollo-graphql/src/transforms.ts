@@ -1,4 +1,4 @@
-import { visit } from "graphql/language/visitor";
+import { visit } from "@apollo/graphql/language/visitor";
 import {
   DocumentNode,
   FloatValueNode,
@@ -13,9 +13,9 @@ import {
   FragmentDefinitionNode,
   ObjectValueNode,
   ListValueNode
-} from "graphql/language/ast";
-import { print } from "graphql/language/printer";
-import { separateOperations } from "graphql/utilities";
+} from "@apollo/graphql/language/ast";
+import { print } from "@apollo/graphql/language/printer";
+import { separateOperations } from "@apollo/graphql/utilities";
 // We'll only fetch the `ListIteratee` type from the `@types/lodash`, but get
 // `sortBy` from the modularized version of the package to avoid bringing in
 // all of `lodash`.

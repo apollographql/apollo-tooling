@@ -1,7 +1,7 @@
 import path from "path";
 import * as t from "@babel/types";
 import { stripIndent } from "common-tags";
-import { GraphQLEnumType, GraphQLInputObjectType } from "graphql";
+import { GraphQLEnumType, GraphQLInputObjectType } from "@apollo/graphql";
 
 import {
   CompilerContext,
@@ -25,13 +25,13 @@ import { CompilerOptions } from "apollo-codegen-core/lib/compiler";
 import TypescriptGenerator, { ObjectProperty } from "./language";
 import Printer from "./printer";
 import { DEFAULT_FILE_EXTENSION } from "./helpers";
-import { GraphQLType, isListType } from "graphql/type/definition";
+import { GraphQLType, isListType } from "@apollo/graphql/type/definition";
 import {
   GraphQLNonNull,
   GraphQLOutputType,
   getNullableType,
   GraphQLObjectType
-} from "graphql";
+} from "@apollo/graphql";
 import { maybePush } from "apollo-codegen-core/lib/utilities/array";
 import { unifyPaths } from "apollo-codegen-core/lib/utilities/printing";
 

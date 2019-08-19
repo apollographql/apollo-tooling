@@ -9,7 +9,7 @@ import {
   GraphQLInputObjectType,
   isNonNullType,
   isListType
-} from "graphql";
+} from "@apollo/graphql";
 
 import {
   CompilerContext,

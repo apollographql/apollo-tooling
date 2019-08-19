@@ -1,5 +1,5 @@
 declare module "@apollographql/graphql-language-service-interface" {
-  import { DocumentNode, GraphQLSchema, Location } from "graphql";
+  import { DocumentNode, GraphQLSchema, Location } from "@apollo/graphql";
   import {
     Diagnostic,
     Position,
@@ -17,7 +17,7 @@ declare module "@apollographql/graphql-language-service-interface" {
 declare module "@apollographql/graphql-language-service-interface/dist/getAutocompleteSuggestions";
 
 declare module "@apollographql/graphql-language-service-interface/dist/getDiagnostics" {
-  import { Location } from "graphql";
+  import { Location } from "@apollo/graphql";
   import { Range } from "vscode-languageserver";
 
   function getRange(location: Location, queryText: string): Range;

@@ -1,6 +1,6 @@
 import { inspect } from "util";
 
-import { GraphQLObjectType } from "graphql";
+import { GraphQLObjectType } from "@apollo/graphql";
 
 import { SelectionSet, Selection, Field, FragmentSpread } from "../";
 import { collectAndMergeFields } from "./collectAndMergeFields";

@@ -1,6 +1,6 @@
 import { flags } from "@oclif/command";
 import { table } from "heroku-cli-util";
-import { introspectionFromSchema, printSchema } from "graphql";
+import { introspectionFromSchema, printSchema } from "@apollo/graphql";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
 import { UploadSchemaVariables } from "apollo-language-server/lib/graphqlTypes";

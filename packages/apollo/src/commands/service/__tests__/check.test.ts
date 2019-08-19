@@ -8,7 +8,7 @@ import { ChangeSeverity } from "apollo-language-server/lib/graphqlTypes";
 import chalk from "chalk";
 import nock = require("nock");
 import { stdout, stderr } from "stdout-stderr";
-import * as graphql from "graphql";
+import * as graphql from "@apollo/graphql";
 
 /**
  * Single URL for all local requests to be mocked
@@ -732,7 +732,7 @@ describe("service:check", () => {
 // import path from "path";
 // import fs from "fs";
 // import { test as setup } from "apollo-cli-test";
-// import { introspectionQuery, print, execute, buildSchema } from "graphql";
+// import { introspectionQuery, print, execute, buildSchema } from "@apollo/graphql";
 // import gql from "graphql-tag";
 // import { ENGINE_URI } from "../../../engine";
 // import { VALIDATE_SCHEMA } from "../../../operations/validateSchema";

@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { parse, print } from "graphql";
+import { parse, print } from "@apollo/graphql";
 import {
   withTypenameFieldAddedWhereNeeded,
   removeDirectiveAnnotatedFields

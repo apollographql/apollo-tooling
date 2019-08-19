@@ -1,4 +1,4 @@
-import { buildSchema } from "graphql";
+import { buildSchema } from "@apollo/graphql";
 import { compile } from "./test-utils/helpers";
 
 import { SelectionSet, Field } from "../..";

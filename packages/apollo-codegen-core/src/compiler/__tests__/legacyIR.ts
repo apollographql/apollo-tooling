@@ -7,7 +7,7 @@ import {
   GraphQLString,
   GraphQLList,
   GraphQLNonNull
-} from "graphql";
+} from "@apollo/graphql";
 
 import { loadSchema } from "../../loading";
 

@@ -1,5 +1,10 @@
 // FileSchemaProvider (FileProvider (SDL || IntrospectionResult) => schema)
-import { GraphQLSchema, buildClientSchema, Source, buildSchema } from "graphql";
+import {
+  GraphQLSchema,
+  buildClientSchema,
+  Source,
+  buildSchema
+} from "@apollo/graphql";
 import { readFileSync } from "fs";
 import { extname, resolve } from "path";
 import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";

@@ -4,7 +4,7 @@ import { ServiceID, ServiceSpecifier, ClientID } from "../engine";
 import URI from "vscode-uri";
 import { WithRequired } from "apollo-env";
 import { getServiceName, parseServiceSpecifier } from "./utils";
-import { ValidationRule } from "graphql/validation/ValidationContext";
+import { ValidationRule } from "@apollo/graphql/validation/ValidationContext";
 
 export interface EngineStatsWindow {
   to: number;

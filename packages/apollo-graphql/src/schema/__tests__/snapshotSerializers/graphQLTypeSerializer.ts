@@ -1,4 +1,4 @@
-import { isNamedType, GraphQLNamedType, printType } from "graphql";
+import { isNamedType, GraphQLNamedType, printType } from "@apollo/graphql";
 import { Plugin, Config, Refs, Printer } from "pretty-format";
 
 export = (({

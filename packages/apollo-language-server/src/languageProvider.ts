@@ -58,7 +58,7 @@ import {
   isTypeSystemExtensionNode,
   GraphQLError,
   DirectiveLocation
-} from "graphql";
+} from "@apollo/graphql";
 import { highlightNodeForNode } from "./utilities/graphql";
 
 import { GraphQLClientProject, isClientProject } from "./project/client";

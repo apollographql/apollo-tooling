@@ -25,9 +25,9 @@ import {
   DirectiveNode,
   isListType,
   isNonNullType
-} from "graphql";
+} from "@apollo/graphql";
 
-declare module "graphql/utilities/buildASTSchema" {
+declare module "@apollo/graphql/utilities/buildASTSchema" {
   function buildASTSchema(
     ast: DocumentNode,
     options?: { assumeValid?: boolean; commentDescriptions?: boolean }

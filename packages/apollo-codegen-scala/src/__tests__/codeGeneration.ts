@@ -6,7 +6,7 @@ import {
   GraphQLEnumType,
   GraphQLCompositeType,
   GraphQLObjectType
-} from "graphql";
+} from "@apollo/graphql";
 
 import {
   generateSource,

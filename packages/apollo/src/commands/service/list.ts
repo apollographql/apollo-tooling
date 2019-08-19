@@ -1,6 +1,6 @@
 import { flags } from "@oclif/command";
 import { ProjectCommand } from "../../Command";
-import { GraphQLSchema } from "graphql";
+import { GraphQLSchema } from "@apollo/graphql";
 import sortBy from "lodash.sortby";
 import { table } from "heroku-cli-util";
 import moment from "moment";

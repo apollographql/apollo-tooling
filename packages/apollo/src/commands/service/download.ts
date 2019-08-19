@@ -1,5 +1,5 @@
 import { flags } from "@oclif/command";
-import { introspectionFromSchema } from "graphql";
+import { introspectionFromSchema } from "@apollo/graphql";
 import { writeFileSync } from "fs";
 import chalk from "chalk";
 import { ProjectCommand } from "../../Command";
