@@ -24,6 +24,7 @@ import { BasicGeneratedFile } from "apollo-codegen-core/lib/utilities/CodeGenera
 import { CompilerOptions } from "apollo-codegen-core/lib/compiler";
 import TypescriptGenerator, { ObjectProperty } from "./language";
 import Printer from "./printer";
+import { DEFAULT_FILE_EXTENSION } from "./helpers";
 import { GraphQLType, isListType } from "graphql/type/definition";
 import {
   GraphQLNonNull,
@@ -82,6 +83,7 @@ function printGlobalImport(
   generator: TypescriptAPIGenerator,
   typesUsed: GraphQLType[],
   outputPath: string,
+  tsFileExtension: string,
   globalSourcePath: string
 ) {
   if (typesUsed.length > 0) {
@@ -89,7 +91,7 @@ function printGlobalImport(
       path.dirname(outputPath),
       path.join(
         path.dirname(globalSourcePath),
-        path.basename(globalSourcePath, ".ts")
+        path.basename(globalSourcePath, `.${tsFileExtension}`)
       )
     );
 
@@ -116,7 +118,8 @@ export function generateSource(context: CompilerContext) {
 
     generatedFiles.push({
       sourcePath: operation.filePath,
-      fileName: `${operation.operationName}.ts`,
+      fileName: `${operation.operationName}.${context.options.tsFileExtension ||
+        DEFAULT_FILE_EXTENSION}`,
       content: new TypescriptGeneratedFile(output)
     });
   });
@@ -162,7 +165,8 @@ export function generateLocalSource(
 
   const operations = Object.values(context.operations).map(operation => ({
     sourcePath: operation.filePath,
-    fileName: `${operation.operationName}.ts`,
+    fileName: `${operation.operationName}.${context.options.tsFileExtension ||
+      DEFAULT_FILE_EXTENSION}`,
     content: (options?: IGeneratedFileOptions) => {
       generator.fileHeader();
       if (options && options.outputPath && options.globalSourcePath) {
@@ -170,6 +174,7 @@ export function generateLocalSource(
           generator,
           generator.getGlobalTypesUsedForOperation(operation),
           options.outputPath,
+          context.options.tsFileExtension || DEFAULT_FILE_EXTENSION,
           options.globalSourcePath
         );
       }
@@ -181,7 +186,8 @@ export function generateLocalSource(
 
   const fragments = Object.values(context.fragments).map(fragment => ({
     sourcePath: fragment.filePath,
-    fileName: `${fragment.fragmentName}.ts`,
+    fileName: `${fragment.fragmentName}.${context.options.tsFileExtension ||
+      DEFAULT_FILE_EXTENSION}`,
     content: (options?: IGeneratedFileOptions) => {
       generator.fileHeader();
       if (options && options.outputPath && options.globalSourcePath) {
@@ -189,6 +195,7 @@ export function generateLocalSource(
           generator,
           generator.getGlobalTypesUsedForFragment(fragment),
           options.outputPath,
+          context.options.tsFileExtension || DEFAULT_FILE_EXTENSION,
           options.globalSourcePath
         );
       }

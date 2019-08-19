@@ -364,6 +364,21 @@ export interface SimpleQuery {
 "
 `;
 
+exports[`client:codegen writes types for typescript with a custom extension 1`] = `
+"/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+}
+"
+`;
+
 exports[`client:codegen writes typescript types for query with client-side data when client schema in graphql file 1`] = `
 "/* tslint:disable */
 /* eslint-disable */

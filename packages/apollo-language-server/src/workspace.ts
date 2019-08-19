@@ -18,6 +18,7 @@ import { ServiceID, SchemaTag, ClientIdentity } from "./engine";
 import { GraphQLClientProject, isClientProject } from "./project/client";
 import { GraphQLServiceProject } from "./project/service";
 import URI from "vscode-uri";
+import { Debug } from "./utilities";
 
 export interface WorkspaceConfig {
   clientIdentity?: ClientIdentity;
@@ -123,20 +124,26 @@ export class GraphQLWorkspace {
     const projectConfigs = Array.from(apolloConfigFolders).map(configFolder =>
       loadConfig({ configPath: configFolder, requireConfig: true })
         .then(config => {
-          foundConfigs.push(config);
-          const projectsForConfig = config.projects.map(projectConfig =>
-            this.createProject({ config, folder })
-          );
+          if (config) {
+            foundConfigs.push(config);
+            const projectsForConfig = config.projects.map(projectConfig =>
+              this.createProject({ config, folder })
+            );
 
-          const existingProjects =
-            this.projectsByFolderUri.get(folder.uri) || [];
+            const existingProjects =
+              this.projectsByFolderUri.get(folder.uri) || [];
 
-          this.projectsByFolderUri.set(folder.uri, [
-            ...existingProjects,
-            ...projectsForConfig
-          ]);
+            this.projectsByFolderUri.set(folder.uri, [
+              ...existingProjects,
+              ...projectsForConfig
+            ]);
+          } else {
+            Debug.error(
+              `Workspace failed to load config from: ${configFolder}/`
+            );
+          }
         })
-        .catch(error => console.error(error))
+        .catch(error => Debug.error(error))
     );
 
     await Promise.all(projectConfigs);

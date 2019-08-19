@@ -461,7 +461,7 @@ export class GraphQLClientProject extends GraphQLProject {
     for (const operationName in current) {
       const document = current[operationName];
 
-      let serviceOnly: DocumentNode = removeDirectiveAnnotatedFields(
+      let serviceOnly = removeDirectiveAnnotatedFields(
         removeDirectives(document, clientOnlyDirectives as string[]),
         clientSchemaDirectives as string[]
       );

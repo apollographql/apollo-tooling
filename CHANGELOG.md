@@ -3,29 +3,46 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Add tsFileExtension flag to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
 - `apollo-codegen-core`
-  - <First `apollo-codegen-core` related entry goes here>
+  - Add tsFileExtension option to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Revert changes from [#656](https://github.com/apollographql/apollo-tooling/pull/656) due to build issues not caught by tests.
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
-  - <First `apollo-codegen-typescript` related entry goes here>
+  - Add tsFileExtension option to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Fix #735 caused #928 error implement [#1461](https://github.com/apollographql/apollo-tooling/pull/1461)
-  - Fix dirname parsing for ts config files [#1463](https://github.com/apollographql/apollo-tooling/pull/1463)
+  - Add debugging util classes for better error/warning handling [#1429](https://github.com/apollographql/apollo-tooling/pull/1429)
+  - Add error for duplicate client operation names [#1466](https://github.com/apollographql/apollo-tooling/pull/1466)
   - Add client schema support through autocomplete, hover information, validation rules, and code actions. [#1433](https://github.com/apollographql/apollo-tooling/pull/1433)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - Improve the syntax highlighting of directives and their definitions. [#1433](https://github.com/apollographql/apollo-tooling/pull/1433)
+  - Add debugging util class for better logging in vs code [#1429](https://github.com/apollographql/apollo-tooling/pull/1429)
+
+## `apollo-language-server@1.14.3`
+
+- `apollo-language-server@1.14.3`
+  - Fix issue where fragment definitions only included in `@client` fields would not be stripped ((AP-682)(https://golinks.io/AP-682), [#1454](https://github.com/apollographql/apollo-tooling/pull/1454))
+
+## `apollo-language-server@1.14.2`
+
+- `apollo-language-server@1.14.2`
+  - Fix #735 caused #928 error implement [#1461](https://github.com/apollographql/apollo-tooling/pull/1461)
+  - Fix dirname parsing for ts config files [#1463](https://github.com/apollographql/apollo-tooling/pull/1463)
+
+## `apollo-codegen-swift@0.35.2`
+
+- `apollo-codegen-swift@0.35.2`
+  - Revert changes from [#656](https://github.com/apollographql/apollo-tooling/pull/656) due to build issues not caught by tests.
 
 ## `apollo@2.17.1`, `apollo-codegen-swift@0.35.1`
 
