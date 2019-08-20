@@ -11,7 +11,8 @@ import {
   isClientConfig,
   isServiceConfig,
   ApolloConfig,
-  getServiceFromKey
+  getServiceFromKey,
+  Debug
 } from "apollo-language-server";
 import { WithRequired, DeepPartial } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
@@ -102,7 +103,20 @@ export abstract class ProjectCommand extends Command {
     const { flags, args } = this.parse(this.constructor as any);
     this.ctx = { flags, args } as any;
 
+    // tell the language server to use the built-in loggers
+    // from oclif
+    Debug.SetLoggers({
+      info: this.log,
+      warning: this.warn,
+      error: message => {
+        this.error(message);
+        this.exit(1);
+      }
+    });
+
     const config = await this.createConfig(flags);
+    if (!config) return;
+
     this.createService(config, flags);
     this.ctx.config = config;
 
@@ -125,6 +139,12 @@ export abstract class ProjectCommand extends Command {
       name: service,
       type: this.type
     });
+
+    if (!config) {
+      this.error("A config failed to load, so the command couldn't be run");
+      this.exit(1);
+      return;
+    }
 
     config.tag = flags.tag || config.tag || "current";
     //  flag overides

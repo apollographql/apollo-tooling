@@ -8,7 +8,8 @@ import {
   TypeSystemExtensionNode,
   isTypeSystemExtensionNode,
   DefinitionNode,
-  GraphQLSchema
+  GraphQLSchema,
+  Kind
 } from "graphql";
 
 import {
@@ -41,7 +42,8 @@ const fileAssociations: { [extension: string]: string } = {
   ".tsx": "typescriptreact",
   ".vue": "vue",
   ".py": "python",
-  ".rb": "ruby"
+  ".rb": "ruby",
+  ".dart": "dart"
 };
 
 export interface GraphQLProjectConfig {
@@ -115,9 +117,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
       .catch(error => {
         console.error(error);
         this.loadingHandler.showError(
-          `Error initializing Apollo GraphQL project "${
-            this.displayName
-          }": ${error}`
+          `Error initializing Apollo GraphQL project "${this.displayName}": ${error}`
         );
       });
   }
@@ -204,6 +204,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   fileWasDeleted(uri: DocumentUri) {
     this.removeGraphQLDocumentsFor(uri);
+    this.checkForDuplicateOperations();
   }
 
   documentDidChange(document: TextDocument) {
@@ -216,6 +217,24 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
       this.invalidate();
     } else {
       this.removeGraphQLDocumentsFor(document.uri);
+    }
+    this.checkForDuplicateOperations();
+  }
+
+  checkForDuplicateOperations(): void {
+    const operations = Object.create(null);
+    for (const document of this.documents) {
+      if (!document.ast) continue;
+      for (const definition of document.ast.definitions) {
+        if (definition.kind === Kind.OPERATION_DEFINITION && definition.name) {
+          if (operations[definition.name.value]) {
+            throw new Error(
+              `️️There are multiple definitions for the ${definition.name.value} operation. All operations in a project must have unique names. If generating types, only the types for the first definition found will be generated.`
+            );
+          }
+          operations[definition.name.value] = definition;
+        }
+      }
     }
   }
 

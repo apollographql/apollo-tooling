@@ -12,9 +12,9 @@ interface StateChangeInput extends LoadingInput {
 export default class ApolloStatusBar {
   public statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right);
 
-  static loadingStateText = "Apollo GraphQL $(rss)";
-  static loadedStateText = "ApolloGraphQL $(rocket)";
-  static warningText = "Apollo GraphQL $(alert)";
+  static loadingStateText = "Apollo $(rss)";
+  static loadedStateText = "Apollo $(rocket)";
+  static warningText = "Apollo $(alert)";
 
   constructor({ hasActiveTextEditor }: LoadingInput) {
     this.showLoadingState({ hasActiveTextEditor });

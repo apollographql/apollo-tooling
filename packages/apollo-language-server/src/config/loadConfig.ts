@@ -14,6 +14,7 @@ import {
 } from "./config";
 import { getServiceFromKey } from "./utils";
 import URI from "vscode-uri";
+import { Debug } from "../utilities";
 
 // config settings
 const MODULE_NAME = "apollo";
@@ -80,28 +81,26 @@ export async function loadConfig({
       ApolloConfigFormat
     >;
   } catch (error) {
-    throw new Error(
-      `A config file failed to load with options: ${JSON.stringify(
-        arguments[0]
-      )}.
-      The error was: ${error}`
-    );
+    return Debug.error(`A config file failed to load with options: ${JSON.stringify(
+      arguments[0]
+    )}.
+    The error was: ${error}`);
   }
 
   if (configPath && !loadedConfig) {
-    throw new Error(
+    return Debug.error(
       `A config file failed to load at '${configPath}'. This is likely because this file is empty or malformed. For more information, please refer to: https://bit.ly/2ByILPj`
     );
   }
 
   if (loadedConfig && loadedConfig.filepath.endsWith("package.json")) {
-    console.warn(
+    Debug.warning(
       'The "apollo" package.json configuration key will no longer be supported in Apollo v3. Please use the apollo.config.js file for Apollo project configuration. For more information, see: https://bit.ly/2ByILPj'
     );
   }
 
   if (requireConfig && !loadedConfig) {
-    throw new Error(
+    return Debug.error(
       `No Apollo config found for project. For more information, please refer to:
       https://bit.ly/2ByILPj`
     );
@@ -135,7 +134,7 @@ export async function loadConfig({
   else if (loadedConfig && loadedConfig.config.client) projectType = "client";
   else if (loadedConfig && loadedConfig.config.service) projectType = "service";
   else
-    throw new Error(
+    return Debug.error(
       "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
     );
 

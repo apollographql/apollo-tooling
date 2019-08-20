@@ -3,6 +3,7 @@
 ## Upcoming
 
 - `apollo`
+  - Shorten `client:check` and `service:check` output in CI [#1404](https://github.com/apollographql/apollo-tooling/pull/1404)
   - Add `--target=format` flag to `client:download-schema` command to download schema in desired format i.e. SDL or JSON
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
@@ -24,6 +25,77 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.18.0`, `apollo-language-server@1.15.0`, `apollo-codegen-core@0.35.0`, `apollo-codegen-typescript@0.35.0`, `vscode-apollo@1.10.0`
+
+- `apollo-codegen-core@0.35.0`
+  - Add tsFileExtension option to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
+- `apollo-codegen-typescript@0.35.0`
+  - Add tsFileExtension option to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
+- `apollo-language-server@1.15.0`
+  - Add debugging util classes for better error/warning handling [#1429](https://github.com/apollographql/apollo-tooling/pull/1429)
+  - Add error for duplicate client operation names [#1466](https://github.com/apollographql/apollo-tooling/pull/1466)
+  - Add client schema support through autocomplete, hover information, validation rules, and code actions. [#1433](https://github.com/apollographql/apollo-tooling/pull/1433)
+- `apollo@2.18.0`
+  - Add tsFileExtension flag to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
+- `vscode-apollo@1.10.0`
+  - Improve the syntax highlighting of directives and their definitions. [#1433](https://github.com/apollographql/apollo-tooling/pull/1433)
+  - Add debugging util class for better logging in vs code [#1429](https://github.com/apollographql/apollo-tooling/pull/1429)
+
+## `apollo-language-server@1.14.3`
+
+- `apollo-language-server@1.14.3`
+  - Fix issue where fragment definitions only included in `@client` fields would not be stripped ((AP-682)(https://golinks.io/AP-682), [#1454](https://github.com/apollographql/apollo-tooling/pull/1454))
+
+## `apollo-language-server@1.14.2`
+
+- `apollo-language-server@1.14.2`
+  - Fix #735 caused #928 error implement [#1461](https://github.com/apollographql/apollo-tooling/pull/1461)
+  - Fix dirname parsing for ts config files [#1463](https://github.com/apollographql/apollo-tooling/pull/1463)
+
+## `apollo-codegen-swift@0.35.2`
+
+- `apollo-codegen-swift@0.35.2`
+  - Revert changes from [#656](https://github.com/apollographql/apollo-tooling/pull/656) due to build issues not caught by tests.
+
+## `apollo@2.17.1`, `apollo-codegen-swift@0.35.1`
+
+- `apollo-codegen-swift@0.35.1`
+  - Fixes issue where a server adding a new type the client doesn't know about can cause a crash
+
+## `apollo@2.17.0`, `apollo-codegen-swift@0.35.0`
+
+- `apollo-codegen-swift@0.35.0`
+  - Fix issue where type names were not being properly escaped [iOS 193](https://github.com/apollographql/apollo-ios/issues/193)
+  - Fix overcorrection on removing redundant modifiers [#1449](https://github.com/apollographql/apollo-tooling/issues/1449)
+  - Added `CaseIterable` conformance so all known cases can be easily iterated.
+  - Added comment to `operationDefinition` to show the original query
+  - Stripped excess whitespace out of `operationDefinition`
+  - Removed force-unwrap when the thing being unwrapped is a double optional
+
+## `vscode-apollo@1.9.1`, `apollo-language-server@1.14.1`
+
+- `apollo-language-server@1.14.1`
+  - Fix cache invalidation bug for reload schema which caused outdated results in autocomplete [#1446](https://github.com/apollographql/apollo-tooling/pull/1446)
+
+## `vscode-apollo@1.9.0`, `apollo-language-server@1.14.0`, `apollo-codegen-swift@0.34.2`
+
+- `vscode-apollo@1.9.0`
+  - Add Dart support for vscode [#1385](https://github.com/apollographql/apollo-tooling/pull/1385)
+- `apollo-language-server@1.14.0`
+  - Add Dart operation extraction [#1385](https://github.com/apollographql/apollo-tooling/pull/1385)
+- `apollo-codegen-swift@0.34.2`
+  - Prevent compiler warnings for redundant access-level modifiers when using `--namespace` [1241](https://github.com/apollographql/apollo-tooling/pull/1241)
+
+## `apollo@2.16.1`, `apollo-language-server@1.13.1`, `vscode-apollo@1.8.1`
+
+- `apollo@2.16.1`
+  - Add `ApolloConfig` type to exports from `apollo` [#1413](https://github.com/apollographql/apollo-tooling/pull/1413)
+- `apollo-language-server@1.13.1`
+  - Add error message for service lookup failure [#1413](https://github.com/apollographql/apollo-tooling/pull/1413)
+- `vscode-apollo@1.8.1`
+  - Only activate extension on apollo.config.js/ts [#1411](https://github.com/apollographql/apollo-tooling/pull/1411)
+  - Changed the status bar title to be "Apollo" to save space. [#1415](https://github.com/apollographql/apollo-tooling/pull/1415)
 
 ## `apollo@2.16.0`, `apollo-codegen-swift@0.34.0`, `apollo-language-server@1.13.0`, `apollo-tools@0.4.0`, `vscode-apollo@1.8.0`
 

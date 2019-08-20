@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.16.0 darwin-x64 node-v11.14.0
+apollo/2.18.0 darwin-x64 node-v8.11.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -131,6 +131,8 @@ OPTIONS
 
   --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
                                              "output" directory. Set "globalTypesFile" to specify a different path.
+                                             Alternatively, set "fileExtension" to modify the extension of the file, for
+                                             example "d.ts" will output "globalTypes.d.ts"
 
   --header=header                            Additional header to send to server for introspectionQuery. May be used
                                              multiple times to add multiple headers. NOTE: The `--endpoint` flag is
@@ -168,6 +170,9 @@ OPTIONS
 
   --target=target                            (required) Type of code generator to use (swift | typescript | flow |
                                              scala)
+
+  --tsFileExtension=tsFileExtension          By default, TypeScript will output "ts" files. Set "tsFileExtension" to
+                                             specify a different file extension, for example "d.ts"
 
   --useFlowExactObjects                      Use Flow exact objects for generated types [flow only]
 
@@ -327,7 +332,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.0/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.1/src/commands/help.ts)_
 
 ## `apollo plugins`
 

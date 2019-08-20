@@ -62,7 +62,7 @@ export function diagnosticsFromError(
   error: GraphQLError,
   severity: DiagnosticSeverity,
   type: string
-): Diagnostic[] {
+): GraphQLDiagnostic[] {
   if (!error.nodes) {
     return [];
   }
@@ -72,9 +72,23 @@ export function diagnosticsFromError(
       source: `GraphQL: ${type}`,
       message: error.message,
       severity,
-      range: rangeForASTNode(highlightNodeForNode(node) || node)
+      range: rangeForASTNode(highlightNodeForNode(node) || node),
+      error
     };
   });
+}
+
+export interface GraphQLDiagnostic extends Diagnostic {
+  /**
+   * The GraphQLError that produced this Diagnostic
+   */
+  error: GraphQLError;
+}
+
+export namespace GraphQLDiagnostic {
+  export function is(diagnostic: Diagnostic): diagnostic is GraphQLDiagnostic {
+    return "error" in diagnostic;
+  }
 }
 
 export class DiagnosticSet {

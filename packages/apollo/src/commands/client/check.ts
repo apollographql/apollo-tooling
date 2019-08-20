@@ -2,10 +2,12 @@ import { flags } from "@oclif/command";
 import { print } from "graphql";
 import { gitInfo } from "../../git";
 import { ClientCommand } from "../../Command";
+import { CompactRenderer } from "../../utils";
 import URI from "vscode-uri";
 import { relative } from "path";
 import { graphqlTypes } from "apollo-language-server";
 import chalk from "chalk";
+import envCi from "env-ci";
 
 const { ValidationErrorType } = graphqlTypes;
 type ValidationResult = graphqlTypes.ValidateOperations_service_validateOperations_validationResults;
@@ -28,44 +30,51 @@ export default class ClientCheck extends ClientCommand {
   };
 
   async run() {
+    const { isCi } = envCi();
+
     const { validationResults, operations } = await this.runTasks<{
       operations: Operation[];
       validationResults: ValidationResult[];
-    }>(({ project, config }) => [
-      {
-        title: "Checking client compatibility with service",
-        task: async ctx => {
-          if (!config.name) {
-            throw new Error(
-              "No service found to link to Engine. Engine is required for this command."
-            );
+    }>(
+      ({ project, config }) => [
+        {
+          title: "Checking client compatibility with service",
+          task: async ctx => {
+            if (!config.name) {
+              throw new Error(
+                "No service found to link to Engine. Engine is required for this command."
+              );
+            }
+            ctx.gitContext = await gitInfo(this.log);
+
+            ctx.operations = Object.entries(
+              this.project.mergedOperationsAndFragmentsForService
+            ).map(([name, doc]) => ({
+              body: print(doc),
+              name,
+              relativePath: relative(
+                config.configURI ? config.configURI.fsPath : "",
+                URI.parse(doc.definitions[0].loc!.source.name).fsPath
+              ),
+              locationOffset: doc.definitions[0].loc!.source.locationOffset
+            }));
+
+            ctx.validationResults = await project.engine.validateOperations({
+              id: config.name,
+              tag: config.tag,
+              operations: ctx.operations.map(({ body, name }) => ({
+                body,
+                name
+              })),
+              gitContext: ctx.gitContext
+            });
           }
-          ctx.gitContext = await gitInfo(this.log);
-
-          ctx.operations = Object.entries(
-            this.project.mergedOperationsAndFragmentsForService
-          ).map(([name, doc]) => ({
-            body: print(doc),
-            name,
-            relativePath: relative(
-              config.configURI ? config.configURI.fsPath : "",
-              URI.parse(doc.definitions[0].loc!.source.name).fsPath
-            ),
-            locationOffset: doc.definitions[0].loc!.source.locationOffset
-          }));
-
-          ctx.validationResults = await project.engine.validateOperations({
-            id: config.name,
-            tag: config.tag,
-            operations: ctx.operations.map(({ body, name }) => ({
-              body,
-              name
-            })),
-            gitContext: ctx.gitContext
-          });
         }
-      }
-    ]);
+      ],
+      () => ({
+        renderer: isCi ? CompactRenderer : "default"
+      })
+    );
 
     // Group the validation results by operation name
     const messagesByOperationName = this.getMessagesByOperationName(

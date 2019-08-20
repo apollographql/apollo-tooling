@@ -176,8 +176,11 @@ exports[`client:codegen writes swift types from local schema 1`] = `
 import Apollo
 
 public final class SimpleQueryQuery: GraphQLQuery {
+  /// query SimpleQuery {
+  ///   hello
+  /// }
   public let operationDefinition =
-    \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
+    \\"query SimpleQuery { hello }\\"
 
   public let operationName = \\"SimpleQuery\\"
 
@@ -220,8 +223,11 @@ exports[`client:codegen writes swift types from local schema in a graphql file 1
 import Apollo
 
 public final class SimpleQueryQuery: GraphQLQuery {
+  /// query SimpleQuery {
+  ///   hello
+  /// }
   public let operationDefinition =
-    \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
+    \\"query SimpleQuery { hello }\\"
 
   public let operationName = \\"SimpleQuery\\"
 
@@ -355,6 +361,21 @@ export interface SimpleQuery {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================
+"
+`;
+
+exports[`client:codegen writes types for typescript with a custom extension 1`] = `
+"/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+}
 "
 `;
 
