@@ -24,7 +24,8 @@
   "scripts": {
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "postpack": "rm -f oclif.manifest.json",
-    "version": "oclif-dev readme && git add README.md"
+    "version": "oclif-dev readme && git add README.md",
+    "pack": "oclif-dev pack -t darwin-x64"
   },
   "engines": {
     "node": ">=8",
