@@ -12,7 +12,7 @@ export default class SchemaDownload extends ClientCommand {
 
     target: flags.string({
       description:
-        "Format of schema to be downloaded i.e. JSON or SDL. Default is JSON"
+        "Format of schema to be downloaded. Currently supporting SDL & JSON"
     })
   };
 
