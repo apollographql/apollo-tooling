@@ -15,7 +15,7 @@ import { fetch } from "apollo-env";
 import { RemoteServiceConfig } from "../../config";
 import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
 
-export class IntrospectionSchemaProvider implements GraphQLSchemaProvider {
+export class EndpointSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
   constructor(private config: Exclude<RemoteServiceConfig, "name">) {}
   async resolveSchema() {
