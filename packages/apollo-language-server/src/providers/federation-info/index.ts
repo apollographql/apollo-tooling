@@ -10,14 +10,21 @@ import { EndpointFederationInfoProvider } from "./endpoint";
 
 export { ApolloFederationInfoProvider };
 
+/**
+ * TODO: remove federation info providers
+ * Since _service now only is responsible for sdl, we can probably
+ * remove all federation info providers (since they're just schema providers)
+ */
 export function federationInfoProviderFromConfig(
   config: ApolloConfig
 ): ApolloFederationInfoProvider {
   if (isServiceConfig(config)) {
-    // TODO: support files for federation info
     if (config.service.endpoint) {
       return new EndpointFederationInfoProvider(config.service.endpoint);
     }
+    // if(config.service.localSchemaFile){
+    //   return new
+    // }
     throw new Error(
       "You must provide a service endpoint to use the federation info provider"
     );
