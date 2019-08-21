@@ -9,6 +9,7 @@ import chalk from "chalk";
 import nock = require("nock");
 import { stdout, stderr } from "stdout-stderr";
 import * as graphql from "graphql";
+import { graphqlTypes } from "apollo-language-server";
 
 /**
  * Single URL for all local requests to be mocked
@@ -696,7 +697,34 @@ describe("service:check", () => {
               severity: ChangeSeverity.NOTICE,
               affectedClients: [],
               affectedQueries: [],
-              changes: []
+              changes: [
+                {
+                  __typename: "Change",
+                  code: "FIELD_ADDED",
+                  severity: ChangeSeverity.NOTICE
+                } as graphqlTypes.CheckSchema_service_checkSchema_diffToPrevious_changes
+              ]
+            }
+          },
+          graphCompositionID: "fff"
+        })
+      ).toMatchSnapshot();
+    });
+
+    it("is correct with no changes", () => {
+      expect(
+        formatMarkdown({
+          graphName: "engine",
+          tag: "staging",
+          checkSchemaResult: {
+            ...checkSchemaResult,
+            diffToPrevious: {
+              ...checkSchemaResult.diffToPrevious,
+              severity: ChangeSeverity.NOTICE,
+              affectedClients: [],
+              affectedQueries: [],
+              changes: [],
+              validationConfig: null
             }
           },
           graphCompositionID: "fff"
