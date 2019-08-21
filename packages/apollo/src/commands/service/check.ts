@@ -295,8 +295,8 @@ export default class ServiceCheck extends ProjectCommand {
     }),
     serviceName: flags.string({
       description:
-        "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service",
-      dependsOn: ["endpoint"]
+        "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service"
+      // dependsOn: ["endpoint"]
     })
   };
 
