@@ -1193,7 +1193,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                 this.printOnNewline(
                   swift`return graphQLMap[${SwiftSource.string(
                     name
-                  )}] as? ${typeName} ?? .none`
+                  )}] as? ${typeName} ?? ${typeName}.none`
                 );
               } else {
                 this.printOnNewline(
