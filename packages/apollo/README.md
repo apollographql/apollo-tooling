@@ -198,7 +198,7 @@ USAGE
   $ apollo client:download-schema OUTPUT
 
 ARGUMENTS
-  OUTPUT  [default: schema.json | schema.graphql] Path to write the introspection result to
+  OUTPUT  [default: schema.json] Path to write the introspection result to
 
 OPTIONS
   -c, --config=config                    Path to your Apollo config file
