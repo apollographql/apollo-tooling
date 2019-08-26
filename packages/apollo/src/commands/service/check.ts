@@ -1,52 +1,65 @@
 import { flags } from "@oclif/command";
 import { table } from "heroku-cli-util";
-import { introspectionFromSchema } from "graphql";
+import { introspectionFromSchema, printSchema, GraphQLSchema } from "graphql";
 import chalk from "chalk";
-import { gitInfo, GitContext } from "../../git";
+import envCi from "env-ci";
+import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
-import { validateHistoricParams } from "../../utils";
+import {
+  validateHistoricParams,
+  pluralize,
+  CompactRenderer
+} from "../../utils";
 import {
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
-  ChangeType
+  ChangeSeverity,
+  CheckSchemaVariables,
+  IntrospectionSchemaInput,
+  IntrospectionTypeInput
 } from "apollo-language-server/lib/graphqlTypes";
-import { ApolloConfig } from "apollo-language-server";
+import {
+  ApolloConfig,
+  GraphQLServiceProject,
+  isServiceProject
+} from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
-import stripANSI from "strip-ansi";
-
-function pluralize(
-  quantity: string | number | null,
-  singular: string,
-  plural: string = `${singular}s`
-) {
-  // Strip ansi color from `quantity` if it's a string
-  const strippedQuantity =
-    typeof quantity === "string" ? parseInt(stripANSI(quantity), 0) : quantity;
-
-  return `${quantity} ${strippedQuantity === 1 ? singular : plural}`;
-}
+import cli from "cli-ux";
+import { isNotNullOrUndefined } from "apollo-env";
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
-  if (change.type === ChangeType.FAILURE) {
+  if (change.severity === ChangeSeverity.FAILURE) {
     color = chalk.red;
   }
 
-  if (change.type === ChangeType.WARNING) {
+  if (change.severity === ChangeSeverity.WARNING) {
     color = chalk.yellow;
   }
 
-  const changeDictionary: Record<ChangeType, string> = {
-    [ChangeType.FAILURE]: "FAIL",
-    [ChangeType.WARNING]: "WARN",
-    [ChangeType.NOTICE]: "PASS"
+  const changeDictionary: Record<ChangeSeverity, string> = {
+    [ChangeSeverity.FAILURE]: "FAIL",
+    [ChangeSeverity.WARNING]: "WARN",
+    [ChangeSeverity.NOTICE]: "PASS"
   };
 
   return {
-    type: color(changeDictionary[change.type]),
+    severity: color(changeDictionary[change.severity]),
     code: color(change.code),
     description: color(change.description)
+  };
+};
+
+const reshapeGraphQLErrorToChange = (
+  severity: ChangeSeverity,
+  message: string
+): Change => {
+  return {
+    severity,
+    code: `FEDERATION_VALIDATION_${severity}`,
+    description: message,
+    __typename: "Change"
   };
 };
 
@@ -58,21 +71,36 @@ export function formatTimePeriod(hours: number): string {
   return pluralize(Math.floor(hours / 24), "day");
 }
 
+type CompositionErrors = Array<{
+  service?: string;
+  field?: string;
+  message: string;
+}>;
+
 interface TasksOutput {
   config: ApolloConfig;
   checkSchemaResult: CheckSchema_service_checkSchema;
   shouldOutputJson: boolean;
   shouldOutputMarkdown: boolean;
+  federationSchemaHash?: string;
+  serviceName: string | undefined;
+  compositionErrors?: CompositionErrors;
+  graphCompositionID?: string;
 }
 
 export function formatMarkdown({
   checkSchemaResult,
+  graphName,
   serviceName,
-  tag
+  tag,
+  graphCompositionID
 }: {
   checkSchemaResult: CheckSchema_service_checkSchema;
-  serviceName: string;
+  graphName: string;
+  serviceName?: string | undefined;
   tag: string;
+  // this will only exist for federated schema check
+  graphCompositionID: string | undefined;
 }): string {
   const { diffToPrevious } = checkSchemaResult;
 
@@ -96,7 +124,7 @@ export function formatMarkdown({
   );
 
   const breakingChanges = diffToPrevious.changes.filter(
-    change => change.type === "FAILURE"
+    change => change.severity === "FAILURE"
   );
 
   const affectedQueryCount = diffToPrevious.affectedQueries
@@ -105,7 +133,9 @@ export function formatMarkdown({
 
   return `
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`${tag}\` on service \`${serviceName}\`.
+🔄 Validated your local schema against schema tag \`${tag}\` ${
+    serviceName ? `for service \`${serviceName}\` ` : ""
+  }on graph \`${graphName}\`.
 🔢 Compared **${pluralize(
     diffToPrevious.changes.length,
     "schema change"
@@ -116,7 +146,7 @@ export function formatMarkdown({
 ${
   breakingChanges.length > 0
     ? `❌ Found **${pluralize(
-        diffToPrevious.changes.filter(change => change.type === "FAILURE")
+        diffToPrevious.changes.filter(change => change.severity === "FAILURE")
           .length,
         "breaking change"
       )}** that would affect **${pluralize(
@@ -129,21 +159,50 @@ ${
     : `✅ Found **no breaking changes**.`
 }
 
-🔗 [View your service check details](${checkSchemaResult.targetUrl}).
+🔗 [View your service check details](${checkSchemaResult.targetUrl +
+    (graphCompositionID ? `?graphCompositionId=${graphCompositionID})` : `)`)}.
+`;
+}
+
+export function formatCompositionErrorsMarkdown({
+  compositionErrors,
+  graphName,
+  serviceName,
+  tag
+}: {
+  compositionErrors: CompositionErrors;
+  graphName: string;
+  serviceName: string;
+  tag: string;
+}): string {
+  return `
+### Apollo Service Check
+🔄 Validated graph composition on schema tag \`${tag}\` for service \`${serviceName}\` on graph \`${graphName}\`.
+❌ Found **${compositionErrors.length} composition errors**
+
+| Service   | Field     | Message   |
+| --------- | --------- | --------- |
+${compositionErrors
+  .map(
+    ({ service, field, message }) => `| ${service} | ${field} | ${message} |`
+  )
+  .join("\n")}
 `;
 }
 
 export function formatHumanReadable({
-  checkSchemaResult
+  checkSchemaResult,
+  graphCompositionID
 }: {
   checkSchemaResult: CheckSchema_service_checkSchema;
+  // this will only exist for federated schema check
+  graphCompositionID: string | undefined;
 }): string {
   const {
     targetUrl,
-    diffToPrevious: { changes, validationConfig }
+    diffToPrevious: { changes }
   } = checkSchemaResult;
   let result = "";
-  const failures = changes.filter(({ type }) => type === ChangeType.FAILURE);
 
   if (changes.length === 0) {
     result = "\nNo changes present between schemas";
@@ -156,13 +215,13 @@ export function formatHumanReadable({
     ]);
 
     const breakingChanges = sortedChanges.filter(
-      change => change.type === ChangeType.FAILURE
+      change => change.severity === ChangeSeverity.FAILURE
     );
 
-    sortBy(breakingChanges, change => change.type);
+    sortBy(breakingChanges, change => change.severity);
 
     const nonBreakingChanges = sortedChanges.filter(
-      change => change.type !== ChangeType.FAILURE
+      change => change.severity !== ChangeSeverity.FAILURE
     );
 
     table(
@@ -174,7 +233,7 @@ export function formatHumanReadable({
       ].filter(Boolean),
       {
         columns: [
-          { key: "type", label: "Change" },
+          { key: "severity", label: "Change" },
           { key: "code", label: "Code" },
           { key: "description", label: "Description" }
         ],
@@ -190,7 +249,9 @@ export function formatHumanReadable({
   }
 
   if (targetUrl) {
-    result += `\n\nView full details at: ${targetUrl}`;
+    result += `\n\nView full details at: ${targetUrl}${
+      graphCompositionID ? `?graphCompositionId=${graphCompositionID}` : ``
+    }`;
   }
 
   return result;
@@ -223,38 +284,185 @@ export default class ServiceCheck extends ProjectCommand {
         "Output result in json, which can then be parsed by CLI tools such as jq.",
       exclusive: ["markdown"]
     }),
+    localSchemaFile: flags.string({
+      description:
+        "Path to your local GraphQL schema file (introspection result or SDL)"
+    }),
     markdown: flags.boolean({
       description: "Output result in markdown.",
       exclusive: ["json"]
+    }),
+    serviceName: flags.string({
+      description:
+        "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service",
+      dependsOn: ["endpoint"]
     })
   };
 
   async run() {
-    // @ts-ignore we're goign to populate `taskOutput` later
+    // @ts-ignore we're going to populate `taskOutput` later
     const taskOutput: TasksOutput = {};
 
     // Define this constant so we can throw it and compare against the same value.
     const breakingChangesErrorMessage = "breaking changes found";
+    const federatedServiceCompositionUnsuccessfulErrorMessage =
+      "Federated service composition was unsuccessful. Please see the reasons below.";
 
+    const { isCi } = envCi();
+
+    let schema: GraphQLSchema | undefined;
     try {
       await this.runTasks<TasksOutput>(
         ({ config, flags, project }) => {
-          const configName = config.name;
+          if (!isServiceProject(project)) {
+            throw new Error(
+              "This project needs to be configured as a service project but is configured as a client project. Please see bit.ly/2ByILPj for help regarding configuration."
+            );
+          }
+
+          /**
+           * Name of the graph being checked. `engine` is an example of a graph.
+           *
+           * A graph can be either a monolithic schema or the result of composition a federated schema.
+           */
+          const graphName = config.name;
           const tag = flags.tag || config.tag || "current";
 
-          if (!configName) {
+          /**
+           * Name of the implementing service being checked.
+           *
+           * This is optional because this check can be run on a graph or on an implementing service.
+           */
+          const serviceName: string | undefined = flags.serviceName;
+
+          if (!graphName) {
             throw new Error("No service found to link to Engine");
           }
 
+          // Add some fields to output that are required for producing
+          // markdown and json output
+          taskOutput.shouldOutputJson = !!flags.json;
+          taskOutput.shouldOutputMarkdown = !!flags.markdown;
+          taskOutput.serviceName = flags.serviceName;
+          taskOutput.config = config;
+
           return [
             {
-              title: `Validating local schema against tag ${chalk.blue(
-                tag
-              )} on service ${chalk.blue(configName)}`,
+              enabled: () => !!serviceName,
+              title: `Validate graph composition for service ${chalk.blue(
+                serviceName || ""
+              )} on graph ${chalk.blue(graphName)}`,
               task: async (ctx: TasksOutput, task) => {
-                task.output = "Resolving schema";
+                if (!serviceName) {
+                  throw new Error(
+                    "This task should not be run without a `serviceName`. Check the `enabled` function."
+                  );
+                }
+                task.output = "Fetching local service's partial schema";
 
-                const schema = await project.resolveSchema({ tag });
+                const info = await project.resolveFederationInfo();
+                if (!info.sdl) {
+                  throw new Error("No SDL found for federated service");
+                }
+
+                task.output = `Attempting to compose graph with ${chalk.blue(
+                  serviceName
+                )} service's partial schema`;
+
+                const {
+                  errors,
+                  compositionValidationDetails,
+                  graphCompositionID
+                } = await project.engine.checkPartialSchema({
+                  id: graphName,
+                  graphVariant: tag,
+                  implementingServiceName: serviceName,
+                  partialSchema: {
+                    sdl: info.sdl
+                  }
+                });
+
+                if (
+                  compositionValidationDetails &&
+                  compositionValidationDetails.schemaHash
+                ) {
+                  ctx.federationSchemaHash =
+                    compositionValidationDetails.schemaHash;
+                }
+
+                if (graphCompositionID) {
+                  ctx.graphCompositionID = graphCompositionID;
+                }
+
+                task.title = `Found ${pluralize(
+                  errors.length,
+                  "graph composition error"
+                )} for service ${chalk.blue(serviceName)} on graph ${chalk.blue(
+                  graphName
+                )}`;
+
+                if (errors.length > 0) {
+                  const decodedErrors = errors
+                    .filter(isNotNullOrUndefined)
+                    .map(error => {
+                      const match = error.message.match(
+                        /^\[([^\[]+)\]\s+(\S+)\ ->\ (.+)/
+                      );
+
+                      if (!match) {
+                        // If we can't match the errors, that means they're in a format we don't recognize.
+                        // Report the entire string as the user will see the raw message.
+                        return { message: error.message };
+                      }
+
+                      // Regular expression matches return `[entireStringMatched, ...eachGroup]`; we don't
+                      // care about the entire string match, only the groups, so ignore the first value in the
+                      // tuple.
+                      const [, service, field, message] = match;
+                      return { service, field, message };
+                    });
+
+                  taskOutput.compositionErrors = decodedErrors;
+                  taskOutput.graphCompositionID = graphCompositionID;
+
+                  this.error(
+                    federatedServiceCompositionUnsuccessfulErrorMessage
+                  );
+                }
+              }
+            },
+            {
+              title: `Validating ${
+                serviceName ? "composed " : ""
+              }schema against tag ${chalk.blue(tag)} on graph ${chalk.blue(
+                graphName
+              )}`,
+              task: async (ctx: TasksOutput, task) => {
+                let schemaCheckSchemaVariables:
+                  | { schemaHash: string }
+                  | { schema: IntrospectionSchemaInput }
+                  | undefined;
+
+                // If we're `federated`, then run composition validation. When we're using composition
+                // validation we'll receive a schema has that represents the composed schema.
+                if (ctx.federationSchemaHash) {
+                  schemaCheckSchemaVariables = {
+                    schemaHash: ctx.federationSchemaHash
+                  };
+                } else {
+                  // This is _not_ a `federated` schema. Resolve the schema given `config.tag`.
+                  task.output = "Resolving schema";
+                  schema = await project.resolveSchema({ tag: config.tag });
+                  if (!schema) {
+                    throw new Error("Failed to resolve schema");
+                  }
+
+                  schemaCheckSchemaVariables = {
+                    schema: introspectionFromSchema(schema)
+                      .__schema as IntrospectionSchemaInput
+                  };
+                }
+
                 await gitInfo(this.log);
 
                 const historicParameters = validateHistoricParams({
@@ -266,27 +474,34 @@ export default class ServiceCheck extends ProjectCommand {
 
                 task.output = "Validating schema";
 
-                const newContext: typeof ctx = {
-                  checkSchemaResult: await project.engine.checkSchema({
-                    id: configName,
-                    // @ts-ignore
-                    // XXX Looks like TS should be generating ReadonlyArrays instead
-                    schema: introspectionFromSchema(schema).__schema,
-                    tag: flags.tag,
-                    gitContext: await gitInfo(this.log),
-                    frontend: flags.frontend || config.engine.frontend,
-                    ...(historicParameters && { historicParameters })
-                  }),
-                  config,
-                  shouldOutputJson: !!flags.json,
-                  shouldOutputMarkdown: !!flags.markdown
+                const variables: CheckSchemaVariables = {
+                  id: graphName,
+                  tag: flags.tag,
+                  gitContext: await gitInfo(this.log),
+                  frontend: flags.frontend || config.engine.frontend,
+                  ...(historicParameters && { historicParameters }),
+                  ...schemaCheckSchemaVariables
                 };
 
-                Object.assign(ctx, newContext);
+                const { schema: _, ...restVariables } = variables;
+                this.debug("Variables sent to Engine:");
+                this.debug(restVariables);
+                if (schema) {
+                  this.debug("SDL of introspection sent to Engine:");
+                  this.debug(printSchema(schema));
+                } else {
+                  this.debug("Schema hash generated:");
+                  this.debug(schemaCheckSchemaVariables);
+                }
 
+                const checkSchemaResult = await project.engine.checkSchema(
+                  variables
+                );
+                // Attach to ctx as this will be used in later steps.
+                ctx.checkSchemaResult = checkSchemaResult;
                 // Save the output because we're going to use it even if we throw. `runTasks` won't return
                 // anything if we throw.
-                Object.assign(taskOutput, ctx);
+                taskOutput.checkSchemaResult = checkSchemaResult;
 
                 task.title = task.title.replace("Validating", "Validated");
               }
@@ -332,7 +547,7 @@ export default class ServiceCheck extends ProjectCommand {
               title: "Reporting result",
               task: async (ctx: TasksOutput, task) => {
                 const breakingSchemaChangeCount = ctx.checkSchemaResult.diffToPrevious.changes.filter(
-                  change => change.type === ChangeType.FAILURE
+                  change => change.severity === ChangeSeverity.FAILURE
                 ).length;
                 const nonBreakingSchemaChangeCount =
                   ctx.checkSchemaResult.diffToPrevious.changes.length -
@@ -360,7 +575,11 @@ export default class ServiceCheck extends ProjectCommand {
           // the `this.log` output to `stdout`.
           //
           // @see https://github.com/SamVerschueren/listr#renderer
-          renderer: context.flags.markdown ? "silent" : "default"
+          renderer: isCi
+            ? CompactRenderer
+            : context.flags.markdown || context.flags.json
+            ? "silent"
+            : "default"
         })
       );
     } catch (error) {
@@ -370,7 +589,10 @@ export default class ServiceCheck extends ProjectCommand {
         return;
       }
 
-      if (error.message !== breakingChangesErrorMessage) {
+      if (
+        error.message !== breakingChangesErrorMessage &&
+        error.message !== federatedServiceCompositionUnsuccessfulErrorMessage
+      ) {
         throw error;
       }
     }
@@ -379,25 +601,25 @@ export default class ServiceCheck extends ProjectCommand {
       checkSchemaResult,
       config,
       shouldOutputJson,
-      shouldOutputMarkdown
+      shouldOutputMarkdown,
+      serviceName,
+      compositionErrors,
+      graphCompositionID
     } = taskOutput;
 
-    // This _should_ always be here; but TypeScript tells us that's optional. If we check it here, then
-    // passing `config` to any other function will signify that `config.service` might now be null or
-    // undefined. Save it as a const to tell TypeScript `service` can't be changed.
-
-    const { service } = config;
-    if (!service) {
-      throw new Error(
-        "Service mising from config. This should have been validated elsewhere"
-      );
-    }
-
     if (shouldOutputJson) {
+      if (compositionErrors) {
+        return this.log(JSON.stringify({ errors: compositionErrors }, null, 2));
+      }
+
       return this.log(
         JSON.stringify(
           {
-            targetUrl: checkSchemaResult.targetUrl,
+            targetUrl:
+              checkSchemaResult.targetUrl +
+              (graphCompositionID
+                ? `?graphCompositionId=${graphCompositionID}`
+                : ``),
             changes: checkSchemaResult.diffToPrevious.changes,
             validationConfig: checkSchemaResult.diffToPrevious.validationConfig
           },
@@ -406,32 +628,78 @@ export default class ServiceCheck extends ProjectCommand {
         )
       );
     } else if (shouldOutputMarkdown) {
-      const serviceName = config.service && config.service.name;
+      // This _should_ always be here; but TypeScript tells us that's optional. If we check it here, then
+      // passing `config` to any other function will signify that `config.service` might now be null or
+      // undefined. Save it as a const to tell TypeScript `service` can't be changed.
 
-      if (!serviceName) {
+      const { service } = config;
+      if (!service) {
         throw new Error(
-          "The service name should have been defined in the Apollo config and validated when the config was loaded. Please file an issue if you're seeing this error."
+          "Service mising from config. This should have been validated elsewhere"
+        );
+      }
+
+      const graphName = config.service && config.service.name;
+
+      if (!graphName) {
+        throw new Error(
+          "The graph name should have been defined in the Apollo config and validated when the config was loaded. Please file an issue if you're seeing this error."
+        );
+      }
+
+      if (compositionErrors) {
+        if (!serviceName) {
+          throw new Error(
+            "Composition errors should only occur when `serviceName` is present. Please file an issue if you're seeing this error."
+          );
+        }
+
+        return this.log(
+          formatCompositionErrorsMarkdown({
+            compositionErrors,
+            graphName,
+            serviceName,
+            tag: config.tag
+          })
         );
       }
 
       return this.log(
         formatMarkdown({
           checkSchemaResult,
+          graphName,
           serviceName,
-          tag: config.tag
+          tag: config.tag,
+          graphCompositionID
         })
       );
     }
 
-    this.log(formatHumanReadable({ checkSchemaResult }));
+    if (compositionErrors) {
+      // Add a cosmetic line break
+      console.log("");
 
-    // exit with failing status if we have failures
-    if (
-      checkSchemaResult.diffToPrevious.changes.find(
-        ({ type }) => type === ChangeType.FAILURE
-      )
-    ) {
+      cli.table(compositionErrors, {
+        columns: [
+          { key: "service", label: "Service" },
+          { key: "field", label: "Field" },
+          { key: "message", label: "Message" }
+        ]
+      });
+
+      // Return a non-zero error code
       this.exit(1);
+    } else {
+      this.log(formatHumanReadable({ checkSchemaResult, graphCompositionID }));
+
+      // exit with failing status if we have failures
+      if (
+        checkSchemaResult.diffToPrevious.changes.find(
+          ({ severity }) => severity === ChangeSeverity.FAILURE
+        )
+      ) {
+        this.exit(1);
+      }
     }
   }
 }

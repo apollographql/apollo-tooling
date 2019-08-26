@@ -18,7 +18,6 @@ export type ObjectProperty = {
 
 export interface FlowCompilerOptions extends CompilerOptions {
   useFlowExactObjects: boolean;
-  useFlowReadOnlyTypes: boolean;
 }
 
 export default class FlowGenerator {
@@ -102,7 +101,7 @@ export default class FlowGenerator {
         objectTypeProperty.optional =
           keyInheritsNullability &&
           annotation.type === "NullableTypeAnnotation";
-        if (this.options.useFlowReadOnlyTypes) {
+        if (this.options.useReadOnlyTypes) {
           objectTypeProperty.variance = { kind: "plus" };
         }
 

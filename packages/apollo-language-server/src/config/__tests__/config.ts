@@ -1,9 +1,4 @@
-import {
-  ApolloConfig,
-  ApolloConfigFormat,
-  DefaultClientConfig,
-  DefaultServiceConfig
-} from "../";
+import { ApolloConfig, ApolloConfigFormat } from "../";
 import URI from "vscode-uri";
 
 describe("ApolloConfig", () => {
@@ -38,7 +33,7 @@ describe("ApolloConfig", () => {
       expect(projects).toHaveLength(1);
       expect(projects[0].isClient).toBeTruthy();
     });
-    it("creates a ClientConfig when client is present", () => {
+    it("creates a ServiceConfig when service is present", () => {
       const rawConfig: ApolloConfigFormat = { service: "my-service" };
       const config = new ApolloConfig(rawConfig);
       const projects = config.projects;

@@ -122,6 +122,30 @@ Object {
 }
 `;
 
+exports[`client:codegen writes read-only Flow types when the deprecated flag is set 1`] = `
+"/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export type SimpleQuery = {
+  +hello: string
+};/* @flow */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+//==============================================================
+// END Enums and Input Objects
+//=============================================================="
+`;
+
 exports[`client:codegen writes read-only Flow types when the flag is set 1`] = `
 "/* @flow */
 /* eslint-disable */
@@ -152,8 +176,13 @@ exports[`client:codegen writes swift types from local schema 1`] = `
 import Apollo
 
 public final class SimpleQueryQuery: GraphQLQuery {
+  /// query SimpleQuery {
+  ///   hello
+  /// }
   public let operationDefinition =
-    \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
+    \\"query SimpleQuery { hello }\\"
+
+  public let operationName = \\"SimpleQuery\\"
 
   public init() {
   }
@@ -184,7 +213,8 @@ public final class SimpleQueryQuery: GraphQLQuery {
       }
     }
   }
-}"
+}
+"
 `;
 
 exports[`client:codegen writes swift types from local schema in a graphql file 1`] = `
@@ -193,8 +223,13 @@ exports[`client:codegen writes swift types from local schema in a graphql file 1
 import Apollo
 
 public final class SimpleQueryQuery: GraphQLQuery {
+  /// query SimpleQuery {
+  ///   hello
+  /// }
   public let operationDefinition =
-    \\"query SimpleQuery {\\\\n  hello\\\\n}\\"
+    \\"query SimpleQuery { hello }\\"
+
+  public let operationName = \\"SimpleQuery\\"
 
   public init() {
   }
@@ -225,7 +260,8 @@ public final class SimpleQueryQuery: GraphQLQuery {
       }
     }
   }
-}"
+}
+"
 `;
 
 exports[`client:codegen writes types for query with only client-side data 1`] = `
@@ -325,6 +361,21 @@ export interface SimpleQuery {
 //==============================================================
 // END Enums and Input Objects
 //==============================================================
+"
+`;
+
+exports[`client:codegen writes types for typescript with a custom extension 1`] = `
+"/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: SimpleQuery
+// ====================================================
+
+export interface SimpleQuery {
+  hello: string;
+}
 "
 `;
 

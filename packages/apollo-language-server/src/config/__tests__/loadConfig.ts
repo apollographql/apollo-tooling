@@ -78,37 +78,37 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
       expect(config.rawConfig).toMatchInlineSnapshot(`
-Object {
-  "client": Object {
-    "addTypename": true,
-    "clientOnlyDirectives": Array [
-      "connection",
-      "type",
-    ],
-    "clientSchemaDirectives": Array [
-      "client",
-      "rest",
-    ],
-    "excludes": Array [
-      "**/node_modules",
-      "**/__tests__",
-    ],
-    "includes": Array [
-      "src/**/*.{ts,tsx,js,jsx,graphql}",
-    ],
-    "service": "hello",
-    "statsWindow": Object {
-      "from": -86400,
-      "to": -0,
-    },
-    "tagName": "gql",
-  },
-  "engine": Object {
-    "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
-    "frontend": "https://engine.apollographql.com",
-  },
-}
-`);
+        Object {
+          "client": Object {
+            "addTypename": true,
+            "clientOnlyDirectives": Array [
+              "connection",
+              "type",
+            ],
+            "clientSchemaDirectives": Array [
+              "client",
+              "rest",
+            ],
+            "excludes": Array [
+              "**/node_modules",
+              "**/__tests__",
+            ],
+            "includes": Array [
+              "src/**/*.{ts,tsx,js,jsx,graphql,gql}",
+            ],
+            "service": "hello",
+            "statsWindow": Object {
+              "from": -86400,
+              "to": -0,
+            },
+            "tagName": "gql",
+          },
+          "engine": Object {
+            "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
+            "frontend": "https://engine.apollographql.com",
+          },
+        }
+      `);
     });
 
     it("loads with service defaults from different dir", async () => {
@@ -127,34 +127,40 @@ Object {
         configFileName: "my.config.js"
       });
       expect(config.rawConfig).toMatchInlineSnapshot(`
-Object {
-  "engine": Object {
-    "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
-    "frontend": "https://engine.apollographql.com",
-  },
-  "service": Object {
-    "endpoint": Object {
-      "url": "http://localhost:4000/graphql",
-    },
-    "excludes": Array [
-      "**/node_modules",
-      "**/__tests__",
-    ],
-    "includes": Array [
-      "src/**/*.{ts,tsx,js,jsx,graphql}",
-    ],
-    "name": "hello",
-  },
-}
-`);
+        Object {
+          "engine": Object {
+            "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
+            "frontend": "https://engine.apollographql.com",
+          },
+          "service": Object {
+            "endpoint": Object {
+              "url": "http://localhost:4000/graphql",
+            },
+            "excludes": Array [
+              "**/node_modules",
+              "**/__tests__",
+            ],
+            "includes": Array [
+              "src/**/*.{ts,tsx,js,jsx,graphql,gql}",
+            ],
+            "name": "hello",
+          },
+        }
+      `);
     });
 
     it("[deprecated] loads config from package.json", async () => {
       writeFilesToDir(dir, {
         "package.json": `{"apollo":{"client": {"service": "hello"}} }`
       });
+
+      // silence the warning
+      const spy = jest.spyOn(console, "warn");
+      spy.mockImplementationOnce(() => {});
+
       const config = await loadConfig({ configPath: dirPath });
 
+      spy.mockRestore();
       expect(config.client.service).toEqual("hello");
     });
 
@@ -169,34 +175,47 @@ Object {
   });
 
   describe("errors", () => {
-    it("throws when config file is empty", done => {
+    it("throws when config file is empty", async () => {
       writeFilesToDir(dir, { "my.config.js": `` });
 
-      return loadConfig({
+      const spy = jest.spyOn(console, "error");
+      // use this to keep the log quiet
+      spy.mockImplementation();
+
+      await loadConfig({
         configPath: dirPath,
         configFileName: "my.config.js"
-      }).catch(err => {
-        expect(err.message).toMatch(/.*A config file failed to load at.*/);
-        done();
       });
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/config file failed to load/i)
+      );
+
+      spy.mockRestore();
     });
 
-    it("throws when explorer.search fails", done => {
+    it("throws when explorer.search fails", async () => {
       writeFilesToDir(dir, { "my.config.js": `* 98375^%*&^ its lit` });
 
-      return loadConfig({
+      const spy = jest.spyOn(console, "error");
+      // use this to keep the log quiet
+      spy.mockImplementation();
+
+      await loadConfig({
         configPath: dirPath,
         configFileName: "my.config.js"
-      }).catch(err => {
-        expect(err.message).toMatch(
-          /.*A config file failed to load with options.*/
-        );
-        done();
       });
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/config file failed to load/i)
+      );
+
+      spy.mockRestore();
     });
 
     it("issues a deprecation warning when loading config from package.json", async () => {
-      jest.spyOn(global.console, "warn");
+      const spy = jest.spyOn(console, "warn");
+      spy.mockImplementation();
 
       writeFilesToDir(dir, {
         "package.json": `{"apollo":{"client": {"service": "hello"}} }`
@@ -207,37 +226,47 @@ Object {
         configFileName: "package.json"
       });
 
-      expect(console.warn.mock.calls[0][0]).toMatchInlineSnapshot(
-        `"The \\"apollo\\" package.json configuration key will no longer be supported in Apollo v3. Please use the apollo.config.js file for Apollo project configuration. For more information, see: https://bit.ly/2ByILPj"`
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/The "apollo" package.json configuration/i)
       );
+
+      spy.mockRestore();
     });
 
-    it("throws if a config file was expected but not found", done => {
+    it("throws if a config file was expected but not found", async () => {
+      const spy = jest.spyOn(console, "error");
+      spy.mockImplementation();
+
       writeFilesToDir(dir, { "my.config.js": `module.exports = {}` });
 
-      return loadConfig({
+      await loadConfig({
         configFileName: "my.TYPO.js",
         requireConfig: true // this is what we're testing
-      }).catch(err => {
-        expect(err.message).toMatch(/.*No Apollo config found for project*/);
-        done();
       });
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/no apollo config/i)
+      );
+      spy.mockRestore();
     });
 
-    it("throws if project type cant be resolved", () => {
+    it("throws if project type cant be resolved", async () => {
+      const spy = jest.spyOn(console, "error");
+      spy.mockImplementation();
+
       writeFilesToDir(dir, {
         "my.config.js": `module.exports = {}`
       });
 
-      const load = async () =>
-        await loadConfig({
-          configPath: dirPath,
-          configFileName: "my.config.js"
-        });
+      await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
 
-      return expect(load()).rejects.toMatchInlineSnapshot(
-        `[Error: Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj]`
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/unable to resolve/i)
       );
+      spy.mockRestore();
     });
   });
 
@@ -312,20 +341,6 @@ Object {
       });
 
       expect(config.isService).toEqual(true);
-    });
-
-    it("throws if project type cant be inferred", done => {
-      writeFilesToDir(dir, {
-        "my.config.js": `module.exports = { engine: { endpoint: 'http://a.a' } }`
-      });
-
-      return loadConfig({
-        configPath: dirPath,
-        configFileName: "my.config.js"
-      }).catch(err => {
-        expect(err.message).toMatch(/.*Unable to resolve project type.*/);
-        done();
-      });
     });
   });
 

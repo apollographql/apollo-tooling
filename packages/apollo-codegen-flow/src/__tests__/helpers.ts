@@ -16,7 +16,7 @@ import { createTypeAnnotationFromGraphQLTypeFunction } from "../helpers";
 const typeAnnotationFromGraphQLType = createTypeAnnotationFromGraphQLTypeFunction(
   {
     passthroughCustomScalars: false,
-    useFlowReadOnlyTypes: false
+    useReadOnlyTypes: false
   }
 );
 
@@ -438,7 +438,7 @@ describe("passthrough custom scalars", () => {
   beforeAll(() => {
     getTypeAnnotation = createTypeAnnotationFromGraphQLTypeFunction({
       passthroughCustomScalars: true,
-      useFlowReadOnlyTypes: false
+      useReadOnlyTypes: false
     });
   });
 
@@ -463,7 +463,7 @@ describe("passthrough custom scalars with custom scalar prefix", () => {
     getTypeAnnotation = createTypeAnnotationFromGraphQLTypeFunction({
       passthroughCustomScalars: true,
       customScalarsPrefix: "Foo$",
-      useFlowReadOnlyTypes: false
+      useReadOnlyTypes: false
     });
   });
 

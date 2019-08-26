@@ -1,0 +1,324 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`service:check formatHumanReadable should have correct output with breaking and non-breaking changes 1`] = `
+"
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
+FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
+FAIL    FIELD_CHANGED_TYPE         \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
+FAIL    FIELD_REMOVED              \`Change.affectedClients\` was removed
+FAIL    FIELD_REMOVED              \`NamedIntrospectionValue.printedType\` was removed
+FAIL    TYPE_REMOVED               \`NamedIntrospectionArg\` removed
+
+PASS    ARG_REMOVED                \`ServiceMutation.registerOperations\` arg \`manifestVersion\` was removed
+PASS    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`historicParameters\` was removed
+PASS    FIELD_ADDED                \`Service.schemaNotificationChannels\` was added
+PASS    FIELD_ADDED                \`ServiceMutation.deregisterSchemaNotificationChannel\` was added
+PASS    FIELD_ADDED                \`ServiceMutation.registerSchemaNotificationChannel\` was added
+PASS    FIELD_DEPRECATION_REMOVED  \`AffectedClient.clientId\` is no longer deprecated
+PASS    FIELD_DEPRECATION_REMOVED  \`Change.description\` is no longer deprecated
+PASS    FIELD_REMOVED              \`AffectedClient.clientReferenceId\` was removed
+PASS    FIELD_REMOVED              \`Change.affectedClientIdVersionPairs\` was removed
+PASS    FIELD_REMOVED              \`Change.affectedClientReferenceIds\` was removed
+PASS    FIELD_REMOVED              \`SchemaDiff.numberOfCheckedOperations\` was removed
+
+View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z?graphCompositionId=fff"
+`;
+
+exports[`service:check formatHumanReadable should have correct output with only breaking changes 1`] = `
+"
+FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
+FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
+FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
+FAIL    FIELD_CHANGED_TYPE  \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
+FAIL    FIELD_REMOVED       \`Change.affectedClients\` was removed
+FAIL    FIELD_REMOVED       \`NamedIntrospectionValue.printedType\` was removed
+FAIL    TYPE_REMOVED        \`NamedIntrospectionArg\` removed
+
+View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z?graphCompositionId=fff"
+`;
+
+exports[`service:check formatHumanReadable should have correct output with only non-breaking changes 1`] = `
+"
+No changes present between schemas
+
+View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z?graphCompositionId=fff"
+`;
+
+exports[`service:check integration federated should report composition errors correctly --json 1`] = `
+"{
+  \\"errors\\": [
+    {
+      \\"service\\": \\"reviews\\",
+      \\"field\\": \\"User.id\\",
+      \\"message\\": \\"marked @external but it does not have a matching field on on the base service (accounts)\\"
+    },
+    {
+      \\"service\\": \\"reviews\\",
+      \\"field\\": \\"User\\",
+      \\"message\\": \\"A @key selects id, but User.id could not be found\\"
+    },
+    {
+      \\"service\\": \\"accounts\\",
+      \\"field\\": \\"User\\",
+      \\"message\\": \\"A @key selects id, but User.id could not be found\\"
+    }
+  ]
+}
+"
+`;
+
+exports[`service:check integration federated should report composition errors correctly --markdown 1`] = `
+"
+### Apollo Service Check
+🔄 Validated graph composition on schema tag \`master\` for service \`accounts\` on graph \`engine\`.
+❌ Found **3 composition errors**
+
+| Service   | Field     | Message   |
+| --------- | --------- | --------- |
+| reviews | User.id | marked @external but it does not have a matching field on on the base service (accounts) |
+| reviews | User | A @key selects id, but User.id could not be found |
+| accounts | User | A @key selects id, but User.id could not be found |
+
+"
+`;
+
+exports[`service:check integration federated should report composition errors correctly compacts output in CI 1`] = `
+"Loading Apollo Project
+Found 3 graph composition errors for service accounts on graph engine
+
+Service   Field    Message
+────────  ───────  ────────────────────────────────────────────────────────────────────────────────────────
+reviews   User.id  marked @external but it does not have a matching field on on the base service (accounts)
+reviews   User     A @key selects id, but User.id could not be found
+accounts  User     A @key selects id, but User.id could not be found
+"
+`;
+
+exports[`service:check integration federated should report composition errors correctly vanilla 1`] = `
+"Loading Apollo Project [started]
+Loading Apollo Project [completed]
+Validate graph composition for service accounts on graph engine [started]
+→ Fetching local service's partial schema
+→ Attempting to compose graph with accounts service's partial schema
+Found 3 graph composition errors for service accounts on graph engine [title changed]
+Found 3 graph composition errors for service accounts on graph engine [failed]
+→ Federated service composition was unsuccessful. Please see the reasons below.
+
+Service   Field    Message
+────────  ───────  ────────────────────────────────────────────────────────────────────────────────────────
+reviews   User.id  marked @external but it does not have a matching field on on the base service (accounts)
+reviews   User     A @key selects id, but User.id could not be found
+accounts  User     A @key selects id, but User.id could not be found
+"
+`;
+
+exports[`service:check integration federated should report composition success correctly --json 1`] = `
+"{
+  \\"targetUrl\\": \\"https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc\\",
+  \\"changes\\": [
+    {
+      \\"severity\\": \\"NOTICE\\",
+      \\"code\\": \\"ARG_CHANGED_TYPE\\",
+      \\"description\\": \\"\`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`\\"
+    }
+  ],
+  \\"validationConfig\\": {
+    \\"from\\": \\"-47347200\\",
+    \\"to\\": \\"-0\\",
+    \\"queryCountThreshold\\": 1,
+    \\"queryCountThresholdPercentage\\": 0
+  }
+}
+"
+`;
+
+exports[`service:check integration federated should report composition success correctly --markdown 1`] = `
+"
+### Apollo Service Check
+🔄 Validated your local schema against schema tag \`master\` for service \`accounts\` on graph \`engine\`.
+🔢 Compared **1 schema change** against **0 operations** seen over the **last 548 days**.
+✅ Found **no breaking changes**.
+
+🔗 [View your service check details](https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc).
+
+"
+`;
+
+exports[`service:check integration federated should report composition success correctly compacts output in CI 1`] = `
+"Loading Apollo Project
+Found 0 graph composition errors for service accounts on graph engine
+Validated composed schema against tag master on graph engine
+Compared 1 schema change against 0 operations over the last 548 days
+Found 0 breaking changes and 1 compatible change
+
+PASS    ARG_CHANGED_TYPE  \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`
+
+View full details at: https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc
+"
+`;
+
+exports[`service:check integration federated should report composition success correctly vanilla 1`] = `
+"Loading Apollo Project [started]
+Loading Apollo Project [completed]
+Validate graph composition for service accounts on graph engine [started]
+→ Fetching local service's partial schema
+→ Attempting to compose graph with accounts service's partial schema
+Found 0 graph composition errors for service accounts on graph engine [title changed]
+Found 0 graph composition errors for service accounts on graph engine [completed]
+Validating composed schema against tag master on graph engine [started]
+→ Validating schema
+Validated composed schema against tag master on graph engine [title changed]
+Validated composed schema against tag master on graph engine [completed]
+Comparing schema changes [started]
+Compared 1 schema change against 0 operations over the last 548 days [title changed]
+Compared 1 schema change against 0 operations over the last 548 days [completed]
+Reporting result [started]
+Found 0 breaking changes and 1 compatible change [title changed]
+Found 0 breaking changes and 1 compatible change [completed]
+
+PASS    ARG_CHANGED_TYPE  \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`
+
+View full details at: https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc
+"
+`;
+
+exports[`service:check integration non-federated should report traffic errors correctly --json 1`] = `
+"{
+  \\"targetUrl\\": \\"https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc\\",
+  \\"changes\\": [
+    {
+      \\"severity\\": \\"FAILURE\\",
+      \\"code\\": \\"ARG_CHANGED_TYPE\\",
+      \\"description\\": \\"\`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`\\"
+    }
+  ],
+  \\"validationConfig\\": {
+    \\"from\\": \\"-47347200\\",
+    \\"to\\": \\"-0\\",
+    \\"queryCountThreshold\\": 1,
+    \\"queryCountThresholdPercentage\\": 0
+  }
+}
+"
+`;
+
+exports[`service:check integration non-federated should report traffic errors correctly --markdown 1`] = `
+"
+### Apollo Service Check
+🔄 Validated your local schema against schema tag \`master\` on graph \`engine\`.
+🔢 Compared **1 schema change** against **0 operations** seen over the **last 548 days**.
+❌ Found **1 breaking change** that would affect **0 operations** across **0 clients**
+
+🔗 [View your service check details](https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc).
+
+"
+`;
+
+exports[`service:check integration non-federated should report traffic errors correctly vanilla 1`] = `
+"Loading Apollo Project [started]
+Loading Apollo Project [completed]
+Validating schema against tag master on graph engine [started]
+→ Resolving schema
+→ Validating schema
+Validated schema against tag master on graph engine [title changed]
+Validated schema against tag master on graph engine [completed]
+Comparing schema changes [started]
+Compared 1 schema change against 0 operations over the last 548 days [title changed]
+Compared 1 schema change against 0 operations over the last 548 days [completed]
+Reporting result [started]
+Found 1 breaking change and 0 compatible changes [title changed]
+Found 1 breaking change and 0 compatible changes [failed]
+→ breaking changes found
+
+FAIL    ARG_CHANGED_TYPE  \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`
+
+View full details at: https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc
+"
+`;
+
+exports[`service:check integration non-federated should report traffic non-errors correctly --json 1`] = `
+"{
+  \\"targetUrl\\": \\"https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc\\",
+  \\"changes\\": [
+    {
+      \\"severity\\": \\"NOTICE\\",
+      \\"code\\": \\"ARG_CHANGED_TYPE\\",
+      \\"description\\": \\"\`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`\\"
+    }
+  ],
+  \\"validationConfig\\": {
+    \\"from\\": \\"-47347200\\",
+    \\"to\\": \\"-0\\",
+    \\"queryCountThreshold\\": 1,
+    \\"queryCountThresholdPercentage\\": 0
+  }
+}
+"
+`;
+
+exports[`service:check integration non-federated should report traffic non-errors correctly --markdown 1`] = `
+"
+### Apollo Service Check
+🔄 Validated your local schema against schema tag \`master\` on graph \`engine\`.
+🔢 Compared **1 schema change** against **0 operations** seen over the **last 548 days**.
+✅ Found **no breaking changes**.
+
+🔗 [View your service check details](https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc).
+
+"
+`;
+
+exports[`service:check integration non-federated should report traffic non-errors correctly vanilla 1`] = `
+"Loading Apollo Project [started]
+Loading Apollo Project [completed]
+Validating schema against tag master on graph engine [started]
+→ Resolving schema
+→ Validating schema
+Validated schema against tag master on graph engine [title changed]
+Validated schema against tag master on graph engine [completed]
+Comparing schema changes [started]
+Compared 1 schema change against 0 operations over the last 548 days [title changed]
+Compared 1 schema change against 0 operations over the last 548 days [completed]
+Reporting result [started]
+Found 0 breaking changes and 1 compatible change [title changed]
+Found 0 breaking changes and 1 compatible change [completed]
+
+PASS    ARG_CHANGED_TYPE  \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`
+
+View full details at: https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc
+"
+`;
+
+exports[`service:check markdown formatting is correct with breaking changes 1`] = `
+"
+### Apollo Service Check
+🔄 Validated your local schema against schema tag \`staging\` on graph \`engine\`.
+🔢 Compared **18 schema changes** against **100 operations** seen over the **last 24 hours**.
+❌ Found **7 breaking changes** that would affect **3 operations** across **2 clients**
+
+🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z?graphCompositionId=fff).
+"
+`;
+
+exports[`service:check markdown formatting is correct with breaking changes 2`] = `
+"
+### Apollo Service Check
+🔄 Validated your local schema against schema tag \`staging\` on graph \`engine\`.
+🔢 Compared **1 schema change** against **1 operation** seen over the **last 24 hours**.
+❌ Found **1 breaking change** that would affect **1 operation** across **1 client**
+
+🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z?graphCompositionId=fff).
+"
+`;
+
+exports[`service:check markdown formatting is correct with no breaking changes 1`] = `
+"
+### Apollo Service Check
+🔄 Validated your local schema against schema tag \`staging\` on graph \`engine\`.
+🔢 Compared **0 schema changes** against **100 operations** seen over the **last 24 hours**.
+✅ Found **no breaking changes**.
+
+🔗 [View your service check details](https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z?graphCompositionId=fff).
+"
+`;

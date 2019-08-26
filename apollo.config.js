@@ -2,7 +2,8 @@ module.exports = {
   client: {
     name: "Apollo CLI",
     service: "engine@master",
-    includes: ["./packages/apollo-language-server/**/*.ts"]
+    includes: ["./packages/apollo-language-server/**/*.ts"],
+    excludes: ["**/*.test.ts", "**/__tests__/*"]
   },
   engine: {
     frontend: "https://engine-staging.apollographql.com",

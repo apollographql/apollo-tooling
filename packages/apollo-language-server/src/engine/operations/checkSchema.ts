@@ -3,7 +3,8 @@ import gql from "graphql-tag";
 export const CHECK_SCHEMA = gql`
   mutation CheckSchema(
     $id: ID!
-    $schema: IntrospectionSchemaInput!
+    $schema: IntrospectionSchemaInput
+    $schemaHash: String
     $tag: String
     $gitContext: GitContextInput
     $historicParameters: HistoricQueryParameters
@@ -12,6 +13,7 @@ export const CHECK_SCHEMA = gql`
     service(id: $id) {
       checkSchema(
         proposedSchema: $schema
+        proposedSchemaHash: $schemaHash
         baseSchemaTag: $tag
         gitContext: $gitContext
         historicParameters: $historicParameters
@@ -19,7 +21,7 @@ export const CHECK_SCHEMA = gql`
       ) {
         targetUrl
         diffToPrevious {
-          type
+          severity
           affectedClients {
             __typename
           }
@@ -28,7 +30,7 @@ export const CHECK_SCHEMA = gql`
           }
           numberOfCheckedOperations
           changes {
-            type
+            severity
             code
             description
           }

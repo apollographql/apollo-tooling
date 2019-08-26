@@ -68,6 +68,10 @@ export function extractGraphQLDocuments(
       return extractGraphQLDocumentsFromJSTemplateLiterals(document, tagName);
     case "python":
       return extractGraphQLDocumentsFromPythonStrings(document, tagName);
+    case "ruby":
+      return extractGraphQLDocumentsFromRubyStrings(document, tagName);
+    case "dart":
+      return extractGraphQLDocumentsFromDartStrings(document, tagName);
     default:
       return null;
   }
@@ -86,7 +90,7 @@ function extractGraphQLDocumentsFromJSTemplateLiterals(
   let result;
   while ((result = regExp.exec(text)) !== null) {
     const contents = replacePlaceholdersWithWhiteSpace(result[1]);
-    const position = document.positionAt(result.index + 4);
+    const position = document.positionAt(result.index + (tagName.length + 1));
     const locationOffset: SourceLocation = {
       line: position.line + 1,
       column: position.character + 1
@@ -130,8 +134,65 @@ function extractGraphQLDocumentsFromPythonStrings(
   return documents;
 }
 
+function extractGraphQLDocumentsFromRubyStrings(
+  document: TextDocument,
+  tagName: string
+): GraphQLDocument[] | null {
+  const text = document.getText();
+
+  const documents: GraphQLDocument[] = [];
+
+  const regExp = new RegExp(`(<<-${tagName})([\\s\\S]+?)${tagName}`, "gm");
+
+  let result;
+  while ((result = regExp.exec(text)) !== null) {
+    const contents = replacePlaceholdersWithWhiteSpace(result[2]);
+    const position = document.positionAt(result.index + result[1].length);
+    const locationOffset: SourceLocation = {
+      line: position.line + 1,
+      column: position.character + 1
+    };
+    const source = new Source(contents, document.uri, locationOffset);
+    documents.push(new GraphQLDocument(source));
+  }
+
+  if (documents.length < 1) return null;
+
+  return documents;
+}
+
+function extractGraphQLDocumentsFromDartStrings(
+  document: TextDocument,
+  tagName: string
+): GraphQLDocument[] | null {
+  const text = document.getText();
+
+  const documents: GraphQLDocument[] = [];
+
+  const regExp = new RegExp(
+    `\\b(${tagName}\\(\\s*r?("""|'''))([\\s\\S]+?)\\2\\s*\\)`,
+    "gm"
+  );
+
+  let result;
+  while ((result = regExp.exec(text)) !== null) {
+    const contents = replacePlaceholdersWithWhiteSpace(result[3]);
+    const position = document.positionAt(result.index + result[1].length);
+    const locationOffset: SourceLocation = {
+      line: position.line + 1,
+      column: position.character + 1
+    };
+    const source = new Source(contents, document.uri, locationOffset);
+    documents.push(new GraphQLDocument(source));
+  }
+
+  if (documents.length < 1) return null;
+
+  return documents;
+}
+
 function replacePlaceholdersWithWhiteSpace(content: string) {
-  return content.replace(/\$\{(.+)?\}/g, match => {
+  return content.replace(/\$\{([\s\S]+?)\}/gm, match => {
     return Array(match.length).join(" ");
   });
 }

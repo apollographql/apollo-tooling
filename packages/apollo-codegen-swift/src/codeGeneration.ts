@@ -47,6 +47,15 @@ export interface Options {
   customScalarsPrefix?: string;
 }
 
+/**
+ * The main method to call from outside this package to generate Swift code.
+ *
+ * @param context The `CompilerContext` to use to generate code.
+ * @param outputIndividualFiles Generates individual files per query/fragment if true,
+ *                              otherwise shoves everything into one giant file.
+ * @param only [optional] The path to a file which is the only file which should be regenerated.
+ *             If absent, all files will be regenerated.
+ */
 export function generateSource(
   context: CompilerContext,
   outputIndividualFiles: boolean,
@@ -60,7 +69,7 @@ export function generateSource(
 
       generator.namespaceDeclaration(context.options.namespace, () => {
         context.typesUsed.forEach(type => {
-          generator.typeDeclarationForGraphQLType(type);
+          generator.typeDeclarationForGraphQLType(type, true);
         });
       });
     });
@@ -86,13 +95,13 @@ export function generateSource(
           () => {
             Object.values(context.operations).forEach(operation => {
               if (operation.filePath === inputFilePath) {
-                generator.classDeclarationForOperation(operation);
+                generator.classDeclarationForOperation(operation, true);
               }
             });
 
             Object.values(context.fragments).forEach(fragment => {
               if (fragment.filePath === inputFilePath) {
-                generator.structDeclarationForFragment(fragment);
+                generator.structDeclarationForFragment(fragment, true);
               }
             });
           }
@@ -104,15 +113,15 @@ export function generateSource(
 
     generator.namespaceDeclaration(context.options.namespace, () => {
       context.typesUsed.forEach(type => {
-        generator.typeDeclarationForGraphQLType(type);
+        generator.typeDeclarationForGraphQLType(type, false);
       });
 
       Object.values(context.operations).forEach(operation => {
-        generator.classDeclarationForOperation(operation);
+        generator.classDeclarationForOperation(operation, false);
       });
 
       Object.values(context.fragments).forEach(fragment => {
-        generator.structDeclarationForFragment(fragment);
+        generator.structDeclarationForFragment(fragment, false);
       });
     });
   }
@@ -137,7 +146,17 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printOnNewline("import Apollo");
   }
 
-  classDeclarationForOperation(operation: Operation) {
+  /**
+   * Generates the class declaration for an operation.
+   *
+   * @param operation The operaton to generate the class declaration for.
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   */
+  classDeclarationForOperation(
+    operation: Operation,
+    outputIndividualFiles: boolean
+  ) {
     const {
       operationName,
       operationType,
@@ -168,29 +187,40 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         throw new GraphQLError(`Unsupported operation type "${operationType}"`);
     }
 
+    const {
+      options: { namespace },
+      fragments
+    } = this.context;
+    const isRedundant = !!namespace && outputIndividualFiles;
+    const modifiers = isRedundant ? ["final"] : ["public", "final"];
+
     this.classDeclaration(
       {
         className,
-        modifiers: ["public", "final"],
+        modifiers,
         adoptedProtocols: [protocol]
       },
       () => {
         if (source) {
+          this.commentWithoutTrimming(source);
           this.printOnNewline("public let operationDefinition =");
           this.withIndent(() => {
             this.multilineString(source);
           });
         }
 
+        this.printNewlineIfNeeded();
+        this.printOnNewline(`public let operationName = "${operationName}"`);
+
         const fragmentsReferenced = collectFragmentsReferenced(
           operation.selectionSet,
-          this.context.fragments
+          fragments
         );
 
         if (this.context.options.generateOperationIds) {
           const { operationId } = generateOperationId(
             operation,
-            this.context.fragments,
+            fragments,
             fragmentsReferenced
           );
           operation.operationId = operationId;
@@ -253,19 +283,28 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.initializerDeclarationForProperties([]);
         }
 
-        this.structDeclarationForSelectionSet({
-          structName: "Data",
-          selectionSet
-        });
+        this.structDeclarationForSelectionSet(
+          {
+            structName: "Data",
+            selectionSet
+          },
+          outputIndividualFiles
+        );
       }
     );
   }
 
-  structDeclarationForFragment({
-    fragmentName,
-    selectionSet,
-    source
-  }: Fragment) {
+  /**
+   * Generates the struct declaration for a fragment.
+   *
+   * @param param0 The fragment name, selectionSet, and source to use to generate the struct
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   */
+  structDeclarationForFragment(
+    { fragmentName, selectionSet, source }: Fragment,
+    outputIndividualFiles: boolean
+  ) {
     const structName = this.helpers.structNameForFragmentName(fragmentName);
 
     this.structDeclarationForSelectionSet(
@@ -274,8 +313,10 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         adoptedProtocols: ["GraphQLFragment"],
         selectionSet
       },
+      outputIndividualFiles,
       () => {
         if (source) {
+          this.commentWithoutTrimming(source);
           this.printOnNewline("public static let fragmentDefinition =");
           this.withIndent(() => {
             this.multilineString(source);
@@ -285,6 +326,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     );
   }
 
+  /**
+   * Generates the struct declaration for a selection set.
+   *
+   * @param param0 The name, adoptedProtocols, and selectionSet to use to generate the struct
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   * @param before [optional] A function to execute before generating the struct declaration.
+   */
   structDeclarationForSelectionSet(
     {
       structName,
@@ -295,6 +344,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       adoptedProtocols?: string[];
       selectionSet: SelectionSet;
     },
+    outputIndividualFiles: boolean,
     before?: Function
   ) {
     const typeCase = typeCaseForSelectionSet(
@@ -309,6 +359,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         variant: typeCase.default,
         typeCase
       },
+      outputIndividualFiles,
       before,
       () => {
         const variants = typeCase.variants.map(
@@ -319,15 +370,27 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         for (const variant of variants) {
           this.propertyDeclarationForVariant(variant);
 
-          this.structDeclarationForVariant({
-            structName: variant.structName,
-            variant
-          });
+          this.structDeclarationForVariant(
+            {
+              structName: variant.structName,
+              variant
+            },
+            outputIndividualFiles
+          );
         }
       }
     );
   }
 
+  /**
+   * Generates the struct declaration for a variant
+   *
+   * @param param0 The structName, adoptedProtocols, variant, and typeCase to use to generate the struct
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   * @param before [optional] A function to execute before generating the struct declaration.
+   * @param after [optional] A function to execute after generating the struct declaration.
+   */
   structDeclarationForVariant(
     {
       structName,
@@ -340,148 +403,165 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       variant: Variant;
       typeCase?: TypeCase;
     },
+    outputIndividualFiles: boolean,
     before?: Function,
     after?: Function
   ) {
-    this.structDeclaration({ structName, adoptedProtocols }, () => {
-      if (before) {
-        before();
-      }
+    const {
+      options: { namespace, mergeInFieldsFromFragmentSpreads }
+    } = this.context;
 
-      this.printNewlineIfNeeded();
-      this.printOnNewline("public static let possibleTypes = [");
-      this.print(
-        join(variant.possibleTypes.map(type => `"${type.name}"`), ", ")
-      );
-      this.print("]");
+    this.structDeclaration(
+      { structName, adoptedProtocols, namespace },
+      outputIndividualFiles,
+      () => {
+        if (before) {
+          before();
+        }
 
-      this.printNewlineIfNeeded();
-      this.printOnNewline(
-        "public static let selections: [GraphQLSelection] = "
-      );
-      if (typeCase) {
-        this.typeCaseInitialization(typeCase);
-      } else {
-        this.selectionSetInitialization(variant);
-      }
-
-      this.printNewlineIfNeeded();
-
-      this.printOnNewline(`public private(set) var resultMap: ResultMap`);
-
-      this.printNewlineIfNeeded();
-      this.printOnNewline("public init(unsafeResultMap: ResultMap)");
-      this.withinBlock(() => {
-        this.printOnNewline(`self.resultMap = unsafeResultMap`);
-      });
-
-      if (typeCase) {
-        this.initializersForTypeCase(typeCase);
-      } else {
-        this.initializersForVariant(variant);
-      }
-
-      const fields = collectAndMergeFields(
-        variant,
-        !!this.context.options.mergeInFieldsFromFragmentSpreads
-      ).map(field => this.helpers.propertyFromField(field as Field));
-
-      const fragmentSpreads = variant.fragmentSpreads.map(fragmentSpread => {
-        const isConditional = variant.possibleTypes.some(
-          type => !fragmentSpread.selectionSet.possibleTypes.includes(type)
-        );
-
-        return this.helpers.propertyFromFragmentSpread(
-          fragmentSpread,
-          isConditional
-        );
-      });
-
-      fields.forEach(this.propertyDeclarationForField, this);
-
-      if (fragmentSpreads.length > 0) {
         this.printNewlineIfNeeded();
-        this.printOnNewline(`public var fragments: Fragments`);
+        this.printOnNewline("public static let possibleTypes = [");
+        this.print(
+          join(variant.possibleTypes.map(type => `"${type.name}"`), ", ")
+        );
+        this.print("]");
+
+        this.printNewlineIfNeeded();
+        this.printOnNewline(
+          "public static let selections: [GraphQLSelection] = "
+        );
+        if (typeCase) {
+          this.typeCaseInitialization(typeCase);
+        } else {
+          this.selectionSetInitialization(variant);
+        }
+
+        this.printNewlineIfNeeded();
+
+        this.printOnNewline(`public private(set) var resultMap: ResultMap`);
+
+        this.printNewlineIfNeeded();
+        this.printOnNewline("public init(unsafeResultMap: ResultMap)");
         this.withinBlock(() => {
-          this.printOnNewline("get");
-          this.withinBlock(() => {
-            this.printOnNewline(`return Fragments(unsafeResultMap: resultMap)`);
-          });
-          this.printOnNewline("set");
-          this.withinBlock(() => {
-            this.printOnNewline(`resultMap += newValue.resultMap`);
-          });
+          this.printOnNewline(`self.resultMap = unsafeResultMap`);
         });
 
-        this.structDeclaration(
-          {
-            structName: "Fragments"
-          },
-          () => {
-            this.printOnNewline(`public private(set) var resultMap: ResultMap`);
+        if (typeCase) {
+          this.initializersForTypeCase(typeCase);
+        } else {
+          this.initializersForVariant(variant);
+        }
 
-            this.printNewlineIfNeeded();
-            this.printOnNewline("public init(unsafeResultMap: ResultMap)");
+        const fields = collectAndMergeFields(
+          variant,
+          !!mergeInFieldsFromFragmentSpreads
+        ).map(field => this.helpers.propertyFromField(field as Field));
+
+        const fragmentSpreads = variant.fragmentSpreads.map(fragmentSpread => {
+          const isConditional = variant.possibleTypes.some(
+            type => !fragmentSpread.selectionSet.possibleTypes.includes(type)
+          );
+
+          return this.helpers.propertyFromFragmentSpread(
+            fragmentSpread,
+            isConditional
+          );
+        });
+
+        fields.forEach(this.propertyDeclarationForField, this);
+
+        if (fragmentSpreads.length > 0) {
+          this.printNewlineIfNeeded();
+          this.printOnNewline(`public var fragments: Fragments`);
+          this.withinBlock(() => {
+            this.printOnNewline("get");
             this.withinBlock(() => {
-              this.printOnNewline(`self.resultMap = unsafeResultMap`);
+              this.printOnNewline(
+                `return Fragments(unsafeResultMap: resultMap)`
+              );
             });
+            this.printOnNewline("set");
+            this.withinBlock(() => {
+              this.printOnNewline(`resultMap += newValue.resultMap`);
+            });
+          });
 
-            for (const fragmentSpread of fragmentSpreads) {
-              const {
-                propertyName,
-                typeName,
-                structName,
-                isConditional
-              } = fragmentSpread;
+          this.structDeclaration(
+            {
+              structName: "Fragments"
+            },
+            outputIndividualFiles,
+            () => {
+              this.printOnNewline(
+                `public private(set) var resultMap: ResultMap`
+              );
 
               this.printNewlineIfNeeded();
-              this.printOnNewline(
-                `public var ${escapeIdentifierIfNeeded(
-                  propertyName
-                )}: ${typeName}`
-              );
+              this.printOnNewline("public init(unsafeResultMap: ResultMap)");
               this.withinBlock(() => {
-                this.printOnNewline("get");
-                this.withinBlock(() => {
-                  if (isConditional) {
-                    this.printOnNewline(
-                      `if !${structName}.possibleTypes.contains(resultMap["__typename"]! as! String) { return nil }`
-                    );
-                  }
-                  this.printOnNewline(
-                    `return ${structName}(unsafeResultMap: resultMap)`
-                  );
-                });
-                this.printOnNewline("set");
-                this.withinBlock(() => {
-                  if (isConditional) {
-                    this.printOnNewline(
-                      `guard let newValue = newValue else { return }`
-                    );
-                    this.printOnNewline(`resultMap += newValue.resultMap`);
-                  } else {
-                    this.printOnNewline(`resultMap += newValue.resultMap`);
-                  }
-                });
+                this.printOnNewline(`self.resultMap = unsafeResultMap`);
               });
-            }
-          }
-        );
-      }
 
-      for (const field of fields) {
-        if (isCompositeType(getNamedType(field.type)) && field.selectionSet) {
-          this.structDeclarationForSelectionSet({
-            structName: field.structName,
-            selectionSet: field.selectionSet
-          });
+              for (const fragmentSpread of fragmentSpreads) {
+                const {
+                  propertyName,
+                  typeName,
+                  structName,
+                  isConditional
+                } = fragmentSpread;
+
+                this.printNewlineIfNeeded();
+                this.printOnNewline(
+                  `public var ${escapeIdentifierIfNeeded(
+                    propertyName
+                  )}: ${typeName}`
+                );
+                this.withinBlock(() => {
+                  this.printOnNewline("get");
+                  this.withinBlock(() => {
+                    if (isConditional) {
+                      this.printOnNewline(
+                        `if !${structName}.possibleTypes.contains(resultMap["__typename"]! as! String) { return nil }`
+                      );
+                    }
+                    this.printOnNewline(
+                      `return ${structName}(unsafeResultMap: resultMap)`
+                    );
+                  });
+                  this.printOnNewline("set");
+                  this.withinBlock(() => {
+                    if (isConditional) {
+                      this.printOnNewline(
+                        `guard let newValue = newValue else { return }`
+                      );
+                      this.printOnNewline(`resultMap += newValue.resultMap`);
+                    } else {
+                      this.printOnNewline(`resultMap += newValue.resultMap`);
+                    }
+                  });
+                });
+              }
+            }
+          );
+        }
+
+        for (const field of fields) {
+          if (isCompositeType(getNamedType(field.type)) && field.selectionSet) {
+            this.structDeclarationForSelectionSet(
+              {
+                structName: field.structName,
+                selectionSet: field.selectionSet
+              },
+              outputIndividualFiles
+            );
+          }
+        }
+
+        if (after) {
+          after();
         }
       }
-
-      if (after) {
-        after();
-      }
-    });
+    );
   }
 
   initializersForTypeCase(typeCase: TypeCase) {
@@ -874,11 +954,21 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printOnNewline("]");
   }
 
-  typeDeclarationForGraphQLType(type: GraphQLType) {
+  /**
+   * Generates a type declaration for the given `GraphQLType`
+   *
+   * @param type The graphQLType to generate a type declaration for.
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   */
+  typeDeclarationForGraphQLType(
+    type: GraphQLType,
+    outputIndividualFiles: boolean
+  ) {
     if (type instanceof GraphQLEnumType) {
       this.enumerationDeclaration(type);
     } else if (type instanceof GraphQLInputObjectType) {
-      this.structDeclarationForInputObjectType(type);
+      this.structDeclarationForInputObjectType(type, outputIndividualFiles);
     }
   }
 
@@ -889,7 +979,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printNewlineIfNeeded();
     this.comment(description || undefined);
     this.printOnNewline(
-      `public enum ${name}: RawRepresentable, Equatable, Hashable, Apollo.JSONDecodable, Apollo.JSONEncodable`
+      `public enum ${name}: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable`
     );
     this.withinBlock(() => {
       this.printOnNewline("public typealias RawValue = String");
@@ -961,10 +1051,35 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.printOnNewline(`default: return false`);
         });
       });
+
+      this.printNewlineIfNeeded();
+      this.printOnNewline(`public static var allCases: [${name}]`);
+      this.withinBlock(() => {
+        this.printOnNewline(`return [`);
+        values.forEach(value => {
+          const enumDotCaseName = escapeIdentifierIfNeeded(
+            this.helpers.enumDotCaseName(value.name)
+          );
+          this.withIndent(() => {
+            this.printOnNewline(`${enumDotCaseName},`);
+          });
+        });
+        this.printOnNewline(`]`);
+      });
     });
   }
 
-  structDeclarationForInputObjectType(type: GraphQLInputObjectType) {
+  /**
+   * Generates a struct for a `GraphQLInputObjectType`.
+   *
+   * @param type The input type to generate code for
+   * @param outputIndividualFiles If this operation is being output as individual files, to help prevent
+   *                              redundant usages of the `public` modifier in enum extensions.
+   */
+  structDeclarationForInputObjectType(
+    type: GraphQLInputObjectType,
+    outputIndividualFiles: boolean
+  ) {
     const { name: structName, description } = type;
     const adoptedProtocols = ["GraphQLMapConvertible"];
     const fields = Object.values(type.getFields());
@@ -982,6 +1097,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
     this.structDeclaration(
       { structName, description: description || undefined, adoptedProtocols },
+      outputIndividualFiles,
       () => {
         this.printOnNewline(`public var graphQLMap: GraphQLMap`);
 
@@ -1021,7 +1137,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           name,
           propertyName,
           typeName,
-          description
+          description,
+          isOptional
         } of properties) {
           this.printNewlineIfNeeded();
           this.comment(description || undefined);
@@ -1031,9 +1148,15 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.withinBlock(() => {
             this.printOnNewline("get");
             this.withinBlock(() => {
-              this.printOnNewline(
-                `return graphQLMap["${name}"] as! ${typeName}`
-              );
+              if (isOptional) {
+                this.printOnNewline(
+                  `return graphQLMap["${name}"] as? ${typeName} ?? .none`
+                );
+              } else {
+                this.printOnNewline(
+                  `return graphQLMap["${name}"] as! ${typeName}`
+                );
+              }
             });
             this.printOnNewline("set");
             this.withinBlock(() => {

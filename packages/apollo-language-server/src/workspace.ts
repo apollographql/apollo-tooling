@@ -18,6 +18,7 @@ import { ServiceID, SchemaTag, ClientIdentity } from "./engine";
 import { GraphQLClientProject, isClientProject } from "./project/client";
 import { GraphQLServiceProject } from "./project/service";
 import URI from "vscode-uri";
+import { Debug } from "./utilities";
 
 export interface WorkspaceConfig {
   clientIdentity?: ClientIdentity;
@@ -28,6 +29,7 @@ export class GraphQLWorkspace {
   private _onDecorations?: NotificationHandler<any>;
   private _onSchemaTags?: NotificationHandler<[ServiceID, SchemaTag[]]>;
   private _onConfigFilesFound?: NotificationHandler<ApolloConfig[]>;
+  private _projectForFileCache: Map<string, GraphQLProject> = new Map();
 
   private projectsByFolderUri: Map<string, GraphQLProject[]> = new Map();
 
@@ -122,20 +124,26 @@ export class GraphQLWorkspace {
     const projectConfigs = Array.from(apolloConfigFolders).map(configFolder =>
       loadConfig({ configPath: configFolder, requireConfig: true })
         .then(config => {
-          foundConfigs.push(config);
-          const projectsForConfig = config.projects.map(projectConfig =>
-            this.createProject({ config, folder })
-          );
+          if (config) {
+            foundConfigs.push(config);
+            const projectsForConfig = config.projects.map(projectConfig =>
+              this.createProject({ config, folder })
+            );
 
-          const existingProjects =
-            this.projectsByFolderUri.get(folder.uri) || [];
+            const existingProjects =
+              this.projectsByFolderUri.get(folder.uri) || [];
 
-          this.projectsByFolderUri.set(folder.uri, [
-            ...existingProjects,
-            ...projectsForConfig
-          ]);
+            this.projectsByFolderUri.set(folder.uri, [
+              ...existingProjects,
+              ...projectsForConfig
+            ]);
+          } else {
+            Debug.error(
+              `Workspace failed to load config from: ${configFolder}/`
+            );
+          }
         })
-        .catch(error => console.error(error))
+        .catch(error => Debug.error(error))
     );
 
     await Promise.all(projectConfigs);
@@ -146,6 +154,7 @@ export class GraphQLWorkspace {
   }
 
   reloadService() {
+    this._projectForFileCache.clear();
     this.projectsByFolderUri.forEach((projects, uri) => {
       this.projectsByFolderUri.set(
         uri,
@@ -225,9 +234,15 @@ export class GraphQLWorkspace {
   }
 
   projectForFile(uri: DocumentUri): GraphQLProject | undefined {
+    const cachedResult = this._projectForFileCache.get(uri);
+    if (cachedResult) {
+      return cachedResult;
+    }
+
     for (const projects of this.projectsByFolderUri.values()) {
       const project = projects.find(project => project.includesFile(uri));
       if (project) {
+        this._projectForFileCache.set(uri, project);
         return project;
       }
     }

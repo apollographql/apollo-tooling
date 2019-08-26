@@ -14,7 +14,8 @@ import * as t from "@babel/types";
 import { createTypeFromGraphQLTypeFunction } from "../helpers";
 
 const typeFromGraphQLType = createTypeFromGraphQLTypeFunction({
-  passthroughCustomScalars: false
+  passthroughCustomScalars: false,
+  useReadOnlyTypes: false
 });
 
 function nullableType(type: t.TSType) {
@@ -288,7 +289,8 @@ describe("passthrough custom scalars", () => {
 
   beforeAll(() => {
     getTypeAnnotation = createTypeFromGraphQLTypeFunction({
-      passthroughCustomScalars: true
+      passthroughCustomScalars: true,
+      useReadOnlyTypes: false
     });
   });
 
@@ -312,7 +314,8 @@ describe("passthrough custom scalars with custom scalar prefix", () => {
   beforeAll(() => {
     getTypeAnnotation = createTypeFromGraphQLTypeFunction({
       passthroughCustomScalars: true,
-      customScalarsPrefix: "Foo$"
+      customScalarsPrefix: "Foo$",
+      useReadOnlyTypes: false
     });
   });
 
@@ -326,6 +329,31 @@ describe("passthrough custom scalars with custom scalar prefix", () => {
 
     expect(getTypeAnnotation(OddType)).toMatchObject(
       nullableType(t.TSTypeReference(t.identifier("Foo$Odd")))
+    );
+  });
+});
+
+describe("readonly arrays", () => {
+  let getTypeAnnotation: Function;
+
+  beforeAll(() => {
+    getTypeAnnotation = createTypeFromGraphQLTypeFunction({
+      useReadOnlyTypes: true
+    });
+  });
+
+  test("Readonly array", () => {
+    const OddType = new GraphQLList(GraphQLString);
+
+    expect(getTypeAnnotation(OddType)).toMatchObject(
+      nullableType(
+        t.TSTypeReference(
+          t.identifier("ReadonlyArray"),
+          t.TSTypeParameterInstantiation([
+            t.TSParenthesizedType(nullableType(t.TSStringKeyword()))
+          ])
+        )
+      )
     );
   });
 });

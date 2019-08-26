@@ -12,8 +12,10 @@ import { QuickPickItem } from "vscode";
 import { GraphQLWorkspace } from "./workspace";
 import { GraphQLLanguageProvider } from "./languageProvider";
 import { LanguageServerLoadingHandler } from "./loadingHandler";
+import { debounceHandler, Debug } from "./utilities";
 
 const connection = createConnection(ProposedFeatures.all);
+Debug.SetConnection(connection);
 
 let hasWorkspaceFolderCapability = false;
 
@@ -80,7 +82,7 @@ connection.onInitialize(async ({ capabilities, workspaceFolders }) => {
       hoverProvider: true,
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: ["..."]
+        triggerCharacters: ["...", "@"]
       },
       definitionProvider: true,
       referencesProvider: true,
@@ -89,6 +91,7 @@ connection.onInitialize(async ({ capabilities, workspaceFolders }) => {
       codeLensProvider: {
         resolveProvider: false
       },
+      codeActionProvider: true,
       executeCommandProvider: {
         commands: []
       },
@@ -117,12 +120,14 @@ const documents: TextDocuments = new TextDocuments();
 // for open, change and close text document events
 documents.listen(connection);
 
-documents.onDidChangeContent(params => {
-  const project = workspace.projectForFile(params.document.uri);
-  if (!project) return;
+documents.onDidChangeContent(
+  debounceHandler(params => {
+    const project = workspace.projectForFile(params.document.uri);
+    if (!project) return;
 
-  project.documentDidChange(params.document);
-});
+    project.documentDidChange(params.document);
+  })
+);
 
 connection.onDidChangeWatchedFiles(params => {
   for (const { uri, type } of params.changes) {
@@ -181,16 +186,32 @@ connection.onWorkspaceSymbol((params, token) =>
   languageProvider.provideWorkspaceSymbol(params.query, token)
 );
 
-connection.onCompletion((params, token) =>
-  languageProvider.provideCompletionItems(
-    params.textDocument.uri,
-    params.position,
-    token
+connection.onCompletion(
+  debounceHandler(
+    (params, token) =>
+      languageProvider.provideCompletionItems(
+        params.textDocument.uri,
+        params.position,
+        token
+      ),
+    false
   )
 );
 
-connection.onCodeLens((params, token) =>
-  languageProvider.provideCodeLenses(params.textDocument.uri, token)
+connection.onCodeLens(
+  debounceHandler((params, token) =>
+    languageProvider.provideCodeLenses(params.textDocument.uri, token)
+  )
+);
+
+connection.onCodeAction(
+  debounceHandler((params, token) =>
+    languageProvider.provideCodeAction(
+      params.textDocument.uri,
+      params.range,
+      token
+    )
+  )
 );
 
 connection.onNotification("apollographql/reloadService", () =>

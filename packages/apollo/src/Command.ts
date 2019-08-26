@@ -11,7 +11,8 @@ import {
   isClientConfig,
   isServiceConfig,
   ApolloConfig,
-  getServiceFromKey
+  getServiceFromKey,
+  Debug
 } from "apollo-language-server";
 import { WithRequired, DeepPartial } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
@@ -71,7 +72,8 @@ export abstract class ProjectCommand extends Command {
         const value = header.substring(separatorIndex + 1).trim();
         return JSON.stringify({ [key]: value });
       },
-      description: "Additional headers to send to server for introspectionQuery"
+      description:
+        "Additional header to send to server for introspectionQuery. May be used multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag."
     }),
     endpoint: flags.string({
       description: "The url of your service"
@@ -101,11 +103,25 @@ export abstract class ProjectCommand extends Command {
     const { flags, args } = this.parse(this.constructor as any);
     this.ctx = { flags, args } as any;
 
+    // tell the language server to use the built-in loggers
+    // from oclif
+    Debug.SetLoggers({
+      info: this.log,
+      warning: this.warn,
+      error: message => {
+        this.error(message);
+        this.exit(1);
+      }
+    });
+
     const config = await this.createConfig(flags);
+    if (!config) return;
+
     this.createService(config, flags);
     this.ctx.config = config;
 
     // make sure this the first item in the task list
+    // XXX Somehow this task gets pushed onto the stack multiple times sometimes
     this.tasks.push({
       title: "Loading Apollo Project",
       task: async ctx => {
@@ -123,6 +139,12 @@ export abstract class ProjectCommand extends Command {
       name: service,
       type: this.type
     });
+
+    if (!config) {
+      this.error("A config failed to load, so the command couldn't be run");
+      this.exit(1);
+      return;
+    }
 
     config.tag = flags.tag || config.tag || "current";
     //  flag overides
@@ -223,10 +245,17 @@ export abstract class ProjectCommand extends Command {
     }
 
     const tasks = await generateTasks(ctx);
-    return new Listr(
-      [...this.tasks, ...tasks],
-      typeof options === "function" ? options(ctx) : options
-    ).run();
+    return new Listr([...this.tasks, ...tasks], {
+      // Use the `verbose` renderer for tests. We need this for two reasons:
+      // 1. We don't want to show a spinner in tests
+      // 2. We want to see individual changes to titles and output lines; this is accomplished with the
+      //    verbose renderer. Note that this _must_ be override-able because some functions require the
+      //    `silent` renderer.
+      ...(process.env.NODE_ENV === "test" && { renderer: "verbose" }),
+      ...(options && typeof options === "function" ? options(ctx) : options),
+      // @ts-ignore This option is added by https://github.com/SamVerschueren/listr-verbose-renderer#options
+      dateFormat: false
+    }).run();
   }
   async catch(err) {
     // handle any error from the command

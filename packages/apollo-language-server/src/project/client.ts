@@ -16,8 +16,13 @@ import {
   extendSchema,
   DocumentNode,
   FieldNode,
-  ObjectTypeDefinitionNode
+  ObjectTypeDefinitionNode,
+  GraphQLObjectType,
+  DefinitionNode,
+  DirectiveDefinitionNode
 } from "graphql";
+import { ValidationRule } from "graphql/validation/ValidationContext";
+import Maybe from "graphql/tsutils/Maybe";
 
 import { NotificationHandler, DiagnosticSeverity } from "vscode-languageserver";
 
@@ -25,14 +30,18 @@ import { rangeForASTNode } from "../utilities/source";
 import { formatMS } from "../format";
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
+import { apolloClientSchemaDocument } from "./defaultClientSchema";
 
 import { FieldStats, SchemaTag, ServiceID, ClientIdentity } from "../engine";
 import { ClientConfig } from "../config";
 import {
   removeDirectives,
   removeDirectiveAnnotatedFields,
-  withTypenameFieldAddedWhereNeeded
+  withTypenameFieldAddedWhereNeeded,
+  ClientSchemaInfo,
+  isDirectiveDefinitionNode
 } from "../utilities/graphql";
+import { defaultValidationRules } from "../errors/validation";
 
 import {
   collectExecutableDefinitionDiagnositics,
@@ -84,6 +93,10 @@ export class GraphQLClientProject extends GraphQLProject {
 
   private fieldStats?: FieldStats;
 
+  private _validationRules?: ValidationRule[];
+
+  public diagnosticSet?: DiagnosticSet;
+
   constructor({
     config,
     loadingHandler,
@@ -102,6 +115,35 @@ export class GraphQLClientProject extends GraphQLProject {
     super({ config, fileSet, loadingHandler, clientIdentity });
     this.rootURI = rootURI;
     this.serviceID = config.name;
+
+    /**
+     * This function is used in the Array.filter function below it to remove any .env files and config files.
+     * If there are 0 files remaining after removing those files, we should warn the user that their config
+     * may be wrong. We shouldn't throw an error here, since they could just be initially setting up a project
+     * and there's no way to know for sure that there _should_ be files.
+     */
+    const filterConfigAndEnvFiles = (path: string) =>
+      !(
+        path.includes("apollo.config") ||
+        path.includes(".env") ||
+        (config.configURI && path === config.configURI.fsPath)
+      );
+
+    if (fileSet.allFiles().filter(filterConfigAndEnvFiles).length === 0) {
+      console.warn(
+        "⚠️  It looks like there are 0 files associated with this Apollo Project. " +
+          "This may be because you don't have any files yet, or your includes/excludes " +
+          "fields are configured incorrectly, and Apollo can't find your files. " +
+          "For help configuring Apollo projects, see this guide: https://bit.ly/2ByILPj"
+      );
+    }
+
+    const { validationRules } = this.config.client;
+    if (typeof validationRules === "function") {
+      this._validationRules = defaultValidationRules.filter(validationRules);
+    } else {
+      this._validationRules = validationRules;
+    }
 
     this.loadEngineData();
   }
@@ -136,7 +178,7 @@ export class GraphQLClientProject extends GraphQLProject {
         total: totalTypes
       },
       tag: this.config.tag,
-      loaded: this.serviceID ? true : false,
+      loaded: Boolean(this.serviceID && (this.schema || this.serviceSchema)),
       lastFetch: this.lastLoadDate
     };
   }
@@ -178,8 +220,67 @@ export class GraphQLClientProject extends GraphQLProject {
   get clientSchema(): DocumentNode {
     return {
       kind: Kind.DOCUMENT,
-      definitions: this.typeSystemDefinitionsAndExtensions
+      definitions: [
+        ...this.typeSystemDefinitionsAndExtensions,
+        ...this.missingApolloClientDirectives
+      ]
     };
+  }
+
+  get missingApolloClientDirectives(): readonly DefinitionNode[] {
+    const { serviceSchema } = this;
+
+    const serviceDirectives = serviceSchema
+      ? serviceSchema.getDirectives().map(directive => directive.name)
+      : [];
+
+    const clientDirectives = this.typeSystemDefinitionsAndExtensions
+      .filter(isDirectiveDefinitionNode)
+      .map(def => def.name.value);
+
+    const existingDirectives = serviceDirectives.concat(clientDirectives);
+
+    const apolloAst = apolloClientSchemaDocument.ast;
+    if (!apolloAst) return [];
+
+    const apolloDirectives = apolloAst.definitions
+      .filter(isDirectiveDefinitionNode)
+      .map(def => def.name.value);
+
+    // If there is overlap between existingDirectives and apolloDirectives,
+    // don't add apolloDirectives. This is in case someone is directly including
+    // the apollo directives or another framework's conflicting directives
+    for (const existingDirective of existingDirectives) {
+      if (apolloDirectives.includes(existingDirective)) {
+        return [];
+      }
+    }
+
+    return apolloAst.definitions;
+  }
+
+  private addClientMetadataToSchemaNodes() {
+    const { schema, serviceSchema } = this;
+    if (!schema || !serviceSchema) return;
+
+    visit(this.clientSchema, {
+      ObjectTypeExtension(node) {
+        const type = schema.getType(node.name.value) as Maybe<
+          GraphQLObjectType
+        >;
+        const { fields } = node;
+        if (!fields || !type) return;
+
+        const localInfo: ClientSchemaInfo = type.clientSchema || {};
+
+        localInfo.localFields = [
+          ...(localInfo.localFields || []),
+          ...fields.map(field => field.name.value)
+        ];
+
+        type.clientSchema = localInfo;
+      }
+    });
   }
 
   async validate() {
@@ -191,6 +292,7 @@ export class GraphQLClientProject extends GraphQLProject {
 
     try {
       this.schema = extendSchema(this.serviceSchema, this.clientSchema);
+      this.addClientMetadataToSchemaNodes();
     } catch (error) {
       if (error instanceof GraphQLError) {
         const uri = error.source && error.source.name;
@@ -215,7 +317,8 @@ export class GraphQLClientProject extends GraphQLProject {
           collectExecutableDefinitionDiagnositics(
             this.schema,
             document,
-            fragments
+            fragments,
+            this._validationRules
           )
         );
       }
@@ -223,6 +326,8 @@ export class GraphQLClientProject extends GraphQLProject {
     for (const [uri, diagnostics] of diagnosticSet.entries()) {
       this._onDiagnostics({ uri, diagnostics });
     }
+
+    this.diagnosticSet = diagnosticSet;
 
     this.generateDecorations();
   }
@@ -237,15 +342,19 @@ export class GraphQLClientProject extends GraphQLProject {
     await this.loadingHandler.handle(
       `Loading Engine data for ${this.displayName}`,
       (async () => {
-        const {
-          schemaTags,
-          fieldStats
-        } = await engineClient.loadSchemaTagsAndFieldStats(serviceID);
-        this._onSchemaTags && this._onSchemaTags([serviceID, schemaTags]);
-        this.fieldStats = fieldStats;
-        this.lastLoadDate = +new Date();
+        try {
+          const {
+            schemaTags,
+            fieldStats
+          } = await engineClient.loadSchemaTagsAndFieldStats(serviceID);
+          this._onSchemaTags && this._onSchemaTags([serviceID, schemaTags]);
+          this.fieldStats = fieldStats;
+          this.lastLoadDate = +new Date();
 
-        this.generateDecorations();
+          this.generateDecorations();
+        } catch (e) {
+          console.error(e);
+        }
       })()
     );
   }
@@ -352,7 +461,7 @@ export class GraphQLClientProject extends GraphQLProject {
     for (const operationName in current) {
       const document = current[operationName];
 
-      let serviceOnly: DocumentNode = removeDirectiveAnnotatedFields(
+      let serviceOnly = removeDirectiveAnnotatedFields(
         removeDirectives(document, clientOnlyDirectives as string[]),
         clientSchemaDirectives as string[]
       );

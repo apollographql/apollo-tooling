@@ -20,6 +20,7 @@
     "graphql-operation-def": {
       "patterns": [
         { "include": "#graphql-query-mutation-subscription" },
+        { "include": "#graphql-directive-definition" },
         { "include": "#graphql-name" },
         { "include": "#graphql-variable-definitions" },
         { "include": "#graphql-directive" },
@@ -28,8 +29,7 @@
     },
     "graphql-fragment-definition": {
       "name": "meta.fragment.graphql",
-      "begin":
-        "\\s*(?:(\\bfragment\\b)\\s*([_A-Za-z][_0-9A-Za-z]*)?\\s*(?:(\\bon\\b)\\s*([_A-Za-z][_0-9A-Za-z]*)))",
+      "begin": "\\s*(?:(\\bfragment\\b)\\s*([_A-Za-z][_0-9A-Za-z]*)?\\s*(?:(\\bon\\b)\\s*([_A-Za-z][_0-9A-Za-z]*)))",
       "end": "(?<=})",
       "captures": {
         "1": { "name": "keyword.fragment.graphql" },
@@ -53,11 +53,10 @@
     },
     "graphql-type-interface": {
       "name": "meta.type.interface.graphql",
-      "begin":
-        "\\s*\\b(?:(extends)?\\b\\s*\\b(type)|(interface)|(input))\\b\\s*([_A-Za-z][_0-9A-Za-z]*)?",
+      "begin": "\\s*\\b(?:(extend)?\\b\\s*\\b(type)|(interface)|(input))\\b\\s*([_A-Za-z][_0-9A-Za-z]*)?",
       "end": "(?<=})",
       "captures": {
-        "1": { "name": "keyword.type.graphql" },
+        "1": { "name": "keyword.extend.graphql" },
         "2": { "name": "keyword.type.graphql" },
         "3": { "name": "keyword.interface.graphql" },
         "4": { "name": "keyword.input.graphql" },
@@ -120,6 +119,7 @@
         { "include": "#graphql-type-object" },
         { "include": "#graphql-colon" },
         { "include": "#graphql-input-types" },
+        { "include": "#graphql-directive"},
         { "include": "#literal-quasi-embedded" }
       ]
     },
@@ -142,8 +142,7 @@
           "patterns": [
             {
               "begin": "\\s*([_A-Za-z][_0-9A-Za-z]*)(?=\\s*\\(|:)",
-              "end":
-                "(?=\\s*(([_A-Za-z][_0-9A-Za-z]*)\\s*(\\(|:)|(})))|\\s*(,)",
+              "end": "(?=\\s*(([_A-Za-z][_0-9A-Za-z]*)\\s*(\\(|:)|(})))|\\s*(,)",
               "beginCaptures": {
                 "1": { "name": "variable.arguments.graphql" }
               },
@@ -170,11 +169,45 @@
         { "include": "#graphql-skip-newlines" }
       ]
     },
+    "graphql-directive-definition": {
+      "begin": "\\s*(\\bdirective\\b)\\s*(@[_A-Za-z][_0-9A-Za-z]*)",
+      "end": "(?=.)",
+      "applyEndPatternLast": 1,
+      "beginCaptures": {
+        "1": { "name": "keyword.directive.graphql" },
+        "2": { "name": "entity.name.function.directive.graphql" }
+      },
+      "patterns": [
+        { "include": "#graphql-variable-definitions" },
+        {
+          "begin": "\\s*(\\bon\\b)\\s*([_A-Za-z]*)",
+          "end": "(?=.)",
+          "applyEndPatternLast": 1,
+          "beginCaptures": {
+            "1": { "name": "keyword.on.graphql" },
+            "2": { "name": "support.type.location.graphql" }
+          },
+          "patterns": [
+            { "include": "#graphql-skip-newlines" },
+            { "include": "#graphql-comment" },
+            { "include": "#literal-quasi-embedded" },
+            {
+              "match": "\\s*(\\|)\\s*([_A-Za-z]*)",
+              "captures": {
+                "2": { "name": "support.type.location.graphql" }
+              }
+            }
+          ]
+        },
+        { "include": "#graphql-skip-newlines" },
+        { "include": "#graphql-comment" },
+        { "include": "#literal-quasi-embedded" }
+      ]
+    },
     "graphql-comment": {
       "patterns": [
         {
-          "comment":
-            "need to prefix comment space with a scope else Atom's reflow cmd doesn't work",
+          "comment": "need to prefix comment space with a scope else Atom's reflow cmd doesn't work",
           "name": "comment.line.graphql.js",
           "match": "(\\s*)(#).*",
           "captures": {
@@ -185,6 +218,14 @@
           "name": "comment.line.graphql.js",
           "begin": "(\"\"\")",
           "end": "(\"\"\")",
+          "beginCaptures": {
+            "1": { "name": "punctuation.whitespace.comment.leading.graphql" }
+          }
+        },
+        {
+          "name": "comment.line.graphql.js",
+          "begin": "(\")",
+          "end": "(\")",
           "beginCaptures": {
             "1": { "name": "punctuation.whitespace.comment.leading.graphql" }
           }
@@ -207,8 +248,7 @@
       "comment": "variable: type = value,.... which may be a list",
       "name": "meta.variables.graphql",
       "begin": "\\s*(\\$?[_A-Za-z][_0-9A-Za-z]*)(?=\\s*\\(|:)",
-      "end":
-        "(?=\\s*((\\$?[_A-Za-z][_0-9A-Za-z]*)\\s*(\\(|:)|(}|\\))))|\\s*(,)",
+      "end": "(?=\\s*((\\$?[_A-Za-z][_0-9A-Za-z]*)\\s*(\\(|:)|(}|\\))))|\\s*(,)",
       "beginCaptures": {
         "1": { "name": "variable.parameter.graphql" }
       },
@@ -267,7 +307,7 @@
     },
     "graphql-variable-assignment": {
       "begin": "\\s(=)",
-      "end": "(?=[\n.])",
+      "end": "(?=[\n,)])",
       "applyEndPatternLast": 1,
       "beginCaptures": {
         "1": { "name": "punctuation.assignment.graphql" }

@@ -1,6 +1,6 @@
 {
   "name": "apollo-graphql",
-  "version": "0.2.0",
+  "version": "0.3.3",
   "description": "Apollo GraphQL utility library",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -15,7 +15,7 @@
     "lodash.sortby": "^4.7.0"
   },
   "peerDependencies": {
-    "graphql": "^0.12.0 || ^0.13.0 || ^14.0.0"
+    "graphql": "^14.2.1"
   },
   "jest": {
     "preset": "ts-jest",

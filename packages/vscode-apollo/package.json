@@ -2,7 +2,7 @@
   "name": "vscode-apollo",
   "displayName": "Apollo GraphQL",
   "description": "Rich editor support for GraphQL client and server development that seamlessly integrates with the Apollo platform",
-  "version": "1.6.3",
+  "version": "1.10.0",
   "referenceID": "87197759-7617-40d0-b32e-46d378e907c7",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -28,7 +28,6 @@
   "dependencies": {
     "apollo-env": "file:../apollo-env",
     "apollo-language-server": "file:../apollo-language-server",
-    "event-stream": "=3.3.4",
     "vscode-languageclient": "^5.2.1"
   },
   "publisher": "apollographql",
@@ -38,7 +37,7 @@
   ],
   "icon": "images/icon-apollo-blue-400x400.png",
   "activationEvents": [
-    "workspaceContains:**/package.json"
+    "workspaceContains:**/apollo.config.[jt]s"
   ],
   "contributes": {
     "configuration": {
@@ -98,6 +97,26 @@
         ],
         "scopeName": "inline.graphql.python",
         "path": "./syntaxes/graphql.py.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.graphql": "graphql"
+        }
+      },
+      {
+        "injectTo": [
+          "source.ruby"
+        ],
+        "scopeName": "inline.graphql.ruby",
+        "path": "./syntaxes/graphql.rb.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.graphql": "graphql"
+        }
+      },
+      {
+        "injectTo": [
+          "source.dart"
+        ],
+        "scopeName": "inline.graphql.dart",
+        "path": "./syntaxes/graphql.dart.json",
         "embeddedLanguages": {
           "meta.embedded.block.graphql": "graphql"
         }

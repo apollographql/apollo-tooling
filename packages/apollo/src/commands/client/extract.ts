@@ -49,9 +49,7 @@ export default class ClientExtract extends ClientCommand {
     ]);
 
     this.log(
-      `Successfully wrote ${operations.length} operations from the ${
-        clientIdentity.name
-      } client to ${filename}`
+      `Successfully wrote ${operations.length} operations from the ${clientIdentity.name} client to ${filename}`
     );
   }
 }

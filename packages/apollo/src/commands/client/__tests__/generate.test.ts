@@ -194,6 +194,28 @@ describe("client:codegen", () => {
   test
     .fs({
       "schema.json": fullSchemaJsonString,
+      "queryOne.graphql": simpleQuery.toString(),
+      "my.config.js": defaultConfig
+    })
+    .command([
+      "client:codegen",
+      "--config=my.config.js",
+      "--target=typescript",
+      "--tsFileExtension=d.ts",
+      "--outputFlat",
+      "outDirectory"
+    ])
+    .it("writes types for typescript with a custom extension", () => {
+      const files = fs.readdirSync("./outDirectory");
+      const filePath = files.find(f => f === "SimpleQuery.d.ts");
+      expect(filePath).toBeDefined();
+      const file = fs.readFileSync(`./outDirectory/${filePath}`).toString();
+      expect(file).toMatchSnapshot();
+    });
+
+  test
+    .fs({
+      "schema.json": fullSchemaJsonString,
       "clientSideSchema.graphql": clientSideSchema.toString(),
       "clientSideSchemaQuery.graphql": clientSideSchemaQuery.toString(),
       "my.config.js": defaultConfig
@@ -349,6 +371,24 @@ describe("client:codegen", () => {
       "--target=flow",
       "--outputFlat",
       "--useFlowReadOnlyTypes",
+      "__tmp__API.js"
+    ])
+    .it("writes read-only Flow types when the deprecated flag is set", () => {
+      expect(fs.readFileSync("__tmp__API.js").toString()).toMatchSnapshot();
+    });
+
+  test
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "queryOne.graphql": simpleQuery.toString(),
+      "my.config.js": defaultConfig
+    })
+    .command([
+      "client:codegen",
+      "--config=my.config.js",
+      "--target=flow",
+      "--outputFlat",
+      "--useReadOnlyTypes",
       "__tmp__API.js"
     ])
     .it("writes read-only Flow types when the flag is set", () => {

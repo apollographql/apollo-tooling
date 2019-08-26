@@ -5,13 +5,68 @@ import {
   visit,
   BREAK,
   TypeInfo,
-  GraphQLSchema
+  GraphQLSchema,
+  getVisitFn,
+  Visitor,
+  ASTKindToNode,
+  FieldNode,
+  InlineFragmentNode,
+  FragmentDefinitionNode
 } from "graphql";
 import { SourceLocation, getLocation } from "graphql/language/location";
 
 import { Position, Range } from "vscode-languageserver";
 
-import { visitWithTypeInfo } from "graphql";
+import { isNode } from "./graphql";
+
+// XXX temp fix to silence ts errors with `apply`
+type applyArg = [
+  any,
+  string | number | undefined,
+  any,
+  readonly (string | number)[],
+  readonly any[]
+];
+
+/**
+ * Creates a new visitor instance which maintains a provided TypeInfo instance
+ * along with visiting visitor.
+ */
+export function visitWithTypeInfo(
+  typeInfo: TypeInfo,
+  visitor: Visitor<ASTKindToNode>
+): Visitor<ASTKindToNode> {
+  return {
+    enter(node: ASTNode) {
+      typeInfo.enter(node);
+      const fn = getVisitFn(visitor, node.kind, /* isLeaving */ false);
+      if (fn) {
+        const result = fn.apply(visitor, (arguments as unknown) as applyArg);
+        if (result !== undefined) {
+          typeInfo.leave(node);
+          if (isNode(result)) {
+            typeInfo.enter(result);
+          }
+        }
+        return result;
+      }
+    },
+    leave(node: ASTNode) {
+      const fn = getVisitFn(visitor, node.kind, /* isLeaving */ true);
+      let result;
+      if (fn) {
+        result = fn.apply(visitor, (arguments as unknown) as applyArg);
+      }
+      // XXX we can't replace this function until we handle this
+      // case better. If we replace with the function in `graphql-js`,
+      // it breaks onHover types
+      if (result !== BREAK) {
+        typeInfo.leave(node);
+      }
+      return result;
+    }
+  };
+}
 
 export function positionFromPositionInContainingDocument(
   source: Source,
@@ -71,6 +126,7 @@ export function positionFromSourceLocation(
 
 export function positionToOffset(source: Source, position: Position): number {
   const lineRegexp = /\r\n|[\n\r]/g;
+  const lineEndingLength = /\r\n/g.test(source.body) ? 2 : 1;
 
   const linesUntilPosition = source.body
     .split(lineRegexp)
@@ -79,7 +135,7 @@ export function positionToOffset(source: Source, position: Position): number {
     position.character +
     linesUntilPosition
       .map(
-        line => line.length + 1 // count EOL
+        line => line.length + lineEndingLength // count EOL
       )
       .reduce((a, b) => a + b, 0)
   );
@@ -126,4 +182,42 @@ export function getASTNodeAndTypeInfoAtPosition(
   } else {
     return null;
   }
+}
+
+export function isFieldResolvedLocally(
+  fieldNode: FieldNode,
+  root: ASTNode
+): boolean | null {
+  const { loc } = fieldNode;
+  if (!loc) return null;
+
+  let underClientDirective: boolean = false;
+
+  function visitor(
+    node: FieldNode | InlineFragmentNode | FragmentDefinitionNode
+  ) {
+    if (
+      loc &&
+      node.loc &&
+      node.loc.start <= loc.start &&
+      loc.end <= node.loc.end &&
+      node.directives &&
+      node.directives.some(directive => directive.name.value === "client")
+    ) {
+      // If this node's location completely contains the target fieldNode's location,
+      // and this node has a @client directive, then the fieldNode must be resolved
+      // locally. We can then stop visiting by returning BREAK.
+      underClientDirective = true;
+      return BREAK;
+    }
+    return;
+  }
+
+  visit(root, {
+    Field: visitor,
+    InlineFragment: visitor,
+    FragmentDefinition: visitor
+  });
+
+  return underClientDirective;
 }

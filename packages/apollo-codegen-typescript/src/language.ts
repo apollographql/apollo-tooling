@@ -16,15 +16,11 @@ export type ObjectProperty = {
   type: t.TSType;
 };
 
-export interface TypescriptCompilerOptions extends CompilerOptions {
-  // Leaving this open for Typescript only compiler options
-}
-
 export default class TypescriptGenerator {
-  options: TypescriptCompilerOptions;
+  options: CompilerOptions;
   typeFromGraphQLType: Function;
 
-  constructor(compilerOptions: TypescriptCompilerOptions) {
+  constructor(compilerOptions: CompilerOptions) {
     this.options = compilerOptions;
 
     this.typeFromGraphQLType = createTypeFromGraphQLTypeFunction(
@@ -105,6 +101,10 @@ export default class TypescriptGenerator {
       // TODO: Check if this works
       propertySignatureType.optional =
         keyInheritsNullability && this.isNullableType(type);
+
+      if (this.options.useReadOnlyTypes) {
+        propertySignatureType.readonly = true;
+      }
 
       if (description) {
         propertySignatureType.leadingComments = [

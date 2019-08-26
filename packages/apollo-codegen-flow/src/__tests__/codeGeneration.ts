@@ -15,7 +15,7 @@ function compile(
   options: FlowCompilerOptions = {
     mergeInFieldsFromFragmentSpreads: true,
     useFlowExactObjects: false,
-    useFlowReadOnlyTypes: false,
+    useReadOnlyTypes: false,
     addTypename: true
   }
 ): CompilerContext {
@@ -286,7 +286,7 @@ describe("Flow codeGeneration", () => {
     `,
       {
         mergeInFieldsFromFragmentSpreads: true,
-        useFlowReadOnlyTypes: true,
+        useReadOnlyTypes: true,
         useFlowExactObjects: true,
         addTypename: true
       }

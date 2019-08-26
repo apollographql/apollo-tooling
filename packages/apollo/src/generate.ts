@@ -25,6 +25,7 @@ import { generateSource as generateScalaSource } from "apollo-codegen-scala";
 
 import { FlowCompilerOptions } from "../../apollo-codegen-flow/lib/language";
 import { validateQueryDocument } from "apollo-language-server/lib/errors/validation";
+import { DEFAULT_FILE_EXTENSION as TYPESCRIPT_DEFAULT_FILE_EXTENSION } from "apollo-codegen-typescript/lib/helpers";
 
 export type TargetType =
   | "json"
@@ -38,6 +39,7 @@ export type GenerationOptions = CompilerOptions &
   LegacyCompilerOptions &
   FlowCompilerOptions & {
     globalTypesFile?: string;
+    tsFileExtension?: string;
     rootPath?: string;
   };
 
@@ -73,10 +75,10 @@ export default function generate(
     const generator = generateSwiftSource(context, outputIndividualFiles, only);
 
     if (outputIndividualFiles) {
-      writeGeneratedFiles(generator.generatedFiles, outputPath);
+      writeGeneratedFiles(generator.generatedFiles, outputPath, "\n");
       writtenFiles += Object.keys(generator.generatedFiles).length;
     } else {
-      fs.writeFileSync(outputPath, generator.output);
+      fs.writeFileSync(outputPath, generator.output.concat("\n"));
       writtenFiles += 1;
     }
 
@@ -154,7 +156,12 @@ export default function generate(
       }
 
       const globalSourcePath =
-        options.globalTypesFile || path.join(outputPath, "globalTypes.ts");
+        options.globalTypesFile ||
+        path.join(
+          outputPath,
+          `globalTypes.${options.tsFileExtension ||
+            TYPESCRIPT_DEFAULT_FILE_EXTENSION}`
+        );
       outFiles[globalSourcePath] = {
         output: generatedGlobalFile.fileContents
       };
@@ -215,12 +222,13 @@ export default function generate(
 
 function writeGeneratedFiles(
   generatedFiles: { [fileName: string]: BasicGeneratedFile },
-  outputDirectory: string
+  outputDirectory: string,
+  terminator: string = ""
 ) {
   for (const [fileName, generatedFile] of Object.entries(generatedFiles)) {
     fs.writeFileSync(
       path.join(outputDirectory, fileName),
-      generatedFile.output
+      generatedFile.output.concat(terminator)
     );
   }
 }

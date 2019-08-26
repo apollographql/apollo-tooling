@@ -6,13 +6,26 @@ export const REGISTER_OPERATIONS = gql`
     $clientIdentity: RegisteredClientIdentityInput!
     $operations: [RegisteredOperationInput!]!
     $manifestVersion: Int!
+    $graphVariant: String
   ) {
     service(id: $id) {
-      registerOperations(
+      registerOperationsWithResponse(
         clientIdentity: $clientIdentity
         operations: $operations
         manifestVersion: $manifestVersion
-      )
+        graphVariant: $graphVariant
+      ) {
+        invalidOperations {
+          errors {
+            message
+          }
+          signature
+        }
+        newOperations {
+          signature
+        }
+        registrationSuccess
+      }
     }
   }
 `;

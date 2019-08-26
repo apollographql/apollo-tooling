@@ -15,7 +15,8 @@ export function getLanguageServerClient(
   const env = {
     APOLLO_CLIENT_NAME: "Apollo VS Code",
     APOLLO_CLIENT_VERSION: version,
-    APOLLO_CLIENT_REFERENCE_ID: referenceID
+    APOLLO_CLIENT_REFERENCE_ID: referenceID,
+    NODE_TLS_REJECT_UNAUTHORIZED: 0
   };
 
   const debugOptions = {
@@ -46,12 +47,16 @@ export function getLanguageServerClient(
       "javascriptreact",
       "typescriptreact",
       "vue",
-      "python"
+      "python",
+      "ruby",
+      "dart"
     ],
     synchronize: {
       fileEvents: [
         workspace.createFileSystemWatcher("**/.env"),
-        workspace.createFileSystemWatcher("**/*.{graphql,js,ts,jsx,tsx,vue,py}")
+        workspace.createFileSystemWatcher(
+          "**/*.{graphql,js,ts,jsx,tsx,vue,py,rb,dart}"
+        )
       ]
     },
     outputChannel

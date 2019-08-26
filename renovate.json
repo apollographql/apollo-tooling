@@ -3,23 +3,23 @@
   "packageRules": [
     {
       "paths": ["packages/apollo/package.json"],
-      "extends": [":pinAllExceptPeerDependencies"],
-      "packageRules": [
-        {
-          "packageNames": ["graphql"],
-          "rangeStrategy": "widen",
-          "allowedVersions": "^14.0.0"
-        }
-      ]
+      "extends": [":pinAllExceptPeerDependencies"]
+    },
+    {
+      "packageNames": ["graphql"],
+      "allowedVersions": "~14.2.1"
     },
     {
       "packageNames": ["@types/node"],
       "allowedVersions": "8.x"
     },
     {
-      "packageNames": ["core-js"],
-      "rangeStrategy": "pin",
-      "allowedVersions": ["=3.0.0-beta.13"]
+      "packageNames": ["lerna"],
+      "allowedVersions": "=3.13.4"
+    },
+    {
+      "packageNames": ["vscode-uri"],
+      "allowedVersions": "=1.0.6"
     }
   ]
 }
