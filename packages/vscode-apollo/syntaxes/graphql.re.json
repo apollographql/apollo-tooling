@@ -1,0 +1,23 @@
+{
+  "fileTypes": ["re"],
+  "injectionSelector": "L:source -string -comment",
+  "patterns": [
+    {
+      "contentName": "meta.embedded.block.graphql",
+      "begin": "(\\[%(relay.(query|fragment|mutation|subscription)|graphql)((.|\n)+?(\\{\\|)))",
+      "end": "(\\|\\})",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.reason"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.reason"
+        }
+      },
+      "patterns": [{ "include": "source.graphql" }]
+    }
+  ],
+  "scopeName": "inline.graphql.reason"
+}

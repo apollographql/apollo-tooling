@@ -72,6 +72,8 @@ export function extractGraphQLDocuments(
       return extractGraphQLDocumentsFromRubyStrings(document, tagName);
     case "dart":
       return extractGraphQLDocumentsFromDartStrings(document, tagName);
+    case "reason":
+      return extractGraphQLDocumentsFromReasonStrings(document, tagName);
     default:
       return null;
   }
@@ -184,6 +186,37 @@ function extractGraphQLDocumentsFromDartStrings(
     };
     const source = new Source(contents, document.uri, locationOffset);
     documents.push(new GraphQLDocument(source));
+  }
+
+  if (documents.length < 1) return null;
+
+  return documents;
+}
+
+function extractGraphQLDocumentsFromReasonStrings(
+  document: TextDocument,
+  tagName: string
+): GraphQLDocument[] | null {
+  const text = document.getText();
+
+  const documents: GraphQLDocument[] = [];
+
+  const matched = text.match(
+    /(?<=\[%(graphql|relay\.(query|fragment|mutation|subscription))((.*|\n)+?(\{\|)))([\s\S]*?)(?=\|\})/gm
+  );
+
+  if (matched) {
+    matched.forEach(content => {
+      const position = document.positionAt(
+        text.indexOf(content) + content.length
+      );
+      const locationOffset: SourceLocation = {
+        line: position.line + 1,
+        column: position.character + 1
+      };
+      const source = new Source(content, document.uri, locationOffset);
+      documents.push(new GraphQLDocument(source));
+    });
   }
 
   if (documents.length < 1) return null;

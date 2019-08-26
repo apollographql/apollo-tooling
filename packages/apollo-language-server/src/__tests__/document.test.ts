@@ -94,4 +94,67 @@ describe("extractGraphQLDocuments", () => {
       expect(documents[0].ast.definitions.length).toBe(2);
     });
   });
+
+  describe("extracting documents from ReasonML extension nodes", () => {
+    const mockTextDocument = (text: string): TextDocument => ({
+      getText: jest.fn().mockReturnValue(text),
+      offsetAt(): number {
+        return 0;
+      },
+      positionAt(): Position {
+        return {
+          character: 0,
+          line: 0
+        };
+      },
+      languageId: "reason",
+      lineCount: 0,
+      uri: "",
+      version: 1
+    });
+
+    it("works with ReasonRelay nodes", () => {
+      const textDocument = mockTextDocument(`
+      module Query = [%relay.query
+      {|
+        query SomeQuery {
+          id
+        }
+      |}
+      ];
+
+      module Fragment = [%relay.fragment
+      {|
+        fragment X on Hero {
+          id
+        }
+      |}
+      ];
+    `);
+      const documents = extractGraphQLDocuments(textDocument);
+
+      expect(documents.length).toEqual(2);
+      expect(documents[0].syntaxErrors.length).toBe(0);
+      expect(documents[1].syntaxErrors.length).toBe(0);
+      expect(documents[0].ast.definitions.length).toBe(1);
+      expect(documents[1].ast.definitions.length).toBe(1);
+    });
+
+    it("works with graphql_ppx style node", () => {
+      const textDocument = mockTextDocument(`
+      module Query = [%graphql
+      {|
+        query SomeQuery {
+          id
+        }
+      |}
+      ];
+    `);
+      const documents = extractGraphQLDocuments(textDocument);
+
+      expect(documents.length).toEqual(1);
+      expect(documents[0].syntaxErrors.length).toBe(0);
+      expect(documents[0].ast.definitions.length).toBe(1);
+    });
+  });
 });

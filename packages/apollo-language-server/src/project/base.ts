@@ -42,7 +42,8 @@ const fileAssociations: { [extension: string]: string } = {
   ".vue": "vue",
   ".py": "python",
   ".rb": "ruby",
-  ".dart": "dart"
+  ".dart": "dart",
+  ".re": "reason"
 };
 
 export interface GraphQLProjectConfig {
