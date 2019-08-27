@@ -10,7 +10,7 @@ import {
   isLocalServiceConfig
 } from "../../config";
 
-import { IntrospectionSchemaProvider } from "./introspection";
+import { EndpointSchemaProvider } from "./endpoint";
 import { EngineSchemaProvider } from "./engine";
 import { FileSchemaProvider } from "./file";
 import { ClientIdentity } from "../../engine";
@@ -31,7 +31,7 @@ export function schemaProviderFromConfig(
     }
 
     if (config.service.endpoint) {
-      return new IntrospectionSchemaProvider(config.service.endpoint);
+      return new EndpointSchemaProvider(config.service.endpoint);
     }
   }
 
@@ -47,7 +47,7 @@ export function schemaProviderFromConfig(
         });
       }
 
-      return new IntrospectionSchemaProvider(config.client.service);
+      return new EndpointSchemaProvider(config.client.service);
     }
   }
 
