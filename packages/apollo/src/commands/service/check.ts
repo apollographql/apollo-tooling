@@ -110,18 +110,23 @@ export function formatMarkdown({
 
   const { validationConfig } = diffToPrevious;
 
-  if (!validationConfig) {
-    throw new Error(
-      "checkSchemaResult.diffToPrevious.validationConfig missing"
+  let validationText = "";
+  if (validationConfig) {
+    // The validationConfig will always return a negative number. Use Math.abs to make it positive.
+    const hours = Math.abs(
+      moment()
+        .add(validationConfig.from, "second")
+        .diff(moment().add(validationConfig.to, "second"), "hours")
     );
-  }
 
-  // This will always return a negative number. Use Math.abs to make it positive.
-  const hours = Math.abs(
-    moment()
-      .add(validationConfig.from, "second")
-      .diff(moment().add(validationConfig.to, "second"), "hours")
-  );
+    validationText = `🔢 Compared **${pluralize(
+      diffToPrevious.changes.length,
+      "schema change"
+    )}** against **${pluralize(
+      diffToPrevious.numberOfCheckedOperations,
+      "operation"
+    )}** seen over the **last ${formatTimePeriod(hours)}**.`;
+  }
 
   const breakingChanges = diffToPrevious.changes.filter(
     change => change.severity === "FAILURE"
@@ -136,13 +141,7 @@ export function formatMarkdown({
 🔄 Validated your local schema against schema tag \`${tag}\` ${
     serviceName ? `for service \`${serviceName}\` ` : ""
   }on graph \`${graphName}\`.
-🔢 Compared **${pluralize(
-    diffToPrevious.changes.length,
-    "schema change"
-  )}** against **${pluralize(
-    diffToPrevious.numberOfCheckedOperations,
-    "operation"
-  )}** seen over the **last ${formatTimePeriod(hours)}**.
+${validationText}
 ${
   breakingChanges.length > 0
     ? `❌ Found **${pluralize(
@@ -156,6 +155,8 @@ ${
         diffToPrevious.affectedClients && diffToPrevious.affectedClients.length,
         "client"
       )}**`
+    : diffToPrevious.changes.length === 0
+    ? `✅ Found **no changes**.`
     : `✅ Found **no breaking changes**.`
 }
 
