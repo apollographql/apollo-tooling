@@ -5,11 +5,6 @@ import { ServiceConfig } from "../config";
 import { ClientIdentity } from "../engine";
 import URI from "vscode-uri";
 
-import {
-  ApolloFederationInfoProvider,
-  federationInfoProviderFromConfig
-} from "../providers/federation-info";
-
 export function isServiceProject(
   project: GraphQLProject
 ): project is GraphQLServiceProject {
@@ -55,6 +50,6 @@ export class GraphQLServiceProject extends GraphQLProject {
   }
 
   resolveFederationInfo() {
-    return this.schemaProvider.resolveServiceDefinition();
+    return this.schemaProvider.resolveFederatedServiceSDL();
   }
 }

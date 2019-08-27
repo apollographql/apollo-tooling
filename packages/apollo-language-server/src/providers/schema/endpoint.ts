@@ -13,15 +13,12 @@ import {
 import { Agent as HTTPSAgent } from "https";
 import { fetch } from "apollo-env";
 import { RemoteServiceConfig } from "../../config";
-import {
-  GraphQLSchemaProvider,
-  SchemaChangeUnsubscribeHandler,
-  FederationInfo
-} from "./base";
+import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
+import { Debug } from "../../utilities";
 
 export class EndpointSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
-  private info?: FederationInfo;
+  private federatedServiceSDL?: string;
 
   constructor(private config: Exclude<RemoteServiceConfig, "name">) {}
   async resolveSchema() {
@@ -56,6 +53,7 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
     this.schema = buildClientSchema(data);
     return this.schema;
   }
+
   onSchemaChange(
     _handler: NotificationHandler<GraphQLSchema>
   ): SchemaChangeUnsubscribeHandler {
@@ -63,8 +61,9 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
     return () => {};
   }
 
-  async resolveServiceDefinition() {
-    if (this.info) return this.info;
+  async resolveFederatedServiceSDL() {
+    if (this.federatedServiceSDL) return this.federatedServiceSDL;
+
     const { skipSSLValidation, url, headers } = this.config;
     const options: HttpLink.Options = {
       uri: url,
@@ -89,20 +88,26 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
         query: parse(getFederationInfoQuery),
         context: { headers }
       })
-    )) as ExecutionResult<{ _service: FederationInfo }>;
+    )) as ExecutionResult<{ _service: { sdl: string } }>;
 
     if (errors && errors.length) {
-      // XXX better error handling of GraphQL errors
-      throw new Error(errors.map(({ message }: Error) => message).join("\n"));
+      return Debug.error(
+        errors.map(({ message }: Error) => message).join("\n")
+      );
     }
 
     if (!data || !data._service) {
-      throw new Error(
+      return Debug.error(
         "No data received from server when querying for _service."
       );
     }
 
-    this.info = data._service;
-    return data._service;
+    this.federatedServiceSDL = data._service.sdl;
+    return data._service.sdl;
   }
+
+  // public async isFederatedSchema() {
+  //   const schema = this.schema || (await this.resolveSchema());
+  //   return false;
+  // }
 }
