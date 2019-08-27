@@ -155,6 +155,10 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     return this.schemaProvider.resolveSchema(config);
   }
 
+  public resolveServiceDefinition() {
+    return this.schemaProvider.resolveServiceDefinition();
+  }
+
   public onSchemaChange(handler: NotificationHandler<GraphQLSchema>) {
     this.lastLoadDate = +new Date();
     return this.schemaProvider.onSchemaChange(handler);
