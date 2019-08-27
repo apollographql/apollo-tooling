@@ -23,8 +23,6 @@ export interface GraphQLServiceProjectConfig {
   loadingHandler: LoadingHandler;
 }
 export class GraphQLServiceProject extends GraphQLProject {
-  public federationInfoProvider: ApolloFederationInfoProvider;
-
   constructor({
     clientIdentity,
     config,
@@ -40,7 +38,6 @@ export class GraphQLServiceProject extends GraphQLProject {
 
     super({ config, fileSet, loadingHandler, clientIdentity });
     this.config = config;
-    this.federationInfoProvider = federationInfoProviderFromConfig(config);
   }
 
   get displayName() {
@@ -58,6 +55,6 @@ export class GraphQLServiceProject extends GraphQLProject {
   }
 
   resolveFederationInfo() {
-    return this.federationInfoProvider.resolveFederationInfo();
+    return this.schemaProvider.resolveServiceDefinition();
   }
 }

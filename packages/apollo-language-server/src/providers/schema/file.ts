@@ -52,4 +52,8 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
     throw new Error("File watching not implemented yet");
     return () => {};
   }
+
+  async resolveServiceDefinition() {
+    return { sdl: "" };
+  }
 }
