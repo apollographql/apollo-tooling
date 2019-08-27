@@ -85,8 +85,8 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
     return () => {};
   }
 
-  async resolveServiceDefinition() {
-    return { sdl: "" };
+  async resolveFederatedServiceSDL() {
+    return "";
   }
 }
 

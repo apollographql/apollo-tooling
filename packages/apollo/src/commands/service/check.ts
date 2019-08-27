@@ -361,8 +361,8 @@ export default class ServiceCheck extends ProjectCommand {
                 }
                 task.output = "Fetching local service's partial schema";
 
-                const info = await project.resolveFederationInfo();
-                if (!info.sdl) {
+                const sdl = await project.resolveFederatedServiceSDL();
+                if (!sdl) {
                   throw new Error("No SDL found for federated service");
                 }
 
@@ -379,7 +379,7 @@ export default class ServiceCheck extends ProjectCommand {
                   graphVariant: tag,
                   implementingServiceName: serviceName,
                   partialSchema: {
-                    sdl: info.sdl
+                    sdl
                   }
                 });
 

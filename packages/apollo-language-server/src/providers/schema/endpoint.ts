@@ -13,15 +13,11 @@ import {
 import { Agent as HTTPSAgent } from "https";
 import { fetch } from "apollo-env";
 import { RemoteServiceConfig } from "../../config";
-import {
-  GraphQLSchemaProvider,
-  SchemaChangeUnsubscribeHandler,
-  FederationInfo
-} from "./base";
+import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
 
 export class EndpointSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
-  private info?: FederationInfo;
+  private federatedServiceSDL?: string;
 
   constructor(private config: Exclude<RemoteServiceConfig, "name">) {}
   async resolveSchema() {
@@ -56,6 +52,7 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
     this.schema = buildClientSchema(data);
     return this.schema;
   }
+
   onSchemaChange(
     _handler: NotificationHandler<GraphQLSchema>
   ): SchemaChangeUnsubscribeHandler {
@@ -63,8 +60,9 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
     return () => {};
   }
 
-  async resolveServiceDefinition() {
-    if (this.info) return this.info;
+  async resolveFederatedServiceSDL() {
+    if (this.federatedServiceSDL) return this.federatedServiceSDL;
+
     const { skipSSLValidation, url, headers } = this.config;
     const options: HttpLink.Options = {
       uri: url,
@@ -89,7 +87,7 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
         query: parse(getFederationInfoQuery),
         context: { headers }
       })
-    )) as ExecutionResult<{ _service: FederationInfo }>;
+    )) as ExecutionResult<{ _service: { sdl: string } }>;
 
     if (errors && errors.length) {
       // XXX better error handling of GraphQL errors
@@ -102,7 +100,12 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
       );
     }
 
-    this.info = data._service;
-    return data._service;
+    this.federatedServiceSDL = data._service.sdl;
+    return data._service.sdl;
   }
+
+  // public async isFederatedSchema() {
+  //   const schema = this.schema || (await this.resolveSchema());
+  //   return false;
+  // }
 }

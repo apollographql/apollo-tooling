@@ -53,7 +53,7 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
     return () => {};
   }
 
-  async resolveServiceDefinition() {
-    return { sdl: "" };
+  async resolveFederatedServiceSDL() {
+    return "";
   }
 }
