@@ -84,6 +84,10 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
     throw new Error("Polling of Engine not implemented yet");
     return () => {};
   }
+
+  async resolveServiceDefinition() {
+    return { sdl: "" };
+  }
 }
 
 export const SCHEMA_QUERY = gql`

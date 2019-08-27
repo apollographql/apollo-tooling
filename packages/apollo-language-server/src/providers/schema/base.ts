@@ -1,6 +1,10 @@
 import { GraphQLSchema } from "graphql";
 import { NotificationHandler } from "vscode-languageserver";
 
+export interface FederationInfo {
+  sdl: string;
+}
+
 export interface SchemaResolveConfig {
   tag?: string;
   force?: boolean;
@@ -11,4 +15,5 @@ export interface GraphQLSchemaProvider {
   onSchemaChange(
     handler: NotificationHandler<GraphQLSchema>
   ): SchemaChangeUnsubscribeHandler;
+  resolveServiceDefinition(): Promise<FederationInfo>;
 }
