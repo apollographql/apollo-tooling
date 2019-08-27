@@ -4,6 +4,7 @@ import { readFileSync } from "fs";
 import { extname, resolve } from "path";
 import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
 import { NotificationHandler } from "vscode-languageserver";
+import { Debug } from "../../utilities";
 
 export interface FileSchemaProviderConfig {
   path: string;
@@ -11,6 +12,7 @@ export interface FileSchemaProviderConfig {
 // XXX file subscription
 export class FileSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
+  private federatedServiceSDL?: string;
 
   constructor(private config: FileSchemaProviderConfig) {}
 
@@ -54,6 +56,28 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
   }
 
   async resolveFederatedServiceSDL() {
-    return "";
+    if (this.federatedServiceSDL) return this.federatedServiceSDL;
+
+    const { path } = this.config;
+    let result;
+    try {
+      result = readFileSync(path, {
+        encoding: "utf-8"
+      });
+    } catch (err) {
+      return Debug.error(`Unable to read file ${path}. ${err.message}`);
+    }
+
+    const ext = extname(path);
+
+    // this file should already be in sdl format
+    if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
+      this.federatedServiceSDL = result as string;
+      return result as string;
+    } else {
+      return Debug.error(
+        "When using localSchemaFile to check or push a federated service, you can only use .graphql, .gql, and .graphqls files"
+      );
+    }
   }
 }

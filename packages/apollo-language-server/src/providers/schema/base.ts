@@ -11,5 +11,5 @@ export interface GraphQLSchemaProvider {
   onSchemaChange(
     handler: NotificationHandler<GraphQLSchema>
   ): SchemaChangeUnsubscribeHandler;
-  resolveFederatedServiceSDL(): Promise<string>;
+  resolveFederatedServiceSDL(): Promise<string | void>;
 }

@@ -14,6 +14,7 @@ import { Agent as HTTPSAgent } from "https";
 import { fetch } from "apollo-env";
 import { RemoteServiceConfig } from "../../config";
 import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
+import { Debug } from "../../utilities";
 
 export class EndpointSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
@@ -90,12 +91,13 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
     )) as ExecutionResult<{ _service: { sdl: string } }>;
 
     if (errors && errors.length) {
-      // XXX better error handling of GraphQL errors
-      throw new Error(errors.map(({ message }: Error) => message).join("\n"));
+      return Debug.error(
+        errors.map(({ message }: Error) => message).join("\n")
+      );
     }
 
     if (!data || !data._service) {
-      throw new Error(
+      return Debug.error(
         "No data received from server when querying for _service."
       );
     }
