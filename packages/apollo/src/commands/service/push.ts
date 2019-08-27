@@ -67,9 +67,9 @@ export default class ServicePush extends ProjectCommand {
           // handle partial schema uploading
           if (isFederated) {
             this.log("Fetching info from federated service");
-            const info = await (project as GraphQLServiceProject).resolveFederationInfo();
+            const sdl = await (project as GraphQLServiceProject).resolveFederatedServiceSDL();
 
-            if (!info.sdl)
+            if (!sdl)
               throw new Error(
                 "No SDL found in response from federated service. This means that the federated service exposed a `__service` field that did not emit errors, but that did not contain a spec-compliant `sdl` field."
               );
@@ -101,7 +101,7 @@ export default class ServicePush extends ProjectCommand {
                 (gitContext && gitContext.commit) ||
                 "",
               activePartialSchema: {
-                sdl: info.sdl
+                sdl
               }
             });
 

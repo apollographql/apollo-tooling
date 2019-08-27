@@ -12,6 +12,7 @@ import {
 } from "./base";
 
 import { GetSchemaByTag } from "../../graphqlTypes";
+import { Debug } from "../../utilities";
 
 export class EngineSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
@@ -85,8 +86,11 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
     return () => {};
   }
 
-  async resolveServiceDefinition() {
-    return { sdl: "" };
+  async resolveFederatedServiceSDL() {
+    Debug.error(
+      "Cannot resolve a federated service's SDL from engine. Use an endpoint or a file instead"
+    );
+    return;
   }
 }
 
