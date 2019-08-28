@@ -1,0 +1,108 @@
+import { FileSchemaProvider } from "../file";
+import * as path from "path";
+import * as fs from "fs";
+import { Debug } from "../../../utilities";
+import { isDone } from "nock";
+
+const makeNestedDir = dir => {
+  if (fs.existsSync(dir)) return;
+
+  try {
+    fs.mkdirSync(dir);
+  } catch (err) {
+    if (err.code == "ENOENT") {
+      makeNestedDir(path.dirname(dir)); //create parent dir
+      makeNestedDir(dir); //create dir
+    }
+  }
+};
+
+const deleteFolderRecursive = path => {
+  // don't delete files on azure CI
+  if (process.env.AZURE_HTTP_USER_AGENT) return;
+
+  if (fs.existsSync(path)) {
+    fs.readdirSync(path).forEach(function(file, index) {
+      var curPath = path + "/" + file;
+      if (fs.lstatSync(curPath).isDirectory()) {
+        // recurse
+        deleteFolderRecursive(curPath);
+      } else {
+        // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+};
+
+const writeFilesToDir = (dir: string, files: Record<string, string>) => {
+  Object.keys(files).forEach(key => {
+    if (key.includes("/")) makeNestedDir(path.dirname(key));
+    fs.writeFileSync(`${dir}/${key}`, files[key]);
+  });
+};
+
+describe("FileSchemaProvider", () => {
+  let dir, dirPath;
+
+  // set up a temp dir
+  beforeEach(() => {
+    dir = fs.mkdtempSync("__tmp__");
+    dirPath = `${process.cwd()}/${dir}`;
+  });
+
+  // clean up our temp dir
+  afterEach(() => {
+    if (dir) deleteFolderRecursive(dir);
+    dir = dirPath = undefined;
+  });
+
+  it("finds and loads sdl from graphql file", async () => {
+    const writtenSDL = `
+        extend type Query {
+          myProduct: Product
+        }
+
+        type Product @key(fields: "id") {
+          id: ID
+          sku: ID
+          name: string
+        }
+      `;
+    writeFilesToDir(dir, {
+      "schema.graphql": writtenSDL
+    });
+
+    const provider = new FileSchemaProvider({ path: dir + "/schema.graphql" });
+    const sdl = await provider.resolveFederatedServiceSDL();
+    expect(sdl).toEqual(writtenSDL);
+  });
+
+  it("errors when sdl file is not a graphql file", async () => {
+    const toWrite = `
+    module.exports = \`
+    extend type Query {
+      myProduct: Product
+    }
+
+    type Product @key(fields: "id") {
+      id: ID
+      sku: ID
+      name: string
+    }\`
+  `;
+    writeFilesToDir(dir, {
+      "schema.js": toWrite
+    });
+
+    const errorSpy = jest.spyOn(Debug, "error");
+
+    // noop -- just silence the error
+    errorSpy.mockImplementationOnce(() => {});
+
+    const provider = new FileSchemaProvider({ path: dir + "/schema.js" });
+    const sdl = await provider.resolveFederatedServiceSDL();
+    expect(errorSpy).toBeCalledTimes(1);
+  });
+});

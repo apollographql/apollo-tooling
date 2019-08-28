@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Add support for `localSchemaFile` for federated service commands [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -19,7 +19,8 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Remove old federation-info provider [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
+  - Support using local schema files for checks/pushes of federated services [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
