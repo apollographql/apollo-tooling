@@ -20,7 +20,7 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Fix 'Go to Definition' for local schema files. [#1490](https://github.com/apollographql/apollo-tooling/pull/1490)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
