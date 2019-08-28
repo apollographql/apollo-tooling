@@ -39,7 +39,7 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
 
       this.schema = buildClientSchema({ __schema });
     } else if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
-      const uri = `file://${resolve(path)}`;
+      const uri = `file:///${resolve(path)}`;
       this.schema = buildSchema(new Source(result, uri));
     }
     if (!this.schema) throw new Error(`Schema could not be loaded for ${path}`);
