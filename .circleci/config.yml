@@ -153,8 +153,8 @@ jobs:
       - run: cd ../../../
       - run: rm package.json && cp tmp/node_modules/apollo/package* .
       - run:
-        name: Build CLI
-        command: npx -p @oclif/dev-cli oclif-dev pack --targets=darwin-x64
+          name: Build CLI
+          command: npx -p @oclif/dev-cli oclif-dev pack --targets=darwin-x64
 
 workflows:
   version: 2
