@@ -166,3 +166,4 @@ workflows:
       - Linting
       - Query Check
       - Generated Types Check
+      - Build CLI
