@@ -145,16 +145,19 @@ jobs:
       - run: npm ci
       - run:
           name: Make tmp dir
-          command: cd packages/apollo && mkdir tmp && cd tmp
+          command: cd packages/apollo && mkdir tmp && cd tmp && npm init -y && git init
       - run:
-          name: Initialize tmp dir with NPM and Git
-          command: npm init -y && git init
-      - run: npm i apollo && cd node_modules/apollo && npm i --package-lock-only
-      - run: ls && pwd && cd ../../../ && ls && pwd
-      - run: rm package.json && cp tmp/node_modules/apollo/package.json tmp/node_modules/apollo/package-lock.json .
+          name: Install apollo in tmp folder and generate lockfile
+          command: npm i apollo && cd node_modules/apollo && npm i --package-lock-only
+          working_directory: packages/apollo/tmp
+      - run:
+          name: Copy package and lockfile to project
+          command: rm package.json && cp tmp/node_modules/apollo/package* .
+          working_directory: packages/apollo
       - run:
           name: Build CLI
           command: npx -p @oclif/dev-cli oclif-dev pack --targets=darwin-x64
+          working_directory: packages/apollo
 
 workflows:
   version: 2
