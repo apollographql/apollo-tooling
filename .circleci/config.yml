@@ -150,7 +150,7 @@ jobs:
           name: Initialize tmp dir with NPM and Git
           command: npm init -y && git init
       - run: npm i apollo && cd node_modules/apollo && npm i --package-lock-only
-      - run: cd ../../../ && ls && pwd
+      - run: ls && pwd && cd ../../../ && ls && pwd
       - run: rm package.json && cp tmp/node_modules/apollo/package.json tmp/node_modules/apollo/package-lock.json .
       - run:
           name: Build CLI
