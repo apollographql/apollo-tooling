@@ -151,7 +151,7 @@ jobs:
           command: npm init -y && git init
       - run: npm i apollo && cd node_modules/apollo && npm i --package-lock-only
       - run: cd ../../../
-      - run: rm package.json && cp tmp/node_modules/apollo/package* .
+      - run: rm package.json && cp tmp/node_modules/apollo/package.json tmp/node_modules/apollo/package-lock.json .
       - run:
           name: Build CLI
           command: npx -p @oclif/dev-cli oclif-dev pack --targets=darwin-x64
