@@ -158,6 +158,10 @@ jobs:
           name: Build CLI
           command: npx -p @oclif/dev-cli oclif-dev pack --targets=darwin-x64
           working_directory: packages/apollo
+      - run:
+          name: Publish
+          command: npx -p @oclif/dev-cli oclif-dev publish
+          working_directory: packages/apollo
 
 workflows:
   version: 2

@@ -108,5 +108,8 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "oclif": {
+    "update": { "s3": { "bucket": "jakedawkins" } }
   }
 }
