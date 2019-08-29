@@ -142,7 +142,7 @@ jobs:
     steps:
       - *run_install_desired_npm
       - checkout
-      - run: npm install
+      - run: npm ci
       - run:
           name: Make tmp dir
           command: cd packages/apollo && mkdir tmp && cd tmp
