@@ -176,3 +176,5 @@ workflows:
       - Query Check
       - Generated Types Check
       - Build CLI
+          filters:
+            tags: /apollo@.*/
