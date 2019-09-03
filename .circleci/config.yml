@@ -177,5 +177,7 @@ workflows:
       - Generated Types Check
       - Build CLI:
           filters:
+            branches:
+              only: test
             tags:
               only: /apollo@.*/
