@@ -4,6 +4,7 @@ import { readFileSync } from "fs";
 import { extname, resolve } from "path";
 import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
 import { NotificationHandler } from "vscode-languageserver";
+import URI from "vscode-uri";
 
 export interface FileSchemaProviderConfig {
   path: string;
@@ -39,7 +40,7 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
 
       this.schema = buildClientSchema({ __schema });
     } else if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
-      const uri = `file:///${resolve(path)}`;
+      const uri = URI.file(resolve(path)).toString();
       this.schema = buildSchema(new Source(result, uri));
     }
     if (!this.schema) throw new Error(`Schema could not be loaded for ${path}`);
