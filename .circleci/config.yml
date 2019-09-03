@@ -138,8 +138,6 @@ jobs:
           command: cmp --silent currentTypes.ts ./packages/apollo-language-server/src/graphqlTypes.ts || (echo "Type check failed. Run 'npm run client:codegen'" && exit 1)
 
   Build CLI:
-    filters:
-      tags: /apollo@.*/
     docker: [{ image: "circleci/node:10" }]
     steps:
       - *run_install_desired_npm
@@ -178,3 +176,7 @@ workflows:
       - Query Check
       - Generated Types Check
       - Build CLI
+          filters:
+            tags:
+              only: /apollo@.*/
+
