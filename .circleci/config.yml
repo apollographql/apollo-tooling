@@ -175,8 +175,7 @@ workflows:
       - Linting
       - Query Check
       - Generated Types Check
-      - Build CLI
+      - Build CLI:
           filters:
             tags:
               only: /apollo@.*/
-
