@@ -17,6 +17,7 @@
     "npm": ">=6"
   },
   "dependencies": {
+    "@apollographql/apollo-graphql": "file:../apollo-graphql",
     "@apollographql/apollo-tools": "file:../apollo-tools",
     "@apollographql/graphql-language-service-interface": "^2.0.2",
     "@endemolshinegroup/cosmiconfig-typescript-loader": "^1.0.0",
