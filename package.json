@@ -29,7 +29,8 @@
     "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "posttest": "npm run lint",
-    "release": "npm run clean && npm ci && lerna publish --exact",
+    "release:version-bump": "npm run clean && npm ci && lerna version --exact -m 'Release'",
+    "release:start-ci-publish": "node -p '`Publish (dist-tag:${process.env.APOLLO_DIST_TAG || \"latest\"})`' | git tag -F - \"publish/$(date -u '+%Y%m%d%H%M%S')\" && git push origin \"$(git describe --match='publish/*' --tags --exact-match HEAD)\"",
     "package-extension": "npm run clean && npm ci && lerna run package-extension --stream --scope=vscode-apollo",
     "client:codegen": "node ./packages/apollo/bin/run client:codegen --target=typescript --outputFlat ./packages/apollo-language-server/src/graphqlTypes.ts"
   },
