@@ -164,7 +164,7 @@ common_publish_filters: &common_publish_filters
 
 workflows:
   version: 2
-  Build and Test:
+  Build:
     jobs:
       - NodeJS 8:
           <<: *common_non_publish_filters
