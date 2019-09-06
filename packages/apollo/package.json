@@ -68,6 +68,7 @@
   "devDependencies": {
     "typescript": "3.5.3"
   },
+  "bundledDependencies": ["apollo-language-server"],
   "oclif": {
     "commands": "./lib/commands",
     "bin": "apollo",
