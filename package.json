@@ -16,7 +16,7 @@
     "azure": "npm ci && npm run test:ci",
     "clean": "git clean -dfqX -- ./node_modules **/{lib,node_modules}/ ./packages/*/tsconfig.tsbuildinfo ./__tmp__*",
     "postinstall": "npm run build",
-    "build": "lerna bootstrap && lerna run build --stream --scope apollo-env && npm run compile && lerna run build --stream --ignore apollo-env",
+    "build": "lerna run build --stream --scope apollo-env && npm run compile && lerna run build --stream --ignore apollo-env",
     "compile": "tsc --build tsconfig.json",
     "compile:clean": "tsc --build tsconfig.json --clean",
     "watch": "tsc --build tsconfig.json --watch",

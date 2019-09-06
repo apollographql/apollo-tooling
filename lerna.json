@@ -7,9 +7,6 @@
     "version": {
       "includeMergedTags": true
     },
-    "bootstrap": {
-      "scope": "apollo"
-    },
     "publish": {
       "message": "Release"
     }
