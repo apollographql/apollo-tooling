@@ -13,5 +13,5 @@
     "lib": true
   },
   "typescript.tsdk": "node_modules/typescript/lib",
-  "debug.node.autoAttach": "on"
+  "debug.node.autoAttach": "off"
 }
