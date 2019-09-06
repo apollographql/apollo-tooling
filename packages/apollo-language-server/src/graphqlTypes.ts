@@ -43,11 +43,9 @@ export interface CheckPartialSchema_service {
   __typename: "ServiceMutation";
   /**
    * This mutation will not result in any changes to the implementing service
-   * 
    * Run composition with the Implementing Service's partial schema replaced with the one provided
    * in the mutation's input. Store the composed schema, return the hash of the composed schema,
    * and any warnings and errors pertaining to composition.
-   * 
    * This mutation will not run validation against operations.
    */
   validatePartialSchemaOfImplementingServiceAgainstGraph: CheckPartialSchema_service_validatePartialSchemaOfImplementingServiceAgainstGraph;
@@ -99,11 +97,10 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_changes {
 export interface CheckSchema_service_checkSchema_diffToPrevious_validationConfig {
   __typename: "SchemaDiffValidationConfig";
   /**
-   * delta in seconds from current time that determines the start of the
-   * window for reported metrics included in a schema diff. A day window
-   * from the present day would have a \`from\` value of -86400. In rare
-   * cases, this could be an ISO timestamp if the user passed one in on diff
-   * creation
+   * delta in seconds from current time that determines the start of the window
+   * for reported metrics included in a schema diff. A day window from the present
+   * day would have a \`from\` value of -86400. In rare cases, this could be an ISO
+   * timestamp if the user passed one in on diff creation
    */
   from: any | null;
   /**
@@ -119,8 +116,9 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_validationConfig
    */
   queryCountThreshold: number | null;
   /**
-   * Number of requests within the window for a query to be considered, relative to total request count.
-   * Expected values are between 0 and 0.05 (minimum 5% of total request volume)
+   * Number of requests within the window for a query to be considered, relative to
+   * total request count. Expected values are between 0 and 0.05 (minimum 5% of
+   * total request volume)
    */
   queryCountThresholdPercentage: number | null;
 }
@@ -167,16 +165,6 @@ export interface CheckSchema_service_checkSchema {
 
 export interface CheckSchema_service {
   __typename: "ServiceMutation";
-  /**
-   * Validate, diff, and store a schema so the diff can be viewed by users in the UI.
-   * This mutation will not mark the schema as "published".
-   * 
-   * One of "proposedSchema" or "proposedSchemaHash" must be provided.
-   * If both are provided, the computed schema hash will be compared with the input hash,
-   * an error will be returned if the hashes don't match.
-   * 
-   * If the "proposedSchemaHash" is specified, the already stored schema will be loaded.
-   */
   checkSchema: CheckSchema_service_checkSchema;
 }
 
@@ -242,16 +230,13 @@ export type ListServices_service_implementingServices = ListServices_service_imp
 export interface ListServices_service {
   __typename: "Service";
   /**
-   * Implementing services that comprise a graph.
+   * List of implementing services that comprise a graph. A non-federated graph should have a single implementing service.
    * Set includeDeleted to see deleted implementing services
    */
   implementingServices: ListServices_service_implementingServices | null;
 }
 
 export interface ListServices {
-  /**
-   * Service by ID
-   */
   service: ListServices_service | null;
 }
 
@@ -270,53 +255,29 @@ export interface ListServicesVariables {
 
 export interface RegisterOperations_service_registerOperationsWithResponse_invalidOperations_errors {
   __typename: "OperationValidationError";
-  /**
-   * Reason for validation failure
-   */
   message: string;
 }
 
 export interface RegisterOperations_service_registerOperationsWithResponse_invalidOperations {
   __typename: "InvalidOperation";
-  /**
-   * Validation errors
-   */
   errors: RegisterOperations_service_registerOperationsWithResponse_invalidOperations_errors[] | null;
-  /**
-   * Signature of operation sent by the client
-   */
   signature: string;
 }
 
 export interface RegisterOperations_service_registerOperationsWithResponse_newOperations {
   __typename: "RegisteredOperation";
-  /**
-   * Signature of operation sent by the client
-   */
   signature: string;
 }
 
 export interface RegisterOperations_service_registerOperationsWithResponse {
   __typename: "RegisterOperationsMutationResponse";
-  /**
-   * Operations that failed to validate against the schema
-   */
   invalidOperations: RegisterOperations_service_registerOperationsWithResponse_invalidOperations[] | null;
-  /**
-   * New operations added to the registry(subset of input operations)
-   */
   newOperations: RegisterOperations_service_registerOperationsWithResponse_newOperations[] | null;
-  /**
-   * True if operations were registered, false if not
-   */
   registrationSuccess: boolean;
 }
 
 export interface RegisterOperations_service {
   __typename: "ServiceMutation";
-  /**
-   * Register operations with diagnostic information about the result of the mutation
-   */
   registerOperationsWithResponse: RegisterOperations_service_registerOperationsWithResponse | null;
 }
 
@@ -392,9 +353,6 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
 
 export interface RemoveServiceAndCompose_service {
   __typename: "ServiceMutation";
-  /**
-   * Remove an implementing service from a graph and update its service list manifest
-   */
   removeImplementingServiceAndTriggerComposition: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition;
 }
 
@@ -438,13 +396,7 @@ export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics {
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats {
   __typename: "ServiceFieldStatsRecord";
-  /**
-   * Dimensions of ServiceFieldStats that can be grouped by.
-   */
   groupBy: SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy;
-  /**
-   * Metrics of ServiceFieldStats that can be aggregated over.
-   */
   metrics: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics;
 }
 
@@ -456,16 +408,14 @@ export interface SchemaTagsAndFieldStats_service_stats {
 export interface SchemaTagsAndFieldStats_service {
   __typename: "Service";
   /**
-   * Get schema tags, with optional filtering to a set of tags. Always sorted by creation date in reverse chronological order.
+   * Get schema tags, with optional filtering to a set of tags. Always sorted by creation
+   * date in reverse chronological order.
    */
   schemaTags: SchemaTagsAndFieldStats_service_schemaTags[];
   stats: SchemaTagsAndFieldStats_service_stats;
 }
 
 export interface SchemaTagsAndFieldStats {
-  /**
-   * Service by ID
-   */
   service: SchemaTagsAndFieldStats_service | null;
 }
 
@@ -518,16 +468,6 @@ export interface UploadAndComposePartialSchema_service_upsertImplementingService
 
 export interface UploadAndComposePartialSchema_service {
   __typename: "ServiceMutation";
-  /**
-   * Creates or updates an implementing service of a given "name" on the graph variant, then
-   * updates the graph variant's composition configs/artifacts to reflect these changes.
-   * 
-   * An enriched SDL of the implementing service can be uploaded
-   * via "implementingServiceConfiguration.partialSchema.partialSchemaSDL".
-   * 
-   * Alternatively, previously uploaded partial schema could be re-associated with the
-   * implementing service via "implementingServiceConfiguration.partialSchema.partialSchemaHash".
-   */
   upsertImplementingServiceAndTriggerComposition: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition;
 }
 
@@ -573,9 +513,6 @@ export interface UploadSchema_service_uploadSchema {
 
 export interface UploadSchema_service {
   __typename: "ServiceMutation";
-  /**
-   * Upload a schema, while updating a tag in the same operation
-   */
   uploadSchema: UploadSchema_service_uploadSchema | null;
 }
 
@@ -633,9 +570,6 @@ export interface ValidateOperations_service_validateOperations {
 
 export interface ValidateOperations_service {
   __typename: "ServiceMutation";
-  /**
-   * Validate operations against a given schema by tag
-   */
   validateOperations: ValidateOperations_service_validateOperations;
 }
 
@@ -1095,9 +1029,6 @@ export interface GetSchemaByTag_service_Service {
 export type GetSchemaByTag_service = GetSchemaByTag_service_User | GetSchemaByTag_service_Service;
 
 export interface GetSchemaByTag {
-  /**
-   * Current identity, null if not authenticated
-   */
   service: GetSchemaByTag_service | null;
 }
 
