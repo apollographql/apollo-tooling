@@ -22,7 +22,7 @@
     "apollo": "./bin/run"
   },
   "scripts": {
-    "prepack": "oclif-dev manifest && oclif-dev readme",
+    "prepack": "ls -laR; oclif-dev manifest && oclif-dev readme",
     "postpack": "rm -f oclif.manifest.json",
     "version": "oclif-dev readme && git add README.md"
   },
