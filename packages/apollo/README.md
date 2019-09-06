@@ -143,7 +143,7 @@ OPTIONS
 
   --key=key                                  The API key for the Apollo Engine service
 
-  --localSchemaFile=localSchemaFile          Path to your local GraphQL schema file (introspection result or SDL)
+  --localSchemaFile=localSchemaFile          Path to your local GraphQL schema file (introspection result or SDL as *.graphql)
 
   --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
 
