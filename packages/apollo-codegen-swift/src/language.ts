@@ -56,12 +56,23 @@ const reservedKeywords = new Set(['associatedtype', 'class', 'deinit', 'enum', '
   'override', 'postfix', 'precedence', 'prefix', 'Protocol', 'required', 'right',
   'set', 'Type', 'unowned', 'weak', 'willSet']);
 
+/**
+ * Escapes the identifier if it matches a reserved keyword.
+ *
+ * For example, the identifier `Self?` requires escaping or it will match the keyword `Self`.
+ *
+ * @param identifier The identifier to escape.
+ */
 export function escapeIdentifierIfNeeded(identifier: string) {
-  if (reservedKeywords.has(identifier)) {
-    return "`" + identifier + "`";
-  } else {
-    return identifier;
-  }
+  // Swift identifiers use a significantly more complicated definition, but GraphQL names are
+  // limited to ASCII, so we only have to worry about ASCII strings here.
+  return identifier.replace(/[a-zA-Z_][a-zA-Z0-9_]*/g, match => {
+    if (reservedKeywords.has(match)) {
+      return `\`${match}\``;
+    } else {
+      return match;
+    }
+  });
 }
 
 export class SwiftGenerator<Context> extends CodeGenerator<
