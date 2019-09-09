@@ -116,6 +116,7 @@ jobs:
           working_directory: packages/apollo
       - store_artifacts:
           path: packages/apollo/dist
+          destination: apollo-cli
       # - run:
       #     name: Publish
       #     command: npx -p @oclif/dev-cli oclif-dev publish --targets=darwin-x64
