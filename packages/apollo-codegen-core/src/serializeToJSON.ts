@@ -3,7 +3,10 @@ import {
   GraphQLType,
   GraphQLScalarType,
   GraphQLEnumType,
-  GraphQLInputObjectType
+  GraphQLInputObjectType,
+  isEnumType,
+  isInputObjectType,
+  isScalarType
 } from "graphql";
 
 import { LegacyCompilerContext } from "./compiler/legacyIR";
@@ -34,11 +37,11 @@ export function serializeAST(ast: any, space?: string) {
 }
 
 function serializeType(type: GraphQLType) {
-  if (type instanceof GraphQLEnumType) {
+  if (isEnumType(type)) {
     return serializeEnumType(type);
-  } else if (type instanceof GraphQLInputObjectType) {
+  } else if (isInputObjectType(type)) {
     return serializeInputObjectType(type);
-  } else if (type instanceof GraphQLScalarType) {
+  } else if (isScalarType(type)) {
     return serializeScalarType(type);
   } else {
     throw new Error(`Unexpected GraphQL type: ${type}`);

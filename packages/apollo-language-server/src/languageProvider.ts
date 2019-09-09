@@ -178,8 +178,8 @@ export class GraphQLLanguageProvider {
         if (!suggestedField) {
           return suggest;
         } else {
-          const requiredArgs = suggestedField.args.filter(
-            a => a.type instanceof GraphQLNonNull
+          const requiredArgs = suggestedField.args.filter(a =>
+            isNonNullType(a.type)
           );
           const paramsSection =
             requiredArgs.length > 0

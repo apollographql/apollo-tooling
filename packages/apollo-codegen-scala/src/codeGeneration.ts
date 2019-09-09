@@ -3,8 +3,10 @@ import {
   getNamedType,
   isCompositeType,
   GraphQLEnumType,
-  GraphQLNonNull,
-  GraphQLInputObjectType
+  GraphQLInputObjectType,
+  isNonNullType,
+  isEnumType,
+  isInputObjectType
 } from "graphql";
 
 import { isTypeProperSuperTypeOf } from "apollo-codegen-core/lib/utilities/graphql";
@@ -157,9 +159,7 @@ export function classDeclarationForOperation(
             undefined,
             true
           );
-          const isOptional = !(
-            type instanceof GraphQLNonNull || type instanceof GraphQLNonNull
-          );
+          const isOptional = !isNonNullType(type);
           return { name, propertyName, type, typeName, isOptional };
         });
 
@@ -382,9 +382,9 @@ export function typeDeclarationForGraphQLType(
   generator: CodeGenerator<LegacyCompilerContext, any>,
   type: GraphQLType
 ) {
-  if (type instanceof GraphQLEnumType) {
+  if (isEnumType(type)) {
     enumerationDeclaration(generator, type);
-  } else if (type instanceof GraphQLInputObjectType) {
+  } else if (isInputObjectType(type)) {
     traitDeclarationForInputObjectType(generator, type);
   }
 }

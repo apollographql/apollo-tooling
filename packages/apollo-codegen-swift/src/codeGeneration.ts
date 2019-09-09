@@ -8,7 +8,9 @@ import {
   GraphQLEnumType,
   GraphQLInputObjectType,
   isNonNullType,
-  isListType
+  isListType,
+  isEnumType,
+  isInputObjectType
 } from "graphql";
 
 import {
@@ -965,9 +967,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     type: GraphQLType,
     outputIndividualFiles: boolean
   ) {
-    if (type instanceof GraphQLEnumType) {
+    if (isEnumType(type)) {
       this.enumerationDeclaration(type);
-    } else if (type instanceof GraphQLInputObjectType) {
+    } else if (isInputObjectType(type)) {
       this.structDeclarationForInputObjectType(type, outputIndividualFiles);
     }
   }
