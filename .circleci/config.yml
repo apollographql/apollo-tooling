@@ -94,23 +94,23 @@ jobs:
           command: cmp --silent currentTypes.ts ./packages/apollo-language-server/src/graphqlTypes.ts || (echo "Type check failed. Run 'npm run client:codegen'" && exit 1)
 
   Build CLI:
-  docker: [{ image: "circleci/node:10" }]
-  steps:
-    - *run_install_desired_npm
-    - checkout
-    - run: npm install
-    - run:
-        name: Make tmp dir
-        command: cd packages/apollo && mkdir tmp && cd tmp
-    - run:
-        name: Initialize tmp dir with NPM and Git
-        command: npm init -y && git init
-    - run: npm i apollo && cd node_modules/apollo && npm i --package-lock-only
-    - run: cd ../../../
-    - run: rm package.json && cp tmp/node_modules/apollo/package* .
-    - run:
-        name: Build CLI
-        command: npx -p @oclif/dev-cli oclif-dev pack --targets=darwin-x64
+    executor: { name: oss/node }
+    steps:
+      - *run_install_desired_npm
+      - checkout
+      - run: npm install
+      - run:
+          name: Make tmp dir
+          command: cd packages/apollo && mkdir tmp && cd tmp
+      - run:
+          name: Initialize tmp dir with NPM and Git
+          command: npm init -y && git init
+      - run: npm i apollo && cd node_modules/apollo && npm i --package-lock-only
+      - run: cd ../../../
+      - run: rm package.json && cp tmp/node_modules/apollo/package* .
+      - run:
+          name: Build CLI
+          command: npx -p @oclif/dev-cli oclif-dev pack --targets=darwin-x64
 
 common_non_publish_filters: &common_non_publish_filters
   filters:
