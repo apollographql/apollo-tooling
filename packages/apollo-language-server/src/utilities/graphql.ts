@@ -1,9 +1,6 @@
 import {
   GraphQLSchema,
   GraphQLCompositeType,
-  GraphQLObjectType,
-  GraphQLInterfaceType,
-  GraphQLUnionType,
   GraphQLField,
   FieldNode,
   SchemaMetaFieldDef,
@@ -15,11 +12,11 @@ import {
   visit,
   print,
   DirectiveNode,
-  OperationDefinitionNode,
   SelectionSetNode,
   DirectiveDefinitionNode,
-  FragmentDefinitionNode,
-  FragmentSpreadNode
+  isObjectType,
+  isInterfaceType,
+  isUnionType
 } from "graphql";
 
 export function isNode(maybeNode: any): maybeNode is ASTNode {
@@ -71,16 +68,13 @@ export function getFieldDef(
   }
   if (
     name === TypeNameMetaFieldDef.name &&
-    (parentType instanceof GraphQLObjectType ||
-      parentType instanceof GraphQLInterfaceType ||
-      parentType instanceof GraphQLUnionType)
+    (isObjectType(parentType) ||
+      isInterfaceType(parentType) ||
+      isUnionType(parentType))
   ) {
     return TypeNameMetaFieldDef;
   }
-  if (
-    parentType instanceof GraphQLObjectType ||
-    parentType instanceof GraphQLInterfaceType
-  ) {
+  if (isObjectType(parentType) || isInterfaceType(parentType)) {
     return parentType.getFields()[name];
   }
 

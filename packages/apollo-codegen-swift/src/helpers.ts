@@ -5,14 +5,14 @@ import {
   GraphQLFloat,
   GraphQLBoolean,
   GraphQLID,
-  GraphQLNonNull,
   GraphQLScalarType,
-  GraphQLEnumType,
   isCompositeType,
   getNamedType,
   GraphQLInputField,
   isNonNullType,
-  isListType
+  isListType,
+  isScalarType,
+  isEnumType
 } from "graphql";
 
 import { camelCase, pascalCase } from "change-case";
@@ -66,7 +66,7 @@ export class Helpers {
         "[" +
         this.typeNameFromGraphQLType(type.ofType, unmodifiedTypeName) +
         "]";
-    } else if (type instanceof GraphQLScalarType) {
+    } else if (isScalarType(type)) {
       typeName = this.typeNameForScalarType(type);
     } else {
       typeName = unmodifiedTypeName || type.name;
@@ -89,9 +89,9 @@ export class Helpers {
       return `.nonNull(${this.fieldTypeEnum(type.ofType, structName)})`;
     } else if (isListType(type)) {
       return `.list(${this.fieldTypeEnum(type.ofType, structName)})`;
-    } else if (type instanceof GraphQLScalarType) {
+    } else if (isScalarType(type)) {
       return `.scalar(${this.typeNameForScalarType(type)}.self)`;
-    } else if (type instanceof GraphQLEnumType) {
+    } else if (isEnumType(type)) {
       return `.scalar(${type.name}.self)`;
     } else if (isCompositeType(type)) {
       return `.object(${structName}.selections)`;
@@ -151,7 +151,7 @@ export class Helpers {
       type = type.ofType;
     }
 
-    const isOptional = !(type instanceof GraphQLNonNull);
+    const isOptional = !isNonNullType(type);
 
     const unmodifiedType = getNamedType(field.type);
 
@@ -200,7 +200,7 @@ export class Helpers {
     return Object.assign({}, field, {
       propertyName: camelCase(field.name),
       typeName: this.typeNameFromGraphQLType(field.type),
-      isOptional: !(field.type instanceof GraphQLNonNull)
+      isOptional: !isNonNullType(field.type)
     });
   }
 

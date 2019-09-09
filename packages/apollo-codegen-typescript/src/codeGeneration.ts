@@ -25,13 +25,15 @@ import { CompilerOptions } from "apollo-codegen-core/lib/compiler";
 import TypescriptGenerator, { ObjectProperty } from "./language";
 import Printer from "./printer";
 import { DEFAULT_FILE_EXTENSION } from "./helpers";
-import { GraphQLType, isListType } from "graphql/type/definition";
 import {
-  GraphQLNonNull,
-  GraphQLOutputType,
-  getNullableType,
-  GraphQLObjectType
-} from "graphql";
+  GraphQLType,
+  isListType,
+  isObjectType,
+  isNonNullType,
+  isEnumType,
+  isInputObjectType
+} from "graphql/type/definition";
+import { GraphQLOutputType, getNullableType } from "graphql";
 import { maybePush } from "apollo-codegen-core/lib/utilities/array";
 import { unifyPaths } from "apollo-codegen-core/lib/utilities/printing";
 
@@ -57,19 +59,17 @@ function printEnumsAndInputObjects(
   `);
 
   typesUsed
-    .filter(type => type instanceof GraphQLEnumType)
+    .filter(isEnumType)
     .sort()
     .forEach(enumType => {
-      generator.typeAliasForEnumType(enumType as GraphQLEnumType);
+      generator.typeAliasForEnumType(enumType);
     });
 
   typesUsed
-    .filter(type => type instanceof GraphQLInputObjectType)
+    .filter(isInputObjectType)
     .sort()
     .forEach(inputObjectType => {
-      generator.typeAliasForInputObjectType(
-        inputObjectType as GraphQLInputObjectType
-      );
+      generator.typeAliasForInputObjectType(inputObjectType);
     });
 
   generator.printer.enqueue(stripIndent`
@@ -388,13 +388,11 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
   };
 
   private isGlobalType = (type: GraphQLType) => {
-    return (
-      type instanceof GraphQLEnumType || type instanceof GraphQLInputObjectType
-    );
+    return isEnumType(type) || isInputObjectType(type);
   };
 
   private getUnderlyingType = (type: GraphQLType): GraphQLType => {
-    if (type instanceof GraphQLNonNull) {
+    if (isNonNullType(type)) {
       return this.getUnderlyingType(getNullableType(type));
     }
     if (isListType(type)) {
@@ -457,7 +455,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     acc: (GraphQLType | GraphQLOutputType)[],
     type: GraphQLType
   ) => {
-    if (type instanceof GraphQLNonNull) {
+    if (isNonNullType(type)) {
       type = getNullableType(type);
     }
 
@@ -465,10 +463,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       type = type.ofType;
     }
 
-    if (
-      type instanceof GraphQLInputObjectType ||
-      type instanceof GraphQLObjectType
-    ) {
+    if (isInputObjectType(type) || isObjectType(type)) {
       acc = maybePush(acc, type);
       const fields = type.getFields();
       acc = Object.keys(fields)

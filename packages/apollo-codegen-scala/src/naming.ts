@@ -8,10 +8,10 @@ import { escapeIdentifierIfNeeded, Property } from "./language";
 import { typeNameFromGraphQLType } from "./types";
 
 import {
-  GraphQLList,
-  GraphQLNonNull,
   getNamedType,
-  isCompositeType
+  isCompositeType,
+  isNonNullType,
+  isListType
 } from "graphql";
 import {
   LegacyCompilerContext,
@@ -53,8 +53,8 @@ export function propertyFromInputField(
   const propertyName = escapeIdentifierIfNeeded(unescapedPropertyName);
 
   const type = field.type;
-  const isList = type instanceof GraphQLList || type instanceof GraphQLList;
-  const isOptional = !(type instanceof GraphQLNonNull);
+  const isList = isListType(type);
+  const isOptional = !isNonNullType(type);
   const bareType = getNamedType(type);
 
   const bareTypeName = isCompositeType(bareType)
@@ -94,8 +94,8 @@ export function propertyFromLegacyField(
   const propertyName = escapeIdentifierIfNeeded(name);
 
   const type = field.type;
-  const isList = type instanceof GraphQLList || type instanceof GraphQLList;
-  const isOptional = field.isConditional || !(type instanceof GraphQLNonNull);
+  const isList = isListType(type);
+  const isOptional = field.isConditional || !isNonNullType(type);
   const bareType = getNamedType(type);
 
   const bareTypeName = isCompositeType(bareType)

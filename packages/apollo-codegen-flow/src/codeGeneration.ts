@@ -1,6 +1,11 @@
 import * as t from "@babel/types";
 import { stripIndent } from "common-tags";
-import { GraphQLEnumType, GraphQLInputObjectType } from "graphql";
+import {
+  GraphQLEnumType,
+  GraphQLInputObjectType,
+  isEnumType,
+  isInputObjectType
+} from "graphql";
 
 import {
   CompilerContext,
@@ -42,19 +47,13 @@ function printEnumsAndInputObjects(
     //==============================================================
   `);
 
-  context.typesUsed
-    .filter(type => type instanceof GraphQLEnumType)
-    .forEach(enumType => {
-      generator.typeAliasForEnumType(enumType as GraphQLEnumType);
-    });
+  context.typesUsed.filter(isEnumType).forEach(enumType => {
+    generator.typeAliasForEnumType(enumType);
+  });
 
-  context.typesUsed
-    .filter(type => type instanceof GraphQLInputObjectType)
-    .forEach(inputObjectType => {
-      generator.typeAliasForInputObjectType(
-        inputObjectType as GraphQLInputObjectType
-      );
-    });
+  context.typesUsed.filter(isInputObjectType).forEach(inputObjectType => {
+    generator.typeAliasForInputObjectType(inputObjectType);
+  });
 
   generator.printer.enqueue(stripIndent`
     //==============================================================
