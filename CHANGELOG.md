@@ -3,8 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Shorten `client:check` and `service:check` output in CI [#1404](https://github.com/apollographql/apollo-tooling/pull/1404)
-  - service:check add null check for validation config [#1471](https://github.com/apollographql/apollo-tooling/pull/1471)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -25,6 +24,19 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.18.1`
+
+- `apollo-codegen-core@0.35.1`
+- `apollo-codegen-flow@0.33.26`
+- `apollo-codegen-scala@0.34.26`
+- `apollo-codegen-swift@0.35.6`
+- `apollo-codegen-typescript@0.35.1`
+- `apollo-language-server@1.15.1`
+- `vscode-apollo@1.10.1`
+- `apollo@2.18.1`
+  - Shorten `client:check` and `service:check` output in CI [#1404](https://github.com/apollographql/apollo-tooling/pull/1404)
+  - service:check add null check for validation config [#1471](https://github.com/apollographql/apollo-tooling/pull/1471)
 
 ## `apollo@2.18.0`, `apollo-language-server@1.15.0`, `apollo-codegen-core@0.35.0`, `apollo-codegen-typescript@0.35.0`, `vscode-apollo@1.10.0`
 
