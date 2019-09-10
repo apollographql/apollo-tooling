@@ -7,9 +7,6 @@ import {
   TypeMetaFieldDef,
   TypeNameMetaFieldDef,
   GraphQLCompositeType,
-  GraphQLObjectType,
-  GraphQLInterfaceType,
-  GraphQLUnionType,
   GraphQLEnumValue,
   GraphQLError,
   GraphQLSchema,
@@ -24,7 +21,10 @@ import {
   DocumentNode,
   DirectiveNode,
   isListType,
-  isNonNullType
+  isNonNullType,
+  isObjectType,
+  isInterfaceType,
+  isUnionType
 } from "graphql";
 
 declare module "graphql/utilities/buildASTSchema" {
@@ -162,7 +162,7 @@ export function isTypeProperSuperTypeOf(
 ) {
   return (
     isEqualType(maybeSuperType, subType) ||
-    (subType instanceof GraphQLObjectType &&
+    (isObjectType(subType) &&
       (isAbstractType(maybeSuperType) &&
         schema.isPossibleType(maybeSuperType, subType)))
   );
@@ -226,16 +226,13 @@ export function getFieldDef(
   }
   if (
     name === TypeNameMetaFieldDef.name &&
-    (parentType instanceof GraphQLObjectType ||
-      parentType instanceof GraphQLInterfaceType ||
-      parentType instanceof GraphQLUnionType)
+    (isObjectType(parentType) ||
+      isInterfaceType(parentType) ||
+      isUnionType(parentType))
   ) {
     return TypeNameMetaFieldDef;
   }
-  if (
-    parentType instanceof GraphQLObjectType ||
-    parentType instanceof GraphQLInterfaceType
-  ) {
+  if (isObjectType(parentType) || isInterfaceType(parentType)) {
     return parentType.getFields()[name];
   }
 

@@ -3,11 +3,11 @@ import {
   GraphQLFloat,
   GraphQLInt,
   GraphQLID,
-  GraphQLScalarType,
   GraphQLString,
   GraphQLType,
   isListType,
-  isNonNullType
+  isNonNullType,
+  isScalarType
 } from "graphql";
 
 import * as t from "@babel/types";
@@ -46,7 +46,7 @@ export function createTypeFromGraphQLTypeFunction(
           ? t.TSParenthesizedType(elementType)
           : elementType
       );
-    } else if (graphQLType instanceof GraphQLScalarType) {
+    } else if (isScalarType(graphQLType)) {
       const builtIn = builtInScalarMap[typeName || graphQLType.name];
       if (builtIn != null) {
         return builtIn;

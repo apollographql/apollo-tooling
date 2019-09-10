@@ -7,9 +7,6 @@ import {
   isCompositeType,
   GraphQLOutputType,
   GraphQLInputType,
-  GraphQLScalarType,
-  GraphQLEnumType,
-  GraphQLInputObjectType,
   GraphQLObjectType,
   GraphQLError,
   GraphQLSchema,
@@ -22,7 +19,10 @@ import {
   SelectionNode,
   isSpecifiedScalarType,
   NonNullTypeNode,
-  GraphQLNonNull
+  GraphQLNonNull,
+  isEnumType,
+  isInputObjectType,
+  isScalarType
 } from "graphql";
 
 import {
@@ -202,13 +202,13 @@ class Compiler {
     if (this.typesUsedSet.has(type)) return;
 
     if (
-      type instanceof GraphQLEnumType ||
-      type instanceof GraphQLInputObjectType ||
-      (type instanceof GraphQLScalarType && !isSpecifiedScalarType(type))
+      isEnumType(type) ||
+      isInputObjectType(type) ||
+      (isScalarType(type) && !isSpecifiedScalarType(type))
     ) {
       this.typesUsedSet.add(type);
     }
-    if (type instanceof GraphQLInputObjectType) {
+    if (isInputObjectType(type)) {
       for (const field of Object.values(type.getFields())) {
         this.addTypeUsed(getNamedType(field.type));
       }
