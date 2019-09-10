@@ -440,6 +440,9 @@ describe("Swift code generation", () => {
         query Hero {
           hero {
             private: name
+            self: friends {
+              id
+            }
           }
         }
       `);
