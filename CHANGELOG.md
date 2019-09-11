@@ -20,6 +20,7 @@
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
   - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
+  - Language server should not break on hover provider over untyped arguments (https://github.com/apollographql/apollo-tooling/pull/1523)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
