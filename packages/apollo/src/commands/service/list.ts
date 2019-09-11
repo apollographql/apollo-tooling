@@ -74,7 +74,7 @@ function formatHumanReadable({
           .sort((s1, s2) =>
             s1.name.toUpperCase() > s2.name.toUpperCase() ? 1 : -1
           )
-          .map(entry => Object.values(entry))
+          .map(Object.values)
           .filter(Boolean)
       ])
     );
