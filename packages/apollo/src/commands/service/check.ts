@@ -658,7 +658,7 @@ export default class ServiceCheck extends ProjectCommand {
         table(
           [
             ["Service", "Field", "Message"],
-            ...compositionErrors.map(error => Object.values(error))
+            ...compositionErrors.map(Object.values)
           ],
           {
             columns: {
