@@ -1,6 +1,7 @@
 import { stripIndent } from "common-tags";
 
-import { SwiftGenerator } from "../language";
+import { SwiftGenerator, SwiftSource, swift } from "../language";
+import { valueFromAST } from "graphql";
 
 describe("Swift code generation: Basic language constructs", () => {
   let generator: SwiftGenerator<any>;
@@ -262,5 +263,115 @@ describe("Swift code generation: Basic language constructs", () => {
     );
 
     expect(generator.output).toMatchSnapshot();
+  });
+});
+
+describe("Swift code generation: Escaping", () => {
+  describe("using SwiftSource", () => {
+    it(`should escape identifiers`, () => {
+      expect(SwiftSource.identifier("self").source).toBe("`self`");
+      expect(SwiftSource.identifier("public").source).toBe("`public`");
+      expect(SwiftSource.identifier("Array<Type>").source).toBe(
+        "Array<`Type`>"
+      );
+      expect(SwiftSource.identifier("[Self?]?").source).toBe("[`Self`?]?");
+    });
+
+    it(`should not escape other words`, () => {
+      expect(SwiftSource.identifier("me").source).toBe("me");
+      expect(SwiftSource.identifier("_Self").source).toBe("_Self");
+      expect(SwiftSource.identifier("classes").source).toBe("classes");
+    });
+
+    it(`should escape fewer words in member position`, () => {
+      expect(SwiftSource.identifier(".self").source).toBe(".`self`");
+      expect(SwiftSource.identifier(".public").source).toBe(".public");
+      expect(SwiftSource.identifier("Foo.Self.Type.self.class").source).toBe(
+        "Foo.Self.`Type`.`self`.class"
+      );
+    });
+
+    it(`should escape fewer words at offset 0 with member escaping`, () => {
+      expect(SwiftSource.memberName("self").source).toBe("`self`");
+      expect(SwiftSource.memberName("public").source).toBe("public");
+      expect(SwiftSource.memberName(" public").source).toBe(" `public`");
+      expect(SwiftSource.memberName("Foo.Self.Type.self.class").source).toBe(
+        "Foo.Self.`Type`.`self`.class"
+      );
+    });
+
+    it(`should escape strings`, () => {
+      expect(SwiftSource.string("foobar").source).toBe('"foobar"');
+      expect(SwiftSource.string("foo\n  bar  ").source).toBe('"foo\\n  bar  "');
+      expect(SwiftSource.string("one'two\"three\\four\tfive").source).toBe(
+        '"one\'two\\"three\\\\four\\tfive"'
+      );
+    });
+
+    it(`should trim strings when asked`, () => {
+      expect(SwiftSource.string("foobar", true).source).toBe('"foobar"');
+      expect(SwiftSource.string("foo\n  bar  ", true).source).toBe('"foo bar"');
+    });
+
+    it(`should support concatenation`, () => {
+      expect(swift`one`.concat().source).toBe("one");
+      expect(swift`one`.concat(swift`two`).source).toBe("onetwo");
+      expect(swift`one`.concat(swift`two`, swift`three`).source).toBe(
+        "onetwothree"
+      );
+    });
+
+    it(`should support appending`, () => {
+      let value = swift`one`;
+      value.append();
+      expect(value.source).toBe("one");
+      value.append(swift`foo`);
+      expect(value.source).toBe("onefoo");
+      value.append(swift`bar`, swift`baz`, swift`qux`);
+      expect(value.source).toBe("onefoobarbazqux");
+    });
+  });
+  describe("using SwiftGenerator", () => {
+    let generator: SwiftGenerator<any>;
+
+    beforeEach(() => {
+      generator = new SwiftGenerator({});
+    });
+
+    it(`should trim with multilineString`, () => {
+      generator.multilineString("foo\n  bar  ");
+
+      expect(generator.output).toBe('"foo bar"');
+    });
+
+    it(`shouldn't trim with multilineString when using """`, () => {
+      generator.multilineString('"""\nfoo\n  bar  \n"""');
+      expect(generator.output).toBe('"\\"\\"\\"\\nfoo\\n  bar  \\n\\"\\"\\""');
+    });
+  });
+  describe("using template strings", () => {
+    it(`should escape interpolated strings but not string literals`, () => {
+      expect(swift`self`.source).toBe("self");
+      expect(swift`${"self"}`.source).toBe("`self`");
+      expect(swift`class ${"Foo.Type.self"}: ${"Protocol?"}`.source).toBe(
+        "class Foo.`Type`.`self`: `Protocol`?"
+      );
+      expect(swift`${["Self", "Foo.Self.self"]}`.source).toBe(
+        "`Self`,Foo.Self.`self`"
+      );
+      expect(swift`${true} ${"true"}`.source).toBe("true `true`");
+      expect(swift`${{ toString: () => "self" }}`.source).toBe("`self`");
+    });
+
+    it(`should not escape already-escaped interpolated strings`, () => {
+      expect(swift`${swift`${"self"}`}`.source).toBe("`self`");
+      expect(swift`${"public"} ${new SwiftSource("public")}`.source).toBe(
+        "`public` public"
+      );
+    });
+
+    it(`should not escape with the raw tag`, () => {
+      expect(SwiftSource.raw`${"self"}`.source).toBe("self");
+    });
   });
 });

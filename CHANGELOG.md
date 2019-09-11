@@ -12,6 +12,7 @@
   - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
 - `apollo-codegen-swift`
   - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
+  - Ensure types and strings are properly escaped in all generated code [#1515](https://github.com/apollographql/apollo-tooling/pull/1515)
 - `apollo-codegen-typescript`
   - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
 - `apollo-env`

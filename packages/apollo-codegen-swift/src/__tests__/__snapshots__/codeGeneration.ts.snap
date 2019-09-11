@@ -108,7 +108,7 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
   ///   }
   /// }
   public let operationDefinition =
-    \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"\\\\\\"\\\\\\"\\\\n    Wow!\\\\n     I thought\\\\n      This movie \\\\ ROCKED!\\\\n  \\\\\\"\\\\\\"\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
+    \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"\\\\\\"\\\\\\"\\\\n    Wow!\\\\n     I thought\\\\n      This movie \\\\\\\\ ROCKED!\\\\n  \\\\\\"\\\\\\"\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
 
   public let operationName = \\"CreateReview\\"
 
@@ -1167,6 +1167,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
 
   public static let selections: [GraphQLSelection] = [
     GraphQLField(\\"name\\", alias: \\"private\\", type: .nonNull(.scalar(String.self))),
+    GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
   ]
 
   public private(set) var resultMap: ResultMap
@@ -1175,12 +1176,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
     self.resultMap = unsafeResultMap
   }
 
-  public static func makeHuman(\`private\`: String) -> Hero {
-    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"private\\": \`private\`])
+  public static func makeHuman(\`private\`: String, \`self\`: [\`Self\`?]? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"private\\": \`private\`, \\"self\\": \`self\`.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
   }
 
-  public static func makeDroid(\`private\`: String) -> Hero {
-    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"private\\": \`private\`])
+  public static func makeDroid(\`private\`: String, \`self\`: [\`Self\`?]? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"private\\": \`private\`, \\"self\\": \`self\`.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
   }
 
   /// The name of the character
@@ -1190,6 +1191,48 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
     }
     set {
       resultMap.updateValue(newValue, forKey: \\"private\\")
+    }
+  }
+
+  /// The friends of the character, or an empty list if they have none
+  public var \`self\`: [\`Self\`?]? {
+    get {
+      return (resultMap[\\"self\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [\`Self\`?] in value.map { (value: ResultMap?) -> \`Self\`? in value.flatMap { (value: ResultMap) -> \`Self\` in \`Self\`(unsafeResultMap: value) } } }
+    }
+    set {
+      resultMap.updateValue(newValue.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }, forKey: \\"self\\")
+    }
+  }
+
+  public struct \`Self\`: GraphQLSelectionSet {
+    public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+    public static let selections: [GraphQLSelection] = [
+      GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
+    ]
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public static func makeHuman(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"id\\": id])
+    }
+
+    public static func makeDroid(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"id\\": id])
+    }
+
+    /// The ID of the character
+    public var id: GraphQLID {
+      get {
+        return resultMap[\\"id\\"]! as! GraphQLID
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"id\\")
+      }
     }
   }
 }"
