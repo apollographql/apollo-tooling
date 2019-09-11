@@ -376,7 +376,8 @@ export class GraphQLLanguageProvider {
         }
 
         case Kind.ARGUMENT: {
-          const argumentNode = typeInfo.getArgument()!;
+          const argumentNode = typeInfo.getArgument();
+          if (!argumentNode) break;
           const content = [
             [
               `\`\`\`graphql`,
