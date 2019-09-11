@@ -1,5 +1,5 @@
 import { flags } from "@oclif/command";
-import { table } from "heroku-cli-util";
+import { table } from "table";
 import { introspectionFromSchema, printSchema, GraphQLSchema } from "graphql";
 import chalk from "chalk";
 import envCi from "env-ci";
@@ -25,7 +25,6 @@ import {
 } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
-import cli from "cli-ux";
 import { isNotNullOrUndefined } from "apollo-env";
 
 const formatChange = (change: Change) => {
@@ -48,18 +47,6 @@ const formatChange = (change: Change) => {
     severity: color(changeDictionary[change.severity]),
     code: color(change.code),
     description: color(change.description)
-  };
-};
-
-const reshapeGraphQLErrorToChange = (
-  severity: ChangeSeverity,
-  message: string
-): Change => {
-  return {
-    severity,
-    code: `FEDERATION_VALIDATION_${severity}`,
-    description: message,
-    __typename: "Change"
   };
 };
 
@@ -225,28 +212,15 @@ export function formatHumanReadable({
       change => change.severity !== ChangeSeverity.FAILURE
     );
 
-    table(
-      [
-        ...breakingChanges.map(formatChange),
+    return table([
+      ["Change", "Code", "Description"],
+      ...[
+        ...breakingChanges.map(formatChange).map(Object.values),
         // Add an empty line between, but only if there are both breaking changes and non-breaking changes.
-        nonBreakingChanges.length && breakingChanges.length ? {} : null,
-        ...nonBreakingChanges.map(formatChange)
-      ].filter(Boolean),
-      {
-        columns: [
-          { key: "severity", label: "Change" },
-          { key: "code", label: "Code" },
-          { key: "description", label: "Description" }
-        ],
-        // Override `printHeader` so we don't print a header
-        printHeader: () => {},
-        // The default `printLine` will output to the console; we want to capture the output so we can test
-        // it.
-        printLine: line => {
-          result += `\n${line}`;
-        }
-      }
-    );
+        // nonBreakingChanges.length && breakingChanges.length ? {} : null,
+        ...nonBreakingChanges.map(formatChange).map(Object.values)
+      ].filter(Boolean)
+    ]);
   }
 
   if (targetUrl) {
@@ -680,13 +654,22 @@ export default class ServiceCheck extends ProjectCommand {
       // Add a cosmetic line break
       console.log("");
 
-      cli.table(compositionErrors, {
-        columns: [
-          { key: "service", label: "Service" },
-          { key: "field", label: "Field" },
-          { key: "message", label: "Message" }
-        ]
-      });
+      this.log(
+        table(
+          [
+            ["Service", "Field", "Message"],
+            ...compositionErrors.map(error => Object.values(error))
+          ],
+          {
+            columns: {
+              2: {
+                width: 50,
+                wrapWord: true
+              }
+            }
+          }
+        )
+      );
 
       // Return a non-zero error code
       this.exit(1);

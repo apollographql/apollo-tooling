@@ -2,7 +2,7 @@ import { flags } from "@oclif/command";
 import { ProjectCommand } from "../../Command";
 import { GraphQLSchema } from "graphql";
 import sortBy from "lodash.sortby";
-import { table } from "heroku-cli-util";
+import { table } from "table";
 import moment from "moment";
 import {
   ApolloConfig,
@@ -57,33 +57,28 @@ function formatHumanReadable({
       ListServices_service_implementingServices_FederatedImplementingServices_services
     >(implementingServices.services, [service => service.name.toUpperCase()]);
 
-    table(
-      sortedImplementingServices
-        .map(sortedImplementingService =>
-          formatImplementingService(
-            sortedImplementingService,
-            // Force the time to a specific value if we're running tests. Otherwise the snapshots will break
-            // when the relative time changes.
-            process.env.NODE_ENV === "test" ? new Date("2019-06-13") : undefined
+    console.log(
+      table([
+        ["Name", "URL", "Last Updated"],
+        ...sortedImplementingServices
+          .map(sortedImplementingService =>
+            formatImplementingService(
+              sortedImplementingService,
+              // Force the time to a specific value if we're running tests. Otherwise the snapshots will break
+              // when the relative time changes.
+              process.env.NODE_ENV === "test"
+                ? new Date("2019-06-13")
+                : undefined
+            )
           )
-        )
-        .sort((s1, s2) =>
-          s1.name.toUpperCase() > s2.name.toUpperCase() ? 1 : -1
-        )
-        .filter(Boolean),
-      {
-        columns: [
-          { key: "name", label: "name" },
-          { key: "url", label: "URL" },
-          { key: "updatedAt", label: "last updated" }
-        ],
-        // The default `printLine` will output to the console; we want to capture the output so we can test
-        // it.
-        printLine: line => {
-          result += `\n${line}`;
-        }
-      }
+          .sort((s1, s2) =>
+            s1.name.toUpperCase() > s2.name.toUpperCase() ? 1 : -1
+          )
+          .map(entry => Object.values(entry))
+          .filter(Boolean)
+      ])
     );
+
     const serviceListUrlEnding = `/graph/${graphName}/service-list`;
     const targetUrl = `${frontendUrl}${serviceListUrlEnding}`;
     result += `\n\nView full details at: ${targetUrl}`;

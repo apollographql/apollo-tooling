@@ -1,5 +1,5 @@
 import { flags } from "@oclif/command";
-import { table } from "heroku-cli-util";
+import { table } from "table";
 import { introspectionFromSchema, printSchema } from "graphql";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
@@ -181,19 +181,11 @@ export default class ServicePush extends ProjectCommand {
         }))
       ].filter(x => x !== null);
 
-      table(messages, {
-        columns: [
-          { key: "type", label: "Change" },
-          { key: "description", label: "Description" }
-        ],
-        // Override `printHeader` so we don't print a header
-        printHeader: () => {},
-        // The default `printLine` will output to the console; we want to capture the output so we can test
-        // it.
-        printLine: line => {
-          printed += `\n${line}`;
-        }
-      });
+      this.log(
+        table([["Change", "Description"], ...messages.map(Object.values)], {
+          columns: { 1: { width: 70, wrapWord: true } }
+        })
+      );
 
       this.log(printed);
       this.log("\n");
@@ -212,17 +204,12 @@ export default class ServicePush extends ProjectCommand {
     }
 
     if (!isFederated || result.didUpdateGateway) {
-      table([result], {
-        columns: [
-          {
-            key: "hash",
-            label: "id",
-            format: (hash: string) => hash.slice(0, 6)
-          },
-          { key: "graphId", label: "graph" },
-          { key: "graphVariant", label: "tag" }
-        ]
-      });
+      this.log(
+        table([
+          ["id", "graph", "tag"],
+          [result.hash.slice(0, 6), result.graphId, result.graphVariant]
+        ])
+      );
       this.log("\n");
     }
   }
