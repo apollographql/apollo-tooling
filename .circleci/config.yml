@@ -75,7 +75,6 @@ jobs:
   Query Check:
     executor: { name: oss/node }
     steps:
-      - skip_when_no_api_key
       - oss/install_specific_npm_version
       - checkout
       - oss/npm_clean_install_with_caching
@@ -91,7 +90,6 @@ jobs:
   Generated Types Check:
     executor: { name: oss/node }
     steps:
-      - skip_when_no_api_key
       - oss/install_specific_npm_version
       - checkout
       - oss/npm_clean_install_with_caching
