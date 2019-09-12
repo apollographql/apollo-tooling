@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Support multiple `localSchemaFile`s [#1500](https://github.com/apollographql/apollo-tooling/pull/1500)
 - `apollo-codegen-core`
   - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
 - `apollo-codegen-flow`
@@ -21,6 +21,7 @@
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
   - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
+  - Support multiple `localSchemaFile`s [#1500](https://github.com/apollographql/apollo-tooling/pull/1500)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`

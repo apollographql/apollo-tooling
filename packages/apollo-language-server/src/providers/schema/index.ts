@@ -42,9 +42,16 @@ export function schemaProviderFromConfig(
 
     if (config.client.service) {
       if (isLocalServiceConfig(config.client.service)) {
-        return new FileSchemaProvider({
-          path: config.client.service.localSchemaFile
-        });
+        const isListOfSchemaFiles = Array.isArray(
+          config.client.service.localSchemaFile
+        );
+        return new FileSchemaProvider(
+          isListOfSchemaFiles
+            ? { paths: config.client.service.localSchemaFile as string[] }
+            : {
+                path: config.client.service.localSchemaFile as string
+              }
+        );
       }
 
       return new IntrospectionSchemaProvider(config.client.service);
