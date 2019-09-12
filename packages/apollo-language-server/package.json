@@ -22,6 +22,7 @@
     "@endemolshinegroup/cosmiconfig-typescript-loader": "^1.0.0",
     "apollo-datasource": "^0.6.0",
     "apollo-env": "file:../apollo-env",
+    "apollo-graphql": "file:../apollo-graphql",
     "apollo-link": "^1.2.3",
     "apollo-link-context": "^1.0.9",
     "apollo-link-error": "^1.1.1",

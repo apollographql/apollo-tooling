@@ -28,7 +28,7 @@ export interface RemoteServiceConfig {
 
 export interface LocalServiceConfig {
   name: ServiceID;
-  localSchemaFile: string;
+  localSchemaFile: string | string[];
 }
 
 export interface EngineConfig {

@@ -72,7 +72,11 @@ export class GeneratedFile<Scope = any> implements BasicGeneratedFile {
   }
 }
 
-export default class CodeGenerator<Context = any, Scope = any> {
+export default class CodeGenerator<
+  Context = any,
+  Scope = any,
+  SourceType extends { toString(): string } = string
+> {
   generatedFiles: { [fileName: string]: GeneratedFile<Scope> } = {};
   currentFile: GeneratedFile<Scope>;
 
@@ -108,8 +112,8 @@ export default class CodeGenerator<Context = any, Scope = any> {
     return this.currentFile.scope;
   }
 
-  print(string?: string) {
-    this.currentFile.print(string);
+  print(source?: SourceType) {
+    this.currentFile.print(source !== undefined ? source.toString() : source);
   }
 
   printNewline() {
@@ -120,8 +124,10 @@ export default class CodeGenerator<Context = any, Scope = any> {
     this.currentFile.printNewlineIfNeeded();
   }
 
-  printOnNewline(string?: string) {
-    this.currentFile.printOnNewline(string);
+  printOnNewline(source?: SourceType) {
+    this.currentFile.printOnNewline(
+      source !== undefined ? source.toString() : source
+    );
   }
 
   printIndent() {
