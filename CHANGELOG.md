@@ -3,6 +3,39 @@
 ## Upcoming
 
 - `apollo`
+    - <First `apollo` related entry goes here>
+- `apollo-codegen-core`
+    - <First `apollo-codegen-core` related entry goes here>
+- `apollo-codegen-flow`
+    - <First `apollo-codegen-flow` related entry goes here>
+- `apollo-codegen-scala`
+    - <First `apollo-codegen-scala` related entry goes here>
+- `apollo-codegen-swift`
+    - <First `apollo-codegen-swift` related entry goes here>
+- `apollo-codegen-typescript`
+    - <First `apollo-codegen-typescript` related entry goes here>
+- `apollo-env`
+  - <First `apollo-env` related entry goes here>
+- `apollo-graphql`
+  - <First `apollo-graphql` related entry goes here>
+- `apollo-language-server`
+  - <First `apollo-language-server` related entry goes here>
+- `apollo-tools`
+  - <First `apollo-tools` related entry goes here>
+- `vscode-apollo`
+  - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.18.2`
+
+- `apollo-codegen-core@0.35.2`
+- `apollo-codegen-flow@0.33.27`
+- `apollo-codegen-scala@0.34.27`
+- `apollo-codegen-swift@0.35.7`
+- `apollo-codegen-typescript@0.35.2`
+- `apollo-language-server@1.15.2`
+- `apollo@2.18.2`
+
+- `apollo`
   - Support multiple `localSchemaFile`s [#1500](https://github.com/apollographql/apollo-tooling/pull/1500)
 - `apollo-codegen-core`
   - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
@@ -16,17 +49,9 @@
   - Fix warning in Xcode 11 when enums have a none case [#1482](https://github.com/apollographql/apollo-tooling/pull/1482)
 - `apollo-codegen-typescript`
   - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
-- `apollo-env`
-  - <First `apollo-env` related entry goes here>
-- `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
   - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
   - Support multiple `localSchemaFile`s [#1500](https://github.com/apollographql/apollo-tooling/pull/1500)
-- `apollo-tools`
-  - <First `apollo-tools` related entry goes here>
-- `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
 
 ## `apollo@2.18.1`
 
