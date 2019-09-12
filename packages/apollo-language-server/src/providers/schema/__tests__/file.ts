@@ -58,8 +58,69 @@ describe("FileSchemaProvider", () => {
     dir = dirPath = undefined;
   });
 
-  it("finds and loads sdl from graphql file", async () => {
-    const writtenSDL = `
+  describe("resolveFederatedServiceSDL", () => {
+    it("finds and loads sdl from graphql file for a federated service", async () => {
+      writeFilesToDir(dir, {
+        "schema.graphql": `
+          extend type Query {
+            myProduct: Product
+          }
+
+          type Product @key(fields: "id") {
+            id: ID
+            sku: ID
+            name: String
+          }
+        `
+      });
+
+      const provider = new FileSchemaProvider({
+        path: dir + "/schema.graphql"
+      });
+      const sdl = await provider.resolveFederatedServiceSDL();
+      expect(sdl).toMatchInlineSnapshot;
+    });
+
+    it("finds and loads sdl from multiple graphql files for a federated service", async () => {
+      writeFilesToDir(dir, {
+        "schema.graphql": `
+          extend type Query {
+            myProduct: Product
+          }
+
+          type Product @key(fields: "id") {
+            id: ID
+            sku: ID
+            name: String
+          }`,
+        "schema2.graphql": `
+          extend type Product {
+            weight: Float
+          }`
+      });
+
+      const provider = new FileSchemaProvider({
+        paths: [dir + "/schema.graphql", dir + "/schema2.graphql"]
+      });
+      const sdl = await provider.resolveFederatedServiceSDL();
+      expect(sdl).toMatchInlineSnapshot(`
+        "type Product @key(fields: \\"id\\") {
+          id: ID
+          sku: ID
+          name: String
+          weight: Float
+        }
+
+        extend type Query {
+          myProduct: Product
+        }
+        "
+      `);
+    });
+
+    it("errors when sdl file is not a graphql file", async () => {
+      const toWrite = `
+        module.exports = \`
         extend type Query {
           myProduct: Product
         }
@@ -68,41 +129,19 @@ describe("FileSchemaProvider", () => {
           id: ID
           sku: ID
           name: string
-        }
+        }\`
       `;
-    writeFilesToDir(dir, {
-      "schema.graphql": writtenSDL
+      writeFilesToDir(dir, {
+        "schema.js": toWrite
+      });
+
+      // noop -- just spy on and silence the error
+      const errorSpy = jest.spyOn(Debug, "error");
+      errorSpy.mockImplementation(() => {});
+
+      const provider = new FileSchemaProvider({ path: dir + "/schema.js" });
+      const sdl = await provider.resolveFederatedServiceSDL();
+      expect(errorSpy).toBeCalledTimes(2);
     });
-
-    const provider = new FileSchemaProvider({ path: dir + "/schema.graphql" });
-    const sdl = await provider.resolveFederatedServiceSDL();
-    expect(sdl).toEqual(writtenSDL);
-  });
-
-  it("errors when sdl file is not a graphql file", async () => {
-    const toWrite = `
-    module.exports = \`
-    extend type Query {
-      myProduct: Product
-    }
-
-    type Product @key(fields: "id") {
-      id: ID
-      sku: ID
-      name: string
-    }\`
-  `;
-    writeFilesToDir(dir, {
-      "schema.js": toWrite
-    });
-
-    const errorSpy = jest.spyOn(Debug, "error");
-
-    // noop -- just silence the error
-    errorSpy.mockImplementationOnce(() => {});
-
-    const provider = new FileSchemaProvider({ path: dir + "/schema.js" });
-    const sdl = await provider.resolveFederatedServiceSDL();
-    expect(errorSpy).toBeCalledTimes(1);
   });
 });
