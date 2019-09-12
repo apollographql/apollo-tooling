@@ -13,7 +13,7 @@
 - `apollo-codegen-swift`
   - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
   - Ensure types and strings are properly escaped in all generated code [#1515](https://github.com/apollographql/apollo-tooling/pull/1515)
-  - Fix warning in xcode 11 when enums have a none case [#1482](https://github.com/apollographql/apollo-tooling/pull/1482)
+  - Fix warning in Xcode 11 when enums have a none case [#1482](https://github.com/apollographql/apollo-tooling/pull/1482)
 - `apollo-codegen-typescript`
   - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
 - `apollo-env`
