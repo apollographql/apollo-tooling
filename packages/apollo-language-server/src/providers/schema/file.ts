@@ -17,7 +17,7 @@ export interface FileSchemaProviderConfig {
   path?: string;
   paths?: string[];
 }
-// XXX file subscription
+
 export class FileSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
 
