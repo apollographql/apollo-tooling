@@ -31,7 +31,7 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
     const documents = path
       ? [this.loadFileAndGetDocument(path)]
       : paths
-      ? paths.map(this.loadFileAndGetDocument)
+      ? paths.map(this.loadFileAndGetDocument, this)
       : undefined;
 
     if (!documents)
