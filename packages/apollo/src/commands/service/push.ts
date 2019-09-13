@@ -19,8 +19,7 @@ export default class ServicePush extends ProjectCommand {
     }),
     localSchemaFile: flags.string({
       description:
-        "Path to your local GraphQL schema file (introspection result or SDL)",
-      multiple: true
+        "Path to your local GraphQL schema file (introspection result or SDL)"
     }),
     federated: flags.boolean({
       char: "f",
