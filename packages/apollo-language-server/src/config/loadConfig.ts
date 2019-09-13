@@ -23,6 +23,7 @@ const defaultFileNames = [
   `${MODULE_NAME}.config.js`,
   `${MODULE_NAME}.config.ts`
 ];
+const envFileNames = [".env", ".env.local"];
 
 const loaders = {
   // XXX improve types for config
@@ -108,21 +109,30 @@ export async function loadConfig({
 
   // add API key from the env
   let engineConfig = {},
+    apiKey,
     nameFromKey;
 
-  // if there's a .env file, load it and parse for key and service name
-  const dotEnvPath = configPath
-    ? resolve(configPath, ".env")
-    : resolve(process.cwd(), ".env");
+  // loop over the list of possible .env files and try to parse for key
+  // and service name. Files are scanned and found values are preferred
+  // in order of appearance in `envFileNames`.
+  envFileNames.forEach(envFile => {
+    const dotEnvPath = configPath
+      ? resolve(configPath, envFile)
+      : resolve(process.cwd(), envFile);
 
-  if (existsSync(dotEnvPath) && lstatSync(dotEnvPath).isFile()) {
-    const env: { [key: string]: string } = require("dotenv").parse(
-      readFileSync(dotEnvPath)
-    );
-    if (env["ENGINE_API_KEY"]) {
-      engineConfig = { engine: { apiKey: env["ENGINE_API_KEY"] } };
-      nameFromKey = getServiceFromKey(env["ENGINE_API_KEY"]);
+    if (existsSync(dotEnvPath) && lstatSync(dotEnvPath).isFile()) {
+      const env: { [key: string]: string } = require("dotenv").parse(
+        readFileSync(dotEnvPath)
+      );
+      if (env["ENGINE_API_KEY"]) {
+        apiKey = env["ENGINE_API_KEY"];
+      }
     }
+  });
+
+  if (apiKey) {
+    engineConfig = { engine: { apiKey } };
+    nameFromKey = getServiceFromKey(apiKey);
   }
 
   // DETERMINE PROJECT TYPE
