@@ -108,7 +108,7 @@ export const DefaultClientConfig = {
 export interface ServiceConfigFormat extends ConfigBase {
   name?: string;
   endpoint?: Exclude<RemoteServiceConfig, "name">;
-  localSchemaFile?: string;
+  localSchemaFile?: string | string[];
 }
 
 export const DefaultServiceConfig = {
