@@ -285,6 +285,35 @@ describe("loadConfig", () => {
       expect(config.client.service).toEqual("harambe");
     });
 
+    it("finds .env.local in config path & parses for key", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: { name: 'hello' } }`,
+        ".env.local": `ENGINE_API_KEY=service:harambe:54378950jn`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.client.service).toEqual("harambe");
+    });
+
+    it("finds .env and .env.local in config path & parses for key, preferring .env.local", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: { name: 'hello' } }`,
+        ".env": `ENGINE_API_KEY=service:hamato:54378950jn`,
+        ".env.local": `ENGINE_API_KEY=service:yoshi:65489061ko`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.client.service).toEqual("yoshi");
+    });
+
     // this doesn't work right now :)
     xit("finds .env in cwd & parses for key", async () => {
       writeFilesToDir(dir, {
