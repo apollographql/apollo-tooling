@@ -15,7 +15,10 @@ import {
   isEnumType
 } from "graphql";
 
-import { camelCase, pascalCase } from "change-case";
+import {
+  camelCase as _camelCase,
+  pascalCase as _pascalCase
+} from "change-case";
 import * as Inflector from "inflected";
 import { join, wrap } from "apollo-codegen-core/lib/utilities/printing";
 
@@ -346,4 +349,34 @@ function makeClosureSignature(
   }
   closureSignature.append(swift` in`);
   return closureSignature;
+}
+
+/**
+ * Converts a value from "underscore_case" to "camelCase".
+ *
+ * This preserves any leading/trailing underscores.
+ */
+function camelCase(value: string): string {
+  const [_, prefix, middle, suffix] = value.match(/^(_*)(.*?)(_*)$/) || [
+    "",
+    "",
+    value,
+    ""
+  ];
+  return `${prefix}${_camelCase(middle)}${suffix}`;
+}
+
+/**
+ * Converts a value from "underscore_case" to "PascalCase".
+ *
+ * This preserves any leading/trailing underscores.
+ */
+function pascalCase(value: string): string {
+  const [_, prefix, middle, suffix] = value.match(/^(_*)(.*?)(_*)$/) || [
+    "",
+    "",
+    value,
+    ""
+  ];
+  return `${prefix}${_pascalCase(middle)}${suffix}`;
 }

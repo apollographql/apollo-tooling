@@ -1786,6 +1786,51 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 }"
 `;
 
+exports[`Swift code generation #structDeclarationForSelectionSet() should preserve leading and trailing underscores on fields 1`] = `
+"public struct Hero: GraphQLSelectionSet {
+  public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+  public static let selections: [GraphQLSelection] = [
+    GraphQLField(\\"name\\", alias: \\"_name\\", type: .nonNull(.scalar(String.self))),
+    GraphQLField(\\"id\\", alias: \\"_camel_case_id__\\", type: .nonNull(.scalar(GraphQLID.self))),
+  ]
+
+  public private(set) var resultMap: ResultMap
+
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  public static func makeHuman(_name: String, _camelCaseId__: GraphQLID) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"_name\\": _name, \\"_camel_case_id__\\": _camelCaseId__])
+  }
+
+  public static func makeDroid(_name: String, _camelCaseId__: GraphQLID) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"_name\\": _name, \\"_camel_case_id__\\": _camelCaseId__])
+  }
+
+  /// The name of the character
+  public var _name: String {
+    get {
+      return resultMap[\\"_name\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"_name\\")
+    }
+  }
+
+  /// The ID of the character
+  public var _camelCaseId__: GraphQLID {
+    get {
+      return resultMap[\\"_camel_case_id__\\"]! as! GraphQLID
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"_camel_case_id__\\")
+    }
+  }
+}"
+`;
+
 exports[`Swift code generation #typeDeclarationForGraphQLType() should escape identifiers in cases of enum declaration for a GraphQLEnumType 1`] = `
 "public enum AlbumPrivacies: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
   public typealias RawValue = String

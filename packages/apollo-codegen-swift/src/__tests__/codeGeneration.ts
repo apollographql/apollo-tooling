@@ -455,6 +455,30 @@ describe("Swift code generation", () => {
       expect(generator.output).toMatchSnapshot();
     });
 
+    it(`should preserve leading and trailing underscores on fields`, () => {
+      const { operations } = compile(`
+        query Hero {
+          hero {
+            _name: name
+            _camel_case_id__: id
+          }
+        }
+      `);
+
+      const selectionSet = (operations["Hero"].selectionSet
+        .selections[0] as Field).selectionSet as SelectionSet;
+
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Hero",
+          selectionSet
+        },
+        false
+      );
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
     it(`should escape reserved keywords in a struct declaration for a selection set`, () => {
       const { operations } = compile(`
         query Hero {
