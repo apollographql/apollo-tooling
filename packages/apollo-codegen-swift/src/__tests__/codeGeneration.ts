@@ -505,6 +505,46 @@ describe("Swift code generation", () => {
       expect(generator.output).toMatchSnapshot();
     });
 
+    it(`should escape init specially in a struct declaration initializer for a selection set`, () => {
+      const { operations } = compile(`
+        query Humans {
+          human(id: 0) {
+            self: friends {
+              id
+            }
+          }
+          human(id: 1) {
+            self: friends {
+              id
+            }
+            _self: name
+          }
+        }
+      `);
+
+      const human0 = (operations["Humans"].selectionSet.selections[0] as Field)
+        .selectionSet as SelectionSet;
+      const human1 = (operations["Humans"].selectionSet.selections[1] as Field)
+        .selectionSet as SelectionSet;
+
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Human",
+          selectionSet: human0
+        },
+        false
+      );
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Human",
+          selectionSet: human1
+        },
+        false
+      );
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
     it(`should generate a nested struct declaration for a selection set with subselections`, () => {
       const { operations } = compile(`
         query Hero {

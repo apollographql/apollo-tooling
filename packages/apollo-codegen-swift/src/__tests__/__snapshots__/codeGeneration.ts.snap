@@ -1185,6 +1185,139 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 }"
 `;
 
+exports[`Swift code generation #structDeclarationForSelectionSet() should escape init specially in a struct declaration initializer for a selection set 1`] = `
+"public struct Human: GraphQLSelectionSet {
+  public static let possibleTypes = [\\"Human\\"]
+
+  public static let selections: [GraphQLSelection] = [
+    GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
+  ]
+
+  public private(set) var resultMap: ResultMap
+
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  public init(\`self\` _self: [\`Self\`?]? = nil) {
+    self.init(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"self\\": _self.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
+  }
+
+  /// This human's friends, or an empty list if they have none
+  public var \`self\`: [\`Self\`?]? {
+    get {
+      return (resultMap[\\"self\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [\`Self\`?] in value.map { (value: ResultMap?) -> \`Self\`? in value.flatMap { (value: ResultMap) -> \`Self\` in \`Self\`(unsafeResultMap: value) } } }
+    }
+    set {
+      resultMap.updateValue(newValue.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }, forKey: \\"self\\")
+    }
+  }
+
+  public struct \`Self\`: GraphQLSelectionSet {
+    public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+    public static let selections: [GraphQLSelection] = [
+      GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
+    ]
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public static func makeHuman(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"id\\": id])
+    }
+
+    public static func makeDroid(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"id\\": id])
+    }
+
+    /// The ID of the character
+    public var id: GraphQLID {
+      get {
+        return resultMap[\\"id\\"]! as! GraphQLID
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"id\\")
+      }
+    }
+  }
+}
+
+public struct Human: GraphQLSelectionSet {
+  public static let possibleTypes = [\\"Human\\"]
+
+  public static let selections: [GraphQLSelection] = [
+    GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
+    GraphQLField(\\"name\\", alias: \\"_self\\", type: .nonNull(.scalar(String.self))),
+  ]
+
+  public private(set) var resultMap: ResultMap
+
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  public init(\`self\` _self_: [\`Self\`?]? = nil, _self: String) {
+    self.init(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"self\\": _self_.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }, \\"_self\\": _self])
+  }
+
+  /// This human's friends, or an empty list if they have none
+  public var \`self\`: [\`Self\`?]? {
+    get {
+      return (resultMap[\\"self\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [\`Self\`?] in value.map { (value: ResultMap?) -> \`Self\`? in value.flatMap { (value: ResultMap) -> \`Self\` in \`Self\`(unsafeResultMap: value) } } }
+    }
+    set {
+      resultMap.updateValue(newValue.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }, forKey: \\"self\\")
+    }
+  }
+
+  /// What this human calls themselves
+  public var _self: String {
+    get {
+      return resultMap[\\"_self\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"_self\\")
+    }
+  }
+
+  public struct \`Self\`: GraphQLSelectionSet {
+    public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+    public static let selections: [GraphQLSelection] = [
+      GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
+    ]
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public static func makeHuman(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"id\\": id])
+    }
+
+    public static func makeDroid(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"id\\": id])
+    }
+
+    /// The ID of the character
+    public var id: GraphQLID {
+      get {
+        return resultMap[\\"id\\"]! as! GraphQLID
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"id\\")
+      }
+    }
+  }
+}"
+`;
+
 exports[`Swift code generation #structDeclarationForSelectionSet() should escape reserved keywords in a struct declaration for a selection set 1`] = `
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
@@ -1200,12 +1333,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
     self.resultMap = unsafeResultMap
   }
 
-  public static func makeHuman(\`private\`: String, \`self\`: [\`Self\`?]? = nil) -> Hero {
-    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"private\\": \`private\`, \\"self\\": \`self\`.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
+  public static func makeHuman(\`private\`: String, \`self\` _self: [\`Self\`?]? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"private\\": \`private\`, \\"self\\": _self.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
   }
 
-  public static func makeDroid(\`private\`: String, \`self\`: [\`Self\`?]? = nil) -> Hero {
-    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"private\\": \`private\`, \\"self\\": \`self\`.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
+  public static func makeDroid(\`private\`: String, \`self\` _self: [\`Self\`?]? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"private\\": \`private\`, \\"self\\": _self.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
   }
 
   /// The name of the character
