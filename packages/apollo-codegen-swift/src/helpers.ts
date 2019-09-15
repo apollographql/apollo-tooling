@@ -135,6 +135,24 @@ export class Helpers {
     );
   }
 
+  /**
+   * Returns the internal parameter name for a given property name.
+   *
+   * If the property name is valid to use, it's returned directly. Otherwise it's prefixed with an
+   * underscore and modified until it's unique among the given property set.
+   * @param propertyName The name of the property.
+   * @param properties A list of properties that should be consulted when producing a unique name.
+   * @returns The name to use for the internal parameter name for the property.
+   */
+  internalParameterName(
+    propertyName: string,
+    properties: { propertyName: string }[]
+  ): string {
+    return SwiftSource.isValidParameterName(propertyName)
+      ? propertyName
+      : makeUniqueName(`_${propertyName}`, properties);
+  }
+
   // Properties
 
   propertyFromField(
@@ -349,6 +367,25 @@ function makeClosureSignature(
   }
   closureSignature.append(swift` in`);
   return closureSignature;
+}
+
+/**
+ * Takes a proposed name and modifies it to be unique given a list of properties.
+ * @param proposedName The proposed name that shouldn't conflict with any property.
+ * @param properties A list of properties the name shouldn't conflict with.
+ * @returns A name based on `proposedName` that doesn't match any existing property name.
+ */
+function makeUniqueName(
+  proposedName: string,
+  properties: { propertyName: string }[]
+): string {
+  // Assume conflicts are very rare and property lists are short, and just do a linear search. If
+  // we find a conflict, start over with the modified name.
+  for (let name = proposedName; ; name += "_") {
+    if (properties.every(prop => prop.propertyName != name)) {
+      return name;
+    }
+  }
 }
 
 /**

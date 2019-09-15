@@ -216,6 +216,21 @@ export class SwiftSource {
   }
 
   /**
+   * Returns whether the given name is valid as a method parameter name.
+   *
+   * Certain tokens aren't valid as method parameter names, even when escaped with backticks, as
+   * the compiler interprets the keyword and identifier as the same thing. In particular, `self`
+   * works this way.
+   * @param input The proposed parameter name.
+   * @returns `true` if the name can be used, or `false` if it needs a separate internal parameter
+   * name.
+   */
+  static isValidParameterName(input: string): boolean {
+    // Right now `self` is the only known token that we can't use with escaping.
+    return input !== "self";
+  }
+
+  /**
    * Template tag for producing a `SwiftSource` value without performing escaping.
    *
    * This is identical to evaluating the template without the tag and passing the result to `new

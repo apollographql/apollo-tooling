@@ -643,7 +643,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                 swift`"__typename": ${SwiftSource.string(
                   variant.possibleTypes[0].toString()
                 )}`,
-                ...properties.map(this.propertyAssignmentForField, this)
+                ...properties.map(p =>
+                  this.propertyAssignmentForField(p, properties)
+                )
               ],
               ", "
             ) || ":",
@@ -683,7 +685,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                   swift`"__typename": ${SwiftSource.string(
                     possibleType.toString()
                   )}`,
-                  ...properties.map(this.propertyAssignmentForField, this)
+                  ...properties.map(p =>
+                    this.propertyAssignmentForField(p, properties)
+                  )
                 ],
                 ", "
               ) || ":",
@@ -695,13 +699,16 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     }
   }
 
-  propertyAssignmentForField(field: {
-    responseKey: string;
-    propertyName: string;
-    type: GraphQLType;
-    isConditional?: boolean;
-    structName?: string;
-  }): SwiftSource {
+  propertyAssignmentForField(
+    field: {
+      responseKey: string;
+      propertyName: string;
+      type: GraphQLType;
+      isConditional?: boolean;
+      structName?: string;
+    },
+    properties: { propertyName: string }[]
+  ): SwiftSource {
     const {
       responseKey,
       propertyName,
@@ -709,16 +716,20 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       isConditional,
       structName
     } = field;
+    const parameterName = this.helpers.internalParameterName(
+      propertyName,
+      properties
+    );
     const valueExpression = isCompositeType(getNamedType(type))
       ? this.helpers.mapExpressionForType(
           type,
           isConditional,
           expression => swift`${expression}.resultMap`,
-          SwiftSource.identifier(propertyName),
+          SwiftSource.identifier(parameterName),
           structName!,
           "ResultMap"
         )
-      : SwiftSource.identifier(propertyName);
+      : SwiftSource.identifier(parameterName);
     return swift`${SwiftSource.string(responseKey)}: ${valueExpression}`;
   }
 
@@ -882,7 +893,12 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
     this.withinBlock(() => {
       properties.forEach(({ propertyName }) => {
-        this.printOnNewline(swift`self.${propertyName} = ${propertyName}`);
+        this.printOnNewline(
+          swift`self.${propertyName} = ${this.helpers.internalParameterName(
+            propertyName,
+            properties
+          )}`
+        );
       });
     });
   }
@@ -891,12 +907,20 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.print(swift`(`);
     this.print(
       join(
-        properties.map(({ propertyName, typeName, isOptional }) =>
-          join([
-            swift`${propertyName}: ${typeName}`,
+        properties.map(({ propertyName, typeName, isOptional }) => {
+          const internalName = this.helpers.internalParameterName(
+            propertyName,
+            properties
+          );
+          const decl =
+            internalName === propertyName
+              ? propertyName
+              : swift`${propertyName} ${internalName}`;
+          return join([
+            swift`${decl}: ${typeName}`,
             isOptional ? swift` = nil` : undefined
-          ])
-        ),
+          ]);
+        }),
         ", "
       )
     );
@@ -1168,12 +1192,20 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.print(swift`(`);
         this.print(
           join(
-            properties.map(({ propertyName, typeName, isOptional }) =>
-              join([
-                swift`${propertyName}: ${typeName}`,
+            properties.map(({ propertyName, typeName, isOptional }) => {
+              const internalName = this.helpers.internalParameterName(
+                propertyName,
+                properties
+              );
+              const decl =
+                internalName === propertyName
+                  ? propertyName
+                  : swift`${propertyName} ${internalName}`;
+              return join([
+                swift`${decl}: ${typeName}`,
                 isOptional ? swift` = nil` : undefined
-              ])
-            ),
+              ]);
+            }),
             ", "
           )
         );
@@ -1186,7 +1218,12 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
               join(
                 properties.map(
                   ({ name, propertyName }) =>
-                    swift`${SwiftSource.string(name)}: ${propertyName}`
+                    swift`${SwiftSource.string(
+                      name
+                    )}: ${this.helpers.internalParameterName(
+                      propertyName,
+                      properties
+                    )}`
                 ),
                 ", "
               ) || ":",
