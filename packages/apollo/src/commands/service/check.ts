@@ -287,8 +287,7 @@ export default class ServiceCheck extends ProjectCommand {
     }),
     localSchemaFile: flags.string({
       description:
-        "Path to your local GraphQL schema file (introspection result or SDL)",
-      multiple: true
+        "Path to your local GraphQL schema file (introspection result or SDL)"
     }),
     markdown: flags.boolean({
       description: "Output result in markdown.",
