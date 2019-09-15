@@ -28,7 +28,7 @@
 ## `apollo@2.18.3`
 
 - `apollo`
-  - fix bad parsing of multiple `locaSchemaFile`s [#1529](https://github.com/apollographql/apollo-tooling/pull/1529)
+  - fix bad parsing of multiple `localSchemaFile`s [#1529](https://github.com/apollographql/apollo-tooling/pull/1529)
 
 ## `apollo@2.18.2`
 
