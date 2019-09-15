@@ -143,7 +143,8 @@ OPTIONS
 
   --key=key                                  The API key for the Apollo Engine service
 
-  --localSchemaFile=localSchemaFile          Path to your local GraphQL schema file (introspection result or SDL as *.graphql)
+  --localSchemaFile=localSchemaFile          Path to your local GraphQL schema file (introspection result or SDL as 
+                                             *.graphql)
 
   --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
 
@@ -217,7 +218,7 @@ OPTIONS
 
   --header=header                        Additional header to send to server for introspectionQuery. May be used
                                          multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
-                                         if using the `--header` flag.
+                                         if using the `--header` flag. NOTE: `--header` flags must preceed `--endpoint`.
 
   --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
                                          queries *and* any client schema extensions
@@ -641,6 +642,10 @@ The tag name is configurable using the CLI `--tagName` option.
 When using the codegen command with Typescript or Flow, make sure to add the `__typename` introspection field to every selection set within your graphql operations.
 
 If you're using a client like `apollo-client` that does this automatically for your GraphQL operations, pass in the `--addTypename` option to `apollo codegen:generate` to make sure the generated Typescript and Flow types have the `__typename` field as well. This is required to ensure proper type generation support for `GraphQLUnionType` and `GraphQLInterfaceType` fields.
+
+## Default `--includes` parameter
+
+If not provided, the default `--includes` parameter is `src/**/*.{ts,tsx,js,jsx,graphql,gql}`.
 
 ## Why is the \_\_typename field required?
 
