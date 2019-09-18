@@ -205,6 +205,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       },
       () => {
         if (source) {
+          this.comment("The raw GraphQL definition of this operation");
           this.printOnNewline(swift`public let operationDefinition =`);
           this.withIndent(() => {
             this.multilineString(source);
@@ -322,6 +323,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       outputIndividualFiles,
       () => {
         if (source) {
+          this.comment("The raw GraphQL definition of this fragment");
           this.printOnNewline(swift`public static let fragmentDefinition =`);
           this.withIndent(() => {
             this.multilineString(source);
