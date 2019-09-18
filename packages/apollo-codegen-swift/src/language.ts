@@ -314,9 +314,18 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   multilineString(string: string) {
     // Disable trimming if the string contains """ as this means we're probably printing an
     // operation definition where trimming is destructive.
-    this.printOnNewline(
-      SwiftSource.string(string, /* trim */ !string.includes('"""'))
-    );
+    if (string.includes('"""')) {
+      this.printOnNewline(SwiftSource.string(string, /* trim */ false));
+    } else {
+      this.printOnNewline(SwiftSource.raw`"""`);
+      string.split("\n").forEach(line => {
+        this.printOnNewline(SwiftSource.raw`${line}`);
+      });
+      this.printOnNewline(SwiftSource.raw`"""`);
+    }
+    // this.printOnNewline(
+    //   SwiftSource.string(string, /* trim */ !string.includes('"""'))
+    // );
   }
 
   comment(comment?: string) {
