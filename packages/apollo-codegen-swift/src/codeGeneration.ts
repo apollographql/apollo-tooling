@@ -99,13 +99,21 @@ export function generateSource(
           () => {
             Object.values(context.operations).forEach(operation => {
               if (operation.filePath === inputFilePath) {
-                generator.classDeclarationForOperation(operation, true, false);
+                generator.classDeclarationForOperation(
+                  operation,
+                  true,
+                  suppressMultilineStringLiterals
+                );
               }
             });
 
             Object.values(context.fragments).forEach(fragment => {
               if (fragment.filePath === inputFilePath) {
-                generator.structDeclarationForFragment(fragment, true, false);
+                generator.structDeclarationForFragment(
+                  fragment,
+                  true,
+                  suppressMultilineStringLiterals
+                );
               }
             });
           }
@@ -121,11 +129,19 @@ export function generateSource(
       });
 
       Object.values(context.operations).forEach(operation => {
-        generator.classDeclarationForOperation(operation, false, false);
+        generator.classDeclarationForOperation(
+          operation,
+          false,
+          suppressMultilineStringLiterals
+        );
       });
 
       Object.values(context.fragments).forEach(fragment => {
-        generator.structDeclarationForFragment(fragment, false, false);
+        generator.structDeclarationForFragment(
+          fragment,
+          false,
+          suppressMultilineStringLiterals
+        );
       });
     });
   }
