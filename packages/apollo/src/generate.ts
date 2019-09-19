@@ -72,7 +72,19 @@ export default function generate(
     const outputIndividualFiles =
       fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory();
 
-    const generator = generateSwiftSource(context, outputIndividualFiles, only);
+    var suppressSwiftMultilineStringLiterals: boolean;
+    if (options.suppressSwiftMultilineStringLiterals == true) {
+      suppressSwiftMultilineStringLiterals = true;
+    } else {
+      suppressSwiftMultilineStringLiterals = false;
+    }
+
+    const generator = generateSwiftSource(
+      context,
+      outputIndividualFiles,
+      suppressSwiftMultilineStringLiterals,
+      only
+    );
 
     if (outputIndividualFiles) {
       writeGeneratedFiles(generator.generatedFiles, outputPath, "\n");

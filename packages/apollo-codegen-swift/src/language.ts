@@ -311,21 +311,33 @@ export class SwiftGenerator<Context> extends CodeGenerator<
     super(context);
   }
 
-  multilineString(string: string) {
+  /**
+   * Outputs a multi-line string
+   *
+   * @param string - The Multi-lined string to output
+   * @param suppressMultilineStringLiterals - If true, will output the multiline string as a single trimmed
+   *                                          string to save bandwidth.
+   *                                          NOTE: This preference will be ignored if your GraphQL query
+   *                                          contains a triple-quote GraphQL string literal, since that's
+   *                                          the same as Swift's string literal and will break the query.
+   */
+  multilineString(string: string, suppressMultilineStringLiterals: Boolean) {
     // Disable trimming if the string contains """ as this means we're probably printing an
     // operation definition where trimming is destructive.
     if (string.includes('"""')) {
       this.printOnNewline(SwiftSource.string(string, /* trim */ false));
     } else {
-      this.printOnNewline(SwiftSource.raw`"""`);
-      string.split("\n").forEach(line => {
-        this.printOnNewline(SwiftSource.raw`${line}`);
-      });
-      this.printOnNewline(SwiftSource.raw`"""`);
+      if (suppressMultilineStringLiterals) {
+        this.printOnNewline(SwiftSource.string(string, /* trim */ true));
+      } else {
+        // Use a multiline string literal
+        this.printOnNewline(SwiftSource.raw`"""`);
+        string.split("\n").forEach(line => {
+          this.printOnNewline(SwiftSource.raw`${line}`);
+        });
+        this.printOnNewline(SwiftSource.raw`"""`);
+      }
     }
-    // this.printOnNewline(
-    //   SwiftSource.string(string, /* trim */ !string.includes('"""'))
-    // );
   }
 
   comment(comment?: string) {
