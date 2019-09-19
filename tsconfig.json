@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "composite": true
+    "composite": true,
+    "types": ["fetch"],
   },
   "files": [],
   "include": [],
@@ -11,6 +12,7 @@
     { "path": "./packages/apollo-codegen-scala" },
     { "path": "./packages/apollo-codegen-swift" },
     { "path": "./packages/apollo-codegen-typescript" },
+    { "path": "./packages/apollo-env" },
     { "path": "./packages/apollo-graphql" },
     { "path": "./packages/apollo-language-server" },
     { "path": "./packages/vscode-apollo" },

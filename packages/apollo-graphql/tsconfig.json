@@ -8,5 +8,7 @@
   },
   "include": ["src/**/*"],
   "exclude": ["**/__tests__", "**/__mocks__"],
-  "references": []
+  "references": [
+    { "path": "../apollo-env" },
+  ]
 }

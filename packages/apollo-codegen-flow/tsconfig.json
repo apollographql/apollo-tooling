@@ -6,5 +6,8 @@
   },
   "include": ["./src/**/*"],
   "exclude": ["**/__tests__/*", "**/__mocks__/*"],
-  "references": [{ "path": "../apollo-codegen-core" }]
+  "references": [
+    { "path": "../apollo-env" },
+    { "path": "../apollo-codegen-core" },
+  ]
 }

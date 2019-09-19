@@ -3,8 +3,13 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./lib",
-    "types": ["node"]
+    "types": [],
+    "typeRoots": [
+      // "../../node_modules/@types",
+      // "./typings",
+    ],
   },
   "include": ["src/**/*"],
-  "exclude": ["src/fetch/**/*"]
+  "exclude": ["**/__tests__/*", "**/__mocks__/*"],
+  "references": [],
 }
