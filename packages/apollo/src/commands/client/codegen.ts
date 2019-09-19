@@ -72,6 +72,10 @@ export default class Generate extends ClientCommand {
       description:
         "Parse all input files, but only output generated code for the specified file [Swift only]"
     }),
+    suppressSwiftMultilineStringLiterals: flags.boolean({
+      description:
+        "Prevents operations from being rendered as multiline strings [Swift only]"
+    }),
 
     // flow
     useFlowExactObjects: flags.boolean({
@@ -205,7 +209,9 @@ export default class Generate extends ClientCommand {
                     useReadOnlyTypes:
                       flags.useReadOnlyTypes || flags.useFlowReadOnlyTypes,
                     globalTypesFile: flags.globalTypesFile,
-                    tsFileExtension: flags.tsFileExtension
+                    tsFileExtension: flags.tsFileExtension,
+                    suppressSwiftMultilineStringLiterals:
+                      flags.suppressSwiftMultilineStringLiterals
                   }
                 );
               };

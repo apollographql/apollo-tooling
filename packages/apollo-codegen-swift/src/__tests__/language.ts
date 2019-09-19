@@ -338,14 +338,20 @@ describe("Swift code generation: Escaping", () => {
       generator = new SwiftGenerator({});
     });
 
-    it(`should trim with multilineString`, () => {
-      generator.multilineString("foo\n  bar  ");
+    it(`should not trim with multiline string if multiline strings are not suppressed and there is no triple quote`, () => {
+      generator.multilineString("foo\n  bar  ", false);
+
+      expect(generator.output).toBe('"""\nfoo\n  bar  \n"""');
+    });
+
+    it(`should trim with multilineString if multiline strings are suppressed`, () => {
+      generator.multilineString("foo\n  bar  ", true);
 
       expect(generator.output).toBe('"foo bar"');
     });
 
-    it(`shouldn't trim with multilineString when using """`, () => {
-      generator.multilineString('"""\nfoo\n  bar  \n"""');
+    it(`shouldn't trim with multilineString when using """ even when multiline strings are suppressed`, () => {
+      generator.multilineString('"""\nfoo\n  bar  \n"""', true);
       expect(generator.output).toBe('"\\"\\"\\"\\nfoo\\n  bar  \\n\\"\\"\\""');
     });
   });

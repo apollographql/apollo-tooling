@@ -46,6 +46,7 @@ export interface CompilerOptions {
   // `ts` fileExtension for now.
   tsFileExtension?: string;
   useReadOnlyTypes?: boolean;
+  suppressSwiftMultilineStringLiterals?: boolean;
 }
 
 export interface CompilerContext {
