@@ -313,6 +313,33 @@ describe("Swift code generation: Escaping", () => {
       expect(SwiftSource.string("foo\n  bar  ", true).source).toBe('"foo bar"');
     });
 
+    it(`should generate multiline strings`, () => {
+      expect(SwiftSource.multilineString("foobar").source).toBe(
+        '"""\nfoobar\n"""'
+      );
+      expect(SwiftSource.multilineString("foo\n  bar  ").source).toBe(
+        '"""\nfoo\n  bar  \n"""'
+      );
+      expect(SwiftSource.multilineString(`"""foo"""`).source).toBe(
+        '#"""\n"""foo"""\n"""#'
+      );
+      expect(SwiftSource.multilineString("foo\\nbar").source).toBe(
+        '#"""\nfoo\\nbar\n"""#'
+      );
+      expect(SwiftSource.multilineString(`"""\\"""#"""`).source).toBe(
+        '##"""\n"""\\"""#"""\n"""##'
+      );
+      expect(SwiftSource.multilineString(`foo\\\\#bar`).source).toBe(
+        '##"""\nfoo\\\\#bar\n"""##'
+      );
+      expect(SwiftSource.multilineString(`foo\\\\#\\##bar`).source).toBe(
+        '###"""\nfoo\\\\#\\##bar\n"""###'
+      );
+      expect(SwiftSource.multilineString("foo\\###nbar").source).toBe(
+        '####"""\nfoo\\###nbar\n"""####'
+      );
+    });
+
     it(`should support concatenation`, () => {
       expect(swift`one`.concat().source).toBe("one");
       expect(swift`one`.concat(swift`two`).source).toBe("onetwo");
