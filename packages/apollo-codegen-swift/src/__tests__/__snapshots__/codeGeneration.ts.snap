@@ -4,7 +4,18 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
 "public final class CreateReviewMutation: GraphQLMutation {
   /// The raw GraphQL definition of this operation
   public let operationDefinition =
-    \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"\\\\\\"\\\\\\"\\\\n    Wow!\\\\n     I thought\\\\n      This movie ROCKED!\\\\n  \\\\\\"\\\\\\"\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
+    #\\"\\"\\"
+    mutation CreateReview($episode: Episode) {
+      createReview(episode: $episode, review: {stars: 5, commentary: \\"\\"\\"
+        Wow!
+         I thought
+          This movie ROCKED!
+      \\"\\"\\"}) {
+        stars
+        commentary
+      }
+    }
+    \\"\\"\\"#
 
   public let operationName = \\"CreateReview\\"
 
@@ -90,7 +101,18 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
 "public final class CreateReviewMutation: GraphQLMutation {
   /// The raw GraphQL definition of this operation
   public let operationDefinition =
-    \\"mutation CreateReview($episode: Episode) {\\\\n  createReview(episode: $episode, review: {stars: 5, commentary: \\\\\\"\\\\\\"\\\\\\"\\\\n    Wow!\\\\n     I thought\\\\n      This movie \\\\\\\\ ROCKED!\\\\n  \\\\\\"\\\\\\"\\\\\\"}) {\\\\n    stars\\\\n    commentary\\\\n  }\\\\n}\\"
+    #\\"\\"\\"
+    mutation CreateReview($episode: Episode) {
+      createReview(episode: $episode, review: {stars: 5, commentary: \\"\\"\\"
+        Wow!
+         I thought
+          This movie \\\\ ROCKED!
+      \\"\\"\\"}) {
+        stars
+        commentary
+      }
+    }
+    \\"\\"\\"#
 
   public let operationName = \\"CreateReview\\"
 

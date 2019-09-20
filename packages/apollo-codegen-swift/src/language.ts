@@ -355,26 +355,21 @@ export class SwiftGenerator<Context> extends CodeGenerator<
    * @param string - The Multi-lined string to output
    * @param suppressMultilineStringLiterals - If true, will output the multiline string as a single trimmed
    *                                          string to save bandwidth.
-   *                                          NOTE: This preference will be ignored if your GraphQL query
-   *                                          contains a triple-quote GraphQL string literal, since that's
-   *                                          the same as Swift's string literal and will break the query.
+   *                                          NOTE: String trimming will be disabled if the string contains a
+   *                                          `"""` sequence as whitespace is significant in GraphQL multiline
+   *                                          strings.
    */
   multilineString(string: string, suppressMultilineStringLiterals: Boolean) {
-    // Disable trimming if the string contains """ as this means we're probably printing an
-    // operation definition where trimming is destructive.
-    if (string.includes('"""')) {
-      this.printOnNewline(SwiftSource.string(string, /* trim */ false));
+    if (suppressMultilineStringLiterals) {
+      this.printOnNewline(
+        SwiftSource.string(string, /* trim */ !string.includes('"""'))
+      );
     } else {
-      if (suppressMultilineStringLiterals) {
-        this.printOnNewline(SwiftSource.string(string, /* trim */ true));
-      } else {
-        // Use a multiline string literal
-        this.printOnNewline(SwiftSource.raw`"""`);
-        string.split("\n").forEach(line => {
-          this.printOnNewline(SwiftSource.raw`${line}`);
+      SwiftSource.multilineString(string)
+        .source.split("\n")
+        .forEach(line => {
+          this.printOnNewline(new SwiftSource(line));
         });
-        this.printOnNewline(SwiftSource.raw`"""`);
-      }
     }
   }
 
