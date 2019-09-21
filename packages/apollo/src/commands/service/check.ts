@@ -6,23 +6,19 @@ import envCi from "env-ci";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
 import {
-  validateHistoricParams,
+  CompactRenderer,
   pluralize,
-  CompactRenderer
+  validateHistoricParams
 } from "../../utils";
 import {
+  ChangeSeverity,
+  CheckPartialSchema_service_checkPartialSchema_checkSchemaResult,
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
-  ChangeSeverity,
   CheckSchemaVariables,
-  IntrospectionSchemaInput,
-  IntrospectionTypeInput
+  IntrospectionSchemaInput
 } from "apollo-language-server/lib/graphqlTypes";
-import {
-  ApolloConfig,
-  GraphQLServiceProject,
-  isServiceProject
-} from "apollo-language-server";
+import { ApolloConfig, isServiceProject } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 import { isNotNullOrUndefined } from "apollo-env";
@@ -66,7 +62,9 @@ type CompositionErrors = Array<{
 
 interface TasksOutput {
   config: ApolloConfig;
-  checkSchemaResult: CheckSchema_service_checkSchema;
+  checkSchemaResult:
+    | CheckSchema_service_checkSchema
+    | CheckPartialSchema_service_checkPartialSchema_checkSchemaResult;
   shouldOutputJson: boolean;
   shouldOutputMarkdown: boolean;
   federationSchemaHash?: string;
@@ -344,40 +342,35 @@ export default class ServiceCheck extends ProjectCommand {
                   serviceName
                 )} service's partial schema`;
 
+                const historicParameters = validateHistoricParams({
+                  validationPeriod: flags.validationPeriod,
+                  queryCountThreshold: flags.queryCountThreshold,
+                  queryCountThresholdPercentage:
+                    flags.queryCountThresholdPercentage
+                });
+
                 const {
-                  errors,
-                  compositionValidationDetails,
-                  graphCompositionID
+                  compositionValidationResult,
+                  checkSchemaResult
                 } = await project.engine.checkPartialSchema({
                   id: graphName,
                   graphVariant: tag,
                   implementingServiceName: serviceName,
                   partialSchema: {
                     sdl: info.sdl
-                  }
+                  },
+                  historicParameters
                 });
 
-                if (
-                  compositionValidationDetails &&
-                  compositionValidationDetails.schemaHash
-                ) {
-                  ctx.federationSchemaHash =
-                    compositionValidationDetails.schemaHash;
-                }
-
-                if (graphCompositionID) {
-                  ctx.graphCompositionID = graphCompositionID;
-                }
-
                 task.title = `Found ${pluralize(
-                  errors.length,
+                  compositionValidationResult.errors.length,
                   "graph composition error"
                 )} for service ${chalk.blue(serviceName)} on graph ${chalk.blue(
                   graphName
                 )}`;
 
-                if (errors.length > 0) {
-                  const decodedErrors = errors
+                if (compositionValidationResult.errors.length > 0) {
+                  const decodedErrors = compositionValidationResult.errors
                     .filter(isNotNullOrUndefined)
                     .map(error => {
                       const match = error.message.match(
@@ -403,6 +396,14 @@ export default class ServiceCheck extends ProjectCommand {
                   this.error(
                     federatedServiceCompositionUnsuccessfulErrorMessage
                   );
+                } else {
+                  if (!checkSchemaResult) {
+                    throw new Error(
+                      "Violated invariant. Schema should have been validated against operations if" +
+                        "there were no composition errors"
+                    );
+                  }
+                  ctx.checkSchemaResult = checkSchemaResult;
                 }
               }
             },
@@ -412,31 +413,25 @@ export default class ServiceCheck extends ProjectCommand {
               }schema against tag ${chalk.blue(tag)} on graph ${chalk.blue(
                 graphName
               )}`,
+              // We have already performed validation per operation above if the service is federated
+              enabled: () => !serviceName,
               task: async (ctx: TasksOutput, task) => {
                 let schemaCheckSchemaVariables:
                   | { schemaHash: string }
                   | { schema: IntrospectionSchemaInput }
                   | undefined;
 
-                // If we're `federated`, then run composition validation. When we're using composition
-                // validation we'll receive a schema has that represents the composed schema.
-                if (ctx.federationSchemaHash) {
-                  schemaCheckSchemaVariables = {
-                    schemaHash: ctx.federationSchemaHash
-                  };
-                } else {
-                  // This is _not_ a `federated` schema. Resolve the schema given `config.tag`.
-                  task.output = "Resolving schema";
-                  schema = await project.resolveSchema({ tag: config.tag });
-                  if (!schema) {
-                    throw new Error("Failed to resolve schema");
-                  }
-
-                  schemaCheckSchemaVariables = {
-                    schema: introspectionFromSchema(schema)
-                      .__schema as IntrospectionSchemaInput
-                  };
+                // This is _not_ a `federated` schema. Resolve the schema given `config.tag`.
+                task.output = "Resolving schema";
+                schema = await project.resolveSchema({ tag: config.tag });
+                if (!schema) {
+                  throw new Error("Failed to resolve schema");
                 }
+
+                schemaCheckSchemaVariables = {
+                  schema: introspectionFromSchema(schema)
+                    .__schema as IntrospectionSchemaInput
+                };
 
                 await gitInfo(this.log);
 
