@@ -49,7 +49,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["HeroName"], false);
+      generator.classDeclarationForOperation(
+        operations["HeroName"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -67,7 +71,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["Hero"], false);
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -85,7 +89,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["Hero"], false);
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -127,7 +131,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["CreateReview"], false);
+      generator.classDeclarationForOperation(
+        operations["CreateReview"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -147,7 +155,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["Hero"], false);
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -182,7 +190,7 @@ describe("Swift code generation", () => {
         { generateOperationIds: true, mergeInFieldsFromFragmentSpreads: true }
       );
 
-      generator.classDeclarationForOperation(operations["Hero"], false);
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -373,7 +381,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["DroidDetails"], false);
+      generator.structDeclarationForFragment(
+        fragments["DroidDetails"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -388,7 +400,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["HeroDetails"], false);
+      generator.structDeclarationForFragment(
+        fragments["HeroDetails"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -405,7 +421,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["HeroDetails"], false);
+      generator.structDeclarationForFragment(
+        fragments["HeroDetails"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
