@@ -176,7 +176,7 @@ exports[`client:codegen writes swift types from local schema 1`] = `
 import Apollo
 
 public final class SimpleQueryQuery: GraphQLQuery {
-  /// The raw GraphQL definition of this operation
+  /// The raw GraphQL definition of this operation.
   public let operationDefinition =
     \\"\\"\\"
     query SimpleQuery {
@@ -225,7 +225,7 @@ exports[`client:codegen writes swift types from local schema in a graphql file 1
 import Apollo
 
 public final class SimpleQueryQuery: GraphQLQuery {
-  /// The raw GraphQL definition of this operation
+  /// The raw GraphQL definition of this operation.
   public let operationDefinition =
     \\"\\"\\"
     query SimpleQuery {
