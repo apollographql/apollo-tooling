@@ -403,6 +403,11 @@ export default class ServiceCheck extends ProjectCommand {
                         "there were no composition errors"
                     );
                   }
+
+                  // this is used for the printing
+                  taskOutput.checkSchemaResult = checkSchemaResult;
+
+                  // this is used for the next step in the `run` command (comparing schema changes)
                   ctx.checkSchemaResult = checkSchemaResult;
                 }
               }
