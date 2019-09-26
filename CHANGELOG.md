@@ -3,8 +3,47 @@
 ## Upcoming
 
 - `apollo`
-  - Support multiple `localSchemaFile`s [#1500](https://github.com/apollographql/apollo-tooling/pull/1500)
+  - Use "table" package for tabular output and word wrap support [#1524](https://github.com/apollographql/apollo-tooling/pull/1524)
   - Add `--target=format` flag to `client:download-schema` command to download schema in desired format i.e. SDL or JSON
+- `apollo-codegen-core`
+  - <First `apollo-codegen-core` related entry goes here>
+- `apollo-codegen-flow`
+  - <First `apollo-codegen-flow` related entry goes here>
+- `apollo-codegen-scala`
+  - <First `apollo-codegen-scala` related entry goes here>
+- `apollo-codegen-swift`
+  - Switch operations and fragments to default to printing queries as multiline strings rather than including queries as multiline comments
+  - Add `--suppressSwiftMultilineStringLiterals` flag to allow a version which strips unnecessary whitespace.
+- `apollo-codegen-typescript`
+  - <First `apollo-codegen-typescript` related entry goes here>
+- `apollo-env`
+  - <First `apollo-env` related entry goes here>
+- `apollo-graphql`
+  - <First `apollo-graphql` related entry goes here>
+- `apollo-language-server`
+  - <First `apollo-language-server` related entry goes here>
+- `apollo-tools`
+  - <First `apollo-tools` related entry goes here>
+- `vscode-apollo`
+  - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.18.3`
+
+- `apollo`
+  - fix bad parsing of multiple `locaSchemaFile`s [#1529](https://github.com/apollographql/apollo-tooling/pull/1529)
+
+## `apollo@2.18.2`
+
+- `apollo-codegen-core@0.35.2`
+- `apollo-codegen-flow@0.33.27`
+- `apollo-codegen-scala@0.34.27`
+- `apollo-codegen-swift@0.35.7`
+- `apollo-codegen-typescript@0.35.2`
+- `apollo-language-server@1.15.2`
+- `apollo@2.18.2`
+
+- `apollo`
+  - Support multiple `localSchemaFile`s [#1500](https://github.com/apollographql/apollo-tooling/pull/1500)
 - `apollo-codegen-core`
   - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
 - `apollo-codegen-flow`

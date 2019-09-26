@@ -1,41 +1,67 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`service:check formatHumanReadable should have correct output with breaking and non-breaking changes 1`] = `
+"╔════════╤═══════════════════════════╤═════════════════════════════════════════════════════════════════════════════════════════╗
+║ Change │ Code                      │ Description                                                                             ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ ARG_REMOVED               │ \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed                             ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ ARG_REMOVED               │ \`ServiceMutation.uploadSchema\` arg \`schema\` was removed                                 ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ ARG_REMOVED               │ \`ServiceMutation.uploadSchema\` arg \`tag\` was removed                                    ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ FIELD_CHANGED_TYPE        │ \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\` ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ FIELD_REMOVED             │ \`Change.affectedClients\` was removed                                                    ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ FIELD_REMOVED             │ \`NamedIntrospectionValue.printedType\` was removed                                       ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ TYPE_REMOVED              │ \`NamedIntrospectionArg\` removed                                                         ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ ARG_REMOVED               │ \`ServiceMutation.registerOperations\` arg \`manifestVersion\` was removed                  ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ ARG_REMOVED               │ \`ServiceMutation.uploadSchema\` arg \`historicParameters\` was removed                     ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ FIELD_ADDED               │ \`Service.schemaNotificationChannels\` was added                                          ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ FIELD_ADDED               │ \`ServiceMutation.deregisterSchemaNotificationChannel\` was added                         ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ FIELD_ADDED               │ \`ServiceMutation.registerSchemaNotificationChannel\` was added                           ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ FIELD_DEPRECATION_REMOVED │ \`AffectedClient.clientId\` is no longer deprecated                                       ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ FIELD_DEPRECATION_REMOVED │ \`Change.description\` is no longer deprecated                                            ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ FIELD_REMOVED             │ \`AffectedClient.clientReferenceId\` was removed                                          ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ FIELD_REMOVED             │ \`Change.affectedClientIdVersionPairs\` was removed                                       ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ FIELD_REMOVED             │ \`Change.affectedClientReferenceIds\` was removed                                         ║
+╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ FIELD_REMOVED             │ \`SchemaDiff.numberOfCheckedOperations\` was removed                                      ║
+╚════════╧═══════════════════════════╧═════════════════════════════════════════════════════════════════════════════════════════╝
 "
-FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
-FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
-FAIL    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
-FAIL    FIELD_CHANGED_TYPE         \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
-FAIL    FIELD_REMOVED              \`Change.affectedClients\` was removed
-FAIL    FIELD_REMOVED              \`NamedIntrospectionValue.printedType\` was removed
-FAIL    TYPE_REMOVED               \`NamedIntrospectionArg\` removed
-
-PASS    ARG_REMOVED                \`ServiceMutation.registerOperations\` arg \`manifestVersion\` was removed
-PASS    ARG_REMOVED                \`ServiceMutation.uploadSchema\` arg \`historicParameters\` was removed
-PASS    FIELD_ADDED                \`Service.schemaNotificationChannels\` was added
-PASS    FIELD_ADDED                \`ServiceMutation.deregisterSchemaNotificationChannel\` was added
-PASS    FIELD_ADDED                \`ServiceMutation.registerSchemaNotificationChannel\` was added
-PASS    FIELD_DEPRECATION_REMOVED  \`AffectedClient.clientId\` is no longer deprecated
-PASS    FIELD_DEPRECATION_REMOVED  \`Change.description\` is no longer deprecated
-PASS    FIELD_REMOVED              \`AffectedClient.clientReferenceId\` was removed
-PASS    FIELD_REMOVED              \`Change.affectedClientIdVersionPairs\` was removed
-PASS    FIELD_REMOVED              \`Change.affectedClientReferenceIds\` was removed
-PASS    FIELD_REMOVED              \`SchemaDiff.numberOfCheckedOperations\` was removed
-
-View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z?graphCompositionId=fff"
 `;
 
 exports[`service:check formatHumanReadable should have correct output with only breaking changes 1`] = `
+"╔════════╤════════════════════╤═════════════════════════════════════════════════════════════════════════════════════════╗
+║ Change │ Code               │ Description                                                                             ║
+╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ ARG_REMOVED        │ \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed                             ║
+╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ ARG_REMOVED        │ \`ServiceMutation.uploadSchema\` arg \`schema\` was removed                                 ║
+╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ ARG_REMOVED        │ \`ServiceMutation.uploadSchema\` arg \`tag\` was removed                                    ║
+╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ FIELD_CHANGED_TYPE │ \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\` ║
+╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ FIELD_REMOVED      │ \`Change.affectedClients\` was removed                                                    ║
+╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ FIELD_REMOVED      │ \`NamedIntrospectionValue.printedType\` was removed                                       ║
+╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ TYPE_REMOVED       │ \`NamedIntrospectionArg\` removed                                                         ║
+╚════════╧════════════════════╧═════════════════════════════════════════════════════════════════════════════════════════╝
 "
-FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed
-FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`schema\` was removed
-FAIL    ARG_REMOVED         \`ServiceMutation.uploadSchema\` arg \`tag\` was removed
-FAIL    FIELD_CHANGED_TYPE  \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`
-FAIL    FIELD_REMOVED       \`Change.affectedClients\` was removed
-FAIL    FIELD_REMOVED       \`NamedIntrospectionValue.printedType\` was removed
-FAIL    TYPE_REMOVED        \`NamedIntrospectionArg\` removed
-
-View full details at: https://engine-dev.apollographql.com/service/engine/checks?schemaTag=Detached%3A%20d664f715645c5f0bb5ad4f2260cd6cb8d19bbc68&schemaTagId=f9f68e7e-1b5f-4eab-a3da-1fd8cd681111&from=2019-03-26T22%3A25%3A12.887Z?graphCompositionId=fff"
 `;
 
 exports[`service:check formatHumanReadable should have correct output with only non-breaking changes 1`] = `
@@ -87,11 +113,17 @@ exports[`service:check integration federated should report composition errors co
 "Loading Apollo Project
 Found 3 graph composition errors for service accounts on graph engine
 
-Service   Field    Message
-────────  ───────  ────────────────────────────────────────────────────────────────────────────────────────
-reviews   User.id  marked @external but it does not have a matching field on on the base service (accounts)
-reviews   User     A @key selects id, but User.id could not be found
-accounts  User     A @key selects id, but User.id could not be found
+╔══════════╤═════════╤════════════════════════════════════════════════════╗
+║ Service  │ Field   │ Message                                            ║
+╟──────────┼─────────┼────────────────────────────────────────────────────╢
+║ reviews  │ User.id │ marked @external but it does not have a matching   ║
+║          │         │ field on on the base service (accounts)            ║
+╟──────────┼─────────┼────────────────────────────────────────────────────╢
+║ reviews  │ User    │ A @key selects id, but User.id could not be found  ║
+╟──────────┼─────────┼────────────────────────────────────────────────────╢
+║ accounts │ User    │ A @key selects id, but User.id could not be found  ║
+╚══════════╧═════════╧════════════════════════════════════════════════════╝
+
 "
 `;
 
@@ -105,11 +137,17 @@ Found 3 graph composition errors for service accounts on graph engine [title cha
 Found 3 graph composition errors for service accounts on graph engine [failed]
 → Federated service composition was unsuccessful. Please see the reasons below.
 
-Service   Field    Message
-────────  ───────  ────────────────────────────────────────────────────────────────────────────────────────
-reviews   User.id  marked @external but it does not have a matching field on on the base service (accounts)
-reviews   User     A @key selects id, but User.id could not be found
-accounts  User     A @key selects id, but User.id could not be found
+╔══════════╤═════════╤════════════════════════════════════════════════════╗
+║ Service  │ Field   │ Message                                            ║
+╟──────────┼─────────┼────────────────────────────────────────────────────╢
+║ reviews  │ User.id │ marked @external but it does not have a matching   ║
+║          │         │ field on on the base service (accounts)            ║
+╟──────────┼─────────┼────────────────────────────────────────────────────╢
+║ reviews  │ User    │ A @key selects id, but User.id could not be found  ║
+╟──────────┼─────────┼────────────────────────────────────────────────────╢
+║ accounts │ User    │ A @key selects id, but User.id could not be found  ║
+╚══════════╧═════════╧════════════════════════════════════════════════════╝
+
 "
 `;
 
@@ -151,10 +189,12 @@ Found 0 graph composition errors for service accounts on graph engine
 Validated composed schema against tag master on graph engine
 Compared 1 schema change against 0 operations over the last 548 days
 Found 0 breaking changes and 1 compatible change
+╔════════╤══════════════════╤═══════════════════════════════════════════════════════════════════════════════╗
+║ Change │ Code             │ Description                                                                   ║
+╟────────┼──────────────────┼───────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ ARG_CHANGED_TYPE │ \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\` ║
+╚════════╧══════════════════╧═══════════════════════════════════════════════════════════════════════════════╝
 
-PASS    ARG_CHANGED_TYPE  \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`
-
-View full details at: https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc
 "
 `;
 
@@ -176,10 +216,12 @@ Compared 1 schema change against 0 operations over the last 548 days [completed]
 Reporting result [started]
 Found 0 breaking changes and 1 compatible change [title changed]
 Found 0 breaking changes and 1 compatible change [completed]
+╔════════╤══════════════════╤═══════════════════════════════════════════════════════════════════════════════╗
+║ Change │ Code             │ Description                                                                   ║
+╟────────┼──────────────────┼───────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ ARG_CHANGED_TYPE │ \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\` ║
+╚════════╧══════════════════╧═══════════════════════════════════════════════════════════════════════════════╝
 
-PASS    ARG_CHANGED_TYPE  \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`
-
-View full details at: https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc
 "
 `;
 
@@ -230,10 +272,12 @@ Reporting result [started]
 Found 1 breaking change and 0 compatible changes [title changed]
 Found 1 breaking change and 0 compatible changes [failed]
 → breaking changes found
+╔════════╤══════════════════╤═══════════════════════════════════════════════════════════════════════════════╗
+║ Change │ Code             │ Description                                                                   ║
+╟────────┼──────────────────┼───────────────────────────────────────────────────────────────────────────────╢
+║ FAIL   │ ARG_CHANGED_TYPE │ \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\` ║
+╚════════╧══════════════════╧═══════════════════════════════════════════════════════════════════════════════╝
 
-FAIL    ARG_CHANGED_TYPE  \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`
-
-View full details at: https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc
 "
 `;
 
@@ -283,10 +327,12 @@ Compared 1 schema change against 0 operations over the last 548 days [completed]
 Reporting result [started]
 Found 0 breaking changes and 1 compatible change [title changed]
 Found 0 breaking changes and 1 compatible change [completed]
+╔════════╤══════════════════╤═══════════════════════════════════════════════════════════════════════════════╗
+║ Change │ Code             │ Description                                                                   ║
+╟────────┼──────────────────┼───────────────────────────────────────────────────────────────────────────────╢
+║ PASS   │ ARG_CHANGED_TYPE │ \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\` ║
+╚════════╧══════════════════╧═══════════════════════════════════════════════════════════════════════════════╝
 
-PASS    ARG_CHANGED_TYPE  \`Query.launches\` argument \`after\` has changed type from \`String\` to \`String!\`
-
-View full details at: https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc
 "
 `;
 
