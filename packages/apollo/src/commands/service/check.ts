@@ -391,7 +391,8 @@ export default class ServiceCheck extends ProjectCommand {
                     });
 
                   taskOutput.compositionErrors = decodedErrors;
-                  taskOutput.graphCompositionID = graphCompositionID;
+                  taskOutput.graphCompositionID =
+                    compositionValidationResult.graphCompositionID;
 
                   this.error(
                     federatedServiceCompositionUnsuccessfulErrorMessage
