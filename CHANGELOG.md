@@ -4,6 +4,7 @@
 
 - `apollo`
   - Use "table" package for tabular output and word wrap support [#1524](https://github.com/apollographql/apollo-tooling/pull/1524)
+  - Use new single-step mutation for checking federated service schemas [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -20,7 +21,7 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Replace old mutation used for checking partial service schemas to use `checkPartialSchema` [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
