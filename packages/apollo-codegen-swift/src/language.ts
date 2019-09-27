@@ -120,6 +120,44 @@ export class SwiftSource {
   }
 
   /**
+   * Returns the input wrapped in a Swift multiline string with escaping.
+   * @param string The input string, to be represented as a Swift multiline string.
+   * @returns A `SwiftSource` containing the Swift multiline string literal.
+   */
+  static multilineString(string: string): SwiftSource {
+    let rawCount = 0;
+    if (/"""|\\/.test(string)) {
+      // There's a """ (which would need escaping) or a backslash. Let's do a raw string literal instead.
+      // We can't just assume a single # is sufficient as it's possible to include the tokens `"""#` or
+      // `\#n` in a GraphQL multiline string so let's look for those.
+      let re = /"""(#+)|\\(#+)/g;
+      for (let ary = re.exec(string); ary !== null; ary = re.exec(string)) {
+        rawCount = Math.max(
+          rawCount,
+          (ary[1] || "").length,
+          (ary[2] || "").length
+        );
+      }
+      rawCount += 1; // add 1 to get whatever won't collide with the string
+    }
+    const rawToken = "#".repeat(rawCount);
+    return new SwiftSource(
+      `${rawToken}"""\n${string.replace(/[\0\r]/g, c => {
+        // Even in a raw string, we want to escape a couple of characters.
+        // It would be exceedingly weird to have these, but we can still handle them.
+        switch (c) {
+          case "\0":
+            return `\\${rawToken}0`;
+          case "\r":
+            return `\\${rawToken}r`;
+          default:
+            return c;
+        }
+      })}\n"""${rawToken}`
+    );
+  }
+
+  /**
    * Escapes the input if it contains a reserved keyword.
    *
    * For example, the input `Self?` requires escaping or it will match the keyword `Self`.
@@ -311,25 +349,34 @@ export class SwiftGenerator<Context> extends CodeGenerator<
     super(context);
   }
 
-  multilineString(string: string) {
-    // Disable trimming if the string contains """ as this means we're probably printing an
-    // operation definition where trimming is destructive.
-    this.printOnNewline(
-      SwiftSource.string(string, /* trim */ !string.includes('"""'))
-    );
+  /**
+   * Outputs a multi-line string
+   *
+   * @param string - The Multi-lined string to output
+   * @param suppressMultilineStringLiterals - If true, will output the multiline string as a single trimmed
+   *                                          string to save bandwidth.
+   *                                          NOTE: String trimming will be disabled if the string contains a
+   *                                          `"""` sequence as whitespace is significant in GraphQL multiline
+   *                                          strings.
+   */
+  multilineString(string: string, suppressMultilineStringLiterals: Boolean) {
+    if (suppressMultilineStringLiterals) {
+      this.printOnNewline(
+        SwiftSource.string(string, /* trim */ !string.includes('"""'))
+      );
+    } else {
+      SwiftSource.multilineString(string)
+        .source.split("\n")
+        .forEach(line => {
+          this.printOnNewline(new SwiftSource(line));
+        });
+    }
   }
 
   comment(comment?: string) {
     comment &&
       comment.split("\n").forEach(line => {
         this.printOnNewline(SwiftSource.raw`/// ${line.trim()}`);
-      });
-  }
-
-  commentWithoutTrimming(comment?: string) {
-    comment &&
-      comment.split("\n").forEach(line => {
-        this.printOnNewline(SwiftSource.raw`/// ${line}`);
       });
   }
 

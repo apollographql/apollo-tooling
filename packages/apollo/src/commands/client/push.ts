@@ -1,5 +1,5 @@
 import { ClientCommand } from "../../Command";
-import { table } from "heroku-cli-util";
+import { table } from "table";
 import { relative } from "path";
 import URI from "vscode-uri";
 import { getOperationManifestFromProject } from "../../utils/getOperationManifestFromProject";
@@ -114,13 +114,29 @@ export default class ClientPush extends ClientCommand {
                     const { operationName, file } = signatureToOperation[
                       operation.signature
                     ];
-                    result += `\n${chalk.red(
-                      "FAIL"
-                    )}\t${operationName} ${chalk.blue(file)}`;
-                    operation.errors &&
-                      operation.errors.forEach(
-                        ({ message }) => (result += `\n\t${message}`)
-                      );
+
+                    result += `\nError in: ${chalk.blue(file)}\n`;
+                    result += table(
+                      [
+                        ["Status", "Operation", "Errors"],
+                        [
+                          chalk.red("Error"),
+                          operationName,
+                          (operation.errors
+                            ? operation.errors.map(({ message }) => message)
+                            : []
+                          ).join("\n")
+                        ]
+                      ],
+                      {
+                        columns: {
+                          2: {
+                            width: 50,
+                            wrapWord: true
+                          }
+                        }
+                      }
+                    );
                   });
                   task.title = `Failed to push operations, due to ${pluralize(
                     invalidOperations.length,
@@ -143,34 +159,16 @@ export default class ClientPush extends ClientCommand {
                     newOperations.length,
                     "operation"
                   )} to the operation registry`;
-
-                  table(
-                    newOperations.map(operation => {
+                  result += table([
+                    ["Status", "Operation Name"],
+                    ...newOperations.map(operation => {
                       const { operationName, file } = signatureToOperation[
                         operation.signature
                       ];
 
-                      return {
-                        added: chalk.green("ADDED"),
-                        name: operationName,
-                        file: chalk.blue(file)
-                      };
-                    }),
-                    {
-                      columns: [
-                        { key: "added", label: "Added" },
-                        { key: "name", label: "Operation Name" },
-                        { key: "file", label: "File Path" }
-                      ],
-                      // Override `printHeader` so we don't print a header
-                      printHeader: () => {},
-                      // The default `printLine` will output to the console; we want to capture the output so we can test
-                      // it.
-                      printLine: line => {
-                        result += `\n${line}`;
-                      }
-                    }
-                  );
+                      return [chalk.green("ADDED"), operationName];
+                    })
+                  ]);
                 } else {
                   task.title = `All operations were already found in the operation registry`;
                 }

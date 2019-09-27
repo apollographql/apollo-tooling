@@ -164,6 +164,8 @@ OPTIONS
   --passthroughCustomScalars                 Use your own types for custom scalars
 
   --queries=queries                          Deprecated in favor of the includes flag
+  
+  --suppressSwiftMultilineStringLiterals     Prevents operations from being rendered as multiline strings [Swift only]
 
   --tagName=tagName                          Name of the template literal tag used to identify template literals
                                              containing GraphQL queries in Javascript/Typescript code

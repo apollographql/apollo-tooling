@@ -313,6 +313,33 @@ describe("Swift code generation: Escaping", () => {
       expect(SwiftSource.string("foo\n  bar  ", true).source).toBe('"foo bar"');
     });
 
+    it(`should generate multiline strings`, () => {
+      expect(SwiftSource.multilineString("foobar").source).toBe(
+        '"""\nfoobar\n"""'
+      );
+      expect(SwiftSource.multilineString("foo\n  bar  ").source).toBe(
+        '"""\nfoo\n  bar  \n"""'
+      );
+      expect(SwiftSource.multilineString(`"""foo"""`).source).toBe(
+        '#"""\n"""foo"""\n"""#'
+      );
+      expect(SwiftSource.multilineString("foo\\nbar").source).toBe(
+        '#"""\nfoo\\nbar\n"""#'
+      );
+      expect(SwiftSource.multilineString(`"""\\"""#"""`).source).toBe(
+        '##"""\n"""\\"""#"""\n"""##'
+      );
+      expect(SwiftSource.multilineString(`foo\\\\#bar`).source).toBe(
+        '##"""\nfoo\\\\#bar\n"""##'
+      );
+      expect(SwiftSource.multilineString(`foo\\\\#\\##bar`).source).toBe(
+        '###"""\nfoo\\\\#\\##bar\n"""###'
+      );
+      expect(SwiftSource.multilineString("foo\\###nbar").source).toBe(
+        '####"""\nfoo\\###nbar\n"""####'
+      );
+    });
+
     it(`should support concatenation`, () => {
       expect(swift`one`.concat().source).toBe("one");
       expect(swift`one`.concat(swift`two`).source).toBe("onetwo");
@@ -338,14 +365,20 @@ describe("Swift code generation: Escaping", () => {
       generator = new SwiftGenerator({});
     });
 
-    it(`should trim with multilineString`, () => {
-      generator.multilineString("foo\n  bar  ");
+    it(`should not trim with multiline string if multiline strings are not suppressed and there is no triple quote`, () => {
+      generator.multilineString("foo\n  bar  ", false);
+
+      expect(generator.output).toBe('"""\nfoo\n  bar  \n"""');
+    });
+
+    it(`should trim with multilineString if multiline strings are suppressed`, () => {
+      generator.multilineString("foo\n  bar  ", true);
 
       expect(generator.output).toBe('"foo bar"');
     });
 
-    it(`shouldn't trim with multilineString when using """`, () => {
-      generator.multilineString('"""\nfoo\n  bar  \n"""');
+    it(`shouldn't trim with multilineString when using """ even when multiline strings are suppressed`, () => {
+      generator.multilineString('"""\nfoo\n  bar  \n"""', true);
       expect(generator.output).toBe('"\\"\\"\\"\\nfoo\\n  bar  \\n\\"\\"\\""');
     });
   });
