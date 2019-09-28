@@ -57,7 +57,7 @@
     "@oclif/dev-cli": "1.22.2",
     "@oclif/test": "1.2.5",
     "@types/babel-types": "7.0.7",
-    "@types/babel__generator": "7.0.2",
+    "@types/babel__generator": "7.6.0",
     "@types/common-tags": "1.8.0",
     "@types/cosmiconfig": "5.0.3",
     "@types/glob": "7.1.1",
