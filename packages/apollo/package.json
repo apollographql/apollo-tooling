@@ -66,7 +66,7 @@
     "vscode-uri": "1.0.6"
   },
   "devDependencies": {
-    "typescript": "3.5.3"
+    "typescript": "3.6.3"
   },
   "oclif": {
     "commands": "./lib/commands",
