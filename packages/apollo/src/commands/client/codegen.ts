@@ -77,6 +77,11 @@ export default class Generate extends ClientCommand {
         "Prevents operations from being rendered as multiline strings [Swift only]"
     }),
 
+    suppressOnDiagnosticsWrite: flags.boolean({
+      description:
+        "Prevents onDiagnostics hook writing generated code for each call"
+    }),
+
     // flow
     useFlowExactObjects: flags.boolean({
       description: "Use Flow exact objects for generated types [flow only]"
@@ -218,7 +223,9 @@ export default class Generate extends ClientCommand {
 
               // project.validationDidFinish(write);
               project.onDiagnostics(({ uri }) => {
-                write();
+                if (!flags.suppressOnDiagnosticsWrite) {
+                  write();
+                }
               });
 
               const writtenFiles = write();
