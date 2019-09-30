@@ -236,7 +236,8 @@ export function addResolversToSchema(
           deprecationReason: value.deprecationReason,
           description: value.description,
           astNode: value.astNode,
-          name: value.name
+          name: value.name,
+          extensions: undefined
         };
       });
 
