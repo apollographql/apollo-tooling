@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.18.3 darwin-x64 node-v8.11.1
+apollo/2.18.4-alpha.1 darwin-x64 node-v8.11.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -164,7 +164,7 @@ OPTIONS
   --passthroughCustomScalars                 Use your own types for custom scalars
 
   --queries=queries                          Deprecated in favor of the includes flag
-  
+
   --suppressSwiftMultilineStringLiterals     Prevents operations from being rendered as multiline strings [Swift only]
 
   --tagName=tagName                          Name of the template literal tag used to identify template literals
