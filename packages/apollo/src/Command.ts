@@ -168,6 +168,7 @@ export abstract class ProjectCommand extends Command {
       });
     }
 
+    // this can set a single or multiple local schema files
     if (flags.localSchemaFile) {
       const files = flags.localSchemaFile.split(",");
       if (isClientConfig(config)) {

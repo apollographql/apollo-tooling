@@ -267,8 +267,7 @@ export default class ServiceCheck extends ProjectCommand {
     }),
     serviceName: flags.string({
       description:
-        "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service",
-      dependsOn: ["endpoint"]
+        "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service"
     })
   };
 
@@ -333,8 +332,8 @@ export default class ServiceCheck extends ProjectCommand {
                 }
                 task.output = "Fetching local service's partial schema";
 
-                const info = await project.resolveFederationInfo();
-                if (!info.sdl) {
+                const sdl = await project.resolveFederatedServiceSDL();
+                if (!sdl) {
                   throw new Error("No SDL found for federated service");
                 }
 
@@ -357,9 +356,8 @@ export default class ServiceCheck extends ProjectCommand {
                   graphVariant: tag,
                   implementingServiceName: serviceName,
                   partialSchema: {
-                    sdl: info.sdl
-                  },
-                  historicParameters
+                    sdl
+                  }
                 });
 
                 task.title = `Found ${pluralize(
