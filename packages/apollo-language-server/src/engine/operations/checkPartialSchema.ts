@@ -6,19 +6,49 @@ export const CHECK_PARTIAL_SCHEMA = gql`
     $graphVariant: String!
     $implementingServiceName: String!
     $partialSchema: PartialSchemaInput!
+    $gitContext: GitContextInput
+    $historicParameters: HistoricQueryParameters
   ) {
     service(id: $id) {
-      validatePartialSchemaOfImplementingServiceAgainstGraph(
+      checkPartialSchema(
         graphVariant: $graphVariant
         implementingServiceName: $implementingServiceName
         partialSchema: $partialSchema
+        gitContext: $gitContext
+        historicParameters: $historicParameters
       ) {
-        compositionValidationDetails {
-          schemaHash
+        compositionValidationResult {
+          compositionValidationDetails {
+            schemaHash
+          }
+          graphCompositionID
+          errors {
+            message
+          }
         }
-        graphCompositionID
-        errors {
-          message
+        checkSchemaResult {
+          diffToPrevious {
+            severity
+            affectedClients {
+              __typename
+            }
+            affectedQueries {
+              __typename
+            }
+            numberOfCheckedOperations
+            changes {
+              severity
+              code
+              description
+            }
+            validationConfig {
+              from
+              to
+              queryCountThreshold
+              queryCountThresholdPercentage
+            }
+          }
+          targetUrl
         }
       }
     }

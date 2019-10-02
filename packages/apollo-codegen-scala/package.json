@@ -1,7 +1,7 @@
 {
   "name": "apollo-codegen-scala",
   "description": "Scala generator module for Apollo Codegen",
-  "version": "0.34.28",
+  "version": "0.35.0-alpha.1",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {

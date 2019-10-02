@@ -5,6 +5,8 @@
 - `apollo`
   - Use "table" package for tabular output and word wrap support [#1524](https://github.com/apollographql/apollo-tooling/pull/1524)
   - Add `--target=format` flag to `client:download-schema` command to download schema in desired format i.e. SDL or JSON
+  - Use new single step mutation for checking federated service schemas [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
+  - Add support for `localSchemaFile` for federated service commands [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
 - `apollo-codegen-core`
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
@@ -19,9 +21,11 @@
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
+  - Use reference-equality, rather than `Function.prototype.name` string comparison, when omitting validation rules within `buildSchemaFromSDL`. [#1551](https://github.com/apollographql/apollo-tooling/pull/1551)
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Replace old mutation used for checking partial service schemas to use `checkPartialSchema` [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
+  - Remove old federation-info provider [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
+  - Support using local schema files for checks/pushes of federated services [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
@@ -30,7 +34,7 @@
 ## `apollo@2.18.3`
 
 - `apollo`
-  - fix bad parsing of multiple `locaSchemaFile`s [#1529](https://github.com/apollographql/apollo-tooling/pull/1529)
+  - fix bad parsing of multiple `localSchemaFile`s [#1529](https://github.com/apollographql/apollo-tooling/pull/1529)
 
 ## `apollo@2.18.2`
 
