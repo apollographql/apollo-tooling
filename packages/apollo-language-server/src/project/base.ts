@@ -112,7 +112,6 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     this.readyPromise = Promise.all(this.initialize())
       .then(() => {
         this._isReady = true;
-        this.invalidate();
       })
       .catch(error => {
         console.error(error);

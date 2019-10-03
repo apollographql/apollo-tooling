@@ -170,6 +170,10 @@ export default class Generate extends ClientCommand {
               });
 
               if (!schema) throw new Error("Error loading schema");
+              // make sure all of the doucuments that we are going to be using for codegen
+              // are valid documents
+              project.validate();
+
               const write = () => {
                 const operations = Object.values(this.project.operations);
                 const fragments = Object.values(this.project.fragments);

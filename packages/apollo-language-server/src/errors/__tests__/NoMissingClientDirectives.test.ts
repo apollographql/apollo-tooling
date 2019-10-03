@@ -154,7 +154,6 @@ class MockLoadingHandler implements LoadingHandler {
 }
 
 jest.mock("fs");
-jest.useFakeTimers();
 
 describe("client state", () => {
   beforeEach(() => {
@@ -195,11 +194,7 @@ describe("client state", () => {
     });
 
     await project.whenReady;
-
-    // the project runs validation on construction in an setTimeout(validate, 0)
-    // to give non blocking diagnostics on langauge server startup
-    // XXX is this slowing down the CLI?
-    jest.runOnlyPendingTimers();
+    await project.validate();
 
     expect(errors).toMatchInlineSnapshot(`
       Object {
