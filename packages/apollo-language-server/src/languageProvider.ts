@@ -31,8 +31,7 @@ import {
   positionFromPositionInContainingDocument,
   rangeForASTNode,
   getASTNodeAndTypeInfoAtPosition,
-  positionToOffset,
-  isFieldResolvedLocally
+  positionToOffset
 } from "./utilities/source";
 
 import {
