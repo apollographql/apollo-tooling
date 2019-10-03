@@ -319,10 +319,11 @@ export class GraphQLLanguageProvider {
               parentType.clientSchema.localFields &&
               parentType.clientSchema.localFields.includes(fieldDef.name);
 
-            const isResolvedLocally = isFieldResolvedLocally(
-              node,
-              document.ast
-            );
+            const isResolvedLocally =
+              node.directives &&
+              node.directives.some(
+                directive => directive.name.value === "client"
+              );
 
             const content = [
               [
