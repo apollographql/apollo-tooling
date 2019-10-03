@@ -357,7 +357,8 @@ export default class ServiceCheck extends ProjectCommand {
                   implementingServiceName: serviceName,
                   partialSchema: {
                     sdl
-                  }
+                  },
+                  gitContext: await gitInfo(this.log)
                 });
 
                 task.title = `Found ${pluralize(
@@ -436,8 +437,6 @@ export default class ServiceCheck extends ProjectCommand {
                   schema: introspectionFromSchema(schema)
                     .__schema as IntrospectionSchemaInput
                 };
-
-                await gitInfo(this.log);
 
                 const historicParameters = validateHistoricParams({
                   validationPeriod: flags.validationPeriod,
