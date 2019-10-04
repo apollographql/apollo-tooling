@@ -3,32 +3,45 @@
 ## Upcoming
 
 - `apollo`
-  - Improve performance of CLI when running projects by delaying or not calling validation unnecessarily [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
-  - Use "table" package for tabular output and word wrap support [#1524](https://github.com/apollographql/apollo-tooling/pull/1524)
-  - Use new single step mutation for checking federated service schemas [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
-  - Add support for `localSchemaFile` for federated service commands [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
-- `apollo-codegen-core`
-  - Improve performance of validation when client fields are present or not [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Switch operations and fragments to default to printing queries as multiline strings rather than including queries as multiline comments
-  - Add `--suppressSwiftMultilineStringLiterals` flag to allow a version which strips unnecessary whitespace.
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - Use reference-equality, rather than `Function.prototype.name` string comparison, when omitting validation rules within `buildSchemaFromSDL`. [#1551](https://github.com/apollographql/apollo-tooling/pull/1551)
+  - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Replace old mutation used for checking partial service schemas to use `checkPartialSchema` [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
-  - Remove old federation-info provider [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
-  - Support using local schema files for checks/pushes of federated services [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
+  - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.19.0`
+
+- `apollo@2.19.0`
+  - Improve performance of CLI when running projects by delaying or not calling validation unnecessarily [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
+  - Use "table" package for tabular output and word wrap support [#1524](https://github.com/apollographql/apollo-tooling/pull/1524)
+  - Use new single step mutation for checking federated service schemas [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
+  - Add support for `localSchemaFile` for federated service commands [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
+- `apollo-codegen-core@0.35.4`
+  - Improve performance of validation when client fields are present or not [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
+- `apollo-codegen-swift@0.35.9`
+  - Switch operations and fragments to default to printing queries as multiline strings rather than including queries as multiline comments
+  - Add `--suppressSwiftMultilineStringLiterals` flag to allow a version which strips unnecessary whitespace.
+- `apollo-graphql@0.3.4`
+  - Use reference-equality, rather than `Function.prototype.name` string comparison, when omitting validation rules within `buildSchemaFromSDL`. [#1551](https://github.com/apollographql/apollo-tooling/pull/1551)
+- `apollo-language-server@1.16.0`
+  - Replace old mutation used for checking partial service schemas to use `checkPartialSchema` [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
+  - Remove old federation-info provider [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
+  - Support using local schema files for checks/pushes of federated services [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
+- `vscode-apollo@1.11.0`
   - Improve performance of validation when client fields are present or not [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
 
 ## `apollo@2.18.3`
