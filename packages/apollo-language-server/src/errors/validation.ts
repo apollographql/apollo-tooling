@@ -131,7 +131,7 @@ export function NoMissingClientDirectives(context: ValidationContext) {
 
   // this isn't really execution context, but it does group the fragments and operations
   // together correctly
-  // XXX we have a simplified version of this in @apollo/gateway that we could proably use
+  // XXX we have a simplified version of this in @apollo/gateway that we could probably use
   // intead of this
   const executionContext = buildExecutionContext(
     schema,

@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Improve performance of CLI when running projects by delaying or not calling validation [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
+  - Improve performance of CLI when running projects by delaying or not calling validation unnecessarily [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
   - Use "table" package for tabular output and word wrap support [#1524](https://github.com/apollographql/apollo-tooling/pull/1524)
   - Use new single step mutation for checking federated service schemas [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
   - Add support for `localSchemaFile` for federated service commands [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
