@@ -16,8 +16,12 @@ import {
   DirectiveDefinitionNode,
   isObjectType,
   isInterfaceType,
-  isUnionType
+  isUnionType,
+  FragmentDefinitionNode,
+  InlineFragmentNode
 } from "graphql";
+
+import { ExecutionContext } from "graphql/execution/execute";
 
 export function isNode(maybeNode: any): maybeNode is ASTNode {
   return maybeNode && typeof maybeNode.kind === "string";
@@ -343,6 +347,65 @@ export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
       }
     }
   });
+}
+
+function getFieldEntryKey(node: FieldNode): string {
+  return node.alias ? node.alias.value : node.name.value;
+}
+// this is a simplified verison of the collect fields algorithm that the
+// reference implementation uses during execution
+// in this case, we don't care about boolean conditions of validating the
+// type conditions as other validation has done that already
+export function simpleCollectFields(
+  context: ExecutionContext,
+  selectionSet: SelectionSetNode,
+  fields: Record<string, FieldNode[]>,
+  visitedFragmentNames: Record<string, boolean>
+): Record<string, FieldNode[]> {
+  for (const selection of selectionSet.selections) {
+    switch (selection.kind) {
+      case Kind.FIELD: {
+        const name = getFieldEntryKey(selection);
+        if (!fields[name]) {
+          fields[name] = [];
+        }
+        fields[name].push(selection);
+        break;
+      }
+      case Kind.INLINE_FRAGMENT: {
+        simpleCollectFields(
+          context,
+          selection.selectionSet,
+          fields,
+          visitedFragmentNames
+        );
+        break;
+      }
+      case Kind.FRAGMENT_SPREAD: {
+        const fragName = selection.name.value;
+        if (visitedFragmentNames[fragName]) continue;
+        visitedFragmentNames[fragName] = true;
+        const fragment = context.fragments[fragName];
+        if (!fragment) continue;
+        simpleCollectFields(
+          context,
+          fragment.selectionSet,
+          fields,
+          visitedFragmentNames
+        );
+        break;
+      }
+    }
+  }
+  return fields;
+}
+export function hasClientDirective(
+  node: FieldNode | InlineFragmentNode | FragmentDefinitionNode
+) {
+  return (
+    node.directives &&
+    node.directives.some(directive => directive.name.value === "client")
+  );
 }
 
 export interface ClientSchemaInfo {

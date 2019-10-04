@@ -3,11 +3,12 @@
 ## Upcoming
 
 - `apollo`
+  - Improve performance of CLI when running projects by delaying or not calling validation unnecessarily [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
   - Use "table" package for tabular output and word wrap support [#1524](https://github.com/apollographql/apollo-tooling/pull/1524)
   - Use new single step mutation for checking federated service schemas [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
   - Add support for `localSchemaFile` for federated service commands [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
 - `apollo-codegen-core`
-  - <First `apollo-codegen-core` related entry goes here>
+  - Improve performance of validation when client fields are present or not [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -28,7 +29,7 @@
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Improve performance of validation when client fields are present or not [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
 
 ## `apollo@2.18.3`
 

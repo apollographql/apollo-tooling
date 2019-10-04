@@ -285,7 +285,6 @@ export class GraphQLClientProject extends GraphQLProject {
 
   async validate() {
     if (!this._onDiagnostics) return;
-
     if (!this.serviceSchema) return;
 
     const diagnosticSet = new DiagnosticSet();
