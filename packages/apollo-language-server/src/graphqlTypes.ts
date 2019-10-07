@@ -165,6 +165,7 @@ export interface CheckPartialSchemaVariables {
   partialSchema: PartialSchemaInput;
   gitContext?: GitContextInput | null;
   historicParameters?: HistoricQueryParameters | null;
+  frontend?: string | null;
 }
 
 /* tslint:disable */
