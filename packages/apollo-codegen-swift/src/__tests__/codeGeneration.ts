@@ -49,7 +49,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["HeroName"], false);
+      generator.classDeclarationForOperation(
+        operations["HeroName"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -67,7 +71,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["Hero"], false);
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -85,7 +89,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["Hero"], false);
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -127,7 +131,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["CreateReview"], false);
+      generator.classDeclarationForOperation(
+        operations["CreateReview"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -147,7 +155,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["Hero"], false);
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -182,7 +190,7 @@ describe("Swift code generation", () => {
         { generateOperationIds: true, mergeInFieldsFromFragmentSpreads: true }
       );
 
-      generator.classDeclarationForOperation(operations["Hero"], false);
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -222,7 +230,7 @@ describe("Swift code generation", () => {
           responseKey: "response_key",
           propertyName: "propertyName",
           type: GraphQLString
-        })
+        }).source
       ).toBe('"response_key": propertyName');
     });
 
@@ -232,7 +240,7 @@ describe("Swift code generation", () => {
           responseKey: "response_key",
           propertyName: "propertyName",
           type: new GraphQLNonNull(GraphQLString)
-        })
+        }).source
       ).toBe('"response_key": propertyName');
     });
 
@@ -242,7 +250,7 @@ describe("Swift code generation", () => {
           responseKey: "response_key",
           propertyName: "propertyName",
           type: new GraphQLList(GraphQLString)
-        })
+        }).source
       ).toBe('"response_key": propertyName');
     });
 
@@ -252,7 +260,7 @@ describe("Swift code generation", () => {
           responseKey: "response_key",
           propertyName: "propertyName",
           type: new GraphQLList(new GraphQLNonNull(GraphQLString))
-        })
+        }).source
       ).toBe('"response_key": propertyName');
     });
 
@@ -262,7 +270,7 @@ describe("Swift code generation", () => {
           responseKey: "response_key",
           propertyName: "propertyName",
           type: new GraphQLNonNull(new GraphQLList(GraphQLString))
-        })
+        }).source
       ).toBe('"response_key": propertyName');
     });
 
@@ -274,7 +282,7 @@ describe("Swift code generation", () => {
           type: new GraphQLNonNull(
             new GraphQLList(new GraphQLNonNull(GraphQLString))
           )
-        })
+        }).source
       ).toBe('"response_key": propertyName');
     });
 
@@ -284,7 +292,7 @@ describe("Swift code generation", () => {
           responseKey: "response_key",
           propertyName: "propertyName",
           type: schema.getType("Droid")
-        })
+        }).source
       ).toBe(
         '"response_key": propertyName.flatMap { (value: Droid) -> ResultMap in value.resultMap }'
       );
@@ -296,7 +304,7 @@ describe("Swift code generation", () => {
           responseKey: "response_key",
           propertyName: "propertyName",
           type: new GraphQLNonNull(schema.getType("Droid"))
-        })
+        }).source
       ).toBe('"response_key": propertyName.resultMap');
     });
 
@@ -306,7 +314,7 @@ describe("Swift code generation", () => {
           responseKey: "response_key",
           propertyName: "propertyName",
           type: new GraphQLList(schema.getType("Droid"))
-        })
+        }).source
       ).toBe(
         '"response_key": propertyName.flatMap { (value: [Droid?]) -> [ResultMap?] in value.map { (value: Droid?) -> ResultMap? in value.flatMap { (value: Droid) -> ResultMap in value.resultMap } } }'
       );
@@ -318,7 +326,7 @@ describe("Swift code generation", () => {
           responseKey: "response_key",
           propertyName: "propertyName",
           type: new GraphQLList(new GraphQLNonNull(schema.getType("Droid")))
-        })
+        }).source
       ).toBe(
         '"response_key": propertyName.flatMap { (value: [Droid]) -> [ResultMap] in value.map { (value: Droid) -> ResultMap in value.resultMap } }'
       );
@@ -330,7 +338,7 @@ describe("Swift code generation", () => {
           responseKey: "response_key",
           propertyName: "propertyName",
           type: new GraphQLNonNull(new GraphQLList(schema.getType("Droid")))
-        })
+        }).source
       ).toBe(
         '"response_key": propertyName.map { (value: Droid?) -> ResultMap? in value.flatMap { (value: Droid) -> ResultMap in value.resultMap } }'
       );
@@ -344,7 +352,7 @@ describe("Swift code generation", () => {
           type: new GraphQLNonNull(
             new GraphQLList(new GraphQLNonNull(schema.getType("Droid")))
           )
-        })
+        }).source
       ).toBe(
         '"response_key": propertyName.map { (value: Droid) -> ResultMap in value.resultMap }'
       );
@@ -373,7 +381,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["DroidDetails"], false);
+      generator.structDeclarationForFragment(
+        fragments["DroidDetails"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -388,7 +400,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["HeroDetails"], false);
+      generator.structDeclarationForFragment(
+        fragments["HeroDetails"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -405,7 +421,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["HeroDetails"], false);
+      generator.structDeclarationForFragment(
+        fragments["HeroDetails"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -440,6 +460,9 @@ describe("Swift code generation", () => {
         query Hero {
           hero {
             private: name
+            self: friends {
+              id
+            }
           }
         }
       `);
@@ -661,7 +684,7 @@ describe("Swift code generation", () => {
         .selectionSet.selections[0] as Field).args as Argument[];
       const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(
         fieldArguments
-      );
+      ).source;
 
       expect(dictionaryLiteral).toBe(
         '["episode": "JEDI", "review": ["stars": 2, "commentary": GraphQLVariable("commentary"), "favorite_color": ["red": GraphQLVariable("red"), "blue": 100, "green": 50]]]'

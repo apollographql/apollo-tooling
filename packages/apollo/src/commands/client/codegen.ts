@@ -72,6 +72,10 @@ export default class Generate extends ClientCommand {
       description:
         "Parse all input files, but only output generated code for the specified file [Swift only]"
     }),
+    suppressSwiftMultilineStringLiterals: flags.boolean({
+      description:
+        "Prevents operations from being rendered as multiline strings [Swift only]"
+    }),
 
     // flow
     useFlowExactObjects: flags.boolean({
@@ -96,7 +100,11 @@ export default class Generate extends ClientCommand {
     // typescript
     globalTypesFile: flags.string({
       description:
-        'By default, TypeScript will put a file named "globalTypes.ts" inside the "output" directory. Set "globalTypesFile" to specify a different path.'
+        'By default, TypeScript will put a file named "globalTypes.ts" inside the "output" directory. Set "globalTypesFile" to specify a different path. Alternatively, set "fileExtension" to modify the extension of the file, for example "d.ts" will output "globalTypes.d.ts"'
+    }),
+    tsFileExtension: flags.string({
+      description:
+        'By default, TypeScript will output "ts" files. Set "tsFileExtension" to specify a different file extension, for example "d.ts"'
     })
   };
 
@@ -114,9 +122,11 @@ export default class Generate extends ClientCommand {
 
   async run() {
     const {
-      flags: { watch }
+      flags: { watch },
+      args: { output }
     } = this.parse(Generate);
 
+    let write;
     const run = () =>
       this.runTasks(({ flags, args, project }) => {
         let inferredTarget: TargetType = "" as TargetType;
@@ -162,7 +172,12 @@ export default class Generate extends ClientCommand {
               });
 
               if (!schema) throw new Error("Error loading schema");
-              const write = () => {
+
+              write = () => {
+                // make sure all of the doucuments that we are going to be using for codegen
+                // are valid documents
+                project.validate();
+
                 const operations = Object.values(this.project.operations);
                 const fragments = Object.values(this.project.fragments);
 
@@ -200,15 +215,13 @@ export default class Generate extends ClientCommand {
                     useFlowExactObjects: flags.useFlowExactObjects,
                     useReadOnlyTypes:
                       flags.useReadOnlyTypes || flags.useFlowReadOnlyTypes,
-                    globalTypesFile: flags.globalTypesFile
+                    globalTypesFile: flags.globalTypesFile,
+                    tsFileExtension: flags.tsFileExtension,
+                    suppressSwiftMultilineStringLiterals:
+                      flags.suppressSwiftMultilineStringLiterals
                   }
                 );
               };
-
-              // project.validationDidFinish(write);
-              project.onDiagnostics(({ uri }) => {
-                write();
-              });
 
               const writtenFiles = write();
 
@@ -221,13 +234,19 @@ export default class Generate extends ClientCommand {
     if (watch) {
       await run().catch(() => {});
       const watcher = new Gaze(this.project.config.client.includes);
+      // FIXME: support excludes with the glob
       watcher.on("all", (event, file) => {
+        // don't trigger write events for generated file changes
+        if (file.indexOf("__generated__") > -1) return;
+        // don't trigger write events on single output file
+        if (file.indexOf(output) > -1) return;
         console.log("\nChange detected, generating types...");
-        this.project.fileDidChange(URI.file(file).toString());
+        write();
       });
       if (tty.isatty((process.stdin as any).fd)) {
         await waitForKey();
         watcher.close();
+        process.exit(0);
       }
       return;
     } else {

@@ -8,7 +8,8 @@ import {
   TypeSystemExtensionNode,
   isTypeSystemExtensionNode,
   DefinitionNode,
-  GraphQLSchema
+  GraphQLSchema,
+  Kind
 } from "graphql";
 
 import {
@@ -112,7 +113,6 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     this.readyPromise = Promise.all(this.initialize())
       .then(() => {
         this._isReady = true;
-        this.invalidate();
       })
       .catch(error => {
         console.error(error);
@@ -153,6 +153,10 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   public resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
     this.lastLoadDate = +new Date();
     return this.schemaProvider.resolveSchema(config);
+  }
+
+  public resolveFederatedServiceSDL() {
+    return this.schemaProvider.resolveFederatedServiceSDL();
   }
 
   public onSchemaChange(handler: NotificationHandler<GraphQLSchema>) {
@@ -204,6 +208,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   fileWasDeleted(uri: DocumentUri) {
     this.removeGraphQLDocumentsFor(uri);
+    this.checkForDuplicateOperations();
   }
 
   documentDidChange(document: TextDocument) {
@@ -216,6 +221,24 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
       this.invalidate();
     } else {
       this.removeGraphQLDocumentsFor(document.uri);
+    }
+    this.checkForDuplicateOperations();
+  }
+
+  checkForDuplicateOperations(): void {
+    const operations = Object.create(null);
+    for (const document of this.documents) {
+      if (!document.ast) continue;
+      for (const definition of document.ast.definitions) {
+        if (definition.kind === Kind.OPERATION_DEFINITION && definition.name) {
+          if (operations[definition.name.value]) {
+            throw new Error(
+              `️️There are multiple definitions for the ${definition.name.value} operation. All operations in a project must have unique names. If generating types, only the types for the first definition found will be generated.`
+            );
+          }
+          operations[definition.name.value] = definition;
+        }
+      }
     }
   }
 

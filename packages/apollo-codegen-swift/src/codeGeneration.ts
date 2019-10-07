@@ -8,7 +8,9 @@ import {
   GraphQLEnumType,
   GraphQLInputObjectType,
   isNonNullType,
-  isListType
+  isListType,
+  isEnumType,
+  isInputObjectType
 } from "graphql";
 
 import {
@@ -19,13 +21,12 @@ import {
   Field
 } from "apollo-codegen-core/lib/compiler";
 
-import { join, wrap } from "apollo-codegen-core/lib/utilities/printing";
-
 import {
   SwiftGenerator,
   Property,
-  escapeIdentifierIfNeeded,
-  Struct
+  Struct,
+  SwiftSource,
+  swift
 } from "./language";
 import { Helpers } from "./helpers";
 import { isList } from "apollo-codegen-core/lib/utilities/graphql";
@@ -40,6 +41,8 @@ import { generateOperationId } from "apollo-codegen-core/lib/compiler/visitors/g
 import { collectAndMergeFields } from "apollo-codegen-core/lib/compiler/visitors/collectAndMergeFields";
 
 import "apollo-codegen-core/lib/utilities/array";
+
+const { join, wrap } = SwiftSource;
 
 export interface Options {
   namespace?: string;
@@ -59,6 +62,7 @@ export interface Options {
 export function generateSource(
   context: CompilerContext,
   outputIndividualFiles: boolean,
+  suppressMultilineStringLiterals: boolean,
   only?: string
 ): SwiftAPIGenerator {
   const generator = new SwiftAPIGenerator(context);
@@ -95,13 +99,21 @@ export function generateSource(
           () => {
             Object.values(context.operations).forEach(operation => {
               if (operation.filePath === inputFilePath) {
-                generator.classDeclarationForOperation(operation, true);
+                generator.classDeclarationForOperation(
+                  operation,
+                  true,
+                  suppressMultilineStringLiterals
+                );
               }
             });
 
             Object.values(context.fragments).forEach(fragment => {
               if (fragment.filePath === inputFilePath) {
-                generator.structDeclarationForFragment(fragment, true);
+                generator.structDeclarationForFragment(
+                  fragment,
+                  true,
+                  suppressMultilineStringLiterals
+                );
               }
             });
           }
@@ -117,11 +129,19 @@ export function generateSource(
       });
 
       Object.values(context.operations).forEach(operation => {
-        generator.classDeclarationForOperation(operation, false);
+        generator.classDeclarationForOperation(
+          operation,
+          false,
+          suppressMultilineStringLiterals
+        );
       });
 
       Object.values(context.fragments).forEach(fragment => {
-        generator.structDeclarationForFragment(fragment, false);
+        generator.structDeclarationForFragment(
+          fragment,
+          false,
+          suppressMultilineStringLiterals
+        );
       });
     });
   }
@@ -140,10 +160,10 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
   fileHeader() {
     this.printOnNewline(
-      "//  This file was automatically generated and should not be edited."
+      SwiftSource.raw`//  This file was automatically generated and should not be edited.`
     );
     this.printNewline();
-    this.printOnNewline("import Apollo");
+    this.printOnNewline(swift`import Apollo`);
   }
 
   /**
@@ -155,7 +175,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
    */
   classDeclarationForOperation(
     operation: Operation,
-    outputIndividualFiles: boolean
+    outputIndividualFiles: boolean,
+    suppressMultilineStringLiterals: boolean
   ) {
     const {
       operationName,
@@ -202,15 +223,17 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       },
       () => {
         if (source) {
-          this.commentWithoutTrimming(source);
-          this.printOnNewline("public let operationDefinition =");
+          this.comment("The raw GraphQL definition of this operation.");
+          this.printOnNewline(swift`public let operationDefinition =`);
           this.withIndent(() => {
-            this.multilineString(source);
+            this.multilineString(source, suppressMultilineStringLiterals);
           });
         }
 
         this.printNewlineIfNeeded();
-        this.printOnNewline(`public let operationName = "${operationName}"`);
+        this.printOnNewline(
+          swift`public let operationName = ${SwiftSource.string(operationName)}`
+        );
 
         const fragmentsReferenced = collectFragmentsReferenced(
           operation.selectionSet,
@@ -226,23 +249,25 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           operation.operationId = operationId;
           this.printNewlineIfNeeded();
           this.printOnNewline(
-            `public let operationIdentifier: String? = "${operationId}"`
+            swift`public let operationIdentifier: String? = ${SwiftSource.string(
+              operationId
+            )}`
           );
         }
 
         if (fragmentsReferenced.size > 0) {
           this.printNewlineIfNeeded();
           this.printOnNewline(
-            "public var queryDocument: String { return operationDefinition"
+            swift`public var queryDocument: String { return operationDefinition`
           );
           fragmentsReferenced.forEach(fragmentName => {
             this.print(
-              `.appending(${this.helpers.structNameForFragmentName(
+              swift`.appending(${this.helpers.structNameForFragmentName(
                 fragmentName
               )}.fragmentDefinition)`
             );
           });
-          this.print(" }");
+          this.print(swift` }`);
         }
 
         this.printNewlineIfNeeded();
@@ -263,19 +288,19 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.initializerDeclarationForProperties(properties);
 
           this.printNewlineIfNeeded();
-          this.printOnNewline(`public var variables: GraphQLMap?`);
+          this.printOnNewline(swift`public var variables: GraphQLMap?`);
           this.withinBlock(() => {
             this.printOnNewline(
               wrap(
-                `return [`,
+                swift`return [`,
                 join(
                   properties.map(
                     ({ name, propertyName }) =>
-                      `"${name}": ${escapeIdentifierIfNeeded(propertyName)}`
+                      swift`${SwiftSource.string(name)}: ${propertyName}`
                   ),
                   ", "
                 ) || ":",
-                `]`
+                swift`]`
               )
             );
           });
@@ -303,7 +328,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
    */
   structDeclarationForFragment(
     { fragmentName, selectionSet, source }: Fragment,
-    outputIndividualFiles: boolean
+    outputIndividualFiles: boolean,
+    suppressMultilineStringLiterals: boolean
   ) {
     const structName = this.helpers.structNameForFragmentName(fragmentName);
 
@@ -316,10 +342,10 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       outputIndividualFiles,
       () => {
         if (source) {
-          this.commentWithoutTrimming(source);
-          this.printOnNewline("public static let fragmentDefinition =");
+          this.comment("The raw GraphQL definition of this fragment.");
+          this.printOnNewline(swift`public static let fragmentDefinition =`);
           this.withIndent(() => {
-            this.multilineString(source);
+            this.multilineString(source, suppressMultilineStringLiterals);
           });
         }
       }
@@ -420,15 +446,20 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         }
 
         this.printNewlineIfNeeded();
-        this.printOnNewline("public static let possibleTypes = [");
+        this.printOnNewline(swift`public static let possibleTypes = [`);
         this.print(
-          join(variant.possibleTypes.map(type => `"${type.name}"`), ", ")
+          join(
+            variant.possibleTypes.map(
+              type => swift`${SwiftSource.string(type.name)}`
+            ),
+            ", "
+          )
         );
-        this.print("]");
+        this.print(swift`]`);
 
         this.printNewlineIfNeeded();
         this.printOnNewline(
-          "public static let selections: [GraphQLSelection] = "
+          swift`public static let selections: [GraphQLSelection] = `
         );
         if (typeCase) {
           this.typeCaseInitialization(typeCase);
@@ -438,12 +469,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         this.printNewlineIfNeeded();
 
-        this.printOnNewline(`public private(set) var resultMap: ResultMap`);
+        this.printOnNewline(
+          swift`public private(set) var resultMap: ResultMap`
+        );
 
         this.printNewlineIfNeeded();
-        this.printOnNewline("public init(unsafeResultMap: ResultMap)");
+        this.printOnNewline(swift`public init(unsafeResultMap: ResultMap)`);
         this.withinBlock(() => {
-          this.printOnNewline(`self.resultMap = unsafeResultMap`);
+          this.printOnNewline(swift`self.resultMap = unsafeResultMap`);
         });
 
         if (typeCase) {
@@ -472,17 +505,17 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         if (fragmentSpreads.length > 0) {
           this.printNewlineIfNeeded();
-          this.printOnNewline(`public var fragments: Fragments`);
+          this.printOnNewline(swift`public var fragments: Fragments`);
           this.withinBlock(() => {
-            this.printOnNewline("get");
+            this.printOnNewline(swift`get`);
             this.withinBlock(() => {
               this.printOnNewline(
-                `return Fragments(unsafeResultMap: resultMap)`
+                swift`return Fragments(unsafeResultMap: resultMap)`
               );
             });
-            this.printOnNewline("set");
+            this.printOnNewline(swift`set`);
             this.withinBlock(() => {
-              this.printOnNewline(`resultMap += newValue.resultMap`);
+              this.printOnNewline(swift`resultMap += newValue.resultMap`);
             });
           });
 
@@ -493,13 +526,15 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             outputIndividualFiles,
             () => {
               this.printOnNewline(
-                `public private(set) var resultMap: ResultMap`
+                swift`public private(set) var resultMap: ResultMap`
               );
 
               this.printNewlineIfNeeded();
-              this.printOnNewline("public init(unsafeResultMap: ResultMap)");
+              this.printOnNewline(
+                swift`public init(unsafeResultMap: ResultMap)`
+              );
               this.withinBlock(() => {
-                this.printOnNewline(`self.resultMap = unsafeResultMap`);
+                this.printOnNewline(swift`self.resultMap = unsafeResultMap`);
               });
 
               for (const fragmentSpread of fragmentSpreads) {
@@ -512,31 +547,33 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
                 this.printNewlineIfNeeded();
                 this.printOnNewline(
-                  `public var ${escapeIdentifierIfNeeded(
-                    propertyName
-                  )}: ${typeName}`
+                  swift`public var ${propertyName}: ${typeName}`
                 );
                 this.withinBlock(() => {
-                  this.printOnNewline("get");
+                  this.printOnNewline(swift`get`);
                   this.withinBlock(() => {
                     if (isConditional) {
                       this.printOnNewline(
-                        `if !${structName}.possibleTypes.contains(resultMap["__typename"]! as! String) { return nil }`
+                        swift`if !${structName}.possibleTypes.contains(resultMap["__typename"]! as! String) { return nil }`
                       );
                     }
                     this.printOnNewline(
-                      `return ${structName}(unsafeResultMap: resultMap)`
+                      swift`return ${structName}(unsafeResultMap: resultMap)`
                     );
                   });
-                  this.printOnNewline("set");
+                  this.printOnNewline(swift`set`);
                   this.withinBlock(() => {
                     if (isConditional) {
                       this.printOnNewline(
-                        `guard let newValue = newValue else { return }`
+                        swift`guard let newValue = newValue else { return }`
                       );
-                      this.printOnNewline(`resultMap += newValue.resultMap`);
+                      this.printOnNewline(
+                        swift`resultMap += newValue.resultMap`
+                      );
                     } else {
-                      this.printOnNewline(`resultMap += newValue.resultMap`);
+                      this.printOnNewline(
+                        swift`resultMap += newValue.resultMap`
+                      );
                     }
                   });
                 });
@@ -593,22 +630,24 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       if (!properties) return;
 
       this.printNewlineIfNeeded();
-      this.printOnNewline(`public init`);
+      this.printOnNewline(swift`public init`);
 
       this.parametersForProperties(properties);
 
       this.withinBlock(() => {
         this.printOnNewline(
           wrap(
-            `self.init(unsafeResultMap: [`,
+            swift`self.init(unsafeResultMap: [`,
             join(
               [
-                `"__typename": "${variant.possibleTypes[0]}"`,
+                swift`"__typename": ${SwiftSource.string(
+                  variant.possibleTypes[0].toString()
+                )}`,
                 ...properties.map(this.propertyAssignmentForField, this)
               ],
               ", "
             ) || ":",
-            `])`
+            swift`])`
           )
         );
       });
@@ -627,24 +666,28 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         if (!properties) continue;
 
         this.printNewlineIfNeeded();
-        this.printOnNewline(`public static func make${possibleType}`);
+        this.printOnNewline(
+          SwiftSource.raw`public static func make${possibleType}`
+        );
 
         this.parametersForProperties(properties);
 
-        this.print(` -> ${structName}`);
+        this.print(swift` -> ${structName}`);
 
         this.withinBlock(() => {
           this.printOnNewline(
             wrap(
-              `return ${structName}(unsafeResultMap: [`,
+              swift`return ${structName}(unsafeResultMap: [`,
               join(
                 [
-                  `"__typename": "${possibleType}"`,
+                  swift`"__typename": ${SwiftSource.string(
+                    possibleType.toString()
+                  )}`,
                   ...properties.map(this.propertyAssignmentForField, this)
                 ],
                 ", "
               ) || ":",
-              `])`
+              swift`])`
             )
           );
         });
@@ -658,7 +701,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     type: GraphQLType;
     isConditional?: boolean;
     structName?: string;
-  }) {
+  }): SwiftSource {
     const {
       responseKey,
       propertyName,
@@ -670,13 +713,13 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       ? this.helpers.mapExpressionForType(
           type,
           isConditional,
-          expression => `${expression}.resultMap`,
-          escapeIdentifierIfNeeded(propertyName),
+          expression => swift`${expression}.resultMap`,
+          SwiftSource.identifier(propertyName),
           structName!,
           "ResultMap"
         )
-      : escapeIdentifierIfNeeded(propertyName);
-    return `"${responseKey}": ${valueExpression}`;
+      : SwiftSource.identifier(propertyName);
+    return swift`${SwiftSource.string(responseKey)}: ${valueExpression}`;
   }
 
   propertyDeclarationForField(field: Field & Property) {
@@ -696,17 +739,13 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.comment(field.description);
     this.deprecationAttributes(field.isDeprecated, field.deprecationReason);
 
-    this.printOnNewline(
-      `public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`
-    );
+    this.printOnNewline(swift`public var ${propertyName}: ${typeName}`);
     this.withinBlock(() => {
       if (isCompositeType(unmodifiedFieldType)) {
-        const structName = escapeIdentifierIfNeeded(
-          this.helpers.structNameForPropertyName(propertyName)
-        );
+        const structName = this.helpers.structNameForPropertyName(propertyName);
 
         if (isList(type)) {
-          this.printOnNewline("get");
+          this.printOnNewline(swift`get`);
           this.withinBlock(() => {
             const resultMapTypeName = this.helpers.typeNameFromGraphQLType(
               type,
@@ -715,49 +754,60 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             );
             let expression;
             if (isOptional) {
-              expression = `(resultMap["${responseKey}"] as? ${resultMapTypeName})`;
+              expression = swift`(resultMap[${SwiftSource.string(
+                responseKey
+              )}] as? ${resultMapTypeName})`;
             } else {
-              expression = `(resultMap["${responseKey}"] as! ${resultMapTypeName})`;
+              expression = swift`(resultMap[${SwiftSource.string(
+                responseKey
+              )}] as! ${resultMapTypeName})`;
             }
             this.printOnNewline(
-              `return ${this.helpers.mapExpressionForType(
+              swift`return ${this.helpers.mapExpressionForType(
                 type,
                 isConditional,
-                expression => `${structName}(unsafeResultMap: ${expression})`,
+                expression =>
+                  swift`${structName}(unsafeResultMap: ${expression})`,
                 expression,
                 "ResultMap",
                 structName
               )}`
             );
           });
-          this.printOnNewline("set");
+          this.printOnNewline(swift`set`);
           this.withinBlock(() => {
             let newValueExpression = this.helpers.mapExpressionForType(
               type,
               isConditional,
-              expression => `${expression}.resultMap`,
-              "newValue",
+              expression => swift`${expression}.resultMap`,
+              swift`newValue`,
               structName,
               "ResultMap"
             );
             this.printOnNewline(
-              `resultMap.updateValue(${newValueExpression}, forKey: "${responseKey}")`
+              swift`resultMap.updateValue(${newValueExpression}, forKey: ${SwiftSource.string(
+                responseKey
+              )})`
             );
           });
         } else {
-          this.printOnNewline("get");
+          this.printOnNewline(swift`get`);
           this.withinBlock(() => {
             if (isOptional) {
               this.printOnNewline(
-                `return (resultMap["${responseKey}"] as? ResultMap).flatMap { ${structName}(unsafeResultMap: $0) }`
+                swift`return (resultMap[${SwiftSource.string(
+                  responseKey
+                )}] as? ResultMap).flatMap { ${structName}(unsafeResultMap: $0) }`
               );
             } else {
               this.printOnNewline(
-                `return ${structName}(unsafeResultMap: resultMap["${responseKey}"]! as! ResultMap)`
+                swift`return ${structName}(unsafeResultMap: resultMap[${SwiftSource.string(
+                  responseKey
+                )}]! as! ResultMap)`
               );
             }
           });
-          this.printOnNewline("set");
+          this.printOnNewline(swift`set`);
           this.withinBlock(() => {
             let newValueExpression;
             if (isOptional) {
@@ -766,27 +816,35 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
               newValueExpression = "newValue.resultMap";
             }
             this.printOnNewline(
-              `resultMap.updateValue(${newValueExpression}, forKey: "${responseKey}")`
+              swift`resultMap.updateValue(${newValueExpression}, forKey: ${SwiftSource.string(
+                responseKey
+              )})`
             );
           });
         }
       } else {
-        this.printOnNewline("get");
+        this.printOnNewline(swift`get`);
         this.withinBlock(() => {
           if (isOptional) {
             this.printOnNewline(
-              `return resultMap["${responseKey}"] as? ${typeName.slice(0, -1)}`
+              swift`return resultMap[${SwiftSource.string(
+                responseKey
+              )}] as? ${typeName.slice(0, -1)}`
             );
           } else {
             this.printOnNewline(
-              `return resultMap["${responseKey}"]! as! ${typeName}`
+              swift`return resultMap[${SwiftSource.string(
+                responseKey
+              )}]! as! ${typeName}`
             );
           }
         });
-        this.printOnNewline("set");
+        this.printOnNewline(swift`set`);
         this.withinBlock(() => {
           this.printOnNewline(
-            `resultMap.updateValue(newValue, forKey: "${responseKey}")`
+            swift`resultMap.updateValue(newValue, forKey: ${SwiftSource.string(
+              responseKey
+            )})`
           );
         });
       }
@@ -797,52 +855,52 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     const { propertyName, typeName, structName } = variant;
 
     this.printNewlineIfNeeded();
-    this.printOnNewline(
-      `public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`
-    );
+    this.printOnNewline(swift`public var ${propertyName}: ${typeName}`);
     this.withinBlock(() => {
-      this.printOnNewline("get");
+      this.printOnNewline(swift`get`);
       this.withinBlock(() => {
         this.printOnNewline(
-          `if !${structName}.possibleTypes.contains(__typename) { return nil }`
+          swift`if !${structName}.possibleTypes.contains(__typename) { return nil }`
         );
-        this.printOnNewline(`return ${structName}(unsafeResultMap: resultMap)`);
+        this.printOnNewline(
+          swift`return ${structName}(unsafeResultMap: resultMap)`
+        );
       });
-      this.printOnNewline("set");
+      this.printOnNewline(swift`set`);
       this.withinBlock(() => {
-        this.printOnNewline(`guard let newValue = newValue else { return }`);
-        this.printOnNewline(`resultMap = newValue.resultMap`);
+        this.printOnNewline(
+          swift`guard let newValue = newValue else { return }`
+        );
+        this.printOnNewline(swift`resultMap = newValue.resultMap`);
       });
     });
   }
 
   initializerDeclarationForProperties(properties: Property[]) {
-    this.printOnNewline(`public init`);
+    this.printOnNewline(swift`public init`);
     this.parametersForProperties(properties);
 
     this.withinBlock(() => {
       properties.forEach(({ propertyName }) => {
-        this.printOnNewline(
-          `self.${propertyName} = ${escapeIdentifierIfNeeded(propertyName)}`
-        );
+        this.printOnNewline(swift`self.${propertyName} = ${propertyName}`);
       });
     });
   }
 
   parametersForProperties(properties: Property[]) {
-    this.print("(");
+    this.print(swift`(`);
     this.print(
       join(
         properties.map(({ propertyName, typeName, isOptional }) =>
           join([
-            `${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`,
-            isOptional && " = nil"
+            swift`${propertyName}: ${typeName}`,
+            isOptional ? swift` = nil` : undefined
           ])
         ),
         ", "
       )
     );
-    this.print(")");
+    this.print(swift`)`);
   }
 
   typeCaseInitialization(typeCase: TypeCase) {
@@ -851,32 +909,36 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       return;
     }
 
-    this.print("[");
+    this.print(swift`[`);
     this.withIndent(() => {
-      this.printOnNewline(`GraphQLTypeCase(`);
+      this.printOnNewline(swift`GraphQLTypeCase(`);
       this.withIndent(() => {
-        this.printOnNewline(`variants: [`);
+        this.printOnNewline(swift`variants: [`);
         this.print(
-          typeCase.variants
-            .flatMap(variant => {
+          join(
+            typeCase.variants.flatMap(variant => {
               const structName = this.helpers.structNameForVariant(variant);
               return variant.possibleTypes.map(
-                type => `"${type}": ${structName}.selections`
+                type =>
+                  swift`${SwiftSource.string(
+                    type.toString()
+                  )}: ${structName}.selections`
               );
-            })
-            .join(", ")
+            }),
+            ", "
+          )
         );
-        this.print("],");
-        this.printOnNewline(`default: `);
+        this.print(swift`],`);
+        this.printOnNewline(swift`default: `);
         this.selectionSetInitialization(typeCase.default);
       });
-      this.printOnNewline(")");
+      this.printOnNewline(swift`)`);
     });
-    this.printOnNewline("]");
+    this.printOnNewline(swift`]`);
   }
 
   selectionSetInitialization(selectionSet: SelectionSet) {
-    this.print("[");
+    this.print(swift`[`);
     this.withIndent(() => {
       for (const selection of selectionSet.selections) {
         switch (selection.kind) {
@@ -887,71 +949,77 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
               responseKey
             );
 
-            this.printOnNewline(`GraphQLField(`);
+            this.printOnNewline(swift`GraphQLField(`);
             this.print(
               join(
                 [
-                  `"${name}"`,
-                  alias ? `alias: "${alias}"` : null,
-                  args &&
-                    args.length &&
-                    `arguments: ${this.helpers.dictionaryLiteralForFieldArguments(
-                      args
-                    )}`,
-                  `type: ${this.helpers.fieldTypeEnum(type, structName)}`
+                  swift`${SwiftSource.string(name)}`,
+                  alias
+                    ? swift`alias: ${SwiftSource.string(alias)}`
+                    : undefined,
+                  args && args.length
+                    ? swift`arguments: ${this.helpers.dictionaryLiteralForFieldArguments(
+                        args
+                      )}`
+                    : undefined,
+                  swift`type: ${this.helpers.fieldTypeEnum(type, structName)}`
                 ],
                 ", "
               )
             );
-            this.print("),");
+            this.print(swift`),`);
             break;
           }
           case "BooleanCondition":
-            this.printOnNewline(`GraphQLBooleanCondition(`);
+            this.printOnNewline(swift`GraphQLBooleanCondition(`);
             this.print(
               join(
                 [
-                  `variableName: "${selection.variableName}"`,
-                  `inverted: ${selection.inverted}`,
-                  "selections: "
+                  swift`variableName: ${SwiftSource.string(
+                    selection.variableName
+                  )}`,
+                  swift`inverted: ${selection.inverted}`,
+                  swift`selections: `
                 ],
                 ", "
               )
             );
             this.selectionSetInitialization(selection.selectionSet);
-            this.print("),");
+            this.print(swift`),`);
             break;
           case "TypeCondition": {
-            this.printOnNewline(`GraphQLTypeCondition(`);
+            this.printOnNewline(swift`GraphQLTypeCondition(`);
             this.print(
               join(
                 [
-                  `possibleTypes: [${join(
+                  swift`possibleTypes: [${join(
                     selection.selectionSet.possibleTypes.map(
-                      type => `"${type.name}"`
+                      type => swift`${SwiftSource.string(type.name)}`
                     ),
                     ", "
                   )}]`,
-                  "selections: "
+                  swift`selections: `
                 ],
                 ", "
               )
             );
             this.selectionSetInitialization(selection.selectionSet);
-            this.print("),");
+            this.print(swift`),`);
             break;
           }
           case "FragmentSpread": {
             const structName = this.helpers.structNameForFragmentName(
               selection.fragmentName
             );
-            this.printOnNewline(`GraphQLFragmentSpread(${structName}.self),`);
+            this.printOnNewline(
+              swift`GraphQLFragmentSpread(${structName}.self),`
+            );
             break;
           }
         }
       }
     });
-    this.printOnNewline("]");
+    this.printOnNewline(swift`]`);
   }
 
   /**
@@ -965,9 +1033,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     type: GraphQLType,
     outputIndividualFiles: boolean
   ) {
-    if (type instanceof GraphQLEnumType) {
+    if (isEnumType(type)) {
       this.enumerationDeclaration(type);
-    } else if (type instanceof GraphQLInputObjectType) {
+    } else if (isInputObjectType(type)) {
       this.structDeclarationForInputObjectType(type, outputIndividualFiles);
     }
   }
@@ -979,10 +1047,10 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printNewlineIfNeeded();
     this.comment(description || undefined);
     this.printOnNewline(
-      `public enum ${name}: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable`
+      swift`public enum ${name}: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable`
     );
     this.withinBlock(() => {
-      this.printOnNewline("public typealias RawValue = String");
+      this.printOnNewline(swift`public typealias RawValue = String`);
 
       values.forEach(value => {
         this.comment(value.description || undefined);
@@ -991,80 +1059,74 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           value.deprecationReason || undefined
         );
         this.printOnNewline(
-          `case ${escapeIdentifierIfNeeded(
-            this.helpers.enumCaseName(value.name)
-          )}`
+          swift`case ${this.helpers.enumCaseName(value.name)}`
         );
       });
       this.comment("Auto generated constant for unknown enum values");
-      this.printOnNewline("case __unknown(RawValue)");
+      this.printOnNewline(swift`case __unknown(RawValue)`);
 
       this.printNewlineIfNeeded();
-      this.printOnNewline("public init?(rawValue: RawValue)");
+      this.printOnNewline(swift`public init?(rawValue: RawValue)`);
       this.withinBlock(() => {
-        this.printOnNewline("switch rawValue");
+        this.printOnNewline(swift`switch rawValue`);
         this.withinBlock(() => {
           values.forEach(value => {
             this.printOnNewline(
-              `case "${value.value}": self = ${escapeIdentifierIfNeeded(
-                this.helpers.enumDotCaseName(value.name)
-              )}`
+              swift`case ${SwiftSource.string(
+                value.value
+              )}: self = ${this.helpers.enumDotCaseName(value.name)}`
             );
           });
-          this.printOnNewline(`default: self = .__unknown(rawValue)`);
+          this.printOnNewline(swift`default: self = .__unknown(rawValue)`);
         });
       });
 
       this.printNewlineIfNeeded();
-      this.printOnNewline("public var rawValue: RawValue");
+      this.printOnNewline(swift`public var rawValue: RawValue`);
       this.withinBlock(() => {
-        this.printOnNewline("switch self");
+        this.printOnNewline(swift`switch self`);
         this.withinBlock(() => {
           values.forEach(value => {
             this.printOnNewline(
-              `case ${escapeIdentifierIfNeeded(
-                this.helpers.enumDotCaseName(value.name)
-              )}: return "${value.value}"`
+              swift`case ${this.helpers.enumDotCaseName(
+                value.name
+              )}: return ${SwiftSource.string(value.value)}`
             );
           });
-          this.printOnNewline(`case .__unknown(let value): return value`);
+          this.printOnNewline(swift`case .__unknown(let value): return value`);
         });
       });
 
       this.printNewlineIfNeeded();
       this.printOnNewline(
-        `public static func == (lhs: ${name}, rhs: ${name}) -> Bool`
+        swift`public static func == (lhs: ${name}, rhs: ${name}) -> Bool`
       );
       this.withinBlock(() => {
-        this.printOnNewline("switch (lhs, rhs)");
+        this.printOnNewline(swift`switch (lhs, rhs)`);
         this.withinBlock(() => {
           values.forEach(value => {
-            const enumDotCaseName = escapeIdentifierIfNeeded(
-              this.helpers.enumDotCaseName(value.name)
-            );
-            const tuple = `(${enumDotCaseName}, ${enumDotCaseName})`;
-            this.printOnNewline(`case ${tuple}: return true`);
+            const enumDotCaseName = this.helpers.enumDotCaseName(value.name);
+            const tuple = swift`(${enumDotCaseName}, ${enumDotCaseName})`;
+            this.printOnNewline(swift`case ${tuple}: return true`);
           });
           this.printOnNewline(
-            `case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue`
+            swift`case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue`
           );
-          this.printOnNewline(`default: return false`);
+          this.printOnNewline(swift`default: return false`);
         });
       });
 
       this.printNewlineIfNeeded();
-      this.printOnNewline(`public static var allCases: [${name}]`);
+      this.printOnNewline(swift`public static var allCases: [${name}]`);
       this.withinBlock(() => {
-        this.printOnNewline(`return [`);
+        this.printOnNewline(swift`return [`);
         values.forEach(value => {
-          const enumDotCaseName = escapeIdentifierIfNeeded(
-            this.helpers.enumDotCaseName(value.name)
-          );
+          const enumDotCaseName = this.helpers.enumDotCaseName(value.name);
           this.withIndent(() => {
-            this.printOnNewline(`${enumDotCaseName},`);
+            this.printOnNewline(swift`${enumDotCaseName},`);
           });
         });
-        this.printOnNewline(`]`);
+        this.printOnNewline(swift`]`);
       });
     });
   }
@@ -1099,36 +1161,36 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       { structName, description: description || undefined, adoptedProtocols },
       outputIndividualFiles,
       () => {
-        this.printOnNewline(`public var graphQLMap: GraphQLMap`);
+        this.printOnNewline(swift`public var graphQLMap: GraphQLMap`);
 
         this.printNewlineIfNeeded();
-        this.printOnNewline(`public init`);
-        this.print("(");
+        this.printOnNewline(swift`public init`);
+        this.print(swift`(`);
         this.print(
           join(
             properties.map(({ propertyName, typeName, isOptional }) =>
               join([
-                `${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`,
-                isOptional && " = nil"
+                swift`${propertyName}: ${typeName}`,
+                isOptional ? swift` = nil` : undefined
               ])
             ),
             ", "
           )
         );
-        this.print(")");
+        this.print(swift`)`);
 
         this.withinBlock(() => {
           this.printOnNewline(
             wrap(
-              `graphQLMap = [`,
+              swift`graphQLMap = [`,
               join(
                 properties.map(
                   ({ name, propertyName }) =>
-                    `"${name}": ${escapeIdentifierIfNeeded(propertyName)}`
+                    swift`${SwiftSource.string(name)}: ${propertyName}`
                 ),
                 ", "
               ) || ":",
-              `]`
+              swift`]`
             )
           );
         });
@@ -1142,26 +1204,30 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         } of properties) {
           this.printNewlineIfNeeded();
           this.comment(description || undefined);
-          this.printOnNewline(
-            `public var ${escapeIdentifierIfNeeded(propertyName)}: ${typeName}`
-          );
+          this.printOnNewline(swift`public var ${propertyName}: ${typeName}`);
           this.withinBlock(() => {
-            this.printOnNewline("get");
+            this.printOnNewline(swift`get`);
             this.withinBlock(() => {
               if (isOptional) {
                 this.printOnNewline(
-                  `return graphQLMap["${name}"] as? ${typeName} ?? .none`
+                  swift`return graphQLMap[${SwiftSource.string(
+                    name
+                  )}] as? ${typeName} ?? ${typeName}.none`
                 );
               } else {
                 this.printOnNewline(
-                  `return graphQLMap["${name}"] as! ${typeName}`
+                  swift`return graphQLMap[${SwiftSource.string(
+                    name
+                  )}] as! ${typeName}`
                 );
               }
             });
-            this.printOnNewline("set");
+            this.printOnNewline(swift`set`);
             this.withinBlock(() => {
               this.printOnNewline(
-                `graphQLMap.updateValue(newValue, forKey: "${name}")`
+                swift`graphQLMap.updateValue(newValue, forKey: ${SwiftSource.string(
+                  name
+                )})`
               );
             });
           });

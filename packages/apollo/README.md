@@ -21,7 +21,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.17.2 linux-x64 node-v10.16.0
+apollo/2.19.0 darwin-x64 node-v8.11.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -131,6 +131,8 @@ OPTIONS
 
   --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
                                              "output" directory. Set "globalTypesFile" to specify a different path.
+                                             Alternatively, set "fileExtension" to modify the extension of the file, for
+                                             example "d.ts" will output "globalTypes.d.ts"
 
   --header=header                            Additional header to send to server for introspectionQuery. May be used
                                              multiple times to add multiple headers. NOTE: The `--endpoint` flag is
@@ -163,11 +165,16 @@ OPTIONS
 
   --queries=queries                          Deprecated in favor of the includes flag
 
+  --suppressSwiftMultilineStringLiterals     Prevents operations from being rendered as multiline strings [Swift only]
+
   --tagName=tagName                          Name of the template literal tag used to identify template literals
                                              containing GraphQL queries in Javascript/Typescript code
 
   --target=target                            (required) Type of code generator to use (swift | typescript | flow |
                                              scala)
+
+  --tsFileExtension=tsFileExtension          By default, TypeScript will output "ts" files. Set "tsFileExtension" to
+                                             specify a different file extension, for example "d.ts"
 
   --useFlowExactObjects                      Use Flow exact objects for generated types [flow only]
 
@@ -325,7 +332,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.0/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.1/src/commands/help.ts)_
 
 ## `apollo plugins`
 
@@ -775,10 +782,18 @@ Some integration tests rely on mocked server data (service:check for example). M
 
 ## Publishing
 
-- Make sure the `CHANGELOG.md` is updated with all changes committed since the last release. Make sure the versions for each package to update are correct, and there's a blank `Upcoming` section for future work.
-- Run `npm run release` to publish the individual packages.
+1. Make sure the `CHANGELOG.md` is updated with all changes committed since the last release. Make sure the versions for each package to update are correct, and there's a blank `Upcoming` section for future work.
+2. Run `npm run release:version-bump -- <bumpish>`
+   - Can use major, minor, patch, prepatch, etc for the bump type. If not used, the command will prompt and ask for the bump type.
+   - This command updates git tags locally and on GitHub
+3. Run npm run release:start-ci-publish locally
+   - Pushes a `publish/XXXXXXXXXX` tag to GitHub to trigger circle CI build
+4. Circle will notify the appropriate Apollo team slack channel when ready to release
+   - Slack channel member will confirm through the Apollo Deploy Bot
+   - Circle will release to all channels (npm, cli binary to s3, vscode marketplace)
+   - Another slack bot notification will confirm success of release.
 
 ## Maintainers
 
+- [@JakeDawkins](https://github.com/jakedawkins) (Apollo)
 - [@jbaxleyiii](https://github.com/jbaxleyiii) (Apollo)
-- [@trevor-scheer](https://github.com/trevor-scheer) (Apollo)

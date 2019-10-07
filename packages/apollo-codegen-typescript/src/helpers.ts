@@ -3,16 +3,18 @@ import {
   GraphQLFloat,
   GraphQLInt,
   GraphQLID,
-  GraphQLScalarType,
   GraphQLString,
   GraphQLType,
   isListType,
-  isNonNullType
+  isNonNullType,
+  isScalarType
 } from "graphql";
 
 import * as t from "@babel/types";
 
 import { CompilerOptions } from "apollo-codegen-core/lib/compiler";
+
+const DEFAULT_FILE_EXTENSION = "ts";
 
 const builtInScalarMap = {
   [GraphQLString.name]: t.TSStringKeyword(),
@@ -44,7 +46,7 @@ export function createTypeFromGraphQLTypeFunction(
           ? t.TSParenthesizedType(elementType)
           : elementType
       );
-    } else if (graphQLType instanceof GraphQLScalarType) {
+    } else if (isScalarType(graphQLType)) {
       const builtIn = builtInScalarMap[typeName || graphQLType.name];
       if (builtIn != null) {
         return builtIn;
@@ -79,3 +81,5 @@ export function createTypeFromGraphQLTypeFunction(
 
   return typeFromGraphQLType;
 }
+
+export { DEFAULT_FILE_EXTENSION };

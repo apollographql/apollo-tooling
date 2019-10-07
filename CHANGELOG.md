@@ -4,14 +4,12 @@
 
 - `apollo`
   - <First `apollo` related entry goes here>
-- `apollo-codegen-core`
-  - <First `apollo-codegen-core` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
-- `apollo-codegen-swift` 
-  - Revert changes from [#656](https://github.com/apollographql/apollo-tooling/pull/656) due to build issues not caught by tests.
+- `apollo-codegen-swift`
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
@@ -19,12 +17,110 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Fix #735 caused #928 error implement [#1461](https://github.com/apollographql/apollo-tooling/pull/1461)
-  - Fix dirname parsing for ts config files [#1463](https://github.com/apollographql/apollo-tooling/pull/1463)
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.19.0`
+
+- `apollo@2.19.0`
+  - Improve performance of CLI when running projects by delaying or not calling validation unnecessarily [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
+  - Use "table" package for tabular output and word wrap support [#1524](https://github.com/apollographql/apollo-tooling/pull/1524)
+  - Use new single step mutation for checking federated service schemas [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
+  - Add support for `localSchemaFile` for federated service commands [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
+- `apollo-codegen-core@0.35.4`
+  - Improve performance of validation when client fields are present or not [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
+- `apollo-codegen-swift@0.35.9`
+  - Switch operations and fragments to default to printing queries as multiline strings rather than including queries as multiline comments
+  - Add `--suppressSwiftMultilineStringLiterals` flag to allow a version which strips unnecessary whitespace.
+- `apollo-graphql@0.3.4`
+  - Use reference-equality, rather than `Function.prototype.name` string comparison, when omitting validation rules within `buildSchemaFromSDL`. [#1551](https://github.com/apollographql/apollo-tooling/pull/1551)
+- `apollo-language-server@1.16.0`
+  - Replace old mutation used for checking partial service schemas to use `checkPartialSchema` [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
+  - Remove old federation-info provider [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
+  - Support using local schema files for checks/pushes of federated services [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
+- `vscode-apollo@1.11.0`
+  - Improve performance of validation when client fields are present or not [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
+
+## `apollo@2.18.3`
+
+- `apollo`
+  - fix bad parsing of multiple `localSchemaFile`s [#1529](https://github.com/apollographql/apollo-tooling/pull/1529)
+
+## `apollo@2.18.2`
+
+- `apollo-codegen-core@0.35.2`
+- `apollo-codegen-flow@0.33.27`
+- `apollo-codegen-scala@0.34.27`
+- `apollo-codegen-swift@0.35.7`
+- `apollo-codegen-typescript@0.35.2`
+- `apollo-language-server@1.15.2`
+- `apollo@2.18.2`
+
+- `apollo`
+  - Support multiple `localSchemaFile`s [#1500](https://github.com/apollographql/apollo-tooling/pull/1500)
+- `apollo-codegen-core`
+  - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
+- `apollo-codegen-flow`
+  - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
+- `apollo-codegen-scala`
+  - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
+- `apollo-codegen-swift`
+  - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
+  - Ensure types and strings are properly escaped in all generated code [#1515](https://github.com/apollographql/apollo-tooling/pull/1515)
+  - Fix warning in Xcode 11 when enums have a none case [#1482](https://github.com/apollographql/apollo-tooling/pull/1482)
+- `apollo-codegen-typescript`
+  - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
+- `apollo-language-server`
+  - Replace instanceof checks with their respective predicates [#1518](https://github.com/apollographql/apollo-tooling/pull/1518)
+  - Support multiple `localSchemaFile`s [#1500](https://github.com/apollographql/apollo-tooling/pull/1500)
+
+## `apollo@2.18.1`
+
+- `apollo-codegen-core@0.35.1`
+- `apollo-codegen-flow@0.33.26`
+- `apollo-codegen-scala@0.34.26`
+- `apollo-codegen-swift@0.35.6`
+- `apollo-codegen-typescript@0.35.1`
+- `apollo-language-server@1.15.1`
+- `vscode-apollo@1.10.1`
+- `apollo@2.18.1`
+  - Shorten `client:check` and `service:check` output in CI [#1404](https://github.com/apollographql/apollo-tooling/pull/1404)
+  - service:check add null check for validation config [#1471](https://github.com/apollographql/apollo-tooling/pull/1471)
+
+## `apollo@2.18.0`, `apollo-language-server@1.15.0`, `apollo-codegen-core@0.35.0`, `apollo-codegen-typescript@0.35.0`, `vscode-apollo@1.10.0`
+
+- `apollo-codegen-core@0.35.0`
+  - Add tsFileExtension option to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
+- `apollo-codegen-typescript@0.35.0`
+  - Add tsFileExtension option to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
+- `apollo-language-server@1.15.0`
+  - Add debugging util classes for better error/warning handling [#1429](https://github.com/apollographql/apollo-tooling/pull/1429)
+  - Add error for duplicate client operation names [#1466](https://github.com/apollographql/apollo-tooling/pull/1466)
+  - Add client schema support through autocomplete, hover information, validation rules, and code actions. [#1433](https://github.com/apollographql/apollo-tooling/pull/1433)
+- `apollo@2.18.0`
+  - Add tsFileExtension flag to allow custom file extension in ts (like d.ts) [#1130](https://github.com/apollographql/apollo-tooling/pull/1130)
+- `vscode-apollo@1.10.0`
+  - Improve the syntax highlighting of directives and their definitions. [#1433](https://github.com/apollographql/apollo-tooling/pull/1433)
+  - Add debugging util class for better logging in vs code [#1429](https://github.com/apollographql/apollo-tooling/pull/1429)
+
+## `apollo-language-server@1.14.3`
+
+- `apollo-language-server@1.14.3`
+  - Fix issue where fragment definitions only included in `@client` fields would not be stripped ((AP-682)(https://golinks.io/AP-682), [#1454](https://github.com/apollographql/apollo-tooling/pull/1454))
+
+## `apollo-language-server@1.14.2`
+
+- `apollo-language-server@1.14.2`
+  - Fix #735 caused #928 error implement [#1461](https://github.com/apollographql/apollo-tooling/pull/1461)
+  - Fix dirname parsing for ts config files [#1463](https://github.com/apollographql/apollo-tooling/pull/1463)
+
+## `apollo-codegen-swift@0.35.2`
+
+- `apollo-codegen-swift@0.35.2`
+  - Revert changes from [#656](https://github.com/apollographql/apollo-tooling/pull/656) due to build issues not caught by tests.
 
 ## `apollo@2.17.1`, `apollo-codegen-swift@0.35.1`
 

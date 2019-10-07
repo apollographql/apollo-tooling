@@ -5,21 +5,21 @@ import {
   GraphQLFloat,
   GraphQLBoolean,
   GraphQLID,
-  GraphQLNonNull,
   GraphQLScalarType,
-  GraphQLEnumType,
   isCompositeType,
   getNamedType,
   GraphQLInputField,
   isNonNullType,
-  isListType
+  isListType,
+  isScalarType,
+  isEnumType
 } from "graphql";
 
 import { camelCase, pascalCase } from "change-case";
 import * as Inflector from "inflected";
 import { join, wrap } from "apollo-codegen-core/lib/utilities/printing";
 
-import { Property, Struct } from "./language";
+import { Property, Struct, SwiftSource, swift } from "./language";
 
 import {
   CompilerOptions,
@@ -31,6 +31,10 @@ import {
 import { isMetaFieldName } from "apollo-codegen-core/lib/utilities/graphql";
 import { Variant } from "apollo-codegen-core/lib/compiler/visitors/typeCase";
 import { collectAndMergeFields } from "apollo-codegen-core/lib/compiler/visitors/collectAndMergeFields";
+
+// In this file, most functions work with strings, but anything that takes or receives an
+// expression uses `SwiftSource`. This way types and names stay represented as strings for as long as
+// possible.
 
 const builtInScalarMap = {
   [GraphQLString.name]: "String",
@@ -66,7 +70,7 @@ export class Helpers {
         "[" +
         this.typeNameFromGraphQLType(type.ofType, unmodifiedTypeName) +
         "]";
-    } else if (type instanceof GraphQLScalarType) {
+    } else if (isScalarType(type)) {
       typeName = this.typeNameForScalarType(type);
     } else {
       typeName = unmodifiedTypeName || type.name;
@@ -84,17 +88,17 @@ export class Helpers {
     );
   }
 
-  fieldTypeEnum(type: GraphQLType, structName: string): string {
+  fieldTypeEnum(type: GraphQLType, structName: string): SwiftSource {
     if (isNonNullType(type)) {
-      return `.nonNull(${this.fieldTypeEnum(type.ofType, structName)})`;
+      return swift`.nonNull(${this.fieldTypeEnum(type.ofType, structName)})`;
     } else if (isListType(type)) {
-      return `.list(${this.fieldTypeEnum(type.ofType, structName)})`;
-    } else if (type instanceof GraphQLScalarType) {
-      return `.scalar(${this.typeNameForScalarType(type)}.self)`;
-    } else if (type instanceof GraphQLEnumType) {
-      return `.scalar(${type.name}.self)`;
+      return swift`.list(${this.fieldTypeEnum(type.ofType, structName)})`;
+    } else if (isScalarType(type)) {
+      return swift`.scalar(${this.typeNameForScalarType(type)}.self)`;
+    } else if (isEnumType(type)) {
+      return swift`.scalar(${type.name}.self)`;
     } else if (isCompositeType(type)) {
-      return `.object(${structName}.selections)`;
+      return swift`.object(${structName}.selections)`;
     } else {
       throw new Error(`Unknown field type: ${type}`);
     }
@@ -106,8 +110,8 @@ export class Helpers {
     return camelCase(name);
   }
 
-  enumDotCaseName(name: string) {
-    return `.${camelCase(name)}`;
+  enumDotCaseName(name: string): SwiftSource {
+    return swift`.${SwiftSource.memberName(camelCase(name))}`;
   }
 
   operationClassName(name: string) {
@@ -151,7 +155,7 @@ export class Helpers {
       type = type.ofType;
     }
 
-    const isOptional = !(type instanceof GraphQLNonNull);
+    const isOptional = !isNonNullType(type);
 
     const unmodifiedType = getNamedType(field.type);
 
@@ -200,7 +204,7 @@ export class Helpers {
     return Object.assign({}, field, {
       propertyName: camelCase(field.name),
       typeName: this.typeNameFromGraphQLType(field.type),
-      isOptional: !(field.type instanceof GraphQLNonNull)
+      isOptional: !isNonNullType(field.type)
     });
   }
 
@@ -228,48 +232,60 @@ export class Helpers {
 
   // Expressions
 
-  dictionaryLiteralForFieldArguments(args: Argument[]) {
-    function expressionFromValue(value: any): string {
+  dictionaryLiteralForFieldArguments(args: Argument[]): SwiftSource {
+    function expressionFromValue(value: any): SwiftSource {
       if (value.kind === "Variable") {
-        return `GraphQLVariable("${value.variableName}")`;
+        return swift`GraphQLVariable(${SwiftSource.string(
+          value.variableName
+        )})`;
       } else if (Array.isArray(value)) {
-        return wrap("[", join(value.map(expressionFromValue), ", "), "]");
+        return SwiftSource.wrap(
+          swift`[`,
+          SwiftSource.join(value.map(expressionFromValue), ", "),
+          swift`]`
+        );
       } else if (typeof value === "object") {
-        return wrap(
-          "[",
-          join(
+        return SwiftSource.wrap(
+          swift`[`,
+          SwiftSource.join(
             Object.entries(value).map(([key, value]) => {
-              return `"${key}": ${expressionFromValue(value)}`;
+              return swift`${SwiftSource.string(key)}: ${expressionFromValue(
+                value
+              )}`;
             }),
             ", "
           ) || ":",
-          "]"
+          swift`]`
         );
+      } else if (typeof value === "string") {
+        return SwiftSource.string(value);
       } else {
-        return JSON.stringify(value);
+        return new SwiftSource(JSON.stringify(value));
       }
     }
 
-    return wrap(
-      "[",
-      join(
+    return SwiftSource.wrap(
+      swift`[`,
+      SwiftSource.join(
         args.map(arg => {
-          return `"${arg.name}": ${expressionFromValue(arg.value)}`;
+          return swift`${SwiftSource.string(arg.name)}: ${expressionFromValue(
+            arg.value
+          )}`;
         }),
         ", "
       ) || ":",
-      "]"
+      swift`]`
     );
   }
 
   mapExpressionForType(
     type: GraphQLType,
     isConditional: boolean = false,
-    makeExpression: (expression: string) => string,
-    expression: string,
+    makeExpression: (expression: SwiftSource) => SwiftSource,
+    expression: SwiftSource,
     inputTypeName: string,
     outputTypeName: string
-  ): string {
+  ): SwiftSource {
     let isOptional;
     if (isNonNullType(type)) {
       isOptional = !!isConditional;
@@ -281,7 +297,7 @@ export class Helpers {
     if (isListType(type)) {
       const elementType = type.ofType;
       if (isOptional) {
-        return `${expression}.flatMap { ${makeClosureSignature(
+        return swift`${expression}.flatMap { ${makeClosureSignature(
           this.typeNameFromGraphQLType(type, inputTypeName, false),
           this.typeNameFromGraphQLType(type, outputTypeName, false)
         )} value.map { ${makeClosureSignature(
@@ -291,28 +307,28 @@ export class Helpers {
           elementType,
           undefined,
           makeExpression,
-          "value",
+          swift`value`,
           inputTypeName,
           outputTypeName
         )} } }`;
       } else {
-        return `${expression}.map { ${makeClosureSignature(
+        return swift`${expression}.map { ${makeClosureSignature(
           this.typeNameFromGraphQLType(elementType, inputTypeName),
           this.typeNameFromGraphQLType(elementType, outputTypeName)
         )} ${this.mapExpressionForType(
           elementType,
           undefined,
           makeExpression,
-          "value",
+          swift`value`,
           inputTypeName,
           outputTypeName
         )} }`;
       }
     } else if (isOptional) {
-      return `${expression}.flatMap { ${makeClosureSignature(
+      return swift`${expression}.flatMap { ${makeClosureSignature(
         this.typeNameFromGraphQLType(type, inputTypeName, false),
         this.typeNameFromGraphQLType(type, outputTypeName, false)
-      )} ${makeExpression("value")} }`;
+      )} ${makeExpression(swift`value`)} }`;
     } else {
       return makeExpression(expression);
     }
@@ -322,12 +338,12 @@ export class Helpers {
 function makeClosureSignature(
   parameterTypeName: string,
   returnTypeName?: string
-) {
-  let closureSignature = `(value: ${parameterTypeName})`;
+): SwiftSource {
+  let closureSignature = swift`(value: ${parameterTypeName})`;
 
   if (returnTypeName) {
-    closureSignature += ` -> ${returnTypeName}`;
+    closureSignature.append(swift` -> ${returnTypeName}`);
   }
-  closureSignature += " in";
+  closureSignature.append(swift` in`);
   return closureSignature;
 }

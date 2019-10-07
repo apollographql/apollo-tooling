@@ -5,10 +5,11 @@ import {
   GraphQLBoolean,
   GraphQLID,
   GraphQLScalarType,
-  GraphQLEnumType,
   isAbstractType,
   isNonNullType,
-  isListType
+  isListType,
+  isScalarType,
+  isEnumType
 } from "graphql";
 import { LegacyCompilerContext } from "apollo-codegen-core/lib/compiler/legacyIR";
 import { GraphQLType } from "graphql";
@@ -76,9 +77,9 @@ export function typeNameFromGraphQLType(
         ) +
         "]";
     }
-  } else if (type instanceof GraphQLScalarType) {
+  } else if (isScalarType(type)) {
     typeName = typeNameForScalarType(context, type);
-  } else if (type instanceof GraphQLEnumType) {
+  } else if (isEnumType(type)) {
     typeName = "String";
   } else {
     typeName = bareTypeName || type.name;

@@ -9,6 +9,7 @@ import chalk from "chalk";
 import nock = require("nock");
 import { stdout, stderr } from "stdout-stderr";
 import * as graphql from "graphql";
+import { graphqlTypes } from "apollo-language-server";
 
 /**
  * Single URL for all local requests to be mocked
@@ -49,6 +50,9 @@ let mockedConsoleLogOriginal: Console["log"] | null = null;
  * Array of intercepted console values.
  */
 let mockedConsoleLogValues: string[] | null = null;
+
+// Get original CI environment variables
+const { CI, CIRCLECI, GITHUB_ACTION, BUILD_BUILDURI } = process.env;
 
 // TODO: the following two functions are identical to the ones found in list.test.ts
 // we are choosing to duplicate them for now, because with a shared helper function,
@@ -130,63 +134,6 @@ function mockIntrospectionQuery() {
 }
 
 /**
- * Mock the network requests for a composition failure.
- */
-function mockCompositionFailure() {
-  mockIntrospectionQuery();
-
-  nock(localURL, {
-    encodedQueryParams: true
-  })
-    .post(
-      "/graphql",
-      ({ operationName }) => operationName === "getFederationInfo"
-    )
-    .reply(200, {
-      data: {
-        _service: {
-          sdl:
-            'extend type Query {\n  me: User\n}\n\ntype User @key(fields: "id") {\n  name: String\n  username: String\n  birthDate: String\n}\n'
-        }
-      }
-    });
-
-  nock("https://engine-staging-graphql.apollographql.com:443", {
-    encodedQueryParams: true
-  })
-    .post(
-      "/api/graphql",
-      ({ operationName }) => operationName === "CheckPartialSchema"
-    )
-    .reply(200, {
-      data: {
-        service: {
-          validatePartialSchemaOfImplementingServiceAgainstGraph: {
-            compositionValidationDetails: {
-              schemaHash: null
-            },
-            warnings: [],
-            errors: [
-              {
-                message:
-                  "[reviews] User.id -> marked @external but it does not have a matching field on on the base service (accounts)"
-              },
-              {
-                message:
-                  "[reviews] User -> A @key selects id, but User.id could not be found"
-              },
-              {
-                message:
-                  "[accounts] User -> A @key selects id, but User.id could not be found"
-              }
-            ]
-          }
-        }
-      }
-    });
-}
-
-/**
  * Mock network requests for a successful schema composition. This includes the subsequent `CheckSchema`
  * request that will be made.
  */
@@ -219,13 +166,39 @@ function mockCompositionSuccess() {
     .reply(200, {
       data: {
         service: {
-          validatePartialSchemaOfImplementingServiceAgainstGraph: {
-            compositionValidationDetails: {
-              schemaHash:
-                "645fdd4b789fffb5c5b59443a12e6f575e61345e95fe9e1dae3fe9acb23c68efa8ac31ea657892f0a85d1c90d8503fe9e482f520fe8d9786ae26948de10ce4a6"
+          checkPartialSchema: {
+            compositionValidationResult: {
+              compositionValidationDetails: {
+                schemaHash:
+                  "645fdd4b789fffb5c5b59443a12e6f575e61345e95fe9e1dae3fe9acb23c68efa8ac31ea657892f0a85d1c90d8503fe9e482f520fe8d9786ae26948de10ce4a6"
+              },
+              graphCompositionID: null,
+              errors: []
             },
-            warnings: [],
-            errors: []
+            checkSchemaResult: {
+              targetUrl:
+                "https://engine-staging.apollographql.com/service/justin-fullstack-tutorial/check/3acd7765-61b2-4f1a-9227-8b288e42bfdc",
+              diffToPrevious: {
+                severity: "NOTICE",
+                affectedClients: [],
+                affectedQueries: [],
+                numberOfCheckedOperations: 0,
+                changes: [
+                  {
+                    severity: "NOTICE",
+                    code: "ARG_CHANGED_TYPE",
+                    description:
+                      "`Query.launches` argument `after` has changed type from `String` to `String!`"
+                  }
+                ],
+                validationConfig: {
+                  from: "-47347200",
+                  to: "-0",
+                  queryCountThreshold: 1,
+                  queryCountThresholdPercentage: 0
+                }
+              }
+            }
           }
         }
       }
@@ -354,6 +327,66 @@ function mockNonFederatedSuccess() {
     });
 }
 
+/**
+ * Mock network requests for a federated schema running partialSchemaCheck and producing errors
+ */
+const mockPartialSchemaCheckFailure = () => {
+  mockIntrospectionQuery();
+
+  nock(localURL, {
+    encodedQueryParams: true
+  })
+    .post(
+      "/graphql",
+      ({ operationName }) => operationName === "getFederationInfo"
+    )
+    .reply(200, {
+      data: {
+        _service: {
+          sdl:
+            'extend type Query {\n  me: User\n}\n\ntype User @key(fields: "id") {\n  name: String\n  username: String\n  birthDate: String\n}\n'
+        }
+      }
+    });
+
+  nock("https://engine-staging-graphql.apollographql.com:443", {
+    encodedQueryParams: true
+  })
+    .post(
+      "/api/graphql",
+      ({ operationName }) => operationName === "CheckPartialSchema"
+    )
+    .reply(200, {
+      data: {
+        service: {
+          checkPartialSchema: {
+            compositionValidationResult: {
+              compositionValidationDetails: {
+                schemaHash: null
+              },
+              graphCompositionID: null,
+              errors: [
+                {
+                  message:
+                    "[reviews] User.id -> marked @external but it does not have a matching field on on the base service (accounts)"
+                },
+                {
+                  message:
+                    "[reviews] User -> A @key selects id, but User.id could not be found"
+                },
+                {
+                  message:
+                    "[accounts] User -> A @key selects id, but User.id could not be found"
+                }
+              ]
+            },
+            checkSchemaResult
+          }
+        }
+      }
+    });
+};
+
 describe("service:check", () => {
   let originalChalkEnabled;
 
@@ -369,6 +402,11 @@ describe("service:check", () => {
 
     nock.disableNetConnect();
 
+    delete process.env.CI;
+    delete process.env.CIRCLECI;
+    delete process.env.GITHUB_ACTION;
+    delete process.env.BUILD_BUILDURI;
+
     // Set the jest timeout to be longer than the default 5000ms to compensate for slow CI.
     jest.setTimeout(25000);
   });
@@ -382,6 +420,11 @@ describe("service:check", () => {
     // Clean up all network mocks and restore original functionality
     nock.cleanAll();
     nock.enableNetConnect();
+
+    process.env.CI = CI;
+    process.env.CIRCLECI = CIRCLECI;
+    process.env.GITHUB_ACTION = GITHUB_ACTION;
+    process.env.BUILD_BUILDURI = BUILD_BUILDURI;
   });
 
   // These are integration tests and not e2e tests because these don't actually hit the remote server.
@@ -390,7 +433,7 @@ describe("service:check", () => {
       describe("should report composition errors correctly", () => {
         it("vanilla", async () => {
           captureApplicationOutput();
-          mockCompositionFailure();
+          mockPartialSchemaCheckFailure();
 
           expect.assertions(2);
 
@@ -406,9 +449,29 @@ describe("service:check", () => {
           expect(uncaptureApplicationOutput()).toMatchSnapshot();
         });
 
+        it("compacts output in CI", async () => {
+          captureApplicationOutput();
+          mockPartialSchemaCheckFailure();
+
+          expect.assertions(2);
+
+          process.env.CI = "true";
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`
+            ])
+          ).rejects.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
         it("--markdown", async () => {
           captureApplicationOutput();
-          mockCompositionFailure();
+          mockPartialSchemaCheckFailure();
 
           expect.assertions(2);
 
@@ -428,7 +491,7 @@ describe("service:check", () => {
 
         it("--json", async () => {
           captureApplicationOutput();
-          mockCompositionFailure();
+          mockPartialSchemaCheckFailure();
 
           expect.assertions(2);
 
@@ -453,6 +516,26 @@ describe("service:check", () => {
           mockCompositionSuccess();
 
           expect.assertions(2);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`
+            ])
+          ).resolves.not.toThrow();
+
+          // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
+          expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("compacts output in CI", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(2);
+
+          process.env.CI = "true";
 
           await expect(
             ServiceCheck.run([
@@ -643,7 +726,34 @@ describe("service:check", () => {
               severity: ChangeSeverity.NOTICE,
               affectedClients: [],
               affectedQueries: [],
-              changes: []
+              changes: [
+                {
+                  __typename: "Change",
+                  code: "FIELD_ADDED",
+                  severity: ChangeSeverity.NOTICE
+                } as graphqlTypes.CheckSchema_service_checkSchema_diffToPrevious_changes
+              ]
+            }
+          },
+          graphCompositionID: "fff"
+        })
+      ).toMatchSnapshot();
+    });
+
+    it("is correct with no changes", () => {
+      expect(
+        formatMarkdown({
+          graphName: "engine",
+          tag: "staging",
+          checkSchemaResult: {
+            ...checkSchemaResult,
+            diffToPrevious: {
+              ...checkSchemaResult.diffToPrevious,
+              severity: ChangeSeverity.NOTICE,
+              affectedClients: [],
+              affectedQueries: [],
+              changes: [],
+              validationConfig: null
             }
           },
           graphCompositionID: "fff"

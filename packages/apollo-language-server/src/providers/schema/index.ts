@@ -10,7 +10,7 @@ import {
   isLocalServiceConfig
 } from "../../config";
 
-import { IntrospectionSchemaProvider } from "./introspection";
+import { EndpointSchemaProvider } from "./endpoint";
 import { EngineSchemaProvider } from "./engine";
 import { FileSchemaProvider } from "./file";
 import { ClientIdentity } from "../../engine";
@@ -27,11 +27,16 @@ export function schemaProviderFromConfig(
 ): GraphQLSchemaProvider {
   if (isServiceConfig(config)) {
     if (config.service.localSchemaFile) {
-      return new FileSchemaProvider({ path: config.service.localSchemaFile });
+      const isListOfSchemaFiles = Array.isArray(config.service.localSchemaFile);
+      return new FileSchemaProvider(
+        isListOfSchemaFiles
+          ? { paths: config.service.localSchemaFile as string[] }
+          : { path: config.service.localSchemaFile as string }
+      );
     }
 
     if (config.service.endpoint) {
-      return new IntrospectionSchemaProvider(config.service.endpoint);
+      return new EndpointSchemaProvider(config.service.endpoint);
     }
   }
 
@@ -42,12 +47,19 @@ export function schemaProviderFromConfig(
 
     if (config.client.service) {
       if (isLocalServiceConfig(config.client.service)) {
-        return new FileSchemaProvider({
-          path: config.client.service.localSchemaFile
-        });
+        const isListOfSchemaFiles = Array.isArray(
+          config.client.service.localSchemaFile
+        );
+        return new FileSchemaProvider(
+          isListOfSchemaFiles
+            ? { paths: config.client.service.localSchemaFile as string[] }
+            : {
+                path: config.client.service.localSchemaFile as string
+              }
+        );
       }
 
-      return new IntrospectionSchemaProvider(config.client.service);
+      return new EndpointSchemaProvider(config.client.service);
     }
   }
 

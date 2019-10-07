@@ -1,76 +1,58 @@
-version: 2
+version: 2.1
 
-#
-# Reusable Snippets!
-#
-# These are re-used by the various tests below, to avoid repetition.
-#
-run_install_desired_npm: &run_install_desired_npm
-  run:
-    name: Install npm@6.
-    command: sudo npm install -g npm@6
+# These "CircleCI Orbs" are reusable bits of configuration that can be shared
+# across projects.  See https://circleci.com/orbs/ for more information.
+orbs:
+  # `oss` is a local reference to the package.  The source for Apollo Orbs can
+  # be found at http://github.com/apollographql/CircleCI-Orbs.
+  oss: apollo/oss-ci-cd-tooling@0.0.5
 
-# These are the steps used for each version of Node which we're testing
-# against.  Thanks to YAMLs inability to merge arrays (though it is able
-# to merge objects), every version of Node must use the exact same steps,
-# or these steps would need to be repeated in a version of Node that needs
-# something different.  Probably best to avoid that, out of principle, though.
-common_test_steps: &common_test_steps
-  steps:
-    - *run_install_desired_npm
-    - checkout
-    - restore_cache:
-        keys:
-          # When lock file changes, use increasingly general patterns to restore cache
-          - npm-v2-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          - npm-v2-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-          - npm-v2-{{ .Environment.CACHE_VERSION }}-
-    - run: npm --version
-    - run: npm ci
-    - save_cache:
-        key: npm-v2-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
-        paths:
-          # This should cache the npm cache instead of node_modules, which is needed because
-          # npm ci actually removes node_modules before installing to guarantee a clean slate.
-          - ~/.npm
-    - run: npm run circle
+commands:
+  # These are the steps used for each version of Node which we're testing
+  # against.  Thanks to YAMLs inability to merge arrays (though it is able
+  # to merge objects), every version of Node must use the exact same steps,
+  # or these steps would need to be repeated in a version of Node that needs
+  # something different.  Probably best to avoid that, out of principle, though.
+  common_test_steps:
+    description: Commands to run on every Node.js environment
+    steps:
+      - oss/install_specific_npm_version
+      - checkout
+      - oss/npm_clean_install_with_caching
+      - run: npm run circle
 
 # Important! When adding a new job to `jobs`, make sure to define when it
 # executes by also adding it to the `workflows` section below!
 jobs:
   # Platform tests, each with the same tests but different platform or version.
-  # The docker tag represents the Node.js version and the full list is available
-  # at https://hub.docker.com/r/circleci/node/.
-  Node.js 8:
-    docker: [{ image: "circleci/node:8" }]
-    <<: *common_test_steps
+  NodeJS 8:
+    executor: { name: oss/node, tag: "8" }
+    steps:
+      - common_test_steps
 
-  Node.js 10:
-    docker: [{ image: "circleci/node:10" }]
-    <<: *common_test_steps
+  NodeJS 10:
+    executor: { name: oss/node, tag: "10" }
+    steps:
+      - common_test_steps
+      # We will save the results of this one particular invocation to use in
+      # the publish step. Not only does this make the publishing step take less
+      # time, this also ensures that a passing version gets deployed even if,
+      # theoretically, rebuilding the same commit on the same version of
+      # Node.js should yield the same results!
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./**
 
   VSCode:
-    docker: [{ image: "circleci/node:10" }]
+    executor: { name: oss/node }
     steps:
       - run:
           name: Install deps for VSCode / GUI
           command: sudo apt-get update && sudo apt-get install -y nodejs libgtk3.0 libxss1 libgconf-2-4 libasound2 libnss3 x11-xserver-utils xvfb
-      - *run_install_desired_npm
+      - oss/install_specific_npm_version
       - checkout
-      - restore_cache:
-          keys:
-            # When lock file changes, use increasingly general patterns to restore cache
-            - npm-v2-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - npm-v2-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - npm-v2-{{ .Environment.CACHE_VERSION }}-
-      - run: npm --version
-      - run: npm ci
-      - save_cache:
-          key: npm-v2-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          paths:
-            # This should cache the npm cache instead of node_modules, which is needed because
-            # npm ci actually removes node_modules before installing to guarantee a clean slate.
-            - ~/.npm
+      - oss/npm_clean_install_with_caching
       - run:
           name: Initialize false display for headless env
           command: Xvfb :99
@@ -82,68 +64,128 @@ jobs:
             DISPLAY: :99
   # Other tests, unrelated to typical code tests.
   Linting:
-    docker: [{ image: "circleci/node:8" }]
+    executor: { name: oss/node }
     steps:
-      - *run_install_desired_npm
+      - oss/install_specific_npm_version
       - checkout
       # (speed) --ignore-scripts to skip unnecessary Lerna build during linting.
       - run: npm install --ignore-scripts
       - run: npm run lint
 
   Query Check:
-    docker: [{ image: "circleci/node:8" }]
+    executor: { name: oss/node }
     steps:
-      - *run_install_desired_npm
+      - oss/install_specific_npm_version
       - checkout
-      - restore_cache:
-          keys:
-            # When lock file changes, use increasingly general patterns to restore cache
-            - npm-v2-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - npm-v2-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - npm-v2-{{ .Environment.CACHE_VERSION }}-
-      - run: npm --version
-      - run: npm ci
-      - save_cache:
-          key: npm-v2-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          paths:
-            # This should cache the npm cache instead of node_modules, which is needed because
-            # npm ci actually removes node_modules before installing to guarantee a clean slate.
-            - ~/.npm
-      - run: ENGINE_API_KEY=$CHECKS_API_KEY ./packages/apollo/bin/run client:check
+      - oss/npm_clean_install_with_caching
+      - run:
+          name:
+          command: |
+            if [ -z "$CHECKS_API_KEY" ]; then
+              echo "NO CHECKS_API_KEY! CANNOT RUN! This is normal on PRs from Forks."
+              exit 0 # i.e. pass tests.
+            fi
+            ENGINE_API_KEY=$CHECKS_API_KEY ./packages/apollo/bin/run client:check
 
   Generated Types Check:
-    docker: [{ image: "circleci/node:8" }]
+    executor: { name: oss/node }
     steps:
-      - *run_install_desired_npm
+      - oss/install_specific_npm_version
       - checkout
-      - restore_cache:
-          keys:
-            # When lock file changes, use increasingly general patterns to restore cache
-            - npm-v2-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - npm-v2-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - npm-v2-{{ .Environment.CACHE_VERSION }}-
-      - run: npm --version
-      - run: npm ci
-      - save_cache:
-          key: npm-v2-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          paths:
-            # This should cache the npm cache instead of node_modules, which is needed because
-            # npm ci actually removes node_modules before installing to guarantee a clean slate.
-            - ~/.npm
+      - oss/npm_clean_install_with_caching
       - run:
-          name: Generate types locally
-          command: npx apollo client:codegen --key=$CHECKS_API_KEY --outputFlat --target=typescript currentTypes.ts
+          name: Generate types locally and compare type files
+          command: |
+            if [ -z "$CHECKS_API_KEY" ]; then
+              echo "NO CHECKS_API_KEY! CANNOT RUN! This is normal on PRs from Forks."
+              exit 0 # i.e. pass tests.
+            fi
+            npx apollo client:codegen --key=$CHECKS_API_KEY --outputFlat --target=typescript currentTypes.ts
+            cmp --silent currentTypes.ts ./packages/apollo-language-server/src/graphqlTypes.ts || (echo "Type check failed. Run 'npm run client:codegen'" && exit 1)
+
+  Build CLI:
+    executor: { name: oss/node }
+    steps:
+      - oss/install_specific_npm_version
+      - checkout
+      - oss/npm_clean_install_with_caching
       - run:
-          name: Compare type files
-          command: cmp --silent currentTypes.ts ./packages/apollo-language-server/src/graphqlTypes.ts || (echo "Type check failed. Run 'npm run client:codegen'" && exit 1)
+          name: Make tmp dir
+          command: cd packages/apollo && mkdir tmp && cd tmp && npm init -y && git init
+      - run:
+          name: Install apollo in tmp folder and generate lockfile
+          command: npm i apollo && cd node_modules/apollo && npm i --package-lock-only
+          working_directory: packages/apollo/tmp
+      - run:
+          name: Copy package and lockfile to project
+          command: rm package.json && cp tmp/node_modules/apollo/package* .
+          working_directory: packages/apollo
+      - run:
+          name: Build CLI
+          command: npx -p @oclif/dev-cli oclif-dev pack --targets=darwin-x64
+          working_directory: packages/apollo
+      - store_artifacts:
+          path: packages/apollo/dist
+          destination: apollo-cli
+      # - run:
+      #     name: Publish
+      #     command: npx -p @oclif/dev-cli oclif-dev publish --targets=darwin-x64
+      #     working_directory: packages/apollo
+
+common_non_publish_filters: &common_non_publish_filters
+  filters:
+    # Ensure every job has `tags` filters since the publish steps have tags.
+    # This is some wild configuration thing that's pretty hard to figure out.
+    tags:
+      only: /.*/
+
+common_publish_filters: &common_publish_filters
+  filters:
+    # Only run pre-publish and publish steps on specific tags.
+    tags:
+      only: /^publish\/[0-9]+$/
+    # We want the publish to trigger on the above tag, not any branch.
+    branches:
+      ignore: /.*/
 
 workflows:
   version: 2
-  Build and Test:
+  Build:
     jobs:
-      - Node.js 8
-      - Node.js 10
-      - VSCode
-      - Linting
-      - Query Check
-      - Generated Types Check
+      - NodeJS 8:
+          <<: *common_non_publish_filters
+      - NodeJS 10:
+          <<: *common_non_publish_filters
+      - VSCode:
+          <<: *common_non_publish_filters
+      - Linting:
+          <<: *common_non_publish_filters
+      - Query Check:
+          <<: *common_non_publish_filters
+      - Generated Types Check:
+          <<: *common_non_publish_filters
+      - Build CLI:
+          <<: *common_non_publish_filters
+      - oss/lerna_tarballs:
+          name: Package tarballs
+          <<: *common_non_publish_filters
+          requires:
+            - NodeJS 8
+            - NodeJS 10
+      - oss/dry_run:
+          name: Dry-run
+          <<: *common_publish_filters
+          requires:
+            - NodeJS 8
+            - NodeJS 10
+      - oss/confirmation:
+          name: Confirmation
+          type: approval
+          <<: *common_publish_filters
+          requires:
+            - Dry-run
+      - oss/publish:
+          name: Publish
+          <<: *common_publish_filters
+          requires:
+            - Confirmation

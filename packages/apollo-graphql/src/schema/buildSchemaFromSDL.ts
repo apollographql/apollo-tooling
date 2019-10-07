@@ -25,6 +25,13 @@ import { isDocumentNode, isNode } from "../utilities/graphql";
 import { GraphQLResolverMap } from "./resolverMap";
 import { GraphQLSchemaValidationError } from "./GraphQLSchemaValidationError";
 import { specifiedSDLRules } from "graphql/validation/specifiedRules";
+import {
+  KnownTypeNamesRule,
+  UniqueDirectivesPerLocationRule
+} from "graphql/validation";
+// Currently, this PossibleTypeExtensions rule is experimental and thus not
+// exposed directly from the rules module above. This may change in the future!
+import { PossibleTypeExtensions } from "graphql/validation/rules/PossibleTypeExtensions";
 import { mapValues, isNotNullOrUndefined } from "apollo-env";
 
 export interface GraphQLSchemaModule {
@@ -33,13 +40,13 @@ export interface GraphQLSchemaModule {
 }
 
 const skippedSDLRules = [
-  "PossibleTypeExtensions",
-  "KnownTypeNames",
-  "UniqueDirectivesPerLocation"
+  PossibleTypeExtensions,
+  KnownTypeNamesRule,
+  UniqueDirectivesPerLocationRule
 ];
 
 const sdlRules = specifiedSDLRules.filter(
-  rule => !skippedSDLRules.includes(rule.name)
+  rule => !skippedSDLRules.includes(rule)
 );
 
 export function modulesFromSDL(
@@ -236,7 +243,8 @@ export function addResolversToSchema(
           deprecationReason: value.deprecationReason,
           description: value.description,
           astNode: value.astNode,
-          name: value.name
+          name: value.name,
+          extensions: undefined
         };
       });
 

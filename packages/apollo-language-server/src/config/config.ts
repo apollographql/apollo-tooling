@@ -28,7 +28,7 @@ export interface RemoteServiceConfig {
 
 export interface LocalServiceConfig {
   name: ServiceID;
-  localSchemaFile: string;
+  localSchemaFile: string | string[];
 }
 
 export interface EngineConfig {
@@ -108,7 +108,7 @@ export const DefaultClientConfig = {
 export interface ServiceConfigFormat extends ConfigBase {
   name?: string;
   endpoint?: Exclude<RemoteServiceConfig, "name">;
-  localSchemaFile?: string;
+  localSchemaFile?: string | string[];
 }
 
 export const DefaultServiceConfig = {

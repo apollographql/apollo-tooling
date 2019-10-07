@@ -12,9 +12,10 @@ import { QuickPickItem } from "vscode";
 import { GraphQLWorkspace } from "./workspace";
 import { GraphQLLanguageProvider } from "./languageProvider";
 import { LanguageServerLoadingHandler } from "./loadingHandler";
-import { debounceHandler } from "./utilities";
+import { debounceHandler, Debug } from "./utilities";
 
 const connection = createConnection(ProposedFeatures.all);
+Debug.SetConnection(connection);
 
 let hasWorkspaceFolderCapability = false;
 
@@ -81,7 +82,7 @@ connection.onInitialize(async ({ capabilities, workspaceFolders }) => {
       hoverProvider: true,
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: ["..."]
+        triggerCharacters: ["...", "@"]
       },
       definitionProvider: true,
       referencesProvider: true,
@@ -90,6 +91,7 @@ connection.onInitialize(async ({ capabilities, workspaceFolders }) => {
       codeLensProvider: {
         resolveProvider: false
       },
+      codeActionProvider: true,
       executeCommandProvider: {
         commands: []
       },
@@ -185,18 +187,30 @@ connection.onWorkspaceSymbol((params, token) =>
 );
 
 connection.onCompletion(
-  debounceHandler((params, token) =>
-    languageProvider.provideCompletionItems(
-      params.textDocument.uri,
-      params.position,
-      token
-    )
+  debounceHandler(
+    (params, token) =>
+      languageProvider.provideCompletionItems(
+        params.textDocument.uri,
+        params.position,
+        token
+      ),
+    false
   )
 );
 
 connection.onCodeLens(
   debounceHandler((params, token) =>
     languageProvider.provideCodeLenses(params.textDocument.uri, token)
+  )
+);
+
+connection.onCodeAction(
+  debounceHandler((params, token) =>
+    languageProvider.provideCodeAction(
+      params.textDocument.uri,
+      params.range,
+      token
+    )
   )
 );
 
