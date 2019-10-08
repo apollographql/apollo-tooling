@@ -348,6 +348,14 @@ export default class ServiceCheck extends ProjectCommand {
                     flags.queryCountThresholdPercentage
                 });
 
+                this.debug({
+                  id: graphName,
+                  graphVariant: tag,
+                  implementingServiceName: serviceName,
+                  frontend: flags.frontend || config.engine.frontend,
+                  ...(historicParameters && { historicParameters })
+                });
+
                 const {
                   compositionValidationResult,
                   checkSchemaResult
