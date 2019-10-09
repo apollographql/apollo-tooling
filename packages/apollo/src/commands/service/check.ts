@@ -358,6 +358,8 @@ export default class ServiceCheck extends ProjectCommand {
                   partialSchema: {
                     sdl
                   },
+                  frontend: flags.frontend || config.engine.frontend,
+                  ...(historicParameters && { historicParameters }),
                   gitContext: await gitInfo(this.log)
                 });
 
