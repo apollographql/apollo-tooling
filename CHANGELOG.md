@@ -11,7 +11,7 @@
 - `apollo-codegen-swift`
   - Ensure fields named `self` don't cause compilation errors in the generated code [#1533](https://github.com/apollographql/apollo-tooling/pull/1533)
   - Preserve leading/trailing underscores on field names [#1533](https://github.com/apollographql/apollo-tooling/pull/1533)
-  - Allow generated code to be compiled without a module umbrella header 1248](https://github.com/apollographql/apollo-tooling/pull/1248)
+  - Allow generated code to be compiled without a module umbrella header [#1248](https://github.com/apollographql/apollo-tooling/pull/1248)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
