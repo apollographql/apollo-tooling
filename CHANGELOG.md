@@ -9,7 +9,8 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - <First `apollo-codegen-swift` related entry goes here>
+  - Ensure fields named `self` don't cause compilation errors in the generated code [#1533](https://github.com/apollographql/apollo-tooling/pull/1533)
+  - Preserve leading/trailing underscores on field names [#1533](https://github.com/apollographql/apollo-tooling/pull/1533)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
