@@ -3,15 +3,13 @@
 ## Upcoming
 
 - `apollo`
-  - Support custom frontend and historic parameters for federated service:check
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Ensure fields named `self` don't cause compilation errors in the generated code [#1533](https://github.com/apollographql/apollo-tooling/pull/1533)
-  - Preserve leading/trailing underscores on field names [#1533](https://github.com/apollographql/apollo-tooling/pull/1533)
-  - Allow generated code to be compiled without a module umbrella header [#1248](https://github.com/apollographql/apollo-tooling/pull/1248)
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
@@ -24,6 +22,15 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+  
+## `apollo@2.19.1`
+
+- `apollo@2.19.1`
+  - Support custom frontend and historic parameters for federated service:check
+- `apollo-codegen-swift@0.35.10`
+  - Ensure fields named `self` don't cause compilation errors in the generated code [#1533](https://github.com/apollographql/apollo-tooling/pull/1533)
+  - Preserve leading/trailing underscores on field names [#1533](https://github.com/apollographql/apollo-tooling/pull/1533)
+  - Allow generated code to be compiled without a module umbrella header [#1248](https://github.com/apollographql/apollo-tooling/pull/1248)
 
 ## `apollo@2.19.0`
 
