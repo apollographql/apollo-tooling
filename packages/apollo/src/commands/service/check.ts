@@ -419,6 +419,10 @@ export default class ServiceCheck extends ProjectCommand {
 
                   // this is used for the next step in the `run` command (comparing schema changes)
                   ctx.checkSchemaResult = checkSchemaResult;
+
+                  this.debug(
+                    `ctx.checkSchemaResult:423 ${ctx.checkSchemaResult}`
+                  );
                 }
               }
             },
@@ -595,6 +599,8 @@ export default class ServiceCheck extends ProjectCommand {
         return this.log(JSON.stringify({ errors: compositionErrors }, null, 2));
       }
 
+      this.debug(` checkSchemaResult:600 ${checkSchemaResult.targetUrl}`);
+
       return this.log(
         JSON.stringify(
           {
@@ -647,6 +653,7 @@ export default class ServiceCheck extends ProjectCommand {
         );
       }
 
+      this.debug(`formatMarkdown:654 ${checkSchemaResult.targetUrl}`);
       return this.log(
         formatMarkdown({
           checkSchemaResult,
