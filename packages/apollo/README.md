@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.19.0 darwin-x64 node-v8.11.1
+apollo/2.19.1 darwin-x64 node-v12.1.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -145,7 +145,9 @@ OPTIONS
 
   --key=key                                  The API key for the Apollo Engine service
 
-  --localSchemaFile=localSchemaFile          Path to your local GraphQL schema file (introspection result or SDL)
+  --localSchemaFile=localSchemaFile          Path to one or more local GraphQL schema file(s), as introspection result
+                                             or SDL. Supports comma-separated list of paths (ex.
+                                             `--localSchemaFile=schema.graphql,extensions.graphql`)
 
   --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
 
@@ -476,8 +478,10 @@ OPTIONS
 
   --key=key                                                      The API key for the Apollo Engine service
 
-  --localSchemaFile=localSchemaFile                              Path to your local GraphQL schema file (introspection
-                                                                 result or SDL)
+  --localSchemaFile=localSchemaFile                              Path to one or more local GraphQL schema file(s), as
+                                                                 introspection result or SDL. Supports comma-separated
+                                                                 list of paths (ex.
+                                                                 `--localSchemaFile=schema.graphql,extensions.graphql`)
 
   --markdown                                                     Output result in markdown.
 
@@ -595,7 +599,9 @@ OPTIONS
 
   --key=key                          The API key for the Apollo Engine service
 
-  --localSchemaFile=localSchemaFile  Path to your local GraphQL schema file (introspection result or SDL)
+  --localSchemaFile=localSchemaFile  Path to one or more local GraphQL schema file(s), as introspection result or SDL.
+                                     Supports comma-separated list of paths (ex.
+                                     `--localSchemaFile=schema.graphql,extensions.graphql`)
 
   --serviceName=serviceName          Provides the name of the implementing service for a federated graph
 
