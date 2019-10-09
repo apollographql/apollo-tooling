@@ -348,14 +348,6 @@ export default class ServiceCheck extends ProjectCommand {
                     flags.queryCountThresholdPercentage
                 });
 
-                this.debug({
-                  id: graphName,
-                  graphVariant: tag,
-                  implementingServiceName: serviceName,
-                  frontend: flags.frontend || config.engine.frontend,
-                  ...(historicParameters && { historicParameters })
-                });
-
                 const {
                   compositionValidationResult,
                   checkSchemaResult
@@ -416,13 +408,8 @@ export default class ServiceCheck extends ProjectCommand {
 
                   // this is used for the printing
                   taskOutput.checkSchemaResult = checkSchemaResult;
-                  this.debug(`taskOutput:419 ${taskOutput.checkSchemaResult}`);
                   // this is used for the next step in the `run` command (comparing schema changes)
                   ctx.checkSchemaResult = checkSchemaResult;
-
-                  this.debug(
-                    `ctx.checkSchemaResult:423 ${ctx.checkSchemaResult.targetUrl}`
-                  );
                 }
               }
             },
@@ -486,15 +473,9 @@ export default class ServiceCheck extends ProjectCommand {
                 );
                 // Attach to ctx as this will be used in later steps.
                 ctx.checkSchemaResult = checkSchemaResult;
-                this.debug(
-                  `checkSchemaResult:489 ${ctx.checkSchemaResult.targetUrl}`
-                );
                 // Save the output because we're going to use it even if we throw. `runTasks` won't return
                 // anything if we throw.
                 taskOutput.checkSchemaResult = checkSchemaResult;
-                this.debug(
-                  `taskOutput:493 ${taskOutput.checkSchemaResult.targetUrl}`
-                );
 
                 task.title = task.title.replace("Validating", "Validated");
               }
@@ -605,8 +586,6 @@ export default class ServiceCheck extends ProjectCommand {
         return this.log(JSON.stringify({ errors: compositionErrors }, null, 2));
       }
 
-      this.debug(` checkSchemaResult:602 ${checkSchemaResult.targetUrl}`);
-
       return this.log(
         JSON.stringify(
           {
@@ -659,7 +638,6 @@ export default class ServiceCheck extends ProjectCommand {
         );
       }
 
-      this.debug(`formatMarkdown:654 ${checkSchemaResult.targetUrl}`);
       return this.log(
         formatMarkdown({
           checkSchemaResult,
