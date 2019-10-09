@@ -15,6 +15,8 @@ Apollo CLI brings together your GraphQL clients and servers with tools for valid
 
 # Usage
 
+**Disclaimer**: The following API documentation is only for the latest version released on NPM, and may not be accurate for previous or future versions.
+
 <!-- usage -->
 ```sh-session
 $ npm install -g apollo
