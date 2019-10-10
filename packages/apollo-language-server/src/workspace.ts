@@ -90,6 +90,11 @@ export class GraphQLWorkspace {
       });
     }
 
+    // after a project has loaded, we do an initial validation to surface errors
+    // on the start of the language server. Instead of doing this in the
+    // base class which is used by codegen and other tools
+    project.whenReady.then(() => project.validate());
+
     return project;
   }
 

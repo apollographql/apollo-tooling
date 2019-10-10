@@ -1,5 +1,5 @@
 import { flags } from "@oclif/command";
-import { table } from "heroku-cli-util";
+import { table } from "table";
 import { introspectionFromSchema, printSchema } from "graphql";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
@@ -19,8 +19,7 @@ export default class ServicePush extends ProjectCommand {
     }),
     localSchemaFile: flags.string({
       description:
-        "Path to your local GraphQL schema file (introspection result or SDL)",
-      multiple: true
+        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
     }),
     federated: flags.boolean({
       char: "f",
@@ -68,14 +67,14 @@ export default class ServicePush extends ProjectCommand {
           // handle partial schema uploading
           if (isFederated) {
             this.log("Fetching info from federated service");
-            const info = await (project as GraphQLServiceProject).resolveFederationInfo();
+            const sdl = await (project as GraphQLServiceProject).resolveFederatedServiceSDL();
 
-            if (!info.sdl)
+            if (!sdl)
               throw new Error(
                 "No SDL found in response from federated service. This means that the federated service exposed a `__service` field that did not emit errors, but that did not contain a spec-compliant `sdl` field."
               );
 
-            if (!flags.serviceURL && !info.url)
+            if (!flags.serviceURL)
               throw new Error(
                 "No URL found for federated service. Please provide the URL for the gateway to reach the service via the --serviceURL flag"
               );
@@ -95,19 +94,19 @@ export default class ServicePush extends ProjectCommand {
             } = await project.engine.uploadAndComposePartialSchema({
               id: config.name,
               graphVariant: config.tag,
-              name: flags.serviceName || info.name,
-              url: flags.serviceURL || info.url,
+              name: flags.serviceName,
+              url: flags.serviceURL,
               revision:
                 flags.serviceRevision ||
                 (gitContext && gitContext.commit) ||
                 "",
               activePartialSchema: {
-                sdl: info.sdl
+                sdl
               }
             });
 
             result = {
-              implementingServiceName: flags.serviceName || info.name,
+              implementingServiceName: flags.serviceName,
               hash: compositionConfig && compositionConfig.schemaHash,
               compositionErrors: errors,
               serviceWasCreated,
@@ -182,19 +181,11 @@ export default class ServicePush extends ProjectCommand {
         }))
       ].filter(x => x !== null);
 
-      table(messages, {
-        columns: [
-          { key: "type", label: "Change" },
-          { key: "description", label: "Description" }
-        ],
-        // Override `printHeader` so we don't print a header
-        printHeader: () => {},
-        // The default `printLine` will output to the console; we want to capture the output so we can test
-        // it.
-        printLine: line => {
-          printed += `\n${line}`;
-        }
-      });
+      this.log(
+        table([["Change", "Description"], ...messages.map(Object.values)], {
+          columns: { 1: { width: 70, wrapWord: true } }
+        })
+      );
 
       this.log(printed);
       this.log("\n");
@@ -213,17 +204,12 @@ export default class ServicePush extends ProjectCommand {
     }
 
     if (!isFederated || result.didUpdateGateway) {
-      table([result], {
-        columns: [
-          {
-            key: "hash",
-            label: "id",
-            format: (hash: string) => hash.slice(0, 6)
-          },
-          { key: "graphId", label: "graph" },
-          { key: "graphVariant", label: "tag" }
-        ]
-      });
+      this.log(
+        table([
+          ["id", "graph", "tag"],
+          [result.hash.slice(0, 6), result.graphId, result.graphVariant]
+        ])
+      );
       this.log("\n");
     }
   }

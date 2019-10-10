@@ -112,7 +112,6 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     this.readyPromise = Promise.all(this.initialize())
       .then(() => {
         this._isReady = true;
-        this.invalidate();
       })
       .catch(error => {
         console.error(error);
@@ -153,6 +152,10 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   public resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
     this.lastLoadDate = +new Date();
     return this.schemaProvider.resolveSchema(config);
+  }
+
+  public resolveFederatedServiceSDL() {
+    return this.schemaProvider.resolveFederatedServiceSDL();
   }
 
   public onSchemaChange(handler: NotificationHandler<GraphQLSchema>) {

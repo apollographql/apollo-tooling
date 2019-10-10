@@ -15,13 +15,15 @@ Apollo CLI brings together your GraphQL clients and servers with tools for valid
 
 # Usage
 
+**Disclaimer**: The following API documentation is only for the latest version released on NPM, and may not be accurate for previous or future versions.
+
 <!-- usage -->
 ```sh-session
 $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.18.2 darwin-x64 node-v12.7.0
+apollo/2.19.1 darwin-x64 node-v12.1.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -143,7 +145,9 @@ OPTIONS
 
   --key=key                                  The API key for the Apollo Engine service
 
-  --localSchemaFile=localSchemaFile          Path to your local GraphQL schema file (introspection result or SDL)
+  --localSchemaFile=localSchemaFile          Path to one or more local GraphQL schema file(s), as introspection result
+                                             or SDL. Supports comma-separated list of paths (ex.
+                                             `--localSchemaFile=schema.graphql,extensions.graphql`)
 
   --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
 
@@ -164,6 +168,8 @@ OPTIONS
   --passthroughCustomScalars                 Use your own types for custom scalars
 
   --queries=queries                          Deprecated in favor of the includes flag
+
+  --suppressSwiftMultilineStringLiterals     Prevents operations from being rendered as multiline strings [Swift only]
 
   --tagName=tagName                          Name of the template literal tag used to identify template literals
                                              containing GraphQL queries in Javascript/Typescript code
@@ -472,8 +478,10 @@ OPTIONS
 
   --key=key                                                      The API key for the Apollo Engine service
 
-  --localSchemaFile=localSchemaFile                              Path to your local GraphQL schema file (introspection
-                                                                 result or SDL)
+  --localSchemaFile=localSchemaFile                              Path to one or more local GraphQL schema file(s), as
+                                                                 introspection result or SDL. Supports comma-separated
+                                                                 list of paths (ex.
+                                                                 `--localSchemaFile=schema.graphql,extensions.graphql`)
 
   --markdown                                                     Output result in markdown.
 
@@ -591,7 +599,9 @@ OPTIONS
 
   --key=key                          The API key for the Apollo Engine service
 
-  --localSchemaFile=localSchemaFile  Path to your local GraphQL schema file (introspection result or SDL)
+  --localSchemaFile=localSchemaFile  Path to one or more local GraphQL schema file(s), as introspection result or SDL.
+                                     Supports comma-separated list of paths (ex.
+                                     `--localSchemaFile=schema.graphql,extensions.graphql`)
 
   --serviceName=serviceName          Provides the name of the implementing service for a federated graph
 

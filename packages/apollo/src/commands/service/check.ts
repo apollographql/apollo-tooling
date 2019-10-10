@@ -1,31 +1,26 @@
 import { flags } from "@oclif/command";
-import { table } from "heroku-cli-util";
+import { table } from "table";
 import { introspectionFromSchema, printSchema, GraphQLSchema } from "graphql";
 import chalk from "chalk";
 import envCi from "env-ci";
 import { gitInfo } from "../../git";
 import { ProjectCommand } from "../../Command";
 import {
-  validateHistoricParams,
+  CompactRenderer,
   pluralize,
-  CompactRenderer
+  validateHistoricParams
 } from "../../utils";
 import {
+  ChangeSeverity,
+  CheckPartialSchema_service_checkPartialSchema_checkSchemaResult,
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
-  ChangeSeverity,
   CheckSchemaVariables,
-  IntrospectionSchemaInput,
-  IntrospectionTypeInput
+  IntrospectionSchemaInput
 } from "apollo-language-server/lib/graphqlTypes";
-import {
-  ApolloConfig,
-  GraphQLServiceProject,
-  isServiceProject
-} from "apollo-language-server";
+import { ApolloConfig, isServiceProject } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
-import cli from "cli-ux";
 import { isNotNullOrUndefined } from "apollo-env";
 
 const formatChange = (change: Change) => {
@@ -51,18 +46,6 @@ const formatChange = (change: Change) => {
   };
 };
 
-const reshapeGraphQLErrorToChange = (
-  severity: ChangeSeverity,
-  message: string
-): Change => {
-  return {
-    severity,
-    code: `FEDERATION_VALIDATION_${severity}`,
-    description: message,
-    __typename: "Change"
-  };
-};
-
 export function formatTimePeriod(hours: number): string {
   if (hours <= 24) {
     return pluralize(hours, "hour");
@@ -79,7 +62,9 @@ type CompositionErrors = Array<{
 
 interface TasksOutput {
   config: ApolloConfig;
-  checkSchemaResult: CheckSchema_service_checkSchema;
+  checkSchemaResult:
+    | CheckSchema_service_checkSchema
+    | CheckPartialSchema_service_checkPartialSchema_checkSchemaResult;
   shouldOutputJson: boolean;
   shouldOutputMarkdown: boolean;
   federationSchemaHash?: string;
@@ -225,28 +210,15 @@ export function formatHumanReadable({
       change => change.severity !== ChangeSeverity.FAILURE
     );
 
-    table(
-      [
-        ...breakingChanges.map(formatChange),
+    return table([
+      ["Change", "Code", "Description"],
+      ...[
+        ...breakingChanges.map(formatChange).map(Object.values),
         // Add an empty line between, but only if there are both breaking changes and non-breaking changes.
-        nonBreakingChanges.length && breakingChanges.length ? {} : null,
-        ...nonBreakingChanges.map(formatChange)
-      ].filter(Boolean),
-      {
-        columns: [
-          { key: "severity", label: "Change" },
-          { key: "code", label: "Code" },
-          { key: "description", label: "Description" }
-        ],
-        // Override `printHeader` so we don't print a header
-        printHeader: () => {},
-        // The default `printLine` will output to the console; we want to capture the output so we can test
-        // it.
-        printLine: line => {
-          result += `\n${line}`;
-        }
-      }
-    );
+        // nonBreakingChanges.length && breakingChanges.length ? {} : null,
+        ...nonBreakingChanges.map(formatChange).map(Object.values)
+      ].filter(Boolean)
+    ]);
   }
 
   if (targetUrl) {
@@ -287,8 +259,7 @@ export default class ServiceCheck extends ProjectCommand {
     }),
     localSchemaFile: flags.string({
       description:
-        "Path to your local GraphQL schema file (introspection result or SDL)",
-      multiple: true
+        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
     }),
     markdown: flags.boolean({
       description: "Output result in markdown.",
@@ -296,8 +267,7 @@ export default class ServiceCheck extends ProjectCommand {
     }),
     serviceName: flags.string({
       description:
-        "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service",
-      dependsOn: ["endpoint"]
+        "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service"
     })
   };
 
@@ -362,8 +332,8 @@ export default class ServiceCheck extends ProjectCommand {
                 }
                 task.output = "Fetching local service's partial schema";
 
-                const info = await project.resolveFederationInfo();
-                if (!info.sdl) {
+                const sdl = await project.resolveFederatedServiceSDL();
+                if (!sdl) {
                   throw new Error("No SDL found for federated service");
                 }
 
@@ -371,40 +341,37 @@ export default class ServiceCheck extends ProjectCommand {
                   serviceName
                 )} service's partial schema`;
 
+                const historicParameters = validateHistoricParams({
+                  validationPeriod: flags.validationPeriod,
+                  queryCountThreshold: flags.queryCountThreshold,
+                  queryCountThresholdPercentage:
+                    flags.queryCountThresholdPercentage
+                });
+
                 const {
-                  errors,
-                  compositionValidationDetails,
-                  graphCompositionID
+                  compositionValidationResult,
+                  checkSchemaResult
                 } = await project.engine.checkPartialSchema({
                   id: graphName,
                   graphVariant: tag,
                   implementingServiceName: serviceName,
                   partialSchema: {
-                    sdl: info.sdl
-                  }
+                    sdl
+                  },
+                  frontend: flags.frontend || config.engine.frontend,
+                  ...(historicParameters && { historicParameters }),
+                  gitContext: await gitInfo(this.log)
                 });
 
-                if (
-                  compositionValidationDetails &&
-                  compositionValidationDetails.schemaHash
-                ) {
-                  ctx.federationSchemaHash =
-                    compositionValidationDetails.schemaHash;
-                }
-
-                if (graphCompositionID) {
-                  ctx.graphCompositionID = graphCompositionID;
-                }
-
                 task.title = `Found ${pluralize(
-                  errors.length,
+                  compositionValidationResult.errors.length,
                   "graph composition error"
                 )} for service ${chalk.blue(serviceName)} on graph ${chalk.blue(
                   graphName
                 )}`;
 
-                if (errors.length > 0) {
-                  const decodedErrors = errors
+                if (compositionValidationResult.errors.length > 0) {
+                  const decodedErrors = compositionValidationResult.errors
                     .filter(isNotNullOrUndefined)
                     .map(error => {
                       const match = error.message.match(
@@ -425,11 +392,25 @@ export default class ServiceCheck extends ProjectCommand {
                     });
 
                   taskOutput.compositionErrors = decodedErrors;
-                  taskOutput.graphCompositionID = graphCompositionID;
+                  taskOutput.graphCompositionID =
+                    compositionValidationResult.graphCompositionID;
 
                   this.error(
                     federatedServiceCompositionUnsuccessfulErrorMessage
                   );
+                } else {
+                  if (!checkSchemaResult) {
+                    throw new Error(
+                      "Violated invariant. Schema should have been validated against operations if" +
+                        "there were no composition errors"
+                    );
+                  }
+
+                  // this is used for the printing
+                  taskOutput.checkSchemaResult = checkSchemaResult;
+
+                  // this is used for the next step in the `run` command (comparing schema changes)
+                  ctx.checkSchemaResult = checkSchemaResult;
                 }
               }
             },
@@ -439,33 +420,25 @@ export default class ServiceCheck extends ProjectCommand {
               }schema against tag ${chalk.blue(tag)} on graph ${chalk.blue(
                 graphName
               )}`,
+              // We have already performed validation per operation above if the service is federated
+              enabled: () => !serviceName,
               task: async (ctx: TasksOutput, task) => {
                 let schemaCheckSchemaVariables:
                   | { schemaHash: string }
                   | { schema: IntrospectionSchemaInput }
                   | undefined;
 
-                // If we're `federated`, then run composition validation. When we're using composition
-                // validation we'll receive a schema has that represents the composed schema.
-                if (ctx.federationSchemaHash) {
-                  schemaCheckSchemaVariables = {
-                    schemaHash: ctx.federationSchemaHash
-                  };
-                } else {
-                  // This is _not_ a `federated` schema. Resolve the schema given `config.tag`.
-                  task.output = "Resolving schema";
-                  schema = await project.resolveSchema({ tag: config.tag });
-                  if (!schema) {
-                    throw new Error("Failed to resolve schema");
-                  }
-
-                  schemaCheckSchemaVariables = {
-                    schema: introspectionFromSchema(schema)
-                      .__schema as IntrospectionSchemaInput
-                  };
+                // This is _not_ a `federated` schema. Resolve the schema given `config.tag`.
+                task.output = "Resolving schema";
+                schema = await project.resolveSchema({ tag: config.tag });
+                if (!schema) {
+                  throw new Error("Failed to resolve schema");
                 }
 
-                await gitInfo(this.log);
+                schemaCheckSchemaVariables = {
+                  schema: introspectionFromSchema(schema)
+                    .__schema as IntrospectionSchemaInput
+                };
 
                 const historicParameters = validateHistoricParams({
                   validationPeriod: flags.validationPeriod,
@@ -681,13 +654,22 @@ export default class ServiceCheck extends ProjectCommand {
       // Add a cosmetic line break
       console.log("");
 
-      cli.table(compositionErrors, {
-        columns: [
-          { key: "service", label: "Service" },
-          { key: "field", label: "Field" },
-          { key: "message", label: "Message" }
-        ]
-      });
+      this.log(
+        table(
+          [
+            ["Service", "Field", "Message"],
+            ...compositionErrors.map(Object.values)
+          ],
+          {
+            columns: {
+              2: {
+                width: 50,
+                wrapWord: true
+              }
+            }
+          }
+        )
+      );
 
       // Return a non-zero error code
       this.exit(1);

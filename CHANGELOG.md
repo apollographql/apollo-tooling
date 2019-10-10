@@ -3,17 +3,15 @@
 ## Upcoming
 
 - `apollo`
-    - <First `apollo` related entry goes here>
-- `apollo-codegen-core`
-    - <First `apollo-codegen-core` related entry goes here>
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
-    - <First `apollo-codegen-flow` related entry goes here>
+  - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
-    - <First `apollo-codegen-scala` related entry goes here>
+  - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-    - <First `apollo-codegen-swift` related entry goes here>
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
-    - <First `apollo-codegen-typescript` related entry goes here>
+  - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
@@ -24,6 +22,41 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - Watch both `.env` and `.env.local` for changes [#1525](https://github.com/apollographql/apollo-tooling/pull/1525)
+
+## `apollo@2.19.1`
+
+- `apollo@2.19.1`
+  - Support custom frontend and historic parameters for federated service:check
+- `apollo-codegen-swift@0.35.10`
+  - Ensure fields named `self` don't cause compilation errors in the generated code [#1533](https://github.com/apollographql/apollo-tooling/pull/1533)
+  - Preserve leading/trailing underscores on field names [#1533](https://github.com/apollographql/apollo-tooling/pull/1533)
+  - Allow generated code to be compiled without a module umbrella header [#1248](https://github.com/apollographql/apollo-tooling/pull/1248)
+
+## `apollo@2.19.0`
+
+- `apollo@2.19.0`
+  - Improve performance of CLI when running projects by delaying or not calling validation unnecessarily [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
+  - Use "table" package for tabular output and word wrap support [#1524](https://github.com/apollographql/apollo-tooling/pull/1524)
+  - Use new single step mutation for checking federated service schemas [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
+  - Add support for `localSchemaFile` for federated service commands [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
+- `apollo-codegen-core@0.35.4`
+  - Improve performance of validation when client fields are present or not [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
+- `apollo-codegen-swift@0.35.9`
+  - Switch operations and fragments to default to printing queries as multiline strings rather than including queries as multiline comments
+  - Add `--suppressSwiftMultilineStringLiterals` flag to allow a version which strips unnecessary whitespace.
+- `apollo-graphql@0.3.4`
+  - Use reference-equality, rather than `Function.prototype.name` string comparison, when omitting validation rules within `buildSchemaFromSDL`. [#1551](https://github.com/apollographql/apollo-tooling/pull/1551)
+- `apollo-language-server@1.16.0`
+  - Replace old mutation used for checking partial service schemas to use `checkPartialSchema` [#1539](https://github.com/apollographql/apollo-tooling/pull/1539)
+  - Remove old federation-info provider [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
+  - Support using local schema files for checks/pushes of federated services [#1489](https://github.com/apollographql/apollo-tooling/pull/1489)
+- `vscode-apollo@1.11.0`
+  - Improve performance of validation when client fields are present or not [#1559](https://github.com/apollographql/apollo-tooling/pull/1559)
+
+## `apollo@2.18.3`
+
+- `apollo`
+  - fix bad parsing of multiple `localSchemaFile`s [#1529](https://github.com/apollographql/apollo-tooling/pull/1529)
 
 ## `apollo@2.18.2`
 

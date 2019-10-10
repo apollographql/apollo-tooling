@@ -26,7 +26,8 @@ import {
   CheckPartialSchema,
   CheckPartialSchemaVariables,
   RemoveServiceAndCompose,
-  RemoveServiceAndComposeVariables
+  RemoveServiceAndComposeVariables,
+  CheckPartialSchema_service_checkPartialSchema
 } from "../graphqlTypes";
 
 export interface ClientIdentity {
@@ -174,7 +175,9 @@ export class ApolloEngineClient extends GraphQLDataSource {
     });
   }
 
-  public async checkPartialSchema(variables: CheckPartialSchemaVariables) {
+  public async checkPartialSchema(
+    variables: CheckPartialSchemaVariables
+  ): Promise<CheckPartialSchema_service_checkPartialSchema> {
     return this.execute<CheckPartialSchema>({
       query: CHECK_PARTIAL_SCHEMA,
       variables
@@ -193,8 +196,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
       if (!(data && data.service)) {
         throw new Error("Error in request from Engine");
       }
-      return data.service
-        .validatePartialSchemaOfImplementingServiceAgainstGraph;
+      return data.service.checkPartialSchema;
     });
   }
 

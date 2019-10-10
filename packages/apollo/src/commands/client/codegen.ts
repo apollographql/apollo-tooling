@@ -41,8 +41,7 @@ export default class Generate extends ClientCommand {
     }),
     localSchemaFile: flags.string({
       description:
-        "Path to your local GraphQL schema file (introspection result or SDL)",
-      multiple: true
+        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
     }),
     addTypename: flags.boolean({
       description:
@@ -72,6 +71,10 @@ export default class Generate extends ClientCommand {
     only: flags.string({
       description:
         "Parse all input files, but only output generated code for the specified file [Swift only]"
+    }),
+    suppressSwiftMultilineStringLiterals: flags.boolean({
+      description:
+        "Prevents operations from being rendered as multiline strings [Swift only]"
     }),
 
     // flow
@@ -119,9 +122,11 @@ export default class Generate extends ClientCommand {
 
   async run() {
     const {
-      flags: { watch }
+      flags: { watch },
+      args: { output }
     } = this.parse(Generate);
 
+    let write;
     const run = () =>
       this.runTasks(({ flags, args, project }) => {
         let inferredTarget: TargetType = "" as TargetType;
@@ -167,7 +172,12 @@ export default class Generate extends ClientCommand {
               });
 
               if (!schema) throw new Error("Error loading schema");
-              const write = () => {
+
+              write = () => {
+                // make sure all of the doucuments that we are going to be using for codegen
+                // are valid documents
+                project.validate();
+
                 const operations = Object.values(this.project.operations);
                 const fragments = Object.values(this.project.fragments);
 
@@ -206,15 +216,12 @@ export default class Generate extends ClientCommand {
                     useReadOnlyTypes:
                       flags.useReadOnlyTypes || flags.useFlowReadOnlyTypes,
                     globalTypesFile: flags.globalTypesFile,
-                    tsFileExtension: flags.tsFileExtension
+                    tsFileExtension: flags.tsFileExtension,
+                    suppressSwiftMultilineStringLiterals:
+                      flags.suppressSwiftMultilineStringLiterals
                   }
                 );
               };
-
-              // project.validationDidFinish(write);
-              project.onDiagnostics(({ uri }) => {
-                write();
-              });
 
               const writtenFiles = write();
 
@@ -227,13 +234,19 @@ export default class Generate extends ClientCommand {
     if (watch) {
       await run().catch(() => {});
       const watcher = new Gaze(this.project.config.client.includes);
+      // FIXME: support excludes with the glob
       watcher.on("all", (event, file) => {
+        // don't trigger write events for generated file changes
+        if (file.indexOf("__generated__") > -1) return;
+        // don't trigger write events on single output file
+        if (file.indexOf(output) > -1) return;
         console.log("\nChange detected, generating types...");
-        this.project.fileDidChange(URI.file(file).toString());
+        write();
       });
       if (tty.isatty((process.stdin as any).fd)) {
         await waitForKey();
         watcher.close();
+        process.exit(0);
       }
       return;
     } else {

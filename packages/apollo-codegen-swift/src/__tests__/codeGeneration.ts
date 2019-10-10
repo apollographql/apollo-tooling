@@ -49,7 +49,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["HeroName"], false);
+      generator.classDeclarationForOperation(
+        operations["HeroName"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -67,7 +71,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["Hero"], false);
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -85,7 +89,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["Hero"], false);
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -127,7 +131,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["CreateReview"], false);
+      generator.classDeclarationForOperation(
+        operations["CreateReview"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -147,7 +155,7 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.classDeclarationForOperation(operations["Hero"], false);
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -182,7 +190,7 @@ describe("Swift code generation", () => {
         { generateOperationIds: true, mergeInFieldsFromFragmentSpreads: true }
       );
 
-      generator.classDeclarationForOperation(operations["Hero"], false);
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -373,7 +381,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["DroidDetails"], false);
+      generator.structDeclarationForFragment(
+        fragments["DroidDetails"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -388,7 +400,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["HeroDetails"], false);
+      generator.structDeclarationForFragment(
+        fragments["HeroDetails"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -405,7 +421,11 @@ describe("Swift code generation", () => {
         }
       `);
 
-      generator.structDeclarationForFragment(fragments["HeroDetails"], false);
+      generator.structDeclarationForFragment(
+        fragments["HeroDetails"],
+        false,
+        false
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -417,6 +437,30 @@ describe("Swift code generation", () => {
         query Hero {
           hero {
             name
+          }
+        }
+      `);
+
+      const selectionSet = (operations["Hero"].selectionSet
+        .selections[0] as Field).selectionSet as SelectionSet;
+
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Hero",
+          selectionSet
+        },
+        false
+      );
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
+    it(`should preserve leading and trailing underscores on fields`, () => {
+      const { operations } = compile(`
+        query Hero {
+          hero {
+            _name: name
+            _camel_case_id__: id
           }
         }
       `);
@@ -454,6 +498,46 @@ describe("Swift code generation", () => {
         {
           structName: "Hero",
           selectionSet
+        },
+        false
+      );
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
+    it(`should escape init specially in a struct declaration initializer for a selection set`, () => {
+      const { operations } = compile(`
+        query Humans {
+          human(id: 0) {
+            self: friends {
+              id
+            }
+          }
+          human(id: 1) {
+            self: friends {
+              id
+            }
+            _self: name
+          }
+        }
+      `);
+
+      const human0 = (operations["Humans"].selectionSet.selections[0] as Field)
+        .selectionSet as SelectionSet;
+      const human1 = (operations["Humans"].selectionSet.selections[1] as Field)
+        .selectionSet as SelectionSet;
+
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Human",
+          selectionSet: human0
+        },
+        false
+      );
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Human",
+          selectionSet: human1
         },
         false
       );
