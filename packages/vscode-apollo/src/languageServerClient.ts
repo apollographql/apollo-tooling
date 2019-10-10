@@ -53,7 +53,7 @@ export function getLanguageServerClient(
     ],
     synchronize: {
       fileEvents: [
-        workspace.createFileSystemWatcher("**/.env"),
+        workspace.createFileSystemWatcher("**/.env?(.local)"),
         workspace.createFileSystemWatcher(
           "**/*.{graphql,js,ts,jsx,tsx,vue,py,rb,dart}"
         )

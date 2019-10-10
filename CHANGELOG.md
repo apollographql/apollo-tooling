@@ -17,12 +17,12 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Load ENV variables from both `.env` and `.env.local` for Vue CLI compatibility [#1525](https://github.com/apollographql/apollo-tooling/pull/1525)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
-  
+  - Watch both `.env` and `.env.local` for changes [#1525](https://github.com/apollographql/apollo-tooling/pull/1525)
+
 ## `apollo@2.19.1`
 
 - `apollo@2.19.1`
