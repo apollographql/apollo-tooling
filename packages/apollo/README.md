@@ -781,7 +781,7 @@ To simplify the development process, you may want to step through and debug comm
 node --inspect-brk=9002 packages/apollo/bin/run <command>
 ```
 
-If you're using VS Code, you can run the included "Attach to CLI Debugger" launch task and debug right from VS Code! Otherwise, you may use the (Chrome inspector)[https://nodejs.org/en/docs/guides/debugging-getting-started/] or other Node debugger of your choice.
+If you're using VS Code, you can run the included "Attach to CLI Debugger" launch task and debug right from VS Code! Otherwise, you may use the Chrome inspector or [other Node debugger](https://nodejs.org/en/docs/guides/debugging-getting-started/) of your choice.
 
 ## Regenerating Mocked Network Data
 
