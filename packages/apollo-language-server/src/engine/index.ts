@@ -98,8 +98,31 @@ export class ApolloEngineClient extends GraphQLDataSource {
       }
 
       if (!(data && data.service)) {
-        throw new Error("Error in request from Engine");
+        throw new Error("Error in request from Graph Manager");
       }
+      return data.service;
+    });
+  }
+
+  public async getGraphInfo(variables: GraphInfoVariables) {
+    return this.execute<GraphInfo>({
+      query: GRAPH_INFO,
+      variables
+    }).then(({ data, errors }) => {
+      if (errors) {
+        throw new Error(errors.map(error => error.message).join("\n"));
+      }
+
+      if (data && !data.service) {
+        throw new Error(
+          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+        );
+      }
+
+      if (!(data && data.service)) {
+        throw new Error("Error in request from Graph Manager");
+      }
+
       return data.service;
     });
   }
