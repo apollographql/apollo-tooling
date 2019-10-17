@@ -187,14 +187,12 @@ connection.onWorkspaceSymbol((params, token) =>
 );
 
 connection.onCompletion(
-  debounceHandler(
-    (params, token) =>
-      languageProvider.provideCompletionItems(
-        params.textDocument.uri,
-        params.position,
-        token
-      ),
-    false
+  debounceHandler((params, token) =>
+    languageProvider.provideCompletionItems(
+      params.textDocument.uri,
+      params.position,
+      token
+    )
   )
 );
 
