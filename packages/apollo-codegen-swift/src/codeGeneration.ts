@@ -300,7 +300,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                       swift`${SwiftSource.string(name)}: ${propertyName}`
                   ),
                   ", "
-                ) || ":",
+                ) || swift`:`,
                 swift`]`
               )
             );
@@ -649,7 +649,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                 )
               ],
               ", "
-            ) || ":",
+            ) || swift`:`,
             swift`])`
           )
         );
@@ -691,7 +691,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                   )
                 ],
                 ", "
-              ) || ":",
+              ) || swift`:`,
               swift`])`
             )
           );
@@ -1227,7 +1227,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                     )}`
                 ),
                 ", "
-              ) || ":",
+              ) || swift`:`,
               swift`]`
             )
           );
