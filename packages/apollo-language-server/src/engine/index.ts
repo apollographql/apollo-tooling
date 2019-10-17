@@ -30,7 +30,8 @@ import {
   RemoveServiceAndComposeVariables,
   CheckPartialSchema_service_checkPartialSchema,
   ListServicesVariables,
-  ListServices
+  ListServices,
+  GraphInfo_service_mostRecentCompositionPublish
 } from "../graphqlTypes";
 
 export interface ClientIdentity {
@@ -107,7 +108,9 @@ export class ApolloEngineClient extends GraphQLDataSource {
     });
   }
 
-  public async graphInfo(variables: GraphInfoVariables) {
+  public async graphInfo(
+    variables: GraphInfoVariables
+  ): Promise<GraphInfo_service_mostRecentCompositionPublish | null> {
     return this.execute<GraphInfo>({
       query: GRAPH_INFO,
       variables
@@ -126,7 +129,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
         throw new Error("Error in request from Graph Manager");
       }
 
-      return data.service;
+      return data.service.mostRecentCompositionPublish;
     });
   }
 
