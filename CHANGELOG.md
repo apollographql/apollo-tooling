@@ -17,10 +17,12 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
+  - Improve autocomplete performance by fixing `leading` option and debounce threshold [#1593](https://github.com/apollographql/apollo-tooling/pull/1593)
   - Load ENV variables from both `.env` and `.env.local` for Vue CLI compatibility [#1525](https://github.com/apollographql/apollo-tooling/pull/1525)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
+  - Fix `ctrl+space` autocomplete with language-server imrovements [#1593](https://github.com/apollographql/apollo-tooling/pull/1593)
   - Watch both `.env` and `.env.local` for changes [#1525](https://github.com/apollographql/apollo-tooling/pull/1525)
 
 ## `apollo@2.19.1`
