@@ -302,6 +302,76 @@ export interface CheckSchemaVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GraphInfo
+// ====================================================
+
+export interface GraphInfo_service_mostRecentCompositionPublish_compositionConfig_implementingServiceLocations {
+  __typename: "ImplementingServiceLocation";
+  /**
+   * The name of the implementing service
+   */
+  name: string;
+}
+
+export interface GraphInfo_service_mostRecentCompositionPublish_compositionConfig {
+  __typename: "CompositionConfig";
+  /**
+   * List of implementing services that comprise a composed graph
+   */
+  implementingServiceLocations: GraphInfo_service_mostRecentCompositionPublish_compositionConfig_implementingServiceLocations[];
+}
+
+export interface GraphInfo_service_mostRecentCompositionPublish_errors {
+  __typename: "SchemaCompositionError";
+  message: string;
+}
+
+export interface GraphInfo_service_mostRecentCompositionPublish {
+  __typename: "CompositionPublishResult";
+  /**
+   * ID that points to composition result.
+   */
+  graphCompositionID: string;
+  /**
+   * The produced composition config. Will be null if there are any errors
+   */
+  compositionConfig: GraphInfo_service_mostRecentCompositionPublish_compositionConfig | null;
+  /**
+   * List of errors during composition. Errors mean that Apollo was unable to compose the
+   * graph's implementing services into a GraphQL schema. This partial schema should not be
+   * published to the implementing service if there were any errors encountered
+   */
+  errors: (GraphInfo_service_mostRecentCompositionPublish_errors | null)[];
+  /**
+   * Whether the gateway link was updated.
+   */
+  updatedGateway: boolean;
+}
+
+export interface GraphInfo_service {
+  __typename: "Service";
+  /**
+   * This returns the composition result that was most recently published to the graph.
+   * Only identites that canQuerySchemas and canQueryImplementingServices have access
+   * to this field
+   */
+  mostRecentCompositionPublish: GraphInfo_service_mostRecentCompositionPublish | null;
+}
+
+export interface GraphInfo {
+  service: GraphInfo_service | null;
+}
+
+export interface GraphInfoVariables {
+  id: string;
+  graphVariant: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: ListServices
 // ====================================================
 

@@ -9,9 +9,10 @@ import { UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA } from "./operations/uploadAndCompose
 import { CHECK_PARTIAL_SCHEMA } from "./operations/checkPartialSchema";
 import { REMOVE_SERVICE_AND_COMPOSE } from "./operations/removeServiceAndCompose";
 import { LIST_SERVICES } from "./operations/listServices";
+import { GRAPH_INFO } from "./operations/graphInfo";
 import {
-  ListServices,
-  ListServicesVariables,
+  GraphInfo,
+  GraphInfoVariables,
   CheckSchema,
   CheckSchemaVariables,
   UploadSchema,
@@ -27,7 +28,9 @@ import {
   CheckPartialSchemaVariables,
   RemoveServiceAndCompose,
   RemoveServiceAndComposeVariables,
-  CheckPartialSchema_service_checkPartialSchema
+  CheckPartialSchema_service_checkPartialSchema,
+  ListServicesVariables,
+  ListServices
 } from "../graphqlTypes";
 
 export interface ClientIdentity {
@@ -304,7 +307,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
     data.service.stats.fieldStats.forEach(fieldStat => {
       // Parse field "ParentType.fieldName:FieldType" into ["ParentType", "fieldName", "FieldType"]
       const [parentType = null, fieldName = null] = fieldStat.groupBy.field
-        ? fieldStat.groupBy.field.split(/\.|:/)
+        ? fieldStat.groupBy.field.split(/[.:]/)
         : [];
 
       if (!parentType || !fieldName) {
