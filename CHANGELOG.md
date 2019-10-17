@@ -11,6 +11,7 @@
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
   - Fix code generation for empty input objects / arrays [#1589](https://github.com/apollographql/apollo-tooling/pull/1589)
+  - Add flag to omit deprecated enum cases [#1595](https://github.com/apollographql/apollo-tooling/pull/1595)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`

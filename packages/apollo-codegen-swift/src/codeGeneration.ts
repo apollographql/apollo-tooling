@@ -1071,7 +1071,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
   enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
-    const values = type.getValues();
+    const values = type.getValues().filter(value => {
+      return (
+        !value.isDeprecated || !this.context.options.omitDeprecatedEnumCases
+      );
+    });
 
     this.printNewlineIfNeeded();
     this.comment(description || undefined);
@@ -1082,19 +1086,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       this.printOnNewline(swift`public typealias RawValue = String`);
 
       values.forEach(value => {
-        if (
-          value.isDeprecated &&
-          !this.context.options.omitDeprecatedEnumCases
-        ) {
-          this.comment(value.description || undefined);
-          this.deprecationAttributes(
-            value.isDeprecated,
-            value.deprecationReason || undefined
-          );
-          this.printOnNewline(
-            swift`case ${this.helpers.enumCaseName(value.name)}`
-          );
-        }
+        this.comment(value.description || undefined);
+        this.deprecationAttributes(
+          value.isDeprecated,
+          value.deprecationReason || undefined
+        );
+        this.printOnNewline(
+          swift`case ${this.helpers.enumCaseName(value.name)}`
+        );
       });
       this.comment("Auto generated constant for unknown enum values");
       this.printOnNewline(swift`case __unknown(RawValue)`);
