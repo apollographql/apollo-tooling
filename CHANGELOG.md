@@ -4,6 +4,7 @@
 
 - `apollo`
   - Fix codegen --watch mode not writing changes for files [#1591](https://github.com/apollographql/apollo-tooling/pull/1591)
+  - Fix `service:check` not outputing url
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
