@@ -3,6 +3,7 @@ import { introspectionFromSchema } from "graphql";
 import { writeFileSync } from "fs";
 import chalk from "chalk";
 import { ProjectCommand } from "../../Command";
+import { GraphQLProject } from "apollo-language-server";
 
 export default class GraphInfo extends ProjectCommand {
   static aliases = ["schema:download"];
@@ -17,40 +18,44 @@ export default class GraphInfo extends ProjectCommand {
     }),
     verbose: flags.boolean({
       char: "v",
-      description: "Whether to include verbose information about the graph's state",
-      default: false,
-    }),
+      description:
+        "Whether to include verbose information about the graph's state",
+      default: false
+    })
   };
 
   async run() {
-    await this.runTasks(({ args, project, flags }) => [
-      {
-        title: `Collecting graph info from Apollo Graph Manager`,
-        task: async () => {
-          try {
+    await this.runTasks(
+      ({
+        args,
+        project,
+        flags,
+        config
+      }: {
+        args: any;
+        project: GraphQLProject;
+        flags: any;
+        config: any;
+      }) => [
+        {
+          title: `Collecting graph info from Apollo Graph Manager`,
+          task: async () => {
+            if (!config.name) {
+              throw new Error("No service found to link to Engine");
+            }
+            const graphInfo = await project.engine.graphInfo({
+              id: config.name,
+              graphVariant: flags.tag
+            });
             const schema = await project.resolveSchema({ tag: flags.tag });
             writeFileSync(
               args.output,
               JSON.stringify(introspectionFromSchema(schema), null, 2)
             );
-          } catch (e) {
-            if (e.code == "ECONNREFUSED") {
-              this.log(chalk.red("ERROR: Connection refused."));
-              this.log(
-                chalk.red(
-                  "You may not be running a service locally, or your endpoint url is incorrect."
-                )
-              );
-              this.log(
-                chalk.red(
-                  "If you're trying to download a schema from Apollo Engine, use the `client:download-schema` command instead."
-                )
-              );
-            }
-            throw e;
+            console.log("graphInfo", graphInfo);
           }
         }
-      }
-    ]);
+      ]
+    );
   }
 }
