@@ -732,6 +732,49 @@ describe("Swift code generation", () => {
       expect(generator.output).toMatchSnapshot();
     });
 
+    it("should omit deprecated cases from an enum declaration for a GraphQLEnumType", () => {
+      const { operations } = compile(
+        `
+          query Starship {
+            starship(id: 1) {
+              length(unit: METER)
+            }
+          }
+        `,
+        {
+          generateOperationIds: true,
+          mergeInFieldsFromFragmentSpreads: true,
+          omitDeprecatedEnumCases: true
+        }
+      );
+
+      let starship = operations["Starship"].selectionSet.selections[0] as Field;
+      let starshipLength = starship.selectionSet.selections[0] as Field;
+      let lengthUnitArg = starshipLength.args[0].type;
+
+      generator.typeDeclarationForGraphQLType(lengthUnitArg, false);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
+    it("should include deprecated cases in an enum declaration for a GraphQLEnumType", () => {
+      const { operations } = compile(`
+          query Starship {
+            starship(id: 1) {
+              length(unit: METER)
+            }
+          }
+        `);
+
+      let starship = operations["Starship"].selectionSet.selections[0] as Field;
+      let starshipLength = starship.selectionSet.selections[0] as Field;
+      let lengthUnitArg = starshipLength.args[0].type;
+
+      generator.typeDeclarationForGraphQLType(lengthUnitArg, false);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
     it("should generate a struct declaration for a GraphQLInputObjectType", () => {
       generator.typeDeclarationForGraphQLType(
         schema.getType("ReviewInput"),
