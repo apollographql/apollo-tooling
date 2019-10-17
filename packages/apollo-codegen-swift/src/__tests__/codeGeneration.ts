@@ -1,4 +1,5 @@
 import {
+  buildSchema,
   parse,
   GraphQLNonNull,
   GraphQLString,
@@ -753,6 +754,71 @@ describe("Swift code generation", () => {
       expect(dictionaryLiteral).toBe(
         '["episode": "JEDI", "review": ["stars": 2, "commentary": GraphQLVariable("commentary"), "favorite_color": ["red": GraphQLVariable("red"), "blue": 100, "green": 50]]]'
       );
+    });
+
+    it("should handle empty input objects", () => {
+      // The existing schemas don't contain any input objects with all nullable types.
+      // Extending the schema in a call to `compile` doesn't seem to work.
+      // So instead we'll just build our own.
+      const schema = buildSchema(`
+        schema {
+          query: Query
+        }
+        type Query {
+          foo(input: FooInput!): Int
+        }
+        input FooInput {
+          id: ID
+        }
+      `);
+      const document = parse(`
+        query FieldArgumentsWithEmptyInputObject {
+          foo(input: {}) {
+            id
+          }
+        }
+      `);
+      const context = compileToIR(schema, document);
+      generator.context = context;
+
+      const { operations } = context;
+      const fieldArguments = (operations["FieldArgumentsWithEmptyInputObject"]
+        .selectionSet.selections[0] as Field).args as Argument[];
+      const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(
+        fieldArguments
+      ).source;
+
+      expect(dictionaryLiteral).toBe('["input": [:]]');
+    });
+
+    it("should handle empty input arrays", () => {
+      // As with the previous test, we need to build our own schema.
+      const schema = buildSchema(`
+        schema {
+          query: Query
+        }
+        type Query {
+          foo(input: [Int!]!): Int
+        }
+      `);
+      const document = parse(`
+        query FieldArgumentsWithEmptyInputArray {
+          foo(input: []) {
+            id
+          }
+        }
+      `);
+      const context = compileToIR(schema, document);
+      generator.context = context;
+
+      const { operations } = context;
+      const fieldArguments = (operations["FieldArgumentsWithEmptyInputArray"]
+        .selectionSet.selections[0] as Field).args as Argument[];
+      const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(
+        fieldArguments
+      ).source;
+
+      expect(dictionaryLiteral).toBe('["input": []]');
     });
   });
 });

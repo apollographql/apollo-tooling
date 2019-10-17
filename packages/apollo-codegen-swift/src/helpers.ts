@@ -260,23 +260,27 @@ export class Helpers {
           value.variableName
         )})`;
       } else if (Array.isArray(value)) {
-        return SwiftSource.wrap(
-          swift`[`,
-          SwiftSource.join(value.map(expressionFromValue), ", "),
-          swift`]`
+        return (
+          SwiftSource.wrap(
+            swift`[`,
+            SwiftSource.join(value.map(expressionFromValue), ", "),
+            swift`]`
+          ) || swift`[]`
         );
       } else if (typeof value === "object") {
-        return SwiftSource.wrap(
-          swift`[`,
-          SwiftSource.join(
-            Object.entries(value).map(([key, value]) => {
-              return swift`${SwiftSource.string(key)}: ${expressionFromValue(
-                value
-              )}`;
-            }),
-            ", "
-          ) || ":",
-          swift`]`
+        return (
+          SwiftSource.wrap(
+            swift`[`,
+            SwiftSource.join(
+              Object.entries(value).map(([key, value]) => {
+                return swift`${SwiftSource.string(key)}: ${expressionFromValue(
+                  value
+                )}`;
+              }),
+              ", "
+            ),
+            swift`]`
+          ) || swift`[:]`
         );
       } else if (typeof value === "string") {
         return SwiftSource.string(value);
@@ -285,17 +289,19 @@ export class Helpers {
       }
     }
 
-    return SwiftSource.wrap(
-      swift`[`,
-      SwiftSource.join(
-        args.map(arg => {
-          return swift`${SwiftSource.string(arg.name)}: ${expressionFromValue(
-            arg.value
-          )}`;
-        }),
-        ", "
-      ) || ":",
-      swift`]`
+    return (
+      SwiftSource.wrap(
+        swift`[`,
+        SwiftSource.join(
+          args.map(arg => {
+            return swift`${SwiftSource.string(arg.name)}: ${expressionFromValue(
+              arg.value
+            )}`;
+          }),
+          ", "
+        ),
+        swift`]`
+      ) || swift`[:]`
     );
   }
 
