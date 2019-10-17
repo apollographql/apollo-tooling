@@ -435,7 +435,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     after?: Function
   ) {
     const {
-      options: { namespace, mergeInFieldsFromFragmentSpreads }
+      options: {
+        namespace,
+        mergeInFieldsFromFragmentSpreads,
+        omitDeprecatedEnumCases
+      }
     } = this.context;
 
     this.structDeclaration(
@@ -1078,14 +1082,19 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       this.printOnNewline(swift`public typealias RawValue = String`);
 
       values.forEach(value => {
-        this.comment(value.description || undefined);
-        this.deprecationAttributes(
-          value.isDeprecated,
-          value.deprecationReason || undefined
-        );
-        this.printOnNewline(
-          swift`case ${this.helpers.enumCaseName(value.name)}`
-        );
+        if (
+          value.isDeprecated &&
+          !this.context.options.omitDeprecatedEnumCases
+        ) {
+          this.comment(value.description || undefined);
+          this.deprecationAttributes(
+            value.isDeprecated,
+            value.deprecationReason || undefined
+          );
+          this.printOnNewline(
+            swift`case ${this.helpers.enumCaseName(value.name)}`
+          );
+        }
       });
       this.comment("Auto generated constant for unknown enum values");
       this.printOnNewline(swift`case __unknown(RawValue)`);

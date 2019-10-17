@@ -32,7 +32,10 @@ describe("Swift code generation", () => {
 
   function compile(
     source: string,
-    options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }
+    options: CompilerOptions = {
+      mergeInFieldsFromFragmentSpreads: true,
+      omitDeprecatedEnumCases: false
+    }
   ): CompilerContext {
     const document = parse(source);
     const context = compileToIR(schema, document, options);
@@ -188,7 +191,11 @@ describe("Swift code generation", () => {
           name
         }
       `,
-        { generateOperationIds: true, mergeInFieldsFromFragmentSpreads: true }
+        {
+          generateOperationIds: true,
+          mergeInFieldsFromFragmentSpreads: true,
+          omitDeprecatedEnumCases: false
+        }
       );
 
       generator.classDeclarationForOperation(operations["Hero"], false, false);

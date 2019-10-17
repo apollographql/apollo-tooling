@@ -153,6 +153,8 @@ OPTIONS
 
   --namespace=namespace                      The namespace to emit generated code into.
 
+  --omitDeprecatedEnumCases                  Omit deprecated enum cases from generated code [Swift only]
+
   --only=only                                Parse all input files, but only output generated code for the specified
                                              file [Swift only]
 
