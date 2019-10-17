@@ -210,7 +210,7 @@ export function formatHumanReadable({
       change => change.severity !== ChangeSeverity.FAILURE
     );
 
-    return table([
+    result += table([
       ["Change", "Code", "Description"],
       ...[
         ...breakingChanges.map(formatChange).map(Object.values),
