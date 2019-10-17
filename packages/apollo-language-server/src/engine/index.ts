@@ -30,7 +30,8 @@ import {
   RemoveServiceAndComposeVariables,
   CheckPartialSchema_service_checkPartialSchema,
   ListServicesVariables,
-  ListServices
+  ListServices,
+  GraphInfo_service_mostRecentCompositionPublish
 } from "../graphqlTypes";
 
 export interface ClientIdentity {
@@ -114,7 +115,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
         throw new Error("Error in request from Graph Manager");
       }
 
-      return data.service;
+      return data.service.mostRecentCompositionPublish;
     });
   }
 

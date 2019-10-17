@@ -6,9 +6,6 @@ import { ProjectCommand } from "../../Command";
 import { GraphQLProject } from "apollo-language-server";
 
 export default class GraphInfo extends ProjectCommand {
-  static aliases = ["schema:download"];
-  static description = "Download the schema from your GraphQL endpoint.";
-
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({
@@ -40,19 +37,20 @@ export default class GraphInfo extends ProjectCommand {
         {
           title: `Collecting graph info from Apollo Graph Manager`,
           task: async () => {
+            console.log("foo");
             if (!config.name) {
               throw new Error("No service found to link to Engine");
             }
-            const graphInfo = await project.engine.graphInfo({
+            const mostRecentCompositionResult = await project.engine.graphInfo({
               id: config.name,
               graphVariant: flags.tag
             });
-            const schema = await project.resolveSchema({ tag: flags.tag });
-            writeFileSync(
-              args.output,
-              JSON.stringify(introspectionFromSchema(schema), null, 2)
-            );
-            console.log("graphInfo", graphInfo);
+            if (!mostRecentCompositionResult) {
+              // TODO: Support normal shit
+              throw new Error(
+                "Graph info only supports federated graphs at the moment"
+              );
+            }
           }
         }
       ]
