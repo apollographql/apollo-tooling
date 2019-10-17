@@ -240,6 +240,7 @@ export default class Generate extends ClientCommand {
         if (file.indexOf("__generated__") > -1) return;
         // don't trigger write events on single output file
         if (file.indexOf(output) > -1) return;
+        this.project.fileDidChange(URI.file(file).toString());
         console.log("\nChange detected, generating types...");
         write();
       });
