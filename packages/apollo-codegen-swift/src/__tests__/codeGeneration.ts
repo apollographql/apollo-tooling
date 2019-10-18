@@ -32,7 +32,10 @@ describe("Swift code generation", () => {
 
   function compile(
     source: string,
-    options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }
+    options: CompilerOptions = {
+      mergeInFieldsFromFragmentSpreads: true,
+      omitDeprecatedEnumCases: false
+    }
   ): CompilerContext {
     const document = parse(source);
     const context = compileToIR(schema, document, options);
@@ -188,7 +191,11 @@ describe("Swift code generation", () => {
           name
         }
       `,
-        { generateOperationIds: true, mergeInFieldsFromFragmentSpreads: true }
+        {
+          generateOperationIds: true,
+          mergeInFieldsFromFragmentSpreads: true,
+          omitDeprecatedEnumCases: false
+        }
       );
 
       generator.classDeclarationForOperation(operations["Hero"], false, false);
@@ -721,6 +728,49 @@ describe("Swift code generation", () => {
       });
 
       generator.typeDeclarationForGraphQLType(albumPrivaciesEnum, false);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
+    it("should omit deprecated cases from an enum declaration for a GraphQLEnumType", () => {
+      const { operations } = compile(
+        `
+          query Starship {
+            starship(id: 1) {
+              length(unit: METER)
+            }
+          }
+        `,
+        {
+          generateOperationIds: true,
+          mergeInFieldsFromFragmentSpreads: true,
+          omitDeprecatedEnumCases: true
+        }
+      );
+
+      let starship = operations["Starship"].selectionSet.selections[0] as Field;
+      let starshipLength = starship.selectionSet.selections[0] as Field;
+      let lengthUnitArg = starshipLength.args[0].type;
+
+      generator.typeDeclarationForGraphQLType(lengthUnitArg, false);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
+    it("should include deprecated cases in an enum declaration for a GraphQLEnumType", () => {
+      const { operations } = compile(`
+          query Starship {
+            starship(id: 1) {
+              length(unit: METER)
+            }
+          }
+        `);
+
+      let starship = operations["Starship"].selectionSet.selections[0] as Field;
+      let starshipLength = starship.selectionSet.selections[0] as Field;
+      let lengthUnitArg = starshipLength.args[0].type;
+
+      generator.typeDeclarationForGraphQLType(lengthUnitArg, false);
 
       expect(generator.output).toMatchSnapshot();
     });

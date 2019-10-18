@@ -435,7 +435,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     after?: Function
   ) {
     const {
-      options: { namespace, mergeInFieldsFromFragmentSpreads }
+      options: {
+        namespace,
+        mergeInFieldsFromFragmentSpreads,
+        omitDeprecatedEnumCases
+      }
     } = this.context;
 
     this.structDeclaration(
@@ -1067,7 +1071,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
   enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
-    const values = type.getValues();
+    const values = type.getValues().filter(value => {
+      return (
+        !value.isDeprecated || !this.context.options.omitDeprecatedEnumCases
+      );
+    });
 
     this.printNewlineIfNeeded();
     this.comment(description || undefined);

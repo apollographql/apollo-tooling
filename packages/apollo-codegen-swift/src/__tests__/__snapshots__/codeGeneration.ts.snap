@@ -2097,3 +2097,100 @@ public enum Episode: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo
   }
 }"
 `;
+
+exports[`Swift code generation #typeDeclarationForGraphQLType() should include deprecated cases in an enum declaration for a GraphQLEnumType 1`] = `
+"/// Units of height
+public enum LengthUnit: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+  public typealias RawValue = String
+  /// The standard unit around the world
+  case meter
+  /// Primarily used in the United States
+  case foot
+  /// Ancient unit used during the Middle Ages
+  @available(*, deprecated, message: \\"Test deprecated enum case\\")
+  case cubit
+  /// Auto generated constant for unknown enum values
+  case __unknown(RawValue)
+
+  public init?(rawValue: RawValue) {
+    switch rawValue {
+      case \\"METER\\": self = .meter
+      case \\"FOOT\\": self = .foot
+      case \\"CUBIT\\": self = .cubit
+      default: self = .__unknown(rawValue)
+    }
+  }
+
+  public var rawValue: RawValue {
+    switch self {
+      case .meter: return \\"METER\\"
+      case .foot: return \\"FOOT\\"
+      case .cubit: return \\"CUBIT\\"
+      case .__unknown(let value): return value
+    }
+  }
+
+  public static func == (lhs: LengthUnit, rhs: LengthUnit) -> Bool {
+    switch (lhs, rhs) {
+      case (.meter, .meter): return true
+      case (.foot, .foot): return true
+      case (.cubit, .cubit): return true
+      case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
+      default: return false
+    }
+  }
+
+  public static var allCases: [LengthUnit] {
+    return [
+      .meter,
+      .foot,
+      .cubit,
+    ]
+  }
+}"
+`;
+
+exports[`Swift code generation #typeDeclarationForGraphQLType() should omit deprecated cases from an enum declaration for a GraphQLEnumType 1`] = `
+"/// Units of height
+public enum LengthUnit: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+  public typealias RawValue = String
+  /// The standard unit around the world
+  case meter
+  /// Primarily used in the United States
+  case foot
+  /// Auto generated constant for unknown enum values
+  case __unknown(RawValue)
+
+  public init?(rawValue: RawValue) {
+    switch rawValue {
+      case \\"METER\\": self = .meter
+      case \\"FOOT\\": self = .foot
+      default: self = .__unknown(rawValue)
+    }
+  }
+
+  public var rawValue: RawValue {
+    switch self {
+      case .meter: return \\"METER\\"
+      case .foot: return \\"FOOT\\"
+      case .__unknown(let value): return value
+    }
+  }
+
+  public static func == (lhs: LengthUnit, rhs: LengthUnit) -> Bool {
+    switch (lhs, rhs) {
+      case (.meter, .meter): return true
+      case (.foot, .foot): return true
+      case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
+      default: return false
+    }
+  }
+
+  public static var allCases: [LengthUnit] {
+    return [
+      .meter,
+      .foot,
+    ]
+  }
+}"
+`;

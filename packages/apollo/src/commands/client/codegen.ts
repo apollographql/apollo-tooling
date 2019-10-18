@@ -64,6 +64,9 @@ export default class Generate extends ClientCommand {
     namespace: flags.string({
       description: "The namespace to emit generated code into."
     }),
+    omitDeprecatedEnumCases: flags.boolean({
+      description: "Omit deprecated enum cases from generated code [Swift only]"
+    }),
     operationIdsPath: flags.string({
       description:
         "Path to an operation id JSON map file. If specified, also stores the operation ids (hashes) as properties on operation types [currently Swift-only]"
@@ -218,7 +221,8 @@ export default class Generate extends ClientCommand {
                     globalTypesFile: flags.globalTypesFile,
                     tsFileExtension: flags.tsFileExtension,
                     suppressSwiftMultilineStringLiterals:
-                      flags.suppressSwiftMultilineStringLiterals
+                      flags.suppressSwiftMultilineStringLiterals,
+                    omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases
                   }
                 );
               };
