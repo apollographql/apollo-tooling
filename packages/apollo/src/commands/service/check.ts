@@ -283,22 +283,18 @@ export default class ServiceCheck extends ProjectCommand {
     const { isCi } = envCi();
 
     let schema: GraphQLSchema | undefined;
+    let graphID: string | undefined;
+    let graphVariant: string | undefined;
     try {
       await this.runTasks<TasksOutput>(
         ({ config, flags, project }) => {
-          if (!isServiceProject(project)) {
-            throw new Error(
-              "This project needs to be configured as a service project but is configured as a client project. Please see bit.ly/2ByILPj for help regarding configuration."
-            );
-          }
-
           /**
            * Name of the graph being checked. `engine` is an example of a graph.
            *
            * A graph can be either a monolithic schema or the result of composition a federated schema.
            */
-          const graphName = config.name;
-          const tag = flags.tag || config.tag || "current";
+          graphID = config.name;
+          graphVariant = flags.tag || config.tag || "current";
 
           /**
            * Name of the implementing service being checked.
@@ -307,8 +303,8 @@ export default class ServiceCheck extends ProjectCommand {
            */
           const serviceName: string | undefined = flags.serviceName;
 
-          if (!graphName) {
-            throw new Error("No service found to link to Engine");
+          if (!graphID) {
+            throw new Error("No graph found to link to Apollo Graph Manager");
           }
 
           // Add some fields to output that are required for producing
@@ -321,9 +317,9 @@ export default class ServiceCheck extends ProjectCommand {
           return [
             {
               enabled: () => !!serviceName,
-              title: `Validate graph composition for service ${chalk.cyan(
+              title: `Validate graph composition for service ${chalk.blue(
                 serviceName || ""
-              )} on graph ${chalk.cyan(graphName)}`,
+              )} on graph ${chalk.blue(graphID)}`,
               task: async (ctx: TasksOutput, task) => {
                 if (!serviceName) {
                   throw new Error(
@@ -337,7 +333,7 @@ export default class ServiceCheck extends ProjectCommand {
                   throw new Error("No SDL found for federated service");
                 }
 
-                task.output = `Attempting to compose graph with ${chalk.cyan(
+                task.output = `Attempting to compose graph with ${chalk.blue(
                   serviceName
                 )} service's partial schema`;
 
@@ -352,8 +348,8 @@ export default class ServiceCheck extends ProjectCommand {
                   compositionValidationResult,
                   checkSchemaResult
                 } = await project.engine.checkPartialSchema({
-                  id: graphName,
-                  graphVariant: tag,
+                  id: graphID!,
+                  graphVariant: graphVariant!,
                   implementingServiceName: serviceName,
                   partialSchema: {
                     sdl
@@ -366,8 +362,8 @@ export default class ServiceCheck extends ProjectCommand {
                 task.title = `Found ${pluralize(
                   compositionValidationResult.errors.length,
                   "graph composition error"
-                )} for service ${chalk.cyan(serviceName)} on graph ${chalk.cyan(
-                  graphName
+                )} for service ${chalk.blue(serviceName)} on graph ${chalk.blue(
+                  graphID!
                 )}`;
 
                 if (compositionValidationResult.errors.length > 0) {
@@ -417,9 +413,9 @@ export default class ServiceCheck extends ProjectCommand {
             {
               title: `Validating ${
                 serviceName ? "composed " : ""
-              }schema against tag ${chalk.cyan(tag)} on graph ${chalk.cyan(
-                graphName
-              )}`,
+              }schema against tag ${chalk.blue(
+                graphVariant!
+              )} on graph ${chalk.blue(graphID)}`,
               // We have already performed validation per operation above if the service is federated
               enabled: () => !serviceName,
               task: async (ctx: TasksOutput, task) => {
@@ -450,7 +446,7 @@ export default class ServiceCheck extends ProjectCommand {
                 task.output = "Validating schema";
 
                 const variables: CheckSchemaVariables = {
-                  id: graphName,
+                  id: graphID!,
                   tag: flags.tag,
                   gitContext: await gitInfo(this.log),
                   frontend: flags.frontend || config.engine.frontend,
@@ -506,14 +502,14 @@ export default class ServiceCheck extends ProjectCommand {
                   : null;
 
                 task.title = `Compared ${pluralize(
-                  chalk.cyan(schemaChanges.length.toString()),
+                  chalk.blue(schemaChanges.length.toString()),
                   "schema change"
                 )} against ${pluralize(
-                  chalk.cyan(numberOfCheckedOperations.toString()),
+                  chalk.blue(numberOfCheckedOperations.toString()),
                   "operation"
                 )}${
                   hours
-                    ? ` over the last ${chalk.cyan(formatTimePeriod(hours))}`
+                    ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
                     : ""
                 }`;
               }
@@ -529,10 +525,10 @@ export default class ServiceCheck extends ProjectCommand {
                   breakingSchemaChangeCount;
 
                 task.title = `Found ${pluralize(
-                  chalk.cyan(breakingSchemaChangeCount.toString()),
+                  chalk.blue(breakingSchemaChangeCount.toString()),
                   "breaking change"
                 )} and ${pluralize(
-                  chalk.cyan(nonBreakingSchemaChangeCount.toString()),
+                  chalk.blue(nonBreakingSchemaChangeCount.toString()),
                   "compatible change"
                 )}`;
 
@@ -603,20 +599,7 @@ export default class ServiceCheck extends ProjectCommand {
         )
       );
     } else if (shouldOutputMarkdown) {
-      // This _should_ always be here; but TypeScript tells us that's optional. If we check it here, then
-      // passing `config` to any other function will signify that `config.service` might now be null or
-      // undefined. Save it as a const to tell TypeScript `service` can't be changed.
-
-      const { service } = config;
-      if (!service) {
-        throw new Error(
-          "Service mising from config. This should have been validated elsewhere"
-        );
-      }
-
-      const graphName = config.service && config.service.name;
-
-      if (!graphName) {
+      if (!graphID) {
         throw new Error(
           "The graph name should have been defined in the Apollo config and validated when the config was loaded. Please file an issue if you're seeing this error."
         );
@@ -632,7 +615,7 @@ export default class ServiceCheck extends ProjectCommand {
         return this.log(
           formatCompositionErrorsMarkdown({
             compositionErrors,
-            graphName,
+            graphName: graphID,
             serviceName,
             tag: config.tag
           })
@@ -642,7 +625,7 @@ export default class ServiceCheck extends ProjectCommand {
       return this.log(
         formatMarkdown({
           checkSchemaResult,
-          graphName,
+          graphName: graphID,
           serviceName,
           tag: config.tag,
           graphCompositionID

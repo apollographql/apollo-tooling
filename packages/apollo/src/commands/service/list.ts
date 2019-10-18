@@ -81,7 +81,7 @@ function formatHumanReadable({
 
     const serviceListUrlEnding = `/graph/${graphName}/service-list`;
     const targetUrl = `${frontendUrl}${serviceListUrlEnding}`;
-    result += `\nView full details at: ${chalk.cyan(targetUrl)}\n`;
+    result += `\n\nView full details at: ${targetUrl}`;
   }
   return result;
 }
@@ -101,37 +101,33 @@ export default class ServiceList extends ProjectCommand {
     const taskOutput: TasksOutput = {};
 
     let schema: GraphQLSchema | undefined;
+    let graphID: string | undefined;
+    let graphVariant: string | undefined;
     try {
       await this.runTasks<TasksOutput>(({ config, flags, project }) => {
-        if (!isServiceProject(project)) {
-          throw new Error(
-            "This project needs to be configured as a service project but is configured as a client project. Please see bit.ly/2ByILPj for help regarding configuration."
-          );
-        }
-
         /**
          * Name of the graph being checked. `engine` is an example of a graph.
          *
          * A graph can be either a monolithic schema or the result of composition a federated schema.
          */
-        const graphName = config.name;
-        const variant = flags.tag || config.tag || "current";
+        graphID = config.name;
+        graphVariant = flags.tag || config.tag || "current";
 
-        if (!graphName) {
+        if (!graphID) {
           throw new Error("No service found to link to Engine");
         }
 
         return [
           {
-            title: `Fetching list of services for graph ${chalk.cyan(
-              graphName + "@" + variant
+            title: `Fetching list of services for graph ${chalk.blue(
+              graphID + "@" + graphVariant
             )}`,
             task: async (ctx: TasksOutput, task) => {
               const {
                 implementingServices
               } = await project.engine.listServices({
-                id: graphName,
-                graphVariant: variant
+                id: graphID!,
+                graphVariant: graphVariant!
               });
               const newContext: typeof ctx = {
                 implementingServices,
@@ -151,17 +147,6 @@ export default class ServiceList extends ProjectCommand {
         return;
       }
       throw error;
-    }
-
-    // This _should_ always be here; but TypeScript tells us that's optional. If we check it here, then
-    // passing `config` to any other function will signify that `config.service` might now be null or
-    // undefined. Save it as a const to tell TypeScript `service` can't be changed.
-
-    const { service } = taskOutput.config;
-    if (!service || !taskOutput.config) {
-      throw new Error(
-        "Service missing from config. This should have been validated elsewhere"
-      );
     }
     this.log(
       formatHumanReadable({
