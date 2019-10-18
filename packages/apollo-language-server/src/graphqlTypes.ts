@@ -371,6 +371,16 @@ export interface CurrentGraphInformation_service_implementingServices_FederatedI
    * of the ImplementingService this is. Typically a Git SHA or docker image ID.
    */
   revision: string;
+  /**
+   * Identifies which graph this implementing service belongs to.
+   * Formerly known as "service_id"
+   */
+  graphID: string;
+  /**
+   * Specifies which variant of a graph this implementing service belongs to".
+   * Formerly known as "tag"
+   */
+  graphVariant: string;
 }
 
 export interface CurrentGraphInformation_service_implementingServices_FederatedImplementingServices {

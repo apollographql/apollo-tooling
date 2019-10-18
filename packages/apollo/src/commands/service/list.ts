@@ -33,7 +33,7 @@ const formatImplementingService = (
   };
 };
 
-function formatHumanReadable({
+export function formatServiceListHumanReadable({
   implementingServices,
   graphName,
   frontendUrl
@@ -57,30 +57,26 @@ function formatHumanReadable({
       ListServices_service_implementingServices_FederatedImplementingServices_services
     >(implementingServices.services, [service => service.name.toUpperCase()]);
 
-    console.log(
-      table([
-        ["Name", "URL", "Last Updated"],
-        ...sortedImplementingServices
-          .map(sortedImplementingService =>
-            formatImplementingService(
-              sortedImplementingService,
-              // Force the time to a specific value if we're running tests. Otherwise the snapshots will break
-              // when the relative time changes.
-              process.env.NODE_ENV === "test"
-                ? new Date("2019-06-13")
-                : undefined
-            )
-          )
-          .sort((s1, s2) =>
-            s1.name.toUpperCase() > s2.name.toUpperCase() ? 1 : -1
-          )
-          .map(Object.values)
-          .filter(Boolean)
-      ])
-    );
-
     const serviceListUrlEnding = `/graph/${graphName}/service-list`;
     const targetUrl = `${frontendUrl}${serviceListUrlEnding}`;
+
+    result += table([
+      ["Name", "URL", "Last Updated"],
+      ...sortedImplementingServices
+        .map(sortedImplementingService =>
+          formatImplementingService(
+            sortedImplementingService,
+            // Force the time to a specific value if we're running tests. Otherwise the snapshots will break
+            // when the relative time changes.
+            process.env.NODE_ENV === "test" ? new Date("2019-06-13") : undefined
+          )
+        )
+        .sort((s1, s2) =>
+          s1.name.toUpperCase() > s2.name.toUpperCase() ? 1 : -1
+        )
+        .map(Object.values)
+        .filter(Boolean)
+    ]);
     result += `\nView full details at: ${chalk.cyan(targetUrl)}\n`;
   }
   return result;
@@ -149,7 +145,7 @@ export default class ServiceList extends ProjectCommand {
       throw error;
     }
     this.log(
-      formatHumanReadable({
+      formatServiceListHumanReadable({
         implementingServices: taskOutput.implementingServices,
         graphName: taskOutput.config.name,
         frontendUrl:
