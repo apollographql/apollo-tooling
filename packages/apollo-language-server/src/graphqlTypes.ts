@@ -302,69 +302,132 @@ export interface CheckSchemaVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GraphInfo
+// GraphQL query operation: CurrentGraphInformation
 // ====================================================
 
-export interface GraphInfo_service_mostRecentCompositionPublish_compositionConfig_implementingServiceLocations {
+export interface CurrentGraphInformation_service_mostRecentCompositionPublish_errors {
+  __typename: "SchemaCompositionError";
+  message: string;
+}
+
+export interface CurrentGraphInformation_service_mostRecentCompositionPublish_compositionConfig_implementingServiceLocations {
   __typename: "ImplementingServiceLocation";
   /**
    * The name of the implementing service
    */
   name: string;
+  /**
+   * The path in storage to access the implementing service config file
+   */
+  path: string;
 }
 
-export interface GraphInfo_service_mostRecentCompositionPublish_compositionConfig {
+export interface CurrentGraphInformation_service_mostRecentCompositionPublish_compositionConfig {
   __typename: "CompositionConfig";
   /**
    * List of implementing services that comprise a composed graph
    */
-  implementingServiceLocations: GraphInfo_service_mostRecentCompositionPublish_compositionConfig_implementingServiceLocations[];
+  implementingServiceLocations: CurrentGraphInformation_service_mostRecentCompositionPublish_compositionConfig_implementingServiceLocations[];
 }
 
-export interface GraphInfo_service_mostRecentCompositionPublish_errors {
-  __typename: "SchemaCompositionError";
-  message: string;
-}
-
-export interface GraphInfo_service_mostRecentCompositionPublish {
+export interface CurrentGraphInformation_service_mostRecentCompositionPublish {
   __typename: "CompositionPublishResult";
   /**
    * ID that points to composition result.
    */
   graphCompositionID: string;
   /**
-   * The produced composition config. Will be null if there are any errors
-   */
-  compositionConfig: GraphInfo_service_mostRecentCompositionPublish_compositionConfig | null;
-  /**
    * List of errors during composition. Errors mean that Apollo was unable to compose the
    * graph's implementing services into a GraphQL schema. This partial schema should not be
    * published to the implementing service if there were any errors encountered
    */
-  errors: (GraphInfo_service_mostRecentCompositionPublish_errors | null)[];
+  errors: CurrentGraphInformation_service_mostRecentCompositionPublish_errors[];
   /**
-   * Whether the gateway link was updated.
+   * The produced composition config. Will be null if there are any errors
    */
-  updatedGateway: boolean;
+  compositionConfig: CurrentGraphInformation_service_mostRecentCompositionPublish_compositionConfig | null;
 }
 
-export interface GraphInfo_service {
+export interface CurrentGraphInformation_service_implementingServices_NonFederatedImplementingService {
+  __typename: "NonFederatedImplementingService";
+}
+
+export interface CurrentGraphInformation_service_implementingServices_FederatedImplementingServices_services {
+  __typename: "FederatedImplementingService";
+  /**
+   * Name of the implementing service
+   */
+  name: string;
+  /**
+   * Timestamp for when this implementing service was updated
+   */
+  updatedAt: any;
+  /**
+   * URL of the graphql endpoint of the implementing service
+   */
+  url: string | null;
+  /**
+   * A way to capture some customer-specific way of tracking which version / edition
+   * of the ImplementingService this is. Typically a Git SHA or docker image ID.
+   */
+  revision: string;
+}
+
+export interface CurrentGraphInformation_service_implementingServices_FederatedImplementingServices {
+  __typename: "FederatedImplementingServices";
+  services: CurrentGraphInformation_service_implementingServices_FederatedImplementingServices_services[];
+}
+
+export type CurrentGraphInformation_service_implementingServices = CurrentGraphInformation_service_implementingServices_NonFederatedImplementingService | CurrentGraphInformation_service_implementingServices_FederatedImplementingServices;
+
+export interface CurrentGraphInformation_service_schemaTag {
+  __typename: "SchemaTag";
+  /**
+   * Indicates this schema is "published" meaning that our users correspond this schema
+   * with a long-running or permanent initiative. Published schemas appear in the UI
+   * when exploring a service's schemas, and typically refer to either active environments
+   * with metrics (e.g. "staging") or git branches that are constantly used as a base
+   * (e.g. "master"). If this field is not found, the schema is "private" to Engine
+   * and is uploaded but not promoted to published yet. The other benefit is this makes
+   * for nice UX around publishing events
+   */
+  publishedAt: any;
+}
+
+export interface CurrentGraphInformation_service_account {
+  __typename: "Account";
+  name: string;
+}
+
+export interface CurrentGraphInformation_service {
   __typename: "Service";
   /**
    * This returns the composition result that was most recently published to the graph.
    * Only identites that canQuerySchemas and canQueryImplementingServices have access
    * to this field
    */
-  mostRecentCompositionPublish: GraphInfo_service_mostRecentCompositionPublish | null;
+  mostRecentCompositionPublish: CurrentGraphInformation_service_mostRecentCompositionPublish | null;
+  /**
+   * List of implementing services that comprise a graph. A non-federated graph should have a single implementing service.
+   * Set includeDeleted to see deleted implementing services
+   */
+  implementingServices: CurrentGraphInformation_service_implementingServices | null;
+  lastReportedAt: any | null;
+  /**
+   * Get the schema tag created at or most recently before a specified date. Returns
+   * latest tag by default.
+   */
+  schemaTag: CurrentGraphInformation_service_schemaTag | null;
+  account: CurrentGraphInformation_service_account | null;
 }
 
-export interface GraphInfo {
-  service: GraphInfo_service | null;
+export interface CurrentGraphInformation {
+  service: CurrentGraphInformation_service | null;
 }
 
-export interface GraphInfoVariables {
-  id: string;
+export interface CurrentGraphInformationVariables {
   graphVariant: string;
+  id: string;
 }
 
 /* tslint:disable */
