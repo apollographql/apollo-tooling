@@ -11,8 +11,6 @@ import { REMOVE_SERVICE_AND_COMPOSE } from "./operations/removeServiceAndCompose
 import { LIST_SERVICES } from "./operations/listServices";
 import { GRAPH_INFO } from "./operations/graphInfo";
 import {
-  GraphInfo,
-  GraphInfoVariables,
   CheckSchema,
   CheckSchemaVariables,
   UploadSchema,
@@ -31,7 +29,9 @@ import {
   CheckPartialSchema_service_checkPartialSchema,
   ListServicesVariables,
   ListServices,
-  GraphInfo_service_mostRecentCompositionPublish
+  CurrentGraphInformationVariables,
+  CurrentGraphInformation,
+  CurrentGraphInformation_service
 } from "../graphqlTypes";
 
 export interface ClientIdentity {
@@ -109,9 +109,9 @@ export class ApolloEngineClient extends GraphQLDataSource {
   }
 
   public async graphInfo(
-    variables: GraphInfoVariables
-  ): Promise<GraphInfo_service_mostRecentCompositionPublish | null> {
-    return this.execute<GraphInfo>({
+    variables: CurrentGraphInformationVariables
+  ): Promise<CurrentGraphInformation_service | null> {
+    return this.execute<CurrentGraphInformation>({
       query: GRAPH_INFO,
       variables
     }).then(({ data, errors }) => {
@@ -129,7 +129,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
         throw new Error("Error in request from Graph Manager");
       }
 
-      return data.service.mostRecentCompositionPublish;
+      return data.service;
     });
   }
 
