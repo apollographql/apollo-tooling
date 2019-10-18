@@ -255,7 +255,9 @@ export class Helpers {
 
   dictionaryLiteralForFieldArguments(args: Argument[]): SwiftSource {
     function expressionFromValue(value: any): SwiftSource {
-      if (value.kind === "Variable") {
+      if (value === null) {
+        return swift`nil`;
+      } else if (value.kind === "Variable") {
         return swift`GraphQLVariable(${SwiftSource.string(
           value.variableName
         )})`;

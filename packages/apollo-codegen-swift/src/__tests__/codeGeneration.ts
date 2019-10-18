@@ -870,5 +870,45 @@ describe("Swift code generation", () => {
 
       expect(dictionaryLiteral).toBe('["input": []]');
     });
+
+    it("should handle input fields of various scalar types including null", () => {
+      // As with the previous test, we need to build our own schema.
+      const schema = buildSchema(`
+        schema {
+          query: Query
+        }
+        type Query {
+          foo(input: FooInput!): Int
+        }
+        input FooInput {
+          id: ID
+          id2: ID
+          name: String
+          age: Int
+          rating: Float
+          bool: Boolean
+        }
+      `);
+      const document = parse(`
+        query FieldArgumentsWithVariousScalars {
+          foo(input: { id: null, id2: "4", name: "Anne", age: 27, rating: 4.7, bool: true }) {
+            id
+          }
+        }
+      `);
+      const context = compileToIR(schema, document);
+      generator.context = context;
+
+      const { operations } = context;
+      const fieldArguments = (operations["FieldArgumentsWithVariousScalars"]
+        .selectionSet.selections[0] as Field).args as Argument[];
+      const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(
+        fieldArguments
+      ).source;
+
+      expect(dictionaryLiteral).toBe(
+        '["input": ["id": nil, "id2": "4", "name": "Anne", "age": 27, "rating": 4.7, "bool": true]]'
+      );
+    });
   });
 });
