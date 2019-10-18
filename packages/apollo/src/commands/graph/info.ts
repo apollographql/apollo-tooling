@@ -8,7 +8,7 @@ import { table } from "table";
 import {
   CurrentGraphInformation_service,
   CurrentGraphInformation_service_mostRecentCompositionPublish
-} from "apollo-language-server/graphqlTypes";
+} from "apollo-language-server/lib/graphqlTypes";
 
 export default class GraphInfo extends ProjectCommand {
   static flags = {
@@ -52,6 +52,10 @@ export default class GraphInfo extends ProjectCommand {
                 graphVariant: config.tag
               }
             );
+            if (!currentGraphInfo) {
+              // TODO
+              throw new Error("gtfo");
+            }
             if (!currentGraphInfo.mostRecentCompositionPublish) {
               // TODO: Support normal shit
               throw new Error(
