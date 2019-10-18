@@ -125,7 +125,7 @@ export default class GraphInfo extends ProjectCommand {
                     }
                   );
                   consoleResult +=
-                    "See https://www.apollographql.com/docs/apollo-server/federation/errors/ for more information.\n";
+                    "See https://www.apollographql.com/docs/apollo-server/federation/errors/ for more information.\n\n";
                 }
               }
             } else {
@@ -161,34 +161,5 @@ export default class GraphInfo extends ProjectCommand {
     );
 
     this.log(consoleResult);
-    this.log("\n");
-
-    if (!compositionResult) {
-      throw new Error("unreachable code");
-    }
-    if (
-      compositionResult &&
-      compositionResult!.errors &&
-      compositionResult!.errors.length
-    ) {
-      this.log(
-        `Current services fail to compose. See composition errors below:\n`
-      );
-      const messages = [
-        ...compositionResult!.errors.map(({ message }) => ({
-          type: chalk.red("Error"),
-          description: message
-        }))
-      ].filter(x => x !== null);
-
-      this.log(
-        table([["Severity", "Description"], ...messages.map(Object.values)], {
-          columns: { 1: { width: 70, wrapWord: true } }
-        })
-      );
-      return;
-    }
-
-    // otherwise, indicate lastUpdatedAt
   }
 }
