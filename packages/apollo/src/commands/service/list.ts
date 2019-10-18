@@ -124,7 +124,7 @@ export default class ServiceList extends ProjectCommand {
         return [
           {
             title: `Fetching list of services for graph ${chalk.blue(
-              graphName
+              graphName + "@" + variant
             )}`,
             task: async (ctx: TasksOutput, task) => {
               const {
