@@ -3,22 +3,25 @@ import { introspectionFromSchema } from "graphql";
 import { writeFileSync } from "fs";
 import chalk from "chalk";
 import { ProjectCommand } from "../../Command";
-import { GraphQLProject } from "apollo-language-server";
+import { DefaultEngineConfig, GraphQLProject } from "apollo-language-server";
 import { table } from "table";
 import {
   CurrentGraphInformation_service,
   CurrentGraphInformation_service_mostRecentCompositionPublish
 } from "apollo-language-server/lib/graphqlTypes";
+import { formatServiceListHumanReadable } from "../service/list";
 
 export default class GraphInfo extends ProjectCommand {
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({
+      name: "tag",
       char: "t",
       description: "The published tag to check this service against",
       default: "current"
     }),
     verbose: flags.boolean({
+      name: "verbose",
       char: "v",
       description:
         "Whether to include verbose information about the graph's state",
@@ -26,6 +29,7 @@ export default class GraphInfo extends ProjectCommand {
     })
   };
   async run() {
+    let consoleResult: string = "\n";
     let compositionResult: CurrentGraphInformation_service_mostRecentCompositionPublish | null = null;
     await this.runTasks(
       ({
@@ -43,9 +47,11 @@ export default class GraphInfo extends ProjectCommand {
           title: `Collecting graph info from Apollo Graph Manager`,
           task: async () => {
             if (!config.name) {
-              throw new Error("No service found to link to Engine");
+              throw new Error("No graph found to link to Graph Manager");
             }
-            this.log(`Graph: ${chalk.cyan(config.name + "@" + config.tag)}`);
+            consoleResult += `Graph ${chalk.cyan(
+              config.name + "@" + config.tag
+            )}`;
             const currentGraphInfo: CurrentGraphInformation_service | null = await project.engine.graphInfo(
               {
                 id: config.name,
@@ -53,15 +59,65 @@ export default class GraphInfo extends ProjectCommand {
               }
             );
             if (!currentGraphInfo) {
-              // TODO
-              throw new Error("gtfo");
+              consoleResult +=
+                "Error: Could not find graph info from Graph Manager\n";
+              if (flags.verbose) {
+                consoleResult += `raw JSON: ${JSON.stringify(
+                  currentGraphInfo,
+                  null,
+                  2
+                )}`;
+              }
+              return;
             }
-            if (!currentGraphInfo.mostRecentCompositionPublish) {
-              // TODO: Support normal shit
-              throw new Error(
-                "Graph info only supports federated graphs at the moment"
-              );
+
+            if (
+              currentGraphInfo.implementingServices &&
+              "services" in currentGraphInfo.implementingServices
+            ) {
+              consoleResult += ` is federated with ${chalk.cyan(
+                `${currentGraphInfo.implementingServices.services.length} implementing services.\n`
+              )}`;
+              if (flags.verbose) {
+                consoleResult += formatServiceListHumanReadable({
+                  implementingServices: currentGraphInfo.implementingServices as any,
+                  graphName: config.name,
+                  frontendUrl:
+                    config.engine.frontend || DefaultEngineConfig.frontend
+                });
+              }
+              if (!currentGraphInfo.mostRecentCompositionPublish) {
+                consoleResult += `No managed configuration has been pushed to the graph.\n`;
+              } else {
+                const compResult =
+                  currentGraphInfo.mostRecentCompositionPublish;
+                if (compResult.errors && compResult.errors.length) {
+                  consoleResult +=
+                    "Current services fail to compose. Composition errors" +
+                    " must be resolved before the gateway can be updated.\n";
+                  const messages = [
+                    ...compResult.errors.map(({ message }) => ({
+                      type: chalk.red("Error"),
+                      description: message
+                    }))
+                  ];
+                  consoleResult += table(
+                    [
+                      ["Severity", "Description"],
+                      ...messages.map(Object.values)
+                    ],
+                    {
+                      columns: { 1: { width: 70, wrapWord: true } }
+                    }
+                  );
+                  consoleResult +=
+                    "See https://www.apollographql.com/docs/apollo-server/federation/errors/ for more information.\n";
+                }
+              }
+            } else {
+              consoleResult += ` is not federated.\n`;
             }
+
             compositionResult = currentGraphInfo.mostRecentCompositionPublish;
             this.log("\n");
             return;
@@ -70,19 +126,22 @@ export default class GraphInfo extends ProjectCommand {
       ]
     );
 
+    this.log(consoleResult);
+    this.log("\n");
+
     if (!compositionResult) {
       throw new Error("unreachable code");
     }
     if (
       compositionResult &&
-      compositionResult.errors &&
-      compositionResult.errors.length
+      compositionResult!.errors &&
+      compositionResult!.errors.length
     ) {
       this.log(
         `Current services fail to compose. See composition errors below:\n`
       );
       const messages = [
-        ...compositionResult.errors.map(({ message }) => ({
+        ...compositionResult!.errors.map(({ message }) => ({
           type: chalk.red("Error"),
           description: message
         }))

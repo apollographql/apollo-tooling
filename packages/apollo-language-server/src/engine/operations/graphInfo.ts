@@ -22,6 +22,8 @@ export const GRAPH_INFO = gql`
             updatedAt
             url
             revision
+            graphID
+            graphVariant
           }
         }
       }
