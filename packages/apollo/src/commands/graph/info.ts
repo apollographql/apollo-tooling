@@ -5,11 +5,18 @@ import chalk from "chalk";
 import { ProjectCommand } from "../../Command";
 import { DefaultEngineConfig, GraphQLProject } from "apollo-language-server";
 import { table } from "table";
+import moment from "moment";
 import {
   CurrentGraphInformation_service,
   CurrentGraphInformation_service_mostRecentCompositionPublish
 } from "apollo-language-server/lib/graphqlTypes";
 import { formatServiceListHumanReadable } from "../service/list";
+
+export function formatDateHumanReadable(date: Date) {
+  return `${moment(date).format("D MMMM YYYY")} (${moment(date).from(
+    new Date()
+  )})`;
+}
 
 export default class GraphInfo extends ProjectCommand {
   static flags = {
@@ -49,7 +56,7 @@ export default class GraphInfo extends ProjectCommand {
             if (!config.name) {
               throw new Error("No graph found to link to Graph Manager");
             }
-            consoleResult += `Graph ${chalk.cyan(
+            consoleResult += ` • Graph ${chalk.cyan(
               config.name + "@" + config.tag
             )}`;
             const currentGraphInfo: CurrentGraphInformation_service | null = await project.engine.graphInfo(
@@ -70,30 +77,37 @@ export default class GraphInfo extends ProjectCommand {
               }
               return;
             }
+            consoleResult += ` (account: ${
+              currentGraphInfo.account
+                ? currentGraphInfo.account.name
+                : "NO_ACCOUNT"
+            })`;
 
             if (
               currentGraphInfo.implementingServices &&
               "services" in currentGraphInfo.implementingServices
             ) {
               consoleResult += ` is federated with ${chalk.cyan(
-                `${currentGraphInfo.implementingServices.services.length} implementing services.\n`
-              )}`;
+                `${currentGraphInfo.implementingServices.services.length} implementing services`
+              )}.\n`;
               if (flags.verbose) {
+                consoleResult += "\nSERVICE LIST\n";
                 consoleResult += formatServiceListHumanReadable({
                   implementingServices: currentGraphInfo.implementingServices as any,
                   graphName: config.name,
                   frontendUrl:
                     config.engine.frontend || DefaultEngineConfig.frontend
                 });
+                consoleResult += "\n";
               }
               if (!currentGraphInfo.mostRecentCompositionPublish) {
-                consoleResult += `No managed configuration has been pushed to the graph.\n`;
+                consoleResult += ` • No managed configuration has been pushed to the graph.\n`;
               } else {
                 const compResult =
                   currentGraphInfo.mostRecentCompositionPublish;
                 if (compResult.errors && compResult.errors.length) {
                   consoleResult +=
-                    "Current services fail to compose. Composition errors" +
+                    " • Current services fail to compose. Composition errors" +
                     " must be resolved before the gateway can be updated.\n";
                   const messages = [
                     ...compResult.errors.map(({ message }) => ({
@@ -116,6 +130,26 @@ export default class GraphInfo extends ProjectCommand {
               }
             } else {
               consoleResult += ` is not federated.\n`;
+            }
+
+            if (currentGraphInfo.lastReportedAt) {
+              consoleResult += ` • Last metrics reported at ${formatDateHumanReadable(
+                currentGraphInfo.lastReportedAt
+              )}.\n`;
+            } else {
+              consoleResult +=
+                " • No metrics reported to graph [see https://www.apollographql.com/docs/references/setup-analytics/ for setup].\n";
+            }
+
+            if (
+              currentGraphInfo.schemaTag &&
+              currentGraphInfo.schemaTag.publishedAt
+            ) {
+              consoleResult += ` • Latest schema published at ${formatDateHumanReadable(
+                currentGraphInfo.schemaTag.publishedAt
+              )}.\n`;
+            } else {
+              consoleResult += ` • No schema published to graph [see https://www.apollographql.com/docs/graph-manager/schema-registry/#using-the-schema-registry for setup].\n`;
             }
 
             compositionResult = currentGraphInfo.mostRecentCompositionPublish;
