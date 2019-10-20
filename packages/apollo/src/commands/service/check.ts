@@ -210,7 +210,7 @@ export function formatHumanReadable({
       change => change.severity !== ChangeSeverity.FAILURE
     );
 
-    return table([
+    result += table([
       ["Change", "Code", "Description"],
       ...[
         ...breakingChanges.map(formatChange).map(Object.values),
@@ -259,7 +259,7 @@ export default class ServiceCheck extends ProjectCommand {
     }),
     localSchemaFile: flags.string({
       description:
-        "Path to your local GraphQL schema file (introspection result or SDL)"
+        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
     }),
     markdown: flags.boolean({
       description: "Output result in markdown.",
@@ -358,6 +358,8 @@ export default class ServiceCheck extends ProjectCommand {
                   partialSchema: {
                     sdl
                   },
+                  frontend: flags.frontend || config.engine.frontend,
+                  ...(historicParameters && { historicParameters }),
                   gitContext: await gitInfo(this.log)
                 });
 

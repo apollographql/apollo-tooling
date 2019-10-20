@@ -41,7 +41,7 @@ export default class Generate extends ClientCommand {
     }),
     localSchemaFile: flags.string({
       description:
-        "Path to your local GraphQL schema file (introspection result or SDL)"
+        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
     }),
     addTypename: flags.boolean({
       description:
@@ -63,6 +63,9 @@ export default class Generate extends ClientCommand {
     // swift
     namespace: flags.string({
       description: "The namespace to emit generated code into."
+    }),
+    omitDeprecatedEnumCases: flags.boolean({
+      description: "Omit deprecated enum cases from generated code [Swift only]"
     }),
     operationIdsPath: flags.string({
       description:
@@ -218,7 +221,8 @@ export default class Generate extends ClientCommand {
                     globalTypesFile: flags.globalTypesFile,
                     tsFileExtension: flags.tsFileExtension,
                     suppressSwiftMultilineStringLiterals:
-                      flags.suppressSwiftMultilineStringLiterals
+                      flags.suppressSwiftMultilineStringLiterals,
+                    omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases
                   }
                 );
               };
@@ -240,6 +244,7 @@ export default class Generate extends ClientCommand {
         if (file.indexOf("__generated__") > -1) return;
         // don't trigger write events on single output file
         if (file.indexOf(output) > -1) return;
+        this.project.fileDidChange(URI.file(file).toString());
         console.log("\nChange detected, generating types...");
         write();
       });

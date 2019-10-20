@@ -5,7 +5,7 @@ version: 2.1
 orbs:
   # `oss` is a local reference to the package.  The source for Apollo Orbs can
   # be found at http://github.com/apollographql/CircleCI-Orbs.
-  oss: apollo/oss-ci-cd-tooling@0.0.5
+  oss: apollo/oss-ci-cd-tooling@0.0.8
 
 commands:
   # These are the steps used for each version of Node which we're testing
@@ -103,35 +103,6 @@ jobs:
             npx apollo client:codegen --key=$CHECKS_API_KEY --outputFlat --target=typescript currentTypes.ts
             cmp --silent currentTypes.ts ./packages/apollo-language-server/src/graphqlTypes.ts || (echo "Type check failed. Run 'npm run client:codegen'" && exit 1)
 
-  Build CLI:
-    executor: { name: oss/node }
-    steps:
-      - oss/install_specific_npm_version
-      - checkout
-      - oss/npm_clean_install_with_caching
-      - run:
-          name: Make tmp dir
-          command: cd packages/apollo && mkdir tmp && cd tmp && npm init -y && git init
-      - run:
-          name: Install apollo in tmp folder and generate lockfile
-          command: npm i apollo && cd node_modules/apollo && npm i --package-lock-only
-          working_directory: packages/apollo/tmp
-      - run:
-          name: Copy package and lockfile to project
-          command: rm package.json && cp tmp/node_modules/apollo/package* .
-          working_directory: packages/apollo
-      - run:
-          name: Build CLI
-          command: npx -p @oclif/dev-cli oclif-dev pack --targets=darwin-x64
-          working_directory: packages/apollo
-      - store_artifacts:
-          path: packages/apollo/dist
-          destination: apollo-cli
-      # - run:
-      #     name: Publish
-      #     command: npx -p @oclif/dev-cli oclif-dev publish --targets=darwin-x64
-      #     working_directory: packages/apollo
-
 common_non_publish_filters: &common_non_publish_filters
   filters:
     # Ensure every job has `tags` filters since the publish steps have tags.
@@ -164,8 +135,12 @@ workflows:
           <<: *common_non_publish_filters
       - Generated Types Check:
           <<: *common_non_publish_filters
-      - Build CLI:
+      - oss/oclif_pack_from_verdaccio_storage:
+          name: Build CLI
+          package: apollo
           <<: *common_non_publish_filters
+          requires:
+            - Package tarballs
       - oss/lerna_tarballs:
           name: Package tarballs
           <<: *common_non_publish_filters

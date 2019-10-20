@@ -216,6 +216,21 @@ export class SwiftSource {
   }
 
   /**
+   * Returns whether the given name is valid as a method parameter name.
+   *
+   * Certain tokens aren't valid as method parameter names, even when escaped with backticks, as
+   * the compiler interprets the keyword and identifier as the same thing. In particular, `self`
+   * works this way.
+   * @param input The proposed parameter name.
+   * @returns `true` if the name can be used, or `false` if it needs a separate internal parameter
+   * name.
+   */
+  static isValidParameterName(input: string): boolean {
+    // Right now `self` is the only known token that we can't use with escaping.
+    return input !== "self";
+  }
+
+  /**
    * Template tag for producing a `SwiftSource` value without performing escaping.
    *
    * This is identical to evaluating the template without the tag and passing the result to `new
@@ -261,30 +276,29 @@ export class SwiftSource {
   }
 
   /**
-   * If maybeSource is not null or empty, then wrap with start and end, otherwise return an empty
-   * string.
+   * If maybeSource is not undefined or empty, then wrap with start and end, otherwise return
+   * undefined.
    *
-   * This is just a wrapper for `wrap()` from apollo-codegen-core/lib/utilities/printing.
+   * This is largely just a wrapper for `wrap()` from apollo-codegen-core/lib/utilities/printing.
    */
   static wrap(
     start: SwiftSource,
     maybeSource?: SwiftSource,
     end?: SwiftSource
-  ): SwiftSource {
-    return new SwiftSource(
-      _wrap(
-        start.source,
-        maybeSource !== undefined ? maybeSource.source : undefined,
-        end !== undefined ? end.source : undefined
-      )
+  ): SwiftSource | undefined {
+    const result = _wrap(
+      start.source,
+      maybeSource !== undefined ? maybeSource.source : undefined,
+      end !== undefined ? end.source : undefined
     );
+    return result ? new SwiftSource(result) : undefined;
   }
 
   /**
-   * Given maybeArray, return an empty string if it is null or empty, otherwise return all items
+   * Given maybeArray, return undefined if it is undefined or empty, otherwise return all items
    * together separated by separator if provided.
    *
-   * This is just a wrapper for `join()` from apollo-codegen-core/lib/utilities/printing.
+   * This is largely just a wrapper for `join()` from apollo-codegen-core/lib/utilities/printing.
    *
    * @param separator The separator to put between elements. This is typed as `string` with the
    * expectation that it's generally something like `', '` but if it contains identifiers it should
@@ -293,8 +307,9 @@ export class SwiftSource {
   static join(
     maybeArray?: (SwiftSource | undefined)[],
     separator?: string
-  ): SwiftSource {
-    return new SwiftSource(_join(maybeArray, separator));
+  ): SwiftSource | undefined {
+    const result = _join(maybeArray, separator);
+    return result ? new SwiftSource(result) : undefined;
   }
 }
 
@@ -437,9 +452,10 @@ export class SwiftGenerator<Context> extends CodeGenerator<
   ) {
     this.printNewlineIfNeeded();
     this.printOnNewline(
-      wrap(swift``, new SwiftSource(_join(modifiers, " ")), swift` `).concat(
-        swift`class ${className}`
-      )
+      (
+        wrap(swift``, new SwiftSource(_join(modifiers, " ")), swift` `) ||
+        swift``
+      ).concat(swift`class ${className}`)
     );
     this.print(
       wrap(

@@ -4,12 +4,16 @@
 
 - `apollo`
   - Add `--target=format` flag to `client:download-schema` command to download schema in desired format i.e. SDL or JSON
+  - Fix codegen --watch mode not writing changes for files [#1591](https://github.com/apollographql/apollo-tooling/pull/1591)
+  - Fix `service:check` not outputing url
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - <First `apollo-codegen-swift` related entry goes here>
+  - Fix code generation for empty input objects / arrays [#1589](https://github.com/apollographql/apollo-tooling/pull/1589)
+  - Add flag to omit deprecated enum cases [#1595](https://github.com/apollographql/apollo-tooling/pull/1595)
+  - Fix code generation for input fields with the value `null` [#1596](https://github.com/apollographql/apollo-tooling/pull/1596)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
@@ -17,11 +21,22 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Improve autocomplete performance by fixing `leading` option and debounce threshold [#1593](https://github.com/apollographql/apollo-tooling/pull/1593)
+  - Load ENV variables from both `.env` and `.env.local` for Vue CLI compatibility [#1525](https://github.com/apollographql/apollo-tooling/pull/1525)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Fix `ctrl+space` autocomplete with language-server imrovements [#1593](https://github.com/apollographql/apollo-tooling/pull/1593)
+  - Watch both `.env` and `.env.local` for changes [#1525](https://github.com/apollographql/apollo-tooling/pull/1525)
+
+## `apollo@2.19.1`
+
+- `apollo@2.19.1`
+  - Support custom frontend and historic parameters for federated service:check
+- `apollo-codegen-swift@0.35.10`
+  - Ensure fields named `self` don't cause compilation errors in the generated code [#1533](https://github.com/apollographql/apollo-tooling/pull/1533)
+  - Preserve leading/trailing underscores on field names [#1533](https://github.com/apollographql/apollo-tooling/pull/1533)
+  - Allow generated code to be compiled without a module umbrella header [#1248](https://github.com/apollographql/apollo-tooling/pull/1248)
 
 ## `apollo@2.19.0`
 
