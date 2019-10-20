@@ -26,10 +26,6 @@ import { SwiftAPIGenerator } from "../codeGeneration";
 describe("Swift code generation", () => {
   let generator: SwiftAPIGenerator;
 
-  beforeEach(() => {
-    generator = new SwiftAPIGenerator({});
-  });
-
   function compile(
     source: string,
     options: CompilerOptions = {
@@ -37,6 +33,13 @@ describe("Swift code generation", () => {
       omitDeprecatedEnumCases: false
     }
   ): CompilerContext {
+    generator = new SwiftAPIGenerator({
+      fragments: {},
+      operations: {},
+      schema: schema,
+      typesUsed: [],
+      options: options
+    });
     const document = parse(source);
     const context = compileToIR(schema, document, options);
     generator.context = context;
@@ -195,6 +198,30 @@ describe("Swift code generation", () => {
           generateOperationIds: true,
           mergeInFieldsFromFragmentSpreads: true,
           omitDeprecatedEnumCases: false
+        }
+      );
+
+      generator.classDeclarationForOperation(operations["Hero"], false, false);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
+    it(` should generate a class declaration with an indent width of 4 spaces`, () => {
+      const { operations } = compile(
+        `
+        query Hero {
+          hero {
+            ...HeroDetails
+          }
+        }
+        fragment HeroDetails on Character {
+          name
+        }
+        `,
+        {
+          generateOperationIds: true,
+          mergeInFieldsFromFragmentSpreads: true,
+          indentWidth: 4
         }
       );
 

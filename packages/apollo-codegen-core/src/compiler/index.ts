@@ -48,6 +48,7 @@ export interface CompilerOptions {
   useReadOnlyTypes?: boolean;
   suppressSwiftMultilineStringLiterals?: boolean;
   omitDeprecatedEnumCases?: boolean;
+  indentWidth?: number;
 }
 
 export interface CompilerContext {

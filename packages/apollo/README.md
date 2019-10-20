@@ -139,6 +139,9 @@ OPTIONS
   --includes=includes                        Glob of files to search for GraphQL operations. This should be used to find
                                              queries *and* any client schema extensions
 
+  --indentWidth=indentWidth                  Number of spaces to indent by at each indent level. Default=2 [currently
+                                             Swift-only]
+
   --key=key                                  The API key for the Apollo Engine service
 
   --localSchemaFile=localSchemaFile          Path to one or more local GraphQL schema file(s), as introspection result

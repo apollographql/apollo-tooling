@@ -61,6 +61,10 @@ export default class Generate extends ClientCommand {
     }),
 
     // swift
+    indentWidth: flags.integer({
+      description: "Number of spaces to indent by at each indent level",
+      default: 2
+    }),
     namespace: flags.string({
       description: "The namespace to emit generated code into."
     }),
@@ -222,7 +226,8 @@ export default class Generate extends ClientCommand {
                     tsFileExtension: flags.tsFileExtension,
                     suppressSwiftMultilineStringLiterals:
                       flags.suppressSwiftMultilineStringLiterals,
-                    omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases
+                    omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases,
+                    indentWidth: flags.indentWidth
                   }
                 );
               };

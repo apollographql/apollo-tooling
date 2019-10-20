@@ -13,6 +13,7 @@
   - Fix code generation for empty input objects / arrays [#1589](https://github.com/apollographql/apollo-tooling/pull/1589)
   - Add flag to omit deprecated enum cases [#1595](https://github.com/apollographql/apollo-tooling/pull/1595)
   - Fix code generation for input fields with the value `null` [#1596](https://github.com/apollographql/apollo-tooling/pull/1596)
+  - Add CLI argument to set indent width [#1606](https://github.com/apollographql/apollo-tooling/pull/1606)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`

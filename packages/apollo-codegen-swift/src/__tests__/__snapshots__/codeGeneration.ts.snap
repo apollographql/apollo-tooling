@@ -1,5 +1,113 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Swift code generation #classDeclarationForOperation()  should generate a class declaration with an indent width of 4 spaces 1`] = `
+"public final class HeroQuery: GraphQLQuery {
+    /// The raw GraphQL definition of this operation.
+    public let operationDefinition =
+        \\"\\"\\"
+        query Hero {
+          hero {
+            ...HeroDetails
+          }
+        }
+        \\"\\"\\"
+
+    public let operationName = \\"Hero\\"
+
+    public let operationIdentifier: String? = \\"90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4\\"
+
+    public var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
+
+    public init() {
+    }
+
+    public struct Data: GraphQLSelectionSet {
+        public static let possibleTypes = [\\"Query\\"]
+
+        public static let selections: [GraphQLSelection] = [
+            GraphQLField(\\"hero\\", type: .object(Hero.selections)),
+        ]
+
+        public private(set) var resultMap: ResultMap
+
+        public init(unsafeResultMap: ResultMap) {
+            self.resultMap = unsafeResultMap
+        }
+
+        public init(hero: Hero? = nil) {
+            self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> ResultMap in value.resultMap }])
+        }
+
+        public var hero: Hero? {
+            get {
+                return (resultMap[\\"hero\\"] as? ResultMap).flatMap { Hero(unsafeResultMap: $0) }
+            }
+            set {
+                resultMap.updateValue(newValue?.resultMap, forKey: \\"hero\\")
+            }
+        }
+
+        public struct Hero: GraphQLSelectionSet {
+            public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+            public static let selections: [GraphQLSelection] = [
+                GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+            ]
+
+            public private(set) var resultMap: ResultMap
+
+            public init(unsafeResultMap: ResultMap) {
+                self.resultMap = unsafeResultMap
+            }
+
+            public static func makeHuman(name: String) -> Hero {
+                return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+            }
+
+            public static func makeDroid(name: String) -> Hero {
+                return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+            }
+
+            /// The name of the character
+            public var name: String {
+                get {
+                    return resultMap[\\"name\\"]! as! String
+                }
+                set {
+                    resultMap.updateValue(newValue, forKey: \\"name\\")
+                }
+            }
+
+            public var fragments: Fragments {
+                get {
+                    return Fragments(unsafeResultMap: resultMap)
+                }
+                set {
+                    resultMap += newValue.resultMap
+                }
+            }
+
+            public struct Fragments {
+                public private(set) var resultMap: ResultMap
+
+                public init(unsafeResultMap: ResultMap) {
+                    self.resultMap = unsafeResultMap
+                }
+
+                public var heroDetails: HeroDetails {
+                    get {
+                        return HeroDetails(unsafeResultMap: resultMap)
+                    }
+                    set {
+                        resultMap += newValue.resultMap
+                    }
+                }
+            }
+        }
+    }
+}"
+`;
+
 exports[`Swift code generation #classDeclarationForOperation() should correctly escape a mutli-line string literal 1`] = `
 "public final class CreateReviewMutation: GraphQLMutation {
   /// The raw GraphQL definition of this operation.

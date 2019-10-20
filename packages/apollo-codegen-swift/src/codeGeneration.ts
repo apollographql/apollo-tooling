@@ -41,6 +41,7 @@ import { generateOperationId } from "apollo-codegen-core/lib/compiler/visitors/g
 import { collectAndMergeFields } from "apollo-codegen-core/lib/compiler/visitors/collectAndMergeFields";
 
 import "apollo-codegen-core/lib/utilities/array";
+import { GeneratedFile } from "apollo-codegen-core/lib/utilities/CodeGenerator";
 
 const { join, wrap } = SwiftSource;
 
@@ -156,6 +157,29 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     super(context);
 
     this.helpers = new Helpers(context.options);
+
+    let indentWidth = context.options.indentWidth;
+    if (indentWidth) {
+      this.currentFile.indentWidth = indentWidth;
+    }
+  }
+
+  withinFile(fileName: string, closure: Function) {
+    let file = this.generatedFiles[fileName];
+    if (!file) {
+      file = new GeneratedFile();
+
+      let indentWidth = this.context.options.indentWidth;
+      if (indentWidth) {
+        file.indentWidth = indentWidth;
+      }
+
+      this.generatedFiles[fileName] = file;
+    }
+    const oldCurrentFile = this.currentFile;
+    this.currentFile = file;
+    closure();
+    this.currentFile = oldCurrentFile;
   }
 
   fileHeader() {
