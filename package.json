@@ -13,7 +13,6 @@
     "apollo": "./packages/apollo/bin/run"
   },
   "scripts": {
-    "azure": "npm ci && npm run test:ci",
     "clean": "git clean -dfqX -- ./node_modules **/{lib,node_modules}/ ./packages/*/tsconfig.tsbuildinfo ./__tmp__*",
     "postinstall": "npm run build",
     "build": "tsc --build tsconfig.json",

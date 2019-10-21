@@ -26,8 +26,8 @@ const debug = fn => {
 };
 
 const deleteFolderRecursive = path => {
-  // don't relete files on azure CI
-  if (process.env.AZURE_HTTP_USER_AGENT) return;
+  // don't delete files on circlci windows -- will get a resource locked error
+  if (process.env.OS && process.env.OS.includes("Windows")) return;
 
   if (fs.existsSync(path)) {
     fs.readdirSync(path).forEach(function(file, index) {

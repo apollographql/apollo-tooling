@@ -6,6 +6,8 @@ orbs:
   # `oss` is a local reference to the package.  The source for Apollo Orbs can
   # be found at http://github.com/apollographql/CircleCI-Orbs.
   oss: apollo/oss-ci-cd-tooling@0.0.8
+  # win is a windows orb provided by circleci
+  win: circleci/windows@2.0.0
 
 commands:
   # These are the steps used for each version of Node which we're testing
@@ -44,7 +46,24 @@ jobs:
           paths:
             - ./**
 
-  VSCode:
+  # todo: actually set node version
+  Windows NodeJS 12:
+    executor:
+      name: win/default
+    steps:
+      - checkout
+      - oss/npm_clean_install_with_caching
+      - run: npm run circle
+
+  Build VSCode:
+    executor: { name: oss/node }
+    steps:
+      - oss/install_specific_npm_version
+      - checkout
+      - oss/npm_clean_install_with_caching
+      - run: npm run package-extension
+
+  Test VSCode:
     executor: { name: oss/node }
     steps:
       - run:
@@ -127,7 +146,11 @@ workflows:
           <<: *common_non_publish_filters
       - NodeJS 10:
           <<: *common_non_publish_filters
-      - VSCode:
+      - Windows NodeJS 12:
+          <<: *common_non_publish_filters
+      - Test VSCode:
+          <<: *common_non_publish_filters
+      - Build VSCode:
           <<: *common_non_publish_filters
       - Linting:
           <<: *common_non_publish_filters
