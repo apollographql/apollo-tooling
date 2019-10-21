@@ -46,15 +46,11 @@
   "jest": {
     "preset": "ts-jest",
     "transformIgnorePatterns": [
-      "/node_modules/",
-      "/apollo-env/"
+      "/node_modules/"
     ],
     "testEnvironment": "node",
     "testMatch": [
       "**/__tests__/*.(js|ts)"
-    ],
-    "setupFiles": [
-      "<rootDir>/../apollo-env/lib/index.js"
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
