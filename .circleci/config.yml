@@ -61,7 +61,7 @@ jobs:
       - oss/install_specific_npm_version
       - checkout
       - oss/npm_clean_install_with_caching
-      - run: npm run package-extension
+      - run: npm run package-extension:no-clean # don't need to run clean and install
       - run:
           name: Moving Extension
           command: |
