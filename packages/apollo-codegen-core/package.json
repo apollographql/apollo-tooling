@@ -31,6 +31,9 @@
     "transformIgnorePatterns": [
       "/node_modules/"
     ],
+    "setupFiles": [
+      "<rootDir>/../../jestSetup.js"
+    ],
     "testEnvironment": "node",
     "setupFilesAfterEnv": [
       "<rootDir>/test-utils/matchers.ts"
