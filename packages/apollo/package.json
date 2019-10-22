@@ -82,8 +82,10 @@
   "jest": {
     "preset": "ts-jest",
     "transformIgnorePatterns": [
-      "/node_modules/",
-      "/apollo-env/"
+      "/node_modules/"
+    ],
+    "setupFiles": [
+      "apollo-env"
     ],
     "testMatch": null,
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",

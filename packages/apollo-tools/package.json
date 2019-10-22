@@ -21,9 +21,6 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "setupFiles": [
-      "<rootDir>/../apollo-env/lib/index.js"
-    ],
     "testMatch": null,
     "testRegex": "/__tests__/.*\\.test\\.(js|ts)$",
     "testPathIgnorePatterns": [
@@ -35,8 +32,10 @@
       "js"
     ],
     "transformIgnorePatterns": [
-      "/node_modules/",
-      "/apollo-env/"
+      "/node_modules/"
+    ],
+    "setupFiles": [
+      "apollo-env"
     ],
     "snapshotSerializers": [
       "<rootDir>/src/__tests__/snapshotSerializers/astSerializer.ts",

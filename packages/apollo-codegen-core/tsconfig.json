@@ -6,5 +6,8 @@
   },
   "include": ["./src/**/*"],
   "exclude": ["**/__tests__/*", "**/__mocks__/*"],
-  "references": [{ "path": "../apollo-language-server" }]
+  "references": [
+    { "path": "../apollo-env" },
+    { "path": "../apollo-language-server" }
+  ]
 }
