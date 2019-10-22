@@ -2,8 +2,7 @@
   "extends": "../../tsconfig.base",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./lib",
-    "esModuleInterop": true
+    "outDir": "./lib"
   },
   "include": ["./src/**/*"],
   "exclude": ["**/__tests__/*", "**/__mocks__/*"],
