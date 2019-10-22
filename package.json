@@ -13,7 +13,6 @@
     "apollo": "./packages/apollo/bin/run"
   },
   "scripts": {
-    "azure": "npm ci && npm run test:ci",
     "clean": "git clean -dfqX -- ./node_modules **/{lib,node_modules}/ ./packages/*/tsconfig.tsbuildinfo ./__tmp__*",
     "postinstall": "npm run build",
     "build": "tsc --build tsconfig.json",
@@ -31,6 +30,8 @@
     "release:version-bump": "lerna version --exact",
     "release:start-ci-publish": "node -p '`Publish (dist-tag:${process.env.APOLLO_DIST_TAG || \"latest\"})`' | git tag -F - \"publish/$(date -u '+%Y%m%d%H%M%S')\" && git push origin \"$(git describe --match='publish/*' --tags --exact-match HEAD)\"",
     "package-extension": "npm run clean && npm ci && lerna run package-extension --stream --scope=vscode-apollo",
+    "package-extension:no-clean": "lerna run package-extension --stream --scope=vscode-apollo",
+    "publish-extension": "lerna run publish-extension --stream --scope=vscode-apollo",
     "client:codegen": "node ./packages/apollo/bin/run client:codegen --target=typescript --outputFlat ./packages/apollo-language-server/src/graphqlTypes.ts"
   },
   "engines": {

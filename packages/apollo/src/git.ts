@@ -48,11 +48,8 @@ export const gitInfo = async (
 
   if (!commit) return;
 
-  let committer;
+  let committer, remoteUrl, message;
   let branch = ciBranch || prBranch;
-  // BUILD_REPOSITORY_ID is for azure pipelines
-  let remoteUrl = process.env.BUILD_REPOSITORY_ID;
-  let message;
 
   // In order to use git-parse and git-rev-sync, we must ensure that a git context is
   // accessible. Without this check, the commands would throw
