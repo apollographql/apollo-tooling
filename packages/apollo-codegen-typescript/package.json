@@ -1,7 +1,7 @@
 {
   "name": "apollo-codegen-typescript",
   "description": "TypeScript generator module for Apollo Codegen",
-  "version": "0.35.6",
+  "version": "0.35.7",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {
@@ -20,39 +20,8 @@
     "@babel/generator": "7.6.4",
     "@babel/types": "7.6.3",
     "apollo-codegen-core": "file:../apollo-codegen-core",
-    "apollo-env": "file:../apollo-env",
     "change-case": "^3.0.1",
     "common-tags": "^1.5.1",
     "inflected": "^2.0.3"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "transformIgnorePatterns": [
-      "/node_modules/",
-      "/apollo-env/"
-    ],
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/__tests__/*.(js|ts)"
-    ],
-    "setupFiles": [
-      "<rootDir>/../apollo-env/lib/index.js"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/node_modules/",
-      "<rootDir>/lib/",
-      "<rootDir>/test/fixtures/",
-      "<rootDir>/test/test-utils"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "<rootDir>/tsconfig.test.json",
-        "diagnostics": false
-      }
-    }
   }
 }

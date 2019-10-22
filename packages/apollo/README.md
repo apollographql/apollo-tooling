@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.20.0 darwin-x64 node-v8.11.1
+apollo/2.21.0 darwin-x64 node-v8.11.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -38,14 +38,18 @@ USAGE
 * [`apollo client:codegen [OUTPUT]`](#apollo-clientcodegen-output)
 * [`apollo client:download-schema OUTPUT`](#apollo-clientdownload-schema-output)
 * [`apollo client:extract OUTPUT`](#apollo-clientextract-output)
+* [`apollo client:push`](#apollo-clientpush)
 * [`apollo help [COMMAND]`](#apollo-help-command)
 * [`apollo plugins`](#apollo-plugins)
 * [`apollo plugins:install PLUGIN...`](#apollo-pluginsinstall-plugin)
 * [`apollo plugins:link PLUGIN`](#apollo-pluginslink-plugin)
 * [`apollo plugins:uninstall PLUGIN...`](#apollo-pluginsuninstall-plugin)
 * [`apollo plugins:update`](#apollo-pluginsupdate)
+* [`apollo service:check`](#apollo-servicecheck)
 * [`apollo service:delete`](#apollo-servicedelete)
 * [`apollo service:download OUTPUT`](#apollo-servicedownload-output)
+* [`apollo service:list`](#apollo-servicelist)
+* [`apollo service:push`](#apollo-servicepush)
 
 ## `apollo client:check`
 
@@ -281,6 +285,46 @@ OPTIONS
 
 _See code: [src/commands/client/extract.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/extract.ts)_
 
+## `apollo client:push`
+
+Register operations with Apollo, adding them to the safelist
+
+```
+USAGE
+  $ apollo client:push
+
+OPTIONS
+  -c, --config=config                    Path to your Apollo config file
+  -t, --tag=tag                          The published service tag for this client
+  --clientName=clientName                Name of the client that the queries will be attached to
+
+  --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
+                                         clientName if not provided
+
+  --clientVersion=clientVersion          The version of the client that the queries will be attached to
+
+  --endpoint=endpoint                    The url of your service
+
+  --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
+                                         work in watch mode
+
+  --header=header                        Additional header to send to server for introspectionQuery. May be used
+                                         multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
+                                         if using the `--header` flag.
+
+  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
+                                         queries *and* any client schema extensions
+
+  --key=key                              The API key for the Apollo Engine service
+
+  --queries=queries                      Deprecated in favor of the includes flag
+
+  --tagName=tagName                      Name of the template literal tag used to identify template literals containing
+                                         GraphQL queries in Javascript/Typescript code
+```
+
+_See code: [src/commands/client/push.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/push.ts)_
+
 ## `apollo help [COMMAND]`
 
 display help for apollo
@@ -415,6 +459,59 @@ OPTIONS
 
 _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.8/src/commands/plugins/update.ts)_
 
+## `apollo service:check`
+
+Check a service against known operation workloads to find breaking changes
+
+```
+USAGE
+  $ apollo service:check
+
+OPTIONS
+  -c, --config=config                                            Path to your Apollo config file
+  -t, --tag=tag                                                  The published tag to check this service against
+  --endpoint=endpoint                                            The url of your service
+
+  --header=header                                                Additional header to send to server for
+                                                                 introspectionQuery. May be used multiple times to add
+                                                                 multiple headers. NOTE: The `--endpoint` flag is
+                                                                 REQUIRED if using the `--header` flag.
+
+  --json                                                         Output result in json, which can then be parsed by CLI
+                                                                 tools such as jq.
+
+  --key=key                                                      The API key for the Apollo Engine service
+
+  --localSchemaFile=localSchemaFile                              Path to one or more local GraphQL schema file(s), as
+                                                                 introspection result or SDL. Supports comma-separated
+                                                                 list of paths (ex.
+                                                                 `--localSchemaFile=schema.graphql,extensions.graphql`)
+
+  --markdown                                                     Output result in markdown.
+
+  --queryCountThreshold=queryCountThreshold                      Minimum number of requests within the requested time
+                                                                 window for a query to be considered.
+
+  --queryCountThresholdPercentage=queryCountThresholdPercentage  Number of requests within the requested time window for
+                                                                 a query to be considered, relative to total request
+                                                                 count. Expected values are between 0 and 0.05 (minimum
+                                                                 5% of total request volume)
+
+  --serviceName=serviceName                                      Provides the name of the implementing service for a
+                                                                 federated graph. This flag will indicate that the
+                                                                 schema is a partial schema from a federated service
+
+  --validationPeriod=validationPeriod                            The size of the time window with which to validate the
+                                                                 schema against. You may provide a number (in seconds),
+                                                                 or an ISO8601 format duration for more granularity
+                                                                 (see: https://en.wikipedia.org/wiki/ISO_8601#Durations)
+
+ALIASES
+  $ apollo schema:check
+```
+
+_See code: [src/commands/service/check.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/check.ts)_
+
 ## `apollo service:delete`
 
 Delete a federated service from Engine and recompose remaining services
@@ -465,6 +562,63 @@ ALIASES
 ```
 
 _See code: [src/commands/service/download.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/download.ts)_
+
+## `apollo service:list`
+
+List the services in a graph
+
+```
+USAGE
+  $ apollo service:list
+
+OPTIONS
+  -c, --config=config  Path to your Apollo config file
+  -t, --tag=tag        The published tag to list the services from
+  --endpoint=endpoint  The url of your service
+
+  --header=header      Additional header to send to server for introspectionQuery. May be used multiple times to add
+                       multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag.
+
+  --key=key            The API key for the Apollo Engine service
+```
+
+_See code: [src/commands/service/list.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/list.ts)_
+
+## `apollo service:push`
+
+Push a service to Engine
+
+```
+USAGE
+  $ apollo service:push
+
+OPTIONS
+  -c, --config=config                Path to your Apollo config file
+  -t, --tag=tag                      [default: current] The tag to publish this service to
+  --endpoint=endpoint                The url of your service
+
+  --header=header                    Additional header to send to server for introspectionQuery. May be used multiple
+                                     times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the
+                                     `--header` flag.
+
+  --key=key                          The API key for the Apollo Engine service
+
+  --localSchemaFile=localSchemaFile  Path to one or more local GraphQL schema file(s), as introspection result or SDL.
+                                     Supports comma-separated list of paths (ex.
+                                     `--localSchemaFile=schema.graphql,extensions.graphql`)
+
+  --serviceName=serviceName          Provides the name of the implementing service for a federated graph
+
+  --serviceRevision=serviceRevision  Provides a unique revision identifier for a change to an implementing service on a
+                                     federated service push. The default of this is a git sha
+
+  --serviceURL=serviceURL            Provides the url to the location of the implementing service for a federated graph
+
+ALIASES
+  $ apollo schema:publish
+```
+
+_See code: [src/commands/service/push.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/push.ts)_
 <!-- commandsstop -->
 
 # Configuration

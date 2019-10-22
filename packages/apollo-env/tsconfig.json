@@ -5,6 +5,5 @@
     "outDir": "./lib",
     "types": ["node"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["src/fetch/**/*"]
+  "include": ["src/**/*"]
 }

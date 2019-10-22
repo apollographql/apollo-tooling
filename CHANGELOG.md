@@ -3,29 +3,47 @@
 ## Upcoming
 
 - `apollo`
-  - Add `--target=format` flag to `client:download-schema` command to download schema in desired format i.e. SDL or JSON
-  - Fix codegen --watch mode not writing changes for files [#1591](https://github.com/apollographql/apollo-tooling/pull/1591)
-  - Fix `service:check` not outputing url
+  - Add sdl download ability to `client:download-schema`
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Fix code generation for empty input objects / arrays [#1589](https://github.com/apollographql/apollo-tooling/pull/1589)
-  - Add flag to omit deprecated enum cases [#1595](https://github.com/apollographql/apollo-tooling/pull/1595)
-  - Fix code generation for input fields with the value `null` [#1596](https://github.com/apollographql/apollo-tooling/pull/1596)
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
-  - <First `apollo-env` related entry goes here>
+  - POTENTIALLY BREAKING: Make `apollo-env` a standard TS package
+    [#1611](https://github.com/apollographql/apollo-tooling/pull/1611) This PR likely warrants a pre-major version bump so that it isn't accidentally upgraded to for dependents using the ^ range. If this breaks your project, please don't hesitate to let us know and revert back to v0.5.1. This PR removes the handwritten node-fetch types and instead
+    just re-exports them. Internally, this drastically simplifies the existence of apollo-env within this monorepo, as it no longer requires a special build step that forces lerna and TS to work around it.
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Improve autocomplete performance by fixing `leading` option and debounce threshold [#1593](https://github.com/apollographql/apollo-tooling/pull/1593)
-  - Load ENV variables from both `.env` and `.env.local` for Vue CLI compatibility [#1525](https://github.com/apollographql/apollo-tooling/pull/1525)
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
+  - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.21.0`
+
+- `apollo@2.21.0`
+  - Add flag to omit deprecated enum cases for swift codegen [#1595](https://github.com/apollographql/apollo-tooling/pull/1595)
+- `apollo-codegen-swift@0.35.7`
+  - Add flag to omit deprecated enum cases [#1595](https://github.com/apollographql/apollo-tooling/pull/1595)
+  - Fix code generation for input fields with the value `null` [#1596](https://github.com/apollographql/apollo-tooling/pull/1596)
+
+## `apollo@2.20.0`
+
+- `apollo@2.20.0`
+  - Fix codegen --watch mode not writing changes for files [#1591](https://github.com/apollographql/apollo-tooling/pull/1591)
+  - Fix `service:check` not outputing url
+- `apollo-codegen-swift@0.35.11`
+  - Fix code generation for empty input objects / arrays [#1589](https://github.com/apollographql/apollo-tooling/pull/1589)
+- `apollo-language-server@1.17.0`
+  - Improve autocomplete performance by fixing `leading` option and debounce threshold [#1593](https://github.com/apollographql/apollo-tooling/pull/1593)
+  - Load ENV variables from both `.env` and `.env.local` for Vue CLI compatibility [#1525](https://github.com/apollographql/apollo-tooling/pull/1525)
+- `vscode-apollo@1.12.0`
   - Fix `ctrl+space` autocomplete with language-server imrovements [#1593](https://github.com/apollographql/apollo-tooling/pull/1593)
   - Watch both `.env` and `.env.local` for changes [#1525](https://github.com/apollographql/apollo-tooling/pull/1525)
 

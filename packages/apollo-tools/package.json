@@ -17,36 +17,5 @@
   },
   "dependencies": {
     "apollo-env": "file:../apollo-env"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "setupFiles": [
-      "<rootDir>/../apollo-env/lib/index.js"
-    ],
-    "testMatch": null,
-    "testRegex": "/__tests__/.*\\.test\\.(js|ts)$",
-    "testPathIgnorePatterns": [
-      "<rootDir>/node_modules/",
-      "<rootDir>/lib/"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "transformIgnorePatterns": [
-      "/node_modules/",
-      "/apollo-env/"
-    ],
-    "snapshotSerializers": [
-      "<rootDir>/src/__tests__/snapshotSerializers/astSerializer.ts",
-      "<rootDir>/src/__tests__/snapshotSerializers/graphQLTypeSerializer.ts"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "<rootDir>/tsconfig.test.json",
-        "diagnostics": true
-      }
-    }
   }
 }
