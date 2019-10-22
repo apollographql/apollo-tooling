@@ -1,19 +1,12 @@
 import { isNamedType, GraphQLNamedType, printType } from "graphql";
-import { Plugin, Config, Refs, Printer } from "pretty-format";
+import { Plugin } from "pretty-format";
 
 export = (({
   test(value: any) {
     return value && isNamedType(value);
   },
 
-  serialize(
-    value: GraphQLNamedType,
-    config: Config,
-    indentation: string,
-    depth: number,
-    refs: Refs,
-    printer: Printer
-  ): string {
+  serialize(value: GraphQLNamedType): string {
     return printType(value);
   }
 } as Plugin) as unknown) as jest.SnapshotSerializerPlugin;
