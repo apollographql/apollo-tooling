@@ -46,8 +46,7 @@ jobs:
           paths:
             - ./**
 
-  # todo: actually set node version
-  Windows NodeJS 12:
+  NodeJS 12 Windows:
     executor:
       name: win/default
     steps:
@@ -162,7 +161,7 @@ workflows:
           <<: *common_non_publish_filters
       - NodeJS 10:
           <<: *common_non_publish_filters
-      - Windows NodeJS 12:
+      - NodeJS 12 Windows:
           <<: *common_non_publish_filters
       - Test VSCode:
           <<: *common_non_publish_filters
@@ -186,7 +185,7 @@ workflows:
           requires:
             - NodeJS 8
             - NodeJS 10
-            - Windows NodeJS 12
+            - NodeJS 12 Windows
             - Test VSCode
             - Build VSCode
       - oss/dry_run:
@@ -195,7 +194,7 @@ workflows:
           requires:
             - NodeJS 8
             - NodeJS 10
-            - Windows NodeJS 12
+            - NodeJS 12 Windows
             - Test VSCode
             - Build VSCode
       - oss/confirmation:
