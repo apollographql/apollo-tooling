@@ -71,6 +71,14 @@ jobs:
           path: ./packages/vscode-apollo/vsix
           destination: vscode-extension
 
+  Publish VSCode Extension:
+    executor: { name: oss/node }
+    steps:
+      - oss/install_specific_npm_version
+      - checkout
+      - oss/npm_clean_install_with_caching
+      - run: npm run publish-extension
+
   Test VSCode:
     executor: { name: oss/node }
     steps:
@@ -178,12 +186,18 @@ workflows:
           requires:
             - NodeJS 8
             - NodeJS 10
+            - Windows NodeJS 12
+            - Test VSCode
+            - Build VSCode
       - oss/dry_run:
           name: Dry-run
           <<: *common_publish_filters
           requires:
             - NodeJS 8
             - NodeJS 10
+            - Windows NodeJS 12
+            - Test VSCode
+            - Build VSCode
       - oss/confirmation:
           name: Confirmation
           type: approval
@@ -192,6 +206,10 @@ workflows:
             - Dry-run
       - oss/publish:
           name: Publish
+          <<: *common_publish_filters
+          requires:
+            - Confirmation
+      - Publish VSCode Extension:
           <<: *common_publish_filters
           requires:
             - Confirmation

@@ -20,6 +20,7 @@
     "update-vscode": "node ../../node_modules/vscode/bin/install",
     "create-server-symlink": "npx rimraf node_modules && mkdir node_modules && node create-server-symlink.js",
     "package-extension": "npx rimraf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink",
+    "publish-extension": "npx rimraf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce publish -p $VS_MARKETPLACE_TOKEN --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo",
     "test": "node ./lib/testRunner/vscode-test-script.js"
   },
   "engines": {
