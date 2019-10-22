@@ -84,9 +84,7 @@
     "transformIgnorePatterns": [
       "/node_modules/"
     ],
-    "setupFiles": [
-      "<rootDir>/../../jestSetup.js"
-    ],
+    "setupFiles": [],
     "testMatch": null,
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "testPathIgnorePatterns": [
