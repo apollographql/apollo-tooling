@@ -13,7 +13,9 @@
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
-  - <First `apollo-env` related entry goes here>
+  - POTENTIALLY BREAKING: Make `apollo-env` a standard TS package
+    [#1611](https://github.com/apollographql/apollo-tooling/pull/1611) This PR likely warrants a pre-major version bump so that it isn't accidentally upgraded to for dependents using the ^ range. If this breaks your project, please don't hesitate to let us know and revert back to v0.5.1. This PR removes the handwritten node-fetch types and instead
+    just re-exports them. Internally, this drastically simplifies the existence of apollo-env within this monorepo, as it no longer requires a special build step that forces lerna and TS to work around it.
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
