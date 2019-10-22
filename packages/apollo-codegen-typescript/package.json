@@ -29,7 +29,6 @@
     "transformIgnorePatterns": [
       "/node_modules/"
     ],
-    "setupFiles": [],
     "testEnvironment": "node",
     "testMatch": [
       "**/__tests__/*.(js|ts)"
