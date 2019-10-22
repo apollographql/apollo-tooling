@@ -1,7 +1,7 @@
 import { ASTNode, print } from "graphql";
-import { Plugin, Config, Refs, Printer } from "pretty-format";
+import { Plugin, Config, Refs } from "pretty-format";
 
-export = {
+export default {
   test(value: any) {
     return value && typeof value.kind === "string";
   },
@@ -12,7 +12,7 @@ export = {
     indentation: string,
     depth: number,
     refs: Refs,
-    printer: Printer
+    printer: any
   ): string {
     return (
       indentation +

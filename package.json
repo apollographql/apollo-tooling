@@ -94,11 +94,6 @@
     "vscode": "1.1.36",
     "yarn": "1.19.1"
   },
-  "jest": {
-    "projects": [
-      "<rootDir>/packages/!(vscode-apollo)"
-    ]
-  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "prettier --write",

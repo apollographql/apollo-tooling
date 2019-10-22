@@ -1,19 +1,12 @@
 import { ASTNode, print } from "graphql";
-import { Plugin, Config, Refs, Printer } from "pretty-format";
+import { Plugin, Config } from "pretty-format";
 
 export = (({
   test(value: any) {
     return value && typeof value.kind === "string";
   },
 
-  serialize(
-    value: ASTNode,
-    config: Config,
-    indentation: string,
-    depth: number,
-    refs: Refs,
-    printer: Printer
-  ): string {
+  serialize(value: ASTNode, _config: Config, indentation: string): string {
     return (
       indentation +
       print(value)
