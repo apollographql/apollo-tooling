@@ -31,7 +31,9 @@
     "transformIgnorePatterns": [
       "/node_modules/"
     ],
-    "setupFiles": [],
+    "setupFiles": [
+      "apollo-env"
+    ],
     "testEnvironment": "node",
     "setupFilesAfterEnv": [
       "<rootDir>/test-utils/matchers.ts"

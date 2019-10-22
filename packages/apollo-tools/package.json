@@ -34,7 +34,9 @@
     "transformIgnorePatterns": [
       "/node_modules/"
     ],
-    "setupFiles": [],
+    "setupFiles": [
+      "apollo-env"
+    ],
     "snapshotSerializers": [
       "<rootDir>/src/__tests__/snapshotSerializers/astSerializer.ts",
       "<rootDir>/src/__tests__/snapshotSerializers/graphQLTypeSerializer.ts"

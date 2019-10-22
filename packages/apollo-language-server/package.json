@@ -48,7 +48,9 @@
     "transformIgnorePatterns": [
       "/node_modules/"
     ],
-    "setupFiles": [],
+    "setupFiles": [
+      "apollo-env"
+    ],
     "testEnvironment": "node",
     "testMatch": [
       "**/__tests__/*.(js|ts)"
