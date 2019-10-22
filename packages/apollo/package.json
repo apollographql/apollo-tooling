@@ -78,35 +78,5 @@
       "@oclif/plugin-warn-if-update-available"
     ],
     "repositoryPrefix": "<%- repo %>/blob/master/packages/apollo/<%- commandPath %>"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "transformIgnorePatterns": [
-      "/node_modules/"
-    ],
-    "setupFiles": [
-      "apollo-env"
-    ],
-    "testMatch": null,
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "testPathIgnorePatterns": [
-      "node_modules",
-      "lib"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ],
-    "testEnvironment": "node",
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "<rootDir>/tsconfig.test.json",
-        "diagnostics": false
-      }
-    }
   }
 }
