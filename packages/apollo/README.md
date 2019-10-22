@@ -206,7 +206,7 @@ USAGE
   $ apollo client:download-schema OUTPUT
 
 ARGUMENTS
-  OUTPUT  [default: schema.json | schema.graphql] Path to write the introspection result to
+  OUTPUT  [default: schema.json] Path to write the introspection result to
 
 OPTIONS
   -c, --config=config                    Path to your Apollo config file
@@ -236,8 +236,6 @@ OPTIONS
 
   --tagName=tagName                      Name of the template literal tag used to identify template literals containing
                                          GraphQL queries in Javascript/Typescript code
-                                         
-  --target=format                        Format of schema to be downloaded. Currently supporting SDL & JSON
 ```
 
 _See code: [src/commands/client/download-schema.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/download-schema.ts)_

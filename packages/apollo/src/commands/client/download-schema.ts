@@ -5,21 +5,19 @@ import { writeFileSync } from "fs";
 import { ClientCommand } from "../../Command";
 
 export default class SchemaDownload extends ClientCommand {
-  static description = "Download a schema from engine or a GraphQL endpoint.";
+  static description =
+    "Download a schema from engine or a GraphQL endpoint in JSON or SDL format";
 
   static flags = {
-    ...ClientCommand.flags,
-
-    target: flags.string({
-      description:
-        "Format of schema to be downloaded. Currently supporting SDL & JSON"
-    })
+    ...ClientCommand.flags
   };
 
   static args = [
     {
       name: "output",
-      description: "Path to write the introspection result to"
+      description: "Path to write the introspection result to",
+      required: true,
+      default: "schema.json"
     }
   ];
 
@@ -27,18 +25,17 @@ export default class SchemaDownload extends ClientCommand {
     let result;
     let gitContext;
     await this.runTasks(({ args, project, flags }) => {
-      const isSDLFormat = flags.target && flags.target.toUpperCase() === "SDL";
-      const output =
-        args.output || (isSDLFormat ? "schema.graphql" : "schema.json");
+      const extension = args.output.split(".").pop();
+      const isSDLFormat = ["graphql", "graphqls", "gql"].includes(extension);
       return [
         {
-          title: `Saving schema to ${output}`,
+          title: `Saving schema to ${args.output}`,
           task: async () => {
             const schema = await project.resolveSchema({ tag: flags.tag });
             const formattedSchema = isSDLFormat
               ? printSchema(schema)
               : JSON.stringify(introspectionFromSchema(schema), null, 2);
-            writeFileSync(output, formattedSchema);
+            writeFileSync(args.output, formattedSchema);
           }
         }
       ];
