@@ -60,7 +60,6 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
     }
 
     if (!(data && data.service && data.service.__typename === "Service")) {
-      console.log(JSON.stringify(data, null, 2));
       throw new Error(
         `Unable to get schema from Apollo Graph Manager for graph ${id}`
       );
