@@ -288,12 +288,6 @@ export default class ServiceCheck extends ProjectCommand {
     try {
       await this.runTasks<TasksOutput>(
         ({ config, flags, project }) => {
-          if (!isServiceProject(project)) {
-            throw new Error(
-              "This project needs to be configured as a service project but is configured as a client project. Please see bit.ly/2ByILPj for help regarding configuration."
-            );
-          }
-
           /**
            * Name of the graph being checked. `engine` is an example of a graph.
            *
