@@ -468,8 +468,6 @@ export default class ServiceCheck extends ProjectCommand {
                 const checkSchemaResult = await project.engine.checkSchema(
                   variables
                 );
-
-                console.log(JSON.stringify(checkSchemaResult, null, 2));
                 // Attach to ctx as this will be used in later steps.
                 ctx.checkSchemaResult = checkSchemaResult;
                 // Save the output because we're going to use it even if we throw. `runTasks` won't return
