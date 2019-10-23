@@ -182,7 +182,7 @@ export default class ServicePush extends ProjectCommand {
       ].filter(x => x !== null);
 
       this.log(
-        table([["Change", "Description"], ...messages.map(Object.values)], {
+        table([["Severity", "Description"], ...messages.map(Object.values)], {
           columns: { 1: { width: 70, wrapWord: true } }
         })
       );
