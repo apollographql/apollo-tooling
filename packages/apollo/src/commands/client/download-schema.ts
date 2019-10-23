@@ -15,7 +15,8 @@ export default class SchemaDownload extends ClientCommand {
   static args = [
     {
       name: "output",
-      description: "Path to write the introspection result to",
+      description:
+        "Path to write the introspection result to. Can be `.graphql`, `.gql`, `.graphqls`, or `.json`",
       required: true,
       default: "schema.json"
     }
