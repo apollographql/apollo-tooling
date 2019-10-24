@@ -4,6 +4,7 @@
 
 - `apollo`
   - Add sdl download ability to `client:download-schema`
+  - colors: use cyan instead of blue for text highlighting
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`

@@ -81,7 +81,7 @@ function formatHumanReadable({
 
     const serviceListUrlEnding = `/graph/${graphName}/service-list`;
     const targetUrl = `${frontendUrl}${serviceListUrlEnding}`;
-    result += `\n\nView full details at: ${targetUrl}`;
+    result += `\nView full details at: ${chalk.cyan(targetUrl)}\n`;
   }
   return result;
 }
@@ -123,7 +123,7 @@ export default class ServiceList extends ProjectCommand {
 
         return [
           {
-            title: `Fetching list of services for graph ${chalk.blue(
+            title: `Fetching list of services for graph ${chalk.cyan(
               graphName + "@" + variant
             )}`,
             task: async (ctx: TasksOutput, task) => {
@@ -160,7 +160,7 @@ export default class ServiceList extends ProjectCommand {
     const { service } = taskOutput.config;
     if (!service || !taskOutput.config) {
       throw new Error(
-        "Service mising from config. This should have been validated elsewhere"
+        "Service missing from config. This should have been validated elsewhere"
       );
     }
     this.log(
