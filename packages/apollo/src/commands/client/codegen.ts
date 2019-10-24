@@ -128,7 +128,7 @@ export default class Generate extends ClientCommand {
 
     let write;
     const run = () =>
-      this.runTasks(({ flags, args, project }) => {
+      this.runTasks(({ flags, args, project, config }) => {
         let inferredTarget: TargetType = "" as TargetType;
         if (
           ["json", "swift", "typescript", "flow", "scala"].includes(
@@ -162,24 +162,35 @@ export default class Generate extends ClientCommand {
           );
         }
 
+        console.log("validating project");
+        project.validate();
+        console.log("validated");
+
         return [
           {
             title: "Generating query files",
             task: async (ctx, task) => {
               task.title = `Generating query files with '${inferredTarget}' target`;
-              const schema = await project.resolveSchema({
-                tag: flags.tag
-              });
+              const schema = await project.resolveSchema(
+                {
+                  tag: config.tag
+                },
+                true
+              );
 
               if (!schema) throw new Error("Error loading schema");
 
               write = () => {
-                // make sure all of the doucuments that we are going to be using for codegen
+                // make sure all of the documents that we are going to be using for codegen
                 // are valid documents
                 project.validate();
 
-                const operations = Object.values(this.project.operations);
-                const fragments = Object.values(this.project.fragments);
+                const operations = this.project.operations
+                  ? Object.values(this.project.operations)
+                  : [];
+                const fragments = this.project.fragments
+                  ? Object.values(this.project.fragments)
+                  : [];
 
                 if (!operations.length && !fragments.length) {
                   throw new Error(
