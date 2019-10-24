@@ -52,14 +52,14 @@ export default class ClientPush extends ClientCommand {
           },
           {
             title: `Checked operations against ${chalk.blue(
-              config.name || ""
+              config.graphId || ""
             )}@${chalk.blue(config.tag)}`,
             task: async () => {}
           },
           {
             title: "Pushing operations to operation registry",
             task: async (_, task) => {
-              if (!config.name) {
+              if (!config.graphId) {
                 throw new Error(
                   "No service found to link to Engine. Engine is required for this command."
                 );
@@ -85,7 +85,7 @@ export default class ClientPush extends ClientCommand {
                   identifier: referenceID || name,
                   version
                 },
-                id: config.name,
+                id: config.graphId,
                 operations: operationManifest,
                 manifestVersion: 2,
                 graphVariant: config.tag

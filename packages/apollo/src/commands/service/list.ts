@@ -110,7 +110,7 @@ export default class ServiceList extends ProjectCommand {
          *
          * A graph can be either a monolithic schema or the result of composition a federated schema.
          */
-        graphID = config.name;
+        graphID = config.graphId;
         graphVariant = flags.tag || config.tag || "current";
 
         if (!graphID) {
@@ -151,7 +151,7 @@ export default class ServiceList extends ProjectCommand {
     this.log(
       formatHumanReadable({
         implementingServices: taskOutput.implementingServices,
-        graphName: taskOutput.config.name,
+        graphName: taskOutput.config.graphId,
         frontendUrl:
           taskOutput.config.engine.frontend || DefaultEngineConfig.frontend
       })

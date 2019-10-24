@@ -288,12 +288,22 @@ export default class ServiceCheck extends ProjectCommand {
     try {
       await this.runTasks<TasksOutput>(
         ({ config, flags, project }) => {
+          if (
+            !isServiceProject(project) &&
+            !(flags.endpoint || flags.localSchemaFile)
+          ) {
+            throw new Error(
+              "This project must be configured as a service project or define `endpoint` or `localSchemaFile` " +
+                "in order to run service:check"
+            );
+          }
+
           /**
            * Name of the graph being checked. `engine` is an example of a graph.
            *
            * A graph can be either a monolithic schema or the result of composition a federated schema.
            */
-          graphID = config.name;
+          graphID = config.graphId;
           graphVariant = flags.tag || config.tag || "current";
 
           /**
@@ -447,7 +457,7 @@ export default class ServiceCheck extends ProjectCommand {
 
                 const variables: CheckSchemaVariables = {
                   id: graphID!,
-                  tag: flags.tag,
+                  tag: graphVariant,
                   gitContext: await gitInfo(this.log),
                   frontend: flags.frontend || config.engine.frontend,
                   ...(historicParameters && { historicParameters }),

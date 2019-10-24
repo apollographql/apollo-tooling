@@ -31,8 +31,14 @@ export function getServiceFromKey(key?: string) {
   return;
 }
 
-export function getServiceName(config: ApolloConfigFormat) {
-  if (config.service) return config.service.name;
+export function getGraphId(config: ApolloConfigFormat) {
+  if (config.service && config.service.name) {
+    if (config.service.name.indexOf("@") > 0) {
+      return parseServiceSpecifier(config.service.name)[0];
+    } else {
+      return config.service.name;
+    }
+  }
   if (config.client) {
     if (typeof config.client.service === "string") {
       return parseServiceSpecifier(config.client

@@ -50,7 +50,7 @@ export default class ServicePush extends ProjectCommand {
       {
         title: "Uploading service to Engine",
         task: async () => {
-          if (!config.name) {
+          if (!config.graphId) {
             throw new Error("No service found to link to Engine");
           }
 
@@ -92,7 +92,7 @@ export default class ServicePush extends ProjectCommand {
               didUpdateGateway,
               serviceWasCreated
             } = await project.engine.uploadAndComposePartialSchema({
-              id: config.name,
+              id: config.graphId,
               graphVariant: config.tag,
               name: flags.serviceName,
               url: flags.serviceURL,
@@ -111,7 +111,7 @@ export default class ServicePush extends ProjectCommand {
               compositionErrors: errors,
               serviceWasCreated,
               didUpdateGateway,
-              graphId: config.name,
+              graphId: config.graphId,
               graphVariant: config.tag || "current"
             };
 
@@ -121,7 +121,7 @@ export default class ServicePush extends ProjectCommand {
           const schema = await project.resolveSchema({ tag: flags.tag });
 
           const variables: UploadSchemaVariables = {
-            id: config.name,
+            id: config.graphId,
             // @ts-ignore
             // XXX Looks like TS should be generating ReadonlyArrays instead
             schema: introspectionFromSchema(schema).__schema,
@@ -138,7 +138,7 @@ export default class ServicePush extends ProjectCommand {
           const response = await project.engine.uploadSchema(variables);
           if (response) {
             result = {
-              graphId: config.name,
+              graphId: config.graphId,
               graphVariant: response.tag ? response.tag.tag : "current",
               hash: response.tag ? response.tag.schema.hash : null,
               code: response.code

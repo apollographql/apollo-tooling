@@ -3,7 +3,7 @@ import merge from "lodash.merge";
 import { ServiceID, ServiceSpecifier, ClientID } from "../engine";
 import URI from "vscode-uri";
 import { WithRequired } from "apollo-env";
-import { getServiceName, parseServiceSpecifier } from "./utils";
+import { getGraphId, parseServiceSpecifier } from "./utils";
 import { ValidationRule } from "graphql/validation/ValidationContext";
 
 export interface EngineStatsWindow {
@@ -132,7 +132,7 @@ export class ApolloConfig {
   public isClient: boolean;
   public isService: boolean;
   public engine: EngineConfig;
-  public name?: string;
+  public graphId?: string;
   public service?: ServiceConfigFormat;
   public client?: ClientConfigFormat;
   private _tag?: string;
@@ -141,7 +141,7 @@ export class ApolloConfig {
     this.isService = !!rawConfig.service;
     this.isClient = !!rawConfig.client;
     this.engine = rawConfig.engine!;
-    this.name = getServiceName(rawConfig);
+    this.graphId = getGraphId(rawConfig);
     this.client = rawConfig.client;
     this.service = rawConfig.service;
   }

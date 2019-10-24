@@ -31,7 +31,7 @@ export default class ServiceDelete extends ProjectCommand {
       {
         title: "Removing service from Engine",
         task: async () => {
-          if (!config.name) {
+          if (!config.graphId) {
             throw new Error("No service found to link to Engine");
           }
 
@@ -47,7 +47,7 @@ export default class ServiceDelete extends ProjectCommand {
             errors,
             updatedGateway
           } = await project.engine.removeServiceAndCompose({
-            id: config.name,
+            id: config.graphId,
             graphVariant,
             name: flags.serviceName
           });
@@ -55,7 +55,7 @@ export default class ServiceDelete extends ProjectCommand {
           result = {
             serviceName: flags.serviceName,
             graphVariant,
-            graphName: config.name,
+            graphName: config.graphId,
             errors,
             updatedGateway
           };

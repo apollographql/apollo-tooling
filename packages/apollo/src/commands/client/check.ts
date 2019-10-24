@@ -40,7 +40,7 @@ export default class ClientCheck extends ClientCommand {
         {
           title: "Checking client compatibility with service",
           task: async ctx => {
-            if (!config.name) {
+            if (!config.graphId) {
               throw new Error(
                 "No service found to link to Engine. Engine is required for this command."
               );
@@ -60,7 +60,7 @@ export default class ClientCheck extends ClientCommand {
             }));
 
             ctx.validationResults = await project.engine.validateOperations({
-              id: config.name,
+              id: config.graphId,
               tag: config.tag,
               operations: ctx.operations.map(({ body, name }) => ({
                 body,

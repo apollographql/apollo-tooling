@@ -114,7 +114,7 @@ export class GraphQLClientProject extends GraphQLProject {
 
     super({ config, fileSet, loadingHandler, clientIdentity });
     this.rootURI = rootURI;
-    this.serviceID = config.name;
+    this.serviceID = config.graphId;
 
     /**
      * This function is used in the Array.filter function below it to remove any .env files and config files.
@@ -149,7 +149,7 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   get displayName(): string {
-    return this.config.name || "Unnamed Project";
+    return this.config.graphId || "Unnamed Project";
   }
 
   initialize() {
