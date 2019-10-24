@@ -84,7 +84,7 @@ export interface GraphQLClientProjectConfig {
 export class GraphQLClientProject extends GraphQLProject {
   public rootURI: URI;
   public serviceID?: string;
-  public config: ClientConfig;
+  public config!: ClientConfig;
 
   private serviceSchema?: GraphQLSchema;
 

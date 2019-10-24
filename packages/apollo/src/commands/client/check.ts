@@ -5,7 +5,7 @@ import { ClientCommand } from "../../Command";
 import { CompactRenderer } from "../../utils";
 import URI from "vscode-uri";
 import { relative } from "path";
-import { graphqlTypes } from "apollo-language-server";
+import { graphqlTypes, isClientConfig } from "apollo-language-server";
 import chalk from "chalk";
 import envCi from "env-ci";
 
@@ -40,6 +40,11 @@ export default class ClientCheck extends ClientCommand {
         {
           title: "Checking client compatibility with service",
           task: async ctx => {
+            if (!isClientConfig(project.config)) {
+              throw new Error("not a client project!");
+            } else {
+              console.log("here is a log");
+            }
             if (!config.graphId) {
               throw new Error(
                 "No service found to link to Engine. Engine is required for this command."

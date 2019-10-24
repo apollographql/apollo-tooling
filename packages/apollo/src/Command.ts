@@ -214,15 +214,15 @@ export abstract class ProjectCommand extends Command {
       referenceID
     };
 
-    if (isServiceConfig(config)) {
-      this.project = new GraphQLServiceProject({
+    if (isClientConfig(config) && !isServiceConfig(config)) {
+      this.project = new GraphQLClientProject({
         config,
         loadingHandler,
         rootURI,
         clientIdentity
       });
-    } else if (isClientConfig(config)) {
-      this.project = new GraphQLClientProject({
+    } else if (isServiceConfig(config)) {
+      this.project = new GraphQLServiceProject({
         config,
         loadingHandler,
         rootURI,
