@@ -50,6 +50,6 @@ export class GraphQLServiceProject extends GraphQLProject {
   }
 
   resolveFederationInfo() {
-    return this.schemaProvider.resolveFederatedServiceSDL();
+    return this.serviceSchemaProvider.resolveFederatedServiceSDL();
   }
 }

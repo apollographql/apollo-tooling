@@ -132,32 +132,15 @@ Found 3 graph composition errors for service accounts on graph engine
 `;
 
 exports[`service:check integration federated should report composition errors correctly vanilla 1`] = `
-"
-  ✔ Loading Apollo Project
-  ⠙ Validate graph composition for service accounts on graph engine
-    → Attempting to compose graph with accounts service's partial schema
-    Comparing schema changes
-    Reporting result
-  ✔ Loading Apollo Project
-  ⠹ Validate graph composition for service accounts on graph engine
-    → Attempting to compose graph with accounts service's partial schema
-    Comparing schema changes
-    Reporting result
-  ✔ Loading Apollo Project
-  ⠸ Validate graph composition for service accounts on graph engine
-    → Attempting to compose graph with accounts service's partial schema
-    Comparing schema changes
-    Reporting result
-  ✔ Loading Apollo Project
-  ⠼ Validate graph composition for service accounts on graph engine
-    → Attempting to compose graph with accounts service's partial schema
-    Comparing schema changes
-    Reporting result
-  ✔ Loading Apollo Project
-  ✖ Found 3 graph composition errors for service accounts on graph engine
-    → Federated service composition was unsuccessful. Please see the reasons below.
-    Comparing schema changes
-    Reporting result
+"Loading Apollo Project [started]
+Loading Apollo Project [completed]
+Validate graph composition for service accounts on graph engine [started]
+→ Fetching local service's partial schema
+→ Attempting to compose graph with accounts service's partial schema
+Found 3 graph composition errors for service accounts on graph engine [title changed]
+Found 3 graph composition errors for service accounts on graph engine [failed]
+→ Federated service composition was unsuccessful. Please see the reasons below.
+
 ╔══════════╤═════════╤════════════════════════════════════════════════════╗
 ║ Service  │ Field   │ Message                                            ║
 ╟──────────┼─────────┼────────────────────────────────────────────────────╢
@@ -221,15 +204,19 @@ View full details at: https://engine-staging.apollographql.com/service/justin-fu
 `;
 
 exports[`service:check integration federated should report composition success correctly vanilla 1`] = `
-"  ✔ Loading Apollo Project
-  ⠙ Validate graph composition for service accounts on graph engine
-    → Attempting to compose graph with accounts service's partial schema
-    Comparing schema changes
-    Reporting result
-  ✔ Loading Apollo Project
-  ✔ Found 0 graph composition errors for service accounts on graph engine
-  ✔ Compared 1 schema change against 0 operations over the last 548 days
-  ✔ Found 0 breaking changes and 1 compatible change
+"Loading Apollo Project [started]
+Loading Apollo Project [completed]
+Validate graph composition for service accounts on graph engine [started]
+→ Fetching local service's partial schema
+→ Attempting to compose graph with accounts service's partial schema
+Found 0 graph composition errors for service accounts on graph engine [title changed]
+Found 0 graph composition errors for service accounts on graph engine [completed]
+Comparing schema changes [started]
+Compared 1 schema change against 0 operations over the last 548 days [title changed]
+Compared 1 schema change against 0 operations over the last 548 days [completed]
+Reporting result [started]
+Found 0 breaking changes and 1 compatible change [title changed]
+Found 0 breaking changes and 1 compatible change [completed]
 ╔════════╤══════════════════╤═══════════════════════════════════════════════════════════════════════════════╗
 ║ Change │ Code             │ Description                                                                   ║
 ╟────────┼──────────────────┼───────────────────────────────────────────────────────────────────────────────╢
@@ -274,16 +261,20 @@ exports[`service:check integration non-federated should report traffic errors co
 `;
 
 exports[`service:check integration non-federated should report traffic errors correctly vanilla 1`] = `
-"  ✔ Loading Apollo Project
-  ⠙ Validating schema against tag master on graph engine
-    → Validating schema
-    Comparing schema changes
-    Reporting result
-  ✔ Loading Apollo Project
-  ✔ Validated schema against tag master on graph engine
-  ✔ Compared 1 schema change against 0 operations over the last 548 days
-  ✖ Found 1 breaking change and 0 compatible changes
-    → breaking changes found
+"Loading Apollo Project [started]
+Loading Apollo Project [completed]
+Validating schema against tag master on graph engine [started]
+→ Resolving schema
+→ Validating schema
+Validated schema against tag master on graph engine [title changed]
+Validated schema against tag master on graph engine [completed]
+Comparing schema changes [started]
+Compared 1 schema change against 0 operations over the last 548 days [title changed]
+Compared 1 schema change against 0 operations over the last 548 days [completed]
+Reporting result [started]
+Found 1 breaking change and 0 compatible changes [title changed]
+Found 1 breaking change and 0 compatible changes [failed]
+→ breaking changes found
 ╔════════╤══════════════════╤═══════════════════════════════════════════════════════════════════════════════╗
 ║ Change │ Code             │ Description                                                                   ║
 ╟────────┼──────────────────┼───────────────────────────────────────────────────────────────────────────────╢
@@ -328,15 +319,19 @@ exports[`service:check integration non-federated should report traffic non-error
 `;
 
 exports[`service:check integration non-federated should report traffic non-errors correctly vanilla 1`] = `
-"  ✔ Loading Apollo Project
-  ⠙ Validating schema against tag master on graph engine
-    → Validating schema
-    Comparing schema changes
-    Reporting result
-  ✔ Loading Apollo Project
-  ✔ Validated schema against tag master on graph engine
-  ✔ Compared 1 schema change against 0 operations over the last 548 days
-  ✔ Found 0 breaking changes and 1 compatible change
+"Loading Apollo Project [started]
+Loading Apollo Project [completed]
+Validating schema against tag master on graph engine [started]
+→ Resolving schema
+→ Validating schema
+Validated schema against tag master on graph engine [title changed]
+Validated schema against tag master on graph engine [completed]
+Comparing schema changes [started]
+Compared 1 schema change against 0 operations over the last 548 days [title changed]
+Compared 1 schema change against 0 operations over the last 548 days [completed]
+Reporting result [started]
+Found 0 breaking changes and 1 compatible change [title changed]
+Found 0 breaking changes and 1 compatible change [completed]
 ╔════════╤══════════════════╤═══════════════════════════════════════════════════════════════════════════════╗
 ║ Change │ Code             │ Description                                                                   ║
 ╟────────┼──────────────────┼───────────────────────────────────────────────────────────────────────────────╢

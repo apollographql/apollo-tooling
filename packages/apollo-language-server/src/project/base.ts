@@ -69,7 +69,7 @@ export interface ProjectStats {
 }
 
 export abstract class GraphQLProject implements GraphQLSchemaProvider {
-  public schemaProvider: GraphQLSchemaProvider;
+  public serviceSchemaProvider: GraphQLSchemaProvider;
   protected _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
 
   private _isReady: boolean;
@@ -96,7 +96,10 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     this.config = config;
     this.fileSet = fileSet;
     this.loadingHandler = loadingHandler;
-    this.schemaProvider = schemaProviderFromConfig(config, clientIdentity);
+    this.serviceSchemaProvider = schemaProviderFromConfig(
+      config,
+      clientIdentity
+    );
     const { engine } = config;
     if (engine.apiKey) {
       this.engineClient = new ApolloEngineClient(
@@ -151,16 +154,16 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   public resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
     this.lastLoadDate = +new Date();
-    return this.schemaProvider.resolveSchema(config);
+    return this.serviceSchemaProvider.resolveSchema(config);
   }
 
   public resolveFederatedServiceSDL() {
-    return this.schemaProvider.resolveFederatedServiceSDL();
+    return this.serviceSchemaProvider.resolveFederatedServiceSDL();
   }
 
   public onSchemaChange(handler: NotificationHandler<GraphQLSchema>) {
     this.lastLoadDate = +new Date();
-    return this.schemaProvider.onSchemaChange(handler);
+    return this.serviceSchemaProvider.onSchemaChange(handler);
   }
 
   onDiagnostics(handler: NotificationHandler<PublishDiagnosticsParams>) {

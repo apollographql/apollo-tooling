@@ -201,7 +201,7 @@ export class GraphQLClientProject extends GraphQLProject {
       `Loading schema for ${this.displayName}`,
       (async () => {
         this.serviceSchema = augmentSchemaWithGeneratedSDLIfNeeded(
-          await this.schemaProvider.resolveSchema({
+          await this.serviceSchemaProvider.resolveSchema({
             tag: tag || this.config.tag,
             force: true
           })
