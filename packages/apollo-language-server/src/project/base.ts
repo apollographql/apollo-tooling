@@ -70,6 +70,7 @@ export interface ProjectStats {
 
 export abstract class GraphQLProject implements GraphQLSchemaProvider {
   public serviceSchemaProvider: GraphQLSchemaProvider;
+  public clientSchemaProvider: GraphQLSchemaProvider;
   protected _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
 
   private _isReady: boolean;
@@ -98,7 +99,13 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     this.loadingHandler = loadingHandler;
     this.serviceSchemaProvider = schemaProviderFromConfig(
       config,
-      clientIdentity
+      clientIdentity,
+      false
+    );
+    this.clientSchemaProvider = schemaProviderFromConfig(
+      config,
+      clientIdentity,
+      true
     );
     const { engine } = config;
     if (engine.apiKey) {
@@ -152,8 +159,14 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     return this.initialize();
   }
 
-  public resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
+  public resolveSchema(
+    config: SchemaResolveConfig,
+    forClientCommand?: boolean
+  ): Promise<GraphQLSchema> {
     this.lastLoadDate = +new Date();
+    if (forClientCommand) {
+      return this.clientSchemaProvider.resolveSchema(config);
+    }
     return this.serviceSchemaProvider.resolveSchema(config);
   }
 

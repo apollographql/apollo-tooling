@@ -84,7 +84,7 @@ export interface GraphQLClientProjectConfig {
 export class GraphQLClientProject extends GraphQLProject {
   public rootURI: URI;
   public serviceID?: string;
-  public config!: ClientConfig;
+  public config: ClientConfig;
 
   private serviceSchema?: GraphQLSchema;
 
@@ -201,7 +201,7 @@ export class GraphQLClientProject extends GraphQLProject {
       `Loading schema for ${this.displayName}`,
       (async () => {
         this.serviceSchema = augmentSchemaWithGeneratedSDLIfNeeded(
-          await this.serviceSchemaProvider.resolveSchema({
+          await this.clientSchemaProvider.resolveSchema({
             tag: tag || this.config.tag,
             force: true
           })

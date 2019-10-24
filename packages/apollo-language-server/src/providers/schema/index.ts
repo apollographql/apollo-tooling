@@ -23,13 +23,14 @@ export {
 
 export function schemaProviderFromConfig(
   config: ApolloConfig,
-  clientIdentity?: ClientIdentity // engine provider needs this
+  clientIdentity?: ClientIdentity, // engine provider needs this
+  forClientCommands?: boolean
 ): GraphQLSchemaProvider {
-  if (config.service && config.service.endpoint) {
+  if (!forClientCommands && config.service && config.service.endpoint) {
     return new EndpointSchemaProvider(config.service.endpoint);
   }
 
-  if (config.service && config.service.localSchemaFile) {
+  if (!forClientCommands && config.service && config.service.localSchemaFile) {
     const isListOfSchemaFiles = Array.isArray(config.service.localSchemaFile);
     return new FileSchemaProvider(
       isListOfSchemaFiles
@@ -62,6 +63,6 @@ export function schemaProviderFromConfig(
   }
 
   throw new Error(
-    "No schema provider was created, because the project type was unable to be resolved from your config. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
+    "No schema provider was created, because the project type was unable to be resolved from your config. Please add either a client or service config. Currently, running `client:` commands are not supported without a `client` key in your config. For more information, please refer to https://bit.ly/2ByILPj"
   );
 }
