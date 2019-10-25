@@ -187,6 +187,10 @@ export async function loadConfig({
     loadedConfig ? loadedConfig.config : undefined
   );
 
+  if (!graphInfo.graphId && graphIdFromKey) {
+    graphInfo.graphId = graphIdFromKey;
+  }
+
   if (
     graphIdFromKey &&
     graphInfo.graphId &&

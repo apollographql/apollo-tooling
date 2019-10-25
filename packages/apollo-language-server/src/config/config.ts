@@ -146,7 +146,7 @@ export class ApolloConfig {
     this.isClient = !!rawConfig.client;
     this.engine = rawConfig.engine!;
     const graphInfo = getGraphInfo(rawConfig);
-    if (graphInfo) this.graphId = graphInfo.graphId;
+    if (graphInfo && graphInfo.graphId) this.graphId = graphInfo.graphId;
     this.client = rawConfig.client || DefaultClientConfig;
     this.service = rawConfig.service || DefaultServiceConfig;
   }

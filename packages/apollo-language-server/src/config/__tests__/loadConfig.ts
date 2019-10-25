@@ -62,7 +62,7 @@ describe("loadConfig", () => {
   });
 
   describe("finding files", () => {
-    it.only("loads with client defaults from different dir", async () => {
+    it("loads with client defaults from different dir", async () => {
       writeFilesToDir(dir, {
         "my.config.js": `
           module.exports = {
@@ -161,13 +161,18 @@ describe("loadConfig", () => {
         configPath: dirPath,
         configFileName: "my.config.js"
       });
-      expect(config.rawConfig).toMatchInlineSnapshot(`
+      expect(config && config.rawConfig).toMatchInlineSnapshot(`
         Object {
-          "engine": Object {
-            "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
-            "frontend": "https://engine.apollographql.com",
-          },
-          "service": Object {
+          "client": Object {
+            "addTypename": true,
+            "clientOnlyDirectives": Array [
+              "connection",
+              "type",
+            ],
+            "clientSchemaDirectives": Array [
+              "client",
+              "rest",
+            ],
             "endpoint": Object {
               "url": "http://localhost:4000/graphql",
             },
@@ -175,10 +180,51 @@ describe("loadConfig", () => {
               "**/node_modules",
               "**/__tests__",
             ],
+            "graphId": "hello",
             "includes": Array [
               "src/**/*.{ts,tsx,js,jsx,graphql,gql}",
             ],
             "name": "hello",
+            "service": "hello@current",
+            "statsWindow": Object {
+              "from": -86400,
+              "to": -0,
+            },
+            "tagName": "gql",
+          },
+          "engine": Object {
+            "apiKey": undefined,
+            "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
+            "frontend": "https://engine.apollographql.com",
+          },
+          "service": Object {
+            "addTypename": true,
+            "clientOnlyDirectives": Array [
+              "connection",
+              "type",
+            ],
+            "clientSchemaDirectives": Array [
+              "client",
+              "rest",
+            ],
+            "endpoint": Object {
+              "url": "http://localhost:4000/graphql",
+            },
+            "excludes": Array [
+              "**/node_modules",
+              "**/__tests__",
+            ],
+            "graphId": "hello",
+            "includes": Array [
+              "src/**/*.{ts,tsx,js,jsx,graphql,gql}",
+            ],
+            "name": "hello",
+            "service": "hello@current",
+            "statsWindow": Object {
+              "from": -86400,
+              "to": -0,
+            },
+            "tagName": "gql",
           },
         }
       `);
@@ -196,7 +242,7 @@ describe("loadConfig", () => {
       const config = await loadConfig({ configPath: dirPath });
 
       spy.mockRestore();
-      expect(config.client.service).toEqual("hello");
+      expect(config && config.client.service).toEqual("hello");
     });
 
     it("loads config from a ts file", async () => {
@@ -205,7 +251,7 @@ describe("loadConfig", () => {
       });
       const config = await loadConfig({ configPath: dirPath });
 
-      expect(config.client.service).toEqual("hello");
+      expect(config && config.client.service).toEqual("hello");
     });
   });
 
@@ -285,7 +331,7 @@ describe("loadConfig", () => {
       spy.mockRestore();
     });
 
-    it("throws if project type cant be resolved", async () => {
+    it("uses default configuration with empty cnofig", async () => {
       const spy = jest.spyOn(console, "error");
       spy.mockImplementation();
 
@@ -298,9 +344,7 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
 
-      expect(spy).toHaveBeenCalledWith(
-        expect.stringMatching(/unable to resolve/i)
-      );
+      expect(spy).not.toHaveBeenCalled();
       spy.mockRestore();
     });
   });
@@ -317,7 +361,7 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
 
-      expect(config.client.service).toEqual("harambe");
+      expect(config && config.graphId).toEqual("harambe");
     });
 
     it("finds .env.local in config path & parses for key", async () => {
@@ -331,7 +375,7 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
 
-      expect(config.client.service).toEqual("harambe");
+      expect(config && config.graphId).toEqual("harambe");
     });
 
     it("finds .env and .env.local in config path & parses for key, preferring .env.local", async () => {
@@ -346,7 +390,7 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
 
-      expect(config.client.service).toEqual("yoshi");
+      expect(config && config.graphId).toEqual("yoshi");
     });
 
     // this doesn't work right now :)
@@ -362,23 +406,23 @@ describe("loadConfig", () => {
       });
 
       process.chdir("../");
-      expect(config.client.service).toEqual("harambe");
+      expect(config && config.graphId).toEqual("harambe");
     });
   });
 
   describe("project type", () => {
-    it("uses passed in type when config doesnt have client/service", async () => {
+    it("is both client and service config with defaults when doesnt have client/service", async () => {
       writeFilesToDir(dir, {
         "my.config.js": `module.exports = { engine: { endpoint: 'http://a.a' } }`
       });
 
       const config = await loadConfig({
         configPath: dirPath,
-        configFileName: "my.config.js",
-        type: "client"
+        configFileName: "my.config.js"
       });
 
-      expect(config.isClient).toEqual(true);
+      expect(config && config.isClient).toEqual(true);
+      expect(config && config.isService).toEqual(true);
     });
 
     it("infers client projects from config", async () => {
@@ -391,7 +435,7 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
 
-      expect(config.isClient).toEqual(true);
+      expect(config && config.isClient).toEqual(true);
     });
 
     it("infers service projects from config", async () => {
@@ -404,39 +448,23 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
 
-      expect(config.isService).toEqual(true);
+      expect(config && config.isService).toEqual(true);
     });
   });
 
   describe("service name", () => {
-    it("lets config service name take precedence for client project", async () => {
+    it("throws when service in config does not match graph token", async () => {
       writeFilesToDir(dir, {
         "my.config.js": `module.exports = { client: { service: 'hello' } }`,
         ".env": `ENGINE_API_KEY=service:harambe:54378950jn`
       });
 
-      const config = await loadConfig({
-        configPath: dirPath,
-        configFileName: "my.config.js",
-        name: "not-it"
-      });
-
-      expect(config.client.service).toEqual("hello");
-    });
-
-    it("lets name passed in take precedence over env var", async () => {
-      writeFilesToDir(dir, {
-        "my.config.js": `module.exports = { client: {  } }`,
-        ".env": `ENGINE_API_KEY=service:harambe:54378950jn`
-      });
-
-      const config = await loadConfig({
-        configPath: dirPath,
-        configFileName: "my.config.js",
-        name: "hello"
-      });
-
-      expect(config.client.service).toEqual("hello");
+      await expect(
+        loadConfig({
+          configPath: dirPath,
+          configFileName: "my.config.js"
+        })
+      ).rejects.toThrow(/does not match/);
     });
 
     it("uses env var to determine service name when no other options", async () => {
@@ -450,7 +478,7 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
 
-      expect(config.client.service).toEqual("harambe");
+      expect(config && config.graphId).toEqual("harambe");
     });
   });
 
@@ -465,7 +493,7 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
 
-      expect(config.rawConfig.client.includes).toEqual(
+      expect(config && config.rawConfig.client.includes).toEqual(
         DefaultClientConfig.includes
       );
     });
@@ -480,7 +508,7 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
 
-      expect(config.rawConfig.service.includes).toEqual(
+      expect(config && config.rawConfig.service.includes).toEqual(
         DefaultServiceConfig.includes
       );
     });
@@ -495,7 +523,7 @@ describe("loadConfig", () => {
         configFileName: "my.config.js"
       });
 
-      expect(config.rawConfig.engine.endpoint).toEqual(
+      expect(config && config.rawConfig.engine.endpoint).toEqual(
         DefaultEngineConfig.endpoint
       );
     });
