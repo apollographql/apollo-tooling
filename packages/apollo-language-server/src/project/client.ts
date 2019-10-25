@@ -18,8 +18,7 @@ import {
   FieldNode,
   ObjectTypeDefinitionNode,
   GraphQLObjectType,
-  DefinitionNode,
-  DirectiveDefinitionNode
+  DefinitionNode
 } from "graphql";
 import { ValidationRule } from "graphql/validation/ValidationContext";
 import Maybe from "graphql/tsutils/Maybe";

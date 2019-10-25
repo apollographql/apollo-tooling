@@ -46,12 +46,13 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
     }
 
     const [id, tag = "current"] = parseServiceSpecifier(client.service);
+    const variantToGet = override && override.tag ? override.tag : tag;
 
     const { data, errors } = await this.client.execute<GetSchemaByTag>({
       query: SCHEMA_QUERY,
       variables: {
         id,
-        tag: override && override.tag ? override.tag : tag
+        tag: variantToGet
       }
     });
 
@@ -62,7 +63,7 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
 
     if (!(data && data.service && data.service.__typename === "Service")) {
       throw new Error(
-        `Unable to get schema from Apollo Engine for service ${id}`
+        `Unable to get schema from Apollo Graph Manager for graph ${id}@${variantToGet}`
       );
     }
 
