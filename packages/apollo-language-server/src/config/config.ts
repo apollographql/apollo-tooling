@@ -138,7 +138,10 @@ export class ApolloConfig {
   private _serviceGraphVariant?: string;
   private _clientGraphVariant?: string;
 
-  constructor(public rawConfig: ApolloConfigFormat, public configURI?: URI) {
+  constructor(
+    public rawConfig: Partial<ApolloConfigFormat>,
+    public configURI?: URI
+  ) {
     this.isService = !!rawConfig.service;
     this.isClient = !!rawConfig.client;
     this.engine = rawConfig.engine!;

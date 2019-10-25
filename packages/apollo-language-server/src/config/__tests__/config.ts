@@ -1,11 +1,29 @@
-import { ApolloConfig, ApolloConfigFormat } from "../";
+import {
+  ApolloConfig,
+  ApolloConfigFormat,
+  getGraphInfo,
+  loadConfigWithDefaults
+} from "../";
 import URI from "vscode-uri";
+import { DeepPartial } from "apollo-env";
+
+function createConfig(raw: DeepPartial<ApolloConfigFormat>) {
+  return loadConfigWithDefaults(
+    {
+      config: raw
+    },
+    getGraphInfo(raw)
+  );
+}
 
 describe("ApolloConfig", () => {
-  describe("confifDirURI", () => {
+  describe("configDirURI", () => {
     it("properly parses dir paths for configDirURI", () => {
       const uri = URI.parse("/test/dir/name");
-      const config = new ApolloConfig({ service: { name: "hai" } }, uri);
+      const config = new ApolloConfig(
+        createConfig({ service: { name: "hai" } }),
+        uri
+      );
       // can be either /test/dir/name or \\test\\dir\\name depending on platform
       // this difference is fine :)
       expect(config.configDirURI.fsPath).toMatch(
@@ -14,7 +32,10 @@ describe("ApolloConfig", () => {
     });
     it("properly parses filepaths for configDirURI", () => {
       const uri = URI.parse("/test/dir/name/apollo.config.js");
-      const config = new ApolloConfig({ service: { name: "hai" } }, uri);
+      const config = new ApolloConfig(
+        createConfig({ service: { name: "hai" } }),
+        uri
+      );
       // can be either /test/dir/name or \\test\\dir\\name depending on platform
       // this difference is fine :)
       expect(config.configDirURI.fsPath).toMatch(
@@ -24,28 +45,32 @@ describe("ApolloConfig", () => {
   });
 
   describe("projects", () => {
-    it("creates a ClientConfig when client is present", () => {
-      const rawConfig: ApolloConfigFormat = {
+    it("uses client details when client key is present", () => {
+      const rawConfig: ApolloConfigFormat = createConfig({
         client: { service: "my-service" }
-      };
+      });
       const config = new ApolloConfig(rawConfig);
       const projects = config.projects;
-      expect(projects).toHaveLength(1);
+      expect(projects).toHaveLength(2);
       expect(projects[0].isClient).toBeTruthy();
+      expect(config.graphId).toEqual("my-service");
     });
-    it("creates a ServiceConfig when service is present", () => {
-      const rawConfig: ApolloConfigFormat = { service: "my-service" };
+    it("uses service details when service key is present", () => {
+      const rawConfig: ApolloConfigFormat = createConfig({
+        service: { name: "my-service" }
+      });
       const config = new ApolloConfig(rawConfig);
       const projects = config.projects;
 
-      expect(projects).toHaveLength(1);
+      expect(projects).toHaveLength(2);
       expect(projects[0].isService).toBeTruthy();
+      expect(config.graphId).toEqual("my-service");
     });
     it("creates multiple configs when both client and service are present", () => {
-      const rawConfig: ApolloConfigFormat = {
+      const rawConfig: ApolloConfigFormat = createConfig({
         client: { service: "my-service" },
-        service: "my-service"
-      };
+        service: { name: "my-service" }
+      });
       const config = new ApolloConfig(rawConfig);
       const projects = config.projects;
 
@@ -53,21 +78,31 @@ describe("ApolloConfig", () => {
       expect(projects.find(c => c.isClient)).toBeTruthy();
       expect(projects.find(c => c.isService)).toBeTruthy();
     });
+    it("creates multiple configs when nothing is present", () => {
+      const config = new ApolloConfig(createConfig({}));
+      expect(config.projects).toHaveLength(2);
+    });
   });
 
   describe("tag", () => {
     it("gets default tag when none is set", () => {
-      const config = new ApolloConfig({ client: { service: "hai" } });
+      const config = new ApolloConfig(
+        createConfig({ client: { service: "hai" } })
+      );
       expect(config.serviceGraphVariant).toEqual("current");
     });
 
     it("gets tag from service specifier", () => {
-      const config = new ApolloConfig({ client: { service: "hai@master" } });
-      expect(config.serviceGraphVariant).toEqual("master");
+      const config = new ApolloConfig(
+        createConfig({ client: { service: "hai@master" } })
+      );
+      expect(config.clientGraphVariant).toEqual("master");
     });
 
     it("can set and override tags", () => {
-      const config = new ApolloConfig({ client: { service: "hai@master" } });
+      const config = new ApolloConfig(
+        createConfig({ client: { service: "hai@master" } })
+      );
       config.serviceGraphVariant = "new";
       expect(config.serviceGraphVariant).toEqual("new");
     });

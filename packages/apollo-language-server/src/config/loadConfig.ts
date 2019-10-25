@@ -1,4 +1,4 @@
-import cosmiconfig from "cosmiconfig";
+import cosmiconfig, { LoaderResult } from "cosmiconfig";
 import { LoaderEntry } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
 import { resolve } from "path";
@@ -16,6 +16,7 @@ import { getGraphInfo, getGraphIdFromKey, GraphInfo } from "./utils";
 import URI from "vscode-uri";
 import { Debug } from "../utilities";
 import { load } from "nock";
+import { DeepPartial } from "apollo-env";
 
 // config settings
 const MODULE_NAME = "apollo";
@@ -53,10 +54,63 @@ export interface LoadConfigSettings {
   requireConfig?: boolean;
 }
 
-export type ConfigResult<T> = {
+type NotNullConfigResult<T> = {
   config: T;
   filepath: string;
-} | null;
+};
+
+export type ConfigResult<T> = NotNullConfigResult<T> | null;
+
+export function loadConfigWithDefaults(
+  loadedConfig: Pick<
+    NotNullConfigResult<DeepPartial<ApolloConfigFormat>>,
+    "config"
+  > | null,
+  graphInfo: GraphInfo,
+  configPath?: string,
+  apiKey?: string
+): ApolloConfig {
+  if (!graphInfo.graphId) {
+    console.warn("Graph is not specified from either Apollo config or env.");
+  }
+  const graphId = graphInfo.graphId;
+
+  const configWithDefaults = {
+    ...(loadedConfig && loadedConfig.config),
+    client: merge(
+      DefaultConfigBase,
+      DefaultClientConfig,
+      graphId
+        ? {
+            service: `${graphId}@${graphInfo.clientGraphVariant}`,
+            graphId
+          }
+        : {},
+      loadedConfig && loadedConfig.config.client
+    ),
+    service: merge(
+      DefaultConfigBase,
+      DefaultServiceConfig,
+      graphId
+        ? {
+            name: `${graphId}@${graphInfo.serviceGraphVariant}`,
+            graphId
+          }
+        : {},
+      loadedConfig && loadedConfig.config.service
+    ),
+    engine: merge(
+      DefaultEngineConfig,
+      loadedConfig && loadedConfig.config.engine,
+      { apiKey }
+    )
+  };
+
+  return new ApolloConfig(
+    configWithDefaults,
+    URI.file(resolve(configPath || process.cwd()))
+  );
+}
 
 // XXX load .env files automatically
 export async function loadConfig({
@@ -143,45 +197,6 @@ export async function loadConfig({
         "graph-level API token or use a personal user token.\n graphId: { key: ${graphIdFromKey}, config: ${graphInfo.graphId} }`
     );
   }
-  const graphId: string | undefined = graphInfo.graphId || graphIdFromKey;
 
-  if (!graphId) {
-    console.warn("Graph is not specified from either Apollo config or env.");
-  }
-
-  const configWithDefaults = {
-    ...(loadedConfig && loadedConfig.config),
-    client: merge(
-      DefaultConfigBase,
-      DefaultClientConfig,
-      graphId
-        ? {
-            service: `${graphId}@${graphInfo.clientGraphVariant}`,
-            graphId
-          }
-        : {},
-      loadedConfig && loadedConfig.config.client
-    ),
-    service: merge(
-      DefaultConfigBase,
-      DefaultServiceConfig,
-      graphId
-        ? {
-            name: `${graphId}@${graphInfo.serviceGraphVariant}`,
-            graphId
-          }
-        : {},
-      loadedConfig && loadedConfig.config.service
-    ),
-    engine: merge(
-      DefaultEngineConfig,
-      loadedConfig && loadedConfig.config.engine,
-      { apiKey }
-    )
-  };
-
-  return new ApolloConfig(
-    configWithDefaults,
-    URI.file(resolve(configPath || process.cwd()))
-  );
+  return loadConfigWithDefaults(loadedConfig, graphInfo, configPath, apiKey);
 }

@@ -7,6 +7,7 @@ import {
   ServiceProjectConfig
 } from "./config";
 import { ServiceIDAndTag, ServiceSpecifier } from "../engine";
+import { DeepPartial } from "apollo-env";
 
 export function isClientConfig(
   config: ApolloConfig
@@ -41,7 +42,9 @@ export interface GraphInfo {
   clientGraphVariant: string;
 }
 
-export function getGraphInfo(config?: ApolloConfigFormat): GraphInfo {
+export function getGraphInfo(
+  config?: DeepPartial<ApolloConfigFormat>
+): GraphInfo {
   let serviceGraphId: string | undefined, clientGraphId: string | undefined;
   let serviceGraphVariant = "current";
   let clientGraphVariant = "current";
