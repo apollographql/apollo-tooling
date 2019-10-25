@@ -173,8 +173,8 @@ export class ApolloConfig {
     if (this._serviceGraphVariant) return this._serviceGraphVariant;
     let tag: string = "current";
     if (this.service && typeof this.service.name === "string") {
-      const specifierTag = parseServiceSpecifier(this.client
-        .service as ServiceSpecifier)[1];
+      const specifierTag = parseServiceSpecifier(this.service
+        .name as ServiceSpecifier)[1];
       if (specifierTag) tag = specifierTag;
     }
     return tag;

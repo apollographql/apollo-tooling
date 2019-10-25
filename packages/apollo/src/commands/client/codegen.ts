@@ -162,9 +162,7 @@ export default class Generate extends ClientCommand {
           );
         }
 
-        console.log("validating project");
         clientProject.validate();
-        console.log("validated");
 
         return [
           {

@@ -15,6 +15,7 @@ import {
 import { getGraphInfo, getGraphIdFromKey, GraphInfo } from "./utils";
 import URI from "vscode-uri";
 import { Debug } from "../utilities";
+import { load } from "nock";
 
 // config settings
 const MODULE_NAME = "apollo";
@@ -131,10 +132,15 @@ export async function loadConfig({
   const graphInfo = getGraphInfo(
     loadedConfig ? loadedConfig.config : undefined
   );
-  if (graphIdFromKey && graphInfo && graphInfo.graphId !== graphIdFromKey) {
+
+  if (
+    graphIdFromKey &&
+    graphInfo.graphId &&
+    graphInfo.graphId !== graphIdFromKey
+  ) {
     throw new Error(
-      "Graph specified in configuration does not match environment key. Please provide a matching " +
-        "graph-level API token or use a personal user token."
+      `Graph specified in configuration does not match environment key. Please provide a matching " +
+        "graph-level API token or use a personal user token.\n graphId: { key: ${graphIdFromKey}, config: ${graphInfo.graphId} }`
     );
   }
   const graphId: string | undefined = graphInfo.graphId || graphIdFromKey;

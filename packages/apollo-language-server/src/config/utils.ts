@@ -77,7 +77,7 @@ export function getGraphInfo(config?: ApolloConfigFormat): GraphInfo {
     return { clientGraphVariant, serviceGraphVariant };
   } else {
     return {
-      graphId: serviceGraphId,
+      graphId: serviceGraphId || clientGraphId,
       serviceGraphVariant,
       clientGraphVariant
     };
