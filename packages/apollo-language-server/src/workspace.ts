@@ -1,20 +1,20 @@
 import {
-  WorkspaceFolder,
   NotificationHandler,
-  PublishDiagnosticsParams
+  PublishDiagnosticsParams,
+  WorkspaceFolder
 } from "vscode-languageserver";
 import { QuickPickItem } from "vscode";
-import { GraphQLProject, DocumentUri } from "./project/base";
+import { DocumentUri, GraphQLProject } from "./project/base";
 import { dirname } from "path";
 import fg from "glob";
 import {
-  loadConfig,
   ApolloConfig,
   isClientConfig,
+  loadConfig,
   ServiceProjectConfig
 } from "./config";
 import { LanguageServerLoadingHandler } from "./loadingHandler";
-import { ServiceID, SchemaTag, ClientIdentity } from "./engine";
+import { ClientIdentity, SchemaTag, ServiceID } from "./engine";
 import { GraphQLClientProject, isClientProject } from "./project/client";
 import { GraphQLServiceProject } from "./project/service";
 import URI from "vscode-uri";
@@ -67,7 +67,8 @@ export class GraphQLWorkspace {
           config,
           loadingHandler: this.LanguageServerLoadingHandler,
           rootURI: URI.parse(folder.uri),
-          clientIdentity
+          clientIdentity,
+          loadSchemaOnStartup: true
         })
       : new GraphQLServiceProject({
           config: config as ServiceProjectConfig,
