@@ -3,8 +3,8 @@ import { NotificationHandler } from "vscode-languageserver";
 import gql from "graphql-tag";
 import { GraphQLSchema, buildClientSchema } from "graphql";
 import { ApolloEngineClient, ClientIdentity } from "../../engine";
-import { ClientConfig, parseServiceSpecifier } from "../../config";
-import { getServiceFromKey } from "../../config/utils";
+import { ClientProjectConfig, parseServiceSpecifier } from "../../config";
+import { getGraphIdFromKey } from "../../config/utils";
 import {
   GraphQLSchemaProvider,
   SchemaChangeUnsubscribeHandler,
@@ -19,7 +19,7 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
   private client?: ApolloEngineClient;
 
   constructor(
-    private config: ClientConfig,
+    private config: ClientProjectConfig,
     private clientIdentity?: ClientIdentity
   ) {}
 
@@ -54,6 +54,7 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
         tag: override && override.tag ? override.tag : tag
       }
     });
+
     if (errors) {
       // XXX better error handling of GraphQL errors
       throw new Error(errors.map(({ message }: Error) => message).join("\n"));

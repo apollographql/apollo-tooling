@@ -4,24 +4,25 @@ import { ListrTask } from "listr";
 import { parse, resolve } from "path";
 
 import {
-  GraphQLProject,
   GraphQLServiceProject,
   GraphQLClientProject,
   loadConfig,
-  isClientConfig,
-  isServiceConfig,
   ApolloConfig,
-  getServiceFromKey,
-  Debug
+  getGraphIdFromKey,
+  Debug,
+  DefaultClientConfig,
+  ClientConfig
 } from "apollo-language-server";
 import { WithRequired, DeepPartial } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 import URI from "vscode-uri";
+import { merge } from "lodash";
 
 const { version, referenceID } = require("../package.json");
 
 export interface ProjectContext<Flags = any, Args = any> {
-  project: GraphQLProject;
+  clientProject: GraphQLClientProject;
+  serviceProject: GraphQLServiceProject;
   config: ApolloConfig;
   flags: Flags;
   args: Args;
@@ -91,8 +92,8 @@ export abstract class ProjectCommand extends Command {
       hidden: true
     })
   };
-
-  public project!: GraphQLProject;
+  public serviceProject!: GraphQLServiceProject;
+  public clientProject!: GraphQLClientProject;
   public tasks: ListrTask[] = [];
 
   protected type: "service" | "client" = "service";
@@ -117,7 +118,7 @@ export abstract class ProjectCommand extends Command {
     const config = await this.createConfig(flags);
     if (!config) return;
 
-    this.createService(config, flags);
+    this.createProject(config);
     this.ctx.config = config;
 
     // make sure this the first item in the task list
@@ -125,19 +126,20 @@ export abstract class ProjectCommand extends Command {
     this.tasks.push({
       title: "Loading Apollo Project",
       task: async ctx => {
-        await this.project.whenReady;
+        await Promise.all([
+          this.clientProject.whenReady,
+          this.serviceProject.whenReady
+        ]);
         ctx = { ...ctx, ...this.ctx };
       }
     });
   }
 
   protected async createConfig(flags: Flags) {
-    const service = flags.key ? getServiceFromKey(flags.key) : undefined;
+    // loadConfig will also inject defaults into the config and ensure validity
     const config = await loadConfig({
       configPath: flags.config && parse(resolve(flags.config)).dir,
-      configFileName: flags.config,
-      name: service,
-      type: this.type
+      configFileName: flags.config
     });
 
     if (!config) {
@@ -146,46 +148,44 @@ export abstract class ProjectCommand extends Command {
       return;
     }
 
-    config.tag = flags.tag || config.tag || "current";
-    //  flag overrides
-    config.setDefaults({
-      engine: {
-        apiKey: flags.key,
-        endpoint: flags.engine,
-        frontend: flags.frontend
-      }
+    if (!config.service || !config.client || !config.engine) {
+      this.error(
+        "Failed to load configuration. You may need to upgrade your version of apollo-language-server"
+      );
+      this.exit(1);
+      return;
+    }
+
+    config.serviceGraphVariant =
+      flags.tag || config.serviceGraphVariant || "current";
+    // Flags always override the config
+    config.engine = merge(Object.create(null), config.engine, {
+      apiKey: flags.key,
+      endpoint: flags.engine,
+      frontend: flags.frontend
     });
 
     if (flags.endpoint) {
-      config.setDefaults({
-        service: {
-          endpoint: {
-            url: flags.endpoint,
-            headers: headersArrayToObject(flags.header),
-            ...(flags.skipSSLValidation && { skipSSLValidation: true })
-          }
+      config.service.endpoint = merge(
+        Object.create(null),
+        config.service.endpoint,
+        {
+          url: flags.endpoint,
+          headers: headersArrayToObject(flags.header),
+          ...(flags.skipSSLValidation && { skipSSLValidation: true })
         }
-      });
+      );
     }
 
     // this can set a single or multiple local schema files
     if (flags.localSchemaFile) {
       const files = flags.localSchemaFile.split(",");
-      if (isClientConfig(config)) {
-        config.setDefaults({
-          client: {
-            service: {
-              localSchemaFile: files
-            }
-          }
-        });
-      } else if (isServiceConfig(config)) {
-        config.setDefaults({
-          service: {
-            localSchemaFile: files
-          }
-        });
-      }
+      config.service.localSchemaFile = files;
+      config.client.service = merge(
+        Object.create(null),
+        config.client.service,
+        { localSchemaFile: files }
+      );
     }
 
     // load per command type defaults;
@@ -197,7 +197,8 @@ export abstract class ProjectCommand extends Command {
     return config;
   }
 
-  protected createService(config: ApolloConfig, flags: Flags) {
+  // The config passed in will always have client, service, and engine configuration by default
+  protected createProject(config: ApolloConfig) {
     const loadingHandler = new OclifLoadingHandler(this);
 
     // When no config is provided, configURI === process.cwd()
@@ -214,27 +215,24 @@ export abstract class ProjectCommand extends Command {
       referenceID
     };
 
-    if (isClientConfig(config) && !isServiceConfig(config)) {
-      this.project = new GraphQLClientProject({
-        config,
-        loadingHandler,
-        rootURI,
-        clientIdentity
-      });
-    } else if (isServiceConfig(config)) {
-      this.project = new GraphQLServiceProject({
-        config,
-        loadingHandler,
-        rootURI,
-        clientIdentity
-      });
-    } else {
-      throw new Error(
-        "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
-      );
+    if (!config.client || !config.service) {
+      throw new Error("Client and service must be defined in config.");
     }
+    this.clientProject = new GraphQLClientProject({
+      config,
+      loadingHandler,
+      rootURI,
+      clientIdentity
+    });
+    this.serviceProject = new GraphQLServiceProject({
+      config,
+      loadingHandler,
+      rootURI,
+      clientIdentity
+    });
 
-    this.ctx.project = this.project;
+    this.ctx.serviceProject = this.serviceProject;
+    this.ctx.clientProject = this.clientProject;
   }
 
   async runTasks<Result>(

@@ -1,14 +1,16 @@
 import {
   ApolloConfig,
-  ClientConfig,
+  ApolloConfigFormat,
+  ClientProjectConfig,
   ClientServiceConfig,
   LocalServiceConfig,
-  ServiceConfig,
-  ApolloConfigFormat
+  ServiceProjectConfig
 } from "./config";
-import { ServiceSpecifier, ServiceIDAndTag } from "../engine";
+import { ServiceIDAndTag, ServiceSpecifier } from "../engine";
 
-export function isClientConfig(config: ApolloConfig): config is ClientConfig {
+export function isClientConfig(
+  config: ApolloConfig
+): config is ClientProjectConfig {
   return config.isClient;
 }
 
@@ -19,11 +21,13 @@ export function isLocalServiceConfig(
   return !!(config as LocalServiceConfig).localSchemaFile;
 }
 
-export function isServiceConfig(config: ApolloConfig): config is ServiceConfig {
+export function isServiceConfig(
+  config: ApolloConfig
+): config is ServiceProjectConfig {
   return config.isService;
 }
 
-export function getServiceFromKey(key?: string) {
+export function getGraphIdFromKey(key?: string): string | undefined {
   if (key) {
     const [type, service] = key.split(":");
     if (type === "service") return service;
@@ -31,26 +35,57 @@ export function getServiceFromKey(key?: string) {
   return;
 }
 
-export function getGraphId(config: ApolloConfigFormat) {
+export interface GraphInfo {
+  graphId?: string;
+  serviceGraphVariant: string;
+  clientGraphVariant: string;
+}
+
+export function getGraphInfo(config?: ApolloConfigFormat): GraphInfo {
+  let serviceGraphId: string | undefined, clientGraphId: string | undefined;
+  let serviceGraphVariant = "current";
+  let clientGraphVariant = "current";
+  if (!config) {
+    return {
+      serviceGraphVariant,
+      clientGraphVariant
+    };
+  }
   if (config.service && config.service.name) {
     if (config.service.name.indexOf("@") > 0) {
-      return parseServiceSpecifier(config.service.name)[0];
+      [serviceGraphId, serviceGraphVariant = "current"] = parseServiceSpecifier(
+        config.service.name
+      );
     } else {
-      return config.service.name;
+      serviceGraphId = config.service.name;
     }
   }
   if (config.client) {
     if (typeof config.client.service === "string") {
-      return parseServiceSpecifier(config.client
-        .service as ServiceSpecifier)[0];
+      [clientGraphId, clientGraphVariant = "current"] = parseServiceSpecifier(
+        config.client.service
+      );
+    } else {
+      clientGraphId = config.client.service && config.client.service.name;
     }
-    return config.client.service && config.client.service.name;
+  }
+  if (serviceGraphId && clientGraphId && serviceGraphId !== clientGraphId) {
+    throw new Error(
+      `Unsupported configuration: service and client configs must refer to the same graph.\nservice:${serviceGraphId}, client:${clientGraphId}`
+    );
+  } else if (!clientGraphId && !serviceGraphId) {
+    return { clientGraphVariant, serviceGraphVariant };
   } else {
-    return undefined;
+    return {
+      graphId: serviceGraphId,
+      serviceGraphVariant,
+      clientGraphVariant
+    };
   }
 }
 
 export function parseServiceSpecifier(specifier: ServiceSpecifier) {
-  const [id, tag] = specifier.split("@").map(x => x.trim());
-  return [id, tag] as ServiceIDAndTag;
+  const trimmed = specifier.trim();
+  const [id, tag] = trimmed.split("@");
+  return [id, tag];
 }

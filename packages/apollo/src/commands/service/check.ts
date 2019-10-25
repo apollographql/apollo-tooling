@@ -18,7 +18,7 @@ import {
   CheckSchemaVariables,
   IntrospectionSchemaInput
 } from "apollo-language-server/lib/graphqlTypes";
-import { ApolloConfig, isServiceProject } from "apollo-language-server";
+import { ApolloConfig } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 import { isNotNullOrUndefined } from "apollo-env";
@@ -287,24 +287,17 @@ export default class ServiceCheck extends ProjectCommand {
     let graphVariant: string | undefined;
     try {
       await this.runTasks<TasksOutput>(
-        ({ config, flags, project }) => {
-          if (
-            !isServiceProject(project) &&
-            !(flags.endpoint || flags.localSchemaFile)
-          ) {
-            throw new Error(
-              "This project must be configured as a service project or define `endpoint` or `localSchemaFile` " +
-                "in order to run service:check"
-            );
-          }
-
+        ({ config, flags, serviceProject }) => {
           /**
            * Name of the graph being checked. `engine` is an example of a graph.
            *
            * A graph can be either a monolithic schema or the result of composition a federated schema.
            */
           graphID = config.graphId;
-          graphVariant = flags.tag || config.tag || "current";
+          graphVariant =
+            flags.serviceGraphVariant ||
+            config.serviceGraphVariant ||
+            "current";
 
           /**
            * Name of the implementing service being checked.
@@ -338,7 +331,7 @@ export default class ServiceCheck extends ProjectCommand {
                 }
                 task.output = "Fetching local service's partial schema";
 
-                const sdl = await project.resolveFederatedServiceSDL();
+                const sdl = await serviceProject.resolveFederatedServiceSDL();
                 if (!sdl) {
                   throw new Error("No SDL found for federated service");
                 }
@@ -357,7 +350,7 @@ export default class ServiceCheck extends ProjectCommand {
                 const {
                   compositionValidationResult,
                   checkSchemaResult
-                } = await project.engine.checkPartialSchema({
+                } = await serviceProject.engine.checkPartialSchema({
                   id: graphID!,
                   graphVariant: graphVariant!,
                   implementingServiceName: serviceName,
@@ -436,7 +429,9 @@ export default class ServiceCheck extends ProjectCommand {
 
                 // This is _not_ a `federated` schema. Resolve the schema given `config.tag`.
                 task.output = "Resolving schema";
-                schema = await project.resolveSchema({ tag: config.tag });
+                schema = await serviceProject.resolveSchema({
+                  tag: config.serviceGraphVariant
+                });
                 if (!schema) {
                   throw new Error("Failed to resolve schema");
                 }
@@ -475,7 +470,7 @@ export default class ServiceCheck extends ProjectCommand {
                   this.debug(schemaCheckSchemaVariables);
                 }
 
-                const checkSchemaResult = await project.engine.checkSchema(
+                const checkSchemaResult = await serviceProject.engine.checkSchema(
                   variables
                 );
                 // Attach to ctx as this will be used in later steps.
@@ -627,7 +622,7 @@ export default class ServiceCheck extends ProjectCommand {
             compositionErrors,
             graphName: graphID,
             serviceName,
-            tag: config.tag
+            tag: config.serviceGraphVariant
           })
         );
       }
@@ -637,7 +632,7 @@ export default class ServiceCheck extends ProjectCommand {
           checkSchemaResult,
           graphName: graphID,
           serviceName,
-          tag: config.tag,
+          tag: config.serviceGraphVariant,
           graphCompositionID
         })
       );

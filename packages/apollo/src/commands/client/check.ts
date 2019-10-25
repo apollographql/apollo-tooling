@@ -36,15 +36,10 @@ export default class ClientCheck extends ClientCommand {
       operations: Operation[];
       validationResults: ValidationResult[];
     }>(
-      ({ project, config }) => [
+      ({ clientProject, config }) => [
         {
           title: "Checking client compatibility with service",
           task: async ctx => {
-            if (!isClientConfig(project.config)) {
-              throw new Error("not a client project!");
-            } else {
-              console.log("here is a log");
-            }
             if (!config.graphId) {
               throw new Error(
                 "No service found to link to Engine. Engine is required for this command."
@@ -53,7 +48,7 @@ export default class ClientCheck extends ClientCommand {
             ctx.gitContext = await gitInfo(this.log);
 
             ctx.operations = Object.entries(
-              this.project.mergedOperationsAndFragmentsForService
+              clientProject.mergedOperationsAndFragmentsForService
             ).map(([name, doc]) => ({
               body: print(doc),
               name,
@@ -64,15 +59,17 @@ export default class ClientCheck extends ClientCommand {
               locationOffset: doc.definitions[0].loc!.source.locationOffset
             }));
 
-            ctx.validationResults = await project.engine.validateOperations({
-              id: config.graphId,
-              tag: config.tag,
-              operations: ctx.operations.map(({ body, name }) => ({
-                body,
-                name
-              })),
-              gitContext: ctx.gitContext
-            });
+            ctx.validationResults = await clientProject.engine.validateOperations(
+              {
+                id: config.graphId,
+                tag: config.serviceGraphVariant,
+                operations: ctx.operations.map(({ body, name }) => ({
+                  body,
+                  name
+                })),
+                gitContext: ctx.gitContext
+              }
+            );
           }
         }
       ],

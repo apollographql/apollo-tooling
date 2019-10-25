@@ -26,11 +26,11 @@ export default class ClientExtract extends ClientCommand {
       clientIdentity: ClientIdentity;
       operations: ManifestEntry[];
       filename: string;
-    }>(({ flags, project, config, args }) => [
+    }>(({ config, args }) => [
       {
         title: "Extracting operations from project",
         task: async ctx => {
-          ctx.operations = getOperationManifestFromProject(this.project);
+          ctx.operations = getOperationManifestFromProject(this.clientProject);
           ctx.clientIdentity = config.client;
         }
       },

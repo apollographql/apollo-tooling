@@ -104,14 +104,15 @@ export default class ServiceList extends ProjectCommand {
     let graphID: string | undefined;
     let graphVariant: string | undefined;
     try {
-      await this.runTasks<TasksOutput>(({ config, flags, project }) => {
+      await this.runTasks<TasksOutput>(({ config, flags, serviceProject }) => {
         /**
          * Name of the graph being checked. `engine` is an example of a graph.
          *
          * A graph can be either a monolithic schema or the result of composition a federated schema.
          */
         graphID = config.graphId;
-        graphVariant = flags.tag || config.tag || "current";
+        graphVariant =
+          flags.serviceGraphVariant || config.serviceGraphVariant || "current";
 
         if (!graphID) {
           throw new Error("No service found to link to Engine");
@@ -125,7 +126,7 @@ export default class ServiceList extends ProjectCommand {
             task: async (ctx: TasksOutput, task) => {
               const {
                 implementingServices
-              } = await project.engine.listServices({
+              } = await serviceProject.engine.listServices({
                 id: graphID!,
                 graphVariant: graphVariant!
               });

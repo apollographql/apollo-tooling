@@ -33,7 +33,7 @@ import { FileSet } from "../fileSet";
 import { apolloClientSchemaDocument } from "./defaultClientSchema";
 
 import { FieldStats, SchemaTag, ServiceID, ClientIdentity } from "../engine";
-import { ClientConfig } from "../config";
+import { ClientProjectConfig } from "../config";
 import {
   removeDirectives,
   removeDirectiveAnnotatedFields,
@@ -49,6 +49,7 @@ import {
   diagnosticsFromError
 } from "../diagnostics";
 import URI from "vscode-uri";
+import { SchemaResolveConfig } from "../providers/schema";
 
 function schemaHasASTNodes(schema: GraphQLSchema): boolean {
   const queryType = schema && schema.getQueryType();
@@ -77,14 +78,14 @@ export function isClientProject(
 
 export interface GraphQLClientProjectConfig {
   clientIdentity?: ClientIdentity;
-  config: ClientConfig;
+  config: ClientProjectConfig;
   rootURI: URI;
   loadingHandler: LoadingHandler;
 }
 export class GraphQLClientProject extends GraphQLProject {
   public rootURI: URI;
   public serviceID?: string;
-  public config!: ClientConfig;
+  public config!: ClientProjectConfig;
 
   private serviceSchema?: GraphQLSchema;
 
@@ -153,7 +154,10 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   initialize() {
-    return [this.scanAllIncludedFiles(), this.loadServiceSchema()];
+    return [
+      this.scanAllIncludedFiles(),
+      this.loadServiceSchema(this.config.serviceGraphVariant)
+    ];
   }
 
   public getProjectStats() {
@@ -177,7 +181,7 @@ export class GraphQLClientProject extends GraphQLProject {
         client: totalTypes - serviceTypes,
         total: totalTypes
       },
-      tag: this.config.tag,
+      tag: this.config.serviceGraphVariant,
       loaded: Boolean(this.serviceID && (this.schema || this.serviceSchema)),
       lastFetch: this.lastLoadDate
     };
@@ -197,24 +201,28 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   private async loadServiceSchema(tag?: SchemaTag) {
+    const handlePromise = new Promise(async resolve => {
+      const resolvedSchema = await this.clientSchemaProvider.resolveSchema({
+        tag: tag || this.config.serviceGraphVariant,
+        force: true
+      });
+      this.serviceSchema = augmentSchemaWithGeneratedSDLIfNeeded(
+        resolvedSchema
+      );
+
+      this.schema = extendSchema(this.serviceSchema, this.clientSchema);
+      resolve();
+    });
     await this.loadingHandler.handle(
       `Loading schema for ${this.displayName}`,
-      (async () => {
-        this.serviceSchema = augmentSchemaWithGeneratedSDLIfNeeded(
-          await this.clientSchemaProvider.resolveSchema({
-            tag: tag || this.config.tag,
-            force: true
-          })
-        );
-
-        this.schema = extendSchema(this.serviceSchema, this.clientSchema);
-      })()
+      handlePromise
     );
   }
 
-  async resolveSchema(): Promise<GraphQLSchema> {
-    if (!this.schema) throw new Error();
-    return this.schema;
+  resolveSchema(config: SchemaResolveConfig): Promise<GraphQLSchema> {
+    if (!this.schema)
+      throw new Error("Unable to load schema for client project.");
+    return Promise.resolve(this.schema);
   }
 
   get clientSchema(): DocumentNode {
@@ -285,7 +293,9 @@ export class GraphQLClientProject extends GraphQLProject {
 
   async validate() {
     if (!this._onDiagnostics) return;
-    if (!this.serviceSchema) return;
+    if (!this.serviceSchema) {
+      throw new Error("no schema for graph");
+    }
 
     const diagnosticSet = new DiagnosticSet();
 

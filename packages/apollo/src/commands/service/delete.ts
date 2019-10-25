@@ -27,7 +27,7 @@ export default class ServiceDelete extends ProjectCommand {
 
   async run() {
     let result;
-    await this.runTasks(({ flags, project, config }) => [
+    await this.runTasks(({ flags, serviceProject, config }) => [
       {
         title: "Removing service from Engine",
         task: async () => {
@@ -41,12 +41,15 @@ export default class ServiceDelete extends ProjectCommand {
             );
           }
 
-          const graphVariant = flags.tag || config.tag || "current";
+          const graphVariant =
+            flags.serviceGraphVariant ||
+            config.serviceGraphVariant ||
+            "current";
 
           const {
             errors,
             updatedGateway
-          } = await project.engine.removeServiceAndCompose({
+          } = await serviceProject.engine.removeServiceAndCompose({
             id: config.graphId,
             graphVariant,
             name: flags.serviceName

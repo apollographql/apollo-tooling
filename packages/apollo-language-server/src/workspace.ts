@@ -11,7 +11,7 @@ import {
   loadConfig,
   ApolloConfig,
   isClientConfig,
-  ServiceConfig
+  ServiceProjectConfig
 } from "./config";
 import { LanguageServerLoadingHandler } from "./loadingHandler";
 import { ServiceID, SchemaTag, ClientIdentity } from "./engine";
@@ -70,7 +70,7 @@ export class GraphQLWorkspace {
           clientIdentity
         })
       : new GraphQLServiceProject({
-          config: config as ServiceConfig,
+          config: config as ServiceProjectConfig,
           loadingHandler: this.LanguageServerLoadingHandler,
           rootURI: URI.parse(folder.uri),
           clientIdentity

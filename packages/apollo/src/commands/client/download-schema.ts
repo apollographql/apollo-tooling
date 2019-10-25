@@ -23,11 +23,13 @@ export default class SchemaDownload extends ClientCommand {
   async run() {
     let result;
     let gitContext;
-    await this.runTasks(({ args, project, flags }) => [
+    await this.runTasks(({ args, clientProject, flags, config }) => [
       {
         title: `Saving schema to ${args.output}`,
         task: async () => {
-          const schema = await project.resolveSchema({ tag: flags.tag });
+          const schema = await clientProject.resolveSchema({
+            tag: config.serviceGraphVariant
+          });
           writeFileSync(
             args.output,
             JSON.stringify(introspectionFromSchema(schema), null, 2)

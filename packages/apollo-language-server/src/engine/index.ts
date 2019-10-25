@@ -1,5 +1,5 @@
 import { GraphQLDataSource } from "./GraphQLDataSource";
-import { DefaultEngineConfig, getServiceFromKey } from "../config";
+import { DefaultEngineConfig, getGraphIdFromKey } from "../config";
 import { CHECK_SCHEMA } from "./operations/checkSchema";
 import { UPLOAD_SCHEMA } from "./operations/uploadSchema";
 import { VALIDATE_OPERATIONS } from "./operations/validateOperations";
@@ -93,7 +93,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
 
       if (data && !data.service) {
         throw new Error(
-          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+          noServiceError(getGraphIdFromKey(this.engineKey), this.baseURL)
         );
       }
 
@@ -116,7 +116,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
 
       if (data && !data.service) {
         throw new Error(
-          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+          noServiceError(getGraphIdFromKey(this.engineKey), this.baseURL)
         );
       }
 
@@ -139,7 +139,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
 
       if (data && !data.service) {
         throw new Error(
-          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+          noServiceError(getGraphIdFromKey(this.engineKey), this.baseURL)
         );
       }
 
@@ -164,7 +164,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
 
       if (data && !data.service) {
         throw new Error(
-          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+          noServiceError(getGraphIdFromKey(this.engineKey), this.baseURL)
         );
       }
 
@@ -189,7 +189,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
 
       if (data && !data.service) {
         throw new Error(
-          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+          noServiceError(getGraphIdFromKey(this.engineKey), this.baseURL)
         );
       }
 
@@ -231,7 +231,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
 
       if (data && !data.service) {
         throw new Error(
-          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+          noServiceError(getGraphIdFromKey(this.engineKey), this.baseURL)
         );
       }
 
@@ -255,7 +255,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
 
       if (data && !data.service) {
         throw new Error(
-          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
+          noServiceError(getGraphIdFromKey(this.engineKey), this.baseURL)
         );
       }
 

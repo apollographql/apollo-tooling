@@ -33,12 +33,14 @@ export default class ServiceDownload extends ProjectCommand {
   async run() {
     let result;
     let gitContext;
-    await this.runTasks(({ args, project, flags }) => [
+    await this.runTasks(({ args, serviceProject, flags }) => [
       {
         title: `Saving schema to ${args.output}`,
         task: async () => {
           try {
-            const schema = await project.resolveSchema({ tag: flags.tag });
+            const schema = await serviceProject.resolveSchema({
+              tag: flags.serviceGraphVariant
+            });
             writeFileSync(
               args.output,
               JSON.stringify(introspectionFromSchema(schema), null, 2)

@@ -82,7 +82,7 @@ function extractDocumentsWithAST(
   // isolate the template literals tagged with gql
   astTypes.visit(ast, {
     visitTaggedTemplateExpression(path: any) {
-      const tag = path.value.tag;
+      const tag = path.value.serviceGraphVariant;
       if (tag.name === tagName) {
         // This currently ignores the anti-pattern of including an interpolated
         // string as anything other than a fragment definition, for example a

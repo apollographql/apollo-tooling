@@ -1,8 +1,8 @@
 import {
   ApolloConfig,
   ApolloConfigFormat,
-  getServiceFromKey,
-  getGraphId,
+  getGraphIdFromKey,
+  getGraphInfo,
   isClientConfig,
   isLocalServiceConfig,
   isServiceConfig,
@@ -11,22 +11,22 @@ import {
 
 describe("getServiceFromKey", () => {
   it("returns undefined with no provided key", () => {
-    expect(getServiceFromKey()).toBeUndefined();
+    expect(getGraphIdFromKey()).toBeUndefined();
   });
 
   it("returns service name from service api key", () => {
     const key = "service:bob-123:489fhseo4";
-    expect(getServiceFromKey(key)).toEqual("bob-123");
+    expect(getGraphIdFromKey(key)).toEqual("bob-123");
   });
 
   it("returns nothing if key is not a service key", () => {
     const key = "not-a-service:bob-123:489fhseo4";
-    expect(getServiceFromKey(key)).toBeUndefined();
+    expect(getGraphIdFromKey(key)).toBeUndefined();
   });
 
   it("returns nothing if key is malformed", () => {
     const key = "service/bob-123:489fhseo4";
-    expect(getServiceFromKey(key)).toBeUndefined();
+    expect(getGraphIdFromKey(key)).toBeUndefined();
   });
 });
 
@@ -36,25 +36,25 @@ describe("getServiceName", () => {
       const rawConfig: ApolloConfigFormat = {
         client: { service: "my-service" }
       };
-      expect(getGraphId(rawConfig)).toEqual("my-service");
+      expect(getGraphInfo(rawConfig)).toEqual("my-service");
 
       const rawConfigWithTag: ApolloConfigFormat = {
         client: { service: "my-service@master" }
       };
-      expect(getGraphId(rawConfigWithTag)).toEqual("my-service");
+      expect(getGraphInfo(rawConfigWithTag)).toEqual("my-service");
     });
 
     it("finds service name when client.service is an object", () => {
       const rawConfig: ApolloConfigFormat = {
         client: { service: { name: "my-service" } }
       };
-      expect(getGraphId(rawConfig)).toEqual("my-service");
+      expect(getGraphInfo(rawConfig)).toEqual("my-service");
     });
   });
   describe("service config", () => {
     it("finds service name from raw service config", () => {
       const rawConfig: ApolloConfigFormat = { service: { name: "my-service" } };
-      expect(getGraphId(rawConfig)).toEqual("my-service");
+      expect(getGraphInfo(rawConfig)).toEqual("my-service");
     });
   });
 });

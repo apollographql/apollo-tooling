@@ -88,7 +88,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   protected lastLoadDate?: number;
 
-  constructor({
+  protected constructor({
     config,
     fileSet,
     loadingHandler,
@@ -117,7 +117,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     }
 
     this._isReady = false;
-    // FIXME: Instead of `Promise.all`, we should catch individual promise rejections
+    // TODO: Instead of `Promise.all`, we should catch individual promise rejections
     // so we can show multiple errors.
     this.readyPromise = Promise.all(this.initialize())
       .then(() => {
@@ -286,7 +286,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     this.needsValidation = false;
   }
 
-  abstract validate(): void;
+  abstract async validate(): Promise<void>;
 
   clearAllDiagnostics() {
     if (!this._onDiagnostics) return;

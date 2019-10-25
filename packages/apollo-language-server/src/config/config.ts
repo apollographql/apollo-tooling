@@ -3,7 +3,7 @@ import merge from "lodash.merge";
 import { ServiceID, ServiceSpecifier, ClientID } from "../engine";
 import URI from "vscode-uri";
 import { WithRequired } from "apollo-env";
-import { getGraphId, parseServiceSpecifier } from "./utils";
+import { getGraphInfo, parseServiceSpecifier } from "./utils";
 import { ValidationRule } from "graphql/validation/ValidationContext";
 
 export interface EngineStatsWindow {
@@ -54,7 +54,7 @@ export interface ConfigBase {
 
 export type ClientServiceConfig = RemoteServiceConfig | LocalServiceConfig;
 
-export interface ClientConfigFormat extends ConfigBase {
+export interface ClientConfig extends ConfigBase {
   // service linking
   service?: ServiceSpecifier | ClientServiceConfig;
   // client identity
@@ -96,7 +96,7 @@ export interface ClientConfigFormat extends ConfigBase {
   validationRules?: ValidationRule[] | ((rule: ValidationRule) => boolean);
 }
 
-export const DefaultClientConfig = {
+export const DefaultClientConfig: ClientConfig = {
   ...DefaultConfigBase,
   tagName: "gql",
   clientOnlyDirectives: ["connection", "type"],
@@ -105,13 +105,13 @@ export const DefaultClientConfig = {
   statsWindow: DefaultEngineStatsWindow
 };
 
-export interface ServiceConfigFormat extends ConfigBase {
+export interface ServiceConfig extends ConfigBase {
   name?: string;
-  endpoint?: Exclude<RemoteServiceConfig, "name">;
+  endpoint?: Omit<RemoteServiceConfig, "name">;
   localSchemaFile?: string | string[];
 }
 
-export const DefaultServiceConfig = {
+export const DefaultServiceConfig: ServiceConfig = {
   ...DefaultConfigBase,
   endpoint: {
     url: "http://localhost:4000/graphql"
@@ -119,8 +119,8 @@ export const DefaultServiceConfig = {
 };
 
 export interface ConfigBaseFormat {
-  client?: ClientConfigFormat;
-  service?: ServiceConfigFormat;
+  client?: ClientConfig;
+  service?: ServiceConfig;
   engine?: EngineConfig;
 }
 
@@ -133,17 +133,19 @@ export class ApolloConfig {
   public isService: boolean;
   public engine: EngineConfig;
   public graphId?: string;
-  public service?: ServiceConfigFormat;
-  public client?: ClientConfigFormat;
-  private _tag?: string;
+  public service: ServiceConfig;
+  public client: ClientConfig;
+  private _serviceGraphVariant?: string;
+  private _clientGraphVariant?: string;
 
   constructor(public rawConfig: ApolloConfigFormat, public configURI?: URI) {
     this.isService = !!rawConfig.service;
     this.isClient = !!rawConfig.client;
     this.engine = rawConfig.engine!;
-    this.graphId = getGraphId(rawConfig);
-    this.client = rawConfig.client;
-    this.service = rawConfig.service;
+    const graphInfo = getGraphInfo(rawConfig);
+    if (graphInfo) this.graphId = graphInfo.graphId;
+    this.client = rawConfig.client || DefaultClientConfig;
+    this.service = rawConfig.service || DefaultServiceConfig;
   }
 
   get configDirURI() {
@@ -153,21 +155,37 @@ export class ApolloConfig {
       : this.configURI;
   }
 
-  get projects() {
+  get projects(): (ClientProjectConfig | ServiceProjectConfig)[] {
     const configs = [];
     const { client, service } = this.rawConfig;
-    if (client) configs.push(new ClientConfig(this.rawConfig, this.configURI));
+    if (client)
+      configs.push(new ClientProjectConfig(this.rawConfig, this.configURI));
     if (service)
-      configs.push(new ServiceConfig(this.rawConfig, this.configURI));
+      configs.push(new ServiceProjectConfig(this.rawConfig, this.configURI));
     return configs;
   }
 
-  set tag(tag: string) {
-    this._tag = tag;
+  set serviceGraphVariant(tag: string) {
+    this._serviceGraphVariant = tag;
   }
 
-  get tag(): string {
-    if (this._tag) return this._tag;
+  get serviceGraphVariant(): string {
+    if (this._serviceGraphVariant) return this._serviceGraphVariant;
+    let tag: string = "current";
+    if (this.service && typeof this.service.name === "string") {
+      const specifierTag = parseServiceSpecifier(this.client
+        .service as ServiceSpecifier)[1];
+      if (specifierTag) tag = specifierTag;
+    }
+    return tag;
+  }
+
+  set clientGraphVariant(tag: string) {
+    this._clientGraphVariant = tag;
+  }
+
+  get clientGraphVariant(): string {
+    if (this._clientGraphVariant) return this._clientGraphVariant;
     let tag: string = "current";
     if (this.client && typeof this.client.service === "string") {
       const specifierTag = parseServiceSpecifier(this.client
@@ -187,10 +205,10 @@ export class ApolloConfig {
   }
 }
 
-export class ClientConfig extends ApolloConfig {
-  public client!: ClientConfigFormat;
+export class ClientProjectConfig extends ApolloConfig {
+  public client!: ClientConfig;
 }
 
-export class ServiceConfig extends ApolloConfig {
-  public service!: ServiceConfigFormat;
+export class ServiceProjectConfig extends ApolloConfig {
+  public service!: ServiceConfig;
 }

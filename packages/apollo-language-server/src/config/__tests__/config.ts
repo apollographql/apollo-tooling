@@ -58,18 +58,18 @@ describe("ApolloConfig", () => {
   describe("tag", () => {
     it("gets default tag when none is set", () => {
       const config = new ApolloConfig({ client: { service: "hai" } });
-      expect(config.tag).toEqual("current");
+      expect(config.serviceGraphVariant).toEqual("current");
     });
 
     it("gets tag from service specifier", () => {
       const config = new ApolloConfig({ client: { service: "hai@master" } });
-      expect(config.tag).toEqual("master");
+      expect(config.serviceGraphVariant).toEqual("master");
     });
 
     it("can set and override tags", () => {
       const config = new ApolloConfig({ client: { service: "hai@master" } });
-      config.tag = "new";
-      expect(config.tag).toEqual("new");
+      config.serviceGraphVariant = "new";
+      expect(config.serviceGraphVariant).toEqual("new");
     });
   });
 

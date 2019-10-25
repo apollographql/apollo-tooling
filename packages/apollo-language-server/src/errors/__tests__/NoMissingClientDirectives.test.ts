@@ -5,7 +5,7 @@ import { basename } from "path";
 
 import { vol } from "memfs";
 import { LoadingHandler } from "../../loadingHandler";
-import { ApolloConfig, ClientConfig } from "../../config";
+import { ApolloConfig, ClientProjectConfig } from "../../config";
 import URI from "vscode-uri";
 
 const serviceSchema = /* GraphQL */ `
@@ -141,7 +141,7 @@ const config = new ApolloConfig({
     validationRules: [NoMissingClientDirectives]
   },
   engine: {}
-}) as ClientConfig;
+}) as ClientProjectConfig;
 
 class MockLoadingHandler implements LoadingHandler {
   handle<T>(_message: string, value: Promise<T>): Promise<T> {

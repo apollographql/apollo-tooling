@@ -26,7 +26,7 @@ export default class ClientPush extends ClientCommand {
     const invalidOperationsErrorMessage = "encountered invalid operations";
     let result = "";
     try {
-      await this.runTasks(({ flags, project, config }) => {
+      await this.runTasks(({ flags, clientProject, config }) => {
         const clientBundleInfo = `${chalk.blue(
           (config.client && config.client.name) || flags
         )}${chalk.blue(
@@ -41,7 +41,7 @@ export default class ClientPush extends ClientCommand {
             title: `Extracting operation from client, ${clientBundleInfo}`,
             task: async (ctx, task) => {
               const operationManifest = getOperationManifestFromProject(
-                this.project
+                clientProject
               );
               ctx.operationManifest = operationManifest;
               task.title = `Extracted ${pluralize(
@@ -53,7 +53,7 @@ export default class ClientPush extends ClientCommand {
           {
             title: `Checked operations against ${chalk.blue(
               config.graphId || ""
-            )}@${chalk.blue(config.tag)}`,
+            )}@${chalk.blue(config.serviceGraphVariant)}`,
             task: async () => {}
           },
           {
@@ -66,11 +66,11 @@ export default class ClientPush extends ClientCommand {
               }
 
               const operationManifest = getOperationManifestFromProject(
-                this.project
+                this.clientProject
               );
 
               const signatureToOperation = generateSignatureToOperationMap(
-                this.project,
+                this.clientProject,
                 config
               );
 
@@ -88,7 +88,7 @@ export default class ClientPush extends ClientCommand {
                 id: config.graphId,
                 operations: operationManifest,
                 manifestVersion: 2,
-                graphVariant: config.tag
+                graphVariant: config.serviceGraphVariant
               };
               const { operations: _op, ...restVariables } = variables;
               this.debug("Variables sent to Apollo");
@@ -101,7 +101,7 @@ export default class ClientPush extends ClientCommand {
                 invalidOperations,
                 newOperations,
                 registrationSuccess
-              } = (response = await project.engine.registerOperations(
+              } = (response = await clientProject.engine.registerOperations(
                 variables
               ));
 

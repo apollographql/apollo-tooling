@@ -46,7 +46,7 @@ export default class ServicePush extends ProjectCommand {
     let result;
     let isFederated;
     let gitContext;
-    await this.runTasks(({ flags, project, config }) => [
+    await this.runTasks(({ flags, serviceProject, config }) => [
       {
         title: "Uploading service to Engine",
         task: async () => {
@@ -67,7 +67,7 @@ export default class ServicePush extends ProjectCommand {
           // handle partial schema uploading
           if (isFederated) {
             this.log("Fetching info from federated service");
-            const sdl = await (project as GraphQLServiceProject).resolveFederatedServiceSDL();
+            const sdl = await (serviceProject as GraphQLServiceProject).resolveFederatedServiceSDL();
 
             if (!sdl)
               throw new Error(
@@ -91,9 +91,9 @@ export default class ServicePush extends ProjectCommand {
               errors,
               didUpdateGateway,
               serviceWasCreated
-            } = await project.engine.uploadAndComposePartialSchema({
+            } = await serviceProject.engine.uploadAndComposePartialSchema({
               id: config.graphId,
-              graphVariant: config.tag,
+              graphVariant: config.serviceGraphVariant,
               name: flags.serviceName,
               url: flags.serviceURL,
               revision:
@@ -112,20 +112,22 @@ export default class ServicePush extends ProjectCommand {
               serviceWasCreated,
               didUpdateGateway,
               graphId: config.graphId,
-              graphVariant: config.tag || "current"
+              graphVariant: config.serviceGraphVariant || "current"
             };
 
             return;
           }
 
-          const schema = await project.resolveSchema({ tag: flags.tag });
+          const schema = await serviceProject.resolveSchema({
+            tag: flags.serviceGraphVariant
+          });
 
           const variables: UploadSchemaVariables = {
             id: config.graphId,
             // @ts-ignore
             // XXX Looks like TS should be generating ReadonlyArrays instead
             schema: introspectionFromSchema(schema).__schema,
-            tag: flags.tag,
+            tag: flags.serviceGraphVariant,
             gitContext
           };
 
@@ -135,7 +137,7 @@ export default class ServicePush extends ProjectCommand {
           this.debug("SDL of introspection sent to Engine:");
           this.debug(printSchema(schema));
 
-          const response = await project.engine.uploadSchema(variables);
+          const response = await serviceProject.engine.uploadSchema(variables);
           if (response) {
             result = {
               graphId: config.graphId,

@@ -12,7 +12,7 @@ import {
   DefaultServiceConfig,
   DefaultEngineConfig
 } from "./config";
-import { getServiceFromKey } from "./utils";
+import { getGraphInfo, getGraphIdFromKey, GraphInfo } from "./utils";
 import URI from "vscode-uri";
 import { Debug } from "../utilities";
 
@@ -50,11 +50,6 @@ export interface LoadConfigSettings {
 
   // used when run by a `Workspace` where we _know_ a config file should be present.
   requireConfig?: boolean;
-
-  // for CLI usage, we don't _require_ a config file for everything. This allows us to pass in
-  // options to build one at runtime
-  name?: string;
-  type?: "service" | "client";
 }
 
 export type ConfigResult<T> = {
@@ -66,10 +61,8 @@ export type ConfigResult<T> = {
 export async function loadConfig({
   configPath,
   configFileName,
-  requireConfig = false,
-  name,
-  type
-}: LoadConfigSettings) {
+  requireConfig = false
+}: LoadConfigSettings): Promise<ApolloConfig | void> {
   const explorer = cosmiconfig(MODULE_NAME, {
     searchPlaces: configFileName ? [configFileName] : defaultFileNames,
     loaders
@@ -108,9 +101,7 @@ export async function loadConfig({
   }
 
   // add API key from the env
-  let engineConfig = {},
-    apiKey,
-    nameFromKey;
+  let apiKey, graphIdFromKey;
 
   // loop over the list of possible .env files and try to parse for key
   // and service name. Files are scanned and found values are preferred
@@ -131,76 +122,60 @@ export async function loadConfig({
   });
 
   if (apiKey) {
-    engineConfig = { engine: { apiKey } };
-    nameFromKey = getServiceFromKey(apiKey);
+    graphIdFromKey = getGraphIdFromKey(apiKey);
   }
 
-  // DETERMINE PROJECT TYPE
-  // The CLI passes in a type when loading config. The editor extension
-  // does not. So we determine the type of the config here, and use it if
-  // the type wasn't explicitly passed in.
-  let projectType: "client" | "service";
-  if (type) projectType = type;
-  else if (loadedConfig && loadedConfig.config.client) projectType = "client";
-  else if (loadedConfig && loadedConfig.config.service) projectType = "service";
-  else
-    return Debug.error(
-      "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
+  // DETERMINE GRAPH ID
+  // If there is a graph identified in either the client or the service keys of the config, it will take
+  // precedence, and we rely on `getGraphId` to verify that these two match.
+  const graphInfo = getGraphInfo(
+    loadedConfig ? loadedConfig.config : undefined
+  );
+  if (graphIdFromKey && graphInfo && graphInfo.graphId !== graphIdFromKey) {
+    throw new Error(
+      "Graph specified in configuration does not match environment key. Please provide a matching " +
+        "graph-level API token or use a personal user token."
     );
+  }
+  const graphId: string | undefined = graphInfo.graphId || graphIdFromKey;
 
-  // DETERMINE SERVICE NAME
-  // precedence: 1. (highest) config.js (client only) 2. name passed into loadConfig 3. name from api key
-  let serviceName = name || nameFromKey;
-  if (
-    projectType === "client" &&
-    loadedConfig &&
-    loadedConfig.config.client &&
-    typeof loadedConfig.config.client.service === "string"
-  ) {
-    serviceName = loadedConfig.config.client.service;
+  if (!graphId) {
+    console.warn("Graph is not specified from either Apollo config or env.");
   }
 
-  // if there wasn't a config loaded from a file, build one.
-  // if there was a service name found in the env, merge it with the new/existing config object.
-  // if the config loaded doesn't have a client/service key, add one based on projectType
-  if (
-    !loadedConfig ||
-    serviceName ||
-    !(loadedConfig.config.client || loadedConfig.config.service)
-  ) {
-    loadedConfig = {
-      filepath: configPath || process.cwd(),
-      config: {
-        ...(loadedConfig && loadedConfig.config),
-        ...(projectType === "client"
-          ? {
-              client: {
-                ...DefaultConfigBase,
-                ...(loadedConfig && loadedConfig.config.client),
-                service: serviceName
-              }
-            }
-          : {
-              service: {
-                ...DefaultConfigBase,
-                ...(loadedConfig && loadedConfig.config.service),
-                name: serviceName
-              }
-            })
-      }
-    };
-  }
+  const configWithDefaults = {
+    ...(loadedConfig && loadedConfig.config),
+    client: merge(
+      DefaultConfigBase,
+      DefaultClientConfig,
+      graphId
+        ? {
+            service: `${graphId}@${graphInfo.clientGraphVariant}`,
+            graphId
+          }
+        : {},
+      loadedConfig && loadedConfig.config.client
+    ),
+    service: merge(
+      DefaultConfigBase,
+      DefaultServiceConfig,
+      graphId
+        ? {
+            name: `${graphId}@${graphInfo.serviceGraphVariant}`,
+            graphId
+          }
+        : {},
+      loadedConfig && loadedConfig.config.service
+    ),
+    engine: merge(
+      DefaultEngineConfig,
+      loadedConfig && loadedConfig.config.engine,
+      { apiKey }
+    )
+  };
 
-  let { config, filepath } = loadedConfig;
-
-  // selectively apply defaults when loading the config
-  // this is just the includes/excludes defaults.
-  // These need to go on _all_ configs. That's why this is last.
-  if (config.client) config = merge({ client: DefaultClientConfig }, config);
-  if (config.service) config = merge({ service: DefaultServiceConfig }, config);
-  if (engineConfig) config = merge(engineConfig, config);
-
-  config = merge({ engine: DefaultEngineConfig }, config);
-
-  return new ApolloConfig(config, URI.file(resolve(filepath)));
+  return new ApolloConfig(
+    configWithDefaults,
+    URI.file(resolve(configPath || process.cwd()))
+  );
 }

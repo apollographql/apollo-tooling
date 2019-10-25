@@ -20,7 +20,7 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
   private federatedServiceSDL?: string;
 
-  constructor(private config: Exclude<RemoteServiceConfig, "name">) {}
+  constructor(private config: Omit<RemoteServiceConfig, "name">) {}
   async resolveSchema() {
     if (this.schema) return this.schema;
     const { skipSSLValidation, url, headers } = this.config;

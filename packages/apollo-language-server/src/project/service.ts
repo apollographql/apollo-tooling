@@ -1,7 +1,7 @@
 import { GraphQLProject } from "./base";
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
-import { ServiceConfig } from "../config";
+import { ServiceProjectConfig } from "../config";
 import { ClientIdentity } from "../engine";
 import URI from "vscode-uri";
 
@@ -13,10 +13,11 @@ export function isServiceProject(
 
 export interface GraphQLServiceProjectConfig {
   clientIdentity?: ClientIdentity;
-  config: ServiceConfig;
+  config: ServiceProjectConfig;
   rootURI: URI;
   loadingHandler: LoadingHandler;
 }
+
 export class GraphQLServiceProject extends GraphQLProject {
   constructor({
     clientIdentity,
@@ -36,14 +37,17 @@ export class GraphQLServiceProject extends GraphQLProject {
   }
 
   get displayName() {
-    return this.config.graphId + "@" + this.config.tag || "Unnamed Project";
+    return (
+      this.config.graphId + "@" + this.config.serviceGraphVariant ||
+      "Unnamed Project"
+    );
   }
 
   initialize() {
     return [];
   }
 
-  validate() {}
+  async validate() {}
 
   getProjectStats() {
     return { loaded: true, type: "service" };

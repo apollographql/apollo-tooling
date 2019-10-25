@@ -128,7 +128,7 @@ export default class Generate extends ClientCommand {
 
     let write;
     const run = () =>
-      this.runTasks(({ flags, args, project, config }) => {
+      this.runTasks(({ flags, args, clientProject, config }) => {
         let inferredTarget: TargetType = "" as TargetType;
         if (
           ["json", "swift", "typescript", "flow", "scala"].includes(
@@ -163,7 +163,7 @@ export default class Generate extends ClientCommand {
         }
 
         console.log("validating project");
-        project.validate();
+        clientProject.validate();
         console.log("validated");
 
         return [
@@ -171,25 +171,24 @@ export default class Generate extends ClientCommand {
             title: "Generating query files",
             task: async (ctx, task) => {
               task.title = `Generating query files with '${inferredTarget}' target`;
-              const schema = await project.resolveSchema(
-                {
-                  tag: config.tag
-                },
-                true
-              );
+              const whatever = await clientProject.schema;
+              // await new Promise((resolve, reject) => setTimeout(() => {resolve()}, 2000));
+              const schema = await clientProject.resolveSchema({
+                tag: config.clientGraphVariant
+              });
 
               if (!schema) throw new Error("Error loading schema");
 
               write = () => {
                 // make sure all of the documents that we are going to be using for codegen
                 // are valid documents
-                project.validate();
+                clientProject.validate();
 
-                const operations = this.project.operations
-                  ? Object.values(this.project.operations)
+                const operations = this.clientProject.operations
+                  ? Object.values(this.clientProject.operations)
                   : [];
-                const fragments = this.project.fragments
-                  ? Object.values(this.project.fragments)
+                const fragments = this.clientProject.fragments
+                  ? Object.values(this.clientProject.fragments)
                   : [];
 
                 if (!operations.length && !fragments.length) {
@@ -244,14 +243,14 @@ export default class Generate extends ClientCommand {
 
     if (watch) {
       await run().catch(() => {});
-      const watcher = new Gaze(this.project.config.client.includes);
+      const watcher = new Gaze(this.clientProject.config.client.includes);
       // FIXME: support excludes with the glob
       watcher.on("all", (event, file) => {
         // don't trigger write events for generated file changes
         if (file.indexOf("__generated__") > -1) return;
         // don't trigger write events on single output file
         if (file.indexOf(output) > -1) return;
-        this.project.fileDidChange(URI.file(file).toString());
+        this.clientProject.fileDidChange(URI.file(file).toString());
         console.log("\nChange detected, generating types...");
         write();
       });
