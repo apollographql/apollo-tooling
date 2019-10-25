@@ -100,7 +100,6 @@ export default class ServiceList extends ProjectCommand {
     // @ts-ignore we're going to populate `taskOutput` later
     const taskOutput: TasksOutput = {};
 
-    let schema: GraphQLSchema | undefined;
     let graphID: string | undefined;
     let graphVariant: string | undefined;
     try {
