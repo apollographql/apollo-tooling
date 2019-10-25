@@ -70,9 +70,6 @@ export function loadConfigWithDefaults(
   configPath?: string,
   apiKey?: string
 ): ApolloConfig {
-  if (!graphInfo.graphId) {
-    console.warn("Graph is not specified from either Apollo config or env.");
-  }
   const graphId = graphInfo.graphId;
 
   const configWithDefaults = {
