@@ -51,6 +51,7 @@ export interface GraphQLProjectConfig {
   config: ApolloConfig;
   fileSet: FileSet;
   loadingHandler: LoadingHandler;
+  loadSchemaOnStartup?: boolean;
 }
 
 export interface TypeStats {
@@ -75,6 +76,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   private _isReady: boolean;
   private readyPromise: Promise<void>;
+  protected loadSchemaOnStartup?: boolean;
   protected engineClient?: ApolloEngineClient;
 
   private needsValidation = false;
@@ -92,7 +94,8 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     config,
     fileSet,
     loadingHandler,
-    clientIdentity
+    clientIdentity,
+    loadSchemaOnStartup
   }: GraphQLProjectConfig) {
     this.config = config;
     this.fileSet = fileSet;
@@ -107,6 +110,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
       clientIdentity,
       true
     );
+    this.loadSchemaOnStartup = loadSchemaOnStartup;
     const { engine } = config;
     if (engine.apiKey) {
       this.engineClient = new ApolloEngineClient(

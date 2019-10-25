@@ -190,6 +190,7 @@ export class ApolloConfig {
   get clientGraphVariant(): string {
     if (this._clientGraphVariant) return this._clientGraphVariant;
     let tag: string = "current";
+    const foo = getGraphInfo(this);
     if (this.client && typeof this.client.service === "string") {
       const specifierTag = parseServiceSpecifier(this.client
         .service as ServiceSpecifier)[1];

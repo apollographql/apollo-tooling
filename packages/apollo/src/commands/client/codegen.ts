@@ -125,10 +125,12 @@ export default class Generate extends ClientCommand {
       flags: { watch },
       args: { output }
     } = this.parse(Generate);
+    await this.clientProject.loadSchema();
 
     let write;
     const run = () =>
-      this.runTasks(({ flags, args, clientProject, config }) => {
+      this.runTasks(({ flags, args, config }) => {
+        const clientProject = this.clientProject;
         let inferredTarget: TargetType = "" as TargetType;
         if (
           ["json", "swift", "typescript", "flow", "scala"].includes(

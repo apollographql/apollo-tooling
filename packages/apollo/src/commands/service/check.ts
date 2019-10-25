@@ -294,10 +294,7 @@ export default class ServiceCheck extends ProjectCommand {
            * A graph can be either a monolithic schema or the result of composition a federated schema.
            */
           graphID = config.graphId;
-          graphVariant =
-            flags.serviceGraphVariant ||
-            config.serviceGraphVariant ||
-            "current";
+          graphVariant = flags.tag || config.serviceGraphVariant || "current";
 
           /**
            * Name of the implementing service being checked.

@@ -158,6 +158,8 @@ export abstract class ProjectCommand extends Command {
 
     config.serviceGraphVariant =
       flags.tag || config.serviceGraphVariant || "current";
+    config.clientGraphVariant =
+      flags.tag || config.clientGraphVariant || "current";
     // Flags always override the config
     config.engine = merge(Object.create(null), config.engine, {
       apiKey: flags.key,
@@ -222,7 +224,8 @@ export abstract class ProjectCommand extends Command {
       config,
       loadingHandler,
       rootURI,
-      clientIdentity
+      clientIdentity,
+      loadSchemaOnStartup: false
     });
     this.serviceProject = new GraphQLServiceProject({
       config,

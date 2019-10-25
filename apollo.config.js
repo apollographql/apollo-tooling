@@ -6,7 +6,7 @@ module.exports = {
     excludes: ["**/*.test.ts", "**/__tests__/*"]
   },
   // service: {
-  //   name: "engine@master",
+  //   name: "engine@staging",
   //   endpoint: {
   //     url: "https://engine-staging-graphql.apollographql.com/api/graphql"
   //   },

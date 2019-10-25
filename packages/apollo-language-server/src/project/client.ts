@@ -1,29 +1,29 @@
 import { GraphQLProject } from "./base";
 import {
-  GraphQLSchema,
-  GraphQLError,
-  printSchema,
   buildSchema,
+  DefinitionNode,
+  DocumentNode,
+  extendSchema,
+  FieldNode,
+  FragmentDefinitionNode,
+  FragmentSpreadNode,
+  GraphQLError,
+  GraphQLObjectType,
+  GraphQLSchema,
+  Kind,
+  ObjectTypeDefinitionNode,
+  OperationDefinitionNode,
+  printSchema,
+  separateOperations,
   Source,
   TypeInfo,
   visit,
-  visitWithTypeInfo,
-  FragmentDefinitionNode,
-  Kind,
-  FragmentSpreadNode,
-  separateOperations,
-  OperationDefinitionNode,
-  extendSchema,
-  DocumentNode,
-  FieldNode,
-  ObjectTypeDefinitionNode,
-  GraphQLObjectType,
-  DefinitionNode
+  visitWithTypeInfo
 } from "graphql";
 import { ValidationRule } from "graphql/validation/ValidationContext";
 import Maybe from "graphql/tsutils/Maybe";
 
-import { NotificationHandler, DiagnosticSeverity } from "vscode-languageserver";
+import { DiagnosticSeverity, NotificationHandler } from "vscode-languageserver";
 
 import { rangeForASTNode } from "../utilities/source";
 import { formatMS } from "../format";
@@ -31,14 +31,14 @@ import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
 import { apolloClientSchemaDocument } from "./defaultClientSchema";
 
-import { FieldStats, SchemaTag, ServiceID, ClientIdentity } from "../engine";
+import { ClientIdentity, FieldStats, SchemaTag, ServiceID } from "../engine";
 import { ClientProjectConfig } from "../config";
 import {
-  removeDirectives,
-  removeDirectiveAnnotatedFields,
-  withTypenameFieldAddedWhereNeeded,
   ClientSchemaInfo,
-  isDirectiveDefinitionNode
+  isDirectiveDefinitionNode,
+  removeDirectiveAnnotatedFields,
+  removeDirectives,
+  withTypenameFieldAddedWhereNeeded
 } from "../utilities/graphql";
 import { defaultValidationRules } from "../errors/validation";
 
@@ -80,6 +80,7 @@ export interface GraphQLClientProjectConfig {
   config: ClientProjectConfig;
   rootURI: URI;
   loadingHandler: LoadingHandler;
+  loadSchemaOnStartup?: boolean;
 }
 export class GraphQLClientProject extends GraphQLProject {
   public rootURI: URI;
@@ -101,7 +102,8 @@ export class GraphQLClientProject extends GraphQLProject {
     config,
     loadingHandler,
     rootURI,
-    clientIdentity
+    clientIdentity,
+    loadSchemaOnStartup = true
   }: GraphQLClientProjectConfig) {
     const fileSet = new FileSet({
       // the URI of the folder _containing_ the apollo.config.js is the true project's root.
@@ -111,8 +113,13 @@ export class GraphQLClientProject extends GraphQLProject {
       excludes: config.client.excludes,
       configURI: config.configURI
     });
-
-    super({ config, fileSet, loadingHandler, clientIdentity });
+    super({
+      config,
+      fileSet,
+      loadingHandler,
+      clientIdentity,
+      loadSchemaOnStartup
+    });
     this.rootURI = rootURI;
     this.serviceID = config.graphId;
 
@@ -145,7 +152,7 @@ export class GraphQLClientProject extends GraphQLProject {
       this._validationRules = validationRules;
     }
 
-    this.loadEngineData();
+    if (this.loadSchemaOnStartup) this.loadEngineData();
   }
 
   get displayName(): string {
@@ -153,10 +160,11 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   initialize() {
-    return [
-      this.scanAllIncludedFiles(),
-      this.loadServiceSchema(this.config.serviceGraphVariant)
-    ];
+    const promises = [this.scanAllIncludedFiles()];
+    if (this.loadSchemaOnStartup) {
+      promises.push(this.loadSchema());
+    }
+    return promises;
   }
 
   public getProjectStats() {
@@ -180,7 +188,7 @@ export class GraphQLClientProject extends GraphQLProject {
         client: totalTypes - serviceTypes,
         total: totalTypes
       },
-      tag: this.config.serviceGraphVariant,
+      tag: this.config.clientGraphVariant,
       loaded: Boolean(this.serviceID && (this.schema || this.serviceSchema)),
       lastFetch: this.lastLoadDate
     };
@@ -194,6 +202,12 @@ export class GraphQLClientProject extends GraphQLProject {
     this._onSchemaTags = handler;
   }
 
+  public async loadSchema() {
+    await this.loadEngineData();
+    await this.loadServiceSchema(this.config.clientGraphVariant);
+    this.invalidate();
+  }
+
   async updateSchemaTag(tag: SchemaTag) {
     await this.loadServiceSchema(tag);
     this.invalidate();
@@ -202,7 +216,7 @@ export class GraphQLClientProject extends GraphQLProject {
   private async loadServiceSchema(tag?: SchemaTag) {
     const handlePromise = new Promise(async resolve => {
       const resolvedSchema = await this.clientSchemaProvider.resolveSchema({
-        tag: tag || this.config.serviceGraphVariant,
+        tag: tag || this.config.clientGraphVariant,
         force: true
       });
       this.serviceSchema = augmentSchemaWithGeneratedSDLIfNeeded(
