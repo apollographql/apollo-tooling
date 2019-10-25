@@ -529,7 +529,9 @@ type MutationRoot {
       };
 
       const schema = buildSchemaFromSDL([{ typeDefs, resolvers }]);
-      const customerTypeEnum = schema.getType("CustomerType") as GraphQLEnumType;
+      const customerTypeEnum = schema.getType(
+        "CustomerType"
+      ) as GraphQLEnumType;
 
       let result = execute(
         schema,
@@ -541,9 +543,10 @@ type MutationRoot {
         `
       );
 
-      expect((result as ExecutionResult).data!.existingCustomer).toBe("EXISTING");
+      expect((result as ExecutionResult).data!.existingCustomer).toBe(
+        "EXISTING"
+      );
       expect(customerTypeEnum.getValue("EXISTING")!.value).toBe(0);
-
       expect((result as ExecutionResult).data!.newCustomer).toBe("NEW");
       expect(customerTypeEnum.getValue("NEW")!.value).toBe(1);
     });

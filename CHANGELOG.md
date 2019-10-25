@@ -15,7 +15,7 @@
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
+  - [#1618] Fixes an issue when enums with a value of 0 fail to resolve when using a Federated Schema (https://github.com/apollographql/apollo-tooling/pull/1618)
 - `apollo-language-server`
   - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
