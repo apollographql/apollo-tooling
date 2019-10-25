@@ -46,17 +46,18 @@ export function getGraphInfo(
   config?: DeepPartial<ApolloConfigFormat>
 ): GraphInfo {
   let serviceGraphId: string | undefined, clientGraphId: string | undefined;
-  let serviceGraphVariant = "current";
-  let clientGraphVariant = "current";
+  const defaultGraphVariant = "current";
   if (!config) {
     return {
-      serviceGraphVariant,
-      clientGraphVariant
+      serviceGraphVariant: defaultGraphVariant,
+      clientGraphVariant: defaultGraphVariant
     };
   }
+  let serviceGraphVariant;
+  let clientGraphVariant;
   if (config.service && config.service.name) {
     if (config.service.name.indexOf("@") > 0) {
-      [serviceGraphId, serviceGraphVariant = "current"] = parseServiceSpecifier(
+      [serviceGraphId, serviceGraphVariant] = parseServiceSpecifier(
         config.service.name
       );
     } else {
@@ -65,13 +66,20 @@ export function getGraphInfo(
   }
   if (config.client) {
     if (typeof config.client.service === "string") {
-      [clientGraphId, clientGraphVariant = "current"] = parseServiceSpecifier(
+      [clientGraphId, clientGraphVariant] = parseServiceSpecifier(
         config.client.service
       );
     } else {
       clientGraphId = config.client.service && config.client.service.name;
     }
   }
+
+  // If variant is not set, fall back to other project or default
+  clientGraphVariant =
+    clientGraphVariant || serviceGraphVariant || defaultGraphVariant;
+  serviceGraphVariant =
+    serviceGraphVariant || clientGraphVariant || defaultGraphVariant;
+
   if (serviceGraphId && clientGraphId && serviceGraphId !== clientGraphId) {
     throw new Error(
       `Unsupported configuration: service and client configs must refer to the same graph.\nservice:${serviceGraphId}, client:${clientGraphId}`
