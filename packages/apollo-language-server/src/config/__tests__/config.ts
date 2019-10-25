@@ -7,7 +7,7 @@ import {
 import URI from "vscode-uri";
 import { DeepPartial } from "apollo-env";
 
-function createConfig(raw: DeepPartial<ApolloConfigFormat>) {
+export function createConfig(raw: DeepPartial<ApolloConfigFormat>) {
   return loadConfigWithDefaults(
     {
       config: raw

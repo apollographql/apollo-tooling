@@ -62,7 +62,7 @@ describe("loadConfig", () => {
   });
 
   describe("finding files", () => {
-    it("loads with client defaults from different dir", async () => {
+    it.only("loads with client defaults from different dir", async () => {
       writeFilesToDir(dir, {
         "my.config.js": `
           module.exports = {
@@ -77,7 +77,7 @@ describe("loadConfig", () => {
         configPath: dirPath,
         configFileName: "my.config.js"
       });
-      expect(config.rawConfig).toMatchInlineSnapshot(`
+      expect(config && config.rawConfig).toMatchInlineSnapshot(`
         Object {
           "client": Object {
             "addTypename": true,
@@ -89,13 +89,18 @@ describe("loadConfig", () => {
               "client",
               "rest",
             ],
+            "endpoint": Object {
+              "url": "http://localhost:4000/graphql",
+            },
             "excludes": Array [
               "**/node_modules",
               "**/__tests__",
             ],
+            "graphId": "hello",
             "includes": Array [
               "src/**/*.{ts,tsx,js,jsx,graphql,gql}",
             ],
+            "name": "hello@current",
             "service": "hello",
             "statsWindow": Object {
               "from": -86400,
@@ -104,8 +109,38 @@ describe("loadConfig", () => {
             "tagName": "gql",
           },
           "engine": Object {
+            "apiKey": undefined,
             "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
             "frontend": "https://engine.apollographql.com",
+          },
+          "service": Object {
+            "addTypename": true,
+            "clientOnlyDirectives": Array [
+              "connection",
+              "type",
+            ],
+            "clientSchemaDirectives": Array [
+              "client",
+              "rest",
+            ],
+            "endpoint": Object {
+              "url": "http://localhost:4000/graphql",
+            },
+            "excludes": Array [
+              "**/node_modules",
+              "**/__tests__",
+            ],
+            "graphId": "hello",
+            "includes": Array [
+              "src/**/*.{ts,tsx,js,jsx,graphql,gql}",
+            ],
+            "name": "hello@current",
+            "service": "hello",
+            "statsWindow": Object {
+              "from": -86400,
+              "to": -0,
+            },
+            "tagName": "gql",
           },
         }
       `);

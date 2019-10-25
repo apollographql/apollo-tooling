@@ -8,6 +8,7 @@ import {
   isServiceConfig,
   parseServiceSpecifier
 } from "../";
+import { createConfig } from "./config";
 
 describe("getServiceFromKey", () => {
   it("returns undefined with no provided key", () => {
@@ -33,35 +34,39 @@ describe("getServiceFromKey", () => {
 describe("getServiceName", () => {
   describe("client config", () => {
     it("finds service name when client.service is a string", () => {
-      const rawConfig: ApolloConfigFormat = {
+      const rawConfig: ApolloConfigFormat = createConfig({
         client: { service: "my-service" }
-      };
-      expect(getGraphInfo(rawConfig)).toEqual("my-service");
+      });
+      expect(getGraphInfo(rawConfig).graphId).toEqual("my-service");
 
-      const rawConfigWithTag: ApolloConfigFormat = {
+      const rawConfigWithTag: ApolloConfigFormat = createConfig({
         client: { service: "my-service@master" }
-      };
-      expect(getGraphInfo(rawConfigWithTag)).toEqual("my-service");
+      });
+      expect(getGraphInfo(rawConfigWithTag).graphId).toEqual("my-service");
     });
 
     it("finds service name when client.service is an object", () => {
-      const rawConfig: ApolloConfigFormat = {
+      const rawConfig: ApolloConfigFormat = createConfig({
         client: { service: { name: "my-service" } }
-      };
-      expect(getGraphInfo(rawConfig)).toEqual("my-service");
+      });
+      expect(getGraphInfo(rawConfig).graphId).toEqual("my-service");
     });
   });
   describe("service config", () => {
     it("finds service name from raw service config", () => {
-      const rawConfig: ApolloConfigFormat = { service: { name: "my-service" } };
-      expect(getGraphInfo(rawConfig)).toEqual("my-service");
+      const rawConfig: ApolloConfigFormat = createConfig({
+        service: { name: "my-service" }
+      });
+      expect(getGraphInfo(rawConfig).graphId).toEqual("my-service");
     });
   });
 });
 
 describe("isClientConfig", () => {
   it("identifies client config properly", () => {
-    const config = new ApolloConfig({ client: { service: "hello" } });
+    const config = new ApolloConfig(
+      createConfig({ client: { service: "hello" } })
+    );
     expect(isClientConfig(config)).toBeTruthy();
   });
 });
@@ -75,7 +80,9 @@ describe("isLocalServiceConfig", () => {
 
 describe("isServiceConfig", () => {
   it("identifies service config properly", () => {
-    const config = new ApolloConfig({ service: "hello" });
+    const config = new ApolloConfig(
+      createConfig({ service: { name: "hello" } })
+    );
     expect(isServiceConfig(config)).toBeTruthy();
   });
 });
