@@ -388,10 +388,10 @@ export class SwiftGenerator<Context> extends CodeGenerator<
     }
   }
 
-  comment(comment?: string) {
+  comment(comment?: string, trim: Boolean = true) {
     comment &&
       comment.split("\n").forEach(line => {
-        this.printOnNewline(SwiftSource.raw`/// ${line.trim()}`);
+        this.printOnNewline(SwiftSource.raw`/// ${trim ? line.trim() : line}`);
       });
   }
 

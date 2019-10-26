@@ -2011,6 +2011,10 @@ exports[`Swift code generation #typeDeclarationForGraphQLType() should generate 
 public struct ReviewInput: GraphQLMapConvertible {
   public var graphQLMap: GraphQLMap
 
+  /// - Parameters:
+  ///   - stars: 0-5 stars
+  ///   - commentary: Comment about the movie, optional
+  ///   - favoriteColor: Favorite color, optional
   public init(stars: Int, commentary: Swift.Optional<String?> = nil, favoriteColor: Swift.Optional<ColorInput?> = nil) {
     graphQLMap = [\\"stars\\": stars, \\"commentary\\": commentary, \\"favorite_color\\": favoriteColor]
   }
