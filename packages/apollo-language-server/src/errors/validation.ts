@@ -28,6 +28,7 @@ import {
   ExecutionContext
 } from "graphql/execution/execute";
 import { hasClientDirective, simpleCollectFields } from "../utilities/graphql";
+import { Debug } from "../utilities";
 
 export interface CodeActionInfo {
   message: string;
@@ -72,7 +73,7 @@ export function validateQueryDocument(
       for (const error of validationErrors) {
         logError(error);
       }
-      throw new ToolError("Validation of GraphQL query document failed");
+      return Debug.error("Validation of GraphQL query document failed");
     }
   } catch (e) {
     console.error(e);

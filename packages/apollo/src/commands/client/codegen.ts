@@ -5,9 +5,10 @@ import { Kind, DocumentNode } from "graphql";
 import tty from "tty";
 import { Gaze } from "gaze";
 import URI from "vscode-uri";
+import chalk from "chalk";
+import { Debug } from "apollo-language-server";
 
 import { TargetType, default as generate } from "../../generate";
-
 import { ClientCommand } from "../../Command";
 
 const waitForKey = async () => {
@@ -246,7 +247,12 @@ export default class Generate extends ClientCommand {
         if (file.indexOf(output) > -1) return;
         this.project.fileDidChange(URI.file(file).toString());
         console.log("\nChange detected, generating types...");
-        write();
+        try {
+          const fileCount = write();
+          console.log(`${chalk.green("✔")} Wrote ${fileCount} files`);
+        } catch (e) {
+          Debug.error("Error while generating types: " + e.message);
+        }
       });
       if (tty.isatty((process.stdin as any).fd)) {
         await waitForKey();
