@@ -3,8 +3,9 @@
 ## Upcoming
 
 - `apollo`
-  - Add sdl download ability to `client:download-schema`
-  - colors: use cyan instead of blue for text highlighting
+  - Add sdl download ability to `client:download-schema` [#1470](https://github.com/apollographql/apollo-tooling/pull/1470)
+  - colors: use cyan instead of blue for text highlighting [#1598](https://github.com/apollographql/apollo-tooling/pull/1598)
+  - Fix codegen --watch breaking out of watch mode on validation errors [#1627](https://github.com/apollographql/apollo-tooling/pull/1627)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
