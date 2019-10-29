@@ -3,9 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Add sdl download ability to `client:download-schema` [#1470](https://github.com/apollographql/apollo-tooling/pull/1470)
-  - colors: use cyan instead of blue for text highlighting [#1598](https://github.com/apollographql/apollo-tooling/pull/1598)
-  - Fix codegen --watch breaking out of watch mode on validation errors [#1627](https://github.com/apollographql/apollo-tooling/pull/1627)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -15,9 +13,7 @@
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
-  - POTENTIALLY BREAKING: Make `apollo-env` a standard TS package
-    [#1611](https://github.com/apollographql/apollo-tooling/pull/1611) This PR likely warrants a pre-major version bump so that it isn't accidentally upgraded to for dependents using the ^ range. If this breaks your project, please don't hesitate to let us know and revert back to v0.5.1. This PR removes the handwritten node-fetch types and instead
-    just re-exports them. Internally, this drastically simplifies the existence of apollo-env within this monorepo, as it no longer requires a special build step that forces lerna and TS to work around it.
+  - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
@@ -26,6 +22,17 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.21.1`
+
+- `apollo@2.21.1`
+  - Add sdl download ability to `client:download-schema` [#1470](https://github.com/apollographql/apollo-tooling/pull/1470)
+  - colors: use cyan instead of blue for text highlighting [#1598](https://github.com/apollographql/apollo-tooling/pull/1598)
+  - Fix codegen --watch breaking out of watch mode on validation errors [#1627](https://github.com/apollographql/apollo-tooling/pull/1627)
+- `apollo-env@0.6.0`
+  - POTENTIALLY BREAKING: Make `apollo-env` a standard TS package
+    [#1611](https://github.com/apollographql/apollo-tooling/pull/1611) This PR likely warrants a pre-major version bump so that it isn't accidentally upgraded to for dependents using the ^ range. If this breaks your project, please don't hesitate to let us know and revert back to v0.5.1. This PR removes the handwritten node-fetch types and instead
+    just re-exports them. Internally, this drastically simplifies the existence of apollo-env within this monorepo, as it no longer requires a special build step that forces lerna and TS to work around it.
 
 ## `apollo@2.21.0`
 
