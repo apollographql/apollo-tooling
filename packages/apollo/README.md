@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.21.0 darwin-x64 node-v8.11.1
+apollo/2.21.1-alpha.0 darwin-x64 node-v10.15.3
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -133,8 +133,8 @@ OPTIONS
 
   --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
                                              "output" directory. Set "globalTypesFile" to specify a different path.
-                                             Alternatively, set "fileExtension" to modify the extension of the file, for
-                                             example "d.ts" will output "globalTypes.d.ts"
+                                             Alternatively, set "tsFileExtension" to modify the extension of the file,
+                                             for example "d.ts" will output "globalTypes.d.ts"
 
   --header=header                            Additional header to send to server for introspectionQuery. May be used
                                              multiple times to add multiple headers. NOTE: The `--endpoint` flag is
@@ -199,14 +199,15 @@ _See code: [src/commands/client/codegen.ts](https://github.com/apollographql/apo
 
 ## `apollo client:download-schema OUTPUT`
 
-Download a schema from engine or a GraphQL endpoint.
+Download a schema from engine or a GraphQL endpoint in JSON or SDL format
 
 ```
 USAGE
   $ apollo client:download-schema OUTPUT
 
 ARGUMENTS
-  OUTPUT  [default: schema.json] Path to write the introspection result to
+  OUTPUT  [default: schema.json] Path to write the introspection result to. Can be `.graphql`, `.gql`, `.graphqls`, or
+          `.json`
 
 OPTIONS
   -c, --config=config                    Path to your Apollo config file
