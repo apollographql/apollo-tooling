@@ -62,6 +62,7 @@ export class GraphQLWorkspace {
     folder: WorkspaceFolder;
   }) {
     const { clientIdentity } = this.config;
+    // TODO: Support the idea that config is always client & service
     const project = isClientConfig(config)
       ? new GraphQLClientProject({
           config,

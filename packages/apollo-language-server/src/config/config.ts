@@ -200,6 +200,7 @@ export class ApolloConfig {
   }
 
   // this type needs to be an "EveryKeyIsOptionalApolloConfig"
+  // TODO: delete this function and migrate caller to use merge directly
   public setDefaults({ client, engine, service }: any): void {
     const config = merge(this.rawConfig, { client, engine, service });
     this.rawConfig = config;
@@ -209,6 +210,7 @@ export class ApolloConfig {
   }
 }
 
+// TODO: these types can probably be cleaned up
 export class ClientProjectConfig extends ApolloConfig {
   public client!: ClientConfig;
 }
