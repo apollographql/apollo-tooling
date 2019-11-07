@@ -11,12 +11,12 @@ import {
   CurrentGraphInformation_service_mostRecentCompositionPublish
 } from "apollo-language-server/lib/graphqlTypes";
 import { formatServiceListHumanReadable } from "../service/list";
-// import React, { Component } from "react";
-// import { render, Color } from "ink";
+import React, { Component } from "react";
+import { render, Color } from "ink";
 
-// export const Test = () => {
-//   return <Color green>Hello World</Color>;
-// };
+export const Test = () => {
+  return <Color green>Hello World</Color>;
+};
 
 export function formatDateHumanReadable(date: Date) {
   return `${moment(date).format("D MMMM YYYY")} (${moment(date).from(
@@ -60,7 +60,7 @@ export default class GraphHello extends ProjectCommand {
           title: `Collecting graph info from Apollo Graph Manager`,
           task: async () => {
             console.log("wow");
-            // render(Test());
+            render(<Test />);
           }
         }
       ]
