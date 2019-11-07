@@ -24,7 +24,7 @@ export function formatDateHumanReadable(date: Date) {
   )})`;
 }
 
-export default class GraphHello extends ProjectCommand {
+export default class ServiceListReact extends ProjectCommand {
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({
