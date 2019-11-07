@@ -178,20 +178,20 @@ import Foundation
 
 public final class SimpleQueryQuery: GraphQLQuery {
   /// The raw GraphQL definition of this operation.
-  public let operationDefinition =
+  public let operationDefinition: String =
     \\"\\"\\"
     query SimpleQuery {
       hello
     }
     \\"\\"\\"
 
-  public let operationName = \\"SimpleQuery\\"
+  public let operationName: String = \\"SimpleQuery\\"
 
   public init() {
   }
 
   public struct Data: GraphQLSelectionSet {
-    public static let possibleTypes = [\\"Query\\"]
+    public static let possibleTypes: [String] = [\\"Query\\"]
 
     public static let selections: [GraphQLSelection] = [
       GraphQLField(\\"hello\\", type: .nonNull(.scalar(String.self))),
@@ -228,20 +228,20 @@ import Foundation
 
 public final class SimpleQueryQuery: GraphQLQuery {
   /// The raw GraphQL definition of this operation.
-  public let operationDefinition =
+  public let operationDefinition: String =
     \\"\\"\\"
     query SimpleQuery {
       hello
     }
     \\"\\"\\"
 
-  public let operationName = \\"SimpleQuery\\"
+  public let operationName: String = \\"SimpleQuery\\"
 
   public init() {
   }
 
   public struct Data: GraphQLSelectionSet {
-    public static let possibleTypes = [\\"Query\\"]
+    public static let possibleTypes: [String] = [\\"Query\\"]
 
     public static let selections: [GraphQLSelection] = [
       GraphQLField(\\"hello\\", type: .nonNull(.scalar(String.self))),

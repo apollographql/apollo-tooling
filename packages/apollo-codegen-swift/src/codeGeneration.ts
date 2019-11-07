@@ -225,7 +225,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       () => {
         if (source) {
           this.comment("The raw GraphQL definition of this operation.");
-          this.printOnNewline(swift`public let operationDefinition =`);
+          this.printOnNewline(swift`public let operationDefinition: String =`);
           this.withIndent(() => {
             this.multilineString(source, suppressMultilineStringLiterals);
           });
@@ -233,7 +233,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         this.printNewlineIfNeeded();
         this.printOnNewline(
-          swift`public let operationName = ${SwiftSource.string(operationName)}`
+          swift`public let operationName: String = ${SwiftSource.string(operationName)}`
         );
 
         const fragmentsReferenced = collectFragmentsReferenced(
@@ -451,7 +451,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         }
 
         this.printNewlineIfNeeded();
-        this.printOnNewline(swift`public static let possibleTypes = [`);
+        this.printOnNewline(swift`public static let possibleTypes: [String] = [`);
         this.print(
           join(
             variant.possibleTypes.map(
