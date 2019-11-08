@@ -233,7 +233,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         this.printNewlineIfNeeded();
         this.printOnNewline(
-          swift`public let operationName: String = ${SwiftSource.string(operationName)}`
+          swift`public let operationName: String = ${SwiftSource.string(
+            operationName
+          )}`
         );
 
         const fragmentsReferenced = collectFragmentsReferenced(
@@ -451,7 +453,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         }
 
         this.printNewlineIfNeeded();
-        this.printOnNewline(swift`public static let possibleTypes: [String] = [`);
+        this.printOnNewline(
+          swift`public static let possibleTypes: [String] = [`
+        );
         this.print(
           join(
             variant.possibleTypes.map(
