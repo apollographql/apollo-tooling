@@ -916,7 +916,7 @@ exports[`Swift code generation #initializerDeclarationForProperties() should gen
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment that includes a fragment spread 1`] = `
 "public struct HeroDetails: GraphQLFragment {
   /// The raw GraphQL definition of this fragment.
-  public static let fragmentDefinition =
+  public static let fragmentDefinition: String =
     \\"\\"\\"
     fragment HeroDetails on Character {
       name
@@ -996,7 +996,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a concrete type condition 1`] = `
 "public struct DroidDetails: GraphQLFragment {
   /// The raw GraphQL definition of this fragment.
-  public static let fragmentDefinition =
+  public static let fragmentDefinition: String =
     \\"\\"\\"
     fragment DroidDetails on Droid {
       name
@@ -1046,7 +1046,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a subselection 1`] = `
 "public struct HeroDetails: GraphQLFragment {
   /// The raw GraphQL definition of this fragment.
-  public static let fragmentDefinition =
+  public static let fragmentDefinition: String =
     \\"\\"\\"
     fragment HeroDetails on Character {
       name
@@ -1134,7 +1134,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with an abstract type condition 1`] = `
 "public struct HeroDetails: GraphQLFragment {
   /// The raw GraphQL definition of this fragment.
-  public static let fragmentDefinition =
+  public static let fragmentDefinition: String =
     \\"\\"\\"
     fragment HeroDetails on Character {
       name

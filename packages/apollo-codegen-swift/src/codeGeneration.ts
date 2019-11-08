@@ -346,7 +346,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       () => {
         if (source) {
           this.comment("The raw GraphQL definition of this fragment.");
-          this.printOnNewline(swift`public static let fragmentDefinition =`);
+          this.printOnNewline(
+            swift`public static let fragmentDefinition: String =`
+          );
           this.withIndent(() => {
             this.multilineString(source, suppressMultilineStringLiterals);
           });
