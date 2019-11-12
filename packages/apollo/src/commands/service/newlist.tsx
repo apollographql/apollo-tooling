@@ -1,71 +1,84 @@
-import { flags } from "@oclif/command";
-import { introspectionFromSchema } from "graphql";
-import { writeFileSync } from "fs";
-import chalk from "chalk";
-import { ProjectCommand } from "../../Command";
-import { DefaultEngineConfig, GraphQLProject } from "apollo-language-server";
-import { table } from "table";
-import moment from "moment";
+import Command, { flags } from "@oclif/command";
+import React, { Component, useEffect, useState } from "react";
+import { render as renderInk, Color, Box, Text } from "ink";
+import { WithRequired, DeepPartial } from "apollo-env";
 import {
-  CurrentGraphInformation_service,
-  CurrentGraphInformation_service_mostRecentCompositionPublish
-} from "apollo-language-server/lib/graphqlTypes";
-import { formatServiceListHumanReadable } from "../service/list";
-import React, { Component } from "react";
-import { render, Color } from "ink";
+  GraphQLProject,
+  GraphQLServiceProject,
+  GraphQLClientProject,
+  loadConfig,
+  isClientConfig,
+  isServiceConfig,
+  ApolloConfig,
+  getServiceFromKey,
+  Debug
+} from "apollo-language-server";
+import URI from "vscode-uri";
+import { parse, resolve } from "path";
+import { OclifLoadingHandler } from "../../OclifLoadingHandler";
+import ApolloCommand, { useConfig } from "../../NewCommand";
 
-export const Test = () => {
-  return <Color green>Hello World</Color>;
-};
-
-export function formatDateHumanReadable(date: Date) {
-  return `${moment(date).format("D MMMM YYYY")} (${moment(date).from(
-    new Date()
-  )})`;
-}
-
-export default class ServiceListReact extends ProjectCommand {
-  static flags = {
-    ...ProjectCommand.flags,
-    tag: flags.string({
-      name: "tag",
-      char: "t",
-      description: "The published tag to check this service against",
-      default: "current"
-    }),
-    verbose: flags.boolean({
-      name: "verbose",
-      char: "v",
-      description:
-        "Whether to include verbose information about the graph's state",
-      default: false
-    })
-  };
-  async run() {
-    let consoleResult: string = "\n";
-    let compositionResult: CurrentGraphInformation_service_mostRecentCompositionPublish | null = null;
-    await this.runTasks(
-      ({
-        args,
-        project,
-        flags,
-        config
-      }: {
-        args: any;
-        project: GraphQLProject;
-        flags: any;
-        config: any;
-      }) => [
-        {
-          title: `Collecting graph info from Apollo Graph Manager`,
-          task: async () => {
-            console.log("wow");
-            render(<Test />);
+export const LIST_SERVICES = `
+  query ListServices($id: ID!, $graphVariant: String! = "current") {
+    service(id: $id) {
+      implementingServices(graphVariant: $graphVariant) {
+        __typename
+        ... on FederatedImplementingServices {
+          services {
+            graphID
+            graphVariant
+            name
+            url
+            updatedAt
           }
         }
-      ]
-    );
+      }
+    }
+  }
+`;
 
-    this.log(consoleResult);
+const Loader = ({ title, isLoading, loaded }) => (
+  <Text>
+    <Color green={loaded} yellow={isLoading}>
+      {isLoading
+        ? `Loading ${title}...`
+        : loaded
+        ? `Loaded ${title}!`
+        : `Failed to Load ${title}`}
+    </Color>
+  </Text>
+);
+
+const commandFlags = {
+  ...ApolloCommand.flags,
+  tag: flags.string({
+    char: "t",
+    description: "The published tag to list the services from"
+  })
+};
+const commandDescription = "List the services in a graph";
+const CommandUI = ({ context }) => {
+  const [loadingConfig, config] = useConfig();
+
+  return (
+    <>
+      <Box>
+        <Loader
+          title="Project"
+          isLoading={loadingConfig}
+          loaded={Boolean(config)}
+        />
+      </Box>
+      <Box></Box>
+    </>
+  );
+};
+
+//   title: `Collecting graph info from Apollo Graph Manager`,
+export default class ServiceListReact extends ApolloCommand {
+  static description = commandDescription;
+  static flags = commandFlags;
+  render() {
+    return <CommandUI context={this.ctx} />;
   }
 }
