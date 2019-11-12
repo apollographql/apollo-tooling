@@ -19,7 +19,7 @@
   "dependencies": {
     "@apollo/federation": "0.10.2",
     "@apollographql/apollo-tools": "file:../apollo-tools",
-    "@apollographql/graphql-language-service-interface": "^2.0.2",
+    "graphql-language-service-interface": "^2.3.0",
     "@endemolshinegroup/cosmiconfig-typescript-loader": "^1.0.0",
     "apollo-datasource": "^0.6.0",
     "apollo-env": "file:../apollo-env",

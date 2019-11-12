@@ -1,4 +1,4 @@
-declare module "@apollographql/graphql-language-service-interface" {
+declare module "graphql-language-service-interface" {
   import { DocumentNode, GraphQLSchema, Location } from "graphql";
   import {
     Diagnostic,
@@ -14,9 +14,9 @@ declare module "@apollographql/graphql-language-service-interface" {
   ): CompletionItem[];
 }
 
-declare module "@apollographql/graphql-language-service-interface/dist/getAutocompleteSuggestions";
+declare module "graphql-language-service-interface/dist/getAutocompleteSuggestions";
 
-declare module "@apollographql/graphql-language-service-interface/dist/getDiagnostics" {
+declare module "graphql-language-service-interface/dist/getDiagnostics" {
   import { Location } from "graphql";
   import { Range } from "vscode-languageserver";
 
