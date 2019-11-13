@@ -6,6 +6,7 @@
     "esModuleInterop": true,
     "noImplicitAny": false,
     "baseUrl": ".",
+    "lib": ["dom", "es2019"],
     "paths": {
       "*": ["./@types/*", "../../types/*"]
     },

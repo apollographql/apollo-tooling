@@ -1,24 +1,15 @@
-import Command, { flags } from "@oclif/command";
-import React, { Component, useEffect, useState } from "react";
-import { render as renderInk, Color, Box, Text } from "ink";
-import { WithRequired, DeepPartial } from "apollo-env";
-import {
-  GraphQLProject,
-  GraphQLServiceProject,
-  GraphQLClientProject,
-  loadConfig,
-  isClientConfig,
-  isServiceConfig,
-  ApolloConfig,
-  getServiceFromKey,
-  Debug
-} from "apollo-language-server";
-import URI from "vscode-uri";
-import { parse, resolve } from "path";
-import { OclifLoadingHandler } from "../../OclifLoadingHandler";
-import ApolloCommand, { useConfig } from "../../NewCommand";
+import React, { Fragment } from "react";
+import { gql, useQuery } from "@apollo/client";
+import { Color, Box } from "ink";
+import Spinner from "ink-spinner";
+import Table from "ink-table";
+import moment from "moment";
+import sortBy from "lodash.sortby";
+import { isNotNullOrUndefined } from "apollo-env";
 
-export const LIST_SERVICES = `
+import ApolloCommand, { useConfig, useOclif } from "../../NewCommand";
+
+export const LIST_SERVICES = gql`
   query ListServices($id: ID!, $graphVariant: String! = "current") {
     service(id: $id) {
       implementingServices(graphVariant: $graphVariant) {
@@ -37,48 +28,97 @@ export const LIST_SERVICES = `
   }
 `;
 
-const Loader = ({ title, isLoading, loaded }) => (
-  <Text>
-    <Color green={loaded} yellow={isLoading}>
-      {isLoading
-        ? `Loading ${title}...`
-        : loaded
-        ? `Loaded ${title}!`
-        : `Failed to Load ${title}`}
-    </Color>
-  </Text>
-);
+//   title: `Collecting graph info from Apollo Graph Manager`,
+export default class ServiceListReact extends ApolloCommand {
+  static description =
+    "List the services that implement a managed federated graph";
+  // static description = commandDescription;
+  // static flags = commandFlags;
+  render() {
+    const config = useConfig();
+    const { flags } = useOclif();
 
-const commandFlags = {
-  ...ApolloCommand.flags,
-  tag: flags.string({
-    char: "t",
-    description: "The published tag to list the services from"
-  })
-};
-const commandDescription = "List the services in a graph";
-const CommandUI = ({ context }) => {
-  const [loadingConfig, config] = useConfig();
+    const id = config.name;
+    const graphVariant = flags.tag || config.tag;
 
-  return (
-    <>
-      <Box>
-        <Loader
-          title="Project"
-          isLoading={loadingConfig}
-          loaded={Boolean(config)}
+    const { loading, data, error } = useQuery(LIST_SERVICES, {
+      variables: { id, graphVariant }
+    });
+
+    if (error) throw error;
+
+    if (loading)
+      return (
+        <Box>
+          <Loader />
+          <Box>
+            Fetching list of services for graph{" "}
+            <Color cyan>{id + "@" + graphVariant}</Color>
+          </Box>
+        </Box>
+      );
+
+    const implementingServices = data.service.implementingServices;
+    const frontendUrl = config.engine.frontend;
+    const serviceList = formatHumanReadable({ implementingServices });
+
+    return (
+      <Box flexDirection="column" marginTop={1}>
+        <Table data={serviceList} />
+        <Footer
+          implementingServices={implementingServices}
+          graphName={id}
+          frontendUrl={frontendUrl}
         />
       </Box>
-      <Box></Box>
-    </>
+    );
+  }
+}
+
+const Loader = () => (
+  <Box paddingRight={1}>
+    <Color green>
+      <Spinner type="dots" />
+    </Color>
+  </Box>
+);
+
+const Footer = ({ implementingServices, graphName, frontendUrl }) => {
+  let errorMessage = "";
+
+  if (
+    !implementingServices ||
+    implementingServices.__typename === "NonFederatedImplementingService"
+  ) {
+    errorMessage =
+      "This graph is not federated, there are no services composing the graph";
+  } else if (implementingServices.services.length === 0) {
+    errorMessage = "There are no services on this federated graph";
+  }
+
+  const targetUrl = `${frontendUrl}/graph/${graphName}/service-list`;
+
+  return (
+    <Box marginTop={1}>
+      {errorMessage && <Color red>{errorMessage}</Color>}
+      View full details at: <Color cyan>{targetUrl}</Color>
+    </Box>
   );
 };
 
-//   title: `Collecting graph info from Apollo Graph Manager`,
-export default class ServiceListReact extends ApolloCommand {
-  static description = commandDescription;
-  static flags = commandFlags;
-  render() {
-    return <CommandUI context={this.ctx} />;
-  }
+function formatHumanReadable({ implementingServices }) {
+  const effectiveDate =
+    process.env.NODE_ENV === "test" ? new Date("2019-06-13") : new Date();
+  return sortBy(implementingServices.services, [
+    service => service.name.toUpperCase()
+  ])
+    .map(({ name, updatedAt, url }) => ({
+      Name: name,
+      URL: url || "",
+      ["Last Updated"]: `${moment(updatedAt).format("D MMMM YYYY")} (${moment(
+        updatedAt
+      ).from(effectiveDate)})`
+    }))
+    .sort((s1, s2) => (s1.Name.toUpperCase() > s2.Name.toUpperCase() ? 1 : -1))
+    .filter(isNotNullOrUndefined);
 }
