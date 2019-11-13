@@ -4,7 +4,6 @@ import { Color, Box } from "ink";
 import Spinner from "ink-spinner";
 import Table from "ink-table";
 import moment from "moment";
-import sortBy from "lodash.sortby";
 import { isNotNullOrUndefined } from "apollo-env";
 
 import ApolloCommand, { useConfig, useOclif } from "../../NewCommand";
@@ -109,9 +108,7 @@ const Footer = ({ implementingServices, graphName, frontendUrl }) => {
 function formatHumanReadable({ implementingServices }) {
   const effectiveDate =
     process.env.NODE_ENV === "test" ? new Date("2019-06-13") : new Date();
-  return sortBy(implementingServices.services, [
-    service => service.name.toUpperCase()
-  ])
+  return implementingServices.services
     .map(({ name, updatedAt, url }) => ({
       Name: name,
       URL: url || "",
@@ -119,5 +116,6 @@ function formatHumanReadable({ implementingServices }) {
         updatedAt
       ).from(effectiveDate)})`
     }))
+    .sort((s1, s2) => (s1.Name.toUpperCase() > s2.Name.toUpperCase() ? 1 : -1))
     .filter(isNotNullOrUndefined);
 }
