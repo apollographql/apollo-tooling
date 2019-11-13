@@ -81,7 +81,7 @@ function formatHumanReadable({
 
     const serviceListUrlEnding = `/graph/${graphName}/service-list`;
     const targetUrl = `${frontendUrl}${serviceListUrlEnding}`;
-    result += `\n\nView full details at: ${targetUrl}`;
+    result += `\nView full details at: ${chalk.cyan(targetUrl)}\n`;
   }
   return result;
 }
