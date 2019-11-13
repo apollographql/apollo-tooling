@@ -119,6 +119,5 @@ function formatHumanReadable({ implementingServices }) {
         updatedAt
       ).from(effectiveDate)})`
     }))
-    .sort((s1, s2) => (s1.Name.toUpperCase() > s2.Name.toUpperCase() ? 1 : -1))
     .filter(isNotNullOrUndefined);
 }
