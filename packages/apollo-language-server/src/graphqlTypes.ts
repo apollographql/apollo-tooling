@@ -977,7 +977,7 @@ export interface GetSchemaByTag_service_Service_schema___schema_types_enumValues
   name: string;
   description: string | null;
   isDeprecated: boolean;
-  depreactionReason: string | null;
+  deprecationReason: string | null;
 }
 
 export interface GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
@@ -1410,7 +1410,7 @@ export interface IntrospectionFullType_enumValues {
   name: string;
   description: string | null;
   isDeprecated: boolean;
-  depreactionReason: string | null;
+  deprecationReason: string | null;
 }
 
 export interface IntrospectionFullType_possibleTypes_ofType_ofType_ofType_ofType_ofType_ofType_ofType {

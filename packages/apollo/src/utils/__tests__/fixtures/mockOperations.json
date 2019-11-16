@@ -2017,7 +2017,7 @@
                     "kind": "Field",
                     "name": {
                       "kind": "Name",
-                      "value": "depreactionReason",
+                      "value": "deprecationReason",
                       "loc": { "start": 1199, "end": 1216 }
                     },
                     "arguments": [],

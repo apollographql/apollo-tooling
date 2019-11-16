@@ -154,7 +154,7 @@ export const SCHEMA_QUERY = gql`
       name
       description
       isDeprecated
-      depreactionReason
+      deprecationReason
     }
     possibleTypes {
       ...IntrospectionTypeRef
