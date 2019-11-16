@@ -50,6 +50,7 @@ jobs:
     executor:
       name: win/default
     steps:
+      - run: git config --global core.autocrlf false
       - checkout
       - oss/npm_clean_install_with_caching
       - run: npm run circle
