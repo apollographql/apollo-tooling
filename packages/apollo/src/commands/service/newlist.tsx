@@ -9,7 +9,7 @@ import { isNotNullOrUndefined } from "apollo-env";
 import ApolloCommand, { useConfig, useOclif } from "../../NewCommand";
 
 export const LIST_SERVICES = gql`
-  query ListServices($id: ID!, $graphVariant: String! = "current") {
+  query ListServicesReact($id: ID!, $graphVariant: String! = "current") {
     service(id: $id) {
       implementingServices(graphVariant: $graphVariant) {
         __typename
@@ -27,12 +27,13 @@ export const LIST_SERVICES = gql`
   }
 `;
 
-//   title: `Collecting graph info from Apollo Graph Manager`,
+// title: `Collecting graph info from Apollo Graph Manager`,
 export default class ServiceListReact extends ApolloCommand {
   static description =
     "List the services that implement a managed federated graph";
-  // static description = commandDescription;
-  // static flags = commandFlags;
+  // TODO: add command-specific flags
+  // static flags =
+
   render() {
     const config = useConfig();
     const { flags } = useOclif();
@@ -59,11 +60,11 @@ export default class ServiceListReact extends ApolloCommand {
 
     const implementingServices = data.service.implementingServices;
     const frontendUrl = config.engine.frontend;
-    const serviceList = formatHumanReadable({ implementingServices });
+    const serviceList = formatServicesForTable({ implementingServices });
 
     return (
       <Box flexDirection="column" marginTop={1}>
-        <Table data={serviceList} />
+        {serviceList.length ? <Table data={serviceList} /> : null}
         <Footer
           implementingServices={implementingServices}
           graphName={id}
@@ -90,7 +91,7 @@ const Footer = ({ implementingServices, graphName, frontendUrl }) => {
     implementingServices.__typename === "NonFederatedImplementingService"
   ) {
     errorMessage =
-      "This graph is not federated, there are no services composing the graph";
+      "This graph is not federated. There are no services composing the graph";
   } else if (implementingServices.services.length === 0) {
     errorMessage = "There are no services on this federated graph";
   }
@@ -98,14 +99,17 @@ const Footer = ({ implementingServices, graphName, frontendUrl }) => {
   const targetUrl = `${frontendUrl}/graph/${graphName}/service-list`;
 
   return (
-    <Box marginTop={1}>
+    // only put a margin on top of the message if there's no errors
+    <Box marginTop={errorMessage.length ? 0 : 1} flexDirection={"column"}>
       {errorMessage && <Color red>{errorMessage}</Color>}
-      View full details at: <Color cyan>{targetUrl}</Color>
+      <Box>
+        View full details at: <Color cyan>{targetUrl}</Color>
+      </Box>
     </Box>
   );
 };
 
-function formatHumanReadable({ implementingServices }) {
+function formatServicesForTable({ implementingServices }) {
   const effectiveDate =
     process.env.NODE_ENV === "test" ? new Date("2019-06-13") : new Date();
   return implementingServices.services

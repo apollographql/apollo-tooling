@@ -27,7 +27,6 @@ Fetching list of services for graph engine@master [completed]
 ║ reviews   │ http://localhost:4004/graphql │ 16 May 2019 (a month ago) ║
 ╚═══════════╧═══════════════════════════════╧═══════════════════════════╝
 
-
 View full details at: https://engine-staging.apollographql.com/graph/engine/service-list
 
 "

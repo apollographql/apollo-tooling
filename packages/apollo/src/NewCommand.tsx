@@ -20,8 +20,12 @@ import {
 const { version, referenceID } = require("../package.json");
 
 // XXX how to get the flags correctly
-const OclifContext = React.createContext<Parser.Output<any, any> | null>(null);
-const ConfigContext = React.createContext<ApolloConfig | void>(undefined);
+export const OclifContext = React.createContext<Parser.Output<any, any> | null>(
+  null
+);
+export const ConfigContext = React.createContext<ApolloConfig | void>(
+  undefined
+);
 
 export default class ApolloCommand extends Command {
   public project!: GraphQLProject;
@@ -44,42 +48,63 @@ export default class ApolloCommand extends Command {
   }
 
   async run() {
-    const Component = this.render;
-    const oclif = this.parse(ApolloCommand);
-    const service = oclif.flags.key
-      ? getServiceFromKey(oclif.flags.key)
-      : undefined;
-    const config = await loadConfig({
-      // configPath: flags.config && parse(resolve(flags.config)).dir,
-      // configFileName: flags.config,
-      name: service
-      // type
-    });
-    if (!config) throw new Error("Could not load config");
-    const client = new ApolloClient({
-      name: "Apollo CLI",
-      version,
-      link: new HttpLink({
-        uri: config.engine.endpoint,
-        headers: {
-          "x-api-key": config.engine.apiKey || service,
-          "apollo-client-reference-id": referenceID
-        },
-        fetch: fetch as any
-      }),
-      cache: new InMemoryCache()
-    });
+    const App = ({ children }) => {
+      const [command, setCommandReady] = useState();
+      useEffect(() => {
+        const Component = this.render;
+        const oclif = this.parse(ApolloCommand);
+        const service = oclif.flags.key
+          ? getServiceFromKey(oclif.flags.key)
+          : undefined;
+        const config = loadConfig({
+          // configPath: flags.config && parse(resolve(flags.config)).dir,
+          // configFileName: flags.config,
+          name: service
+          // type
+        })
+          .then(config => {
+            if (!config) throw new Error("Could not load config");
+            const client = new ApolloClient({
+              name: "Apollo CLI",
+              version,
+              link: new HttpLink({
+                uri: config.engine.endpoint,
+                headers: {
+                  "x-api-key": config.engine.apiKey || service,
+                  "apollo-client-reference-id": referenceID
+                },
+                fetch: fetch as any
+              }),
+              cache: new InMemoryCache()
+            });
+            setCommandReady({
+              client,
+              config,
+              oclif
+            });
+          })
+          .catch(e => {
+            /// XXX what do we do with this error
+          });
+      });
+
+      if (!command) {
+        return null; // XXX return some interstitial loading state (This should be near instant however)
+      }
+
+      return (
+        <OclifContext.Provider value={oclif}>
+          <ConfigContext.Provider value={config}>
+            <ApolloProvider client={client}>{children}</ApolloProvider>
+          </ConfigContext.Provider>
+        </OclifContext.Provider>
+      );
+    };
 
     const { waitUntilExit } = renderInk(
-      <OclifContext.Provider value={oclif}>
-        <ConfigContext.Provider value={config}>
-          <ApolloProvider client={client}>
-            <ErrorBoundary>
-              <Component />
-            </ErrorBoundary>
-          </ApolloProvider>
-        </ConfigContext.Provider>
-      </OclifContext.Provider>,
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>,
       {
         debug: process.env.DEBUG === "true"
       }
@@ -105,7 +130,7 @@ export function useConfig() {
 interface ErrorBoundaryState {
   error?: Error;
 }
-class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
+export class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
   state = {} as ErrorBoundaryState;
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
@@ -118,7 +143,6 @@ class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
     if (!error) {
       return this.props.children;
     }
-
     return (
       <Box>
         <Color red>An error occurred: {error.message}</Color>
