@@ -3,7 +3,7 @@ import { print } from "graphql";
 import { gitInfo } from "../../git";
 import { ClientCommand } from "../../Command";
 import { CompactRenderer } from "../../utils";
-import URI from "vscode-uri";
+import { URI } from "vscode-uri";
 import { relative } from "path";
 import { graphqlTypes } from "apollo-language-server";
 import chalk from "chalk";

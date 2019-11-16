@@ -1,4 +1,4 @@
-import URI from "vscode-uri";
+import { URI } from "vscode-uri";
 
 const withUnixSeparator = (uriString: string) =>
   uriString.split(/[\/\\]/).join("/");

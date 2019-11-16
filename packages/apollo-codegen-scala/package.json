@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "apollo-codegen-core": "file:../apollo-codegen-core",
-    "change-case": "^3.0.1",
-    "common-tags": "^1.5.1",
-    "inflected": "^2.0.3"
+    "change-case": "^3.1.0",
+    "common-tags": "^1.8.0",
+    "inflected": "^2.0.4"
   }
 }

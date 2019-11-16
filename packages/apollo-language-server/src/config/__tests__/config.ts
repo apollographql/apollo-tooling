@@ -1,5 +1,5 @@
 import { ApolloConfig, ApolloConfigFormat } from "../";
-import URI from "vscode-uri";
+import { URI } from "vscode-uri";
 
 describe("ApolloConfig", () => {
   describe("confifDirURI", () => {

@@ -1,6 +1,6 @@
 import { extname } from "path";
 import { readFileSync } from "fs";
-import URI from "vscode-uri";
+import { URI } from "vscode-uri";
 
 import {
   TypeSystemDefinitionNode,
@@ -331,7 +331,8 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   get typeSystemDefinitionsAndExtensions(): (
     | TypeSystemDefinitionNode
-    | TypeSystemExtensionNode)[] {
+    | TypeSystemExtensionNode
+  )[] {
     const definitionsAndExtensions = [];
     for (const document of this.documents) {
       if (!document.ast) continue;

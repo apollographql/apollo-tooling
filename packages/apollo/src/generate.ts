@@ -1,7 +1,7 @@
 import { fs } from "apollo-codegen-core/lib/localfs";
 import path from "path";
 import { GraphQLSchema, DocumentNode, print } from "graphql";
-import URI from "vscode-uri";
+import { URI } from "vscode-uri";
 
 import {
   compileToIR,

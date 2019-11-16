@@ -48,7 +48,7 @@ import {
   DiagnosticSet,
   diagnosticsFromError
 } from "../diagnostics";
-import URI from "vscode-uri";
+import { URI } from "vscode-uri";
 
 function schemaHasASTNodes(schema: GraphQLSchema): boolean {
   const queryType = schema && schema.getQueryType();

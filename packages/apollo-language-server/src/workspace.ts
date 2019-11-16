@@ -17,7 +17,7 @@ import { LanguageServerLoadingHandler } from "./loadingHandler";
 import { ServiceID, SchemaTag, ClientIdentity } from "./engine";
 import { GraphQLClientProject, isClientProject } from "./project/client";
 import { GraphQLServiceProject } from "./project/service";
-import URI from "vscode-uri";
+import { URI } from "vscode-uri";
 import { Debug } from "./utilities";
 
 export interface WorkspaceConfig {

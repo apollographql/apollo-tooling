@@ -13,7 +13,7 @@ import {
   DefaultEngineConfig
 } from "./config";
 import { getServiceFromKey } from "./utils";
-import URI from "vscode-uri";
+import { URI } from "vscode-uri";
 import { Debug } from "../utilities";
 
 // config settings

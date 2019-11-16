@@ -16,7 +16,7 @@ import {
 } from "apollo-language-server";
 import { WithRequired, DeepPartial } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
-import URI from "vscode-uri";
+import { URI } from "vscode-uri";
 
 const { version, referenceID } = require("../package.json");
 

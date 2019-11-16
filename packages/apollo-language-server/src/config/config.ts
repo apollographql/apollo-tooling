@@ -1,7 +1,7 @@
 import { dirname } from "path";
 import merge from "lodash.merge";
 import { ServiceID, ServiceSpecifier, ClientID } from "../engine";
-import URI from "vscode-uri";
+import { URI } from "vscode-uri";
 import { WithRequired } from "apollo-env";
 import { getServiceName, parseServiceSpecifier } from "./utils";
 import { ValidationRule } from "graphql/validation/ValidationContext";
@@ -170,8 +170,9 @@ export class ApolloConfig {
     if (this._tag) return this._tag;
     let tag: string = "current";
     if (this.client && typeof this.client.service === "string") {
-      const specifierTag = parseServiceSpecifier(this.client
-        .service as ServiceSpecifier)[1];
+      const specifierTag = parseServiceSpecifier(
+        this.client.service as ServiceSpecifier
+      )[1];
       if (specifierTag) tag = specifierTag;
     }
     return tag;

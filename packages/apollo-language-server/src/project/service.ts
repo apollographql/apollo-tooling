@@ -3,7 +3,7 @@ import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
 import { ServiceConfig } from "../config";
 import { ClientIdentity } from "../engine";
-import URI from "vscode-uri";
+import { URI } from "vscode-uri";
 
 export function isServiceProject(
   project: GraphQLProject

@@ -1,7 +1,7 @@
 import { ClientCommand } from "../../Command";
 import { table } from "table";
 import { relative } from "path";
-import URI from "vscode-uri";
+import { URI } from "vscode-uri";
 import { getOperationManifestFromProject } from "../../utils/getOperationManifestFromProject";
 import {
   operationHash,
