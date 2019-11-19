@@ -206,36 +206,53 @@ USAGE
   $ apollo client:download-schema OUTPUT
 
 ARGUMENTS
-  OUTPUT  [default: schema.json] Path to write the introspection result to
+  OUTPUT  [default: schema.json] [optional] Path to write the introspection result to. Can be
+          `.graphql`, `.gql`, `.graphqls`, or `.json`.
 
 OPTIONS
   -c, --config=config                    Path to your Apollo config file
+
+  -o, --output-file=output-file          Path to write the introspection result to. Can be
+                                         `.graphql`, `.gql`, `.graphqls`, or `.json`. Takes
+                                         precedence over [OUTPUT] argument. Use '-' to print the
+                                         result directly to stdout.
+
   -t, --tag=tag                          The published service tag for this client
+
   --clientName=clientName                Name of the client that the queries will be attached to
 
-  --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client traces, will use
-                                         clientName if not provided
+  --clientReferenceId=clientReferenceId  Reference id for the client which will match ids from client
+                                         traces, will use clientName if not provided
 
-  --clientVersion=clientVersion          The version of the client that the queries will be attached to
+  --clientVersion=clientVersion          The version of the client that the queries will be attached
+                                         to
 
   --endpoint=endpoint                    The url of your service
 
-  --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently
-                                         work in watch mode
+  --excludes=excludes                    Glob of files to exclude for GraphQL operations. Caveat:
+                                         this doesn't currently work in watch mode
 
-  --header=header                        Additional header to send to server for introspectionQuery. May be used
-                                         multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
-                                         if using the `--header` flag.
+  --header=header                        Additional header to send to server for introspectionQuery.
+                                         May be used multiple times to add multiple headers. NOTE:
+                                         The `--endpoint` flag is REQUIRED if using the `--header`
+                                         flag.
 
-  --includes=includes                    Glob of files to search for GraphQL operations. This should be used to find
-                                         queries *and* any client schema extensions
+  --includes=includes                    Glob of files to search for GraphQL operations. This should
+                                         be used to find queries *and* any client schema extensions
+
+  --json                                 Output result in json. If not specified, inferred from
+                                         output file extension.
 
   --key=key                              The API key for the Apollo Engine service
 
   --queries=queries                      Deprecated in favor of the includes flag
 
-  --tagName=tagName                      Name of the template literal tag used to identify template literals containing
-                                         GraphQL queries in Javascript/Typescript code
+  --sdl                                  Output result in SDL. If not specified, inferred from output
+                                         file extension.
+
+  --tagName=tagName                      Name of the template literal tag used to identify template
+                                         literals containing GraphQL queries in Javascript/Typescript
+                                         code
 ```
 
 _See code: [src/commands/client/download-schema.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/client/download-schema.ts)_
