@@ -8,16 +8,29 @@ import {
   loadConfig,
   ApolloConfig,
   getServiceFromKey,
-  Debug
+  Debug,
+  isClientConfig,
+  isServiceConfig
 } from "apollo-language-server";
 import { parse, resolve } from "path";
 import {
   ApolloProvider,
   ApolloClient,
   InMemoryCache,
-  HttpLink
+  HttpLink,
+  NormalizedCacheObject
 } from "@apollo/client";
+import { any } from "prop-types";
 const { version, referenceID } = require("../package.json");
+
+const headersArrayToObject = (
+  arr?: string[]
+): Record<string, string> | undefined => {
+  if (!arr) return;
+  return arr
+    .map(val => JSON.parse(val))
+    .reduce((pre, next) => ({ ...pre, ...next }), {});
+};
 
 // XXX how to get the flags correctly
 export const OclifContext = React.createContext<Parser.Output<any, any> | null>(
@@ -27,7 +40,48 @@ export const ConfigContext = React.createContext<ApolloConfig | void>(
   undefined
 );
 
+const defaultFlags = {
+  config: flags.string({
+    char: "c",
+    description: "Path to your Apollo config file"
+  }),
+  header: flags.string({
+    multiple: true,
+    parse: header => {
+      const separatorIndex = header.indexOf(":");
+      const key = header.substring(0, separatorIndex).trim();
+      const value = header.substring(separatorIndex + 1).trim();
+      return JSON.stringify({ [key]: value });
+    },
+    description:
+      "Additional header to send to server for introspectionQuery. May be used multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag."
+  }),
+  endpoint: flags.string({
+    description: "The url of your service"
+  }),
+  key: flags.string({
+    description: "The API key for the Apollo Engine service",
+    default: () => process.env.ENGINE_API_KEY
+  }),
+  engine: flags.string({
+    description: "Reporting URL for a custom Apollo Engine deployment",
+    hidden: true
+  }),
+  frontend: flags.string({
+    description: "URL for a custom Apollo Engine frontend",
+    hidden: true
+  })
+};
+
+type CommandState = {
+  client: ApolloClient<NormalizedCacheObject>;
+  config: ApolloConfig;
+  oclif: Parser.Output<any, any>;
+};
+
 export default class ApolloCommand extends Command {
+  static flags = defaultFlags;
+
   public project!: GraphQLProject;
   protected type: "service" | "client" = "service";
 
@@ -47,21 +101,93 @@ export default class ApolloCommand extends Command {
     throw new Error("Render not implemented for command");
   }
 
+  /**
+   * 1. using command flags, determine what kind of project this is,
+   *    where to get the config, and then load the config from file or defaults
+   */
+  async loadConfigFromFlags(flags, service) {
+    const config = await loadConfig({
+      configPath: flags.config && parse(resolve(flags.config)).dir,
+      configFileName: flags.config,
+      name: service,
+      type: this.type // how do we set this for client projects?
+    });
+
+    if (!config)
+      throw new Error(
+        "A config failed to load, so the command couldn't be run"
+      );
+
+    config.tag = flags.tag || config.tag || "current";
+    // flag overrides
+    config.setDefaults({
+      engine: {
+        apiKey: flags.key,
+        endpoint: flags.engine,
+        frontend: flags.frontend
+      }
+    });
+
+    if (flags.endpoint) {
+      config.setDefaults({
+        service: {
+          endpoint: {
+            url: flags.endpoint,
+            headers: headersArrayToObject(flags.header),
+            ...(flags.skipSSLValidation && { skipSSLValidation: true })
+          }
+        }
+      });
+    }
+
+    // this can set a single or multiple local schema files
+    if (flags.localSchemaFile) {
+      const files = flags.localSchemaFile.split(",");
+      if (isClientConfig(config)) {
+        config.setDefaults({
+          client: {
+            service: {
+              localSchemaFile: files
+            }
+          }
+        });
+      } else if (isServiceConfig(config)) {
+        config.setDefaults({
+          service: {
+            localSchemaFile: files
+          }
+        });
+      }
+    }
+
+    // load per command type defaults;
+    if (this.configMap) {
+      const defaults = this.configMap(flags);
+      config.setDefaults(defaults);
+    }
+
+    return config;
+  }
+
   async run() {
-    const App = ({ children }) => {
-      const [command, setCommandReady] = useState();
+    const App = props => {
+      const children = props.children;
+      if (!children) return null;
+
+      const [command, setCommandReady]: [
+        CommandState | void,
+        (CommandState) => void
+      ] = useState();
+
+      // this useEffect hook loads the config and sets the
+      // state.command to { client: ApolloClient, config: ApolloConfig, oclif: Oclif }
+      // rendering waits until this effect sets the command state.
       useEffect(() => {
-        const Component = this.render;
         const oclif = this.parse(ApolloCommand);
         const service = oclif.flags.key
           ? getServiceFromKey(oclif.flags.key)
           : undefined;
-        const config = loadConfig({
-          // configPath: flags.config && parse(resolve(flags.config)).dir,
-          // configFileName: flags.config,
-          name: service
-          // type
-        })
+        this.loadConfigFromFlags(oclif.flags, service)
           .then(config => {
             if (!config) throw new Error("Could not load config");
             const client = new ApolloClient({
@@ -93,9 +219,9 @@ export default class ApolloCommand extends Command {
       }
 
       return (
-        <OclifContext.Provider value={oclif}>
-          <ConfigContext.Provider value={config}>
-            <ApolloProvider client={client}>{children}</ApolloProvider>
+        <OclifContext.Provider value={command.oclif}>
+          <ConfigContext.Provider value={command.config}>
+            <ApolloProvider client={command.client}>{children}</ApolloProvider>
           </ConfigContext.Provider>
         </OclifContext.Provider>
       );
