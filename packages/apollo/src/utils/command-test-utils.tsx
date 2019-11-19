@@ -2,49 +2,58 @@ import React from "react";
 import { render } from "ink-testing-library";
 import stripAnsi from "strip-ansi";
 import { MockedProvider } from "@apollo/client/testing";
-import { ErrorBoundary, OclifContext, ConfigContext } from "../NewCommand";
+import ApolloCommand, {
+  ErrorBoundary,
+  OclifContext,
+  ConfigContext
+} from "../NewCommand";
+import * as Parser from "@oclif/parser";
+import { ApolloConfig } from "apollo-language-server";
+import { ParserOutput } from "@oclif/parser/lib/parse";
 
 /*
-  The ideal test wrapper should take an apollo.config.js output (the object exported),
-  flags and arguments to the CLI (aka --key=service:foo:123), and mocks for requests to
-  both local servers or graph manager
+  This test util should be used to test command classes that extend ApolloCommand. This is _not_ useful
+  for testing the ApolloCommand base class, config parsing logic that happens outside of an individual
+  command, or anything _not_ found in the individual command.
 
-  It should use the same ErrorBoundary from the actual command implemenation so that we have
-  consistent error handling.
+  To use, pass the implementing class (the command) to the function, along with
+  mockable configuration, ApolloClient mocks, and CLI flags and args like so...
 
-  The goal is to test *individual commands*, not our command setup / parsing / filesystem loading of the config
+  const { lastFrame, frames, rerender } = executeCommand(ServiceList, {
+    config: {
+      name: "hello",
+      engine: { frontend: "https://engine.apollographql.com" }
+    },
+    flags: { tag: "wow", key: "service:hello:2345824930" },
+    mocks: mocks.federatedSuccess
+  });
 
-  This wrapper should be a shared utility that lets you write tests like so:
+  This function returns a few tools to help with teting components.
+  - The `lastFrame` is the last rendered output, with ANSI characters already stripped.
+  - The `frames` array is a list of all the intermediate states of the command output when run.
+  - `rerender` is a function that takes a time arg (in ms), waits that long, and rerenders the command
+    - this is useful for getting the final state of an async command like so:
 
-  const CLI = (
-    <Test flags={{}} args={[]} config={{}} mocks={[]}>
-      <Command />
-    </Test>
-  );
+      expect(lastFrame()).toMatchInlineSnapshot(
+      `"⠋ Fetching list of services for graph hello@wow"`
+      );
 
-  // initial loading state after the config is loaded
-  const { rerender, lastFrame } = render(CLI);
+      // final state -- wait until next tick
+      await rerender(0);
+      expect(lastFrame()).toMatchInlineSnapshot(`...`)
 
-  expect(stripAnsi(lastFrame())).toMatchInlineSnapshot()
-
-  // wait for Apollo Client to "respond" which is asnyc because that is reality when running
-  // the command
-  wait(0)
-
-  // test response from GM // Server // whatever the next async tick would look like
-  rerender(CLI);
-
-  // this should be the final output if only one async action is done, if not, use `wait` again and rerender, etc
-  expect(stripAnsi(lastFrame())).toMatchInlineSnapshot()
-
-
+  This execution util uses the same ErrorBoundary that the actual runtime uses, so we can test
+  error handling logic and rendering as well.
 */
 
-export const executeCommand = (Command, { config, args, flags, mocks }) => {
+export const executeCommand = (
+  Command: any,
+  { config, args, flags, mocks }: any
+) => {
   const Component = new Command().render;
   const App = (
     <ErrorBoundary>
-      <OclifContext.Provider value={{ flags, args }}>
+      <OclifContext.Provider value={{ flags, args } as Parser.Output<any, any>}>
         <ConfigContext.Provider value={config}>
           <MockedProvider addTypename={false} mocks={mocks}>
             <Component />

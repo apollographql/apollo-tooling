@@ -20,7 +20,7 @@ import {
   HttpLink,
   NormalizedCacheObject
 } from "@apollo/client";
-import { any } from "prop-types";
+// import { any } from "prop-types";
 const { version, referenceID } = require("../package.json");
 
 const headersArrayToObject = (
@@ -105,7 +105,7 @@ export default class ApolloCommand extends Command {
    * 1. using command flags, determine what kind of project this is,
    *    where to get the config, and then load the config from file or defaults
    */
-  async loadConfigFromFlags(flags, service) {
+  async loadConfigFromFlags(flags: Record<string, any>, service: string) {
     const config = await loadConfig({
       configPath: flags.config && parse(resolve(flags.config)).dir,
       configFileName: flags.config,
@@ -170,17 +170,14 @@ export default class ApolloCommand extends Command {
   }
 
   async run() {
-    const App = props => {
+    const App = (props: { children?: React.Component }) => {
       const children = props.children;
       if (!children) return null;
 
-      const [command, setCommandReady]: [
-        CommandState | void,
-        (CommandState) => void
-      ] = useState();
+      const [command, setCommandReady] = useState<CommandState | void>();
 
       // this useEffect hook loads the config and sets the
-      // state.command to { client: ApolloClient, config: ApolloConfig, oclif: Oclif }
+      // state.command to { client: ApolloClient, config: ApolloConfig, oclif: Parser.Output }
       // rendering waits until this effect sets the command state.
       useEffect(() => {
         const oclif = this.parse(ApolloCommand);
