@@ -21,7 +21,7 @@
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Fix client localSchemaFile for vscode stats command [#1634](https://github.com/apollographql/apollo-tooling/pull/1634)
 
 ## `apollo@2.21.1`
 
