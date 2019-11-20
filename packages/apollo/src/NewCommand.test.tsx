@@ -1,23 +1,20 @@
 import React from "react";
 import { Config } from "@oclif/config";
 import ApolloCommand, { useOclif, useConfig } from "./NewCommand";
+import { render } from "ink";
 
 describe("useConfig", () => {
   it("should load config with hook", async done => {
-    // const command = new ApolloCommand());
-    class Test extends ApolloCommand {
+    class Tester extends ApolloCommand {
       render() {
-        console.log("RENDER");
         const config = useConfig();
         if (config) done();
         return null;
       }
     }
-    const testCommand = new Test([], new Config({ root: "/" }));
-    console.log(JSON.stringify(testCommand.init));
-    await testCommand.init();
-    await testCommand.run();
+    await Tester.run([]);
   });
+
   it("should fail if config fails to load", () => {});
 });
 

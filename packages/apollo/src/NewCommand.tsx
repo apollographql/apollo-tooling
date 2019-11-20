@@ -105,7 +105,7 @@ export default class ApolloCommand extends Command {
    * 1. using command flags, determine what kind of project this is,
    *    where to get the config, and then load the config from file or defaults
    */
-  async loadConfigFromFlags(flags: Record<string, any>, service: string) {
+  async loadConfigFromFlags(flags: Record<string, any>, service?: string) {
     const config = await loadConfig({
       configPath: flags.config && parse(resolve(flags.config)).dir,
       configFileName: flags.config,
@@ -170,7 +170,7 @@ export default class ApolloCommand extends Command {
   }
 
   async run() {
-    const App = (props: { children?: React.Component }) => {
+    const App = (props: { children?: any }) => {
       const children = props.children;
       if (!children) return null;
 
@@ -206,9 +206,7 @@ export default class ApolloCommand extends Command {
               oclif
             });
           })
-          .catch(e => {
-            /// XXX what do we do with this error
-          });
+          .catch(e => console.error(e));
       });
 
       if (!command) {
@@ -224,9 +222,12 @@ export default class ApolloCommand extends Command {
       );
     };
 
+    const Comp = this.render;
     const { waitUntilExit } = renderInk(
       <ErrorBoundary>
-        <App />
+        <App>
+          <Comp />
+        </App>
       </ErrorBoundary>,
       {
         debug: process.env.DEBUG === "true"
