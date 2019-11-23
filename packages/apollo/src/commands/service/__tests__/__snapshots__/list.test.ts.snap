@@ -3,8 +3,8 @@
 exports[`service:list integration should display non federated message for a non federated service vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
-Fetching list of services for graph engine [started]
-Fetching list of services for graph engine [completed]
+Fetching list of services for graph engine@master [started]
+Fetching list of services for graph engine@master [completed]
 
 There are no services on this federated graph
 "
@@ -13,8 +13,8 @@ There are no services on this federated graph
 exports[`service:list integration should list services correctly for a federated service vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
-Fetching list of services for graph engine [started]
-Fetching list of services for graph engine [completed]
+Fetching list of services for graph engine@master [started]
+Fetching list of services for graph engine@master [completed]
 ╔═══════════╤═══════════════════════════════╤═══════════════════════════╗
 ║ Name      │ URL                           │ Last Updated              ║
 ╟───────────┼───────────────────────────────┼───────────────────────────╢
@@ -28,7 +28,7 @@ Fetching list of services for graph engine [completed]
 ╚═══════════╧═══════════════════════════════╧═══════════════════════════╝
 
 
-
 View full details at: https://engine-staging.apollographql.com/graph/engine/service-list
+
 "
 `;

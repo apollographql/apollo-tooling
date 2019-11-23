@@ -165,6 +165,7 @@ export interface CheckPartialSchemaVariables {
   partialSchema: PartialSchemaInput;
   gitContext?: GitContextInput | null;
   historicParameters?: HistoricQueryParameters | null;
+  frontend?: string | null;
 }
 
 /* tslint:disable */
@@ -270,6 +271,15 @@ export interface CheckSchema_service_checkSchema {
 
 export interface CheckSchema_service {
   __typename: "ServiceMutation";
+  /**
+   * Checks a proposed schema against the schema that has been published to
+   * a particular tag, using metrics that have been published to the base tag.
+   * Callers can set the historicParameters directly, which will be used if
+   * provided. If useMaximumRetention is provided, but historicParameters is not,
+   * then validation will use the maximum retention the graph has access to.
+   * If neither historicParameters nor useMaximumRetention is provided, the
+   * default time range of one week (7 days) will be used.
+   */
   checkSchema: CheckSchema_service_checkSchema;
 }
 
@@ -967,7 +977,7 @@ export interface GetSchemaByTag_service_Service_schema___schema_types_enumValues
   name: string;
   description: string | null;
   isDeprecated: boolean;
-  depreactionReason: string | null;
+  deprecationReason: string | null;
 }
 
 export interface GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
@@ -1400,7 +1410,7 @@ export interface IntrospectionFullType_enumValues {
   name: string;
   description: string | null;
   isDeprecated: boolean;
-  depreactionReason: string | null;
+  deprecationReason: string | null;
 }
 
 export interface IntrospectionFullType_possibleTypes_ofType_ofType_ofType_ofType_ofType_ofType_ofType {

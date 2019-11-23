@@ -1,6 +1,6 @@
 {
   "name": "apollo-env",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "author": "opensource@apollographql.com",
   "license": "MIT",
   "repository": {
@@ -11,11 +11,6 @@
   "bugs": "https://github.com/apollographql/apollo-tooling/issues",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "scripts": {
-    "clean": "npx rimraf lib",
-    "prebuild": "npm run clean",
-    "build": "tsc --project ./src/fetch && node clone-types.js && cd src && tsc"
-  },
   "engines": {
     "node": ">=8"
   },

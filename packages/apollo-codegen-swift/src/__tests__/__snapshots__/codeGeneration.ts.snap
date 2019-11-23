@@ -1185,6 +1185,139 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 }"
 `;
 
+exports[`Swift code generation #structDeclarationForSelectionSet() should escape init specially in a struct declaration initializer for a selection set 1`] = `
+"public struct Human: GraphQLSelectionSet {
+  public static let possibleTypes = [\\"Human\\"]
+
+  public static let selections: [GraphQLSelection] = [
+    GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
+  ]
+
+  public private(set) var resultMap: ResultMap
+
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  public init(\`self\` _self: [\`Self\`?]? = nil) {
+    self.init(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"self\\": _self.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
+  }
+
+  /// This human's friends, or an empty list if they have none
+  public var \`self\`: [\`Self\`?]? {
+    get {
+      return (resultMap[\\"self\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [\`Self\`?] in value.map { (value: ResultMap?) -> \`Self\`? in value.flatMap { (value: ResultMap) -> \`Self\` in \`Self\`(unsafeResultMap: value) } } }
+    }
+    set {
+      resultMap.updateValue(newValue.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }, forKey: \\"self\\")
+    }
+  }
+
+  public struct \`Self\`: GraphQLSelectionSet {
+    public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+    public static let selections: [GraphQLSelection] = [
+      GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
+    ]
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public static func makeHuman(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"id\\": id])
+    }
+
+    public static func makeDroid(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"id\\": id])
+    }
+
+    /// The ID of the character
+    public var id: GraphQLID {
+      get {
+        return resultMap[\\"id\\"]! as! GraphQLID
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"id\\")
+      }
+    }
+  }
+}
+
+public struct Human: GraphQLSelectionSet {
+  public static let possibleTypes = [\\"Human\\"]
+
+  public static let selections: [GraphQLSelection] = [
+    GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
+    GraphQLField(\\"name\\", alias: \\"_self\\", type: .nonNull(.scalar(String.self))),
+  ]
+
+  public private(set) var resultMap: ResultMap
+
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  public init(\`self\` _self_: [\`Self\`?]? = nil, _self: String) {
+    self.init(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"self\\": _self_.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }, \\"_self\\": _self])
+  }
+
+  /// This human's friends, or an empty list if they have none
+  public var \`self\`: [\`Self\`?]? {
+    get {
+      return (resultMap[\\"self\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [\`Self\`?] in value.map { (value: ResultMap?) -> \`Self\`? in value.flatMap { (value: ResultMap) -> \`Self\` in \`Self\`(unsafeResultMap: value) } } }
+    }
+    set {
+      resultMap.updateValue(newValue.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }, forKey: \\"self\\")
+    }
+  }
+
+  /// What this human calls themselves
+  public var _self: String {
+    get {
+      return resultMap[\\"_self\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"_self\\")
+    }
+  }
+
+  public struct \`Self\`: GraphQLSelectionSet {
+    public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+    public static let selections: [GraphQLSelection] = [
+      GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
+    ]
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public static func makeHuman(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"id\\": id])
+    }
+
+    public static func makeDroid(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"id\\": id])
+    }
+
+    /// The ID of the character
+    public var id: GraphQLID {
+      get {
+        return resultMap[\\"id\\"]! as! GraphQLID
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"id\\")
+      }
+    }
+  }
+}"
+`;
+
 exports[`Swift code generation #structDeclarationForSelectionSet() should escape reserved keywords in a struct declaration for a selection set 1`] = `
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
@@ -1200,12 +1333,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
     self.resultMap = unsafeResultMap
   }
 
-  public static func makeHuman(\`private\`: String, \`self\`: [\`Self\`?]? = nil) -> Hero {
-    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"private\\": \`private\`, \\"self\\": \`self\`.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
+  public static func makeHuman(\`private\`: String, \`self\` _self: [\`Self\`?]? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"private\\": \`private\`, \\"self\\": _self.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
   }
 
-  public static func makeDroid(\`private\`: String, \`self\`: [\`Self\`?]? = nil) -> Hero {
-    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"private\\": \`private\`, \\"self\\": \`self\`.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
+  public static func makeDroid(\`private\`: String, \`self\` _self: [\`Self\`?]? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"private\\": \`private\`, \\"self\\": _self.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
   }
 
   /// The name of the character
@@ -1786,6 +1919,51 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 }"
 `;
 
+exports[`Swift code generation #structDeclarationForSelectionSet() should preserve leading and trailing underscores on fields 1`] = `
+"public struct Hero: GraphQLSelectionSet {
+  public static let possibleTypes = [\\"Human\\", \\"Droid\\"]
+
+  public static let selections: [GraphQLSelection] = [
+    GraphQLField(\\"name\\", alias: \\"_name\\", type: .nonNull(.scalar(String.self))),
+    GraphQLField(\\"id\\", alias: \\"_camel_case_id__\\", type: .nonNull(.scalar(GraphQLID.self))),
+  ]
+
+  public private(set) var resultMap: ResultMap
+
+  public init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  public static func makeHuman(_name: String, _camelCaseId__: GraphQLID) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"_name\\": _name, \\"_camel_case_id__\\": _camelCaseId__])
+  }
+
+  public static func makeDroid(_name: String, _camelCaseId__: GraphQLID) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"_name\\": _name, \\"_camel_case_id__\\": _camelCaseId__])
+  }
+
+  /// The name of the character
+  public var _name: String {
+    get {
+      return resultMap[\\"_name\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"_name\\")
+    }
+  }
+
+  /// The ID of the character
+  public var _camelCaseId__: GraphQLID {
+    get {
+      return resultMap[\\"_camel_case_id__\\"]! as! GraphQLID
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"_camel_case_id__\\")
+    }
+  }
+}"
+`;
+
 exports[`Swift code generation #typeDeclarationForGraphQLType() should escape identifiers in cases of enum declaration for a GraphQLEnumType 1`] = `
 "public enum AlbumPrivacies: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
   public typealias RawValue = String
@@ -1915,6 +2093,103 @@ public enum Episode: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo
       .newhope,
       .empire,
       .jedi,
+    ]
+  }
+}"
+`;
+
+exports[`Swift code generation #typeDeclarationForGraphQLType() should include deprecated cases in an enum declaration for a GraphQLEnumType 1`] = `
+"/// Units of height
+public enum LengthUnit: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+  public typealias RawValue = String
+  /// The standard unit around the world
+  case meter
+  /// Primarily used in the United States
+  case foot
+  /// Ancient unit used during the Middle Ages
+  @available(*, deprecated, message: \\"Test deprecated enum case\\")
+  case cubit
+  /// Auto generated constant for unknown enum values
+  case __unknown(RawValue)
+
+  public init?(rawValue: RawValue) {
+    switch rawValue {
+      case \\"METER\\": self = .meter
+      case \\"FOOT\\": self = .foot
+      case \\"CUBIT\\": self = .cubit
+      default: self = .__unknown(rawValue)
+    }
+  }
+
+  public var rawValue: RawValue {
+    switch self {
+      case .meter: return \\"METER\\"
+      case .foot: return \\"FOOT\\"
+      case .cubit: return \\"CUBIT\\"
+      case .__unknown(let value): return value
+    }
+  }
+
+  public static func == (lhs: LengthUnit, rhs: LengthUnit) -> Bool {
+    switch (lhs, rhs) {
+      case (.meter, .meter): return true
+      case (.foot, .foot): return true
+      case (.cubit, .cubit): return true
+      case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
+      default: return false
+    }
+  }
+
+  public static var allCases: [LengthUnit] {
+    return [
+      .meter,
+      .foot,
+      .cubit,
+    ]
+  }
+}"
+`;
+
+exports[`Swift code generation #typeDeclarationForGraphQLType() should omit deprecated cases from an enum declaration for a GraphQLEnumType 1`] = `
+"/// Units of height
+public enum LengthUnit: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+  public typealias RawValue = String
+  /// The standard unit around the world
+  case meter
+  /// Primarily used in the United States
+  case foot
+  /// Auto generated constant for unknown enum values
+  case __unknown(RawValue)
+
+  public init?(rawValue: RawValue) {
+    switch rawValue {
+      case \\"METER\\": self = .meter
+      case \\"FOOT\\": self = .foot
+      default: self = .__unknown(rawValue)
+    }
+  }
+
+  public var rawValue: RawValue {
+    switch self {
+      case .meter: return \\"METER\\"
+      case .foot: return \\"FOOT\\"
+      case .__unknown(let value): return value
+    }
+  }
+
+  public static func == (lhs: LengthUnit, rhs: LengthUnit) -> Bool {
+    switch (lhs, rhs) {
+      case (.meter, .meter): return true
+      case (.foot, .foot): return true
+      case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
+      default: return false
+    }
+  }
+
+  public static var allCases: [LengthUnit] {
+    return [
+      .meter,
+      .foot,
     ]
   }
 }"

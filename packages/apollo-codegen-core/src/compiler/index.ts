@@ -47,6 +47,7 @@ export interface CompilerOptions {
   tsFileExtension?: string;
   useReadOnlyTypes?: boolean;
   suppressSwiftMultilineStringLiterals?: boolean;
+  omitDeprecatedEnumCases?: boolean;
 }
 
 export interface CompilerContext {

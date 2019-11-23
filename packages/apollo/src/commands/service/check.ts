@@ -210,7 +210,7 @@ export function formatHumanReadable({
       change => change.severity !== ChangeSeverity.FAILURE
     );
 
-    return table([
+    result += table([
       ["Change", "Code", "Description"],
       ...[
         ...breakingChanges.map(formatChange).map(Object.values),
@@ -259,7 +259,7 @@ export default class ServiceCheck extends ProjectCommand {
     }),
     localSchemaFile: flags.string({
       description:
-        "Path to your local GraphQL schema file (introspection result or SDL)"
+        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
     }),
     markdown: flags.boolean({
       description: "Output result in markdown.",
@@ -321,9 +321,9 @@ export default class ServiceCheck extends ProjectCommand {
           return [
             {
               enabled: () => !!serviceName,
-              title: `Validate graph composition for service ${chalk.blue(
+              title: `Validate graph composition for service ${chalk.cyan(
                 serviceName || ""
-              )} on graph ${chalk.blue(graphName)}`,
+              )} on graph ${chalk.cyan(graphName)}`,
               task: async (ctx: TasksOutput, task) => {
                 if (!serviceName) {
                   throw new Error(
@@ -337,7 +337,7 @@ export default class ServiceCheck extends ProjectCommand {
                   throw new Error("No SDL found for federated service");
                 }
 
-                task.output = `Attempting to compose graph with ${chalk.blue(
+                task.output = `Attempting to compose graph with ${chalk.cyan(
                   serviceName
                 )} service's partial schema`;
 
@@ -358,13 +358,15 @@ export default class ServiceCheck extends ProjectCommand {
                   partialSchema: {
                     sdl
                   },
+                  frontend: flags.frontend || config.engine.frontend,
+                  ...(historicParameters && { historicParameters }),
                   gitContext: await gitInfo(this.log)
                 });
 
                 task.title = `Found ${pluralize(
                   compositionValidationResult.errors.length,
                   "graph composition error"
-                )} for service ${chalk.blue(serviceName)} on graph ${chalk.blue(
+                )} for service ${chalk.cyan(serviceName)} on graph ${chalk.cyan(
                   graphName
                 )}`;
 
@@ -415,7 +417,7 @@ export default class ServiceCheck extends ProjectCommand {
             {
               title: `Validating ${
                 serviceName ? "composed " : ""
-              }schema against tag ${chalk.blue(tag)} on graph ${chalk.blue(
+              }schema against tag ${chalk.cyan(tag)} on graph ${chalk.cyan(
                 graphName
               )}`,
               // We have already performed validation per operation above if the service is federated
@@ -504,14 +506,14 @@ export default class ServiceCheck extends ProjectCommand {
                   : null;
 
                 task.title = `Compared ${pluralize(
-                  chalk.blue(schemaChanges.length.toString()),
+                  chalk.cyan(schemaChanges.length.toString()),
                   "schema change"
                 )} against ${pluralize(
-                  chalk.blue(numberOfCheckedOperations.toString()),
+                  chalk.cyan(numberOfCheckedOperations.toString()),
                   "operation"
                 )}${
                   hours
-                    ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
+                    ? ` over the last ${chalk.cyan(formatTimePeriod(hours))}`
                     : ""
                 }`;
               }
@@ -527,10 +529,10 @@ export default class ServiceCheck extends ProjectCommand {
                   breakingSchemaChangeCount;
 
                 task.title = `Found ${pluralize(
-                  chalk.blue(breakingSchemaChangeCount.toString()),
+                  chalk.cyan(breakingSchemaChangeCount.toString()),
                   "breaking change"
                 )} and ${pluralize(
-                  chalk.blue(nonBreakingSchemaChangeCount.toString()),
+                  chalk.cyan(nonBreakingSchemaChangeCount.toString()),
                   "compatible change"
                 )}`;
 

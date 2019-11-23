@@ -835,6 +835,12 @@
               "description": "Primarily used in the United States",
               "isDeprecated": false,
               "deprecationReason": null
+            },
+            {
+              "name": "CUBIT",
+              "description": "Ancient unit used during the Middle Ages",
+              "isDeprecated": true,
+              "deprecationReason": "Test deprecated enum case"
             }
           ],
           "possibleTypes": null

@@ -6,5 +6,9 @@
   },
   "include": ["./src/**/*"],
   "exclude": ["**/__tests__/*", "**/__mocks__/*"],
-  "references": [{ "path": "../apollo-tools" }, { "path": "../apollo-graphql" }]
+  "references": [
+    { "path": "../apollo-env" },
+    { "path": "../apollo-tools" },
+    { "path": "../apollo-graphql" }
+  ]
 }

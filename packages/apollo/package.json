@@ -1,7 +1,7 @@
 {
   "name": "apollo",
   "description": "Command line tool for Apollo GraphQL",
-  "version": "2.19.0",
+  "version": "2.21.1",
   "referenceID": "21ad0845-c235-422e-be7d-a998310df972",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -53,7 +53,7 @@
     "gaze": "1.1.3",
     "git-parse": "1.0.3",
     "git-rev-sync": "1.12.0",
-    "glob": "7.1.4",
+    "glob": "7.1.5",
     "graphql": "14.0.2 - 14.2.0 || ^14.3.1",
     "graphql-tag": "2.10.1",
     "listr": "0.14.3",
@@ -66,7 +66,7 @@
     "vscode-uri": "1.0.6"
   },
   "devDependencies": {
-    "typescript": "3.6.3"
+    "typescript": "3.6.4"
   },
   "oclif": {
     "commands": "./lib/commands",
@@ -78,33 +78,5 @@
       "@oclif/plugin-warn-if-update-available"
     ],
     "repositoryPrefix": "<%- repo %>/blob/master/packages/apollo/<%- commandPath %>"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "transformIgnorePatterns": [
-      "/node_modules/",
-      "/apollo-env/"
-    ],
-    "testMatch": null,
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "testPathIgnorePatterns": [
-      "node_modules",
-      "lib"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ],
-    "testEnvironment": "node",
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "<rootDir>/tsconfig.test.json",
-        "diagnostics": false
-      }
-    }
   }
 }

@@ -15,13 +15,15 @@ Apollo CLI brings together your GraphQL clients and servers with tools for valid
 
 # Usage
 
+**Disclaimer**: The following API documentation is only for the latest version released on NPM, and may not be accurate for previous or future versions.
+
 <!-- usage -->
 ```sh-session
 $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.19.0 darwin-x64 node-v8.11.1
+apollo/2.21.1 darwin-x64 node-v10.15.3
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -131,8 +133,8 @@ OPTIONS
 
   --globalTypesFile=globalTypesFile          By default, TypeScript will put a file named "globalTypes.ts" inside the
                                              "output" directory. Set "globalTypesFile" to specify a different path.
-                                             Alternatively, set "fileExtension" to modify the extension of the file, for
-                                             example "d.ts" will output "globalTypes.d.ts"
+                                             Alternatively, set "tsFileExtension" to modify the extension of the file,
+                                             for example "d.ts" will output "globalTypes.d.ts"
 
   --header=header                            Additional header to send to server for introspectionQuery. May be used
                                              multiple times to add multiple headers. NOTE: The `--endpoint` flag is
@@ -143,11 +145,15 @@ OPTIONS
 
   --key=key                                  The API key for the Apollo Engine service
 
-  --localSchemaFile=localSchemaFile          Path to your local GraphQL schema file (introspection result or SDL)
+  --localSchemaFile=localSchemaFile          Path to one or more local GraphQL schema file(s), as introspection result
+                                             or SDL. Supports comma-separated list of paths (ex.
+                                             `--localSchemaFile=schema.graphql,extensions.graphql`)
 
   --mergeInFieldsFromFragmentSpreads         Merge fragment fields onto its enclosing type
 
   --namespace=namespace                      The namespace to emit generated code into.
+
+  --omitDeprecatedEnumCases                  Omit deprecated enum cases from generated code [Swift only]
 
   --only=only                                Parse all input files, but only output generated code for the specified
                                              file [Swift only]
@@ -193,14 +199,15 @@ _See code: [src/commands/client/codegen.ts](https://github.com/apollographql/apo
 
 ## `apollo client:download-schema OUTPUT`
 
-Download a schema from engine or a GraphQL endpoint.
+Download a schema from engine or a GraphQL endpoint in JSON or SDL format
 
 ```
 USAGE
   $ apollo client:download-schema OUTPUT
 
 ARGUMENTS
-  OUTPUT  [default: schema.json] Path to write the introspection result to
+  OUTPUT  [default: schema.json] Path to write the introspection result to. Can be `.graphql`, `.gql`, `.graphqls`, or
+          `.json`
 
 OPTIONS
   -c, --config=config                    Path to your Apollo config file
@@ -474,8 +481,10 @@ OPTIONS
 
   --key=key                                                      The API key for the Apollo Engine service
 
-  --localSchemaFile=localSchemaFile                              Path to your local GraphQL schema file (introspection
-                                                                 result or SDL)
+  --localSchemaFile=localSchemaFile                              Path to one or more local GraphQL schema file(s), as
+                                                                 introspection result or SDL. Supports comma-separated
+                                                                 list of paths (ex.
+                                                                 `--localSchemaFile=schema.graphql,extensions.graphql`)
 
   --markdown                                                     Output result in markdown.
 
@@ -593,7 +602,9 @@ OPTIONS
 
   --key=key                          The API key for the Apollo Engine service
 
-  --localSchemaFile=localSchemaFile  Path to your local GraphQL schema file (introspection result or SDL)
+  --localSchemaFile=localSchemaFile  Path to one or more local GraphQL schema file(s), as introspection result or SDL.
+                                     Supports comma-separated list of paths (ex.
+                                     `--localSchemaFile=schema.graphql,extensions.graphql`)
 
   --serviceName=serviceName          Provides the name of the implementing service for a federated graph
 
@@ -773,7 +784,7 @@ To simplify the development process, you may want to step through and debug comm
 node --inspect-brk=9002 packages/apollo/bin/run <command>
 ```
 
-If you're using VS Code, you can run the included "Attach to CLI Debugger" launch task and debug right from VS Code! Otherwise, you may use the (Chrome inspector)[https://nodejs.org/en/docs/guides/debugging-getting-started/] or other Node debugger of your choice.
+If you're using VS Code, you can run the included "Attach to CLI Debugger" launch task and debug right from VS Code! Otherwise, you may use the Chrome inspector or [other Node debugger](https://nodejs.org/en/docs/guides/debugging-getting-started/) of your choice.
 
 ## Regenerating Mocked Network Data
 

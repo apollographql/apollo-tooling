@@ -178,7 +178,7 @@ export class GraphQLClientProject extends GraphQLProject {
         total: totalTypes
       },
       tag: this.config.tag,
-      loaded: Boolean(this.serviceID && (this.schema || this.serviceSchema)),
+      loaded: Boolean(this.schema || this.serviceSchema),
       lastFetch: this.lastLoadDate
     };
   }

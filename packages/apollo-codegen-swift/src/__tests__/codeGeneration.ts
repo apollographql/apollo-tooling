@@ -1,4 +1,5 @@
 import {
+  buildSchema,
   parse,
   GraphQLNonNull,
   GraphQLString,
@@ -31,7 +32,10 @@ describe("Swift code generation", () => {
 
   function compile(
     source: string,
-    options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }
+    options: CompilerOptions = {
+      mergeInFieldsFromFragmentSpreads: true,
+      omitDeprecatedEnumCases: false
+    }
   ): CompilerContext {
     const document = parse(source);
     const context = compileToIR(schema, document, options);
@@ -187,7 +191,11 @@ describe("Swift code generation", () => {
           name
         }
       `,
-        { generateOperationIds: true, mergeInFieldsFromFragmentSpreads: true }
+        {
+          generateOperationIds: true,
+          mergeInFieldsFromFragmentSpreads: true,
+          omitDeprecatedEnumCases: false
+        }
       );
 
       generator.classDeclarationForOperation(operations["Hero"], false, false);
@@ -455,6 +463,30 @@ describe("Swift code generation", () => {
       expect(generator.output).toMatchSnapshot();
     });
 
+    it(`should preserve leading and trailing underscores on fields`, () => {
+      const { operations } = compile(`
+        query Hero {
+          hero {
+            _name: name
+            _camel_case_id__: id
+          }
+        }
+      `);
+
+      const selectionSet = (operations["Hero"].selectionSet
+        .selections[0] as Field).selectionSet as SelectionSet;
+
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Hero",
+          selectionSet
+        },
+        false
+      );
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
     it(`should escape reserved keywords in a struct declaration for a selection set`, () => {
       const { operations } = compile(`
         query Hero {
@@ -474,6 +506,46 @@ describe("Swift code generation", () => {
         {
           structName: "Hero",
           selectionSet
+        },
+        false
+      );
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
+    it(`should escape init specially in a struct declaration initializer for a selection set`, () => {
+      const { operations } = compile(`
+        query Humans {
+          human(id: 0) {
+            self: friends {
+              id
+            }
+          }
+          human(id: 1) {
+            self: friends {
+              id
+            }
+            _self: name
+          }
+        }
+      `);
+
+      const human0 = (operations["Humans"].selectionSet.selections[0] as Field)
+        .selectionSet as SelectionSet;
+      const human1 = (operations["Humans"].selectionSet.selections[1] as Field)
+        .selectionSet as SelectionSet;
+
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Human",
+          selectionSet: human0
+        },
+        false
+      );
+      generator.structDeclarationForSelectionSet(
+        {
+          structName: "Human",
+          selectionSet: human1
         },
         false
       );
@@ -660,6 +732,49 @@ describe("Swift code generation", () => {
       expect(generator.output).toMatchSnapshot();
     });
 
+    it("should omit deprecated cases from an enum declaration for a GraphQLEnumType", () => {
+      const { operations } = compile(
+        `
+          query Starship {
+            starship(id: 1) {
+              length(unit: METER)
+            }
+          }
+        `,
+        {
+          generateOperationIds: true,
+          mergeInFieldsFromFragmentSpreads: true,
+          omitDeprecatedEnumCases: true
+        }
+      );
+
+      let starship = operations["Starship"].selectionSet.selections[0] as Field;
+      let starshipLength = starship.selectionSet.selections[0] as Field;
+      let lengthUnitArg = starshipLength.args[0].type;
+
+      generator.typeDeclarationForGraphQLType(lengthUnitArg, false);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
+    it("should include deprecated cases in an enum declaration for a GraphQLEnumType", () => {
+      const { operations } = compile(`
+          query Starship {
+            starship(id: 1) {
+              length(unit: METER)
+            }
+          }
+        `);
+
+      let starship = operations["Starship"].selectionSet.selections[0] as Field;
+      let starshipLength = starship.selectionSet.selections[0] as Field;
+      let lengthUnitArg = starshipLength.args[0].type;
+
+      generator.typeDeclarationForGraphQLType(lengthUnitArg, false);
+
+      expect(generator.output).toMatchSnapshot();
+    });
+
     it("should generate a struct declaration for a GraphQLInputObjectType", () => {
       generator.typeDeclarationForGraphQLType(
         schema.getType("ReviewInput"),
@@ -688,6 +803,111 @@ describe("Swift code generation", () => {
 
       expect(dictionaryLiteral).toBe(
         '["episode": "JEDI", "review": ["stars": 2, "commentary": GraphQLVariable("commentary"), "favorite_color": ["red": GraphQLVariable("red"), "blue": 100, "green": 50]]]'
+      );
+    });
+
+    it("should handle empty input objects", () => {
+      // The existing schemas don't contain any input objects with all nullable types.
+      // Extending the schema in a call to `compile` doesn't seem to work.
+      // So instead we'll just build our own.
+      const schema = buildSchema(`
+        schema {
+          query: Query
+        }
+        type Query {
+          foo(input: FooInput!): Int
+        }
+        input FooInput {
+          id: ID
+        }
+      `);
+      const document = parse(`
+        query FieldArgumentsWithEmptyInputObject {
+          foo(input: {}) {
+            id
+          }
+        }
+      `);
+      const context = compileToIR(schema, document);
+      generator.context = context;
+
+      const { operations } = context;
+      const fieldArguments = (operations["FieldArgumentsWithEmptyInputObject"]
+        .selectionSet.selections[0] as Field).args as Argument[];
+      const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(
+        fieldArguments
+      ).source;
+
+      expect(dictionaryLiteral).toBe('["input": [:]]');
+    });
+
+    it("should handle empty input arrays", () => {
+      // As with the previous test, we need to build our own schema.
+      const schema = buildSchema(`
+        schema {
+          query: Query
+        }
+        type Query {
+          foo(input: [Int!]!): Int
+        }
+      `);
+      const document = parse(`
+        query FieldArgumentsWithEmptyInputArray {
+          foo(input: []) {
+            id
+          }
+        }
+      `);
+      const context = compileToIR(schema, document);
+      generator.context = context;
+
+      const { operations } = context;
+      const fieldArguments = (operations["FieldArgumentsWithEmptyInputArray"]
+        .selectionSet.selections[0] as Field).args as Argument[];
+      const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(
+        fieldArguments
+      ).source;
+
+      expect(dictionaryLiteral).toBe('["input": []]');
+    });
+
+    it("should handle input fields of various scalar types including null", () => {
+      // As with the previous test, we need to build our own schema.
+      const schema = buildSchema(`
+        schema {
+          query: Query
+        }
+        type Query {
+          foo(input: FooInput!): Int
+        }
+        input FooInput {
+          id: ID
+          id2: ID
+          name: String
+          age: Int
+          rating: Float
+          bool: Boolean
+        }
+      `);
+      const document = parse(`
+        query FieldArgumentsWithVariousScalars {
+          foo(input: { id: null, id2: "4", name: "Anne", age: 27, rating: 4.7, bool: true }) {
+            id
+          }
+        }
+      `);
+      const context = compileToIR(schema, document);
+      generator.context = context;
+
+      const { operations } = context;
+      const fieldArguments = (operations["FieldArgumentsWithVariousScalars"]
+        .selectionSet.selections[0] as Field).args as Argument[];
+      const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(
+        fieldArguments
+      ).source;
+
+      expect(dictionaryLiteral).toBe(
+        '["input": ["id": nil, "id2": "4", "name": "Anne", "age": 27, "rating": 4.7, "bool": true]]'
       );
     });
   });

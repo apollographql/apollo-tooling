@@ -149,7 +149,7 @@ export default class ClientCheck extends ClientCommand {
   }) => {
     const { name, locationOffset, relativePath } = operation;
     this.log(
-      `${name}: ${chalk.blue(`${relativePath}:${locationOffset.line}`)}\n`
+      `${name}: ${chalk.cyan(`${relativePath}:${locationOffset.line}`)}\n`
     );
 
     const byErrorType = validationResults.reduce(

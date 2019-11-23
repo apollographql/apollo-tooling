@@ -43,7 +43,9 @@ To authenticate with Engine to pull down the schema, create a file next to the `
 
 > It is best practice to create a new API key for each member of the team and name the key so it's easy to find and revoke if needed
 
-After the key is found, add the following line to the `.env` file:
+> If you're working on a project that traces the `.env` file, you can optionally create an untrace `.env.local` file to store your API key
+
+After the key is found, add the following line to the `.env` or `.env.local` file:
 
 ```bash
 ENGINE_API_KEY=<enter copied key here>
@@ -142,7 +144,7 @@ The Apollo GraphQL platform supports publishing multiple versions (tags) of a sc
 
 <h2 id="troubleshooting">Troubleshooting</h2>
 
-The most common errors are configuration errors, like a missing `.env` file or incorrect service information in the `apollo.config.js` file.
+The most common errors are configuration errors, like a missing `.env` file, missing `.env.local` file, or incorrect service information in the `apollo.config.js` file.
 There is more information about configuring an Apollo projects [here](https://www.apollographql.com/docs/references/apollo-config.html).
 
 Other errors may be caused from an old version of a published schema. To reload a schema, open the Command Palette (`cmd + shift + p` on mac), search "Apollo" and choose the "Apollo: Reload Schema" option.

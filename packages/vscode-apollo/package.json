@@ -2,7 +2,7 @@
   "name": "vscode-apollo",
   "displayName": "Apollo GraphQL",
   "description": "Rich editor support for GraphQL client and server development that seamlessly integrates with the Apollo platform",
-  "version": "1.11.0",
+  "version": "1.12.1",
   "referenceID": "87197759-7617-40d0-b32e-46d378e907c7",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -19,7 +19,10 @@
     "postinstall": "npm run update-vscode && npm run create-server-symlink",
     "update-vscode": "node ../../node_modules/vscode/bin/install",
     "create-server-symlink": "npx rimraf node_modules && mkdir node_modules && node create-server-symlink.js",
-    "package-extension": "npx rimraf node_modules && yarn install --force --production --ignore-scripts && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink",
+    "_internal:prepare-extension": "npx rimraf node_modules && yarn install --force --production --ignore-scripts",
+    "_internal:cleanup-extension": "git clean -dfqX -- ./node_modules ./yarn.lock && npm run create-server-symlink",
+    "package-extension": "npm run _internal:prepare-extension && ../../node_modules/vsce/out/vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && npm run _internal:cleanup-extension",
+    "publish-extension": "npm run _internal:prepare-extension && ../../node_modules/vsce/out/vsce publish -p $VS_MARKETPLACE_TOKEN --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo && npm run _internal:cleanup-extension",
     "test": "node ./lib/testRunner/vscode-test-script.js"
   },
   "engines": {

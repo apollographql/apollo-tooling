@@ -108,10 +108,7 @@ export abstract class ProjectCommand extends Command {
     Debug.SetLoggers({
       info: this.log,
       warning: this.warn,
-      error: message => {
-        this.error(message);
-        this.exit(1);
-      }
+      error: console.error
     });
 
     const config = await this.createConfig(flags);

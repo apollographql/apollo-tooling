@@ -1,7 +1,7 @@
 {
   "name": "apollo-codegen-core",
   "description": "Core generator APIs for Apollo Codegen",
-  "version": "0.35.4",
+  "version": "0.35.8",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {
@@ -17,46 +17,13 @@
     "npm": ">=6"
   },
   "dependencies": {
-    "@babel/generator": "7.6.2",
+    "@babel/generator": "7.7.4",
     "@babel/parser": "^7.1.3",
-    "@babel/types": "7.6.1",
+    "@babel/types": "7.7.4",
     "apollo-env": "file:../apollo-env",
     "apollo-language-server": "file:../apollo-language-server",
     "ast-types": "^0.13.0",
     "common-tags": "^1.5.1",
     "recast": "^0.18.0"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "transformIgnorePatterns": [
-      "/node_modules/",
-      "/apollo-env/"
-    ],
-    "testEnvironment": "node",
-    "setupFiles": [
-      "<rootDir>/../apollo-env/lib/index.js"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/test-utils/matchers.ts"
-    ],
-    "testMatch": [
-      "**/__tests__/*.(js|ts)"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/node_modules/",
-      "<rootDir>/lib/",
-      "<rootDir>/test/fixtures/",
-      "<rootDir>/test/test-utils"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "<rootDir>/tsconfig.test.json",
-        "diagnostics": false
-      }
-    }
   }
 }

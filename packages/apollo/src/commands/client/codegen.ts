@@ -5,9 +5,10 @@ import { Kind, DocumentNode } from "graphql";
 import tty from "tty";
 import { Gaze } from "gaze";
 import URI from "vscode-uri";
+import chalk from "chalk";
+import { Debug } from "apollo-language-server";
 
 import { TargetType, default as generate } from "../../generate";
-
 import { ClientCommand } from "../../Command";
 
 const waitForKey = async () => {
@@ -41,7 +42,7 @@ export default class Generate extends ClientCommand {
     }),
     localSchemaFile: flags.string({
       description:
-        "Path to your local GraphQL schema file (introspection result or SDL)"
+        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
     }),
     addTypename: flags.boolean({
       description:
@@ -63,6 +64,9 @@ export default class Generate extends ClientCommand {
     // swift
     namespace: flags.string({
       description: "The namespace to emit generated code into."
+    }),
+    omitDeprecatedEnumCases: flags.boolean({
+      description: "Omit deprecated enum cases from generated code [Swift only]"
     }),
     operationIdsPath: flags.string({
       description:
@@ -100,7 +104,7 @@ export default class Generate extends ClientCommand {
     // typescript
     globalTypesFile: flags.string({
       description:
-        'By default, TypeScript will put a file named "globalTypes.ts" inside the "output" directory. Set "globalTypesFile" to specify a different path. Alternatively, set "fileExtension" to modify the extension of the file, for example "d.ts" will output "globalTypes.d.ts"'
+        'By default, TypeScript will put a file named "globalTypes.ts" inside the "output" directory. Set "globalTypesFile" to specify a different path. Alternatively, set "tsFileExtension" to modify the extension of the file, for example "d.ts" will output "globalTypes.d.ts"'
     }),
     tsFileExtension: flags.string({
       description:
@@ -218,7 +222,8 @@ export default class Generate extends ClientCommand {
                     globalTypesFile: flags.globalTypesFile,
                     tsFileExtension: flags.tsFileExtension,
                     suppressSwiftMultilineStringLiterals:
-                      flags.suppressSwiftMultilineStringLiterals
+                      flags.suppressSwiftMultilineStringLiterals,
+                    omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases
                   }
                 );
               };
@@ -240,8 +245,14 @@ export default class Generate extends ClientCommand {
         if (file.indexOf("__generated__") > -1) return;
         // don't trigger write events on single output file
         if (file.indexOf(output) > -1) return;
+        this.project.fileDidChange(URI.file(file).toString());
         console.log("\nChange detected, generating types...");
-        write();
+        try {
+          const fileCount = write();
+          console.log(`${chalk.green("✔")} Wrote ${fileCount} files`);
+        } catch (e) {
+          Debug.error("Error while generating types: " + e.message);
+        }
       });
       if (tty.isatty((process.stdin as any).fd)) {
         await waitForKey();

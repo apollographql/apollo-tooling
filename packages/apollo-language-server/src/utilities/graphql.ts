@@ -334,17 +334,13 @@ export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
       }
       if (!node.selectionSet) return undefined;
 
-      if (true) {
-        return {
-          ...node,
-          selectionSet: {
-            ...node.selectionSet,
-            selections: [typenameField, ...node.selectionSet.selections]
-          }
-        };
-      } else {
-        return undefined;
-      }
+      return {
+        ...node,
+        selectionSet: {
+          ...node.selectionSet,
+          selections: [typenameField, ...node.selectionSet.selections]
+        }
+      };
     }
   });
 }

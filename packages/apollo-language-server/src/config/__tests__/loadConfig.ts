@@ -21,8 +21,13 @@ const makeNestedDir = dir => {
 };
 
 const deleteFolderRecursive = path => {
-  // don't delete files on azure CI
-  if (process.env.AZURE_HTTP_USER_AGENT) return;
+  // don't delete files on windows -- will get a resource locked error
+  if (
+    require("os")
+      .type()
+      .includes("Windows")
+  )
+    return;
 
   if (fs.existsSync(path)) {
     fs.readdirSync(path).forEach(function(file, index) {
@@ -283,6 +288,35 @@ describe("loadConfig", () => {
       });
 
       expect(config.client.service).toEqual("harambe");
+    });
+
+    it("finds .env.local in config path & parses for key", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: { name: 'hello' } }`,
+        ".env.local": `ENGINE_API_KEY=service:harambe:54378950jn`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.client.service).toEqual("harambe");
+    });
+
+    it("finds .env and .env.local in config path & parses for key, preferring .env.local", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: { name: 'hello' } }`,
+        ".env": `ENGINE_API_KEY=service:hamato:54378950jn`,
+        ".env.local": `ENGINE_API_KEY=service:yoshi:65489061ko`
+      });
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.client.service).toEqual("yoshi");
     });
 
     // this doesn't work right now :)

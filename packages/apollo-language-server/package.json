@@ -1,7 +1,7 @@
 {
   "name": "apollo-language-server",
   "description": "A language server for Apollo GraphQL projects",
-  "version": "1.16.0",
+  "version": "1.17.1",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {
@@ -17,7 +17,7 @@
     "npm": ">=6"
   },
   "dependencies": {
-    "@apollo/federation": "0.10.1",
+    "@apollo/federation": "0.11.2",
     "@apollographql/apollo-tools": "file:../apollo-tools",
     "@apollographql/graphql-language-service-interface": "^2.0.2",
     "@endemolshinegroup/cosmiconfig-typescript-loader": "^1.0.0",
@@ -42,35 +42,5 @@
     "moment": "^2.24.0",
     "vscode-languageserver": "^5.1.0",
     "vscode-uri": "1.0.6"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "transformIgnorePatterns": [
-      "/node_modules/",
-      "/apollo-env/"
-    ],
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/__tests__/*.(js|ts)"
-    ],
-    "setupFiles": [
-      "<rootDir>/../apollo-env/lib/index.js"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/node_modules/",
-      "<rootDir>/lib/",
-      "<rootDir>/test/fixtures/",
-      "<rootDir>/test/test-utils"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "<rootDir>/tsconfig.test.json",
-        "diagnostics": false
-      }
-    }
   }
 }

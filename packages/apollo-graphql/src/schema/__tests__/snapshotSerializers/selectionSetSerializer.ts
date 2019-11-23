@@ -1,5 +1,5 @@
 import { print, SelectionNode, isSelectionNode } from "graphql";
-import { Plugin, Config, Refs, Printer } from "pretty-format";
+import { Plugin } from "pretty-format";
 
 export = (({
   test(value: any) {
@@ -8,14 +8,7 @@ export = (({
     );
   },
 
-  serialize(
-    value: SelectionNode[],
-    config: Config,
-    indentation: string,
-    depth: number,
-    refs: Refs,
-    printer: Printer
-  ): string {
+  serialize(value: SelectionNode[]): string {
     return String(print(value)).replace(",", "\n");
   }
 } as Plugin) as unknown) as jest.SnapshotSerializerPlugin;

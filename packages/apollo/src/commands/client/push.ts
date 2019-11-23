@@ -27,9 +27,9 @@ export default class ClientPush extends ClientCommand {
     let result = "";
     try {
       await this.runTasks(({ flags, project, config }) => {
-        const clientBundleInfo = `${chalk.blue(
+        const clientBundleInfo = `${chalk.cyan(
           (config.client && config.client.name) || flags
-        )}${chalk.blue(
+        )}${chalk.cyan(
           (config.client &&
             config.client.version &&
             `@${config.client.version}`) ||
@@ -51,9 +51,9 @@ export default class ClientPush extends ClientCommand {
             }
           },
           {
-            title: `Checked operations against ${chalk.blue(
-              config.name || ""
-            )}@${chalk.blue(config.tag)}`,
+            title: `Checked operations against ${chalk.cyan(
+              config.name + "@" + config.tag
+            )}`,
             task: async () => {}
           },
           {
@@ -115,7 +115,7 @@ export default class ClientPush extends ClientCommand {
                       operation.signature
                     ];
 
-                    result += `\nError in: ${chalk.blue(file)}\n`;
+                    result += `\nError in: ${chalk.cyan(file)}\n`;
                     result += table(
                       [
                         ["Status", "Operation", "Errors"],
