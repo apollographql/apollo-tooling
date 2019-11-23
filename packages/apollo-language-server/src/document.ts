@@ -201,22 +201,26 @@ function extractGraphQLDocumentsFromReasonStrings(
 
   const documents: GraphQLDocument[] = [];
 
-  const matched = text.match(
-    /(?<=\[%(graphql|relay\.(query|fragment|mutation|subscription))((.*|\n)+?(\{\|)))([\s\S]*?)(?=\|\})/gm
+  const reasonFileFilter = new RegExp(/(\[%(graphql|relay\.))/g);
+
+  if (!reasonFileFilter.test(text)) {
+    return documents;
+  }
+
+  const reasonRegexp = new RegExp(
+    /(?<=\[%(graphql|relay\.\w*)[\s\S]*{\|)[.\s\S]+?(?=\|})/gm
   );
 
-  if (matched) {
-    matched.forEach(content => {
-      const position = document.positionAt(
-        text.indexOf(content) + content.length
-      );
-      const locationOffset: SourceLocation = {
-        line: position.line + 1,
-        column: position.character + 1
-      };
-      const source = new Source(content, document.uri, locationOffset);
-      documents.push(new GraphQLDocument(source));
-    });
+  let result;
+  while ((result = reasonRegexp.exec(text)) !== null) {
+    const contents = result[0];
+    const position = document.positionAt(result.index);
+    const locationOffset: SourceLocation = {
+      line: position.line + 1,
+      column: position.character + 1
+    };
+    const source = new Source(contents, document.uri, locationOffset);
+    documents.push(new GraphQLDocument(source));
   }
 
   if (documents.length < 1) return null;
