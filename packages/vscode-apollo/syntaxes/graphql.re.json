@@ -4,19 +4,15 @@
   "patterns": [
     {
       "contentName": "meta.embedded.block.graphql",
-      "begin": "(\\[%(relay.(query|fragment|mutation|subscription)|graphql)((.|\n)+?(\\{\\|)))",
-      "end": "(\\|\\})",
-      "beginCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.begin.reason"
+      "begin": "(\\[%(graphql|relay\\.([a-zA-Z]*)))s*$",
+      "end": "(?<=])",
+      "patterns": [
+        {
+          "begin": "^\\s*({\\|)$",
+          "end": "^\\s*(\\|})",
+          "patterns": [{ "include": "source.graphql" }]
         }
-      },
-      "endCaptures": {
-        "0": {
-          "name": "punctuation.definition.string.end.reason"
-        }
-      },
-      "patterns": [{ "include": "source.graphql" }]
+      ]
     }
   ],
   "scopeName": "inline.graphql.reason"
