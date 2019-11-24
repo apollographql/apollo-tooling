@@ -17,11 +17,11 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Adds support for ReasonML to the language server [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Adds syntax highlighting for ReasonML [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
 
 ## `apollo@2.21.1`
 
