@@ -154,7 +154,7 @@ export class GraphQLLanguageProvider {
     ) {
       const parentType = typeInfo.parentType;
       const parentFields = {
-        ...(parentType.getFields() as {
+        ...((parentType ? parentType.getFields() : {}) as {
           [label: string]: GraphQLField<any, any>;
         })
       };
