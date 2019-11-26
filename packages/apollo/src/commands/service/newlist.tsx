@@ -37,7 +37,9 @@ export default class ServiceListReact extends ApolloCommand {
   static description =
     "List the services that implement a managed federated graph";
   // TODO: add command-specific flags
-  // static flags =
+  static flags = {
+    ...ApolloCommand.flags
+  };
 
   render() {
     const config = useConfig();

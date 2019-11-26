@@ -20,7 +20,6 @@ import {
   HttpLink,
   NormalizedCacheObject
 } from "@apollo/client";
-// import { any } from "prop-types";
 const { version, referenceID } = require("../package.json");
 
 const headersArrayToObject = (
@@ -32,7 +31,6 @@ const headersArrayToObject = (
     .reduce((pre, next) => ({ ...pre, ...next }), {});
 };
 
-// XXX how to get the flags correctly
 export const OclifContext = React.createContext<Parser.Output<any, any> | null>(
   null
 );
@@ -70,6 +68,17 @@ const defaultFlags = {
   frontend: flags.string({
     description: "URL for a custom Apollo Engine frontend",
     hidden: true
+  }),
+  // TODO: Is this _supposed_ to be on the base class? It's checked, but
+  // was never described here. It _was_ on the service:download command only
+  skipSSLValidation: flags.boolean({
+    char: "k",
+    description: "Allow connections to an SSL site without certs"
+  }),
+  // TODO: same with this flag. SHOULD it be here?
+  localSchemaFile: flags.string({
+    description:
+      "Path to one or more local GraphQL schema file(s) that make up a single schema, as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
   })
 };
 
@@ -102,15 +111,16 @@ export default class ApolloCommand extends Command {
   }
 
   /**
-   * 1. using command flags, determine what kind of project this is,
-   *    where to get the config, and then load the config from file or defaults
+   * 1. determine what kind of project this is.
+   * 2. Using the flags, figure out where to get the config
+   *    and then load the config from file or defaults
    */
   async loadConfigFromFlags(flags: Record<string, any>, service?: string) {
     const config = await loadConfig({
       configPath: flags.config && parse(resolve(flags.config)).dir,
       configFileName: flags.config,
       name: service,
-      type: this.type // how do we set this for client projects?
+      type: this.type
     });
 
     if (!config)
@@ -161,6 +171,7 @@ export default class ApolloCommand extends Command {
     }
 
     // load per command type defaults;
+    // XXX What is this??
     if (this.configMap) {
       const defaults = this.configMap(flags);
       config.setDefaults(defaults);
@@ -180,7 +191,7 @@ export default class ApolloCommand extends Command {
       // state.command to { client: ApolloClient, config: ApolloConfig, oclif: Parser.Output }
       // rendering waits until this effect sets the command state.
       useEffect(() => {
-        const oclif = this.parse(ApolloCommand);
+        const oclif = this.parse(this.constructor as Parser.Input<any>);
         const service = oclif.flags.key
           ? getServiceFromKey(oclif.flags.key)
           : undefined;
@@ -206,8 +217,11 @@ export default class ApolloCommand extends Command {
               oclif
             });
           })
-          .catch(e => console.error(e));
-      });
+          .catch(e => {
+            console.error(e);
+            this.exit(1);
+          });
+      }, []);
 
       if (!command) {
         return null; // XXX return some interstitial loading state (This should be near instant however)

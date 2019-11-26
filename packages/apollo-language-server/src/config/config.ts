@@ -137,6 +137,11 @@ export class ApolloConfig {
   public client?: ClientConfigFormat;
   private _tag?: string;
 
+  /**
+   * FIXME: This raw config value passed to the ApolloConfig
+   * constructor is MUTATED by the constructor. This is bad, and
+   * an unexpected side-effect of the constructor.
+   */
   constructor(public rawConfig: ApolloConfigFormat, public configURI?: URI) {
     this.isService = !!rawConfig.service;
     this.isClient = !!rawConfig.client;
