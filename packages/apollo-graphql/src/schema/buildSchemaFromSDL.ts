@@ -238,7 +238,7 @@ export function addResolversToSchema(
       const newValues: { [key: string]: GraphQLEnumValue } = {};
       values.forEach(value => {
         let newValue = (fieldConfigs as any)[value.name];
-        if (newValue == undefined) {
+        if (newValue === undefined) {
           newValue = value.name;
         }
         newValues[value.name] = {
