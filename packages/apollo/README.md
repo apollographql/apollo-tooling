@@ -622,11 +622,11 @@ _See code: [src/commands/service/push.ts](https://github.com/apollographql/apoll
 
 # Configuration
 
-The Apollo CLI and VS Code extension can be configured with an Apollo config file. Apollo configuration is stored as a plain object in an `apollo.config.js` file which exports the configuration. For more information about configuring an Apollo project, see: https://bit.ly/2ByILPj.
+The Apollo CLI and VS Code extension can be configured with an Apollo config file. Apollo configuration is stored as a plain object in an `apollo.config.js` file which exports the configuration. For more information about configuring an Apollo project, see: https://www.apollographql.com/docs/devtools/apollo-config/.
 
 > Note: the use of the `apollo` key in the project's package.json file for configuration is deprecated, and will no longer be supported in Apollo v3
 
-You'll need to set up your Apollo configuration for all the features of the Apollo CLI and VS Code extension to work correctly. For full details on how to do that, [visit our docs](https://www.apollographql.com/docs/references/apollo-config.html). A basic configuration (`apollo.config.js` style) looks something like this:
+You'll need to set up your Apollo configuration for all the features of the Apollo CLI and VS Code extension to work correctly. For full details on how to do that, [visit our docs](https://www.apollographql.com/docs/devtools/apollo-config/). A basic configuration (`apollo.config.js` style) looks something like this:
 
 ```js
 module.exports = {
