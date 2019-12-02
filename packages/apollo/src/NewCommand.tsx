@@ -2,7 +2,7 @@ import Command, { flags } from "@oclif/command";
 import * as Parser from "@oclif/parser";
 import React, { useEffect, useState, useContext } from "react";
 import { render as renderInk, Color, Box } from "ink";
-import { DeepPartial, fetch } from "apollo-env";
+import { DeepPartial, fetch, WithRequired } from "apollo-env";
 import {
   GraphQLProject,
   loadConfig,
@@ -10,7 +10,9 @@ import {
   getServiceFromKey,
   Debug,
   isClientConfig,
-  isServiceConfig
+  isServiceConfig,
+  GraphQLServiceProject,
+  GraphQLClientProject
 } from "apollo-language-server";
 import { parse, resolve } from "path";
 import {
@@ -20,6 +22,8 @@ import {
   HttpLink,
   NormalizedCacheObject
 } from "@apollo/client";
+import URI from "vscode-uri";
+import { OclifLoadingHandler } from "./OclifLoadingHandler";
 const { version, referenceID } = require("../package.json");
 
 const headersArrayToObject = (
@@ -37,8 +41,33 @@ export const OclifContext = React.createContext<Parser.Output<any, any> | null>(
 export const ConfigContext = React.createContext<ApolloConfig | void>(
   undefined
 );
+export const ProjectContext = React.createContext<GraphQLProject | void>(
+  undefined
+);
 
-const defaultFlags = {
+export interface Flags {
+  config?: string;
+  header?: string[];
+  endpoint?: string;
+  localSchemaFile?: string;
+  key?: string;
+  engine?: string;
+  frontend?: string;
+  tag?: string;
+  skipSSLValidation?: boolean;
+}
+
+export interface ClientCommandFlags extends Flags {
+  includes?: string;
+  queries?: string;
+  excludes?: string;
+  tagName?: string;
+  clientName?: string;
+  clientReferenceId?: string;
+  clientVersion?: string;
+}
+
+export const defaultFlags = {
   config: flags.string({
     char: "c",
     description: "Path to your Apollo config file"
@@ -82,10 +111,46 @@ const defaultFlags = {
   })
 };
 
+// TODO 3.0: get rid of the need for this set of client-only flags at the root.
+// remove the ClientCommand class extension below
+export const clientFlags = {
+  clientReferenceId: flags.string({
+    description:
+      "Reference id for the client which will match ids from client traces, will use clientName if not provided"
+  }),
+  clientName: flags.string({
+    description: "Name of the client that the queries will be attached to"
+  }),
+  clientVersion: flags.string({
+    description:
+      "The version of the client that the queries will be attached to"
+  }),
+  tag: flags.string({
+    char: "t",
+    description: "The published service tag for this client"
+  }),
+  queries: flags.string({
+    description: "Deprecated in favor of the includes flag"
+  }),
+  includes: flags.string({
+    description:
+      "Glob of files to search for GraphQL operations. This should be used to find queries *and* any client schema extensions"
+  }),
+  excludes: flags.string({
+    description:
+      "Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently work in watch mode"
+  }),
+  tagName: flags.string({
+    description:
+      "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code"
+  })
+};
+
 type CommandState = {
   client: ApolloClient<NormalizedCacheObject>;
   config: ApolloConfig;
   oclif: Parser.Output<any, any>;
+  project: GraphQLProject;
 };
 
 export default class ApolloCommand extends Command {
@@ -108,6 +173,44 @@ export default class ApolloCommand extends Command {
 
   render(): React.ReactElement {
     throw new Error("Render not implemented for command");
+  }
+
+  protected createService(config: ApolloConfig, flags: Flags) {
+    const loadingHandler = new OclifLoadingHandler(this);
+
+    // When no config is provided, configURI === process.cwd()
+    // In this case, we don't want to look to the .dir since that's the parent
+    const configPath = config.configURI!.fsPath;
+    const rootURI =
+      configPath === process.cwd()
+        ? URI.file(configPath)
+        : URI.file(parse(configPath).dir);
+
+    const clientIdentity = {
+      name: "Apollo CLI",
+      version,
+      referenceID
+    };
+
+    if (isServiceConfig(config)) {
+      return new GraphQLServiceProject({
+        config,
+        loadingHandler,
+        rootURI,
+        clientIdentity
+      });
+    } else if (isClientConfig(config)) {
+      return new GraphQLClientProject({
+        config,
+        loadingHandler,
+        rootURI,
+        clientIdentity
+      });
+    } else {
+      throw new Error(
+        "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
+      );
+    }
   }
 
   /**
@@ -171,10 +274,13 @@ export default class ApolloCommand extends Command {
     }
 
     // load per command type defaults;
-    // XXX What is this??
+    // it looks like this is so extending commands can
+    // set defaults on the config object at runtime
     if (this.configMap) {
-      const defaults = this.configMap(flags);
-      config.setDefaults(defaults);
+      if (this.type === "client") {
+        const overrides = this.getConfigOverridesForClientCommands(flags);
+        config.setDefaults(overrides);
+      }
     }
 
     return config;
@@ -211,11 +317,14 @@ export default class ApolloCommand extends Command {
               }),
               cache: new InMemoryCache()
             });
+            const project = this.createService(config, oclif.flags);
             setCommandReady({
               client,
               config,
-              oclif
+              oclif,
+              project
             });
+            return config;
           })
           .catch(e => {
             console.error(e);
@@ -230,7 +339,11 @@ export default class ApolloCommand extends Command {
       return (
         <OclifContext.Provider value={command.oclif}>
           <ConfigContext.Provider value={command.config}>
-            <ApolloProvider client={command.client}>{children}</ApolloProvider>
+            <ProjectContext.Provider value={command.project}>
+              <ApolloProvider client={command.client}>
+                {children}
+              </ApolloProvider>
+            </ProjectContext.Provider>
           </ConfigContext.Provider>
         </OclifContext.Provider>
       );
@@ -250,6 +363,37 @@ export default class ApolloCommand extends Command {
 
     await waitUntilExit();
   }
+
+  getConfigOverridesForClientCommands(flags: any) {
+    // TODO: SET CLASS TYPE
+    const config = {
+      client: {
+        name: flags.clientName,
+        referenceID: flags.clientReferenceId,
+        version: flags.clientVersion
+      }
+    } as WithRequired<DeepPartial<ApolloConfig>, "client">;
+    if (flags.endpoint) {
+      config.client.service = {
+        url: flags.endpoint,
+        headers: headersArrayToObject(flags.header)
+      };
+    }
+
+    if (flags.includes || flags.queries) {
+      config.client.includes = [flags.includes || flags.queries];
+    }
+
+    if (flags.excludes) {
+      config.client.excludes = [flags.excludes];
+    }
+
+    if (flags.tagName) {
+      config.client.tagName = flags.tagName;
+    }
+
+    return config;
+  }
 }
 
 /* Hooks */
@@ -262,6 +406,12 @@ export function useOclif<TFlags = any, TArgs = any>() {
 export function useConfig() {
   const output = useContext(ConfigContext);
   if (!output) throw new Error("Could not load config");
+  return output;
+}
+
+export function useProject() {
+  const output = useContext(ProjectContext);
+  if (!output) throw new Error("Could not load project");
   return output;
 }
 
