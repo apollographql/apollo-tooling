@@ -1,22 +1,16 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { Color, Box, Text } from "ink";
-import Spinner from "ink-spinner";
-import Table from "ink-table";
+import React, { useEffect, useState } from "react";
+import { GraphQLClientProject } from "apollo-language-server";
+import { writeFileSync } from "fs";
 
+import { getOperationManifestFromProject } from "../../utils/getOperationManifestFromProject";
 import ApolloCommand, {
   useConfig,
   useOclif,
   useProject,
   clientFlags
 } from "../../NewCommand";
-import { getOperationManifestFromProject } from "../../utils/getOperationManifestFromProject";
-import { GraphQLClientProject } from "apollo-language-server";
-import { writeFileSync } from "fs";
-import { defaultFlags } from "@oclif/parser/lib/flags";
+import { TaskList } from "../../components/";
 
-/**
- * This is an example of a multi-step command
- */
 export default class ClientExtractReact extends ApolloCommand {
   static description = "Extract queries from a client project";
   protected type: "service" | "client" = "client";
@@ -35,25 +29,29 @@ export default class ClientExtractReact extends ApolloCommand {
 
   render() {
     const config = useConfig();
-    const { flags, args } = useOclif();
+    const { args } = useOclif();
     const project = useProject();
 
     const [running, setRunning] = useState([
       "Extracting operations from project"
-    ] as string[]);
-    const [done, setDone] = useState([] as string[]);
+    ] as Array<string | string[]>);
+    const [done, setDone] = useState([] as Array<string | string[]>);
     const [operations, setOperations] = useState();
 
+    // get operations from client project
     useEffect(() => {
-      setOperations(
-        getOperationManifestFromProject(project as GraphQLClientProject)
+      const operations = getOperationManifestFromProject(
+        project as GraphQLClientProject
       );
+      setOperations(operations);
+      if (!operations) throw new Error("Operations could not be fetched");
       setDone(running);
       setRunning(["Outputing extracted queries to: " + args.output]);
     }, []);
 
+    // waits until operations are fetched, writes file, and updates the "done" list
     useEffect(() => {
-      if (!operations || done.length != 1) return;
+      if (!operations) return;
       writeFileSync(
         args.output,
         JSON.stringify({ version: 2, operations }, null, 2)
@@ -61,45 +59,18 @@ export default class ClientExtractReact extends ApolloCommand {
       setDone([
         ...done,
         ...running,
-        `Successfully wrote ${operations.length} operations from the ${
-          config.client!.name
-        } client to ${args.output}`
+        [
+          "Successfully wrote",
+          `%c ${operations.length}`,
+          " operations from the",
+          `%c ${config.client!.name}`,
+          " client to",
+          `%c ${args.output}`
+        ]
       ]);
       setRunning([]);
-    });
+    }, [operations]);
 
-    return <Box>{printTaskTitles({ running, done })}</Box>;
+    return <TaskList running={running} done={done} />;
   }
 }
-
-const printTaskTitles = ({
-  running,
-  done
-}: {
-  running: string[];
-  done: string[];
-}) => {
-  return (
-    <Box flexDirection={"column"} marginLeft={2}>
-      {done.map(title => (
-        <Text key={title}>
-          <Color green>✔</Color> {title}
-        </Text>
-      ))}
-      {running.map(title => (
-        <Box key={title}>
-          <Loader />
-          <Text>{title}</Text>
-        </Box>
-      ))}
-    </Box>
-  );
-};
-
-const Loader = () => (
-  <Box paddingRight={1} marginBottom={1}>
-    <Color green>
-      <Spinner type="dots" />
-    </Color>
-  </Box>
-);

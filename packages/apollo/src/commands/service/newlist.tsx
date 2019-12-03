@@ -1,10 +1,10 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { gql, useQuery } from "@apollo/client";
 import { Color, Box } from "ink";
-import Spinner from "ink-spinner";
 import Table from "ink-table";
 import moment from "moment";
 import { isNotNullOrUndefined } from "apollo-env";
+import { Task } from "../../components";
 
 import ApolloCommand, { useConfig, useOclif } from "../../NewCommand";
 
@@ -56,13 +56,12 @@ export default class ServiceListReact extends ApolloCommand {
 
     if (loading)
       return (
-        <Box>
-          <Loader />
-          <Box>
-            Fetching list of services for graph{" "}
-            <Color cyan>{id + "@" + graphVariant}</Color>
-          </Box>
-        </Box>
+        <Task
+          title={[
+            "Fetching list of services for graph",
+            `%c ${id}@${graphVariant}`
+          ]}
+        />
       );
 
     const implementingServices = data.service.implementingServices;
@@ -81,14 +80,6 @@ export default class ServiceListReact extends ApolloCommand {
     );
   }
 }
-
-const Loader = () => (
-  <Box paddingRight={1}>
-    <Color green>
-      <Spinner type="dots" />
-    </Color>
-  </Box>
-);
 
 const Footer = ({ implementingServices, graphName, frontendUrl }) => {
   let errorMessage = "";
