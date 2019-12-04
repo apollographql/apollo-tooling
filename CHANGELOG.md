@@ -29,6 +29,7 @@
   - Add sdl download ability to `client:download-schema` [#1470](https://github.com/apollographql/apollo-tooling/pull/1470)
   - colors: use cyan instead of blue for text highlighting [#1598](https://github.com/apollographql/apollo-tooling/pull/1598)
   - Fix codegen --watch breaking out of watch mode on validation errors [#1627](https://github.com/apollographql/apollo-tooling/pull/1627)
+  - Minimize autogen files on Phabricator [#1698](https://github.com/apollographql/apollo-tooling/pull/1698)
 - `apollo-env@0.6.0`
   - POTENTIALLY BREAKING: Make `apollo-env` a standard TS package
     [#1611](https://github.com/apollographql/apollo-tooling/pull/1611) This PR likely warrants a pre-major version bump so that it isn't accidentally upgraded to for dependents using the ^ range. If this breaks your project, please don't hesitate to let us know and revert back to v0.5.1. This PR removes the handwritten node-fetch types and instead
