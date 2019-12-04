@@ -20,8 +20,7 @@ const builtInScalarMap = {
   [GraphQLString.name]: t.TSStringKeyword(),
   [GraphQLInt.name]: t.TSNumberKeyword(),
   [GraphQLFloat.name]: t.TSNumberKeyword(),
-  [GraphQLBoolean.name]: t.TSBooleanKeyword(),
-  [GraphQLID.name]: t.TSStringKeyword()
+  [GraphQLBoolean.name]: t.TSBooleanKeyword()
 };
 
 export function createTypeFromGraphQLTypeFunction(
@@ -57,7 +56,7 @@ export function createTypeFromGraphQLTypeFunction(
           )
         );
       } else {
-        return t.TSAnyKeyword();
+        return t.TSStringKeyword();
       }
     } else if (isNonNullType(graphQLType)) {
       // This won't happen; but for TypeScript completeness:
