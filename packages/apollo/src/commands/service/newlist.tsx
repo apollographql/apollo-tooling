@@ -1,6 +1,6 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Color, Box } from "ink";
+import { Color, Box, Text } from "ink";
 import Table from "ink-table";
 import moment from "moment";
 import { isNotNullOrUndefined } from "apollo-env";
@@ -56,12 +56,14 @@ export default class ServiceListReact extends ApolloCommand {
 
     if (loading)
       return (
-        <Task
-          title={[
-            "Fetching list of services for graph",
-            `%c ${id}@${graphVariant}`
-          ]}
-        />
+        <Task status="running">
+          <Text>
+            Fetching list of services for graph{" "}
+            <Color cyan>
+              {id}@{graphVariant}
+            </Color>
+          </Text>
+        </Task>
       );
 
     const implementingServices = data.service.implementingServices;

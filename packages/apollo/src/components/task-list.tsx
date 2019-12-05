@@ -1,39 +1,53 @@
 import React from "react";
 import { Box } from "ink";
 import Task from "./task";
+import { isString } from "util";
 
 /**
  * This task list component takes a list of running and finished tasks
  * and renders them with spinners and checkmarks respectively.
  *
- * Tasks can either be strins or list of strings. Lists of strings will be
- * concatenated together, with segments starting with %c highlighted in cyan
- * for example: <TaskList running={["task 1", ["task", "%c 2"]]} /> would render 2 tasks,
- * the first all white, and the second with the number 2 in cyan instead of white.
+ * tasks can either be strings to print verbatim or components to be rendered
+ * with a spinner or check before them.
+ *
+ * NOTE: Do not manually add checks or spinners to custom tasks, these are automatically
+ * added by the component
  */
 export default ({
   running = [],
   done = []
 }: {
-  running: Array<string | string[]>;
-  done: Array<string | string[]>;
+  running: Array<string | any>;
+  done: Array<string | any>;
 }) => {
   return (
     <Box flexDirection={"column"}>
-      {done.map(title => (
-        <Task
-          key={Array.isArray(title) ? title.join() : title}
-          title={title}
-          status={"done"}
-        />
-      ))}
-      {running.map(title => (
-        <Task
-          key={Array.isArray(title) ? title.join() : title}
-          title={title}
-          status={"running"}
-        />
-      ))}
+      {done.map((titleOrComponent, i) =>
+        isString(titleOrComponent) ? (
+          <Task
+            key={titleOrComponent}
+            title={titleOrComponent}
+            status={"done"}
+          />
+        ) : (
+          <Task status="done" key={i}>
+            {titleOrComponent}
+          </Task>
+        )
+      )}
+      {running.map((titleOrComponent, i) =>
+        isString(titleOrComponent) ? (
+          <Task
+            key={titleOrComponent}
+            title={titleOrComponent}
+            status={"running"}
+          />
+        ) : (
+          <Task status="running" key={i}>
+            {titleOrComponent}
+          </Task>
+        )
+      )}
     </Box>
   );
 };

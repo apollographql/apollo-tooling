@@ -10,6 +10,7 @@ import ApolloCommand, {
   clientFlags
 } from "../../NewCommand";
 import { TaskList } from "../../components/";
+import { Text, Color } from "ink";
 
 export default class ClientExtractReact extends ApolloCommand {
   static description = "Extract queries from a client project";
@@ -34,8 +35,8 @@ export default class ClientExtractReact extends ApolloCommand {
 
     const [running, setRunning] = useState([
       "Extracting operations from project"
-    ] as Array<string | string[]>);
-    const [done, setDone] = useState([] as Array<string | string[]>);
+    ] as Array<string | any>);
+    const [done, setDone] = useState([] as Array<string | any>);
     const [operations, setOperations] = useState();
 
     // get operations from client project
@@ -59,14 +60,19 @@ export default class ClientExtractReact extends ApolloCommand {
       setDone([
         ...done,
         ...running,
-        [
-          "Successfully wrote",
-          `%c ${operations.length}`,
-          " operations from the",
-          `%c ${config.client!.name}`,
-          " client to",
-          `%c ${args.output}`
-        ]
+        // [
+        //   "Successfully wrote",
+        //   `%c ${operations.length}`,
+        //   " operations from the",
+        //   `%c ${config.client!.name}`,
+        //   " client to",
+        //   `%c ${args.output}`
+        // ]
+        <Text>
+          Successfully wrote <Color cyan>{operations.length}</Color> operations
+          from the <Color cyan>{config.client!.name}</Color> client to{" "}
+          <Color cyan>{args.output}</Color>
+        </Text>
       ]);
       setRunning([]);
     }, [operations]);
