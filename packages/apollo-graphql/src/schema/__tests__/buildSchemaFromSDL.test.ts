@@ -503,5 +503,52 @@ type MutationRoot {
       expect(colorEnum.getValue("RED")!.value).toBe("#f00");
       expect(mockResolver).toBeCalledWith(undefined, { borderColor: "#f00" });
     });
+
+    it(`should add resolvers to enum types with 0 value`, () => {
+      const typeDefs = gql`
+        enum CustomerType {
+          EXISTING
+          NEW
+        }
+
+        type Query {
+          existingCustomer: CustomerType
+          newCustomer: CustomerType
+        }
+      `;
+
+      const resolvers = {
+        CustomerType: {
+          EXISTING: 0,
+          NEW: 1
+        },
+        Query: {
+          existingCustomer: () => 0,
+          newCustomer: () => 1
+        }
+      };
+
+      const schema = buildSchemaFromSDL([{ typeDefs, resolvers }]);
+      const customerTypeEnum = schema.getType(
+        "CustomerType"
+      ) as GraphQLEnumType;
+
+      let result = execute(
+        schema,
+        gql`
+          query {
+            existingCustomer
+            newCustomer
+          }
+        `
+      );
+
+      expect((result as ExecutionResult).data!.existingCustomer).toBe(
+        "EXISTING"
+      );
+      expect(customerTypeEnum.getValue("EXISTING")!.value).toBe(0);
+      expect((result as ExecutionResult).data!.newCustomer).toBe("NEW");
+      expect(customerTypeEnum.getValue("NEW")!.value).toBe(1);
+    });
   });
 });
