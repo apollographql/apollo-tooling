@@ -15,7 +15,7 @@ export default ({
   children
 }: {
   title?: string;
-  children?: any;
+  children?: React.ReactNode;
   status?: "running" | "done";
 }) => (
   <Box marginLeft={2}>

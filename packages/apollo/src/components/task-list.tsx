@@ -17,8 +17,8 @@ export default ({
   running = [],
   done = []
 }: {
-  running: Array<string | any>;
-  done: Array<string | any>;
+  running: Array<React.ReactNode>;
+  done: Array<React.ReactNode>;
 }) => {
   return (
     <Box flexDirection={"column"}>

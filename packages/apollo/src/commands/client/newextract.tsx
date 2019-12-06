@@ -35,8 +35,8 @@ export default class ClientExtractReact extends ApolloCommand {
 
     const [running, setRunning] = useState([
       "Extracting operations from project"
-    ] as Array<string | any>);
-    const [done, setDone] = useState([] as Array<string | any>);
+    ] as Array<string | React.ReactNode>);
+    const [done, setDone] = useState([] as Array<string | React.ReactNode>);
     const [operations, setOperations] = useState();
 
     // get operations from client project
@@ -60,14 +60,6 @@ export default class ClientExtractReact extends ApolloCommand {
       setDone([
         ...done,
         ...running,
-        // [
-        //   "Successfully wrote",
-        //   `%c ${operations.length}`,
-        //   " operations from the",
-        //   `%c ${config.client!.name}`,
-        //   " client to",
-        //   `%c ${args.output}`
-        // ]
         <Text>
           Successfully wrote <Color cyan>{operations.length}</Color> operations
           from the <Color cyan>{config.client!.name}</Color> client to{" "}
