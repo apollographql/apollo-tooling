@@ -84,13 +84,13 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
   onSchemaChange(
     _handler: NotificationHandler<GraphQLSchema>
   ): SchemaChangeUnsubscribeHandler {
-    throw new Error("Polling of Engine not implemented yet");
+    throw new Error("Polling of Apollo Graph Manager not implemented yet");
     return () => {};
   }
 
   async resolveFederatedServiceSDL() {
     Debug.error(
-      "Cannot resolve a federated service's SDL from engine. Use an endpoint or a file instead"
+      "Cannot resolve a federated service's SDL from Apollo Graph Manager. Use an endpoint or a file instead"
     );
     return;
   }
