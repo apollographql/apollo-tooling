@@ -1,3 +1,4 @@
+import { flags } from "@oclif/command";
 import { writeFileSync } from "fs";
 import { ClientCommand } from "../../Command";
 import {
@@ -9,7 +10,13 @@ import { ClientIdentity } from "apollo-language-server";
 export default class ClientExtract extends ClientCommand {
   static description = "Extract queries from a client";
   static flags = {
-    ...ClientCommand.flags
+    ...ClientCommand.flags,
+    stripLiterals: flags.boolean({
+      description:
+        "Whether to strip literals from extracted queries. DEFAULT: true",
+      default: true,
+      allowNo: true
+    })
   };
 
   static args = [
@@ -30,7 +37,9 @@ export default class ClientExtract extends ClientCommand {
       {
         title: "Extracting operations from project",
         task: async ctx => {
-          ctx.operations = getOperationManifestFromProject(this.project);
+          ctx.operations = getOperationManifestFromProject(this.project, {
+            stripLiterals: flags.stripLiterals
+          });
           ctx.clientIdentity = config.client;
         }
       },

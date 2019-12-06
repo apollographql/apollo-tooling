@@ -13,14 +13,16 @@ export interface ManifestEntry {
 }
 
 export function getOperationManifestFromProject(
-  project: GraphQLClientProject
+  project: GraphQLClientProject,
+  options: { stripLiterals: boolean } = { stripLiterals: true }
 ): ManifestEntry[] {
   const manifest = Object.entries(
     project.mergedOperationsAndFragmentsForService
   ).map(([operationName, operationAST]) => {
     const printed = defaultOperationRegistrySignature(
       operationAST,
-      operationName
+      operationName,
+      { stripLiterals: options.stripLiterals }
     );
 
     return {
