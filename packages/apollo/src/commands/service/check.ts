@@ -317,9 +317,9 @@ export default class ServiceCheck extends ProjectCommand {
           return [
             {
               enabled: () => !!serviceName,
-              title: `Validate graph composition for service ${chalk.blue(
+              title: `Validate graph composition for service ${chalk.cyan(
                 serviceName || ""
-              )} on graph ${chalk.blue(graphID)}`,
+              )} on graph ${chalk.cyan(graphID)}`,
               task: async (ctx: TasksOutput, task) => {
                 if (!serviceName) {
                   throw new Error(
@@ -333,7 +333,7 @@ export default class ServiceCheck extends ProjectCommand {
                   throw new Error("No SDL found for federated service");
                 }
 
-                task.output = `Attempting to compose graph with ${chalk.blue(
+                task.output = `Attempting to compose graph with ${chalk.cyan(
                   serviceName
                 )} service's partial schema`;
 
@@ -362,7 +362,7 @@ export default class ServiceCheck extends ProjectCommand {
                 task.title = `Found ${pluralize(
                   compositionValidationResult.errors.length,
                   "graph composition error"
-                )} for service ${chalk.blue(serviceName)} on graph ${chalk.blue(
+                )} for service ${chalk.cyan(serviceName)} on graph ${chalk.cyan(
                   graphID!
                 )}`;
 
@@ -413,9 +413,9 @@ export default class ServiceCheck extends ProjectCommand {
             {
               title: `Validating ${
                 serviceName ? "composed " : ""
-              }schema against tag ${chalk.blue(
+              }schema against tag ${chalk.cyan(
                 graphVariant!
-              )} on graph ${chalk.blue(graphID)}`,
+              )} on graph ${chalk.cyan(graphID)}`,
               // We have already performed validation per operation above if the service is federated
               enabled: () => !serviceName,
               task: async (ctx: TasksOutput, task) => {
@@ -502,14 +502,14 @@ export default class ServiceCheck extends ProjectCommand {
                   : null;
 
                 task.title = `Compared ${pluralize(
-                  chalk.blue(schemaChanges.length.toString()),
+                  chalk.cyan(schemaChanges.length.toString()),
                   "schema change"
                 )} against ${pluralize(
-                  chalk.blue(numberOfCheckedOperations.toString()),
+                  chalk.cyan(numberOfCheckedOperations.toString()),
                   "operation"
                 )}${
                   hours
-                    ? ` over the last ${chalk.blue(formatTimePeriod(hours))}`
+                    ? ` over the last ${chalk.cyan(formatTimePeriod(hours))}`
                     : ""
                 }`;
               }
@@ -525,10 +525,10 @@ export default class ServiceCheck extends ProjectCommand {
                   breakingSchemaChangeCount;
 
                 task.title = `Found ${pluralize(
-                  chalk.blue(breakingSchemaChangeCount.toString()),
+                  chalk.cyan(breakingSchemaChangeCount.toString()),
                   "breaking change"
                 )} and ${pluralize(
-                  chalk.blue(nonBreakingSchemaChangeCount.toString()),
+                  chalk.cyan(nonBreakingSchemaChangeCount.toString()),
                   "compatible change"
                 )}`;
 
