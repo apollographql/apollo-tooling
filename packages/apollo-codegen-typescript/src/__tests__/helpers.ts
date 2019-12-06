@@ -279,7 +279,7 @@ describe("Typescript typeAnnotationFromGraphQLType", () => {
     });
 
     expect(typeFromGraphQLType(OddType)).toMatchObject(
-      nullableType(t.TSAnyKeyword())
+      nullableType(t.TSStringKeyword())
     );
   });
 });
@@ -304,6 +304,12 @@ describe("passthrough custom scalars", () => {
 
     expect(getTypeAnnotation(OddType)).toMatchObject(
       nullableType(t.TSTypeReference(t.identifier("Odd")))
+    );
+  });
+
+  test("ID", () => {
+    expect(getTypeAnnotation(GraphQLID)).toMatchObject(
+      nullableType(t.TSTypeReference(t.identifier("ID")))
     );
   });
 });

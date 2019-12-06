@@ -9,9 +9,9 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Add additional type annotations to improve compile times.  [1638](https://github.com/apollographql/apollo-tooling/pull/1638)
+  - Add additional type annotations to improve compile times [#1638](https://github.com/apollographql/apollo-tooling/pull/1638)
 - `apollo-codegen-typescript`
-  - <First `apollo-codegen-typescript` related entry goes here>
+  - Don't treat GraphQL's ID type as builtin for TypeScript with `--passthroughCustomScalars` [#1704](https://github.com/apollographql/apollo-tooling/pull/1704)
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
