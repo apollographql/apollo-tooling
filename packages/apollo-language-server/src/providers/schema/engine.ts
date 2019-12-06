@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 import { GraphQLSchema, buildClientSchema } from "graphql";
 import { ApolloEngineClient, ClientIdentity } from "../../engine";
 import { ClientConfig, parseServiceSpecifier } from "../../config";
-import { getServiceFromKey } from "../../config/utils";
+import { getServiceFromKey, isServiceKey } from "../../config/utils";
 import {
   GraphQLSchemaProvider,
   SchemaChangeUnsubscribeHandler,
@@ -48,13 +48,14 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
     const [id, tag = "current"] = parseServiceSpecifier(client.service);
 
     // make sure the API key is valid for the service we're requesting a schema of.
-    // TODO: check if we're using a service API key or a user token
-    // const keyServiceName = getServiceFromKey(engine.apiKey);
-    // if (id !== keyServiceName) {
-    //   throw new Error(
-    //     `API key service name (${keyServiceName}) does not match the service name in your config (${id}). Try changing the service name in your config to ${keyServiceName} or get a new key.`
-    //   );
-    // }
+    if (isServiceKey(engine.apiKey)) {
+      const keyServiceName = getServiceFromKey(engine.apiKey);
+      if (id !== keyServiceName) {
+        throw new Error(
+          `API key service name \`${keyServiceName}\` does not match the service name in your config \`${id}\`. Try changing the service name in your config to \`${keyServiceName}\` or get a new key.`
+        );
+      }
+    }
 
     const { data, errors } = await this.client.execute<GetSchemaByTag>({
       query: SCHEMA_QUERY,
