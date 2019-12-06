@@ -273,12 +273,32 @@ describe("defaultOperationRegistrySignature", () => {
           blah
         }
       `
+    },
+    {
+      name: "test with stripLiterals=false",
+      operationName: "Foo",
+      input: gql`
+        query Foo($b: Int) {
+          user(name: "hello", age: 5) {
+            ...Bar
+            a @skip(if: true)
+            b @include(if: false)
+            c(value: 4) {
+              d
+            }
+            ... on User {
+              hello @directive(arg: "Value!")
+            }
+          }
+        }
+      `,
+      options: { stripLiterals: false }
     }
   ];
-  cases.forEach(({ name, operationName, input }) => {
+  cases.forEach(({ name, operationName, input, options }) => {
     test(name, () => {
       expect(
-        defaultOperationRegistrySignature(input, operationName)
+        defaultOperationRegistrySignature(input, operationName, options)
       ).toMatchSnapshot();
     });
   });
