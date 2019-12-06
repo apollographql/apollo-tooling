@@ -278,6 +278,8 @@ OPTIONS
 
   --queries=queries                      Deprecated in favor of the includes flag
 
+  --[no-]stripLiterals                   Whether to strip literals from extracted queries. DEFAULT: true
+
   --tagName=tagName                      Name of the template literal tag used to identify template literals containing
                                          GraphQL queries in Javascript/Typescript code
 ```
