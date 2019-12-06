@@ -8,13 +8,13 @@ const stagingAPI = "https://engine-staging-graphql.apollographql.com:443";
 /**
  * Default API key. This is not an actual API key but a randomly generated string.
  *
- * If you need to use the `nock` recorder, then this will not work because we won't be able to access engine
+ * If you need to use the `nock` recorder, then this will not work because we won't be able to access graph manager
  * with a fake API key.
  */
 const fakeApiKey = "service:engine:9YC5AooMa2yO11eFlZat11";
 
 /**
- * Engine API key we're using.
+ * Graph Manager API key we're using.
  *
  * This is hard-coded to `fakeApiKey` because this is out day-to-day usage should be. If we're going to be
  * updating the mocked data; we'll need to use a real API key (see [README#Regenerating Mocked Network
@@ -24,7 +24,7 @@ const fakeApiKey = "service:engine:9YC5AooMa2yO11eFlZat11";
 const apiKey = fakeApiKey;
 
 /**
- * An array that we'll spread into all CLI commands to pass the engine api key.
+ * An array that we'll spread into all CLI commands to pass the graph manager api key.
  */
 const cliKeyParameter = [`--key=${apiKey}`];
 
