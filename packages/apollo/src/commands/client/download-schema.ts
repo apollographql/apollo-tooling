@@ -6,7 +6,7 @@ import { ClientCommand } from "../../Command";
 
 export default class SchemaDownload extends ClientCommand {
   static description =
-    "Download a schema from engine or a GraphQL endpoint in JSON or SDL format";
+    "Download a schema from Apollo Graph Manager or a GraphQL endpoint in JSON or SDL format";
 
   static flags = {
     ...ClientCommand.flags

@@ -42,7 +42,7 @@ export default class ClientCheck extends ClientCommand {
           task: async ctx => {
             if (!config.name) {
               throw new Error(
-                "No service found to link to Engine. Engine is required for this command."
+                "No service found to link to Apollo Graph Manager. Graph Manager is required for this command."
               );
             }
             ctx.gitContext = await gitInfo(this.log);

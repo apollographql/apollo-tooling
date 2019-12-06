@@ -114,7 +114,7 @@ export default class ServiceList extends ProjectCommand {
         graphVariant = flags.tag || config.tag || "current";
 
         if (!graphID) {
-          throw new Error("No service found to link to Engine");
+          throw new Error("No service found to link to Apollo Graph Manager");
         }
 
         return [

@@ -61,7 +61,7 @@ export default class ClientPush extends ClientCommand {
             task: async (_, task) => {
               if (!config.name) {
                 throw new Error(
-                  "No service found to link to Engine. Engine is required for this command."
+                  "No service found to link to Apollo Graph Manager. Graph Manager is required for this command."
                 );
               }
 

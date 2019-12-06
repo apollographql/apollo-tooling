@@ -304,7 +304,7 @@ export default class ServiceCheck extends ProjectCommand {
           const serviceName: string | undefined = flags.serviceName;
 
           if (!graphID) {
-            throw new Error("No service found to link to Engine");
+            throw new Error("No service found to link to Apollo Graph Manager");
           }
 
           // Add some fields to output that are required for producing
@@ -455,10 +455,12 @@ export default class ServiceCheck extends ProjectCommand {
                 };
 
                 const { schema: _, ...restVariables } = variables;
-                this.debug("Variables sent to Engine:");
+                this.debug("Variables sent to Apollo Graph Manager:");
                 this.debug(restVariables);
                 if (schema) {
-                  this.debug("SDL of introspection sent to Engine:");
+                  this.debug(
+                    "SDL of introspection sent to Apollo Graph Manager:"
+                  );
                   this.debug(printSchema(schema));
                 } else {
                   this.debug("Schema hash generated:");
