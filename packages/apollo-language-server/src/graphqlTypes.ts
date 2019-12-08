@@ -707,272 +707,268 @@ export interface ValidateOperationsVariables {
 // GraphQL query operation: GetSchemaByTag
 // ====================================================
 
-export interface GetSchemaByTag_service_User {
-  __typename: "User" | "InternalIdentity";
-}
-
-export interface GetSchemaByTag_service_Service_schema___schema_queryType {
+export interface GetSchemaByTag_service_schema___schema_queryType {
   __typename: "IntrospectionType";
   name: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_mutationType {
+export interface GetSchemaByTag_service_schema___schema_mutationType {
   __typename: "IntrospectionType";
   name: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_subscriptionType {
+export interface GetSchemaByTag_service_schema___schema_subscriptionType {
   __typename: "IntrospectionType";
   name: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_args_type {
+export interface GetSchemaByTag_service_schema___schema_types_fields_args_type {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_args_type_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_args_type_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_args {
+export interface GetSchemaByTag_service_schema___schema_types_fields_args {
   __typename: "IntrospectionInputValue";
   name: string;
   description: string | null;
-  type: GetSchemaByTag_service_Service_schema___schema_types_fields_args_type;
+  type: GetSchemaByTag_service_schema___schema_types_fields_args_type;
   defaultValue: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_type_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_type_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_type_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_type_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_fields_type_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_type_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields_type {
+export interface GetSchemaByTag_service_schema___schema_types_fields_type {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_fields_type_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_fields_type_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_fields {
+export interface GetSchemaByTag_service_schema___schema_types_fields {
   __typename: "IntrospectionField";
   name: string;
   description: string | null;
-  args: GetSchemaByTag_service_Service_schema___schema_types_fields_args[];
-  type: GetSchemaByTag_service_Service_schema___schema_types_fields_type;
+  args: GetSchemaByTag_service_schema___schema_types_fields_args[];
+  type: GetSchemaByTag_service_schema___schema_types_fields_type;
   isDeprecated: boolean;
   deprecationReason: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_inputFields_type {
+export interface GetSchemaByTag_service_schema___schema_types_inputFields_type {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_inputFields_type_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_inputFields_type_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_inputFields {
+export interface GetSchemaByTag_service_schema___schema_types_inputFields {
   __typename: "IntrospectionInputValue";
   name: string;
   description: string | null;
-  type: GetSchemaByTag_service_Service_schema___schema_types_inputFields_type;
+  type: GetSchemaByTag_service_schema___schema_types_inputFields_type;
   defaultValue: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_interfaces_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_interfaces_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_interfaces_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_interfaces_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_interfaces_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_interfaces_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_interfaces {
+export interface GetSchemaByTag_service_schema___schema_types_interfaces {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_interfaces_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_interfaces_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_enumValues {
+export interface GetSchemaByTag_service_schema___schema_types_enumValues {
   __typename: "IntrospectionEnumValue";
   name: string;
   description: string | null;
@@ -980,168 +976,166 @@ export interface GetSchemaByTag_service_Service_schema___schema_types_enumValues
   deprecationReason: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType {
+export interface GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types_possibleTypes {
+export interface GetSchemaByTag_service_schema___schema_types_possibleTypes {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_types_possibleTypes_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_types_possibleTypes_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_types {
+export interface GetSchemaByTag_service_schema___schema_types {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
   description: string | null;
-  fields: GetSchemaByTag_service_Service_schema___schema_types_fields[] | null;
-  inputFields: GetSchemaByTag_service_Service_schema___schema_types_inputFields[] | null;
-  interfaces: GetSchemaByTag_service_Service_schema___schema_types_interfaces[] | null;
-  enumValues: GetSchemaByTag_service_Service_schema___schema_types_enumValues[] | null;
-  possibleTypes: GetSchemaByTag_service_Service_schema___schema_types_possibleTypes[] | null;
+  fields: GetSchemaByTag_service_schema___schema_types_fields[] | null;
+  inputFields: GetSchemaByTag_service_schema___schema_types_inputFields[] | null;
+  interfaces: GetSchemaByTag_service_schema___schema_types_interfaces[] | null;
+  enumValues: GetSchemaByTag_service_schema___schema_types_enumValues[] | null;
+  possibleTypes: GetSchemaByTag_service_schema___schema_types_possibleTypes[] | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_directives_args_type_ofType_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_directives_args_type_ofType_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType {
+export interface GetSchemaByTag_service_schema___schema_directives_args_type_ofType_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_directives_args_type_ofType_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType {
+export interface GetSchemaByTag_service_schema___schema_directives_args_type_ofType {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_directives_args_type_ofType_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_directives_args_type {
+export interface GetSchemaByTag_service_schema___schema_directives_args_type {
   __typename: "IntrospectionType";
   kind: IntrospectionTypeKind | null;
   name: string | null;
-  ofType: GetSchemaByTag_service_Service_schema___schema_directives_args_type_ofType | null;
+  ofType: GetSchemaByTag_service_schema___schema_directives_args_type_ofType | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_directives_args {
+export interface GetSchemaByTag_service_schema___schema_directives_args {
   __typename: "IntrospectionInputValue";
   name: string;
   description: string | null;
-  type: GetSchemaByTag_service_Service_schema___schema_directives_args_type;
+  type: GetSchemaByTag_service_schema___schema_directives_args_type;
   defaultValue: string | null;
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema_directives {
+export interface GetSchemaByTag_service_schema___schema_directives {
   __typename: "IntrospectionDirective";
   name: string;
   description: string | null;
   locations: IntrospectionDirectiveLocation[];
-  args: GetSchemaByTag_service_Service_schema___schema_directives_args[];
+  args: GetSchemaByTag_service_schema___schema_directives_args[];
 }
 
-export interface GetSchemaByTag_service_Service_schema___schema {
+export interface GetSchemaByTag_service_schema___schema {
   __typename: "IntrospectionSchema";
-  queryType: GetSchemaByTag_service_Service_schema___schema_queryType;
-  mutationType: GetSchemaByTag_service_Service_schema___schema_mutationType | null;
-  subscriptionType: GetSchemaByTag_service_Service_schema___schema_subscriptionType | null;
-  types: GetSchemaByTag_service_Service_schema___schema_types[];
-  directives: GetSchemaByTag_service_Service_schema___schema_directives[];
+  queryType: GetSchemaByTag_service_schema___schema_queryType;
+  mutationType: GetSchemaByTag_service_schema___schema_mutationType | null;
+  subscriptionType: GetSchemaByTag_service_schema___schema_subscriptionType | null;
+  types: GetSchemaByTag_service_schema___schema_types[];
+  directives: GetSchemaByTag_service_schema___schema_directives[];
 }
 
-export interface GetSchemaByTag_service_Service_schema {
+export interface GetSchemaByTag_service_schema {
   __typename: "Schema";
   hash: string;
-  __schema: GetSchemaByTag_service_Service_schema___schema;
+  __schema: GetSchemaByTag_service_schema___schema;
 }
 
-export interface GetSchemaByTag_service_Service {
+export interface GetSchemaByTag_service {
   __typename: "Service";
   /**
    * Get a schema by hash OR current tag
    */
-  schema: GetSchemaByTag_service_Service_schema | null;
+  schema: GetSchemaByTag_service_schema | null;
 }
-
-export type GetSchemaByTag_service = GetSchemaByTag_service_User | GetSchemaByTag_service_Service;
 
 export interface GetSchemaByTag {
   service: GetSchemaByTag_service | null;
@@ -1149,6 +1143,7 @@ export interface GetSchemaByTag {
 
 export interface GetSchemaByTagVariables {
   tag: string;
+  id: string;
 }
 
 /* tslint:disable */

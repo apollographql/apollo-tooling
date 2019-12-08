@@ -42,5 +42,34 @@
     "moment": "^2.24.0",
     "vscode-languageserver": "^5.1.0",
     "vscode-uri": "1.0.6"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "transformIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "setupFiles": [
+      "apollo-env"
+    ],
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/*.(js|ts)"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/lib/",
+      "<rootDir>/test/fixtures/",
+      "<rootDir>/test/test-utils"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "<rootDir>/tsconfig.test.json",
+        "diagnostics": false
+      }
+    }
   }
 }

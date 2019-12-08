@@ -4,7 +4,7 @@ import { ProjectCommand } from "../../Command";
 
 export default class ServiceDelete extends ProjectCommand {
   static description =
-    "Delete a federated service from Engine and recompose remaining services";
+    "Delete a federated service from Apollo Graph Manager and recompose remaining services";
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({
@@ -29,10 +29,10 @@ export default class ServiceDelete extends ProjectCommand {
     let result;
     await this.runTasks(({ flags, project, config }) => [
       {
-        title: "Removing service from Engine",
+        title: "Removing service from Apollo Graph Manager",
         task: async () => {
           if (!config.name) {
-            throw new Error("No service found to link to Engine");
+            throw new Error("No service found to link to Apollo Graph Manager");
           }
 
           if (flags.federated) {

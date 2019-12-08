@@ -1,10 +1,6 @@
 import gql from "graphql-tag";
 import { buildServiceDefinition } from "../buildServiceDefinition";
 import { GraphQLObjectType } from "graphql";
-import { astSerializer, graphQLTypeSerializer } from "./snapshotSerializers";
-
-expect.addSnapshotSerializer(astSerializer);
-expect.addSnapshotSerializer(graphQLTypeSerializer);
 
 describe("buildServiceDefinition", () => {
   describe(`type definitions`, () => {

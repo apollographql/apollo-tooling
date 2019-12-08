@@ -23,6 +23,10 @@ export function isServiceConfig(config: ApolloConfig): config is ServiceConfig {
   return config.isService;
 }
 
+export function isServiceKey(key?: string) {
+  return key && /service:.*:.*/.test(key);
+}
+
 export function getServiceFromKey(key?: string) {
   if (key) {
     const [type, service] = key.split(":");

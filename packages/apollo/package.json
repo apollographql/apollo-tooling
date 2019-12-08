@@ -35,8 +35,8 @@
     "@oclif/command": "1.5.19",
     "@oclif/config": "1.13.3",
     "@oclif/errors": "1.2.2",
-    "@oclif/plugin-autocomplete": "0.1.4",
-    "@oclif/plugin-help": "2.2.1",
+    "@oclif/plugin-autocomplete": "0.1.5",
+    "@oclif/plugin-help": "2.2.2",
     "@oclif/plugin-not-found": "1.2.3",
     "@oclif/plugin-plugins": "1.7.8",
     "@oclif/plugin-warn-if-update-available": "1.7.0",
@@ -66,7 +66,7 @@
     "vscode-uri": "1.0.6"
   },
   "devDependencies": {
-    "typescript": "3.6.4"
+    "typescript": "3.7.3"
   },
   "oclif": {
     "commands": "./lib/commands",
@@ -78,5 +78,35 @@
       "@oclif/plugin-warn-if-update-available"
     ],
     "repositoryPrefix": "<%- repo %>/blob/master/packages/apollo/<%- commandPath %>"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "transformIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "setupFiles": [
+      "apollo-env"
+    ],
+    "testMatch": null,
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "lib"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "testEnvironment": "node",
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "<rootDir>/tsconfig.test.json",
+        "diagnostics": false
+      }
+    }
   }
 }

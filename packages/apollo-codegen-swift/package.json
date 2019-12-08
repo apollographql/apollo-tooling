@@ -21,5 +21,31 @@
     "change-case": "^3.0.1",
     "common-tags": "^1.5.1",
     "inflected": "^2.0.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "transformIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/*.(js|ts)"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/lib/",
+      "<rootDir>/test/fixtures/",
+      "<rootDir>/test/test-utils"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "<rootDir>/tsconfig.test.json",
+        "diagnostics": false
+      }
+    }
   }
 }

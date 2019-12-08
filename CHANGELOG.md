@@ -3,21 +3,22 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Rename "Engine" to "Apollo Graph Manager" in ouput [#1705](https://github.com/apollographql/apollo-tooling/pull/1705)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - <First `apollo-codegen-swift` related entry goes here>
+  - Add additional type annotations to improve compile times. [1638](https://github.com/apollographql/apollo-tooling/pull/1638)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
+  - [#1618] Fixes an issue when enums with a value of 0 fail to resolve when using a Federated Schema (https://github.com/apollographql/apollo-tooling/pull/1618)
 - `apollo-language-server`
   - Adds support for ReasonML to the language server [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
+  - Rename "Engine" to "Apollo Graph Manager" in ouput [#1705](https://github.com/apollographql/apollo-tooling/pull/1705)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
