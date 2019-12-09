@@ -41,7 +41,7 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
         context: { headers }
       })
     ).catch(e => {
-      // error message specific to the default endpoint url -- this gets hit quite often
+      // html response from introspection
       if (isString(e.message) && e.message.includes("token <")) {
         throw new Error(
           "Apollo tried to introspect a running GraphQL service at " +
@@ -54,6 +54,8 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
             e.message
         );
       }
+
+      // 404 encountered with the default url
       if (
         url === DefaultServiceConfig.endpoint.url &&
         isString(e.message) &&
@@ -70,6 +72,14 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
             "The following error occurred: \n" +
             "-----------------------------\n" +
             e.message
+        );
+      }
+      // 404 with a non-default url
+      if (isString(e.message) && e.message.includes("ECONNREFUSED")) {
+        throw new Error(
+          "Failed to connect to a running GraphQL endpoint at " +
+            url +
+            "\nThis may be because you didn't start your service or the endpoint URL is incorrect."
         );
       }
       throw new Error(e);
