@@ -18,6 +18,7 @@
   - [#1618] Fixes an issue when enums with a value of 0 fail to resolve when using a Federated Schema (https://github.com/apollographql/apollo-tooling/pull/1618)
 - `apollo-language-server`
   - Rename "Engine" to "Apollo Graph Manager" in ouput [#1705](https://github.com/apollographql/apollo-tooling/pull/1705)
+  - Add helpful messages for common errors when introspecting schemas [#1713](https://github.com/apollographql/apollo-tooling/pull/1713)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
