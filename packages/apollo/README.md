@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.21.1 darwin-x64 node-v10.15.3
+apollo/2.21.2 darwin-x64 node-v10.15.3
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -93,7 +93,7 @@ _See code: [src/commands/client/check.ts](https://github.com/apollographql/apoll
 
 ## `apollo client:codegen [OUTPUT]`
 
-Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.
+Generate static types for GraphQL queries. Can use the published schema in Apollo Graph Manager or a downloaded schema.
 
 ```
 USAGE
@@ -199,7 +199,7 @@ _See code: [src/commands/client/codegen.ts](https://github.com/apollographql/apo
 
 ## `apollo client:download-schema OUTPUT`
 
-Download a schema from engine or a GraphQL endpoint in JSON or SDL format
+Download a schema from Apollo Graph Manager or a GraphQL endpoint in JSON or SDL format
 
 ```
 USAGE
@@ -339,7 +339,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.1/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.2/src/commands/help.ts)_
 
 ## `apollo plugins`
 
@@ -513,7 +513,7 @@ _See code: [src/commands/service/check.ts](https://github.com/apollographql/apol
 
 ## `apollo service:delete`
 
-Delete a federated service from Engine and recompose remaining services
+Delete a federated service from Apollo Graph Manager and recompose remaining services
 
 ```
 USAGE
@@ -585,7 +585,7 @@ _See code: [src/commands/service/list.ts](https://github.com/apollographql/apoll
 
 ## `apollo service:push`
 
-Push a service to Engine
+Push a service to Apollo Graph Manager
 
 ```
 USAGE
