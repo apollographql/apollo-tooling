@@ -12,9 +12,10 @@ import {
 } from "graphql";
 import { Agent as HTTPSAgent } from "https";
 import { fetch } from "apollo-env";
-import { RemoteServiceConfig } from "../../config";
+import { RemoteServiceConfig, DefaultServiceConfig } from "../../config";
 import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
 import { Debug } from "../../utilities";
+import { isString } from "util";
 
 export class EndpointSchemaProvider implements GraphQLSchemaProvider {
   private schema?: GraphQLSchema;
@@ -39,7 +40,50 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
         query: parse(getIntrospectionQuery()),
         context: { headers }
       })
-    )) as ExecutionResult<IntrospectionQuery>;
+    ).catch(e => {
+      // html response from introspection
+      if (isString(e.message) && e.message.includes("token <")) {
+        throw new Error(
+          "Apollo tried to introspect a running GraphQL service at " +
+            url +
+            "\nIt expected a JSON schema introspection result, but got an HTML response instead." +
+            "\nYou may need to add headers to your request or adjust your endpoint url.\n" +
+            "-----------------------------\n" +
+            "For more information, please refer to: https://bit.ly/2ByILPj \n\n" +
+            "The following error occurred:\n-----------------------------\n" +
+            e.message
+        );
+      }
+
+      // 404 encountered with the default url
+      if (
+        url === DefaultServiceConfig.endpoint.url &&
+        isString(e.message) &&
+        e.message.includes("ECONNREFUSED")
+      ) {
+        throw new Error(
+          "Failed to connect to a running GraphQL endpoint at " +
+            url +
+            "\nThis may be because you didn't start your service.\n" +
+            "By default, when an endpoint, Graph Manager API key, or localSchemaFile isn't provided, Apollo tries to fetch a schema from " +
+            DefaultServiceConfig.endpoint.url +
+            "\n-----------------------------\n" +
+            "\nFor more information, please refer to: https://bit.ly/2ByILPj \n\n" +
+            "The following error occurred: \n" +
+            "-----------------------------\n" +
+            e.message
+        );
+      }
+      // 404 with a non-default url
+      if (isString(e.message) && e.message.includes("ECONNREFUSED")) {
+        throw new Error(
+          "Failed to connect to a running GraphQL endpoint at " +
+            url +
+            "\nThis may be because you didn't start your service or the endpoint URL is incorrect."
+        );
+      }
+      throw new Error(e);
+    })) as ExecutionResult<IntrospectionQuery>;
 
     if (errors && errors.length) {
       // XXX better error handling of GraphQL errors
