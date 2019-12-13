@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
+    "jsx": "react",
     "rootDir": "./src",
     "outDir": "./lib",
     "esModuleInterop": true,

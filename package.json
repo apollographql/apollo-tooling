@@ -49,6 +49,7 @@
     "apollo-env": "file:packages/apollo-env",
     "apollo-graphql": "file:packages/apollo-graphql",
     "apollo-language-server": "file:packages/apollo-language-server",
+    "debug": "^4.1.1",
     "vscode-apollo": "file:packages/vscode-apollo"
   },
   "devDependencies": {
@@ -59,6 +60,7 @@
     "@types/babel__generator": "7.6.0",
     "@types/common-tags": "1.8.0",
     "@types/cosmiconfig": "5.0.3",
+    "@types/debug": "^4.1.5",
     "@types/glob": "7.1.1",
     "@types/inflected": "1.1.29",
     "@types/jest": "24.0.23",
@@ -73,6 +75,7 @@
     "@types/nock": "10.0.3",
     "@types/node": "8.10.56",
     "@types/node-fetch": "2.5.4",
+    "@types/react": "^16.9.16",
     "@types/table": "4.0.7",
     "graphql": "14.5.7",
     "heroku-cli-util": "8.0.11",
