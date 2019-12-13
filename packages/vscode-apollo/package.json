@@ -123,6 +123,16 @@
         "embeddedLanguages": {
           "meta.embedded.block.graphql": "graphql"
         }
+      },
+      {
+        "injectTo": [
+          "source.reason"
+        ],
+        "scopeName": "inline.graphql.reason",
+        "path": "./syntaxes/graphql.re.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.graphql": "graphql"
+        }
       }
     ],
     "commands": [
