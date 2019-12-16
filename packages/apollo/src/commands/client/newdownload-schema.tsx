@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { introspectionFromSchema, printSchema } from "graphql";
-import { GraphQLClientProject } from "apollo-language-server";
 import { writeFileSync } from "fs";
 
-import { getOperationManifestFromProject } from "../../utils/getOperationManifestFromProject";
 import ApolloCommand, {
-  useConfig,
   useOclif,
   useProject,
   clientFlags
 } from "../../NewCommand";
 import { TaskList } from "../../components/";
-import { Text, Color } from "ink";
 
 export default class SchemaDownloadReact extends ApolloCommand {
   static description =
@@ -40,12 +36,10 @@ export default class SchemaDownloadReact extends ApolloCommand {
       `Saving schema to ${args.output}`
     ] as Array<string | any>);
     const [done, setDone] = useState([] as Array<string | any>);
-    // const [operations, setOperations] = useState();
 
     const extension = args.output.split(".").pop();
     const isSDLFormat = ["graphql", "graphqls", "gql"].includes(extension);
 
-    // get operations from client project
     useEffect(() => {
       project.resolveSchema({ tag: flags.tag }).then(schema => {
         const formattedSchema = isSDLFormat
