@@ -1203,6 +1203,21 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.printOnNewline(swift`public var graphQLMap: GraphQLMap`);
 
         this.printNewlineIfNeeded();
+
+        if (properties.length > 0) {
+          this.comment("- Parameters:");
+          properties.forEach(property => {
+            var propertyDescription = "";
+            if (property.description) {
+              propertyDescription = `: ${property.description}`;
+            }
+            this.comment(
+              `  - ${property.propertyName}${propertyDescription}`,
+              false
+            );
+          });
+        }
+
         this.printOnNewline(swift`public init`);
         this.print(swift`(`);
         this.print(
