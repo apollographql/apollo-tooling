@@ -153,8 +153,13 @@ export class GraphQLLanguageProvider {
       state.kind === "AliasedField"
     ) {
       const parentType = typeInfo.parentType;
+
+      if (!parentType) {
+        return [];
+      }
+
       const parentFields = {
-        ...((parentType ? parentType.getFields() : {}) as {
+        ...(parentType.getFields() as {
           [label: string]: GraphQLField<any, any>;
         })
       };
