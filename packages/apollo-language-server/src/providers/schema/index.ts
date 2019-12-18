@@ -25,19 +25,20 @@ export function schemaProviderFromConfig(
   config: ApolloConfig,
   clientIdentity?: ClientIdentity // engine provider needs this
 ): GraphQLSchemaProvider {
-  if (isServiceConfig(config)) {
-    if (config.service.localSchemaFile) {
-      const isListOfSchemaFiles = Array.isArray(config.service.localSchemaFile);
-      return new FileSchemaProvider(
-        isListOfSchemaFiles
-          ? { paths: config.service.localSchemaFile as string[] }
-          : { path: config.service.localSchemaFile as string }
-      );
-    }
+  // we need this to be first because there will pretty much always be a
+  // url (since it's a default). If there is a localSchemaFile, we need to
+  // use that instead of the url.
+  if (config.service && config.service.localSchemaFile) {
+    const isListOfSchemaFiles = Array.isArray(config.service.localSchemaFile);
+    return new FileSchemaProvider(
+      isListOfSchemaFiles
+        ? { paths: config.service.localSchemaFile as string[] }
+        : { path: config.service.localSchemaFile as string }
+    );
+  }
 
-    if (config.service.endpoint) {
-      return new EndpointSchemaProvider(config.service.endpoint);
-    }
+  if (config.service && config.service.endpoint) {
+    return new EndpointSchemaProvider(config.service.endpoint);
   }
 
   if (isClientConfig(config)) {

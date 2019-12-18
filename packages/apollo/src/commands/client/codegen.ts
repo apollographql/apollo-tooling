@@ -26,7 +26,7 @@ const waitForKey = async () => {
 export default class Generate extends ClientCommand {
   static aliases = ["codegen:generate"];
   static description =
-    "Generate static types for GraphQL queries. Can use the published schema in Apollo Engine or a downloaded schema.";
+    "Generate static types for GraphQL queries. Can use the published schema in Apollo Graph Manager or a downloaded schema.";
 
   static flags = {
     ...ClientCommand.flags,

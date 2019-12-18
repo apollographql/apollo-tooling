@@ -9,7 +9,7 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Add additional type annotations to improve compile times.  [1638](https://github.com/apollographql/apollo-tooling/pull/1638)
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
@@ -17,11 +17,24 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
+  - Adds support for ReasonML to the language server [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
   - Fix "TypeError: Cannot read property 'getFields' of undefined" when getting autocomplete suggestions. [1681](https://github.com/apollographql/apollo-tooling/pull/1681)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Adds syntax highlighting for ReasonML [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
+
+## `apollo@2.21.2`
+
+- `apollo@2.21.2`
+  - Rename "Engine" to "Apollo Graph Manager" in ouput [#1705](https://github.com/apollographql/apollo-tooling/pull/1705)
+- `apollo-codegen-swift@0.35.14`
+  - Add additional type annotations to improve compile times. [1638](https://github.com/apollographql/apollo-tooling/pull/1638)
+- `apollo-graphql@0.3.6`
+  - [#1618] Fixes an issue when enums with a value of 0 fail to resolve when using a Federated Schema (https://github.com/apollographql/apollo-tooling/pull/1618)
+- `apollo-language-server@1.17.2`
+  - Rename "Engine" to "Apollo Graph Manager" in ouput [#1705](https://github.com/apollographql/apollo-tooling/pull/1705)
+  - Add helpful messages for common errors when introspecting schemas [#1713](https://github.com/apollographql/apollo-tooling/pull/1713)
 
 ## `apollo@2.21.1`
 

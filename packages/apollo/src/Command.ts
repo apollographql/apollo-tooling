@@ -144,7 +144,7 @@ export abstract class ProjectCommand extends Command {
     }
 
     config.tag = flags.tag || config.tag || "current";
-    //  flag overides
+    //  flag overrides
     config.setDefaults({
       engine: {
         apiKey: flags.key,
