@@ -98,10 +98,12 @@ export abstract class ProjectCommand extends Command {
   protected type: "service" | "client" = "service";
   protected configMap?: (flags: any) => DeepPartial<ApolloConfig>;
   private ctx!: ProjectContext;
+  protected flags: any;
 
   async init() {
     const { flags, args } = this.parse(this.constructor as any);
     this.ctx = { flags, args } as any;
+    this.flags = flags;
 
     // tell the language server to use the built-in loggers
     // from oclif
@@ -194,6 +196,11 @@ export abstract class ProjectCommand extends Command {
     return config;
   }
 
+  /**
+   * Create a project that can be a client project.
+   *
+   * This kicks a process that will eventually fire off a `whenReady` on the project
+   */
   protected createService(config: ApolloConfig, flags: Flags) {
     const loadingHandler = new OclifLoadingHandler(this);
 

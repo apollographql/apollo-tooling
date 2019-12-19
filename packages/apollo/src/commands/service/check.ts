@@ -18,10 +18,15 @@ import {
   CheckSchemaVariables,
   IntrospectionSchemaInput
 } from "apollo-language-server/lib/graphqlTypes";
-import { ApolloConfig, isServiceProject } from "apollo-language-server";
+import {
+  ApolloConfig,
+  isServiceProject,
+  GraphQLProject
+} from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 import { isNotNullOrUndefined } from "apollo-env";
+import { check } from "../../commandHelpers/service/check";
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
@@ -272,6 +277,34 @@ export default class ServiceCheck extends ProjectCommand {
   };
 
   async run() {
+    // We need to wait for `project` to be ready before we continue.
+    const projectThatIsSetup = await setupProject();
+
+    const { flags, project } = this;
+    const { config } = project;
+
+    if (!config.name) {
+      throw new Error("Project must have a name");
+    }
+
+    // /**
+    //  * Name of the graph being checked. `engine` is an example of a graph.
+    //  *
+    //  * A graph can be either a monolithic schema or the result of composition a federated schema.
+    //  */
+    // const graphID = config.name;
+    // if (!graphID) {
+    //   throw new Error("No service found to link to Apollo Graph Manager");
+    // }
+
+    // const graphVariant: string = config.tag;
+
+    // TODO?: Don't pass `config`, `flags`, and `project`. Only pass what `check` needs, especially if it's a
+    // very small subset of these 3 variables.
+    await check({ config, flags, project });
+  }
+
+  async oldrun() {
     // @ts-ignore we're going to populate `taskOutput` later
     const taskOutput: TasksOutput = {};
 
