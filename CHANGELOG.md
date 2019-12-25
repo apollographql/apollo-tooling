@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Replace broken bit.ly link to configuration docs [#1736](https://github.com/apollographql/apollo-tooling/pull/1736)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -18,6 +18,7 @@
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
   - Adds support for ReasonML to the language server [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
+  - Replace broken bit.ly link to configuration docs [#1736](https://github.com/apollographql/apollo-tooling/pull/1736)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
