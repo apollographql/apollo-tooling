@@ -227,7 +227,7 @@ export abstract class ProjectCommand extends Command {
       });
     } else {
       throw new Error(
-        "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
+        "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://www.apollographql.com/docs/devtools/apollo-config/"
       );
     }
 

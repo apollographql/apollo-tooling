@@ -90,20 +90,20 @@ export async function loadConfig({
 
   if (configPath && !loadedConfig) {
     return Debug.error(
-      `A config file failed to load at '${configPath}'. This is likely because this file is empty or malformed. For more information, please refer to: https://bit.ly/2ByILPj`
+      `A config file failed to load at '${configPath}'. This is likely because this file is empty or malformed. For more information, please refer to: https://www.apollographql.com/docs/devtools/apollo-config/`
     );
   }
 
   if (loadedConfig && loadedConfig.filepath.endsWith("package.json")) {
     Debug.warning(
-      'The "apollo" package.json configuration key will no longer be supported in Apollo v3. Please use the apollo.config.js file for Apollo project configuration. For more information, see: https://bit.ly/2ByILPj'
+      'The "apollo" package.json configuration key will no longer be supported in Apollo v3. Please use the apollo.config.js file for Apollo project configuration. For more information, see: https://www.apollographql.com/docs/devtools/apollo-config/'
     );
   }
 
   if (requireConfig && !loadedConfig) {
     return Debug.error(
       `No Apollo config found for project. For more information, please refer to:
-      https://bit.ly/2ByILPj`
+      https://www.apollographql.com/docs/devtools/apollo-config/`
     );
   }
 
@@ -145,7 +145,7 @@ export async function loadConfig({
   else if (loadedConfig && loadedConfig.config.service) projectType = "service";
   else
     return Debug.error(
-      "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
+      "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://www.apollographql.com/docs/devtools/apollo-config/"
     );
 
   // DETERMINE SERVICE NAME
