@@ -70,7 +70,7 @@ module.exports = {
 
 > Linking to the local schema won't provide all features such as switching schema tags and performance metrics.
 
-More information about configuring an Apollo project can be found [here](https://www.apollographql.com/docs/references/apollo-config.html)
+More information about configuring an Apollo project can be found [here](https://www.apollographql.com/docs/devtools/apollo-config/)
 
 <h3 id="client-only-schemas">Client-only schemas</h3>
 
@@ -81,7 +81,7 @@ Client-side schema definitions can be spread throughout the client app project a
 ```js
 module.exports = {
   client: {
-    service: "my-graphql-app"
+    service: "my-graphql-app",
     includes: ["./src/**/*.js"],
     excludes: ["**/__tests__/**"]
   }
