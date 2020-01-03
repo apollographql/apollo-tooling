@@ -70,7 +70,7 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
 
     const ext = extname(path);
 
-    // an actual introspectionQuery result, convert to DocumentNode
+    // an actual introspection query result, convert to DocumentNode
     if (ext === ".json") {
       const parsed = JSON.parse(result);
       const __schema = parsed.data
