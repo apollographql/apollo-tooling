@@ -113,7 +113,7 @@ function uncaptureApplicationOutput(): string | null {
 function sdlToIntrospectionQueryResult(schemaSdl: string) {
   return graphql.graphqlSync(
     graphql.buildSchema(schemaSdl),
-    graphql.introspectionQuery
+    graphql.getIntrospectionQuery()
   ).data;
 }
 

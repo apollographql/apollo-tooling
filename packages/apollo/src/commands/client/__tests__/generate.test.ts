@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 import { test as setup } from "apollo-cli-test";
 import {
-  introspectionQuery,
+  getIntrospectionQuery,
   print,
   execute,
   buildSchema,
@@ -46,7 +46,8 @@ const {
 
 // introspection results of a schema, JSON.stringified
 const fullSchemaJsonString = JSON.stringify(
-  execute(buildSchema(graphQLSchema), gql(introspectionQuery)).data.__schema
+  execute(buildSchema(graphQLSchema), gql(getIntrospectionQuery())).data
+    .__schema
 );
 
 // to be used for sample js files that contain client side schema definitions
