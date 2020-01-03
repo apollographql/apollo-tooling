@@ -282,7 +282,7 @@ type MutationRoot {
           `
         )
       ).toThrowErrorMatchingInlineSnapshot(
-        `"There can be only one directive named \\"something\\"."`
+        `"There can be only one directive named \\"@something\\"."`
       );
     });
 
@@ -303,7 +303,7 @@ type MutationRoot {
           })
         )
       ).toThrowErrorMatchingInlineSnapshot(
-        `"Directive \\"something\\" already exists in the schema. It cannot be redefined."`
+        `"Directive \\"@something\\" already exists in the schema. It cannot be redefined."`
       );
     });
 
@@ -348,7 +348,7 @@ type MutationRoot {
           `
         )
       ).toThrowErrorMatchingInlineSnapshot(
-        `"Unknown directive \\"something\\"."`
+        `"Unknown directive \\"@something\\"."`
       );
     });
   });
