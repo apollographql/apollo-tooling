@@ -48,7 +48,6 @@ import {
 import { GraphQLType } from "graphql";
 import { Property } from "./language";
 import { GraphQLCompositeType } from "graphql";
-import { createLexer } from "graphql/language";
 
 export function generateSource(context: LegacyCompilerContext) {
   const generator = new CodeGenerator(context);
