@@ -141,7 +141,8 @@ class LegacyIRTransformer {
       const { sourceWithFragments, operationId } = generateOperationId(
         operation,
         this.context.fragments,
-        fragmentsReferenced
+        fragmentsReferenced,
+        this.context.options.operationIdGenerator
       );
 
       operations[operationName] = {
