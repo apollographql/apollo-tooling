@@ -5,13 +5,14 @@
 - `apollo`
   - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
-  - <First `apollo-codegen-flow` related entry goes here>
+  - Add @generated comment
 - `apollo-codegen-scala`
-  - <First `apollo-codegen-scala` related entry goes here>
+  - Add @generated comment
 - `apollo-codegen-swift`
   - Add documentation to input structs' constructors [#1619](https://github.com/apollographql/apollo-tooling/pull/1619)
+  - Add @generated comment
 - `apollo-codegen-typescript`
-  - <First `apollo-codegen-typescript` related entry goes here>
+  - Add @generated comment
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`

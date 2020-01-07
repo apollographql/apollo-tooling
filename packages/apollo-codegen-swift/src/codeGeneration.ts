@@ -159,6 +159,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
   }
 
   fileHeader() {
+    this.printOnNewline(SwiftSource.raw`// @generated`);
     this.printOnNewline(
       SwiftSource.raw`//  This file was automatically generated and should not be edited.`
     );
