@@ -13,7 +13,7 @@
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
-  - <First `apollo-env` related entry goes here>
+  - Add @types/node-fetch to apollo-env deps since they are exported [#1749](https://github.com/apollographql/apollo-tooling/pull/1749)
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
