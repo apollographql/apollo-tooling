@@ -11,7 +11,7 @@
 - `apollo-codegen-swift`
   - Add documentation to input structs' constructors [#1619](https://github.com/apollographql/apollo-tooling/pull/1619)
 - `apollo-codegen-typescript`
-  - <First `apollo-codegen-typescript` related entry goes here>
+  - Emit TypeScript string unions instead of enums by default [#1750](https://github.com/apollographql/apollo-tooling/pull/1750)
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
