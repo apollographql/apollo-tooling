@@ -182,6 +182,8 @@ OPTIONS
   --tsFileExtension=tsFileExtension          By default, TypeScript will output "ts" files. Set "tsFileExtension" to
                                              specify a different file extension, for example "d.ts"
 
+  --tsUseEnums                               Use TypeScript enums for GraphQL enums. By default, string unions are emitted
+
   --useFlowExactObjects                      Use Flow exact objects for generated types [flow only]
 
   --useFlowReadOnlyTypes                     Use read only types for generated types [flow only]. **Deprecated in favor

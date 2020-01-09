@@ -30,14 +30,34 @@ export default class TypescriptGenerator {
 
   public enumerationDeclaration(type: GraphQLEnumType) {
     const { name, description } = type;
-    const enumMembers = sortEnumValues(type.getValues()).map(({ value }) => {
-      return t.TSEnumMember(t.identifier(value), t.stringLiteral(value));
-    });
 
-    const typeAlias = t.exportNamedDeclaration(
-      t.TSEnumDeclaration(t.identifier(name), enumMembers),
-      []
-    );
+    const createEnumDeclaration = () => {
+      const enumMembers = sortEnumValues(type.getValues()).map(({ value }) => {
+        return t.TSEnumMember(t.identifier(value), t.stringLiteral(value));
+      });
+
+      return t.exportNamedDeclaration(
+        t.TSEnumDeclaration(t.identifier(name), enumMembers),
+        []
+      );
+    };
+
+    const createStringUnionDeclaration = () => {
+      const unionMembers = t.TSUnionType(
+        sortEnumValues(type.getValues()).map(({ value }) =>
+          t.TSLiteralType(t.stringLiteral(value))
+        )
+      );
+
+      return t.exportNamedDeclaration(
+        t.TSTypeAliasDeclaration(t.identifier(name), null, unionMembers),
+        []
+      );
+    };
+
+    const typeAlias = this.options.tsUseEnums
+      ? createEnumDeclaration()
+      : createStringUnionDeclaration();
 
     if (description) {
       typeAlias.leadingComments = [
