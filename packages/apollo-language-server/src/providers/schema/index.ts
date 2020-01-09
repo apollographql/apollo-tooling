@@ -65,6 +65,6 @@ export function schemaProviderFromConfig(
   }
 
   throw new Error(
-    "No schema provider was created, because the project type was unable to be resolved from your config. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
+    "No schema provider was created, because the project type was unable to be resolved from your config. Please add either a client or service config. For more information, please refer to https://www.apollographql.com/docs/devtools/apollo-config/"
   );
 }
