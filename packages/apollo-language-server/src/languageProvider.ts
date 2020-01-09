@@ -25,7 +25,7 @@ import {
   getTypeInfo
 } from "@apollographql/graphql-language-service-interface/dist/getAutocompleteSuggestions";
 import { GraphQLWorkspace } from "./workspace";
-import { DocumentUri } from "./project/base";
+import { DocumentUri, GraphQLProject } from "./project/base";
 
 import {
   positionFromPositionInContainingDocument,
@@ -491,26 +491,31 @@ export class GraphQLLanguageProvider {
     _context: ReferenceContext,
     _token: CancellationToken
   ): Promise<Location[] | null> {
-    const project = this.workspace.projectForFile(uri);
-    if (!project) return null;
-    const document = project.documentAt(uri, position);
+    const projectFindReferencesRunIn = this.workspace.projectForFile(uri);
+    if (!projectFindReferencesRunIn) return null;
+    const document = projectFindReferencesRunIn.documentAt(uri, position);
     if (!(document && document.ast)) return null;
-
-    if (!project.schema) return null;
 
     const positionInDocument = positionFromPositionInContainingDocument(
       document.source,
       position
     );
 
-    const nodeAndTypeInfo = getASTNodeAndTypeInfoAtPosition(
-      document.source,
-      positionInDocument,
-      document.ast,
-      project.schema
-    );
+    function getRefsInSingleProject(project: GraphQLProject) {
+      if (!project.schema) return null;
+      if (!(document && document.ast)) return null;
 
-    if (nodeAndTypeInfo) {
+      const nodeAndTypeInfo = getASTNodeAndTypeInfoAtPosition(
+        document.source,
+        positionInDocument,
+        document.ast,
+        project.schema
+      );
+
+      if (!nodeAndTypeInfo) {
+        return null;
+      }
+
       const [node, typeInfo] = nodeAndTypeInfo;
 
       switch (node.kind) {
@@ -560,10 +565,20 @@ export class GraphQLLanguageProvider {
             .map(fieldNode => locationForASTNode(fieldNode))
             .filter(isNotNullOrUndefined);
         }
+        default:
+          return null;
       }
     }
 
-    return null;
+    let allRefs: Location[] | null = [];
+    for (const project of this.workspace.projects) {
+      const projectRefs = getRefsInSingleProject(project);
+      if (projectRefs) {
+        allRefs = allRefs.concat(projectRefs);
+      }
+    }
+
+    return allRefs;
   }
 
   async provideDocumentSymbol(
