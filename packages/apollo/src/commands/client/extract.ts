@@ -11,11 +11,13 @@ export default class ClientExtract extends ClientCommand {
   static description = "Extract queries from a client";
   static flags = {
     ...ClientCommand.flags,
-    stripLiterals: flags.boolean({
+    preserveStringAndNumericLiterals: flags.boolean({
       description:
-        "Whether to strip literals from extracted queries. DEFAULT: true",
-      default: true,
-      allowNo: true
+        "Disable redaction of string and numerical literals.  Without this flag, these values will be replaced" +
+        " with empty strings (`''`) and zeroes (`0`) respectively.  This redaction is intended to avoid " +
+        " inadvertently outputting potentially personally identifiable information (e.g. embedded passwords " +
+        " or API keys) into operation manifests",
+      default: false
     })
   };
 
@@ -38,7 +40,8 @@ export default class ClientExtract extends ClientCommand {
         title: "Extracting operations from project",
         task: async ctx => {
           ctx.operations = getOperationManifestFromProject(this.project, {
-            stripLiterals: flags.stripLiterals
+            preserveStringAndNumericLiterals:
+              flags.preserveStringAndNumericLiterals
           });
           ctx.clientIdentity = config.client;
         }

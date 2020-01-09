@@ -14,7 +14,9 @@ export interface ManifestEntry {
 
 export function getOperationManifestFromProject(
   project: GraphQLClientProject,
-  options: { stripLiterals: boolean } = { stripLiterals: true }
+  options: { preserveStringAndNumericLiterals: boolean } = {
+    preserveStringAndNumericLiterals: false
+  }
 ): ManifestEntry[] {
   const manifest = Object.entries(
     project.mergedOperationsAndFragmentsForService
@@ -22,7 +24,10 @@ export function getOperationManifestFromProject(
     const printed = defaultOperationRegistrySignature(
       operationAST,
       operationName,
-      { stripLiterals: options.stripLiterals }
+      {
+        preserveStringAndNumericLiterals:
+          options.preserveStringAndNumericLiterals
+      }
     );
 
     return {

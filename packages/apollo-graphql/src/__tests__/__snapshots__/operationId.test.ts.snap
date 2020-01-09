@@ -28,7 +28,7 @@ exports[`defaultOperationRegistrySignature fragments in various order 1`] = `"fr
 
 exports[`defaultOperationRegistrySignature full test 1`] = `"fragment Bar on User{age@skip(if:$a)...Nested}fragment Nested on User{blah}query Foo($a:Boolean,$b:Int){user(age:0,name:\\"\\"){aliased:name tz...Bar...on User{bee hello}}}"`;
 
-exports[`defaultOperationRegistrySignature test with stripLiterals=false 1`] = `"query Foo($b:Int){user(age:5,name:\\"hello\\"){a@skip(if:true)b@include(if:false)c(value:4){d}...Bar...on User{hello@directive(arg:\\"Value!\\")}}}"`;
+exports[`defaultOperationRegistrySignature test with preserveStringAndNumericLiterals=true 1`] = `"query Foo($b:Int){user(age:5,name:\\"hello\\"){a@skip(if:true)b@include(if:false)c(value:4){d}...Bar...on User{hello@directive(arg:\\"Value!\\")}}}"`;
 
 exports[`defaultOperationRegistrySignature with various argument types 1`] = `"query OpName($a:[[Boolean!]!],$b:EnumType,$c:Int!){user{name(apple:$a,bag:$b,cat:$c)}}"`;
 

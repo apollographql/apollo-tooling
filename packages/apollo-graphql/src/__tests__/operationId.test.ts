@@ -275,7 +275,7 @@ describe("defaultOperationRegistrySignature", () => {
       `
     },
     {
-      name: "test with stripLiterals=false",
+      name: "test with preserveStringAndNumericLiterals=true",
       operationName: "Foo",
       input: gql`
         query Foo($b: Int) {
@@ -292,7 +292,7 @@ describe("defaultOperationRegistrySignature", () => {
           }
         }
       `,
-      options: { stripLiterals: false }
+      options: { preserveStringAndNumericLiterals: true }
     }
   ];
   cases.forEach(({ name, operationName, input, options }) => {

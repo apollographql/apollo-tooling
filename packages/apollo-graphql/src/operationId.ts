@@ -75,12 +75,14 @@ export function defaultEngineReportingSignature(
 export function defaultOperationRegistrySignature(
   ast: DocumentNode,
   operationName: string,
-  options: { stripLiterals: boolean } = { stripLiterals: true }
+  options: { preserveStringAndNumericLiterals: boolean } = {
+    preserveStringAndNumericLiterals: false
+  }
 ): string {
   const withoutUnusedDefs = dropUnusedDefinitions(ast, operationName);
-  const maybeWithLiterals = options.stripLiterals
-    ? hideStringAndNumericLiterals(withoutUnusedDefs)
-    : withoutUnusedDefs;
+  const maybeWithLiterals = options.preserveStringAndNumericLiterals
+    ? withoutUnusedDefs
+    : hideStringAndNumericLiterals(withoutUnusedDefs);
   return printWithReducedWhitespace(sortAST(maybeWithLiterals));
 }
 
