@@ -9,18 +9,29 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Add documentation to input structs' constructors [#1619](https://github.com/apollographql/apollo-tooling/pull/1619)
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
-  - Add @types/node-fetch to apollo-env deps since they are exported [#1749](https://github.com/apollographql/apollo-tooling/pull/1749)
+  - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Adds support for ReasonML to the language server [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
+  - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.21.3`
+
+- `apollo-codegen-swift@0.35.10`
+  - Add documentation to input structs' constructors [#1619](https://github.com/apollographql/apollo-tooling/pull/1619)
+- `apollo-env@0.6.1`
+  - Add @types/node-fetch to apollo-env deps since they are exported [#1749](https://github.com/apollographql/apollo-tooling/pull/1749)
+- `apollo-language-server@1.18.0`
+  - Adds support for ReasonML to the language server [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
+- `vscode-apollo@1.13.0`
   - Adds syntax highlighting for ReasonML [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
 
 ## `apollo@2.21.2`
