@@ -1,0 +1,82 @@
+{
+  "version": 2,
+  "operations": [
+    {
+      "signature": "1a44edd7bcdd053a032afe46c6db1d991f2bcc8c5da36b2a83e2da45ee42e9c4",
+      "document": "mutation CheckPartialSchema($frontend:String,$gitContext:GitContextInput,$graphVariant:String!,$historicParameters:HistoricQueryParameters,$id:ID!,$implementingServiceName:String!,$partialSchema:PartialSchemaInput!){service(id:$id){__typename checkPartialSchema(frontend:$frontend,gitContext:$gitContext,graphVariant:$graphVariant,historicParameters:$historicParameters,implementingServiceName:$implementingServiceName,partialSchema:$partialSchema){__typename checkSchemaResult{__typename diffToPrevious{__typename affectedClients{__typename}affectedQueries{__typename}changes{__typename code description severity}numberOfCheckedOperations severity validationConfig{__typename from queryCountThreshold queryCountThresholdPercentage to}}targetUrl}compositionValidationResult{__typename compositionValidationDetails{__typename schemaHash}errors{__typename message}graphCompositionID}}}}",
+      "metadata": {
+        "engineSignature": ""
+      }
+    },
+    {
+      "signature": "b82f5733769160e5ee87c442bc88247dceacfaa51c69e07c77b7149d4da52168",
+      "document": "mutation CheckSchema($frontend:String,$gitContext:GitContextInput,$historicParameters:HistoricQueryParameters,$id:ID!,$schema:IntrospectionSchemaInput,$schemaHash:String,$tag:String){service(id:$id){__typename checkSchema(baseSchemaTag:$tag,frontend:$frontend,gitContext:$gitContext,historicParameters:$historicParameters,proposedSchema:$schema,proposedSchemaHash:$schemaHash){__typename diffToPrevious{__typename affectedClients{__typename}affectedQueries{__typename}changes{__typename code description severity}numberOfCheckedOperations severity validationConfig{__typename from queryCountThreshold queryCountThresholdPercentage to}}targetUrl}}}",
+      "metadata": {
+        "engineSignature": ""
+      }
+    },
+    {
+      "signature": "39c509b42cfd65e4b8b5636aac3e05bbe98e1a2f4e943f973807957e2b687eb8",
+      "document": "query ListServices($graphVariant:String!,$id:ID!){service(id:$id){__typename implementingServices(graphVariant:$graphVariant){__typename...on FederatedImplementingServices{__typename services{__typename graphID graphVariant name updatedAt url}}}}}",
+      "metadata": {
+        "engineSignature": ""
+      }
+    },
+    {
+      "signature": "771fd6f5f2ff6e31536b37a990b09daa53dc3177072c1d14bb139e54dddca64f",
+      "document": "mutation RegisterOperations($clientIdentity:RegisteredClientIdentityInput!,$graphVariant:String,$id:ID!,$manifestVersion:Int!,$operations:[RegisteredOperationInput!]!){service(id:$id){__typename registerOperationsWithResponse(clientIdentity:$clientIdentity,graphVariant:$graphVariant,manifestVersion:$manifestVersion,operations:$operations){__typename invalidOperations{__typename errors{__typename message}signature}newOperations{__typename signature}registrationSuccess}}}",
+      "metadata": {
+        "engineSignature": ""
+      }
+    },
+    {
+      "signature": "fe097d92f3ee736e61bcc297a51642b40b621d89cb2a72662afe2ceb5e5e44f4",
+      "document": "mutation RemoveServiceAndCompose($graphVariant:String!,$id:ID!,$name:String!){service(id:$id){__typename removeImplementingServiceAndTriggerComposition(graphVariant:$graphVariant,name:$name){__typename compositionConfig{__typename implementingServiceLocations{__typename name path}}errors{__typename locations{__typename column line}message}updatedGateway}}}",
+      "metadata": {
+        "engineSignature": ""
+      }
+    },
+    {
+      "signature": "135e8314de0c2f23f4a2be87b20e59f30ecf2cbcdfad6676a46aad21d29cdb5b",
+      "document": "query SchemaTagsAndFieldStats($id:ID!){service(id:$id){__typename schemaTags{__typename tag}stats(from:\"\",to:\"\"){__typename fieldStats{__typename groupBy{__typename field}metrics{__typename fieldHistogram{__typename durationMs(percentile:0)}}}}}}",
+      "metadata": {
+        "engineSignature": ""
+      }
+    },
+    {
+      "signature": "ce1744708a65a3959506e757e97b67c57dea1595ec1895dcc9125b2587f03e70",
+      "document": "mutation UploadAndComposePartialSchema($activePartialSchema:PartialSchemaInput!,$graphVariant:String!,$id:ID!,$name:String!,$revision:String!,$url:String!){service(id:$id){__typename upsertImplementingServiceAndTriggerComposition(activePartialSchema:$activePartialSchema,graphVariant:$graphVariant,name:$name,revision:$revision,url:$url){__typename compositionConfig{__typename schemaHash}errors{__typename message}didUpdateGateway:updatedGateway serviceWasCreated:wasCreated}}}",
+      "metadata": {
+        "engineSignature": ""
+      }
+    },
+    {
+      "signature": "a2497bb8c32f97870dfc58823b1377f6339c3e5ba53010b2a6b1e5d8fa8b8634",
+      "document": "mutation UploadSchema($gitContext:GitContextInput,$id:ID!,$schema:IntrospectionSchemaInput!,$tag:String!){service(id:$id){__typename uploadSchema(gitContext:$gitContext,schema:$schema,tag:$tag){__typename code message success tag{__typename schema{__typename hash}tag}}}}",
+      "metadata": {
+        "engineSignature": ""
+      }
+    },
+    {
+      "signature": "600e261efe1f25ee30c53edd0b2b83c7eb6691ef5ae1c8f460ace2d303ad053d",
+      "document": "mutation ValidateOperations($gitContext:GitContextInput,$id:ID!,$operations:[OperationDocumentInput!]!,$tag:String){service(id:$id){__typename validateOperations(gitContext:$gitContext,operations:$operations,tag:$tag){__typename validationResults{__typename code description operation{__typename name}type}}}}",
+      "metadata": {
+        "engineSignature": ""
+      }
+    },
+    {
+      "signature": "90dd61fa080c480c2f4edf3cc2b248d7dccc24e780cf7ec8f3b3a520d1dc821c",
+      "document": "fragment IntrospectionFullType on IntrospectionType{__typename description enumValues(includeDeprecated:true){__typename depreactionReason description isDeprecated name}fields{__typename args{__typename...IntrospectionInputValue}deprecationReason description isDeprecated name type{__typename...IntrospectionTypeRef}}inputFields{__typename...IntrospectionInputValue}interfaces{__typename...IntrospectionTypeRef}kind name possibleTypes{__typename...IntrospectionTypeRef}}fragment IntrospectionInputValue on IntrospectionInputValue{__typename defaultValue description name type{__typename...IntrospectionTypeRef}}fragment IntrospectionTypeRef on IntrospectionType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name ofType{__typename kind name}}}}}}}}query GetSchemaByTag($tag:String!){service:me{__typename...on Service{__typename schema(tag:$tag){__typename hash __schema:introspection{__typename directives{__typename args{__typename...IntrospectionInputValue}description locations name}mutationType{__typename name}queryType{__typename name}subscriptionType{__typename name}types(filter:{includeBuiltInTypes:true}){__typename...IntrospectionFullType}}}}}}",
+      "metadata": {
+        "engineSignature": ""
+      }
+    },
+    {
+      "signature": "1f2b31e5d7274390529c81b3e78e071919865a5731b9a772380930463608e88f",
+      "document": "query ListServicesReact($graphVariant:String!=\"\",$id:ID!){service(id:$id){__typename implementingServices(graphVariant:$graphVariant){__typename...on FederatedImplementingServices{__typename services{__typename graphID graphVariant name updatedAt url}}}}}",
+      "metadata": {
+        "engineSignature": ""
+      }
+    }
+  ]
+}

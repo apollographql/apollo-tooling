@@ -213,7 +213,10 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   async resolveSchema(): Promise<GraphQLSchema> {
-    if (!this.schema) throw new Error();
+    if (!this.schema)
+      throw new Error(
+        "No schema found in client project. Client project may be setup improperly."
+      );
     return this.schema;
   }
 

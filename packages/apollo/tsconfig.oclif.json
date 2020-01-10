@@ -6,12 +6,19 @@
     "esModuleInterop": true,
     "noImplicitAny": false,
     "baseUrl": ".",
+    "lib": ["dom", "es2019"],
     "paths": {
       "*": ["./@types/*", "../../types/*"]
-    }
+    },
+    "jsx": "react"
   },
   "include": ["./src/**/*"],
-  "exclude": ["**/__tests__/*", "**/__mocks__/*"],
+  "exclude": [
+    "**/__tests__/*",
+    "**/__mocks__/*",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
   "references": [
     { "path": "../apollo-codegen-flow" },
     { "path": "../apollo-codegen-scala" },

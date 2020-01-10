@@ -1,4 +1,13 @@
 {
   "extends": "../../tsconfig.test.base",
-  "include": ["**/__tests__/*", "**/__mocks__/*"]
+  "include": [
+    "**/__tests__/*",
+    "**/__mocks__/*",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
+  "compilerOptions": {
+    "jsx": "react",
+    "lib": ["dom", "es2019"]
+  }
 }
