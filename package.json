@@ -80,7 +80,7 @@
     "jest": "24.9.0",
     "jest-environment-node": "24.9.0",
     "jest-matcher-utils": "24.9.0",
-    "lerna": "3.20.0",
+    "lerna": "3.20.2",
     "lint-staged": "9.5.0",
     "memfs": "2.17.1",
     "nock": "11.4.0",
