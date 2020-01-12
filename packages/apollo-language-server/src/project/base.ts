@@ -70,7 +70,7 @@ export interface ProjectStats {
 }
 
 export abstract class GraphQLProject implements GraphQLSchemaProvider {
-  public schemaProvider: GraphQLSchemaProvider;
+  public schemaProvider!: GraphQLSchemaProvider;
   protected _onDiagnostics?: NotificationHandler<PublishDiagnosticsParams>;
 
   private _isReady: boolean;
@@ -81,10 +81,11 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   protected documentsByFile: Map<DocumentUri, GraphQLDocument[]> = new Map();
 
-  public config: ApolloConfig;
+  public config!: ApolloConfig;
   public schema?: GraphQLSchema;
   private fileSet: FileSet;
   protected loadingHandler: LoadingHandler;
+  protected clientIdentity?: ClientIdentity;
 
   protected lastLoadDate?: number;
 
@@ -94,23 +95,14 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     loadingHandler,
     clientIdentity
   }: GraphQLProjectConfig) {
-    this.config = config;
     this.fileSet = fileSet;
     this.loadingHandler = loadingHandler;
-    this.schemaProvider = schemaProviderFromConfig(config, clientIdentity);
-    const { engine } = config;
-    if (engine.apiKey) {
-      this.engineClient = new ApolloEngineClient(
-        engine.apiKey!,
-        engine.endpoint,
-        clientIdentity
-      );
-    }
+    this.clientIdentity = clientIdentity;
 
     this._isReady = false;
     // FIXME: Instead of `Promise.all`, we should catch individual promise rejections
     // so we can show multiple errors.
-    this.readyPromise = Promise.all(this.initialize())
+    this.readyPromise = Promise.all(this.updateConfig(config))
       .then(() => {
         this._isReady = true;
       })
@@ -147,6 +139,15 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   public updateConfig(config: ApolloConfig) {
     this.config = config;
+    this.schemaProvider = schemaProviderFromConfig(config, this.clientIdentity);
+    const { engine } = config;
+    if (engine.apiKey) {
+      this.engineClient = new ApolloEngineClient(
+        engine.apiKey!,
+        engine.endpoint,
+        this.clientIdentity
+      );
+    }
     return this.initialize();
   }
 
