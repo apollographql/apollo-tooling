@@ -109,6 +109,10 @@ export default class Generate extends ClientCommand {
     tsFileExtension: flags.string({
       description:
         'By default, TypeScript will output "ts" files. Set "tsFileExtension" to specify a different file extension, for example "d.ts"'
+    }),
+    tsUseOptionalForNullables: flags.boolean({
+      description:
+        "This makes nullable fields optional instead of union of field type and null. Makes forwarding query/mutation results to components with optional props easier. When enabling this You should be aware that apollo-client assigns null to fields with empty value and `undefined !== null` in JavaScript. So a type guard like `type fieldValue !== 'object'` without any further checks, compiles but may result in runtime errors."
     })
   };
 
@@ -221,6 +225,7 @@ export default class Generate extends ClientCommand {
                       flags.useReadOnlyTypes || flags.useFlowReadOnlyTypes,
                     globalTypesFile: flags.globalTypesFile,
                     tsFileExtension: flags.tsFileExtension,
+                    tsUseOptionalForNullables: flags.tsUseOptionalForNullables,
                     suppressSwiftMultilineStringLiterals:
                       flags.suppressSwiftMultilineStringLiterals,
                     omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases

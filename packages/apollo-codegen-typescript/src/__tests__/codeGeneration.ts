@@ -634,4 +634,21 @@ describe("Typescript codeGeneration local / global", () => {
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
+
+  test("use optional for nullables config enabled", () => {
+    const context = compile(
+      `
+      query HeroName($episode: Episode) {
+        hero(episode: $episode) {
+          name
+          id
+        }
+      }
+    `,
+      { tsUseOptionalForNullables: true }
+    );
+
+    const output = generateSource(context);
+    expect(output).toMatchSnapshot();
+  });
 });

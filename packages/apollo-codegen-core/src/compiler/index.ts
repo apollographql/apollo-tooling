@@ -45,6 +45,7 @@ export interface CompilerOptions {
   // this option is only implemented in the ts codegen, so we name it
   // `ts` fileExtension for now.
   tsFileExtension?: string;
+  tsUseOptionalForNullables?: boolean;
   useReadOnlyTypes?: boolean;
   suppressSwiftMultilineStringLiterals?: boolean;
   omitDeprecatedEnumCases?: boolean;

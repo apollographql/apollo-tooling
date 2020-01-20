@@ -93,14 +93,28 @@ export default class TypescriptGenerator {
     } = {}
   ) {
     return fields.map(({ name, description, type }) => {
+      let fieldType = type;
+
+      const isNullableType = this.isNullableType(fieldType);
+      if (
+        this.options.tsUseOptionalForNullables &&
+        t.isTSUnionType(fieldType) &&
+        isNullableType
+      ) {
+        fieldType = { ...fieldType }; // copy to prevent main field type mutation
+        fieldType.types = fieldType.types.filter(
+          type => !t.isTSNullKeyword(type)
+        );
+      }
+
       const propertySignatureType = t.TSPropertySignature(
         t.identifier(name),
-        t.TSTypeAnnotation(type)
+        t.TSTypeAnnotation(fieldType)
       );
 
-      // TODO: Check if this works
-      propertySignatureType.optional =
-        keyInheritsNullability && this.isNullableType(type);
+      propertySignatureType.optional = this.options.tsUseOptionalForNullables
+        ? isNullableType
+        : keyInheritsNullability && isNullableType;
 
       if (this.options.useReadOnlyTypes) {
         propertySignatureType.readonly = true;
