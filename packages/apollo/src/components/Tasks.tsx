@@ -5,7 +5,8 @@ import React, {
   useRef,
   ReactElement,
   MutableRefObject,
-  Dispatch
+  Dispatch,
+  ReactNode
 } from "react";
 
 import { Text, Color, Box } from "ink";
@@ -57,7 +58,7 @@ export function useTask<TResult>(
   flexbox layout of the task items being rendered
 */
 // XXX improve child typing to only allow <Task>
-export function Tasks({ children }) {
+export function Tasks({ children }: { children: ReactNode }) {
   // this holds a mutable promise of each task
   const _activeTaskRef = useRef(null);
   // this keeps track of the order of tasks that need to be executed
@@ -128,7 +129,7 @@ export function Task<T>(props: TaskProps<T>) {
   useEffect(() => {
     if (!isActive) return;
 
-    // controlled task version is run by the `task` prop
+    // uncontrolled task version is run by the `task` prop
     if ("task" in props) {
       const { task: taskFn, setResult } = props.task();
 
@@ -165,12 +166,13 @@ export function Task<T>(props: TaskProps<T>) {
   if ("loading" in props) {
     isDone = !props.loading;
   }
+  if (isDone && !isError && state !== "success") setState("success");
 
   // if the task hasn't started, don't render anything
   if (!(isActive || isDone)) return null;
 
   return (
-    <Box flexDirection="column" marginBottom={1}>
+    <Box flexDirection="column">
       {/* 1. Print task status and name */}
       <Box>
         {!isDone && (
@@ -184,8 +186,7 @@ export function Task<T>(props: TaskProps<T>) {
         {/* controlled tasks need to print the checkbox too -- the second
             check says if there is no error reported and the task is done,
             it's a success */}
-        {state === "success" ||
-          (!isError && isDone && <Color green>{"✔ "}</Color>)}
+        {state === "success" && <Color green>{"✔ "}</Color>}
 
         {isError && <Color red>{"X "}</Color>}
         {title && <Text>{title}</Text>}

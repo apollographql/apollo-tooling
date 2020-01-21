@@ -2,14 +2,13 @@ import React from "react";
 import { render } from "ink-testing-library";
 import stripAnsi from "strip-ansi";
 import { MockedProvider } from "@apollo/client/testing";
-import ApolloCommand, {
+import {
   ErrorBoundary,
   OclifContext,
-  ConfigContext
+  ConfigContext,
+  ProjectContext
 } from "../NewCommand";
 import * as Parser from "@oclif/parser";
-import { ApolloConfig } from "apollo-language-server";
-import { ParserOutput } from "@oclif/parser/lib/parse";
 
 /*
   This test util should be used to test command classes that extend ApolloCommand. This is _not_ useful
@@ -48,16 +47,18 @@ import { ParserOutput } from "@oclif/parser/lib/parse";
 
 export const executeCommand = (
   Command: any,
-  { config, args, flags, mocks }: any
+  { config, args, flags, mocks, project }: any
 ) => {
   const Component = new Command().render;
   const App = (
     <ErrorBoundary>
       <OclifContext.Provider value={{ flags, args } as Parser.Output<any, any>}>
         <ConfigContext.Provider value={config}>
-          <MockedProvider addTypename={false} mocks={mocks}>
-            <Component />
-          </MockedProvider>
+          <ProjectContext.Provider value={project}>
+            <MockedProvider addTypename={false} mocks={mocks}>
+              <Component />
+            </MockedProvider>
+          </ProjectContext.Provider>
         </ConfigContext.Provider>
       </OclifContext.Provider>
     </ErrorBoundary>

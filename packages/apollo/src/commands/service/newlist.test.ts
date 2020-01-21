@@ -1,5 +1,3 @@
-import React from "react";
-
 import ServiceList, { LIST_SERVICES } from "./newlist";
 import { executeCommand } from "../../utils/command-test-utils";
 
@@ -108,7 +106,6 @@ describe("service:list", () => {
     expect(lastFrame()).toMatchInlineSnapshot(`
       "
       ⠋ Fetching list of services for graph hello@wow
-
       "
     `);
 
@@ -117,7 +114,6 @@ describe("service:list", () => {
     expect(lastFrame()).toMatchInlineSnapshot(`
       "
       ✔ Fetching list of services for graph hello@wow
-
       ┌───────────┬───────────────────────────────┬───────────────────────────┐
       │ Name      │ URL                           │ Last Updated              │
       ├───────────┼───────────────────────────────┼───────────────────────────┤
@@ -152,7 +148,6 @@ describe("service:list", () => {
     expect(lastFrame()).toMatchInlineSnapshot(`
       "
       ⠋ Fetching list of services for graph hello@wow
-
       "
     `);
 
@@ -180,7 +175,6 @@ describe("service:list", () => {
     expect(lastFrame()).toMatchInlineSnapshot(`
       "
       ⠋ Fetching list of services for graph hello@wow
-
       "
     `);
 
@@ -189,7 +183,6 @@ describe("service:list", () => {
     expect(lastFrame()).toMatchInlineSnapshot(`
       "
       ✔ Fetching list of services for graph hello@wow
-
       This graph is not federated. There are no services composing the graph
       View full details at: https://engine.apollographql.com/graph/hello/service-list"
     `);
