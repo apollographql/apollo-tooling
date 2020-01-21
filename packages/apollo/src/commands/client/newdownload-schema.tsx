@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { introspectionFromSchema, printSchema } from "graphql";
+import React from "react";
+import { introspectionFromSchema, printSchema, GraphQLSchema } from "graphql";
 import { writeFileSync } from "fs";
-
 import ApolloCommand, {
   useOclif,
   useProject,
   clientFlags
 } from "../../NewCommand";
-import { TaskList } from "../../components/";
+import { Task, Tasks, useTask } from "../../components/";
+import { Text, Color, Box } from "ink";
 
 export default class SchemaDownloadReact extends ApolloCommand {
   static description =
@@ -32,25 +32,31 @@ export default class SchemaDownloadReact extends ApolloCommand {
     const { args, flags } = useOclif();
     const project = useProject();
 
-    const [running, setRunning] = useState([
-      `Saving schema to ${args.output}`
-    ] as Array<string | any>);
-    const [done, setDone] = useState([] as Array<string | any>);
-
     const extension = args.output.split(".").pop();
     const isSDLFormat = ["graphql", "graphqls", "gql"].includes(extension);
 
-    useEffect(() => {
-      project.resolveSchema({ tag: flags.tag }).then(schema => {
-        const formattedSchema = isSDLFormat
-          ? printSchema(schema)
-          : JSON.stringify(introspectionFromSchema(schema), null, 2);
-        writeFileSync(args.output, formattedSchema);
-        setDone(running);
-        setRunning([]);
-      });
-    }, []);
+    const [schema, loadProject] = useTask<GraphQLSchema>(async () => {
+      await project.whenReady;
+      return await project.resolveSchema({ tag: flags.tag });
+    });
 
-    return <TaskList running={running} done={done} />;
+    const [written, writeFile] = useTask<boolean>(async () => {
+      if (!schema) throw new Error("Unable to load schema");
+      const formattedSchema = isSDLFormat
+        ? printSchema(schema)
+        : JSON.stringify(introspectionFromSchema(schema), null, 2);
+      writeFileSync(args.output, formattedSchema);
+      return true;
+    });
+
+    return (
+      <Box>
+        <Tasks>
+          <Task task={loadProject} title="Loading schema" />
+          <Task task={writeFile} title={`Writing file to ${args.output}`} />
+        </Tasks>
+        {written && <Text>File written to {args.output}</Text>}
+      </Box>
+    );
   }
 }

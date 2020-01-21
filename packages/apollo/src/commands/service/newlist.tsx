@@ -4,7 +4,7 @@ import { Color, Box, Text } from "ink";
 import Table from "ink-table";
 import moment from "moment";
 import { isNotNullOrUndefined } from "apollo-env";
-import { Task } from "../../components";
+import { Task, Tasks } from "../../components";
 
 import ApolloCommand, { useConfig, useOclif } from "../../NewCommand";
 
@@ -27,12 +27,6 @@ export const LIST_SERVICES = gql`
   }
 `;
 
-/**
- * TODO
- *
- */
-
-// title: `Collecting graph info from Apollo Graph Manager`,
 export default class ServiceListReact extends ApolloCommand {
   static description =
     "List the services that implement a managed federated graph";
@@ -54,30 +48,34 @@ export default class ServiceListReact extends ApolloCommand {
 
     if (error) throw error;
 
-    if (loading)
-      return (
-        <Task status="running">
-          <Text>
-            Fetching list of services for graph{" "}
-            <Color cyan>
-              {id}@{graphVariant}
-            </Color>
-          </Text>
-        </Task>
-      );
-
-    const implementingServices = data.service.implementingServices;
+    const implementingServices = data && data.service.implementingServices;
     const frontendUrl = config.engine.frontend;
-    const serviceList = formatServicesForTable({ implementingServices });
+    const serviceList =
+      implementingServices && formatServicesForTable({ implementingServices });
 
     return (
       <Box flexDirection="column" marginTop={1}>
-        {serviceList.length ? <Table data={serviceList} /> : null}
-        <Footer
-          implementingServices={implementingServices}
-          graphName={id}
-          frontendUrl={frontendUrl}
-        />
+        <Tasks>
+          <Task
+            title={
+              <Text>
+                Fetching list of services for graph{" "}
+                <Color cyan>
+                  {id}@{graphVariant}
+                </Color>
+              </Text>
+            }
+            loading={loading}
+          />
+        </Tasks>
+        {!loading && serviceList.length ? <Table data={serviceList} /> : null}
+        {!loading && (
+          <Footer
+            implementingServices={implementingServices}
+            graphName={id}
+            frontendUrl={frontendUrl}
+          />
+        )}
       </Box>
     );
   }
@@ -85,7 +83,6 @@ export default class ServiceListReact extends ApolloCommand {
 
 const Footer = ({ implementingServices, graphName, frontendUrl }) => {
   let errorMessage = "";
-
   if (
     !implementingServices ||
     implementingServices.__typename === "NonFederatedImplementingService"

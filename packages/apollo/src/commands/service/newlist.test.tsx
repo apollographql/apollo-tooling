@@ -94,7 +94,7 @@ const mocks = {
 };
 
 describe("service:list", () => {
-  it("succeeds with a federated graph", async () => {
+  fit("succeeds with a federated graph", async () => {
     const { lastFrame, frames, rerender } = executeCommand(ServiceList, {
       config: {
         name: "hello",
