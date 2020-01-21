@@ -94,7 +94,7 @@ const mocks = {
 };
 
 describe("service:list", () => {
-  fit("succeeds with a federated graph", async () => {
+  it("succeeds with a federated graph", async () => {
     const { lastFrame, frames, rerender } = executeCommand(ServiceList, {
       config: {
         name: "hello",
@@ -105,14 +105,19 @@ describe("service:list", () => {
     });
 
     // first loading state
-    expect(lastFrame()).toMatchInlineSnapshot(
-      `"⠋ Fetching list of services for graph hello@wow"`
-    );
+    expect(lastFrame()).toMatchInlineSnapshot(`
+      "
+      ⠋ Fetching list of services for graph hello@wow
+
+      "
+    `);
 
     // final state
     await rerender(0);
     expect(lastFrame()).toMatchInlineSnapshot(`
       "
+      ✔ Fetching list of services for graph hello@wow
+
       ┌───────────┬───────────────────────────────┬───────────────────────────┐
       │ Name      │ URL                           │ Last Updated              │
       ├───────────┼───────────────────────────────┼───────────────────────────┤
@@ -144,9 +149,12 @@ describe("service:list", () => {
     });
 
     // first loading state
-    expect(lastFrame()).toMatchInlineSnapshot(
-      `"⠋ Fetching list of services for graph hello@wow"`
-    );
+    expect(lastFrame()).toMatchInlineSnapshot(`
+      "
+      ⠋ Fetching list of services for graph hello@wow
+
+      "
+    `);
 
     // final state
     await rerender(0);
@@ -169,14 +177,19 @@ describe("service:list", () => {
     });
 
     // first loading state
-    expect(lastFrame()).toMatchInlineSnapshot(
-      `"⠋ Fetching list of services for graph hello@wow"`
-    );
+    expect(lastFrame()).toMatchInlineSnapshot(`
+      "
+      ⠋ Fetching list of services for graph hello@wow
+
+      "
+    `);
 
     // final state
     await rerender(0);
     expect(lastFrame()).toMatchInlineSnapshot(`
       "
+      ✔ Fetching list of services for graph hello@wow
+
       This graph is not federated. There are no services composing the graph
       View full details at: https://engine.apollographql.com/graph/hello/service-list"
     `);

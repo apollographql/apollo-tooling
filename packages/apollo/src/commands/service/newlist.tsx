@@ -40,6 +40,11 @@ export default class ServiceListReact extends ApolloCommand {
     const { flags } = useOclif();
 
     const id = config.name;
+    if (!id)
+      throw new Error(
+        "No service ID found in config or flags for Apollo Graph Manager."
+      );
+
     const graphVariant = flags.tag || config.tag;
 
     const { loading, data, error } = useQuery(LIST_SERVICES, {
@@ -49,12 +54,13 @@ export default class ServiceListReact extends ApolloCommand {
     if (error) throw error;
 
     const implementingServices = data && data.service.implementingServices;
-    const frontendUrl = config.engine.frontend;
     const serviceList =
-      implementingServices && formatServicesForTable({ implementingServices });
+      implementingServices &&
+      implementingServices.services &&
+      formatServicesForTable({ implementingServices });
 
     return (
-      <Box flexDirection="column" marginTop={1}>
+      <Box flexDirection="column">
         <Tasks>
           <Task
             title={
@@ -68,12 +74,12 @@ export default class ServiceListReact extends ApolloCommand {
             loading={loading}
           />
         </Tasks>
-        {!loading && serviceList.length ? <Table data={serviceList} /> : null}
+        {!loading && serviceList ? <Table data={serviceList} /> : null}
         {!loading && (
           <Footer
             implementingServices={implementingServices}
             graphName={id}
-            frontendUrl={frontendUrl}
+            frontendUrl={config.engine.frontend}
           />
         )}
       </Box>

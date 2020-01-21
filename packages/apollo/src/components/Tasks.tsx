@@ -157,7 +157,7 @@ export function Task<T>(props: TaskProps<T>) {
     // XXX is this even needed since tasks can't go backwards to run again?
   }, [isActive]);
 
-  const isError = isErrorState(state);
+  const isError = state instanceof Error;
   let isDone = isError || state === "success";
 
   // for controlled tasks (i.e. controlled by another hook / source)
@@ -166,10 +166,12 @@ export function Task<T>(props: TaskProps<T>) {
     isDone = !props.loading;
   }
 
-  // if the task hasn't started, don't render a
+  // if the task hasn't started, don't render anything
   if (!(isActive || isDone)) return null;
+
   return (
-    <Box marginLeft={2} flexDirection="column">
+    <Box flexDirection="column" marginBottom={1}>
+      {/* 1. Print task status and name */}
       <Box>
         {!isDone && (
           <Box paddingRight={1} marginBottom={1}>
@@ -178,11 +180,21 @@ export function Task<T>(props: TaskProps<T>) {
             </Color>
           </Box>
         )}
-        {state === "success" && <Color green>{"✔ "}</Color>}
+
+        {/* controlled tasks need to print the checkbox too -- the second
+            check says if there is no error reported and the task is done,
+            it's a success */}
+        {state === "success" ||
+          (!isError && isDone && <Color green>{"✔ "}</Color>)}
+
         {isError && <Color red>{"X "}</Color>}
         {title && <Text>{title}</Text>}
       </Box>
+
+      {/* 2. Fire done callback after task finishes running */}
       {isDone && done && done(isError ? (state as Error) : undefined)}
+
+      {/* 3. Print any errors */}
       {isError && !done && (
         <Box>
           <Color red>{(state as Error).message}</Color>
@@ -190,8 +202,4 @@ export function Task<T>(props: TaskProps<T>) {
       )}
     </Box>
   );
-}
-
-function isErrorState(state: string | Error): state is Error {
-  return state instanceof Error;
 }
