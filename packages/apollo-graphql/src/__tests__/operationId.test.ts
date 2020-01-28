@@ -1,7 +1,7 @@
 import { default as gql, disableFragmentWarnings } from "graphql-tag";
 import {
   defaultEngineReportingSignature,
-  defaultOperationRegistrySignature
+  operationRegistrySignature
 } from "../operationId";
 
 // The gql duplicate fragment warning feature really is just warnings; nothing
@@ -146,7 +146,7 @@ describe("defaultEngineReportingSignature", () => {
   });
 });
 
-describe("defaultOperationRegistrySignature", () => {
+describe("operationRegistrySignature", () => {
   const cases = [
     // Test cases borrowed from optics-agent-js.
     {
@@ -298,7 +298,7 @@ describe("defaultOperationRegistrySignature", () => {
   cases.forEach(({ name, operationName, input, options }) => {
     test(name, () => {
       expect(
-        defaultOperationRegistrySignature(input, operationName, options)
+        operationRegistrySignature(input, operationName, options)
       ).toMatchSnapshot();
     });
   });

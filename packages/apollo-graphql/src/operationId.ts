@@ -72,7 +72,7 @@ export function defaultEngineReportingSignature(
 // sorting the AST in a deterministic manner, potentially hiding string and numeric
 // literals, and removing unused definitions. This is a less aggressive transform
 // than its engine reporting signature counterpart.
-export function defaultOperationRegistrySignature(
+export function operationRegistrySignature(
   ast: DocumentNode,
   operationName: string,
   options: { preserveStringAndNumericLiterals: boolean } = {
@@ -84,6 +84,15 @@ export function defaultOperationRegistrySignature(
     ? withoutUnusedDefs
     : hideStringAndNumericLiterals(withoutUnusedDefs);
   return printWithReducedWhitespace(sortAST(maybeWithLiterals));
+}
+
+export function defaultOperationRegistrySignature(
+  ast: DocumentNode,
+  operationName: string
+): string {
+  return operationRegistrySignature(ast, operationName, {
+    preserveStringAndNumericLiterals: false
+  });
 }
 
 export function operationHash(operation: string): string {
