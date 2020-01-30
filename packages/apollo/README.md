@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.21.3 darwin-x64 node-v12.13.1
+apollo/2.22.0 darwin-x64 node-v12.14.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -276,13 +276,13 @@ OPTIONS
 
   --key=key                              The API key for the Apollo Engine service
 
-  --queries=queries                      Deprecated in favor of the includes flag
-
-  --preserveStringAndNumericLiterals     Disable redaction of string and numerical literals. Without this flag, these
+  --preserveStringAndNumericLiterals     Disable redaction of string and numerical literals.  Without this flag, these
                                          values will be replaced with empty strings (`''`) and zeroes (`0`)
-                                         respectively. This redaction is intended to avoid inadvertently outputting
-                                         potentially personally identifiable information (e.g. embedded passwords or
-                                         API keys) into operation manifests.  DEFAULT: false
+                                         respectively.  This redaction is intended to avoid  inadvertently outputting
+                                         potentially personally identifiable information (e.g. embedded passwords  or
+                                         API keys) into operation manifests
+
+  --queries=queries                      Deprecated in favor of the includes flag
 
   --tagName=tagName                      Name of the template literal tag used to identify template literals containing
                                          GraphQL queries in Javascript/Typescript code
