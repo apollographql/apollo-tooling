@@ -278,6 +278,12 @@ OPTIONS
 
   --queries=queries                      Deprecated in favor of the includes flag
 
+  --preserveStringAndNumericLiterals     Disable redaction of string and numerical literals. Without this flag, these
+                                         values will be replaced with empty strings (`''`) and zeroes (`0`)
+                                         respectively. This redaction is intended to avoid inadvertently outputting
+                                         potentially personally identifiable information (e.g. embedded passwords or
+                                         API keys) into operation manifests.  DEFAULT: false
+
   --tagName=tagName                      Name of the template literal tag used to identify template literals containing
                                          GraphQL queries in Javascript/Typescript code
 ```

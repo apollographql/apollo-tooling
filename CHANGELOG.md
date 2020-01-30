@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Support disabling literal stripping when extracting queries.  [1703](https://github.com/apollographql/apollo-tooling/pull/1703)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
