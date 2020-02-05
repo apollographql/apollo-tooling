@@ -1,3 +1,4 @@
+import { flags } from "@oclif/command";
 import { writeFileSync } from "fs";
 import { ClientCommand } from "../../Command";
 import {
@@ -9,7 +10,15 @@ import { ClientIdentity } from "apollo-language-server";
 export default class ClientExtract extends ClientCommand {
   static description = "Extract queries from a client";
   static flags = {
-    ...ClientCommand.flags
+    ...ClientCommand.flags,
+    preserveStringAndNumericLiterals: flags.boolean({
+      description:
+        "Disable redaction of string and numerical literals.  Without this flag, these values will be replaced" +
+        " with empty strings (`''`) and zeroes (`0`) respectively.  This redaction is intended to avoid " +
+        " inadvertently outputting potentially personally identifiable information (e.g. embedded passwords " +
+        " or API keys) into operation manifests",
+      default: false
+    })
   };
 
   static args = [
@@ -30,7 +39,10 @@ export default class ClientExtract extends ClientCommand {
       {
         title: "Extracting operations from project",
         task: async ctx => {
-          ctx.operations = getOperationManifestFromProject(this.project);
+          ctx.operations = getOperationManifestFromProject(this.project, {
+            preserveStringAndNumericLiterals:
+              flags.preserveStringAndNumericLiterals
+          });
           ctx.clientIdentity = config.client;
         }
       },

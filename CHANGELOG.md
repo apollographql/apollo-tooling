@@ -4,6 +4,7 @@
 
 - `apollo`
   - Update shortlinks to use go.apollo.dev instead of bitly [#1790](https://github.com/apollographql/apollo-tooling/pull/1790)
+  - Support disabling literal stripping when extracting queries.  [1703](https://github.com/apollographql/apollo-tooling/pull/1703)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
