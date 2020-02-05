@@ -10,7 +10,6 @@
 - `apollo-codegen-scala`
   - Add @generated comment
 - `apollo-codegen-swift`
-  - Add documentation to input structs' constructors [#1619](https://github.com/apollographql/apollo-tooling/pull/1619)
   - Add @generated comment
 - `apollo-codegen-typescript`
   - Add @generated comment
