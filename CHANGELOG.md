@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Update shortlinks to use go.apollo.dev instead of bitly [#1790](https://github.com/apollographql/apollo-tooling/pull/1790)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
