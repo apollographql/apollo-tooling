@@ -370,6 +370,7 @@ export default class ServiceCheck extends ProjectCommand {
                   const decodedErrors = compositionValidationResult.errors
                     .filter(isNotNullOrUndefined)
                     .map(error => {
+                      // checks for format: [serviceName] Location -> Error Message
                       const match = error.message.match(
                         /^\[([^\[]+)\]\s+(\S+)\ ->\ (.+)/
                       );
@@ -639,22 +640,38 @@ export default class ServiceCheck extends ProjectCommand {
       // Add a cosmetic line break
       console.log("");
 
-      this.log(
-        table(
-          [
-            ["Service", "Field", "Message"],
-            ...compositionErrors.map(Object.values)
-          ],
-          {
-            columns: {
-              2: {
-                width: 50,
-                wrapWord: true
+      // errors that DONT match the expected format: [service] field -> message
+      const unformattedErrors = compositionErrors.filter(
+        e => !e.field && !e.service
+      );
+      // errors that match the expected format: [service] field -> message
+      const formattedErrors = compositionErrors.filter(
+        e => e.field || e.service
+      );
+
+      if (formattedErrors.length)
+        this.log(
+          table(
+            [
+              ["Service", "Field", "Message"],
+              ...formattedErrors.map(Object.values)
+            ],
+            {
+              columns: {
+                2: {
+                  width: 50,
+                  wrapWord: true
+                }
               }
             }
-          }
-        )
-      );
+          )
+        );
+
+      // list out errors which we couldn't determine Service name and/or location names
+      if (unformattedErrors.length)
+        this.log(
+          table([["Message"], ...unformattedErrors.map(e => [e.message])])
+        );
 
       // Return a non-zero error code
       this.exit(1);
