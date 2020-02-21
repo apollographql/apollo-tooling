@@ -355,6 +355,9 @@ export interface ListServices_service {
 }
 
 export interface ListServices {
+  /**
+   * Service by ID
+   */
   service: ListServices_service | null;
 }
 
@@ -537,6 +540,9 @@ export interface SchemaTagsAndFieldStats_service {
 }
 
 export interface SchemaTagsAndFieldStats {
+  /**
+   * Service by ID
+   */
   service: SchemaTagsAndFieldStats_service | null;
 }
 
@@ -1148,6 +1154,9 @@ export interface GetSchemaByTag_service {
 }
 
 export interface GetSchemaByTag {
+  /**
+   * Service by ID
+   */
   service: GetSchemaByTag_service | null;
 }
 

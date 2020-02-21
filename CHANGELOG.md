@@ -4,7 +4,8 @@
 
 - `apollo`
   - Update shortlinks to use go.apollo.dev instead of bitly [#1790](https://github.com/apollographql/apollo-tooling/pull/1790)
-  - Support disabling literal stripping when extracting queries.  [1703](https://github.com/apollographql/apollo-tooling/pull/1703)
+  - Support disabling literal stripping when extracting queries. [1703](https://github.com/apollographql/apollo-tooling/pull/1703)
+  - Fix rendering of unexpected composition errors throwing a table cell error [#1806](https://github.com/apollographql/apollo-tooling/pull/1806)
 - `apollo-codegen-flow`
   - Add @generated comment
 - `apollo-codegen-scala`
