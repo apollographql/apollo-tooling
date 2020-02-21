@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.22.1 darwin-x64 node-v10.17.0
+apollo/2.23.0 darwin-x64 node-v10.15.3
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -549,7 +549,7 @@ USAGE
   $ apollo service:download OUTPUT
 
 ARGUMENTS
-  OUTPUT  [default: schema.json] Path to write the introspection result to
+  OUTPUT  [default: schema.json] Path to write the introspection result to. Supports .json output only.
 
 OPTIONS
   -c, --config=config      Path to your Apollo config file
