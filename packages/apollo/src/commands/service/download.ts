@@ -1,8 +1,10 @@
 import { flags } from "@oclif/command";
 import { introspectionFromSchema } from "graphql";
-import { writeFileSync } from "fs";
 import chalk from "chalk";
 import { ProjectCommand } from "../../Command";
+import mkdirp from "mkdirp";
+import fs from "fs";
+import { dirname as getDirName } from "path";
 
 export default class ServiceDownload extends ProjectCommand {
   static aliases = ["schema:download"];
@@ -24,22 +26,22 @@ export default class ServiceDownload extends ProjectCommand {
   static args = [
     {
       name: "output",
-      description: "Path to write the introspection result to",
+      description:
+        "Path to write the introspection result to. Supports .json output only.",
       required: true,
       default: "schema.json"
     }
   ];
 
   async run() {
-    let result;
-    let gitContext;
     await this.runTasks(({ args, project, flags }) => [
       {
         title: `Saving schema to ${args.output}`,
         task: async () => {
           try {
             const schema = await project.resolveSchema({ tag: flags.tag });
-            writeFileSync(
+            await mkdirp(getDirName(args.output));
+            fs.writeFileSync(
               args.output,
               JSON.stringify(introspectionFromSchema(schema), null, 2)
             );
