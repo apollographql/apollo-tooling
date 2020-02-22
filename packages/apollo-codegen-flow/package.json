@@ -17,7 +17,7 @@
     "npm": ">=6"
   },
   "dependencies": {
-    "@babel/generator": "7.8.3",
+    "@babel/generator": "7.8.4",
     "@babel/types": "7.8.3",
     "apollo-codegen-core": "file:../apollo-codegen-core",
     "change-case": "^3.0.1",
