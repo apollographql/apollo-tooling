@@ -229,7 +229,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
         if (definition.kind === Kind.OPERATION_DEFINITION && definition.name) {
           if (operations[definition.name.value]) {
             throw new Error(
-              `️️There are multiple definitions for the ${definition.name.value} operation. All operations in a project must have unique names. If generating types, only the types for the first definition found will be generated.`
+              `️️There are multiple definitions for the \`${definition.name.value}\` operation. Please rename or remove all operations with the duplicated name before continuing.`
             );
           }
           operations[definition.name.value] = definition;
