@@ -197,13 +197,9 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     // Don't process files of an unsupported filetype
     if (!languageId) return;
 
-    try {
-      const contents = readFileSync(filePath, "utf8");
-      const document = TextDocument.create(uri, languageId, -1, contents);
-      this.documentDidChange(document);
-    } catch (error) {
-      console.error(error);
-    }
+    const contents = readFileSync(filePath, "utf8");
+    const document = TextDocument.create(uri, languageId, -1, contents);
+    this.documentDidChange(document);
   }
 
   fileWasDeleted(uri: DocumentUri) {
