@@ -1,8 +1,8 @@
-import { flags } from "@oclif/command";
 import { introspectionFromSchema, printSchema } from "graphql";
-import { writeFileSync } from "fs";
-
 import { ClientCommand } from "../../Command";
+import mkdirp from "mkdirp";
+import fs from "fs";
+import { dirname as getDirName } from "path";
 
 export default class SchemaDownload extends ClientCommand {
   static description =
@@ -23,8 +23,6 @@ export default class SchemaDownload extends ClientCommand {
   ];
 
   async run() {
-    let result;
-    let gitContext;
     await this.runTasks(({ args, project, flags }) => {
       const extension = args.output.split(".").pop();
       const isSDLFormat = ["graphql", "graphqls", "gql"].includes(extension);
@@ -36,7 +34,13 @@ export default class SchemaDownload extends ClientCommand {
             const formattedSchema = isSDLFormat
               ? printSchema(schema)
               : JSON.stringify(introspectionFromSchema(schema), null, 2);
-            writeFileSync(args.output, formattedSchema);
+
+            try {
+              await mkdirp(getDirName(args.output));
+              fs.writeFileSync(args.output, formattedSchema);
+            } catch (err) {
+              throw err;
+            }
           }
         }
       ];

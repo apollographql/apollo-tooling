@@ -52,7 +52,7 @@ export const printStatsToClientOutputChannel = (
     client.outputChannel.appendLine(
       "❌ Service stats could not be loaded. This may be because you're missing an apollo.config.js file " +
         "or it is misconfigured. For more information about configuring Apollo projects, " +
-        "see the guide here (https://bit.ly/2ByILPj)."
+        "see the guide here (https://go.apollo.dev/t/config)."
     );
     return;
   }

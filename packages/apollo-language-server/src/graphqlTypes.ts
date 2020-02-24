@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -170,6 +171,7 @@ export interface CheckPartialSchemaVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -299,6 +301,7 @@ export interface CheckSchemaVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -352,6 +355,9 @@ export interface ListServices_service {
 }
 
 export interface ListServices {
+  /**
+   * Service by ID
+   */
   service: ListServices_service | null;
 }
 
@@ -362,6 +368,7 @@ export interface ListServicesVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -410,6 +417,7 @@ export interface RegisterOperationsVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -483,6 +491,7 @@ export interface RemoveServiceAndComposeVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -531,6 +540,9 @@ export interface SchemaTagsAndFieldStats_service {
 }
 
 export interface SchemaTagsAndFieldStats {
+  /**
+   * Service by ID
+   */
   service: SchemaTagsAndFieldStats_service | null;
 }
 
@@ -540,6 +552,7 @@ export interface SchemaTagsAndFieldStatsVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -601,6 +614,7 @@ export interface UploadAndComposePartialSchemaVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -644,6 +658,7 @@ export interface UploadSchemaVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -701,6 +716,7 @@ export interface ValidateOperationsVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1138,6 +1154,9 @@ export interface GetSchemaByTag_service {
 }
 
 export interface GetSchemaByTag {
+  /**
+   * Service by ID
+   */
   service: GetSchemaByTag_service | null;
 }
 
@@ -1148,6 +1167,7 @@ export interface GetSchemaByTagVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1477,6 +1497,7 @@ export interface IntrospectionFullType {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1548,6 +1569,7 @@ export interface IntrospectionInputValue {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1611,6 +1633,7 @@ export interface IntrospectionTypeRef {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================

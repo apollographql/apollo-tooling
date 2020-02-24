@@ -1,7 +1,7 @@
 {
   "name": "apollo",
   "description": "Command line tool for Apollo GraphQL",
-  "version": "2.21.2",
+  "version": "2.23.0",
   "referenceID": "21ad0845-c235-422e-be7d-a998310df972",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -33,12 +33,12 @@
   "dependencies": {
     "@apollographql/apollo-tools": "file:../apollo-tools",
     "@oclif/command": "1.5.19",
-    "@oclif/config": "1.13.3",
+    "@oclif/config": "1.14.0",
     "@oclif/errors": "1.2.2",
     "@oclif/plugin-autocomplete": "0.1.5",
     "@oclif/plugin-help": "2.2.3",
     "@oclif/plugin-not-found": "1.2.3",
-    "@oclif/plugin-plugins": "1.7.8",
+    "@oclif/plugin-plugins": "1.7.9",
     "@oclif/plugin-warn-if-update-available": "1.7.0",
     "apollo-codegen-core": "file:../apollo-codegen-core",
     "apollo-codegen-flow": "file:../apollo-codegen-flow",
@@ -55,10 +55,11 @@
     "git-rev-sync": "1.12.0",
     "glob": "7.1.5",
     "graphql": "14.0.2 - 14.2.0 || ^14.3.1",
-    "graphql-tag": "2.10.1",
+    "graphql-tag": "2.10.3",
     "listr": "0.14.3",
     "lodash.identity": "3.0.0",
     "lodash.pickby": "4.6.0",
+    "mkdirp": "^1.0.3",
     "moment": "2.24.0",
     "strip-ansi": "5.2.0",
     "table": "5.4.6",
@@ -66,7 +67,7 @@
     "vscode-uri": "1.0.6"
   },
   "devDependencies": {
-    "typescript": "3.7.3"
+    "typescript": "3.7.5"
   },
   "oclif": {
     "commands": "./lib/commands",

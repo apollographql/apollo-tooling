@@ -659,7 +659,8 @@ fragment HeroName on Character {
 `;
 
 exports[`Scala code generation #generateSource() should emit a package declaration when the namespace option is specified 1`] = `
-"//  This file was automatically generated and should not be edited.
+"// @generated
+//  This file was automatically generated and should not be edited.
 
 
 package hello.world

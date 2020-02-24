@@ -49,7 +49,7 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
             "\nIt expected a JSON schema introspection result, but got an HTML response instead." +
             "\nYou may need to add headers to your request or adjust your endpoint url.\n" +
             "-----------------------------\n" +
-            "For more information, please refer to: https://bit.ly/2ByILPj \n\n" +
+            "For more information, please refer to: https://go.apollo.dev/t/config \n\n" +
             "The following error occurred:\n-----------------------------\n" +
             e.message
         );
@@ -68,7 +68,7 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
             "By default, when an endpoint, Graph Manager API key, or localSchemaFile isn't provided, Apollo tries to fetch a schema from " +
             DefaultServiceConfig.endpoint.url +
             "\n-----------------------------\n" +
-            "\nFor more information, please refer to: https://bit.ly/2ByILPj \n\n" +
+            "\nFor more information, please refer to: https://go.apollo.dev/t/config \n\n" +
             "The following error occurred: \n" +
             "-----------------------------\n" +
             e.message

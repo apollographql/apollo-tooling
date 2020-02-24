@@ -134,7 +134,7 @@ export class GraphQLClientProject extends GraphQLProject {
         "⚠️  It looks like there are 0 files associated with this Apollo Project. " +
           "This may be because you don't have any files yet, or your includes/excludes " +
           "fields are configured incorrectly, and Apollo can't find your files. " +
-          "For help configuring Apollo projects, see this guide: https://bit.ly/2ByILPj"
+          "For help configuring Apollo projects, see this guide: https://go.apollo.dev/t/config"
       );
     }
 
