@@ -3,29 +3,56 @@
 ## Upcoming
 
 - `apollo`
-  - Update shortlinks to use go.apollo.dev instead of bitly [#1790](https://github.com/apollographql/apollo-tooling/pull/1790)
-  - Fix rendering of unexpected composition errors throwing a table cell error [#1806](https://github.com/apollographql/apollo-tooling/pull/1806)
-  - Support disabling literal stripping when extracting queries. [1703](https://github.com/apollographql/apollo-tooling/pull/1703)
-  - Add ability to define schema download output path that doesn't exist yet [#1807](https://github.com/apollographql/apollo-tooling/pull/1807)
-  - Correctly fail on duplicate operations in client projects [#1812](https://github.com/apollographql/apollo-tooling/pull/1812)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
-  - Add @generated comment
+  - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
-  - Add @generated comment
+  - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Add @generated comment
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
-  - Add @generated comment
+  - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Correctly fail on duplicate operations in client projects [#1812](https://github.com/apollographql/apollo-tooling/pull/1812)
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.24.0`
+
+- `apollo@2.24.0`
+  - Correctly fail on duplicate operations in client projects [#1812](https://github.com/apollographql/apollo-tooling/pull/1812)
+- `apollo-language-server@1.20.0`
+  - Correctly fail on duplicate operations in client projects [#1812](https://github.com/apollographql/apollo-tooling/pull/1812)
+
+## `apollo@2.23.0`
+
+- `apollo`
+  - Fix rendering of unexpected composition errors throwing a table cell error [#1806](https://github.com/apollographql/apollo-tooling/pull/1806)
+  - Add ability to define schema download output path that doesn't exist yet [#1807](https://github.com/apollographql/apollo-tooling/pull/1807)
+
+## `apollo@2.22.1`
+
+- `apollo@2.22.1`
+  - Update shortlinks to use go.apollo.dev instead of bitly [#1790](https://github.com/apollographql/apollo-tooling/pull/1790)
+- `apollo-codegen-flow@0.34.1`
+  - Add @generated comment
+- `apollo-codegen-scala@0.35.1`
+  - Add @generated comment
+- `apollo-codegen-swift@0.36.1`
+  - Add @generated comment
+- `apollo-codegen-typescript@0.36.1`
+  - Add @generated comment
+
+## `apollo@2.22.0`
+
+- `apollo@2.22.0`
+  - Support disabling literal stripping when extracting queries. [1703](https://github.com/apollographql/apollo-tooling/pull/1703)
 
 ## `apollo@2.21.3`
 
