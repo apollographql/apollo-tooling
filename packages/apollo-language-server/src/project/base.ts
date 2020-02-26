@@ -197,13 +197,9 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     // Don't process files of an unsupported filetype
     if (!languageId) return;
 
-    try {
-      const contents = readFileSync(filePath, "utf8");
-      const document = TextDocument.create(uri, languageId, -1, contents);
-      this.documentDidChange(document);
-    } catch (error) {
-      console.error(error);
-    }
+    const contents = readFileSync(filePath, "utf8");
+    const document = TextDocument.create(uri, languageId, -1, contents);
+    this.documentDidChange(document);
   }
 
   fileWasDeleted(uri: DocumentUri) {
@@ -233,7 +229,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
         if (definition.kind === Kind.OPERATION_DEFINITION && definition.name) {
           if (operations[definition.name.value]) {
             throw new Error(
-              `️️There are multiple definitions for the ${definition.name.value} operation. All operations in a project must have unique names. If generating types, only the types for the first definition found will be generated.`
+              `️️There are multiple definitions for the \`${definition.name.value}\` operation. Please rename or remove all operations with the duplicated name before continuing.`
             );
           }
           operations[definition.name.value] = definition;
