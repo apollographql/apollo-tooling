@@ -120,7 +120,7 @@ export abstract class ProjectCommand extends Command {
     // make sure this the first item in the task list
     // XXX Somehow this task gets pushed onto the stack multiple times sometimes
     this.tasks.push({
-      title: "Loading Apollo Project",
+      title: "Loading Apollo Project lol",
       task: async ctx => {
         await this.project.whenReady;
         ctx = { ...ctx, ...this.ctx };
