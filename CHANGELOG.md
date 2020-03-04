@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Add confirmation check when deleting services [#1826](https://github.com/apollographql/apollo-tooling/pull/1826)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -29,7 +29,6 @@
   - Correctly fail on duplicate operations in client projects [#1812](https://github.com/apollographql/apollo-tooling/pull/1812)
 - `apollo-language-server@1.20.0`
   - Correctly fail on duplicate operations in client projects [#1812](https://github.com/apollographql/apollo-tooling/pull/1812)
-  - Add confirmation check when deleting services [#1826](https://github.com/apollographql/apollo-tooling/pull/1826)
 
 ## `apollo@2.23.0`
 
