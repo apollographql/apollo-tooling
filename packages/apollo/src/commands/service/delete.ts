@@ -1,4 +1,4 @@
-import inquirer from "inquirer";
+import cli from "cli-ux";
 import { flags } from "@oclif/command";
 
 import { ProjectCommand } from "../../Command";
@@ -28,19 +28,11 @@ export default class ServiceDelete extends ProjectCommand {
 
   async run() {
     let result;
-    const {
-      confirmDeleteService
-    }: { confirmDeleteService: boolean } = await inquirer.prompt([
-      {
-        message:
-          "Are you sure you want to delete this service? THIS IS NOT REVERSIBLE!",
-        type: "confirm",
-        default: false,
-        name: "confirmDeleteService"
-      }
-    ]);
+    const confirmed = await cli.confirm(
+      "Are you sure you want to delete this service? THIS IS NOT REVERSIBLE! (y/N)"
+    );
 
-    if (!confirmDeleteService) {
+    if (!confirmed) {
       this.log("You have chosen to not delete this service. Exiting...");
       this.exit(0);
     }
