@@ -1,3 +1,4 @@
+import cli from "cli-ux";
 import { flags } from "@oclif/command";
 
 import { ProjectCommand } from "../../Command";
@@ -22,11 +23,30 @@ export default class ServiceDelete extends ProjectCommand {
       required: true,
       description:
         "Provides the name of the implementing service for a federated graph"
+    }),
+    yes: flags.boolean({
+      char: "y",
+      required: false,
+      description: "Bypass confirmation when deleting a service"
     })
   };
 
   async run() {
     let result;
+    const { flags } = this.parse(ServiceDelete);
+
+    // if the yes flag is set we don't need a confirmation, the yes flag is needed for CI or programmatic use.
+    const confirmed =
+      flags.yes ||
+      (await cli.confirm(
+        "Are you sure you want to delete this service? THIS IS NOT REVERSIBLE! (y/N)"
+      ));
+
+    if (!confirmed) {
+      this.log("You have chosen to not delete this service. Exiting...");
+      this.exit(0);
+    }
+
     await this.runTasks(({ flags, project, config }) => [
       {
         title: "Removing service from Apollo Graph Manager",
