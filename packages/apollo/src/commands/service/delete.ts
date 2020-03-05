@@ -23,14 +23,24 @@ export default class ServiceDelete extends ProjectCommand {
       required: true,
       description:
         "Provides the name of the implementing service for a federated graph"
+    }),
+    yes: flags.boolean({
+      char: "y",
+      required: false,
+      description: "Bypass confirmation when deleting a service"
     })
   };
 
   async run() {
     let result;
-    const confirmed = await cli.confirm(
-      "Are you sure you want to delete this service? THIS IS NOT REVERSIBLE! (y/N)"
-    );
+    const { flags } = this.parse(ServiceDelete);
+
+    // if the yes flag is set we don't need a confirmation, the yes flag is needed for CI or programmatic use.
+    const confirmed =
+      flags.yes ||
+      (await cli.confirm(
+        "Are you sure you want to delete this service? THIS IS NOT REVERSIBLE! (y/N)"
+      ));
 
     if (!confirmed) {
       this.log("You have chosen to not delete this service. Exiting...");
