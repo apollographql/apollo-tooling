@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Add confirmation check when deleting services [#1826](https://github.com/apollographql/apollo-tooling/pull/1826)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -22,6 +22,11 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.25.0`
+
+- `apollo@2.25.0`
+  - Add confirmation check when deleting services [#1826](https://github.com/apollographql/apollo-tooling/pull/1826)
 
 ## `apollo@2.24.0`
 
