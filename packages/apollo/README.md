@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.24.0 darwin-x64 node-v10.15.3
+apollo/2.25.0 darwin-x64 node-v13.9.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -528,6 +528,7 @@ USAGE
 OPTIONS
   -c, --config=config        Path to your Apollo config file
   -t, --tag=tag              The variant of the service to delete
+  -y, --yes                  Bypass confirmation when deleting a service
   --endpoint=endpoint        The url of your service
 
   --header=header            Additional header to send to server for introspectionQuery. May be used multiple times to
