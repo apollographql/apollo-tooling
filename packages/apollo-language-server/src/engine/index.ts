@@ -92,9 +92,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
       }
 
       if (data && !data.service) {
-        throw new Error(
-          noServiceError(getServiceFromKey(this.engineKey), this.baseURL)
-        );
+        throw new Error(noServiceError(variables.id, this.baseURL));
       }
 
       if (!(data && data.service)) {
