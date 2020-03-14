@@ -94,7 +94,7 @@
     "typescript": "3.7.5",
     "vsce": "1.74.0",
     "vscode": "1.1.36",
-    "yarn": "1.22.1"
+    "yarn": "1.22.4"
   },
   "jest": {
     "projects": [
