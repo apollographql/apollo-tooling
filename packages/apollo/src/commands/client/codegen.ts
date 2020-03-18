@@ -37,7 +37,7 @@ export default class Generate extends ClientCommand {
     // general
     target: flags.string({
       description:
-        "Type of code generator to use (swift | typescript | flow | scala)",
+        "Type of code generator to use (swift | typescript | flow | scala | json | json-modern (exposes raw json types))",
       required: true
     }),
     localSchemaFile: flags.string({
@@ -135,9 +135,14 @@ export default class Generate extends ClientCommand {
       this.runTasks(({ flags, args, project, config }) => {
         let inferredTarget: TargetType = "" as TargetType;
         if (
-          ["json", "swift", "typescript", "flow", "scala"].includes(
-            flags.target
-          )
+          [
+            "json",
+            "json-modern",
+            "swift",
+            "typescript",
+            "flow",
+            "scala"
+          ].includes(flags.target)
         ) {
           inferredTarget = flags.target as TargetType;
         } else {

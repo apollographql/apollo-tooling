@@ -29,6 +29,7 @@ import { DEFAULT_FILE_EXTENSION as TYPESCRIPT_DEFAULT_FILE_EXTENSION } from "apo
 
 export type TargetType =
   | "json"
+  | "json-modern"
   | "swift"
   | "scala"
   | "flow"
@@ -45,6 +46,17 @@ export type GenerationOptions = CompilerOptions &
 
 function toPath(uri: string): string {
   return URI.parse(uri).fsPath;
+}
+
+function stripLoc(obj: Object) {
+  let cloned = JSON.parse(JSON.stringify(obj));
+  for (let prop in cloned) {
+    if (prop === "loc") delete cloned[prop];
+    else if (typeof cloned[prop] === "object") {
+      cloned[prop] = stripLoc(cloned[prop]);
+    }
+  }
+  return cloned;
 }
 
 export default function generate(
@@ -211,6 +223,10 @@ export default function generate(
     let output;
     const context = compileToLegacyIR(schema, document, options);
     switch (target) {
+      case "json-modern":
+        const ir = stripLoc(compileToIR(schema, document, options));
+        output = serializeToJSON(ir);
+        break;
       case "json":
         output = serializeToJSON(context);
         break;

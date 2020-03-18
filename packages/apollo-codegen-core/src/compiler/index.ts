@@ -22,7 +22,9 @@ import {
   GraphQLNonNull,
   isEnumType,
   isInputObjectType,
-  isScalarType
+  isScalarType,
+  NamedTypeNode,
+  ListTypeNode
 } from "graphql";
 
 import {
@@ -104,6 +106,7 @@ export interface Field {
   alias?: string;
   args?: Argument[];
   type: GraphQLOutputType;
+  rawType: NamedTypeNode | ListTypeNode | NonNullTypeNode | undefined;
   description?: string;
   isDeprecated?: boolean;
   deprecationReason?: string;
@@ -129,6 +132,17 @@ export interface FragmentSpread {
   fragmentName: string;
   isConditional?: boolean;
   selectionSet: SelectionSet;
+}
+
+function stripLoc(obj: Object) {
+  let cloned = JSON.parse(JSON.stringify(obj));
+  for (let prop in cloned) {
+    if (prop === "loc") delete cloned[prop];
+    else if (typeof cloned[prop] === "object") {
+      cloned[prop] = stripLoc(cloned[prop]);
+    }
+  }
+  return cloned;
 }
 
 export function compileToIR(
@@ -328,6 +342,11 @@ class Compiler {
           );
         }
 
+        // messy JSON type or pretty printed, depending on the jsonTypes option passed to compiler
+        const rawType =
+          fieldDef.astNode && fieldDef.astNode
+            ? fieldDef.astNode.type
+            : undefined;
         const fieldType = fieldDef.type;
         const unmodifiedFieldType = getNamedType(fieldType);
 
@@ -359,6 +378,7 @@ class Compiler {
           alias,
           args,
           type: fieldType,
+          rawType: rawType,
           description:
             !isMetaFieldName(name) && description ? description : undefined,
           isDeprecated,
