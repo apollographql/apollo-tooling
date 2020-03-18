@@ -1,0 +1,23 @@
+[package]
+name = "apollo3"
+version = "0.1.0"
+authors = ["Jake <dawkinsjh@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = "2.26.0"
+structopt = "0.2.10"
+graphql-parser = "0.2.3"
+graphql_client = "0.8.0"
+serde = "1.0" # why this?
+serde_json = "1.0.48"
+failure = "*"
+reqwest = "^0.9"
+json = "0.12"
+
+[dev-dependencies]
+assert_cmd = "0.10"
+predicates = "1"
+tempfile = "3"
