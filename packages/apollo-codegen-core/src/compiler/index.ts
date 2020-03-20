@@ -24,7 +24,8 @@ import {
   isInputObjectType,
   isScalarType,
   NamedTypeNode,
-  ListTypeNode
+  ListTypeNode,
+  TypeNode
 } from "graphql";
 
 import {
@@ -67,6 +68,7 @@ export interface Operation {
   variables: {
     name: string;
     type: GraphQLType;
+    rawType: TypeNode;
   }[];
   filePath: string;
   source: string;
@@ -91,6 +93,7 @@ export interface Argument {
   name: string;
   value: any;
   type?: GraphQLInputType;
+  rawType?: TypeNode;
 }
 
 export type Selection =
@@ -249,7 +252,7 @@ class Compiler {
         const name = node.variable.name.value;
         const type = typeFromAST(this.schema, node.type as NonNullTypeNode);
         this.addTypeUsed(getNamedType(type as GraphQLType));
-        return { name, type: type as GraphQLNonNull<any> };
+        return { name, type: type as GraphQLNonNull<any>, rawType: node.type };
       }
     );
 
@@ -342,11 +345,7 @@ class Compiler {
           );
         }
 
-        // messy JSON type or pretty printed, depending on the jsonTypes option passed to compiler
-        const rawType =
-          fieldDef.astNode && fieldDef.astNode
-            ? fieldDef.astNode.type
-            : undefined;
+        const rawType = fieldDef.astNode ? fieldDef.astNode.type : undefined;
         const fieldType = fieldDef.type;
         const unmodifiedFieldType = getNamedType(fieldType);
 
@@ -366,7 +365,9 @@ class Compiler {
                 return {
                   name,
                   value: valueFromValueNode(arg.value),
-                  type: (argDef && argDef.type) || undefined
+                  type: (argDef && argDef.type) || undefined,
+                  rawType:
+                    argDef && argDef.astNode ? argDef.astNode.type : undefined
                 };
               })
             : undefined;
@@ -378,7 +379,7 @@ class Compiler {
           alias,
           args,
           type: fieldType,
-          rawType: rawType,
+          rawType,
           description:
             !isMetaFieldName(name) && description ? description : undefined,
           isDeprecated,
