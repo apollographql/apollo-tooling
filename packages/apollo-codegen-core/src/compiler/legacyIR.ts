@@ -29,6 +29,7 @@ export interface CompilerOptions {
   customScalarsPrefix?: string;
   namespace?: string;
   generateOperationIds?: boolean;
+  exposeRawTypes?: boolean;
 }
 
 export interface LegacyCompilerContext {
@@ -104,7 +105,10 @@ export interface Argument {
 export function compileToLegacyIR(
   schema: GraphQLSchema,
   document: DocumentNode,
-  options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }
+  options: CompilerOptions = {
+    mergeInFieldsFromFragmentSpreads: true,
+    exposeRawTypes: false
+  }
 ): LegacyCompilerContext {
   const context = compileToIR(schema, document, options);
   const transformer = new LegacyIRTransformer(context, options);

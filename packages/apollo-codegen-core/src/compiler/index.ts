@@ -51,6 +51,7 @@ export interface CompilerOptions {
   useReadOnlyTypes?: boolean;
   suppressSwiftMultilineStringLiterals?: boolean;
   omitDeprecatedEnumCases?: boolean;
+  exposeRawTypes?: boolean;
 }
 
 export interface CompilerContext {
@@ -137,12 +138,12 @@ export interface FragmentSpread {
   selectionSet: SelectionSet;
 }
 
-function stripLoc(obj: Object) {
+export function stripProp(propName: string, obj: Object) {
   let cloned = JSON.parse(JSON.stringify(obj));
   for (let prop in cloned) {
-    if (prop === "loc") delete cloned[prop];
+    if (prop === propName) delete cloned[prop];
     else if (typeof cloned[prop] === "object") {
-      cloned[prop] = stripLoc(cloned[prop]);
+      cloned[prop] = stripProp(propName, cloned[prop]);
     }
   }
   return cloned;
@@ -151,7 +152,9 @@ function stripLoc(obj: Object) {
 export function compileToIR(
   schema: GraphQLSchema,
   document: DocumentNode,
-  options: CompilerOptions = {}
+  options: CompilerOptions = {
+    exposeRawTypes: true
+  }
 ): CompilerContext {
   if (options.addTypename) {
     document = withTypenameFieldAddedWhereNeeded(document);
@@ -252,7 +255,13 @@ class Compiler {
         const name = node.variable.name.value;
         const type = typeFromAST(this.schema, node.type as NonNullTypeNode);
         this.addTypeUsed(getNamedType(type as GraphQLType));
-        return { name, type: type as GraphQLNonNull<any>, rawType: node.type };
+        return {
+          name,
+          type: type as GraphQLNonNull<any>,
+          rawType: this.options.exposeRawTypes
+            ? stripProp("loc", node.type)
+            : undefined
+        };
       }
     );
 
@@ -345,7 +354,10 @@ class Compiler {
           );
         }
 
-        const rawType = fieldDef.astNode ? fieldDef.astNode.type : undefined;
+        const rawType =
+          fieldDef.astNode && this.options.exposeRawTypes
+            ? stripProp("loc", fieldDef.astNode.type)
+            : undefined;
         const fieldType = fieldDef.type;
         const unmodifiedFieldType = getNamedType(fieldType);
 
@@ -367,7 +379,9 @@ class Compiler {
                   value: valueFromValueNode(arg.value),
                   type: (argDef && argDef.type) || undefined,
                   rawType:
-                    argDef && argDef.astNode ? argDef.astNode.type : undefined
+                    argDef && argDef.astNode && this.options.exposeRawTypes
+                      ? stripProp("loc", argDef.astNode.type)
+                      : undefined
                 };
               })
             : undefined;

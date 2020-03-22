@@ -416,6 +416,28 @@ describe("client:codegen", () => {
       expect(output).toMatchSnapshot();
     });
 
+  test
+    .fs({
+      "schema.json": fullSchemaJsonString,
+      "queryOne.graphql": simpleQuery.toString(),
+      "my.config.js": defaultConfig
+    })
+    .command([
+      "client:codegen",
+      "--target=json-modern",
+      "--config=my.config.js",
+      "__tmp__operations.json"
+    ])
+    .it("writes json operations with rawTypes (json-modern)", () => {
+      const output = JSON.parse(
+        fs.readFileSync("__tmp__operations.json").toString()
+      );
+      // have to overwrite filepath, since test directories change for every test
+      output.operations[0].filePath = "";
+      expect(JSON.stringify(output)).toContain("rawTypes");
+      expect(output).toMatchSnapshot();
+    });
+
   // TODO: fix UnhandledPromiseRejection
   test
     .skip()
