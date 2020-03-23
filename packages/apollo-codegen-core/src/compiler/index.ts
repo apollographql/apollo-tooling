@@ -346,6 +346,7 @@ class Compiler {
           ? selectionNode.alias.value
           : undefined;
 
+        console.log({ schema: this.schema });
         const fieldDef = getFieldDef(this.schema, parentType, selectionNode);
         if (!fieldDef) {
           throw new GraphQLError(
@@ -354,6 +355,7 @@ class Compiler {
           );
         }
 
+        console.log(fieldDef);
         const rawType =
           fieldDef.astNode && this.options.exposeRawTypes
             ? stripProp("loc", fieldDef.astNode.type)

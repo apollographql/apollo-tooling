@@ -16,7 +16,7 @@ const schema = loadSchema(
 );
 
 fdescribe("Compiling query documents to the legacy IR", () => {
-  fit(`should include variables defined in operations`, () => {
+  fit(`should print IR with rawTypes on fields`, () => {
     const document = parse(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -24,54 +24,53 @@ fdescribe("Compiling query documents to the legacy IR", () => {
         }
       }
 
-      query Search($text: String!) {
-        search(text: $text) {
-          ... on Character {
-            name
-          }
-        }
-      }
 
-      mutation CreateReviewForEpisode($episode: Episode!, $review: ReviewInput!) {
-        createReview(episode: $episode, review: $review) {
-          stars
-          commentary
-        }
-      }
+#      query Search($text: String!) {
+#        search(text: $text) {
+#          ... on Character {
+#            name
+#          }
+#        }
+#      }
+
+#      mutation CreateReviewForEpisode($episode: Episode!, $review: ReviewInput!) {
+#        createReview(episode: $episode, review: $review) {
+#          stars
+#          commentary
+#        }
+#      }
     `);
 
-    const { operations } = withStringifiedTypes(compileToIR(schema, document));
+    const { operations } = compileToIR(schema, document);
 
-    expect(operations["HeroName"].variables).toEqual([
-      {
-        name: "episode",
-        type: "Episode",
-        rawType: {
-          kind: "NamedType",
-          name: {
-            kind: "Name",
-            value: "Episode"
-          }
-        }
-      }
-    ]);
+    // console.log(operations);
 
-    // "rawType": Object {
-    // +       "kind": "NamedType",
-    // +       "name": Object {
-    // +         "kind": "Name",
-    // +         "value": "Episode",
-    // +       },
-    // +     },
+    expect(
+      operations["HeroName"].selectionSet.selections[0].selectionSet
+        .selections[0]
+    ).toEqual({});
+    // expect(operations["HeroName"].variables).toEqual([
+    //   {
+    //     name: "episode",
+    //     type: "Episode",
+    //     rawType: {
+    //       kind: "NamedType",
+    //       name: {
+    //         kind: "Name",
+    //         value: "Episode"
+    //       }
+    //     }
+    //   }
+    // ]);
 
-    expect(operations["Search"].variables).toEqual([
-      { name: "text", type: "String!" }
-    ]);
+    // expect(operations["Search"].variables).toEqual([
+    //   { name: "text", type: "String!" }
+    // ]);
 
-    expect(operations["CreateReviewForEpisode"].variables).toEqual([
-      { name: "episode", type: "Episode!" },
-      { name: "review", type: "ReviewInput!" }
-    ]);
+    // expect(operations["CreateReviewForEpisode"].variables).toEqual([
+    //   { name: "episode", type: "Episode!" },
+    //   { name: "review", type: "ReviewInput!" }
+    // ]);
   });
 
   it(`should keep track of enums and input object types used in variables`, () => {
