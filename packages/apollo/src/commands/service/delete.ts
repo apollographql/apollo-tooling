@@ -15,14 +15,13 @@ export default class ServiceDelete extends ProjectCommand {
     tag: flags.string({
       char: "t",
       description:
-        "[Deprecated: please use --variant instead] The published variant to delete the implementing service from",
+        "[Deprecated: please use --variant instead] The variant to delete the implementing service from",
       hidden: true,
       exclusive: ["variant"]
     }),
     variant: flags.string({
       char: "v",
-      description:
-        "The published variant to delete the implementing service from",
+      description: "The variant to delete the implementing service from",
       exclusive: ["tag"]
     }),
     federated: flags.boolean({

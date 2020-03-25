@@ -93,13 +93,13 @@ export default class ServiceList extends ProjectCommand {
     tag: flags.string({
       char: "t",
       description:
-        "[Deprecated: please use --variant instead] The published tag (AKA variant) to list implementing services for",
+        "[Deprecated: please use --variant instead] The tag (AKA variant) to list implementing services for",
       hidden: true,
       exclusive: ["variant"]
     }),
     variant: flags.string({
       char: "v",
-      description: "The published variant to list implementing services for",
+      description: "The variant to list implementing services for",
       exclusive: ["tag"]
     })
   };

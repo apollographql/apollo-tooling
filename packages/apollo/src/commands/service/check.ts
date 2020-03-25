@@ -243,13 +243,13 @@ export default class ServiceCheck extends ProjectCommand {
     tag: flags.string({
       char: "t",
       description:
-        "[Deprecated: please use --variant instead] The published tag (AKA variant) to check the proposed schema against",
+        "[Deprecated: please use --variant instead] The tag (AKA variant) to check the proposed schema against",
       hidden: true,
       exclusive: ["variant"]
     }),
     variant: flags.string({
       char: "v",
-      description: "The published variant to check the proposed schema against",
+      description: "The variant to check the proposed schema against",
       exclusive: ["tag"]
     }),
     validationPeriod: flags.string({

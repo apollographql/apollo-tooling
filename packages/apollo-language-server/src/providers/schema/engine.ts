@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 import { GraphQLSchema, buildClientSchema } from "graphql";
 import { ApolloEngineClient, ClientIdentity } from "../../engine";
 import { ClientConfig, parseServiceSpecifier } from "../../config";
-import { getServiceFromKey, isServiceKey } from "../../config/utils";
+import { getServiceFromKey, isServiceKey } from "../../config";
 import {
   GraphQLSchemaProvider,
   SchemaChangeUnsubscribeHandler,
