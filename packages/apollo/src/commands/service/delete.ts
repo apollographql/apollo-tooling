@@ -2,7 +2,10 @@ import cli from "cli-ux";
 import { flags } from "@oclif/command";
 
 import { ProjectCommand } from "../../Command";
-import { graphUndefinedError } from "../../utils/sharedMessages";
+import {
+  graphUndefinedError,
+  tagFlagDeprecatedWarning
+} from "../../utils/sharedMessages";
 
 export default class ServiceDelete extends ProjectCommand {
   static description =
@@ -11,7 +14,16 @@ export default class ServiceDelete extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The variant of the service to delete"
+      description:
+        "[Deprecated: please use --variant instead] The published variant to delete the implementing service from",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description:
+        "The published variant to delete the implementing service from",
+      exclusive: ["tag"]
     }),
     federated: flags.boolean({
       char: "f",
@@ -62,7 +74,11 @@ export default class ServiceDelete extends ProjectCommand {
             );
           }
 
-          const graphVariant = flags.tag || config.tag;
+          const graphVariant = flags.variant || flags.tag || config.tag;
+
+          if (flags.tag) {
+            this.warn(tagFlagDeprecatedWarning);
+          }
 
           const {
             errors,
