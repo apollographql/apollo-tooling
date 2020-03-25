@@ -6,6 +6,7 @@ import { ProjectCommand } from "../../Command";
 import { UploadSchemaVariables } from "apollo-language-server/lib/graphqlTypes";
 import { GraphQLServiceProject } from "apollo-language-server";
 import chalk from "chalk";
+import { graphUndefinedError } from "../../utils/errors";
 
 export default class ServicePush extends ProjectCommand {
   static aliases = ["schema:publish"];
@@ -51,7 +52,7 @@ export default class ServicePush extends ProjectCommand {
         title: "Uploading service to Apollo Graph Manager",
         task: async () => {
           if (!config.name) {
-            throw new Error("No service found to link to Apollo Graph Manager");
+            throw graphUndefinedError;
           }
 
           if (flags.federated) {

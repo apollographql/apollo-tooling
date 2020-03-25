@@ -4,16 +4,13 @@ import { GraphQLSchema } from "graphql";
 import sortBy from "lodash.sortby";
 import { table } from "table";
 import moment from "moment";
-import {
-  ApolloConfig,
-  isServiceProject,
-  DefaultEngineConfig
-} from "apollo-language-server";
+import { ApolloConfig, DefaultEngineConfig } from "apollo-language-server";
 import chalk from "chalk";
 import {
   ListServices_service_implementingServices,
   ListServices_service_implementingServices_FederatedImplementingServices_services
 } from "apollo-language-server/lib/graphqlTypes";
+import { graphUndefinedError } from "../../utils/errors";
 
 interface TasksOutput {
   config: ApolloConfig;
@@ -114,7 +111,7 @@ export default class ServiceList extends ProjectCommand {
         graphVariant = flags.tag || config.tag || "current";
 
         if (!graphID) {
-          throw new Error("No service found to link to Apollo Graph Manager");
+          throw graphUndefinedError;
         }
 
         return [
