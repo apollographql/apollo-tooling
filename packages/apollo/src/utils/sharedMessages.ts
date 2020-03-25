@@ -1,4 +1,5 @@
 import { CLIError } from "@oclif/errors";
+import chalk from "chalk";
 
 const errorMessage = [
   "No graph (i.e. service) found to link to Apollo Graph Manager.",
@@ -7,3 +8,7 @@ const errorMessage = [
   "https://go.apollo.dev/t/config"
 ].join("\n");
 export const graphUndefinedError = new CLIError(errorMessage);
+
+export const tagFlagDeprecatedWarning = chalk.yellow(
+  "Using the --tag flag is deprecated. Please use --variant (or -v) instead."
+);

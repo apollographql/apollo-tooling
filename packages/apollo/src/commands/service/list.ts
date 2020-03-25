@@ -10,7 +10,10 @@ import {
   ListServices_service_implementingServices,
   ListServices_service_implementingServices_FederatedImplementingServices_services
 } from "apollo-language-server/lib/graphqlTypes";
-import { graphUndefinedError } from "../../utils/sharedMessages";
+import {
+  graphUndefinedError,
+  tagFlagDeprecatedWarning
+} from "../../utils/sharedMessages";
 
 interface TasksOutput {
   config: ApolloConfig;
@@ -120,11 +123,7 @@ export default class ServiceList extends ProjectCommand {
         graphVariant = flags.variant || flags.tag || config.tag;
 
         if (flags.tag) {
-          this.warn(
-            chalk.yellow(
-              "Using the --tag flag is deprecated. Please use --variant (or -v) instead."
-            )
-          );
+          this.warn(tagFlagDeprecatedWarning);
         }
 
         if (!graphID) {
