@@ -144,7 +144,7 @@ export abstract class ProjectCommand extends Command {
       return;
     }
 
-    config.tag = flags.tag || config.tag || "current";
+    config.tag = flags.tag || config.tag;
     //  flag overrides
     config.setDefaults({
       engine: {

@@ -113,7 +113,7 @@ export default class ServicePush extends ProjectCommand {
               serviceWasCreated,
               didUpdateGateway,
               graphId: config.name,
-              graphVariant: config.tag || "current"
+              graphVariant: config.tag
             };
 
             return;

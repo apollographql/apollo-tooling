@@ -89,7 +89,13 @@ export default class ServiceList extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The published tag to list the services from"
+      description: "The published tag to list implementing services from",
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The published variant to list implementing services from",
+      exclusive: ["tag"]
     })
   };
 
@@ -103,12 +109,14 @@ export default class ServiceList extends ProjectCommand {
     try {
       await this.runTasks<TasksOutput>(({ config, flags, project }) => {
         /**
-         * Name of the graph being checked. `engine` is an example of a graph.
+         * Name of the graph we are listing implementing services of. `engine` is an example of a graph.
          *
          * A graph can be either a monolithic schema or the result of composition a federated schema.
+         * This command only supports graphs that are federated into multiple implementing services.
+         *
          */
         graphID = config.name;
-        graphVariant = flags.tag || config.tag || "current";
+        graphVariant = flags.variant || flags.tag || config.tag;
 
         if (!graphID) {
           throw graphUndefinedError;

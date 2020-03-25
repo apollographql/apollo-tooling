@@ -62,7 +62,7 @@ export default class ServiceDelete extends ProjectCommand {
             );
           }
 
-          const graphVariant = flags.tag || config.tag || "current";
+          const graphVariant = flags.tag || config.tag;
 
           const {
             errors,
