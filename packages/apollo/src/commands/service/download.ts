@@ -51,7 +51,7 @@ export default class ServiceDownload extends ProjectCommand {
           // we currently recommend using client:download-schema instead.
           try {
             const graphVariant: string =
-              flags.variant || flags.tag || config.tag;
+              flags.variant || flags.tag || config.variant;
             if (flags.tag) {
               console.warn(tagFlagDeprecatedWarning);
             }

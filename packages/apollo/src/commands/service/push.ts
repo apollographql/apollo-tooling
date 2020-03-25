@@ -94,7 +94,7 @@ export default class ServicePush extends ProjectCommand {
               serviceWasCreated
             } = await project.engine.uploadAndComposePartialSchema({
               id: config.name,
-              graphVariant: config.tag,
+              graphVariant: config.variant,
               name: flags.serviceName,
               url: flags.serviceURL,
               revision:
@@ -113,7 +113,7 @@ export default class ServicePush extends ProjectCommand {
               serviceWasCreated,
               didUpdateGateway,
               graphId: config.name,
-              graphVariant: config.tag
+              graphVariant: config.variant
             };
 
             return;

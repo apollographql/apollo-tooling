@@ -306,7 +306,7 @@ export default class ServiceCheck extends ProjectCommand {
            * A graph can be either a monolithic schema or the result of composition a federated schema.
            */
           graphID = config.name;
-          graphVariant = config.tag;
+          graphVariant = config.variant;
 
           if (flags.tag) {
             console.warn(tagFlagDeprecatedWarning);
@@ -440,9 +440,9 @@ export default class ServiceCheck extends ProjectCommand {
                   | { schema: IntrospectionSchemaInput }
                   | undefined;
 
-                // This is _not_ a `federated` schema. Resolve the schema given `config.tag`.
+                // This is _not_ a `federated` schema. Resolve the schema given `config.variant`.
                 task.output = "Resolving schema";
-                schema = await project.resolveSchema({ tag: config.tag });
+                schema = await project.resolveSchema({ tag: config.variant });
                 if (!schema) {
                   throw new Error("Failed to resolve schema");
                 }
@@ -635,7 +635,7 @@ export default class ServiceCheck extends ProjectCommand {
             compositionErrors,
             graphName: graphID,
             serviceName,
-            tag: config.tag
+            tag: config.variant
           })
         );
       }
@@ -645,7 +645,7 @@ export default class ServiceCheck extends ProjectCommand {
           checkSchemaResult,
           graphName: graphID,
           serviceName,
-          tag: config.tag,
+          tag: config.variant,
           graphCompositionID
         })
       );

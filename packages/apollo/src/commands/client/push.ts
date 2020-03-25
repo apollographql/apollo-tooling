@@ -53,7 +53,7 @@ export default class ClientPush extends ClientCommand {
           },
           {
             title: `Checked operations against ${chalk.cyan(
-              config.name + "@" + config.tag
+              config.name + "@" + config.variant
             )}`,
             task: async () => {}
           },
@@ -87,7 +87,7 @@ export default class ClientPush extends ClientCommand {
                 id: config.name,
                 operations: operationManifest,
                 manifestVersion: 2,
-                graphVariant: config.tag
+                graphVariant: config.variant
               };
               const { operations: _op, ...restVariables } = variables;
               this.debug("Variables sent to Apollo");

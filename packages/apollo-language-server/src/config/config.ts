@@ -135,7 +135,7 @@ export class ApolloConfig {
   public name?: string;
   public service?: ServiceConfigFormat;
   public client?: ClientConfigFormat;
-  private _tag?: string;
+  private _variant?: string;
 
   constructor(public rawConfig: ApolloConfigFormat, public configURI?: URI) {
     this.isService = !!rawConfig.service;
@@ -162,12 +162,12 @@ export class ApolloConfig {
     return configs;
   }
 
-  set tag(tag: string) {
-    this._tag = tag;
+  set variant(tag: string) {
+    this._variant = tag;
   }
 
-  get tag(): string {
-    if (this._tag) return this._tag;
+  get variant(): string {
+    if (this._variant) return this._variant;
     let tag: string = "current";
     if (this.client && typeof this.client.service === "string") {
       const specifierTag = parseServiceSpecifier(this.client
