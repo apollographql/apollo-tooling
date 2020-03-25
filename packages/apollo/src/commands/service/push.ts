@@ -10,20 +10,20 @@ import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ServicePush extends ProjectCommand {
   static aliases = ["schema:publish"];
-  static description = "Push a service to Apollo Graph Manager";
+  static description = "Push a service definition to Apollo Graph Manager";
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
       description:
-        "The tag (AKA variant) to publish your schema to in Apollo Graph Manager",
+        "The tag (AKA variant) to publish your service to in Apollo Graph Manager",
       hidden: true,
       exclusive: ["variant"]
     }),
     variant: flags.string({
       char: "v",
       description:
-        "The variant to publish your schema to in Apollo Graph Manager",
+        "The variant to publish your service to in Apollo Graph Manager",
       hidden: true,
       exclusive: ["tag"]
     }),

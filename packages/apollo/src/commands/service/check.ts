@@ -125,7 +125,7 @@ export function formatMarkdown({
   return `
 ### Apollo Service Check
 🔄 Validated your local schema against metrics from variant \`${tag}\` ${
-    serviceName ? `for service \`${serviceName}\` ` : ""
+    serviceName ? `for graph \`${serviceName}\` ` : ""
   }on graph \`${graphName}@${tag}\`.
 ${validationText}
 ${
