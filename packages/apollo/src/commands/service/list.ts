@@ -90,6 +90,7 @@ export default class ServiceList extends ProjectCommand {
     tag: flags.string({
       char: "t",
       description: "The published tag to list implementing services from",
+      hidden: true,
       exclusive: ["variant"]
     }),
     variant: flags.string({
@@ -117,6 +118,14 @@ export default class ServiceList extends ProjectCommand {
          */
         graphID = config.name;
         graphVariant = flags.variant || flags.tag || config.tag;
+
+        if (flags.tag) {
+          this.warn(
+            chalk.yellow(
+              "Using the --tag flag is deprecated. Please use --variant (or -v) instead."
+            )
+          );
+        }
 
         if (!graphID) {
           throw graphUndefinedError;
