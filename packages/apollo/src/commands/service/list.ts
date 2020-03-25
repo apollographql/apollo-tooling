@@ -92,13 +92,14 @@ export default class ServiceList extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The published tag to list implementing services from",
+      description:
+        "[Deprecated: please use --variant instead] The published tag (AKA variant) to list implementing services for",
       hidden: true,
       exclusive: ["variant"]
     }),
     variant: flags.string({
       char: "v",
-      description: "The published variant to list implementing services from",
+      description: "The published variant to list implementing services for",
       exclusive: ["tag"]
     })
   };
@@ -107,7 +108,6 @@ export default class ServiceList extends ProjectCommand {
     // @ts-ignore we're going to populate `taskOutput` later
     const taskOutput: TasksOutput = {};
 
-    let schema: GraphQLSchema | undefined;
     let graphID: string | undefined;
     let graphVariant: string | undefined;
     try {

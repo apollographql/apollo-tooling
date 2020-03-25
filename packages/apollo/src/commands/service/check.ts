@@ -22,7 +22,10 @@ import { ApolloConfig, isServiceProject } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 import { isNotNullOrUndefined } from "apollo-env";
-import { graphUndefinedError } from "../../utils/sharedMessages";
+import {
+  graphUndefinedError,
+  tagFlagDeprecatedWarning
+} from "../../utils/sharedMessages";
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
@@ -239,7 +242,15 @@ export default class ServiceCheck extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The published tag to check this service against"
+      description:
+        "[Deprecated: please use --variant instead] The published tag (AKA variant) to check the proposed schema against",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The published variant to check the proposed schema against",
+      exclusive: ["tag"]
     }),
     validationPeriod: flags.string({
       description:
@@ -295,7 +306,11 @@ export default class ServiceCheck extends ProjectCommand {
            * A graph can be either a monolithic schema or the result of composition a federated schema.
            */
           graphID = config.name;
-          graphVariant = flags.tag || config.tag;
+          graphVariant = flags.variant || flags.tag || config.tag;
+
+          if (flags.tag) {
+            console.warn(tagFlagDeprecatedWarning);
+          }
 
           /**
            * Name of the implementing service being checked.
