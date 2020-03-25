@@ -119,14 +119,14 @@ export default class ServicePush extends ProjectCommand {
             return;
           }
 
-          const schema = await project.resolveSchema({ tag: flags.tag });
+          const schema = await project.resolveSchema({ tag: config.variant });
 
           const variables: UploadSchemaVariables = {
             id: config.name,
             // @ts-ignore
             // XXX Looks like TS should be generating ReadonlyArrays instead
             schema: introspectionFromSchema(schema).__schema,
-            tag: flags.tag,
+            tag: config.variant,
             gitContext
           };
 

@@ -23,14 +23,14 @@ export default class SchemaDownload extends ClientCommand {
   ];
 
   async run() {
-    await this.runTasks(({ args, project, flags }) => {
+    await this.runTasks(({ args, project, flags, config }) => {
       const extension = args.output.split(".").pop();
       const isSDLFormat = ["graphql", "graphqls", "gql"].includes(extension);
       return [
         {
           title: `Saving schema to ${args.output}`,
           task: async () => {
-            const schema = await project.resolveSchema({ tag: flags.tag });
+            const schema = await project.resolveSchema({ tag: config.variant });
             const formattedSchema = isSDLFormat
               ? printSchema(schema)
               : JSON.stringify(introspectionFromSchema(schema), null, 2);

@@ -463,7 +463,7 @@ export default class ServiceCheck extends ProjectCommand {
 
                 const variables: CheckSchemaVariables = {
                   id: graphID!,
-                  tag: flags.tag,
+                  tag: config.variant,
                   gitContext: await gitInfo(this.log),
                   frontend: flags.frontend || config.engine.frontend,
                   ...(historicParameters && { historicParameters }),
