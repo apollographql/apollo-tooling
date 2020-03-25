@@ -22,7 +22,7 @@ import { ApolloConfig, isServiceProject } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 import { isNotNullOrUndefined } from "apollo-env";
-import { graphUndefinedError } from "../../utils/errors";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;

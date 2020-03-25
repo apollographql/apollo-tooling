@@ -6,7 +6,7 @@ import { ProjectCommand } from "../../Command";
 import { UploadSchemaVariables } from "apollo-language-server/lib/graphqlTypes";
 import { GraphQLServiceProject } from "apollo-language-server";
 import chalk from "chalk";
-import { graphUndefinedError } from "../../utils/errors";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ServicePush extends ProjectCommand {
   static aliases = ["schema:publish"];

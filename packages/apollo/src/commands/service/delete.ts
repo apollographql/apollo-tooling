@@ -2,7 +2,7 @@ import cli from "cli-ux";
 import { flags } from "@oclif/command";
 
 import { ProjectCommand } from "../../Command";
-import { graphUndefinedError } from "../../utils/errors";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ServiceDelete extends ProjectCommand {
   static description =

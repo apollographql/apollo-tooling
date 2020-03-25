@@ -14,7 +14,7 @@ import {
   ApolloConfig,
   graphqlTypes
 } from "apollo-language-server";
-import { graphUndefinedError } from "../../utils/errors";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ClientPush extends ClientCommand {
   static description =

@@ -10,7 +10,7 @@ import {
   ListServices_service_implementingServices,
   ListServices_service_implementingServices_FederatedImplementingServices_services
 } from "apollo-language-server/lib/graphqlTypes";
-import { graphUndefinedError } from "../../utils/errors";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 interface TasksOutput {
   config: ApolloConfig;
