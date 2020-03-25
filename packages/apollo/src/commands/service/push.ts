@@ -15,8 +15,17 @@ export default class ServicePush extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The tag to publish this service to",
-      default: "current"
+      description:
+        "The tag (AKA variant) to publish your schema to in Apollo Graph Manager",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description:
+        "The variant to publish your schema to in Apollo Graph Manager",
+      hidden: true,
+      exclusive: ["tag"]
     }),
     localSchemaFile: flags.string({
       description:
