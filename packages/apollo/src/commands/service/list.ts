@@ -14,6 +14,8 @@ import {
   ListServices_service_implementingServices,
   ListServices_service_implementingServices_FederatedImplementingServices_services
 } from "apollo-language-server/lib/graphqlTypes";
+import { CLIError } from "@oclif/errors";
+import { graphUndefinedError } from "../../utils/errors";
 
 interface TasksOutput {
   config: ApolloConfig;
@@ -114,7 +116,7 @@ export default class ServiceList extends ProjectCommand {
         graphVariant = flags.tag || config.tag || "current";
 
         if (!graphID) {
-          throw new Error("No service found to link to Apollo Graph Manager");
+          throw graphUndefinedError;
         }
 
         return [

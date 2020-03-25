@@ -14,6 +14,7 @@ import {
   ApolloConfig,
   graphqlTypes
 } from "apollo-language-server";
+import { graphUndefinedError } from "../../utils/errors";
 
 export default class ClientPush extends ClientCommand {
   static description =
@@ -60,9 +61,7 @@ export default class ClientPush extends ClientCommand {
             title: "Pushing operations to operation registry",
             task: async (_, task) => {
               if (!config.name) {
-                throw new Error(
-                  "No service found to link to Apollo Graph Manager. Graph Manager is required for this command."
-                );
+                throw graphUndefinedError;
               }
 
               const operationManifest = getOperationManifestFromProject(

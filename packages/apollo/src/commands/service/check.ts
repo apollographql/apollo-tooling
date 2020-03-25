@@ -22,6 +22,7 @@ import { ApolloConfig, isServiceProject } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 import { isNotNullOrUndefined } from "apollo-env";
+import { graphUndefinedError } from "../../utils/errors";
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
@@ -304,7 +305,7 @@ export default class ServiceCheck extends ProjectCommand {
           const serviceName: string | undefined = flags.serviceName;
 
           if (!graphID) {
-            throw new Error("No service found to link to Apollo Graph Manager");
+            throw graphUndefinedError;
           }
 
           // Add some fields to output that are required for producing

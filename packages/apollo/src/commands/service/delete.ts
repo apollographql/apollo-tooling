@@ -2,6 +2,7 @@ import cli from "cli-ux";
 import { flags } from "@oclif/command";
 
 import { ProjectCommand } from "../../Command";
+import { graphUndefinedError } from "../../utils/errors";
 
 export default class ServiceDelete extends ProjectCommand {
   static description =
@@ -52,7 +53,7 @@ export default class ServiceDelete extends ProjectCommand {
         title: "Removing service from Apollo Graph Manager",
         task: async () => {
           if (!config.name) {
-            throw new Error("No service found to link to Apollo Graph Manager");
+            throw graphUndefinedError;
           }
 
           if (flags.federated) {
