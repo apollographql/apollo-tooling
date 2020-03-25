@@ -2,10 +2,7 @@ import cli from "cli-ux";
 import { flags } from "@oclif/command";
 
 import { ProjectCommand } from "../../Command";
-import {
-  graphUndefinedError,
-  tagFlagDeprecatedWarning
-} from "../../utils/sharedMessages";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ServiceDelete extends ProjectCommand {
   static description =
@@ -74,10 +71,6 @@ export default class ServiceDelete extends ProjectCommand {
           }
 
           const graphVariant = config.variant;
-
-          if (flags.tag) {
-            this.warn(tagFlagDeprecatedWarning);
-          }
 
           const {
             errors,

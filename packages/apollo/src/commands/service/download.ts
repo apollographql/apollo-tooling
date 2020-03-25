@@ -5,7 +5,6 @@ import { ProjectCommand } from "../../Command";
 import mkdirp from "mkdirp";
 import fs from "fs";
 import { dirname as getDirName } from "path";
-import { tagFlagDeprecatedWarning } from "../../utils/sharedMessages";
 
 export default class ServiceDownload extends ProjectCommand {
   static aliases = ["schema:download"];
@@ -51,9 +50,6 @@ export default class ServiceDownload extends ProjectCommand {
           // we currently recommend using client:download-schema instead.
           try {
             const graphVariant: string = config.variant;
-            if (flags.tag) {
-              console.warn(tagFlagDeprecatedWarning);
-            }
 
             const schema = await project.resolveSchema({ tag: graphVariant });
             await mkdirp(getDirName(args.output));

@@ -22,10 +22,7 @@ import { ApolloConfig } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 import { isNotNullOrUndefined } from "apollo-env";
-import {
-  graphUndefinedError,
-  tagFlagDeprecatedWarning
-} from "../../utils/sharedMessages";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
@@ -307,10 +304,6 @@ export default class ServiceCheck extends ProjectCommand {
            */
           graphID = config.name;
           graphVariant = config.variant;
-
-          if (flags.tag) {
-            console.warn(tagFlagDeprecatedWarning);
-          }
 
           /**
            * Name of the implementing service being checked.

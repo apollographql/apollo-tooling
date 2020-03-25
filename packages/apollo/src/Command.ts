@@ -17,6 +17,7 @@ import {
 import { WithRequired, DeepPartial } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 import URI from "vscode-uri";
+import { tagFlagDeprecatedWarning } from "./utils/sharedMessages";
 
 const { version, referenceID } = require("../package.json");
 
@@ -146,6 +147,9 @@ export abstract class ProjectCommand extends Command {
     }
 
     config.variant = flags.variant || flags.tag || config.variant;
+    if (flags.tag) {
+      console.warn(tagFlagDeprecatedWarning);
+    }
     //  flag overrides
     config.setDefaults({
       engine: {

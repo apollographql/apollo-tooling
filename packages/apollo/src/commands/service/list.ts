@@ -1,6 +1,5 @@
 import { flags } from "@oclif/command";
 import { ProjectCommand } from "../../Command";
-import { GraphQLSchema } from "graphql";
 import sortBy from "lodash.sortby";
 import { table } from "table";
 import moment from "moment";
@@ -10,10 +9,7 @@ import {
   ListServices_service_implementingServices,
   ListServices_service_implementingServices_FederatedImplementingServices_services
 } from "apollo-language-server/lib/graphqlTypes";
-import {
-  graphUndefinedError,
-  tagFlagDeprecatedWarning
-} from "../../utils/sharedMessages";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 interface TasksOutput {
   config: ApolloConfig;
@@ -121,10 +117,6 @@ export default class ServiceList extends ProjectCommand {
          */
         graphID = config.name;
         graphVariant = config.variant;
-
-        if (flags.tag) {
-          this.warn(tagFlagDeprecatedWarning);
-        }
 
         if (!graphID) {
           throw graphUndefinedError;
