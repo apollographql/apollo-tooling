@@ -1,6 +1,6 @@
 import { flags } from "@oclif/command";
 import { table } from "table";
-import { introspectionFromSchema, printSchema, GraphQLSchema } from "graphql";
+import { GraphQLSchema, introspectionFromSchema, printSchema } from "graphql";
 import chalk from "chalk";
 import envCi from "env-ci";
 import { gitInfo } from "../../git";
@@ -18,7 +18,7 @@ import {
   CheckSchemaVariables,
   IntrospectionSchemaInput
 } from "apollo-language-server/lib/graphqlTypes";
-import { ApolloConfig, isServiceProject } from "apollo-language-server";
+import { ApolloConfig } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 import { isNotNullOrUndefined } from "apollo-env";
@@ -129,7 +129,7 @@ export function formatMarkdown({
 ### Apollo Service Check
 🔄 Validated your local schema against schema tag \`${tag}\` ${
     serviceName ? `for service \`${serviceName}\` ` : ""
-  }on graph \`${graphName}\`.
+  }on graph \`${graphName}@${tag}\`.
 ${validationText}
 ${
   breakingChanges.length > 0
@@ -167,7 +167,7 @@ export function formatCompositionErrorsMarkdown({
 }): string {
   return `
 ### Apollo Service Check
-🔄 Validated graph composition on schema tag \`${tag}\` for service \`${serviceName}\` on graph \`${graphName}\`.
+🔄 Validated graph composition on schema tag \`${tag}\` for service \`${serviceName}\` on graph \`${graphName}@${tag}\`.
 ❌ Found **${compositionErrors.length} composition errors**
 
 | Service   | Field     | Message   |
@@ -306,7 +306,7 @@ export default class ServiceCheck extends ProjectCommand {
            * A graph can be either a monolithic schema or the result of composition a federated schema.
            */
           graphID = config.name;
-          graphVariant = flags.variant || flags.tag || config.tag;
+          graphVariant = config.tag;
 
           if (flags.tag) {
             console.warn(tagFlagDeprecatedWarning);
@@ -322,6 +322,7 @@ export default class ServiceCheck extends ProjectCommand {
           if (!graphID) {
             throw graphUndefinedError;
           }
+          const graphSpecifier = `${graphID}@${graphVariant}`;
 
           // Add some fields to output that are required for producing
           // markdown and json output
@@ -335,7 +336,7 @@ export default class ServiceCheck extends ProjectCommand {
               enabled: () => !!serviceName,
               title: `Validate graph composition for service ${chalk.cyan(
                 serviceName || ""
-              )} on graph ${chalk.cyan(graphID)}`,
+              )} on graph ${chalk.cyan(graphSpecifier)}`,
               task: async (ctx: TasksOutput, task) => {
                 if (!serviceName) {
                   throw new Error(
@@ -379,11 +380,11 @@ export default class ServiceCheck extends ProjectCommand {
                   compositionValidationResult.errors.length,
                   "graph composition error"
                 )} for service ${chalk.cyan(serviceName)} on graph ${chalk.cyan(
-                  graphID!
+                  graphSpecifier
                 )}`;
 
                 if (compositionValidationResult.errors.length > 0) {
-                  const decodedErrors = compositionValidationResult.errors
+                  taskOutput.compositionErrors = compositionValidationResult.errors
                     .filter(isNotNullOrUndefined)
                     .map(error => {
                       // checks for format: [serviceName] Location -> Error Message
@@ -403,8 +404,6 @@ export default class ServiceCheck extends ProjectCommand {
                       const [, service, field, message] = match;
                       return { service, field, message };
                     });
-
-                  taskOutput.compositionErrors = decodedErrors;
                   taskOutput.graphCompositionID =
                     compositionValidationResult.graphCompositionID;
 
@@ -432,7 +431,7 @@ export default class ServiceCheck extends ProjectCommand {
                 serviceName ? "composed " : ""
               }schema against tag ${chalk.cyan(
                 graphVariant!
-              )} on graph ${chalk.cyan(graphID)}`,
+              )} on graph ${chalk.cyan(graphSpecifier)}`,
               // We have already performed validation per operation above if the service is federated
               enabled: () => !serviceName,
               task: async (ctx: TasksOutput, task) => {

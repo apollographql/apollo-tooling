@@ -36,6 +36,7 @@ export interface Flags {
   engine?: string;
   frontend?: string;
   tag?: string;
+  variant?: string;
   skipSSLValidation?: boolean;
 }
 
@@ -144,7 +145,7 @@ export abstract class ProjectCommand extends Command {
       return;
     }
 
-    config.tag = flags.tag || config.tag;
+    config.tag = flags.variant || flags.tag || config.tag;
     //  flag overrides
     config.setDefaults({
       engine: {
