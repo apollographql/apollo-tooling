@@ -3,7 +3,14 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - https://github.com/apollographql/apollo-tooling/pull/1849
+    - Update all commands that supported --tag to prefer --variant and indicate a deprecation warning for --tag
+        - All usages of --tag will continue to work
+        - The two flags cannot be used in tandem (i.e. --variant replaces --tag)
+        - --tag will no longer appear in help messages
+    - Updates of --help messages
+    - Bug fix of some apollo commands that did not work with `graph@variant` parsing within the apollo.config.js
+    - Improved error messaging when a graph is not specified in either `apollo.config.js` or within the API key.
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
