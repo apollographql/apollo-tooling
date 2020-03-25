@@ -14,8 +14,15 @@ export default class ServiceDownload extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The published tag to check this service against",
-      default: "current"
+      description:
+        "[Deprecated: please use --variant instead] The tag (AKA variant) to download the schema of",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The variant to download the schema of",
+      exclusive: ["tag"]
     }),
     skipSSLValidation: flags.boolean({
       char: "k",
@@ -34,12 +41,17 @@ export default class ServiceDownload extends ProjectCommand {
   ];
 
   async run() {
-    await this.runTasks(({ args, project, flags }) => [
+    await this.runTasks(({ args, project, flags, config }) => [
       {
         title: `Saving schema to ${args.output}`,
         task: async () => {
+          // XXX Because of how we use schema providers, this command will never download a schema from
+          // Apollo Graph Manager. We could change that by refactoring the usage of schema providers, but
+          // we currently recommend using client:download-schema instead.
           try {
-            const schema = await project.resolveSchema({ tag: flags.tag });
+            const graphVariant: string = config.variant;
+
+            const schema = await project.resolveSchema({ tag: graphVariant });
             await mkdirp(getDirName(args.output));
             fs.writeFileSync(
               args.output,

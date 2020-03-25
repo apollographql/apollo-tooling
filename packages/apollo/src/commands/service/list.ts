@@ -1,6 +1,5 @@
 import { flags } from "@oclif/command";
 import { ProjectCommand } from "../../Command";
-import { GraphQLSchema } from "graphql";
 import sortBy from "lodash.sortby";
 import { table } from "table";
 import moment from "moment";
@@ -10,7 +9,7 @@ import {
   ListServices_service_implementingServices,
   ListServices_service_implementingServices_FederatedImplementingServices_services
 } from "apollo-language-server/lib/graphqlTypes";
-import { graphUndefinedError } from "../../utils/errors";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 interface TasksOutput {
   config: ApolloConfig;
@@ -89,7 +88,15 @@ export default class ServiceList extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The published tag to list the services from"
+      description:
+        "[Deprecated: please use --variant instead] The tag (AKA variant) to list implementing services for",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The variant to list implementing services for",
+      exclusive: ["tag"]
     })
   };
 
@@ -97,18 +104,19 @@ export default class ServiceList extends ProjectCommand {
     // @ts-ignore we're going to populate `taskOutput` later
     const taskOutput: TasksOutput = {};
 
-    let schema: GraphQLSchema | undefined;
     let graphID: string | undefined;
     let graphVariant: string | undefined;
     try {
       await this.runTasks<TasksOutput>(({ config, flags, project }) => {
         /**
-         * Name of the graph being checked. `engine` is an example of a graph.
+         * Name of the graph we are listing implementing services of. `engine` is an example of a graph.
          *
          * A graph can be either a monolithic schema or the result of composition a federated schema.
+         * This command only supports graphs that are federated into multiple implementing services.
+         *
          */
         graphID = config.name;
-        graphVariant = flags.tag || config.tag || "current";
+        graphVariant = config.variant;
 
         if (!graphID) {
           throw graphUndefinedError;

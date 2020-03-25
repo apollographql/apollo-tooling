@@ -2,7 +2,7 @@ import cli from "cli-ux";
 import { flags } from "@oclif/command";
 
 import { ProjectCommand } from "../../Command";
-import { graphUndefinedError } from "../../utils/errors";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ServiceDelete extends ProjectCommand {
   static description =
@@ -11,7 +11,15 @@ export default class ServiceDelete extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The variant of the service to delete"
+      description:
+        "[Deprecated: please use --variant instead] The variant to delete the implementing service from",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The variant to delete the implementing service from",
+      exclusive: ["tag"]
     }),
     federated: flags.boolean({
       char: "f",
@@ -62,7 +70,7 @@ export default class ServiceDelete extends ProjectCommand {
             );
           }
 
-          const graphVariant = flags.tag || config.tag || "current";
+          const graphVariant = config.variant;
 
           const {
             errors,
@@ -94,7 +102,7 @@ export default class ServiceDelete extends ProjectCommand {
 
     if (result.updatedGateway) {
       this.log(
-        `The ${result.serviceName} service with ${result.graphVariant} tag was removed from ${result.graphName}. Remaining services were composed.`
+        `The ${result.serviceName} service was removed from ${result.graphName}@${result.graphVariant}. Remaining services were composed.`
       );
       this.log("\n");
     }

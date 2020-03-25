@@ -6,17 +6,26 @@ import { ProjectCommand } from "../../Command";
 import { UploadSchemaVariables } from "apollo-language-server/lib/graphqlTypes";
 import { GraphQLServiceProject } from "apollo-language-server";
 import chalk from "chalk";
-import { graphUndefinedError } from "../../utils/errors";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ServicePush extends ProjectCommand {
   static aliases = ["schema:publish"];
-  static description = "Push a service to Apollo Graph Manager";
+  static description = "Push a service definition to Apollo Graph Manager";
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The tag to publish this service to",
-      default: "current"
+      description:
+        "The tag (AKA variant) to publish your service to in Apollo Graph Manager",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description:
+        "The variant to publish your service to in Apollo Graph Manager",
+      hidden: true,
+      exclusive: ["tag"]
     }),
     localSchemaFile: flags.string({
       description:
@@ -94,7 +103,7 @@ export default class ServicePush extends ProjectCommand {
               serviceWasCreated
             } = await project.engine.uploadAndComposePartialSchema({
               id: config.name,
-              graphVariant: config.tag,
+              graphVariant: config.variant,
               name: flags.serviceName,
               url: flags.serviceURL,
               revision:
@@ -113,20 +122,20 @@ export default class ServicePush extends ProjectCommand {
               serviceWasCreated,
               didUpdateGateway,
               graphId: config.name,
-              graphVariant: config.tag || "current"
+              graphVariant: config.variant
             };
 
             return;
           }
 
-          const schema = await project.resolveSchema({ tag: flags.tag });
+          const schema = await project.resolveSchema({ tag: config.variant });
 
           const variables: UploadSchemaVariables = {
             id: config.name,
             // @ts-ignore
             // XXX Looks like TS should be generating ReadonlyArrays instead
             schema: introspectionFromSchema(schema).__schema,
-            tag: flags.tag,
+            tag: config.variant,
             gitContext
           };
 

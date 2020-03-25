@@ -17,6 +17,7 @@ import {
 import { WithRequired, DeepPartial } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 import URI from "vscode-uri";
+import { tagFlagDeprecatedWarning } from "./utils/sharedMessages";
 
 const { version, referenceID } = require("../package.json");
 
@@ -36,6 +37,7 @@ export interface Flags {
   engine?: string;
   frontend?: string;
   tag?: string;
+  variant?: string;
   skipSSLValidation?: boolean;
 }
 
@@ -76,18 +78,19 @@ export abstract class ProjectCommand extends Command {
         "Additional header to send to server for introspectionQuery. May be used multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag."
     }),
     endpoint: flags.string({
-      description: "The url of your service"
+      description: "The URL for the CLI use to introspect your service"
     }),
     key: flags.string({
-      description: "The API key for the Apollo Engine service",
+      description:
+        "The API key to use for authentication to Apollo Graph Manager",
       default: () => process.env.ENGINE_API_KEY
     }),
     engine: flags.string({
-      description: "Reporting URL for a custom Apollo Engine deployment",
+      description: "URL for a custom Apollo Graph Manager deployment",
       hidden: true
     }),
     frontend: flags.string({
-      description: "URL for a custom Apollo Engine frontend",
+      description: "URL for a custom Apollo Graph Manager frontend",
       hidden: true
     })
   };
@@ -143,7 +146,10 @@ export abstract class ProjectCommand extends Command {
       return;
     }
 
-    config.tag = flags.tag || config.tag || "current";
+    config.variant = flags.variant || flags.tag || config.variant;
+    if (flags.tag) {
+      console.warn(tagFlagDeprecatedWarning);
+    }
     //  flag overrides
     config.setDefaults({
       engine: {
@@ -281,7 +287,16 @@ export abstract class ClientCommand extends ProjectCommand {
     }),
     tag: flags.string({
       char: "t",
-      description: "The published service tag for this client"
+      description:
+        "[Deprecated: please use --variant instead] The tag (AKA variant) of the graph in Apollo Graph Manager to associate this client to",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description:
+        "The variant of the graph in Apollo Graph Manager to associate this client to",
+      exclusive: ["tag"]
     }),
     queries: flags.string({
       description: "Deprecated in favor of the includes flag"

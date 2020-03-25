@@ -177,7 +177,7 @@ export class GraphQLClientProject extends GraphQLProject {
         client: totalTypes - serviceTypes,
         total: totalTypes
       },
-      tag: this.config.tag,
+      tag: this.config.variant,
       loaded: Boolean(this.schema || this.serviceSchema),
       lastFetch: this.lastLoadDate
     };
@@ -202,7 +202,7 @@ export class GraphQLClientProject extends GraphQLProject {
       (async () => {
         this.serviceSchema = augmentSchemaWithGeneratedSDLIfNeeded(
           await this.schemaProvider.resolveSchema({
-            tag: tag || this.config.tag,
+            tag: tag || this.config.variant,
             force: true
           })
         );
