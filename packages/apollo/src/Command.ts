@@ -283,7 +283,16 @@ export abstract class ClientCommand extends ProjectCommand {
     }),
     tag: flags.string({
       char: "t",
-      description: "The published service tag for this client"
+      description:
+        "[Deprecated: please use --variant instead] The tag (AKA variant) of the graph in Apollo Graph Manager to associate this client to",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description:
+        "The variant of the graph in Apollo Graph Manager to associate this client to",
+      exclusive: ["tag"]
     }),
     queries: flags.string({
       description: "Deprecated in favor of the includes flag"
