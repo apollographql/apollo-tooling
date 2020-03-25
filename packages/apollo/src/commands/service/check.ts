@@ -124,7 +124,7 @@ export function formatMarkdown({
 
   return `
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`${tag}\` ${
+🔄 Validated your local schema against metrics from variant \`${tag}\` ${
     serviceName ? `for service \`${serviceName}\` ` : ""
   }on graph \`${graphName}@${tag}\`.
 ${validationText}
@@ -164,7 +164,7 @@ export function formatCompositionErrorsMarkdown({
 }): string {
   return `
 ### Apollo Service Check
-🔄 Validated graph composition on schema tag \`${tag}\` for service \`${serviceName}\` on graph \`${graphName}@${tag}\`.
+🔄 Validated graph composition for service \`${serviceName}\` on graph \`${graphName}@${tag}\`.
 ❌ Found **${compositionErrors.length} composition errors**
 
 | Service   | Field     | Message   |
@@ -422,7 +422,7 @@ export default class ServiceCheck extends ProjectCommand {
             {
               title: `Validating ${
                 serviceName ? "composed " : ""
-              }schema against tag ${chalk.cyan(
+              }schema against metrics from variant ${chalk.cyan(
                 graphVariant!
               )} on graph ${chalk.cyan(graphSpecifier)}`,
               // We have already performed validation per operation above if the service is federated

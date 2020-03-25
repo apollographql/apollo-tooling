@@ -55,18 +55,18 @@ describe("ApolloConfig", () => {
     });
   });
 
-  describe("tag", () => {
-    it("gets default tag when none is set", () => {
+  describe("variant", () => {
+    it("gets default variant when none is set", () => {
       const config = new ApolloConfig({ client: { service: "hai" } });
       expect(config.variant).toEqual("current");
     });
 
-    it("gets tag from service specifier", () => {
+    it("gets variant from service specifier", () => {
       const config = new ApolloConfig({ client: { service: "hai@master" } });
       expect(config.variant).toEqual("master");
     });
 
-    it("can set and override tags", () => {
+    it("can set and override variants", () => {
       const config = new ApolloConfig({ client: { service: "hai@master" } });
       config.variant = "new";
       expect(config.variant).toEqual("new");
