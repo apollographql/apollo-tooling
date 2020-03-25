@@ -50,8 +50,7 @@ export default class ServiceDownload extends ProjectCommand {
           // Apollo Graph Manager. We could change that by refactoring the usage of schema providers, but
           // we currently recommend using client:download-schema instead.
           try {
-            const graphVariant: string =
-              flags.variant || flags.tag || config.variant;
+            const graphVariant: string = config.variant;
             if (flags.tag) {
               console.warn(tagFlagDeprecatedWarning);
             }

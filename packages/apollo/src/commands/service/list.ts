@@ -120,7 +120,7 @@ export default class ServiceList extends ProjectCommand {
          *
          */
         graphID = config.name;
-        graphVariant = flags.variant || flags.tag || config.variant;
+        graphVariant = config.variant;
 
         if (flags.tag) {
           this.warn(tagFlagDeprecatedWarning);

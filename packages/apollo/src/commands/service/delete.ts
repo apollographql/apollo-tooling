@@ -73,7 +73,7 @@ export default class ServiceDelete extends ProjectCommand {
             );
           }
 
-          const graphVariant = flags.variant || flags.tag || config.variant;
+          const graphVariant = config.variant;
 
           if (flags.tag) {
             this.warn(tagFlagDeprecatedWarning);
