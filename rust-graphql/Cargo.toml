@@ -1,5 +1,5 @@
 [package]
-name = "visitor"
+name = "graphql"
 version = "0.1.0"
 authors = ["Jake <dawkinsjh@gmail.com>"]
 edition = "2018"

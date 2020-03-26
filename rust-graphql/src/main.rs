@@ -7,10 +7,10 @@
 // // // // // // // //
 
 /// traits are similar to interfaces. This says that anything that
-/// implements a `NodeVisitor` must implement the visit_name
+/// implements a `Visitor` must implement the visit_name
 /// a visitor must be able to visit any kind of node, so any
 /// visitor must implement all these functions
-trait NodeVisitor {
+pub trait Visitor {
     fn visit_document(&mut self, d: &Document);
     fn visit_definition(&mut self, d: &Definition);
     fn visit_name(&mut self, n: &Name);
@@ -18,10 +18,11 @@ trait NodeVisitor {
     fn visit_type_definition(&mut self, td: &TypeDefinition);
 }
 
-/// Any struct (DocumentNodes) that implement this trait much allow
+/// Any struct (ASTNodes) that implement this trait much allow
 /// the user to implement the accept fn.
-trait DocumentNode {
-    fn accept(&self, nv: &mut dyn NodeVisitor);
+pub trait ASTNode {
+    // accept can be implemented to take any struct that implements Visitor
+    fn accept<V: Visitor>(&self, v: &mut V);
 }
 
 // // // // // // // //
@@ -37,10 +38,9 @@ trait DocumentNode {
 pub struct Document {
     definitions: Vec<Definition>,
 }
-
-impl DocumentNode for Document {
-    fn accept(&self, nv: &mut dyn NodeVisitor) {
-        nv.visit_document(self);
+impl ASTNode for Document {
+    fn accept<V: Visitor>(&self, v: &mut V) {
+        v.visit_document(self);
     }
 }
 
@@ -49,10 +49,9 @@ impl DocumentNode for Document {
 pub enum Definition {
     TypeDefinition(TypeDefinition),
 }
-
-impl DocumentNode for Definition {
-    fn accept(&self, nv: &mut dyn NodeVisitor) {
-        nv.visit_definition(self);
+impl ASTNode for Definition {
+    fn accept<V: Visitor>(&self, v: &mut V) {
+        v.visit_definition(self);
     }
 }
 
@@ -62,10 +61,9 @@ pub enum TypeDefinition {
     Scalar(ScalarType),
     // Object()
 }
-
-impl DocumentNode for TypeDefinition {
-    fn accept(&self, nv: &mut dyn NodeVisitor) {
-        nv.visit_type_definition(self);
+impl ASTNode for TypeDefinition {
+    fn accept<V: Visitor>(&self, v: &mut V) {
+        v.visit_type_definition(self);
     }
 }
 
@@ -77,11 +75,10 @@ impl DocumentNode for TypeDefinition {
 pub struct Name {
     pub value: String,
 }
-
 /// `Name` is a node, so I want to add the `accept` fn to that node
-impl DocumentNode for Name {
-    fn accept(&self, nv: &mut dyn NodeVisitor) {
-        nv.visit_name(self);
+impl ASTNode for Name {
+    fn accept<V: Visitor>(&self, v: &mut V) {
+        v.visit_name(self);
     }
 }
 
@@ -109,10 +106,9 @@ pub struct ScalarType {
     pub description: Option<String>,
     pub name: Name,
 }
-
-impl DocumentNode for ScalarType {
-    fn accept(&self, nv: &mut dyn NodeVisitor) {
-        nv.visit_scalar_type(&self);
+impl ASTNode for ScalarType {
+    fn accept<V: Visitor>(&self, v: &mut V) {
+        v.visit_scalar_type(&self);
     }
 }
 
@@ -136,12 +132,12 @@ pub struct ObjectType {
 // // // // // // // //
 // // // // // // // //
 
-fn print(node: &dyn DocumentNode) -> String {
+fn print<N: ASTNode>(n: &N) -> String {
     struct Printer {
         output: String,
     }
 
-    impl NodeVisitor for Printer {
+    impl Visitor for Printer {
         fn visit_name(&mut self, n: &Name) {
             self.output.push_str(&n.value);
         }
@@ -179,7 +175,7 @@ fn print(node: &dyn DocumentNode) -> String {
     let mut print_schema = Printer {
         output: std::string::String::new(),
     };
-    node.accept(&mut print_schema);
+    n.accept(&mut print_schema);
     print_schema.output
 }
 
