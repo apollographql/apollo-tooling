@@ -6,6 +6,7 @@ import {
   DefaultServiceConfig,
   DefaultEngineConfig
 } from "../config";
+import { Debug } from "../../utilities";
 
 const makeNestedDir = dir => {
   if (fs.existsSync(dir)) return;
@@ -317,6 +318,25 @@ describe("loadConfig", () => {
       });
 
       expect(config.client.service).toEqual("yoshi");
+    });
+
+    it("Allows setting ENGINE_API_KEY with a deprecation warning", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: { name: 'hello' } }`,
+        ".env.local": `ENGINE_API_KEY=service:yoshi:65489061ko`
+      });
+
+      const spy = jest.spyOn(Debug, "warning");
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.client.service).toEqual("yoshi");
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/Deprecation warning/i)
+      );
     });
 
     it("Throws when .env defined legacy and new key", async () => {
