@@ -3,7 +3,7 @@ import { NotificationHandler } from "vscode-languageserver";
 import gql from "graphql-tag";
 import { GraphQLSchema, buildClientSchema } from "graphql";
 import { ApolloEngineClient, ClientIdentity } from "../../engine";
-import { ClientConfig, parseServiceSpecifier } from "../../config";
+import { ClientConfig, keyEnvVar, parseServiceSpecifier } from "../../config";
 import { getServiceFromKey, isServiceKey } from "../../config";
 import {
   GraphQLSchemaProvider,
@@ -36,7 +36,9 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
     // create engine client
     if (!this.client) {
       if (!engine.apiKey) {
-        throw new Error("ENGINE_API_KEY not found");
+        throw new Error(
+          `No API key found. Please set ${keyEnvVar} or use --key`
+        );
       }
       this.client = new ApolloEngineClient(
         engine.apiKey,

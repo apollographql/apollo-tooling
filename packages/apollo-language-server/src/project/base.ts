@@ -23,7 +23,7 @@ import { GraphQLDocument, extractGraphQLDocuments } from "../document";
 
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
-import { ApolloConfig } from "../config";
+import { ApolloConfig, keyEnvVar } from "../config";
 import {
   schemaProviderFromConfig,
   GraphQLSchemaProvider,
@@ -136,7 +136,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     // handle error states for missing engine config
     // all in the same place :tada:
     if (!this.engineClient) {
-      throw new Error("Unable to find ENGINE_API_KEY");
+      throw new Error(`Unable to find ${keyEnvVar}`);
     }
     return this.engineClient!;
   }

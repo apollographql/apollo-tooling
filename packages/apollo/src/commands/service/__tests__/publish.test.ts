@@ -12,7 +12,7 @@ it("is turned on after summit", () => {});
 // export const vol = Volume.fromJSON({});
 // const ENGINE_URI = "https://engine-graphql.apollographql.com/api/graphql";
 // const test = setup.do(() => mockConsole());
-// const ENGINE_API_KEY = "service:test:1234";
+// const APOLLO_KEY = "service:test:1234";
 // const hash = "12345";
 // const schemaSource = fs.readFileSync(
 //   path.resolve(__dirname, "./fixtures/schema.graphql"),
@@ -38,7 +38,7 @@ it("is turned on after summit", () => {});
 
 // const engineSuccess = ({ schema, tag, result } = {}) => nock => {
 //   nock
-//     .matchHeader("x-api-key", ENGINE_API_KEY)
+//     .matchHeader("x-api-key", APOLLO_KEY)
 //     .post("/", {
 //       operationName: "UploadSchema",
 //       variables: {
@@ -83,7 +83,7 @@ it("is turned on after summit", () => {});
 //     .only()
 //     .nock("http://localhost:4000", localSuccess)
 //     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .stdout()
 //     .command(["service:push"])
 //     .it("calls engine with a schema from the default remote", () => {
@@ -94,7 +94,7 @@ it("is turned on after summit", () => {});
 //     .nock("http://localhost:4000", localSuccess)
 //     .nock(ENGINE_URI, engineSuccess())
 //     .stdout()
-//     .command(["service:push", `--key=${ENGINE_API_KEY}`])
+//     .command(["service:push", `--key=${APOLLO_KEY}`])
 //     .it("allows a custom api key", () => {
 //       expect(uiLog).toContain("12345");
 //     });
@@ -103,7 +103,7 @@ it("is turned on after summit", () => {});
 //     .stdout()
 //     .nock("https://staging.example.com", localSuccess)
 //     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .command(["service:push", "--endpoint=https://staging.example.com/graphql"])
 //     .it("calls engine with a schema from a custom remote", ({ stdout }) => {
 //       expect(uiLog).toContain("12345");
@@ -118,7 +118,7 @@ it("is turned on after summit", () => {});
 //           "schemas": {
 //             "customEndpoint": {
 //               "endpoint": "https://staging.example.com/graphql",
-//               "engineKey": "${ENGINE_API_KEY}"
+//               "engineKey": "${APOLLO_KEY}"
 //             }
 //           }
 //         }
@@ -140,7 +140,7 @@ it("is turned on after summit", () => {});
 //   test
 //     .nock("http://localhost:4000", localSuccess)
 //     .nock("https://engine.example.com", engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .stdout()
 //     .command(["service:push", "--engine=https://engine.example.com"])
 //     .it("calls engine with a schema from a custom registry", () => {
@@ -161,7 +161,7 @@ it("is turned on after summit", () => {});
 //         .reply(200, { data: fullSchema });
 //     })
 //     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .command([
 //       "service:push",
 //       "--endpoint=https://staging.example.com/graphql",
@@ -183,7 +183,7 @@ it("is turned on after summit", () => {});
 //     )
 //     .stdout()
 //     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .command(["service:push", "--endpoint=introspection-result.json"])
 //     .it(
 //       "calls engine with a schema from an introspection result on the filesystem",
@@ -200,7 +200,7 @@ it("is turned on after summit", () => {});
 //     )
 //     .stdout()
 //     .nock(ENGINE_URI, engineSuccess({ schema: fullSchema.__schema }))
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .command(["service:push", "--endpoint=schema.graphql"])
 //     .it(
 //       "calls engine with a schema from a schema file on the filesystem",
@@ -234,7 +234,7 @@ it("is turned on after summit", () => {});
 //         }
 //       })
 //     )
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .stdout()
 //     .command(["service:push"])
 //     .it(
