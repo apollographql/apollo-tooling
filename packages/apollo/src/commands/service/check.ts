@@ -68,6 +68,7 @@ interface TasksOutput {
     | CheckPartialSchema_service_checkPartialSchema_checkSchemaResult;
   shouldOutputJson: boolean;
   shouldOutputMarkdown: boolean;
+  shouldAlwaysExit0: boolean;
   federationSchemaHash?: string;
   serviceName: string | undefined;
   compositionErrors?: CompositionErrors;
@@ -277,6 +278,10 @@ export default class ServiceCheck extends ProjectCommand {
     serviceName: flags.string({
       description:
         "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service"
+    }),
+    successOnCompletion: flags.boolean({
+      description:
+        "Exit with status 0 when the check completes, even if errors are found"
     })
   };
 
@@ -317,10 +322,10 @@ export default class ServiceCheck extends ProjectCommand {
           }
           const graphSpecifier = `${graphID}@${graphVariant}`;
 
-          // Add some fields to output that are required for producing
-          // markdown and json output
+          // Add some fields to output that are required for post-processing
           taskOutput.shouldOutputJson = !!flags.json;
           taskOutput.shouldOutputMarkdown = !!flags.markdown;
+          taskOutput.shouldAlwaysExit0 = !!flags.successOnCompletion;
           taskOutput.serviceName = flags.serviceName;
           taskOutput.config = config;
 
@@ -567,7 +572,6 @@ export default class ServiceCheck extends ProjectCommand {
     } catch (error) {
       if (error.message.includes("/upgrade")) {
         this.exit(1);
-
         return;
       }
 
@@ -586,7 +590,8 @@ export default class ServiceCheck extends ProjectCommand {
       shouldOutputMarkdown,
       serviceName,
       compositionErrors,
-      graphCompositionID
+      graphCompositionID,
+      shouldAlwaysExit0
     } = taskOutput;
 
     if (shouldOutputJson) {
@@ -680,8 +685,10 @@ export default class ServiceCheck extends ProjectCommand {
         this.log(
           table([["Message"], ...unformattedErrors.map(e => [e.message])])
         );
-
       // Return a non-zero error code
+      if (shouldAlwaysExit0) {
+        return;
+      }
       this.exit(1);
     } else {
       this.log(formatHumanReadable({ checkSchemaResult, graphCompositionID }));
@@ -692,6 +699,9 @@ export default class ServiceCheck extends ProjectCommand {
           ({ severity }) => severity === ChangeSeverity.FAILURE
         )
       ) {
+        if (shouldAlwaysExit0) {
+          return;
+        }
         this.exit(1);
       }
     }
