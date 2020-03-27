@@ -3,6 +3,8 @@
 ## Upcoming
 
 - `apollo`
+  - https://github.com/apollographql/apollo-tooling/pull/1851
+    - Support APOLLO_KEY and deprecate ENGINE_API_KEY for .env support
   - https://github.com/apollographql/apollo-tooling/pull/1849
     - Update all commands that supported --tag to prefer --variant and indicate a deprecation warning for --tag
         - All usages of --tag will continue to work
