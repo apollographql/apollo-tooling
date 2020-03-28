@@ -1,23 +1,22 @@
 import Command, { flags } from "@oclif/command";
-import Listr from "listr";
-import { ListrTask } from "listr";
+import Listr, { ListrTask } from "listr";
 import { parse, resolve } from "path";
 
 import {
+  ApolloConfig,
+  Debug,
+  getServiceFromKey,
+  GraphQLClientProject,
   GraphQLProject,
   GraphQLServiceProject,
-  GraphQLClientProject,
-  loadConfig,
   isClientConfig,
   isServiceConfig,
-  ApolloConfig,
-  getServiceFromKey,
-  Debug
+  loadConfig
 } from "apollo-language-server";
-import { WithRequired, DeepPartial } from "apollo-env";
+import { DeepPartial, WithRequired } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 import URI from "vscode-uri";
-import { tagFlagDeprecatedWarning } from "./utils/sharedMessages";
+import chalk from "chalk";
 
 const { version, referenceID } = require("../package.json");
 
@@ -38,6 +37,7 @@ export interface Flags {
   frontend?: string;
   tag?: string;
   variant?: string;
+  graph?: string;
   skipSSLValidation?: boolean;
 }
 
@@ -147,8 +147,20 @@ export abstract class ProjectCommand extends Command {
     }
 
     config.variant = flags.variant || flags.tag || config.variant;
+    config.graph =
+      flags.graph ||
+      (config.service && config.service.name) ||
+      (config.client &&
+        typeof config.client.service === "string" &&
+        config.client.service) ||
+      undefined;
+
     if (flags.tag) {
-      console.warn(tagFlagDeprecatedWarning);
+      console.warn(
+        chalk.yellow(
+          "Using the --tag flag is deprecated. Please use --variant (or -v) instead."
+        )
+      );
     }
     //  flag overrides
     config.setDefaults({

@@ -54,6 +54,9 @@ export interface ConfigBase {
 
 export type ClientServiceConfig = RemoteServiceConfig | LocalServiceConfig;
 
+// This is an illegal graph ID in Apollo Graph Manager, so it's safe to use as a reserved value
+export const graphIdNotSet = "<NO_GRAPH_ID_SET>";
+
 export interface ClientConfigFormat extends ConfigBase {
   // service linking
   service?: ServiceSpecifier | ClientServiceConfig;
@@ -136,6 +139,7 @@ export class ApolloConfig {
   public service?: ServiceConfigFormat;
   public client?: ClientConfigFormat;
   private _variant?: string;
+  private _graphId?: string;
 
   constructor(public rawConfig: ApolloConfigFormat, public configURI?: URI) {
     this.isService = !!rawConfig.service;
@@ -162,19 +166,35 @@ export class ApolloConfig {
     return configs;
   }
 
-  set variant(tag: string) {
-    this._variant = tag;
+  set variant(variant: string) {
+    this._variant = variant;
   }
 
   get variant(): string {
     if (this._variant) return this._variant;
     let tag: string = "current";
     if (this.client && typeof this.client.service === "string") {
-      const specifierTag = parseServiceSpecifier(this.client
+      const parsedVariant = parseServiceSpecifier(this.client
         .service as ServiceSpecifier)[1];
-      if (specifierTag) tag = specifierTag;
+      if (parsedVariant) tag = parsedVariant;
     }
     return tag;
+  }
+
+  set graph(graphId: string | undefined) {
+    this._graphId = graphId;
+  }
+
+  get graph(): string | undefined {
+    if (this._graphId) return this._graphId;
+    if (this.client && typeof this.client.service === "string") {
+      const graphSpecifier = parseServiceSpecifier(this.client.service)[0];
+      if (graphSpecifier) return graphSpecifier;
+    } else if (this.service && typeof this.service.name === "string") {
+      const graphSpecifier = parseServiceSpecifier(this.service.name)[0];
+      if (graphSpecifier) return graphSpecifier;
+    }
+    return;
   }
 
   // this type needs to be an "EveryKeyIsOptionalApolloConfig"
