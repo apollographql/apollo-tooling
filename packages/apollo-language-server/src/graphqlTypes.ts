@@ -69,14 +69,14 @@ export interface CheckPartialSchema_service_checkPartialSchema_checkSchemaResult
   /**
    * delta in seconds from current time that determines the start of the window
    * for reported metrics included in a schema diff. A day window from the present
-   * day would have a \`from\` value of -86400. In rare cases, this could be an ISO
+   * day would have a `from` value of -86400. In rare cases, this could be an ISO
    * timestamp if the user passed one in on diff creation
    */
   from: any | null;
   /**
    * delta in seconds from current time that determines the end of the
    * window for reported metrics included in a schema diff. A day window
-   * from the present day would have a \`to\` value of -0. In rare
+   * from the present day would have a `to` value of -0. In rare
    * cases, this could be an ISO timestamp if the user passed one in on diff
    * creation
    */
@@ -207,14 +207,14 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_validationConfig
   /**
    * delta in seconds from current time that determines the start of the window
    * for reported metrics included in a schema diff. A day window from the present
-   * day would have a \`from\` value of -86400. In rare cases, this could be an ISO
+   * day would have a `from` value of -86400. In rare cases, this could be an ISO
    * timestamp if the user passed one in on diff creation
    */
   from: any | null;
   /**
    * delta in seconds from current time that determines the end of the
    * window for reported metrics included in a schema diff. A day window
-   * from the present day would have a \`to\` value of -0. In rare
+   * from the present day would have a `to` value of -0. In rare
    * cases, this could be an ISO timestamp if the user passed one in on diff
    * creation
    */
@@ -520,7 +520,13 @@ export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics {
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats {
   __typename: "ServiceFieldStatsRecord";
+  /**
+   * Dimensions of ServiceFieldStats that can be grouped by.
+   */
   groupBy: SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy;
+  /**
+   * Metrics of ServiceFieldStats that can be aggregated over.
+   */
   metrics: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics;
 }
 
