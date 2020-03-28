@@ -3,7 +3,7 @@ import merge from "lodash.merge";
 import { ServiceID, ServiceSpecifier, ClientID } from "../engine";
 import URI from "vscode-uri";
 import { WithRequired } from "apollo-env";
-import { getServiceName, parseServiceSpecifier } from "./utils";
+import { getGraphIdFromConfig, parseServiceSpecifier } from "./utils";
 import { ValidationRule } from "graphql/validation/ValidationContext";
 
 export interface EngineStatsWindow {
@@ -145,7 +145,8 @@ export class ApolloConfig {
     this.isService = !!rawConfig.service;
     this.isClient = !!rawConfig.client;
     this.engine = rawConfig.engine!;
-    this.name = getServiceName(rawConfig);
+    this.name = getGraphIdFromConfig(rawConfig);
+    this._graphId = getGraphIdFromConfig(rawConfig);
     this.client = rawConfig.client;
     this.service = rawConfig.service;
   }
@@ -174,8 +175,10 @@ export class ApolloConfig {
     if (this._variant) return this._variant;
     let tag: string = "current";
     if (this.client && typeof this.client.service === "string") {
-      const parsedVariant = parseServiceSpecifier(this.client
-        .service as ServiceSpecifier)[1];
+      const parsedVariant = parseServiceSpecifier(this.client.service)[1];
+      if (parsedVariant) tag = parsedVariant;
+    } else if (this.service && typeof this.service.name === "string") {
+      const parsedVariant = parseServiceSpecifier(this.service.name)[1];
       if (parsedVariant) tag = parsedVariant;
     }
     return tag;
