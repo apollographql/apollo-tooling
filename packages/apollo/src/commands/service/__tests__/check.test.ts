@@ -6,10 +6,10 @@ import ServiceCheck, {
 import checkSchemaResult from "../../../../__fixtures__/check-schema-result";
 import { ChangeSeverity } from "apollo-language-server/lib/graphqlTypes";
 import chalk from "chalk";
-import nock = require("nock");
-import { stdout, stderr } from "stdout-stderr";
+import { stdout } from "stdout-stderr";
 import * as graphql from "graphql";
 import { graphqlTypes } from "apollo-language-server";
+import nock = require("nock");
 
 /**
  * Single URL for all local requests to be mocked
@@ -25,19 +25,9 @@ const localURL = "http://localhost:4000";
 const fakeApiKey = "service:engine:9YC5AooMa2yO11eFlZat11";
 
 /**
- * Graph Manager API key we're using.
- *
- * This is hard-coded to `fakeApiKey` because this is out day-to-day usage should be. If we're going to be
- * updating the mocked data; we'll need to use a real API key (see [README#Regenerating Mocked Network
- * Data](https://github.com/apollographql/apollo-tooling#regenerating-mocked-network-data)); which will be
- * placed here.
- */
-const apiKey = fakeApiKey;
-
-/**
  * An array that we'll spread into all CLI commands to pass the graph manager api key.
  */
-const cliKeyParameter = [`--key=${apiKey}`];
+const cliKeyParameter = [`--key=${fakeApiKey}`];
 
 /**
  * The original `console.log` being mocked.
@@ -527,6 +517,24 @@ describe("service:check", () => {
 
           // Inline snapshots don't work here due to https://github.com/facebook/jest/issues/6744.
           expect(uncaptureApplicationOutput()).toMatchSnapshot();
+        });
+
+        it("errors when graph flag does not match token", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(1);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              `--graph=happy-fun-times`
+            ])
+          ).rejects.toThrow(
+            /Cannot specify a service token that does not match graph./
+          );
         });
 
         it("compacts output in CI", async () => {

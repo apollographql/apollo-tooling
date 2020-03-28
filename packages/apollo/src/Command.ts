@@ -204,6 +204,14 @@ export abstract class ProjectCommand extends Command {
       config.setDefaults(defaults);
     }
 
+    const [tokenType, identifier] =
+      (config.engine.apiKey && config.engine.apiKey.split(":")) || [];
+    if (tokenType == "service" && identifier !== config.graph) {
+      throw new Error(
+        `Cannot specify a service token that does not match graph. Graph ${config.graph} does not match graph from token (${identifier})`
+      );
+    }
+
     return config;
   }
 
