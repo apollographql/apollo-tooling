@@ -131,10 +131,7 @@ describe("Scala code generation: Types", function() {
       expect(
         typeNameFromGraphQLType(
           {
-            options: {
-              passthroughCustomScalars: true,
-              customScalarsPrefix: ""
-            }
+            options: { passthroughCustomScalars: true, customScalarsPrefix: "" }
           },
           new GraphQLScalarType({ name: "CustomScalarType", serialize: String })
         )
