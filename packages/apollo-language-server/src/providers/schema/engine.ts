@@ -27,9 +27,9 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
     if (this.schema && (!override || !override.force)) return this.schema;
     const { engine, client } = this.config;
 
-    if (typeof client.service !== "string") {
+    if (!this.config.graph) {
       throw new Error(
-        `Service name not found for client, found ${client.service}`
+        `No graph ID found for client. Please specify a graph ID via the config or the --graph flag`
       );
     }
 
@@ -45,23 +45,11 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
       );
     }
 
-    const [id, tag = "current"] = parseServiceSpecifier(client.service);
-
-    // make sure the API key is valid for the service we're requesting a schema of.
-    if (isServiceKey(engine.apiKey)) {
-      const keyServiceName = getServiceFromKey(engine.apiKey);
-      if (id !== keyServiceName) {
-        throw new Error(
-          `API key service name \`${keyServiceName}\` does not match the service name in your config \`${id}\`. Try changing the service name in your config to \`${keyServiceName}\` or get a new key.`
-        );
-      }
-    }
-
     const { data, errors } = await this.client.execute<GetSchemaByTag>({
       query: SCHEMA_QUERY,
       variables: {
-        id,
-        tag: override && override.tag ? override.tag : tag
+        id: this.config.graph,
+        tag: override && override.tag ? override.tag : this.config.variant
       }
     });
     if (errors) {
@@ -71,7 +59,7 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
 
     if (!(data && data.service && data.service.__typename === "Service")) {
       throw new Error(
-        `Unable to get schema from Apollo Graph Manager for graph ${id}`
+        `Unable to get schema from Apollo Graph Manager for graph ${this.config.graph}`
       );
     }
 
