@@ -53,14 +53,14 @@ export default class ClientPush extends ClientCommand {
           },
           {
             title: `Checked operations against ${chalk.cyan(
-              config.name + "@" + config.variant
+              config.graph + "@" + config.variant
             )}`,
             task: async () => {}
           },
           {
             title: "Pushing operations to operation registry",
             task: async (_, task) => {
-              if (!config.name) {
+              if (!config.graph) {
                 throw graphUndefinedError;
               }
 
@@ -84,7 +84,7 @@ export default class ClientPush extends ClientCommand {
                   identifier: referenceID || name,
                   version
                 },
-                id: config.name,
+                id: config.graph,
                 operations: operationManifest,
                 manifestVersion: 2,
                 graphVariant: config.variant

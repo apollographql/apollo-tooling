@@ -65,7 +65,7 @@ export default class ServiceDelete extends ProjectCommand {
       {
         title: "Removing service from Apollo Graph Manager",
         task: async () => {
-          if (!config.name) {
+          if (!config.graph) {
             throw graphUndefinedError;
           }
 
@@ -81,7 +81,7 @@ export default class ServiceDelete extends ProjectCommand {
             errors,
             updatedGateway
           } = await project.engine.removeServiceAndCompose({
-            id: config.name,
+            id: config.graph,
             graphVariant,
             name: flags.serviceName
           });
@@ -89,7 +89,7 @@ export default class ServiceDelete extends ProjectCommand {
           result = {
             serviceName: flags.serviceName,
             graphVariant,
-            graphName: config.name,
+            graphName: config.graph,
             errors,
             updatedGateway
           };
