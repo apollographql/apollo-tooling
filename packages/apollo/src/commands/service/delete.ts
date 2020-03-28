@@ -21,13 +21,6 @@ export default class ServiceDelete extends ProjectCommand {
       description: "The variant to delete the implementing service from",
       exclusive: ["tag"]
     }),
-    federated: flags.boolean({
-      char: "f",
-      default: false,
-      hidden: true,
-      description:
-        "[Deprecated: use --serviceName to indicate federation] Indicates that the schema is a partial schema from a federated service"
-    }),
     serviceName: flags.string({
       required: true,
       description:
@@ -62,12 +55,6 @@ export default class ServiceDelete extends ProjectCommand {
         task: async () => {
           if (!config.name) {
             throw graphUndefinedError;
-          }
-
-          if (flags.federated) {
-            this.log(
-              "The --federated flag is no longer required when running federated commands. Use of the flag will not be supported in future versions of the CLI."
-            );
           }
 
           const graphVariant = config.variant;
