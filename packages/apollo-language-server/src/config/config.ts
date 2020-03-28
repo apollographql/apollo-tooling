@@ -132,19 +132,16 @@ export class ApolloConfig {
   public isClient: boolean;
   public isService: boolean;
   public engine: EngineConfig;
-  public name?: string;
   public service?: ServiceConfigFormat;
   public client?: ClientConfigFormat;
   private _variant?: string;
   private _graphId?: string;
 
   constructor(public rawConfig: ApolloConfigFormat, public configURI?: URI) {
-    const graphIdFromConfig = getGraphIdFromConfig(rawConfig);
     this.isService = !!rawConfig.service;
     this.isClient = !!rawConfig.client;
     this.engine = rawConfig.engine!;
-    this.name = graphIdFromConfig;
-    this._graphId = graphIdFromConfig;
+    this._graphId = getGraphIdFromConfig(rawConfig);
     this.client = rawConfig.client;
     this.service = rawConfig.service;
   }
