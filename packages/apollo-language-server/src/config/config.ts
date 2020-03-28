@@ -1,6 +1,6 @@
 import { dirname } from "path";
 import merge from "lodash.merge";
-import { ServiceID, ServiceSpecifier, ClientID } from "../engine";
+import { ClientID, ServiceID, ServiceSpecifier } from "../engine";
 import URI from "vscode-uri";
 import { WithRequired } from "apollo-env";
 import { getGraphIdFromConfig, parseServiceSpecifier } from "./utils";
@@ -139,11 +139,12 @@ export class ApolloConfig {
   private _graphId?: string;
 
   constructor(public rawConfig: ApolloConfigFormat, public configURI?: URI) {
+    const graphIdFromConfig = getGraphIdFromConfig(rawConfig);
     this.isService = !!rawConfig.service;
     this.isClient = !!rawConfig.client;
     this.engine = rawConfig.engine!;
-    this.name = getGraphIdFromConfig(rawConfig);
-    this._graphId = getGraphIdFromConfig(rawConfig);
+    this.name = graphIdFromConfig;
+    this._graphId = graphIdFromConfig;
     this.client = rawConfig.client;
     this.service = rawConfig.service;
   }
@@ -187,14 +188,7 @@ export class ApolloConfig {
 
   get graph(): string | undefined {
     if (this._graphId) return this._graphId;
-    if (this.client && typeof this.client.service === "string") {
-      const graphSpecifier = parseServiceSpecifier(this.client.service)[0];
-      if (graphSpecifier) return graphSpecifier;
-    } else if (this.service && typeof this.service.name === "string") {
-      const graphSpecifier = parseServiceSpecifier(this.service.name)[0];
-      if (graphSpecifier) return graphSpecifier;
-    }
-    return;
+    return getGraphIdFromConfig(this.rawConfig);
   }
 
   // this type needs to be an "EveryKeyIsOptionalApolloConfig"

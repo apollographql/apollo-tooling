@@ -5,6 +5,7 @@ import { parse, resolve } from "path";
 import {
   ApolloConfig,
   Debug,
+  getGraphIdFromConfig,
   getServiceFromKey,
   GraphQLClientProject,
   GraphQLProject,
@@ -147,13 +148,7 @@ export abstract class ProjectCommand extends Command {
     }
 
     config.variant = flags.variant || flags.tag || config.variant;
-    config.graph =
-      flags.graph ||
-      (config.service && config.service.name) ||
-      (config.client &&
-        typeof config.client.service === "string" &&
-        config.client.service) ||
-      undefined;
+    config.graph = flags.graph || getGraphIdFromConfig(config.rawConfig);
 
     if (flags.tag) {
       console.warn(
