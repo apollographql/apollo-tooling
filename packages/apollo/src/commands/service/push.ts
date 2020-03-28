@@ -27,6 +27,11 @@ export default class ServicePush extends ProjectCommand {
       hidden: true,
       exclusive: ["tag"]
     }),
+    graph: flags.string({
+      char: "g",
+      description:
+        "The ID of the graph in Apollo Graph Manager to publish your service to. Overrides config file if set."
+    }),
     localSchemaFile: flags.string({
       description:
         "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"

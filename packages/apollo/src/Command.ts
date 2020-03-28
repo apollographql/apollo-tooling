@@ -298,6 +298,11 @@ export abstract class ClientCommand extends ProjectCommand {
         "The variant of the graph in Apollo Graph Manager to associate this client to",
       exclusive: ["tag"]
     }),
+    graph: flags.string({
+      char: "g",
+      description:
+        "The ID for the graph in Apollo Graph Manager to operate client commands with. Overrides config file if set."
+    }),
     queries: flags.string({
       description: "Deprecated in favor of the includes flag"
     }),
