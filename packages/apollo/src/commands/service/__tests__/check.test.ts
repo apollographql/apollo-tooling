@@ -537,6 +537,23 @@ describe("service:check", () => {
           );
         });
 
+        it("allows setting graph with a flag", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(1);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              `--graph=happy-fun-times`,
+              `--key=service:happy-fun-times:asldf89jaose9jroinc`
+            ])
+          ).resolves.not.toThrow();
+        });
+
         it("compacts output in CI", async () => {
           captureApplicationOutput();
           mockCompositionSuccess();
