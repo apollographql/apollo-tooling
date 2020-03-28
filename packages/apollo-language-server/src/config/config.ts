@@ -54,9 +54,6 @@ export interface ConfigBase {
 
 export type ClientServiceConfig = RemoteServiceConfig | LocalServiceConfig;
 
-// This is an illegal graph ID in Apollo Graph Manager, so it's safe to use as a reserved value
-export const graphIdNotSet = "<NO_GRAPH_ID_SET>";
-
 export interface ClientConfigFormat extends ConfigBase {
   // service linking
   service?: ServiceSpecifier | ClientServiceConfig;
