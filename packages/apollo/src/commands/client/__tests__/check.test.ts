@@ -13,7 +13,7 @@ it("is turned on after summit", () => {});
 
 // import { fs as mockFS, vol } from "apollo-codegen-core/lib/localfs";
 // const test = setup.do(() => mockConsole());
-// const ENGINE_API_KEY = "service:test:1234";
+// const APOLLO_KEY = "service:test:1234";
 // const hash = "12345";
 
 // const dummyOperations = [
@@ -26,7 +26,7 @@ it("is turned on after summit", () => {});
 
 // const engineSuccess = ({ operations, tag, results } = {}) => nock => {
 //   nock
-//     .matchHeader("x-api-key", ENGINE_API_KEY)
+//     .matchHeader("x-api-key", APOLLO_KEY)
 //     .post("/", {
 //       operationName: "CheckOperations",
 //       variables: {
@@ -85,7 +85,7 @@ it("is turned on after summit", () => {});
 //   test
 //     .do(() => vol.fromJSON(files))
 //     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .stdout()
 //     .command(["queries:check"])
 //     .exit(1)
@@ -103,7 +103,7 @@ it("is turned on after summit", () => {});
 //         "apollo": {
 //           "schemas": {
 //             "default": {
-//               "engineKey": "${ENGINE_API_KEY}"
+//               "engineKey": "${APOLLO_KEY}"
 //             }
 //           }
 //         }
@@ -132,7 +132,7 @@ it("is turned on after summit", () => {});
 //         "apollo": {
 //           "schemas": {
 //             "default": {
-//               "engineKey": "${ENGINE_API_KEY}"
+//               "engineKey": "${APOLLO_KEY}"
 //             }
 //           }
 //         }
@@ -156,7 +156,7 @@ it("is turned on after summit", () => {});
 //     .do(() => vol.fromJSON(files))
 //     .nock(ENGINE_URI, engineSuccess())
 //     .stdout()
-//     .command(["queries:check", `--key=${ENGINE_API_KEY}`])
+//     .command(["queries:check", `--key=${APOLLO_KEY}`])
 //     .exit(1)
 //     .it("allows custom api key", () => {
 //       expect(stdout).toContain("FAILURE");
@@ -166,7 +166,7 @@ it("is turned on after summit", () => {});
 //   test
 //     .do(() => vol.fromJSON(files))
 //     .nock(ENGINE_URI, engineSuccess({ results: [] }))
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .stdout()
 //     .command(["queries:check"])
 //     .it(
@@ -187,7 +187,7 @@ it("is turned on after summit", () => {});
 //       vol.fromJSON(nested);
 //     })
 //     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .stdout()
 //     .command(["queries:check", "--queries=./client/*.graphql"])
 //     .exit(1)
@@ -203,7 +203,7 @@ it("is turned on after summit", () => {});
 //       "https://engine.example.com",
 //       engineSuccess({ engine: "https://engine.example.com" })
 //     )
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .command(["queries:check", "--engine=https://engine.example.com"])
 //     .exit(1)
 //     .it("compares against a schema from a custom registry", std => {
@@ -214,7 +214,7 @@ it("is turned on after summit", () => {});
 //   test
 //     .do(() => vol.fromJSON(files))
 //     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .stdout()
 //     .command(["queries:check", "--json"])
 //     .exit(1)

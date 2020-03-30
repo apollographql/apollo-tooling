@@ -34,6 +34,9 @@ const loaders = {
   }
 };
 
+export const legacyKeyEnvVar = "ENGINE_API_KEY";
+export const keyEnvVar = "APOLLO_KEY";
+
 export interface LoadConfigSettings {
   // the current working directory to start looking for the config
   // config loading only works on node so we default to
@@ -123,9 +126,19 @@ export async function loadConfig({
       const env: { [key: string]: string } = require("dotenv").parse(
         readFileSync(dotEnvPath)
       );
-      if (env["ENGINE_API_KEY"]) {
-        apiKey = env["ENGINE_API_KEY"];
+      const legacyKey = env[legacyKeyEnvVar];
+      const key = env[keyEnvVar];
+      if (legacyKey && key) {
+        throw new Error(
+          `Cannot set both ${legacyKeyEnvVar} and ${keyEnvVar}. Please only set ${keyEnvVar}`
+        );
       }
+      if (legacyKey) {
+        Debug.warning(
+          `[Deprecation warning] Setting the key via ${legacyKeyEnvVar} is deprecated and will not be supported in future versions.`
+        );
+      }
+      apiKey = key || legacyKey;
     }
   });
 

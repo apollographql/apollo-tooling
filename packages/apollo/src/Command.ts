@@ -83,7 +83,7 @@ export abstract class ProjectCommand extends Command {
     key: flags.string({
       description:
         "The API key to use for authentication to Apollo Graph Manager",
-      default: () => process.env.ENGINE_API_KEY
+      default: () => process.env.APOLLO_KEY || process.env.ENGINE_API_KEY
     }),
     engine: flags.string({
       description: "URL for a custom Apollo Graph Manager deployment",

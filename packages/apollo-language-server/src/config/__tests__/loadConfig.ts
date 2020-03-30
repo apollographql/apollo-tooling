@@ -6,6 +6,7 @@ import {
   DefaultServiceConfig,
   DefaultEngineConfig
 } from "../config";
+import { Debug } from "../../utilities";
 
 const makeNestedDir = dir => {
   if (fs.existsSync(dir)) return;
@@ -279,7 +280,7 @@ describe("loadConfig", () => {
     it("finds .env in config path & parses for key", async () => {
       writeFilesToDir(dir, {
         "my.config.js": `module.exports = { client: { name: 'hello' } }`,
-        ".env": `ENGINE_API_KEY=service:harambe:54378950jn`
+        ".env": `APOLLO_KEY=service:harambe:54378950jn`
       });
 
       const config = await loadConfig({
@@ -293,7 +294,7 @@ describe("loadConfig", () => {
     it("finds .env.local in config path & parses for key", async () => {
       writeFilesToDir(dir, {
         "my.config.js": `module.exports = { client: { name: 'hello' } }`,
-        ".env.local": `ENGINE_API_KEY=service:harambe:54378950jn`
+        ".env.local": `APOLLO_KEY=service:harambe:54378950jn`
       });
 
       const config = await loadConfig({
@@ -307,8 +308,8 @@ describe("loadConfig", () => {
     it("finds .env and .env.local in config path & parses for key, preferring .env.local", async () => {
       writeFilesToDir(dir, {
         "my.config.js": `module.exports = { client: { name: 'hello' } }`,
-        ".env": `ENGINE_API_KEY=service:hamato:54378950jn`,
-        ".env.local": `ENGINE_API_KEY=service:yoshi:65489061ko`
+        ".env": `APOLLO_KEY=service:hamato:54378950jn`,
+        ".env.local": `APOLLO_KEY=service:yoshi:65489061ko`
       });
 
       const config = await loadConfig({
@@ -319,11 +320,44 @@ describe("loadConfig", () => {
       expect(config.client.service).toEqual("yoshi");
     });
 
+    it("Allows setting ENGINE_API_KEY with a deprecation warning", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: { name: 'hello' } }`,
+        ".env.local": `ENGINE_API_KEY=service:yoshi:65489061ko`
+      });
+
+      const spy = jest.spyOn(Debug, "warning");
+
+      const config = await loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      expect(config.client.service).toEqual("yoshi");
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/Deprecation warning/i)
+      );
+    });
+
+    it("Throws when .env defined legacy and new key", async () => {
+      writeFilesToDir(dir, {
+        "my.config.js": `module.exports = { client: { name: 'hello' } }`,
+        ".env.local": `ENGINE_API_KEY=service:yoshi:65489061ko\nAPOLLO_KEY=service:yoshi:65489061ko`
+      });
+
+      const loadConfigPromise = loadConfig({
+        configPath: dirPath,
+        configFileName: "my.config.js"
+      });
+
+      await expect(loadConfigPromise).rejects.toThrow(/Cannot set both/);
+    });
+
     // this doesn't work right now :)
     xit("finds .env in cwd & parses for key", async () => {
       writeFilesToDir(dir, {
         "dir/my.config.js": `module.exports = { client: { name: 'hello' } }`,
-        ".env": `ENGINE_API_KEY=service:harambe:54378950jn`
+        ".env": `APOLLO_KEY=service:harambe:54378950jn`
       });
       process.chdir(dir);
       const config = await loadConfig({
@@ -382,7 +416,7 @@ describe("loadConfig", () => {
     it("lets config service name take precedence for client project", async () => {
       writeFilesToDir(dir, {
         "my.config.js": `module.exports = { client: { service: 'hello' } }`,
-        ".env": `ENGINE_API_KEY=service:harambe:54378950jn`
+        ".env": `APOLLO_KEY=service:harambe:54378950jn`
       });
 
       const config = await loadConfig({
@@ -397,7 +431,7 @@ describe("loadConfig", () => {
     it("lets name passed in take precedence over env var", async () => {
       writeFilesToDir(dir, {
         "my.config.js": `module.exports = { client: {  } }`,
-        ".env": `ENGINE_API_KEY=service:harambe:54378950jn`
+        ".env": `APOLLO_KEY=service:harambe:54378950jn`
       });
 
       const config = await loadConfig({
@@ -412,7 +446,7 @@ describe("loadConfig", () => {
     it("uses env var to determine service name when no other options", async () => {
       writeFilesToDir(dir, {
         "my.config.js": `module.exports = { client: {  } }`,
-        ".env": `ENGINE_API_KEY=service:harambe:54378950jn`
+        ".env": `APOLLO_KEY=service:harambe:54378950jn`
       });
 
       const config = await loadConfig({
