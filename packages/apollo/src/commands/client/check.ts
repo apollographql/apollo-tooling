@@ -41,7 +41,7 @@ export default class ClientCheck extends ClientCommand {
         {
           title: "Checking client compatibility with service",
           task: async ctx => {
-            if (!config.name) {
+            if (!config.graph) {
               throw graphUndefinedError;
             }
             ctx.gitContext = await gitInfo(this.log);
@@ -59,7 +59,7 @@ export default class ClientCheck extends ClientCommand {
             }));
 
             ctx.validationResults = await project.engine.validateOperations({
-              id: config.name,
+              id: config.graph,
               tag: config.variant,
               operations: ctx.operations.map(({ body, name }) => ({
                 body,

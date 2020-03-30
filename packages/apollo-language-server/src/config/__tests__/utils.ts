@@ -2,7 +2,7 @@ import {
   ApolloConfig,
   ApolloConfigFormat,
   getServiceFromKey,
-  getServiceName,
+  getGraphIdFromConfig,
   isClientConfig,
   isLocalServiceConfig,
   isServiceConfig,
@@ -36,25 +36,25 @@ describe("getServiceName", () => {
       const rawConfig: ApolloConfigFormat = {
         client: { service: "my-service" }
       };
-      expect(getServiceName(rawConfig)).toEqual("my-service");
+      expect(getGraphIdFromConfig(rawConfig)).toEqual("my-service");
 
       const rawConfigWithTag: ApolloConfigFormat = {
         client: { service: "my-service@master" }
       };
-      expect(getServiceName(rawConfigWithTag)).toEqual("my-service");
+      expect(getGraphIdFromConfig(rawConfigWithTag)).toEqual("my-service");
     });
 
     it("finds service name when client.service is an object", () => {
       const rawConfig: ApolloConfigFormat = {
         client: { service: { name: "my-service" } }
       };
-      expect(getServiceName(rawConfig)).toEqual("my-service");
+      expect(getGraphIdFromConfig(rawConfig)).toEqual("my-service");
     });
   });
   describe("service config", () => {
     it("finds service name from raw service config", () => {
       const rawConfig: ApolloConfigFormat = { service: { name: "my-service" } };
-      expect(getServiceName(rawConfig)).toEqual("my-service");
+      expect(getGraphIdFromConfig(rawConfig)).toEqual("my-service");
     });
   });
 });

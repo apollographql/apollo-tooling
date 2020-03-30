@@ -24,6 +24,11 @@ export default class ServiceDownload extends ProjectCommand {
       description: "The variant to download the schema of",
       exclusive: ["tag"]
     }),
+    graph: flags.string({
+      char: "g",
+      description:
+        "The ID of the graph in Apollo Graph Manager for which to download the schema for. Overrides config file if provided."
+    }),
     skipSSLValidation: flags.boolean({
       char: "k",
       description: "Allow connections to an SSL site without certs"

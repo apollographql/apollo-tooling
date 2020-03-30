@@ -1,23 +1,23 @@
 import Command, { flags } from "@oclif/command";
-import Listr from "listr";
-import { ListrTask } from "listr";
+import Listr, { ListrTask } from "listr";
 import { parse, resolve } from "path";
 
 import {
+  ApolloConfig,
+  Debug,
+  getGraphIdFromConfig,
+  getServiceFromKey,
+  GraphQLClientProject,
   GraphQLProject,
   GraphQLServiceProject,
-  GraphQLClientProject,
-  loadConfig,
   isClientConfig,
   isServiceConfig,
-  ApolloConfig,
-  getServiceFromKey,
-  Debug
+  loadConfig
 } from "apollo-language-server";
-import { WithRequired, DeepPartial } from "apollo-env";
+import { DeepPartial, WithRequired } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 import URI from "vscode-uri";
-import { tagFlagDeprecatedWarning } from "./utils/sharedMessages";
+import chalk from "chalk";
 
 const { version, referenceID } = require("../package.json");
 
@@ -38,6 +38,7 @@ export interface Flags {
   frontend?: string;
   tag?: string;
   variant?: string;
+  graph?: string;
   skipSSLValidation?: boolean;
 }
 
@@ -147,8 +148,14 @@ export abstract class ProjectCommand extends Command {
     }
 
     config.variant = flags.variant || flags.tag || config.variant;
+    config.graph = flags.graph || getGraphIdFromConfig(config.rawConfig);
+
     if (flags.tag) {
-      console.warn(tagFlagDeprecatedWarning);
+      console.warn(
+        chalk.yellow(
+          "Using the --tag flag is deprecated. Please use --variant (or -v) instead."
+        )
+      );
     }
     //  flag overrides
     config.setDefaults({
@@ -195,6 +202,14 @@ export abstract class ProjectCommand extends Command {
     if (this.configMap) {
       const defaults = this.configMap(flags);
       config.setDefaults(defaults);
+    }
+
+    const [tokenType, identifier] =
+      (config.engine.apiKey && config.engine.apiKey.split(":")) || [];
+    if (tokenType == "service" && identifier !== config.graph) {
+      throw new Error(
+        `Cannot specify a service token that does not match graph. Graph ${config.graph} does not match graph from token (${identifier})`
+      );
     }
 
     return config;
@@ -297,6 +312,11 @@ export abstract class ClientCommand extends ProjectCommand {
       description:
         "The variant of the graph in Apollo Graph Manager to associate this client to",
       exclusive: ["tag"]
+    }),
+    graph: flags.string({
+      char: "g",
+      description:
+        "The ID for the graph in Apollo Graph Manager to operate client commands with. Overrides config file if set."
     }),
     queries: flags.string({
       description: "Deprecated in favor of the includes flag"

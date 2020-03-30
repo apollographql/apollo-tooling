@@ -7,7 +7,8 @@ import {
   ApolloConfig,
   isClientConfig,
   isServiceConfig,
-  isLocalServiceConfig
+  isLocalServiceConfig,
+  ClientConfig
 } from "../../config";
 
 import { EndpointSchemaProvider } from "./endpoint";
@@ -62,6 +63,10 @@ export function schemaProviderFromConfig(
 
       return new EndpointSchemaProvider(config.client.service);
     }
+  }
+
+  if (config.graph && config.engine) {
+    return new EngineSchemaProvider(config as ClientConfig, clientIdentity);
   }
 
   throw new Error(

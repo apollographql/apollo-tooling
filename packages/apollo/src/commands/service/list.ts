@@ -97,6 +97,11 @@ export default class ServiceList extends ProjectCommand {
       char: "v",
       description: "The variant to list implementing services for",
       exclusive: ["tag"]
+    }),
+    graph: flags.string({
+      char: "g",
+      description:
+        "The ID of the graph in Apollo Graph Manager for which to list implementing services. Overrides config file if set."
     })
   };
 
@@ -115,7 +120,7 @@ export default class ServiceList extends ProjectCommand {
          * This command only supports graphs that are federated into multiple implementing services.
          *
          */
-        graphID = config.name;
+        graphID = config.graph;
         graphVariant = config.variant;
 
         if (!graphID) {
@@ -156,7 +161,7 @@ export default class ServiceList extends ProjectCommand {
     this.log(
       formatHumanReadable({
         implementingServices: taskOutput.implementingServices,
-        graphName: taskOutput.config.name,
+        graphName: taskOutput.config.graph,
         frontendUrl:
           taskOutput.config.engine.frontend || DefaultEngineConfig.frontend
       })

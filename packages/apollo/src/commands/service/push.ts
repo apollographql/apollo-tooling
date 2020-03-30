@@ -27,6 +27,11 @@ export default class ServicePush extends ProjectCommand {
       hidden: true,
       exclusive: ["tag"]
     }),
+    graph: flags.string({
+      char: "g",
+      description:
+        "The ID of the graph in Apollo Graph Manager to publish your service to. Overrides config file if set."
+    }),
     localSchemaFile: flags.string({
       description:
         "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
@@ -60,7 +65,7 @@ export default class ServicePush extends ProjectCommand {
       {
         title: "Uploading service to Apollo Graph Manager",
         task: async () => {
-          if (!config.name) {
+          if (!config.graph) {
             throw graphUndefinedError;
           }
 
@@ -102,7 +107,7 @@ export default class ServicePush extends ProjectCommand {
               didUpdateGateway,
               serviceWasCreated
             } = await project.engine.uploadAndComposePartialSchema({
-              id: config.name,
+              id: config.graph,
               graphVariant: config.variant,
               name: flags.serviceName,
               url: flags.serviceURL,
@@ -121,7 +126,7 @@ export default class ServicePush extends ProjectCommand {
               compositionErrors: errors,
               serviceWasCreated,
               didUpdateGateway,
-              graphId: config.name,
+              graphId: config.graph,
               graphVariant: config.variant
             };
 
@@ -131,7 +136,7 @@ export default class ServicePush extends ProjectCommand {
           const schema = await project.resolveSchema({ tag: config.variant });
 
           const variables: UploadSchemaVariables = {
-            id: config.name,
+            id: config.graph,
             // @ts-ignore
             // XXX Looks like TS should be generating ReadonlyArrays instead
             schema: introspectionFromSchema(schema).__schema,
@@ -148,7 +153,7 @@ export default class ServicePush extends ProjectCommand {
           const response = await project.engine.uploadSchema(variables);
           if (response) {
             result = {
-              graphId: config.name,
+              graphId: config.graph,
               graphVariant: response.tag ? response.tag.tag : "current",
               hash: response.tag ? response.tag.schema.hash : null,
               code: response.code

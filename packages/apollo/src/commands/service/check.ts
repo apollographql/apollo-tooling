@@ -249,6 +249,11 @@ export default class ServiceCheck extends ProjectCommand {
       description: "The variant to check the proposed schema against",
       exclusive: ["tag"]
     }),
+    graph: flags.string({
+      char: "g",
+      description:
+        "The ID of the graph in Apollo Graph Manager to check your proposed schema changes against. Overrides config file if set."
+    }),
     validationPeriod: flags.string({
       description:
         "The size of the time window with which to validate the schema against. You may provide a number (in seconds), or an ISO8601 format duration for more granularity (see: https://en.wikipedia.org/wiki/ISO_8601#Durations)"
@@ -302,7 +307,7 @@ export default class ServiceCheck extends ProjectCommand {
            *
            * A graph can be either a monolithic schema or the result of composition a federated schema.
            */
-          graphID = config.name;
+          graphID = config.graph;
           graphVariant = config.variant;
 
           /**

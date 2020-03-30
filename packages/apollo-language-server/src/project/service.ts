@@ -36,7 +36,7 @@ export class GraphQLServiceProject extends GraphQLProject {
   }
 
   get displayName() {
-    return this.config.name || "Unnamed Project";
+    return this.config.graph || "Unnamed Project";
   }
 
   initialize() {
