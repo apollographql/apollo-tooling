@@ -31,13 +31,6 @@ export default class ServicePush extends ProjectCommand {
       description:
         "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
     }),
-    federated: flags.boolean({
-      char: "f",
-      default: false,
-      hidden: true,
-      description:
-        "[Deprecated: use --serviceName to indicate federation] Indicates that the schema is a partial schema from a federated service"
-    }),
     serviceName: flags.string({
       description:
         "Provides the name of the implementing service for a federated graph"
@@ -62,12 +55,6 @@ export default class ServicePush extends ProjectCommand {
         task: async () => {
           if (!config.name) {
             throw graphUndefinedError;
-          }
-
-          if (flags.federated) {
-            this.log(
-              "The --federated flag is no longer required when running federated commands. Use of the flag will not be supported in future versions of the CLI."
-            );
           }
 
           isFederated = flags.serviceName;

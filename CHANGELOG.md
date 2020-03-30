@@ -3,6 +3,7 @@
 ## Upcoming
 
 - `apollo`
+  - Remove support for the --federated flag from service:check and service:push (https://github.com/apollographql/apollo-tooling/pull/1857)  
   - https://github.com/apollographql/apollo-tooling/pull/1849
     - Update all commands that supported --tag to prefer --variant and indicate a deprecation warning for --tag
         - All usages of --tag will continue to work
