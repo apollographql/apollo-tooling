@@ -279,7 +279,7 @@ export default class ServiceCheck extends ProjectCommand {
       description:
         "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service"
     }),
-    successOnCompletion: flags.boolean({
+    ignoreFailures: flags.boolean({
       description:
         "Exit with status 0 when the check completes, even if errors are found"
     })
@@ -325,7 +325,7 @@ export default class ServiceCheck extends ProjectCommand {
           // Add some fields to output that are required for post-processing
           taskOutput.shouldOutputJson = !!flags.json;
           taskOutput.shouldOutputMarkdown = !!flags.markdown;
-          taskOutput.shouldAlwaysExit0 = !!flags.successOnCompletion;
+          taskOutput.shouldAlwaysExit0 = !!flags.ignoreFailures;
           taskOutput.serviceName = flags.serviceName;
           taskOutput.config = config;
 
