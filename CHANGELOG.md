@@ -36,6 +36,12 @@
   - Added `--ignoreFailures` flag to service:check to exit with code 0 with check failures [#1856](https://github.com/apollographql/apollo-tooling/pull/1856)
   - Make Update "no service found to link..." error more consistent [#1847](https://github.com/apollographql/apollo-tooling/pull/1847)
   - Fix non-existent service message to use the actual service name that's being looked up [#1834](https://github.com/apollographql/apollo-tooling/pull/1834)
+- `apollo-language-server@1.21.0`
+  - Support `APOLLO_KEY` and deprecate `ENGINE_API_KEY` for `.env` support [#1851](https://github.com/apollographql/apollo-tooling/pull/1851)
+  - Support `graph@variant` parsing under the `service.name` key in config files, similar to client configs [#1858](https://github.com/apollographql/apollo-tooling/pull/1858)
+  - Improved error messaging when a graph is not specified in either `apollo.config.js` or within the API key. [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Make Update "no service found to link..." error more consistent [#1847](https://github.com/apollographql/apollo-tooling/pull/1847)
+  - Fix non-existent service message to use the actual service name that's being looked up [#1834](https://github.com/apollographql/apollo-tooling/pull/1834)
 
 ## `apollo@2.25.0`
 
