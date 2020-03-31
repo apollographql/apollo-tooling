@@ -3,13 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Support APOLLO_KEY and deprecate ENGINE_API_KEY for .env support [#1851](https://github.com/apollographql/apollo-tooling/pull/1851)
-  - Support `--graph`/`-v` flag for specifying graph manager id without requiring a config file [#1858](https://github.com/apollographql/apollo-tooling/pull/1858)
-  - Support `graph@variat` parsing under the `service.name` key in config files, similar to client configs [#1858](https://github.com/apollographql/apollo-tooling/pull/1858)
-  - Update all commands that supported --tag to prefer --variant and indicate a deprecation warning for --tag [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
-  - Updates of --help messages [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
-  - Bug fix of some apollo commands that did not work with `graph@variant` parsing within the `apollo.config.js` [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
-  - Improved error messaging when a graph is not specified in either `apollo.config.js` or within the API key. [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -28,6 +22,20 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.26.0`
+
+- `apollo@2.26.0`
+  - Support `APOLLO_KEY` and deprecate `ENGINE_API_KEY` for `.env` support [#1851](https://github.com/apollographql/apollo-tooling/pull/1851)
+  - Support `--graph`/`-v` flag for specifying graph manager id without requiring a config file [#1858](https://github.com/apollographql/apollo-tooling/pull/1858)
+  - Support `graph@variant` parsing under the `service.name` key in config files, similar to client configs [#1858](https://github.com/apollographql/apollo-tooling/pull/1858)
+  - Update all commands that supported --tag to prefer --variant and indicate a deprecation warning for --tag [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Updates of --help messages [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Bug fix of some apollo commands that did not work with `graph@variant` parsing within the `apollo.config.js` [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Improved error messaging when a graph is not specified in either `apollo.config.js` or within the API key. [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Added `--ignoreFailures` flag to service:check to exit with code 0 with check failures [#1856](https://github.com/apollographql/apollo-tooling/pull/1856)
+  - Make Update "no service found to link..." error more consistent [#1847](https://github.com/apollographql/apollo-tooling/pull/1847)
+  - Fix non-existent service message to use the actual service name that's being looked up [#1834](https://github.com/apollographql/apollo-tooling/pull/1834)
 
 ## `apollo@2.25.0`
 
