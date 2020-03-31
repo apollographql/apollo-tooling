@@ -3,16 +3,13 @@
 ## Upcoming
 
 - `apollo`
-  - https://github.com/apollographql/apollo-tooling/pull/1851
-    - Support APOLLO_KEY and deprecate ENGINE_API_KEY for .env support
-  - https://github.com/apollographql/apollo-tooling/pull/1849
-    - Update all commands that supported --tag to prefer --variant and indicate a deprecation warning for --tag
-        - All usages of --tag will continue to work
-        - The two flags cannot be used in tandem (i.e. --variant replaces --tag)
-        - --tag will no longer appear in help messages
-    - Updates of --help messages
-    - Bug fix of some apollo commands that did not work with `graph@variant` parsing within the apollo.config.js
-    - Improved error messaging when a graph is not specified in either `apollo.config.js` or within the API key.
+  - Support APOLLO_KEY and deprecate ENGINE_API_KEY for .env support [#1851](https://github.com/apollographql/apollo-tooling/pull/1851)
+  - Support `--graph`/`-v` flag for specifying graph manager id without requiring a config file [#1858](https://github.com/apollographql/apollo-tooling/pull/1858)
+  - Support `graph@variat` parsing under the `service.name` key in config files, similar to client configs [#1858](https://github.com/apollographql/apollo-tooling/pull/1858)
+  - Update all commands that supported --tag to prefer --variant and indicate a deprecation warning for --tag [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Updates of --help messages [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Bug fix of some apollo commands that did not work with `graph@variant` parsing within the `apollo.config.js` [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Improved error messaging when a graph is not specified in either `apollo.config.js` or within the API key. [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
