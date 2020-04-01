@@ -24,7 +24,6 @@ export default class ServicePush extends ProjectCommand {
       char: "v",
       description:
         "The variant to publish your service to in Apollo Graph Manager",
-      hidden: true,
       exclusive: ["tag"]
     }),
     graph: flags.string({
