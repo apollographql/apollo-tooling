@@ -135,7 +135,7 @@ export async function loadConfig({
       }
       if (legacyKey) {
         Debug.warning(
-          `[Deprecation warning] Setting the key via ${legacyKeyEnvVar} is deprecated and will not be supported in future versions.`
+          `[Deprecation warning] Setting the key via ${legacyKeyEnvVar} is deprecated and will not be supported in future versions. Please use ${keyEnvVar} instead.`
         );
       }
       apiKey = key || legacyKey;
