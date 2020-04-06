@@ -70,7 +70,7 @@ export interface Operation {
   variables: {
     name: string;
     type: GraphQLType;
-    rawType: TypeNode;
+    rawType?: TypeNode;
   }[];
   filePath: string;
   source: string;
@@ -83,6 +83,7 @@ export interface Fragment {
   fragmentName: string;
   source: string;
   type: GraphQLCompositeType;
+  rawType?: TypeNode;
   selectionSet: SelectionSet;
 }
 
@@ -111,7 +112,7 @@ export interface Field {
   alias?: string;
   args?: Argument[];
   type: GraphQLOutputType;
-  rawType: NamedTypeNode | ListTypeNode | NonNullTypeNode | undefined;
+  rawType?: TypeNode;
   description?: string;
   isDeprecated?: boolean;
   deprecationReason?: string;
@@ -299,6 +300,10 @@ class Compiler {
       fragmentDefinition.typeCondition
     ) as GraphQLCompositeType;
 
+    const rawType = this.options.exposeRawTypes
+      ? parseType(typeFromAST.toString())
+      : undefined;
+
     return {
       fragmentName,
       filePath,
@@ -307,7 +312,8 @@ class Compiler {
       selectionSet: this.compileSelectionSet(
         fragmentDefinition.selectionSet,
         type
-      )
+      ),
+      rawType
     };
   }
 
