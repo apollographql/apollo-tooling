@@ -25,7 +25,8 @@ import {
   isScalarType,
   NamedTypeNode,
   ListTypeNode,
-  TypeNode
+  TypeNode,
+  parseType
 } from "graphql";
 
 import {
@@ -254,13 +255,13 @@ class Compiler {
       node => {
         const name = node.variable.name.value;
         const type = typeFromAST(this.schema, node.type as NonNullTypeNode);
+        // we have to clone the type string, since parseType is destructive
+        // const stringType = type && `${type}`;
         this.addTypeUsed(getNamedType(type as GraphQLType));
         return {
           name,
-          type: type as GraphQLNonNull<any>,
-          rawType: this.options.exposeRawTypes
-            ? stripProp("loc", node.type)
-            : undefined
+          type: type as GraphQLNonNull<any>
+          // rawType: stringType && stripProp("loc", parseType(stringType))
         };
       }
     );
@@ -346,7 +347,6 @@ class Compiler {
           ? selectionNode.alias.value
           : undefined;
 
-        console.log({ schema: this.schema });
         const fieldDef = getFieldDef(this.schema, parentType, selectionNode);
         if (!fieldDef) {
           throw new GraphQLError(
@@ -355,14 +355,10 @@ class Compiler {
           );
         }
 
-        console.log(fieldDef);
-        const rawType =
-          fieldDef.astNode && this.options.exposeRawTypes
-            ? stripProp("loc", fieldDef.astNode.type)
-            : undefined;
         const fieldType = fieldDef.type;
-        const unmodifiedFieldType = getNamedType(fieldType);
+        // const rawType = stripProp("loc", parseType(fieldType.toString()));
 
+        const unmodifiedFieldType = getNamedType(fieldType);
         this.addTypeUsed(unmodifiedFieldType);
 
         const { description, isDeprecated, deprecationReason } = fieldDef;
@@ -376,14 +372,14 @@ class Compiler {
                 const argDef = fieldDef.args.find(
                   argDef => argDef.name === arg.name.value
                 );
+                const argDefType = (argDef && argDef.type) || undefined;
                 return {
                   name,
                   value: valueFromValueNode(arg.value),
-                  type: (argDef && argDef.type) || undefined,
-                  rawType:
-                    argDef && argDef.astNode && this.options.exposeRawTypes
-                      ? stripProp("loc", argDef.astNode.type)
-                      : undefined
+                  type: argDefType
+                  // rawType:
+                  //   argDefType &&
+                  //   stripProp("loc", parseType(argDefType.toString()))
                 };
               })
             : undefined;
@@ -395,7 +391,7 @@ class Compiler {
           alias,
           args,
           type: fieldType,
-          rawType,
+          // rawType,
           description:
             !isMetaFieldName(name) && description ? description : undefined,
           isDeprecated,

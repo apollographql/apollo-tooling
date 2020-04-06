@@ -24,47 +24,67 @@ fdescribe("Compiling query documents to the legacy IR", () => {
         }
       }
 
+#query Search($text: String!) {
+#  search(text: $text) {
+#    ... on Character {
+##name
+#    }
+#  }
+#}
 
-#      query Search($text: String!) {
-#        search(text: $text) {
-#          ... on Character {
-#            name
-#          }
-#        }
-#      }
-
-#      mutation CreateReviewForEpisode($episode: Episode!, $review: ReviewInput!) {
-#        createReview(episode: $episode, review: $review) {
-#          stars
-#          commentary
-#        }
-#      }
+#mutation CreateReviewForEpisode($episode: Episode!, $review: ReviewInput!) {
+#  createReview(episode: $episode, review: $review) {
+#    stars
+#    commentary
+#  }
+ #     }
     `);
 
     const { operations } = compileToIR(schema, document);
 
-    // console.log(operations);
-
-    expect(
-      operations["HeroName"].selectionSet.selections[0].selectionSet
-        .selections[0]
-    ).toEqual({});
-    // expect(operations["HeroName"].variables).toEqual([
-    //   {
-    //     name: "episode",
-    //     type: "Episode",
-    //     rawType: {
-    //       kind: "NamedType",
-    //       name: {
-    //         kind: "Name",
-    //         value: "Episode"
-    //       }
+    // expect(
+    //   operations["HeroName"].selectionSet.selections[0].selectionSet
+    //     .selections[0].rawType
+    // ).toEqual({
+    //   kind: "NonNullType",
+    //   type: {
+    //     kind: "NamedType",
+    //     name: {
+    //       kind: "Name",
+    //       value: "String"
     //     }
     //   }
-    // ]);
+    // });
+
+    expect(operations["HeroName"].variables).toEqual([
+      {
+        name: "episode",
+        type: "Episode"
+        // rawType: {
+        //   kind: "NamedType",
+        //   name: {
+        //     kind: "Name",
+        //     value: "Episode"
+        //   }
+        // }
+      }
+    ]);
 
     // expect(operations["Search"].variables).toEqual([
-    //   { name: "text", type: "String!" }
+    //   {
+    //     name: "text",
+    //     type: "String!"
+    //     // rawType: {
+    //     //   kind: "NonNullType",
+    //     //   type: {
+    //     //     kind: "NamedType",
+    //     //     name: {
+    //     //       kind: "Name",
+    //     //       value: "String"
+    //     //     }
+    //     //   }
+    //     // }
+    //   }
     // ]);
 
     // expect(operations["CreateReviewForEpisode"].variables).toEqual([
