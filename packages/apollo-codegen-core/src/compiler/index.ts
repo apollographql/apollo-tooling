@@ -123,6 +123,7 @@ export interface Field {
 export interface TypeCondition {
   kind: "TypeCondition";
   type: GraphQLCompositeType;
+  rawType?: TypeNode;
   selectionSet: SelectionSet;
 }
 
@@ -301,7 +302,7 @@ class Compiler {
     ) as GraphQLCompositeType;
 
     const rawType = this.options.exposeRawTypes
-      ? parseType(typeFromAST.toString())
+      ? stripProp("loc", parseType(typeFromAST.toString()))
       : undefined;
 
     return {
@@ -436,9 +437,13 @@ class Compiler {
         const possibleTypesForTypeCondition = this.possibleTypesForType(
           type
         ).filter(type => possibleTypes.includes(type));
+        const typeConditionRawType = this.options.exposeRawTypes
+          ? stripProp("loc", parseType(type.toString()))
+          : undefined;
         return {
           kind: "TypeCondition",
           type,
+          rawType: typeConditionRawType,
           selectionSet: this.compileSelectionSet(
             selectionNode.selectionSet,
             type,

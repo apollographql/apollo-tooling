@@ -20,7 +20,7 @@ describe("Compiling query documents to modern IR with rawTypes", () => {
       query Search($text: String!) {
         search(text: $text) {
           ... on Character {
-          name
+            name
           }
         }
       }
@@ -66,6 +66,14 @@ describe("Compiling query documents to modern IR with rawTypes", () => {
           value: "String"
         }
       }
+    });
+
+    expect(
+      operations["Search"].selectionSet.selections[0].selectionSet.selections[0]
+        .rawType
+    ).toEqual({
+      kind: "NamedType",
+      name: { kind: "Name", value: "Character" }
     });
 
     expect(
