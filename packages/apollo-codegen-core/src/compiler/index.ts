@@ -255,13 +255,15 @@ class Compiler {
       node => {
         const name = node.variable.name.value;
         const type = typeFromAST(this.schema, node.type as NonNullTypeNode);
-        // we have to clone the type string, since parseType is destructive
-        // const stringType = type && `${type}`;
         this.addTypeUsed(getNamedType(type as GraphQLType));
+        const rawType =
+          this.options.exposeRawTypes && type
+            ? stripProp("loc", parseType(type.toString()))
+            : undefined;
         return {
           name,
-          type: type as GraphQLNonNull<any>
-          // rawType: stringType && stripProp("loc", parseType(stringType))
+          type: type as GraphQLNonNull<any>,
+          rawType
         };
       }
     );
@@ -356,7 +358,9 @@ class Compiler {
         }
 
         const fieldType = fieldDef.type;
-        // const rawType = stripProp("loc", parseType(fieldType.toString()));
+        const rawType = this.options.exposeRawTypes
+          ? stripProp("loc", parseType(fieldType.toString()))
+          : undefined;
 
         const unmodifiedFieldType = getNamedType(fieldType);
         this.addTypeUsed(unmodifiedFieldType);
@@ -373,13 +377,15 @@ class Compiler {
                   argDef => argDef.name === arg.name.value
                 );
                 const argDefType = (argDef && argDef.type) || undefined;
+                const argDefRawType =
+                  this.options.exposeRawTypes && argDefType
+                    ? stripProp("loc", parseType(argDefType.toString()))
+                    : undefined;
                 return {
                   name,
                   value: valueFromValueNode(arg.value),
-                  type: argDefType
-                  // rawType:
-                  //   argDefType &&
-                  //   stripProp("loc", parseType(argDefType.toString()))
+                  type: argDefType,
+                  rawType: argDefRawType
                 };
               })
             : undefined;
@@ -391,7 +397,7 @@ class Compiler {
           alias,
           args,
           type: fieldType,
-          // rawType,
+          rawType,
           description:
             !isMetaFieldName(name) && description ? description : undefined,
           isDeprecated,
