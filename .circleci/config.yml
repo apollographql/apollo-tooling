@@ -5,7 +5,7 @@ version: 2.1
 orbs:
   # `oss` is a local reference to the package.  The source for Apollo Orbs can
   # be found at http://github.com/apollographql/CircleCI-Orbs.
-  oss: apollo/oss-ci-cd-tooling@0.0.8
+  oss: apollo/oss-ci-cd-tooling@dev:0.0.9
   # win is a windows orb provided by circleci
   win: circleci/windows@2.0.0
 
