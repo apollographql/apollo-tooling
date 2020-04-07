@@ -229,7 +229,7 @@ export default class Generate extends ClientCommand {
                     suppressSwiftMultilineStringLiterals:
                       flags.suppressSwiftMultilineStringLiterals,
                     omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases,
-                    exposeRawTypes: inferredTarget === "json-modern"
+                    exposeTypeNodes: inferredTarget === "json-modern"
                   }
                 );
               };

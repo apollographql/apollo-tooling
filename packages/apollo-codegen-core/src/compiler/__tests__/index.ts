@@ -8,12 +8,13 @@ const schema = loadSchema(
   require.resolve("../../../../../__fixtures__/starwars/schema.json")
 );
 
-describe("Compiling query documents to modern IR with rawTypes", () => {
-  it(`should print IR with rawTypes on fields`, () => {
+describe("Compiling query documents to modern IR with typeNodes", () => {
+  it(`should print IR with typeNodes on fields`, () => {
     const document = parse(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
           name
+          ...withId
         }
       }
 
@@ -31,13 +32,17 @@ describe("Compiling query documents to modern IR with rawTypes", () => {
           commentary
         }
       }
+
+      fragment withId on Character {
+        id
+      }
     `);
 
     const { operations } = compileToIR(schema, document);
 
     expect(
       operations["HeroName"].selectionSet.selections[0].selectionSet
-        .selections[0].rawType
+        .selections[0].typeNode
     ).toEqual({
       kind: "NonNullType",
       type: {
@@ -49,7 +54,7 @@ describe("Compiling query documents to modern IR with rawTypes", () => {
       }
     });
 
-    expect(operations["HeroName"].variables[0].rawType).toEqual({
+    expect(operations["HeroName"].variables[0].typeNode).toEqual({
       kind: "NamedType",
       name: {
         kind: "Name",
@@ -57,7 +62,7 @@ describe("Compiling query documents to modern IR with rawTypes", () => {
       }
     });
 
-    expect(operations["Search"].variables[0].rawType).toEqual({
+    expect(operations["Search"].variables[0].typeNode).toEqual({
       kind: "NonNullType",
       type: {
         kind: "NamedType",
@@ -70,7 +75,7 @@ describe("Compiling query documents to modern IR with rawTypes", () => {
 
     expect(
       operations["Search"].selectionSet.selections[0].selectionSet.selections[0]
-        .rawType
+        .typeNode
     ).toEqual({
       kind: "NamedType",
       name: { kind: "Name", value: "Character" }
@@ -78,7 +83,7 @@ describe("Compiling query documents to modern IR with rawTypes", () => {
 
     expect(
       operations["CreateReviewForEpisode"].selectionSet.selections[0]
-        .selectionSet.selections[0].rawType
+        .selectionSet.selections[0].typeNode
     ).toEqual({
       kind: "NonNullType",
       type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }

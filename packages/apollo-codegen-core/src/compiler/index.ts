@@ -52,7 +52,7 @@ export interface CompilerOptions {
   useReadOnlyTypes?: boolean;
   suppressSwiftMultilineStringLiterals?: boolean;
   omitDeprecatedEnumCases?: boolean;
-  exposeRawTypes?: boolean;
+  exposeTypeNodes?: boolean;
 }
 
 export interface CompilerContext {
@@ -70,7 +70,7 @@ export interface Operation {
   variables: {
     name: string;
     type: GraphQLType;
-    rawType?: TypeNode;
+    typeNode?: TypeNode;
   }[];
   filePath: string;
   source: string;
@@ -83,7 +83,7 @@ export interface Fragment {
   fragmentName: string;
   source: string;
   type: GraphQLCompositeType;
-  rawType?: TypeNode;
+  typeNode?: TypeNode;
   selectionSet: SelectionSet;
 }
 
@@ -96,7 +96,7 @@ export interface Argument {
   name: string;
   value: any;
   type?: GraphQLInputType;
-  rawType?: TypeNode;
+  typeNode?: TypeNode;
 }
 
 export type Selection =
@@ -112,7 +112,7 @@ export interface Field {
   alias?: string;
   args?: Argument[];
   type: GraphQLOutputType;
-  rawType?: TypeNode;
+  typeNode?: TypeNode;
   description?: string;
   isDeprecated?: boolean;
   deprecationReason?: string;
@@ -123,7 +123,7 @@ export interface Field {
 export interface TypeCondition {
   kind: "TypeCondition";
   type: GraphQLCompositeType;
-  rawType?: TypeNode;
+  typeNode?: TypeNode;
   selectionSet: SelectionSet;
 }
 
@@ -156,7 +156,7 @@ export function compileToIR(
   schema: GraphQLSchema,
   document: DocumentNode,
   options: CompilerOptions = {
-    exposeRawTypes: true
+    exposeTypeNodes: true
   }
 ): CompilerContext {
   if (options.addTypename) {
@@ -258,14 +258,14 @@ class Compiler {
         const name = node.variable.name.value;
         const type = typeFromAST(this.schema, node.type as NonNullTypeNode);
         this.addTypeUsed(getNamedType(type as GraphQLType));
-        const rawType =
-          this.options.exposeRawTypes && type
+        const typeNode =
+          this.options.exposeTypeNodes && type
             ? stripProp("loc", parseType(type.toString()))
             : undefined;
         return {
           name,
           type: type as GraphQLNonNull<any>,
-          rawType
+          typeNode
         };
       }
     );
@@ -301,8 +301,8 @@ class Compiler {
       fragmentDefinition.typeCondition
     ) as GraphQLCompositeType;
 
-    const rawType = this.options.exposeRawTypes
-      ? stripProp("loc", parseType(typeFromAST.toString()))
+    const typeNode = this.options.exposeTypeNodes
+      ? stripProp("loc", parseType(type.toString()))
       : undefined;
 
     return {
@@ -314,7 +314,7 @@ class Compiler {
         fragmentDefinition.selectionSet,
         type
       ),
-      rawType
+      typeNode
     };
   }
 
@@ -365,7 +365,7 @@ class Compiler {
         }
 
         const fieldType = fieldDef.type;
-        const rawType = this.options.exposeRawTypes
+        const typeNode = this.options.exposeTypeNodes
           ? stripProp("loc", parseType(fieldType.toString()))
           : undefined;
 
@@ -384,15 +384,15 @@ class Compiler {
                   argDef => argDef.name === arg.name.value
                 );
                 const argDefType = (argDef && argDef.type) || undefined;
-                const argDefRawType =
-                  this.options.exposeRawTypes && argDefType
+                const argDeftypeNode =
+                  this.options.exposeTypeNodes && argDefType
                     ? stripProp("loc", parseType(argDefType.toString()))
                     : undefined;
                 return {
                   name,
                   value: valueFromValueNode(arg.value),
                   type: argDefType,
-                  rawType: argDefRawType
+                  typeNode: argDeftypeNode
                 };
               })
             : undefined;
@@ -404,7 +404,7 @@ class Compiler {
           alias,
           args,
           type: fieldType,
-          rawType,
+          typeNode,
           description:
             !isMetaFieldName(name) && description ? description : undefined,
           isDeprecated,
@@ -437,13 +437,13 @@ class Compiler {
         const possibleTypesForTypeCondition = this.possibleTypesForType(
           type
         ).filter(type => possibleTypes.includes(type));
-        const typeConditionRawType = this.options.exposeRawTypes
+        const typeConditiontypeNode = this.options.exposeTypeNodes
           ? stripProp("loc", parseType(type.toString()))
           : undefined;
         return {
           kind: "TypeCondition",
           type,
-          rawType: typeConditionRawType,
+          typeNode: typeConditiontypeNode,
           selectionSet: this.compileSelectionSet(
             selectionNode.selectionSet,
             type,
