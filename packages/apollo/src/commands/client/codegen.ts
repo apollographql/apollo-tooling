@@ -155,7 +155,7 @@ export default class Generate extends ClientCommand {
           inferredTarget != "flow"
         ) {
           throw new Error(
-            "The output path must be specified in the arguments for Swift and Scala"
+            "The output path must be specified in the arguments for targets that aren't TypeScript or Flow"
           );
         }
 
@@ -228,7 +228,8 @@ export default class Generate extends ClientCommand {
                     tsFileExtension: flags.tsFileExtension,
                     suppressSwiftMultilineStringLiterals:
                       flags.suppressSwiftMultilineStringLiterals,
-                    omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases
+                    omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases,
+                    exposeRawTypes: inferredTarget === "json-modern"
                   }
                 );
               };

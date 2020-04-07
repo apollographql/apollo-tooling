@@ -48,17 +48,6 @@ function toPath(uri: string): string {
   return URI.parse(uri).fsPath;
 }
 
-function stripLoc(obj: Object) {
-  let cloned = JSON.parse(JSON.stringify(obj));
-  for (let prop in cloned) {
-    if (prop === "loc") delete cloned[prop];
-    else if (typeof cloned[prop] === "object") {
-      cloned[prop] = stripLoc(cloned[prop]);
-    }
-  }
-  return cloned;
-}
-
 export default function generate(
   document: DocumentNode,
   schema: GraphQLSchema,
@@ -224,7 +213,8 @@ export default function generate(
     const context = compileToLegacyIR(schema, document, options);
     switch (target) {
       case "json-modern":
-        const ir = stripLoc(compileToIR(schema, document, options));
+        const ir = compileToIR(schema, document, options);
+        // console.log(JSON.stringify(ir));
         output = serializeToJSON(ir);
         break;
       case "json":
