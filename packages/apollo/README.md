@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.26.0 darwin-x64 node-v10.15.3
+apollo/2.26.1-alpha.0 darwin-x64 node-v10.15.3
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -655,6 +655,8 @@ OPTIONS
 
   -g, --graph=graph                  The ID of the graph in Apollo Graph Manager to publish your service to. Overrides
                                      config file if set.
+
+  -v, --variant=variant              The variant to publish your service to in Apollo Graph Manager
 
   --endpoint=endpoint                The URL for the CLI use to introspect your service
 
