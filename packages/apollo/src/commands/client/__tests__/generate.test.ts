@@ -428,13 +428,13 @@ describe("client:codegen", () => {
       "--config=my.config.js",
       "__tmp__operations.json"
     ])
-    .it("writes json operations with rawTypes (json-modern)", () => {
+    .it("writes json operations with typeNode (json-modern)", () => {
       const output = JSON.parse(
         fs.readFileSync("__tmp__operations.json").toString()
       );
       // have to overwrite filepath, since test directories change for every test
       output.operations[0].filePath = "";
-      expect(JSON.stringify(output)).toContain("rawTypes");
+      expect(JSON.stringify(output)).toContain("typeNode");
       expect(output).toMatchSnapshot();
     });
 
