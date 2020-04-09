@@ -29,6 +29,7 @@ import { DEFAULT_FILE_EXTENSION as TYPESCRIPT_DEFAULT_FILE_EXTENSION } from "apo
 
 export type TargetType =
   | "json"
+  | "json-modern"
   | "swift"
   | "scala"
   | "flow"
@@ -211,6 +212,11 @@ export default function generate(
     let output;
     const context = compileToLegacyIR(schema, document, options);
     switch (target) {
+      case "json-modern":
+        const ir = compileToIR(schema, document, options);
+        // console.log(JSON.stringify(ir));
+        output = serializeToJSON(ir);
+        break;
       case "json":
         output = serializeToJSON(context);
         break;

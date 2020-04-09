@@ -37,7 +37,7 @@ export default class Generate extends ClientCommand {
     // general
     target: flags.string({
       description:
-        "Type of code generator to use (swift | typescript | flow | scala)",
+        "Type of code generator to use (swift | typescript | flow | scala | json | json-modern (exposes raw json types))",
       required: true
     }),
     localSchemaFile: flags.string({
@@ -135,9 +135,14 @@ export default class Generate extends ClientCommand {
       this.runTasks(({ flags, args, project, config }) => {
         let inferredTarget: TargetType = "" as TargetType;
         if (
-          ["json", "swift", "typescript", "flow", "scala"].includes(
-            flags.target
-          )
+          [
+            "json",
+            "json-modern",
+            "swift",
+            "typescript",
+            "flow",
+            "scala"
+          ].includes(flags.target)
         ) {
           inferredTarget = flags.target as TargetType;
         } else {
@@ -150,7 +155,7 @@ export default class Generate extends ClientCommand {
           inferredTarget != "flow"
         ) {
           throw new Error(
-            "The output path must be specified in the arguments for Swift and Scala"
+            "The output path must be specified in the arguments for targets that aren't TypeScript or Flow"
           );
         }
 
@@ -223,7 +228,8 @@ export default class Generate extends ClientCommand {
                     tsFileExtension: flags.tsFileExtension,
                     suppressSwiftMultilineStringLiterals:
                       flags.suppressSwiftMultilineStringLiterals,
-                    omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases
+                    omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases,
+                    exposeTypeNodes: inferredTarget === "json-modern"
                   }
                 );
               };

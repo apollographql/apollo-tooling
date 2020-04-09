@@ -1,13 +1,6 @@
 import { stripIndent } from "common-tags";
 
-import {
-  parse,
-  isType,
-  GraphQLID,
-  GraphQLString,
-  GraphQLList,
-  GraphQLNonNull
-} from "graphql";
+import { parse } from "graphql";
 
 import { loadSchema } from "../../loading";
 

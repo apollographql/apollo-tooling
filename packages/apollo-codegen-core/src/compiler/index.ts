@@ -22,7 +22,11 @@ import {
   GraphQLNonNull,
   isEnumType,
   isInputObjectType,
-  isScalarType
+  isScalarType,
+  NamedTypeNode,
+  ListTypeNode,
+  TypeNode,
+  parseType
 } from "graphql";
 
 import {
@@ -48,6 +52,7 @@ export interface CompilerOptions {
   useReadOnlyTypes?: boolean;
   suppressSwiftMultilineStringLiterals?: boolean;
   omitDeprecatedEnumCases?: boolean;
+  exposeTypeNodes?: boolean;
 }
 
 export interface CompilerContext {
@@ -65,6 +70,7 @@ export interface Operation {
   variables: {
     name: string;
     type: GraphQLType;
+    typeNode?: TypeNode;
   }[];
   filePath: string;
   source: string;
@@ -77,6 +83,7 @@ export interface Fragment {
   fragmentName: string;
   source: string;
   type: GraphQLCompositeType;
+  typeNode?: TypeNode;
   selectionSet: SelectionSet;
 }
 
@@ -89,6 +96,7 @@ export interface Argument {
   name: string;
   value: any;
   type?: GraphQLInputType;
+  typeNode?: TypeNode;
 }
 
 export type Selection =
@@ -104,6 +112,7 @@ export interface Field {
   alias?: string;
   args?: Argument[];
   type: GraphQLOutputType;
+  typeNode?: TypeNode;
   description?: string;
   isDeprecated?: boolean;
   deprecationReason?: string;
@@ -114,6 +123,7 @@ export interface Field {
 export interface TypeCondition {
   kind: "TypeCondition";
   type: GraphQLCompositeType;
+  typeNode?: TypeNode;
   selectionSet: SelectionSet;
 }
 
@@ -131,10 +141,23 @@ export interface FragmentSpread {
   selectionSet: SelectionSet;
 }
 
+export function stripProp(propName: string, obj: Object) {
+  let cloned = JSON.parse(JSON.stringify(obj));
+  for (let prop in cloned) {
+    if (prop === propName) delete cloned[prop];
+    else if (typeof cloned[prop] === "object") {
+      cloned[prop] = stripProp(propName, cloned[prop]);
+    }
+  }
+  return cloned;
+}
+
 export function compileToIR(
   schema: GraphQLSchema,
   document: DocumentNode,
-  options: CompilerOptions = {}
+  options: CompilerOptions = {
+    exposeTypeNodes: true
+  }
 ): CompilerContext {
   if (options.addTypename) {
     document = withTypenameFieldAddedWhereNeeded(document);
@@ -235,7 +258,15 @@ class Compiler {
         const name = node.variable.name.value;
         const type = typeFromAST(this.schema, node.type as NonNullTypeNode);
         this.addTypeUsed(getNamedType(type as GraphQLType));
-        return { name, type: type as GraphQLNonNull<any> };
+        const typeNode =
+          this.options.exposeTypeNodes && type
+            ? stripProp("loc", parseType(type.toString()))
+            : undefined;
+        return {
+          name,
+          type: type as GraphQLNonNull<any>,
+          typeNode
+        };
       }
     );
 
@@ -270,6 +301,10 @@ class Compiler {
       fragmentDefinition.typeCondition
     ) as GraphQLCompositeType;
 
+    const typeNode = this.options.exposeTypeNodes
+      ? stripProp("loc", parseType(type.toString()))
+      : undefined;
+
     return {
       fragmentName,
       filePath,
@@ -278,7 +313,8 @@ class Compiler {
       selectionSet: this.compileSelectionSet(
         fragmentDefinition.selectionSet,
         type
-      )
+      ),
+      typeNode
     };
   }
 
@@ -329,8 +365,11 @@ class Compiler {
         }
 
         const fieldType = fieldDef.type;
-        const unmodifiedFieldType = getNamedType(fieldType);
+        const typeNode = this.options.exposeTypeNodes
+          ? stripProp("loc", parseType(fieldType.toString()))
+          : undefined;
 
+        const unmodifiedFieldType = getNamedType(fieldType);
         this.addTypeUsed(unmodifiedFieldType);
 
         const { description, isDeprecated, deprecationReason } = fieldDef;
@@ -344,10 +383,16 @@ class Compiler {
                 const argDef = fieldDef.args.find(
                   argDef => argDef.name === arg.name.value
                 );
+                const argDefType = (argDef && argDef.type) || undefined;
+                const argDeftypeNode =
+                  this.options.exposeTypeNodes && argDefType
+                    ? stripProp("loc", parseType(argDefType.toString()))
+                    : undefined;
                 return {
                   name,
                   value: valueFromValueNode(arg.value),
-                  type: (argDef && argDef.type) || undefined
+                  type: argDefType,
+                  typeNode: argDeftypeNode
                 };
               })
             : undefined;
@@ -359,6 +404,7 @@ class Compiler {
           alias,
           args,
           type: fieldType,
+          typeNode,
           description:
             !isMetaFieldName(name) && description ? description : undefined,
           isDeprecated,
@@ -391,9 +437,13 @@ class Compiler {
         const possibleTypesForTypeCondition = this.possibleTypesForType(
           type
         ).filter(type => possibleTypes.includes(type));
+        const typeConditiontypeNode = this.options.exposeTypeNodes
+          ? stripProp("loc", parseType(type.toString()))
+          : undefined;
         return {
           kind: "TypeCondition",
           type,
+          typeNode: typeConditiontypeNode,
           selectionSet: this.compileSelectionSet(
             selectionNode.selectionSet,
             type,

@@ -10,8 +10,11 @@ import {
 } from "graphql";
 
 import { LegacyCompilerContext } from "./compiler/legacyIR";
+import { CompilerContext } from "./compiler";
 
-export default function serializeToJSON(context: LegacyCompilerContext) {
+export default function serializeToJSON(
+  context: LegacyCompilerContext | CompilerContext
+) {
   return serializeAST(
     {
       operations: Object.values(context.operations),
