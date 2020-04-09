@@ -128,6 +128,49 @@ Object {
 }
 `;
 
+exports[`client:codegen writes json operations with typeNode (json-modern) 1`] = `
+Object {
+  "fragments": Array [],
+  "operations": Array [
+    Object {
+      "filePath": "",
+      "operationName": "SimpleQuery",
+      "operationType": "query",
+      "rootType": "Query",
+      "selectionSet": Object {
+        "possibleTypes": Array [
+          "Query",
+        ],
+        "selections": Array [
+          Object {
+            "isDeprecated": false,
+            "kind": "Field",
+            "name": "hello",
+            "responseKey": "hello",
+            "type": "String!",
+            "typeNode": Object {
+              "kind": "NonNullType",
+              "type": Object {
+                "kind": "NamedType",
+                "name": Object {
+                  "kind": "Name",
+                  "value": "String",
+                },
+              },
+            },
+          },
+        ],
+      },
+      "source": "query SimpleQuery {
+  hello
+}",
+      "variables": Array [],
+    },
+  ],
+  "typesUsed": Array [],
+}
+`;
+
 exports[`client:codegen writes read-only Flow types when the deprecated flag is set 1`] = `
 "/* @flow */
 /* eslint-disable */
