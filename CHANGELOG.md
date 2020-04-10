@@ -12,6 +12,8 @@
   - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
+- `apollo-codegen-core`
+  - <First `apollo-codegen-core` related entry goes here>
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
@@ -22,6 +24,16 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.27.0`
+
+- `apollo@2.27.0`
+  - downgrade mkdirp to keep node 8 working as expected [63f0773](https://github.com/apollographql/apollo-tooling/commit/63f077313533c7aa304464bf9c02bb7c3dba4edc)
+  - Remove "hidden: true" from --variant in service:push [#1865](https://github.com/apollographql/apollo-tooling/pull/1846)
+  - update ENGINE_API_KEY deprecation message to give alternative [#1866](https://github.com/apollographql/apollo-tooling/pull/1866)
+  - Add json-modern codegen target which adds typeNodes (ast type nodes) to codegen output [#1846](https://github.com/apollographql/apollo-tooling/pull/1846)
+- `apollo-codegen-core@0.36.6`
+  - Add json-modern target which adds typeNodes (ast type nodes) to codegen output [#1846](https://github.com/apollographql/apollo-tooling/pull/1846)
 
 ## `apollo@2.26.0`
 
