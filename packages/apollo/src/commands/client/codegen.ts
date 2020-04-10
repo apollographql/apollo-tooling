@@ -109,6 +109,10 @@ export default class Generate extends ClientCommand {
     tsFileExtension: flags.string({
       description:
         'By default, TypeScript will output "ts" files. Set "tsFileExtension" to specify a different file extension, for example "d.ts"'
+    }),
+    tsUseEnums: flags.boolean({
+      description:
+        "Use TypeScript enums for GraphQL enums. By default, string unions are emitted"
     })
   };
 
@@ -226,6 +230,7 @@ export default class Generate extends ClientCommand {
                       flags.useReadOnlyTypes || flags.useFlowReadOnlyTypes,
                     globalTypesFile: flags.globalTypesFile,
                     tsFileExtension: flags.tsFileExtension,
+                    tsUseEnums: flags.tsUseEnums,
                     suppressSwiftMultilineStringLiterals:
                       flags.suppressSwiftMultilineStringLiterals,
                     omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases,

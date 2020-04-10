@@ -14,11 +14,7 @@ Object {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -260,11 +256,7 @@ Object {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -406,11 +398,7 @@ Object {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -470,11 +458,7 @@ Object {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -568,11 +552,7 @@ Object {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -713,10 +693,7 @@ TypescriptGeneratedFile {
 // START Enums and Input Objects
 //==============================================================
 
-export enum EnumCommentTestCase {
-  first = \\"first\\",
-  second = \\"second\\",
-}
+export type EnumCommentTestCase = \\"first\\" | \\"second\\";
 
 export interface Duplicate {
   propA: EnumCommentTestCase;
@@ -900,11 +877,7 @@ TypescriptGeneratedFile {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -1075,11 +1048,7 @@ TypescriptGeneratedFile {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -1196,11 +1165,7 @@ TypescriptGeneratedFile {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -1299,11 +1264,7 @@ TypescriptGeneratedFile {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -1414,11 +1375,7 @@ TypescriptGeneratedFile {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -1469,10 +1426,7 @@ TypescriptGeneratedFile {
 // START Enums and Input Objects
 //==============================================================
 
-export enum EnumCommentTestCase {
-  first = \\"first\\",
-  second = \\"second\\",
-}
+export type EnumCommentTestCase = \\"first\\" | \\"second\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -1523,10 +1477,7 @@ TypescriptGeneratedFile {
 // START Enums and Input Objects
 //==============================================================
 
-export enum EnumCommentTestCase {
-  first = \\"first\\",
-  second = \\"second\\",
-}
+export type EnumCommentTestCase = \\"first\\" | \\"second\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -1614,11 +1565,7 @@ TypescriptGeneratedFile {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -1729,11 +1676,7 @@ TypescriptGeneratedFile {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -1799,11 +1742,7 @@ TypescriptGeneratedFile {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 /**
  * The input object sent when passing in a color
@@ -1981,11 +1920,7 @@ exports[`Typescript codeGeneration multiple files 4`] = `
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 /**
  * The input object sent when passing in a color
@@ -2025,11 +1960,7 @@ Object {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -2155,11 +2086,7 @@ Object {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 //==============================================================
 // END Enums and Input Objects
@@ -2219,11 +2146,7 @@ Object {
 /**
  * The episodes in the Star Wars trilogy
  */
-export enum Episode {
-  EMPIRE = \\"EMPIRE\\",
-  JEDI = \\"JEDI\\",
-  NEWHOPE = \\"NEWHOPE\\",
-}
+export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
 
 /**
  * The input object sent when passing in a color
