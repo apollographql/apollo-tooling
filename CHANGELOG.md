@@ -11,7 +11,7 @@
 - `apollo-codegen-swift`
   - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
-  - <First `apollo-codegen-typescript` related entry goes here>
+  - add `tsUseOptionalForNullables` config [#1766](https://github.com/apollographql/apollo-tooling/pull/1766) and [#622](https://github.com/apollographql/apollo-tooling/issues/622)
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
