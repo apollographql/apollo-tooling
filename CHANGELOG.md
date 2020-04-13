@@ -19,7 +19,7 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Remove error from the case with old and new api keys present [#1893](https://github.com/apollographql/apollo-tooling/pull/1893)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
