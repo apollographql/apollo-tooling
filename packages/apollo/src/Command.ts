@@ -208,7 +208,7 @@ export abstract class ProjectCommand extends Command {
       (config.engine.apiKey && config.engine.apiKey.split(":")) || [];
     if (tokenType == "service" && identifier !== config.graph) {
       throw new Error(
-        `Cannot specify a service token that does not match graph. Graph ${config.graph} does not match graph from token (${identifier})`
+        `Cannot specify a service api key that does not match graph id. Graph id found in config (${config.graph}) does not match graph from api key (${identifier}).`
       );
     }
 
