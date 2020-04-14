@@ -208,6 +208,8 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
   }
 
   documentDidChange(document: TextDocument) {
+    if (!document.uri.startsWith("file://")) return;
+
     const documents = extractGraphQLDocuments(
       document,
       this.config.client && this.config.client.tagName
