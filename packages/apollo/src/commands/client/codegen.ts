@@ -190,15 +190,15 @@ export default class Generate extends ClientCommand {
                 // to prevent silent erroring of syntax errors, we check the project's
                 // documents to make sure there are no errors. If there are, we error here
                 // instead of project initialization
-                // for (const document of this.project.documents) {
-                //   if (document.syntaxErrors) {
-                //     const errors = document.syntaxErrors.map(
-                //       e =>
-                //         `Syntax error in ${document.source.name}: ${e.message}\n`
-                //     );
-                //     throw new Error(errors.toString());
-                //   }
-                // }
+                for (const document of this.project.documents) {
+                  if (document.syntaxErrors) {
+                    const errors = document.syntaxErrors.map(
+                      e =>
+                        `Syntax error in ${document.source.name}: ${e.message}\n`
+                    );
+                    throw new Error(errors.toString());
+                  }
+                }
 
                 const operations = Object.values(this.project.operations);
                 const fragments = Object.values(this.project.fragments);

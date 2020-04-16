@@ -32,7 +32,6 @@ export class GraphQLDocument {
         source,
         rangeOfTokenAtLocation(error.locations[0], source.body)
       );
-      console.log(error.message, source.name);
       this.syntaxErrors.push({
         severity: DiagnosticSeverity.Error,
         message: error.message,
