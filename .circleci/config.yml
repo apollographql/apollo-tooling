@@ -83,12 +83,22 @@ jobs:
   Publish GitHub Release:
     docker:
       - image: circleci/golang:latest
+    parameters:
+      verdaccio_path:
+        type: string
+        description: The location of the Verdaccio installation store
+        default: '$HOME/.config/verdaccio/storage/'
+      backup_path:
+        type: string
+        description: The location where Verdaccio will be backed up to.
+        default: './.verdaccio-storage'
     steps:
-      - checkout
+      - attach_workspace:
+        at: << parameters.backup_path >>/**
       - run:
           name: "Publish Release on GitHub"
           command: |
-            ls oclif-dist
+            ls ./.verdaccio-storage
             go get github.com/tcnksm/ghr
 
 
