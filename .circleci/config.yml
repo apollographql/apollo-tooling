@@ -95,9 +95,10 @@ jobs:
             test -d oclif-dist/channels && exit 1 || "Not a pre-release, continuing with publishing"
             go get github.com/tcnksm/ghr
             VERSION=$(ls oclif-dist | cut -d 'v' -f2)
-            echo "Publishing apollo@${VERSION} to GitHub Releases"
+            echo "Publishing apollo@${VERSION} to GitHub Releases using ghr"
+            echo "ghr -t ${GITHUB_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} ./oclif-dist/apollo-v${VERSION}/"
             ls ./oclif-dist/apollo-v${VERSION}/
-            ghr -t ${GITHUB_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} ./oclif-dist/apollo-v${VERSION}/
+            ghr -t ${GITHUB_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} "./oclif-dist/apollo-v${VERSION}/"
 
   Test VSCode:
     executor: { name: oss/node }
