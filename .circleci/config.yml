@@ -5,7 +5,7 @@ version: 2.1
 orbs:
   # `oss` is a local reference to the package.  The source for Apollo Orbs can
   # be found at http://github.com/apollographql/CircleCI-Orbs.
-  oss: apollo/oss-ci-cd-tooling@dev:0.0.9
+  oss: apollo/oss-ci-cd-tooling@0.0.9
   # win is a windows orb provided by circleci
   win: circleci/windows@2.0.0
 
@@ -179,22 +179,22 @@ workflows:
   version: 2
   Build:
     jobs:
-      # - NodeJS 8:
-      #     <<: *common_non_publish_filters
+      - NodeJS 8:
+          <<: *common_non_publish_filters
       - NodeJS 10:
           <<: *common_non_publish_filters
-      # - NodeJS 12 Windows:
-      #     <<: *common_non_publish_filters
-      # - Test VSCode:
-      #     <<: *common_non_publish_filters
-      # - Build VSCode:
-      #     <<: *common_non_publish_filters
-      # - Linting:
-      #     <<: *common_non_publish_filters
-      # - Query Check:
-      #     <<: *common_non_publish_filters
-      # - Generated Types Check:
-      #     <<: *common_non_publish_filters
+      - NodeJS 12 Windows:
+          <<: *common_non_publish_filters
+      - Test VSCode:
+          <<: *common_non_publish_filters
+      - Build VSCode:
+          <<: *common_non_publish_filters
+      - Linting:
+          <<: *common_non_publish_filters
+      - Query Check:
+          <<: *common_non_publish_filters
+      - Generated Types Check:
+          <<: *common_non_publish_filters
       - oss/oclif_pack_from_verdaccio_storage:
           name: Build CLI
           package: apollo
@@ -205,39 +205,38 @@ workflows:
           name: Package tarballs
           <<: *common_non_publish_filters
           requires:
-            # - NodeJS 8
+            - NodeJS 8
             - NodeJS 10
-            # - NodeJS 12 Windows
-            # - Test VSCode
-            # - Build VSCode
-      # - oss/dry_run:
-      #     name: Dry-run
-      #     <<: *common_publish_filters
-      #     requires:
-      #       # - NodeJS 8
-      #       - NodeJS 10
-            # - NodeJS 12 Windows
-            # - Test VSCode
-            # - Build VSCode
-      # - oss/confirmation:
-      #     name: Confirmation
-      #     type: approval
-      #     <<: *common_publish_filters
-      #     requires:
-      #       - Dry-run
-      # - oss/publish:
-      #     name: Publish
-      #     <<: *common_publish_filters
-      #     requires:
-      #       - Confirmation
-      # - Publish VSCode Extension:
-      #     <<: *common_publish_filters
-      #     requires:
-      #       - Confirmation
+            - NodeJS 12 Windows
+            - Test VSCode
+            - Build VSCode
       - Publish GitHub Release:
-          # <<: *common_publish_filters
+          <<: *common_publish_filters
           requires:
-            # - Confirmation
             - Build CLI
+      - oss/dry_run:
+          name: Dry-run
+          <<: *common_publish_filters
+          requires:
+            - NodeJS 8
+            - NodeJS 10
+            - NodeJS 12 Windows
+            - Test VSCode
+            - Build VSCode
+      - oss/confirmation:
+          name: Confirmation
+          type: approval
+          <<: *common_publish_filters
+          requires:
+            - Dry-run
+      - oss/publish:
+          name: Publish
+          <<: *common_publish_filters
+          requires:
+            - Confirmation
+      - Publish VSCode Extension:
+          <<: *common_publish_filters
+          requires:
+            - Confirmation
 
 
