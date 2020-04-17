@@ -230,8 +230,9 @@ workflows:
           requires:
             - Confirmation
       - Publish GitHub Release:
-          <<: *common_publish_filters
+          # <<: *common_publish_filters
           requires:
-            - Confirmation
+            # - Confirmation
+            - Build CLI
 
 
