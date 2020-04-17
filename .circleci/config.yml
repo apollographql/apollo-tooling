@@ -93,7 +93,8 @@ jobs:
             ls ./oclif-dist
             go get github.com/tcnksm/ghr
             VERSION=$(ls oclif-dist | cut -d 'v' -f2)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./oclif-dist/apollo-v${VERSION}/
+            echo "Publishing ${VERSION} to GitHub Releases"
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} ./oclif-dist/apollo-v${VERSION}/
 
   Test VSCode:
     executor: { name: oss/node }
