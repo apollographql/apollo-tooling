@@ -208,30 +208,30 @@ workflows:
             # - NodeJS 12 Windows
             # - Test VSCode
             # - Build VSCode
-      - oss/dry_run:
-          name: Dry-run
-          <<: *common_publish_filters
-          requires:
-            # - NodeJS 8
-            - NodeJS 10
+      # - oss/dry_run:
+      #     name: Dry-run
+      #     <<: *common_publish_filters
+      #     requires:
+      #       # - NodeJS 8
+      #       - NodeJS 10
             # - NodeJS 12 Windows
             # - Test VSCode
             # - Build VSCode
-      - oss/confirmation:
-          name: Confirmation
-          type: approval
-          <<: *common_publish_filters
-          requires:
-            - Dry-run
-      - oss/publish:
-          name: Publish
-          <<: *common_publish_filters
-          requires:
-            - Confirmation
-      - Publish VSCode Extension:
-          <<: *common_publish_filters
-          requires:
-            - Confirmation
+      # - oss/confirmation:
+      #     name: Confirmation
+      #     type: approval
+      #     <<: *common_publish_filters
+      #     requires:
+      #       - Dry-run
+      # - oss/publish:
+      #     name: Publish
+      #     <<: *common_publish_filters
+      #     requires:
+      #       - Confirmation
+      # - Publish VSCode Extension:
+      #     <<: *common_publish_filters
+      #     requires:
+      #       - Confirmation
       - Publish GitHub Release:
           # <<: *common_publish_filters
           requires:
