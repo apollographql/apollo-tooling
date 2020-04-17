@@ -871,4 +871,3 @@ Some integration tests rely on mocked server data (service:check for example). M
 ## Maintainers
 
 - [@JakeDawkins](https://github.com/jakedawkins) (Apollo)
-- [@jbaxleyiii](https://github.com/jbaxleyiii) (Apollo)
