@@ -5,7 +5,7 @@ version: 2.1
 orbs:
   # `oss` is a local reference to the package.  The source for Apollo Orbs can
   # be found at http://github.com/apollographql/CircleCI-Orbs.
-  oss: apollo/oss-ci-cd-tooling@0.0.8
+  oss: apollo/oss-ci-cd-tooling@dev:0.0.9
   # win is a windows orb provided by circleci
   win: circleci/windows@2.0.0
 
@@ -78,6 +78,22 @@ jobs:
       - checkout
       - oss/npm_clean_install_with_caching
       - run: npm run publish-extension
+
+
+  Publish GitHub Release:
+    docker:
+      - image: circleci/golang:latest
+    steps:
+      - checkout
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            ls oclif-dist
+            go get github.com/tcnksm/ghr
+
+
+      # VERSION=$(ls oclif-dist | cut -d 'v' -f2)
+      # ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
 
   Test VSCode:
     executor: { name: oss/node }
@@ -189,6 +205,12 @@ workflows:
             - NodeJS 12 Windows
             - Test VSCode
             - Build VSCode
+      - Publish GitHub Release:
+          requires:
+            - Package tarballs
+        # <<: *common_publish_filters
+        # requires:
+        #   - Confirmation
       - oss/dry_run:
           name: Dry-run
           <<: *common_publish_filters
