@@ -25,6 +25,10 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
+## `apollo@2.27.1-alpha.0`
+- `apollo@2.27.1-alpha.0`
+    - Setup automatically creating a GitHub release [#1876](https://github.com/apollographql/apollo-tooling/pull/1876)
+
 ## `apollo@2.27.0`
 
 - `apollo@2.27.0`
