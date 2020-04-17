@@ -87,6 +87,7 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
+      - checkout
       - run:
           name: "Publish Release on GitHub"
           command: |
@@ -175,22 +176,22 @@ workflows:
   version: 2
   Build:
     jobs:
-      - NodeJS 8:
-          <<: *common_non_publish_filters
+      # - NodeJS 8:
+      #     <<: *common_non_publish_filters
       - NodeJS 10:
           <<: *common_non_publish_filters
-      - NodeJS 12 Windows:
-          <<: *common_non_publish_filters
-      - Test VSCode:
-          <<: *common_non_publish_filters
-      - Build VSCode:
-          <<: *common_non_publish_filters
-      - Linting:
-          <<: *common_non_publish_filters
-      - Query Check:
-          <<: *common_non_publish_filters
-      - Generated Types Check:
-          <<: *common_non_publish_filters
+      # - NodeJS 12 Windows:
+      #     <<: *common_non_publish_filters
+      # - Test VSCode:
+      #     <<: *common_non_publish_filters
+      # - Build VSCode:
+      #     <<: *common_non_publish_filters
+      # - Linting:
+      #     <<: *common_non_publish_filters
+      # - Query Check:
+      #     <<: *common_non_publish_filters
+      # - Generated Types Check:
+      #     <<: *common_non_publish_filters
       - oss/oclif_pack_from_verdaccio_storage:
           name: Build CLI
           package: apollo
@@ -201,20 +202,20 @@ workflows:
           name: Package tarballs
           <<: *common_non_publish_filters
           requires:
-            - NodeJS 8
+            # - NodeJS 8
             - NodeJS 10
-            - NodeJS 12 Windows
-            - Test VSCode
-            - Build VSCode
+            # - NodeJS 12 Windows
+            # - Test VSCode
+            # - Build VSCode
       - oss/dry_run:
           name: Dry-run
           <<: *common_publish_filters
           requires:
-            - NodeJS 8
+            # - NodeJS 8
             - NodeJS 10
-            - NodeJS 12 Windows
-            - Test VSCode
-            - Build VSCode
+            # - NodeJS 12 Windows
+            # - Test VSCode
+            # - Build VSCode
       - oss/confirmation:
           name: Confirmation
           type: approval
