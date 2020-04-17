@@ -96,9 +96,9 @@ jobs:
             go get github.com/tcnksm/ghr
             VERSION=$(ls oclif-dist | cut -d 'v' -f2)
             echo "Publishing apollo@${VERSION} to GitHub Releases using ghr"
-            echo "ghr -t ${GITHUB_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} ./oclif-dist/apollo-v${VERSION}/"
+            echo "ghr -t ${GH_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} ./oclif-dist/apollo-v${VERSION}/"
             ls ./oclif-dist/apollo-v${VERSION}/
-            ghr -t ${GITHUB_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} "./oclif-dist/apollo-v${VERSION}/"
+            ghr -t ${GH_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} "./oclif-dist/apollo-v${VERSION}/"
 
   Test VSCode:
     executor: { name: oss/node }
