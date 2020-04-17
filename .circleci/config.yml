@@ -94,7 +94,7 @@ jobs:
         default: './.verdaccio-storage'
     steps:
       - attach_workspace:
-        at: << parameters.backup_path >>/**
+          at: << parameters.backup_path >>/**
       - run:
           name: "Publish Release on GitHub"
           command: |
