@@ -20,6 +20,7 @@
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
   - Fix definition navigation for vscode using localSchemaFile [#1996](https://github.com/apollographql/apollo-tooling/pull/1996)
+  - Replace deprecated use of `getErrors` with `onError` [#1908](https://github.com/apollographql/apollo-tooling/pull/1908)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
