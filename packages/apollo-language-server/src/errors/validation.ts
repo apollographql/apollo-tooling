@@ -51,7 +51,12 @@ export function getValidationErrors(
   rules: ValidationRule[] = defaultValidationRules
 ) {
   const typeInfo = new TypeInfo(schema);
-  const context = new ValidationContext(schema, document, typeInfo);
+
+  const errors: GraphQLError[] = [];
+
+  const context = new ValidationContext(schema, document, typeInfo, error =>
+    errors.push(error)
+  );
 
   if (fragments) {
     (context as any)._fragments = fragments;
@@ -60,7 +65,7 @@ export function getValidationErrors(
   const visitors = rules.map(rule => rule(context));
   // Visit the whole document with each instance of all provided rules.
   visit(document, visitWithTypeInfo(typeInfo, visitInParallel(visitors)));
-  return context.getErrors();
+  return errors;
 }
 
 export function validateQueryDocument(
