@@ -210,15 +210,12 @@ export default function generate(
     }
   } else {
     let output;
-    const context = compileToLegacyIR(schema, document, options);
+    const context = compileToLegacyIR(schema, document, {
+      ...options,
+      exposeTypeNodes: target === "json-modern"
+    });
     switch (target) {
       case "json-modern":
-        const ir = compileToLegacyIR(schema, document, {
-          ...options,
-          exposeTypeNodes: true
-        });
-        output = serializeToJSON(ir);
-        break;
       case "json":
         output = serializeToJSON(context);
         break;
