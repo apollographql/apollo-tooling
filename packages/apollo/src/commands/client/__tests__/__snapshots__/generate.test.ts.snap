@@ -157,16 +157,16 @@ Object {
       "fragmentsReferenced": Array [],
       "inlineFragments": Array [],
       "operationId": "4de1e386589b0853a102a87a3f21ca25266116517e59c1e8be9442e2571f00bc",
-          "operationName": "SimpleQuery",
-          "operationType": "query",
-          "rootType": "Query",
-          "source": "query SimpleQuery {
+      "operationName": "SimpleQuery",
+      "operationType": "query",
+      "rootType": "Query",
+      "source": "query SimpleQuery {
   hello
 }",
-       "sourceWithFragments": "query SimpleQuery {
+      "sourceWithFragments": "query SimpleQuery {
   hello
 }",
-            "variables": Array [],
+      "variables": Array [],
     },
   ],
   "typesUsed": Array [],
