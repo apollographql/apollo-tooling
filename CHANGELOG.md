@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Change json-modern target to use legacy IR as base, similar to json target []().
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -13,7 +13,7 @@
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-codegen-core`
-  - <First `apollo-codegen-core` related entry goes here>
+  - Change json-modern target to use legacy IR as base, similar to json target []().
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
@@ -26,8 +26,9 @@
   - <First `vscode-apollo` related entry goes here>
 
 ## `apollo@2.27.2`
+
 - `apollo@2.27.2`
-    - Setup automatically creating a GitHub release [#1876](https://github.com/apollographql/apollo-tooling/pull/1876)
+  - Setup automatically creating a GitHub release [#1876](https://github.com/apollographql/apollo-tooling/pull/1876)
 
 ## `apollo@2.27.0`
 

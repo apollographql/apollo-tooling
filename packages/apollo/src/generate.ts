@@ -213,8 +213,10 @@ export default function generate(
     const context = compileToLegacyIR(schema, document, options);
     switch (target) {
       case "json-modern":
-        const ir = compileToIR(schema, document, options);
-        // console.log(JSON.stringify(ir));
+        const ir = compileToLegacyIR(schema, document, {
+          ...options,
+          exposeTypeNodes: true
+        });
         output = serializeToJSON(ir);
         break;
       case "json":
