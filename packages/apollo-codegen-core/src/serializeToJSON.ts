@@ -82,7 +82,7 @@ function serializeEnumType(type: GraphQLEnumType) {
 
 function serializeInputObjectType(
   type: GraphQLInputObjectType,
-  options: serializeOptions
+  options?: serializeOptions
 ) {
   const { name, description } = type;
   const fields = Object.values(type.getFields());
@@ -94,9 +94,10 @@ function serializeInputObjectType(
     fields: fields.map(field => ({
       name: field.name,
       type: String(field.type),
-      typeNode: options.exposeTypeNodes
-        ? stripProp("loc", parseType(field.type.toString()))
-        : undefined,
+      typeNode:
+        options && options.exposeTypeNodes
+          ? stripProp("loc", parseType(field.type.toString()))
+          : undefined,
       description: field.description,
       defaultValue: field.defaultValue
     }))
