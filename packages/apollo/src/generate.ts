@@ -217,7 +217,9 @@ export default function generate(
     switch (target) {
       case "json-modern":
       case "json":
-        output = serializeToJSON(context);
+        output = serializeToJSON(context, {
+          exposeTypeNodes: Boolean(options.exposeTypeNodes)
+        });
         break;
       case "scala":
         output = generateScalaSource(context);
