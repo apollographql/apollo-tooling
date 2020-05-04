@@ -3,6 +3,7 @@ import { LoaderEntry } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
 import { resolve } from "path";
 import { readFileSync, existsSync, lstatSync } from "fs";
+import cloneDeep from "lodash.clonedeep";
 import merge from "lodash.merge";
 import {
   ApolloConfig,
@@ -208,11 +209,13 @@ export async function loadConfig({
   // selectively apply defaults when loading the config
   // this is just the includes/excludes defaults.
   // These need to go on _all_ configs. That's why this is last.
-  if (config.client) config = merge({ client: DefaultClientConfig }, config);
-  if (config.service) config = merge({ service: DefaultServiceConfig }, config);
-  if (engineConfig) config = merge(engineConfig, config);
+  if (config.client)
+    config = merge(cloneDeep({ client: DefaultClientConfig }), config);
+  if (config.service)
+    config = merge(cloneDeep({ service: DefaultServiceConfig }), config);
+  if (engineConfig) config = merge(cloneDeep(engineConfig), config);
 
-  config = merge({ engine: DefaultEngineConfig }, config);
+  config = merge(cloneDeep({ engine: DefaultEngineConfig }), config);
 
   return new ApolloConfig(config, URI.file(resolve(filepath)));
 }
