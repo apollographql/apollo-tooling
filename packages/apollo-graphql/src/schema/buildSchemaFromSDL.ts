@@ -29,9 +29,6 @@ import {
   KnownTypeNamesRule,
   UniqueDirectivesPerLocationRule
 } from "graphql/validation";
-// Currently, this PossibleTypeExtensions rule is experimental and thus not
-// exposed directly from the rules module above. This may change in the future!
-import { PossibleTypeExtensions } from "graphql/validation/rules/PossibleTypeExtensions";
 import { mapValues, isNotNullOrUndefined } from "apollo-env";
 
 export interface GraphQLSchemaModule {
@@ -39,11 +36,19 @@ export interface GraphQLSchemaModule {
   resolvers?: GraphQLResolverMap<any>;
 }
 
-const skippedSDLRules = [
-  PossibleTypeExtensions,
-  KnownTypeNamesRule,
-  UniqueDirectivesPerLocationRule
-];
+const skippedSDLRules = [KnownTypeNamesRule, UniqueDirectivesPerLocationRule];
+
+// Currently, this PossibleTypeExtensions rule is experimental and thus not
+// exposed directly from the rules module above. This may change in the future!
+// Additionally, it does not exist in prior graphql versions. Thus this try/catch.
+try {
+  const {
+    PossibleTypeExtensions
+  } = require("graphql/validation/rules/PossibleTypeExtensions");
+  skippedSDLRules.push(PossibleTypeExtensions);
+} catch (e) {
+  // ignore this error
+}
 
 const sdlRules = specifiedSDLRules.filter(
   rule => !skippedSDLRules.includes(rule)
