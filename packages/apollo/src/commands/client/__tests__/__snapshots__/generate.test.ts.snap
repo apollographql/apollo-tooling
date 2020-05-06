@@ -133,35 +133,37 @@ Object {
   "fragments": Array [],
   "operations": Array [
     Object {
-      "filePath": "",
-      "operationName": "SimpleQuery",
-      "operationType": "query",
-      "rootType": "Query",
-      "selectionSet": Object {
-        "possibleTypes": Array [
-          "Query",
-        ],
-        "selections": Array [
-          Object {
-            "isDeprecated": false,
-            "kind": "Field",
-            "name": "hello",
-            "responseKey": "hello",
-            "type": "String!",
-            "typeNode": Object {
-              "kind": "NonNullType",
-              "type": Object {
-                "kind": "NamedType",
-                "name": Object {
-                  "kind": "Name",
-                  "value": "String",
-                },
+      "fields": Array [
+        Object {
+          "fieldName": "hello",
+          "isConditional": false,
+          "isDeprecated": false,
+          "responseName": "hello",
+          "type": "String!",
+          "typeNode": Object {
+            "kind": "NonNullType",
+            "type": Object {
+              "kind": "NamedType",
+              "name": Object {
+                "kind": "Name",
+                "value": "String",
               },
             },
           },
-        ],
-      },
+        },
+      ],
+      "filePath": "",
+      "fragmentSpreads": Array [],
+      "fragmentsReferenced": Array [],
+      "inlineFragments": Array [],
+      "operationId": "4de1e386589b0853a102a87a3f21ca25266116517e59c1e8be9442e2571f00bc",
+      "operationName": "SimpleQuery",
+      "operationType": "query",
+      "rootType": "Query",
       "source": "query SimpleQuery {
+  hello
+}",
+      "sourceWithFragments": "query SimpleQuery {
   hello
 }",
       "variables": Array [],
