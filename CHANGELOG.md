@@ -3,8 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Change json-modern target to use legacy IR as base, similar to json target [#1916](https://github.com/apollographql/apollo-tooling/pull/1916).
-  - Update json-modern IR to expose `typeNode`s on `typesUsed` [#1916](https://github.com/apollographql/apollo-tooling/pull/1916)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -14,8 +13,7 @@
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-codegen-core`
-  - Change json-modern target to use legacy IR as base, similar to json target [#1916](https://github.com/apollographql/apollo-tooling/pull/1916).
-  - Update json-modern IR to expose `typeNode`s on `typesUsed` [#1916](https://github.com/apollographql/apollo-tooling/pull/1916)
+  - <First `apollo-codegen-core` related entry goes here>
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
@@ -26,6 +24,15 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.27.3`
+
+- `apollo@2.27.4`
+  - Change json-modern target to use legacy IR as base, similar to json target [#1916](https://github.com/apollographql/apollo-tooling/pull/1916).
+  - Update json-modern IR to expose `typeNode`s on `typesUsed` [#1916](https://github.com/apollographql/apollo-tooling/pull/1916)
+- `apollo-codegen-core@0.36.9`
+  - Change json-modern target to use legacy IR as base, similar to json target [#1916](https://github.com/apollographql/apollo-tooling/pull/1916).
+  - Update json-modern IR to expose `typeNode`s on `typesUsed` [#1916](https://github.com/apollographql/apollo-tooling/pull/1916)
 
 ## `apollo@2.27.2`
 
