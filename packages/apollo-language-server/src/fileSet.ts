@@ -65,6 +65,10 @@ export class FileSet {
     return this.files;
   }
 
+  close() {
+    this.watcher.close();
+  }
+
   private globInitial() {
     // since glob.sync takes a single pattern, but we allow an array of `includes`, we can join all the
     // `includes` globs into a single pattern and pass to glob.sync. The `ignore` option does, however, allow
