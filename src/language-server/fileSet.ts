@@ -1,3 +1,4 @@
+import minimatch from "minimatch";
 import glob from "glob";
 import { invariant } from "../tools";
 import URI from "vscode-uri";
@@ -29,7 +30,16 @@ export class FileSet {
   }
 
   includesFile(filePath: string): boolean {
-    return this.allFiles().includes(normalizeURI(filePath));
+    const normalizedFilePath = normalizeURI(filePath);
+
+    return (
+      this.includes.some(include => {
+        return minimatch(normalizedFilePath, resolve(this.rootURI.fsPath, include));
+      }) &&
+      !this.excludes.some(exclude => {
+        return minimatch(normalizedFilePath, resolve(this.rootURI.fsPath, exclude));
+      })
+    );
   }
 
   allFiles(): string[] {
