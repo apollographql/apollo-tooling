@@ -471,7 +471,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         this.printNewlineIfNeeded();
         this.printOnNewline(
-          swift`public static let selections: [GraphQLSelection] = `
+          swift`public private(set) static var selections: [GraphQLSelection] = `
         );
         if (typeCase) {
           this.typeCaseInitialization(typeCase);
