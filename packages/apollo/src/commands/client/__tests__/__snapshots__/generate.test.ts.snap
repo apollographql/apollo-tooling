@@ -249,7 +249,7 @@ public final class SimpleQueryQuery: GraphQLQuery {
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Query\\"]
 
-    public static let selections: [GraphQLSelection] = [
+    public private(set) static var selections: [GraphQLSelection] = [
       GraphQLField(\\"hello\\", type: .nonNull(.scalar(String.self))),
     ]
 
@@ -300,7 +300,7 @@ public final class SimpleQueryQuery: GraphQLQuery {
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Query\\"]
 
-    public static let selections: [GraphQLSelection] = [
+    public private(set) static var selections: [GraphQLSelection] = [
       GraphQLField(\\"hello\\", type: .nonNull(.scalar(String.self))),
     ]
 
