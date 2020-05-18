@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Fix CLI crashing when trying to open a directory that is named like a file [#1948](https://github.com/apollographql/apollo-tooling/pull/1948).
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
