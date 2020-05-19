@@ -249,9 +249,11 @@ public final class SimpleQueryQuery: GraphQLQuery {
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Query\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"hello\\", type: .nonNull(.scalar(String.self))),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"hello\\", type: .nonNull(.scalar(String.self))),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -300,9 +302,11 @@ public final class SimpleQueryQuery: GraphQLQuery {
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Query\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"hello\\", type: .nonNull(.scalar(String.self))),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"hello\\", type: .nonNull(.scalar(String.self))),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
