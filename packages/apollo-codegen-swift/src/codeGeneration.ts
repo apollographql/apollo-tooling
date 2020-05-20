@@ -215,7 +215,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       fragments
     } = this.context;
     const isRedundant = !!namespace && outputIndividualFiles;
-    const modifiers = isRedundant ? ["final"] : ["public", "final"];
+    const modifiers = isRedundant
+      ? ["final"]
+      : [this.helpers.swiftAccessLevel, "final"];
 
     this.classDeclaration(
       {
@@ -226,7 +228,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       () => {
         if (source) {
           this.comment("The raw GraphQL definition of this operation.");
-          this.printOnNewline(swift`public let operationDefinition: String =`);
+          this.printOnNewline(
+            swift`${new SwiftSource(
+              this.helpers.swiftAccessLevel
+            )} let operationDefinition: String =`
+          );
           this.withIndent(() => {
             this.multilineString(source, suppressMultilineStringLiterals);
           });
@@ -234,9 +240,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         this.printNewlineIfNeeded();
         this.printOnNewline(
-          swift`public let operationName: String = ${SwiftSource.string(
-            operationName
-          )}`
+          swift`${new SwiftSource(
+            this.helpers.swiftAccessLevel
+          )} let operationName: String = ${SwiftSource.string(operationName)}`
         );
 
         const fragmentsReferenced = collectFragmentsReferenced(
@@ -253,7 +259,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           operation.operationId = operationId;
           this.printNewlineIfNeeded();
           this.printOnNewline(
-            swift`public let operationIdentifier: String? = ${SwiftSource.string(
+            swift`${new SwiftSource(
+              this.helpers.swiftAccessLevel
+            )} let operationIdentifier: String? = ${SwiftSource.string(
               operationId
             )}`
           );
@@ -262,7 +270,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         if (fragmentsReferenced.size > 0) {
           this.printNewlineIfNeeded();
           this.printOnNewline(
-            swift`public var queryDocument: String { return operationDefinition`
+            swift`${new SwiftSource(
+              this.helpers.swiftAccessLevel
+            )} var queryDocument: String { return operationDefinition`
           );
           fragmentsReferenced.forEach(fragmentName => {
             this.print(
@@ -283,7 +293,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
               isNonNullType(type) ||
               (isListType(type) && isNonNullType(type.ofType))
             );
-            return { name, propertyName: name, type, typeName, isOptional };
+            return {
+              name,
+              propertyName: name,
+              type,
+              typeName,
+              isOptional,
+              accessLevel: this.helpers.swiftAccessLevel
+            };
           });
 
           this.propertyDeclarations(properties);
@@ -292,7 +309,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.initializerDeclarationForProperties(properties);
 
           this.printNewlineIfNeeded();
-          this.printOnNewline(swift`public var variables: GraphQLMap?`);
+          this.printOnNewline(
+            swift`${new SwiftSource(
+              this.helpers.swiftAccessLevel
+            )} var variables: GraphQLMap?`
+          );
           this.withinBlock(() => {
             this.printOnNewline(
               wrap(
@@ -315,7 +336,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.structDeclarationForSelectionSet(
           {
             structName: "Data",
-            selectionSet
+            selectionSet,
+            accessLevel: this.helpers.swiftAccessLevel
           },
           outputIndividualFiles
         );
@@ -341,14 +363,17 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       {
         structName,
         adoptedProtocols: ["GraphQLFragment"],
-        selectionSet
+        selectionSet,
+        accessLevel: this.helpers.swiftAccessLevel
       },
       outputIndividualFiles,
       () => {
         if (source) {
           this.comment("The raw GraphQL definition of this fragment.");
           this.printOnNewline(
-            swift`public static let fragmentDefinition: String =`
+            swift`${new SwiftSource(
+              this.helpers.swiftAccessLevel
+            )} static let fragmentDefinition: String =`
           );
           this.withIndent(() => {
             this.multilineString(source, suppressMultilineStringLiterals);
@@ -370,11 +395,13 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     {
       structName,
       adoptedProtocols = ["GraphQLSelectionSet"],
-      selectionSet
+      selectionSet,
+      accessLevel
     }: {
       structName: string;
       adoptedProtocols?: string[];
       selectionSet: SelectionSet;
+      accessLevel?: string;
     },
     outputIndividualFiles: boolean,
     before?: Function
@@ -389,7 +416,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         structName,
         adoptedProtocols,
         variant: typeCase.default,
-        typeCase
+        typeCase,
+        accessLevel: accessLevel
       },
       outputIndividualFiles,
       before,
@@ -405,7 +433,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           this.structDeclarationForVariant(
             {
               structName: variant.structName,
-              variant
+              variant,
+              accessLevel: this.helpers.swiftAccessLevel
             },
             outputIndividualFiles
           );
@@ -428,12 +457,14 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       structName,
       adoptedProtocols = ["GraphQLSelectionSet"],
       variant,
-      typeCase
+      typeCase,
+      accessLevel
     }: {
       structName: string;
       adoptedProtocols?: string[];
       variant: Variant;
       typeCase?: TypeCase;
+      accessLevel?: string;
     },
     outputIndividualFiles: boolean,
     before?: Function,
@@ -447,8 +478,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       }
     } = this.context;
 
+    // Use the given access level, or fallback to the helper's if it wasn't included
+    const _accessLevel = accessLevel || this.helpers.swiftAccessLevel;
+
     this.structDeclaration(
-      { structName, adoptedProtocols, namespace },
+      { structName, adoptedProtocols, namespace, accessLevel: _accessLevel },
       outputIndividualFiles,
       () => {
         if (before) {
@@ -457,7 +491,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         this.printNewlineIfNeeded();
         this.printOnNewline(
-          swift`public static let possibleTypes: [String] = [`
+          swift`${new SwiftSource(
+            _accessLevel
+          )} static let possibleTypes: [String] = [`
         );
         this.print(
           join(
@@ -471,7 +507,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         this.printNewlineIfNeeded();
         this.printOnNewline(
-          swift`public static var selections: [GraphQLSelection] {`
+          swift`${new SwiftSource(
+            _accessLevel
+          )} static var selections: [GraphQLSelection] {`
         );
         this.withIndent(() => {
           this.printOnNewline(swift`return `);
@@ -485,11 +523,17 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         this.printNewlineIfNeeded();
 
         this.printOnNewline(
-          swift`public private(set) var resultMap: ResultMap`
+          swift`${new SwiftSource(
+            _accessLevel
+          )} private(set) var resultMap: ResultMap`
         );
 
         this.printNewlineIfNeeded();
-        this.printOnNewline(swift`public init(unsafeResultMap: ResultMap)`);
+        this.printOnNewline(
+          swift`${new SwiftSource(
+            _accessLevel
+          )} init(unsafeResultMap: ResultMap)`
+        );
         this.withinBlock(() => {
           this.printOnNewline(swift`self.resultMap = unsafeResultMap`);
         });
@@ -520,7 +564,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         if (fragmentSpreads.length > 0) {
           this.printNewlineIfNeeded();
-          this.printOnNewline(swift`public var fragments: Fragments`);
+          this.printOnNewline(
+            swift`${new SwiftSource(_accessLevel)} var fragments: Fragments`
+          );
           this.withinBlock(() => {
             this.printOnNewline(swift`get`);
             this.withinBlock(() => {
@@ -536,17 +582,22 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
           this.structDeclaration(
             {
-              structName: "Fragments"
+              structName: "Fragments",
+              accessLevel: _accessLevel
             },
             outputIndividualFiles,
             () => {
               this.printOnNewline(
-                swift`public private(set) var resultMap: ResultMap`
+                swift`${new SwiftSource(
+                  _accessLevel
+                )} private(set) var resultMap: ResultMap`
               );
 
               this.printNewlineIfNeeded();
               this.printOnNewline(
-                swift`public init(unsafeResultMap: ResultMap)`
+                swift`${new SwiftSource(
+                  _accessLevel
+                )} init(unsafeResultMap: ResultMap)`
               );
               this.withinBlock(() => {
                 this.printOnNewline(swift`self.resultMap = unsafeResultMap`);
@@ -562,7 +613,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
                 this.printNewlineIfNeeded();
                 this.printOnNewline(
-                  swift`public var ${propertyName}: ${typeName}`
+                  swift`${new SwiftSource(
+                    _accessLevel
+                  )} var ${propertyName}: ${typeName}`
                 );
                 this.withinBlock(() => {
                   this.printOnNewline(swift`get`);
@@ -602,7 +655,8 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
             this.structDeclarationForSelectionSet(
               {
                 structName: field.structName,
-                selectionSet: field.selectionSet
+                selectionSet: field.selectionSet,
+                accessLevel: _accessLevel
               },
               outputIndividualFiles
             );
@@ -645,7 +699,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       if (!properties) return;
 
       this.printNewlineIfNeeded();
-      this.printOnNewline(swift`public init`);
+      this.printOnNewline(
+        swift`${new SwiftSource(this.helpers.swiftAccessLevel)} init`
+      );
 
       this.parametersForProperties(properties);
 
@@ -684,7 +740,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         this.printNewlineIfNeeded();
         this.printOnNewline(
-          SwiftSource.raw`public static func make${possibleType}`
+          SwiftSource.raw`${new SwiftSource(
+            this.helpers.swiftAccessLevel
+          )} static func make${possibleType}`
         );
 
         this.parametersForProperties(properties);
@@ -765,7 +823,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.comment(field.description);
     this.deprecationAttributes(field.isDeprecated, field.deprecationReason);
 
-    this.printOnNewline(swift`public var ${propertyName}: ${typeName}`);
+    this.printOnNewline(
+      swift`${new SwiftSource(
+        this.helpers.swiftAccessLevel
+      )} var ${propertyName}: ${typeName}`
+    );
     this.withinBlock(() => {
       if (isCompositeType(unmodifiedFieldType)) {
         const structName = this.helpers.structNameForPropertyName(propertyName);
@@ -881,7 +943,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     const { propertyName, typeName, structName } = variant;
 
     this.printNewlineIfNeeded();
-    this.printOnNewline(swift`public var ${propertyName}: ${typeName}`);
+    this.printOnNewline(
+      swift`${new SwiftSource(
+        this.helpers.swiftAccessLevel
+      )} var ${propertyName}: ${typeName}`
+    );
     this.withinBlock(() => {
       this.printOnNewline(swift`get`);
       this.withinBlock(() => {
@@ -903,7 +969,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
   }
 
   initializerDeclarationForProperties(properties: Property[]) {
-    this.printOnNewline(swift`public init`);
+    this.printOnNewline(
+      swift`${new SwiftSource(this.helpers.swiftAccessLevel)} init`
+    );
     this.parametersForProperties(properties);
 
     this.withinBlock(() => {
@@ -1090,10 +1158,16 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printNewlineIfNeeded();
     this.comment(description || undefined);
     this.printOnNewline(
-      swift`public enum ${name}: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable`
+      swift`${new SwiftSource(
+        this.helpers.swiftAccessLevel
+      )} enum ${name}: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable`
     );
     this.withinBlock(() => {
-      this.printOnNewline(swift`public typealias RawValue = String`);
+      this.printOnNewline(
+        swift`${new SwiftSource(
+          this.helpers.swiftAccessLevel
+        )} typealias RawValue = String`
+      );
 
       values.forEach(value => {
         this.comment(value.description || undefined);
@@ -1109,7 +1183,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       this.printOnNewline(swift`case __unknown(RawValue)`);
 
       this.printNewlineIfNeeded();
-      this.printOnNewline(swift`public init?(rawValue: RawValue)`);
+      this.printOnNewline(
+        swift`${new SwiftSource(
+          this.helpers.swiftAccessLevel
+        )} init?(rawValue: RawValue)`
+      );
       this.withinBlock(() => {
         this.printOnNewline(swift`switch rawValue`);
         this.withinBlock(() => {
@@ -1125,7 +1203,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       });
 
       this.printNewlineIfNeeded();
-      this.printOnNewline(swift`public var rawValue: RawValue`);
+      this.printOnNewline(
+        swift`${new SwiftSource(
+          this.helpers.swiftAccessLevel
+        )} var rawValue: RawValue`
+      );
       this.withinBlock(() => {
         this.printOnNewline(swift`switch self`);
         this.withinBlock(() => {
@@ -1142,7 +1224,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
       this.printNewlineIfNeeded();
       this.printOnNewline(
-        swift`public static func == (lhs: ${name}, rhs: ${name}) -> Bool`
+        swift`${new SwiftSource(
+          this.helpers.swiftAccessLevel
+        )} static func == (lhs: ${name}, rhs: ${name}) -> Bool`
       );
       this.withinBlock(() => {
         this.printOnNewline(swift`switch (lhs, rhs)`);
@@ -1160,7 +1244,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
       });
 
       this.printNewlineIfNeeded();
-      this.printOnNewline(swift`public static var allCases: [${name}]`);
+      this.printOnNewline(
+        swift`${new SwiftSource(
+          this.helpers.swiftAccessLevel
+        )} static var allCases: [${name}]`
+      );
       this.withinBlock(() => {
         this.printOnNewline(swift`return [`);
         values.forEach(value => {
@@ -1188,6 +1276,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     const { name: structName, description } = type;
     const adoptedProtocols = ["GraphQLMapConvertible"];
     const fields = Object.values(type.getFields());
+    const accessLevel = this.helpers.swiftAccessLevel;
 
     const properties = fields.map(
       this.helpers.propertyFromInputField,
@@ -1201,10 +1290,19 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     });
 
     this.structDeclaration(
-      { structName, description: description || undefined, adoptedProtocols },
+      {
+        structName,
+        description: description || undefined,
+        adoptedProtocols,
+        accessLevel
+      },
       outputIndividualFiles,
       () => {
-        this.printOnNewline(swift`public var graphQLMap: GraphQLMap`);
+        this.printOnNewline(
+          swift`${new SwiftSource(
+            this.helpers.swiftAccessLevel
+          )} var graphQLMap: GraphQLMap`
+        );
 
         this.printNewlineIfNeeded();
 
@@ -1222,7 +1320,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           });
         }
 
-        this.printOnNewline(swift`public init`);
+        this.printOnNewline(
+          swift`${new SwiftSource(this.helpers.swiftAccessLevel)} init`
+        );
         this.print(swift`(`);
         this.print(
           join(
@@ -1275,7 +1375,11 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         } of properties) {
           this.printNewlineIfNeeded();
           this.comment(description || undefined);
-          this.printOnNewline(swift`public var ${propertyName}: ${typeName}`);
+          this.printOnNewline(
+            swift`${new SwiftSource(
+              this.helpers.swiftAccessLevel
+            )} var ${propertyName}: ${typeName}`
+          );
           this.withinBlock(() => {
             this.printOnNewline(swift`get`);
             this.withinBlock(() => {

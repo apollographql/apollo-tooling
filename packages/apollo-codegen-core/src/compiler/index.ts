@@ -53,6 +53,7 @@ export interface CompilerOptions {
   suppressSwiftMultilineStringLiterals?: boolean;
   omitDeprecatedEnumCases?: boolean;
   exposeTypeNodes?: boolean;
+  swiftAccessLevel?: string;
 }
 
 export interface CompilerContext {

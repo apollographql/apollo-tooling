@@ -17,6 +17,7 @@ export interface Struct {
   adoptedProtocols?: string[];
   description?: string;
   namespace?: string;
+  accessLevel: string;
 }
 
 export interface Protocol {
@@ -29,6 +30,7 @@ export interface Property {
   typeName: string;
   isOptional?: boolean;
   description?: string;
+  accessLevel: string;
 }
 
 /**
@@ -489,7 +491,8 @@ export class SwiftGenerator<Context> extends CodeGenerator<
       structName,
       description,
       adoptedProtocols = [],
-      namespace = undefined
+      namespace = undefined,
+      accessLevel
     }: Struct,
     outputIndividualFiles: boolean,
     closure: Function
@@ -501,7 +504,7 @@ export class SwiftGenerator<Context> extends CodeGenerator<
       adoptedProtocols.includes("GraphQLFragment") &&
       !!namespace &&
       outputIndividualFiles;
-    const modifier = new SwiftSource(isRedundant ? "" : "public ");
+    const modifier = new SwiftSource(isRedundant ? "" : `${accessLevel} `);
 
     this.printOnNewline(swift`${modifier}struct ${structName}`);
     this.print(
@@ -512,9 +515,16 @@ export class SwiftGenerator<Context> extends CodeGenerator<
     this.popScope();
   }
 
-  propertyDeclaration({ propertyName, typeName, description }: Property) {
+  propertyDeclaration({
+    propertyName,
+    typeName,
+    description,
+    accessLevel
+  }: Property) {
     this.comment(description);
-    this.printOnNewline(swift`public var ${propertyName}: ${typeName}`);
+    this.printOnNewline(
+      swift`${new SwiftSource(accessLevel)} var ${propertyName}: ${typeName}`
+    );
   }
 
   propertyDeclarations(properties: Property[]) {

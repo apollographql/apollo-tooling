@@ -1,6 +1,2287 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Swift code generation #classDeclarationForOperation() should correctly escape a mutli-line string literal 1`] = `
+exports[`Swift code generation internal access level #classDeclarationForOperation() should correctly escape a mutli-line string literal 1`] = `
+"internal final class CreateReviewMutation: GraphQLMutation {
+  /// The raw GraphQL definition of this operation.
+  internal let operationDefinition: String =
+    #\\"\\"\\"
+    mutation CreateReview($episode: Episode) {
+      createReview(episode: $episode, review: {stars: 5, commentary: \\"\\"\\"
+        Wow!
+         I thought
+          This movie ROCKED!
+      \\"\\"\\"}) {
+        stars
+        commentary
+      }
+    }
+    \\"\\"\\"#
+
+  internal let operationName: String = \\"CreateReview\\"
+
+  internal var episode: Episode?
+
+  internal init(episode: Episode? = nil) {
+    self.episode = episode
+  }
+
+  internal var variables: GraphQLMap? {
+    return [\\"episode\\": episode]
+  }
+
+  internal struct Data: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Mutation\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\\\n I thought\\\\n  This movie ROCKED!\\"]], type: .object(CreateReview.selections)),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal init(createReview: CreateReview? = nil) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Mutation\\", \\"createReview\\": createReview.flatMap { (value: CreateReview) -> ResultMap in value.resultMap }])
+    }
+
+    internal var createReview: CreateReview? {
+      get {
+        return (resultMap[\\"createReview\\"] as? ResultMap).flatMap { CreateReview(unsafeResultMap: $0) }
+      }
+      set {
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"createReview\\")
+      }
+    }
+
+    internal struct CreateReview: GraphQLSelectionSet {
+      internal static let possibleTypes: [String] = [\\"Review\\"]
+
+      internal static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField(\\"stars\\", type: .nonNull(.scalar(Int.self))),
+          GraphQLField(\\"commentary\\", type: .scalar(String.self)),
+        ]
+      }
+
+      internal private(set) var resultMap: ResultMap
+
+      internal init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      internal init(stars: Int, commentary: String? = nil) {
+        self.init(unsafeResultMap: [\\"__typename\\": \\"Review\\", \\"stars\\": stars, \\"commentary\\": commentary])
+      }
+
+      /// The number of stars this review gave, 1-5
+      internal var stars: Int {
+        get {
+          return resultMap[\\"stars\\"]! as! Int
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: \\"stars\\")
+        }
+      }
+
+      /// Comment about the movie
+      internal var commentary: String? {
+        get {
+          return resultMap[\\"commentary\\"] as? String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: \\"commentary\\")
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #classDeclarationForOperation() should correctly escape a mutli-line string literal with backslashes 1`] = `
+"internal final class CreateReviewMutation: GraphQLMutation {
+  /// The raw GraphQL definition of this operation.
+  internal let operationDefinition: String =
+    #\\"\\"\\"
+    mutation CreateReview($episode: Episode) {
+      createReview(episode: $episode, review: {stars: 5, commentary: \\"\\"\\"
+        Wow!
+         I thought
+          This movie \\\\ ROCKED!
+      \\"\\"\\"}) {
+        stars
+        commentary
+      }
+    }
+    \\"\\"\\"#
+
+  internal let operationName: String = \\"CreateReview\\"
+
+  internal var episode: Episode?
+
+  internal init(episode: Episode? = nil) {
+    self.episode = episode
+  }
+
+  internal var variables: GraphQLMap? {
+    return [\\"episode\\": episode]
+  }
+
+  internal struct Data: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Mutation\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\\\n I thought\\\\n  This movie \\\\\\\\ ROCKED!\\"]], type: .object(CreateReview.selections)),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal init(createReview: CreateReview? = nil) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Mutation\\", \\"createReview\\": createReview.flatMap { (value: CreateReview) -> ResultMap in value.resultMap }])
+    }
+
+    internal var createReview: CreateReview? {
+      get {
+        return (resultMap[\\"createReview\\"] as? ResultMap).flatMap { CreateReview(unsafeResultMap: $0) }
+      }
+      set {
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"createReview\\")
+      }
+    }
+
+    internal struct CreateReview: GraphQLSelectionSet {
+      internal static let possibleTypes: [String] = [\\"Review\\"]
+
+      internal static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField(\\"stars\\", type: .nonNull(.scalar(Int.self))),
+          GraphQLField(\\"commentary\\", type: .scalar(String.self)),
+        ]
+      }
+
+      internal private(set) var resultMap: ResultMap
+
+      internal init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      internal init(stars: Int, commentary: String? = nil) {
+        self.init(unsafeResultMap: [\\"__typename\\": \\"Review\\", \\"stars\\": stars, \\"commentary\\": commentary])
+      }
+
+      /// The number of stars this review gave, 1-5
+      internal var stars: Int {
+        get {
+          return resultMap[\\"stars\\"]! as! Int
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: \\"stars\\")
+        }
+      }
+
+      /// Comment about the movie
+      internal var commentary: String? {
+        get {
+          return resultMap[\\"commentary\\"] as? String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: \\"commentary\\")
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #classDeclarationForOperation() should generate a class declaration for a mutation with variables 1`] = `
+"internal final class CreateReviewMutation: GraphQLMutation {
+  /// The raw GraphQL definition of this operation.
+  internal let operationDefinition: String =
+    \\"\\"\\"
+    mutation CreateReview($episode: Episode) {
+      createReview(episode: $episode, review: {stars: 5, commentary: \\"Wow!\\"}) {
+        stars
+        commentary
+      }
+    }
+    \\"\\"\\"
+
+  internal let operationName: String = \\"CreateReview\\"
+
+  internal var episode: Episode?
+
+  internal init(episode: Episode? = nil) {
+    self.episode = episode
+  }
+
+  internal var variables: GraphQLMap? {
+    return [\\"episode\\": episode]
+  }
+
+  internal struct Data: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Mutation\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\"]], type: .object(CreateReview.selections)),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal init(createReview: CreateReview? = nil) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Mutation\\", \\"createReview\\": createReview.flatMap { (value: CreateReview) -> ResultMap in value.resultMap }])
+    }
+
+    internal var createReview: CreateReview? {
+      get {
+        return (resultMap[\\"createReview\\"] as? ResultMap).flatMap { CreateReview(unsafeResultMap: $0) }
+      }
+      set {
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"createReview\\")
+      }
+    }
+
+    internal struct CreateReview: GraphQLSelectionSet {
+      internal static let possibleTypes: [String] = [\\"Review\\"]
+
+      internal static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField(\\"stars\\", type: .nonNull(.scalar(Int.self))),
+          GraphQLField(\\"commentary\\", type: .scalar(String.self)),
+        ]
+      }
+
+      internal private(set) var resultMap: ResultMap
+
+      internal init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      internal init(stars: Int, commentary: String? = nil) {
+        self.init(unsafeResultMap: [\\"__typename\\": \\"Review\\", \\"stars\\": stars, \\"commentary\\": commentary])
+      }
+
+      /// The number of stars this review gave, 1-5
+      internal var stars: Int {
+        get {
+          return resultMap[\\"stars\\"]! as! Int
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: \\"stars\\")
+        }
+      }
+
+      /// Comment about the movie
+      internal var commentary: String? {
+        get {
+          return resultMap[\\"commentary\\"] as? String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: \\"commentary\\")
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #classDeclarationForOperation() should generate a class declaration for a query with a fragment spread nested in an inline fragment 1`] = `
+"internal final class HeroQuery: GraphQLQuery {
+  /// The raw GraphQL definition of this operation.
+  internal let operationDefinition: String =
+    \\"\\"\\"
+    query Hero {
+      hero {
+        ... on Droid {
+          ...HeroDetails
+        }
+      }
+    }
+    \\"\\"\\"
+
+  internal let operationName: String = \\"Hero\\"
+
+  internal var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
+
+  internal init() {
+  }
+
+  internal struct Data: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Query\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"hero\\", type: .object(Hero.selections)),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal init(hero: Hero? = nil) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> ResultMap in value.resultMap }])
+    }
+
+    internal var hero: Hero? {
+      get {
+        return (resultMap[\\"hero\\"] as? ResultMap).flatMap { Hero(unsafeResultMap: $0) }
+      }
+      set {
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"hero\\")
+      }
+    }
+
+    internal struct Hero: GraphQLSelectionSet {
+      internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+      internal static var selections: [GraphQLSelection] {
+        return [
+          GraphQLTypeCase(
+            variants: [\\"Droid\\": AsDroid.selections],
+            default: [
+            ]
+          )
+        ]
+      }
+
+      internal private(set) var resultMap: ResultMap
+
+      internal init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      internal static func makeHuman() -> Hero {
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\"])
+      }
+
+      internal static func makeDroid(name: String) -> Hero {
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+      }
+
+      internal var asDroid: AsDroid? {
+        get {
+          if !AsDroid.possibleTypes.contains(__typename) { return nil }
+          return AsDroid(unsafeResultMap: resultMap)
+        }
+        set {
+          guard let newValue = newValue else { return }
+          resultMap = newValue.resultMap
+        }
+      }
+
+      internal struct AsDroid: GraphQLSelectionSet {
+        internal static let possibleTypes: [String] = [\\"Droid\\"]
+
+        internal static var selections: [GraphQLSelection] {
+          return [
+            GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+          ]
+        }
+
+        internal private(set) var resultMap: ResultMap
+
+        internal init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
+
+        internal init(name: String) {
+          self.init(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+        }
+
+        /// What others call this droid
+        internal var name: String {
+          get {
+            return resultMap[\\"name\\"]! as! String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: \\"name\\")
+          }
+        }
+
+        internal var fragments: Fragments {
+          get {
+            return Fragments(unsafeResultMap: resultMap)
+          }
+          set {
+            resultMap += newValue.resultMap
+          }
+        }
+
+        internal struct Fragments {
+          internal private(set) var resultMap: ResultMap
+
+          internal init(unsafeResultMap: ResultMap) {
+            self.resultMap = unsafeResultMap
+          }
+
+          internal var heroDetails: HeroDetails {
+            get {
+              return HeroDetails(unsafeResultMap: resultMap)
+            }
+            set {
+              resultMap += newValue.resultMap
+            }
+          }
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #classDeclarationForOperation() should generate a class declaration for a query with conditional fragment spreads 1`] = `
+"internal final class HeroQuery: GraphQLQuery {
+  /// The raw GraphQL definition of this operation.
+  internal let operationDefinition: String =
+    \\"\\"\\"
+    query Hero {
+      hero {
+        ...DroidDetails
+      }
+    }
+    \\"\\"\\"
+
+  internal let operationName: String = \\"Hero\\"
+
+  internal var queryDocument: String { return operationDefinition.appending(DroidDetails.fragmentDefinition) }
+
+  internal init() {
+  }
+
+  internal struct Data: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Query\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"hero\\", type: .object(Hero.selections)),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal init(hero: Hero? = nil) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> ResultMap in value.resultMap }])
+    }
+
+    internal var hero: Hero? {
+      get {
+        return (resultMap[\\"hero\\"] as? ResultMap).flatMap { Hero(unsafeResultMap: $0) }
+      }
+      set {
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"hero\\")
+      }
+    }
+
+    internal struct Hero: GraphQLSelectionSet {
+      internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+      internal static var selections: [GraphQLSelection] {
+        return [
+          GraphQLTypeCase(
+            variants: [\\"Droid\\": AsDroid.selections],
+            default: [
+            ]
+          )
+        ]
+      }
+
+      internal private(set) var resultMap: ResultMap
+
+      internal init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      internal static func makeHuman() -> Hero {
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\"])
+      }
+
+      internal static func makeDroid(primaryFunction: String? = nil) -> Hero {
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"primaryFunction\\": primaryFunction])
+      }
+
+      internal var fragments: Fragments {
+        get {
+          return Fragments(unsafeResultMap: resultMap)
+        }
+        set {
+          resultMap += newValue.resultMap
+        }
+      }
+
+      internal struct Fragments {
+        internal private(set) var resultMap: ResultMap
+
+        internal init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
+
+        internal var droidDetails: DroidDetails? {
+          get {
+            if !DroidDetails.possibleTypes.contains(resultMap[\\"__typename\\"]! as! String) { return nil }
+            return DroidDetails(unsafeResultMap: resultMap)
+          }
+          set {
+            guard let newValue = newValue else { return }
+            resultMap += newValue.resultMap
+          }
+        }
+      }
+
+      internal var asDroid: AsDroid? {
+        get {
+          if !AsDroid.possibleTypes.contains(__typename) { return nil }
+          return AsDroid(unsafeResultMap: resultMap)
+        }
+        set {
+          guard let newValue = newValue else { return }
+          resultMap = newValue.resultMap
+        }
+      }
+
+      internal struct AsDroid: GraphQLSelectionSet {
+        internal static let possibleTypes: [String] = [\\"Droid\\"]
+
+        internal static var selections: [GraphQLSelection] {
+          return [
+            GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
+          ]
+        }
+
+        internal private(set) var resultMap: ResultMap
+
+        internal init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
+
+        internal init(primaryFunction: String? = nil) {
+          self.init(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"primaryFunction\\": primaryFunction])
+        }
+
+        /// This droid's primary function
+        internal var primaryFunction: String? {
+          get {
+            return resultMap[\\"primaryFunction\\"] as? String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: \\"primaryFunction\\")
+          }
+        }
+
+        internal var fragments: Fragments {
+          get {
+            return Fragments(unsafeResultMap: resultMap)
+          }
+          set {
+            resultMap += newValue.resultMap
+          }
+        }
+
+        internal struct Fragments {
+          internal private(set) var resultMap: ResultMap
+
+          internal init(unsafeResultMap: ResultMap) {
+            self.resultMap = unsafeResultMap
+          }
+
+          internal var droidDetails: DroidDetails {
+            get {
+              return DroidDetails(unsafeResultMap: resultMap)
+            }
+            set {
+              resultMap += newValue.resultMap
+            }
+          }
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #classDeclarationForOperation() should generate a class declaration for a query with fragment spreads 1`] = `
+"internal final class HeroQuery: GraphQLQuery {
+  /// The raw GraphQL definition of this operation.
+  internal let operationDefinition: String =
+    \\"\\"\\"
+    query Hero {
+      hero {
+        ...HeroDetails
+      }
+    }
+    \\"\\"\\"
+
+  internal let operationName: String = \\"Hero\\"
+
+  internal var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
+
+  internal init() {
+  }
+
+  internal struct Data: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Query\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"hero\\", type: .object(Hero.selections)),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal init(hero: Hero? = nil) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> ResultMap in value.resultMap }])
+    }
+
+    internal var hero: Hero? {
+      get {
+        return (resultMap[\\"hero\\"] as? ResultMap).flatMap { Hero(unsafeResultMap: $0) }
+      }
+      set {
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"hero\\")
+      }
+    }
+
+    internal struct Hero: GraphQLSelectionSet {
+      internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+      internal static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        ]
+      }
+
+      internal private(set) var resultMap: ResultMap
+
+      internal init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      internal static func makeHuman(name: String) -> Hero {
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+      }
+
+      internal static func makeDroid(name: String) -> Hero {
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+      }
+
+      /// The name of the character
+      internal var name: String {
+        get {
+          return resultMap[\\"name\\"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: \\"name\\")
+        }
+      }
+
+      internal var fragments: Fragments {
+        get {
+          return Fragments(unsafeResultMap: resultMap)
+        }
+        set {
+          resultMap += newValue.resultMap
+        }
+      }
+
+      internal struct Fragments {
+        internal private(set) var resultMap: ResultMap
+
+        internal init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
+
+        internal var heroDetails: HeroDetails {
+          get {
+            return HeroDetails(unsafeResultMap: resultMap)
+          }
+          set {
+            resultMap += newValue.resultMap
+          }
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #classDeclarationForOperation() should generate a class declaration for a query with variables 1`] = `
+"internal final class HeroNameQuery: GraphQLQuery {
+  /// The raw GraphQL definition of this operation.
+  internal let operationDefinition: String =
+    \\"\\"\\"
+    query HeroName($episode: Episode) {
+      hero(episode: $episode) {
+        name
+      }
+    }
+    \\"\\"\\"
+
+  internal let operationName: String = \\"HeroName\\"
+
+  internal var episode: Episode?
+
+  internal init(episode: Episode? = nil) {
+    self.episode = episode
+  }
+
+  internal var variables: GraphQLMap? {
+    return [\\"episode\\": episode]
+  }
+
+  internal struct Data: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Query\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"hero\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\")], type: .object(Hero.selections)),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal init(hero: Hero? = nil) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> ResultMap in value.resultMap }])
+    }
+
+    internal var hero: Hero? {
+      get {
+        return (resultMap[\\"hero\\"] as? ResultMap).flatMap { Hero(unsafeResultMap: $0) }
+      }
+      set {
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"hero\\")
+      }
+    }
+
+    internal struct Hero: GraphQLSelectionSet {
+      internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+      internal static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        ]
+      }
+
+      internal private(set) var resultMap: ResultMap
+
+      internal init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      internal static func makeHuman(name: String) -> Hero {
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+      }
+
+      internal static func makeDroid(name: String) -> Hero {
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+      }
+
+      /// The name of the character
+      internal var name: String {
+        get {
+          return resultMap[\\"name\\"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: \\"name\\")
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #classDeclarationForOperation() should generate a class declaration with an operationIdentifier property when generateOperationIds is specified 1`] = `
+"internal final class HeroQuery: GraphQLQuery {
+  /// The raw GraphQL definition of this operation.
+  internal let operationDefinition: String =
+    \\"\\"\\"
+    query Hero {
+      hero {
+        ...HeroDetails
+      }
+    }
+    \\"\\"\\"
+
+  internal let operationName: String = \\"Hero\\"
+
+  internal let operationIdentifier: String? = \\"90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4\\"
+
+  internal var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
+
+  internal init() {
+  }
+
+  internal struct Data: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Query\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"hero\\", type: .object(Hero.selections)),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal init(hero: Hero? = nil) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Query\\", \\"hero\\": hero.flatMap { (value: Hero) -> ResultMap in value.resultMap }])
+    }
+
+    internal var hero: Hero? {
+      get {
+        return (resultMap[\\"hero\\"] as? ResultMap).flatMap { Hero(unsafeResultMap: $0) }
+      }
+      set {
+        resultMap.updateValue(newValue?.resultMap, forKey: \\"hero\\")
+      }
+    }
+
+    internal struct Hero: GraphQLSelectionSet {
+      internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+      internal static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        ]
+      }
+
+      internal private(set) var resultMap: ResultMap
+
+      internal init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      internal static func makeHuman(name: String) -> Hero {
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+      }
+
+      internal static func makeDroid(name: String) -> Hero {
+        return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+      }
+
+      /// The name of the character
+      internal var name: String {
+        get {
+          return resultMap[\\"name\\"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: \\"name\\")
+        }
+      }
+
+      internal var fragments: Fragments {
+        get {
+          return Fragments(unsafeResultMap: resultMap)
+        }
+        set {
+          resultMap += newValue.resultMap
+        }
+      }
+
+      internal struct Fragments {
+        internal private(set) var resultMap: ResultMap
+
+        internal init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
+
+        internal var heroDetails: HeroDetails {
+          get {
+            return HeroDetails(unsafeResultMap: resultMap)
+          }
+          set {
+            resultMap += newValue.resultMap
+          }
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #initializerDeclarationForProperties() should generate initializer for a property 1`] = `
+"internal init(episode: Episode) {
+  self.episode = episode
+}"
+`;
+
+exports[`Swift code generation internal access level #initializerDeclarationForProperties() should generate initializer for an optional property 1`] = `
+"internal init(episode: Episode? = nil) {
+  self.episode = episode
+}"
+`;
+
+exports[`Swift code generation internal access level #initializerDeclarationForProperties() should generate initializer for multiple properties 1`] = `
+"internal init(episode: Episode? = nil, scene: String? = nil) {
+  self.episode = episode
+  self.scene = scene
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForFragment() should generate a struct declaration for a fragment that includes a fragment spread 1`] = `
+"internal struct HeroDetails: GraphQLFragment {
+  /// The raw GraphQL definition of this fragment.
+  internal static let fragmentDefinition: String =
+    \\"\\"\\"
+    fragment HeroDetails on Character {
+      name
+      ...MoreHeroDetails
+    }
+    \\"\\"\\"
+
+  internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"appearsIn\\", type: .nonNull(.list(.scalar(Episode.self)))),
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal static func makeHuman(name: String, appearsIn: [Episode?]) -> HeroDetails {
+    return HeroDetails(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
+  }
+
+  internal static func makeDroid(name: String, appearsIn: [Episode?]) -> HeroDetails {
+    return HeroDetails(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
+  }
+
+  /// The name of the character
+  internal var name: String {
+    get {
+      return resultMap[\\"name\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"name\\")
+    }
+  }
+
+  /// The movies this character appears in
+  internal var appearsIn: [Episode?] {
+    get {
+      return resultMap[\\"appearsIn\\"]! as! [Episode?]
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"appearsIn\\")
+    }
+  }
+
+  internal var fragments: Fragments {
+    get {
+      return Fragments(unsafeResultMap: resultMap)
+    }
+    set {
+      resultMap += newValue.resultMap
+    }
+  }
+
+  internal struct Fragments {
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal var moreHeroDetails: MoreHeroDetails {
+      get {
+        return MoreHeroDetails(unsafeResultMap: resultMap)
+      }
+      set {
+        resultMap += newValue.resultMap
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForFragment() should generate a struct declaration for a fragment with a concrete type condition 1`] = `
+"internal struct DroidDetails: GraphQLFragment {
+  /// The raw GraphQL definition of this fragment.
+  internal static let fragmentDefinition: String =
+    \\"\\"\\"
+    fragment DroidDetails on Droid {
+      name
+      primaryFunction
+    }
+    \\"\\"\\"
+
+  internal static let possibleTypes: [String] = [\\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal init(name: String, primaryFunction: String? = nil) {
+    self.init(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
+  }
+
+  /// What others call this droid
+  internal var name: String {
+    get {
+      return resultMap[\\"name\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"name\\")
+    }
+  }
+
+  /// This droid's primary function
+  internal var primaryFunction: String? {
+    get {
+      return resultMap[\\"primaryFunction\\"] as? String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"primaryFunction\\")
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForFragment() should generate a struct declaration for a fragment with a subselection 1`] = `
+"internal struct HeroDetails: GraphQLFragment {
+  /// The raw GraphQL definition of this fragment.
+  internal static let fragmentDefinition: String =
+    \\"\\"\\"
+    fragment HeroDetails on Character {
+      name
+      friends {
+        name
+      }
+    }
+    \\"\\"\\"
+
+  internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"friends\\", type: .list(.object(Friend.selections))),
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal static func makeHuman(name: String, friends: [Friend?]? = nil) -> HeroDetails {
+    return HeroDetails(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"friends\\": friends.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }])
+  }
+
+  internal static func makeDroid(name: String, friends: [Friend?]? = nil) -> HeroDetails {
+    return HeroDetails(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"friends\\": friends.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }])
+  }
+
+  /// The name of the character
+  internal var name: String {
+    get {
+      return resultMap[\\"name\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"name\\")
+    }
+  }
+
+  /// The friends of the character, or an empty list if they have none
+  internal var friends: [Friend?]? {
+    get {
+      return (resultMap[\\"friends\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [Friend?] in value.map { (value: ResultMap?) -> Friend? in value.flatMap { (value: ResultMap) -> Friend in Friend(unsafeResultMap: value) } } }
+    }
+    set {
+      resultMap.updateValue(newValue.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }, forKey: \\"friends\\")
+    }
+  }
+
+  internal struct Friend: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal static func makeHuman(name: String) -> Friend {
+      return Friend(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+    }
+
+    internal static func makeDroid(name: String) -> Friend {
+      return Friend(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+    }
+
+    /// The name of the character
+    internal var name: String {
+      get {
+        return resultMap[\\"name\\"]! as! String
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"name\\")
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForFragment() should generate a struct declaration for a fragment with an abstract type condition 1`] = `
+"internal struct HeroDetails: GraphQLFragment {
+  /// The raw GraphQL definition of this fragment.
+  internal static let fragmentDefinition: String =
+    \\"\\"\\"
+    fragment HeroDetails on Character {
+      name
+      appearsIn
+    }
+    \\"\\"\\"
+
+  internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"appearsIn\\", type: .nonNull(.list(.scalar(Episode.self)))),
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal static func makeHuman(name: String, appearsIn: [Episode?]) -> HeroDetails {
+    return HeroDetails(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
+  }
+
+  internal static func makeDroid(name: String, appearsIn: [Episode?]) -> HeroDetails {
+    return HeroDetails(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"appearsIn\\": appearsIn])
+  }
+
+  /// The name of the character
+  internal var name: String {
+    get {
+      return resultMap[\\"name\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"name\\")
+    }
+  }
+
+  /// The movies this character appears in
+  internal var appearsIn: [Episode?] {
+    get {
+      return resultMap[\\"appearsIn\\"]! as! [Episode?]
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"appearsIn\\")
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForSelectionSet() should escape init specially in a struct declaration initializer for a selection set 1`] = `
+"internal struct Human: GraphQLSelectionSet {
+  internal static let possibleTypes: [String] = [\\"Human\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal init(\`self\` _self: [\`Self\`?]? = nil) {
+    self.init(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"self\\": _self.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
+  }
+
+  /// This human's friends, or an empty list if they have none
+  internal var \`self\`: [\`Self\`?]? {
+    get {
+      return (resultMap[\\"self\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [\`Self\`?] in value.map { (value: ResultMap?) -> \`Self\`? in value.flatMap { (value: ResultMap) -> \`Self\` in \`Self\`(unsafeResultMap: value) } } }
+    }
+    set {
+      resultMap.updateValue(newValue.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }, forKey: \\"self\\")
+    }
+  }
+
+  internal struct \`Self\`: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal static func makeHuman(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"id\\": id])
+    }
+
+    internal static func makeDroid(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"id\\": id])
+    }
+
+    /// The ID of the character
+    internal var id: GraphQLID {
+      get {
+        return resultMap[\\"id\\"]! as! GraphQLID
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"id\\")
+      }
+    }
+  }
+}
+
+internal struct Human: GraphQLSelectionSet {
+  internal static let possibleTypes: [String] = [\\"Human\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
+      GraphQLField(\\"name\\", alias: \\"_self\\", type: .nonNull(.scalar(String.self))),
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal init(\`self\` _self_: [\`Self\`?]? = nil, _self: String) {
+    self.init(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"self\\": _self_.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }, \\"_self\\": _self])
+  }
+
+  /// This human's friends, or an empty list if they have none
+  internal var \`self\`: [\`Self\`?]? {
+    get {
+      return (resultMap[\\"self\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [\`Self\`?] in value.map { (value: ResultMap?) -> \`Self\`? in value.flatMap { (value: ResultMap) -> \`Self\` in \`Self\`(unsafeResultMap: value) } } }
+    }
+    set {
+      resultMap.updateValue(newValue.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }, forKey: \\"self\\")
+    }
+  }
+
+  /// What this human calls themselves
+  internal var _self: String {
+    get {
+      return resultMap[\\"_self\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"_self\\")
+    }
+  }
+
+  internal struct \`Self\`: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal static func makeHuman(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"id\\": id])
+    }
+
+    internal static func makeDroid(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"id\\": id])
+    }
+
+    /// The ID of the character
+    internal var id: GraphQLID {
+      get {
+        return resultMap[\\"id\\"]! as! GraphQLID
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"id\\")
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForSelectionSet() should escape reserved keywords in a struct declaration for a selection set 1`] = `
+"internal struct Hero: GraphQLSelectionSet {
+  internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", alias: \\"private\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal static func makeHuman(\`private\`: String, \`self\` _self: [\`Self\`?]? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"private\\": \`private\`, \\"self\\": _self.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
+  }
+
+  internal static func makeDroid(\`private\`: String, \`self\` _self: [\`Self\`?]? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"private\\": \`private\`, \\"self\\": _self.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }])
+  }
+
+  /// The name of the character
+  internal var \`private\`: String {
+    get {
+      return resultMap[\\"private\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"private\\")
+    }
+  }
+
+  /// The friends of the character, or an empty list if they have none
+  internal var \`self\`: [\`Self\`?]? {
+    get {
+      return (resultMap[\\"self\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [\`Self\`?] in value.map { (value: ResultMap?) -> \`Self\`? in value.flatMap { (value: ResultMap) -> \`Self\` in \`Self\`(unsafeResultMap: value) } } }
+    }
+    set {
+      resultMap.updateValue(newValue.flatMap { (value: [\`Self\`?]) -> [ResultMap?] in value.map { (value: \`Self\`?) -> ResultMap? in value.flatMap { (value: \`Self\`) -> ResultMap in value.resultMap } } }, forKey: \\"self\\")
+    }
+  }
+
+  internal struct \`Self\`: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal static func makeHuman(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"id\\": id])
+    }
+
+    internal static func makeDroid(id: GraphQLID) -> \`Self\` {
+      return \`Self\`(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"id\\": id])
+    }
+
+    /// The ID of the character
+    internal var id: GraphQLID {
+      get {
+        return resultMap[\\"id\\"]! as! GraphQLID
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"id\\")
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForSelectionSet() should generate a nested struct declaration for a selection set with subselections 1`] = `
+"internal struct Hero: GraphQLSelectionSet {
+  internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"friends\\", type: .list(.object(Friend.selections))),
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal static func makeHuman(friends: [Friend?]? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"friends\\": friends.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }])
+  }
+
+  internal static func makeDroid(friends: [Friend?]? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"friends\\": friends.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }])
+  }
+
+  /// The friends of the character, or an empty list if they have none
+  internal var friends: [Friend?]? {
+    get {
+      return (resultMap[\\"friends\\"] as? [ResultMap?]).flatMap { (value: [ResultMap?]) -> [Friend?] in value.map { (value: ResultMap?) -> Friend? in value.flatMap { (value: ResultMap) -> Friend in Friend(unsafeResultMap: value) } } }
+    }
+    set {
+      resultMap.updateValue(newValue.flatMap { (value: [Friend?]) -> [ResultMap?] in value.map { (value: Friend?) -> ResultMap? in value.flatMap { (value: Friend) -> ResultMap in value.resultMap } } }, forKey: \\"friends\\")
+    }
+  }
+
+  internal struct Friend: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal static func makeHuman(name: String) -> Friend {
+      return Friend(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+    }
+
+    internal static func makeDroid(name: String) -> Friend {
+      return Friend(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+    }
+
+    /// The name of the character
+    internal var name: String {
+      get {
+        return resultMap[\\"name\\"]! as! String
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"name\\")
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForSelectionSet() should generate a struct declaration for a fragment spread nested in an inline fragment 1`] = `
+"internal struct Hero: GraphQLSelectionSet {
+  internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLTypeCase(
+        variants: [\\"Droid\\": AsDroid.selections],
+        default: [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        ]
+      )
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal static func makeHuman(name: String) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+  }
+
+  internal static func makeDroid(name: String) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+  }
+
+  /// The name of the character
+  internal var name: String {
+    get {
+      return resultMap[\\"name\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"name\\")
+    }
+  }
+
+  internal var asDroid: AsDroid? {
+    get {
+      if !AsDroid.possibleTypes.contains(__typename) { return nil }
+      return AsDroid(unsafeResultMap: resultMap)
+    }
+    set {
+      guard let newValue = newValue else { return }
+      resultMap = newValue.resultMap
+    }
+  }
+
+  internal struct AsDroid: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Droid\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal init(name: String) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+    }
+
+    /// What others call this droid
+    internal var name: String {
+      get {
+        return resultMap[\\"name\\"]! as! String
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"name\\")
+      }
+    }
+
+    internal var fragments: Fragments {
+      get {
+        return Fragments(unsafeResultMap: resultMap)
+      }
+      set {
+        resultMap += newValue.resultMap
+      }
+    }
+
+    internal struct Fragments {
+      internal private(set) var resultMap: ResultMap
+
+      internal init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      internal var heroDetails: HeroDetails {
+        get {
+          return HeroDetails(unsafeResultMap: resultMap)
+        }
+        set {
+          resultMap += newValue.resultMap
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForSelectionSet() should generate a struct declaration for a selection set 1`] = `
+"internal struct Hero: GraphQLSelectionSet {
+  internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal static func makeHuman(name: String) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+  }
+
+  internal static func makeDroid(name: String) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+  }
+
+  /// The name of the character
+  internal var name: String {
+    get {
+      return resultMap[\\"name\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"name\\")
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a conditional field 1`] = `
+"internal struct Hero: GraphQLSelectionSet {
+  internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLBooleanCondition(variableName: \\"includeName\\", inverted: false, selections: [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]),
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal static func makeHuman(name: String? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+  }
+
+  internal static func makeDroid(name: String? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+  }
+
+  /// The name of the character
+  internal var name: String? {
+    get {
+      return resultMap[\\"name\\"] as? String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"name\\")
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a fragment spread that matches the parent type 1`] = `
+"internal struct Hero: GraphQLSelectionSet {
+  internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal static func makeHuman(name: String) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+  }
+
+  internal static func makeDroid(name: String) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+  }
+
+  /// The name of the character
+  internal var name: String {
+    get {
+      return resultMap[\\"name\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"name\\")
+    }
+  }
+
+  internal var fragments: Fragments {
+    get {
+      return Fragments(unsafeResultMap: resultMap)
+    }
+    set {
+      resultMap += newValue.resultMap
+    }
+  }
+
+  internal struct Fragments {
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal var heroDetails: HeroDetails {
+      get {
+        return HeroDetails(unsafeResultMap: resultMap)
+      }
+      set {
+        resultMap += newValue.resultMap
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a fragment spread with a more specific type condition 1`] = `
+"internal struct Hero: GraphQLSelectionSet {
+  internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLTypeCase(
+        variants: [\\"Droid\\": AsDroid.selections],
+        default: [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        ]
+      )
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal static func makeHuman(name: String) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+  }
+
+  internal static func makeDroid(name: String) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+  }
+
+  /// The name of the character
+  internal var name: String {
+    get {
+      return resultMap[\\"name\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"name\\")
+    }
+  }
+
+  internal var fragments: Fragments {
+    get {
+      return Fragments(unsafeResultMap: resultMap)
+    }
+    set {
+      resultMap += newValue.resultMap
+    }
+  }
+
+  internal struct Fragments {
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal var droidDetails: DroidDetails? {
+      get {
+        if !DroidDetails.possibleTypes.contains(resultMap[\\"__typename\\"]! as! String) { return nil }
+        return DroidDetails(unsafeResultMap: resultMap)
+      }
+      set {
+        guard let newValue = newValue else { return }
+        resultMap += newValue.resultMap
+      }
+    }
+  }
+
+  internal var asDroid: AsDroid? {
+    get {
+      if !AsDroid.possibleTypes.contains(__typename) { return nil }
+      return AsDroid(unsafeResultMap: resultMap)
+    }
+    set {
+      guard let newValue = newValue else { return }
+      resultMap = newValue.resultMap
+    }
+  }
+
+  internal struct AsDroid: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Droid\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal init(name: String) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name])
+    }
+
+    /// What others call this droid
+    internal var name: String {
+      get {
+        return resultMap[\\"name\\"]! as! String
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"name\\")
+      }
+    }
+
+    internal var fragments: Fragments {
+      get {
+        return Fragments(unsafeResultMap: resultMap)
+      }
+      set {
+        resultMap += newValue.resultMap
+      }
+    }
+
+    internal struct Fragments {
+      internal private(set) var resultMap: ResultMap
+
+      internal init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      internal var droidDetails: DroidDetails {
+        get {
+          return DroidDetails(unsafeResultMap: resultMap)
+        }
+        set {
+          resultMap += newValue.resultMap
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with an inline fragment 1`] = `
+"internal struct Hero: GraphQLSelectionSet {
+  internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLTypeCase(
+        variants: [\\"Droid\\": AsDroid.selections],
+        default: [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        ]
+      )
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal static func makeHuman(name: String) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"name\\": name])
+  }
+
+  internal static func makeDroid(name: String, primaryFunction: String? = nil) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
+  }
+
+  /// The name of the character
+  internal var name: String {
+    get {
+      return resultMap[\\"name\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"name\\")
+    }
+  }
+
+  internal var asDroid: AsDroid? {
+    get {
+      if !AsDroid.possibleTypes.contains(__typename) { return nil }
+      return AsDroid(unsafeResultMap: resultMap)
+    }
+    set {
+      guard let newValue = newValue else { return }
+      resultMap = newValue.resultMap
+    }
+  }
+
+  internal struct AsDroid: GraphQLSelectionSet {
+    internal static let possibleTypes: [String] = [\\"Droid\\"]
+
+    internal static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
+      ]
+    }
+
+    internal private(set) var resultMap: ResultMap
+
+    internal init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    internal init(name: String, primaryFunction: String? = nil) {
+      self.init(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"name\\": name, \\"primaryFunction\\": primaryFunction])
+    }
+
+    /// What others call this droid
+    internal var name: String {
+      get {
+        return resultMap[\\"name\\"]! as! String
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"name\\")
+      }
+    }
+
+    /// This droid's primary function
+    internal var primaryFunction: String? {
+      get {
+        return resultMap[\\"primaryFunction\\"] as? String
+      }
+      set {
+        resultMap.updateValue(newValue, forKey: \\"primaryFunction\\")
+      }
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #structDeclarationForSelectionSet() should preserve leading and trailing underscores on fields 1`] = `
+"internal struct Hero: GraphQLSelectionSet {
+  internal static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
+
+  internal static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", alias: \\"_name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"id\\", alias: \\"_camel_case_id__\\", type: .nonNull(.scalar(GraphQLID.self))),
+    ]
+  }
+
+  internal private(set) var resultMap: ResultMap
+
+  internal init(unsafeResultMap: ResultMap) {
+    self.resultMap = unsafeResultMap
+  }
+
+  internal static func makeHuman(_name: String, _camelCaseId__: GraphQLID) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Human\\", \\"_name\\": _name, \\"_camel_case_id__\\": _camelCaseId__])
+  }
+
+  internal static func makeDroid(_name: String, _camelCaseId__: GraphQLID) -> Hero {
+    return Hero(unsafeResultMap: [\\"__typename\\": \\"Droid\\", \\"_name\\": _name, \\"_camel_case_id__\\": _camelCaseId__])
+  }
+
+  /// The name of the character
+  internal var _name: String {
+    get {
+      return resultMap[\\"_name\\"]! as! String
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"_name\\")
+    }
+  }
+
+  /// The ID of the character
+  internal var _camelCaseId__: GraphQLID {
+    get {
+      return resultMap[\\"_camel_case_id__\\"]! as! GraphQLID
+    }
+    set {
+      resultMap.updateValue(newValue, forKey: \\"_camel_case_id__\\")
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #typeDeclarationForGraphQLType() should escape identifiers in cases of enum declaration for a GraphQLEnumType 1`] = `
+"internal enum AlbumPrivacies: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+  internal typealias RawValue = String
+  case \`public\`
+  case \`private\`
+  /// Auto generated constant for unknown enum values
+  case __unknown(RawValue)
+
+  internal init?(rawValue: RawValue) {
+    switch rawValue {
+      case \\"PUBLIC\\": self = .public
+      case \\"PRIVATE\\": self = .private
+      default: self = .__unknown(rawValue)
+    }
+  }
+
+  internal var rawValue: RawValue {
+    switch self {
+      case .public: return \\"PUBLIC\\"
+      case .private: return \\"PRIVATE\\"
+      case .__unknown(let value): return value
+    }
+  }
+
+  internal static func == (lhs: AlbumPrivacies, rhs: AlbumPrivacies) -> Bool {
+    switch (lhs, rhs) {
+      case (.public, .public): return true
+      case (.private, .private): return true
+      case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
+      default: return false
+    }
+  }
+
+  internal static var allCases: [AlbumPrivacies] {
+    return [
+      .public,
+      .private,
+    ]
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #typeDeclarationForGraphQLType() should generate a struct declaration for a GraphQLInputObjectType 1`] = `
+"/// The input object sent when someone is creating a new review
+internal struct ReviewInput: GraphQLMapConvertible {
+  internal var graphQLMap: GraphQLMap
+
+  /// - Parameters:
+  ///   - stars: 0-5 stars
+  ///   - commentary: Comment about the movie, optional
+  ///   - favoriteColor: Favorite color, optional
+  internal init(stars: Int, commentary: Swift.Optional<String?> = nil, favoriteColor: Swift.Optional<ColorInput?> = nil) {
+    graphQLMap = [\\"stars\\": stars, \\"commentary\\": commentary, \\"favorite_color\\": favoriteColor]
+  }
+
+  /// 0-5 stars
+  internal var stars: Int {
+    get {
+      return graphQLMap[\\"stars\\"] as! Int
+    }
+    set {
+      graphQLMap.updateValue(newValue, forKey: \\"stars\\")
+    }
+  }
+
+  /// Comment about the movie, optional
+  internal var commentary: Swift.Optional<String?> {
+    get {
+      return graphQLMap[\\"commentary\\"] as? Swift.Optional<String?> ?? Swift.Optional<String?>.none
+    }
+    set {
+      graphQLMap.updateValue(newValue, forKey: \\"commentary\\")
+    }
+  }
+
+  /// Favorite color, optional
+  internal var favoriteColor: Swift.Optional<ColorInput?> {
+    get {
+      return graphQLMap[\\"favorite_color\\"] as? Swift.Optional<ColorInput?> ?? Swift.Optional<ColorInput?>.none
+    }
+    set {
+      graphQLMap.updateValue(newValue, forKey: \\"favorite_color\\")
+    }
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #typeDeclarationForGraphQLType() should generate an enum declaration for a GraphQLEnumType 1`] = `
+"/// The episodes in the Star Wars trilogy
+internal enum Episode: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+  internal typealias RawValue = String
+  /// Star Wars Episode IV: A New Hope, released in 1977.
+  case newhope
+  /// Star Wars Episode V: The Empire Strikes Back, released in 1980.
+  case empire
+  /// Star Wars Episode VI: Return of the Jedi, released in 1983.
+  case jedi
+  /// Auto generated constant for unknown enum values
+  case __unknown(RawValue)
+
+  internal init?(rawValue: RawValue) {
+    switch rawValue {
+      case \\"NEWHOPE\\": self = .newhope
+      case \\"EMPIRE\\": self = .empire
+      case \\"JEDI\\": self = .jedi
+      default: self = .__unknown(rawValue)
+    }
+  }
+
+  internal var rawValue: RawValue {
+    switch self {
+      case .newhope: return \\"NEWHOPE\\"
+      case .empire: return \\"EMPIRE\\"
+      case .jedi: return \\"JEDI\\"
+      case .__unknown(let value): return value
+    }
+  }
+
+  internal static func == (lhs: Episode, rhs: Episode) -> Bool {
+    switch (lhs, rhs) {
+      case (.newhope, .newhope): return true
+      case (.empire, .empire): return true
+      case (.jedi, .jedi): return true
+      case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
+      default: return false
+    }
+  }
+
+  internal static var allCases: [Episode] {
+    return [
+      .newhope,
+      .empire,
+      .jedi,
+    ]
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #typeDeclarationForGraphQLType() should include deprecated cases in an enum declaration for a GraphQLEnumType 1`] = `
+"/// Units of height
+internal enum LengthUnit: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+  internal typealias RawValue = String
+  /// The standard unit around the world
+  case meter
+  /// Primarily used in the United States
+  case foot
+  /// Ancient unit used during the Middle Ages
+  @available(*, deprecated, message: \\"Test deprecated enum case\\")
+  case cubit
+  /// Auto generated constant for unknown enum values
+  case __unknown(RawValue)
+
+  internal init?(rawValue: RawValue) {
+    switch rawValue {
+      case \\"METER\\": self = .meter
+      case \\"FOOT\\": self = .foot
+      case \\"CUBIT\\": self = .cubit
+      default: self = .__unknown(rawValue)
+    }
+  }
+
+  internal var rawValue: RawValue {
+    switch self {
+      case .meter: return \\"METER\\"
+      case .foot: return \\"FOOT\\"
+      case .cubit: return \\"CUBIT\\"
+      case .__unknown(let value): return value
+    }
+  }
+
+  internal static func == (lhs: LengthUnit, rhs: LengthUnit) -> Bool {
+    switch (lhs, rhs) {
+      case (.meter, .meter): return true
+      case (.foot, .foot): return true
+      case (.cubit, .cubit): return true
+      case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
+      default: return false
+    }
+  }
+
+  internal static var allCases: [LengthUnit] {
+    return [
+      .meter,
+      .foot,
+      .cubit,
+    ]
+  }
+}"
+`;
+
+exports[`Swift code generation internal access level #typeDeclarationForGraphQLType() should omit deprecated cases from an enum declaration for a GraphQLEnumType 1`] = `
+"/// Units of height
+internal enum LengthUnit: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
+  internal typealias RawValue = String
+  /// The standard unit around the world
+  case meter
+  /// Primarily used in the United States
+  case foot
+  /// Auto generated constant for unknown enum values
+  case __unknown(RawValue)
+
+  internal init?(rawValue: RawValue) {
+    switch rawValue {
+      case \\"METER\\": self = .meter
+      case \\"FOOT\\": self = .foot
+      default: self = .__unknown(rawValue)
+    }
+  }
+
+  internal var rawValue: RawValue {
+    switch self {
+      case .meter: return \\"METER\\"
+      case .foot: return \\"FOOT\\"
+      case .__unknown(let value): return value
+    }
+  }
+
+  internal static func == (lhs: LengthUnit, rhs: LengthUnit) -> Bool {
+    switch (lhs, rhs) {
+      case (.meter, .meter): return true
+      case (.foot, .foot): return true
+      case (.__unknown(let lhsValue), .__unknown(let rhsValue)): return lhsValue == rhsValue
+      default: return false
+    }
+  }
+
+  internal static var allCases: [LengthUnit] {
+    return [
+      .meter,
+      .foot,
+    ]
+  }
+}"
+`;
+
+exports[`Swift code generation public access level #classDeclarationForOperation() should correctly escape a mutli-line string literal 1`] = `
 "public final class CreateReviewMutation: GraphQLMutation {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
@@ -101,7 +2382,7 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
 }"
 `;
 
-exports[`Swift code generation #classDeclarationForOperation() should correctly escape a mutli-line string literal with backslashes 1`] = `
+exports[`Swift code generation public access level #classDeclarationForOperation() should correctly escape a mutli-line string literal with backslashes 1`] = `
 "public final class CreateReviewMutation: GraphQLMutation {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
@@ -202,7 +2483,7 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
 }"
 `;
 
-exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a mutation with variables 1`] = `
+exports[`Swift code generation public access level #classDeclarationForOperation() should generate a class declaration for a mutation with variables 1`] = `
 "public final class CreateReviewMutation: GraphQLMutation {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
@@ -299,7 +2580,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 }"
 `;
 
-exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with a fragment spread nested in an inline fragment 1`] = `
+exports[`Swift code generation public access level #classDeclarationForOperation() should generate a class declaration for a query with a fragment spread nested in an inline fragment 1`] = `
 "public final class HeroQuery: GraphQLQuery {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
@@ -446,7 +2727,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 }"
 `;
 
-exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with conditional fragment spreads 1`] = `
+exports[`Swift code generation public access level #classDeclarationForOperation() should generate a class declaration for a query with conditional fragment spreads 1`] = `
 "public final class HeroQuery: GraphQLQuery {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
@@ -619,7 +2900,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 }"
 `;
 
-exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with fragment spreads 1`] = `
+exports[`Swift code generation public access level #classDeclarationForOperation() should generate a class declaration for a query with fragment spreads 1`] = `
 "public final class HeroQuery: GraphQLQuery {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
@@ -729,7 +3010,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 }"
 `;
 
-exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration for a query with variables 1`] = `
+exports[`Swift code generation public access level #classDeclarationForOperation() should generate a class declaration for a query with variables 1`] = `
 "public final class HeroNameQuery: GraphQLQuery {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
@@ -818,7 +3099,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 }"
 `;
 
-exports[`Swift code generation #classDeclarationForOperation() should generate a class declaration with an operationIdentifier property when generateOperationIds is specified 1`] = `
+exports[`Swift code generation public access level #classDeclarationForOperation() should generate a class declaration with an operationIdentifier property when generateOperationIds is specified 1`] = `
 "public final class HeroQuery: GraphQLQuery {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
@@ -930,26 +3211,26 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 }"
 `;
 
-exports[`Swift code generation #initializerDeclarationForProperties() should generate initializer for a property 1`] = `
+exports[`Swift code generation public access level #initializerDeclarationForProperties() should generate initializer for a property 1`] = `
 "public init(episode: Episode) {
   self.episode = episode
 }"
 `;
 
-exports[`Swift code generation #initializerDeclarationForProperties() should generate initializer for an optional property 1`] = `
+exports[`Swift code generation public access level #initializerDeclarationForProperties() should generate initializer for an optional property 1`] = `
 "public init(episode: Episode? = nil) {
   self.episode = episode
 }"
 `;
 
-exports[`Swift code generation #initializerDeclarationForProperties() should generate initializer for multiple properties 1`] = `
+exports[`Swift code generation public access level #initializerDeclarationForProperties() should generate initializer for multiple properties 1`] = `
 "public init(episode: Episode? = nil, scene: String? = nil) {
   self.episode = episode
   self.scene = scene
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment that includes a fragment spread 1`] = `
+exports[`Swift code generation public access level #structDeclarationForFragment() should generate a struct declaration for a fragment that includes a fragment spread 1`] = `
 "public struct HeroDetails: GraphQLFragment {
   /// The raw GraphQL definition of this fragment.
   public static let fragmentDefinition: String =
@@ -1031,7 +3312,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a concrete type condition 1`] = `
+exports[`Swift code generation public access level #structDeclarationForFragment() should generate a struct declaration for a fragment with a concrete type condition 1`] = `
 "public struct DroidDetails: GraphQLFragment {
   /// The raw GraphQL definition of this fragment.
   public static let fragmentDefinition: String =
@@ -1083,7 +3364,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with a subselection 1`] = `
+exports[`Swift code generation public access level #structDeclarationForFragment() should generate a struct declaration for a fragment with a subselection 1`] = `
 "public struct HeroDetails: GraphQLFragment {
   /// The raw GraphQL definition of this fragment.
   public static let fragmentDefinition: String =
@@ -1175,7 +3456,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForFragment() should generate a struct declaration for a fragment with an abstract type condition 1`] = `
+exports[`Swift code generation public access level #structDeclarationForFragment() should generate a struct declaration for a fragment with an abstract type condition 1`] = `
 "public struct HeroDetails: GraphQLFragment {
   /// The raw GraphQL definition of this fragment.
   public static let fragmentDefinition: String =
@@ -1231,7 +3512,7 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForSelectionSet() should escape init specially in a struct declaration initializer for a selection set 1`] = `
+exports[`Swift code generation public access level #structDeclarationForSelectionSet() should escape init specially in a struct declaration initializer for a selection set 1`] = `
 "public struct Human: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\"]
 
@@ -1372,7 +3653,7 @@ public struct Human: GraphQLSelectionSet {
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForSelectionSet() should escape reserved keywords in a struct declaration for a selection set 1`] = `
+exports[`Swift code generation public access level #structDeclarationForSelectionSet() should escape reserved keywords in a struct declaration for a selection set 1`] = `
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
@@ -1453,7 +3734,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForSelectionSet() should generate a nested struct declaration for a selection set with subselections 1`] = `
+exports[`Swift code generation public access level #structDeclarationForSelectionSet() should generate a nested struct declaration for a selection set with subselections 1`] = `
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
@@ -1523,7 +3804,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a fragment spread nested in an inline fragment 1`] = `
+exports[`Swift code generation public access level #structDeclarationForSelectionSet() should generate a struct declaration for a fragment spread nested in an inline fragment 1`] = `
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
@@ -1632,7 +3913,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set 1`] = `
+exports[`Swift code generation public access level #structDeclarationForSelectionSet() should generate a struct declaration for a selection set 1`] = `
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
@@ -1668,7 +3949,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a conditional field 1`] = `
+exports[`Swift code generation public access level #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a conditional field 1`] = `
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
@@ -1706,7 +3987,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a fragment spread that matches the parent type 1`] = `
+exports[`Swift code generation public access level #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a fragment spread that matches the parent type 1`] = `
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
@@ -1769,7 +4050,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a fragment spread with a more specific type condition 1`] = `
+exports[`Swift code generation public access level #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with a fragment spread with a more specific type condition 1`] = `
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
@@ -1906,7 +4187,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with an inline fragment 1`] = `
+exports[`Swift code generation public access level #structDeclarationForSelectionSet() should generate a struct declaration for a selection set with an inline fragment 1`] = `
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
@@ -1999,7 +4280,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 }"
 `;
 
-exports[`Swift code generation #structDeclarationForSelectionSet() should preserve leading and trailing underscores on fields 1`] = `
+exports[`Swift code generation public access level #structDeclarationForSelectionSet() should preserve leading and trailing underscores on fields 1`] = `
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
@@ -2046,7 +4327,7 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should preser
 }"
 `;
 
-exports[`Swift code generation #typeDeclarationForGraphQLType() should escape identifiers in cases of enum declaration for a GraphQLEnumType 1`] = `
+exports[`Swift code generation public access level #typeDeclarationForGraphQLType() should escape identifiers in cases of enum declaration for a GraphQLEnumType 1`] = `
 "public enum AlbumPrivacies: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
   public typealias RawValue = String
   case \`public\`
@@ -2088,7 +4369,7 @@ exports[`Swift code generation #typeDeclarationForGraphQLType() should escape id
 }"
 `;
 
-exports[`Swift code generation #typeDeclarationForGraphQLType() should generate a struct declaration for a GraphQLInputObjectType 1`] = `
+exports[`Swift code generation public access level #typeDeclarationForGraphQLType() should generate a struct declaration for a GraphQLInputObjectType 1`] = `
 "/// The input object sent when someone is creating a new review
 public struct ReviewInput: GraphQLMapConvertible {
   public var graphQLMap: GraphQLMap
@@ -2133,7 +4414,7 @@ public struct ReviewInput: GraphQLMapConvertible {
 }"
 `;
 
-exports[`Swift code generation #typeDeclarationForGraphQLType() should generate an enum declaration for a GraphQLEnumType 1`] = `
+exports[`Swift code generation public access level #typeDeclarationForGraphQLType() should generate an enum declaration for a GraphQLEnumType 1`] = `
 "/// The episodes in the Star Wars trilogy
 public enum Episode: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
   public typealias RawValue = String
@@ -2184,7 +4465,7 @@ public enum Episode: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo
 }"
 `;
 
-exports[`Swift code generation #typeDeclarationForGraphQLType() should include deprecated cases in an enum declaration for a GraphQLEnumType 1`] = `
+exports[`Swift code generation public access level #typeDeclarationForGraphQLType() should include deprecated cases in an enum declaration for a GraphQLEnumType 1`] = `
 "/// Units of height
 public enum LengthUnit: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
   public typealias RawValue = String
@@ -2236,7 +4517,7 @@ public enum LengthUnit: RawRepresentable, Equatable, Hashable, CaseIterable, Apo
 }"
 `;
 
-exports[`Swift code generation #typeDeclarationForGraphQLType() should omit deprecated cases from an enum declaration for a GraphQLEnumType 1`] = `
+exports[`Swift code generation public access level #typeDeclarationForGraphQLType() should omit deprecated cases from an enum declaration for a GraphQLEnumType 1`] = `
 "/// Units of height
 public enum LengthUnit: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.JSONDecodable, Apollo.JSONEncodable {
   public typealias RawValue = String

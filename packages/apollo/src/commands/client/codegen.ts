@@ -80,6 +80,10 @@ export default class Generate extends ClientCommand {
       description:
         "Prevents operations from being rendered as multiline strings [Swift only]"
     }),
+    swiftAccessLevel: flags.string({
+      description:
+        "Sets the access level for generated types (public or internal). If not provided, public access level is used. [Swift only]"
+    }),
 
     // flow
     useFlowExactObjects: flags.boolean({
@@ -229,7 +233,8 @@ export default class Generate extends ClientCommand {
                     suppressSwiftMultilineStringLiterals:
                       flags.suppressSwiftMultilineStringLiterals,
                     omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases,
-                    exposeTypeNodes: inferredTarget === "json-modern"
+                    exposeTypeNodes: inferredTarget === "json-modern",
+                    swiftAccessLevel: flags.swiftAccessLevel || "public"
                   }
                 );
               };

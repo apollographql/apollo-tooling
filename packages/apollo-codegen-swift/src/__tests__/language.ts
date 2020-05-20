@@ -16,11 +16,13 @@ describe("Swift code generation: Basic language constructs", () => {
       () => {
         generator.propertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
+          accessLevel: "public"
         });
         generator.propertyDeclaration({
           propertyName: "age",
-          typeName: "Int"
+          typeName: "Int",
+          accessLevel: "public"
         });
       }
     );
@@ -39,11 +41,13 @@ describe("Swift code generation: Basic language constructs", () => {
       () => {
         generator.propertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
+          accessLevel: "public"
         });
         generator.propertyDeclaration({
           propertyName: "age",
-          typeName: "Int"
+          typeName: "Int",
+          accessLevel: "public"
         });
       }
     );
@@ -62,15 +66,18 @@ describe("Swift code generation: Basic language constructs", () => {
       () => {
         generator.propertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
+          accessLevel: "public"
         });
         generator.propertyDeclaration({
           propertyName: "age",
-          typeName: "Int"
+          typeName: "Int",
+          accessLevel: "public"
         });
         generator.propertyDeclaration({
           propertyName: "self",
-          typeName: "Self"
+          typeName: "Self",
+          accessLevel: "public"
         });
       }
     );
@@ -85,16 +92,22 @@ describe("Swift code generation: Basic language constructs", () => {
   });
 
   it(`should generate a struct declaration`, () => {
-    generator.structDeclaration({ structName: "Hero" }, false, () => {
-      generator.propertyDeclaration({
-        propertyName: "name",
-        typeName: "String"
-      });
-      generator.propertyDeclaration({
-        propertyName: "age",
-        typeName: "Int"
-      });
-    });
+    generator.structDeclaration(
+      { structName: "Hero", accessLevel: "public" },
+      false,
+      () => {
+        generator.propertyDeclaration({
+          propertyName: "name",
+          typeName: "String",
+          accessLevel: "public"
+        });
+        generator.propertyDeclaration({
+          propertyName: "age",
+          typeName: "Int",
+          accessLevel: "public"
+        });
+      }
+    );
 
     expect(generator.output).toBe(stripIndent`
       public struct Hero {
@@ -109,17 +122,20 @@ describe("Swift code generation: Basic language constructs", () => {
       {
         structName: "Hero",
         adoptedProtocols: ["GraphQLFragment"],
-        namespace: "StarWars"
+        namespace: "StarWars",
+        accessLevel: "public"
       },
       false,
       () => {
         generator.propertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
+          accessLevel: "public"
         });
         generator.propertyDeclaration({
           propertyName: "age",
-          typeName: "Int"
+          typeName: "Int",
+          accessLevel: "public"
         });
       }
     );
@@ -137,17 +153,20 @@ describe("Swift code generation: Basic language constructs", () => {
       {
         structName: "Hero",
         adoptedProtocols: ["GraphQLFragment"],
-        namespace: "StarWars"
+        namespace: "StarWars",
+        accessLevel: "public"
       },
       true,
       () => {
         generator.propertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
+          accessLevel: "public"
         });
         generator.propertyDeclaration({
           propertyName: "age",
-          typeName: "Int"
+          typeName: "Int",
+          accessLevel: "public"
         });
       }
     );
@@ -161,20 +180,27 @@ describe("Swift code generation: Basic language constructs", () => {
   });
 
   it(`should generate an escaped struct declaration`, () => {
-    generator.structDeclaration({ structName: "Type" }, false, () => {
-      generator.propertyDeclaration({
-        propertyName: "name",
-        typeName: "String"
-      });
-      generator.propertyDeclaration({
-        propertyName: "yearOfBirth",
-        typeName: "Int"
-      });
-      generator.propertyDeclaration({
-        propertyName: "self",
-        typeName: "Self"
-      });
-    });
+    generator.structDeclaration(
+      { structName: "Type", accessLevel: "public" },
+      false,
+      () => {
+        generator.propertyDeclaration({
+          propertyName: "name",
+          typeName: "String",
+          accessLevel: "public"
+        });
+        generator.propertyDeclaration({
+          propertyName: "yearOfBirth",
+          typeName: "Int",
+          accessLevel: "public"
+        });
+        generator.propertyDeclaration({
+          propertyName: "self",
+          typeName: "Self",
+          accessLevel: "public"
+        });
+      }
+    );
 
     expect(generator.output).toBe(stripIndent`
       public struct \`Type\` {
@@ -186,23 +212,34 @@ describe("Swift code generation: Basic language constructs", () => {
   });
 
   it(`should generate nested struct declarations`, () => {
-    generator.structDeclaration({ structName: "Hero" }, false, () => {
-      generator.propertyDeclaration({
-        propertyName: "name",
-        typeName: "String"
-      });
-      generator.propertyDeclaration({
-        propertyName: "friends",
-        typeName: "[Friend]"
-      });
-
-      generator.structDeclaration({ structName: "Friend" }, false, () => {
+    generator.structDeclaration(
+      { structName: "Hero", accessLevel: "public" },
+      false,
+      () => {
         generator.propertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
+          accessLevel: "public"
         });
-      });
-    });
+        generator.propertyDeclaration({
+          propertyName: "friends",
+          typeName: "[Friend]",
+          accessLevel: "public"
+        });
+
+        generator.structDeclaration(
+          { structName: "Friend", accessLevel: "public" },
+          false,
+          () => {
+            generator.propertyDeclaration({
+              propertyName: "name",
+              typeName: "String",
+              accessLevel: "public"
+            });
+          }
+        );
+      }
+    );
 
     expect(generator.output).toBe(stripIndent`
       public struct Hero {
@@ -222,15 +259,18 @@ describe("Swift code generation: Basic language constructs", () => {
       () => {
         generator.protocolPropertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
+          accessLevel: "public"
         });
         generator.protocolPropertyDeclaration({
           propertyName: "age",
-          typeName: "Int"
+          typeName: "Int",
+          accessLevel: "public"
         });
         generator.protocolPropertyDeclaration({
           propertyName: "default",
-          typeName: "Boolean"
+          typeName: "Boolean",
+          accessLevel: "public"
         });
       }
     );
@@ -246,18 +286,20 @@ describe("Swift code generation: Basic language constructs", () => {
 
   it(`should handle multi-line descriptions`, () => {
     generator.structDeclaration(
-      { structName: "Hero", description: "A hero" },
+      { structName: "Hero", description: "A hero", accessLevel: "public" },
       false,
       () => {
         generator.propertyDeclaration({
           propertyName: "name",
           typeName: "String",
-          description: `A multiline comment \n on the hero's name.`
+          description: `A multiline comment \n on the hero's name.`,
+          accessLevel: "public"
         });
         generator.propertyDeclaration({
           propertyName: "age",
           typeName: "String",
-          description: `A multiline comment \n on the hero's age.`
+          description: `A multiline comment \n on the hero's age.`,
+          accessLevel: "public"
         });
       }
     );
@@ -271,6 +313,7 @@ describe("Swift code generation: Escaping", () => {
     it(`should escape identifiers`, () => {
       expect(SwiftSource.identifier("self").source).toBe("`self`");
       expect(SwiftSource.identifier("public").source).toBe("`public`");
+      expect(SwiftSource.identifier("internal").source).toBe("`internal`");
       expect(SwiftSource.identifier("Array<Type>").source).toBe(
         "Array<`Type`>"
       );
@@ -295,6 +338,8 @@ describe("Swift code generation: Escaping", () => {
       expect(SwiftSource.memberName("self").source).toBe("`self`");
       expect(SwiftSource.memberName("public").source).toBe("public");
       expect(SwiftSource.memberName(" public").source).toBe(" `public`");
+      expect(SwiftSource.memberName("internal").source).toBe("internal");
+      expect(SwiftSource.memberName(" internal").source).toBe(" `internal`");
       expect(SwiftSource.memberName("Foo.Self.Type.self.class").source).toBe(
         "Foo.Self.`Type`.`self`.class"
       );
@@ -400,6 +445,9 @@ describe("Swift code generation: Escaping", () => {
       expect(swift`${swift`${"self"}`}`.source).toBe("`self`");
       expect(swift`${"public"} ${new SwiftSource("public")}`.source).toBe(
         "`public` public"
+      );
+      expect(swift`${"internal"} ${new SwiftSource("internal")}`.source).toBe(
+        "`internal` internal"
       );
     });
 

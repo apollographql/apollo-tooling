@@ -183,6 +183,9 @@ OPTIONS
 
   --suppressSwiftMultilineStringLiterals     Prevents operations from being rendered as multiline strings [Swift only]
 
+  --swiftAccessLevel                         Sets the access level for generated types (public or internal).
+                                             If not provided, public access level is used. [Swift only]
+
   --tagName=tagName                          Name of the template literal tag used to identify template literals
                                              containing GraphQL queries in Javascript/Typescript code
 

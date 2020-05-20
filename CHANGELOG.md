@@ -10,6 +10,7 @@
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
   - Change selection sets to computed vars to remove unnecessary  memory use [#1950](https://github.com/apollographql/apollo-tooling/pull/1950)
+  - Added ability to specify Swift access level modifier [#NNNN](https://github.com/apollographql/apollo-tooling/pull/NNNN)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-codegen-core`

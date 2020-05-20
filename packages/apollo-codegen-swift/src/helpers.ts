@@ -48,7 +48,15 @@ const builtInScalarMap = {
 };
 
 export class Helpers {
-  constructor(public options: CompilerOptions) {}
+  constructor(public options: CompilerOptions) {
+    if (options.swiftAccessLevel === undefined) {
+      this.swiftAccessLevel = `public`;
+    } else {
+      this.swiftAccessLevel = options.swiftAccessLevel;
+    }
+  }
+
+  swiftAccessLevel: string;
 
   // Types
 
@@ -186,22 +194,27 @@ export class Helpers {
 
     const typeName = this.typeNameFromGraphQLType(type, unmodifiedTypeName);
 
+    const accessLevel = this.swiftAccessLevel;
+
     return Object.assign({}, field, {
       responseKey,
       propertyName,
       typeName,
       structName,
-      isOptional
+      isOptional,
+      accessLevel
     });
   }
 
   propertyFromVariant(variant: Variant): Variant & Property & Struct {
     const structName = this.structNameForVariant(variant);
+    const accessLevel = this.swiftAccessLevel;
 
     return Object.assign(variant, {
       propertyName: camelCase(structName),
       typeName: structName + "?",
-      structName
+      structName,
+      accessLevel
     });
   }
 
@@ -213,11 +226,14 @@ export class Helpers {
       fragmentSpread.fragmentName
     );
 
+    const accessLevel = this.swiftAccessLevel;
+
     return Object.assign({}, fragmentSpread, {
       propertyName: camelCase(fragmentSpread.fragmentName),
       typeName: isConditional ? structName + "?" : structName,
       structName,
-      isConditional
+      isConditional,
+      accessLevel
     });
   }
 
