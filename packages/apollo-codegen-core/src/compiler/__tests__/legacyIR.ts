@@ -58,7 +58,7 @@ describe("Compiling query documents to the legacy IR", () => {
     ]);
   });
 
-  it(`should keep track of enums and input object types used in variables`, () => {
+  it(`should keep track of enums, union types, and input object types used in variables`, () => {
     const document = parse(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -86,7 +86,12 @@ describe("Compiling query documents to the legacy IR", () => {
       compileToLegacyIR(schema, document)
     );
 
-    expect(typesUsed).toEqual(["Episode", "ReviewInput", "ColorInput"]);
+    expect(typesUsed).toEqual([
+      "Episode",
+      "SearchResult",
+      "ReviewInput",
+      "ColorInput"
+    ]);
   });
 
   it(`should keep track of enums used in fields`, () => {

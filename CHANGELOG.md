@@ -3,16 +3,16 @@
 ## Upcoming
 
 - `apollo`
-  - Fix CLI crashing when trying to open a directory that is named like a file [#1948](https://github.com/apollographql/apollo-tooling/pull/1948).
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Change selection sets to computed vars to remove unnecessary  memory use [#1950](https://github.com/apollographql/apollo-tooling/pull/1950)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-codegen-core`
+  - Add Union types to the `typesUsed` property of the IR exported when using the `json-modern` target [#1969](https://github.com/apollographql/apollo-tooling/pull/1969).
   - <First `apollo-codegen-core` related entry goes here>
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
@@ -24,6 +24,13 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.28.0`
+
+- `apollo`
+  - Fix CLI crashing when trying to open a directory that is named like a file [#1948](https://github.com/apollographql/apollo-tooling/pull/1948).
+- `apollo-codegen-swift`
+  - Change selection sets to computed vars to remove unnecessary  memory use [#1950](https://github.com/apollographql/apollo-tooling/pull/1950)
 
 ## `apollo@2.27.3`
 

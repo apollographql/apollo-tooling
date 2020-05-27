@@ -1,4 +1,4 @@
-import { GraphQLSchema, buildSchema, parse } from "graphql";
+import { GraphQLSchema, GraphQLUnionType, buildSchema, parse } from "graphql";
 import { compileToLegacyIR } from "../compiler/legacyIR";
 import serializeToJSON from "../serializeToJSON";
 
@@ -155,6 +155,36 @@ describe("JSON output", function() {
 
     const output = serializeToJSON(context);
 
+    expect(output).toMatchSnapshot();
+  });
+
+  test("should generate JSON output for a query involving a union", function() {
+    const context = compileFromSource(`
+      query Search {
+        search(text: "an") {
+          __typename
+          ... on Human {
+            name
+            height
+          }
+          ... on Droid {
+            name
+            primaryFunction
+          }
+          ... on Starship {
+            name
+            length
+          }
+        }
+      }
+    `);
+
+    expect(context.typesUsed.length).toBe(1);
+    const type = context.typesUsed[0] as GraphQLUnionType;
+    expect(type.name).toBe("SearchResult");
+    expect(type.getTypes().length).toBe(3);
+
+    const output = serializeToJSON(context);
     expect(output).toMatchSnapshot();
   });
 });

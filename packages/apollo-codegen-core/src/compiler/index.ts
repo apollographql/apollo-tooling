@@ -23,6 +23,7 @@ import {
   isEnumType,
   isInputObjectType,
   isScalarType,
+  isUnionType,
   NamedTypeNode,
   ListTypeNode,
   TypeNode,
@@ -225,11 +226,11 @@ class Compiler {
 
   addTypeUsed(type: GraphQLType) {
     if (this.typesUsedSet.has(type)) return;
-
     if (
       isEnumType(type) ||
       isInputObjectType(type) ||
-      (isScalarType(type) && !isSpecifiedScalarType(type))
+      (isScalarType(type) && !isSpecifiedScalarType(type)) ||
+      isUnionType(type)
     ) {
       this.typesUsedSet.add(type);
     }

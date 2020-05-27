@@ -4,9 +4,11 @@ import {
   GraphQLScalarType,
   GraphQLEnumType,
   GraphQLInputObjectType,
+  GraphQLUnionType,
   isEnumType,
   isInputObjectType,
   isScalarType,
+  isUnionType,
   parseType
 } from "graphql";
 
@@ -25,7 +27,7 @@ interface serializeOptions {
 
 export default function serializeToJSON(
   context: LegacyCompilerContext | CompilerContext,
-  options: serializeOptions
+  options?: serializeOptions
 ) {
   return serializeAST(
     {
@@ -51,13 +53,15 @@ export function serializeAST(ast: any, space?: string) {
   );
 }
 
-function serializeType(type: GraphQLType, options: serializeOptions) {
+function serializeType(type: GraphQLType, options?: serializeOptions) {
   if (isEnumType(type)) {
     return serializeEnumType(type);
   } else if (isInputObjectType(type)) {
     return serializeInputObjectType(type, options);
   } else if (isScalarType(type)) {
     return serializeScalarType(type);
+  } else if (isUnionType(type)) {
+    return serializeUnionType(type);
   } else {
     throw new Error(`Unexpected GraphQL type: ${type}`);
   }
@@ -111,5 +115,16 @@ function serializeScalarType(type: GraphQLScalarType) {
     kind: "ScalarType",
     name,
     description
+  };
+}
+
+function serializeUnionType(type: GraphQLUnionType) {
+  const { name, description } = type;
+
+  return {
+    kind: "UnionType",
+    name,
+    description,
+    types: type.getTypes()
   };
 }
