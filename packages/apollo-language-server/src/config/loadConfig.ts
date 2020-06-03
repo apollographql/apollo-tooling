@@ -129,8 +129,8 @@ export async function loadConfig({
       const legacyKey = env[legacyKeyEnvVar];
       const key = env[keyEnvVar];
       if (legacyKey && key) {
-        throw new Error(
-          `Cannot set both ${legacyKeyEnvVar} and ${keyEnvVar}. Please only set ${keyEnvVar}`
+        Debug.warning(
+          `Both ${legacyKeyEnvVar} and ${keyEnvVar} were found. ${keyEnvVar} will take precedence.`
         );
       }
       if (legacyKey) {

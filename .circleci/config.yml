@@ -5,7 +5,7 @@ version: 2.1
 orbs:
   # `oss` is a local reference to the package.  The source for Apollo Orbs can
   # be found at http://github.com/apollographql/CircleCI-Orbs.
-  oss: apollo/oss-ci-cd-tooling@0.0.8
+  oss: apollo/oss-ci-cd-tooling@0.0.9
   # win is a windows orb provided by circleci
   win: circleci/windows@2.0.0
 
@@ -78,6 +78,27 @@ jobs:
       - checkout
       - oss/npm_clean_install_with_caching
       - run: npm run publish-extension
+
+
+  Publish GitHub Release:
+    docker:
+      - image: circleci/golang:latest
+    steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: .
+      - checkout
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            set +e
+            test -d oclif-dist/channels && exit 1 || "Not a pre-release, continuing with publishing"
+            go get github.com/tcnksm/ghr
+            VERSION=$(ls oclif-dist | cut -d 'v' -f2)
+            echo "Publishing apollo@${VERSION} to GitHub Releases using ghr"
+            echo "ghr -t ${GH_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} ./oclif-dist/apollo-v${VERSION}/"
+            ls ./oclif-dist/apollo-v${VERSION}/
+            ghr -t ${GH_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} "./oclif-dist/apollo-v${VERSION}/"
 
   Test VSCode:
     executor: { name: oss/node }
@@ -189,6 +210,10 @@ workflows:
             - NodeJS 12 Windows
             - Test VSCode
             - Build VSCode
+      - Publish GitHub Release:
+          <<: *common_publish_filters
+          requires:
+            - Build CLI
       - oss/dry_run:
           name: Dry-run
           <<: *common_publish_filters
@@ -213,3 +238,5 @@ workflows:
           <<: *common_publish_filters
           requires:
             - Confirmation
+
+

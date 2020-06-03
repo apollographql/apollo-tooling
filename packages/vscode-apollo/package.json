@@ -2,7 +2,7 @@
   "name": "vscode-apollo",
   "displayName": "Apollo GraphQL",
   "description": "Rich editor support for GraphQL client and server development that seamlessly integrates with the Apollo platform",
-  "version": "1.15.1",
+  "version": "1.16.0",
   "referenceID": "87197759-7617-40d0-b32e-46d378e907c7",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -130,6 +130,16 @@
         ],
         "scopeName": "inline.graphql.reason",
         "path": "./syntaxes/graphql.re.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.graphql": "graphql"
+        }
+      },
+      {
+        "injectTo": [
+          "source.elixir"
+        ],
+        "scopeName": "inline.graphql.elixir",
+        "path": "./syntaxes/graphql.ex.json",
         "embeddedLanguages": {
           "meta.embedded.block.graphql": "graphql"
         }
