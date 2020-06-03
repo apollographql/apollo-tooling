@@ -19,6 +19,7 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
+  - Remove error from the case with old and new api keys present [#1893](https://github.com/apollographql/apollo-tooling/pull/1893)
   - Add Elixir support for vscode [#1971](https://github.com/apollographql/apollo-tooling/pull/1971)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>

@@ -339,18 +339,22 @@ describe("loadConfig", () => {
       );
     });
 
-    it("Throws when .env defined legacy and new key", async () => {
+    it("Uses new key when .env defined both legacy and new key", async () => {
       writeFilesToDir(dir, {
         "my.config.js": `module.exports = { client: { name: 'hello' } }`,
         ".env.local": `ENGINE_API_KEY=service:yoshi:65489061ko\nAPOLLO_KEY=service:yoshi:65489061ko`
       });
+      const spy = jest.spyOn(Debug, "warning");
 
-      const loadConfigPromise = loadConfig({
+      const config = await loadConfig({
         configPath: dirPath,
         configFileName: "my.config.js"
       });
 
-      await expect(loadConfigPromise).rejects.toThrow(/Cannot set both/);
+      expect(config.engine.apiKey).toEqual("service:yoshi:65489061ko");
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringMatching(/Both ENGINE_API_KEY and APOLLO_KEY were found/i)
+      );
     });
 
     // this doesn't work right now :)
