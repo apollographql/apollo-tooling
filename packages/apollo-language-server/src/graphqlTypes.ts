@@ -1722,6 +1722,7 @@ export interface IntrospectionDirectiveInput {
   description?: string | null;
   locations: IntrospectionDirectiveLocation[];
   args: IntrospectionInputValueInput[];
+  isRepeatable?: boolean | null;
 }
 
 /**
@@ -1765,6 +1766,7 @@ export interface IntrospectionSchemaInput {
   mutationType?: IntrospectionTypeRefInput | null;
   subscriptionType?: IntrospectionTypeRefInput | null;
   directives: IntrospectionDirectiveInput[];
+  description?: string | null;
 }
 
 /**

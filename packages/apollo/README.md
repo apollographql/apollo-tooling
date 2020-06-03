@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.27.0 darwin-x64 node-v10.15.3
+apollo/2.28.0 darwin-x64 node-v12.16.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -871,4 +871,3 @@ Some integration tests rely on mocked server data (service:check for example). M
 ## Maintainers
 
 - [@JakeDawkins](https://github.com/jakedawkins) (Apollo)
-- [@jbaxleyiii](https://github.com/jbaxleyiii) (Apollo)

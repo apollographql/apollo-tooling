@@ -32,9 +32,11 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Mutation\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\\\n I thought\\\\n  This movie ROCKED!\\"]], type: .object(CreateReview.selections)),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\\\n I thought\\\\n  This movie ROCKED!\\"]], type: .object(CreateReview.selections)),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -58,10 +60,12 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
     public struct CreateReview: GraphQLSelectionSet {
       public static let possibleTypes: [String] = [\\"Review\\"]
 
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField(\\"stars\\", type: .nonNull(.scalar(Int.self))),
-        GraphQLField(\\"commentary\\", type: .scalar(String.self)),
-      ]
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField(\\"stars\\", type: .nonNull(.scalar(Int.self))),
+          GraphQLField(\\"commentary\\", type: .scalar(String.self)),
+        ]
+      }
 
       public private(set) var resultMap: ResultMap
 
@@ -129,9 +133,11 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Mutation\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\\\n I thought\\\\n  This movie \\\\\\\\ ROCKED!\\"]], type: .object(CreateReview.selections)),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\\\n I thought\\\\n  This movie \\\\\\\\ ROCKED!\\"]], type: .object(CreateReview.selections)),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -155,10 +161,12 @@ exports[`Swift code generation #classDeclarationForOperation() should correctly 
     public struct CreateReview: GraphQLSelectionSet {
       public static let possibleTypes: [String] = [\\"Review\\"]
 
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField(\\"stars\\", type: .nonNull(.scalar(Int.self))),
-        GraphQLField(\\"commentary\\", type: .scalar(String.self)),
-      ]
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField(\\"stars\\", type: .nonNull(.scalar(Int.self))),
+          GraphQLField(\\"commentary\\", type: .scalar(String.self)),
+        ]
+      }
 
       public private(set) var resultMap: ResultMap
 
@@ -222,9 +230,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Mutation\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\"]], type: .object(CreateReview.selections)),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"createReview\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\"), \\"review\\": [\\"stars\\": 5, \\"commentary\\": \\"Wow!\\"]], type: .object(CreateReview.selections)),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -248,10 +258,12 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     public struct CreateReview: GraphQLSelectionSet {
       public static let possibleTypes: [String] = [\\"Review\\"]
 
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField(\\"stars\\", type: .nonNull(.scalar(Int.self))),
-        GraphQLField(\\"commentary\\", type: .scalar(String.self)),
-      ]
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField(\\"stars\\", type: .nonNull(.scalar(Int.self))),
+          GraphQLField(\\"commentary\\", type: .scalar(String.self)),
+        ]
+      }
 
       public private(set) var resultMap: ResultMap
 
@@ -311,9 +323,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Query\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"hero\\", type: .object(Hero.selections)),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"hero\\", type: .object(Hero.selections)),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -337,13 +351,15 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     public struct Hero: GraphQLSelectionSet {
       public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-      public static let selections: [GraphQLSelection] = [
-        GraphQLTypeCase(
-          variants: [\\"Droid\\": AsDroid.selections],
-          default: [
-          ]
-        )
-      ]
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLTypeCase(
+            variants: [\\"Droid\\": AsDroid.selections],
+            default: [
+            ]
+          )
+        ]
+      }
 
       public private(set) var resultMap: ResultMap
 
@@ -373,9 +389,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       public struct AsDroid: GraphQLSelectionSet {
         public static let possibleTypes: [String] = [\\"Droid\\"]
 
-        public static let selections: [GraphQLSelection] = [
-          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-        ]
+        public static var selections: [GraphQLSelection] {
+          return [
+            GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+          ]
+        }
 
         public private(set) var resultMap: ResultMap
 
@@ -450,9 +468,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Query\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"hero\\", type: .object(Hero.selections)),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"hero\\", type: .object(Hero.selections)),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -476,13 +496,15 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     public struct Hero: GraphQLSelectionSet {
       public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-      public static let selections: [GraphQLSelection] = [
-        GraphQLTypeCase(
-          variants: [\\"Droid\\": AsDroid.selections],
-          default: [
-          ]
-        )
-      ]
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLTypeCase(
+            variants: [\\"Droid\\": AsDroid.selections],
+            default: [
+            ]
+          )
+        ]
+      }
 
       public private(set) var resultMap: ResultMap
 
@@ -540,9 +562,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
       public struct AsDroid: GraphQLSelectionSet {
         public static let possibleTypes: [String] = [\\"Droid\\"]
 
-        public static let selections: [GraphQLSelection] = [
-          GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
-        ]
+        public static var selections: [GraphQLSelection] {
+          return [
+            GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
+          ]
+        }
 
         public private(set) var resultMap: ResultMap
 
@@ -617,9 +641,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Query\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"hero\\", type: .object(Hero.selections)),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"hero\\", type: .object(Hero.selections)),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -643,9 +669,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     public struct Hero: GraphQLSelectionSet {
       public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-      ]
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        ]
+      }
 
       public private(set) var resultMap: ResultMap
 
@@ -728,9 +756,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Query\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"hero\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\")], type: .object(Hero.selections)),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"hero\\", arguments: [\\"episode\\": GraphQLVariable(\\"episode\\")], type: .object(Hero.selections)),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -754,9 +784,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     public struct Hero: GraphQLSelectionSet {
       public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-      ]
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        ]
+      }
 
       public private(set) var resultMap: ResultMap
 
@@ -810,9 +842,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
   public struct Data: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Query\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"hero\\", type: .object(Hero.selections)),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"hero\\", type: .object(Hero.selections)),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -836,9 +870,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
     public struct Hero: GraphQLSelectionSet {
       public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-      public static let selections: [GraphQLSelection] = [
-        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-      ]
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        ]
+      }
 
       public private(set) var resultMap: ResultMap
 
@@ -926,10 +962,12 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    GraphQLField(\\"appearsIn\\", type: .nonNull(.list(.scalar(Episode.self)))),
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"appearsIn\\", type: .nonNull(.list(.scalar(Episode.self)))),
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1006,10 +1044,12 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
   public static let possibleTypes: [String] = [\\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1058,10 +1098,12 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    GraphQLField(\\"friends\\", type: .list(.object(Friend.selections))),
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"friends\\", type: .list(.object(Friend.selections))),
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1100,9 +1142,11 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
   public struct Friend: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -1144,10 +1188,12 @@ exports[`Swift code generation #structDeclarationForFragment() should generate a
 
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    GraphQLField(\\"appearsIn\\", type: .nonNull(.list(.scalar(Episode.self)))),
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"appearsIn\\", type: .nonNull(.list(.scalar(Episode.self)))),
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1189,9 +1235,11 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
 "public struct Human: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1216,9 +1264,11 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
   public struct \`Self\`: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -1249,10 +1299,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
 public struct Human: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
-    GraphQLField(\\"name\\", alias: \\"_self\\", type: .nonNull(.scalar(String.self))),
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
+      GraphQLField(\\"name\\", alias: \\"_self\\", type: .nonNull(.scalar(String.self))),
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1287,9 +1339,11 @@ public struct Human: GraphQLSelectionSet {
   public struct \`Self\`: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -1322,10 +1376,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"name\\", alias: \\"private\\", type: .nonNull(.scalar(String.self))),
-    GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", alias: \\"private\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"friends\\", alias: \\"self\\", type: .list(.object(\`Self\`.selections))),
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1364,9 +1420,11 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should escape
   public struct \`Self\`: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"id\\", type: .nonNull(.scalar(GraphQLID.self))),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -1399,9 +1457,11 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"friends\\", type: .list(.object(Friend.selections))),
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"friends\\", type: .list(.object(Friend.selections))),
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1430,9 +1490,11 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   public struct Friend: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -1465,14 +1527,16 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLTypeCase(
-      variants: [\\"Droid\\": AsDroid.selections],
-      default: [
-        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-      ]
-    )
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLTypeCase(
+        variants: [\\"Droid\\": AsDroid.selections],
+        default: [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        ]
+      )
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1512,10 +1576,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   public struct AsDroid: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Droid\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -1570,9 +1636,11 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1604,11 +1672,13 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLBooleanCondition(variableName: \\"includeName\\", inverted: false, selections: [
-      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    ]),
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLBooleanCondition(variableName: \\"includeName\\", inverted: false, selections: [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]),
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1640,10 +1710,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1701,14 +1773,16 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLTypeCase(
-      variants: [\\"Droid\\": AsDroid.selections],
-      default: [
-        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-      ]
-    )
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLTypeCase(
+        variants: [\\"Droid\\": AsDroid.selections],
+        default: [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        ]
+      )
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1776,10 +1850,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   public struct AsDroid: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Droid\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -1834,14 +1910,16 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLTypeCase(
-      variants: [\\"Droid\\": AsDroid.selections],
-      default: [
-        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-      ]
-    )
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLTypeCase(
+        variants: [\\"Droid\\": AsDroid.selections],
+        default: [
+          GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        ]
+      )
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 
@@ -1881,10 +1959,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should genera
   public struct AsDroid: GraphQLSelectionSet {
     public static let possibleTypes: [String] = [\\"Droid\\"]
 
-    public static let selections: [GraphQLSelection] = [
-      GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
-      GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
-    ]
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField(\\"name\\", type: .nonNull(.scalar(String.self))),
+        GraphQLField(\\"primaryFunction\\", type: .scalar(String.self)),
+      ]
+    }
 
     public private(set) var resultMap: ResultMap
 
@@ -1923,10 +2003,12 @@ exports[`Swift code generation #structDeclarationForSelectionSet() should preser
 "public struct Hero: GraphQLSelectionSet {
   public static let possibleTypes: [String] = [\\"Human\\", \\"Droid\\"]
 
-  public static let selections: [GraphQLSelection] = [
-    GraphQLField(\\"name\\", alias: \\"_name\\", type: .nonNull(.scalar(String.self))),
-    GraphQLField(\\"id\\", alias: \\"_camel_case_id__\\", type: .nonNull(.scalar(GraphQLID.self))),
-  ]
+  public static var selections: [GraphQLSelection] {
+    return [
+      GraphQLField(\\"name\\", alias: \\"_name\\", type: .nonNull(.scalar(String.self))),
+      GraphQLField(\\"id\\", alias: \\"_camel_case_id__\\", type: .nonNull(.scalar(GraphQLID.self))),
+    ]
+  }
 
   public private(set) var resultMap: ResultMap
 

@@ -20,10 +20,25 @@
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
   - Remove error from the case with old and new api keys present [#1893](https://github.com/apollographql/apollo-tooling/pull/1893)
+  - Add Elixir support for vscode [#1971](https://github.com/apollographql/apollo-tooling/pull/1971)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Add Elixir support for vscode [#1971](https://github.com/apollographql/apollo-tooling/pull/1971)
+
+## `apollo@2.27.3`
+
+- `apollo@2.27.4`
+  - Change json-modern target to use legacy IR as base, similar to json target [#1916](https://github.com/apollographql/apollo-tooling/pull/1916).
+  - Update json-modern IR to expose `typeNode`s on `typesUsed` [#1916](https://github.com/apollographql/apollo-tooling/pull/1916)
+- `apollo-codegen-core@0.36.9`
+  - Change json-modern target to use legacy IR as base, similar to json target [#1916](https://github.com/apollographql/apollo-tooling/pull/1916).
+  - Update json-modern IR to expose `typeNode`s on `typesUsed` [#1916](https://github.com/apollographql/apollo-tooling/pull/1916)
+
+## `apollo@2.27.2`
+
+- `apollo@2.27.2`
+  - Setup automatically creating a GitHub release [#1876](https://github.com/apollographql/apollo-tooling/pull/1876)
 
 ## `apollo@2.27.0`
 
