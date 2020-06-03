@@ -44,7 +44,9 @@ const fileAssociations: { [extension: string]: string } = {
   ".py": "python",
   ".rb": "ruby",
   ".dart": "dart",
-  ".re": "reason"
+  ".re": "reason",
+  ".ex": "elixir",
+  ".exs": "elixir"
 };
 
 export interface GraphQLProjectConfig {

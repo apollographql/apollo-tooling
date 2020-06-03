@@ -3,13 +3,13 @@
 ## Upcoming
 
 - `apollo`
-  - Fix CLI crashing when trying to open a directory that is named like a file [#1948](https://github.com/apollographql/apollo-tooling/pull/1948).
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Change selection sets to computed vars to remove unnecessary  memory use [#1950](https://github.com/apollographql/apollo-tooling/pull/1950)
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-codegen-core`
@@ -19,11 +19,11 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Add Elixir support for vscode [#1971](https://github.com/apollographql/apollo-tooling/pull/1971)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Add Elixir support for vscode [#1971](https://github.com/apollographql/apollo-tooling/pull/1971)
 
 ## `apollo@2.27.3`
 

@@ -133,6 +133,16 @@
         "embeddedLanguages": {
           "meta.embedded.block.graphql": "graphql"
         }
+      },
+      {
+        "injectTo": [
+          "source.elixir"
+        ],
+        "scopeName": "inline.graphql.elixir",
+        "path": "./syntaxes/graphql.ex.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.graphql": "graphql"
+        }
       }
     ],
     "commands": [
