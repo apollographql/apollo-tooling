@@ -533,7 +533,7 @@ describe("service:check", () => {
               `--graph=happy-fun-times`
             ])
           ).rejects.toThrow(
-            /Cannot specify a service token that does not match graph./
+            /Cannot specify a service api key that does not match graph id..*/
           );
         });
 

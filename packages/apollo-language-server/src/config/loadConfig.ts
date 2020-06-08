@@ -189,7 +189,13 @@ export async function loadConfig({
               client: {
                 ...DefaultConfigBase,
                 ...(loadedConfig && loadedConfig.config.client),
-                service: serviceName
+                // if there was a `client.service` defined in the loaded config file,
+                // prefer that over the service name defined by the api key in .env
+                ...(loadedConfig &&
+                loadedConfig.config.client &&
+                loadedConfig.config.client.service
+                  ? { service: loadedConfig.config.client.service }
+                  : { service: serviceName })
               }
             }
           : {

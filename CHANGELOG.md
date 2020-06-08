@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Fix `.env` api key taking precedence over `localSchemaFile` [#1892](https://github.com/apollographql/apollo-tooling/pull/1892)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -19,6 +19,7 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
+  - Fix `.env` api key taking precedence over `localSchemaFile` [#1892](https://github.com/apollographql/apollo-tooling/pull/1892)
   - Remove error from the case with old and new api keys present [#1893](https://github.com/apollographql/apollo-tooling/pull/1893)
   - Add Elixir support for vscode [#1971](https://github.com/apollographql/apollo-tooling/pull/1971)
 - `apollo-tools`
