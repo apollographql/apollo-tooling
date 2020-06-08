@@ -42,6 +42,7 @@ const skippedSDLRules: ValidationRule[] = [
   UniqueDirectivesPerLocationRule
 ];
 
+// BREAKING VERSION: Remove this when graphql-js 15 is minimum version.
 // Currently, this PossibleTypeExtensions rule is experimental and thus not
 // exposed directly from the rules module above. This may change in the future!
 // Additionally, it does not exist in prior graphql versions. Thus this try/catch.
@@ -52,8 +53,8 @@ try {
     skippedSDLRules.push(PossibleTypeExtensions);
   }
 } catch (e) {
-  // BREAKING VERSION: Remove this when graphql-js 15 is minimum version.
-  // If this validation rule is missing, we will assume its not used by their version of `graphql`.
+  // No need to fail in this case.  Instead, if this validation rule is missing, we will assume its not used
+  // by the version of `graphql` that is available to us.
 }
 
 const sdlRules = specifiedSDLRules.filter(
