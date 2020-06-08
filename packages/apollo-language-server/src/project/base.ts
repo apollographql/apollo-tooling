@@ -1,5 +1,5 @@
 import { extname } from "path";
-import { readFileSync } from "fs";
+import { lstatSync, readFileSync } from "fs";
 import URI from "vscode-uri";
 
 import {
@@ -44,7 +44,9 @@ const fileAssociations: { [extension: string]: string } = {
   ".py": "python",
   ".rb": "ruby",
   ".dart": "dart",
-  ".re": "reason"
+  ".re": "reason",
+  ".ex": "elixir",
+  ".exs": "elixir"
 };
 
 export interface GraphQLProjectConfig {
@@ -196,6 +198,10 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
     // Don't process files of an unsupported filetype
     if (!languageId) return;
+
+    // Don't process directories. Directories might be named like files so
+    // we have to explicitly check.
+    if (!lstatSync(filePath).isFile()) return;
 
     const contents = readFileSync(filePath, "utf8");
     const document = TextDocument.create(uri, languageId, -1, contents);

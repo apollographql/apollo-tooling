@@ -210,15 +210,16 @@ export default function generate(
     }
   } else {
     let output;
-    const context = compileToLegacyIR(schema, document, options);
+    const context = compileToLegacyIR(schema, document, {
+      ...options,
+      exposeTypeNodes: target === "json-modern"
+    });
     switch (target) {
       case "json-modern":
-        const ir = compileToIR(schema, document, options);
-        // console.log(JSON.stringify(ir));
-        output = serializeToJSON(ir);
-        break;
       case "json":
-        output = serializeToJSON(context);
+        output = serializeToJSON(context, {
+          exposeTypeNodes: Boolean(options.exposeTypeNodes)
+        });
         break;
       case "scala":
         output = generateScalaSource(context);
