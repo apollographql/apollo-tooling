@@ -1700,6 +1700,15 @@ export enum ValidationErrorType {
 }
 
 /**
+ * Filter options to exclude by client reference ID, client name, and client version.
+ */
+export interface ClientInfoFilter {
+  referenceID?: string | null;
+  name?: string | null;
+  version?: string | null;
+}
+
+/**
  * This is stored with a schema when it is uploaded
  */
 export interface GitContextInput {
@@ -1715,6 +1724,9 @@ export interface HistoricQueryParameters {
   to?: any | null;
   queryCountThreshold?: number | null;
   queryCountThresholdPercentage?: number | null;
+  excludedOperationIDs?: string[] | null;
+  excludedClients?: ClientInfoFilter[] | null;
+  includedVariants?: string[] | null;
 }
 
 export interface IntrospectionDirectiveInput {
