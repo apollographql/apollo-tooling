@@ -102,6 +102,7 @@ function mockServiceListFederated() {
     )
     .reply(200, {
       data: {
+        frontendUrlRoot: "https://engine-staging.apollographql.com",
         service: {
           implementingServices: {
             services: [
@@ -158,6 +159,7 @@ function mockServiceListNonFederated() {
     )
     .reply(200, {
       data: {
+        frontendUrlRoot: "https://engine-staging.apollographql.com",
         service: {
           implementingServices: {
             services: [],

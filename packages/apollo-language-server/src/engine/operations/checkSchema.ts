@@ -8,7 +8,6 @@ export const CHECK_SCHEMA = gql`
     $tag: String
     $gitContext: GitContextInput
     $historicParameters: HistoricQueryParameters
-    $frontend: String
   ) {
     service(id: $id) {
       checkSchema(
@@ -17,7 +16,6 @@ export const CHECK_SCHEMA = gql`
         baseSchemaTag: $tag
         gitContext: $gitContext
         historicParameters: $historicParameters
-        frontend: $frontend
       ) {
         targetUrl
         diffToPrevious {

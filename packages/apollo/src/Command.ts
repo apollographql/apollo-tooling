@@ -35,7 +35,6 @@ export interface Flags {
   localSchemaFile?: string;
   key?: string;
   engine?: string;
-  frontend?: string;
   tag?: string;
   variant?: string;
   graph?: string;
@@ -88,10 +87,6 @@ export abstract class ProjectCommand extends Command {
     }),
     engine: flags.string({
       description: "URL for a custom Apollo Graph Manager deployment",
-      hidden: true
-    }),
-    frontend: flags.string({
-      description: "URL for a custom Apollo Graph Manager frontend",
       hidden: true
     })
   };
@@ -161,8 +156,7 @@ export abstract class ProjectCommand extends Command {
     config.setDefaults({
       engine: {
         apiKey: flags.key,
-        endpoint: flags.engine,
-        frontend: flags.frontend
+        endpoint: flags.engine
       }
     });
 

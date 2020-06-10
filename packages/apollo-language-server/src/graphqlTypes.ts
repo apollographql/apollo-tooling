@@ -166,7 +166,6 @@ export interface CheckPartialSchemaVariables {
   partialSchema: PartialSchemaInput;
   gitContext?: GitContextInput | null;
   historicParameters?: HistoricQueryParameters | null;
-  frontend?: string | null;
 }
 
 /* tslint:disable */
@@ -296,7 +295,6 @@ export interface CheckSchemaVariables {
   tag?: string | null;
   gitContext?: GitContextInput | null;
   historicParameters?: HistoricQueryParameters | null;
-  frontend?: string | null;
 }
 
 /* tslint:disable */
@@ -355,6 +353,7 @@ export interface ListServices_service {
 }
 
 export interface ListServices {
+  frontendUrlRoot: string;
   /**
    * Service by ID
    */

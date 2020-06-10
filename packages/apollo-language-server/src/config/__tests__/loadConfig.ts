@@ -111,7 +111,6 @@ describe("loadConfig", () => {
           },
           "engine": Object {
             "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
-            "frontend": "https://engine.apollographql.com",
           },
         }
       `);
@@ -136,7 +135,6 @@ describe("loadConfig", () => {
         Object {
           "engine": Object {
             "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
-            "frontend": "https://engine.apollographql.com",
           },
           "service": Object {
             "endpoint": Object {
