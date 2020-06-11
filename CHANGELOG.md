@@ -23,7 +23,7 @@
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Improved hover and autocomplete features [#1997](https://github.com/apollographql/apollo-tooling/pull/1997)
 
 ## `apollo@2.28.2`
 
