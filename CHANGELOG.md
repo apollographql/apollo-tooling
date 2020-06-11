@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Don't send a user-specified frontend URL to Apollo's servers; fetch one when needed. Drop `--frontend` flag. [#1990](https://github.com/apollographql/apollo-tooling/pull/1990)
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -19,11 +19,18 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Don't send a user-specified frontend URL to Apollo's servers; fetch one when needed. [#1990](https://github.com/apollographql/apollo-tooling/pull/1990)
+  - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.28.3`
+
+- `apollo@2.28.3`
+  - Don't send a user-specified frontend URL to Apollo's servers; fetch one when needed. Drop `--frontend` flag. [#1990](https://github.com/apollographql/apollo-tooling/pull/1990)
+- `apollo-language-server@1.22.3`
+  - Don't send a user-specified frontend URL to Apollo's servers; fetch one when needed. [#1990](https://github.com/apollographql/apollo-tooling/pull/1990)
 
 ## `apollo@2.28.2`
 
