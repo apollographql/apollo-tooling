@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Don't send a user-specified frontend URL to Apollo's servers; fetch one when needed. Drop `--frontend` flag. [#1990](https://github.com/apollographql/apollo-tooling/pull/1990)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -19,7 +19,7 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Don't send a user-specified frontend URL to Apollo's servers; fetch one when needed. [#1990](https://github.com/apollographql/apollo-tooling/pull/1990)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`

@@ -2,6 +2,7 @@ import gql from "graphql-tag";
 
 export const LIST_SERVICES = gql`
   query ListServices($id: ID!, $graphVariant: String!) {
+    frontendUrlRoot
     service(id: $id) {
       implementingServices(graphVariant: $graphVariant) {
         __typename

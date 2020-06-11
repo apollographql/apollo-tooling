@@ -33,13 +33,11 @@ export interface LocalServiceConfig {
 
 export interface EngineConfig {
   endpoint?: EndpointURI;
-  frontend?: EndpointURI;
   readonly apiKey?: string;
 }
 
 export const DefaultEngineConfig = {
-  endpoint: "https://engine-graphql.apollographql.com/api/graphql",
-  frontend: "https://engine.apollographql.com"
+  endpoint: "https://engine-graphql.apollographql.com/api/graphql"
 };
 
 export const DefaultConfigBase = {

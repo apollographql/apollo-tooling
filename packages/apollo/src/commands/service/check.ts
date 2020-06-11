@@ -374,7 +374,6 @@ export default class ServiceCheck extends ProjectCommand {
                   partialSchema: {
                     sdl
                   },
-                  frontend: flags.frontend || config.engine.frontend,
                   ...(historicParameters && { historicParameters }),
                   gitContext: await gitInfo(this.log)
                 });
@@ -468,7 +467,6 @@ export default class ServiceCheck extends ProjectCommand {
                   id: graphID!,
                   tag: config.variant,
                   gitContext: await gitInfo(this.log),
-                  frontend: flags.frontend || config.engine.frontend,
                   ...(historicParameters && { historicParameters }),
                   ...schemaCheckSchemaVariables
                 };

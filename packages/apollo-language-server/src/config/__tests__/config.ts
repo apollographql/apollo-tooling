@@ -78,8 +78,7 @@ describe("ApolloConfig", () => {
       const config = new ApolloConfig({});
       const overrides = {
         engine: {
-          endpoint: "https://test.apollographql.com/api/graphql",
-          frontend: "https://test.apollographql.com"
+          endpoint: "https://test.apollographql.com/api/graphql"
         }
       };
       config.setDefaults(overrides);
