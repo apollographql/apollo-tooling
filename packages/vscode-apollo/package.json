@@ -157,7 +157,7 @@
         "category": "Apollo"
       },
       {
-        "command": "apollographql/showStatus",
+        "command": "apollographql/showStats",
         "title": "Show Status",
         "category": "Apollo"
       }
