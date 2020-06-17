@@ -23,7 +23,7 @@
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Fix 'Apollo: Show Status' command. [#2004](https://github.com/apollographql/apollo-tooling/pull/2004)
 
 ## `apollo@2.28.3`
 
