@@ -14,6 +14,7 @@ import { graphUndefinedError } from "../../utils/sharedMessages";
 interface TasksOutput {
   config: ApolloConfig;
   implementingServices: ListServices_service_implementingServices | null;
+  frontendUrlRoot: string;
 }
 
 const formatImplementingService = (
@@ -32,11 +33,11 @@ const formatImplementingService = (
 function formatHumanReadable({
   implementingServices,
   graphName,
-  frontendUrl
+  frontendUrlRoot
 }: {
   implementingServices: ListServices_service_implementingServices | null;
   graphName: string | undefined;
-  frontendUrl: string | undefined;
+  frontendUrlRoot: string;
 }): string {
   let result = "";
   if (
@@ -76,7 +77,7 @@ function formatHumanReadable({
     );
 
     const serviceListUrlEnding = `/graph/${graphName}/service-list`;
-    const targetUrl = `${frontendUrl}${serviceListUrlEnding}`;
+    const targetUrl = `${frontendUrlRoot}${serviceListUrlEnding}`;
     result += `\nView full details at: ${chalk.cyan(targetUrl)}\n`;
   }
   return result;
@@ -134,13 +135,16 @@ export default class ServiceList extends ProjectCommand {
             )}`,
             task: async (ctx: TasksOutput, task) => {
               const {
-                implementingServices
+                frontendUrlRoot,
+                service
               } = await project.engine.listServices({
                 id: graphID!,
                 graphVariant: graphVariant!
               });
+              const { implementingServices } = service!;
               const newContext: typeof ctx = {
                 implementingServices,
+                frontendUrlRoot,
                 config
               };
 
@@ -162,8 +166,7 @@ export default class ServiceList extends ProjectCommand {
       formatHumanReadable({
         implementingServices: taskOutput.implementingServices,
         graphName: taskOutput.config.graph,
-        frontendUrl:
-          taskOutput.config.engine.frontend || DefaultEngineConfig.frontend
+        frontendUrlRoot: taskOutput.frontendUrlRoot
       })
     );
   }

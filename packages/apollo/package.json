@@ -1,7 +1,7 @@
 {
   "name": "apollo",
   "description": "Command line tool for Apollo GraphQL",
-  "version": "2.28.2",
+  "version": "2.28.3",
   "referenceID": "21ad0845-c235-422e-be7d-a998310df972",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
@@ -38,7 +38,7 @@
     "@oclif/plugin-autocomplete": "0.2.0",
     "@oclif/plugin-help": "2.2.3",
     "@oclif/plugin-not-found": "1.2.4",
-    "@oclif/plugin-plugins": "1.7.9",
+    "@oclif/plugin-plugins": "1.7.10",
     "@oclif/plugin-warn-if-update-available": "1.7.0",
     "apollo-codegen-core": "file:../apollo-codegen-core",
     "apollo-codegen-flow": "file:../apollo-codegen-flow",

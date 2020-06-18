@@ -24,6 +24,14 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - Fix definition navigation for vscode using localSchemaFile [#1996](https://github.com/apollographql/apollo-tooling/pull/1996)
+  - Fix 'Apollo: Show Status' command. [#2004](https://github.com/apollographql/apollo-tooling/pull/2004)
+
+## `apollo@2.28.3`
+
+- `apollo@2.28.3`
+  - Don't send a user-specified frontend URL to Apollo's servers; fetch one when needed. Drop `--frontend` flag. [#1990](https://github.com/apollographql/apollo-tooling/pull/1990)
+- `apollo-language-server@1.22.3`
+  - Don't send a user-specified frontend URL to Apollo's servers; fetch one when needed. [#1990](https://github.com/apollographql/apollo-tooling/pull/1990)
 
 ## `apollo@2.28.2`
 

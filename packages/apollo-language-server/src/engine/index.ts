@@ -98,7 +98,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
       if (!(data && data.service)) {
         throw new Error("Error in request from Apollo Graph Manager");
       }
-      return data.service;
+      return data;
     });
   }
 

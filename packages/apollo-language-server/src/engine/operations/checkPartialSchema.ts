@@ -8,7 +8,6 @@ export const CHECK_PARTIAL_SCHEMA = gql`
     $partialSchema: PartialSchemaInput!
     $gitContext: GitContextInput
     $historicParameters: HistoricQueryParameters
-    $frontend: String
   ) {
     service(id: $id) {
       checkPartialSchema(
@@ -17,7 +16,6 @@ export const CHECK_PARTIAL_SCHEMA = gql`
         partialSchema: $partialSchema
         gitContext: $gitContext
         historicParameters: $historicParameters
-        frontend: $frontend
       ) {
         compositionValidationResult {
           compositionValidationDetails {
