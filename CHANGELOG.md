@@ -19,10 +19,11 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Fix definition navigation for vscode using localSchemaFile [#1996](https://github.com/apollographql/apollo-tooling/pull/1996)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
+  - Fix definition navigation for vscode using localSchemaFile [#1996](https://github.com/apollographql/apollo-tooling/pull/1996)
   - Fix 'Apollo: Show Status' command. [#2004](https://github.com/apollographql/apollo-tooling/pull/2004)
 
 ## `apollo@2.28.3`
