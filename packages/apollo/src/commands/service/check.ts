@@ -30,13 +30,8 @@ const formatChange = (change: Change) => {
     color = chalk.red;
   }
 
-  if (change.severity === ChangeSeverity.WARNING) {
-    color = chalk.yellow;
-  }
-
   const changeDictionary: Record<ChangeSeverity, string> = {
     [ChangeSeverity.FAILURE]: "FAIL",
-    [ChangeSeverity.WARNING]: "WARN",
     [ChangeSeverity.NOTICE]: "PASS"
   };
 
