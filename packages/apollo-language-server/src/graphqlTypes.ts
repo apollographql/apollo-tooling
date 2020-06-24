@@ -1648,7 +1648,6 @@ export interface IntrospectionTypeRef {
 export enum ChangeSeverity {
   FAILURE = "FAILURE",
   NOTICE = "NOTICE",
-  WARNING = "WARNING",
 }
 
 /**
