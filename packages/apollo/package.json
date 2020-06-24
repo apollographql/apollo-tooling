@@ -24,7 +24,7 @@
   "scripts": {
     "prepack": "oclif-dev manifest && oclif-dev readme",
     "postpack": "rm -f oclif.manifest.json",
-    "version": "oclif-dev readme && git add README.md"
+    "version": "cross-env COLUMNS=74 oclif-dev readme && git add README.md"
   },
   "engines": {
     "node": ">=8",
