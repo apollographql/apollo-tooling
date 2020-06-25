@@ -71,8 +71,9 @@ export function getValidationErrors(
 
   // In `graphql@15.0.0`, `context.getErrors` was removed.
   // If this function is available, then we prefer to use it, as the user
-  // may be on a version of `graphql` that is pre-14.5.0 (and therefore `errors`)
+  // may be on a version of `graphql` that is pre-14.5.0, and therefore `errors`
   // will be empty as it's never called above.
+  // This can be removed in a major release if pre-14.5.0 support is dropped.
   if (typeof context.getErrors === "function") {
     return context.getErrors();
   }
