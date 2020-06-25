@@ -54,6 +54,9 @@ export function getValidationErrors(
 
   const errors: GraphQLError[] = [];
 
+  // The fourth `onError` parameter in the constructor of `ValidationContext`
+  // was introduced in `graphql@14.5.0`. It is safe to use this in pre-14.5.0
+  // versions too, as there was no fourth parameter in any earlier version.
   const context = new ValidationContext(schema, document, typeInfo, error =>
     errors.push(error)
   );
@@ -65,6 +68,14 @@ export function getValidationErrors(
   const visitors = rules.map(rule => rule(context));
   // Visit the whole document with each instance of all provided rules.
   visit(document, visitWithTypeInfo(typeInfo, visitInParallel(visitors)));
+
+  // In `graphql@15.0.0`, `context.getErrors` was removed.
+  // If this function is available, then we prefer to use it, as the user
+  // may be on a version of `graphql` that is pre-14.5.0 (and therefore `errors`)
+  // will be empty as it's never called above.
+  if (typeof context.getErrors === "function") {
+    return context.getErrors();
+  }
   return errors;
 }
 
