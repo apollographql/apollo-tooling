@@ -39,7 +39,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
     "minimatch": "^3.0.4",
-    "moment": "2.26.0",
+    "moment": "2.27.0",
     "vscode-languageserver": "^5.1.0",
     "vscode-uri": "1.0.6"
   },
