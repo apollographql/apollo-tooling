@@ -6,6 +6,7 @@ import git from "git-rev-sync";
 import pickBy from "lodash.pickby";
 import identity from "lodash.identity";
 import Command from "@oclif/command";
+import gitUrlParse from "git-url-parse";
 
 const findGitRoot = (start?: string | string[]): string | void => {
   start = start || process.cwd();
@@ -21,6 +22,35 @@ const findGitRoot = (start?: string | string[]): string | void => {
   } else {
     return findGitRoot(start);
   }
+};
+
+/**
+ * remove any username and password info from the
+ * git remote (`git ls-remote --get-url`)
+ *
+ * This can be made more generic in the future, allowing for more options
+ * for git providers. right now, we only support github & bitbucket. other remotes
+ * serve no purpose currently in graph manager.
+ */
+
+export const sanitizeGitRemote = (remote?: string) => {
+  if (!remote) return null;
+  const info = gitUrlParse(remote);
+
+  // we only support github and bitbucket sources
+  const source = info.source.toLowerCase();
+  if (source !== "github.com" && source !== "bitbucket.com") return null;
+
+  if (info.user !== "" && info.user !== "git") {
+    info.user = "REDACTED";
+  }
+
+  // just to make sure that with an unknown `protocol` that stringify doesn't
+  // just print the old, dirty url
+  // https://github.com/IonicaBizau/git-url-parse/blob/0b362b3e3b91a23ae58355fd2160523f0abde5d9/lib/index.js#L216-L217
+  info.href = null;
+
+  return gitUrlParse.stringify(info);
 };
 
 export interface Commit {
@@ -71,7 +101,7 @@ export const gitInfo = async (
     // The remoteUrl call can fail and throw an error
     // https://github.com/kurttheviking/git-rev-sync-js#gitremoteurl--string
     try {
-      remoteUrl = git.remoteUrl();
+      remoteUrl = sanitizeGitRemote(git.remoteUrl());
     } catch (e) {
       log(["Unable to retrieve remote url, failed with:", e].join("\n\n"));
     }

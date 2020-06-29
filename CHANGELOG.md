@@ -9,18 +9,134 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Add documentation to input structs' constructors [#1619](https://github.com/apollographql/apollo-tooling/pull/1619)
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
+- `apollo-codegen-core`
+  - <First `apollo-codegen-core` related entry goes here>
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Adds support for ReasonML to the language server [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
+  - Fix definition navigation for vscode using localSchemaFile [#1996](https://github.com/apollographql/apollo-tooling/pull/1996)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
+  - Fix definition navigation for vscode using localSchemaFile [#1996](https://github.com/apollographql/apollo-tooling/pull/1996)
+  - Fix 'Apollo: Show Status' command. [#2004](https://github.com/apollographql/apollo-tooling/pull/2004)
+
+## `apollo@2.28.3`
+
+- `apollo@2.28.3`
+  - Don't send a user-specified frontend URL to Apollo's servers; fetch one when needed. Drop `--frontend` flag. [#1990](https://github.com/apollographql/apollo-tooling/pull/1990)
+- `apollo-language-server@1.22.3`
+  - Don't send a user-specified frontend URL to Apollo's servers; fetch one when needed. [#1990](https://github.com/apollographql/apollo-tooling/pull/1990)
+
+## `apollo@2.28.2`
+
+- `apollo@2.28.2`
+  - Prevent cli from sending some git credentials [#1988](https://github.com/apollographql/apollo-tooling/pull/1988)
+
+## `apollo@2.28.1`
+
+- `apollo@2.28.1`
+  - Fix silent codegen errors on syntax errors [#1899](https://github.com/apollographql/apollo-tooling/pull/1899)
+- `apollo-language-server@1.22.1`
+  - Remove error from the case with old and new api keys present [#1893](https://github.com/apollographql/apollo-tooling/pull/1893)
+  - Add Elixir support for vscode [#1971](https://github.com/apollographql/apollo-tooling/pull/1971)
+- `vscode-apollo@1.61.1`
+  - Add Elixir support for vscode [#1971](https://github.com/apollographql/apollo-tooling/pull/1971)
+
+## `apollo@2.27.3`
+
+- `apollo@2.27.4`
+  - Change json-modern target to use legacy IR as base, similar to json target [#1916](https://github.com/apollographql/apollo-tooling/pull/1916).
+  - Update json-modern IR to expose `typeNode`s on `typesUsed` [#1916](https://github.com/apollographql/apollo-tooling/pull/1916)
+- `apollo-codegen-core@0.36.9`
+  - Change json-modern target to use legacy IR as base, similar to json target [#1916](https://github.com/apollographql/apollo-tooling/pull/1916).
+  - Update json-modern IR to expose `typeNode`s on `typesUsed` [#1916](https://github.com/apollographql/apollo-tooling/pull/1916)
+
+## `apollo@2.27.2`
+
+- `apollo@2.27.2`
+  - Setup automatically creating a GitHub release [#1876](https://github.com/apollographql/apollo-tooling/pull/1876)
+
+## `apollo@2.27.0`
+
+- `apollo@2.27.0`
+  - downgrade mkdirp to keep node 8 working as expected [63f0773](https://github.com/apollographql/apollo-tooling/commit/63f077313533c7aa304464bf9c02bb7c3dba4edc)
+  - Remove "hidden: true" from --variant in service:push [#1865](https://github.com/apollographql/apollo-tooling/pull/1846)
+  - update ENGINE_API_KEY deprecation message to give alternative [#1866](https://github.com/apollographql/apollo-tooling/pull/1866)
+  - Add json-modern codegen target which adds typeNodes (ast type nodes) to codegen output [#1846](https://github.com/apollographql/apollo-tooling/pull/1846)
+- `apollo-codegen-core@0.36.6`
+  - Add json-modern target which adds typeNodes (ast type nodes) to codegen output [#1846](https://github.com/apollographql/apollo-tooling/pull/1846)
+
+## `apollo@2.26.0`
+
+- `apollo@2.26.0`
+  - Support `APOLLO_KEY` and deprecate `ENGINE_API_KEY` for `.env` support [#1851](https://github.com/apollographql/apollo-tooling/pull/1851)
+  - Support `--graph`/`-v` flag for specifying graph manager id without requiring a config file [#1858](https://github.com/apollographql/apollo-tooling/pull/1858)
+  - Support `graph@variant` parsing under the `service.name` key in config files, similar to client configs [#1858](https://github.com/apollographql/apollo-tooling/pull/1858)
+  - Update all commands that supported --tag to prefer --variant and indicate a deprecation warning for --tag [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Updates of --help messages [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Bug fix of some apollo commands that did not work with `graph@variant` parsing within the `apollo.config.js` [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Improved error messaging when a graph is not specified in either `apollo.config.js` or within the API key. [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Added `--ignoreFailures` flag to service:check to exit with code 0 with check failures [#1856](https://github.com/apollographql/apollo-tooling/pull/1856)
+  - Make Update "no service found to link..." error more consistent [#1847](https://github.com/apollographql/apollo-tooling/pull/1847)
+  - Fix non-existent service message to use the actual service name that's being looked up [#1834](https://github.com/apollographql/apollo-tooling/pull/1834)
+- `apollo-language-server@1.21.0`
+  - Support `APOLLO_KEY` and deprecate `ENGINE_API_KEY` for `.env` support [#1851](https://github.com/apollographql/apollo-tooling/pull/1851)
+  - Support `graph@variant` parsing under the `service.name` key in config files, similar to client configs [#1858](https://github.com/apollographql/apollo-tooling/pull/1858)
+  - Improved error messaging when a graph is not specified in either `apollo.config.js` or within the API key. [#1849](https://github.com/apollographql/apollo-tooling/pull/1849)
+  - Make Update "no service found to link..." error more consistent [#1847](https://github.com/apollographql/apollo-tooling/pull/1847)
+  - Fix non-existent service message to use the actual service name that's being looked up [#1834](https://github.com/apollographql/apollo-tooling/pull/1834)
+
+## `apollo@2.25.0`
+
+- `apollo@2.25.0`
+  - Add confirmation check when deleting services [#1826](https://github.com/apollographql/apollo-tooling/pull/1826)
+
+## `apollo@2.24.0`
+
+- `apollo@2.24.0`
+  - Correctly fail on duplicate operations in client projects [#1812](https://github.com/apollographql/apollo-tooling/pull/1812)
+- `apollo-language-server@1.20.0`
+  - Correctly fail on duplicate operations in client projects [#1812](https://github.com/apollographql/apollo-tooling/pull/1812)
+
+## `apollo@2.23.0`
+
+- `apollo`
+  - Fix rendering of unexpected composition errors throwing a table cell error [#1806](https://github.com/apollographql/apollo-tooling/pull/1806)
+  - Add ability to define schema download output path that doesn't exist yet [#1807](https://github.com/apollographql/apollo-tooling/pull/1807)
+
+## `apollo@2.22.1`
+
+- `apollo@2.22.1`
+  - Update shortlinks to use go.apollo.dev instead of bitly [#1790](https://github.com/apollographql/apollo-tooling/pull/1790)
+- `apollo-codegen-flow@0.34.1`
+  - Add @generated comment
+- `apollo-codegen-scala@0.35.1`
+  - Add @generated comment
+- `apollo-codegen-swift@0.36.1`
+  - Add @generated comment
+- `apollo-codegen-typescript@0.36.1`
+  - Add @generated comment
+
+## `apollo@2.22.0`
+
+- `apollo@2.22.0`
+  - Support disabling literal stripping when extracting queries. [1703](https://github.com/apollographql/apollo-tooling/pull/1703)
+
+## `apollo@2.21.3`
+
+- `apollo-codegen-swift@0.35.10`
+  - Add documentation to input structs' constructors [#1619](https://github.com/apollographql/apollo-tooling/pull/1619)
+- `apollo-env@0.6.1`
+  - Add @types/node-fetch to apollo-env deps since they are exported [#1749](https://github.com/apollographql/apollo-tooling/pull/1749)
+- `apollo-language-server@1.18.0`
+  - Adds support for ReasonML to the language server [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
+- `vscode-apollo@1.13.0`
   - Adds syntax highlighting for ReasonML [#1488](https://github.com/apollographql/apollo-tooling/pull/1488)
 
 ## `apollo@2.21.2`

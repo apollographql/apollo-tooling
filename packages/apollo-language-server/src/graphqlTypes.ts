@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -68,14 +69,14 @@ export interface CheckPartialSchema_service_checkPartialSchema_checkSchemaResult
   /**
    * delta in seconds from current time that determines the start of the window
    * for reported metrics included in a schema diff. A day window from the present
-   * day would have a \`from\` value of -86400. In rare cases, this could be an ISO
+   * day would have a `from` value of -86400. In rare cases, this could be an ISO
    * timestamp if the user passed one in on diff creation
    */
   from: any | null;
   /**
    * delta in seconds from current time that determines the end of the
    * window for reported metrics included in a schema diff. A day window
-   * from the present day would have a \`to\` value of -0. In rare
+   * from the present day would have a `to` value of -0. In rare
    * cases, this could be an ISO timestamp if the user passed one in on diff
    * creation
    */
@@ -165,11 +166,11 @@ export interface CheckPartialSchemaVariables {
   partialSchema: PartialSchemaInput;
   gitContext?: GitContextInput | null;
   historicParameters?: HistoricQueryParameters | null;
-  frontend?: string | null;
 }
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -205,14 +206,14 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_validationConfig
   /**
    * delta in seconds from current time that determines the start of the window
    * for reported metrics included in a schema diff. A day window from the present
-   * day would have a \`from\` value of -86400. In rare cases, this could be an ISO
+   * day would have a `from` value of -86400. In rare cases, this could be an ISO
    * timestamp if the user passed one in on diff creation
    */
   from: any | null;
   /**
    * delta in seconds from current time that determines the end of the
    * window for reported metrics included in a schema diff. A day window
-   * from the present day would have a \`to\` value of -0. In rare
+   * from the present day would have a `to` value of -0. In rare
    * cases, this could be an ISO timestamp if the user passed one in on diff
    * creation
    */
@@ -294,11 +295,11 @@ export interface CheckSchemaVariables {
   tag?: string | null;
   gitContext?: GitContextInput | null;
   historicParameters?: HistoricQueryParameters | null;
-  frontend?: string | null;
 }
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -352,6 +353,10 @@ export interface ListServices_service {
 }
 
 export interface ListServices {
+  frontendUrlRoot: string;
+  /**
+   * Service by ID
+   */
   service: ListServices_service | null;
 }
 
@@ -362,6 +367,7 @@ export interface ListServicesVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -410,6 +416,7 @@ export interface RegisterOperationsVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -483,6 +490,7 @@ export interface RemoveServiceAndComposeVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -511,7 +519,13 @@ export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics {
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats {
   __typename: "ServiceFieldStatsRecord";
+  /**
+   * Dimensions of ServiceFieldStats that can be grouped by.
+   */
   groupBy: SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy;
+  /**
+   * Metrics of ServiceFieldStats that can be aggregated over.
+   */
   metrics: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics;
 }
 
@@ -531,6 +545,9 @@ export interface SchemaTagsAndFieldStats_service {
 }
 
 export interface SchemaTagsAndFieldStats {
+  /**
+   * Service by ID
+   */
   service: SchemaTagsAndFieldStats_service | null;
 }
 
@@ -540,6 +557,7 @@ export interface SchemaTagsAndFieldStatsVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -601,6 +619,7 @@ export interface UploadAndComposePartialSchemaVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -644,6 +663,7 @@ export interface UploadSchemaVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -701,6 +721,7 @@ export interface ValidateOperationsVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1138,6 +1159,9 @@ export interface GetSchemaByTag_service {
 }
 
 export interface GetSchemaByTag {
+  /**
+   * Service by ID
+   */
   service: GetSchemaByTag_service | null;
 }
 
@@ -1148,6 +1172,7 @@ export interface GetSchemaByTagVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1477,6 +1502,7 @@ export interface IntrospectionFullType {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1548,6 +1574,7 @@ export interface IntrospectionInputValue {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1611,6 +1638,7 @@ export interface IntrospectionTypeRef {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1620,7 +1648,6 @@ export interface IntrospectionTypeRef {
 export enum ChangeSeverity {
   FAILURE = "FAILURE",
   NOTICE = "NOTICE",
-  WARNING = "WARNING",
 }
 
 /**
@@ -1671,6 +1698,15 @@ export enum ValidationErrorType {
 }
 
 /**
+ * Filter options to exclude by client reference ID, client name, and client version.
+ */
+export interface ClientInfoFilter {
+  referenceID?: string | null;
+  name?: string | null;
+  version?: string | null;
+}
+
+/**
  * This is stored with a schema when it is uploaded
  */
 export interface GitContextInput {
@@ -1686,6 +1722,9 @@ export interface HistoricQueryParameters {
   to?: any | null;
   queryCountThreshold?: number | null;
   queryCountThresholdPercentage?: number | null;
+  excludedOperationIDs?: string[] | null;
+  excludedClients?: ClientInfoFilter[] | null;
+  includedVariants?: string[] | null;
 }
 
 export interface IntrospectionDirectiveInput {
@@ -1693,6 +1732,7 @@ export interface IntrospectionDirectiveInput {
   description?: string | null;
   locations: IntrospectionDirectiveLocation[];
   args: IntrospectionInputValueInput[];
+  isRepeatable?: boolean | null;
 }
 
 /**
@@ -1736,6 +1776,7 @@ export interface IntrospectionSchemaInput {
   mutationType?: IntrospectionTypeRefInput | null;
   subscriptionType?: IntrospectionTypeRefInput | null;
   directives: IntrospectionDirectiveInput[];
+  description?: string | null;
 }
 
 /**

@@ -1,9 +1,9 @@
 import { dirname } from "path";
 import merge from "lodash.merge";
-import { ServiceID, ServiceSpecifier, ClientID } from "../engine";
+import { ClientID, ServiceID, ServiceSpecifier } from "../engine";
 import URI from "vscode-uri";
 import { WithRequired } from "apollo-env";
-import { getServiceName, parseServiceSpecifier } from "./utils";
+import { getGraphIdFromConfig, parseServiceSpecifier } from "./utils";
 import { ValidationRule } from "graphql/validation/ValidationContext";
 
 export interface EngineStatsWindow {
@@ -33,13 +33,11 @@ export interface LocalServiceConfig {
 
 export interface EngineConfig {
   endpoint?: EndpointURI;
-  frontend?: EndpointURI;
   readonly apiKey?: string;
 }
 
 export const DefaultEngineConfig = {
-  endpoint: "https://engine-graphql.apollographql.com/api/graphql",
-  frontend: "https://engine.apollographql.com"
+  endpoint: "https://engine-graphql.apollographql.com/api/graphql"
 };
 
 export const DefaultConfigBase = {
@@ -132,16 +130,16 @@ export class ApolloConfig {
   public isClient: boolean;
   public isService: boolean;
   public engine: EngineConfig;
-  public name?: string;
   public service?: ServiceConfigFormat;
   public client?: ClientConfigFormat;
-  private _tag?: string;
+  private _variant?: string;
+  private _graphId?: string;
 
   constructor(public rawConfig: ApolloConfigFormat, public configURI?: URI) {
     this.isService = !!rawConfig.service;
     this.isClient = !!rawConfig.client;
     this.engine = rawConfig.engine!;
-    this.name = getServiceName(rawConfig);
+    this._graphId = getGraphIdFromConfig(rawConfig);
     this.client = rawConfig.client;
     this.service = rawConfig.service;
   }
@@ -162,19 +160,30 @@ export class ApolloConfig {
     return configs;
   }
 
-  set tag(tag: string) {
-    this._tag = tag;
+  set variant(variant: string) {
+    this._variant = variant;
   }
 
-  get tag(): string {
-    if (this._tag) return this._tag;
+  get variant(): string {
+    if (this._variant) return this._variant;
     let tag: string = "current";
     if (this.client && typeof this.client.service === "string") {
-      const specifierTag = parseServiceSpecifier(this.client
-        .service as ServiceSpecifier)[1];
-      if (specifierTag) tag = specifierTag;
+      const parsedVariant = parseServiceSpecifier(this.client.service)[1];
+      if (parsedVariant) tag = parsedVariant;
+    } else if (this.service && typeof this.service.name === "string") {
+      const parsedVariant = parseServiceSpecifier(this.service.name)[1];
+      if (parsedVariant) tag = parsedVariant;
     }
     return tag;
+  }
+
+  set graph(graphId: string | undefined) {
+    this._graphId = graphId;
+  }
+
+  get graph(): string | undefined {
+    if (this._graphId) return this._graphId;
+    return getGraphIdFromConfig(this.rawConfig);
   }
 
   // this type needs to be an "EveryKeyIsOptionalApolloConfig"

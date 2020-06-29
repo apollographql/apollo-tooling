@@ -8,6 +8,7 @@ import { relative } from "path";
 import { graphqlTypes } from "apollo-language-server";
 import chalk from "chalk";
 import envCi from "env-ci";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 const { ValidationErrorType } = graphqlTypes;
 type ValidationResult = graphqlTypes.ValidateOperations_service_validateOperations_validationResults;
@@ -40,10 +41,8 @@ export default class ClientCheck extends ClientCommand {
         {
           title: "Checking client compatibility with service",
           task: async ctx => {
-            if (!config.name) {
-              throw new Error(
-                "No service found to link to Apollo Graph Manager. Graph Manager is required for this command."
-              );
+            if (!config.graph) {
+              throw graphUndefinedError;
             }
             ctx.gitContext = await gitInfo(this.log);
 
@@ -60,8 +59,8 @@ export default class ClientCheck extends ClientCommand {
             }));
 
             ctx.validationResults = await project.engine.validateOperations({
-              id: config.name,
-              tag: config.tag,
+              id: config.graph,
+              tag: config.variant,
               operations: ctx.operations.map(({ body, name }) => ({
                 body,
                 name

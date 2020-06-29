@@ -29,6 +29,7 @@ import { DEFAULT_FILE_EXTENSION as TYPESCRIPT_DEFAULT_FILE_EXTENSION } from "apo
 
 export type TargetType =
   | "json"
+  | "json-modern"
   | "swift"
   | "scala"
   | "flow"
@@ -209,10 +210,16 @@ export default function generate(
     }
   } else {
     let output;
-    const context = compileToLegacyIR(schema, document, options);
+    const context = compileToLegacyIR(schema, document, {
+      ...options,
+      exposeTypeNodes: target === "json-modern"
+    });
     switch (target) {
+      case "json-modern":
       case "json":
-        output = serializeToJSON(context);
+        output = serializeToJSON(context, {
+          exposeTypeNodes: Boolean(options.exposeTypeNodes)
+        });
         break;
       case "scala":
         output = generateScalaSource(context);

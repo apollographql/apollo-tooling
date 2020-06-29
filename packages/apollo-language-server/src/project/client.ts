@@ -113,7 +113,7 @@ export class GraphQLClientProject extends GraphQLProject {
 
     super({ config, fileSet, loadingHandler, clientIdentity });
     this.rootURI = rootURI;
-    this.serviceID = config.name;
+    this.serviceID = config.graph;
 
     /**
      * This function is used in the Array.filter function below it to remove any .env files and config files.
@@ -133,7 +133,7 @@ export class GraphQLClientProject extends GraphQLProject {
         "⚠️  It looks like there are 0 files associated with this Apollo Project. " +
           "This may be because you don't have any files yet, or your includes/excludes " +
           "fields are configured incorrectly, and Apollo can't find your files. " +
-          "For help configuring Apollo projects, see this guide: https://bit.ly/2ByILPj"
+          "For help configuring Apollo projects, see this guide: https://go.apollo.dev/t/config"
       );
     }
 
@@ -148,7 +148,7 @@ export class GraphQLClientProject extends GraphQLProject {
   }
 
   get displayName(): string {
-    return this.config.name || "Unnamed Project";
+    return this.config.graph || "Unnamed Project";
   }
 
   initialize() {
@@ -176,7 +176,7 @@ export class GraphQLClientProject extends GraphQLProject {
         client: totalTypes - serviceTypes,
         total: totalTypes
       },
-      tag: this.config.tag,
+      tag: this.config.variant,
       loaded: Boolean(this.schema || this.serviceSchema),
       lastFetch: this.lastLoadDate
     };
@@ -201,7 +201,7 @@ export class GraphQLClientProject extends GraphQLProject {
       (async () => {
         this.serviceSchema = augmentSchemaWithGeneratedSDLIfNeeded(
           await this.schemaProvider.resolveSchema({
-            tag: tag || this.config.tag,
+            tag: tag || this.config.variant,
             force: true
           })
         );

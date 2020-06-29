@@ -14,6 +14,7 @@ import {
   ApolloConfig,
   graphqlTypes
 } from "apollo-language-server";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ClientPush extends ClientCommand {
   static description =
@@ -52,17 +53,15 @@ export default class ClientPush extends ClientCommand {
           },
           {
             title: `Checked operations against ${chalk.cyan(
-              config.name + "@" + config.tag
+              config.graph + "@" + config.variant
             )}`,
             task: async () => {}
           },
           {
             title: "Pushing operations to operation registry",
             task: async (_, task) => {
-              if (!config.name) {
-                throw new Error(
-                  "No service found to link to Apollo Graph Manager. Graph Manager is required for this command."
-                );
+              if (!config.graph) {
+                throw graphUndefinedError;
               }
 
               const operationManifest = getOperationManifestFromProject(
@@ -85,10 +84,10 @@ export default class ClientPush extends ClientCommand {
                   identifier: referenceID || name,
                   version
                 },
-                id: config.name,
+                id: config.graph,
                 operations: operationManifest,
                 manifestVersion: 2,
-                graphVariant: config.tag
+                graphVariant: config.variant
               };
               const { operations: _op, ...restVariables } = variables;
               this.debug("Variables sent to Apollo");

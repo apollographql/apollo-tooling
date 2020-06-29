@@ -236,6 +236,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       stripIndent`
         /* tslint:disable */
         /* eslint-disable */
+        // @generated
         // This file was automatically generated and should not be edited.
       `
     );

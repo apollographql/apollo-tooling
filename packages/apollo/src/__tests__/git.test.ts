@@ -1,4 +1,4 @@
-import { gitInfo } from "../git";
+import { gitInfo, sanitizeGitRemote } from "../git";
 
 describe("Git integration", () => {
   it("Returns commit, branch, message, committer, and remoteUrl", async () => {
@@ -15,5 +15,80 @@ describe("Git integration", () => {
     );
     expect(info.message).toBeDefined();
     expect(info.branch).toBeDefined();
+  });
+});
+
+describe("strip usernames/passwords from git remotes", () => {
+  it("returns empty for unknown remotes", () => {
+    let clean = sanitizeGitRemote("https://un@gitlab.com/apollographql/test");
+    expect(clean).toBeNull();
+  });
+  it("removes username from remote with only a username present", () => {
+    let clean = sanitizeGitRemote(
+      "https://un@bitbucket.com/apollographql/test"
+    );
+    expect(clean).toEqual("https://REDACTED@bitbucket.com/apollographql/test");
+  });
+  it("does not mind case", () => {
+    let clean = sanitizeGitRemote("https://un@GITHUB.com/apollographql/test");
+    expect(clean).toEqual("https://REDACTED@GITHUB.com/apollographql/test");
+  });
+  it("strips usernames from ssh urls", () => {
+    let clean = sanitizeGitRemote("ssh://un%401@github.com/apollographql/test");
+    expect(clean).toEqual("REDACTED@github.com:apollographql/test");
+  });
+  it("works properly with (allowed) special characters in username/password", () => {
+    let clean = sanitizeGitRemote(
+      "https://un:p%40ssw%3Ard@github.com/apollographql/test"
+    );
+    expect(clean).toEqual("https://REDACTED@github.com/apollographql/test");
+
+    let bbClean = sanitizeGitRemote(
+      "https://un:p%40ssw%3Ard@bitbucket.com/apollographql/test"
+    );
+    expect(bbClean).toEqual(
+      "https://REDACTED@bitbucket.com/apollographql/test"
+    );
+  });
+  it("works with non-url remotes from github with git user ONLY", () => {
+    let clean = sanitizeGitRemote(
+      "git@github.com:apollographql/apollo-tooling.git"
+    );
+    expect(clean).toEqual("git@github.com:apollographql/apollo-tooling.git");
+
+    let clean2 = sanitizeGitRemote(
+      "bob@github.com:apollographql/apollo-tooling.git"
+    );
+    expect(clean2).toEqual(
+      "REDACTED@github.com:apollographql/apollo-tooling.git"
+    );
+  });
+  it("works with non-url remotes from bitbucket with git user ONLY", () => {
+    let clean = sanitizeGitRemote(
+      "git@bitbucket.com:apollographql/apollo-tooling.git"
+    );
+    expect(clean).toEqual("git@bitbucket.com:apollographql/apollo-tooling.git");
+
+    let clean2 = sanitizeGitRemote(
+      "bob@bitbucket.com:apollographql/apollo-tooling.git"
+    );
+    expect(clean2).toEqual(
+      "REDACTED@bitbucket.com:apollographql/apollo-tooling.git"
+    );
+  });
+  it("does not allow non-url remotes from unrecognized providers (not github)", () => {
+    let clean = sanitizeGitRemote(
+      "git@lab.com:apollographql/apollo-tooling.git"
+    );
+    expect(clean).toBeNull();
+  });
+  // TODO maybe fix this in the future?
+  // git-url-parse right now just uses the dirty `href` if the protocol is unknow
+  // https://github.com/IonicaBizau/git-url-parse/blob/master/lib/index.js#L216-L217
+  it("returns null with unknown protocols", () => {
+    let clean = sanitizeGitRemote(
+      "git+http://un:p%40sswrd@github.com/apollographql/test"
+    );
+    expect(clean).toBeNull();
   });
 });

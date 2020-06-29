@@ -7,7 +7,8 @@ import {
   ApolloConfig,
   isClientConfig,
   isServiceConfig,
-  isLocalServiceConfig
+  isLocalServiceConfig,
+  ClientConfig
 } from "../../config";
 
 import { EndpointSchemaProvider } from "./endpoint";
@@ -64,7 +65,11 @@ export function schemaProviderFromConfig(
     }
   }
 
+  if (config.graph && config.engine) {
+    return new EngineSchemaProvider(config as ClientConfig, clientIdentity);
+  }
+
   throw new Error(
-    "No schema provider was created, because the project type was unable to be resolved from your config. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
+    "No schema provider was created, because the project type was unable to be resolved from your config. Please add either a client or service config. For more information, please refer to https://go.apollo.dev/t/config"
   );
 }

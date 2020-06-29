@@ -6,10 +6,10 @@ import ServiceCheck, {
 import checkSchemaResult from "../../../../__fixtures__/check-schema-result";
 import { ChangeSeverity } from "apollo-language-server/lib/graphqlTypes";
 import chalk from "chalk";
-import nock = require("nock");
-import { stdout, stderr } from "stdout-stderr";
+import { stdout } from "stdout-stderr";
 import * as graphql from "graphql";
 import { graphqlTypes } from "apollo-language-server";
+import nock = require("nock");
 
 /**
  * Single URL for all local requests to be mocked
@@ -25,19 +25,9 @@ const localURL = "http://localhost:4000";
 const fakeApiKey = "service:engine:9YC5AooMa2yO11eFlZat11";
 
 /**
- * Graph Manager API key we're using.
- *
- * This is hard-coded to `fakeApiKey` because this is out day-to-day usage should be. If we're going to be
- * updating the mocked data; we'll need to use a real API key (see [README#Regenerating Mocked Network
- * Data](https://github.com/apollographql/apollo-tooling#regenerating-mocked-network-data)); which will be
- * placed here.
- */
-const apiKey = fakeApiKey;
-
-/**
  * An array that we'll spread into all CLI commands to pass the graph manager api key.
  */
-const cliKeyParameter = [`--key=${apiKey}`];
+const cliKeyParameter = [`--key=${fakeApiKey}`];
 
 /**
  * The original `console.log` being mocked.
@@ -529,6 +519,41 @@ describe("service:check", () => {
           expect(uncaptureApplicationOutput()).toMatchSnapshot();
         });
 
+        it("errors when graph flag does not match token", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(1);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              `--graph=happy-fun-times`
+            ])
+          ).rejects.toThrow(
+            /Cannot specify a service token that does not match graph./
+          );
+        });
+
+        it("allows setting graph with a flag", async () => {
+          captureApplicationOutput();
+          mockCompositionSuccess();
+
+          expect.assertions(1);
+
+          await expect(
+            ServiceCheck.run([
+              ...cliKeyParameter,
+              "--serviceName=accounts",
+              `--endpoint=${localURL}/graphql`,
+              `--graph=happy-fun-times`,
+              `--key=service:happy-fun-times:asldf89jaose9jroinc`
+            ])
+          ).resolves.not.toThrow();
+        });
+
         it("compacts output in CI", async () => {
           captureApplicationOutput();
           mockCompositionSuccess();
@@ -850,7 +875,7 @@ describe("service:check", () => {
 // import { vol, fs as mockFS } from "apollo-codegen-core/lib/localfs";
 
 // const test = setup.do(() => captureApplicationOutput());
-// const ENGINE_API_KEY = "service:test:1234";
+// const APOLLO_KEY = "service:test:1234";
 // const hash = "12345";
 // const schemaContents = fs.readFileSync(
 //   path.resolve(__dirname, "./fixtures/schema.graphql"),
@@ -874,7 +899,7 @@ describe("service:check", () => {
 
 // const engineSuccess = ({ schema, tag, results } = {}) => nock => {
 //   nock
-//     .matchHeader("x-api-key", ENGINE_API_KEY)
+//     .matchHeader("x-api-key", APOLLO_KEY)
 //     .post("/", {
 //       operationName: "CheckSchema",
 //       variables: {
@@ -936,7 +961,7 @@ describe("service:check", () => {
 //   test
 //     .nock("http://localhost:4000", localSuccess)
 //     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .stdout()
 //     .command(["schema:check"])
 //     .exit(1)
@@ -950,7 +975,7 @@ describe("service:check", () => {
 //     .nock("http://localhost:4000", localSuccess)
 //     .nock(ENGINE_URI, engineSuccess())
 //     .stdout()
-//     .command(["schema:check", `--key=${ENGINE_API_KEY}`])
+//     .command(["schema:check", `--key=${APOLLO_KEY}`])
 //     .exit(1)
 //     .it("allows custom api key", () => {
 //       expect(stdout).toContain("FAILURE");
@@ -961,7 +986,7 @@ describe("service:check", () => {
 //   test
 //     .nock("http://localhost:4000", localSuccess)
 //     .nock(ENGINE_URI, engineSuccess({ results: [] }))
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .stdout()
 //     .command(["schema:check"])
 //     .it(
@@ -975,7 +1000,7 @@ describe("service:check", () => {
 //     .stdout()
 //     .nock("https://staging.example.com", localSuccess)
 //     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .command(["schema:check", "--endpoint=https://staging.example.com/graphql"])
 //     .exit(1)
 //     .it("compares against a schema from a custom remote", () => {
@@ -991,7 +1016,7 @@ describe("service:check", () => {
 //       "https://engine.example.com",
 //       engineSuccess({ engine: "https://engine.example.com" })
 //     )
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .command(["schema:check", "--engine=https://engine.example.com"])
 //     .exit(1)
 //     .it("compares against a schema from a custom registry", std => {
@@ -1014,7 +1039,7 @@ describe("service:check", () => {
 //         .reply(200, { data: fullSchema });
 //     })
 //     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .command([
 //       "schema:check",
 //       "--endpoint=https://staging.example.com/graphql",
@@ -1039,7 +1064,7 @@ describe("service:check", () => {
 //     )
 //     .stdout()
 //     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .command(["schema:check", "--endpoint=introspection-result.json"])
 //     .exit(1)
 //     .it(
@@ -1059,7 +1084,7 @@ describe("service:check", () => {
 //     )
 //     .stdout()
 //     .nock(ENGINE_URI, engineSuccess({ schema: fullSchema.__schema }))
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .command(["schema:check", "--endpoint=schema.graphql"])
 //     .exit(1)
 //     .it(
@@ -1074,7 +1099,7 @@ describe("service:check", () => {
 //   test
 //     .nock("http://localhost:4000", localSuccess)
 //     .nock(ENGINE_URI, engineSuccess())
-//     .env({ ENGINE_API_KEY })
+//     .env({ APOLLO_KEY })
 //     .stdout()
 //     .command(["schema:check", "--json"])
 //     .exit(1)

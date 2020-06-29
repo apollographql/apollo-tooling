@@ -35,8 +35,9 @@ export function getServiceFromKey(key?: string) {
   return;
 }
 
-export function getServiceName(config: ApolloConfigFormat) {
-  if (config.service) return config.service.name;
+export function getGraphIdFromConfig(config: ApolloConfigFormat) {
+  if (config.service && config.service.name)
+    return parseServiceSpecifier(config.service.name)[0];
   if (config.client) {
     if (typeof config.client.service === "string") {
       return parseServiceSpecifier(config.client

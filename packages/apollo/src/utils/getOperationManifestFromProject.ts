@@ -1,8 +1,5 @@
 import { GraphQLClientProject } from "apollo-language-server";
-import {
-  defaultOperationRegistrySignature,
-  operationHash
-} from "apollo-graphql";
+import { operationHash, operationRegistrySignature } from "apollo-graphql";
 
 export interface ManifestEntry {
   signature: string;
@@ -13,15 +10,17 @@ export interface ManifestEntry {
 }
 
 export function getOperationManifestFromProject(
-  project: GraphQLClientProject
+  project: GraphQLClientProject,
+  options: { preserveStringAndNumericLiterals: boolean } = {
+    preserveStringAndNumericLiterals: false
+  }
 ): ManifestEntry[] {
   const manifest = Object.entries(
     project.mergedOperationsAndFragmentsForService
   ).map(([operationName, operationAST]) => {
-    const printed = defaultOperationRegistrySignature(
-      operationAST,
-      operationName
-    );
+    const printed = operationRegistrySignature(operationAST, operationName, {
+      preserveStringAndNumericLiterals: options.preserveStringAndNumericLiterals
+    });
 
     return {
       signature: operationHash(printed),

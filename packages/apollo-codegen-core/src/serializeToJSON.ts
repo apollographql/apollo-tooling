@@ -6,17 +6,32 @@ import {
   GraphQLInputObjectType,
   isEnumType,
   isInputObjectType,
-  isScalarType
+  isScalarType,
+  parseType
 } from "graphql";
 
 import { LegacyCompilerContext } from "./compiler/legacyIR";
+import { CompilerContext, stripProp } from "./compiler";
 
-export default function serializeToJSON(context: LegacyCompilerContext) {
+/**
+ * These options are passed from the generate function, which
+ * This option needs to be passed to the input object serializer
+ * to print the `typeNode` key. We do this here instead of in the
+ * compiler, since  modifying the types there get really hacky and unpleasant
+ */
+interface serializeOptions {
+  exposeTypeNodes: boolean;
+}
+
+export default function serializeToJSON(
+  context: LegacyCompilerContext | CompilerContext,
+  options: serializeOptions
+) {
   return serializeAST(
     {
       operations: Object.values(context.operations),
       fragments: Object.values(context.fragments),
-      typesUsed: context.typesUsed.map(serializeType)
+      typesUsed: context.typesUsed.map(type => serializeType(type, options))
     },
     "\t"
   );
@@ -36,11 +51,11 @@ export function serializeAST(ast: any, space?: string) {
   );
 }
 
-function serializeType(type: GraphQLType) {
+function serializeType(type: GraphQLType, options: serializeOptions) {
   if (isEnumType(type)) {
     return serializeEnumType(type);
   } else if (isInputObjectType(type)) {
-    return serializeInputObjectType(type);
+    return serializeInputObjectType(type, options);
   } else if (isScalarType(type)) {
     return serializeScalarType(type);
   } else {
@@ -65,7 +80,10 @@ function serializeEnumType(type: GraphQLEnumType) {
   };
 }
 
-function serializeInputObjectType(type: GraphQLInputObjectType) {
+function serializeInputObjectType(
+  type: GraphQLInputObjectType,
+  options?: serializeOptions
+) {
   const { name, description } = type;
   const fields = Object.values(type.getFields());
 
@@ -76,10 +94,14 @@ function serializeInputObjectType(type: GraphQLInputObjectType) {
     fields: fields.map(field => ({
       name: field.name,
       type: String(field.type),
+      typeNode:
+        options && options.exposeTypeNodes
+          ? stripProp("loc", parseType(field.type.toString()))
+          : undefined,
       description: field.description,
       defaultValue: field.defaultValue
     }))
-  };
+  } as any;
 }
 
 function serializeScalarType(type: GraphQLScalarType) {

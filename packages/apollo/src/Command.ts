@@ -1,22 +1,23 @@
 import Command, { flags } from "@oclif/command";
-import Listr from "listr";
-import { ListrTask } from "listr";
+import Listr, { ListrTask } from "listr";
 import { parse, resolve } from "path";
 
 import {
+  ApolloConfig,
+  Debug,
+  getGraphIdFromConfig,
+  getServiceFromKey,
+  GraphQLClientProject,
   GraphQLProject,
   GraphQLServiceProject,
-  GraphQLClientProject,
-  loadConfig,
   isClientConfig,
   isServiceConfig,
-  ApolloConfig,
-  getServiceFromKey,
-  Debug
+  loadConfig
 } from "apollo-language-server";
-import { WithRequired, DeepPartial } from "apollo-env";
+import { DeepPartial, WithRequired } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 import URI from "vscode-uri";
+import chalk from "chalk";
 
 const { version, referenceID } = require("../package.json");
 
@@ -34,8 +35,9 @@ export interface Flags {
   localSchemaFile?: string;
   key?: string;
   engine?: string;
-  frontend?: string;
   tag?: string;
+  variant?: string;
+  graph?: string;
   skipSSLValidation?: boolean;
 }
 
@@ -76,18 +78,15 @@ export abstract class ProjectCommand extends Command {
         "Additional header to send during introspection. May be used multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag."
     }),
     endpoint: flags.string({
-      description: "The url of your service"
+      description: "The URL for the CLI use to introspect your service"
     }),
     key: flags.string({
-      description: "The API key for the Apollo Engine service",
-      default: () => process.env.ENGINE_API_KEY
+      description:
+        "The API key to use for authentication to Apollo Graph Manager",
+      default: () => process.env.APOLLO_KEY || process.env.ENGINE_API_KEY
     }),
     engine: flags.string({
-      description: "Reporting URL for a custom Apollo Engine deployment",
-      hidden: true
-    }),
-    frontend: flags.string({
-      description: "URL for a custom Apollo Engine frontend",
+      description: "URL for a custom Apollo Graph Manager deployment",
       hidden: true
     })
   };
@@ -143,13 +142,21 @@ export abstract class ProjectCommand extends Command {
       return;
     }
 
-    config.tag = flags.tag || config.tag || "current";
+    config.variant = flags.variant || flags.tag || config.variant;
+    config.graph = flags.graph || getGraphIdFromConfig(config.rawConfig);
+
+    if (flags.tag) {
+      console.warn(
+        chalk.yellow(
+          "Using the --tag flag is deprecated. Please use --variant (or -v) instead."
+        )
+      );
+    }
     //  flag overrides
     config.setDefaults({
       engine: {
         apiKey: flags.key,
-        endpoint: flags.engine,
-        frontend: flags.frontend
+        endpoint: flags.engine
       }
     });
 
@@ -191,6 +198,14 @@ export abstract class ProjectCommand extends Command {
       config.setDefaults(defaults);
     }
 
+    const [tokenType, identifier] =
+      (config.engine.apiKey && config.engine.apiKey.split(":")) || [];
+    if (tokenType == "service" && identifier !== config.graph) {
+      throw new Error(
+        `Cannot specify a service token that does not match graph. Graph ${config.graph} does not match graph from token (${identifier})`
+      );
+    }
+
     return config;
   }
 
@@ -227,7 +242,7 @@ export abstract class ProjectCommand extends Command {
       });
     } else {
       throw new Error(
-        "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://bit.ly/2ByILPj"
+        "Unable to resolve project type. Please add either a client or service config. For more information, please refer to https://go.apollo.dev/t/config"
       );
     }
 
@@ -281,7 +296,21 @@ export abstract class ClientCommand extends ProjectCommand {
     }),
     tag: flags.string({
       char: "t",
-      description: "The published service tag for this client"
+      description:
+        "[Deprecated: please use --variant instead] The tag (AKA variant) of the graph in Apollo Graph Manager to associate this client to",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description:
+        "The variant of the graph in Apollo Graph Manager to associate this client to",
+      exclusive: ["tag"]
+    }),
+    graph: flags.string({
+      char: "g",
+      description:
+        "The ID for the graph in Apollo Graph Manager to operate client commands with. Overrides config file if set."
     }),
     queries: flags.string({
       description: "Deprecated in favor of the includes flag"

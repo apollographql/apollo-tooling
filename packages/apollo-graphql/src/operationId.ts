@@ -69,25 +69,30 @@ export function defaultEngineReportingSignature(
 }
 
 // The operation registry signature function consists of removing extra whitespace,
-// sorting the AST in a deterministic manner, hiding string and numeric literals,
-// and removing unused definitions. This is a less aggressive transform than its
-// engine reporting signature counterpart.
-//
-// XXX
-// The hiding of literals is currently being discussed. This behavior
-// should not be depended on in the future, as it's likely we will choose not
-// to hide them at all. The rationale being, if queries are being shipped to
-// a client bundle, exposing PII via this signature is a very small concern,
-// relatively speaking.
+// sorting the AST in a deterministic manner, potentially hiding string and numeric
+// literals, and removing unused definitions. This is a less aggressive transform
+// than its engine reporting signature counterpart.
+export function operationRegistrySignature(
+  ast: DocumentNode,
+  operationName: string,
+  options: { preserveStringAndNumericLiterals: boolean } = {
+    preserveStringAndNumericLiterals: false
+  }
+): string {
+  const withoutUnusedDefs = dropUnusedDefinitions(ast, operationName);
+  const maybeWithLiterals = options.preserveStringAndNumericLiterals
+    ? withoutUnusedDefs
+    : hideStringAndNumericLiterals(withoutUnusedDefs);
+  return printWithReducedWhitespace(sortAST(maybeWithLiterals));
+}
+
 export function defaultOperationRegistrySignature(
   ast: DocumentNode,
   operationName: string
 ): string {
-  return printWithReducedWhitespace(
-    sortAST(
-      hideStringAndNumericLiterals(dropUnusedDefinitions(ast, operationName))
-    )
-  );
+  return operationRegistrySignature(ast, operationName, {
+    preserveStringAndNumericLiterals: false
+  });
 }
 
 export function operationHash(operation: string): string {

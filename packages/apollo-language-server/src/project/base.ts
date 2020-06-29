@@ -1,5 +1,5 @@
 import { extname } from "path";
-import { readFileSync } from "fs";
+import { lstatSync, readFileSync } from "fs";
 import URI from "vscode-uri";
 
 import {
@@ -23,7 +23,7 @@ import { GraphQLDocument, extractGraphQLDocuments } from "../document";
 
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
-import { ApolloConfig } from "../config";
+import { ApolloConfig, keyEnvVar } from "../config";
 import {
   schemaProviderFromConfig,
   GraphQLSchemaProvider,
@@ -44,7 +44,9 @@ const fileAssociations: { [extension: string]: string } = {
   ".py": "python",
   ".rb": "ruby",
   ".dart": "dart",
-  ".re": "reason"
+  ".re": "reason",
+  ".ex": "elixir",
+  ".exs": "elixir"
 };
 
 export interface GraphQLProjectConfig {
@@ -136,7 +138,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     // handle error states for missing engine config
     // all in the same place :tada:
     if (!this.engineClient) {
-      throw new Error("Unable to find ENGINE_API_KEY");
+      throw new Error(`Unable to find ${keyEnvVar}`);
     }
     return this.engineClient!;
   }
@@ -197,13 +199,13 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
     // Don't process files of an unsupported filetype
     if (!languageId) return;
 
-    try {
-      const contents = readFileSync(filePath, "utf8");
-      const document = TextDocument.create(uri, languageId, -1, contents);
-      this.documentDidChange(document);
-    } catch (error) {
-      console.error(error);
-    }
+    // Don't process directories. Directories might be named like files so
+    // we have to explicitly check.
+    if (!lstatSync(filePath).isFile()) return;
+
+    const contents = readFileSync(filePath, "utf8");
+    const document = TextDocument.create(uri, languageId, -1, contents);
+    this.documentDidChange(document);
   }
 
   fileWasDeleted(uri: DocumentUri) {
@@ -233,7 +235,7 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
         if (definition.kind === Kind.OPERATION_DEFINITION && definition.name) {
           if (operations[definition.name.value]) {
             throw new Error(
-              `️️There are multiple definitions for the ${definition.name.value} operation. All operations in a project must have unique names. If generating types, only the types for the first definition found will be generated.`
+              `️️There are multiple definitions for the \`${definition.name.value}\` operation. Please rename or remove all operations with the duplicated name before continuing.`
             );
           }
           operations[definition.name.value] = definition;

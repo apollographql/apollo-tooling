@@ -52,6 +52,7 @@ import { GraphQLCompositeType } from "graphql";
 export function generateSource(context: LegacyCompilerContext) {
   const generator = new CodeGenerator(context);
 
+  generator.printOnNewline("// @generated");
   generator.printOnNewline(
     "//  This file was automatically generated and should not be edited."
   );

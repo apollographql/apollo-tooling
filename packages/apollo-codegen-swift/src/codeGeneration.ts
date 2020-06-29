@@ -159,6 +159,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
   }
 
   fileHeader() {
+    this.printOnNewline(SwiftSource.raw`// @generated`);
     this.printOnNewline(
       SwiftSource.raw`//  This file was automatically generated and should not be edited.`
     );
@@ -470,14 +471,17 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         this.printNewlineIfNeeded();
         this.printOnNewline(
-          swift`public static let selections: [GraphQLSelection] = `
+          swift`public static var selections: [GraphQLSelection] {`
         );
-        if (typeCase) {
-          this.typeCaseInitialization(typeCase);
-        } else {
-          this.selectionSetInitialization(variant);
-        }
-
+        this.withIndent(() => {
+          this.printOnNewline(swift`return `);
+          if (typeCase) {
+            this.typeCaseInitialization(typeCase);
+          } else {
+            this.selectionSetInitialization(variant);
+          }
+        });
+        this.printOnNewline(swift`}`);
         this.printNewlineIfNeeded();
 
         this.printOnNewline(

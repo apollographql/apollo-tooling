@@ -4,7 +4,8 @@ import {
   GraphQLObjectType,
   GraphQLCompositeType,
   GraphQLInputType,
-  DocumentNode
+  DocumentNode,
+  TypeNode
 } from "graphql";
 
 import {
@@ -29,6 +30,7 @@ export interface CompilerOptions {
   customScalarsPrefix?: string;
   namespace?: string;
   generateOperationIds?: boolean;
+  exposeTypeNodes?: boolean;
 }
 
 export interface LegacyCompilerContext {
@@ -80,6 +82,7 @@ export interface LegacyField {
   fieldName: string;
   args?: Argument[];
   type: GraphQLType;
+  typeNode?: TypeNode;
   description?: string;
   isConditional?: boolean;
   conditions?: BooleanCondition[];
@@ -104,7 +107,10 @@ export interface Argument {
 export function compileToLegacyIR(
   schema: GraphQLSchema,
   document: DocumentNode,
-  options: CompilerOptions = { mergeInFieldsFromFragmentSpreads: true }
+  options: CompilerOptions = {
+    mergeInFieldsFromFragmentSpreads: true,
+    exposeTypeNodes: false
+  }
 ): LegacyCompilerContext {
   const context = compileToIR(schema, document, options);
   const transformer = new LegacyIRTransformer(context, options);
@@ -248,6 +254,7 @@ class LegacyIRTransformer {
       const {
         args,
         type,
+        typeNode,
         isConditional,
         description,
         isDeprecated,
@@ -268,6 +275,7 @@ class LegacyIRTransformer {
         responseName: field.alias || field.name,
         fieldName: field.name,
         type,
+        typeNode,
         args,
         isConditional,
         conditions,

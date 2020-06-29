@@ -1,6 +1,6 @@
 import { flags } from "@oclif/command";
 import { table } from "table";
-import { introspectionFromSchema, printSchema, GraphQLSchema } from "graphql";
+import { GraphQLSchema, introspectionFromSchema, printSchema } from "graphql";
 import chalk from "chalk";
 import envCi from "env-ci";
 import { gitInfo } from "../../git";
@@ -18,10 +18,11 @@ import {
   CheckSchemaVariables,
   IntrospectionSchemaInput
 } from "apollo-language-server/lib/graphqlTypes";
-import { ApolloConfig, isServiceProject } from "apollo-language-server";
+import { ApolloConfig } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
 import { isNotNullOrUndefined } from "apollo-env";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 const formatChange = (change: Change) => {
   let color = (x: string): string => x;
@@ -29,13 +30,8 @@ const formatChange = (change: Change) => {
     color = chalk.red;
   }
 
-  if (change.severity === ChangeSeverity.WARNING) {
-    color = chalk.yellow;
-  }
-
   const changeDictionary: Record<ChangeSeverity, string> = {
     [ChangeSeverity.FAILURE]: "FAIL",
-    [ChangeSeverity.WARNING]: "WARN",
     [ChangeSeverity.NOTICE]: "PASS"
   };
 
@@ -67,6 +63,7 @@ interface TasksOutput {
     | CheckPartialSchema_service_checkPartialSchema_checkSchemaResult;
   shouldOutputJson: boolean;
   shouldOutputMarkdown: boolean;
+  shouldAlwaysExit0: boolean;
   federationSchemaHash?: string;
   serviceName: string | undefined;
   compositionErrors?: CompositionErrors;
@@ -123,9 +120,9 @@ export function formatMarkdown({
 
   return `
 ### Apollo Service Check
-🔄 Validated your local schema against schema tag \`${tag}\` ${
-    serviceName ? `for service \`${serviceName}\` ` : ""
-  }on graph \`${graphName}\`.
+🔄 Validated your local schema against metrics from variant \`${tag}\` ${
+    serviceName ? `for graph \`${serviceName}\` ` : ""
+  }on graph \`${graphName}@${tag}\`.
 ${validationText}
 ${
   breakingChanges.length > 0
@@ -163,7 +160,7 @@ export function formatCompositionErrorsMarkdown({
 }): string {
   return `
 ### Apollo Service Check
-🔄 Validated graph composition on schema tag \`${tag}\` for service \`${serviceName}\` on graph \`${graphName}\`.
+🔄 Validated graph composition for service \`${serviceName}\` on graph \`${graphName}@${tag}\`.
 ❌ Found **${compositionErrors.length} composition errors**
 
 | Service   | Field     | Message   |
@@ -238,7 +235,20 @@ export default class ServiceCheck extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The published tag to check this service against"
+      description:
+        "[Deprecated: please use --variant instead] The tag (AKA variant) to check the proposed schema against",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The variant to check the proposed schema against",
+      exclusive: ["tag"]
+    }),
+    graph: flags.string({
+      char: "g",
+      description:
+        "The ID of the graph in Apollo Graph Manager to check your proposed schema changes against. Overrides config file if set."
     }),
     validationPeriod: flags.string({
       description:
@@ -268,6 +278,10 @@ export default class ServiceCheck extends ProjectCommand {
     serviceName: flags.string({
       description:
         "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service"
+    }),
+    ignoreFailures: flags.boolean({
+      description:
+        "Exit with status 0 when the check completes, even if errors are found"
     })
   };
 
@@ -293,8 +307,8 @@ export default class ServiceCheck extends ProjectCommand {
            *
            * A graph can be either a monolithic schema or the result of composition a federated schema.
            */
-          graphID = config.name;
-          graphVariant = flags.tag || config.tag || "current";
+          graphID = config.graph;
+          graphVariant = config.variant;
 
           /**
            * Name of the implementing service being checked.
@@ -304,13 +318,14 @@ export default class ServiceCheck extends ProjectCommand {
           const serviceName: string | undefined = flags.serviceName;
 
           if (!graphID) {
-            throw new Error("No service found to link to Apollo Graph Manager");
+            throw graphUndefinedError;
           }
+          const graphSpecifier = `${graphID}@${graphVariant}`;
 
-          // Add some fields to output that are required for producing
-          // markdown and json output
+          // Add some fields to output that are required for post-processing
           taskOutput.shouldOutputJson = !!flags.json;
           taskOutput.shouldOutputMarkdown = !!flags.markdown;
+          taskOutput.shouldAlwaysExit0 = !!flags.ignoreFailures;
           taskOutput.serviceName = flags.serviceName;
           taskOutput.config = config;
 
@@ -319,7 +334,7 @@ export default class ServiceCheck extends ProjectCommand {
               enabled: () => !!serviceName,
               title: `Validate graph composition for service ${chalk.cyan(
                 serviceName || ""
-              )} on graph ${chalk.cyan(graphID)}`,
+              )} on graph ${chalk.cyan(graphSpecifier)}`,
               task: async (ctx: TasksOutput, task) => {
                 if (!serviceName) {
                   throw new Error(
@@ -354,7 +369,6 @@ export default class ServiceCheck extends ProjectCommand {
                   partialSchema: {
                     sdl
                   },
-                  frontend: flags.frontend || config.engine.frontend,
                   ...(historicParameters && { historicParameters }),
                   gitContext: await gitInfo(this.log)
                 });
@@ -363,13 +377,14 @@ export default class ServiceCheck extends ProjectCommand {
                   compositionValidationResult.errors.length,
                   "graph composition error"
                 )} for service ${chalk.cyan(serviceName)} on graph ${chalk.cyan(
-                  graphID!
+                  graphSpecifier
                 )}`;
 
                 if (compositionValidationResult.errors.length > 0) {
-                  const decodedErrors = compositionValidationResult.errors
+                  taskOutput.compositionErrors = compositionValidationResult.errors
                     .filter(isNotNullOrUndefined)
                     .map(error => {
+                      // checks for format: [serviceName] Location -> Error Message
                       const match = error.message.match(
                         /^\[([^\[]+)\]\s+(\S+)\ ->\ (.+)/
                       );
@@ -386,8 +401,6 @@ export default class ServiceCheck extends ProjectCommand {
                       const [, service, field, message] = match;
                       return { service, field, message };
                     });
-
-                  taskOutput.compositionErrors = decodedErrors;
                   taskOutput.graphCompositionID =
                     compositionValidationResult.graphCompositionID;
 
@@ -413,9 +426,9 @@ export default class ServiceCheck extends ProjectCommand {
             {
               title: `Validating ${
                 serviceName ? "composed " : ""
-              }schema against tag ${chalk.cyan(
+              }schema against metrics from variant ${chalk.cyan(
                 graphVariant!
-              )} on graph ${chalk.cyan(graphID)}`,
+              )} on graph ${chalk.cyan(graphSpecifier)}`,
               // We have already performed validation per operation above if the service is federated
               enabled: () => !serviceName,
               task: async (ctx: TasksOutput, task) => {
@@ -424,9 +437,9 @@ export default class ServiceCheck extends ProjectCommand {
                   | { schema: IntrospectionSchemaInput }
                   | undefined;
 
-                // This is _not_ a `federated` schema. Resolve the schema given `config.tag`.
+                // This is _not_ a `federated` schema. Resolve the schema given `config.variant`.
                 task.output = "Resolving schema";
-                schema = await project.resolveSchema({ tag: config.tag });
+                schema = await project.resolveSchema({ tag: config.variant });
                 if (!schema) {
                   throw new Error("Failed to resolve schema");
                 }
@@ -447,9 +460,8 @@ export default class ServiceCheck extends ProjectCommand {
 
                 const variables: CheckSchemaVariables = {
                   id: graphID!,
-                  tag: flags.tag,
+                  tag: config.variant,
                   gitContext: await gitInfo(this.log),
-                  frontend: flags.frontend || config.engine.frontend,
                   ...(historicParameters && { historicParameters }),
                   ...schemaCheckSchemaVariables
                 };
@@ -558,7 +570,6 @@ export default class ServiceCheck extends ProjectCommand {
     } catch (error) {
       if (error.message.includes("/upgrade")) {
         this.exit(1);
-
         return;
       }
 
@@ -577,7 +588,8 @@ export default class ServiceCheck extends ProjectCommand {
       shouldOutputMarkdown,
       serviceName,
       compositionErrors,
-      graphCompositionID
+      graphCompositionID,
+      shouldAlwaysExit0
     } = taskOutput;
 
     if (shouldOutputJson) {
@@ -619,7 +631,7 @@ export default class ServiceCheck extends ProjectCommand {
             compositionErrors,
             graphName: graphID,
             serviceName,
-            tag: config.tag
+            tag: config.variant
           })
         );
       }
@@ -629,7 +641,7 @@ export default class ServiceCheck extends ProjectCommand {
           checkSchemaResult,
           graphName: graphID,
           serviceName,
-          tag: config.tag,
+          tag: config.variant,
           graphCompositionID
         })
       );
@@ -639,24 +651,42 @@ export default class ServiceCheck extends ProjectCommand {
       // Add a cosmetic line break
       console.log("");
 
-      this.log(
-        table(
-          [
-            ["Service", "Field", "Message"],
-            ...compositionErrors.map(Object.values)
-          ],
-          {
-            columns: {
-              2: {
-                width: 50,
-                wrapWord: true
-              }
-            }
-          }
-        )
+      // errors that DONT match the expected format: [service] field -> message
+      const unformattedErrors = compositionErrors.filter(
+        e => !e.field && !e.service
+      );
+      // errors that match the expected format: [service] field -> message
+      const formattedErrors = compositionErrors.filter(
+        e => e.field || e.service
       );
 
+      if (formattedErrors.length)
+        this.log(
+          table(
+            [
+              ["Service", "Field", "Message"],
+              ...formattedErrors.map(Object.values)
+            ],
+            {
+              columns: {
+                2: {
+                  width: 50,
+                  wrapWord: true
+                }
+              }
+            }
+          )
+        );
+
+      // list out errors which we couldn't determine Service name and/or location names
+      if (unformattedErrors.length)
+        this.log(
+          table([["Message"], ...unformattedErrors.map(e => [e.message])])
+        );
       // Return a non-zero error code
+      if (shouldAlwaysExit0) {
+        return;
+      }
       this.exit(1);
     } else {
       this.log(formatHumanReadable({ checkSchemaResult, graphCompositionID }));
@@ -667,6 +697,9 @@ export default class ServiceCheck extends ProjectCommand {
           ({ severity }) => severity === ChangeSeverity.FAILURE
         )
       ) {
+        if (shouldAlwaysExit0) {
+          return;
+        }
         this.exit(1);
       }
     }

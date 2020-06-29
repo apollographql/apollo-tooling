@@ -4,6 +4,7 @@ exports[`Flow codeGeneration covariant properties with $ReadOnlyArray 1`] = `
 Object {
   "common": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -23,6 +24,7 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -92,6 +94,7 @@ export type HeroNameVariables = {|
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -131,6 +134,7 @@ export type humanFragment = {|
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -156,6 +160,7 @@ exports[`Flow codeGeneration fragment spreads with inline fragments 1`] = `
 Object {
   "common": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -175,6 +180,7 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -244,6 +250,7 @@ export type HeroNameVariables = {
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -283,6 +290,7 @@ export type humanFragment = {
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -308,6 +316,7 @@ exports[`Flow codeGeneration fragment with fragment spreads 1`] = `
 Object {
   "common": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -322,6 +331,7 @@ Object {
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -343,6 +353,7 @@ export type simpleFragment = {
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -372,6 +383,7 @@ exports[`Flow codeGeneration fragment with fragment spreads with inline fragment
 Object {
   "common": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -391,6 +403,7 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -412,6 +425,7 @@ export type simpleFragment = {
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -459,6 +473,7 @@ exports[`Flow codeGeneration handles multiline graphql comments 1`] = `
 Object {
   "common": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -473,6 +488,7 @@ Object {
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -504,6 +520,7 @@ exports[`Flow codeGeneration inline fragment 1`] = `
 Object {
   "common": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -523,6 +540,7 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -560,6 +578,7 @@ exports[`Flow codeGeneration inline fragment on type conditions 1`] = `
 Object {
   "common": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -579,6 +598,7 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -646,6 +666,7 @@ exports[`Flow codeGeneration inline fragment on type conditions with differing i
 Object {
   "common": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -665,6 +686,7 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -748,6 +770,7 @@ Array [
     "content": FlowGeneratedFile {
       "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -781,6 +804,7 @@ export type HeroNameVariables = {
     "content": FlowGeneratedFile {
       "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -814,6 +838,7 @@ export type SomeOtherVariables = {
     "content": FlowGeneratedFile {
       "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -848,6 +873,7 @@ export type ReviewMovieVariables = {
     "content": FlowGeneratedFile {
       "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -873,6 +899,7 @@ exports[`Flow codeGeneration multiple files 3`] = `"common"`;
 exports[`Flow codeGeneration multiple files 4`] = `
 "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -911,6 +938,7 @@ exports[`Flow codeGeneration query with fragment spreads 1`] = `
 Object {
   "common": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -930,6 +958,7 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -963,6 +992,7 @@ export type HeroFragmentVariables = {
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -988,6 +1018,7 @@ exports[`Flow codeGeneration simple fragment 1`] = `
 Object {
   "common": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1002,6 +1033,7 @@ Object {
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1027,6 +1059,7 @@ exports[`Flow codeGeneration simple hero query 1`] = `
 Object {
   "common": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1046,6 +1079,7 @@ export type Episode = \\"EMPIRE\\" | \\"JEDI\\" | \\"NEWHOPE\\";
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -1083,6 +1117,7 @@ exports[`Flow codeGeneration simple mutation 1`] = `
 Object {
   "common": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================
@@ -1120,6 +1155,7 @@ export type ColorInput = {|
       "content": FlowGeneratedFile {
         "fileContents": "/* @flow */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================

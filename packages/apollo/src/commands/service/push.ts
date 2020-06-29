@@ -6,16 +6,30 @@ import { ProjectCommand } from "../../Command";
 import { UploadSchemaVariables } from "apollo-language-server/lib/graphqlTypes";
 import { GraphQLServiceProject } from "apollo-language-server";
 import chalk from "chalk";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ServicePush extends ProjectCommand {
   static aliases = ["schema:publish"];
-  static description = "Push a service to Apollo Graph Manager";
+  static description = "Push a service definition to Apollo Graph Manager";
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The tag to publish this service to",
-      default: "current"
+      description:
+        "The tag (AKA variant) to publish your service to in Apollo Graph Manager",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description:
+        "The variant to publish your service to in Apollo Graph Manager",
+      exclusive: ["tag"]
+    }),
+    graph: flags.string({
+      char: "g",
+      description:
+        "The ID of the graph in Apollo Graph Manager to publish your service to. Overrides config file if set."
     }),
     localSchemaFile: flags.string({
       description:
@@ -50,8 +64,8 @@ export default class ServicePush extends ProjectCommand {
       {
         title: "Uploading service to Apollo Graph Manager",
         task: async () => {
-          if (!config.name) {
-            throw new Error("No service found to link to Apollo Graph Manager");
+          if (!config.graph) {
+            throw graphUndefinedError;
           }
 
           if (flags.federated) {
@@ -92,8 +106,8 @@ export default class ServicePush extends ProjectCommand {
               didUpdateGateway,
               serviceWasCreated
             } = await project.engine.uploadAndComposePartialSchema({
-              id: config.name,
-              graphVariant: config.tag,
+              id: config.graph,
+              graphVariant: config.variant,
               name: flags.serviceName,
               url: flags.serviceURL,
               revision:
@@ -111,21 +125,21 @@ export default class ServicePush extends ProjectCommand {
               compositionErrors: errors,
               serviceWasCreated,
               didUpdateGateway,
-              graphId: config.name,
-              graphVariant: config.tag || "current"
+              graphId: config.graph,
+              graphVariant: config.variant
             };
 
             return;
           }
 
-          const schema = await project.resolveSchema({ tag: flags.tag });
+          const schema = await project.resolveSchema({ tag: config.variant });
 
           const variables: UploadSchemaVariables = {
-            id: config.name,
+            id: config.graph,
             // @ts-ignore
             // XXX Looks like TS should be generating ReadonlyArrays instead
             schema: introspectionFromSchema(schema).__schema,
-            tag: flags.tag,
+            tag: config.variant,
             gitContext
           };
 
@@ -138,7 +152,7 @@ export default class ServicePush extends ProjectCommand {
           const response = await project.engine.uploadSchema(variables);
           if (response) {
             result = {
-              graphId: config.name,
+              graphId: config.graph,
               graphVariant: response.tag ? response.tag.tag : "current",
               hash: response.tag ? response.tag.schema.hash : null,
               code: response.code

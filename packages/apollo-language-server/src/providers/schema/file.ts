@@ -19,6 +19,7 @@ import {
   composeServices,
   printSchema as printFederatedSchema
 } from "@apollo/federation";
+import URI from "vscode-uri";
 // import federationDirectives from "@apollo/federation/src/directives";
 
 export interface FileSchemaProviderConfig {
@@ -82,7 +83,8 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
       const schema = buildClientSchema({ __schema });
       return parse(printSchema(schema));
     } else if (ext === ".graphql" || ext === ".graphqls" || ext === ".gql") {
-      return parse(result);
+      const uri = URI.file(resolve(path)).toString();
+      return parse(new Source(result, uri));
     }
     throw new Error(
       "File Type not supported for schema loading. Must be a .json, .graphql, .gql, or .graphqls file"

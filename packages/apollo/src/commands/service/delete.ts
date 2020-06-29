@@ -1,6 +1,8 @@
+import cli from "cli-ux";
 import { flags } from "@oclif/command";
 
 import { ProjectCommand } from "../../Command";
+import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ServiceDelete extends ProjectCommand {
   static description =
@@ -9,7 +11,20 @@ export default class ServiceDelete extends ProjectCommand {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description: "The variant of the service to delete"
+      description:
+        "[Deprecated: please use --variant instead] The variant to delete the implementing service from",
+      hidden: true,
+      exclusive: ["variant"]
+    }),
+    variant: flags.string({
+      char: "v",
+      description: "The variant to delete the implementing service from",
+      exclusive: ["tag"]
+    }),
+    graph: flags.string({
+      char: "g",
+      description:
+        "The ID of the graph in Apollo Graph Manager for which to delete an implementing service. Overrides config file if set."
     }),
     federated: flags.boolean({
       char: "f",
@@ -22,17 +37,36 @@ export default class ServiceDelete extends ProjectCommand {
       required: true,
       description:
         "Provides the name of the implementing service for a federated graph"
+    }),
+    yes: flags.boolean({
+      char: "y",
+      required: false,
+      description: "Bypass confirmation when deleting a service"
     })
   };
 
   async run() {
     let result;
+    const { flags } = this.parse(ServiceDelete);
+
+    // if the yes flag is set we don't need a confirmation, the yes flag is needed for CI or programmatic use.
+    const confirmed =
+      flags.yes ||
+      (await cli.confirm(
+        "Are you sure you want to delete this service? THIS IS NOT REVERSIBLE! (y/N)"
+      ));
+
+    if (!confirmed) {
+      this.log("You have chosen to not delete this service. Exiting...");
+      this.exit(0);
+    }
+
     await this.runTasks(({ flags, project, config }) => [
       {
         title: "Removing service from Apollo Graph Manager",
         task: async () => {
-          if (!config.name) {
-            throw new Error("No service found to link to Apollo Graph Manager");
+          if (!config.graph) {
+            throw graphUndefinedError;
           }
 
           if (flags.federated) {
@@ -41,13 +75,13 @@ export default class ServiceDelete extends ProjectCommand {
             );
           }
 
-          const graphVariant = flags.tag || config.tag || "current";
+          const graphVariant = config.variant;
 
           const {
             errors,
             updatedGateway
           } = await project.engine.removeServiceAndCompose({
-            id: config.name,
+            id: config.graph,
             graphVariant,
             name: flags.serviceName
           });
@@ -55,7 +89,7 @@ export default class ServiceDelete extends ProjectCommand {
           result = {
             serviceName: flags.serviceName,
             graphVariant,
-            graphName: config.name,
+            graphName: config.graph,
             errors,
             updatedGateway
           };
@@ -73,7 +107,7 @@ export default class ServiceDelete extends ProjectCommand {
 
     if (result.updatedGateway) {
       this.log(
-        `The ${result.serviceName} service with ${result.graphVariant} tag was removed from ${result.graphName}. Remaining services were composed.`
+        `The ${result.serviceName} service was removed from ${result.graphName}@${result.graphVariant}. Remaining services were composed.`
       );
       this.log("\n");
     }

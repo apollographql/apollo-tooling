@@ -37,7 +37,7 @@ export default class Generate extends ClientCommand {
     // general
     target: flags.string({
       description:
-        "Type of code generator to use (swift | typescript | flow | scala)",
+        "Type of code generator to use (swift | typescript | flow | scala | json | json-modern (exposes raw json types))",
       required: true
     }),
     localSchemaFile: flags.string({
@@ -132,12 +132,17 @@ export default class Generate extends ClientCommand {
 
     let write;
     const run = () =>
-      this.runTasks(({ flags, args, project }) => {
+      this.runTasks(({ flags, args, project, config }) => {
         let inferredTarget: TargetType = "" as TargetType;
         if (
-          ["json", "swift", "typescript", "flow", "scala"].includes(
-            flags.target
-          )
+          [
+            "json",
+            "json-modern",
+            "swift",
+            "typescript",
+            "flow",
+            "scala"
+          ].includes(flags.target)
         ) {
           inferredTarget = flags.target as TargetType;
         } else {
@@ -150,7 +155,7 @@ export default class Generate extends ClientCommand {
           inferredTarget != "flow"
         ) {
           throw new Error(
-            "The output path must be specified in the arguments for Swift and Scala"
+            "The output path must be specified in the arguments for targets that aren't TypeScript or Flow"
           );
         }
 
@@ -172,7 +177,7 @@ export default class Generate extends ClientCommand {
             task: async (ctx, task) => {
               task.title = `Generating query files with '${inferredTarget}' target`;
               const schema = await project.resolveSchema({
-                tag: flags.tag
+                tag: config.variant
               });
 
               if (!schema) throw new Error("Error loading schema");
@@ -181,6 +186,19 @@ export default class Generate extends ClientCommand {
                 // make sure all of the doucuments that we are going to be using for codegen
                 // are valid documents
                 project.validate();
+
+                // to prevent silent erroring of syntax errors, we check the project's
+                // documents to make sure there are no errors. If there are, we error here
+                // instead of project initialization
+                for (const document of this.project.documents) {
+                  if (document.syntaxErrors.length) {
+                    const errors = document.syntaxErrors.map(
+                      e =>
+                        `Syntax error in ${document.source.name}: ${e.message}\n`
+                    );
+                    throw new Error(errors.toString());
+                  }
+                }
 
                 const operations = Object.values(this.project.operations);
                 const fragments = Object.values(this.project.fragments);
@@ -223,7 +241,8 @@ export default class Generate extends ClientCommand {
                     tsFileExtension: flags.tsFileExtension,
                     suppressSwiftMultilineStringLiterals:
                       flags.suppressSwiftMultilineStringLiterals,
-                    omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases
+                    omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases,
+                    exposeTypeNodes: inferredTarget === "json-modern"
                   }
                 );
               };
