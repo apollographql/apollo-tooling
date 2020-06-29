@@ -18,12 +18,9 @@ import {
   FieldNode,
   ObjectTypeDefinitionNode,
   GraphQLObjectType,
-  DefinitionNode,
-  DirectiveDefinitionNode
+  DefinitionNode
 } from "graphql";
 import { ValidationRule } from "graphql/validation/ValidationContext";
-import Maybe from "graphql/tsutils/Maybe";
-
 import { NotificationHandler, DiagnosticSeverity } from "vscode-languageserver";
 
 import { rangeForASTNode } from "../utilities/source";
@@ -49,6 +46,8 @@ import {
   diagnosticsFromError
 } from "../diagnostics";
 import URI from "vscode-uri";
+
+type Maybe<T> = null | undefined | T;
 
 function schemaHasASTNodes(schema: GraphQLSchema): boolean {
   const queryType = schema && schema.getQueryType();

@@ -244,6 +244,7 @@ export function addResolversToSchema(
         newValues[value.name] = {
           value: newValue,
           deprecationReason: value.deprecationReason,
+          isDeprecated: value.isDeprecated,
           description: value.description,
           astNode: value.astNode,
           name: value.name,
