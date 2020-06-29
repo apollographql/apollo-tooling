@@ -49,8 +49,7 @@ exports[`JSON output should generate JSON output for a mutation with an enum and
 							\\"responseName\\": \\"__typename\\",
 							\\"fieldName\\": \\"__typename\\",
 							\\"type\\": \\"String!\\",
-							\\"isConditional\\": false,
-							\\"isDeprecated\\": false
+							\\"isConditional\\": false
 						},
 						{
 							\\"responseName\\": \\"stars\\",
@@ -177,8 +176,7 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 							\\"responseName\\": \\"__typename\\",
 							\\"fieldName\\": \\"__typename\\",
 							\\"type\\": \\"String!\\",
-							\\"isConditional\\": false,
-							\\"isDeprecated\\": false
+							\\"isConditional\\": false
 						},
 						{
 							\\"responseName\\": \\"id\\",
@@ -219,8 +217,7 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 					\\"responseName\\": \\"__typename\\",
 					\\"fieldName\\": \\"__typename\\",
 					\\"type\\": \\"String!\\",
-					\\"isConditional\\": false,
-					\\"isDeprecated\\": false
+					\\"isConditional\\": false
 				},
 				{
 					\\"responseName\\": \\"name\\",
@@ -243,8 +240,7 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 							\\"responseName\\": \\"__typename\\",
 							\\"fieldName\\": \\"__typename\\",
 							\\"type\\": \\"String!\\",
-							\\"isConditional\\": false,
-							\\"isDeprecated\\": false
+							\\"isConditional\\": false
 						},
 						{
 							\\"responseName\\": \\"name\\",
@@ -275,8 +271,7 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 							\\"responseName\\": \\"__typename\\",
 							\\"fieldName\\": \\"__typename\\",
 							\\"type\\": \\"String!\\",
-							\\"isConditional\\": false,
-							\\"isDeprecated\\": false
+							\\"isConditional\\": false
 						},
 						{
 							\\"responseName\\": \\"name\\",
@@ -326,8 +321,7 @@ exports[`JSON output should generate JSON output for a query with a nested selec
 							\\"responseName\\": \\"__typename\\",
 							\\"fieldName\\": \\"__typename\\",
 							\\"type\\": \\"String!\\",
-							\\"isConditional\\": false,
-							\\"isDeprecated\\": false
+							\\"isConditional\\": false
 						},
 						{
 							\\"responseName\\": \\"name\\",
@@ -349,8 +343,7 @@ exports[`JSON output should generate JSON output for a query with a nested selec
 									\\"responseName\\": \\"__typename\\",
 									\\"fieldName\\": \\"__typename\\",
 									\\"type\\": \\"String!\\",
-									\\"isConditional\\": false,
-									\\"isDeprecated\\": false
+									\\"isConditional\\": false
 								},
 								{
 									\\"responseName\\": \\"name\\",
@@ -418,8 +411,7 @@ exports[`JSON output should generate JSON output for a query with an enum variab
 							\\"responseName\\": \\"__typename\\",
 							\\"fieldName\\": \\"__typename\\",
 							\\"type\\": \\"String!\\",
-							\\"isConditional\\": false,
-							\\"isDeprecated\\": false
+							\\"isConditional\\": false
 						},
 						{
 							\\"responseName\\": \\"name\\",
@@ -508,8 +500,7 @@ exports[`JSON output should generate JSON output for a subscription 1`] = `
 							\\"responseName\\": \\"__typename\\",
 							\\"fieldName\\": \\"__typename\\",
 							\\"type\\": \\"String!\\",
-							\\"isConditional\\": false,
-							\\"isDeprecated\\": false
+							\\"isConditional\\": false
 						},
 						{
 							\\"responseName\\": \\"id\\",
