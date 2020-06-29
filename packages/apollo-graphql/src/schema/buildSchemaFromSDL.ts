@@ -256,7 +256,8 @@ export function addResolversToSchema(
         newValues[value.name] = {
           value: newValue,
           deprecationReason: value.deprecationReason,
-          isDeprecated: value.isDeprecated,
+          // @see https://github.com/graphql/graphql-js/blob/13ab792895c7056186fddee552d0db9776c735a3/src/type/definition.js#L1439
+          isDeprecated: value.deprecationReason != null,
           description: value.description,
           astNode: value.astNode,
           name: value.name,
