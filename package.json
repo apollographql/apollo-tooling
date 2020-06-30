@@ -80,7 +80,7 @@
     "heroku-cli-util": "8.0.12",
     "husky": "3.1.0",
     "jest": "25.4.0",
-    "jest-environment-node": "25.1.0",
+    "jest-environment-node": "26.1.0",
     "jest-matcher-utils": "26.1.0",
     "lerna": "3.22.1",
     "lint-staged": "10.2.11",
