@@ -315,7 +315,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
   public let operationName: String = \\"Hero\\"
 
-  public var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
+  public var queryDocument: String { return operationDefinition.appending(\\"\\\\n\\" + HeroDetails.fragmentDefinition) }
 
   public init() {
   }
@@ -460,7 +460,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
   public let operationName: String = \\"Hero\\"
 
-  public var queryDocument: String { return operationDefinition.appending(DroidDetails.fragmentDefinition) }
+  public var queryDocument: String { return operationDefinition.appending(\\"\\\\n\\" + DroidDetails.fragmentDefinition) }
 
   public init() {
   }
@@ -633,7 +633,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
   public let operationName: String = \\"Hero\\"
 
-  public var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
+  public var queryDocument: String { return operationDefinition.appending(\\"\\\\n\\" + HeroDetails.fragmentDefinition) }
 
   public init() {
   }
@@ -834,7 +834,7 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
   public let operationIdentifier: String? = \\"90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4\\"
 
-  public var queryDocument: String { return operationDefinition.appending(HeroDetails.fragmentDefinition) }
+  public var queryDocument: String { return operationDefinition.appending(\\"\\\\n\\" + HeroDetails.fragmentDefinition) }
 
   public init() {
   }
