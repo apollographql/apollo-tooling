@@ -101,7 +101,7 @@ exports[`service:check integration federated should report composition errors co
 exports[`service:check integration federated should report composition errors correctly --markdown 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated graph composition for service \`accounts\` on graph \`engine@master\`.
+🔄 Validated graph composition for service \`accounts\` on graph \`engine@prod\`.
 ❌ Found **3 composition errors**
 
 | Service   | Field     | Message   |
@@ -115,7 +115,7 @@ exports[`service:check integration federated should report composition errors co
 
 exports[`service:check integration federated should report composition errors correctly compacts output in CI 1`] = `
 "Loading Apollo Project
-Found 3 graph composition errors for service accounts on graph engine@master
+Found 3 graph composition errors for service accounts on graph engine@prod
 
 ╔══════════╤═════════╤════════════════════════════════════════════════════╗
 ║ Service  │ Field   │ Message                                            ║
@@ -134,11 +134,11 @@ Found 3 graph composition errors for service accounts on graph engine@master
 exports[`service:check integration federated should report composition errors correctly vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
-Validate graph composition for service accounts on graph engine@master [started]
+Validate graph composition for service accounts on graph engine@prod [started]
 → Fetching local service's partial schema
 → Attempting to compose graph with accounts service's partial schema
-Found 3 graph composition errors for service accounts on graph engine@master [title changed]
-Found 3 graph composition errors for service accounts on graph engine@master [failed]
+Found 3 graph composition errors for service accounts on graph engine@prod [title changed]
+Found 3 graph composition errors for service accounts on graph engine@prod [failed]
 → Federated service composition was unsuccessful. Please see the reasons below.
 
 ╔══════════╤═════════╤════════════════════════════════════════════════════╗
@@ -178,7 +178,7 @@ exports[`service:check integration federated should report composition success c
 exports[`service:check integration federated should report composition success correctly --markdown 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against metrics from variant \`master\` for graph \`accounts\` on graph \`engine@master\`.
+🔄 Validated your local schema against metrics from variant \`prod\` for graph \`accounts\` on graph \`engine@prod\`.
 🔢 Compared **1 schema change** against **0 operations** seen over the **last 548 days**.
 ✅ Found **no breaking changes**.
 
@@ -189,7 +189,7 @@ exports[`service:check integration federated should report composition success c
 
 exports[`service:check integration federated should report composition success correctly compacts output in CI 1`] = `
 "Loading Apollo Project
-Found 0 graph composition errors for service accounts on graph engine@master
+Found 0 graph composition errors for service accounts on graph engine@prod
 Compared 1 schema change against 0 operations over the last 548 days
 Found 0 breaking changes and 1 compatible change
 ╔════════╤══════════════════╤═══════════════════════════════════════════════════════════════════════════════╗
@@ -206,11 +206,11 @@ View full details at: https://engine-staging.apollographql.com/service/justin-fu
 exports[`service:check integration federated should report composition success correctly vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
-Validate graph composition for service accounts on graph engine@master [started]
+Validate graph composition for service accounts on graph engine@prod [started]
 → Fetching local service's partial schema
 → Attempting to compose graph with accounts service's partial schema
-Found 0 graph composition errors for service accounts on graph engine@master [title changed]
-Found 0 graph composition errors for service accounts on graph engine@master [completed]
+Found 0 graph composition errors for service accounts on graph engine@prod [title changed]
+Found 0 graph composition errors for service accounts on graph engine@prod [completed]
 Comparing schema changes [started]
 Compared 1 schema change against 0 operations over the last 548 days [title changed]
 Compared 1 schema change against 0 operations over the last 548 days [completed]
@@ -251,7 +251,7 @@ exports[`service:check integration non-federated should report traffic errors co
 exports[`service:check integration non-federated should report traffic errors correctly --markdown 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against metrics from variant \`master\` on graph \`engine@master\`.
+🔄 Validated your local schema against metrics from variant \`prod\` on graph \`engine@prod\`.
 🔢 Compared **1 schema change** against **0 operations** seen over the **last 548 days**.
 ❌ Found **1 breaking change** that would affect **0 operations** across **0 clients**
 
@@ -263,11 +263,11 @@ exports[`service:check integration non-federated should report traffic errors co
 exports[`service:check integration non-federated should report traffic errors correctly vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
-Validating schema against metrics from variant master on graph engine@master [started]
+Validating schema against metrics from variant prod on graph engine@prod [started]
 → Resolving schema
 → Validating schema
-Validated schema against metrics from variant master on graph engine@master [title changed]
-Validated schema against metrics from variant master on graph engine@master [completed]
+Validated schema against metrics from variant prod on graph engine@prod [title changed]
+Validated schema against metrics from variant prod on graph engine@prod [completed]
 Comparing schema changes [started]
 Compared 1 schema change against 0 operations over the last 548 days [title changed]
 Compared 1 schema change against 0 operations over the last 548 days [completed]
@@ -309,7 +309,7 @@ exports[`service:check integration non-federated should report traffic non-error
 exports[`service:check integration non-federated should report traffic non-errors correctly --markdown 1`] = `
 "
 ### Apollo Service Check
-🔄 Validated your local schema against metrics from variant \`master\` on graph \`engine@master\`.
+🔄 Validated your local schema against metrics from variant \`prod\` on graph \`engine@prod\`.
 🔢 Compared **1 schema change** against **0 operations** seen over the **last 548 days**.
 ✅ Found **no breaking changes**.
 
@@ -321,11 +321,11 @@ exports[`service:check integration non-federated should report traffic non-error
 exports[`service:check integration non-federated should report traffic non-errors correctly vanilla 1`] = `
 "Loading Apollo Project [started]
 Loading Apollo Project [completed]
-Validating schema against metrics from variant master on graph engine@master [started]
+Validating schema against metrics from variant prod on graph engine@prod [started]
 → Resolving schema
 → Validating schema
-Validated schema against metrics from variant master on graph engine@master [title changed]
-Validated schema against metrics from variant master on graph engine@master [completed]
+Validated schema against metrics from variant prod on graph engine@prod [title changed]
+Validated schema against metrics from variant prod on graph engine@prod [completed]
 Comparing schema changes [started]
 Compared 1 schema change against 0 operations over the last 548 days [title changed]
 Compared 1 schema change against 0 operations over the last 548 days [completed]
