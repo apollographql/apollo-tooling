@@ -16,6 +16,26 @@
     {
       "packageNames": ["vscode-uri"],
       "allowedVersions": "=1.0.6"
+    },
+    {
+      "packageNames": ["jest"],
+      "allowedVersions": "=24.9.0"
+    },
+    {
+      "packageNames": ["jest-environment-node"],
+      "allowedVersions": "=24.9.0"
+    },
+    {
+      "packageNames": ["jest-matcher-utils"],
+      "allowedVersions": "=24.9.0"
+    },
+    {
+      "packageNames": ["@types/jest"],
+      "allowedVersions": "=24.9.1"
+    },
+    {
+      "packageNames": ["ts-jest"],
+      "allowedVersions": "=24.3.0"
     }
   ]
 }
