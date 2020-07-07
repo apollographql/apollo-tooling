@@ -74,7 +74,7 @@
     "@types/nock": "10.0.3",
     "@types/node": "8.10.61",
     "@types/node-fetch": "2.5.7",
-    "@types/table": "4.0.7",
+    "@types/table": "5.0.0",
     "cross-env": "^7.0.2",
     "graphql": "14.5.7",
     "heroku-cli-util": "8.0.12",
