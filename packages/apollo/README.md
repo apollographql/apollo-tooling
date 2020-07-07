@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.28.3 darwin-x64 node-v14.1.0
+apollo/2.29.0-alpha.0 darwin-x64 node-v12.16.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -89,9 +89,9 @@ OPTIONS
       currently work in watch mode
 
   --header=header
-      Additional header to send to server for introspectionQuery. May be 
-      used multiple times to add multiple headers. NOTE: The `--endpoint` 
-      flag is REQUIRED if using the `--header` flag.
+      Additional header to send during introspection. May be used multiple 
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      if using the `--header` flag.
 
   --includes=includes
       Glob of files to search for GraphQL operations. This should be used to 
@@ -176,9 +176,9 @@ OPTIONS
       the file, for example "d.ts" will output "globalTypes.d.ts"
 
   --header=header
-      Additional header to send to server for introspectionQuery. May be 
-      used multiple times to add multiple headers. NOTE: The `--endpoint` 
-      flag is REQUIRED if using the `--header` flag.
+      Additional header to send during introspection. May be used multiple 
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      if using the `--header` flag.
 
   --includes=includes
       Glob of files to search for GraphQL operations. This should be used to 
@@ -300,9 +300,9 @@ OPTIONS
       currently work in watch mode
 
   --header=header
-      Additional header to send to server for introspectionQuery. May be 
-      used multiple times to add multiple headers. NOTE: The `--endpoint` 
-      flag is REQUIRED if using the `--header` flag.
+      Additional header to send during introspection. May be used multiple 
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      if using the `--header` flag.
 
   --includes=includes
       Glob of files to search for GraphQL operations. This should be used to 
@@ -362,9 +362,9 @@ OPTIONS
       currently work in watch mode
 
   --header=header
-      Additional header to send to server for introspectionQuery. May be 
-      used multiple times to add multiple headers. NOTE: The `--endpoint` 
-      flag is REQUIRED if using the `--header` flag.
+      Additional header to send during introspection. May be used multiple 
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      if using the `--header` flag.
 
   --includes=includes
       Glob of files to search for GraphQL operations. This should be used to 
@@ -429,9 +429,9 @@ OPTIONS
       currently work in watch mode
 
   --header=header
-      Additional header to send to server for introspectionQuery. May be 
-      used multiple times to add multiple headers. NOTE: The `--endpoint` 
-      flag is REQUIRED if using the `--header` flag.
+      Additional header to send during introspection. May be used multiple 
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      if using the `--header` flag.
 
   --includes=includes
       Glob of files to search for GraphQL operations. This should be used to 
@@ -482,7 +482,7 @@ EXAMPLE
   $ apollo plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.9/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.8.0/src/commands/plugins/index.ts)_
 
 ## `apollo plugins:install PLUGIN...`
 
@@ -520,7 +520,7 @@ EXAMPLES
   $ apollo plugins:install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.9/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.8.0/src/commands/plugins/install.ts)_
 
 ## `apollo plugins:link PLUGIN`
 
@@ -550,7 +550,7 @@ EXAMPLE
   $ apollo plugins:link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.9/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.8.0/src/commands/plugins/link.ts)_
 
 ## `apollo plugins:uninstall PLUGIN...`
 
@@ -572,7 +572,7 @@ ALIASES
   $ apollo plugins:remove
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.9/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.8.0/src/commands/plugins/uninstall.ts)_
 
 ## `apollo plugins:update`
 
@@ -587,7 +587,7 @@ OPTIONS
   -v, --verbose
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.7.9/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.8.0/src/commands/plugins/update.ts)_
 
 ## `apollo service:check`
 
@@ -612,9 +612,9 @@ OPTIONS
       The URL for the CLI use to introspect your service
 
   --header=header
-      Additional header to send to server for introspectionQuery. May be 
-      used multiple times to add multiple headers. NOTE: The `--endpoint` 
-      flag is REQUIRED if using the `--header` flag.
+      Additional header to send during introspection. May be used multiple 
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      if using the `--header` flag.
 
   --ignoreFailures
       Exit with status 0 when the check completes, even if errors are found
@@ -683,11 +683,11 @@ OPTIONS
   --endpoint=endpoint        The URL for the CLI use to introspect your
                              service
 
-  --header=header            Additional header to send to server for
-                             introspectionQuery. May be used multiple
-                             times to add multiple headers. NOTE: The
-                             `--endpoint` flag is REQUIRED if using the
-                             `--header` flag.
+  --header=header            Additional header to send during
+                             introspection. May be used multiple times to
+                             add multiple headers. NOTE: The `--endpoint`
+                             flag is REQUIRED if using the `--header`
+                             flag.
 
   --key=key                  The API key to use for authentication to
                              Apollo Graph Manager
@@ -724,10 +724,10 @@ OPTIONS
   --endpoint=endpoint      The URL for the CLI use to introspect your
                            service
 
-  --header=header          Additional header to send to server for
-                           introspectionQuery. May be used multiple times
-                           to add multiple headers. NOTE: The `--endpoint`
-                           flag is REQUIRED if using the `--header` flag.
+  --header=header          Additional header to send during introspection.
+                           May be used multiple times to add multiple
+                           headers. NOTE: The `--endpoint` flag is
+                           REQUIRED if using the `--header` flag.
 
   --key=key                The API key to use for authentication to Apollo
                            Graph Manager
@@ -758,10 +758,10 @@ OPTIONS
   --endpoint=endpoint    The URL for the CLI use to introspect your
                          service
 
-  --header=header        Additional header to send to server for
-                         introspectionQuery. May be used multiple times to
-                         add multiple headers. NOTE: The `--endpoint` flag
-                         is REQUIRED if using the `--header` flag.
+  --header=header        Additional header to send during introspection.
+                         May be used multiple times to add multiple
+                         headers. NOTE: The `--endpoint` flag is REQUIRED
+                         if using the `--header` flag.
 
   --key=key              The API key to use for authentication to Apollo
                          Graph Manager
@@ -792,9 +792,9 @@ OPTIONS
       The URL for the CLI use to introspect your service
 
   --header=header
-      Additional header to send to server for introspectionQuery. May be 
-      used multiple times to add multiple headers. NOTE: The `--endpoint` 
-      flag is REQUIRED if using the `--header` flag.
+      Additional header to send during introspection. May be used multiple 
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      if using the `--header` flag.
 
   --key=key
       The API key to use for authentication to Apollo Graph Manager
