@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Add support for graphql version ^15 [#1743](https://github.com/apollographql/apollo-tooling/pull/1743)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -17,9 +17,10 @@
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
+  - Add support for graphql version ^15 [#1743](https://github.com/apollographql/apollo-tooling/pull/1743)
 - `apollo-language-server`
   - Fix definition navigation for vscode using localSchemaFile [#1996](https://github.com/apollographql/apollo-tooling/pull/1996)
+  - Add support for graphql version ^15 [#1743](https://github.com/apollographql/apollo-tooling/pull/1743)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
