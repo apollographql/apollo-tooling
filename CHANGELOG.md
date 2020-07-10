@@ -25,6 +25,13 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
+## `apollo@2.29.1
+
+** Note: this release is an immediate follow-up to the previous release. `apollo-graphql` should've been updated but it was unfortunately missed. **
+
+- `apollo-graphql@0.5.0`
+  - Add support for graphql version ^15 [#1743](https://github.com/apollographql/apollo-tooling/pull/1743)
+
 ## `apollo@2.29.0`
 
 - `apollo@2.29.0`
