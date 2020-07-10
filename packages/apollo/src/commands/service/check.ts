@@ -250,6 +250,12 @@ export default class ServiceCheck extends ProjectCommand {
       description:
         "The ID of the graph in Apollo Graph Manager to check your proposed schema changes against. Overrides config file if set."
     }),
+    branch: flags.string({
+      description: "The branch name to associate with this check"
+    }),
+    author: flags.string({
+      description: "The author to associate with this proposed schema"
+    }),
     validationPeriod: flags.string({
       description:
         "The size of the time window with which to validate the schema against. You may provide a number (in seconds), or an ISO8601 format duration for more granularity (see: https://en.wikipedia.org/wiki/ISO_8601#Durations)"
@@ -359,6 +365,8 @@ export default class ServiceCheck extends ProjectCommand {
                     flags.queryCountThresholdPercentage
                 });
 
+                const gitInfoFromEnv = await gitInfo(this.log);
+
                 const {
                   compositionValidationResult,
                   checkSchemaResult
@@ -370,7 +378,11 @@ export default class ServiceCheck extends ProjectCommand {
                     sdl
                   },
                   ...(historicParameters && { historicParameters }),
-                  gitContext: await gitInfo(this.log)
+                  gitContext: {
+                    ...gitInfoFromEnv,
+                    ...(flags.author ? { committer: flags.author } : undefined),
+                    ...(flags.branch ? { branch: flags.branch } : undefined)
+                  }
                 });
 
                 task.title = `Found ${pluralize(
@@ -458,10 +470,18 @@ export default class ServiceCheck extends ProjectCommand {
 
                 task.output = "Validating schema";
 
+                const gitInfoFromEnv = await gitInfo(this.log);
+
                 const variables: CheckSchemaVariables = {
                   id: graphID!,
                   tag: config.variant,
-                  gitContext: await gitInfo(this.log),
+                  gitContext: {
+                    ...gitInfoFromEnv,
+                    ...(flags.committer
+                      ? { committer: flags.committer }
+                      : undefined),
+                    ...(flags.branch ? { branch: flags.branch } : undefined)
+                  },
                   ...(historicParameters && { historicParameters }),
                   ...schemaCheckSchemaVariables
                 };

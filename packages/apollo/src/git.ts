@@ -60,7 +60,7 @@ export interface Commit {
 
 export interface GitContext {
   committer?: string;
-  commit: string;
+  commit?: string;
   message?: string;
   remoteUrl?: string;
   branch?: string;
