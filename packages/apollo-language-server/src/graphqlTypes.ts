@@ -1711,7 +1711,7 @@ export interface ClientInfoFilter {
  */
 export interface GitContextInput {
   remoteUrl?: string | null;
-  commit: string;
+  commit?: string | null;
   committer?: string | null;
   message?: string | null;
   branch?: string | null;

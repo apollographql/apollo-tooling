@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Allow flags for `--branch` and `--author` in service:check command. This will permit users to group changes using the `--branch` flag and indicate an author, via a string value using the `--author` flag.
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
