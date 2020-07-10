@@ -20,7 +20,7 @@
     "@babel/generator": "7.10.4",
     "@babel/types": "7.10.4",
     "apollo-codegen-core": "file:../apollo-codegen-core",
-    "change-case": "^3.0.1",
+    "change-case": "^4.0.0",
     "common-tags": "^1.5.1",
     "inflected": "^2.0.3"
   },
