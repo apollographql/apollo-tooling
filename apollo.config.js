@@ -1,7 +1,7 @@
 module.exports = {
   client: {
     name: "Apollo CLI",
-    service: "engine@main",
+    service: "engine@prod",
     includes: ["./packages/apollo-language-server/**/*.ts"],
     excludes: ["**/*.test.ts", "**/__tests__/*"]
   },
