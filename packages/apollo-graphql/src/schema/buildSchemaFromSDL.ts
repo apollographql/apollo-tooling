@@ -18,7 +18,7 @@ import {
   isAbstractType,
   isScalarType,
   isEnumType,
-  GraphQLEnumValue
+  GraphQLEnumValueConfig
 } from "graphql";
 import { validateSDL } from "graphql/validation/validate";
 import { isDocumentNode, isNode } from "../utilities/graphql";
@@ -247,18 +247,18 @@ export function addResolversToSchema(
 
     if (isEnumType(type)) {
       const values = type.getValues();
-      const newValues: { [key: string]: GraphQLEnumValue } = {};
+      const newValues: { [key: string]: GraphQLEnumValueConfig } = {};
       values.forEach(value => {
         let newValue = (fieldConfigs as any)[value.name];
         if (newValue === undefined) {
           newValue = value.name;
         }
+
         newValues[value.name] = {
           value: newValue,
           deprecationReason: value.deprecationReason,
           description: value.description,
           astNode: value.astNode,
-          name: value.name,
           extensions: undefined
         };
       });
