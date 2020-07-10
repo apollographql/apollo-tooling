@@ -1722,7 +1722,7 @@ export interface HistoricQueryParameters {
   to?: any | null;
   queryCountThreshold?: number | null;
   queryCountThresholdPercentage?: number | null;
-  excludedOperationIDs?: string[] | null;
+  ignoredOperations?: string[] | null;
   excludedClients?: ClientInfoFilter[] | null;
   includedVariants?: string[] | null;
 }
