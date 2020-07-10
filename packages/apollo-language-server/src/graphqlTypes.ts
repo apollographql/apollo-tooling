@@ -1711,7 +1711,7 @@ export interface ClientInfoFilter {
  */
 export interface GitContextInput {
   remoteUrl?: string | null;
-  commit?: string;
+  commit: string;
   committer?: string | null;
   message?: string | null;
   branch?: string | null;
@@ -1722,7 +1722,7 @@ export interface HistoricQueryParameters {
   to?: any | null;
   queryCountThreshold?: number | null;
   queryCountThresholdPercentage?: number | null;
-  excludedOperationIDs?: string[] | null;
+  ignoredOperations?: string[] | null;
   excludedClients?: ClientInfoFilter[] | null;
   includedVariants?: string[] | null;
 }
