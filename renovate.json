@@ -3,7 +3,14 @@
   "packageRules": [
     {
       "paths": ["packages/apollo/package.json"],
-      "extends": [":pinAllExceptPeerDependencies"]
+      "extends": [":pinAllExceptPeerDependencies"],
+      "packageRules": [
+        {
+          "packageNames": ["graphql"],
+          "depTypeList": ["dependencies"],
+          "rangeStrategy": "replace"
+        }
+      ]
     },
     {
       "packageNames": ["graphql"],
