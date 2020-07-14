@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.29.2 darwin-x64 node-v14.4.0
+apollo/2.29.1 darwin-x64 node-v12.16.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -482,7 +482,7 @@ EXAMPLE
   $ apollo plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.0/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.8.0/src/commands/plugins/index.ts)_
 
 ## `apollo plugins:install PLUGIN...`
 
@@ -520,7 +520,7 @@ EXAMPLES
   $ apollo plugins:install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.0/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.8.0/src/commands/plugins/install.ts)_
 
 ## `apollo plugins:link PLUGIN`
 
@@ -550,7 +550,7 @@ EXAMPLE
   $ apollo plugins:link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.0/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.8.0/src/commands/plugins/link.ts)_
 
 ## `apollo plugins:uninstall PLUGIN...`
 
@@ -572,7 +572,7 @@ ALIASES
   $ apollo plugins:remove
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.0/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.8.0/src/commands/plugins/uninstall.ts)_
 
 ## `apollo plugins:update`
 
@@ -587,7 +587,7 @@ OPTIONS
   -v, --verbose
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.0/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.8.0/src/commands/plugins/update.ts)_
 
 ## `apollo service:check`
 
@@ -607,12 +607,6 @@ OPTIONS
 
   -v, --variant=variant
       The variant to check the proposed schema against
-
-  --author=author
-      The author to associate with this proposed schema
-
-  --branch=branch
-      The branch name to associate with this check
 
   --endpoint=endpoint
       The URL for the CLI use to introspect your service
