@@ -30,6 +30,7 @@ const {
   graphQLSchema,
   simpleQuery,
   otherQuery,
+  queryWithFragments,
   clientSideSchema,
   clientSideSchemaQuery,
   clientSideOnlySchema,
@@ -38,6 +39,7 @@ const {
   graphQLSchema: "../../service/__tests__/fixtures/schema.graphql",
   simpleQuery: "./fixtures/simpleQuery.graphql",
   otherQuery: "./fixtures/otherQuery.graphql",
+  queryWithFragments: "./fixtures/queryWithFragments.graphql",
   clientSideSchema: "./fixtures/clientSideSchema.graphql",
   clientSideSchemaQuery: "./fixtures/clientSideSchemaQuery.graphql",
   clientSideOnlySchema: "./fixtures/clientSideOnlySchema.graphql",
@@ -113,7 +115,7 @@ describe("client:codegen", () => {
   test
     .fs({
       "schema.json": fullSchemaJsonString,
-      "queryOne.graphql": simpleQuery.toString(),
+      "queryOne.graphql": queryWithFragments.toString(),
       "my.config.js": `
         module.exports = {
           client: {

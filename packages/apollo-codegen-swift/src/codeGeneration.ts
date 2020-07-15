@@ -245,12 +245,13 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
         );
 
         if (this.context.options.generateOperationIds) {
-          const { operationId } = generateOperationId(
+          const { operationId, sourceWithFragments } = generateOperationId(
             operation,
             fragments,
             fragmentsReferenced
           );
           operation.operationId = operationId;
+          operation.sourceWithFragments = sourceWithFragments;
           this.printNewlineIfNeeded();
           this.printOnNewline(
             swift`public let operationIdentifier: String? = ${SwiftSource.string(
@@ -266,7 +267,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
           );
           fragmentsReferenced.forEach(fragmentName => {
             this.print(
-              swift`.appending(${this.helpers.structNameForFragmentName(
+              swift`.appending("\\n" + ${this.helpers.structNameForFragmentName(
                 fragmentName
               )}.fragmentDefinition)`
             );

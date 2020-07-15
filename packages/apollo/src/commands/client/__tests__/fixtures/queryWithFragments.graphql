@@ -1,0 +1,10 @@
+query QueryWithFragments {
+  hello
+  serverSideField {
+    ...ServerFieldFragment
+  }
+}
+
+fragment ServerFieldFragment on ServerField {
+  serverData
+}

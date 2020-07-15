@@ -9,7 +9,7 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - <First `apollo-codegen-swift` related entry goes here>
+  - Generate JSON file including fragments when --operationIds option is provided [#2017](https://github.com/apollographql/apollo-tooling/pull/2017)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-codegen-core`
