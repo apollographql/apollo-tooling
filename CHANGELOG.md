@@ -3,13 +3,13 @@
 ## Upcoming
 
 - `apollo`
-  - Allow flags for `--branch` and `--author` in service:check command. This will permit users to group changes using the `--branch` flag and indicate an author, via a string value using the `--author` flag.
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Generate JSON file including fragments when --operationIds option is provided [#2017](https://github.com/apollographql/apollo-tooling/pull/2017)
+   - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-codegen-core`
@@ -25,7 +25,17 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
-## `apollo@2.29.1
+## `apollo@2.30.1`
+
+- `apollo-codegen-swift@0.37.7`
+    - Generate JSON file including fragments when --operationIds option is provided [#2017](https://github.com/apollographql/apollo-tooling/pull/2017)
+
+## `apollo@2.30.0`
+
+- `apollo@2.30.0`
+  - Allow flags for `--branch` and `--author` in service:check command. This will permit users to group changes using the `--branch` flag and indicate an author, via a string value using the `--author` flag.
+
+## `apollo@2.29.1`
 
 ** Note: this release is an immediate follow-up to the previous release. `apollo-graphql` should've been updated but it was unfortunately missed. **
 
