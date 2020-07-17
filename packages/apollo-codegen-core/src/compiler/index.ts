@@ -56,6 +56,7 @@ export interface CompilerOptions {
   suppressSwiftMultilineStringLiterals?: boolean;
   omitDeprecatedEnumCases?: boolean;
   exposeTypeNodes?: boolean;
+  keepSchemaEnumOrder?: boolean;
 }
 
 export interface CompilerContext {
