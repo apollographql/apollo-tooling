@@ -4,6 +4,8 @@ import {
   GraphQLObjectType,
   GraphQLCompositeType,
   GraphQLInputType,
+  GraphQLUnionType,
+  GraphQLInterfaceType,
   DocumentNode,
   TypeNode
 } from "graphql";
@@ -39,6 +41,11 @@ export interface LegacyCompilerContext {
   fragments: { [fragmentName: string]: LegacyFragment };
   typesUsed: GraphQLType[];
   options: CompilerOptions;
+  unionTypes: GraphQLUnionType[];
+  interfaceTypes: Map<
+    GraphQLInterfaceType,
+    (GraphQLObjectType | GraphQLInterfaceType)[]
+  >;
 }
 
 export interface LegacyOperation {
@@ -185,7 +192,9 @@ class LegacyIRTransformer {
       operations,
       fragments,
       typesUsed: this.context.typesUsed,
-      options: this.options
+      options: this.options,
+      unionTypes: this.context.unionTypes,
+      interfaceTypes: this.context.interfaceTypes
     };
 
     return legacyContext;

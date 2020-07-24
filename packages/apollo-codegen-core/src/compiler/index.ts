@@ -12,6 +12,8 @@ import {
   GraphQLSchema,
   GraphQLType,
   GraphQLCompositeType,
+  GraphQLUnionType,
+  GraphQLInterfaceType,
   DocumentNode,
   OperationDefinitionNode,
   FragmentDefinitionNode,
@@ -23,8 +25,8 @@ import {
   isEnumType,
   isInputObjectType,
   isScalarType,
-  NamedTypeNode,
-  ListTypeNode,
+  isUnionType,
+  isInterfaceType,
   TypeNode,
   parseType
 } from "graphql";
@@ -61,6 +63,11 @@ export interface CompilerContext {
   operations: { [operationName: string]: Operation };
   fragments: { [fragmentName: string]: Fragment };
   options: CompilerOptions;
+  unionTypes: GraphQLUnionType[];
+  interfaceTypes: Map<
+    GraphQLInterfaceType,
+    (GraphQLObjectType | GraphQLInterfaceType)[]
+  >;
 }
 
 export interface Operation {
@@ -206,14 +213,29 @@ export function compileToIR(
   }
 
   const typesUsed = compiler.typesUsed;
+  const unionTypes = compiler.unionTypes;
+  const interfaceTypes = compiler.interfaceTypes;
 
-  return { schema, typesUsed, operations, fragments, options };
+  return {
+    schema,
+    typesUsed,
+    operations,
+    fragments,
+    options,
+    unionTypes,
+    interfaceTypes
+  };
 }
 
 class Compiler {
   options: CompilerOptions;
   schema: GraphQLSchema;
   typesUsedSet: Set<GraphQLType>;
+  unionTypesSet: Set<GraphQLUnionType>;
+  interfaceTypesMap: Map<
+    GraphQLInterfaceType,
+    (GraphQLObjectType | GraphQLInterfaceType)[]
+  >;
 
   unresolvedFragmentSpreads: FragmentSpread[] = [];
 
@@ -222,6 +244,8 @@ class Compiler {
     this.options = options;
 
     this.typesUsedSet = new Set();
+    this.unionTypesSet = new Set();
+    this.interfaceTypesMap = new Map();
   }
 
   addTypeUsed(type: GraphQLType) {
@@ -243,6 +267,31 @@ class Compiler {
 
   get typesUsed(): GraphQLType[] {
     return Array.from(this.typesUsedSet);
+  }
+
+  addUnionType(type: GraphQLType) {
+    if (isUnionType(type)) {
+      if (this.unionTypesSet.has(type)) return;
+      this.unionTypesSet.add(type);
+    }
+  }
+
+  get unionTypes(): GraphQLUnionType[] {
+    return Array.from(this.unionTypesSet);
+  }
+
+  addInterfaceType(type: GraphQLType) {
+    if (isInterfaceType(type)) {
+      if (this.interfaceTypesMap.has(type)) return;
+      this.interfaceTypesMap.set(type, this.possibleTypesForType(type));
+    }
+  }
+
+  get interfaceTypes(): Map<
+    GraphQLInterfaceType,
+    (GraphQLObjectType | GraphQLInterfaceType)[]
+  > {
+    return this.interfaceTypesMap;
   }
 
   compileOperation(operationDefinition: OperationDefinitionNode): Operation {
@@ -372,6 +421,8 @@ class Compiler {
 
         const unmodifiedFieldType = getNamedType(fieldType);
         this.addTypeUsed(unmodifiedFieldType);
+        this.addUnionType(unmodifiedFieldType);
+        this.addInterfaceType(unmodifiedFieldType);
 
         const { description, isDeprecated, deprecationReason } = fieldDef;
 
