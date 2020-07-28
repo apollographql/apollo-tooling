@@ -157,9 +157,11 @@ export default function generate(
       (fs.existsSync(outputPath) && fs.statSync(outputPath).isDirectory())
     ) {
       if (options.globalTypesFile) {
-        const globalTypesDir = path.dirname(options.globalTypesFile);
-        if (!fs.existsSync(globalTypesDir)) {
-          fs.mkdirSync(globalTypesDir);
+        if (context.typesUsed.length > 0) {
+          const globalTypesDir = path.dirname(options.globalTypesFile);
+          if (!fs.existsSync(globalTypesDir)) {
+            fs.mkdirSync(globalTypesDir);
+          }
         }
       } else if (nextToSources && !fs.existsSync(outputPath)) {
         fs.mkdirSync(outputPath);
@@ -172,9 +174,12 @@ export default function generate(
           `globalTypes.${options.tsFileExtension ||
             TYPESCRIPT_DEFAULT_FILE_EXTENSION}`
         );
-      outFiles[globalSourcePath] = {
-        output: generatedGlobalFile.fileContents
-      };
+
+      if (context.typesUsed.length > 0) {
+        outFiles[globalSourcePath] = {
+          output: generatedGlobalFile.fileContents
+        };
+      }
 
       generatedFiles.forEach(({ sourcePath, fileName, content }) => {
         let dir = outputPath;
