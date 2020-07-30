@@ -151,7 +151,9 @@ exports[`JSON output should generate JSON output for a mutation with an enum and
 				}
 			]
 		}
-	]
+	],
+	\\"unionTypes\\": [],
+	\\"interfaceTypes\\": []
 }"
 `;
 
@@ -300,7 +302,17 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 			]
 		}
 	],
-	\\"typesUsed\\": []
+	\\"typesUsed\\": [],
+	\\"unionTypes\\": [],
+	\\"interfaceTypes\\": [
+		{
+			\\"name\\": \\"Character\\",
+			\\"types\\": [
+				\\"Human\\",
+				\\"Droid\\"
+			]
+		}
+	]
 }"
 `;
 
@@ -377,7 +389,17 @@ exports[`JSON output should generate JSON output for a query with a nested selec
 		}
 	],
 	\\"fragments\\": [],
-	\\"typesUsed\\": []
+	\\"typesUsed\\": [],
+	\\"unionTypes\\": [],
+	\\"interfaceTypes\\": [
+		{
+			\\"name\\": \\"Character\\",
+			\\"types\\": [
+				\\"Human\\",
+				\\"Droid\\"
+			]
+		}
+	]
 }"
 `;
 
@@ -468,6 +490,16 @@ exports[`JSON output should generate JSON output for a query with an enum variab
 				}
 			]
 		}
+	],
+	\\"unionTypes\\": [],
+	\\"interfaceTypes\\": [
+		{
+			\\"name\\": \\"Character\\",
+			\\"types\\": [
+				\\"Human\\",
+				\\"Droid\\"
+			]
+		}
 	]
 }"
 `;
@@ -538,7 +570,9 @@ exports[`JSON output should generate JSON output for a subscription 1`] = `
 		}
 	],
 	\\"fragments\\": [],
-	\\"typesUsed\\": []
+	\\"typesUsed\\": [],
+	\\"unionTypes\\": [],
+	\\"interfaceTypes\\": []
 }"
 `;
 
@@ -658,6 +692,265 @@ exports[`JSON output should generate JSON output for an input object type with d
 				}
 			]
 		}
+	],
+	\\"unionTypes\\": [],
+	\\"interfaceTypes\\": []
+}"
+`;
+
+exports[`JSON output should list all interfaces and their implementing types under a \`interfaceTypes\` property 1`] = `
+"{
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"GraphQL request\\",
+			\\"operationName\\": \\"HeroForEpisode\\",
+			\\"operationType\\": \\"query\\",
+			\\"rootType\\": \\"Query\\",
+			\\"variables\\": [],
+			\\"source\\": \\"query HeroForEpisode {\\\\n  hero(episode: JEDI) {\\\\n    __typename\\\\n    name\\\\n    ... on Droid {\\\\n      primaryFunction\\\\n    }\\\\n  }\\\\n}\\",
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"hero\\",
+					\\"fieldName\\": \\"hero\\",
+					\\"type\\": \\"Character\\",
+					\\"args\\": [
+						{
+							\\"name\\": \\"episode\\",
+							\\"value\\": \\"JEDI\\",
+							\\"type\\": \\"Episode\\"
+						}
+					],
+					\\"isConditional\\": false,
+					\\"isDeprecated\\": false,
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false,
+							\\"isDeprecated\\": false
+						},
+						{
+							\\"responseName\\": \\"name\\",
+							\\"fieldName\\": \\"name\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false,
+							\\"description\\": \\"The name of the character\\",
+							\\"isDeprecated\\": false
+						}
+					],
+					\\"fragmentSpreads\\": [],
+					\\"inlineFragments\\": [
+						{
+							\\"typeCondition\\": \\"Droid\\",
+							\\"possibleTypes\\": [
+								\\"Droid\\"
+							],
+							\\"fields\\": [
+								{
+									\\"responseName\\": \\"__typename\\",
+									\\"fieldName\\": \\"__typename\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false,
+									\\"isDeprecated\\": false
+								},
+								{
+									\\"responseName\\": \\"name\\",
+									\\"fieldName\\": \\"name\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false,
+									\\"description\\": \\"What others call this droid\\",
+									\\"isDeprecated\\": false
+								},
+								{
+									\\"responseName\\": \\"primaryFunction\\",
+									\\"fieldName\\": \\"primaryFunction\\",
+									\\"type\\": \\"String\\",
+									\\"isConditional\\": false,
+									\\"description\\": \\"This droid's primary function\\",
+									\\"isDeprecated\\": false
+								}
+							],
+							\\"fragmentSpreads\\": []
+						}
+					]
+				}
+			],
+			\\"fragmentSpreads\\": [],
+			\\"inlineFragments\\": [],
+			\\"fragmentsReferenced\\": [],
+			\\"sourceWithFragments\\": \\"query HeroForEpisode {\\\\n  hero(episode: JEDI) {\\\\n    __typename\\\\n    name\\\\n    ... on Droid {\\\\n      primaryFunction\\\\n    }\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"173a7ebf41abd014f3fc54ddd007f6182fca738bd44a1e2d1bb75503c8bf79f6\\"
+		}
+	],
+	\\"fragments\\": [],
+	\\"typesUsed\\": [],
+	\\"unionTypes\\": [],
+	\\"interfaceTypes\\": [
+		{
+			\\"name\\": \\"Character\\",
+			\\"types\\": [
+				\\"Human\\",
+				\\"Droid\\"
+			]
+		}
 	]
+}"
+`;
+
+exports[`JSON output should list all unions and their types under a \`unionTypes\` property 1`] = `
+"{
+	\\"operations\\": [
+		{
+			\\"filePath\\": \\"GraphQL request\\",
+			\\"operationName\\": \\"Search\\",
+			\\"operationType\\": \\"query\\",
+			\\"rootType\\": \\"Query\\",
+			\\"variables\\": [],
+			\\"source\\": \\"query Search {\\\\n  search(text: \\\\\\"an\\\\\\") {\\\\n    __typename\\\\n    ... on Human {\\\\n      name\\\\n      height\\\\n    }\\\\n    ... on Droid {\\\\n      name\\\\n      primaryFunction\\\\n    }\\\\n    ... on Starship {\\\\n      name\\\\n      length\\\\n    }\\\\n  }\\\\n}\\",
+			\\"fields\\": [
+				{
+					\\"responseName\\": \\"search\\",
+					\\"fieldName\\": \\"search\\",
+					\\"type\\": \\"[SearchResult]\\",
+					\\"args\\": [
+						{
+							\\"name\\": \\"text\\",
+							\\"value\\": \\"an\\",
+							\\"type\\": \\"String\\"
+						}
+					],
+					\\"isConditional\\": false,
+					\\"isDeprecated\\": false,
+					\\"fields\\": [
+						{
+							\\"responseName\\": \\"__typename\\",
+							\\"fieldName\\": \\"__typename\\",
+							\\"type\\": \\"String!\\",
+							\\"isConditional\\": false,
+							\\"isDeprecated\\": false
+						}
+					],
+					\\"fragmentSpreads\\": [],
+					\\"inlineFragments\\": [
+						{
+							\\"typeCondition\\": \\"Human\\",
+							\\"possibleTypes\\": [
+								\\"Human\\"
+							],
+							\\"fields\\": [
+								{
+									\\"responseName\\": \\"__typename\\",
+									\\"fieldName\\": \\"__typename\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false,
+									\\"isDeprecated\\": false
+								},
+								{
+									\\"responseName\\": \\"name\\",
+									\\"fieldName\\": \\"name\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false,
+									\\"description\\": \\"What this human calls themselves\\",
+									\\"isDeprecated\\": false
+								},
+								{
+									\\"responseName\\": \\"height\\",
+									\\"fieldName\\": \\"height\\",
+									\\"type\\": \\"Float\\",
+									\\"isConditional\\": false,
+									\\"description\\": \\"Height in the preferred unit, default is meters\\",
+									\\"isDeprecated\\": false
+								}
+							],
+							\\"fragmentSpreads\\": []
+						},
+						{
+							\\"typeCondition\\": \\"Droid\\",
+							\\"possibleTypes\\": [
+								\\"Droid\\"
+							],
+							\\"fields\\": [
+								{
+									\\"responseName\\": \\"__typename\\",
+									\\"fieldName\\": \\"__typename\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false,
+									\\"isDeprecated\\": false
+								},
+								{
+									\\"responseName\\": \\"name\\",
+									\\"fieldName\\": \\"name\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false,
+									\\"description\\": \\"What others call this droid\\",
+									\\"isDeprecated\\": false
+								},
+								{
+									\\"responseName\\": \\"primaryFunction\\",
+									\\"fieldName\\": \\"primaryFunction\\",
+									\\"type\\": \\"String\\",
+									\\"isConditional\\": false,
+									\\"description\\": \\"This droid's primary function\\",
+									\\"isDeprecated\\": false
+								}
+							],
+							\\"fragmentSpreads\\": []
+						},
+						{
+							\\"typeCondition\\": \\"Starship\\",
+							\\"possibleTypes\\": [
+								\\"Starship\\"
+							],
+							\\"fields\\": [
+								{
+									\\"responseName\\": \\"__typename\\",
+									\\"fieldName\\": \\"__typename\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false,
+									\\"isDeprecated\\": false
+								},
+								{
+									\\"responseName\\": \\"name\\",
+									\\"fieldName\\": \\"name\\",
+									\\"type\\": \\"String!\\",
+									\\"isConditional\\": false,
+									\\"description\\": \\"The name of the starship\\",
+									\\"isDeprecated\\": false
+								},
+								{
+									\\"responseName\\": \\"length\\",
+									\\"fieldName\\": \\"length\\",
+									\\"type\\": \\"Float\\",
+									\\"isConditional\\": false,
+									\\"description\\": \\"Length of the starship, along the longest axis\\",
+									\\"isDeprecated\\": false
+								}
+							],
+							\\"fragmentSpreads\\": []
+						}
+					]
+				}
+			],
+			\\"fragmentSpreads\\": [],
+			\\"inlineFragments\\": [],
+			\\"fragmentsReferenced\\": [],
+			\\"sourceWithFragments\\": \\"query Search {\\\\n  search(text: \\\\\\"an\\\\\\") {\\\\n    __typename\\\\n    ... on Human {\\\\n      name\\\\n      height\\\\n    }\\\\n    ... on Droid {\\\\n      name\\\\n      primaryFunction\\\\n    }\\\\n    ... on Starship {\\\\n      name\\\\n      length\\\\n    }\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"9887ff0652e14d678a66769b853c41293d4afb1d1338bbbdb9f84e66979605dd\\"
+		}
+	],
+	\\"fragments\\": [],
+	\\"typesUsed\\": [],
+	\\"unionTypes\\": [
+		{
+			\\"name\\": \\"SearchResult\\",
+			\\"types\\": [
+				\\"Human\\",
+				\\"Droid\\",
+				\\"Starship\\"
+			]
+		}
+	],
+	\\"interfaceTypes\\": []
 }"
 `;

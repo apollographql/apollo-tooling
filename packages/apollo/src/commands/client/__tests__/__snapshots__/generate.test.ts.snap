@@ -96,6 +96,7 @@ export type SimpleQuery = {
 exports[`client:codegen writes json operations 1`] = `
 Object {
   "fragments": Array [],
+  "interfaceTypes": Array [],
   "operations": Array [
     Object {
       "fields": Array [
@@ -125,12 +126,14 @@ Object {
     },
   ],
   "typesUsed": Array [],
+  "unionTypes": Array [],
 }
 `;
 
 exports[`client:codegen writes json operations with typeNode (json-modern) 1`] = `
 Object {
   "fragments": Array [],
+  "interfaceTypes": Array [],
   "operations": Array [
     Object {
       "fields": Array [
@@ -170,6 +173,7 @@ Object {
     },
   ],
   "typesUsed": Array [],
+  "unionTypes": Array [],
 }
 `;
 

@@ -1,4 +1,4 @@
-import { GraphQLSchema, buildSchema, parse } from "graphql";
+import { GraphQLSchema, buildSchema, parse, GraphQLUnionType } from "graphql";
 import { compileToLegacyIR } from "../compiler/legacyIR";
 import serializeToJSON from "../serializeToJSON";
 
@@ -155,6 +155,60 @@ describe("JSON output", function() {
 
     const output = serializeToJSON(context);
 
+    expect(output).toMatchSnapshot();
+  });
+
+  test("should list all unions and their types under a `unionTypes` property", function() {
+    const context = compileFromSource(`
+      query Search {
+        search(text: "an") {
+          __typename
+          ... on Human {
+            name
+            height
+          }
+          ... on Droid {
+            name
+            primaryFunction
+          }
+          ... on Starship {
+            name
+            length
+          }
+        }
+      }
+    `);
+
+    expect(context.unionTypes.length).toBe(1);
+    const type = context.unionTypes[0] as GraphQLUnionType;
+    expect(type.name).toBe("SearchResult");
+    expect(type.getTypes().length).toBe(3);
+
+    const output = serializeToJSON(context);
+    expect(output).toMatchSnapshot();
+  });
+
+  test("should list all interfaces and their implementing types under a `interfaceTypes` property", function() {
+    const context = compileFromSource(`
+      query HeroForEpisode {
+        hero(episode: JEDI) {
+          name
+          ... on Droid {
+            primaryFunction
+          }
+        }
+      }
+    `);
+
+    expect(context.interfaceTypes.size).toBe(1);
+    const [
+      interfaceType,
+      implementors
+    ] = context.interfaceTypes.entries().next().value;
+    expect(interfaceType.toString()).toBe("Character");
+    expect(implementors.length).toBe(2);
+
+    const output = serializeToJSON(context);
     expect(output).toMatchSnapshot();
   });
 });

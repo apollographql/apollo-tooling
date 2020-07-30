@@ -13,7 +13,7 @@
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-codegen-core`
-  - <First `apollo-codegen-core` related entry goes here>
+  - Add new `unionTypes` and `interfaceTypes` properties to the exported IR JSON (when using the `json-modern` target), that list all unions and their types, as well as all interfaces and their implementing types [#2050](https://github.com/apollographql/apollo-tooling/pull/2050).
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`

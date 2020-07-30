@@ -4,9 +4,14 @@ import {
   GraphQLScalarType,
   GraphQLEnumType,
   GraphQLInputObjectType,
+  GraphQLUnionType,
+  GraphQLInterfaceType,
+  GraphQLObjectType,
   isEnumType,
   isInputObjectType,
   isScalarType,
+  isUnionType,
+  isInterfaceType,
   parseType
 } from "graphql";
 
@@ -25,13 +30,15 @@ interface serializeOptions {
 
 export default function serializeToJSON(
   context: LegacyCompilerContext | CompilerContext,
-  options: serializeOptions
+  options?: serializeOptions
 ) {
   return serializeAST(
     {
       operations: Object.values(context.operations),
       fragments: Object.values(context.fragments),
-      typesUsed: context.typesUsed.map(type => serializeType(type, options))
+      typesUsed: context.typesUsed.map(type => serializeType(type, options)),
+      unionTypes: context.unionTypes.map(type => serializeType(type, options)),
+      interfaceTypes: serializeInterfaceTypes(context.interfaceTypes)
     },
     "\t"
   );
@@ -51,13 +58,15 @@ export function serializeAST(ast: any, space?: string) {
   );
 }
 
-function serializeType(type: GraphQLType, options: serializeOptions) {
+function serializeType(type: GraphQLType, options?: serializeOptions) {
   if (isEnumType(type)) {
     return serializeEnumType(type);
   } else if (isInputObjectType(type)) {
     return serializeInputObjectType(type, options);
   } else if (isScalarType(type)) {
     return serializeScalarType(type);
+  } else if (isUnionType(type)) {
+    return serializeUnionType(type);
   } else {
     throw new Error(`Unexpected GraphQL type: ${type}`);
   }
@@ -112,4 +121,31 @@ function serializeScalarType(type: GraphQLScalarType) {
     name,
     description
   };
+}
+
+function serializeUnionType(type: GraphQLUnionType) {
+  const { name } = type;
+  return {
+    name,
+    types: type.getTypes()
+  };
+}
+
+function serializeInterfaceTypes(
+  interfaceTypes: Map<
+    GraphQLInterfaceType,
+    (GraphQLObjectType | GraphQLInterfaceType)[]
+  >
+) {
+  const types: {
+    name: string;
+    types: (GraphQLObjectType | GraphQLInterfaceType)[];
+  }[] = [];
+  for (let [interfaceType, implementors] of interfaceTypes) {
+    types.push({
+      name: interfaceType.toString(),
+      types: implementors
+    });
+  }
+  return types;
 }
