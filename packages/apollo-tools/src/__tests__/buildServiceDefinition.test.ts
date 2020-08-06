@@ -1,11 +1,6 @@
 import gql from "graphql-tag";
 import { buildServiceDefinition } from "../buildServiceDefinition";
-import {
-  GraphQLObjectType,
-  GraphQLScalarType,
-  GraphQLInt,
-  IntValueNode
-} from "graphql";
+import { GraphQLObjectType, GraphQLScalarType } from "graphql";
 
 describe("buildServiceDefinition", () => {
   describe(`type definitions`, () => {
