@@ -13,7 +13,8 @@ import {
   isObjectType,
   SchemaDefinitionNode,
   OperationTypeNode,
-  SchemaExtensionNode
+  SchemaExtensionNode,
+  isUnionType
 } from "graphql";
 import { isNode, isDocumentNode } from "./utilities/graphql";
 import { GraphQLResolverMap } from "./schema/resolverMap";
@@ -213,27 +214,34 @@ function addResolversToSchema(
 ) {
   for (const [typeName, fieldConfigs] of Object.entries(resolvers)) {
     const type = schema.getType(typeName);
-    if (!isObjectType(type)) continue;
+    if (isObjectType(type)) {
+      const fieldMap = type.getFields();
 
-    const fieldMap = type.getFields();
-
-    for (const [fieldName, fieldConfig] of Object.entries(fieldConfigs)) {
-      if (fieldName.startsWith("__")) {
-        (type as any)[fieldName.substring(2)] = fieldConfig;
-        continue;
-      }
-
-      const field = fieldMap[fieldName];
-      if (!field) continue;
-
-      if (typeof fieldConfig === "function") {
-        field.resolve = fieldConfig;
-      } else {
-        if (fieldConfig.resolve) {
-          field.resolve = fieldConfig.resolve;
+      for (const [fieldName, fieldConfig] of Object.entries(fieldConfigs)) {
+        if (fieldName.startsWith("__")) {
+          (type as any)[fieldName.substring(2)] = fieldConfig;
+          continue;
         }
-        if (fieldConfig.subscribe) {
-          field.subscribe = fieldConfig.subscribe;
+
+        const field = fieldMap[fieldName];
+        if (!field) continue;
+
+        if (typeof fieldConfig === "function") {
+          field.resolve = fieldConfig;
+        } else {
+          if (fieldConfig.resolve) {
+            field.resolve = fieldConfig.resolve;
+          }
+          if (fieldConfig.subscribe) {
+            field.subscribe = fieldConfig.subscribe;
+          }
+        }
+      }
+    } else if (isUnionType(type)) {
+      for (const [fieldName, fieldConfig] of Object.entries(fieldConfigs)) {
+        if (fieldName.startsWith("__")) {
+          (type as any)[fieldName.substring(2)] = fieldConfig;
+          continue;
         }
       }
     }

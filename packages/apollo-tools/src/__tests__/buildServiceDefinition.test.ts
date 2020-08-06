@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 import { buildServiceDefinition } from "../buildServiceDefinition";
-import { GraphQLObjectType } from "graphql";
+import { GraphQLObjectType, UniqueOperationTypesRule } from "graphql";
 
 describe("buildServiceDefinition", () => {
   describe(`type definitions`, () => {
@@ -428,6 +428,37 @@ type MutationRoot {
       expect(commentAdded).toBeDefined();
 
       expect(commentAdded.subscribe).toEqual(commentAddedSubscription);
+    });
+
+    it(`should resolve union types`, () => {
+      const service = buildServiceDefinition([
+        {
+          typeDefs: gql`
+            type A {
+              a: Boolean
+            }
+            type B {
+              b: Boolean
+            }
+
+            union C = A | B
+          `,
+          resolvers: {
+            C: {
+              __resolveType: (aorb: any) => {
+                return "a" in aorb ? "A" : "B";
+              }
+            }
+          }
+        }
+      ]);
+
+      expect(service.schema).toBeDefined();
+      const schema = service.schema!;
+
+      const unionType = schema.getType("C");
+      expect(unionType).toBeDefined();
+      expect((unionType as any).resolveType).toBeDefined();
     });
   });
 });
