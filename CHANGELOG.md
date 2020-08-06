@@ -21,7 +21,7 @@
 - `apollo-language-server`
   - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
-  - <First `apollo-tools` related entry goes here>
+  - Adds support for `resolveType` on unions [#890](https://github.com/apollographql/apollo-tooling/issues/890)
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 

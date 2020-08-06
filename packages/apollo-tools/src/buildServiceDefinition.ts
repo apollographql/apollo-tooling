@@ -11,10 +11,10 @@ import {
   Kind,
   extendSchema,
   isObjectType,
+  isUnionType,
   SchemaDefinitionNode,
   OperationTypeNode,
-  SchemaExtensionNode,
-  isUnionType
+  SchemaExtensionNode
 } from "graphql";
 import { isNode, isDocumentNode } from "./utilities/graphql";
 import { GraphQLResolverMap } from "./schema/resolverMap";
