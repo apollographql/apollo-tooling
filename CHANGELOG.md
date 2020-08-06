@@ -21,7 +21,7 @@
 - `apollo-language-server`
   - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
-  - <First `apollo-tools` related entry goes here>
+  - Support scalars when using modules [#2068](https://github.com/apollographql/apollo-tooling/issues/2068)
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 

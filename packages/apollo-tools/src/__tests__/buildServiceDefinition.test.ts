@@ -1,6 +1,11 @@
 import gql from "graphql-tag";
 import { buildServiceDefinition } from "../buildServiceDefinition";
-import { GraphQLObjectType } from "graphql";
+import {
+  GraphQLObjectType,
+  GraphQLScalarType,
+  GraphQLInt,
+  IntValueNode
+} from "graphql";
 
 describe("buildServiceDefinition", () => {
   describe(`type definitions`, () => {
@@ -428,6 +433,42 @@ type MutationRoot {
       expect(commentAdded).toBeDefined();
 
       expect(commentAdded.subscribe).toEqual(commentAddedSubscription);
+    });
+
+    it(`should support scalars`, () => {
+      const service = buildServiceDefinition([
+        {
+          typeDefs: gql`
+            scalar Example
+          `,
+          resolvers: {
+            Example: {
+              serialize: value => {
+                return "serialized";
+              },
+              parseValue: value => {
+                return "parsed";
+              },
+              parseLiteral: (valueNode, variables) => {
+                return "parsed literal";
+              }
+            }
+          }
+        }
+      ]);
+
+      expect(service.schema).toBeDefined();
+      const schema = service.schema!;
+
+      const exampleType = schema.getType("Example");
+      expect(exampleType).toBeDefined();
+
+      const scalarType = exampleType as GraphQLScalarType;
+      expect(scalarType.serialize(0)).toEqual("serialized");
+      expect(scalarType.parseValue(0)).toEqual("parsed");
+      expect(
+        scalarType.parseLiteral({ kind: "IntValue", value: "0" }, null)
+      ).toEqual("parsed literal");
     });
   });
 });
