@@ -61,7 +61,7 @@
     "listr": "0.14.3",
     "lodash.identity": "3.0.0",
     "lodash.pickby": "4.6.0",
-    "mkdirp": "0.5.5",
+    "mkdirp": "1.0.4",
     "moment": "2.27.0",
     "strip-ansi": "5.2.0",
     "table": "5.4.6",
