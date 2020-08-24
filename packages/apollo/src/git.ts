@@ -39,11 +39,12 @@ export const sanitizeGitRemote = (remote?: string) => {
 
   // we only support github and bitbucket sources
   const source = info.source.toLowerCase();
-  if (source !== "github.com" && source !== "bitbucket.com") return null;
+  if (source !== "github.com" && source !== "bitbucket.org") return null;
 
   if (info.user !== "" && info.user !== "git") {
     info.user = "REDACTED";
   }
+  info.token = "";
 
   // just to make sure that with an unknown `protocol` that stringify doesn't
   // just print the old, dirty url
