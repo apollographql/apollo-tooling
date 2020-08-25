@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Re-throw instances of ExitError to retain correct process exit code.
+  - Re-throw instances of ExitError to retain correct process exit code. [#2090](https://github.com/apollographql/apollo-tooling/pull/2090)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
