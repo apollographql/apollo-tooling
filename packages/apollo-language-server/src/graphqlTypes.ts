@@ -540,7 +540,7 @@ export interface SchemaTagsAndFieldStats_service {
    * Get schema tags, with optional filtering to a set of tags. Always sorted by creation
    * date in reverse chronological order.
    */
-  schemaTags: SchemaTagsAndFieldStats_service_schemaTags[];
+  schemaTags: SchemaTagsAndFieldStats_service_schemaTags[] | null;
   stats: SchemaTagsAndFieldStats_service_stats;
 }
 
@@ -1672,6 +1672,7 @@ export enum IntrospectionDirectiveLocation {
   SCHEMA = "SCHEMA",
   SUBSCRIPTION = "SUBSCRIPTION",
   UNION = "UNION",
+  VARIABLE_DEFINITION = "VARIABLE_DEFINITION",
 }
 
 export enum IntrospectionTypeKind {

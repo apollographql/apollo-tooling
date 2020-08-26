@@ -25,9 +25,9 @@ describe("strip usernames/passwords from git remotes", () => {
   });
   it("removes username from remote with only a username present", () => {
     let clean = sanitizeGitRemote(
-      "https://un@bitbucket.com/apollographql/test"
+      "https://un@bitbucket.org/apollographql/test"
     );
-    expect(clean).toEqual("https://REDACTED@bitbucket.com/apollographql/test");
+    expect(clean).toEqual("https://REDACTED@bitbucket.org/apollographql/test");
   });
   it("does not mind case", () => {
     let clean = sanitizeGitRemote("https://un@GITHUB.com/apollographql/test");
@@ -44,10 +44,10 @@ describe("strip usernames/passwords from git remotes", () => {
     expect(clean).toEqual("https://REDACTED@github.com/apollographql/test");
 
     let bbClean = sanitizeGitRemote(
-      "https://un:p%40ssw%3Ard@bitbucket.com/apollographql/test"
+      "https://un:p%40ssw%3Ard@bitbucket.org/apollographql/test"
     );
     expect(bbClean).toEqual(
-      "https://REDACTED@bitbucket.com/apollographql/test"
+      "https://REDACTED@bitbucket.org/apollographql/test"
     );
   });
   it("works with non-url remotes from github with git user ONLY", () => {
@@ -65,15 +65,15 @@ describe("strip usernames/passwords from git remotes", () => {
   });
   it("works with non-url remotes from bitbucket with git user ONLY", () => {
     let clean = sanitizeGitRemote(
-      "git@bitbucket.com:apollographql/apollo-tooling.git"
+      "git@bitbucket.org:apollographql/apollo-tooling.git"
     );
-    expect(clean).toEqual("git@bitbucket.com:apollographql/apollo-tooling.git");
+    expect(clean).toEqual("git@bitbucket.org:apollographql/apollo-tooling.git");
 
     let clean2 = sanitizeGitRemote(
-      "bob@bitbucket.com:apollographql/apollo-tooling.git"
+      "bob@bitbucket.org:apollographql/apollo-tooling.git"
     );
     expect(clean2).toEqual(
-      "REDACTED@bitbucket.com:apollographql/apollo-tooling.git"
+      "REDACTED@bitbucket.org:apollographql/apollo-tooling.git"
     );
   });
   it("does not allow non-url remotes from unrecognized providers (not github)", () => {

@@ -262,7 +262,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
       }
     });
 
-    if (!(data && data.service) || errors) {
+    if (!(data && data.service && data.service.schemaTags) || errors) {
       throw new Error(
         errors
           ? errors.map(error => error.message).join("\n")
