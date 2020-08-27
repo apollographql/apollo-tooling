@@ -26,7 +26,7 @@ import sortBy from "lodash.sortby";
 // values. Leaves enums alone (since there's no consistent "zero" enum). This
 // can help combine similar queries if you substitute values directly into
 // queries rather than use GraphQL variables, and can hide sensitive data in
-// your query (say, a hardcoded API key) from Engine servers, but in general
+// your query (say, a hardcoded API key) from Apollo's servers, but in general
 // avoiding those situations is better than working around them.
 export function hideLiterals(ast: DocumentNode): DocumentNode {
   return visit(ast, {

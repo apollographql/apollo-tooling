@@ -1,6 +1,6 @@
 import { default as gql, disableFragmentWarnings } from "graphql-tag";
 import {
-  defaultEngineReportingSignature,
+  defaultUsageReportingSignature,
   operationRegistrySignature
 } from "../operationId";
 
@@ -8,7 +8,7 @@ import {
 // breaks if you turn it off in tests.
 disableFragmentWarnings();
 
-describe("defaultEngineReportingSignature", () => {
+describe("defaultUsageReportingSignature", () => {
   const cases = [
     // Test cases borrowed from optics-agent-js.
     {
@@ -140,7 +140,7 @@ describe("defaultEngineReportingSignature", () => {
   cases.forEach(({ name, operationName, input }) => {
     test(name, () => {
       expect(
-        defaultEngineReportingSignature(input, operationName)
+        defaultUsageReportingSignature(input, operationName)
       ).toMatchSnapshot();
     });
   });

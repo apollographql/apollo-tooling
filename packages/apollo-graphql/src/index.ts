@@ -1,7 +1,9 @@
 export {
-  defaultEngineReportingSignature,
   defaultOperationRegistrySignature,
+  defaultUsageReportingSignature,
   operationRegistrySignature,
-  operationHash
+  operationHash,
+  // deprecated name for this function:
+  defaultUsageReportingSignature as defaultEngineReportingSignature
 } from "./operationId";
 export * from "./schema";
