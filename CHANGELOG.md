@@ -17,7 +17,7 @@
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
+  - Rename `defaultEngineReportingSignature` to `defaultUsageReportingSignature`; the old name continues to be exported as well.
 - `apollo-language-server`
   - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
