@@ -110,7 +110,7 @@ describe("loadConfig", () => {
             "tagName": "gql",
           },
           "engine": Object {
-            "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
+            "endpoint": "https://api.graphql.apollographql.com/api/graphql",
           },
         }
       `);
@@ -134,7 +134,7 @@ describe("loadConfig", () => {
       expect(config.rawConfig).toMatchInlineSnapshot(`
         Object {
           "engine": Object {
-            "endpoint": "https://engine-graphql.apollographql.com/api/graphql",
+            "endpoint": "https://api.graphql.apollographql.com/api/graphql",
           },
           "service": Object {
             "endpoint": Object {

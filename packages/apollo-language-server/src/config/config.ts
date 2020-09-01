@@ -37,7 +37,7 @@ export interface EngineConfig {
 }
 
 export const DefaultEngineConfig = {
-  endpoint: "https://engine-graphql.apollographql.com/api/graphql"
+  endpoint: "https://api.graphql.apollographql.com/api/graphql"
 };
 
 export const DefaultConfigBase = {
