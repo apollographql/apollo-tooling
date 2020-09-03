@@ -29,7 +29,7 @@ const findGitRoot = (start?: string | string[]): string | void => {
  * git remote (`git ls-remote --get-url`)
  *
  * This can be made more generic in the future, allowing for more options
- * for git providers. right now, we only support github & bitbucket. other remotes
+ * for git providers. right now, we only support github, gitlab, and bitbucket. other remotes
  * serve no purpose currently in Apollo Studio.
  */
 
@@ -37,9 +37,14 @@ export const sanitizeGitRemote = (remote?: string) => {
   if (!remote) return null;
   const info = gitUrlParse(remote);
 
-  // we only support github and bitbucket sources
+  // we only support github, gitlab, and bitbucket sources
   const source = info.source.toLowerCase();
-  if (source !== "github.com" && source !== "bitbucket.org") return null;
+  if (
+    source !== "github.com" &&
+    source !== "gitlab.com" &&
+    source !== "bitbucket.org"
+  )
+    return null;
 
   if (info.user !== "" && info.user !== "git") {
     info.user = "REDACTED";
