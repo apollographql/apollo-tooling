@@ -1197,7 +1197,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
     properties.forEach(property => {
       if (property.isOptional) {
-        property.typeName = `Swift.Optional<${property.typeName}>`;
+        property.typeName = `${property.typeName}?`;
       }
     });
 
@@ -1284,7 +1284,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
                 this.printOnNewline(
                   swift`return graphQLMap[${SwiftSource.string(
                     name
-                  )}] as? ${typeName} ?? ${typeName}.none`
+                  )}] as? ${typeName} ?? nil`
                 );
               } else {
                 this.printOnNewline(

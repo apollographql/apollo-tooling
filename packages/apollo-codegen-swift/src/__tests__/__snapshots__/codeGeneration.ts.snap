@@ -2097,7 +2097,7 @@ public struct ReviewInput: GraphQLMapConvertible {
   ///   - stars: 0-5 stars
   ///   - commentary: Comment about the movie, optional
   ///   - favoriteColor: Favorite color, optional
-  public init(stars: Int, commentary: Swift.Optional<String?> = nil, favoriteColor: Swift.Optional<ColorInput?> = nil) {
+  public init(stars: Int, commentary: String?? = nil, favoriteColor: ColorInput?? = nil) {
     graphQLMap = [\\"stars\\": stars, \\"commentary\\": commentary, \\"favorite_color\\": favoriteColor]
   }
 
@@ -2112,9 +2112,9 @@ public struct ReviewInput: GraphQLMapConvertible {
   }
 
   /// Comment about the movie, optional
-  public var commentary: Swift.Optional<String?> {
+  public var commentary: String?? {
     get {
-      return graphQLMap[\\"commentary\\"] as? Swift.Optional<String?> ?? Swift.Optional<String?>.none
+      return graphQLMap[\\"commentary\\"] as? String?? ?? nil
     }
     set {
       graphQLMap.updateValue(newValue, forKey: \\"commentary\\")
@@ -2122,9 +2122,9 @@ public struct ReviewInput: GraphQLMapConvertible {
   }
 
   /// Favorite color, optional
-  public var favoriteColor: Swift.Optional<ColorInput?> {
+  public var favoriteColor: ColorInput?? {
     get {
-      return graphQLMap[\\"favorite_color\\"] as? Swift.Optional<ColorInput?> ?? Swift.Optional<ColorInput?>.none
+      return graphQLMap[\\"favorite_color\\"] as? ColorInput?? ?? nil
     }
     set {
       graphQLMap.updateValue(newValue, forKey: \\"favorite_color\\")
