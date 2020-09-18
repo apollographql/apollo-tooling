@@ -15,6 +15,7 @@ import { fetch } from "apollo-env";
 export interface GraphQLResponse<T> {
   data?: T;
   errors?: GraphQLError[];
+  extensions?: { nonWebAuthErrorMessage?: string | null };
 }
 export class GraphQLDataSource<TContext = any> {
   public baseURL!: string;
