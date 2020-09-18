@@ -248,7 +248,7 @@ export default class ServiceCheck extends ProjectCommand {
     graph: flags.string({
       char: "g",
       description:
-        "The ID of the graph in Apollo Graph Manager to check your proposed schema changes against. Overrides config file if set."
+        "The ID of the graph in Apollo to check your proposed schema changes against. Overrides config file if set."
     }),
     branch: flags.string({
       description: "The branch name to associate with this check"
@@ -487,12 +487,10 @@ export default class ServiceCheck extends ProjectCommand {
                 };
 
                 const { schema: _, ...restVariables } = variables;
-                this.debug("Variables sent to Apollo Graph Manager:");
+                this.debug("Variables sent to Apollo:");
                 this.debug(restVariables);
                 if (schema) {
-                  this.debug(
-                    "SDL of introspection sent to Apollo Graph Manager:"
-                  );
+                  this.debug("SDL of introspection sent to Apollo:");
                   this.debug(printSchema(schema));
                 } else {
                   this.debug("Schema hash generated:");

@@ -10,26 +10,24 @@ import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ServicePush extends ProjectCommand {
   static aliases = ["schema:publish"];
-  static description = "Push a service definition to Apollo Graph Manager";
+  static description = "Push a service definition to Apollo";
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({
       char: "t",
-      description:
-        "The tag (AKA variant) to publish your service to in Apollo Graph Manager",
+      description: "The tag (AKA variant) to publish your service to Apollo",
       hidden: true,
       exclusive: ["variant"]
     }),
     variant: flags.string({
       char: "v",
-      description:
-        "The variant to publish your service to in Apollo Graph Manager",
+      description: "The variant to publish your service to in Apollo",
       exclusive: ["tag"]
     }),
     graph: flags.string({
       char: "g",
       description:
-        "The ID of the graph in Apollo Graph Manager to publish your service to. Overrides config file if set."
+        "The ID of the graph in Apollo to publish your service to. Overrides config file if set."
     }),
     localSchemaFile: flags.string({
       description:
@@ -62,7 +60,7 @@ export default class ServicePush extends ProjectCommand {
     let gitContext;
     await this.runTasks(({ flags, project, config }) => [
       {
-        title: "Uploading service to Apollo Graph Manager",
+        title: "Uploading service to Apollo",
         task: async () => {
           if (!config.graph) {
             throw graphUndefinedError;
@@ -144,9 +142,9 @@ export default class ServicePush extends ProjectCommand {
           };
 
           const { schema: _, ...restVariables } = variables;
-          this.debug("Variables sent to Apollo Graph Manager:");
+          this.debug("Variables sent to Apollo:");
           this.debug(restVariables);
-          this.debug("SDL of introspection sent to Apollo Graph Manager:");
+          this.debug("SDL of introspection sent to Apollo:");
           this.debug(printSchema(schema));
 
           const response = await project.engine.uploadSchema(variables);
@@ -157,7 +155,7 @@ export default class ServicePush extends ProjectCommand {
               hash: response.tag ? response.tag.schema.hash : null,
               code: response.code
             };
-            this.debug("Result received from Apollo Graph Manager:");
+            this.debug("Result received from Apollo:");
             this.debug(result);
           }
         }

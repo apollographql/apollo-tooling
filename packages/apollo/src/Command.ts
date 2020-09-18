@@ -81,12 +81,11 @@ export abstract class ProjectCommand extends Command {
       description: "The URL for the CLI use to introspect your service"
     }),
     key: flags.string({
-      description:
-        "The API key to use for authentication to Apollo Graph Manager",
+      description: "The API key to use for authentication to Apollo",
       default: () => process.env.APOLLO_KEY || process.env.ENGINE_API_KEY
     }),
     engine: flags.string({
-      description: "URL for a custom Apollo Graph Manager deployment",
+      description: "URL for a custom Apollo deployment",
       hidden: true
     })
   };
@@ -297,20 +296,20 @@ export abstract class ClientCommand extends ProjectCommand {
     tag: flags.string({
       char: "t",
       description:
-        "[Deprecated: please use --variant instead] The tag (AKA variant) of the graph in Apollo Graph Manager to associate this client to",
+        "[Deprecated: please use --variant instead] The tag (AKA variant) of the graph in Apollo to associate this client to",
       hidden: true,
       exclusive: ["variant"]
     }),
     variant: flags.string({
       char: "v",
       description:
-        "The variant of the graph in Apollo Graph Manager to associate this client to",
+        "The variant of the graph in Apollo to associate this client to",
       exclusive: ["tag"]
     }),
     graph: flags.string({
       char: "g",
       description:
-        "The ID for the graph in Apollo Graph Manager to operate client commands with. Overrides config file if set."
+        "The ID for the graph in Apollo to operate client commands with. Overrides config file if set."
     }),
     queries: flags.string({
       description: "Deprecated in favor of the includes flag"

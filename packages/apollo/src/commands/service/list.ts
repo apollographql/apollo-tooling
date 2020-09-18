@@ -102,7 +102,7 @@ export default class ServiceList extends ProjectCommand {
     graph: flags.string({
       char: "g",
       description:
-        "The ID of the graph in Apollo Graph Manager for which to list implementing services. Overrides config file if set."
+        "The ID of the graph in the Apollo registry for which to list implementing services. Overrides config file if set."
     })
   };
 

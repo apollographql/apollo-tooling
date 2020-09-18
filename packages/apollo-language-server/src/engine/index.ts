@@ -44,9 +44,9 @@ export type ServiceSpecifier = string;
 export type FieldStats = Map<string, Map<string, number | null>>;
 
 export function noServiceError(service: string | undefined, endpoint?: string) {
-  return `Could not find service ${
+  return `Could not find graph ${
     service ? service : ""
-  } from Apollo Graph Manager at ${endpoint}. Please check your API key and service name`;
+  } from Apollo at ${endpoint}. Please check your API key and graph ID`;
 }
 
 export class ApolloEngineClient extends GraphQLDataSource {
@@ -96,7 +96,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
       }
 
       if (!(data && data.service)) {
-        throw new Error("Error in request from Apollo Graph Manager");
+        throw new Error("Error in response from Apollo");
       }
       return data;
     });
@@ -117,7 +117,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
       }
 
       if (!(data && data.service)) {
-        throw new Error("Error in request from Apollo Graph Manager");
+        throw new Error("Error in response from Apollo");
       }
       return data.service.checkSchema;
     });
@@ -138,7 +138,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
       }
 
       if (!(data && data.service)) {
-        throw new Error("Error in request from Apollo Graph Manager");
+        throw new Error("Error in response from Apollo");
       }
       return data.service.uploadSchema;
     });
@@ -161,7 +161,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
       }
 
       if (!(data && data.service)) {
-        throw new Error("Error in request from Apollo Graph Manager");
+        throw new Error("Error in response from Apollo");
       }
       return data.service.upsertImplementingServiceAndTriggerComposition;
     });
@@ -184,7 +184,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
       }
 
       if (!(data && data.service)) {
-        throw new Error("Error in request from Apollo Graph Manager");
+        throw new Error("Error in response from Apollo");
       }
       return data.service.checkPartialSchema;
     });
@@ -202,7 +202,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
       }
 
       if (!data || !data.service) {
-        throw new Error("Error in request from Apollo Graph Manager");
+        throw new Error("Error in response from Apollo");
       }
 
       return data.service.removeImplementingServiceAndTriggerComposition;
@@ -224,7 +224,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
       }
 
       if (!(data && data.service)) {
-        throw new Error("Error in request from Apollo Graph Manager");
+        throw new Error("Error in response from Apollo");
       }
 
       return data.service.validateOperations.validationResults;
@@ -248,7 +248,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
       if (
         !(data && data.service && data.service.registerOperationsWithResponse)
       ) {
-        throw new Error("Error in request from Apollo Graph Manager");
+        throw new Error("Error in response from Apollo");
       }
       return data.service.registerOperationsWithResponse;
     });

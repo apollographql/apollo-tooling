@@ -20,7 +20,7 @@ The Apollo GraphQL extension for VS Code brings an all-in-one tooling experience
 Some features of this extension (like syntax highlighting) will work without any configuration, but to get all of the benefits of the VS Code experience, it's best to link the schema that is being developed against **before** installing the extension. The best way to do that is by [publishing a schema](https://www.apollographql.com/docs/platform/schema-registry.html#setup) to the Apollo schema registry. Once that is done, two steps are needed:
 
 1. Create an `apollo.config.js` at the root of the project
-2. Copy an API key from the Engine dashboard of the published service
+2. Copy an API key from the Apollo Studio dashboard of the published graph
 
 <h3 id="apollo-config">Setting up an Apollo config</h3>
 
@@ -34,12 +34,12 @@ module.exports = {
 };
 ```
 
-The service name is the id of the service created in Engine and can be found in the services dashboard of [Engine](https://engine.apollographql.com)
+The service name is the id of the graph created in Apollo and can be found in the graphs dashboard of [Apollo Studio](https://studio.apollographql.com)
 
-> Important note: If the name of the service in Engine is changed, this value should be the service id. This can be found in the url when browsing the service in Engine.
+> Important note: If the display name of the graph in Studio is changed, this value should still remain the same graph **ID**. This can be found in the url when browsing the graph in Studio.
 
 <h3 id="api-key">Setting up an API key</h3>
-To authenticate with Engine to pull down the schema, create a file next to the `apollo.config.js` called `.env`. This should be an untraced file (i.e. don't push it to GitHub). Go to the settings page of the published service and create a new API key.
+To authenticate with Apollo to pull down the schema, create a file next to the `apollo.config.js` called `.env`. This should be an untracked file (i.e. don't push it to GitHub). Go to the settings page of the published service and create a new API key.
 
 > It is best practice to create a new API key for each member of the team and name the key so it's easy to find and revoke if needed
 
@@ -48,7 +48,7 @@ To authenticate with Engine to pull down the schema, create a file next to the `
 After the key is found, add the following line to the `.env` or `.env.local` file:
 
 ```bash
-ENGINE_API_KEY=<enter copied key here>
+APOLLO_KEY=<enter copied key here>
 ```
 
 After this is done, VS Code should automatically update and start providing autocomplete, validation, and more!
@@ -124,7 +124,7 @@ GraphQL's flexibility can make it difficult to predict the cost of an operation.
 
 To turn on tracing for your GraphQL server, please visit our [guide](https://www.apollographql.com/docs/platform/setup-analytics.html).
 
-The VS Code extension will show inline performance diagnostics when connected to a service with reported metrics in Engine. As operations are typed, any fields that take longer than 1ms to respond will be annotated to the right of the field inline! This gives team members a picture of how long the operation will take as more and more fields are added to operations or fragments.
+The VS Code extension will show inline performance diagnostics when connected to a service with reported metrics in Apollo Studio. As operations are typed, any fields that take longer than 1ms to respond will be annotated to the right of the field inline! This gives team members a picture of how long the operation will take as more and more fields are added to operations or fragments.
 
 <img src="https://raw.githubusercontent.com/apollographql/apollo-tooling/master/packages/vscode-apollo/images/marketplace/perf-annotation.png"  style="max-width:800px;" alt="Performance annotation next to a field">
 

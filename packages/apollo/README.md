@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.30.3 linux-x64 node-v12.18.3
+apollo/2.30.3 darwin-x64 node-v14.4.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -64,12 +64,11 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID for the graph in Apollo Graph Manager to operate client 
-      commands with. Overrides config file if set.
+      The ID for the graph in Apollo to operate client commands with. 
+      Overrides config file if set.
 
   -v, --variant=variant
-      The variant of the graph in Apollo Graph Manager to associate this 
-      client to
+      The variant of the graph in Apollo to associate this client to
 
   --clientName=clientName
       Name of the client that the queries will be attached to
@@ -98,7 +97,7 @@ OPTIONS
       find queries *and* any client schema extensions
 
   --key=key
-      The API key to use for authentication to Apollo Graph Manager
+      The API key to use for authentication to Apollo
 
   --queries=queries
       Deprecated in favor of the includes flag
@@ -112,7 +111,7 @@ _See code: [src/commands/client/check.ts](https://github.com/apollographql/apoll
 
 ## `apollo client:codegen [OUTPUT]`
 
-Generate static types for GraphQL queries. Can use the published schema in Apollo Graph Manager or a downloaded schema.
+Generate static types for GraphQL queries. Can use the published schema in the Apollo registry or a downloaded schema.
 
 ```
 USAGE
@@ -138,12 +137,11 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID for the graph in Apollo Graph Manager to operate client 
-      commands with. Overrides config file if set.
+      The ID for the graph in Apollo to operate client commands with. 
+      Overrides config file if set.
 
   -v, --variant=variant
-      The variant of the graph in Apollo Graph Manager to associate this 
-      client to
+      The variant of the graph in Apollo to associate this client to
 
   --[no-]addTypename
       [default: true] Automatically add __typename to your queries, can be 
@@ -185,7 +183,7 @@ OPTIONS
       find queries *and* any client schema extensions
 
   --key=key
-      The API key to use for authentication to Apollo Graph Manager
+      The API key to use for authentication to Apollo
 
   --localSchemaFile=localSchemaFile
       Path to one or more local GraphQL schema file(s), as introspection 
@@ -260,7 +258,7 @@ _See code: [src/commands/client/codegen.ts](https://github.com/apollographql/apo
 
 ## `apollo client:download-schema OUTPUT`
 
-Download a schema from Apollo Graph Manager or a GraphQL endpoint in JSON or SDL format
+Download a schema from Apollo or a GraphQL endpoint in JSON or SDL format
 
 ```
 USAGE
@@ -275,12 +273,11 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID for the graph in Apollo Graph Manager to operate client 
-      commands with. Overrides config file if set.
+      The ID for the graph in Apollo to operate client commands with. 
+      Overrides config file if set.
 
   -v, --variant=variant
-      The variant of the graph in Apollo Graph Manager to associate this 
-      client to
+      The variant of the graph in Apollo to associate this client to
 
   --clientName=clientName
       Name of the client that the queries will be attached to
@@ -309,7 +306,7 @@ OPTIONS
       find queries *and* any client schema extensions
 
   --key=key
-      The API key to use for authentication to Apollo Graph Manager
+      The API key to use for authentication to Apollo
 
   --queries=queries
       Deprecated in favor of the includes flag
@@ -337,12 +334,11 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID for the graph in Apollo Graph Manager to operate client 
-      commands with. Overrides config file if set.
+      The ID for the graph in Apollo to operate client commands with. 
+      Overrides config file if set.
 
   -v, --variant=variant
-      The variant of the graph in Apollo Graph Manager to associate this 
-      client to
+      The variant of the graph in Apollo to associate this client to
 
   --clientName=clientName
       Name of the client that the queries will be attached to
@@ -371,7 +367,7 @@ OPTIONS
       find queries *and* any client schema extensions
 
   --key=key
-      The API key to use for authentication to Apollo Graph Manager
+      The API key to use for authentication to Apollo
 
   --preserveStringAndNumericLiterals
       Disable redaction of string and numerical literals.  Without this 
@@ -404,12 +400,11 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID for the graph in Apollo Graph Manager to operate client 
-      commands with. Overrides config file if set.
+      The ID for the graph in Apollo to operate client commands with. 
+      Overrides config file if set.
 
   -v, --variant=variant
-      The variant of the graph in Apollo Graph Manager to associate this 
-      client to
+      The variant of the graph in Apollo to associate this client to
 
   --clientName=clientName
       Name of the client that the queries will be attached to
@@ -438,7 +433,7 @@ OPTIONS
       find queries *and* any client schema extensions
 
   --key=key
-      The API key to use for authentication to Apollo Graph Manager
+      The API key to use for authentication to Apollo
 
   --queries=queries
       Deprecated in favor of the includes flag
@@ -602,8 +597,8 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID of the graph in Apollo Graph Manager to check your proposed 
-      schema changes against. Overrides config file if set.
+      The ID of the graph in Apollo to check your proposed schema changes 
+      against. Overrides config file if set.
 
   -v, --variant=variant
       The variant to check the proposed schema against
@@ -630,7 +625,7 @@ OPTIONS
       jq.
 
   --key=key
-      The API key to use for authentication to Apollo Graph Manager
+      The API key to use for authentication to Apollo
 
   --localSchemaFile=localSchemaFile
       Path to one or more local GraphQL schema file(s), as introspection 
@@ -668,7 +663,7 @@ _See code: [src/commands/service/check.ts](https://github.com/apollographql/apol
 
 ## `apollo service:delete`
 
-Delete a federated service from Apollo Graph Manager and recompose remaining services
+Delete a federated service from Apollo and recompose remaining services
 
 ```
 USAGE
@@ -677,9 +672,9 @@ USAGE
 OPTIONS
   -c, --config=config        Path to your Apollo config file
 
-  -g, --graph=graph          The ID of the graph in Apollo Graph Manager
-                             for which to delete an implementing service.
-                             Overrides config file if set.
+  -g, --graph=graph          The ID of the graph in Apollo for which to
+                             delete an implementing service. Overrides
+                             config file if set.
 
   -v, --variant=variant      The variant to delete the implementing
                              service from
@@ -696,7 +691,7 @@ OPTIONS
                              flag.
 
   --key=key                  The API key to use for authentication to
-                             Apollo Graph Manager
+                             Apollo
 
   --serviceName=serviceName  (required) Provides the name of the
                              implementing service for a federated graph
@@ -719,7 +714,7 @@ ARGUMENTS
 OPTIONS
   -c, --config=config      Path to your Apollo config file
 
-  -g, --graph=graph        The ID of the graph in Apollo Graph Manager for
+  -g, --graph=graph        The ID of the graph in the Apollo registry for
                            which to download the schema for. Overrides
                            config file if provided.
 
@@ -736,7 +731,6 @@ OPTIONS
                            REQUIRED if using the `--header` flag.
 
   --key=key                The API key to use for authentication to Apollo
-                           Graph Manager
 
 ALIASES
   $ apollo schema:download
@@ -755,7 +749,7 @@ USAGE
 OPTIONS
   -c, --config=config    Path to your Apollo config file
 
-  -g, --graph=graph      The ID of the graph in Apollo Graph Manager for
+  -g, --graph=graph      The ID of the graph in the Apollo registry for
                          which to list implementing services. Overrides
                          config file if set.
 
@@ -770,14 +764,13 @@ OPTIONS
                          if using the `--header` flag.
 
   --key=key              The API key to use for authentication to Apollo
-                         Graph Manager
 ```
 
 _See code: [src/commands/service/list.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/list.ts)_
 
 ## `apollo service:push`
 
-Push a service definition to Apollo Graph Manager
+Push a service definition to Apollo
 
 ```
 USAGE
@@ -788,11 +781,11 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID of the graph in Apollo Graph Manager to publish your service 
-      to. Overrides config file if set.
+      The ID of the graph in Apollo to publish your service to. Overrides 
+      config file if set.
 
   -v, --variant=variant
-      The variant to publish your service to in Apollo Graph Manager
+      The variant to publish your service to in Apollo
 
   --endpoint=endpoint
       The URL for the CLI use to introspect your service
@@ -803,7 +796,7 @@ OPTIONS
       if using the `--header` flag.
 
   --key=key
-      The API key to use for authentication to Apollo Graph Manager
+      The API key to use for authentication to Apollo
 
   --localSchemaFile=localSchemaFile
       Path to one or more local GraphQL schema file(s), as introspection 
@@ -996,7 +989,7 @@ If you're using VS Code, you can run the included "Attach to CLI Debugger" launc
 
 ## Regenerating Mocked Network Data
 
-Some integration tests rely on mocked server data (service:check for example). Mock data is generated by making real network requests and recording those requests with [`nock`'s recording feature](https://github.com/nock/nock#recording). Stop mocking network calls and add `nock.recorder.rec()` before network calls are made. For `service:check`, change `apiKey` to a real engine API key. Then run the tests and nock will output code to mock requests to the console. You can (and probably should) pare down the request to be less brittle (by only checking for an operation name, for example). See [`src/commands/service/__tests__/check.test.ts`](./packages/apollo/src/commands/service/__tests__/check.test.ts) for an example of how a mocked network request will look.
+Some integration tests rely on mocked server data (service:check for example). Mock data is generated by making real network requests and recording those requests with [`nock`'s recording feature](https://github.com/nock/nock#recording). Stop mocking network calls and add `nock.recorder.rec()` before network calls are made. For `service:check`, change `apiKey` to a real Apollo API key. Then run the tests and nock will output code to mock requests to the console. You can (and probably should) pare down the request to be less brittle (by only checking for an operation name, for example). See [`src/commands/service/__tests__/check.test.ts`](./packages/apollo/src/commands/service/__tests__/check.test.ts) for an example of how a mocked network request will look.
 
 
 ## Publishing

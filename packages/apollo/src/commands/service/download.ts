@@ -27,7 +27,7 @@ export default class ServiceDownload extends ProjectCommand {
     graph: flags.string({
       char: "g",
       description:
-        "The ID of the graph in Apollo Graph Manager for which to download the schema for. Overrides config file if provided."
+        "The ID of the graph in the Apollo registry for which to download the schema for. Overrides config file if provided."
     }),
     skipSSLValidation: flags.boolean({
       char: "k",
@@ -51,7 +51,7 @@ export default class ServiceDownload extends ProjectCommand {
         title: `Saving schema to ${args.output}`,
         task: async () => {
           // XXX Because of how we use schema providers, this command will never download a schema from
-          // Apollo Graph Manager. We could change that by refactoring the usage of schema providers, but
+          // Apollo. We could change that by refactoring the usage of schema providers, but
           // we currently recommend using client:download-schema instead.
           try {
             const graphVariant: string = config.variant;
@@ -72,7 +72,7 @@ export default class ServiceDownload extends ProjectCommand {
               );
               this.log(
                 chalk.red(
-                  "If you're trying to download a schema from Apollo Graph Manager, use the `client:download-schema` command instead."
+                  "If you're trying to download a schema from the Apollo registry, use the `client:download-schema` command instead."
                 )
               );
             }

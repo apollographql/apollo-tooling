@@ -30,7 +30,7 @@ const findGitRoot = (start?: string | string[]): string | void => {
  *
  * This can be made more generic in the future, allowing for more options
  * for git providers. right now, we only support github & bitbucket. other remotes
- * serve no purpose currently in graph manager.
+ * serve no purpose currently in Apollo Studio.
  */
 
 export const sanitizeGitRemote = (remote?: string) => {
