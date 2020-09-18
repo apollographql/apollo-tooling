@@ -85,8 +85,12 @@ export class ApolloEngineClient extends GraphQLDataSource {
     return this.execute<ListServices>({
       query: LIST_SERVICES,
       variables
-    }).then(({ data, errors }) => {
+    }).then(({ data, errors, extensions }) => {
       // use error logger
+      if (extensions && extensions.nonWebAuthErrorMessage) {
+        throw new Error(extensions.nonWebAuthErrorMessage);
+      }
+
       if (errors) {
         throw new Error(errors.map(error => error.message).join("\n"));
       }
@@ -106,8 +110,12 @@ export class ApolloEngineClient extends GraphQLDataSource {
     return this.execute<CheckSchema>({
       query: CHECK_SCHEMA,
       variables
-    }).then(({ data, errors }) => {
+    }).then(({ data, errors, extensions }) => {
       // use error logger
+      if (extensions && extensions.nonWebAuthErrorMessage) {
+        throw new Error(extensions.nonWebAuthErrorMessage);
+      }
+
       if (errors) {
         throw new Error(errors.map(error => error.message).join("\n"));
       }
@@ -127,8 +135,12 @@ export class ApolloEngineClient extends GraphQLDataSource {
     return this.execute<UploadSchema>({
       query: UPLOAD_SCHEMA,
       variables
-    }).then(({ data, errors }) => {
+    }).then(({ data, errors, extensions }) => {
       // use error logger
+      if (extensions && extensions.nonWebAuthErrorMessage) {
+        throw new Error(extensions.nonWebAuthErrorMessage);
+      }
+
       if (errors) {
         throw new Error(errors.map(error => error.message).join("\n"));
       }
@@ -150,8 +162,12 @@ export class ApolloEngineClient extends GraphQLDataSource {
     return this.execute<UploadAndComposePartialSchema>({
       query: UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA,
       variables
-    }).then(({ data, errors }) => {
+    }).then(({ data, errors, extensions }) => {
       // use error logger
+      if (extensions && extensions.nonWebAuthErrorMessage) {
+        throw new Error(extensions.nonWebAuthErrorMessage);
+      }
+
       if (errors) {
         throw new Error(errors.map(error => error.message).join("\n"));
       }
@@ -173,8 +189,12 @@ export class ApolloEngineClient extends GraphQLDataSource {
     return this.execute<CheckPartialSchema>({
       query: CHECK_PARTIAL_SCHEMA,
       variables
-    }).then(({ data, errors }) => {
+    }).then(({ data, errors, extensions }) => {
       // use error logger
+      if (extensions && extensions.nonWebAuthErrorMessage) {
+        throw new Error(extensions.nonWebAuthErrorMessage);
+      }
+
       if (errors) {
         throw new Error(errors.map(error => error.message).join("\n"));
       }
@@ -196,7 +216,11 @@ export class ApolloEngineClient extends GraphQLDataSource {
     return this.execute<RemoveServiceAndCompose>({
       query: REMOVE_SERVICE_AND_COMPOSE,
       variables
-    }).then(({ data, errors }) => {
+    }).then(({ data, errors, extensions }) => {
+      if (extensions && extensions.nonWebAuthErrorMessage) {
+        throw new Error(extensions.nonWebAuthErrorMessage);
+      }
+
       if (errors) {
         throw new Error(errors.map(error => error.message).join("\n"));
       }
@@ -213,8 +237,12 @@ export class ApolloEngineClient extends GraphQLDataSource {
     return this.execute<ValidateOperations>({
       query: VALIDATE_OPERATIONS,
       variables
-    }).then(({ data, errors }) => {
+    }).then(({ data, errors, extensions }) => {
       // use error logger
+      if (extensions && extensions.nonWebAuthErrorMessage) {
+        throw new Error(extensions.nonWebAuthErrorMessage);
+      }
+
       if (errors) {
         throw new Error(errors.map(error => error.message).join("\n"));
       }
@@ -235,8 +263,12 @@ export class ApolloEngineClient extends GraphQLDataSource {
     return this.execute<RegisterOperations>({
       query: REGISTER_OPERATIONS,
       variables
-    }).then(({ data, errors }) => {
+    }).then(({ data, errors, extensions }) => {
       // use error logger
+      if (extensions && extensions.nonWebAuthErrorMessage) {
+        throw new Error(extensions.nonWebAuthErrorMessage);
+      }
+
       if (errors) {
         throw new Error(errors.map(error => error.message).join("\n"));
       }
@@ -255,12 +287,18 @@ export class ApolloEngineClient extends GraphQLDataSource {
   }
 
   async loadSchemaTagsAndFieldStats(serviceID: string) {
-    const { data, errors } = await this.execute<SchemaTagsAndFieldStats>({
+    const { data, errors, extensions } = await this.execute<
+      SchemaTagsAndFieldStats
+    >({
       query: SCHEMA_TAGS_AND_FIELD_STATS,
       variables: {
         id: serviceID
       }
     });
+
+    if (extensions && extensions.nonWebAuthErrorMessage) {
+      throw new Error(extensions.nonWebAuthErrorMessage);
+    }
 
     if (!(data && data.service && data.service.schemaTags) || errors) {
       throw new Error(
