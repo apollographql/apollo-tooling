@@ -65,7 +65,7 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
           "Failed to connect to a running GraphQL endpoint at " +
             url +
             "\nThis may be because you didn't start your service.\n" +
-            "By default, when an endpoint, Graph Manager API key, or localSchemaFile isn't provided, Apollo tries to fetch a schema from " +
+            "By default, when an endpoint, Apollo API key, or localSchemaFile isn't provided, Apollo tries to fetch a schema from " +
             DefaultServiceConfig.endpoint.url +
             "\n-----------------------------\n" +
             "\nFor more information, please refer to: https://go.apollo.dev/t/config \n\n" +

@@ -19,13 +19,13 @@ const localURL = "http://localhost:4000";
 /**
  * Default API key. This is not an actual API key but a randomly generated string.
  *
- * If you need to use the `nock` recorder, then this will not work because we won't be able to access graph manager
+ * If you need to use the `nock` recorder, then this will not work because we won't be able to access Apollo
  * with a fake API key.
  */
 const fakeApiKey = "service:engine:9YC5AooMa2yO11eFlZat11";
 
 /**
- * An array that we'll spread into all CLI commands to pass the graph manager api key.
+ * An array that we'll spread into all CLI commands to pass the Apollo api key.
  */
 const cliKeyParameter = [`--key=${fakeApiKey}`];
 

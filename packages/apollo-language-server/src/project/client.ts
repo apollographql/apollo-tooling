@@ -338,7 +338,7 @@ export class GraphQLClientProject extends GraphQLProject {
     if (!serviceID) return;
 
     await this.loadingHandler.handle(
-      `Loading Apollo Graph Manager data for ${this.displayName}`,
+      `Loading Apollo data for ${this.displayName}`,
       (async () => {
         try {
           const {

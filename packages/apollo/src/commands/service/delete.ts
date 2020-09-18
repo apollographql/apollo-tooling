@@ -6,7 +6,7 @@ import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ServiceDelete extends ProjectCommand {
   static description =
-    "Delete a federated service from Apollo Graph Manager and recompose remaining services";
+    "Delete a federated service from Apollo and recompose remaining services";
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({
@@ -24,7 +24,7 @@ export default class ServiceDelete extends ProjectCommand {
     graph: flags.string({
       char: "g",
       description:
-        "The ID of the graph in Apollo Graph Manager for which to delete an implementing service. Overrides config file if set."
+        "The ID of the graph in Apollo for which to delete an implementing service. Overrides config file if set."
     }),
     federated: flags.boolean({
       char: "f",
@@ -63,7 +63,7 @@ export default class ServiceDelete extends ProjectCommand {
 
     await this.runTasks(({ flags, project, config }) => [
       {
-        title: "Removing service from Apollo Graph Manager",
+        title: "Removing service from Apollo",
         task: async () => {
           if (!config.graph) {
             throw graphUndefinedError;

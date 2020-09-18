@@ -61,7 +61,7 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
 
     if (!(data && data.service && data.service.__typename === "Service")) {
       throw new Error(
-        `Unable to get schema from Apollo Graph Manager for graph ${this.config.graph}`
+        `Unable to get schema from the Apollo registry for graph ${this.config.graph}`
       );
     }
 
@@ -74,13 +74,13 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
   onSchemaChange(
     _handler: NotificationHandler<GraphQLSchema>
   ): SchemaChangeUnsubscribeHandler {
-    throw new Error("Polling of Apollo Graph Manager not implemented yet");
+    throw new Error("Polling of Apollo not implemented yet");
     return () => {};
   }
 
   async resolveFederatedServiceSDL() {
     Debug.error(
-      "Cannot resolve a federated service's SDL from Apollo Graph Manager. Use an endpoint or a file instead"
+      "Cannot resolve a federated service's SDL from Apollo. Use an endpoint or a file instead"
     );
     return;
   }
