@@ -5,6 +5,7 @@
 - `apollo`
   - Update CLI default API domain from `engine-graphql.apollographql.com` to `graphql.api.apollographql.com`.
     Users that have set up support for corporate proxies or firewalls may need to update configurations.
+  - Accept GitLab remote URLs when fetching git info for service:check and service:push [#2104](https://github.com/apollographql/apollo-tooling/pull/2104)
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`

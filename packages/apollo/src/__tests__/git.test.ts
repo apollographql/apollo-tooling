@@ -20,7 +20,9 @@ describe("Git integration", () => {
 
 describe("strip usernames/passwords from git remotes", () => {
   it("returns empty for unknown remotes", () => {
-    let clean = sanitizeGitRemote("https://un@gitlab.com/apollographql/test");
+    let clean = sanitizeGitRemote(
+      "https://un@sourceforge.net/apollographql/test"
+    );
     expect(clean).toBeNull();
   });
   it("removes username from remote with only a username present", () => {
@@ -49,6 +51,11 @@ describe("strip usernames/passwords from git remotes", () => {
     expect(bbClean).toEqual(
       "https://REDACTED@bitbucket.org/apollographql/test"
     );
+
+    let glClean = sanitizeGitRemote(
+      "https://un:p%40ssw%3Ard@gitlab.com/apollographql/test"
+    );
+    expect(glClean).toEqual("https://REDACTED@gitlab.com/apollographql/test");
   });
   it("works with non-url remotes from github with git user ONLY", () => {
     let clean = sanitizeGitRemote(
@@ -74,6 +81,19 @@ describe("strip usernames/passwords from git remotes", () => {
     );
     expect(clean2).toEqual(
       "REDACTED@bitbucket.org:apollographql/apollo-tooling.git"
+    );
+  });
+  it("works with non-url remotes from gitlab with git user ONLY", () => {
+    let clean = sanitizeGitRemote(
+      "git@gitlab.com:apollographql/apollo-tooling.git"
+    );
+    expect(clean).toEqual("git@gitlab.com:apollographql/apollo-tooling.git");
+
+    let clean2 = sanitizeGitRemote(
+      "bob@gitlab.com:apollographql/apollo-tooling.git"
+    );
+    expect(clean2).toEqual(
+      "REDACTED@gitlab.com:apollographql/apollo-tooling.git"
     );
   });
   it("does not allow non-url remotes from unrecognized providers (not github)", () => {
