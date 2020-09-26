@@ -62,7 +62,7 @@
     "lodash.identity": "3.0.0",
     "lodash.pickby": "4.6.0",
     "mkdirp": "1.0.4",
-    "moment": "2.28.0",
+    "moment": "2.29.0",
     "strip-ansi": "5.2.0",
     "table": "5.4.6",
     "tty": "1.0.1",
