@@ -91,7 +91,7 @@
     "symlink-dir": "3.1.2",
     "ts-jest": "24.3.0",
     "ts-node": "9.0.0",
-    "tslib": "1.13.0",
+    "tslib": "1.14.1",
     "typescript": "3.7.5",
     "vsce": "1.81.1",
     "vscode": "1.1.37",
