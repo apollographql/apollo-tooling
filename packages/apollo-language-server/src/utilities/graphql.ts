@@ -165,9 +165,11 @@ function removeOrphanedFragmentDefinitionsAndVariables<AST extends ASTNode>(
       return {
         ...node,
         // Remove matching top level variables definitions.
-        variableDefinitions: node.variableDefinitions.filter(
-          varDef => !variablesToRemove.has(varDef.variable.name.value)
-        )
+        variableDefinitions:
+          node.variableDefinitions &&
+          node.variableDefinitions.filter(
+            varDef => !variablesToRemove.has(varDef.variable.name.value)
+          )
       };
     }
   });
