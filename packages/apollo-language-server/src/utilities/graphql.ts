@@ -349,7 +349,7 @@ export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
     }
   });
 
-  // Remove all orphaned fragment definitions
+  // Remove all orphaned fragment definitions and variables
   ast = removeOrphanedFragmentDefinitionsAndVariables(
     ast,
     removedFragmentSpreadNames,

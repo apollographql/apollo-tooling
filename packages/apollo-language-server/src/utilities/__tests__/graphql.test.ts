@@ -117,7 +117,7 @@ describe("removeDirectiveAnnotatedFields", () => {
     `);
   });
 
-  it("remove variables from definition if they are only used in client only fields", () => {
+  it("should remove variables from definition if they are only used in annotated fields", () => {
     expect(
       print(
         removeDirectiveAnnotatedFields(

@@ -21,7 +21,7 @@
 - `apollo-graphql`
   - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
-  - Fix `removeDirectiveAnnotatedFields` to remove variables from the operation definition if the variable was only used in the removed field.
+  - Fix `removeDirectiveAnnotatedFields` to remove variables from the operation definition if the variables are unused after removing directive annotated fields. [#2146](https://github.com/apollographql/apollo-tooling/pull/2146)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
