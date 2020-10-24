@@ -1,4 +1,6 @@
+import pMap from "p-map";
 import { fs } from "apollo-codegen-core/lib/localfs";
+import util from "util";
 import path from "path";
 import { GraphQLSchema, DocumentNode, print } from "graphql";
 import URI from "vscode-uri";
@@ -27,6 +29,9 @@ import { FlowCompilerOptions } from "../../apollo-codegen-flow/lib/language";
 import { validateQueryDocument } from "apollo-language-server/lib/errors/validation";
 import { DEFAULT_FILE_EXTENSION as TYPESCRIPT_DEFAULT_FILE_EXTENSION } from "apollo-codegen-typescript/lib/helpers";
 
+const promisedReadFile = util.promisify(fs.readFile);
+const promisedWriteFile = util.promisify(fs.writeFile);
+
 export type TargetType =
   | "json"
   | "json-modern"
@@ -48,7 +53,7 @@ function toPath(uri: string): string {
   return URI.parse(uri).fsPath;
 }
 
-export default function generate(
+export default async function generate(
   document: DocumentNode,
   schema: GraphQLSchema,
   outputPath: string,
@@ -57,7 +62,7 @@ export default function generate(
   tagName: string,
   nextToSources: boolean | string,
   options: GenerationOptions
-): number {
+): Promise<number> {
   let writtenFiles = 0;
   validateQueryDocument(schema, document);
 
@@ -85,7 +90,7 @@ export default function generate(
     );
 
     if (outputIndividualFiles) {
-      writeGeneratedFiles(generator.generatedFiles, outputPath, "\n");
+      await writeGeneratedFiles(generator.generatedFiles, outputPath, "\n");
       writtenFiles += Object.keys(generator.generatedFiles).length;
     } else {
       fs.writeFileSync(outputPath, generator.output.concat("\n"));
@@ -119,7 +124,7 @@ export default function generate(
         };
       });
 
-      writeGeneratedFiles(outFiles, path.resolve("."));
+      await writeGeneratedFiles(outFiles, path.resolve("."));
 
       writtenFiles += Object.keys(outFiles).length;
     } else if (
@@ -132,7 +137,7 @@ export default function generate(
         };
       });
 
-      writeGeneratedFiles(outFiles, outputPath);
+      await writeGeneratedFiles(outFiles, outputPath);
 
       writtenFiles += Object.keys(outFiles).length;
     } else {
@@ -195,7 +200,7 @@ export default function generate(
         };
       });
 
-      writeGeneratedFiles(outFiles, path.resolve("."));
+      await writeGeneratedFiles(outFiles, path.resolve("."));
 
       writtenFiles += Object.keys(outFiles).length;
     } else {
@@ -241,12 +246,23 @@ function writeGeneratedFiles(
   outputDirectory: string,
   terminator: string = ""
 ) {
-  for (const [fileName, generatedFile] of Object.entries(generatedFiles)) {
-    fs.writeFileSync(
-      path.join(outputDirectory, fileName),
-      generatedFile.output.concat(terminator)
-    );
-  }
+  return pMap(
+    Object.entries(generatedFiles),
+    async ([fileName, generatedFile]) => {
+      const finalFileName = path.join(outputDirectory, fileName);
+      const newFileContent = generatedFile.output.concat(terminator);
+      const currentFileContent = await promisedReadFile(finalFileName, {
+        encoding: "utf-8"
+      });
+      if (newFileContent === currentFileContent) {
+        return;
+      }
+      promisedWriteFile(path.join(finalFileName), newFileContent);
+    },
+    {
+      concurrency: 10
+    }
+  );
 }
 
 interface OperationIdsMap {
