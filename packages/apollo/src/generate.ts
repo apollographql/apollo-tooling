@@ -1,3 +1,4 @@
+import { readFileSync } from "fs";
 import { fs } from "apollo-codegen-core/lib/localfs";
 import path from "path";
 import { GraphQLSchema, DocumentNode, print } from "graphql";
@@ -242,10 +243,15 @@ function writeGeneratedFiles(
   terminator: string = ""
 ) {
   for (const [fileName, generatedFile] of Object.entries(generatedFiles)) {
-    fs.writeFileSync(
-      path.join(outputDirectory, fileName),
-      generatedFile.output.concat(terminator)
-    );
+    const finalFileName = path.join(outputDirectory, fileName);
+    const newFileContent = generatedFile.output.concat(terminator);
+    const currentFileContent = fs.readFileSync(finalFileName, {
+      encoding: "utf-8"
+    });
+    if (newFileContent === currentFileContent) {
+      return;
+    }
+    fs.writeFileSync(finalFileName, newFileContent);
   }
 }
 
