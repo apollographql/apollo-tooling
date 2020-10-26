@@ -247,7 +247,7 @@ export default class Generate extends ClientCommand {
                 );
               };
 
-              const writtenFiles = await write();
+              const writtenFiles = write();
 
               task.title = `Generating query files with '${inferredTarget}' target - wrote ${writtenFiles} files`;
             }

@@ -63,7 +63,6 @@
     "lodash.pickby": "4.6.0",
     "mkdirp": "1.0.4",
     "moment": "2.29.1",
-    "p-map": "^4.0.0",
     "strip-ansi": "5.2.0",
     "table": "5.4.6",
     "tty": "1.0.1",
