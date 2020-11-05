@@ -3,11 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - Update CLI default API domain from `engine-graphql.apollographql.com` to `graphql.api.apollographql.com`.
-    Users that have set up support for corporate proxies or firewalls may need to update configurations.
-  - Accept GitLab remote URLs when fetching git info for service:check and service:push [#2104](https://github.com/apollographql/apollo-tooling/pull/2104)
-  - `--commitId` in `service:check` and `service:push` overrides the current commit ID otherwise read through [env-ci](https://www.npmjs.com/package/env-ci).
-  - `service:push` now takes `--author` and `--branch` matching `service:check`.
+  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
@@ -28,6 +24,14 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.31.1`
+
+  - Update CLI default API domain from `engine-graphql.apollographql.com` to `graphql.api.apollographql.com`.
+    Users that have set up support for corporate proxies or firewalls may need to update configurations.
+  - Accept GitLab remote URLs when fetching git info for service:check and service:push [#2104](https://github.com/apollographql/apollo-tooling/pull/2104)
+  - `--commitId` in `service:check` and `service:push` overrides the current commit ID otherwise read through [env-ci](https://www.npmjs.com/package/env-ci).
+  - `service:push` now takes `--author` and `--branch` matching `service:check`.
 
 ## `apollo-graphql@0.6.0`
 
