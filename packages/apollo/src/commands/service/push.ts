@@ -29,6 +29,16 @@ export default class ServicePush extends ProjectCommand {
       description:
         "The ID of the graph in Apollo to publish your service to. Overrides config file if set."
     }),
+    branch: flags.string({
+      description: "The branch name to associate with this publication"
+    }),
+    commitId: flags.string({
+      description:
+        "The SHA-1 hash of the commit to associate with this publication"
+    }),
+    author: flags.string({
+      description: "The author to associate with this publication"
+    }),
     localSchemaFile: flags.string({
       description:
         "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
@@ -74,7 +84,13 @@ export default class ServicePush extends ProjectCommand {
 
           isFederated = flags.serviceName;
 
-          gitContext = await gitInfo(this.log);
+          const gitInfoFromEnv = await gitInfo(this.log);
+          gitContext = {
+            ...gitInfoFromEnv,
+            ...(flags.author ? { committer: flags.author } : undefined),
+            ...(flags.branch ? { branch: flags.branch } : undefined),
+            ...(flags.commitId ? { commit: flags.commitId } : undefined)
+          };
 
           // handle partial schema uploading
           if (isFederated) {
