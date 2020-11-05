@@ -253,6 +253,9 @@ export default class ServiceCheck extends ProjectCommand {
     branch: flags.string({
       description: "The branch name to associate with this check"
     }),
+    commitId: flags.string({
+      description: "The SHA-1 hash of the commit to associate with this check"
+    }),
     author: flags.string({
       description: "The author to associate with this proposed schema"
     }),
@@ -381,7 +384,8 @@ export default class ServiceCheck extends ProjectCommand {
                   gitContext: {
                     ...gitInfoFromEnv,
                     ...(flags.author ? { committer: flags.author } : undefined),
-                    ...(flags.branch ? { branch: flags.branch } : undefined)
+                    ...(flags.branch ? { branch: flags.branch } : undefined),
+                    ...(flags.commitId ? { commit: flags.commitId } : undefined)
                   }
                 });
 
