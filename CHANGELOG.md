@@ -9,7 +9,7 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-   - <First `apollo-codegen-swift` related entry goes here>
+  - Use Swift syntax sugar for double-optional
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-codegen-core`
