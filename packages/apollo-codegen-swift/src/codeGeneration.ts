@@ -68,15 +68,17 @@ export function generateSource(
   const generator = new SwiftAPIGenerator(context);
 
   if (outputIndividualFiles) {
-    generator.withinFile(`Types.graphql.swift`, () => {
-      generator.fileHeader();
+    if (context.typesUsed.length > 0) {
+      generator.withinFile(`Types.graphql.swift`, () => {
+        generator.fileHeader();
 
-      generator.namespaceDeclaration(context.options.namespace, () => {
-        context.typesUsed.forEach(type => {
-          generator.typeDeclarationForGraphQLType(type, true);
+        generator.namespaceDeclaration(context.options.namespace, () => {
+          context.typesUsed.forEach(type => {
+            generator.typeDeclarationForGraphQLType(type, true);
+          });
         });
       });
-    });
+    }
 
     const inputFilePaths = new Set<string>();
 

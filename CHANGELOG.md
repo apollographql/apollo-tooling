@@ -9,7 +9,7 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-   - <First `apollo-codegen-swift` related entry goes here>
+   - When outputting multiple files, skip generating `Types.graphql.swift` if there are no type definitions [#2063](https://github.com/apollographql/apollo-tooling/pull/2063)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-codegen-core`
