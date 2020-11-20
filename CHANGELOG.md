@@ -9,7 +9,7 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-   - <First `apollo-codegen-swift` related entry goes here>
+   - Fix bug in generated compound type names that lead to structName being inconsistent throughout codegen [#2170](https://github.com/apollographql/apollo-tooling/pull/2170)
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-codegen-core`
