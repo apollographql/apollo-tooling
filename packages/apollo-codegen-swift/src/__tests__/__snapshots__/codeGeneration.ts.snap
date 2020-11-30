@@ -949,17 +949,6 @@ exports[`Swift code generation #initializerDeclarationForProperties() should gen
 }"
 `;
 
-exports[`Swift code generation #propertyDeclarationForField()  1`] = `
-"public var :  {
-  get {
-    return TestCTum(unsafeResultMap: resultMap[\\"testCTA\\"]! as! ResultMap)
-  }
-  set {
-    resultMap.updateValue(newValue.resultMap, forKey: \\"testCTA\\")
-  }
-}"
-`;
-
 exports[`Swift code generation #propertyDeclarationForField() should generate structName as testCTum for key testCTA 1`] = `
 "public var :  {
   get {
