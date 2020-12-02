@@ -769,7 +769,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printOnNewline(swift`public var ${propertyName}: ${typeName}`);
     this.withinBlock(() => {
       if (isCompositeType(unmodifiedFieldType)) {
-        const structName = this.helpers.structNameForPropertyName(propertyName);
+        const structName = this.helpers.structNameForPropertyName(responseKey);
 
         if (isList(type)) {
           this.printOnNewline(swift`get`);
