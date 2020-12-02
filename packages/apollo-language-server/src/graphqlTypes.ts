@@ -464,11 +464,11 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
   /**
    * List of errors during composition. Errors mean that Apollo was unable to compose the
    * graph's implementing services into a GraphQL schema. This partial schema should not be
-   * published to the implementing service if there were any errors encountered
+   * published to the implementing service if there were any errors encountered.
    */
   errors: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors | null)[];
   /**
-   * Whether the gateway link was updated.
+   * Whether the gateway link was updated, or would have been for dry runs.
    */
   updatedGateway: boolean;
 }
