@@ -18,6 +18,10 @@ import { DeepPartial, WithRequired } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 import URI from "vscode-uri";
 import chalk from "chalk";
+import { bootstrap } from "global-agent";
+
+// Support the standard HTTP_PROXY/HTTPS_PROXY/NO_PROXY environment variables.
+bootstrap({ environmentVariableNamespace: "" });
 
 const { version, referenceID } = require("../package.json");
 
