@@ -3,7 +3,7 @@
 ## Upcoming
 
 - `apollo`
-  - <First `apollo` related entry goes here>
+  - Support the standard `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` environment variables for using an HTTP proxy.
 - `apollo-codegen-flow`
   - <First `apollo-codegen-flow` related entry goes here>
 - `apollo-codegen-scala`
