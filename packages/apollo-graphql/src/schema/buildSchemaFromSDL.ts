@@ -12,6 +12,7 @@ import {
   DirectiveDefinitionNode,
   SchemaDefinitionNode,
   SchemaExtensionNode,
+  specifiedDirectives,
   OperationTypeNode,
   GraphQLObjectType,
   GraphQLEnumType,
@@ -103,6 +104,7 @@ export function buildSchemaFromSDL(
   const schemaDefinitions: SchemaDefinitionNode[] = [];
   const schemaExtensions: SchemaExtensionNode[] = [];
 
+  let directiveNames: Set<string> = new Set<string>();
   for (const definition of documentAST.definitions) {
     if (isTypeDefinitionNode(definition)) {
       const typeName = definition.name.value;
@@ -121,6 +123,7 @@ export function buildSchemaFromSDL(
         extensionsMap[typeName] = [definition];
       }
     } else if (definition.kind === Kind.DIRECTIVE_DEFINITION) {
+      directiveNames.add(definition.name.value);
       directiveDefinitions.push(definition);
     } else if (definition.kind === Kind.SCHEMA_DEFINITION) {
       schemaDefinitions.push(definition);
@@ -129,10 +132,14 @@ export function buildSchemaFromSDL(
     }
   }
 
+  const defaultDirectivesNotInSchema = specifiedDirectives.filter(
+    directive => !directiveNames.has(directive.name)
+  );
   let schema = schemaToExtend
     ? schemaToExtend
     : new GraphQLSchema({
-        query: undefined
+        query: undefined,
+        directives: defaultDirectivesNotInSchema
       });
 
   const missingTypeDefinitions: TypeDefinitionNode[] = [];
