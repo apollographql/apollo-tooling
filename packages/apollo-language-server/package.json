@@ -40,7 +40,7 @@
     "lodash.merge": "^4.6.1",
     "minimatch": "^3.0.4",
     "moment": "2.29.1",
-    "vscode-languageserver": "^5.1.0",
+    "vscode-languageserver": "^6.0.0",
     "vscode-uri": "1.0.6"
   },
   "jest": {
