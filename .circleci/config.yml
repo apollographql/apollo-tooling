@@ -213,7 +213,7 @@ workflows:
       - Publish GitHub Release:
           <<: *common_publish_filters
           requires:
-            - Build CLI
+            - Confirmation
       - oss/dry_run:
           name: Dry-run
           <<: *common_publish_filters
@@ -229,6 +229,7 @@ workflows:
           <<: *common_publish_filters
           requires:
             - Dry-run
+            - Build CLI
       - oss/publish:
           name: Publish
           <<: *common_publish_filters
