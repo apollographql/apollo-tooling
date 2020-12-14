@@ -214,6 +214,7 @@ workflows:
           <<: *common_publish_filters
           requires:
             - Confirmation
+            - Build CLI
       - oss/dry_run:
           name: Dry-run
           <<: *common_publish_filters
@@ -235,9 +236,19 @@ workflows:
           <<: *common_publish_filters
           requires:
             - Confirmation
+            # This "Dry-run" is also gated behind "Confirmation", but being left here
+            # as a dependency in case "Confirmation" is ever removed from this workflow
+            # so we have a clear picture of the actual dependency (as multiple go through
+            # the Confirmation step).
+            - Dry-run
       - Publish VSCode Extension:
           <<: *common_publish_filters
           requires:
             - Confirmation
+            # This "Build CLI" is also gated behind "Confirmation", but being left here
+            # as a dependency in case "Confirmation" is ever removed from this workflow
+            # so we have a clear picture of the actual dependency (as multiple go through
+            # the Confirmation step).
+            - Build CLI
 
 
