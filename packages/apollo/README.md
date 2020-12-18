@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.31.2 darwin-x64 node-v12.19.0
+apollo/2.32.0 darwin-x64 node-v15.4.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -56,6 +56,8 @@ USAGE
 Check a client project against a pushed service
 
 ```
+Check a client project against a pushed service
+
 USAGE
   $ apollo client:check
 
@@ -114,6 +116,8 @@ _See code: [src/commands/client/check.ts](https://github.com/apollographql/apoll
 Generate static types for GraphQL queries. Can use the published schema in the Apollo registry or a downloaded schema.
 
 ```
+Generate static types for GraphQL queries. Can use the published schema in the Apollo registry or a downloaded schema.
+
 USAGE
   $ apollo client:codegen [OUTPUT]
 
@@ -261,6 +265,8 @@ _See code: [src/commands/client/codegen.ts](https://github.com/apollographql/apo
 Download a schema from Apollo or a GraphQL endpoint in JSON or SDL format
 
 ```
+Download a schema from Apollo or a GraphQL endpoint in JSON or SDL format
+
 USAGE
   $ apollo client:download-schema OUTPUT
 
@@ -323,6 +329,8 @@ _See code: [src/commands/client/download-schema.ts](https://github.com/apollogra
 Extract queries from a client
 
 ```
+Extract queries from a client
+
 USAGE
   $ apollo client:extract OUTPUT
 
@@ -392,6 +400,8 @@ _See code: [src/commands/client/extract.ts](https://github.com/apollographql/apo
 Register operations with Apollo, adding them to the safelist
 
 ```
+Register operations with Apollo, adding them to the safelist
+
 USAGE
   $ apollo client:push
 
@@ -450,6 +460,8 @@ _See code: [src/commands/client/push.ts](https://github.com/apollographql/apollo
 display help for apollo
 
 ```
+display help for <%= config.bin %>
+
 USAGE
   $ apollo help [COMMAND]
 
@@ -467,6 +479,8 @@ _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.3
 list installed plugins
 
 ```
+list installed plugins
+
 USAGE
   $ apollo plugins
 
@@ -477,13 +491,21 @@ EXAMPLE
   $ apollo plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.1/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.4/src/commands/plugins/index.ts)_
 
 ## `apollo plugins:install PLUGIN...`
 
 installs a plugin into the CLI
 
 ```
+installs a plugin into the CLI
+Can be installed from npm or a git url.
+
+Installation of a user-installed plugin will override a core plugin.
+
+e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in the CLI without the need to patch and update the whole CLI.
+
+
 USAGE
   $ apollo plugins:install PLUGIN...
 
@@ -515,13 +537,19 @@ EXAMPLES
   $ apollo plugins:install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.1/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.4/src/commands/plugins/install.ts)_
 
 ## `apollo plugins:link PLUGIN`
 
 links a plugin into the CLI for development
 
 ```
+links a plugin into the CLI for development
+Installation of a linked plugin will override a user-installed or core plugin.
+
+e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello' command will override the user-installed or core plugin implementation. This is useful for development work.
+
+
 USAGE
   $ apollo plugins:link PLUGIN
 
@@ -545,13 +573,15 @@ EXAMPLE
   $ apollo plugins:link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.1/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.4/src/commands/plugins/link.ts)_
 
 ## `apollo plugins:uninstall PLUGIN...`
 
 removes a plugin from the CLI
 
 ```
+removes a plugin from the CLI
+
 USAGE
   $ apollo plugins:uninstall PLUGIN...
 
@@ -567,13 +597,15 @@ ALIASES
   $ apollo plugins:remove
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.1/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.4/src/commands/plugins/uninstall.ts)_
 
 ## `apollo plugins:update`
 
 update installed plugins
 
 ```
+update installed plugins
+
 USAGE
   $ apollo plugins:update
 
@@ -582,13 +614,15 @@ OPTIONS
   -v, --verbose
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.1/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.4/src/commands/plugins/update.ts)_
 
 ## `apollo service:check`
 
 Check a service against known operation workloads to find breaking changes
 
 ```
+Check a service against known operation workloads to find breaking changes
+
 USAGE
   $ apollo service:check
 
@@ -669,6 +703,8 @@ _See code: [src/commands/service/check.ts](https://github.com/apollographql/apol
 Delete a federated service from Apollo and recompose remaining services
 
 ```
+Delete a federated service from Apollo and recompose remaining services
+
 USAGE
   $ apollo service:delete
 
@@ -707,6 +743,8 @@ _See code: [src/commands/service/delete.ts](https://github.com/apollographql/apo
 Download the schema from your GraphQL endpoint.
 
 ```
+Download the schema from your GraphQL endpoint.
+
 USAGE
   $ apollo service:download OUTPUT
 
@@ -746,6 +784,8 @@ _See code: [src/commands/service/download.ts](https://github.com/apollographql/a
 List the services in a graph
 
 ```
+List the services in a graph
+
 USAGE
   $ apollo service:list
 
@@ -776,6 +816,8 @@ _See code: [src/commands/service/list.ts](https://github.com/apollographql/apoll
 Push a service definition to Apollo
 
 ```
+Push a service definition to Apollo
+
 USAGE
   $ apollo service:push
 
