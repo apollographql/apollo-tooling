@@ -134,7 +134,7 @@ export abstract class ProjectCommand extends Command {
     const service = flags.key ? getServiceFromKey(flags.key) : undefined;
     const config = await loadConfig({
       configPath: flags.config && parse(resolve(flags.config)).dir,
-      configFileName: basename(flags.config),
+      configFileName: flags.config && basename(flags.config),
       name: service,
       type: this.type
     });
