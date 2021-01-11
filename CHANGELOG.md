@@ -9,7 +9,7 @@
 - `apollo-codegen-scala`
   - <First `apollo-codegen-scala` related entry goes here>
 - `apollo-codegen-swift`
-  - Fix issue where a query referencing many fragments caused type checking for `queryDocument` to time out [#2198](https://github.com/apollographql/apollo-tooling/pull/2198)
+  - <First `apollo-codegen-swift` related entry goes here>
 - `apollo-codegen-typescript`
   - <First `apollo-codegen-typescript` related entry goes here>
 - `apollo-codegen-core`
@@ -24,6 +24,10 @@
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+## `apollo@2.32.1`
+- `apollo-codegen-swift`
+  - Fix issue where a query referencing many fragments caused type checking for `queryDocument` to time out [#2198](https://github.com/apollographql/apollo-tooling/pull/2198)
 
 ## `apollo@2.32.0`
 
