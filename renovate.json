@@ -1,47 +1,48 @@
 {
   "extends": ["apollo-open-source"],
+  "dependencyDashboard": true,
   "packageRules": [
     {
-      "paths": ["packages/apollo/package.json"],
+      "matchPaths": ["packages/apollo/package.json"],
       "extends": [":pinAllExceptPeerDependencies"],
       "packageRules": [
         {
-          "packageNames": ["graphql"],
+          "matchPackageNames": ["graphql"],
           "depTypeList": ["dependencies"],
           "rangeStrategy": "replace"
         }
       ]
     },
     {
-      "packageNames": ["graphql"],
+      "matchPackageNames": ["graphql"],
       "allowedVersions": "~14.2.1"
     },
     {
-      "packageNames": ["@types/node"],
+      "matchPackageNames": ["@types/node"],
       "allowedVersions": "8.x"
     },
     {
-      "packageNames": ["vscode-uri"],
+      "matchPackageNames": ["vscode-uri"],
       "allowedVersions": "=1.0.6"
     },
     {
-      "packageNames": ["jest"],
+      "matchPackageNames": ["jest"],
       "allowedVersions": "=24.9.0"
     },
     {
-      "packageNames": ["jest-environment-node"],
+      "matchPackageNames": ["jest-environment-node"],
       "allowedVersions": "=24.9.0"
     },
     {
-      "packageNames": ["jest-matcher-utils"],
+      "matchPackageNames": ["jest-matcher-utils"],
       "allowedVersions": "=24.9.0"
     },
     {
-      "packageNames": ["@types/jest"],
+      "matchPackageNames": ["@types/jest"],
       "allowedVersions": "=24.9.1"
     },
     {
-      "packageNames": ["ts-jest"],
+      "matchPackageNames": ["ts-jest"],
       "allowedVersions": "=24.3.0"
     }
   ]
