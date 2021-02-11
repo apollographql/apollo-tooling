@@ -35,8 +35,8 @@
     "client:codegen": "node ./packages/apollo/bin/run client:codegen --target=typescript --outputFlat ./packages/apollo-language-server/src/graphqlTypes.ts"
   },
   "engines": {
-    "node": ">=8",
-    "npm": ">=6"
+    "node": ">=8 <15",
+    "npm": ">=6 <7"
   },
   "dependencies": {
     "@apollographql/apollo-tools": "file:packages/apollo-tools",
