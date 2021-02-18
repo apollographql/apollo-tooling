@@ -25,8 +25,8 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
-## `apollo@2.32.3`
-- `apollo@2.32.3`
+## `apollo@2.32.4`
+- `apollo@2.32.4`
   - Bump version of `env-ci` [#1754](https://github.com/apollographql/apollo-tooling/pull/1754) [Issue #2219](https://github.com/apollographql/apollo-tooling/issues/2219)
 
 ## `apollo@2.32.1`
