@@ -25,6 +25,11 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
+## `apollo@2.32.2`
+
+- `apollo@2.32.2`
+  - Bump version of `env-ci` [#1754](https://github.com/apollographql/apollo-tooling/pull/1754) [Issue #2219](https://github.com/apollographql/apollo-tooling/issues/2219)
+
 ## `apollo@2.32.1`
 - `apollo-codegen-swift`
   - Fix issue where a query referencing many fragments caused type checking for `queryDocument` to time out [#2198](https://github.com/apollographql/apollo-tooling/pull/2198)
