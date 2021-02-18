@@ -232,6 +232,7 @@ workflows:
             - NodeJS 12
             - NodeJS 12 Windows
             - NodeJS 14
+            - Test VSCode
             - Build VSCode
       - oss/confirmation:
           name: Confirmation
