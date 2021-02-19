@@ -25,10 +25,33 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
-## `apollo@2.32.4`
-- `apollo@2.32.4`
+## `apollo@2.32.5`
+
+- `apollo@2.32.5`
   - Bump version of `env-ci` [#1754](https://github.com/apollographql/apollo-tooling/pull/1754) [Issue #2219](https://github.com/apollographql/apollo-tooling/issues/2219)
 
+    Due to human error during the release process, the following packages also had their versions bumped, despite having no known significant changes.  (Apologies, from that human.)
+
+    - `apollo-codegen-core@0.39.3`
+    - `apollo-codegen-flow@0.37.3`
+    - `apollo-codegen-scala@0.38.3`
+    - `apollo-codegen-swift@0.39.3`
+    - `apollo-codegen-typescript@0.39.3`
+    - `apollo-env@0.6.6`
+    - `apollo-graphql@0.6.1`
+    - `apollo-language-server@1.25.2`
+    - `@apollographql/apollo-tools@0.4.9`
+    - `vscode-apollo@1.18.2`
+
+## `apollo@2.32.4`
+
+- This version should not be used as it was published without depended-on packages.  Please use `apollo@2.32.5` instead.
+## `apollo@2.32.3`
+
+- This version was not actually published.
+## `apollo@2.32.3`
+
+- This version was not actually published.
 ## `apollo@2.32.1`
 - `apollo-codegen-swift`
   - Fix issue where a query referencing many fragments caused type checking for `queryDocument` to time out [#2198](https://github.com/apollographql/apollo-tooling/pull/2198)
