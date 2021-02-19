@@ -102,7 +102,6 @@ jobs:
             /usr/local/go/bin/go get github.com/tcnksm/ghr
             VERSION=$(ls oclif-dist | cut -d 'v' -f2)
             echo "Publishing apollo@${VERSION} to GitHub Releases using ghr"
-            echo "ghr -t ${GH_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} ./oclif-dist/apollo-v${VERSION}/"
             ls ./oclif-dist/apollo-v${VERSION}/
             /go/bin/ghr -t ${GH_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} "./oclif-dist/apollo-v${VERSION}/"
 
