@@ -237,6 +237,7 @@ workflows:
             - NodeJS 14
             - Test VSCode
             - Build VSCode
+            - Build CLI
       - oss/confirmation:
           name: Confirmation
           type: approval
