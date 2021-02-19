@@ -115,17 +115,14 @@ jobs:
       - checkout
       - oss/npm_clean_install_with_caching
       - run:
-          name: Not running these tests because they're failing.
-          command: /bin/true
-      # - run:
-      #     name: Initialize false display for headless env
-      #     command: Xvfb :99
-      #     background: true
-      # - run:
-      #     name: Run VSCode tests
-      #     command: npm run test:vscode
-      #     environment:
-      #       DISPLAY: :99
+          name: Initialize false display for headless env
+          command: Xvfb :99
+          background: true
+      - run:
+          name: Run VSCode tests
+          command: npm run test:vscode
+          environment:
+            DISPLAY: :99
   # Other tests, unrelated to typical code tests.
   Linting:
     executor: { name: oss/node }
