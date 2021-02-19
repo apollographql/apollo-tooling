@@ -98,7 +98,7 @@ jobs:
           name: "Publish Release on GitHub"
           command: |
             set +e
-            test -d oclif-dist/channels && exit 1 || "Not a pre-release, continuing with publishing"
+            test -d oclif-dist/channels && exit 1 || echo "Not a pre-release, continuing with publishing"
             go get github.com/tcnksm/ghr
             VERSION=$(ls oclif-dist | cut -d 'v' -f2)
             echo "Publishing apollo@${VERSION} to GitHub Releases using ghr"
