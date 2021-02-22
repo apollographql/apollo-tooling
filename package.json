@@ -73,7 +73,7 @@
     "@types/mkdirp": "1.0.1",
     "@types/nock": "10.0.3",
     "@types/node": "8.10.66",
-    "@types/node-fetch": "2.5.7",
+    "@types/node-fetch": "2.5.8",
     "@types/table": "6.0.0",
     "cross-env": "7.0.3",
     "graphql": "15.2.0",

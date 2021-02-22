@@ -15,7 +15,7 @@
     "node": ">=8"
   },
   "dependencies": {
-    "@types/node-fetch": "2.5.7",
+    "@types/node-fetch": "2.5.8",
     "core-js": "^3.0.1",
     "node-fetch": "^2.2.0",
     "sha.js": "^2.4.11"
