@@ -62,7 +62,7 @@ jobs:
 
 
   Build VSCode:
-    executor: { name: oss/node }
+    executor: { name: oss/node, tag: "12" }
     steps:
       - oss/install_specific_npm_version
       - checkout
@@ -78,7 +78,7 @@ jobs:
           destination: vscode-extension
 
   Publish VSCode Extension:
-    executor: { name: oss/node }
+    executor: { name: oss/node, tag: "12" }
     steps:
       - oss/install_specific_npm_version
       - checkout
@@ -106,7 +106,7 @@ jobs:
             /go/bin/ghr -t ${GH_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} "./oclif-dist/apollo-v${VERSION}/"
 
   Test VSCode:
-    executor: { name: oss/node }
+    executor: { name: oss/node, tag: "12" }
     steps:
       - run:
           name: Install deps for VSCode / GUI
@@ -125,7 +125,7 @@ jobs:
             DISPLAY: :99
   # Other tests, unrelated to typical code tests.
   Linting:
-    executor: { name: oss/node }
+    executor: { name: oss/node, tag: "12" }
     steps:
       - oss/install_specific_npm_version
       - checkout
@@ -134,7 +134,7 @@ jobs:
       - run: npm run lint
 
   Query Check:
-    executor: { name: oss/node }
+    executor: { name: oss/node, tag: "12" }
     steps:
       - oss/install_specific_npm_version
       - checkout
@@ -149,7 +149,7 @@ jobs:
             ENGINE_API_KEY=$CHECKS_API_KEY ./packages/apollo/bin/run client:check
 
   Generated Types Check:
-    executor: { name: oss/node }
+    executor: { name: oss/node, tag: "12" }
     steps:
       - oss/install_specific_npm_version
       - checkout
