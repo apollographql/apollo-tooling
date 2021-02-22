@@ -14,7 +14,7 @@
   },
   "scripts": {
     "clean": "git clean -dfqX -- ./node_modules **/{lib,node_modules}/ ./packages/*/tsconfig.tsbuildinfo ./__tmp__*",
-    "postinstall": "npm run build",
+    "postinstall": "husky install && npm run build",
     "build": "tsc --build tsconfig.json",
     "build:clean": "npm run build -- --clean",
     "watch": "npm run build -- --watch",
@@ -78,7 +78,7 @@
     "cross-env": "7.0.3",
     "graphql": "15.2.0",
     "heroku-cli-util": "8.0.12",
-    "husky": "3.1.0",
+    "husky": "5.1.0",
     "jest": "24.9.0",
     "jest-environment-node": "24.9.0",
     "jest-matcher-utils": "24.9.0",
@@ -107,10 +107,5 @@
       "prettier --write",
       "git add"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }
