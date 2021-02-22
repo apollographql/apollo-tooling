@@ -102,7 +102,8 @@ export abstract class ProjectCommand extends Command {
   private ctx!: ProjectContext;
 
   async init() {
-    const { flags, args } = this.parse(this.constructor as any);
+    const { flags, args } = this.parse<Flags, { [name: string]: any }>(this
+      .constructor as any);
     this.ctx = { flags, args } as any;
 
     // tell the language server to use the built-in loggers
