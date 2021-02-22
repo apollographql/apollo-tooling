@@ -14,7 +14,7 @@ import { ClientCommand } from "../../Command";
 const waitForKey = async () => {
   console.log("Press any key to stop.");
   process.stdin.setRawMode!(true);
-  return new Promise(resolve =>
+  return new Promise<void>(resolve =>
     process.stdin.once("data", () => {
       (process.stdin as any).unref();
       process.stdin.setRawMode!(false);

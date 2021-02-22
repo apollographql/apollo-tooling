@@ -197,7 +197,7 @@ export function activate(context: ExtensionContext) {
           cancellable: false
         },
         () => {
-          return new Promise(resolve => {
+          return new Promise<void>(resolve => {
             currentLoadingResolve.set(token, resolve);
           });
         }
