@@ -14,7 +14,7 @@
   },
   "scripts": {
     "clean": "git clean -dfqX -- ./node_modules **/{lib,node_modules}/ ./packages/*/tsconfig.tsbuildinfo ./__tmp__*",
-    "postinstall": "npm run build",
+    "postinstall": "husky install && npm run build",
     "build": "tsc --build tsconfig.json",
     "build:clean": "npm run build -- --clean",
     "watch": "npm run build -- --watch",
@@ -107,10 +107,5 @@
       "prettier --write",
       "git add"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }
