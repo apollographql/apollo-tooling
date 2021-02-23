@@ -17,7 +17,7 @@
     "npm": ">=6"
   },
   "dependencies": {
-    "@apollo/federation": "0.20.7",
+    "@apollo/federation": "0.21.0",
     "@apollographql/apollo-tools": "file:../apollo-tools",
     "@apollographql/graphql-language-service-interface": "^2.0.2",
     "@endemolshinegroup/cosmiconfig-typescript-loader": "^1.0.0",
