@@ -44,6 +44,20 @@
     {
       "matchPackageNames": ["ts-jest"],
       "allowedVersions": "=24.3.0"
-    }
-  ]
+    },
+    {
+      "matchPaths": [
+        "docs/package.json"
+      ],
+      "extends": [
+        "apollo-docs"
+      ],
+      // "Past" major version branches, preserved as
+      // "version-[0-9]" branches, should be added here!
+      // See Apollo Server or Apollo Client repos for examples.
+      "baseBranches": [
+        "main"
+      ]
+    },
+  ],
 }
