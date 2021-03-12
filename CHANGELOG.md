@@ -2,28 +2,10 @@
 
 ## Upcoming
 
-- `apollo`
-  - <First `apollo` related entry goes here>
 - `apollo-codegen-flow`
-  - <First `apollo-codegen-flow` related entry goes here>
-- `apollo-codegen-scala`
-  - <First `apollo-codegen-scala` related entry goes here>
-- `apollo-codegen-swift`
-  - <First `apollo-codegen-swift` related entry goes here>
+  - Add `/* prettier-disable */` in generated files header [#2240](https://github.com/apollographql/apollo-tooling/pull/2240)
 - `apollo-codegen-typescript`
-  - <First `apollo-codegen-typescript` related entry goes here>
-- `apollo-codegen-core`
-  - <First `apollo-codegen-core` related entry goes here>
-- `apollo-env`
-  - <First `apollo-env` related entry goes here>
-- `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
-- `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
-- `apollo-tools`
-  - <First `apollo-tools` related entry goes here>
-- `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Add `/* prettier-disable */` in generated files header [#2240](https://github.com/apollographql/apollo-tooling/pull/2240)
 
 ## `apollo@2.32.5`
 
