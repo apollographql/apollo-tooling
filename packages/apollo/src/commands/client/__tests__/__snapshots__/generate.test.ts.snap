@@ -3,6 +3,7 @@
 exports[`client:codegen extracts queries with a custom tagName provided as a flag 1`] = `
 "/* tslint:disable */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -19,6 +20,7 @@ export interface SimpleQuery {
 exports[`client:codegen extracts queries with a custom tagName provided in the config 1`] = `
 "/* tslint:disable */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -44,6 +46,7 @@ exports[`client:codegen generates operation IDs for swift files when flag is set
 exports[`client:codegen writes exact Flow types when the useFlowExactObjects flag is set 1`] = `
 "/* @flow */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -55,6 +58,7 @@ export type SimpleQuery = {|
   hello: string
 |};/* @flow */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -70,6 +74,7 @@ export type SimpleQuery = {|
 exports[`client:codegen writes flow types 1`] = `
 "/* @flow */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -81,6 +86,7 @@ export type SimpleQuery = {
   hello: string
 };/* @flow */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -180,6 +186,7 @@ Object {
 exports[`client:codegen writes read-only Flow types when the deprecated flag is set 1`] = `
 "/* @flow */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -191,6 +198,7 @@ export type SimpleQuery = {
   +hello: string
 };/* @flow */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -206,6 +214,7 @@ export type SimpleQuery = {
 exports[`client:codegen writes read-only Flow types when the flag is set 1`] = `
 "/* @flow */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -217,6 +226,7 @@ export type SimpleQuery = {
   +hello: string
 };/* @flow */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -338,6 +348,7 @@ public final class SimpleQueryQuery: GraphQLQuery {
 exports[`client:codegen writes types for query with only client-side data 1`] = `
 "/* tslint:disable */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -357,6 +368,7 @@ export interface SimpleQuery {
 
 /* tslint:disable */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -414,6 +426,7 @@ object SimpleQueryQuery extends com.apollographql.scalajs.GraphQLQuery {
 exports[`client:codegen writes types for typescript 1`] = `
 "/* tslint:disable */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -427,6 +440,7 @@ export interface SimpleQuery {
 
 /* tslint:disable */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -443,6 +457,7 @@ export interface SimpleQuery {
 exports[`client:codegen writes types for typescript with a custom extension 1`] = `
 "/* tslint:disable */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -459,6 +474,7 @@ export interface SimpleQuery {
 exports[`client:codegen writes typescript types for query with client-side data when client schema in graphql file 1`] = `
 "/* tslint:disable */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -492,6 +508,7 @@ export interface SimpleQuery {
 
 /* tslint:disable */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -508,6 +525,7 @@ export interface SimpleQuery {
 exports[`client:codegen writes typescript types for query with client-side data when client schema in js file 1`] = `
 "/* tslint:disable */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
@@ -541,6 +559,7 @@ export interface SimpleQuery {
 
 /* tslint:disable */
 /* eslint-disable */
+/* prettier-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
