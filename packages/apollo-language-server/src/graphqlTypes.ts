@@ -37,7 +37,7 @@ export interface CheckPartialSchema_service_checkPartialSchema_compositionValida
    * graph's implementing services into a GraphQL schema. This partial schema should not be
    * published to the implementing service if there were any errors encountered
    */
-  errors: (CheckPartialSchema_service_checkPartialSchema_compositionValidationResult_errors | null)[];
+  errors: CheckPartialSchema_service_checkPartialSchema_compositionValidationResult_errors[];
 }
 
 export interface CheckPartialSchema_service_checkPartialSchema_checkSchemaResult_diffToPrevious_affectedClients {
@@ -1766,6 +1766,8 @@ export interface IntrospectionInputValueInput {
   description?: string | null;
   type: IntrospectionTypeInput;
   defaultValue?: string | null;
+  isDeprecated?: boolean | null;
+  deprecationReason?: string | null;
 }
 
 /**
@@ -1787,6 +1789,7 @@ export interface IntrospectionTypeInput {
   kind: IntrospectionTypeKind;
   name?: string | null;
   description?: string | null;
+  specifiedByUrl?: string | null;
   fields?: IntrospectionFieldInput[] | null;
   interfaces?: IntrospectionTypeInput[] | null;
   possibleTypes?: IntrospectionTypeInput[] | null;
@@ -1816,7 +1819,8 @@ export interface OperationDocumentInput {
  * creating the association.
  * 
  * If both the sdl and hash are specified, an error will be thrown if the provided
- * hash doesn't match our hash of the sdl contents
+ * hash doesn't match our hash of the sdl contents. If the sdl field is specified,
+ * the hash does not need to be and will be computed server-side.
  */
 export interface PartialSchemaInput {
   sdl?: string | null;

@@ -1,0 +1,63 @@
+{
+  "extends": ["apollo-open-source"],
+  "dependencyDashboard": true,
+  "packageRules": [
+    {
+      "matchPaths": ["packages/apollo/package.json"],
+      "extends": [":pinAllExceptPeerDependencies"],
+      "packageRules": [
+        {
+          "matchPackageNames": ["graphql"],
+          "depTypeList": ["dependencies"],
+          "rangeStrategy": "replace"
+        }
+      ]
+    },
+    {
+      "matchPackageNames": ["graphql"],
+      "allowedVersions": "~14.2.1"
+    },
+    {
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "8.x"
+    },
+    {
+      "matchPackageNames": ["vscode-uri"],
+      "allowedVersions": "=1.0.6"
+    },
+    {
+      "matchPackageNames": ["jest"],
+      "allowedVersions": "=24.9.0"
+    },
+    {
+      "matchPackageNames": ["jest-environment-node"],
+      "allowedVersions": "=24.9.0"
+    },
+    {
+      "matchPackageNames": ["jest-matcher-utils"],
+      "allowedVersions": "=24.9.0"
+    },
+    {
+      "matchPackageNames": ["@types/jest"],
+      "allowedVersions": "=24.9.1"
+    },
+    {
+      "matchPackageNames": ["ts-jest"],
+      "allowedVersions": "=24.3.0"
+    },
+    {
+      "matchPaths": [
+        "docs/package.json"
+      ],
+      "extends": [
+        "apollo-docs"
+      ],
+      // "Past" major version branches, preserved as
+      // "version-[0-9]" branches, should be added here!
+      // See Apollo Server or Apollo Client repos for examples.
+      "baseBranches": [
+        "main"
+      ]
+    },
+  ],
+}
