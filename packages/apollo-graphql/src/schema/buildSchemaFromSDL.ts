@@ -30,7 +30,7 @@ import {
   UniqueDirectivesPerLocationRule,
   ValidationRule
 } from "graphql/validation";
-import { mapValues, isNotNullOrUndefined } from "apollo-env";
+import { mapValues } from "../utilities/mapValues";
 
 export interface GraphQLSchemaModule {
   typeDefs: DocumentNode;
@@ -294,4 +294,8 @@ export function addResolversToSchema(
       }
     }
   }
+}
+
+function isNotNullOrUndefined<T>(value: T | null | undefined): value is T {
+  return value !== null && typeof value !== "undefined";
 }

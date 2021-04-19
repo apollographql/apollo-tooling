@@ -21,7 +21,6 @@ import {
 import { ApolloConfig } from "apollo-language-server";
 import moment from "moment";
 import sortBy from "lodash.sortby";
-import { isNotNullOrUndefined } from "apollo-env";
 import { graphUndefinedError } from "../../utils/sharedMessages";
 
 const formatChange = (change: Change) => {
@@ -726,4 +725,8 @@ export default class ServiceCheck extends ProjectCommand {
       }
     }
   }
+}
+
+function isNotNullOrUndefined<T>(value: T | null | undefined): value is T {
+  return value !== null && typeof value !== "undefined";
 }
