@@ -347,7 +347,7 @@ export interface ListServices_service {
   __typename: "Service";
   /**
    * List of implementing services that comprise a graph. A non-federated graph should have a single implementing service.
-   * Set includeDeleted to see deleted implementing services
+   * Set includeDeleted to see deleted implementing services.
    */
   implementingServices: ListServices_service_implementingServices | null;
 }
@@ -438,7 +438,7 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
 export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig {
   __typename: "CompositionConfig";
   /**
-   * List of implementing services that comprise a composed graph
+   * List of GCS links for implementing services that comprise a composed graph
    */
   implementingServiceLocations: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServiceLocations[];
 }
