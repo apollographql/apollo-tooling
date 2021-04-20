@@ -11,6 +11,7 @@
     "node": ">=6"
   },
   "dependencies": {
+    "core-js-pure": "^3.10.2",
     "lodash.sortby": "^4.7.0"
   },
   "peerDependencies": {

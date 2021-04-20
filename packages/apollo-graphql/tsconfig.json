@@ -5,7 +5,10 @@
     "outDir": "./lib",
     "esModuleInterop": true,
     "target": "es2016",
-    "lib": ["ES2018.AsyncIterable", "ES2019.Array"]
+    "lib": ["ES2018.AsyncIterable", "ES2019.Array"],
+    "paths": {
+      "*": ["./types/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["**/__tests__", "**/__mocks__"],
