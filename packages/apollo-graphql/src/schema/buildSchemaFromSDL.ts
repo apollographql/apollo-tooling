@@ -27,7 +27,8 @@ import { GraphQLSchemaValidationError } from "./GraphQLSchemaValidationError";
 import { specifiedSDLRules } from "graphql/validation/specifiedRules";
 
 // TODO(Node.js 10): When we deprecate Node.js 10, remove this and switch
-// to using `Array.prototype.flat`.
+// to using `Array.prototype.flat`.  When doing this, deleting the hand-rolled
+// types in `./packages/apollo-gateway/src/types/` that go with it.
 import flat from "core-js-pure/features/array/flat";
 
 import {
