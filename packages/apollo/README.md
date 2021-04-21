@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.32.5 linux-x64 node-v12.20.1
+apollo/2.32.6 linux-x64 node-v14.16.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -41,6 +41,7 @@ USAGE
 * [`apollo client:push`](#apollo-clientpush)
 * [`apollo help [COMMAND]`](#apollo-help-command)
 * [`apollo plugins`](#apollo-plugins)
+* [`apollo plugins:inspect PLUGIN...`](#apollo-pluginsinspect-plugin)
 * [`apollo plugins:install PLUGIN...`](#apollo-pluginsinstall-plugin)
 * [`apollo plugins:link PLUGIN`](#apollo-pluginslink-plugin)
 * [`apollo plugins:uninstall PLUGIN...`](#apollo-pluginsuninstall-plugin)
@@ -491,7 +492,30 @@ EXAMPLE
   $ apollo plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.5/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.0/src/commands/plugins/index.ts)_
+
+## `apollo plugins:inspect PLUGIN...`
+
+displays installation properties of a plugin
+
+```
+displays installation properties of a plugin
+
+USAGE
+  $ apollo plugins:inspect PLUGIN...
+
+ARGUMENTS
+  PLUGIN  [default: .] plugin to inspect
+
+OPTIONS
+  -h, --help     show CLI help
+  -v, --verbose
+
+EXAMPLE
+  $ apollo plugins:inspect myplugin
+```
+
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.0/src/commands/plugins/inspect.ts)_
 
 ## `apollo plugins:install PLUGIN...`
 
@@ -537,7 +561,7 @@ EXAMPLES
   $ apollo plugins:install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.5/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.0/src/commands/plugins/install.ts)_
 
 ## `apollo plugins:link PLUGIN`
 
@@ -573,7 +597,7 @@ EXAMPLE
   $ apollo plugins:link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.5/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.0/src/commands/plugins/link.ts)_
 
 ## `apollo plugins:uninstall PLUGIN...`
 
@@ -597,7 +621,7 @@ ALIASES
   $ apollo plugins:remove
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.5/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.0/src/commands/plugins/uninstall.ts)_
 
 ## `apollo plugins:update`
 
@@ -614,7 +638,7 @@ OPTIONS
   -v, --verbose
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.5/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.0/src/commands/plugins/update.ts)_
 
 ## `apollo service:check`
 
