@@ -25,12 +25,18 @@ import { isDocumentNode, isNode } from "../utilities/graphql";
 import { GraphQLResolverMap } from "./resolverMap";
 import { GraphQLSchemaValidationError } from "./GraphQLSchemaValidationError";
 import { specifiedSDLRules } from "graphql/validation/specifiedRules";
+
+// TODO(Node.js 10): When we deprecate Node.js 10, remove this and switch
+// to using `Array.prototype.flat`.  When doing this, deleting the hand-rolled
+// types in `./packages/apollo-gateway/src/types/` that go with it.
+import flat from "core-js-pure/features/array/flat";
+
 import {
   KnownTypeNamesRule,
   UniqueDirectivesPerLocationRule,
   ValidationRule
 } from "graphql/validation";
-import { mapValues, isNotNullOrUndefined } from "apollo-env";
+import { mapValues } from "../utilities/mapValues";
 
 export interface GraphQLSchemaModule {
   typeDefs: DocumentNode;
@@ -156,7 +162,7 @@ export function buildSchemaFromSDL(
     {
       kind: Kind.DOCUMENT,
       definitions: [
-        ...Object.values(definitionsMap).flat(),
+        ...flat(Object.values(definitionsMap)),
         ...missingTypeDefinitions,
         ...directiveDefinitions
       ]
@@ -170,7 +176,7 @@ export function buildSchemaFromSDL(
     schema,
     {
       kind: Kind.DOCUMENT,
-      definitions: Object.values(extensionsMap).flat()
+      definitions: flat(Object.values(extensionsMap))
     },
     {
       assumeValidSDL: true
@@ -182,10 +188,11 @@ export function buildSchemaFromSDL(
   if (schemaDefinitions.length > 0 || schemaExtensions.length > 0) {
     operationTypeMap = {};
 
-    const operationTypes = [...schemaDefinitions, ...schemaExtensions]
-      .map(node => node.operationTypes)
-      .filter(isNotNullOrUndefined)
-      .flat();
+    const operationTypes = flat(
+      [...schemaDefinitions, ...schemaExtensions]
+        .map(node => node.operationTypes)
+        .filter(isNotNullOrUndefined)
+    );
 
     for (const { operation, type } of operationTypes) {
       operationTypeMap[operation] = type.name.value;
@@ -294,4 +301,8 @@ export function addResolversToSchema(
       }
     }
   }
+}
+
+function isNotNullOrUndefined<T>(value: T | null | undefined): value is T {
+  return value !== null && typeof value !== "undefined";
 }

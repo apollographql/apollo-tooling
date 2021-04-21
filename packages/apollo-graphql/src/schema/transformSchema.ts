@@ -21,7 +21,7 @@ import {
   GraphQLInputObjectType,
   GraphQLInputFieldConfigMap
 } from "graphql";
-import { mapValues } from "apollo-env";
+import { mapValues } from "../utilities/mapValues";
 
 type TypeTransformer = (
   type: GraphQLNamedType

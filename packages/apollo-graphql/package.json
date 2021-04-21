@@ -11,7 +11,7 @@
     "node": ">=6"
   },
   "dependencies": {
-    "apollo-env": "file:../apollo-env",
+    "core-js-pure": "^3.10.2",
     "lodash.sortby": "^4.7.0"
   },
   "peerDependencies": {
