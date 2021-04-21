@@ -25,6 +25,18 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
+## apollo-env@0.7.0
+
+- The following utility functions are no longer exported from `apollo-env` and can now be found in the `apollo-graphql` library:
+    - `createHash`
+    - `isNodeLike`
+    - `mapValues`
+    - `isNotNullOrDefined`
+
+## apollo-graphql@0.7.0
+
+- This package no longer depends on `apollo-env` to avoid the side-effects of its polyfills.
+
 ## `apollo@2.32.5`
 
 - `apollo@2.32.5`
