@@ -85,7 +85,7 @@
     "jest-matcher-utils": "24.9.0",
     "lerna": "3.22.1",
     "lint-staged": "10.5.4",
-    "memfs": "3.2.0",
+    "memfs": "3.2.2",
     "nock": "11.4.0",
     "prettier": "1.18.2",
     "stdout-stderr": "0.1.13",
