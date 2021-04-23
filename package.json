@@ -79,7 +79,7 @@
     "cross-env": "7.0.3",
     "graphql": "15.2.0",
     "heroku-cli-util": "8.0.12",
-    "husky": "5.1.3",
+    "husky": "5.2.0",
     "jest": "24.9.0",
     "jest-environment-node": "24.9.0",
     "jest-matcher-utils": "24.9.0",
