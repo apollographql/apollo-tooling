@@ -105,24 +105,6 @@ jobs:
             ls ./oclif-dist/apollo-v${VERSION}/
             /go/bin/ghr -t ${GH_TOKEN} -c ${CIRCLE_SHA1} -delete apollo@${VERSION} "./oclif-dist/apollo-v${VERSION}/"
 
-  Test VSCode:
-    executor: { name: oss/node, tag: "12" }
-    steps:
-      - run:
-          name: Install deps for VSCode / GUI
-          command: sudo apt-get update && sudo apt-get install -y nodejs libgtk3.0 libxss1 libgconf-2-4 libasound2 libnss3 x11-xserver-utils xvfb
-      - oss/install_specific_npm_version
-      - checkout
-      - oss/npm_clean_install_with_caching
-      - run:
-          name: Initialize false display for headless env
-          command: Xvfb :99
-          background: true
-      - run:
-          name: Run VSCode tests
-          command: npm run test:vscode
-          environment:
-            DISPLAY: :99
   # Other tests, unrelated to typical code tests.
   Linting:
     executor: { name: oss/node, tag: "12" }
@@ -192,8 +174,6 @@ workflows:
           <<: *common_non_publish_filters
       - NodeJS 14:
           <<: *common_non_publish_filters
-      - Test VSCode:
-          <<: *common_non_publish_filters
       - Build VSCode:
           <<: *common_non_publish_filters
       - Linting:
@@ -216,11 +196,6 @@ workflows:
             - NodeJS 12
             - NodeJS 12 Windows
             - NodeJS 14
-            # VS Code tests just don't work anymore because of a
-            # transitive update that couldn't be tracked down.
-            # There is only one low-impact test that is run, so
-            # just disabling this test from blocking the workflows
-            # - Test VSCode
             - Build VSCode
       - Publish GitHub Release:
           <<: *common_publish_filters
@@ -235,11 +210,6 @@ workflows:
             - NodeJS 12
             - NodeJS 12 Windows
             - NodeJS 14
-            # VS Code tests just don't work anymore because of a
-            # transitive update that couldn't be tracked down.
-            # There is only one low-impact test that is run, so
-            # just disabling this test from blocking the workflows
-            # - Test VSCode
             - Build VSCode
             - Build CLI
       - oss/confirmation:
