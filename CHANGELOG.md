@@ -25,6 +25,10 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
+## apollo-graphql@0.9.2
+
+- Add missing `sha.js` dependency [PR #2283](https://github.com/apollographql/apollo-tooling/pull/2283)
+
 ## apollo-env@0.9.0
 
 - The following utility functions are no longer exported from `apollo-env` and can now be found in the `apollo-graphql` library:
