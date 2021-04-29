@@ -17,13 +17,17 @@
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - Add missing `sha.js` dependency [PR #2283](https://github.com/apollographql/apollo-tooling/pull/2283)
+  - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
   - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
+
+### apollo-env@0.10.0
+
+- deps: Updated `node-fetch` to v2.6.1
 
 ## apollo-graphql@0.9.2
 
