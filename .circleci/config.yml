@@ -88,12 +88,11 @@ jobs:
 
   Publish GitHub Release:
     docker:
-      - image: circleci/golang:latest
+      - image: cimg/go:1.16.3
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
-      - checkout
       - run:
           name: "Publish Release on GitHub"
           command: |
