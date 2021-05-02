@@ -36,7 +36,7 @@
   },
   "engines": {
     "node": ">=8 <15",
-    "npm": ">=6 <7"
+    "npm": "<8"
   },
   "dependencies": {
     "@apollographql/apollo-tools": "file:packages/apollo-tools",
