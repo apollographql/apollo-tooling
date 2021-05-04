@@ -58,6 +58,11 @@ jobs:
           paths:
             - ./**
 
+  NodeJS 16:
+    docker:
+      - image: cimg/node:16.0.0
+    steps:
+      - common_test_steps
 
   Build VSCode:
     docker:
@@ -179,6 +184,8 @@ workflows:
           <<: *common_non_publish_filters
       - NodeJS 14:
           <<: *common_non_publish_filters
+      - NodeJS 16:
+          <<: *common_non_publish_filters
       - Build VSCode:
           <<: *common_non_publish_filters
       - Linting:
@@ -200,6 +207,7 @@ workflows:
             - NodeJS 12
             - NodeJS 12 Windows
             - NodeJS 14
+            - NodeJS 16
             - Build VSCode
       - Publish GitHub Release:
           <<: *common_publish_filters
@@ -213,6 +221,7 @@ workflows:
             - NodeJS 12
             - NodeJS 12 Windows
             - NodeJS 14
+            - NodeJS 16
             - Build VSCode
             - Build CLI
       - oss/confirmation:
