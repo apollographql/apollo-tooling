@@ -18,7 +18,8 @@ commands:
   common_test_steps:
     description: Commands to run on every Node.js environment
     steps:
-      - oss/install_specific_npm_version
+      - oss/install_specific_npm_version:
+          version: '7'
       - checkout
       - oss/npm_clean_install_with_caching
       - run: npm run circle
@@ -64,7 +65,8 @@ jobs:
   Build VSCode:
     executor: { name: oss/node, tag: "12" }
     steps:
-      - oss/install_specific_npm_version
+      - oss/install_specific_npm_version:
+          version: '7'
       - checkout
       - oss/npm_clean_install_with_caching
       - run: npm run package-extension:no-clean # don't need to run clean and install
@@ -80,7 +82,8 @@ jobs:
   Publish VSCode Extension:
     executor: { name: oss/node, tag: "12" }
     steps:
-      - oss/install_specific_npm_version
+      - oss/install_specific_npm_version:
+          version: '7'
       - checkout
       - oss/npm_clean_install_with_caching
       - run: npm run publish-extension
@@ -108,7 +111,8 @@ jobs:
   Linting:
     executor: { name: oss/node, tag: "12" }
     steps:
-      - oss/install_specific_npm_version
+      - oss/install_specific_npm_version:
+          version: '7'
       - checkout
       # (speed) --ignore-scripts to skip unnecessary Lerna build during linting.
       - run: npm install --ignore-scripts
@@ -117,7 +121,8 @@ jobs:
   Query Check:
     executor: { name: oss/node, tag: "12" }
     steps:
-      - oss/install_specific_npm_version
+      - oss/install_specific_npm_version:
+          version: '7'
       - checkout
       - oss/npm_clean_install_with_caching
       - run:
@@ -132,7 +137,8 @@ jobs:
   Generated Types Check:
     executor: { name: oss/node, tag: "12" }
     steps:
-      - oss/install_specific_npm_version
+      - oss/install_specific_npm_version:
+          version: '7'
       - checkout
       - oss/npm_clean_install_with_caching
       - run:
