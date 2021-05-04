@@ -29,12 +29,14 @@ commands:
 jobs:
   # Platform tests, each with the same tests but different platform or version.
   NodeJS 10:
-    executor: { name: oss/node, tag: "10" }
+    docker:
+      - image: cimg/node:10.24.1
     steps:
       - common_test_steps
 
   NodeJS 12:
-    executor: { name: oss/node, tag: "12" }
+    docker:
+      - image: cimg/node:12.22.1
     steps:
       - common_test_steps
 
@@ -48,7 +50,8 @@ jobs:
       - run: npm run circle
 
   NodeJS 14:
-    executor: { name: oss/node, tag: "14" }
+    docker:
+      - image: cimg/node:14.16.1
     steps:
       - common_test_steps
       # We will save the results of this one particular invocation to use in
@@ -63,7 +66,8 @@ jobs:
 
 
   Build VSCode:
-    executor: { name: oss/node, tag: "12" }
+    docker:
+      - image: cimg/node:12.22.1
     steps:
       - oss/install_specific_npm_version:
           version: '7'
@@ -80,7 +84,8 @@ jobs:
           destination: vscode-extension
 
   Publish VSCode Extension:
-    executor: { name: oss/node, tag: "12" }
+    docker:
+      - image: cimg/node:12.22.1
     steps:
       - oss/install_specific_npm_version:
           version: '7'
@@ -109,7 +114,8 @@ jobs:
 
   # Other tests, unrelated to typical code tests.
   Linting:
-    executor: { name: oss/node, tag: "12" }
+    docker:
+      - image: cimg/node:12.22.1
     steps:
       - oss/install_specific_npm_version:
           version: '7'
@@ -119,7 +125,8 @@ jobs:
       - run: npm run lint
 
   Query Check:
-    executor: { name: oss/node, tag: "12" }
+    docker:
+      - image: cimg/node:12.22.1
     steps:
       - oss/install_specific_npm_version:
           version: '7'
@@ -135,7 +142,8 @@ jobs:
             ENGINE_API_KEY=$CHECKS_API_KEY ./packages/apollo/bin/run client:check
 
   Generated Types Check:
-    executor: { name: oss/node, tag: "12" }
+    docker:
+      - image: cimg/node:12.22.1
     steps:
       - oss/install_specific_npm_version:
           version: '7'
