@@ -34,11 +34,47 @@ jobs:
     steps:
       - common_test_steps
 
-  NodeJS 12 Windows:
+  NodeJS 14 Windows:
     executor:
       name: win/default
+    environment:
+      # Note: This is a no-op at the second, but bear with me on this.  If this
+      # comment is not removed by 2021-06-30 remove it along with the next line.
+      # renovate: datasource=github-tags depName=nodejs/node versioning=node
+      NODE_VERSION: 14.16.1
+      NPM_VERSION: 7.10.0
     steps:
       - run: git config --global core.autocrlf false
+      - run:
+          name: Install desired Node.js version with nvm
+          command: |
+            nvm install ${Env:NODE_VERSION}
+            nvm on
+      - run:
+          # https://github.com/coreybutler/nvm-windows/issues/300
+          # Have to move the command out of the way because it can't
+          # overwrite itself otherwise.   This is madness, but apparently
+          # accepted.  Other things I tried: using yarn to install npm,
+          # using http://npm.im/npm-windows-upgrade and even shouting.
+          name: Install specific version of npm in a crazy Windows way
+          command: |
+            $node_dir = (get-item (get-command npm).source).directory.fullname
+            foreach ($cmd in @("npm", "npx")) {
+              foreach ($ext in @(".ps1", ".cmd", "")) {
+                if (Test-Path "$node_dir/$cmd$ext") {
+                  rename-item -path (join-path -path $node_dir -childpath "$cmd$ext") "${cmd}-orig${ext}"
+                }
+              }
+            }
+            npm-orig install --global "npm@${Env:NPM_VERSION}"
+      - run:
+          name: Assert Node.js version
+          command: |
+            if ((node --version) -Ne "v${Env:NODE_VERSION}") { exit 1 }
+      - run:
+          name: Assert npm version
+          command: |
+            if ((npm --version) -Ne "${Env:NPM_VERSION}") { exit 1 }
       - checkout
       - oss/npm_clean_install_with_caching
       - run: npm run circle
@@ -180,7 +216,7 @@ workflows:
     jobs:
       - NodeJS 12:
           <<: *common_non_publish_filters
-      - NodeJS 12 Windows:
+      - NodeJS 14 Windows:
           <<: *common_non_publish_filters
       - NodeJS 14:
           <<: *common_non_publish_filters
@@ -205,7 +241,7 @@ workflows:
           <<: *common_non_publish_filters
           requires:
             - NodeJS 12
-            - NodeJS 12 Windows
+            - NodeJS 14 Windows
             - NodeJS 14
             - NodeJS 16
             - Build VSCode
@@ -219,7 +255,7 @@ workflows:
           <<: *common_publish_filters
           requires:
             - NodeJS 12
-            - NodeJS 12 Windows
+            - NodeJS 14 Windows
             - NodeJS 14
             - NodeJS 16
             - Build VSCode
