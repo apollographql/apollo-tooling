@@ -111,6 +111,9 @@
         "tsConfig": "<rootDir>/tsconfig.test.json",
         "diagnostics": false
       }
-    }
+    },
+    "setupFilesAfterEnv": [
+      "<rootDir>/test-utils/setup.js"
+    ]
   }
 }
