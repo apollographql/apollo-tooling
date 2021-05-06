@@ -107,6 +107,8 @@ export default class ServiceList extends ProjectCommand {
   };
 
   async run() {
+    this.printDeprecationWarning();
+
     // @ts-ignore we're going to populate `taskOutput` later
     const taskOutput: TasksOutput = {};
 

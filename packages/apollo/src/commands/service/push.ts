@@ -65,6 +65,8 @@ export default class ServicePush extends ProjectCommand {
   };
 
   async run() {
+    this.printDeprecationWarning();
+
     let result;
     let isFederated;
     let gitContext;

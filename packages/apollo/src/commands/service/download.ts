@@ -46,6 +46,8 @@ export default class ServiceDownload extends ProjectCommand {
   ];
 
   async run() {
+    this.printDeprecationWarning();
+
     await this.runTasks(({ args, project, flags, config }) => [
       {
         title: `Saving schema to ${args.output}`,

@@ -46,6 +46,8 @@ export default class ServiceDelete extends ProjectCommand {
   };
 
   async run() {
+    this.printDeprecationWarning();
+
     let result;
     const { flags } = this.parse(ServiceDelete);
 
