@@ -25,7 +25,12 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
-### apollo-env@0.10.0
+## apollo@2.33.2
+
+- Add a deprecation message to all `apollo service:*` commands, pointing people towards the [Apollo Rover CLI migration guide](https://go.apollo.dev/t/migration). <br/>
+  [@hwillson](https://github.com/hwillson) in [#2308](https://github.com/apollographql/apollo-tooling/pull/2308)
+
+## apollo-env@0.10.0
 
 - deps: Updated `node-fetch` to v2.6.1
 
