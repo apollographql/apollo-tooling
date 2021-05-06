@@ -284,10 +284,13 @@ export abstract class ProjectCommand extends Command {
   }
 
   protected printDeprecationWarning() {
+    const separator = "-".repeat(65);
     console.error(
+      `\n${separator}\n` +
       "DEPRECATED: This command will be removed from the `apollo` CLI in \n" +
       "its next major version. Replacement functionality is available in \n" +
-      "the new Apollo Rover CLI: https://go.apollo.dev/t/migration \n"
+      "the new Apollo Rover CLI: https://go.apollo.dev/t/migration\n" +
+      `${separator}\n`
     );
   }
 }
