@@ -229,7 +229,8 @@ export function formatHumanReadable({
 export default class ServiceCheck extends ProjectCommand {
   static aliases = ["schema:check"];
   static description =
-    "Check a service against known operation workloads to find breaking changes";
+    "[DEPRECATED] Check a service against known operation workloads to find breaking changes" +
+    ProjectCommand.DEPRECATION_MSG;
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({

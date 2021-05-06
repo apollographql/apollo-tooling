@@ -84,7 +84,9 @@ function formatHumanReadable({
 }
 
 export default class ServiceList extends ProjectCommand {
-  static description = "List the services in a graph";
+  static description =
+    "[DEPRECATED] List the services in a graph" +
+    ProjectCommand.DEPRECATION_MSG;
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({
