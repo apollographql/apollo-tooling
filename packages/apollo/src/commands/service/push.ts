@@ -10,7 +10,9 @@ import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ServicePush extends ProjectCommand {
   static aliases = ["schema:publish"];
-  static description = "Push a service definition to Apollo";
+  static description =
+    "[DEPRECATED] Push a service definition to Apollo" +
+    ProjectCommand.DEPRECATION_MSG;
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({
@@ -65,6 +67,8 @@ export default class ServicePush extends ProjectCommand {
   };
 
   async run() {
+    this.printDeprecationWarning();
+
     let result;
     let isFederated;
     let gitContext;

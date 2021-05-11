@@ -282,6 +282,17 @@ export abstract class ProjectCommand extends Command {
   async finally(err) {
     // called after run and catch regardless of whether or not the command errored
   }
+
+  static DEPRECATION_MSG =
+    "\n-----------------------------------------------------------------\n" +
+    "DEPRECATED: This command will be removed from the `apollo` CLI in \n" +
+    "its next major version. Replacement functionality is available in \n" +
+    "the new Apollo Rover CLI: https://go.apollo.dev/t/migration\n" +
+    "-----------------------------------------------------------------\n";
+
+  protected printDeprecationWarning() {
+    console.error(ProjectCommand.DEPRECATION_MSG);
+  }
 }
 
 export abstract class ClientCommand extends ProjectCommand {

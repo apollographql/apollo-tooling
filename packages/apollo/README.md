@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.33.1 linux-x64 node-v14.16.1
+apollo/2.33.1 darwin-x64 node-v14.15.3
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -642,10 +642,16 @@ _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/
 
 ## `apollo service:check`
 
-Check a service against known operation workloads to find breaking changes
+[DEPRECATED] Check a service against known operation workloads to find breaking changes
 
 ```
-Check a service against known operation workloads to find breaking changes
+[DEPRECATED] Check a service against known operation workloads to find breaking changes
+-----------------------------------------------------------------
+DEPRECATED: This command will be removed from the `apollo` CLI in 
+its next major version. Replacement functionality is available in 
+the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+-----------------------------------------------------------------
+
 
 USAGE
   $ apollo service:check
@@ -716,6 +722,13 @@ OPTIONS
       for more granularity (see: 
       https://en.wikipedia.org/wiki/ISO_8601#Durations)
 
+DESCRIPTION
+  -----------------------------------------------------------------
+  DEPRECATED: This command will be removed from the `apollo` CLI in 
+  its next major version. Replacement functionality is available in 
+  the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+  -----------------------------------------------------------------
+
 ALIASES
   $ apollo schema:check
 ```
@@ -724,10 +737,16 @@ _See code: [src/commands/service/check.ts](https://github.com/apollographql/apol
 
 ## `apollo service:delete`
 
-Delete a federated service from Apollo and recompose remaining services
+[DEPRECATED] Delete a federated service from Apollo and recompose remaining services
 
 ```
-Delete a federated service from Apollo and recompose remaining services
+[DEPRECATED] Delete a federated service from Apollo and recompose remaining services
+-----------------------------------------------------------------
+DEPRECATED: This command will be removed from the `apollo` CLI in 
+its next major version. Replacement functionality is available in 
+the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+-----------------------------------------------------------------
+
 
 USAGE
   $ apollo service:delete
@@ -758,16 +777,29 @@ OPTIONS
 
   --serviceName=serviceName  (required) Provides the name of the
                              implementing service for a federated graph
+
+DESCRIPTION
+  -----------------------------------------------------------------
+  DEPRECATED: This command will be removed from the `apollo` CLI in 
+  its next major version. Replacement functionality is available in 
+  the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+  -----------------------------------------------------------------
 ```
 
 _See code: [src/commands/service/delete.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/delete.ts)_
 
 ## `apollo service:download OUTPUT`
 
-Download the schema from your GraphQL endpoint.
+[DEPRECATED] Download the schema from your GraphQL endpoint.
 
 ```
-Download the schema from your GraphQL endpoint.
+[DEPRECATED] Download the schema from your GraphQL endpoint.
+-----------------------------------------------------------------
+DEPRECATED: This command will be removed from the `apollo` CLI in 
+its next major version. Replacement functionality is available in 
+the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+-----------------------------------------------------------------
+
 
 USAGE
   $ apollo service:download OUTPUT
@@ -797,6 +829,13 @@ OPTIONS
 
   --key=key                The API key to use for authentication to Apollo
 
+DESCRIPTION
+  -----------------------------------------------------------------
+  DEPRECATED: This command will be removed from the `apollo` CLI in 
+  its next major version. Replacement functionality is available in 
+  the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+  -----------------------------------------------------------------
+
 ALIASES
   $ apollo schema:download
 ```
@@ -805,10 +844,16 @@ _See code: [src/commands/service/download.ts](https://github.com/apollographql/a
 
 ## `apollo service:list`
 
-List the services in a graph
+[DEPRECATED] List the services in a graph
 
 ```
-List the services in a graph
+[DEPRECATED] List the services in a graph
+-----------------------------------------------------------------
+DEPRECATED: This command will be removed from the `apollo` CLI in 
+its next major version. Replacement functionality is available in 
+the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+-----------------------------------------------------------------
+
 
 USAGE
   $ apollo service:list
@@ -831,16 +876,29 @@ OPTIONS
                          if using the `--header` flag.
 
   --key=key              The API key to use for authentication to Apollo
+
+DESCRIPTION
+  -----------------------------------------------------------------
+  DEPRECATED: This command will be removed from the `apollo` CLI in 
+  its next major version. Replacement functionality is available in 
+  the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+  -----------------------------------------------------------------
 ```
 
 _See code: [src/commands/service/list.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/list.ts)_
 
 ## `apollo service:push`
 
-Push a service definition to Apollo
+[DEPRECATED] Push a service definition to Apollo
 
 ```
-Push a service definition to Apollo
+[DEPRECATED] Push a service definition to Apollo
+-----------------------------------------------------------------
+DEPRECATED: This command will be removed from the `apollo` CLI in 
+its next major version. Replacement functionality is available in 
+the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+-----------------------------------------------------------------
+
 
 USAGE
   $ apollo service:push
@@ -891,6 +949,13 @@ OPTIONS
   --serviceURL=serviceURL
       Provides the url to the location of the implementing service for a 
       federated graph
+
+DESCRIPTION
+  -----------------------------------------------------------------
+  DEPRECATED: This command will be removed from the `apollo` CLI in 
+  its next major version. Replacement functionality is available in 
+  the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+  -----------------------------------------------------------------
 
 ALIASES
   $ apollo schema:publish
