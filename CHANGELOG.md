@@ -17,7 +17,7 @@
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - Complex directive arguments don't break `transformSchema` (Fixes #2162)
+  - <First `apollo-graphql` related entry goes here>
 - `apollo-language-server`
   - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
@@ -25,6 +25,8 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
+## apollo-graphql@0.9.3
+- Complex directive arguments don't break `transformSchema` (Fixes #2162) [PR #2335](https://github.com/apollographql/apollo-tooling/pull/2335)
 ## apollo@2.33.2
 
 - Add a deprecation message to all `apollo service:*` commands, pointing people towards the [Apollo Rover CLI migration guide](https://go.apollo.dev/t/migration). <br/>
