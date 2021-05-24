@@ -17,7 +17,7 @@
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
+  - Complex directive arguments don't break `transformSchema` (Fixes #2162)
 - `apollo-language-server`
   - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
