@@ -23,7 +23,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.33.3 darwin-x64 node-v12.16.1
+apollo/2.33.4 darwin-x64 node-v16.2.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
