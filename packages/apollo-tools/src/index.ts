@@ -1,5 +1,3 @@
-import "apollo-env";
-
 export * from "./utilities";
 
 export * from "./schema";
