@@ -90,7 +90,7 @@
     "nock": "11.4.0",
     "prettier": "1.18.2",
     "stdout-stderr": "0.1.13",
-    "symlink-dir": "5.0.0",
+    "symlink-dir": "5.0.1",
     "ts-jest": "24.3.0",
     "ts-node": "9.1.1",
     "tslib": "1.14.1",
