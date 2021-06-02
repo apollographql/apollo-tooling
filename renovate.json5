@@ -3,6 +3,10 @@
   "dependencyDashboard": true,
   "packageRules": [
     {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
       "matchPaths": ["packages/apollo/package.json"],
       "extends": [":pinAllExceptPeerDependencies"],
       "packageRules": [
