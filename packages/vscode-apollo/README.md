@@ -81,7 +81,7 @@ Client-side schema definitions can be spread throughout the client app project a
 ```js
 module.exports = {
   client: {
-    service: "my-graphql-app"
+    service: "my-graphql-app",
     includes: ["./src/**/*.js"],
     excludes: ["**/__tests__/**"]
   }
