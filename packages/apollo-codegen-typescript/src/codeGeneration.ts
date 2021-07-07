@@ -379,10 +379,21 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     }
 
     if (selection.selectionSet) {
-      return selection.selectionSet.selections.reduce(
-        this.reduceSelection,
-        acc
-      );
+      return selection.selectionSet.selections
+        .filter(childSelection => {
+          // Filter out unnecessary members from union types
+          if (
+            childSelection.kind === "TypeCondition" &&
+            selection.selectionSet &&
+            !selection.selectionSet.possibleTypes.some(
+              possibleType => possibleType.name === childSelection.type.name
+            )
+          ) {
+            return false;
+          }
+          return true;
+        })
+        .reduce(this.reduceSelection, acc);
     }
 
     return acc;
