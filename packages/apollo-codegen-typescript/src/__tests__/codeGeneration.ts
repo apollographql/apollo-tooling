@@ -663,4 +663,35 @@ describe("Typescript codeGeneration local / global", () => {
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
   });
+
+  test("unused import with nested fragments", () => {
+    const context = compileMisc(`
+      query man {
+        man {
+          ...HumanFragment
+        }
+      }
+      fragment HumanFragment on Human {
+        ...NestedHumanFragment
+      }
+      fragment NestedHumanFragment on Human {
+        ... on Man {
+          manProp
+        }
+        ... on Woman {
+          womanProp
+        }
+      }
+    `);
+
+    const output = generateLocalSource(context).map(f => ({
+      ...f,
+      content: f.content({
+        outputPath: "/some/file/ComponentA.tsx",
+        globalSourcePath: "/__generated__/globalTypes.ts"
+      })
+    }));
+    expect(output).toMatchSnapshot();
+    expect(generateGlobalSource(context)).toMatchSnapshot();
+  });
 });
