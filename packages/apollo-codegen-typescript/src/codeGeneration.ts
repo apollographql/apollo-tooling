@@ -379,21 +379,53 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     }
 
     if (selection.selectionSet) {
-      return selection.selectionSet.selections
-        .filter(childSelection => {
+      return (
+        selection.selectionSet.selections
+          .map(childSelection => {
+            if (childSelection.kind === "FragmentSpread") {
+              // Compute the intersection between the possible types of the fragment spread and the parent's possible types.
+              return {
+                ...childSelection,
+                selectionSet: {
+                  ...childSelection.selectionSet,
+                  possibleTypes: childSelection.selectionSet.possibleTypes.filter(
+                    possibleType =>
+                      selection.selectionSet &&
+                      selection.selectionSet.possibleTypes.includes(
+                        possibleType
+                      )
+                  )
+                }
+              };
+            }
+            return childSelection;
+          })
           // Filter out unnecessary members from union types
-          if (
-            childSelection.kind === "TypeCondition" &&
-            selection.selectionSet &&
-            !selection.selectionSet.possibleTypes.some(
-              possibleType => possibleType.name === childSelection.type.name
+          .filter(childSelection => {
+            if (childSelection.kind !== "TypeCondition") return true;
+
+            // If the TypeCondition's type matches the parent type, we want to keep it
+            if (
+              selection.kind === "Field" &&
+              !isListType(selection.type) &&
+              selection.type.name === childSelection.type.name
             )
-          ) {
+              return true;
+
+            // If the TypeCondition's type matches any of the parents possibleTypes, we want to keep it
+            if (
+              !selection.selectionSet ||
+              selection.selectionSet.possibleTypes.some(
+                possibleType => possibleType.name === childSelection.type.name
+              )
+            ) {
+              return true;
+            }
+
             return false;
-          }
-          return true;
-        })
-        .reduce(this.reduceSelection, acc);
+          })
+          .reduce(this.reduceSelection, acc)
+      );
     }
 
     return acc;
