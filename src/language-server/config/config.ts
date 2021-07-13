@@ -151,7 +151,7 @@ export class ApolloConfig {
       : this.configURI;
   }
 
-  get projects() {
+  get projects(): (ClientConfig | ServiceConfig)[] {
     const configs = [];
     const { client, service } = this.rawConfig;
     if (client) configs.push(new ClientConfig(this.rawConfig, this.configURI));
