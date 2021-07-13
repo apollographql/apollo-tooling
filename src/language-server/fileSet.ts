@@ -1,5 +1,3 @@
-import { relative } from "path";
-import minimatch = require("minimatch");
 import glob from "glob";
 import { invariant } from "../tools";
 import URI from "vscode-uri";
