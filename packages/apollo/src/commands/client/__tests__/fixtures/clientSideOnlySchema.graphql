@@ -1,8 +1,0 @@
-type Query {
-  localState: String!
-  complexLocalState: LocalType!
-}
-
-type LocalType {
-  someData: String!
-}

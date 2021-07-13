@@ -1,20 +1,25 @@
 {
   "compilerOptions": {
-    "composite": true
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "target": "es2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "removeComments": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["es2017", "esnext.asynciterable"],
+    "types": ["node"],
+    "baseUrl": "."
   },
-  "files": [],
-  "include": [],
-  "references": [
-    { "path": "./packages/apollo" },
-    { "path": "./packages/apollo-codegen-core" },
-    { "path": "./packages/apollo-codegen-flow" },
-    { "path": "./packages/apollo-codegen-scala" },
-    { "path": "./packages/apollo-codegen-swift" },
-    { "path": "./packages/apollo-codegen-typescript" },
-    { "path": "./packages/apollo-env" },
-    { "path": "./packages/apollo-graphql" },
-    { "path": "./packages/apollo-language-server" },
-    { "path": "./packages/apollo-tools" },
-    { "path": "./packages/vscode-apollo" }
-  ]
+  "exclude": ["**/__tests__/*", "**/__mocks__/*", "./lib", "./src/testRunner"]
 }
