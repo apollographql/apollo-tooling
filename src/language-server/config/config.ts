@@ -2,7 +2,7 @@ import { dirname } from "path";
 import merge from "lodash.merge";
 import { ClientID, ServiceID, ServiceSpecifier } from "../engine";
 import URI from "vscode-uri";
-import { WithRequired } from "apollo-env";
+import { WithRequired } from "../../env";
 import { getGraphIdFromConfig, parseServiceSpecifier } from "./utils";
 import { ValidationRule } from "graphql/validation/ValidationContext";
 

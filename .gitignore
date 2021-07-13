@@ -1,2 +1,22 @@
-yarn.lock
+node_modules
+lib
+
+# TypeScript incremental compilation cache
+*.tsbuildinfo
+
+# Visual Studio Code workspace settings
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+.DS_Store
+vscode-graphql-*.vsix
+.env
+
+# files generated from tests
+__tmp__*
 .vscode-test
+
+yarn.lock

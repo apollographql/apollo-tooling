@@ -61,7 +61,7 @@ import {
 import { highlightNodeForNode } from "./utilities/graphql";
 
 import { GraphQLClientProject, isClientProject } from "./project/client";
-import { isNotNullOrUndefined } from "@apollographql/apollo-tools";
+import { isNotNullOrUndefined } from "../tools";
 import { CodeActionInfo } from "./errors/validation";
 import { GraphQLDiagnostic } from "./diagnostics";
 

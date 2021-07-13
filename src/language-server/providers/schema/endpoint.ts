@@ -11,7 +11,7 @@ import {
   parse
 } from "graphql";
 import { Agent as HTTPSAgent } from "https";
-import { fetch } from "apollo-env";
+import { fetch } from "../../../env";
 import { RemoteServiceConfig, DefaultServiceConfig } from "../../config";
 import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
 import { Debug } from "../../utilities";

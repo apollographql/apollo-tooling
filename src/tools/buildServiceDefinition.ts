@@ -13,8 +13,7 @@ import {
   isObjectType,
   SchemaDefinitionNode,
   OperationTypeNode,
-  SchemaExtensionNode,
-  OperationTypeDefinitionNode
+  SchemaExtensionNode
 } from "graphql";
 import { isNode, isDocumentNode } from "./utilities/graphql";
 import { GraphQLResolverMap } from "./schema/resolverMap";
@@ -28,10 +27,6 @@ export interface GraphQLSchemaModule {
 interface GraphQLServiceDefinition {
   schema?: GraphQLSchema;
   errors?: GraphQLError[];
-}
-
-function flattened<T>(arr: ReadonlyArray<ReadonlyArray<T>>): ReadonlyArray<T> {
-  return new Array<T>().concat(...arr);
 }
 
 export function buildServiceDefinition(
@@ -124,11 +119,10 @@ export function buildServiceDefinition(
     // but this matches the current 'last definition wins' behavior of `buildASTSchema`.
     const schemaDefinition = schemaDefinitions[schemaDefinitions.length - 1];
 
-    const operationTypes = flattened(
-      [schemaDefinition, ...schemaExtensions]
-        .map(node => node.operationTypes)
-        .filter(isNotNullOrUndefined)
-    );
+    const operationTypes = [schemaDefinition, ...schemaExtensions]
+      .map(node => node.operationTypes)
+      .filter(isNotNullOrUndefined)
+      .flat();
 
     for (const operationType of operationTypes) {
       const typeName = operationType.type.name.value;
@@ -184,15 +178,15 @@ export function buildServiceDefinition(
   }
 
   try {
-    const typeDefinitions = flattened(Object.values(typeDefinitionsMap));
-    const directives = flattened(Object.values(directivesMap));
+    const typeDefinitions = Object.values(typeDefinitionsMap).flat();
+    const directives = Object.values(directivesMap).flat();
 
     let schema = buildASTSchema({
       kind: Kind.DOCUMENT,
       definitions: [...typeDefinitions, ...directives]
     });
 
-    const typeExtensions = flattened(Object.values(typeExtensionsMap));
+    const typeExtensions = Object.values(typeExtensionsMap).flat();
 
     if (typeExtensions.length > 0) {
       schema = extendSchema(schema, {

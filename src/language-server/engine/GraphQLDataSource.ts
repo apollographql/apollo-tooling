@@ -10,7 +10,7 @@ import {
 } from "apollo-server-errors";
 import to from "await-to-js";
 import { GraphQLError } from "graphql";
-import { fetch } from "apollo-env";
+import { fetch } from "../../env";
 
 export interface GraphQLResponse<T> {
   data?: T;

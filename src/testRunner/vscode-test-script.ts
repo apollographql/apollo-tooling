@@ -33,6 +33,6 @@ cp.stderr.on("data", err => {
 
 cp.on("close", code => {
   if (code !== 0) {
-    process.exit(code);
+    process.exit(code || undefined);
   }
 });

@@ -7,6 +7,10 @@ declare interface GlobalFetch {
   fetch(input: RequestInfo, init?: RequestInit): Promise<Response>;
 }
 
+declare interface WindowOrWorkerGlobalScope {
+  fetch(input: RequestInfo, init?: RequestInit): Promise<Response>;
+}
+
 type RequestInfo = import("./fetch").RequestInfo;
 type Headers = import("./fetch").Headers;
 type HeadersInit = import("./fetch").HeadersInit;

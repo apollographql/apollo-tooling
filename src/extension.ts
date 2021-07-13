@@ -43,7 +43,7 @@ function isError(response: any): response is ErrorShape {
 
 export function activate(context: ExtensionContext) {
   const serverModule = context.asAbsolutePath(
-    join("node_modules/apollo-language-server/lib", "server.js")
+    join("lib/language-server", "server.js")
   );
 
   // Initialize language client
