@@ -16,12 +16,13 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc --build tsconfig.json",
-    "clean": "git clean -dfqX -- ./node_modules ./lib ./tsconfig.tsbuildinfo ./__tmp__*",
+    "build:clean": "npm run build -- --clean",
+    "watch": "npm run build -- --watch",
     "preinstall": "npx rimraf node_modules && mkdir node_modules",
-    "postinstall": "npm run update-vscode && npm run build",
+    "postinstall": "npm run update-vscode",
     "update-vscode": "node ./node_modules/vscode/bin/install",
     "_internal:prepare-extension": "npx rimraf node_modules && yarn install --force --production --ignore-scripts",
-    "_internal:cleanup-extension": "git clean -dfqX -- ./node_modules ./yarn.lock && npm i",
+    "_internal:cleanup-extension": "git clean -dfqX -- ./node_modules ./yarn.lock",
     "package-extension": "npm run _internal:prepare-extension && npx vsce package --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/vscode-graphql && npm run _internal:cleanup-extension",
     "publish-extension": "npm run _internal:prepare-extension && npx vsce publish -p $VS_MARKETPLACE_TOKEN --yarn --baseContentUrl https://raw.githubusercontent.com/apollographql/vscode-graphql && npm run _internal:cleanup-extension",
     "test": "node ./lib/testRunner/vscode-test-script.js"
