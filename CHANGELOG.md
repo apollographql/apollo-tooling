@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 1.19.4
+
+- Fix VS Code extension performance issues for larger projects [#1938](https://github.com/apollographql/apollo-tooling/pull/1938)
+
 -> *Note:* This project used to live in the [apollo-tooling](https://github.com/apollographql/apollo-tooling) repo. Refer to the [apollo-tooling CHANGELOG](https://github.com/apollographql/apollo-tooling/blob/master/CHANGELOG.md) for full list of changes before April 25, 2021. See below for filtered changelog from apollo-tooling.
 
 ## Legacy apollo-tooling Changelog
