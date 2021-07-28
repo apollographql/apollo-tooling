@@ -339,7 +339,9 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     outputIndividualFiles: boolean,
     suppressMultilineStringLiterals: boolean
   ) {
-    const structName = this.helpers.structNameForFragmentName(fragmentName);
+    const structName = this.helpers.structDeclarationNameForFragmentName(
+      fragmentName
+    );
 
     this.structDeclarationForSelectionSet(
       {
