@@ -54,7 +54,7 @@
     "globals": {
       "ts-jest": {
         "tsConfig": "<rootDir>/tsconfig.test.json",
-        "diagnostics": false
+        "diagnostics": ,
       }
     }
   }
