@@ -25,7 +25,15 @@
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - Adds support for àpollo.config.cjs`files, to allow Projects with`type: module`in package.json (Fixes #2342) [PR #2381](https://github.com/apollographql/apollo-tooling/pull/2381)
+  - <First `vscode-apollo` related entry goes here>
+
+## apollo@2.33.6
+
+- Removed the use of the `tty` npm package which has been removed from npm. [PR #2406](https://github.com/apollographql/apollo-tooling/pull/2406) [Issue #2407](https://github.com/apollographql/apollo-tooling/issues/2407)
+
+## apollo@2.33.5
+
+- Adds support for àpollo.config.cjs`files allowing `package.json` files with `type: "module"` [Issue #2342](https://github.com/apollographql/apollo-tooling/issues/2342) [PR #2381](https://github.com/apollographql/apollo-tooling/pull/2381)
 
 ## apollo-tools@0.5.1
 
