@@ -2,7 +2,6 @@ import "apollo-env";
 import { flags } from "@oclif/command";
 import path from "path";
 import { Kind, DocumentNode } from "graphql";
-import tty from "tty";
 import { Gaze } from "gaze";
 import URI from "vscode-uri";
 import chalk from "chalk";
@@ -273,7 +272,8 @@ export default class Generate extends ClientCommand {
           Debug.error("Error while generating types: " + e.message);
         }
       });
-      if (tty.isatty((process.stdin as any).fd)) {
+
+      if (process.stdin.isTTY) {
         await waitForKey();
         watcher.close();
         process.exit(0);
