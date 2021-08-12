@@ -1,7 +1,7 @@
 {
   "name": "apollo-codegen-flow",
   "description": "Flow generator module for Apollo Codegen",
-  "version": "0.38.3",
+  "version": "0.38.4",
   "author": "Apollo GraphQL <opensource@apollographql.com>",
   "license": "MIT",
   "repository": {
