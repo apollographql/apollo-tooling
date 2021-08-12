@@ -601,7 +601,7 @@ export interface UploadAndComposePartialSchema_service_upsertImplementingService
 
 export interface UploadAndComposePartialSchema_service {
   __typename: "ServiceMutation";
-  upsertImplementingServiceAndTriggerComposition: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition;
+  upsertImplementingServiceAndTriggerComposition: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition | null;
 }
 
 export interface UploadAndComposePartialSchema {
