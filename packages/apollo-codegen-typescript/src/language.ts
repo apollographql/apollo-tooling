@@ -167,7 +167,7 @@ export default class TypescriptGenerator {
   }
 
   public import(types: GraphQLType[], source: string) {
-    return t.importDeclaration(
+    const node = t.importDeclaration(
       types.map(type =>
         t.importSpecifier(
           t.identifier(type.toString()),
@@ -176,5 +176,7 @@ export default class TypescriptGenerator {
       ),
       t.stringLiteral(source)
     );
+    node.importKind = 'type';
+    return node;
   }
 }
