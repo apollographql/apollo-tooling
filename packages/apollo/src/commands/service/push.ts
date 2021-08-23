@@ -118,12 +118,7 @@ export default class ServicePush extends ProjectCommand {
              * revision: git commit hash/docker id. placeholder for now
              */
 
-            const {
-              compositionConfig,
-              errors,
-              didUpdateGateway,
-              serviceWasCreated
-            } = await project.engine.uploadAndComposePartialSchema({
+            const uploadAndComposeResult = await project.engine.uploadAndComposePartialSchema({
               id: config.graph,
               graphVariant: config.variant,
               name: flags.serviceName,
@@ -136,6 +131,17 @@ export default class ServicePush extends ProjectCommand {
                 sdl
               }
             });
+
+            if (!uploadAndComposeResult) {
+              throw new Error("NOOOOO");
+            }
+
+            const {
+              compositionConfig,
+              errors,
+              didUpdateGateway,
+              serviceWasCreated
+            } = uploadAndComposeResult;
 
             result = {
               implementingServiceName: flags.serviceName,
