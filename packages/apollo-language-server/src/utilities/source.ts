@@ -7,11 +7,9 @@ import {
   TypeInfo,
   GraphQLSchema,
   getVisitFn,
+  GraphQLType,
   Visitor,
-  ASTKindToNode,
-  FieldNode,
-  InlineFragmentNode,
-  FragmentDefinitionNode
+  ASTKindToNode
 } from "graphql";
 import { SourceLocation, getLocation } from "graphql/language/location";
 

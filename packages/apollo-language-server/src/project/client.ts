@@ -17,26 +17,22 @@ import {
   DocumentNode,
   FieldNode,
   ObjectTypeDefinitionNode,
-  GraphQLObjectType,
-  DefinitionNode
 } from "graphql";
 import { ValidationRule } from "graphql/validation/ValidationContext";
+
 import { NotificationHandler, DiagnosticSeverity } from "vscode-languageserver";
 
 import { rangeForASTNode } from "../utilities/source";
 import { formatMS } from "../format";
 import { LoadingHandler } from "../loadingHandler";
 import { FileSet } from "../fileSet";
-import { apolloClientSchemaDocument } from "./defaultClientSchema";
 
 import { FieldStats, SchemaTag, ServiceID, ClientIdentity } from "../engine";
 import { ClientConfig } from "../config";
 import {
   removeDirectives,
   removeDirectiveAnnotatedFields,
-  withTypenameFieldAddedWhereNeeded,
-  ClientSchemaInfo,
-  isDirectiveDefinitionNode
+  withTypenameFieldAddedWhereNeeded
 } from "../utilities/graphql";
 import { defaultValidationRules } from "../errors/validation";
 
@@ -46,8 +42,6 @@ import {
   diagnosticsFromError
 } from "../diagnostics";
 import URI from "vscode-uri";
-
-type Maybe<T> = null | undefined | T;
 
 function schemaHasASTNodes(schema: GraphQLSchema): boolean {
   const queryType = schema && schema.getQueryType();
@@ -93,8 +87,6 @@ export class GraphQLClientProject extends GraphQLProject {
   private fieldStats?: FieldStats;
 
   private _validationRules?: ValidationRule[];
-
-  public diagnosticSet?: DiagnosticSet;
 
   constructor({
     config,
@@ -224,67 +216,8 @@ export class GraphQLClientProject extends GraphQLProject {
   get clientSchema(): DocumentNode {
     return {
       kind: Kind.DOCUMENT,
-      definitions: [
-        ...this.typeSystemDefinitionsAndExtensions,
-        ...this.missingApolloClientDirectives
-      ]
+      definitions: this.typeSystemDefinitionsAndExtensions
     };
-  }
-
-  get missingApolloClientDirectives(): readonly DefinitionNode[] {
-    const { serviceSchema } = this;
-
-    const serviceDirectives = serviceSchema
-      ? serviceSchema.getDirectives().map(directive => directive.name)
-      : [];
-
-    const clientDirectives = this.typeSystemDefinitionsAndExtensions
-      .filter(isDirectiveDefinitionNode)
-      .map(def => def.name.value);
-
-    const existingDirectives = serviceDirectives.concat(clientDirectives);
-
-    const apolloAst = apolloClientSchemaDocument.ast;
-    if (!apolloAst) return [];
-
-    const apolloDirectives = apolloAst.definitions
-      .filter(isDirectiveDefinitionNode)
-      .map(def => def.name.value);
-
-    // If there is overlap between existingDirectives and apolloDirectives,
-    // don't add apolloDirectives. This is in case someone is directly including
-    // the apollo directives or another framework's conflicting directives
-    for (const existingDirective of existingDirectives) {
-      if (apolloDirectives.includes(existingDirective)) {
-        return [];
-      }
-    }
-
-    return apolloAst.definitions;
-  }
-
-  private addClientMetadataToSchemaNodes() {
-    const { schema, serviceSchema } = this;
-    if (!schema || !serviceSchema) return;
-
-    visit(this.clientSchema, {
-      ObjectTypeExtension(node) {
-        const type = schema.getType(node.name.value) as Maybe<
-          GraphQLObjectType
-        >;
-        const { fields } = node;
-        if (!fields || !type) return;
-
-        const localInfo: ClientSchemaInfo = type.clientSchema || {};
-
-        localInfo.localFields = [
-          ...(localInfo.localFields || []),
-          ...fields.map(field => field.name.value)
-        ];
-
-        type.clientSchema = localInfo;
-      }
-    });
   }
 
   async validate() {
@@ -295,7 +228,6 @@ export class GraphQLClientProject extends GraphQLProject {
 
     try {
       this.schema = extendSchema(this.serviceSchema, this.clientSchema);
-      this.addClientMetadataToSchemaNodes();
     } catch (error) {
       if (error instanceof GraphQLError) {
         const uri = error.source && error.source.name;
@@ -329,8 +261,6 @@ export class GraphQLClientProject extends GraphQLProject {
     for (const [uri, diagnostics] of diagnosticSet.entries()) {
       this._onDiagnostics({ uri, diagnostics });
     }
-
-    this.diagnosticSet = diagnosticSet;
 
     this.generateDecorations();
   }

@@ -206,16 +206,6 @@ connection.onCodeLens(
   )
 );
 
-connection.onCodeAction(
-  debounceHandler((params, token) =>
-    languageProvider.provideCodeAction(
-      params.textDocument.uri,
-      params.range,
-      token
-    )
-  )
-);
-
 connection.onNotification("apollographql/reloadService", () =>
   workspace.reloadService()
 );
