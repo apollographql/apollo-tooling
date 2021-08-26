@@ -178,7 +178,7 @@ export default class TypescriptGenerator {
     );
     // Expect error until @types/babel-types is upgraded
     // @ts-expect-error
-    node.importKind = 'type';
+    node.importKind = "type";
     return node;
   }
 }
