@@ -11,7 +11,7 @@ describe("Git integration", () => {
     expect(info.remoteUrl).toBeDefined();
     // Match both ssh and http/s remotes
     expect(info.remoteUrl).toMatch(
-      /(https?:\/\/|git@)github.com(\/|:)apollographql\/apollo-tooling(.git)?/
+      /(https?:\/\/|git@)github.com(\/|:)(.*)\/apollo-tooling(.git)?/
     );
     expect(info.message).toBeDefined();
     expect(info.branch).toBeDefined();
