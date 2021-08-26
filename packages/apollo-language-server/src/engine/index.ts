@@ -160,7 +160,13 @@ export class ApolloEngineClient extends GraphQLDataSource {
         throw new Error(noServiceError(variables.id, this.baseURL));
       }
 
-      if (!(data && data.service)) {
+      if (
+        !(
+          data &&
+          data.service &&
+          data.service.upsertImplementingServiceAndTriggerComposition
+        )
+      ) {
         throw new Error("Error in response from Apollo");
       }
       return data.service.upsertImplementingServiceAndTriggerComposition;
