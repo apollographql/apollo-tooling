@@ -7,7 +7,7 @@ orbs:
   # be found at http://github.com/apollographql/CircleCI-Orbs.
   oss: apollo/oss-ci-cd-tooling@0.0.19
   # win is a windows orb provided by circleci
-  win: circleci/windows@2.4.0
+  win: circleci/windows@2.4.1
 
 commands:
   # These are the steps used for each version of Node which we're testing
