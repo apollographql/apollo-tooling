@@ -8,9 +8,7 @@ import {
   FileChangeType,
   ServerCapabilities
 } from "vscode-languageserver";
-import { QuickPickItem } from "vscode";
 import { GraphQLWorkspace } from "./workspace";
-import { GraphQLLanguageProvider } from "./languageProvider";
 import { LanguageServerLoadingHandler } from "./loadingHandler";
 import { debounceHandler, Debug } from "./utilities";
 
@@ -157,77 +155,6 @@ connection.onDidChangeWatchedFiles(params => {
         break;
     }
   }
-});
-
-const languageProvider = new GraphQLLanguageProvider(workspace);
-
-connection.onHover((params, token) =>
-  languageProvider.provideHover(params.textDocument.uri, params.position, token)
-);
-
-connection.onDefinition((params, token) =>
-  languageProvider.provideDefinition(
-    params.textDocument.uri,
-    params.position,
-    token
-  )
-);
-
-connection.onReferences((params, token) =>
-  languageProvider.provideReferences(
-    params.textDocument.uri,
-    params.position,
-    params.context,
-    token
-  )
-);
-
-connection.onDocumentSymbol((params, token) =>
-  languageProvider.provideDocumentSymbol(params.textDocument.uri, token)
-);
-
-connection.onWorkspaceSymbol((params, token) =>
-  languageProvider.provideWorkspaceSymbol(params.query, token)
-);
-
-connection.onCompletion(
-  debounceHandler((params, token) =>
-    languageProvider.provideCompletionItems(
-      params.textDocument.uri,
-      params.position,
-      token
-    )
-  )
-);
-
-connection.onCodeLens(
-  debounceHandler((params, token) =>
-    languageProvider.provideCodeLenses(params.textDocument.uri, token)
-  )
-);
-
-connection.onCodeAction(
-  debounceHandler((params, token) =>
-    languageProvider.provideCodeAction(
-      params.textDocument.uri,
-      params.range,
-      token
-    )
-  )
-);
-
-connection.onNotification("apollographql/reloadService", () =>
-  workspace.reloadService()
-);
-
-connection.onNotification(
-  "apollographql/tagSelected",
-  (selection: QuickPickItem) => workspace.updateSchemaTag(selection)
-);
-
-connection.onNotification("apollographql/getStats", async ({ uri }) => {
-  const status = await languageProvider.provideStats(uri);
-  connection.sendNotification("apollographql/statsLoaded", status);
 });
 
 // Listen on the connection
