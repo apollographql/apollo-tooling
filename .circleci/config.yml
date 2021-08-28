@@ -81,7 +81,7 @@ jobs:
 
   NodeJS 14:
     docker:
-      - image: cimg/node:14.17.3
+      - image: cimg/node:14.17.5
     steps:
       - common_test_steps
       # We will save the results of this one particular invocation to use in
