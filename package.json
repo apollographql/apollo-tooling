@@ -53,7 +53,7 @@
     "@types/babel__generator": "7.6.3",
     "@types/babel-types": "7.0.10",
     "@types/common-tags": "1.8.1",
-    "@types/core-js": "2.5.4",
+    "@types/core-js": "2.5.5",
     "@types/cosmiconfig": "5.0.3",
     "@types/glob": "7.1.4",
     "@types/inflected": "1.1.29",
