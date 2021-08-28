@@ -30,7 +30,7 @@ jobs:
   # Platform tests, each with the same tests but different platform or version.
   NodeJS 12:
     docker:
-      - image: cimg/node:12.22.3
+      - image: cimg/node:12.22.5
     steps:
       - common_test_steps
 
@@ -121,7 +121,7 @@ jobs:
   # Other tests, unrelated to typical code tests.
   Linting:
     docker:
-      - image: cimg/node:12.22.3
+      - image: cimg/node:12.22.5
     steps:
       - oss/install_specific_npm_version:
           version: '7'
@@ -132,7 +132,7 @@ jobs:
 
   Query Check:
     docker:
-      - image: cimg/node:12.22.3
+      - image: cimg/node:12.22.5
     steps:
       - oss/install_specific_npm_version:
           version: '7'
@@ -149,7 +149,7 @@ jobs:
 
   Generated Types Check:
     docker:
-      - image: cimg/node:12.22.3
+      - image: cimg/node:12.22.5
     steps:
       - oss/install_specific_npm_version:
           version: '7'
