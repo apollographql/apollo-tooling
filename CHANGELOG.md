@@ -19,7 +19,7 @@
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
+  - remove flat polyfill, use Array.prototype.flat instead [PR #2449](https://github.com/apollographql/apollo-tooling/pull/2449)
 - `apollo-language-server`
   - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
@@ -33,7 +33,7 @@
 
 ## apollo@2.33.5
 
-- Adds support for àpollo.config.cjs`files allowing `package.json` files with `type: "module"` [Issue #2342](https://github.com/apollographql/apollo-tooling/issues/2342) [PR #2381](https://github.com/apollographql/apollo-tooling/pull/2381)
+- Adds support for àpollo.config.cjs`files allowing`package.json`files with`type: "module"` [Issue #2342](https://github.com/apollographql/apollo-tooling/issues/2342) [PR #2381](https://github.com/apollographql/apollo-tooling/pull/2381)
 
 ## apollo-tools@0.5.1
 
