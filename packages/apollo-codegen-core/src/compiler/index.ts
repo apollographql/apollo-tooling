@@ -28,7 +28,10 @@ import {
   isUnionType,
   isInterfaceType,
   TypeNode,
-  parseType
+  parseType,
+  isNonNullType,
+  getNullableType,
+  modifiedOutputType,
 } from "graphql";
 
 import {
@@ -414,9 +417,8 @@ class Compiler {
           );
         }
 
-        const fieldType = selectionNode.required
-          ? new GraphQLNonNull(fieldDef.type)
-          : fieldDef.type;
+        const fieldType = modifiedOutputType(fieldDef.type, selectionNode.required);
+
         const typeNode = this.options.exposeTypeNodes
           ? stripProp("loc", parseType(fieldType.toString()))
           : undefined;
