@@ -102,7 +102,7 @@ jobs:
 
   Publish GitHub Release:
     docker:
-      - image: cimg/go:1.16.7
+      - image: cimg/go:1.17.2
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
