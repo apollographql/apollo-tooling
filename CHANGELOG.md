@@ -19,7 +19,7 @@
 - `apollo-env`
   - <First `apollo-env` related entry goes here>
 - `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
+  - Add support for interface on interfaces to transformSchema. [PR #2456](https://github.com/apollographql/apollo-tooling/pull/2456)
 - `apollo-language-server`
   - <First `apollo-language-server` related entry goes here>
 - `apollo-tools`
