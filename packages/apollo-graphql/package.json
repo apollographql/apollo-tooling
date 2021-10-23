@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "keywords": [],
-  "author": "Apollo <opensource@apollographql.com>",
+  "author": "Apollo <packages@apollographql.com>",
   "license": "MIT",
   "engines": {
     "node": ">=6"

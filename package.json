@@ -8,7 +8,7 @@
     "url": "git+https://github.com/apollographql/apollo-tooling.git"
   },
   "license": "MIT",
-  "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "author": "Apollo GraphQL <packages@apollographql.com>",
   "bin": {
     "apollo": "./packages/apollo/bin/run"
   },
