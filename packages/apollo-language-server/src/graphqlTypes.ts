@@ -438,7 +438,7 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
 export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig {
   __typename: "CompositionConfig";
   /**
-   * List of GCS links for implementing services that comprise a composed graph
+   * List of GCS links for implementing services that comprise a composed graph. Is empty if tag/inaccessible is enabled.
    */
   implementingServiceLocations: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServiceLocations[];
 }
@@ -503,7 +503,7 @@ export interface SchemaTagsAndFieldStats_service_schemaTags {
 }
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy {
-  __typename: "ServiceFieldStatsDimensions";
+  __typename: "ServiceFieldLatenciesDimensions";
   field: string | null;
 }
 
@@ -513,18 +513,18 @@ export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics_fieldH
 }
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics {
-  __typename: "ServiceFieldStatsMetrics";
+  __typename: "ServiceFieldLatenciesMetrics";
   fieldHistogram: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics_fieldHistogram;
 }
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats {
-  __typename: "ServiceFieldStatsRecord";
+  __typename: "ServiceFieldLatenciesRecord";
   /**
-   * Dimensions of ServiceFieldStats that can be grouped by.
+   * Dimensions of ServiceFieldLatencies that can be grouped by.
    */
   groupBy: SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy;
   /**
-   * Metrics of ServiceFieldStats that can be aggregated over.
+   * Metrics of ServiceFieldLatencies that can be aggregated over.
    */
   metrics: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics;
 }
@@ -1702,8 +1702,8 @@ export enum ValidationErrorType {
  * Filter options to exclude by client reference ID, client name, and client version.
  */
 export interface ClientInfoFilter {
-  referenceID?: string | null;
   name?: string | null;
+  referenceID?: string | null;
   version?: string | null;
 }
 
@@ -1711,99 +1711,99 @@ export interface ClientInfoFilter {
  * This is stored with a schema when it is uploaded
  */
 export interface GitContextInput {
-  remoteUrl?: string | null;
+  branch?: string | null;
   commit?: string | null;
   committer?: string | null;
   message?: string | null;
-  branch?: string | null;
+  remoteUrl?: string | null;
 }
 
 export interface HistoricQueryParameters {
+  excludedClients?: ClientInfoFilter[] | null;
   from?: any | null;
-  to?: any | null;
+  ignoredOperations?: string[] | null;
+  includedVariants?: string[] | null;
   queryCountThreshold?: number | null;
   queryCountThresholdPercentage?: number | null;
-  ignoredOperations?: string[] | null;
-  excludedClients?: ClientInfoFilter[] | null;
-  includedVariants?: string[] | null;
+  to?: any | null;
 }
 
 export interface IntrospectionDirectiveInput {
-  name: string;
-  description?: string | null;
-  locations: IntrospectionDirectiveLocation[];
   args: IntrospectionInputValueInput[];
+  description?: string | null;
   isRepeatable?: boolean | null;
+  locations: IntrospectionDirectiveLocation[];
+  name: string;
 }
 
 /**
  * __EnumValue introspection type
  */
 export interface IntrospectionEnumValueInput {
-  name: string;
+  deprecationReason?: string | null;
   description?: string | null;
   isDeprecated: boolean;
-  deprecationReason?: string | null;
+  name: string;
 }
 
 /**
  * __Field introspection type
  */
 export interface IntrospectionFieldInput {
-  name: string;
-  description?: string | null;
   args: IntrospectionInputValueInput[];
-  type: IntrospectionTypeInput;
-  isDeprecated: boolean;
   deprecationReason?: string | null;
+  description?: string | null;
+  isDeprecated: boolean;
+  name: string;
+  type: IntrospectionTypeInput;
 }
 
 /**
  * __Value introspection type
  */
 export interface IntrospectionInputValueInput {
-  name: string;
-  description?: string | null;
-  type: IntrospectionTypeInput;
   defaultValue?: string | null;
-  isDeprecated?: boolean | null;
   deprecationReason?: string | null;
+  description?: string | null;
+  isDeprecated?: boolean | null;
+  name: string;
+  type: IntrospectionTypeInput;
 }
 
 /**
  * __Schema introspection type
  */
 export interface IntrospectionSchemaInput {
-  types?: IntrospectionTypeInput[] | null;
-  queryType: IntrospectionTypeRefInput;
-  mutationType?: IntrospectionTypeRefInput | null;
-  subscriptionType?: IntrospectionTypeRefInput | null;
-  directives: IntrospectionDirectiveInput[];
   description?: string | null;
+  directives: IntrospectionDirectiveInput[];
+  mutationType?: IntrospectionTypeRefInput | null;
+  queryType: IntrospectionTypeRefInput;
+  subscriptionType?: IntrospectionTypeRefInput | null;
+  types?: IntrospectionTypeInput[] | null;
 }
 
 /**
  * __Type introspection type
  */
 export interface IntrospectionTypeInput {
+  description?: string | null;
+  enumValues?: IntrospectionEnumValueInput[] | null;
+  fields?: IntrospectionFieldInput[] | null;
+  inputFields?: IntrospectionInputValueInput[] | null;
+  interfaces?: IntrospectionTypeInput[] | null;
   kind: IntrospectionTypeKind;
   name?: string | null;
-  description?: string | null;
-  specifiedByUrl?: string | null;
-  fields?: IntrospectionFieldInput[] | null;
-  interfaces?: IntrospectionTypeInput[] | null;
-  possibleTypes?: IntrospectionTypeInput[] | null;
-  enumValues?: IntrospectionEnumValueInput[] | null;
-  inputFields?: IntrospectionInputValueInput[] | null;
   ofType?: IntrospectionTypeInput | null;
+  possibleTypes?: IntrospectionTypeInput[] | null;
+  specifiedByUrl?: string | null;
 }
 
 /**
  * Shallow __Type introspection type
  */
 export interface IntrospectionTypeRefInput {
-  name: string;
   kind?: string | null;
+  name: string;
 }
 
 export interface OperationDocumentInput {
@@ -1823,8 +1823,8 @@ export interface OperationDocumentInput {
  * the hash does not need to be and will be computed server-side.
  */
 export interface PartialSchemaInput {
-  sdl?: string | null;
   hash?: string | null;
+  sdl?: string | null;
 }
 
 export interface RegisteredClientIdentityInput {
@@ -1834,9 +1834,9 @@ export interface RegisteredClientIdentityInput {
 }
 
 export interface RegisteredOperationInput {
-  signature: string;
   document?: string | null;
   metadata?: RegisteredOperationMetadataInput | null;
+  signature: string;
 }
 
 export interface RegisteredOperationMetadataInput {
