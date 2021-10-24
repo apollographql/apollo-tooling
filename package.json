@@ -32,7 +32,7 @@
   },
   "engines": {
     "node": ">=8 <17",
-    "npm": "7.x"
+    "npm": "8.x"
   },
   "dependencies": {
     "@apollographql/apollo-tools": "file:packages/apollo-tools",
