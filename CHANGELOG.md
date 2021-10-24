@@ -21,11 +21,11 @@
 - `apollo-graphql`
   - Add support for interface on interfaces to transformSchema. [PR #2456](https://github.com/apollographql/apollo-tooling/pull/2456)
 - `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
+  - Improved hover and autocomplete features [#1997](https://github.com/apollographql/apollo-tooling/pull/1997)
 - `apollo-tools`
   - <First `apollo-tools` related entry goes here>
 - `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
+  - Improved hover and autocomplete features [#1997](https://github.com/apollographql/apollo-tooling/pull/1997)
 
 ## apollo@2.33.6
 
