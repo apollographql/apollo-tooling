@@ -1,31 +1,11 @@
-# Changelog
+# CHANGELOG
 
 > **Note:** Apollo's GraphQL VSCode extension is no longer housed in this repository. It is now maintained separately in [this repo](https://github.com/apollographql/vscode-graphql).
 
-## Upcoming
+## `apollo@2.33.7`
 
-- `apollo`
-  - <First `apollo` related entry goes here>
-- `apollo-codegen-flow`
-  - <First `apollo-codegen-flow` related entry goes here>
-- `apollo-codegen-scala`
-  - <First `apollo-codegen-scala` related entry goes here>
-- `apollo-codegen-swift`
-  - <First `apollo-codegen-swift` related entry goes here>
-- `apollo-codegen-typescript`
-  - <First `apollo-codegen-typescript` related entry goes here>
-- `apollo-codegen-core`
-  - <First `apollo-codegen-core` related entry goes here>
-- `apollo-env`
-  - <First `apollo-env` related entry goes here>
-- `apollo-graphql`
+- `apollo-graphql@0.9.4`
   - Add support for interface on interfaces to transformSchema. [PR #2456](https://github.com/apollographql/apollo-tooling/pull/2456)
-- `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
-- `apollo-tools`
-  - <First `apollo-tools` related entry goes here>
-- `vscode-apollo`
-  - <First `vscode-apollo` related entry goes here>
 
 ## `apollo@2.33.6`
 

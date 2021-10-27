@@ -69,7 +69,7 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID for the graph in Apollo to operate client commands with. 
+      The ID for the graph in Apollo to operate client commands with.
       Overrides config file if set.
 
   -v, --variant=variant
@@ -79,7 +79,7 @@ OPTIONS
       Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId
-      Reference id for the client which will match ids from client traces, 
+      Reference id for the client which will match ids from client traces,
       will use clientName if not provided
 
   --clientVersion=clientVersion
@@ -89,16 +89,16 @@ OPTIONS
       The URL for the CLI use to introspect your service
 
   --excludes=excludes
-      Glob of files to exclude for GraphQL operations. Caveat: this doesn't 
+      Glob of files to exclude for GraphQL operations. Caveat: this doesn't
       currently work in watch mode
 
   --header=header
-      Additional header to send during introspection. May be used multiple 
-      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      Additional header to send during introspection. May be used multiple
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
       if using the `--header` flag.
 
   --includes=includes
-      Glob of files to search for GraphQL operations. This should be used to 
+      Glob of files to search for GraphQL operations. This should be used to
       find queries *and* any client schema extensions
 
   --key=key
@@ -108,7 +108,7 @@ OPTIONS
       Deprecated in favor of the includes flag
 
   --tagName=tagName
-      Name of the template literal tag used to identify template literals 
+      Name of the template literal tag used to identify template literals
       containing GraphQL queries in Javascript/Typescript code
 ```
 
@@ -127,16 +127,16 @@ USAGE
 ARGUMENTS
   OUTPUT
       Directory to which generated files will be written.
-      - For TypeScript/Flow generators, this specifies a directory relative 
+      - For TypeScript/Flow generators, this specifies a directory relative
       to each source file by default.
-      - For TypeScript/Flow generators with the "outputFlat" flag is set, 
-      and for the Swift generator, this specifies a file or directory 
+      - For TypeScript/Flow generators with the "outputFlat" flag is set,
+      and for the Swift generator, this specifies a file or directory
       (absolute or relative to the current working directory) to which:
-         - a file will be written for each query (if "output" is a 
+         - a file will be written for each query (if "output" is a
       directory)
          - all generated types will be written
-      - For all other types, this defines a file (absolute or relative to 
-      the current working directory) to which all generated types are 
+      - For all other types, this defines a file (absolute or relative to
+      the current working directory) to which all generated types are
       written.
 
 OPTIONS
@@ -144,21 +144,21 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID for the graph in Apollo to operate client commands with. 
+      The ID for the graph in Apollo to operate client commands with.
       Overrides config file if set.
 
   -v, --variant=variant
       The variant of the graph in Apollo to associate this client to
 
   --[no-]addTypename
-      [default: true] Automatically add __typename to your queries, can be 
+      [default: true] Automatically add __typename to your queries, can be
       unset with --no-addTypename
 
   --clientName=clientName
       Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId
-      Reference id for the client which will match ids from client traces, 
+      Reference id for the client which will match ids from client traces,
       will use clientName if not provided
 
   --clientVersion=clientVersion
@@ -171,30 +171,30 @@ OPTIONS
       The URL for the CLI use to introspect your service
 
   --excludes=excludes
-      Glob of files to exclude for GraphQL operations. Caveat: this doesn't 
+      Glob of files to exclude for GraphQL operations. Caveat: this doesn't
       currently work in watch mode
 
   --globalTypesFile=globalTypesFile
-      By default, TypeScript will put a file named "globalTypes.ts" inside 
-      the "output" directory. Set "globalTypesFile" to specify a different 
-      path. Alternatively, set "tsFileExtension" to modify the extension of 
+      By default, TypeScript will put a file named "globalTypes.ts" inside
+      the "output" directory. Set "globalTypesFile" to specify a different
+      path. Alternatively, set "tsFileExtension" to modify the extension of
       the file, for example "d.ts" will output "globalTypes.d.ts"
 
   --header=header
-      Additional header to send during introspection. May be used multiple 
-      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      Additional header to send during introspection. May be used multiple
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
       if using the `--header` flag.
 
   --includes=includes
-      Glob of files to search for GraphQL operations. This should be used to 
+      Glob of files to search for GraphQL operations. This should be used to
       find queries *and* any client schema extensions
 
   --key=key
       The API key to use for authentication to Apollo
 
   --localSchemaFile=localSchemaFile
-      Path to one or more local GraphQL schema file(s), as introspection 
-      result or SDL. Supports comma-separated list of paths (ex. 
+      Path to one or more local GraphQL schema file(s), as introspection
+      result or SDL. Supports comma-separated list of paths (ex.
       `--localSchemaFile=schema.graphql,extensions.graphql`)
 
   --mergeInFieldsFromFragmentSpreads
@@ -207,19 +207,19 @@ OPTIONS
       Omit deprecated enum cases from generated code [Swift only]
 
   --only=only
-      Parse all input files, but only output generated code for the 
+      Parse all input files, but only output generated code for the
       specified file [Swift only]
 
   --operationIdsPath=operationIdsPath
-      Path to an operation id JSON map file. If specified, also stores the 
-      operation ids (hashes) as properties on operation types [currently 
+      Path to an operation id JSON map file. If specified, also stores the
+      operation ids (hashes) as properties on operation types [currently
       Swift-only]
 
   --outputFlat
-      By default, TypeScript/Flow will put each generated file in a 
-      directory next to its source file using the value of the "output" as 
-      the directory name. Set "outputFlat" to put all generated files in the 
-      directory relative to the current working directory defined by 
+      By default, TypeScript/Flow will put each generated file in a
+      directory next to its source file using the value of the "output" as
+      the directory name. Set "outputFlat" to put all generated files in the
+      directory relative to the current working directory defined by
       "output".
 
   --passthroughCustomScalars
@@ -229,26 +229,26 @@ OPTIONS
       Deprecated in favor of the includes flag
 
   --suppressSwiftMultilineStringLiterals
-      Prevents operations from being rendered as multiline strings [Swift 
+      Prevents operations from being rendered as multiline strings [Swift
       only]
 
   --tagName=tagName
-      Name of the template literal tag used to identify template literals 
+      Name of the template literal tag used to identify template literals
       containing GraphQL queries in Javascript/Typescript code
 
   --target=target
-      (required) Type of code generator to use (swift | typescript | flow | 
+      (required) Type of code generator to use (swift | typescript | flow |
       scala | json | json-modern (exposes raw json types))
 
   --tsFileExtension=tsFileExtension
-      By default, TypeScript will output "ts" files. Set "tsFileExtension" 
+      By default, TypeScript will output "ts" files. Set "tsFileExtension"
       to specify a different file extension, for example "d.ts"
 
   --useFlowExactObjects
       Use Flow exact objects for generated types [flow only]
 
   --useFlowReadOnlyTypes
-      Use read only types for generated types [flow only]. **Deprecated in 
+      Use read only types for generated types [flow only]. **Deprecated in
       favor of `useReadOnlyTypes`.**
 
   --useReadOnlyTypes
@@ -282,7 +282,7 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID for the graph in Apollo to operate client commands with. 
+      The ID for the graph in Apollo to operate client commands with.
       Overrides config file if set.
 
   -v, --variant=variant
@@ -292,7 +292,7 @@ OPTIONS
       Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId
-      Reference id for the client which will match ids from client traces, 
+      Reference id for the client which will match ids from client traces,
       will use clientName if not provided
 
   --clientVersion=clientVersion
@@ -302,16 +302,16 @@ OPTIONS
       The URL for the CLI use to introspect your service
 
   --excludes=excludes
-      Glob of files to exclude for GraphQL operations. Caveat: this doesn't 
+      Glob of files to exclude for GraphQL operations. Caveat: this doesn't
       currently work in watch mode
 
   --header=header
-      Additional header to send during introspection. May be used multiple 
-      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      Additional header to send during introspection. May be used multiple
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
       if using the `--header` flag.
 
   --includes=includes
-      Glob of files to search for GraphQL operations. This should be used to 
+      Glob of files to search for GraphQL operations. This should be used to
       find queries *and* any client schema extensions
 
   --key=key
@@ -321,7 +321,7 @@ OPTIONS
       Deprecated in favor of the includes flag
 
   --tagName=tagName
-      Name of the template literal tag used to identify template literals 
+      Name of the template literal tag used to identify template literals
       containing GraphQL queries in Javascript/Typescript code
 ```
 
@@ -345,7 +345,7 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID for the graph in Apollo to operate client commands with. 
+      The ID for the graph in Apollo to operate client commands with.
       Overrides config file if set.
 
   -v, --variant=variant
@@ -355,7 +355,7 @@ OPTIONS
       Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId
-      Reference id for the client which will match ids from client traces, 
+      Reference id for the client which will match ids from client traces,
       will use clientName if not provided
 
   --clientVersion=clientVersion
@@ -365,34 +365,34 @@ OPTIONS
       The URL for the CLI use to introspect your service
 
   --excludes=excludes
-      Glob of files to exclude for GraphQL operations. Caveat: this doesn't 
+      Glob of files to exclude for GraphQL operations. Caveat: this doesn't
       currently work in watch mode
 
   --header=header
-      Additional header to send during introspection. May be used multiple 
-      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      Additional header to send during introspection. May be used multiple
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
       if using the `--header` flag.
 
   --includes=includes
-      Glob of files to search for GraphQL operations. This should be used to 
+      Glob of files to search for GraphQL operations. This should be used to
       find queries *and* any client schema extensions
 
   --key=key
       The API key to use for authentication to Apollo
 
   --preserveStringAndNumericLiterals
-      Disable redaction of string and numerical literals.  Without this 
-      flag, these values will be replaced with empty strings (`''`) and 
-      zeroes (`0`) respectively.  This redaction is intended to avoid  
-      inadvertently outputting potentially personally identifiable 
-      information (e.g. embedded passwords  or API keys) into operation 
+      Disable redaction of string and numerical literals.  Without this
+      flag, these values will be replaced with empty strings (`''`) and
+      zeroes (`0`) respectively.  This redaction is intended to avoid
+      inadvertently outputting potentially personally identifiable
+      information (e.g. embedded passwords  or API keys) into operation
       manifests
 
   --queries=queries
       Deprecated in favor of the includes flag
 
   --tagName=tagName
-      Name of the template literal tag used to identify template literals 
+      Name of the template literal tag used to identify template literals
       containing GraphQL queries in Javascript/Typescript code
 ```
 
@@ -413,7 +413,7 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID for the graph in Apollo to operate client commands with. 
+      The ID for the graph in Apollo to operate client commands with.
       Overrides config file if set.
 
   -v, --variant=variant
@@ -423,7 +423,7 @@ OPTIONS
       Name of the client that the queries will be attached to
 
   --clientReferenceId=clientReferenceId
-      Reference id for the client which will match ids from client traces, 
+      Reference id for the client which will match ids from client traces,
       will use clientName if not provided
 
   --clientVersion=clientVersion
@@ -433,16 +433,16 @@ OPTIONS
       The URL for the CLI use to introspect your service
 
   --excludes=excludes
-      Glob of files to exclude for GraphQL operations. Caveat: this doesn't 
+      Glob of files to exclude for GraphQL operations. Caveat: this doesn't
       currently work in watch mode
 
   --header=header
-      Additional header to send during introspection. May be used multiple 
-      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      Additional header to send during introspection. May be used multiple
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
       if using the `--header` flag.
 
   --includes=includes
-      Glob of files to search for GraphQL operations. This should be used to 
+      Glob of files to search for GraphQL operations. This should be used to
       find queries *and* any client schema extensions
 
   --key=key
@@ -452,7 +452,7 @@ OPTIONS
       Deprecated in favor of the includes flag
 
   --tagName=tagName
-      Name of the template literal tag used to identify template literals 
+      Name of the template literal tag used to identify template literals
       containing GraphQL queries in Javascript/Typescript code
 ```
 
@@ -548,17 +548,17 @@ DESCRIPTION
 
   Installation of a user-installed plugin will override a core plugin.
 
-  e.g. If you have a core plugin that has a 'hello' command, installing a 
-  user-installed plugin with a 'hello' command will override the core 
-  plugin implementation. This is useful if a user needs to update core 
-  plugin functionality in the CLI without the need to patch and update the 
+  e.g. If you have a core plugin that has a 'hello' command, installing a
+  user-installed plugin with a 'hello' command will override the core
+  plugin implementation. This is useful if a user needs to update core
+  plugin functionality in the CLI without the need to patch and update the
   whole CLI.
 
 ALIASES
   $ apollo plugins:add
 
 EXAMPLES
-  $ apollo plugins:install myplugin 
+  $ apollo plugins:install myplugin
   $ apollo plugins:install https://github.com/someuser/someplugin
   $ apollo plugins:install someuser/someplugin
 ```
@@ -587,12 +587,12 @@ OPTIONS
   -v, --verbose
 
 DESCRIPTION
-  Installation of a linked plugin will override a user-installed or core 
+  Installation of a linked plugin will override a user-installed or core
   plugin.
 
-  e.g. If you have a user-installed or core plugin that has a 'hello' 
-  command, installing a linked plugin with a 'hello' command will override 
-  the user-installed or core plugin implementation. This is useful for 
+  e.g. If you have a user-installed or core plugin that has a 'hello'
+  command, installing a linked plugin with a 'hello' command will override
+  the user-installed or core plugin implementation. This is useful for
   development work.
 
 EXAMPLE
@@ -649,8 +649,8 @@ _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/
 ```
 [DEPRECATED] Check a service against known operation workloads to find breaking changes
 -----------------------------------------------------------------
-DEPRECATED: This command will be removed from the `apollo` CLI in 
-its next major version. Replacement functionality is available in 
+DEPRECATED: This command will be removed from the `apollo` CLI in
+its next major version. Replacement functionality is available in
 the new Apollo Rover CLI: https://go.apollo.dev/t/migration
 -----------------------------------------------------------------
 
@@ -663,7 +663,7 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID of the graph in Apollo to check your proposed schema changes 
+      The ID of the graph in Apollo to check your proposed schema changes
       against. Overrides config file if set.
 
   -v, --variant=variant
@@ -682,52 +682,52 @@ OPTIONS
       The URL for the CLI use to introspect your service
 
   --header=header
-      Additional header to send during introspection. May be used multiple 
-      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      Additional header to send during introspection. May be used multiple
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
       if using the `--header` flag.
 
   --ignoreFailures
       Exit with status 0 when the check completes, even if errors are found
 
   --json
-      Output result in json, which can then be parsed by CLI tools such as 
+      Output result in json, which can then be parsed by CLI tools such as
       jq.
 
   --key=key
       The API key to use for authentication to Apollo
 
   --localSchemaFile=localSchemaFile
-      Path to one or more local GraphQL schema file(s), as introspection 
-      result or SDL. Supports comma-separated list of paths (ex. 
+      Path to one or more local GraphQL schema file(s), as introspection
+      result or SDL. Supports comma-separated list of paths (ex.
       `--localSchemaFile=schema.graphql,extensions.graphql`)
 
   --markdown
       Output result in markdown.
 
   --queryCountThreshold=queryCountThreshold
-      Minimum number of requests within the requested time window for a 
+      Minimum number of requests within the requested time window for a
       query to be considered.
 
   --queryCountThresholdPercentage=queryCountThresholdPercentage
-      Number of requests within the requested time window for a query to be 
-      considered, relative to total request count. Expected values are 
+      Number of requests within the requested time window for a query to be
+      considered, relative to total request count. Expected values are
       between 0 and 0.05 (minimum 5% of total request volume)
 
   --serviceName=serviceName
-      Provides the name of the implementing service for a federated graph. 
-      This flag will indicate that the schema is a partial schema from a 
+      Provides the name of the implementing service for a federated graph.
+      This flag will indicate that the schema is a partial schema from a
       federated service
 
   --validationPeriod=validationPeriod
-      The size of the time window with which to validate the schema against. 
-      You may provide a number (in seconds), or an ISO8601 format duration 
-      for more granularity (see: 
+      The size of the time window with which to validate the schema against.
+      You may provide a number (in seconds), or an ISO8601 format duration
+      for more granularity (see:
       https://en.wikipedia.org/wiki/ISO_8601#Durations)
 
 DESCRIPTION
   -----------------------------------------------------------------
-  DEPRECATED: This command will be removed from the `apollo` CLI in 
-  its next major version. Replacement functionality is available in 
+  DEPRECATED: This command will be removed from the `apollo` CLI in
+  its next major version. Replacement functionality is available in
   the new Apollo Rover CLI: https://go.apollo.dev/t/migration
   -----------------------------------------------------------------
 
@@ -744,8 +744,8 @@ _See code: [src/commands/service/check.ts](https://github.com/apollographql/apol
 ```
 [DEPRECATED] Delete a federated service from Apollo and recompose remaining services
 -----------------------------------------------------------------
-DEPRECATED: This command will be removed from the `apollo` CLI in 
-its next major version. Replacement functionality is available in 
+DEPRECATED: This command will be removed from the `apollo` CLI in
+its next major version. Replacement functionality is available in
 the new Apollo Rover CLI: https://go.apollo.dev/t/migration
 -----------------------------------------------------------------
 
@@ -782,8 +782,8 @@ OPTIONS
 
 DESCRIPTION
   -----------------------------------------------------------------
-  DEPRECATED: This command will be removed from the `apollo` CLI in 
-  its next major version. Replacement functionality is available in 
+  DEPRECATED: This command will be removed from the `apollo` CLI in
+  its next major version. Replacement functionality is available in
   the new Apollo Rover CLI: https://go.apollo.dev/t/migration
   -----------------------------------------------------------------
 ```
@@ -797,8 +797,8 @@ _See code: [src/commands/service/delete.ts](https://github.com/apollographql/apo
 ```
 [DEPRECATED] Download the schema from your GraphQL endpoint.
 -----------------------------------------------------------------
-DEPRECATED: This command will be removed from the `apollo` CLI in 
-its next major version. Replacement functionality is available in 
+DEPRECATED: This command will be removed from the `apollo` CLI in
+its next major version. Replacement functionality is available in
 the new Apollo Rover CLI: https://go.apollo.dev/t/migration
 -----------------------------------------------------------------
 
@@ -833,8 +833,8 @@ OPTIONS
 
 DESCRIPTION
   -----------------------------------------------------------------
-  DEPRECATED: This command will be removed from the `apollo` CLI in 
-  its next major version. Replacement functionality is available in 
+  DEPRECATED: This command will be removed from the `apollo` CLI in
+  its next major version. Replacement functionality is available in
   the new Apollo Rover CLI: https://go.apollo.dev/t/migration
   -----------------------------------------------------------------
 
@@ -851,8 +851,8 @@ _See code: [src/commands/service/download.ts](https://github.com/apollographql/a
 ```
 [DEPRECATED] List the services in a graph
 -----------------------------------------------------------------
-DEPRECATED: This command will be removed from the `apollo` CLI in 
-its next major version. Replacement functionality is available in 
+DEPRECATED: This command will be removed from the `apollo` CLI in
+its next major version. Replacement functionality is available in
 the new Apollo Rover CLI: https://go.apollo.dev/t/migration
 -----------------------------------------------------------------
 
@@ -881,8 +881,8 @@ OPTIONS
 
 DESCRIPTION
   -----------------------------------------------------------------
-  DEPRECATED: This command will be removed from the `apollo` CLI in 
-  its next major version. Replacement functionality is available in 
+  DEPRECATED: This command will be removed from the `apollo` CLI in
+  its next major version. Replacement functionality is available in
   the new Apollo Rover CLI: https://go.apollo.dev/t/migration
   -----------------------------------------------------------------
 ```
@@ -896,8 +896,8 @@ _See code: [src/commands/service/list.ts](https://github.com/apollographql/apoll
 ```
 [DEPRECATED] Push a service definition to Apollo
 -----------------------------------------------------------------
-DEPRECATED: This command will be removed from the `apollo` CLI in 
-its next major version. Replacement functionality is available in 
+DEPRECATED: This command will be removed from the `apollo` CLI in
+its next major version. Replacement functionality is available in
 the new Apollo Rover CLI: https://go.apollo.dev/t/migration
 -----------------------------------------------------------------
 
@@ -910,7 +910,7 @@ OPTIONS
       Path to your Apollo config file
 
   -g, --graph=graph
-      The ID of the graph in Apollo to publish your service to. Overrides 
+      The ID of the graph in Apollo to publish your service to. Overrides
       config file if set.
 
   -v, --variant=variant
@@ -929,33 +929,33 @@ OPTIONS
       The URL for the CLI use to introspect your service
 
   --header=header
-      Additional header to send during introspection. May be used multiple 
-      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED 
+      Additional header to send during introspection. May be used multiple
+      times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED
       if using the `--header` flag.
 
   --key=key
       The API key to use for authentication to Apollo
 
   --localSchemaFile=localSchemaFile
-      Path to one or more local GraphQL schema file(s), as introspection 
-      result or SDL. Supports comma-separated list of paths (ex. 
+      Path to one or more local GraphQL schema file(s), as introspection
+      result or SDL. Supports comma-separated list of paths (ex.
       `--localSchemaFile=schema.graphql,extensions.graphql`)
 
   --serviceName=serviceName
       Provides the name of the implementing service for a federated graph
 
   --serviceRevision=serviceRevision
-      Provides a unique revision identifier for a change to an implementing 
+      Provides a unique revision identifier for a change to an implementing
       service on a federated service push. The default of this is a git sha
 
   --serviceURL=serviceURL
-      Provides the url to the location of the implementing service for a 
+      Provides the url to the location of the implementing service for a
       federated graph
 
 DESCRIPTION
   -----------------------------------------------------------------
-  DEPRECATED: This command will be removed from the `apollo` CLI in 
-  its next major version. Replacement functionality is available in 
+  DEPRECATED: This command will be removed from the `apollo` CLI in
+  its next major version. Replacement functionality is available in
   the new Apollo Rover CLI: https://go.apollo.dev/t/migration
   -----------------------------------------------------------------
 
@@ -1139,7 +1139,7 @@ Some integration tests rely on mocked server data (service:check for example). M
 
 ## Publishing
 
-1. Make sure the `CHANGELOG.md` is updated with all changes committed since the last release. Make sure the versions for each package to update are correct, and there's a blank `Upcoming` section for future work.
+1. Make sure the `CHANGELOG.md` is updated with all changes committed since the last release. Make sure the versions for each package to update are correct.
 2. Run `npm run release:version-bump -- <bumpish>`
    - Can use major, minor, patch, prepatch, etc for the bump type. If not used, the command will prompt and ask for the bump type.
    - This command updates git tags locally and on GitHub
