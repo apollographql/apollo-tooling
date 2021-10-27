@@ -27,46 +27,43 @@
 - `vscode-apollo`
   - <First `vscode-apollo` related entry goes here>
 
-## apollo@2.33.6
+## `apollo@2.33.6`
 
-- Removed the use of the `tty` npm package which has been removed from npm. [PR #2406](https://github.com/apollographql/apollo-tooling/pull/2406) [Issue #2407](https://github.com/apollographql/apollo-tooling/issues/2407)
+- `apollo@2.33.6`
+  - Removed the use of the `tty` npm package which has been removed from npm. [PR #2406](https://github.com/apollographql/apollo-tooling/pull/2406) [Issue #2407](https://github.com/apollographql/apollo-tooling/issues/2407)
 
-## apollo@2.33.5
+## `apollo@2.33.5`
 
-- Adds support for àpollo.config.cjs`files allowing `package.json` files with `type: "module"` [Issue #2342](https://github.com/apollographql/apollo-tooling/issues/2342) [PR #2381](https://github.com/apollographql/apollo-tooling/pull/2381)
+- `apollo@2.33.5`
+  - Adds support for àpollo.config.cjs`files allowing `package.json` files with `type: "module"` [Issue #2342](https://github.com/apollographql/apollo-tooling/issues/2342) [PR #2381](https://github.com/apollographql/apollo-tooling/pull/2381)
 
-## apollo-tools@0.5.1
+- `apollo-tools@0.5.1`
+  - Remove dependency on `apollo-env`, so using this package no longer installs polyfills.
 
-- Remove dependency on `apollo-env`, so using this package no longer installs polyfills.
+- `apollo-graphql@0.9.3`
+  - Complex directive arguments don't break `transformSchema` (Fixes #2162) [PR #2335](https://github.com/apollographql/apollo-tooling/pull/2335)
 
-## apollo-graphql@0.9.3
+## `apollo@2.33.2`
 
-- Complex directive arguments don't break `transformSchema` (Fixes #2162) [PR #2335](https://github.com/apollographql/apollo-tooling/pull/2335)
-
-## apollo@2.33.2
-
-- Add a deprecation message to all `apollo service:*` commands, pointing people towards the [Apollo Rover CLI migration guide](https://go.apollo.dev/t/migration). <br/>
+- `apollo@2.33.2`
+  - Add a deprecation message to all `apollo service:*` commands, pointing people towards the [Apollo Rover CLI migration guide](https://go.apollo.dev/t/migration). <br/>
   [@hwillson](https://github.com/hwillson) in [#2308](https://github.com/apollographql/apollo-tooling/pull/2308)
 
-## apollo-env@0.10.0
+- `apollo-env@0.10.0`
+  - deps: Updated `node-fetch` to v2.6.1
 
-- deps: Updated `node-fetch` to v2.6.1
+- `apollo-graphql@0.9.2`
+  - Add missing `sha.js` dependency [PR #2283](https://github.com/apollographql/apollo-tooling/pull/2283)
 
-## apollo-graphql@0.9.2
+- `apollo-env@0.9.0`
+  - The following utility functions are no longer exported from `apollo-env` and can now be found in the `apollo-graphql` library:
+    - `createHash`
+    - `isNodeLike`
+    - `mapValues`
+    - `isNotNullOrDefined`
 
-- Add missing `sha.js` dependency [PR #2283](https://github.com/apollographql/apollo-tooling/pull/2283)
-
-## apollo-env@0.9.0
-
-- The following utility functions are no longer exported from `apollo-env` and can now be found in the `apollo-graphql` library:
-  - `createHash`
-  - `isNodeLike`
-  - `mapValues`
-  - `isNotNullOrDefined`
-
-## apollo-graphql@0.9.0
-
-- This package no longer depends on `apollo-env` to avoid the side-effects of its polyfills.
+- `apollo-graphql@0.9.0`
+  - This package no longer depends on `apollo-env` to avoid the side-effects of its polyfills.
 
 ## `apollo@2.32.5`
 
