@@ -2,6 +2,11 @@
 
 > **Note:** Apollo's GraphQL VSCode extension is no longer housed in this repository. It is now maintained separately in [this repo](https://github.com/apollographql/vscode-graphql).
 
+## vNEXT
+
+- `apollo-graphql`
+  - Export useful operation sanitization transforms [PR #2057](https://github.com/apollographql/apollo-tooling/pull/2057)
+
 ## `apollo@2.33.7`
 
 - `apollo-graphql@0.9.4`
