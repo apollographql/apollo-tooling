@@ -371,8 +371,8 @@ type MutationRoot {
           }
         `
       );
-      expect(schema.astNode?.directives).toHaveLength(1);
-      expect(schema.astNode?.directives![0].name.value).toEqual("contact");
+      expect(schema.astNode!.directives).toHaveLength(1);
+      expect(schema.astNode!.directives![0].name.value).toEqual("contact");
     });
   });
 

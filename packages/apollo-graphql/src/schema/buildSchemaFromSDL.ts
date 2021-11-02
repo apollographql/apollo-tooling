@@ -132,7 +132,9 @@ export function buildSchemaFromSDL(
       directiveDefinitions.push(definition);
     } else if (definition.kind === Kind.SCHEMA_DEFINITION) {
       schemaDefinitions.push(definition);
-      schemaDirectives.push(...(definition.directives ?? []));
+      schemaDirectives.push(
+        ...(definition.directives ? definition.directives : [])
+      );
     } else if (definition.kind === Kind.SCHEMA_EXTENSION) {
       schemaExtensions.push(definition);
     }
