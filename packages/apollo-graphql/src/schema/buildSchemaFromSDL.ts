@@ -218,7 +218,7 @@ export function buildSchemaFromSDL(
         : undefined
     ),
     astNode: {
-      kind: 'SchemaDefinition',
+      kind: Kind.SCHEMA_DEFINITION,
       directives: schemaDirectives,
       operationTypes: [] // satisfies typescript, will be ignored
     }
