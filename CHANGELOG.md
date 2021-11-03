@@ -6,6 +6,7 @@
 
 - `apollo-graphql`
   - Export useful operation sanitization transforms [PR #2057](https://github.com/apollographql/apollo-tooling/pull/2057)
+  - Preserve directive usages on SchemaDefinition nodes in `buildSchemaFromSDL` [PR #2457](https://github.com/apollographql/apollo-tooling/pull/2457)
 
 ## `apollo@2.33.7`
 

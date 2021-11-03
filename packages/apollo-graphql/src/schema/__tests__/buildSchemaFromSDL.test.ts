@@ -351,6 +351,29 @@ type MutationRoot {
         `"Unknown directive \\"@something\\"."`
       );
     });
+
+    it(`should preserve directive usages from the schema definition node`, () => {
+      const schema = buildSchemaFromSDL(
+        gql`
+          directive @contact(
+            name: String!
+            url: String!
+            description: String
+          ) on SCHEMA
+
+          schema
+            @contact(
+              name: "Contact"
+              url: "http://example.com/contact"
+              description: "Testing"
+            ) {
+            query: Query
+          }
+        `
+      );
+      expect(schema.astNode!.directives).toHaveLength(1);
+      expect(schema.astNode!.directives![0].name.value).toEqual("contact");
+    });
   });
 
   describe(`resolvers`, () => {
