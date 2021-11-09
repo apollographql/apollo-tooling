@@ -202,8 +202,8 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 			\\"fragmentsReferenced\\": [
 				\\"CharacterDetails\\"
 			],
-			\\"sourceWithFragments\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    id\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\\\nfragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    height\\\\n  }\\\\n}\\",
-			\\"operationId\\": \\"9ea2d583a2bcf98ddcedc95a807e34011ff3c0f66fabaf01fa0169e4a4159121\\"
+			\\"sourceWithFragments\\": \\"query HeroAndDetails {\\\\n  hero {\\\\n    __typename\\\\n    id\\\\n    ...CharacterDetails\\\\n  }\\\\n}\\\\nfragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    __typename\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    __typename\\\\n    height\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"8382c257b6468c99d5f57b35465ec8b2f8ad6cba4ea6f7dbf4040894787c8e02\\"
 		}
 	],
 	\\"fragments\\": [
@@ -215,7 +215,7 @@ exports[`JSON output should generate JSON output for a query with a fragment spr
 			],
 			\\"fragmentName\\": \\"CharacterDetails\\",
 			\\"filePath\\": \\"GraphQL request\\",
-			\\"source\\": \\"fragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    height\\\\n  }\\\\n}\\",
+			\\"source\\": \\"fragment CharacterDetails on Character {\\\\n  __typename\\\\n  name\\\\n  ... on Droid {\\\\n    __typename\\\\n    primaryFunction\\\\n  }\\\\n  ... on Human {\\\\n    __typename\\\\n    height\\\\n  }\\\\n}\\",
 			\\"fields\\": [
 				{
 					\\"responseName\\": \\"__typename\\",
@@ -707,7 +707,7 @@ exports[`JSON output should list all interfaces and their implementing types und
 			\\"operationType\\": \\"query\\",
 			\\"rootType\\": \\"Query\\",
 			\\"variables\\": [],
-			\\"source\\": \\"query HeroForEpisode {\\\\n  hero(episode: JEDI) {\\\\n    __typename\\\\n    name\\\\n    ... on Droid {\\\\n      primaryFunction\\\\n    }\\\\n  }\\\\n}\\",
+			\\"source\\": \\"query HeroForEpisode {\\\\n  hero(episode: JEDI) {\\\\n    __typename\\\\n    name\\\\n    ... on Droid {\\\\n      __typename\\\\n      primaryFunction\\\\n    }\\\\n  }\\\\n}\\",
 			\\"fields\\": [
 				{
 					\\"responseName\\": \\"hero\\",
@@ -779,8 +779,8 @@ exports[`JSON output should list all interfaces and their implementing types und
 			\\"fragmentSpreads\\": [],
 			\\"inlineFragments\\": [],
 			\\"fragmentsReferenced\\": [],
-			\\"sourceWithFragments\\": \\"query HeroForEpisode {\\\\n  hero(episode: JEDI) {\\\\n    __typename\\\\n    name\\\\n    ... on Droid {\\\\n      primaryFunction\\\\n    }\\\\n  }\\\\n}\\",
-			\\"operationId\\": \\"173a7ebf41abd014f3fc54ddd007f6182fca738bd44a1e2d1bb75503c8bf79f6\\"
+			\\"sourceWithFragments\\": \\"query HeroForEpisode {\\\\n  hero(episode: JEDI) {\\\\n    __typename\\\\n    name\\\\n    ... on Droid {\\\\n      __typename\\\\n      primaryFunction\\\\n    }\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"ea3ecdd4626f2b1423ed6c91cf4a0f1b506b66391c6ab2bb67f1c605bcdcaf8e\\"
 		}
 	],
 	\\"fragments\\": [],
@@ -807,7 +807,7 @@ exports[`JSON output should list all unions and their types under a \`unionTypes
 			\\"operationType\\": \\"query\\",
 			\\"rootType\\": \\"Query\\",
 			\\"variables\\": [],
-			\\"source\\": \\"query Search {\\\\n  search(text: \\\\\\"an\\\\\\") {\\\\n    __typename\\\\n    ... on Human {\\\\n      name\\\\n      height\\\\n    }\\\\n    ... on Droid {\\\\n      name\\\\n      primaryFunction\\\\n    }\\\\n    ... on Starship {\\\\n      name\\\\n      length\\\\n    }\\\\n  }\\\\n}\\",
+			\\"source\\": \\"query Search {\\\\n  search(text: \\\\\\"an\\\\\\") {\\\\n    __typename\\\\n    ... on Human {\\\\n      __typename\\\\n      name\\\\n      height\\\\n    }\\\\n    ... on Droid {\\\\n      __typename\\\\n      name\\\\n      primaryFunction\\\\n    }\\\\n    ... on Starship {\\\\n      __typename\\\\n      name\\\\n      length\\\\n    }\\\\n  }\\\\n}\\",
 			\\"fields\\": [
 				{
 					\\"responseName\\": \\"search\\",
@@ -935,8 +935,8 @@ exports[`JSON output should list all unions and their types under a \`unionTypes
 			\\"fragmentSpreads\\": [],
 			\\"inlineFragments\\": [],
 			\\"fragmentsReferenced\\": [],
-			\\"sourceWithFragments\\": \\"query Search {\\\\n  search(text: \\\\\\"an\\\\\\") {\\\\n    __typename\\\\n    ... on Human {\\\\n      name\\\\n      height\\\\n    }\\\\n    ... on Droid {\\\\n      name\\\\n      primaryFunction\\\\n    }\\\\n    ... on Starship {\\\\n      name\\\\n      length\\\\n    }\\\\n  }\\\\n}\\",
-			\\"operationId\\": \\"9887ff0652e14d678a66769b853c41293d4afb1d1338bbbdb9f84e66979605dd\\"
+			\\"sourceWithFragments\\": \\"query Search {\\\\n  search(text: \\\\\\"an\\\\\\") {\\\\n    __typename\\\\n    ... on Human {\\\\n      __typename\\\\n      name\\\\n      height\\\\n    }\\\\n    ... on Droid {\\\\n      __typename\\\\n      name\\\\n      primaryFunction\\\\n    }\\\\n    ... on Starship {\\\\n      __typename\\\\n      name\\\\n      length\\\\n    }\\\\n  }\\\\n}\\",
+			\\"operationId\\": \\"4e878da6864f199125278cef600dbd9609d553cec95f363324dea5ca7410e4c5\\"
 		}
 	],
 	\\"fragments\\": [],
