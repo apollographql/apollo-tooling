@@ -2,15 +2,17 @@
 
 > **Note:** Apollo's GraphQL VSCode extension is no longer housed in this repository. It is now maintained separately in [this repo](https://github.com/apollographql/vscode-graphql).
 
-## vNEXT
+## `apollo@2.33.9`
 
-- `apollo-graphql`
-  - Export useful operation sanitization transforms [PR #2057](https://github.com/apollographql/apollo-tooling/pull/2057)
-  - Preserve directive usages on SchemaDefinition nodes in `buildSchemaFromSDL` [PR #2457](https://github.com/apollographql/apollo-tooling/pull/2457)
-
-- `apollo-language-server` / `apollo-codegen-core`
+- `apollo-language-server@1.26.7` / `apollo-codegen-core@0.40.7`
   - Adjust `apollo-codegen-core` to use the same `withTypenameFieldAddedWhereNeeded` utility as `apollo-language-server`, to make sure modified operations align between codegen and anything leveraging the language server utility functions (like the `client:push` command). <br/>
   [@hwillson](https://github.com/hwillson) in [#2473](https://github.com/apollographql/apollo-tooling/pull/2473)
+
+## `apollo@2.33.8`
+
+- `apollo-graphql@0.9.5`
+  - Export useful operation sanitization transforms [PR #2057](https://github.com/apollographql/apollo-tooling/pull/2057)
+  - Preserve directive usages on SchemaDefinition nodes in `buildSchemaFromSDL` [PR #2457](https://github.com/apollographql/apollo-tooling/pull/2457)
 
 ## `apollo@2.33.7`
 
