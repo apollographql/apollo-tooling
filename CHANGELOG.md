@@ -8,6 +8,10 @@
   - Export useful operation sanitization transforms [PR #2057](https://github.com/apollographql/apollo-tooling/pull/2057)
   - Preserve directive usages on SchemaDefinition nodes in `buildSchemaFromSDL` [PR #2457](https://github.com/apollographql/apollo-tooling/pull/2457)
 
+- `apollo-language-server` / `apollo-codegen-core`
+  - Adjust `apollo-codegen-core` to use the same `withTypenameFieldAddedWhereNeeded` utility as `apollo-language-server`, to make sure modified operations align between codegen and anything leveraging the language server utility functions (like the `client:push` command). <br/>
+  [@hwillson](https://github.com/hwillson) in [#2473](https://github.com/apollographql/apollo-tooling/pull/2473)
+
 ## `apollo@2.33.7`
 
 - `apollo-graphql@0.9.4`

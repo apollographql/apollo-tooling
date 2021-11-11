@@ -25,5 +25,5 @@ export * from "./config";
 import * as graphqlTypes from "./graphqlTypes";
 export { graphqlTypes };
 
-// debug logger
-export { Debug } from "./utilities";
+// GraphQL utilities
+export { Debug, withTypenameFieldAddedWhereNeeded } from "./utilities";

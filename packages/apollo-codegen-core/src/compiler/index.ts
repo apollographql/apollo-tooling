@@ -36,9 +36,10 @@ import {
   getFieldDef,
   valueFromValueNode,
   filePathForNode,
-  withTypenameFieldAddedWhereNeeded,
   isMetaFieldName
 } from "../utilities/graphql";
+
+import { withTypenameFieldAddedWhereNeeded } from "apollo-language-server";
 
 export interface CompilerOptions {
   addTypename?: boolean;

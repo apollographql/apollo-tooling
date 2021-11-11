@@ -1,9 +1,6 @@
 import { parse, print } from "graphql";
-import {
-  withTypenameFieldAddedWhereNeeded,
-  removeConnectionDirectives,
-  removeClientDirectives
-} from "../graphql";
+import { removeConnectionDirectives, removeClientDirectives } from "../graphql";
+import { withTypenameFieldAddedWhereNeeded } from "apollo-language-server";
 
 describe("typename additions", () => {
   it("adds typenames to selectionSets", () => {
