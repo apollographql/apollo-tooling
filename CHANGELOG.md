@@ -2,6 +2,10 @@
 
 > **Note:** Apollo's GraphQL VSCode extension is no longer housed in this repository. It is now maintained separately in [this repo](https://github.com/apollographql/vscode-graphql).
 
+## vNEXT
+- `apollo-codegen-swift`
+  - Add namespace when a fragment struct is referenced (Fixes #2396) [PR #2397](https://github.com/apollographql/apollo-tooling/pull/2397)
+
 ## `apollo@2.33.9`
 
 - `apollo-language-server@1.26.7` / `apollo-codegen-core@0.40.7`

@@ -125,7 +125,25 @@ export class Helpers {
     return pascalCase(Inflector.singularize(propertyName));
   }
 
+  /**
+   * Returns the Swift name for a struct representing a fragment. This must contain
+   * the application namespace in case the fragment name is the same as the name of any
+   * field in the current query, otherwise, Swift will assume the type reference is to
+   * the struct that we're inside the namespace of.
+   */
   structNameForFragmentName(fragmentName: string) {
+    const prefix =
+      this.options && this.options.namespace
+        ? `${this.options.namespace}.`
+        : "";
+    return `${prefix}${pascalCase(fragmentName)}`;
+  }
+
+  /**
+   * Returns the Swift struct name that is being declared. When declaring a struct in Swift,
+   * no namespace can be included in the name.
+   */
+  structDeclarationNameForFragmentName(fragmentName: string) {
     return pascalCase(fragmentName);
   }
 
