@@ -1,67 +1,73 @@
-# Changelog
+# CHANGELOG
 
 > **Note:** Apollo's GraphQL VSCode extension is no longer housed in this repository. It is now maintained separately in [this repo](https://github.com/apollographql/vscode-graphql).
 
-## Upcoming
-
-- `apollo`
-  - <First `apollo` related entry goes here>
-- `apollo-codegen-flow`
-  - <First `apollo-codegen-flow` related entry goes here>
-- `apollo-codegen-scala`
-  - <First `apollo-codegen-scala` related entry goes here>
+## vNEXT
 - `apollo-codegen-swift`
   - Add namespace when a fragment struct is referenced (Fixes #2396) [PR #2397](https://github.com/apollographql/apollo-tooling/pull/2397)
-- `apollo-codegen-typescript`
-  - <First `apollo-codegen-typescript` related entry goes here>
-- `apollo-codegen-core`
-  - <First `apollo-codegen-core` related entry goes here>
-- `apollo-env`
-  - <First `apollo-env` related entry goes here>
-- `apollo-graphql`
-  - <First `apollo-graphql` related entry goes here>
-- `apollo-language-server`
-  - <First `apollo-language-server` related entry goes here>
-- `apollo-tools`
-  - <First `apollo-tools` related entry goes here>
 
-## apollo-tools@0.5.1
-- Remove dependency on `apollo-env`, so using this package no longer installs polyfills.
+## `apollo@2.33.9`
 
-## apollo-graphql@0.9.3
-- Complex directive arguments don't break `transformSchema` (Fixes #2162) [PR #2335](https://github.com/apollographql/apollo-tooling/pull/2335)
+- `apollo-language-server@1.26.7` / `apollo-codegen-core@0.40.7`
+  - Adjust `apollo-codegen-core` to use the same `withTypenameFieldAddedWhereNeeded` utility as `apollo-language-server`, to make sure modified operations align between codegen and anything leveraging the language server utility functions (like the `client:push` command). <br/>
+  [@hwillson](https://github.com/hwillson) in [#2473](https://github.com/apollographql/apollo-tooling/pull/2473)
 
-## apollo@2.33.2
+## `apollo@2.33.8`
 
-- Add a deprecation message to all `apollo service:*` commands, pointing people towards the [Apollo Rover CLI migration guide](https://go.apollo.dev/t/migration). <br/>
+- `apollo-graphql@0.9.5`
+  - Export useful operation sanitization transforms [PR #2057](https://github.com/apollographql/apollo-tooling/pull/2057)
+  - Preserve directive usages on SchemaDefinition nodes in `buildSchemaFromSDL` [PR #2457](https://github.com/apollographql/apollo-tooling/pull/2457)
+
+## `apollo@2.33.7`
+
+- `apollo-graphql@0.9.4`
+  - Add support for interface on interfaces to transformSchema. [PR #2456](https://github.com/apollographql/apollo-tooling/pull/2456)
+
+## `apollo@2.33.6`
+
+- `apollo@2.33.6`
+  - Removed the use of the `tty` npm package which has been removed from npm. [PR #2406](https://github.com/apollographql/apollo-tooling/pull/2406) [Issue #2407](https://github.com/apollographql/apollo-tooling/issues/2407)
+
+## `apollo@2.33.5`
+
+- `apollo@2.33.5`
+  - Adds support for àpollo.config.cjs`files allowing `package.json` files with `type: "module"` [Issue #2342](https://github.com/apollographql/apollo-tooling/issues/2342) [PR #2381](https://github.com/apollographql/apollo-tooling/pull/2381)
+
+- `apollo-tools@0.5.1`
+  - Remove dependency on `apollo-env`, so using this package no longer installs polyfills.
+
+- `apollo-graphql@0.9.3`
+  - Complex directive arguments don't break `transformSchema` (Fixes #2162) [PR #2335](https://github.com/apollographql/apollo-tooling/pull/2335)
+
+## `apollo@2.33.2`
+
+- `apollo@2.33.2`
+  - Add a deprecation message to all `apollo service:*` commands, pointing people towards the [Apollo Rover CLI migration guide](https://go.apollo.dev/t/migration). <br/>
   [@hwillson](https://github.com/hwillson) in [#2308](https://github.com/apollographql/apollo-tooling/pull/2308)
 
-## apollo-env@0.10.0
+- `apollo-env@0.10.0`
+  - deps: Updated `node-fetch` to v2.6.1
 
-- deps: Updated `node-fetch` to v2.6.1
+- `apollo-graphql@0.9.2`
+  - Add missing `sha.js` dependency [PR #2283](https://github.com/apollographql/apollo-tooling/pull/2283)
 
-## apollo-graphql@0.9.2
-
-- Add missing `sha.js` dependency [PR #2283](https://github.com/apollographql/apollo-tooling/pull/2283)
-
-## apollo-env@0.9.0
-
-- The following utility functions are no longer exported from `apollo-env` and can now be found in the `apollo-graphql` library:
+- `apollo-env@0.9.0`
+  - The following utility functions are no longer exported from `apollo-env` and can now be found in the `apollo-graphql` library:
     - `createHash`
     - `isNodeLike`
     - `mapValues`
     - `isNotNullOrDefined`
 
-## apollo-graphql@0.9.0
-
-- This package no longer depends on `apollo-env` to avoid the side-effects of its polyfills.
+- `apollo-graphql@0.9.0`
+  - This package no longer depends on `apollo-env` to avoid the side-effects of its polyfills.
 
 ## `apollo@2.32.5`
 
 - `apollo@2.32.5`
+
   - Bump version of `env-ci` [#1754](https://github.com/apollographql/apollo-tooling/pull/1754) [Issue #2219](https://github.com/apollographql/apollo-tooling/issues/2219)
 
-    Due to human error during the release process, the following packages also had their versions bumped, despite having no known significant changes.  (Apologies, from that human.)
+    Due to human error during the release process, the following packages also had their versions bumped, despite having no known significant changes. (Apologies, from that human.)
 
     - `apollo-codegen-core@0.39.3`
     - `apollo-codegen-flow@0.37.3`
@@ -76,14 +82,18 @@
 
 ## `apollo@2.32.4`
 
-- This version should not be used as it was published without depended-on packages.  Please use `apollo@2.32.5` instead.
+- This version should not be used as it was published without depended-on packages. Please use `apollo@2.32.5` instead.
+
 ## `apollo@2.32.3`
 
 - This version was not actually published.
+
 ## `apollo@2.32.3`
 
 - This version was not actually published.
+
 ## `apollo@2.32.1`
+
 - `apollo-codegen-swift`
   - Fix issue where a query referencing many fragments caused type checking for `queryDocument` to time out [#2198](https://github.com/apollographql/apollo-tooling/pull/2198)
 
@@ -95,19 +105,19 @@
 ## `apollo@2.31.2`
 
 - `apollo-codegen-swift`
-   - Fix bug in generated compound type names that lead to structName being inconsistent throughout codegen [#2170](https://github.com/apollographql/apollo-tooling/pull/2170)
+  - Fix bug in generated compound type names that lead to structName being inconsistent throughout codegen [#2170](https://github.com/apollographql/apollo-tooling/pull/2170)
 
 ## `apollo@2.31.1`
 
-  - Update CLI default API domain from `engine-graphql.apollographql.com` to `graphql.api.apollographql.com`.
-    Users that have set up support for corporate proxies or firewalls may need to update configurations.
-  - Accept GitLab remote URLs when fetching git info for service:check and service:push [#2104](https://github.com/apollographql/apollo-tooling/pull/2104)
-  - `--commitId` in `service:check` and `service:push` overrides the current commit ID otherwise read through [env-ci](https://www.npmjs.com/package/env-ci).
-  - `service:push` now takes `--author` and `--branch` matching `service:check`.
+- Update CLI default API domain from `engine-graphql.apollographql.com` to `graphql.api.apollographql.com`.
+  Users that have set up support for corporate proxies or firewalls may need to update configurations.
+- Accept GitLab remote URLs when fetching git info for service:check and service:push [#2104](https://github.com/apollographql/apollo-tooling/pull/2104)
+- `--commitId` in `service:check` and `service:push` overrides the current commit ID otherwise read through [env-ci](https://www.npmjs.com/package/env-ci).
+- `service:push` now takes `--author` and `--branch` matching `service:check`.
 
 ## `apollo-graphql@0.6.0`
 
-  - Rename `defaultEngineReportingSignature` to `defaultUsageReportingSignature`; the old name continues to be exported as well.
+- Rename `defaultEngineReportingSignature` to `defaultUsageReportingSignature`; the old name continues to be exported as well.
 
 ## `apollo@2.30.2`
 
@@ -117,7 +127,7 @@
 ## `apollo@2.30.1`
 
 - `apollo-codegen-swift@0.37.7`
-    - Generate JSON file including fragments when --operationIds option is provided [#2017](https://github.com/apollographql/apollo-tooling/pull/2017)
+  - Generate JSON file including fragments when --operationIds option is provided [#2017](https://github.com/apollographql/apollo-tooling/pull/2017)
 
 ## `apollo@2.30.0`
 

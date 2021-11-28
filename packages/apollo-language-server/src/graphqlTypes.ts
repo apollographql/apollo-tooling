@@ -438,7 +438,7 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
 export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig {
   __typename: "CompositionConfig";
   /**
-   * List of GCS links for implementing services that comprise a composed graph
+   * List of GCS links for implementing services that comprise a composed graph. Is empty if tag/inaccessible is enabled.
    */
   implementingServiceLocations: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServiceLocations[];
 }
@@ -503,7 +503,7 @@ export interface SchemaTagsAndFieldStats_service_schemaTags {
 }
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy {
-  __typename: "ServiceFieldStatsDimensions";
+  __typename: "ServiceFieldLatenciesDimensions";
   field: string | null;
 }
 
@@ -513,18 +513,18 @@ export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics_fieldH
 }
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics {
-  __typename: "ServiceFieldStatsMetrics";
+  __typename: "ServiceFieldLatenciesMetrics";
   fieldHistogram: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics_fieldHistogram;
 }
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats {
-  __typename: "ServiceFieldStatsRecord";
+  __typename: "ServiceFieldLatenciesRecord";
   /**
-   * Dimensions of ServiceFieldStats that can be grouped by.
+   * Dimensions of ServiceFieldLatencies that can be grouped by.
    */
   groupBy: SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy;
   /**
-   * Metrics of ServiceFieldStats that can be aggregated over.
+   * Metrics of ServiceFieldLatencies that can be aggregated over.
    */
   metrics: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics;
 }
@@ -601,7 +601,7 @@ export interface UploadAndComposePartialSchema_service_upsertImplementingService
 
 export interface UploadAndComposePartialSchema_service {
   __typename: "ServiceMutation";
-  upsertImplementingServiceAndTriggerComposition: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition;
+  upsertImplementingServiceAndTriggerComposition: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition | null;
 }
 
 export interface UploadAndComposePartialSchema {

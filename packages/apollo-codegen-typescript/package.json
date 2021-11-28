@@ -1,8 +1,8 @@
 {
   "name": "apollo-codegen-typescript",
   "description": "TypeScript generator module for Apollo Codegen",
-  "version": "0.40.3",
-  "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "version": "0.40.7",
+  "author": "Apollo GraphQL <packages@apollographql.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -17,8 +17,8 @@
     "npm": ">=6"
   },
   "dependencies": {
-    "@babel/generator": "7.14.8",
-    "@babel/types": "7.14.8",
+    "@babel/generator": "7.16.0",
+    "@babel/types": "7.16.0",
     "apollo-codegen-core": "file:../apollo-codegen-core",
     "change-case": "^4.0.0",
     "common-tags": "^1.5.1",

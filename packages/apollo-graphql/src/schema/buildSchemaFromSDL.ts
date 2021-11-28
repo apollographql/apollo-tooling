@@ -18,7 +18,8 @@ import {
   isAbstractType,
   isScalarType,
   isEnumType,
-  GraphQLEnumValueConfig
+  GraphQLEnumValueConfig,
+  DirectiveNode
 } from "graphql";
 import { validateSDL } from "graphql/validation/validate";
 import { isDocumentNode, isNode } from "../utilities/graphql";
@@ -108,6 +109,7 @@ export function buildSchemaFromSDL(
 
   const schemaDefinitions: SchemaDefinitionNode[] = [];
   const schemaExtensions: SchemaExtensionNode[] = [];
+  const schemaDirectives: DirectiveNode[] = [];
 
   for (const definition of documentAST.definitions) {
     if (isTypeDefinitionNode(definition)) {
@@ -130,6 +132,9 @@ export function buildSchemaFromSDL(
       directiveDefinitions.push(definition);
     } else if (definition.kind === Kind.SCHEMA_DEFINITION) {
       schemaDefinitions.push(definition);
+      schemaDirectives.push(
+        ...(definition.directives ? definition.directives : [])
+      );
     } else if (definition.kind === Kind.SCHEMA_EXTENSION) {
       schemaExtensions.push(definition);
     }
@@ -211,7 +216,12 @@ export function buildSchemaFromSDL(
       typeName
         ? (schema.getType(typeName) as GraphQLObjectType<any, any>)
         : undefined
-    )
+    ),
+    astNode: {
+      kind: Kind.SCHEMA_DEFINITION,
+      directives: schemaDirectives,
+      operationTypes: [] // satisfies typescript, will be ignored
+    }
   });
 
   for (const module of modules) {

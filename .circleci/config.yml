@@ -5,9 +5,9 @@ version: 2.1
 orbs:
   # `oss` is a local reference to the package.  The source for Apollo Orbs can
   # be found at http://github.com/apollographql/CircleCI-Orbs.
-  oss: apollo/oss-ci-cd-tooling@0.0.19
+  oss: apollo/oss-ci-cd-tooling@0.0.20
   # win is a windows orb provided by circleci
-  win: circleci/windows@2.4.0
+  win: circleci/windows@2.4.1
 
 commands:
   # These are the steps used for each version of Node which we're testing
@@ -30,7 +30,7 @@ jobs:
   # Platform tests, each with the same tests but different platform or version.
   NodeJS 12:
     docker:
-      - image: cimg/node:12.22.3
+      - image: cimg/node:12.22.7
     steps:
       - common_test_steps
 
@@ -41,7 +41,7 @@ jobs:
       # Note: This is a no-op at the second, but bear with me on this.  If this
       # comment is not removed by 2021-06-30 remove it along with the next line.
       # renovate: datasource=github-tags depName=nodejs/node versioning=node
-      NODE_VERSION: 14.16.1
+      NODE_VERSION: 14.17.5
       NPM_VERSION: 7.10.0
     steps:
       - run: git config --global core.autocrlf false
@@ -81,7 +81,7 @@ jobs:
 
   NodeJS 14:
     docker:
-      - image: cimg/node:14.17.3
+      - image: cimg/node:14.18.1
     steps:
       - common_test_steps
       # We will save the results of this one particular invocation to use in
@@ -96,13 +96,13 @@ jobs:
 
   NodeJS 16:
     docker:
-      - image: cimg/node:16.0.0
+      - image: cimg/node:16.13.0
     steps:
       - common_test_steps
 
   Publish GitHub Release:
     docker:
-      - image: cimg/go:1.16.6
+      - image: cimg/go:1.17.3
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
@@ -121,7 +121,7 @@ jobs:
   # Other tests, unrelated to typical code tests.
   Linting:
     docker:
-      - image: cimg/node:12.22.3
+      - image: cimg/node:12.22.7
     steps:
       - oss/install_specific_npm_version:
           version: '7'
@@ -132,7 +132,7 @@ jobs:
 
   Query Check:
     docker:
-      - image: cimg/node:12.22.3
+      - image: cimg/node:12.22.7
     steps:
       - oss/install_specific_npm_version:
           version: '7'
@@ -149,7 +149,7 @@ jobs:
 
   Generated Types Check:
     docker:
-      - image: cimg/node:12.22.3
+      - image: cimg/node:12.22.7
     steps:
       - oss/install_specific_npm_version:
           version: '7'

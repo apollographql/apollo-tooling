@@ -1,11 +1,11 @@
 {
   "name": "apollo-graphql",
-  "version": "0.9.3",
+  "version": "0.9.5",
   "description": "Apollo GraphQL utility library",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "keywords": [],
-  "author": "Apollo <opensource@apollographql.com>",
+  "author": "Apollo <packages@apollographql.com>",
   "license": "MIT",
   "engines": {
     "node": ">=6"

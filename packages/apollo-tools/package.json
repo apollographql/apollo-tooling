@@ -1,7 +1,7 @@
 {
   "name": "@apollographql/apollo-tools",
-  "version": "0.5.1",
-  "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "version": "0.5.2",
+  "author": "Apollo GraphQL <packages@apollographql.com>",
   "license": "MIT",
   "repository": {
     "type": "git",

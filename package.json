@@ -8,7 +8,7 @@
     "url": "git+https://github.com/apollographql/apollo-tooling.git"
   },
   "license": "MIT",
-  "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "author": "Apollo GraphQL <packages@apollographql.com>",
   "bin": {
     "apollo": "./packages/apollo/bin/run"
   },
@@ -32,7 +32,7 @@
   },
   "engines": {
     "node": ">=8 <17",
-    "npm": "7.x"
+    "npm": ">=7.x <9.x"
   },
   "dependencies": {
     "@apollographql/apollo-tools": "file:packages/apollo-tools",
@@ -48,18 +48,18 @@
   },
   "devDependencies": {
     "@fancy-test/nock": "0.1.1",
-    "@oclif/dev-cli": "1.26.0",
+    "@oclif/dev-cli": "1.26.3",
     "@oclif/test": "1.2.8",
     "@types/babel__generator": "7.6.3",
-    "@types/babel-types": "7.0.10",
+    "@types/babel-types": "7.0.11",
     "@types/common-tags": "1.8.1",
-    "@types/core-js": "2.5.4",
+    "@types/core-js": "2.5.5",
     "@types/cosmiconfig": "5.0.3",
-    "@types/glob": "7.1.4",
+    "@types/glob": "7.2.0",
     "@types/inflected": "1.1.29",
     "@types/jest": "24.9.1",
     "@types/listr": "0.14.4",
-    "@types/lodash": "4.14.171",
+    "@types/lodash": "4.14.177",
     "@types/lodash.debounce": "4.0.6",
     "@types/lodash.identity": "3.0.6",
     "@types/lodash.merge": "4.6.6",
@@ -80,7 +80,7 @@
     "jest-environment-node": "24.9.0",
     "jest-matcher-utils": "24.9.0",
     "lerna": "4.0.0",
-    "lint-staged": "11.1.1",
+    "lint-staged": "11.2.6",
     "memfs": "3.2.2",
     "nock": "11.4.0",
     "prettier": "1.18.2",
@@ -90,7 +90,7 @@
     "ts-node": "9.1.1",
     "tslib": "1.14.1",
     "typescript": "4.2.4",
-    "vsce": "1.95.1",
+    "vsce": "1.103.1",
     "vscode": "1.1.37",
     "yarn": "1.22.10"
   },
