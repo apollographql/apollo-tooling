@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@fancy-test/nock": "0.1.1",
-    "@oclif/dev-cli": "1.26.6",
+    "@oclif/dev-cli": "1.26.9",
     "@oclif/test": "1.2.8",
     "@types/babel__generator": "7.6.3",
     "@types/babel-types": "7.0.11",
