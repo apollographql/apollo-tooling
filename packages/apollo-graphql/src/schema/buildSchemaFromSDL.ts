@@ -56,8 +56,24 @@ const skippedSDLRules: ValidationRule[] = [
 try {
   const PossibleTypeExtensions: typeof import("graphql/validation/rules/PossibleTypeExtensions").PossibleTypeExtensions = require("graphql/validation/rules/PossibleTypeExtensions")
     .PossibleTypeExtensions;
+
   if (PossibleTypeExtensions) {
     skippedSDLRules.push(PossibleTypeExtensions);
+  }
+} catch (e) {
+  // No need to fail in this case.  Instead, if this validation rule is missing, we will assume its not used
+  // by the version of `graphql` that is available to us.
+}
+
+// BREAKING AGAIN: PossibleTypeExtensions is finilized into PossibleTypeExtensionsRule in
+// graphql 16. For compatible reason, try catch logic for 15 is kept with extra logic for 16.
+try {
+  // Compatible for graphql-js@16
+  const PossibleTypeExtensionsRule = require("graphql")
+    .PossibleTypeExtensionsRule;
+
+  if (PossibleTypeExtensionsRule) {
+    skippedSDLRules.push(PossibleTypeExtensionsRule);
   }
 } catch (e) {
   // No need to fail in this case.  Instead, if this validation rule is missing, we will assume its not used
