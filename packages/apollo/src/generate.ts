@@ -107,7 +107,7 @@ export default function generate(
     if (nextToSources) {
       generatedFiles.forEach(({ sourcePath, fileName, content }) => {
         const dir = path.join(
-          path.dirname(path.posix.relative(rootPath, toPath(sourcePath))),
+          path.dirname(path.relative(rootPath, toPath(sourcePath))),
           outputPath
         );
         if (!fs.existsSync(dir)) {
