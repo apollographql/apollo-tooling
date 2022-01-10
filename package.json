@@ -28,7 +28,8 @@
     "posttest": "npm run lint",
     "release:version-bump": "lerna version --exact",
     "release:start-ci-publish": "node -p '`Publish (dist-tag:${process.env.APOLLO_DIST_TAG || \"latest\"})`' | git tag -F - \"publish/$(date -u '+%Y%m%d%H%M%S')\" && git push origin \"$(git describe --match='publish/*' --tags --exact-match HEAD)\"",
-    "client:codegen": "node ./packages/apollo/bin/run client:codegen --target=typescript --outputFlat ./packages/apollo-language-server/src/graphqlTypes.ts"
+    "client:codegen": "node ./packages/apollo/bin/run client:codegen --target=typescript --outputFlat ./packages/apollo-language-server/src/graphqlTypes.ts",
+    "iris":"npm run build && npx apollo codegen:generate --config=iris.config.js --target=typescript"
   },
   "engines": {
     "node": ">=8 <17",
