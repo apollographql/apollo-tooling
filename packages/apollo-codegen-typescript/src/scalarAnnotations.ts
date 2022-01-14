@@ -40,9 +40,7 @@ const inferFieldType = (f: doc.Type): t.TSPropertySignature | undefined =>
     : undefined;
 
 const inferCollectionType = ([type, ...types]: t.TSType[]) =>
-  types.length === 0
-    ? t.TSArrayType(type)
-    : t.TSTupleType([type, ...types]);
+  types.length === 0 ? t.TSArrayType(type) : t.TSTupleType([type, ...types]);
 
 const inferJSDocType = (docType: JSDocType): t.TSType => {
   switch (docType.type) {
@@ -57,12 +55,14 @@ const inferJSDocType = (docType: JSDocType): t.TSType => {
         docType.fields.map(inferFieldType).filter(isNotUndefined)
       );
     case "NonNullableType":
-      return inferJSDocType(docType.expression)
-    case "VoidLiteral": return t.TSVoidKeyword()
+      return inferJSDocType(docType.expression);
+    case "VoidLiteral":
+      return t.TSVoidKeyword();
     // null | undefined keyword
     case "UndefinedLiteral":
     case "NullLiteral":
-    case "NullableLiteral": return t.TSUndefinedKeyword()
+    case "NullableLiteral":
+      return t.TSUndefinedKeyword();
     // nullable Types
     case "NullableType":
     case "OptionalType":
