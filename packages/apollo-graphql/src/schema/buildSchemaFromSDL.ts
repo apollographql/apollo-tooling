@@ -65,7 +65,7 @@ try {
   // by the version of `graphql` that is available to us.
 }
 
-// BREAKING AGAIN: PossibleTypeExtensions is finilized into PossibleTypeExtensionsRule in
+// BREAKING AGAIN: PossibleTypeExtensions is finalized into PossibleTypeExtensionsRule in
 // graphql 16. For compatible reason, try catch logic for 15 is kept with extra logic for 16.
 try {
   // Compatible for graphql-js@16
