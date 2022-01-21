@@ -2,7 +2,15 @@
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg?maxAge=2592000)](https://raw.githubusercontent.com/apollographql/apollo-tooling/master/LICENSE) [![npm](https://img.shields.io/npm/v/apollo.svg)](https://www.npmjs.com/package/apollo) [![Get on Slack](https://img.shields.io/badge/spectrum-join-orange.svg)](https://spectrum.chat/apollo?tab=posts)
 
-> **Note:** Apollo's GraphQL VSCode extension is no longer housed in this repository. It is now maintained separately in [this repo](https://github.com/apollographql/vscode-graphql).
+---
+
+> **[2022-01-21] Note - Upcoming Deprecation Plans:** We (Apollo) are working towards fully deprecating this repository and its related projects. Most of the functionality in this repository has been replaced by newer projects and the rest will be soon. We'll share detailed migration documentation when everything here is ready to be officially deprecated, but just a heads up in case you're planning on adopting anything here for a new project (which you still can of course if the tooling here works for you - support for this tooling will be a minimal however).
+
+---
+
+> **[2021-07-23] Note - Housekeeping:** Apollo's GraphQL VSCode extension is no longer housed in this repository. It is now maintained separately in [this repo](https://github.com/apollographql/vscode-graphql).
+
+---
 
 Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
 
