@@ -2,6 +2,12 @@
 
 > **Note:** Apollo's GraphQL VSCode extension is no longer housed in this repository. It is now maintained separately in [this repo](https://github.com/apollographql/vscode-graphql).
 
+## `PR: missing fix from apollo@2.3.1`
+
+- `PR #2538`
+  - Added a code correction for type flow: Correct path build for windows.[PR #2538](https://github.com/apollographql/apollo-tooling/pull/2538)
+  - Old issue where windows code path is fixed for type typescript only, missed for type flow -[#917](https://github.com/apollographql/apollo-tooling/pull/917))
+
 ## `apollo@2.33.9`
 
 - `apollo-language-server@1.26.7` / `apollo-codegen-core@0.40.7`
