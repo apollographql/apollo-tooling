@@ -4,7 +4,7 @@
 
 ---
 
-> **[2022-01-21] Note - Upcoming Deprecation Plans:** We (Apollo) are working towards fully deprecating this repository and its related projects. Most of the functionality in this repository has been replaced by newer projects and the rest will be soon. We'll share detailed migration documentation when everything here is ready to be officially deprecated, but just a heads up in case you're planning on adopting anything here for a new project (which you still can of course if the tooling here works for you - support for this tooling will be a minimal however).
+> **[2022-01-21] Note - Upcoming Deprecation Plans:** We (Apollo) are working towards fully deprecating this repository and its related projects. Most of the functionality in this repository has been replaced by newer projects and the rest will be soon. We'll share detailed migration documentation when everything here is ready to be officially deprecated, but just a heads up in case you're planning on adopting anything here for a new project (which you still can of course if the tooling here works for you - support for this tooling will be minimal however).
 
 ---
 
