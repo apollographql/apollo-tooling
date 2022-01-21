@@ -9,6 +9,7 @@ import { sortEnumValues } from "apollo-codegen-core/lib/utilities/graphql";
 import { createTypeFromGraphQLTypeFunction } from "./helpers";
 
 import * as t from "@babel/types";
+import { GQLScalarAnnotationType } from "./scalarAnnotations";
 
 export type ObjectProperty = {
   name: string;
@@ -25,6 +26,15 @@ export default class TypescriptGenerator {
 
     this.typeFromGraphQLType = createTypeFromGraphQLTypeFunction(
       compilerOptions
+    );
+  }
+
+  public scalarDeclaration({
+    name,
+    type
+  }: GQLScalarAnnotationType): t.ExportNamedDeclaration {
+    return t.exportNamedDeclaration(
+      t.TSTypeAliasDeclaration(t.identifier(name), undefined, type)
     );
   }
 

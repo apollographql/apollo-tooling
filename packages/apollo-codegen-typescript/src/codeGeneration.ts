@@ -1,7 +1,11 @@
 import path from "path";
 import * as t from "@babel/types";
 import { stripIndent } from "common-tags";
-import { GraphQLEnumType, GraphQLInputObjectType } from "graphql";
+import {
+  GraphQLEnumType,
+  GraphQLInputObjectType,
+  GraphQLScalarType
+} from "graphql";
 
 import {
   CompilerContext,
@@ -36,6 +40,11 @@ import {
 import { GraphQLOutputType, getNullableType } from "graphql";
 import { maybePush } from "apollo-codegen-core/lib/utilities/array";
 import { unifyPaths } from "apollo-codegen-core/lib/utilities/printing";
+import {
+  inferGQLScalarAnnotations,
+  isTypeAnnotatedScalar,
+  GQLScalarAnnotationType
+} from "./scalarAnnotations";
 
 class TypescriptGeneratedFile implements BasicGeneratedFile {
   fileContents: string;
@@ -57,6 +66,11 @@ function printEnumsAndInputObjects(
     // START Enums and Input Objects
     //==============================================================
   `);
+
+  typesUsed
+    .flatMap(inferGQLScalarAnnotations)
+    .sort()
+    .forEach(scalarType => generator.typeAliasForScalarType(scalarType));
 
   typesUsed
     .filter(isEnumType)
@@ -242,6 +256,10 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     );
   }
 
+  public typeAliasForScalarType(scalar: GQLScalarAnnotationType) {
+    this.printer.enqueue(this.scalarDeclaration(scalar));
+  }
+
   public typeAliasForEnumType(enumType: GraphQLEnumType) {
     this.printer.enqueue(this.enumerationDeclaration(enumType));
   }
@@ -388,9 +406,8 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     return acc;
   };
 
-  private isGlobalType = (type: GraphQLType) => {
-    return isEnumType(type) || isInputObjectType(type);
-  };
+  private isGlobalType = (type: GraphQLType) =>
+    isEnumType(type) || isInputObjectType(type) || isTypeAnnotatedScalar(type);
 
   private getUnderlyingType = (type: GraphQLType): GraphQLType => {
     if (isNonNullType(type)) {

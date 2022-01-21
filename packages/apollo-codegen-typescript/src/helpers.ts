@@ -13,6 +13,7 @@ import {
 import * as t from "@babel/types";
 
 import { CompilerOptions } from "apollo-codegen-core/lib/compiler";
+import { isTypeAnnotatedScalar } from "./scalarAnnotations";
 
 const DEFAULT_FILE_EXTENSION = "ts";
 
@@ -46,6 +47,8 @@ export function createTypeFromGraphQLTypeFunction(
           ? t.TSParenthesizedType(elementType)
           : elementType
       );
+    } else if (isTypeAnnotatedScalar(graphQLType)) {
+      return t.TSTypeReference(t.identifier(graphQLType.name));
     } else if (isScalarType(graphQLType)) {
       const builtIn = builtInScalarMap[typeName || graphQLType.name];
       if (builtIn != null) {
