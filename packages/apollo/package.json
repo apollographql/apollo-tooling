@@ -65,7 +65,7 @@
     "mkdirp": "1.0.4",
     "moment": "2.29.1",
     "strip-ansi": "5.2.0",
-    "table": "6.7.5",
+    "table": "6.8.0",
     "tty": "1.0.1",
     "vscode-uri": "1.0.6"
   },
