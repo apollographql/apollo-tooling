@@ -2,6 +2,11 @@
 
 > **Note:** Apollo's GraphQL VSCode extension is no longer housed in this repository. It is now maintained separately in [this repo](https://github.com/apollographql/vscode-graphql).
 
+## `apollo@2.33.10`
+
+- `apollo-codegen-core@0.40.8`
+  - Adjust `apollo-codegen-core` to sort types and union type arrays. [PR#2576](https://github.com/apollographql/apollo-tooling/pull/2576)
+
 ## `apollo@2.33.9`
 
 - `apollo-language-server@1.26.7` / `apollo-codegen-core@0.40.7`

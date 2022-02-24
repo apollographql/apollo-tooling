@@ -267,7 +267,7 @@ class Compiler {
   }
 
   get typesUsed(): GraphQLType[] {
-    return Array.from(this.typesUsedSet);
+    return Array.from(this.typesUsedSet).sort();
   }
 
   addUnionType(type: GraphQLType) {
@@ -278,7 +278,7 @@ class Compiler {
   }
 
   get unionTypes(): GraphQLUnionType[] {
-    return Array.from(this.unionTypesSet);
+    return Array.from(this.unionTypesSet).sort();
   }
 
   addInterfaceType(type: GraphQLType) {
@@ -525,7 +525,7 @@ class Compiler {
 
   possibleTypesForType(type: GraphQLCompositeType): GraphQLObjectType[] {
     if (isAbstractType(type)) {
-      return Array.from(this.schema.getPossibleTypes(type)) || [];
+      return Array.from(this.schema.getPossibleTypes(type)).sort() || [];
     } else {
       return [type];
     }
