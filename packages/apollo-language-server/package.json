@@ -1,8 +1,8 @@
 {
   "name": "apollo-language-server",
   "description": "A language server for Apollo GraphQL projects",
-  "version": "1.24.1",
-  "author": "Apollo GraphQL <opensource@apollographql.com>",
+  "version": "1.26.7",
+  "author": "Apollo GraphQL <packages@apollographql.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -17,11 +17,11 @@
     "npm": ">=6"
   },
   "dependencies": {
-    "@apollo/federation": "0.20.4",
+    "@apollo/federation": "0.27.0",
     "@apollographql/apollo-tools": "file:../apollo-tools",
     "@apollographql/graphql-language-service-interface": "^2.0.2",
     "@endemolshinegroup/cosmiconfig-typescript-loader": "^1.0.0",
-    "apollo-datasource": "^0.7.0",
+    "apollo-datasource": "^0.9.0",
     "apollo-env": "file:../apollo-env",
     "apollo-graphql": "file:../apollo-graphql",
     "apollo-link": "^1.2.3",

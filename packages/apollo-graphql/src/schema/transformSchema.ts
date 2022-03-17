@@ -19,9 +19,10 @@ import {
   GraphQLUnionType,
   isInputObjectType,
   GraphQLInputObjectType,
-  GraphQLInputFieldConfigMap
+  GraphQLInputFieldConfigMap,
+  GraphQLDirective
 } from "graphql";
-import { mapValues } from "apollo-env";
+import { mapValues } from "../utilities/mapValues";
 
 type TypeTransformer = (
   type: GraphQLNamedType
@@ -53,7 +54,8 @@ export function transformSchema(
     types: Object.values(typeMap),
     query: replaceMaybeType(schemaConfig.query),
     mutation: replaceMaybeType(schemaConfig.mutation),
-    subscription: replaceMaybeType(schemaConfig.subscription)
+    subscription: replaceMaybeType(schemaConfig.subscription),
+    directives: replaceDirectives(schemaConfig.directives)
   });
 
   function recreateNamedType(type: GraphQLNamedType): GraphQLNamedType {
@@ -70,6 +72,7 @@ export function transformSchema(
 
       return new GraphQLInterfaceType({
         ...config,
+        interfaces: () => config.interfaces.map(replaceNamedType),
         fields: () => replaceFields(config.fields)
       });
     } else if (isUnionType(type)) {
@@ -144,5 +147,15 @@ export function transformSchema(
       ...arg,
       type: replaceType(arg.type)
     }));
+  }
+
+  function replaceDirectives(directives: GraphQLDirective[]) {
+    return directives.map(directive => {
+      const config = directive.toConfig();
+      return new GraphQLDirective({
+        ...config,
+        args: replaceArgs(config.args)
+      });
+    });
   }
 }

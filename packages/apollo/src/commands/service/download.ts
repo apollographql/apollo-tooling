@@ -8,7 +8,9 @@ import { dirname as getDirName } from "path";
 
 export default class ServiceDownload extends ProjectCommand {
   static aliases = ["schema:download"];
-  static description = "Download the schema from your GraphQL endpoint.";
+  static description =
+    "[DEPRECATED] Download the schema from your GraphQL endpoint." +
+    ProjectCommand.DEPRECATION_MSG;
 
   static flags = {
     ...ProjectCommand.flags,
@@ -46,6 +48,8 @@ export default class ServiceDownload extends ProjectCommand {
   ];
 
   async run() {
+    this.printDeprecationWarning();
+
     await this.runTasks(({ args, project, flags, config }) => [
       {
         title: `Saving schema to ${args.output}`,

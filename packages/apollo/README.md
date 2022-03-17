@@ -2,6 +2,16 @@
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg?maxAge=2592000)](https://raw.githubusercontent.com/apollographql/apollo-tooling/master/LICENSE) [![npm](https://img.shields.io/npm/v/apollo.svg)](https://www.npmjs.com/package/apollo) [![Get on Slack](https://img.shields.io/badge/spectrum-join-orange.svg)](https://spectrum.chat/apollo?tab=posts)
 
+---
+
+> **[2022-01-21] Note - Upcoming Deprecation Plans:** We (Apollo) are working towards fully deprecating this repository and its related projects. Most of the functionality in this repository has been replaced by newer projects and the rest will be soon. We'll share detailed migration documentation when everything here is ready to be officially deprecated, but just a heads up in case you're planning on adopting anything here for a new project (which you still can of course if the tooling here works for you - support for this tooling will be minimal however).
+
+---
+
+> **[2021-07-23] Note - Housekeeping:** Apollo's GraphQL VSCode extension is no longer housed in this repository. It is now maintained separately in [this repo](https://github.com/apollographql/vscode-graphql).
+
+---
+
 Apollo CLI brings together your GraphQL clients and servers with tools for validating your schema, linting your operations for compatibility with your server, and generating static types for improved client-side type safety.
 
 <!-- toc -->
@@ -23,7 +33,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.31.1 linux-x64 node-v15.1.0
+apollo/2.33.9 darwin-x64 node-v14.18.1
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -41,6 +51,7 @@ USAGE
 * [`apollo client:push`](#apollo-clientpush)
 * [`apollo help [COMMAND]`](#apollo-help-command)
 * [`apollo plugins`](#apollo-plugins)
+* [`apollo plugins:inspect PLUGIN...`](#apollo-pluginsinspect-plugin)
 * [`apollo plugins:install PLUGIN...`](#apollo-pluginsinstall-plugin)
 * [`apollo plugins:link PLUGIN`](#apollo-pluginslink-plugin)
 * [`apollo plugins:uninstall PLUGIN...`](#apollo-pluginsuninstall-plugin)
@@ -460,7 +471,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.3/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.3/src/commands/help.ts)_
 
 ## `apollo plugins`
 
@@ -477,7 +488,28 @@ EXAMPLE
   $ apollo plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.1/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.1/src/commands/plugins/index.ts)_
+
+## `apollo plugins:inspect PLUGIN...`
+
+displays installation properties of a plugin
+
+```
+USAGE
+  $ apollo plugins:inspect PLUGIN...
+
+ARGUMENTS
+  PLUGIN  [default: .] plugin to inspect
+
+OPTIONS
+  -h, --help     show CLI help
+  -v, --verbose
+
+EXAMPLE
+  $ apollo plugins:inspect myplugin
+```
+
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.1/src/commands/plugins/inspect.ts)_
 
 ## `apollo plugins:install PLUGIN...`
 
@@ -515,7 +547,7 @@ EXAMPLES
   $ apollo plugins:install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.1/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.1/src/commands/plugins/install.ts)_
 
 ## `apollo plugins:link PLUGIN`
 
@@ -545,7 +577,7 @@ EXAMPLE
   $ apollo plugins:link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.1/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.1/src/commands/plugins/link.ts)_
 
 ## `apollo plugins:uninstall PLUGIN...`
 
@@ -567,7 +599,7 @@ ALIASES
   $ apollo plugins:remove
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.1/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.1/src/commands/plugins/uninstall.ts)_
 
 ## `apollo plugins:update`
 
@@ -582,11 +614,11 @@ OPTIONS
   -v, --verbose
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.9.1/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.1/src/commands/plugins/update.ts)_
 
 ## `apollo service:check`
 
-Check a service against known operation workloads to find breaking changes
+[DEPRECATED] Check a service against known operation workloads to find breaking changes
 
 ```
 USAGE
@@ -658,6 +690,13 @@ OPTIONS
       for more granularity (see: 
       https://en.wikipedia.org/wiki/ISO_8601#Durations)
 
+DESCRIPTION
+  -----------------------------------------------------------------
+  DEPRECATED: This command will be removed from the `apollo` CLI in 
+  its next major version. Replacement functionality is available in 
+  the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+  -----------------------------------------------------------------
+
 ALIASES
   $ apollo schema:check
 ```
@@ -666,7 +705,7 @@ _See code: [src/commands/service/check.ts](https://github.com/apollographql/apol
 
 ## `apollo service:delete`
 
-Delete a federated service from Apollo and recompose remaining services
+[DEPRECATED] Delete a federated service from Apollo and recompose remaining services
 
 ```
 USAGE
@@ -698,13 +737,20 @@ OPTIONS
 
   --serviceName=serviceName  (required) Provides the name of the
                              implementing service for a federated graph
+
+DESCRIPTION
+  -----------------------------------------------------------------
+  DEPRECATED: This command will be removed from the `apollo` CLI in 
+  its next major version. Replacement functionality is available in 
+  the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+  -----------------------------------------------------------------
 ```
 
 _See code: [src/commands/service/delete.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/delete.ts)_
 
 ## `apollo service:download OUTPUT`
 
-Download the schema from your GraphQL endpoint.
+[DEPRECATED] Download the schema from your GraphQL endpoint.
 
 ```
 USAGE
@@ -735,6 +781,13 @@ OPTIONS
 
   --key=key                The API key to use for authentication to Apollo
 
+DESCRIPTION
+  -----------------------------------------------------------------
+  DEPRECATED: This command will be removed from the `apollo` CLI in 
+  its next major version. Replacement functionality is available in 
+  the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+  -----------------------------------------------------------------
+
 ALIASES
   $ apollo schema:download
 ```
@@ -743,7 +796,7 @@ _See code: [src/commands/service/download.ts](https://github.com/apollographql/a
 
 ## `apollo service:list`
 
-List the services in a graph
+[DEPRECATED] List the services in a graph
 
 ```
 USAGE
@@ -767,13 +820,20 @@ OPTIONS
                          if using the `--header` flag.
 
   --key=key              The API key to use for authentication to Apollo
+
+DESCRIPTION
+  -----------------------------------------------------------------
+  DEPRECATED: This command will be removed from the `apollo` CLI in 
+  its next major version. Replacement functionality is available in 
+  the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+  -----------------------------------------------------------------
 ```
 
 _See code: [src/commands/service/list.ts](https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo/src/commands/service/list.ts)_
 
 ## `apollo service:push`
 
-Push a service definition to Apollo
+[DEPRECATED] Push a service definition to Apollo
 
 ```
 USAGE
@@ -825,6 +885,13 @@ OPTIONS
   --serviceURL=serviceURL
       Provides the url to the location of the implementing service for a 
       federated graph
+
+DESCRIPTION
+  -----------------------------------------------------------------
+  DEPRECATED: This command will be removed from the `apollo` CLI in 
+  its next major version. Replacement functionality is available in 
+  the new Apollo Rover CLI: https://go.apollo.dev/t/migration
+  -----------------------------------------------------------------
 
 ALIASES
   $ apollo schema:publish
@@ -1006,11 +1073,12 @@ Some integration tests rely on mocked server data (service:check for example). M
 
 ## Publishing
 
-1. Make sure the `CHANGELOG.md` is updated with all changes committed since the last release. Make sure the versions for each package to update are correct, and there's a blank `Upcoming` section for future work.
+1. Make sure the `CHANGELOG.md` is updated with all changes committed since the last release. Make sure the versions for each package to update are correct.
 2. Run `npm run release:version-bump -- <bumpish>`
    - Can use major, minor, patch, prepatch, etc for the bump type. If not used, the command will prompt and ask for the bump type.
    - This command updates git tags locally and on GitHub
 3. Run npm run release:start-ci-publish locally
+   - IMPORTANT: If publishing a prerelease (like `alpha`/`beta`/`rc`), set the tag that NPM will use to publish with the `APOLLO_DIST_TAG` environment variable. By default, if this isn't set, NPM will publish the prerelease to the `latest` tag (which isn't what we'd want).
    - Pushes a `publish/XXXXXXXXXX` tag to GitHub to trigger circle CI build
 4. Circle will notify the appropriate Apollo team slack channel when ready to release
    - Slack channel member will confirm through the Apollo Deploy Bot

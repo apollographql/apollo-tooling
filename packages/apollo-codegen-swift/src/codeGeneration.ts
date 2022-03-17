@@ -262,17 +262,20 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
 
         if (fragmentsReferenced.size > 0) {
           this.printNewlineIfNeeded();
-          this.printOnNewline(
-            swift`public var queryDocument: String { return operationDefinition`
-          );
-          fragmentsReferenced.forEach(fragmentName => {
-            this.print(
-              swift`.appending("\\n" + ${this.helpers.structNameForFragmentName(
-                fragmentName
-              )}.fragmentDefinition)`
+          this.printOnNewline(swift`public var queryDocument: String`);
+          this.withinBlock(() => {
+            this.printOnNewline(
+              swift`var document: String = operationDefinition`
             );
+            fragmentsReferenced.forEach(fragmentName => {
+              this.printOnNewline(
+                swift`document.append("\\n" + ${this.helpers.structNameForFragmentName(
+                  fragmentName
+                )}.fragmentDefinition)`
+              );
+            });
+            this.printOnNewline(swift`return document`);
           });
-          this.print(swift` }`);
         }
 
         this.printNewlineIfNeeded();
@@ -769,7 +772,7 @@ export class SwiftAPIGenerator extends SwiftGenerator<CompilerContext> {
     this.printOnNewline(swift`public var ${propertyName}: ${typeName}`);
     this.withinBlock(() => {
       if (isCompositeType(unmodifiedFieldType)) {
-        const structName = this.helpers.structNameForPropertyName(propertyName);
+        const structName = this.helpers.structNameForPropertyName(responseKey);
 
         if (isList(type)) {
           this.printOnNewline(swift`get`);

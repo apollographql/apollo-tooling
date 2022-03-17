@@ -315,7 +315,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
   public let operationName: String = \\"Hero\\"
 
-  public var queryDocument: String { return operationDefinition.appending(\\"\\\\n\\" + HeroDetails.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append(\\"\\\\n\\" + HeroDetails.fragmentDefinition)
+    return document
+  }
 
   public init() {
   }
@@ -460,7 +464,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
   public let operationName: String = \\"Hero\\"
 
-  public var queryDocument: String { return operationDefinition.appending(\\"\\\\n\\" + DroidDetails.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append(\\"\\\\n\\" + DroidDetails.fragmentDefinition)
+    return document
+  }
 
   public init() {
   }
@@ -633,7 +641,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
   public let operationName: String = \\"Hero\\"
 
-  public var queryDocument: String { return operationDefinition.appending(\\"\\\\n\\" + HeroDetails.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append(\\"\\\\n\\" + HeroDetails.fragmentDefinition)
+    return document
+  }
 
   public init() {
   }
@@ -834,7 +846,11 @@ exports[`Swift code generation #classDeclarationForOperation() should generate a
 
   public let operationIdentifier: String? = \\"90d0d674eb6a7b33776f63200d6cec3d09f881247c360a2ac9a29037a02210c4\\"
 
-  public var queryDocument: String { return operationDefinition.appending(\\"\\\\n\\" + HeroDetails.fragmentDefinition) }
+  public var queryDocument: String {
+    var document: String = operationDefinition
+    document.append(\\"\\\\n\\" + HeroDetails.fragmentDefinition)
+    return document
+  }
 
   public init() {
   }
@@ -946,6 +962,17 @@ exports[`Swift code generation #initializerDeclarationForProperties() should gen
 "public init(episode: Episode? = nil, scene: String? = nil) {
   self.episode = episode
   self.scene = scene
+}"
+`;
+
+exports[`Swift code generation #propertyDeclarationForField() should generate structName as testCTum for key testCTA 1`] = `
+"public var :  {
+  get {
+    return TestCTum(unsafeResultMap: resultMap[\\"testCTA\\"]! as! ResultMap)
+  }
+  set {
+    resultMap.updateValue(newValue.resultMap, forKey: \\"testCTA\\")
+  }
 }"
 `;
 

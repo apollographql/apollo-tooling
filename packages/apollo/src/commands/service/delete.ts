@@ -6,7 +6,8 @@ import { graphUndefinedError } from "../../utils/sharedMessages";
 
 export default class ServiceDelete extends ProjectCommand {
   static description =
-    "Delete a federated service from Apollo and recompose remaining services";
+    "[DEPRECATED] Delete a federated service from Apollo and recompose remaining services" +
+    ProjectCommand.DEPRECATION_MSG;
   static flags = {
     ...ProjectCommand.flags,
     tag: flags.string({
@@ -46,6 +47,8 @@ export default class ServiceDelete extends ProjectCommand {
   };
 
   async run() {
+    this.printDeprecationWarning();
+
     let result;
     const { flags } = this.parse(ServiceDelete);
 

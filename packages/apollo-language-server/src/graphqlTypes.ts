@@ -37,7 +37,7 @@ export interface CheckPartialSchema_service_checkPartialSchema_compositionValida
    * graph's implementing services into a GraphQL schema. This partial schema should not be
    * published to the implementing service if there were any errors encountered
    */
-  errors: (CheckPartialSchema_service_checkPartialSchema_compositionValidationResult_errors | null)[];
+  errors: CheckPartialSchema_service_checkPartialSchema_compositionValidationResult_errors[];
 }
 
 export interface CheckPartialSchema_service_checkPartialSchema_checkSchemaResult_diffToPrevious_affectedClients {
@@ -347,7 +347,7 @@ export interface ListServices_service {
   __typename: "Service";
   /**
    * List of implementing services that comprise a graph. A non-federated graph should have a single implementing service.
-   * Set includeDeleted to see deleted implementing services
+   * Set includeDeleted to see deleted implementing services.
    */
   implementingServices: ListServices_service_implementingServices | null;
 }
@@ -438,7 +438,7 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
 export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig {
   __typename: "CompositionConfig";
   /**
-   * List of implementing services that comprise a composed graph
+   * List of GCS links for implementing services that comprise a composed graph. Is empty if tag/inaccessible is enabled.
    */
   implementingServiceLocations: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig_implementingServiceLocations[];
 }
@@ -464,11 +464,11 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
   /**
    * List of errors during composition. Errors mean that Apollo was unable to compose the
    * graph's implementing services into a GraphQL schema. This partial schema should not be
-   * published to the implementing service if there were any errors encountered
+   * published to the implementing service if there were any errors encountered.
    */
   errors: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors | null)[];
   /**
-   * Whether the gateway link was updated.
+   * Whether the gateway link was updated, or would have been for dry runs.
    */
   updatedGateway: boolean;
 }
@@ -503,7 +503,7 @@ export interface SchemaTagsAndFieldStats_service_schemaTags {
 }
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy {
-  __typename: "ServiceFieldStatsDimensions";
+  __typename: "ServiceFieldLatenciesDimensions";
   field: string | null;
 }
 
@@ -513,18 +513,18 @@ export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics_fieldH
 }
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats_metrics {
-  __typename: "ServiceFieldStatsMetrics";
+  __typename: "ServiceFieldLatenciesMetrics";
   fieldHistogram: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics_fieldHistogram;
 }
 
 export interface SchemaTagsAndFieldStats_service_stats_fieldStats {
-  __typename: "ServiceFieldStatsRecord";
+  __typename: "ServiceFieldLatenciesRecord";
   /**
-   * Dimensions of ServiceFieldStats that can be grouped by.
+   * Dimensions of ServiceFieldLatencies that can be grouped by.
    */
   groupBy: SchemaTagsAndFieldStats_service_stats_fieldStats_groupBy;
   /**
-   * Metrics of ServiceFieldStats that can be aggregated over.
+   * Metrics of ServiceFieldLatencies that can be aggregated over.
    */
   metrics: SchemaTagsAndFieldStats_service_stats_fieldStats_metrics;
 }
@@ -601,7 +601,7 @@ export interface UploadAndComposePartialSchema_service_upsertImplementingService
 
 export interface UploadAndComposePartialSchema_service {
   __typename: "ServiceMutation";
-  upsertImplementingServiceAndTriggerComposition: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition;
+  upsertImplementingServiceAndTriggerComposition: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition | null;
 }
 
 export interface UploadAndComposePartialSchema {
@@ -1766,6 +1766,8 @@ export interface IntrospectionInputValueInput {
   description?: string | null;
   type: IntrospectionTypeInput;
   defaultValue?: string | null;
+  isDeprecated?: boolean | null;
+  deprecationReason?: string | null;
 }
 
 /**
@@ -1787,6 +1789,7 @@ export interface IntrospectionTypeInput {
   kind: IntrospectionTypeKind;
   name?: string | null;
   description?: string | null;
+  specifiedByUrl?: string | null;
   fields?: IntrospectionFieldInput[] | null;
   interfaces?: IntrospectionTypeInput[] | null;
   possibleTypes?: IntrospectionTypeInput[] | null;
@@ -1816,7 +1819,8 @@ export interface OperationDocumentInput {
  * creating the association.
  * 
  * If both the sdl and hash are specified, an error will be thrown if the provided
- * hash doesn't match our hash of the sdl contents
+ * hash doesn't match our hash of the sdl contents. If the sdl field is specified,
+ * the hash does not need to be and will be computed server-side.
  */
 export interface PartialSchemaInput {
   sdl?: string | null;

@@ -367,6 +367,59 @@ describe("Swift code generation", () => {
     });
   });
 
+  describe("#propertyDeclarationForField()", () => {
+    it(`should generate structName as testCTum for key testCTA`, () => {
+      // The existing schemas don't contain any outputs with fields ending in a series of caps,
+      // while also being a composite type.
+      const schema = buildSchema(`
+        schema {
+          query: Query
+        }
+        type Query {
+          foo(input: FooInput!): FooOutput
+        }
+        input FooInput {
+          id: ID
+        }
+        type FooOutput {
+          testCTA: Link
+        }
+        union Link = InternalLink | ExternalLink
+        type InternalLink {
+          path: String
+        }
+        type ExternalLink {
+          url: String
+        }
+      `);
+      const document = parse(`
+        query Test {
+          foo(input: {}) {
+            testCTA {
+              ... on InternalLink {
+                path
+              }
+              ... on ExternalLink {
+                url
+              }
+            }
+          }
+        }
+      `);
+      const context = compileToIR(schema, document);
+      generator.context = context;
+
+      const { operations, typesUsed } = context;
+
+      const outputField = operations["Test"].selectionSet
+        .selections[0] as Field;
+      generator.propertyDeclarationForField(outputField.selectionSet
+        .selections[0] as (Field & Property));
+
+      expect(generator.output).toMatchSnapshot();
+    });
+  });
+
   describe("#structDeclarationForFragment()", () => {
     it(`should generate a struct declaration for a fragment with an abstract type condition`, () => {
       const { fragments } = compile(`

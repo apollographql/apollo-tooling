@@ -18,6 +18,10 @@ import { DeepPartial, WithRequired } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
 import URI from "vscode-uri";
 import chalk from "chalk";
+import { bootstrap } from "global-agent";
+
+// Support the standard HTTP_PROXY/HTTPS_PROXY/NO_PROXY environment variables.
+bootstrap({ environmentVariableNamespace: "" });
 
 const { version, referenceID } = require("../package.json");
 
@@ -98,7 +102,8 @@ export abstract class ProjectCommand extends Command {
   private ctx!: ProjectContext;
 
   async init() {
-    const { flags, args } = this.parse(this.constructor as any);
+    const { flags, args } = this.parse<Flags, { [name: string]: any }>(this
+      .constructor as any);
     this.ctx = { flags, args } as any;
 
     // tell the language server to use the built-in loggers
@@ -276,6 +281,17 @@ export abstract class ProjectCommand extends Command {
   }
   async finally(err) {
     // called after run and catch regardless of whether or not the command errored
+  }
+
+  static DEPRECATION_MSG =
+    "\n-----------------------------------------------------------------\n" +
+    "DEPRECATED: This command will be removed from the `apollo` CLI in \n" +
+    "its next major version. Replacement functionality is available in \n" +
+    "the new Apollo Rover CLI: https://go.apollo.dev/t/migration\n" +
+    "-----------------------------------------------------------------\n";
+
+  protected printDeprecationWarning() {
+    console.error(ProjectCommand.DEPRECATION_MSG);
   }
 }
 

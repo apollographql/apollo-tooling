@@ -4,9 +4,13 @@
     "rootDir": "./src",
     "outDir": "./lib",
     "esModuleInterop": true,
-    "target": "es2016"
+    "target": "es2016",
+    "lib": ["ES2018.AsyncIterable", "ES2019.Array"],
+    "paths": {
+      "*": ["./types/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["**/__tests__", "**/__mocks__"],
-  "references": [{ "path": "../apollo-env" }]
+  "references": []
 }

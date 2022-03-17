@@ -1,18 +1,19 @@
 {
   "name": "apollo-graphql",
-  "version": "0.6.0",
+  "version": "0.9.5",
   "description": "Apollo GraphQL utility library",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "keywords": [],
-  "author": "Apollo <opensource@apollographql.com>",
+  "author": "Apollo <packages@apollographql.com>",
   "license": "MIT",
   "engines": {
     "node": ">=6"
   },
   "dependencies": {
-    "apollo-env": "file:../apollo-env",
-    "lodash.sortby": "^4.7.0"
+    "core-js-pure": "^3.10.2",
+    "lodash.sortby": "^4.7.0",
+    "sha.js": "^2.4.11"
   },
   "peerDependencies": {
     "graphql": "^14.2.1 || ^15.0.0"

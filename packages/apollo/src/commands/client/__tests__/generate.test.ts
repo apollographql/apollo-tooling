@@ -1,8 +1,6 @@
-// this is because of herkou-cli-utils hacky mocking system on their console logger
-import { stdout, mockConsole } from "heroku-cli-util";
 import path from "path";
 import fs from "fs";
-import { test as setup } from "apollo-cli-test";
+import { test } from "apollo-cli-test";
 import {
   getIntrospectionQuery,
   print,
@@ -11,8 +9,6 @@ import {
   graphql
 } from "graphql";
 import gql from "graphql-tag";
-
-const test = setup.do(() => mockConsole());
 
 // helper function to resolve files from the actual filesystem
 const resolveFiles = opts => {

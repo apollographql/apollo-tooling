@@ -53,7 +53,6 @@
 // defaultOperationRegistrySignature, which are slightly different normalization
 // functions used in other contextes.
 import { DocumentNode } from "graphql";
-import { createHash } from "apollo-env";
 import {
   printWithReducedWhitespace,
   dropUnusedDefinitions,
@@ -62,6 +61,7 @@ import {
   removeAliases,
   hideLiterals
 } from "./transforms";
+import { createHash } from "./utilities/createHash";
 
 // The usage reporting signature function consists of removing extra whitespace,
 // sorting the AST in a deterministic manner, hiding literals, and removing
