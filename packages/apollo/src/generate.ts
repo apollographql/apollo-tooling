@@ -1,6 +1,6 @@
 import { fs } from "apollo-codegen-core/lib/localfs";
 import path from "path";
-import { GraphQLSchema, DocumentNode, print } from "graphql";
+import { GraphQLSchema, DocumentNode, isScalarType } from "graphql";
 import URI from "vscode-uri";
 
 import {
@@ -164,7 +164,7 @@ export default function generate(
             TYPESCRIPT_DEFAULT_FILE_EXTENSION}`
         );
 
-      if (context.typesUsed.length > 0) {
+      if (context.typesUsed.some(t => !isScalarType(t))) {
         if (options.globalTypesFile) {
           const globalTypesDir = path.dirname(options.globalTypesFile);
           if (!fs.existsSync(globalTypesDir)) {
