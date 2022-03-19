@@ -96,7 +96,7 @@ jobs:
 
   NodeJS 16:
     docker:
-      - image: cimg/node:16.13.1
+      - image: cimg/node:16.14.2
     steps:
       - common_test_steps
 
