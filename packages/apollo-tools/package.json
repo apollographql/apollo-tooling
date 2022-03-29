@@ -15,9 +15,6 @@
     "node": ">=8",
     "npm": ">=6"
   },
-  "dependencies": {
-    "apollo-env": "file:../apollo-env"
-  },
   "peerDependencies": {
     "graphql": "^14.2.1 || ^15.0.0"
   },
