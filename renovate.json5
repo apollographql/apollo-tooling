@@ -1,5 +1,10 @@
 {
-  "extends": ["apollo-open-source"],
+  "extends": [
+    "apollo-open-source",
+    // Bundle together Jest/TS-Jest updates (even major ones).
+    "group:jestMonorepo",
+    "group:jestPlusTSJest"
+  ],
   "schedule": null,
   // Override this value set in apollo-open-source back to the default.
   // It's nice to be able to see PRs for everything in the Dependency Dashboard.
@@ -43,26 +48,6 @@
     {
       "matchPackageNames": ["vscode-uri"],
       "allowedVersions": "=1.0.6"
-    },
-    {
-      "matchPackageNames": ["jest"],
-      "allowedVersions": "=24.9.0"
-    },
-    {
-      "matchPackageNames": ["jest-environment-node"],
-      "allowedVersions": "=24.9.0"
-    },
-    {
-      "matchPackageNames": ["jest-matcher-utils"],
-      "allowedVersions": "=24.9.0"
-    },
-    {
-      "matchPackageNames": ["@types/jest"],
-      "allowedVersions": "=24.9.1"
-    },
-    {
-      "matchPackageNames": ["ts-jest"],
-      "allowedVersions": "=24.3.0"
     },
     {
       "matchPaths": [
