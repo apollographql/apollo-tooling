@@ -152,11 +152,14 @@ export class ApolloConfig {
   }
 
   get projects() {
-    const configs = [];
+    const configs: (ClientConfig | ServiceConfig)[] = [];
     const { client, service } = this.rawConfig;
-    if (client) configs.push(new ClientConfig(this.rawConfig, this.configURI));
-    if (service)
+    if (client) {
+      configs.push(new ClientConfig(this.rawConfig, this.configURI));
+    }
+    if (service) {
       configs.push(new ServiceConfig(this.rawConfig, this.configURI));
+    }
     return configs;
   }
 

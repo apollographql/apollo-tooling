@@ -3,10 +3,8 @@ import {
   GraphQLSchema,
   buildClientSchema,
   Source,
-  buildSchema,
   printSchema,
   parse,
-  visit
 } from "graphql";
 import { readFileSync } from "fs";
 import { extname, resolve } from "path";
@@ -14,13 +12,8 @@ import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
 import { NotificationHandler } from "vscode-languageserver";
 import { Debug } from "../../utilities";
 import { buildSchemaFromSDL } from "apollo-graphql";
-import {
-  buildFederatedSchema,
-  composeServices,
-  printSchema as printFederatedSchema
-} from "@apollo/federation";
+import { buildFederatedSchema } from "@apollo/federation";
 import URI from "vscode-uri";
-// import federationDirectives from "@apollo/federation/src/directives";
 
 export interface FileSchemaProviderConfig {
   path?: string;
