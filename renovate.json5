@@ -50,6 +50,11 @@
       "allowedVersions": "=1.0.6"
     },
     {
+      // v3 is ESM only
+      "matchPackageNames": ["node-fetch"],
+      "allowedVersions": "^2.0.0"
+    },
+    {
       "matchPaths": [
         "docs/package.json"
       ],
