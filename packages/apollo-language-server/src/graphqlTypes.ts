@@ -17,13 +17,16 @@ export interface CheckPartialSchema_service_checkPartialSchema_compositionValida
 
 export interface CheckPartialSchema_service_checkPartialSchema_compositionValidationResult_errors {
   __typename: "SchemaCompositionError";
+  /**
+   * A human-readable locations.
+   */
   message: string;
 }
 
 export interface CheckPartialSchema_service_checkPartialSchema_compositionValidationResult {
   __typename: "CompositionValidationResult";
   /**
-   * Akin to a composition config, represents the partial schemas and implementing services that were used
+   * Akin to a composition config, represents the subgraph schemas and corresponding subgraphs that were used
    * in running composition. Will be null if any errors are encountered. Also may contain a schema hash if
    * one could be computed, which can be used for schema validation.
    */
@@ -34,8 +37,8 @@ export interface CheckPartialSchema_service_checkPartialSchema_compositionValida
   graphCompositionID: string;
   /**
    * List of errors during composition. Errors mean that Apollo was unable to compose the
-   * graph's implementing services into a GraphQL schema. This partial schema should not be
-   * published to the implementing service if there were any errors encountered
+   * graph variant's subgraphs into a supergraph schema. If present, gateways / routers
+   * are not updated.
    */
   errors: CheckPartialSchema_service_checkPartialSchema_compositionValidationResult_errors[];
 }
@@ -51,7 +54,7 @@ export interface CheckPartialSchema_service_checkPartialSchema_checkSchemaResult
 export interface CheckPartialSchema_service_checkPartialSchema_checkSchemaResult_diffToPrevious_changes {
   __typename: "Change";
   /**
-   * Indication of the success of the overall change, either failure, warning, or notice.
+   * Severity of the change, either failure or warning.
    */
   severity: ChangeSeverity;
   /**
@@ -59,7 +62,7 @@ export interface CheckPartialSchema_service_checkPartialSchema_checkSchemaResult
    */
   code: string;
   /**
-   * Explanation of both the target of the change and how it was changed.
+   * Human-readable description of the change.
    */
   description: string;
 }
@@ -96,23 +99,23 @@ export interface CheckPartialSchema_service_checkPartialSchema_checkSchemaResult
 export interface CheckPartialSchema_service_checkPartialSchema_checkSchemaResult_diffToPrevious {
   __typename: "SchemaDiff";
   /**
-   * Indication of the success of the change, either failure, warning, or notice.
+   * Indication of the success of the change; either failure, warning, or notice.
    */
   severity: ChangeSeverity;
   /**
-   * Clients affected by all changes in diff
+   * Clients affected by all changes in the diff.
    */
   affectedClients: CheckPartialSchema_service_checkPartialSchema_checkSchemaResult_diffToPrevious_affectedClients[] | null;
   /**
-   * Operations affected by all changes in diff
+   * Operations affected by all changes in the diff.
    */
   affectedQueries: CheckPartialSchema_service_checkPartialSchema_checkSchemaResult_diffToPrevious_affectedQueries[] | null;
   /**
-   * Number of operations that were validated during schema diff
+   * Number of operations that were validated during the check.
    */
   numberOfCheckedOperations: number | null;
   /**
-   * List of schema changes with associated affected clients and operations
+   * List of schema changes with associated affected clients and operations.
    */
   changes: CheckPartialSchema_service_checkPartialSchema_checkSchemaResult_diffToPrevious_changes[];
   /**
@@ -136,11 +139,11 @@ export interface CheckPartialSchema_service_checkPartialSchema_checkSchemaResult
 export interface CheckPartialSchema_service_checkPartialSchema {
   __typename: "CheckPartialSchemaResult";
   /**
-   * Result of composition validation run before the schema check.
+   * Result of compostion run as part of the overall subgraph check.
    */
   compositionValidationResult: CheckPartialSchema_service_checkPartialSchema_compositionValidationResult;
   /**
-   * Result of traffic validation. This will be null if composition validation was unsuccessful.
+   * Overall result of the check. This will be null if composition validation was unsuccessful.
    */
   checkSchemaResult: CheckPartialSchema_service_checkPartialSchema_checkSchemaResult | null;
 }
@@ -148,9 +151,8 @@ export interface CheckPartialSchema_service_checkPartialSchema {
 export interface CheckPartialSchema_service {
   __typename: "ServiceMutation";
   /**
-   * Compose an implementing service's partial schema, diff the composed schema, validate traffic against that schema,
-   * and store the result so the details can be viewed by users in the UI.
-   * This mutation will not mark the schema as "published".
+   * Check a proposed subgraph schema change.
+   * If the proposal composes successfully, perform a usage check for the resulting schema.
    */
   checkPartialSchema: CheckPartialSchema_service_checkPartialSchema;
 }
@@ -188,7 +190,7 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_affectedQueries 
 export interface CheckSchema_service_checkSchema_diffToPrevious_changes {
   __typename: "Change";
   /**
-   * Indication of the success of the overall change, either failure, warning, or notice.
+   * Severity of the change, either failure or warning.
    */
   severity: ChangeSeverity;
   /**
@@ -196,7 +198,7 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_changes {
    */
   code: string;
   /**
-   * Explanation of both the target of the change and how it was changed.
+   * Human-readable description of the change.
    */
   description: string;
 }
@@ -233,23 +235,23 @@ export interface CheckSchema_service_checkSchema_diffToPrevious_validationConfig
 export interface CheckSchema_service_checkSchema_diffToPrevious {
   __typename: "SchemaDiff";
   /**
-   * Indication of the success of the change, either failure, warning, or notice.
+   * Indication of the success of the change; either failure, warning, or notice.
    */
   severity: ChangeSeverity;
   /**
-   * Clients affected by all changes in diff
+   * Clients affected by all changes in the diff.
    */
   affectedClients: CheckSchema_service_checkSchema_diffToPrevious_affectedClients[] | null;
   /**
-   * Operations affected by all changes in diff
+   * Operations affected by all changes in the diff.
    */
   affectedQueries: CheckSchema_service_checkSchema_diffToPrevious_affectedQueries[] | null;
   /**
-   * Number of operations that were validated during schema diff
+   * Number of operations that were validated during the check.
    */
   numberOfCheckedOperations: number | null;
   /**
-   * List of schema changes with associated affected clients and operations
+   * List of schema changes with associated affected clients and operations.
    */
   changes: CheckSchema_service_checkSchema_diffToPrevious_changes[];
   /**
@@ -274,12 +276,11 @@ export interface CheckSchema_service {
   __typename: "ServiceMutation";
   /**
    * Checks a proposed schema against the schema that has been published to
-   * a particular tag, using metrics that have been published to the base tag.
-   * Callers can set the historicParameters directly, which will be used if
-   * provided. If useMaximumRetention is provided, but historicParameters is not,
-   * then validation will use the maximum retention the graph has access to.
-   * If neither historicParameters nor useMaximumRetention is provided, the
-   * default time range of one week (7 days) will be used.
+   * a particular variant, using metrics corresponding to `historicParameters`.
+   * Callers can set `historicParameters` directly or rely on defaults set in the
+   * graph's check configuration (7 days by default).
+   * If they do not set `historicParameters` but set `useMaximumRetention`,
+   * validation will use the maximum retention the graph has access to.
    */
   checkSchema: CheckSchema_service_checkSchema;
 }
@@ -313,31 +314,32 @@ export interface ListServices_service_implementingServices_NonFederatedImplement
 export interface ListServices_service_implementingServices_FederatedImplementingServices_services {
   __typename: "FederatedImplementingService";
   /**
-   * Identifies which graph this implementing service belongs to.
-   * Formerly known as "service_id"
+   * The ID of the graph this subgraph belongs to.
    */
   graphID: string;
   /**
-   * Specifies which variant of a graph this implementing service belongs to".
-   * Formerly known as "tag"
+   * Which variant of a graph this subgraph belongs to.
    */
   graphVariant: string;
   /**
-   * Name of the implementing service
+   * Name of the subgraph.
    */
   name: string;
   /**
-   * URL of the graphql endpoint of the implementing service
+   * URL of the subgraph's GraphQL endpoint.
    */
   url: string | null;
   /**
-   * Timestamp for when this implementing service was updated
+   * Timestamp for when this subgraph was updated.
    */
   updatedAt: any;
 }
 
 export interface ListServices_service_implementingServices_FederatedImplementingServices {
   __typename: "FederatedImplementingServices";
+  /**
+   * The list of underlying subgraphs.
+   */
   services: ListServices_service_implementingServices_FederatedImplementingServices_services[];
 }
 
@@ -346,13 +348,16 @@ export type ListServices_service_implementingServices = ListServices_service_imp
 export interface ListServices_service {
   __typename: "Service";
   /**
-   * List of implementing services that comprise a graph. A non-federated graph should have a single implementing service.
-   * Set includeDeleted to see deleted implementing services.
+   * List of subgraphs that comprise a graph. A non-federated graph should have a single implementing service.
+   * Set includeDeleted to see deleted subgraphs.
    */
   implementingServices: ListServices_service_implementingServices | null;
 }
 
 export interface ListServices {
+  /**
+   * Address of the Studio frontend.
+   */
   frontendUrlRoot: string;
   /**
    * Service by ID
@@ -451,7 +456,13 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
 
 export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors {
   __typename: "SchemaCompositionError";
+  /**
+   * Affected locations.
+   */
   locations: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors_locations | null)[];
+  /**
+   * A human-readable locations.
+   */
   message: string;
 }
 
@@ -462,19 +473,22 @@ export interface RemoveServiceAndCompose_service_removeImplementingServiceAndTri
    */
   compositionConfig: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_compositionConfig | null;
   /**
-   * List of errors during composition. Errors mean that Apollo was unable to compose the
-   * graph's implementing services into a GraphQL schema. This partial schema should not be
-   * published to the implementing service if there were any errors encountered.
+   *   List of errors during composition. Errors mean that Apollo was unable to compose the
+   *   graph variant's subgraphs into a GraphQL schema. If present, gateways / routers
+   * are not updated.
    */
   errors: (RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition_errors | null)[];
   /**
-   * Whether the gateway link was updated, or would have been for dry runs.
+   * Whether the gateway/router was updated via Uplink, or would have been for dry runs.
    */
   updatedGateway: boolean;
 }
 
 export interface RemoveServiceAndCompose_service {
   __typename: "ServiceMutation";
+  /**
+   * Removes a subgraph. If composition is successful, this will update running routers.
+   */
   removeImplementingServiceAndTriggerComposition: RemoveServiceAndCompose_service_removeImplementingServiceAndTriggerComposition;
 }
 
@@ -567,40 +581,46 @@ export interface SchemaTagsAndFieldStatsVariables {
 export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_compositionConfig {
   __typename: "CompositionConfig";
   /**
-   * Hash of the composed schema
+   * Hash of the API schema.
    */
   schemaHash: string;
 }
 
 export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_errors {
   __typename: "SchemaCompositionError";
+  /**
+   * A human-readable locations.
+   */
   message: string;
 }
 
 export interface UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition {
   __typename: "CompositionAndUpsertResult";
   /**
-   * The produced composition config. Will be null if there are any errors
+   * The produced composition config, or null if there are any errors.
    */
   compositionConfig: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_compositionConfig | null;
   /**
    * List of errors during composition. Errors mean that Apollo was unable to compose the
-   * graph's implementing services into a GraphQL schema. This partial schema should not be
-   * published to the implementing service if there were any errors encountered
+   * graph variant's subgraphs into a supergraph schema. If present, gateways / routers
+   * are not updated.
    */
   errors: (UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition_errors | null)[];
   /**
-   * Whether the gateway link was updated.
+   * Whether the gateway/router was updated via Uplink, or would have been for dry runs.
    */
   didUpdateGateway: boolean;
   /**
-   * Whether an implementingService was created as part of this mutation
+   * Whether a subgraph was created as part of this mutation.
    */
   serviceWasCreated: boolean;
 }
 
 export interface UploadAndComposePartialSchema_service {
   __typename: "ServiceMutation";
+  /**
+   * Publish to a subgraph. If composition is successful, this will update running routers.
+   */
   upsertImplementingServiceAndTriggerComposition: UploadAndComposePartialSchema_service_upsertImplementingServiceAndTriggerComposition | null;
 }
 
@@ -628,25 +648,46 @@ export interface UploadAndComposePartialSchemaVariables {
 
 export interface UploadSchema_service_uploadSchema_tag_schema {
   __typename: "Schema";
+  /**
+   * The hex representation of the SHA256 of the GraphQL document.
+   */
   hash: string;
 }
 
 export interface UploadSchema_service_uploadSchema_tag {
   __typename: "SchemaTag";
   tag: string;
+  /**
+   * The published schema.
+   */
   schema: UploadSchema_service_uploadSchema_tag_schema;
 }
 
 export interface UploadSchema_service_uploadSchema {
   __typename: "UploadSchemaMutationResponse";
+  /**
+   * A response code for processing via machines (e.g. UPLOAD_SUCCESS or NO_CHANGES)
+   */
   code: string;
+  /**
+   * Human readable result of a schema publish.
+   */
   message: string;
+  /**
+   * Whether the schema publish successfully completed or encountered errors.
+   */
   success: boolean;
+  /**
+   * If successful, the corresponding publication.
+   */
   tag: UploadSchema_service_uploadSchema_tag | null;
 }
 
 export interface UploadSchema_service {
   __typename: "ServiceMutation";
+  /**
+   * Publish a schema to this variant, either via a document or an introspection query result.
+   */
   uploadSchema: UploadSchema_service_uploadSchema | null;
 }
 
@@ -1146,6 +1187,9 @@ export interface GetSchemaByTag_service_schema___schema {
 
 export interface GetSchemaByTag_service_schema {
   __typename: "Schema";
+  /**
+   * The hex representation of the SHA256 of the GraphQL document.
+   */
   hash: string;
   __schema: GetSchemaByTag_service_schema___schema;
 }
@@ -1153,7 +1197,7 @@ export interface GetSchemaByTag_service_schema {
 export interface GetSchemaByTag_service {
   __typename: "Service";
   /**
-   * Get a schema by hash OR current tag
+   * Get a schema by hash or current tag
    */
   schema: GetSchemaByTag_service_schema | null;
 }
@@ -1702,8 +1746,8 @@ export enum ValidationErrorType {
  * Filter options to exclude by client reference ID, client name, and client version.
  */
 export interface ClientInfoFilter {
-  referenceID?: string | null;
   name?: string | null;
+  referenceID?: string | null;
   version?: string | null;
 }
 
@@ -1711,104 +1755,112 @@ export interface ClientInfoFilter {
  * This is stored with a schema when it is uploaded
  */
 export interface GitContextInput {
-  remoteUrl?: string | null;
+  branch?: string | null;
   commit?: string | null;
   committer?: string | null;
   message?: string | null;
-  branch?: string | null;
+  remoteUrl?: string | null;
 }
 
 export interface HistoricQueryParameters {
+  excludedClients?: ClientInfoFilter[] | null;
+  excludedOperationNames?: OperationNameFilterInput[] | null;
   from?: any | null;
-  to?: any | null;
+  ignoredOperations?: string[] | null;
+  includedVariants?: string[] | null;
   queryCountThreshold?: number | null;
   queryCountThresholdPercentage?: number | null;
-  ignoredOperations?: string[] | null;
-  excludedClients?: ClientInfoFilter[] | null;
-  includedVariants?: string[] | null;
+  to?: any | null;
 }
 
 export interface IntrospectionDirectiveInput {
-  name: string;
-  description?: string | null;
-  locations: IntrospectionDirectiveLocation[];
   args: IntrospectionInputValueInput[];
+  description?: string | null;
   isRepeatable?: boolean | null;
+  locations: IntrospectionDirectiveLocation[];
+  name: string;
 }
 
 /**
  * __EnumValue introspection type
  */
 export interface IntrospectionEnumValueInput {
-  name: string;
+  deprecationReason?: string | null;
   description?: string | null;
   isDeprecated: boolean;
-  deprecationReason?: string | null;
+  name: string;
 }
 
 /**
  * __Field introspection type
  */
 export interface IntrospectionFieldInput {
-  name: string;
-  description?: string | null;
   args: IntrospectionInputValueInput[];
-  type: IntrospectionTypeInput;
-  isDeprecated: boolean;
   deprecationReason?: string | null;
+  description?: string | null;
+  isDeprecated: boolean;
+  name: string;
+  type: IntrospectionTypeInput;
 }
 
 /**
  * __Value introspection type
  */
 export interface IntrospectionInputValueInput {
-  name: string;
-  description?: string | null;
-  type: IntrospectionTypeInput;
   defaultValue?: string | null;
-  isDeprecated?: boolean | null;
   deprecationReason?: string | null;
+  description?: string | null;
+  isDeprecated?: boolean | null;
+  name: string;
+  type: IntrospectionTypeInput;
 }
 
 /**
  * __Schema introspection type
  */
 export interface IntrospectionSchemaInput {
-  types?: IntrospectionTypeInput[] | null;
-  queryType: IntrospectionTypeRefInput;
-  mutationType?: IntrospectionTypeRefInput | null;
-  subscriptionType?: IntrospectionTypeRefInput | null;
-  directives: IntrospectionDirectiveInput[];
   description?: string | null;
+  directives: IntrospectionDirectiveInput[];
+  mutationType?: IntrospectionTypeRefInput | null;
+  queryType: IntrospectionTypeRefInput;
+  subscriptionType?: IntrospectionTypeRefInput | null;
+  types?: IntrospectionTypeInput[] | null;
 }
 
 /**
  * __Type introspection type
  */
 export interface IntrospectionTypeInput {
+  description?: string | null;
+  enumValues?: IntrospectionEnumValueInput[] | null;
+  fields?: IntrospectionFieldInput[] | null;
+  inputFields?: IntrospectionInputValueInput[] | null;
+  interfaces?: IntrospectionTypeInput[] | null;
   kind: IntrospectionTypeKind;
   name?: string | null;
-  description?: string | null;
-  specifiedByUrl?: string | null;
-  fields?: IntrospectionFieldInput[] | null;
-  interfaces?: IntrospectionTypeInput[] | null;
-  possibleTypes?: IntrospectionTypeInput[] | null;
-  enumValues?: IntrospectionEnumValueInput[] | null;
-  inputFields?: IntrospectionInputValueInput[] | null;
   ofType?: IntrospectionTypeInput | null;
+  possibleTypes?: IntrospectionTypeInput[] | null;
+  specifiedByUrl?: string | null;
 }
 
 /**
  * Shallow __Type introspection type
  */
 export interface IntrospectionTypeRefInput {
-  name: string;
   kind?: string | null;
+  name: string;
 }
 
 export interface OperationDocumentInput {
   body: string;
   name?: string | null;
+}
+
+/**
+ * Options to filter by operation name.
+ */
+export interface OperationNameFilterInput {
+  name: string;
 }
 
 /**
@@ -1823,8 +1875,8 @@ export interface OperationDocumentInput {
  * the hash does not need to be and will be computed server-side.
  */
 export interface PartialSchemaInput {
-  sdl?: string | null;
   hash?: string | null;
+  sdl?: string | null;
 }
 
 export interface RegisteredClientIdentityInput {
@@ -1834,9 +1886,9 @@ export interface RegisteredClientIdentityInput {
 }
 
 export interface RegisteredOperationInput {
-  signature: string;
   document?: string | null;
   metadata?: RegisteredOperationMetadataInput | null;
+  signature: string;
 }
 
 export interface RegisteredOperationMetadataInput {
