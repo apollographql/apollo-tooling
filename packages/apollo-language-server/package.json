@@ -38,7 +38,7 @@
     "graphql-tag": "^2.10.1",
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
-    "minimatch": "^3.0.4",
+    "minimatch": "^5.0.0",
     "moment": "2.29.1",
     "vscode-languageserver": "^5.1.0",
     "vscode-uri": "1.0.6"
