@@ -38,7 +38,7 @@
     "@oclif/plugin-autocomplete": "0.3.0",
     "@oclif/plugin-help": "3.3.1",
     "@oclif/plugin-not-found": "1.2.6",
-    "@oclif/plugin-plugins": "1.10.11",
+    "@oclif/plugin-plugins": "2.1.0",
     "@oclif/plugin-warn-if-update-available": "1.7.3",
     "apollo-codegen-core": "file:../apollo-codegen-core",
     "apollo-codegen-flow": "file:../apollo-codegen-flow",
