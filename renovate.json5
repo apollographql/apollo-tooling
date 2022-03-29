@@ -23,6 +23,12 @@
       "groupSlug": "all-minor-patch",
     },
     {
+      "groupName": "oclif",
+      "matchPackagePrefixes": [
+        "@oclif/"
+      ]
+    },
+    {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true
     },
