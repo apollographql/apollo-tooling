@@ -25,7 +25,6 @@
     "postcircle": "npm run lint",
     "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
-    "posttest": "npm run lint",
     "release:version-bump": "lerna version --exact",
     "release:start-ci-publish": "node -p '`Publish (dist-tag:${process.env.APOLLO_DIST_TAG || \"latest\"})`' | git tag -F - \"publish/$(date -u '+%Y%m%d%H%M%S')\" && git push origin \"$(git describe --match='publish/*' --tags --exact-match HEAD)\"",
     "client:codegen": "node ./packages/apollo/bin/run client:codegen --target=typescript --outputFlat ./packages/apollo-language-server/src/graphqlTypes.ts"
@@ -73,7 +72,6 @@
     "@types/node-fetch": "2.6.1",
     "@types/sha.js": "2.4.0",
     "@types/table": "6.0.0",
-    "chai": "^4.3.6",
     "cross-env": "7.0.3",
     "graphql": "15.2.0",
     "heroku-cli-util": "8.0.12",
