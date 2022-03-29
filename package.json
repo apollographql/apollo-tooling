@@ -76,7 +76,7 @@
     "graphql": "15.2.0",
     "heroku-cli-util": "8.0.12",
     "husky": "5.2.0",
-    "jest": "24.9.0",
+    "jest": "26.0.0",
     "jest-environment-node": "24.9.0",
     "jest-matcher-utils": "24.9.0",
     "lerna": "4.0.0",
