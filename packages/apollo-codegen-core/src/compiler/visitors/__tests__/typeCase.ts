@@ -171,9 +171,11 @@ describe("TypeCase", () => {
 
     const selectionSet = (context.operations["Hero"].selectionSet
       .selections[0] as Field).selectionSet as SelectionSet;
-    const typeCase = typeCaseForSelectionSet(collectAndMergeFields(
-      typeCaseForSelectionSet(selectionSet).variants[0]
-    )[0].selectionSet as SelectionSet);
+    const typeCase = typeCaseForSelectionSet(
+      collectAndMergeFields(
+        typeCaseForSelectionSet(selectionSet).variants[0]
+      )[0].selectionSet as SelectionSet
+    );
 
     expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], ["name"]);
     expect(

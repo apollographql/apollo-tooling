@@ -13,8 +13,7 @@ import {
   isObjectType,
   SchemaDefinitionNode,
   OperationTypeNode,
-  SchemaExtensionNode,
-  OperationTypeDefinitionNode
+  SchemaExtensionNode
 } from "graphql";
 import { isNode, isDocumentNode } from "./utilities/graphql";
 import { GraphQLResolverMap } from "./schema/resolverMap";
@@ -35,7 +34,7 @@ function flattened<T>(arr: ReadonlyArray<ReadonlyArray<T>>): ReadonlyArray<T> {
 }
 
 export function buildServiceDefinition(
-  modules: GraphQLSchemaModule[]
+  modules: (GraphQLSchemaModule | DocumentNode)[]
 ): GraphQLServiceDefinition {
   const errors: GraphQLError[] = [];
 
@@ -202,7 +201,7 @@ export function buildServiceDefinition(
     }
 
     for (const module of modules) {
-      if (!module.resolvers) continue;
+      if ("kind" in module || !module.resolvers) continue;
 
       addResolversToSchema(schema, module.resolvers);
     }

@@ -287,7 +287,10 @@ export function traitDeclarationForSelectionSet(
         generator.printNewlineIfNeeded();
         generator.printOnNewline("val possibleTypes = scala.collection.Set(");
         generator.print(
-          join(Array.from(possibleTypes).map(type => `"${String(type)}"`), ", ")
+          join(
+            Array.from(possibleTypes).map(type => `"${String(type)}"`),
+            ", "
+          )
         );
         generator.print(")");
       }
