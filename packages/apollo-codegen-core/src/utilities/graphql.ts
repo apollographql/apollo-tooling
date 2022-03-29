@@ -125,7 +125,7 @@ export function isTypeProperSuperTypeOf(
     isEqualType(maybeSuperType, subType) ||
     (isObjectType(subType) &&
       isAbstractType(maybeSuperType) &&
-        schema.isPossibleType(maybeSuperType, subType))
+      schema.isPossibleType(maybeSuperType, subType))
   );
 }
 

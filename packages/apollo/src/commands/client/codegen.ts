@@ -162,8 +162,8 @@ export default class Generate extends ClientCommand {
           !flags.outputFlat &&
           (inferredTarget === "typescript" || inferredTarget === "flow") &&
           args.output &&
-            (path.isAbsolute(args.output) ||
-              args.output.split(path.sep).length > 1)
+          (path.isAbsolute(args.output) ||
+            args.output.split(path.sep).length > 1)
         ) {
           throw new Error(
             'For TypeScript and Flow generators, "output" must be empty or a single directory name, unless the "outputFlat" flag is set.'
