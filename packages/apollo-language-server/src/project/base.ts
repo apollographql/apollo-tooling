@@ -334,7 +334,8 @@ export abstract class GraphQLProject implements GraphQLSchemaProvider {
 
   get typeSystemDefinitionsAndExtensions(): (
     | TypeSystemDefinitionNode
-    | TypeSystemExtensionNode)[] {
+    | TypeSystemExtensionNode
+  )[] {
     const definitionsAndExtensions = [];
     for (const document of this.documents) {
       if (!document.ast) continue;

@@ -40,8 +40,9 @@ export function getGraphIdFromConfig(config: ApolloConfigFormat) {
     return parseServiceSpecifier(config.service.name)[0];
   if (config.client) {
     if (typeof config.client.service === "string") {
-      return parseServiceSpecifier(config.client
-        .service as ServiceSpecifier)[0];
+      return parseServiceSpecifier(
+        config.client.service as ServiceSpecifier
+      )[0];
     }
     return config.client.service && config.client.service.name;
   } else {

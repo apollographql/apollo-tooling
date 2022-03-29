@@ -212,8 +212,6 @@ export function buildServiceDefinition(
   }
 }
 
-
-
 function addResolversToSchema(
   schema: GraphQLSchema,
   resolvers: GraphQLResolverMap<any>

@@ -4,7 +4,7 @@ import {
   buildClientSchema,
   Source,
   printSchema,
-  parse,
+  parse
 } from "graphql";
 import { readFileSync } from "fs";
 import { extname, resolve } from "path";

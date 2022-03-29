@@ -413,8 +413,9 @@ describe("Swift code generation", () => {
 
       const outputField = operations["Test"].selectionSet
         .selections[0] as Field;
-      generator.propertyDeclarationForField(outputField.selectionSet
-        .selections[0] as (Field & Property));
+      generator.propertyDeclarationForField(
+        outputField.selectionSet.selections[0] as Field & Property
+      );
 
       expect(generator.output).toMatchSnapshot();
     });

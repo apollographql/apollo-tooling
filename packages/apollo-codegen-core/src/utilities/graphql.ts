@@ -105,13 +105,10 @@ export function valueFromValueNode(
     case "ListValue":
       return valueNode.values.map(valueFromValueNode);
     case "ObjectValue":
-      return valueNode.fields.reduce(
-        (object, field) => {
-          object[field.name.value] = valueFromValueNode(field.value);
-          return object;
-        },
-        {} as any
-      );
+      return valueNode.fields.reduce((object, field) => {
+        object[field.name.value] = valueFromValueNode(field.value);
+        return object;
+      }, {} as any);
     case "Variable":
       return { kind: "Variable", variableName: valueNode.name.value };
     default:
@@ -127,8 +124,8 @@ export function isTypeProperSuperTypeOf(
   return (
     isEqualType(maybeSuperType, subType) ||
     (isObjectType(subType) &&
-      (isAbstractType(maybeSuperType) &&
-        schema.isPossibleType(maybeSuperType, subType)))
+      isAbstractType(maybeSuperType) &&
+        schema.isPossibleType(maybeSuperType, subType))
   );
 }
 
