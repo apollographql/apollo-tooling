@@ -86,7 +86,7 @@
     "prettier": "1.18.2",
     "stdout-stderr": "0.1.13",
     "symlink-dir": "5.0.1",
-    "ts-jest": "24.3.0",
+    "ts-jest": "25.2.1",
     "ts-node": "9.1.1",
     "tslib": "1.14.1",
     "typescript": "4.2.4",
