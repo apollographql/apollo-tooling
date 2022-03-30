@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "composite": true,
-    "target": "es2017",
+    "target": "es2019",
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -17,7 +17,7 @@
     "noUnusedLocals": false,
     "forceConsistentCasingInFileNames": true,
     "useUnknownInCatchVariables": false,
-    "lib": ["es2017", "esnext.asynciterable"],
+    "lib": ["es2019", "esnext.asynciterable"],
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
