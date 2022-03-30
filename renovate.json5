@@ -61,6 +61,11 @@
       "allowedVersions": "^2.0.0"
     },
     {
+      // v5 is importing node:tty which is breaking though I'm not sure why
+      "matchPackageNames": ["chalk"],
+      "allowedVersions": "^4.0.0"
+    },
+    {
       "matchPaths": [
         "docs/package.json"
       ],
