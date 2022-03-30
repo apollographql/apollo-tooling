@@ -27,11 +27,6 @@ import { GraphQLResolverMap } from "./resolverMap";
 import { GraphQLSchemaValidationError } from "./GraphQLSchemaValidationError";
 import { specifiedSDLRules } from "graphql/validation/specifiedRules";
 
-// TODO(Node.js 10): When we deprecate Node.js 10, remove this and switch
-// to using `Array.prototype.flat`.  When doing this, deleting the hand-rolled
-// types in `./packages/apollo-gateway/src/types/` that go with it.
-import flat from "core-js-pure/features/array/flat";
-
 import {
   KnownTypeNamesRule,
   UniqueDirectivesPerLocationRule,
@@ -167,7 +162,7 @@ export function buildSchemaFromSDL(
     {
       kind: Kind.DOCUMENT,
       definitions: [
-        ...flat(Object.values(definitionsMap)),
+        ...Object.values(definitionsMap).flat(),
         ...missingTypeDefinitions,
         ...directiveDefinitions
       ]
@@ -181,7 +176,7 @@ export function buildSchemaFromSDL(
     schema,
     {
       kind: Kind.DOCUMENT,
-      definitions: flat(Object.values(extensionsMap))
+      definitions: Object.values(extensionsMap).flat()
     },
     {
       assumeValidSDL: true
@@ -193,11 +188,10 @@ export function buildSchemaFromSDL(
   if (schemaDefinitions.length > 0 || schemaExtensions.length > 0) {
     operationTypeMap = {};
 
-    const operationTypes = flat(
-      [...schemaDefinitions, ...schemaExtensions]
-        .map(node => node.operationTypes)
-        .filter(isNotNullOrUndefined)
-    );
+    const operationTypes = [...schemaDefinitions, ...schemaExtensions]
+      .map(node => node.operationTypes)
+      .filter(isNotNullOrUndefined)
+      .flat();
 
     for (const { operation, type } of operationTypes) {
       operationTypeMap[operation] = type.name.value;

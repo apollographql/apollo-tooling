@@ -8,10 +8,10 @@
   "author": "Apollo <packages@apollographql.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=6"
+    "node": ">=12.13.0 <18.0",
+    "npm": ">=7 <9"
   },
   "dependencies": {
-    "core-js-pure": "^3.10.2",
     "lodash.sortby": "^4.7.0",
     "sha.js": "^2.4.11"
   },

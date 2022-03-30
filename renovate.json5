@@ -49,7 +49,7 @@
     },
     {
       "matchPackageNames": ["@types/node"],
-      "allowedVersions": "8.x"
+      "allowedVersions": "12.x"
     },
     {
       "matchPackageNames": ["vscode-uri"],

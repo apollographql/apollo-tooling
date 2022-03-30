@@ -13,8 +13,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "engines": {
-    "node": ">=8",
-    "npm": ">=6"
+    "node": ">=12.13.0 <18.0",
+    "npm": ">=7 <9"
   },
   "dependencies": {
     "apollo-codegen-core": "file:../apollo-codegen-core",

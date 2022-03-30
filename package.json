@@ -29,8 +29,8 @@
     "client:codegen": "node ./packages/apollo/bin/run client:codegen --target=typescript --outputFlat ./packages/apollo-language-server/src/graphqlTypes.ts"
   },
   "engines": {
-    "node": ">=8 <17",
-    "npm": ">=7.x <9.x"
+    "node": ">=12.13.0 <18.0",
+    "npm": ">=7 <9"
   },
   "dependencies": {
     "@apollographql/apollo-tools": "file:packages/apollo-tools",
@@ -51,7 +51,6 @@
     "@types/babel__generator": "7.6.4",
     "@types/babel-types": "7.0.11",
     "@types/common-tags": "1.8.1",
-    "@types/core-js": "2.5.5",
     "@types/cosmiconfig": "5.0.3",
     "@types/gaze": "1.1.2",
     "@types/git-parse": "^1.0.1",
@@ -68,7 +67,7 @@
     "@types/minimatch": "3.0.5",
     "@types/mkdirp": "1.0.2",
     "@types/nock": "10.0.3",
-    "@types/node": "8.10.66",
+    "@types/node": "12.12.6",
     "@types/node-fetch": "2.6.1",
     "@types/sha.js": "2.4.0",
     "@types/table": "6.0.0",
