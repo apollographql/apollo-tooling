@@ -4,6 +4,9 @@
 
 ## vNEXT
 
+- `apollo-language-server`
+  - Remove `moment` as a dependency [#2595](https://github.com/apollographql/apollo-tooling/pull/2595)
+
 ## `apollo@2.33.10`
 - This release includes a number of patch updates for dependencies within the following packages. Behavior changes aren't expected and should be considered reportable issues.
   - apollo-codegen-core@0.40.8
