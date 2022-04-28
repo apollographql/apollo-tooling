@@ -167,7 +167,7 @@ export default class TypescriptGenerator {
   }
 
   public import(types: GraphQLType[], source: string) {
-    return t.importDeclaration(
+    const node = t.importDeclaration(
       types.map(type =>
         t.importSpecifier(
           t.identifier(type.toString()),
@@ -176,5 +176,11 @@ export default class TypescriptGenerator {
       ),
       t.stringLiteral(source)
     );
+    // Expect an error until `@types/babel-types` is upgraded to match the
+    // `importKind` changes made to babel:
+    // https://github.com/babel/babel/issues/9485
+    // @ts-expect-error
+    node.importKind = "type";
+    return node;
   }
 }

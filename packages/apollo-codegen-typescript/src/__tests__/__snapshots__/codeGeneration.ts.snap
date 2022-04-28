@@ -673,7 +673,7 @@ Array [
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { EnumCommentTestCase, Duplicate } from \\"./../../__generated__/globalTypes\\";
+import type { EnumCommentTestCase, Duplicate } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL mutation operation: duplicates
@@ -739,7 +739,7 @@ Array [
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"./../../__generated__/globalTypes\\";
+import type { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: HeroName
@@ -865,7 +865,7 @@ export interface humanFragment {
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"./../../__generated__/globalTypes\\";
+import type { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL fragment: droidFragment
@@ -1018,7 +1018,7 @@ export interface simpleFragment {
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"./../../__generated__/globalTypes\\";
+import type { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL fragment: anotherFragment
@@ -1149,7 +1149,7 @@ Array [
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"./../../__generated__/globalTypes\\";
+import type { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: HeroInlineFragment
@@ -1218,7 +1218,7 @@ Array [
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"./../../__generated__/globalTypes\\";
+import type { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: HeroName
@@ -1321,7 +1321,7 @@ Array [
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"./../../__generated__/globalTypes\\";
+import type { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: HeroName
@@ -1436,7 +1436,7 @@ Array [
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { EnumCommentTestCase } from \\"./../../__generated__/globalTypes\\";
+import type { EnumCommentTestCase } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: nesting
@@ -1490,7 +1490,7 @@ Array [
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { EnumCommentTestCase } from \\"./../../__generated__/globalTypes\\";
+import type { EnumCommentTestCase } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: nesting
@@ -1544,7 +1544,7 @@ Array [
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"./../../__generated__/globalTypes\\";
+import type { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: HeroFragment
@@ -1682,7 +1682,7 @@ Array [
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Episode } from \\"./../../__generated__/globalTypes\\";
+import type { Episode } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL query operation: HeroName
@@ -1751,7 +1751,7 @@ Array [
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Episode, ReviewInput } from \\"./../../__generated__/globalTypes\\";
+import type { Episode, ReviewInput } from \\"./../../__generated__/globalTypes\\";
 
 // ====================================================
 // GraphQL mutation operation: ReviewMovie
