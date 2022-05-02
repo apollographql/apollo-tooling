@@ -73,7 +73,7 @@
     "@types/table": "6.0.0",
     "chai": "4.3.6",
     "cross-env": "7.0.3",
-    "graphql": "15.2.0",
+    "graphql": "file:../graphql-js-wxue/npmDist",
     "heroku-cli-util": "8.0.12",
     "jest": "27.5.1",
     "jest-environment-node": "27.5.1",
