@@ -26,7 +26,9 @@ const defaultFileNames = [
 const envFileNames = [".env", ".env.local"];
 
 const loaders: Record<string, Loader> = {
-  ...defaultLoaders,
+  ".cjs": defaultLoaders[".js"],
+  ".js": defaultLoaders[".js"],
+  ".json": defaultLoaders[".json"],
   ".ts": TypeScriptLoader,
 };
 
