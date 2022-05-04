@@ -66,6 +66,11 @@
       "allowedVersions": "^4.0.0"
     },
     {
+      // v7 is ESM only
+      "matchPackageNames": ["strip-ansi"],
+      "allowedVersions": "^6.0.0"
+    },
+    {
       "matchPaths": [
         "docs/package.json"
       ],
