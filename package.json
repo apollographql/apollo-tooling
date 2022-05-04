@@ -70,6 +70,7 @@
     "@types/node-fetch": "2.6.1",
     "@types/sha.js": "2.4.0",
     "@types/table": "6.0.0",
+    "@types/vscode": "1.66.0",
     "chai": "4.3.6",
     "cross-env": "7.0.3",
     "graphql": "15.2.0",
@@ -86,7 +87,6 @@
     "ts-jest": "28.0.1",
     "ts-node": "10.7.0",
     "typescript": "4.6.4",
-    "vscode": "1.1.37",
     "yarn": "1.22.18"
   },
   "jest": {
