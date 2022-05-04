@@ -10,11 +10,11 @@ import {
   TextDocumentSyncKind,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { QuickPickItem } from "vscode";
 import { GraphQLWorkspace } from "./workspace";
 import { GraphQLLanguageProvider } from "./languageProvider";
 import { LanguageServerLoadingHandler } from "./loadingHandler";
 import { debounceHandler, Debug } from "./utilities";
+import { QuickPickItem } from "vscode";
 
 const connection = createConnection(ProposedFeatures.all);
 Debug.SetConnection(connection);
