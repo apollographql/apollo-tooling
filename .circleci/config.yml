@@ -187,8 +187,8 @@ workflows:
     jobs:
       - NodeJS 12:
           <<: *common_non_publish_filters
-      - NodeJS 14 Windows:
-          <<: *common_non_publish_filters
+      #- NodeJS 14 Windows:
+      #    <<: *common_non_publish_filters
       - NodeJS 14:
           <<: *common_non_publish_filters
       - NodeJS 16:
@@ -210,7 +210,7 @@ workflows:
           <<: *common_non_publish_filters
           requires:
             - NodeJS 12
-            - NodeJS 14 Windows
+            #- NodeJS 14 Windows
             - NodeJS 14
             - NodeJS 16
       - Publish GitHub Release:
@@ -223,7 +223,7 @@ workflows:
           <<: *common_publish_filters
           requires:
             - NodeJS 12
-            - NodeJS 14 Windows
+            #- NodeJS 14 Windows
             - NodeJS 14
             - NodeJS 16
             - Build CLI
