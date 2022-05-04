@@ -3,7 +3,7 @@ import {
   TypeDefinitionNode,
   TypeExtensionNode,
   DocumentNode,
-  Kind
+  Kind,
 } from "graphql";
 
 // FIXME: We should add proper type guards for these predicate functions

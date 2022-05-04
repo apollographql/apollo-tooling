@@ -28,7 +28,7 @@ import {
   isUnionType,
   isInterfaceType,
   TypeNode,
-  parseType
+  parseType,
 } from "graphql";
 
 import {
@@ -36,7 +36,7 @@ import {
   getFieldDef,
   valueFromValueNode,
   filePathForNode,
-  isMetaFieldName
+  isMetaFieldName,
 } from "../utilities/graphql";
 
 import { withTypenameFieldAddedWhereNeeded } from "apollo-language-server";
@@ -165,7 +165,7 @@ export function compileToIR(
   schema: GraphQLSchema,
   document: DocumentNode,
   options: CompilerOptions = {
-    exposeTypeNodes: true
+    exposeTypeNodes: true,
   }
 ): CompilerContext {
   if (options.addTypename) {
@@ -174,9 +174,8 @@ export function compileToIR(
 
   const compiler = new Compiler(schema, options);
 
-  const operations: { [operationName: string]: Operation } = Object.create(
-    null
-  );
+  const operations: { [operationName: string]: Operation } =
+    Object.create(null);
   const fragments: { [fragmentName: string]: Fragment } = Object.create(null);
 
   for (const definition of document.definitions) {
@@ -199,17 +198,17 @@ export function compileToIR(
     }
 
     // Compute the intersection between the possiblew types of the fragment spread and the fragment.
-    const possibleTypes = fragment.selectionSet.possibleTypes.filter(type =>
+    const possibleTypes = fragment.selectionSet.possibleTypes.filter((type) =>
       fragmentSpread.selectionSet.possibleTypes.includes(type)
     );
 
     fragmentSpread.isConditional = fragment.selectionSet.possibleTypes.some(
-      type => !fragmentSpread.selectionSet.possibleTypes.includes(type)
+      (type) => !fragmentSpread.selectionSet.possibleTypes.includes(type)
     );
 
     fragmentSpread.selectionSet = {
       possibleTypes,
-      selections: fragment.selectionSet.selections
+      selections: fragment.selectionSet.selections,
     };
   }
 
@@ -224,7 +223,7 @@ export function compileToIR(
     fragments,
     options,
     unionTypes,
-    interfaceTypes
+    interfaceTypes,
   };
 }
 
@@ -305,7 +304,7 @@ class Compiler {
     const operationType = operationDefinition.operation;
 
     const variables = (operationDefinition.variableDefinitions || []).map(
-      node => {
+      (node) => {
         const name = node.variable.name.value;
         const type = typeFromAST(this.schema, node.type as NonNullTypeNode);
         this.addTypeUsed(getNamedType(type as GraphQLType));
@@ -316,7 +315,7 @@ class Compiler {
         return {
           name,
           type: type as GraphQLNonNull<any>,
-          typeNode
+          typeNode,
         };
       }
     );
@@ -337,7 +336,7 @@ class Compiler {
       selectionSet: this.compileSelectionSet(
         operationDefinition.selectionSet,
         rootType
-      )
+      ),
     };
   }
 
@@ -365,7 +364,7 @@ class Compiler {
         fragmentDefinition.selectionSet,
         type
       ),
-      typeNode
+      typeNode,
     };
   }
 
@@ -378,7 +377,7 @@ class Compiler {
     return {
       possibleTypes,
       selections: selectionSetNode.selections
-        .map(selectionNode =>
+        .map((selectionNode) =>
           wrapInBooleanConditionsIfNeeded(
             this.compileSelection(
               selectionNode,
@@ -390,7 +389,7 @@ class Compiler {
             possibleTypes
           )
         )
-        .filter(x => x) as Selection[]
+        .filter((x) => x) as Selection[],
     };
   }
 
@@ -431,10 +430,10 @@ class Compiler {
 
         const args =
           selectionNode.arguments && selectionNode.arguments.length > 0
-            ? selectionNode.arguments.map(arg => {
+            ? selectionNode.arguments.map((arg) => {
                 const name = arg.name.value;
                 const argDef = fieldDef.args.find(
-                  argDef => argDef.name === arg.name.value
+                  (argDef) => argDef.name === arg.name.value
                 );
                 const argDefType = (argDef && argDef.type) || undefined;
                 const argDeftypeNode =
@@ -445,7 +444,7 @@ class Compiler {
                   name,
                   value: valueFromValueNode(arg.value),
                   type: argDefType,
-                  typeNode: argDeftypeNode
+                  typeNode: argDeftypeNode,
                 };
               })
             : undefined;
@@ -461,7 +460,7 @@ class Compiler {
           description:
             !isMetaFieldName(name) && description ? description : undefined,
           isDeprecated,
-          deprecationReason: deprecationReason || undefined
+          deprecationReason: deprecationReason || undefined,
         };
 
         if (isCompositeType(unmodifiedFieldType)) {
@@ -489,7 +488,7 @@ class Compiler {
           : parentType;
         const possibleTypesForTypeCondition = this.possibleTypesForType(
           type
-        ).filter(type => possibleTypes.includes(type));
+        ).filter((type) => possibleTypes.includes(type));
         const typeConditiontypeNode = this.options.exposeTypeNodes
           ? stripProp("loc", parseType(type.toString()))
           : undefined;
@@ -501,7 +500,7 @@ class Compiler {
             selectionNode.selectionSet,
             type,
             possibleTypesForTypeCondition
-          )
+          ),
         };
       }
       case Kind.FRAGMENT_SPREAD: {
@@ -514,8 +513,8 @@ class Compiler {
           fragmentName,
           selectionSet: {
             possibleTypes,
-            selections: []
-          }
+            selections: [],
+          },
         };
         this.unresolvedFragmentSpreads.push(fragmentSpread);
         return fragmentSpread;
@@ -564,8 +563,8 @@ function wrapInBooleanConditionsIfNeeded(
             inverted: directiveName === "skip",
             selectionSet: {
               possibleTypes,
-              selections: [selection]
-            }
+              selections: [selection],
+            },
           };
           break;
       }

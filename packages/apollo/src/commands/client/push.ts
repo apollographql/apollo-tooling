@@ -5,14 +5,14 @@ import URI from "vscode-uri";
 import { getOperationManifestFromProject } from "../../utils/getOperationManifestFromProject";
 import {
   operationHash,
-  defaultOperationRegistrySignature
+  defaultOperationRegistrySignature,
 } from "apollo-graphql";
 import { pluralize } from "../../utils";
 import chalk from "chalk";
 import {
   GraphQLClientProject,
   ApolloConfig,
-  graphqlTypes
+  graphqlTypes,
 } from "apollo-language-server";
 import { graphUndefinedError } from "../../utils/sharedMessages";
 
@@ -20,7 +20,7 @@ export default class ClientPush extends ClientCommand {
   static description =
     "Register operations with Apollo, adding them to the safelist";
   static flags = {
-    ...ClientCommand.flags
+    ...ClientCommand.flags,
   };
 
   async run() {
@@ -49,13 +49,13 @@ export default class ClientPush extends ClientCommand {
                 operationManifest.length,
                 "operation"
               )} from client, ${clientBundleInfo}`;
-            }
+            },
           },
           {
             title: `Checked operations against ${chalk.cyan(
               config.graph + "@" + config.variant
             )}`,
-            task: async () => {}
+            task: async () => {},
           },
           {
             title: "Pushing operations to operation registry",
@@ -82,12 +82,12 @@ export default class ClientPush extends ClientCommand {
                 clientIdentity: {
                   name: name,
                   identifier: referenceID || name,
-                  version
+                  version,
                 },
                 id: config.graph,
                 operations: operationManifest,
                 manifestVersion: 2,
-                graphVariant: config.variant
+                graphVariant: config.variant,
               };
               const { operations: _op, ...restVariables } = variables;
               this.debug("Variables sent to Apollo");
@@ -96,23 +96,17 @@ export default class ClientPush extends ClientCommand {
               this.debug(operationManifest);
 
               let response: graphqlTypes.RegisterOperations_service_registerOperationsWithResponse;
-              const {
-                invalidOperations,
-                newOperations,
-                registrationSuccess
-              } = (response = await project.engine.registerOperations(
-                variables
-              ));
+              const { invalidOperations, newOperations, registrationSuccess } =
+                (response = await project.engine.registerOperations(variables));
 
               this.debug("Results received from Apollo");
               this.debug(response);
 
               if (!registrationSuccess) {
                 if (invalidOperations) {
-                  invalidOperations.forEach(operation => {
-                    const { operationName, file } = signatureToOperation[
-                      operation.signature
-                    ];
+                  invalidOperations.forEach((operation) => {
+                    const { operationName, file } =
+                      signatureToOperation[operation.signature];
 
                     result += `\nError in: ${chalk.cyan(file)}\n`;
                     result += table(
@@ -124,16 +118,16 @@ export default class ClientPush extends ClientCommand {
                           (operation.errors
                             ? operation.errors.map(({ message }) => message)
                             : []
-                          ).join("\n")
-                        ]
+                          ).join("\n"),
+                        ],
                       ],
                       {
                         columns: {
                           2: {
                             width: 50,
-                            wrapWord: true
-                          }
-                        }
+                            wrapWord: true,
+                          },
+                        },
                       }
                     );
                   });
@@ -148,7 +142,7 @@ export default class ClientPush extends ClientCommand {
                     [
                       "Registration failed and did not receive invalid operations.",
                       "This should not occur, so please open a GitHub issue on:",
-                      "https://github.com/apollographql/apollo-tooling/"
+                      "https://github.com/apollographql/apollo-tooling/",
                     ].join("\n")
                   );
                 }
@@ -160,20 +154,19 @@ export default class ClientPush extends ClientCommand {
                   )} to the operation registry`;
                   result += table([
                     ["Status", "Operation Name"],
-                    ...newOperations.map(operation => {
-                      const { operationName, file } = signatureToOperation[
-                        operation.signature
-                      ];
+                    ...newOperations.map((operation) => {
+                      const { operationName, file } =
+                        signatureToOperation[operation.signature];
 
                       return [chalk.green("ADDED"), operationName];
-                    })
+                    }),
                   ]);
                 } else {
                   task.title = `All operations were already found in the operation registry`;
                 }
               }
-            }
-          }
+            },
+          },
         ];
       });
     } catch (e) {
@@ -216,8 +209,8 @@ function generateSignatureToOperationMap(
           {
             operationName,
             document,
-            file: line ? `${relativePath}:${line}` : relativePath || ""
-          }
+            file: line ? `${relativePath}:${line}` : relativePath || "",
+          },
         ];
       }
     )

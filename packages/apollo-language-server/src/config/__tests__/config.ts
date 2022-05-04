@@ -26,7 +26,7 @@ describe("ApolloConfig", () => {
   describe("projects", () => {
     it("creates a ClientConfig when client is present", () => {
       const rawConfig: ApolloConfigFormat = {
-        client: { service: "my-service" }
+        client: { service: "my-service" },
       };
       const config = new ApolloConfig(rawConfig);
       const projects = config.projects;
@@ -44,14 +44,14 @@ describe("ApolloConfig", () => {
     it("creates multiple configs when both client and service are present", () => {
       const rawConfig: ApolloConfigFormat = {
         client: { service: "my-service" },
-        service: "my-service"
+        service: "my-service",
       };
       const config = new ApolloConfig(rawConfig);
       const projects = config.projects;
 
       expect(projects).toHaveLength(2);
-      expect(projects.find(c => c.isClient)).toBeTruthy();
-      expect(projects.find(c => c.isService)).toBeTruthy();
+      expect(projects.find((c) => c.isClient)).toBeTruthy();
+      expect(projects.find((c) => c.isService)).toBeTruthy();
     });
   });
 
@@ -78,8 +78,8 @@ describe("ApolloConfig", () => {
       const config = new ApolloConfig({});
       const overrides = {
         engine: {
-          endpoint: "https://test.apollographql.com/api/graphql"
-        }
+          endpoint: "https://test.apollographql.com/api/graphql",
+        },
       };
       config.setDefaults(overrides);
       expect(config.engine).toEqual(overrides.engine);
@@ -90,8 +90,8 @@ describe("ApolloConfig", () => {
       const overrides = {
         client: {
           name: "my-client",
-          service: "my-service@master"
-        }
+          service: "my-service@master",
+        },
       };
       config.setDefaults(overrides);
       expect(config.client).toEqual(overrides.client);
@@ -102,8 +102,8 @@ describe("ApolloConfig", () => {
       const overrides = {
         service: {
           name: "my-service",
-          url: "localhost:9090"
-        }
+          url: "localhost:9090",
+        },
       };
       config.setDefaults(overrides);
       expect(config.service).toEqual(config.service);

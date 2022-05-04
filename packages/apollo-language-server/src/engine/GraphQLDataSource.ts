@@ -6,7 +6,7 @@ import { createHttpLink } from "apollo-link-http";
 import {
   ApolloError,
   AuthenticationError,
-  ForbiddenError
+  ForbiddenError,
 } from "apollo-server-errors";
 import to from "await-to-js";
 import { GraphQLError } from "graphql";
@@ -41,7 +41,7 @@ export class GraphQLDataSource<TContext = any> {
     return ApolloLink.from([
       this.onErrorLink(),
       this.onRequestLink(),
-      createHttpLink({ fetch, uri })
+      createHttpLink({ fetch, uri }),
     ]);
   }
 
@@ -107,7 +107,7 @@ export class GraphQLDataSource<TContext = any> {
     return onError(({ graphQLErrors, networkError, operation }) => {
       const { result, response } = operation.getContext();
       if (graphQLErrors) {
-        graphQLErrors.map(graphqlError =>
+        graphQLErrors.map((graphqlError) =>
           console.error(`[GraphQL error]: ${graphqlError.message}`)
         );
       }

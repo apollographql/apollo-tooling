@@ -23,9 +23,8 @@ export default class TypescriptGenerator {
   constructor(compilerOptions: CompilerOptions) {
     this.options = compilerOptions;
 
-    this.typeFromGraphQLType = createTypeFromGraphQLTypeFunction(
-      compilerOptions
-    );
+    this.typeFromGraphQLType =
+      createTypeFromGraphQLTypeFunction(compilerOptions);
   }
 
   public enumerationDeclaration(type: GraphQLEnumType) {
@@ -43,8 +42,8 @@ export default class TypescriptGenerator {
       typeAlias.leadingComments = [
         {
           type: "CommentBlock",
-          value: commentBlockContent(description)
-        } as t.CommentBlock
+          value: commentBlockContent(description),
+        } as t.CommentBlock,
       ];
     }
 
@@ -61,13 +60,13 @@ export default class TypescriptGenerator {
       const field = fieldMap[fieldName];
       return {
         name: fieldName,
-        type: this.typeFromGraphQLType(field.type)
+        type: this.typeFromGraphQLType(field.type),
       };
     });
 
     const inputType = t.exportNamedDeclaration(
       this.interface(name, fields, {
-        keyInheritsNullability: true
+        keyInheritsNullability: true,
       }),
       []
     );
@@ -76,8 +75,8 @@ export default class TypescriptGenerator {
       inputType.leadingComments = [
         {
           type: "CommentBlock",
-          value: commentBlockContent(description)
-        } as t.CommentBlock
+          value: commentBlockContent(description),
+        } as t.CommentBlock,
       ];
     }
 
@@ -87,7 +86,7 @@ export default class TypescriptGenerator {
   public typesForProperties(
     fields: ObjectProperty[],
     {
-      keyInheritsNullability = false
+      keyInheritsNullability = false,
     }: {
       keyInheritsNullability?: boolean;
     } = {}
@@ -110,8 +109,8 @@ export default class TypescriptGenerator {
         propertySignatureType.leadingComments = [
           {
             type: "CommentBlock",
-            value: commentBlockContent(description)
-          } as t.CommentBlock
+            value: commentBlockContent(description),
+          } as t.CommentBlock,
         ];
       }
 
@@ -123,7 +122,7 @@ export default class TypescriptGenerator {
     name: string,
     fields: ObjectProperty[],
     {
-      keyInheritsNullability = false
+      keyInheritsNullability = false,
     }: {
       keyInheritsNullability?: boolean;
     } = {}
@@ -134,7 +133,7 @@ export default class TypescriptGenerator {
       undefined,
       t.TSInterfaceBody(
         this.typesForProperties(fields, {
-          keyInheritsNullability
+          keyInheritsNullability,
         })
       )
     );
@@ -162,13 +161,14 @@ export default class TypescriptGenerator {
 
   public isNullableType(type: t.TSType) {
     return (
-      t.isTSUnionType(type) && type.types.some(type => t.isTSNullKeyword(type))
+      t.isTSUnionType(type) &&
+      type.types.some((type) => t.isTSNullKeyword(type))
     );
   }
 
   public import(types: GraphQLType[], source: string) {
     return t.importDeclaration(
-      types.map(type =>
+      types.map((type) =>
         t.importSpecifier(
           t.identifier(type.toString()),
           t.identifier(type.toString())

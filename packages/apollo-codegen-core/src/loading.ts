@@ -15,7 +15,7 @@ import {
   visit,
   Kind,
   OperationDefinitionNode,
-  FragmentDefinitionNode
+  FragmentDefinitionNode,
 } from "graphql";
 
 import { ToolError } from "apollo-language-server";
@@ -42,7 +42,7 @@ function maybeCommentedOut(content: string) {
 }
 
 function filterValidDocuments(documents: string[]) {
-  return documents.filter(document => {
+  return documents.filter((document) => {
     const source = new Source(document);
     try {
       parse(source);
@@ -74,7 +74,7 @@ function extractDocumentsWithAST(
 
   // Sometimes the js is unparsable, so this function will throw
   const ast = recast.parse(content, {
-    parser: options.parser || require("recast/parsers/babylon")
+    parser: options.parser || require("recast/parsers/babylon"),
   });
 
   const finished: string[] = [];
@@ -89,15 +89,17 @@ function extractDocumentsWithAST(
         // literal(these cases could be covered during the replacement of
         // literals in the signature calculation)
         finished.push(
-          (path.value.quasi.quasis as Array<{
-            value: { cooked: string; raw: string };
-          }>)
+          (
+            path.value.quasi.quasis as Array<{
+              value: { cooked: string; raw: string };
+            }>
+          )
             .map(({ value }) => value.cooked)
             .join("")
         );
       }
       return this.traverse(path);
-    }
+    },
   });
 
   return finished;
@@ -135,7 +137,7 @@ export function loadQueryDocuments(
   tagName: string = "gql"
 ): DocumentNode[] {
   const sources = inputPaths
-    .map(inputPath => {
+    .map((inputPath) => {
       if (fs.lstatSync(inputPath).isDirectory()) {
         return null;
       }
@@ -161,7 +163,7 @@ export function loadQueryDocuments(
               options = require("recast/parsers/_babylon_options.js")(options);
               options.plugins.push("jsx", "typescript");
               return babelParser.parse(source, options);
-            }
+            },
           };
         } else {
           parser = require("recast/parsers/babylon");
@@ -170,7 +172,7 @@ export function loadQueryDocuments(
         const doc = extractDocumentFromJavascript(body.toString(), {
           tagName,
           parser,
-          inputPath
+          inputPath,
         });
         return doc ? new Source(doc, inputPath) : null;
       }
@@ -185,8 +187,8 @@ export function loadQueryDocuments(
 
       return null;
     })
-    .filter(source => source)
-    .map(source => {
+    .filter((source) => source)
+    .map((source) => {
       try {
         return parse(source!);
       } catch (e) {
@@ -197,7 +199,7 @@ export function loadQueryDocuments(
         return null;
       }
     })
-    .filter(source => source);
+    .filter((source) => source);
 
   return sources as DocumentNode[];
 }
@@ -216,13 +218,13 @@ export function extractOperationsAndFragments(
   const fragments: Record<string, FragmentDefinitionNode> = {};
   const operations: Array<OperationDefinitionNode> = [];
 
-  documents.forEach(operation => {
+  documents.forEach((operation) => {
     // We could use separateOperations from graphql-js in the case that
     // all fragments are defined in the same file. Currently this
     // solution duplicates much of the logic, adding the ability to pull
     // fragments from separate files
     visit(operation, {
-      [Kind.FRAGMENT_DEFINITION]: node => {
+      [Kind.FRAGMENT_DEFINITION]: (node) => {
         if (!node.name || node.name.kind !== "Name") {
           (errorLogger || console.warn)(
             `Fragment Definition must have a name ${node}`
@@ -236,9 +238,9 @@ export function extractOperationsAndFragments(
         }
         fragments[node.name.value] = node;
       },
-      [Kind.OPERATION_DEFINITION]: node => {
+      [Kind.OPERATION_DEFINITION]: (node) => {
         operations.push(node);
-      }
+      },
     });
   });
 
@@ -251,17 +253,17 @@ export function combineOperationsAndFragments(
   errorLogger?: (message: string) => void
 ) {
   const fullOperations: Array<DocumentNode> = [];
-  operations.forEach(operation => {
+  operations.forEach((operation) => {
     const completeOperation: Array<
       OperationDefinitionNode | FragmentDefinitionNode
     > = [
       operation,
-      ...Object.values(getNestedFragments(operation, fragments, errorLogger))
+      ...Object.values(getNestedFragments(operation, fragments, errorLogger)),
     ];
 
     fullOperations.push({
       kind: "Document",
-      definitions: completeOperation
+      definitions: completeOperation,
     });
   });
   return fullOperations;
@@ -277,7 +279,7 @@ function getNestedFragments(
   // extraction step
   const combination: Record<string, FragmentDefinitionNode> = {};
   visit(operation, {
-    [Kind.FRAGMENT_SPREAD]: node => {
+    [Kind.FRAGMENT_SPREAD]: (node) => {
       if (!node.name || node.name.kind !== "Name") {
         (errorLogger || console.warn)(
           `Fragment Spread must have a name ${node}`
@@ -293,7 +295,7 @@ function getNestedFragments(
         getNestedFragments(fragments[node.name.value], fragments, errorLogger),
         { [node.name.value]: fragments[node.name.value] }
       );
-    }
+    },
   });
   return combination;
 }

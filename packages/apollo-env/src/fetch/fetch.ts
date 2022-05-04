@@ -28,5 +28,5 @@ export {
   RequestMode,
   RequestCredentials,
   RequestCache,
-  RequestRedirect
+  RequestRedirect,
 } from "node-fetch";

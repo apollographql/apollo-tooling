@@ -4,7 +4,7 @@ import { graphqlTypes } from "apollo-language-server";
 export function validateHistoricParams({
   validationPeriod,
   queryCountThreshold,
-  queryCountThresholdPercentage
+  queryCountThresholdPercentage,
 }: Partial<{
   validationPeriod: string;
   queryCountThreshold: number;
@@ -59,7 +59,7 @@ export function validateHistoricParams({
   return {
     ...(from && { to: -0, from }),
     ...(queryCountThreshold && { queryCountThreshold }),
-    ...(asPercentage && { queryCountThresholdPercentage: asPercentage })
+    ...(asPercentage && { queryCountThresholdPercentage: asPercentage }),
   };
 }
 

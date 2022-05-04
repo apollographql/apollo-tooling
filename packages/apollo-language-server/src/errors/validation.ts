@@ -15,7 +15,7 @@ import {
   getLocation,
   InlineFragmentNode,
   Kind,
-  isObjectType
+  isObjectType,
 } from "graphql";
 
 import { TextEdit } from "vscode-languageserver";
@@ -25,7 +25,7 @@ import { ValidationRule } from "graphql/validation/ValidationContext";
 import { positionFromSourceLocation } from "../utilities/source";
 import {
   buildExecutionContext,
-  ExecutionContext
+  ExecutionContext,
 } from "graphql/execution/execute";
 import { hasClientDirective, simpleCollectFields } from "../utilities/graphql";
 import { Debug } from "../utilities";
@@ -41,7 +41,7 @@ export const defaultValidationRules: ValidationRule[] = [
   NoAnonymousQueries,
   NoTypenameAlias,
   NoMissingClientDirectives,
-  ...specifiedRules.filter(rule => !specifiedRulesToBeRemoved.includes(rule))
+  ...specifiedRules.filter((rule) => !specifiedRulesToBeRemoved.includes(rule)),
 ];
 
 export function getValidationErrors(
@@ -68,7 +68,7 @@ export function getValidationErrors(
     (context as any)._fragments = fragments;
   }
 
-  const visitors = rules.map(rule => rule(context));
+  const visitors = rules.map((rule) => rule(context));
   // Visit the whole document with each instance of all provided rules.
   visit(document, visitWithTypeInfo(typeInfo, visitInParallel(visitors)));
 
@@ -105,12 +105,12 @@ export function NoAnonymousQueries(context: ValidationContext) {
       if (!node.name) {
         context.reportError(
           new GraphQLError("Apollo does not support anonymous operations", [
-            node
+            node,
           ])
         );
       }
       return false;
-    }
+    },
   };
 }
 
@@ -126,7 +126,7 @@ export function NoTypenameAlias(context: ValidationContext) {
           )
         );
       }
-    }
+    },
   };
 }
 
@@ -215,7 +215,7 @@ export function NoMissingClientDirectives(context: ValidationContext) {
         // subset of the overall local fields types
         const fieldNames = Object.entries(fields).map(([name]) => name);
         selectsClientFieldSet = fieldNames.every(
-          field => clientFields && clientFields.includes(field)
+          (field) => clientFields && clientFields.includes(field)
         );
         message += `fragment ${
           "name" in node ? `"${node.name.value}" ` : ""
@@ -250,8 +250,8 @@ export function NoMissingClientDirectives(context: ValidationContext) {
                 getLocation(source, locToInsertDirective)
               ),
               " @client"
-            )
-          ]
+            ),
+          ],
         };
         extensions = { codeAction };
       }
@@ -271,7 +271,7 @@ export function NoMissingClientDirectives(context: ValidationContext) {
   return {
     InlineFragment: visitor,
     FragmentDefinition: visitor,
-    Field: visitor
+    Field: visitor,
     // TODO support directives on FragmentSpread
   };
 }

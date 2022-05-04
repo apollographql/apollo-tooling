@@ -5,7 +5,7 @@ import path from "path";
 import {
   extractDocumentFromJavascript,
   loadAndMergeQueryDocuments,
-  loadQueryDocuments
+  loadQueryDocuments,
 } from "../loading";
 
 // Test example javascript source files are located within __fixtures__
@@ -64,7 +64,7 @@ describe("extractDocumentFromJavascript", () => {
 describe("Validation", () => {
   test(`should extract gql snippet from javascript file`, () => {
     const inputPaths = [
-      path.join(__dirname, "../../../../__fixtures__/starwars/gqlQueries.js")
+      path.join(__dirname, "../../../../__fixtures__/starwars/gqlQueries.js"),
     ];
 
     const document = loadAndMergeQueryDocuments(inputPaths);
@@ -76,7 +76,7 @@ describe("Validation", () => {
 describe("loadQueryDocuments", () => {
   test(`should load a schema document from a .graphqls file`, () => {
     const inputPaths = [
-      path.join(__dirname, "../../../../__fixtures__/starwars/schema.graphqls")
+      path.join(__dirname, "../../../../__fixtures__/starwars/schema.graphqls"),
     ];
 
     const document = loadQueryDocuments(inputPaths);

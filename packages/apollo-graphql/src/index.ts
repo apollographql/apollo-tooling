@@ -4,11 +4,11 @@ export {
   operationRegistrySignature,
   operationHash,
   // deprecated name for this function:
-  defaultUsageReportingSignature as defaultEngineReportingSignature
+  defaultUsageReportingSignature as defaultEngineReportingSignature,
 } from "./operationId";
 export * from "./schema";
 export {
   printWithReducedWhitespace,
   hideStringAndNumericLiterals,
-  hideLiterals
+  hideLiterals,
 } from "./transforms";

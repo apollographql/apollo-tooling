@@ -13,7 +13,7 @@ export interface EngineStatsWindow {
 
 export const DefaultEngineStatsWindow = {
   to: -0,
-  from: -86400 // one day
+  from: -86400, // one day
 };
 
 export interface HistoricalEngineStatsWindow extends EngineStatsWindow {}
@@ -37,12 +37,12 @@ export interface EngineConfig {
 }
 
 export const DefaultEngineConfig = {
-  endpoint: "https://graphql.api.apollographql.com/api/graphql"
+  endpoint: "https://graphql.api.apollographql.com/api/graphql",
 };
 
 export const DefaultConfigBase = {
   includes: ["src/**/*.{ts,tsx,js,jsx,graphql,gql}"],
-  excludes: ["**/node_modules", "**/__tests__"]
+  excludes: ["**/node_modules", "**/__tests__"],
 };
 
 export interface ConfigBase {
@@ -100,7 +100,7 @@ export const DefaultClientConfig = {
   clientOnlyDirectives: ["connection", "type"],
   clientSchemaDirectives: ["client", "rest"],
   addTypename: true,
-  statsWindow: DefaultEngineStatsWindow
+  statsWindow: DefaultEngineStatsWindow,
 };
 
 export interface ServiceConfigFormat extends ConfigBase {
@@ -112,8 +112,8 @@ export interface ServiceConfigFormat extends ConfigBase {
 export const DefaultServiceConfig = {
   ...DefaultConfigBase,
   endpoint: {
-    url: "http://localhost:4000/graphql"
-  }
+    url: "http://localhost:4000/graphql",
+  },
 };
 
 export interface ConfigBaseFormat {

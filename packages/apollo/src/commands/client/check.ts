@@ -11,7 +11,8 @@ import envCi from "env-ci";
 import { graphUndefinedError } from "../../utils/sharedMessages";
 
 const { ValidationErrorType } = graphqlTypes;
-type ValidationResult = graphqlTypes.ValidateOperations_service_validateOperations_validationResults;
+type ValidationResult =
+  graphqlTypes.ValidateOperations_service_validateOperations_validationResults;
 
 interface Operation {
   body: string;
@@ -27,7 +28,7 @@ interface LocationOffset {
 export default class ClientCheck extends ClientCommand {
   static description = "Check a client project against a pushed service";
   static flags = {
-    ...ClientCommand.flags
+    ...ClientCommand.flags,
   };
 
   async run() {
@@ -40,7 +41,7 @@ export default class ClientCheck extends ClientCommand {
       ({ project, config }) => [
         {
           title: "Checking client compatibility with service",
-          task: async ctx => {
+          task: async (ctx) => {
             if (!config.graph) {
               throw graphUndefinedError;
             }
@@ -55,7 +56,7 @@ export default class ClientCheck extends ClientCommand {
                 config.configURI ? config.configURI.fsPath : "",
                 URI.parse(doc.definitions[0].loc!.source.name).fsPath
               ),
-              locationOffset: doc.definitions[0].loc!.source.locationOffset
+              locationOffset: doc.definitions[0].loc!.source.locationOffset,
             }));
 
             ctx.validationResults = await project.engine.validateOperations({
@@ -63,15 +64,15 @@ export default class ClientCheck extends ClientCommand {
               tag: config.variant,
               operations: ctx.operations.map(({ body, name }) => ({
                 body,
-                name
+                name,
               })),
-              gitContext: ctx.gitContext
+              gitContext: ctx.gitContext,
             });
-          }
-        }
+          },
+        },
       ],
       () => ({
-        renderer: isCi ? CompactRenderer : "default"
+        renderer: isCi ? CompactRenderer : "default",
       })
     );
 
@@ -130,9 +131,9 @@ export default class ClientCheck extends ClientCommand {
           validationResults: byOperation[matchingOperation.name]
             ? [
                 ...byOperation[matchingOperation.name].validationResults,
-                validationResult
+                validationResult,
               ]
-            : [validationResult]
+            : [validationResult],
         };
       }
       return byOperation;
@@ -141,7 +142,7 @@ export default class ClientCheck extends ClientCommand {
 
   logMessagesForOperation = ({
     validationResults,
-    operation
+    operation,
   }: {
     validationResults: ValidationResult[];
     operation: Operation;
@@ -160,14 +161,14 @@ export default class ClientCheck extends ClientCommand {
       {
         [ValidationErrorType.INVALID]: [],
         [ValidationErrorType.FAILURE]: [],
-        [ValidationErrorType.WARNING]: []
+        [ValidationErrorType.WARNING]: [],
         // XXX TS doesn't recognize ValidationErrorType as a type unless prefixed with graphqlTypes
       } as { [key in graphqlTypes.ValidationErrorType]: ValidationResult[] }
     );
 
-    Object.values(byErrorType).map(validations => {
+    Object.values(byErrorType).map((validations) => {
       if (validations.length > 0) {
-        validations.forEach(validation => {
+        validations.forEach((validation) => {
           this.log(this.formatValidation(validation));
         });
         this.log();
@@ -212,7 +213,7 @@ export default class ClientCheck extends ClientCommand {
       {
         invalid: 0,
         failure: 0,
-        warning: 0
+        warning: 0,
       }
     );
 

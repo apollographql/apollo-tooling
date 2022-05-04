@@ -49,17 +49,17 @@ describe("Compiling query documents to modern IR with typeNodes", () => {
         kind: "NamedType",
         name: {
           kind: "Name",
-          value: "String"
-        }
-      }
+          value: "String",
+        },
+      },
     });
 
     expect(operations["HeroName"].variables[0].typeNode).toEqual({
       kind: "NamedType",
       name: {
         kind: "Name",
-        value: "Episode"
-      }
+        value: "Episode",
+      },
     });
 
     expect(operations["Search"].variables[0].typeNode).toEqual({
@@ -68,9 +68,9 @@ describe("Compiling query documents to modern IR with typeNodes", () => {
         kind: "NamedType",
         name: {
           kind: "Name",
-          value: "String"
-        }
-      }
+          value: "String",
+        },
+      },
     });
 
     expect(
@@ -78,7 +78,7 @@ describe("Compiling query documents to modern IR with typeNodes", () => {
         .typeNode
     ).toEqual({
       kind: "NamedType",
-      name: { kind: "Name", value: "Character" }
+      name: { kind: "Name", value: "Character" },
     });
 
     expect(
@@ -86,7 +86,7 @@ describe("Compiling query documents to modern IR with typeNodes", () => {
         .selectionSet.selections[0].typeNode
     ).toEqual({
       kind: "NonNullType",
-      type: { kind: "NamedType", name: { kind: "Name", value: "Int" } }
+      type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
     });
   });
 });

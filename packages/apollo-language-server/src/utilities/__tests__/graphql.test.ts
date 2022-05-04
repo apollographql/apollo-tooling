@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 import { parse, print } from "graphql";
 import {
   withTypenameFieldAddedWhereNeeded,
-  removeDirectiveAnnotatedFields
+  removeDirectiveAnnotatedFields,
 } from "../graphql";
 
 describe("withTypenameFieldAddedWhereNeeded", () => {

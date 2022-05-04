@@ -1,7 +1,7 @@
 import { print, SelectionNode, isSelectionNode } from "graphql";
 import { Plugin, Config, Refs, Printer } from "pretty-format";
 
-export = (({
+export = {
   test(value: any) {
     return (
       Array.isArray(value) && value.length > 0 && value.every(isSelectionNode)
@@ -17,5 +17,5 @@ export = (({
     printer: Printer
   ): string {
     return String(print(value)).replace(",", "\n");
-  }
-} as Plugin) as unknown) as jest.SnapshotSerializerPlugin;
+  },
+} as Plugin as unknown as jest.SnapshotSerializerPlugin;

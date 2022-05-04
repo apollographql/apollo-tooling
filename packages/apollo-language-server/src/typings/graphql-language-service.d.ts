@@ -4,7 +4,7 @@ declare module "@apollographql/graphql-language-service-interface" {
     Diagnostic,
     Position,
     Range,
-    CompletionItem
+    CompletionItem,
   } from "vscode-languageserver";
 
   function getAutocompleteSuggestions(

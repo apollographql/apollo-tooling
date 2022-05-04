@@ -8,7 +8,7 @@ import { ProjectCommand } from "../../Command";
 import {
   CompactRenderer,
   pluralize,
-  validateHistoricParams
+  validateHistoricParams,
 } from "../../utils";
 import {
   ChangeSeverity,
@@ -16,7 +16,7 @@ import {
   CheckSchema_service_checkSchema,
   CheckSchema_service_checkSchema_diffToPrevious_changes as Change,
   CheckSchemaVariables,
-  IntrospectionSchemaInput
+  IntrospectionSchemaInput,
 } from "apollo-language-server/lib/graphqlTypes";
 import { ApolloConfig } from "apollo-language-server";
 import moment from "moment";
@@ -31,13 +31,13 @@ const formatChange = (change: Change) => {
 
   const changeDictionary: Record<ChangeSeverity, string> = {
     [ChangeSeverity.FAILURE]: "FAIL",
-    [ChangeSeverity.NOTICE]: "PASS"
+    [ChangeSeverity.NOTICE]: "PASS",
   };
 
   return {
     severity: color(changeDictionary[change.severity]),
     code: color(change.code),
-    description: color(change.description)
+    description: color(change.description),
   };
 };
 
@@ -74,7 +74,7 @@ export function formatMarkdown({
   graphName,
   serviceName,
   tag,
-  graphCompositionID
+  graphCompositionID,
 }: {
   checkSchemaResult: CheckSchema_service_checkSchema;
   graphName: string;
@@ -110,7 +110,7 @@ export function formatMarkdown({
   }
 
   const breakingChanges = diffToPrevious.changes.filter(
-    change => change.severity === "FAILURE"
+    (change) => change.severity === "FAILURE"
   );
 
   const affectedQueryCount = diffToPrevious.affectedQueries
@@ -126,7 +126,7 @@ ${validationText}
 ${
   breakingChanges.length > 0
     ? `❌ Found **${pluralize(
-        diffToPrevious.changes.filter(change => change.severity === "FAILURE")
+        diffToPrevious.changes.filter((change) => change.severity === "FAILURE")
           .length,
         "breaking change"
       )}** that would affect **${pluralize(
@@ -141,8 +141,10 @@ ${
     : `✅ Found **no breaking changes**.`
 }
 
-🔗 [View your service check details](${checkSchemaResult.targetUrl +
-    (graphCompositionID ? `?graphCompositionId=${graphCompositionID})` : `)`)}.
+🔗 [View your service check details](${
+    checkSchemaResult.targetUrl +
+    (graphCompositionID ? `?graphCompositionId=${graphCompositionID})` : `)`)
+  }.
 `;
 }
 
@@ -150,7 +152,7 @@ export function formatCompositionErrorsMarkdown({
   compositionErrors,
   graphName,
   serviceName,
-  tag
+  tag,
 }: {
   compositionErrors: CompositionErrors;
   graphName: string;
@@ -174,7 +176,7 @@ ${compositionErrors
 
 export function formatHumanReadable({
   checkSchemaResult,
-  graphCompositionID
+  graphCompositionID,
 }: {
   checkSchemaResult: CheckSchema_service_checkSchema;
   // this will only exist for federated schema check
@@ -182,7 +184,7 @@ export function formatHumanReadable({
 }): string {
   const {
     targetUrl,
-    diffToPrevious: { changes }
+    diffToPrevious: { changes },
   } = checkSchemaResult;
   let result = "";
 
@@ -192,18 +194,18 @@ export function formatHumanReadable({
     // Create a sorted list of the changes. We'll then filter values from the sorted list, resulting in sorted
     // filtered lists.
     const sortedChanges = sortBy<typeof changes[0]>(changes, [
-      change => change.code,
-      change => change.description
+      (change) => change.code,
+      (change) => change.description,
     ]);
 
     const breakingChanges = sortedChanges.filter(
-      change => change.severity === ChangeSeverity.FAILURE
+      (change) => change.severity === ChangeSeverity.FAILURE
     );
 
-    sortBy(breakingChanges, change => change.severity);
+    sortBy(breakingChanges, (change) => change.severity);
 
     const nonBreakingChanges = sortedChanges.filter(
-      change => change.severity !== ChangeSeverity.FAILURE
+      (change) => change.severity !== ChangeSeverity.FAILURE
     );
 
     result += table([
@@ -212,8 +214,8 @@ export function formatHumanReadable({
         ...breakingChanges.map(formatChange).map(Object.values),
         // Add an empty line between, but only if there are both breaking changes and non-breaking changes.
         // nonBreakingChanges.length && breakingChanges.length ? {} : null,
-        ...nonBreakingChanges.map(formatChange).map(Object.values)
-      ].filter(Boolean)
+        ...nonBreakingChanges.map(formatChange).map(Object.values),
+      ].filter(Boolean),
     ]);
   }
 
@@ -238,60 +240,60 @@ export default class ServiceCheck extends ProjectCommand {
       description:
         "[Deprecated: please use --variant instead] The tag (AKA variant) to check the proposed schema against",
       hidden: true,
-      exclusive: ["variant"]
+      exclusive: ["variant"],
     }),
     variant: flags.string({
       char: "v",
       description: "The variant to check the proposed schema against",
-      exclusive: ["tag"]
+      exclusive: ["tag"],
     }),
     graph: flags.string({
       char: "g",
       description:
-        "The ID of the graph in Apollo to check your proposed schema changes against. Overrides config file if set."
+        "The ID of the graph in Apollo to check your proposed schema changes against. Overrides config file if set.",
     }),
     branch: flags.string({
-      description: "The branch name to associate with this check"
+      description: "The branch name to associate with this check",
     }),
     commitId: flags.string({
-      description: "The SHA-1 hash of the commit to associate with this check"
+      description: "The SHA-1 hash of the commit to associate with this check",
     }),
     author: flags.string({
-      description: "The author to associate with this proposed schema"
+      description: "The author to associate with this proposed schema",
     }),
     validationPeriod: flags.string({
       description:
-        "The size of the time window with which to validate the schema against. You may provide a number (in seconds), or an ISO8601 format duration for more granularity (see: https://en.wikipedia.org/wiki/ISO_8601#Durations)"
+        "The size of the time window with which to validate the schema against. You may provide a number (in seconds), or an ISO8601 format duration for more granularity (see: https://en.wikipedia.org/wiki/ISO_8601#Durations)",
     }),
     queryCountThreshold: flags.integer({
       description:
-        "Minimum number of requests within the requested time window for a query to be considered."
+        "Minimum number of requests within the requested time window for a query to be considered.",
     }),
     queryCountThresholdPercentage: flags.integer({
       description:
-        "Number of requests within the requested time window for a query to be considered, relative to total request count. Expected values are between 0 and 0.05 (minimum 5% of total request volume)"
+        "Number of requests within the requested time window for a query to be considered, relative to total request count. Expected values are between 0 and 0.05 (minimum 5% of total request volume)",
     }),
     json: flags.boolean({
       description:
         "Output result in json, which can then be parsed by CLI tools such as jq.",
-      exclusive: ["markdown"]
+      exclusive: ["markdown"],
     }),
     localSchemaFile: flags.string({
       description:
-        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
+        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)",
     }),
     markdown: flags.boolean({
       description: "Output result in markdown.",
-      exclusive: ["json"]
+      exclusive: ["json"],
     }),
     serviceName: flags.string({
       description:
-        "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service"
+        "Provides the name of the implementing service for a federated graph. This flag will indicate that the schema is a partial schema from a federated service",
     }),
     ignoreFailures: flags.boolean({
       description:
-        "Exit with status 0 when the check completes, even if errors are found"
-    })
+        "Exit with status 0 when the check completes, even if errors are found",
+    }),
   };
 
   async run() {
@@ -367,29 +369,31 @@ export default class ServiceCheck extends ProjectCommand {
                   validationPeriod: flags.validationPeriod,
                   queryCountThreshold: flags.queryCountThreshold,
                   queryCountThresholdPercentage:
-                    flags.queryCountThresholdPercentage
+                    flags.queryCountThresholdPercentage,
                 });
 
                 const gitInfoFromEnv = await gitInfo(this.log);
 
-                const {
-                  compositionValidationResult,
-                  checkSchemaResult
-                } = await project.engine.checkPartialSchema({
-                  id: graphID!,
-                  graphVariant: graphVariant!,
-                  implementingServiceName: serviceName,
-                  partialSchema: {
-                    sdl
-                  },
-                  ...(historicParameters && { historicParameters }),
-                  gitContext: {
-                    ...gitInfoFromEnv,
-                    ...(flags.author ? { committer: flags.author } : undefined),
-                    ...(flags.branch ? { branch: flags.branch } : undefined),
-                    ...(flags.commitId ? { commit: flags.commitId } : undefined)
-                  }
-                });
+                const { compositionValidationResult, checkSchemaResult } =
+                  await project.engine.checkPartialSchema({
+                    id: graphID!,
+                    graphVariant: graphVariant!,
+                    implementingServiceName: serviceName,
+                    partialSchema: {
+                      sdl,
+                    },
+                    ...(historicParameters && { historicParameters }),
+                    gitContext: {
+                      ...gitInfoFromEnv,
+                      ...(flags.author
+                        ? { committer: flags.author }
+                        : undefined),
+                      ...(flags.branch ? { branch: flags.branch } : undefined),
+                      ...(flags.commitId
+                        ? { commit: flags.commitId }
+                        : undefined),
+                    },
+                  });
 
                 task.title = `Found ${pluralize(
                   compositionValidationResult.errors.length,
@@ -399,26 +403,27 @@ export default class ServiceCheck extends ProjectCommand {
                 )}`;
 
                 if (compositionValidationResult.errors.length > 0) {
-                  taskOutput.compositionErrors = compositionValidationResult.errors
-                    .filter(isNotNullOrUndefined)
-                    .map(error => {
-                      // checks for format: [serviceName] Location -> Error Message
-                      const match = error.message.match(
-                        /^\[([^\[]+)\]\s+(\S+)\ ->\ (.+)/
-                      );
+                  taskOutput.compositionErrors =
+                    compositionValidationResult.errors
+                      .filter(isNotNullOrUndefined)
+                      .map((error) => {
+                        // checks for format: [serviceName] Location -> Error Message
+                        const match = error.message.match(
+                          /^\[([^\[]+)\]\s+(\S+)\ ->\ (.+)/
+                        );
 
-                      if (!match) {
-                        // If we can't match the errors, that means they're in a format we don't recognize.
-                        // Report the entire string as the user will see the raw message.
-                        return { message: error.message };
-                      }
+                        if (!match) {
+                          // If we can't match the errors, that means they're in a format we don't recognize.
+                          // Report the entire string as the user will see the raw message.
+                          return { message: error.message };
+                        }
 
-                      // Regular expression matches return `[entireStringMatched, ...eachGroup]`; we don't
-                      // care about the entire string match, only the groups, so ignore the first value in the
-                      // tuple.
-                      const [, service, field, message] = match;
-                      return { service, field, message };
-                    });
+                        // Regular expression matches return `[entireStringMatched, ...eachGroup]`; we don't
+                        // care about the entire string match, only the groups, so ignore the first value in the
+                        // tuple.
+                        const [, service, field, message] = match;
+                        return { service, field, message };
+                      });
                   taskOutput.graphCompositionID =
                     compositionValidationResult.graphCompositionID;
 
@@ -439,7 +444,7 @@ export default class ServiceCheck extends ProjectCommand {
                   // this is used for the next step in the `run` command (comparing schema changes)
                   ctx.checkSchemaResult = checkSchemaResult;
                 }
-              }
+              },
             },
             {
               title: `Validating ${
@@ -464,14 +469,14 @@ export default class ServiceCheck extends ProjectCommand {
 
                 schemaCheckSchemaVariables = {
                   schema: introspectionFromSchema(schema)
-                    .__schema as IntrospectionSchemaInput
+                    .__schema as IntrospectionSchemaInput,
                 };
 
                 const historicParameters = validateHistoricParams({
                   validationPeriod: flags.validationPeriod,
                   queryCountThreshold: flags.queryCountThreshold,
                   queryCountThresholdPercentage:
-                    flags.queryCountThresholdPercentage
+                    flags.queryCountThresholdPercentage,
                 });
 
                 task.output = "Validating schema";
@@ -486,10 +491,10 @@ export default class ServiceCheck extends ProjectCommand {
                     ...(flags.committer
                       ? { committer: flags.committer }
                       : undefined),
-                    ...(flags.branch ? { branch: flags.branch } : undefined)
+                    ...(flags.branch ? { branch: flags.branch } : undefined),
                   },
                   ...(historicParameters && { historicParameters }),
-                  ...schemaCheckSchemaVariables
+                  ...schemaCheckSchemaVariables,
                 };
 
                 const { schema: _, ...restVariables } = variables;
@@ -513,7 +518,7 @@ export default class ServiceCheck extends ProjectCommand {
                 taskOutput.checkSchemaResult = checkSchemaResult;
 
                 task.title = task.title.replace("Validating", "Validated");
-              }
+              },
             },
             {
               title: "Comparing schema changes",
@@ -550,14 +555,15 @@ export default class ServiceCheck extends ProjectCommand {
                     ? ` over the last ${chalk.cyan(formatTimePeriod(hours))}`
                     : ""
                 }`;
-              }
+              },
             },
             {
               title: "Reporting result",
               task: async (ctx: TasksOutput, task) => {
-                const breakingSchemaChangeCount = ctx.checkSchemaResult.diffToPrevious.changes.filter(
-                  change => change.severity === ChangeSeverity.FAILURE
-                ).length;
+                const breakingSchemaChangeCount =
+                  ctx.checkSchemaResult.diffToPrevious.changes.filter(
+                    (change) => change.severity === ChangeSeverity.FAILURE
+                  ).length;
                 const nonBreakingSchemaChangeCount =
                   ctx.checkSchemaResult.diffToPrevious.changes.length -
                   breakingSchemaChangeCount;
@@ -575,11 +581,11 @@ export default class ServiceCheck extends ProjectCommand {
                   // `catch` this error below and proceed with the reporting.
                   throw new Error(breakingChangesErrorMessage);
                 }
-              }
-            }
+              },
+            },
           ];
         },
-        context => ({
+        (context) => ({
           // It would be better here to use a custom renderer that will output the `Listr` output to stderr and
           // the `this.log` output to `stdout`.
           //
@@ -588,7 +594,7 @@ export default class ServiceCheck extends ProjectCommand {
             ? CompactRenderer
             : context.flags.markdown || context.flags.json
             ? "silent"
-            : "default"
+            : "default",
         })
       );
     } catch (error) {
@@ -613,7 +619,7 @@ export default class ServiceCheck extends ProjectCommand {
       serviceName,
       compositionErrors,
       graphCompositionID,
-      shouldAlwaysExit0
+      shouldAlwaysExit0,
     } = taskOutput;
 
     if (shouldOutputJson) {
@@ -630,7 +636,7 @@ export default class ServiceCheck extends ProjectCommand {
                 ? `?graphCompositionId=${graphCompositionID}`
                 : ``),
             changes: checkSchemaResult.diffToPrevious.changes,
-            validationConfig: checkSchemaResult.diffToPrevious.validationConfig
+            validationConfig: checkSchemaResult.diffToPrevious.validationConfig,
           },
           null,
           2
@@ -655,7 +661,7 @@ export default class ServiceCheck extends ProjectCommand {
             compositionErrors,
             graphName: graphID,
             serviceName,
-            tag: config.variant
+            tag: config.variant,
           })
         );
       }
@@ -666,7 +672,7 @@ export default class ServiceCheck extends ProjectCommand {
           graphName: graphID,
           serviceName,
           tag: config.variant,
-          graphCompositionID
+          graphCompositionID,
         })
       );
     }
@@ -677,11 +683,11 @@ export default class ServiceCheck extends ProjectCommand {
 
       // errors that DONT match the expected format: [service] field -> message
       const unformattedErrors = compositionErrors.filter(
-        e => !e.field && !e.service
+        (e) => !e.field && !e.service
       );
       // errors that match the expected format: [service] field -> message
       const formattedErrors = compositionErrors.filter(
-        e => e.field || e.service
+        (e) => e.field || e.service
       );
 
       if (formattedErrors.length)
@@ -689,15 +695,15 @@ export default class ServiceCheck extends ProjectCommand {
           table(
             [
               ["Service", "Field", "Message"],
-              ...formattedErrors.map(Object.values)
+              ...formattedErrors.map(Object.values),
             ],
             {
               columns: {
                 2: {
                   width: 50,
-                  wrapWord: true
-                }
-              }
+                  wrapWord: true,
+                },
+              },
             }
           )
         );
@@ -705,7 +711,7 @@ export default class ServiceCheck extends ProjectCommand {
       // list out errors which we couldn't determine Service name and/or location names
       if (unformattedErrors.length)
         this.log(
-          table([["Message"], ...unformattedErrors.map(e => [e.message])])
+          table([["Message"], ...unformattedErrors.map((e) => [e.message])])
         );
       // Return a non-zero error code
       if (shouldAlwaysExit0) {

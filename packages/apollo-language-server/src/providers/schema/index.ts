@@ -1,14 +1,14 @@
 import {
   GraphQLSchemaProvider,
   SchemaChangeUnsubscribeHandler,
-  SchemaResolveConfig
+  SchemaResolveConfig,
 } from "./base";
 import {
   ApolloConfig,
   isClientConfig,
   isServiceConfig,
   isLocalServiceConfig,
-  ClientConfig
+  ClientConfig,
 } from "../../config";
 
 import { EndpointSchemaProvider } from "./endpoint";
@@ -19,7 +19,7 @@ import { ClientIdentity } from "../../engine";
 export {
   GraphQLSchemaProvider,
   SchemaChangeUnsubscribeHandler,
-  SchemaResolveConfig
+  SchemaResolveConfig,
 };
 
 export function schemaProviderFromConfig(
@@ -56,7 +56,7 @@ export function schemaProviderFromConfig(
           isListOfSchemaFiles
             ? { paths: config.client.service.localSchemaFile as string[] }
             : {
-                path: config.client.service.localSchemaFile as string
+                path: config.client.service.localSchemaFile as string,
               }
         );
       }

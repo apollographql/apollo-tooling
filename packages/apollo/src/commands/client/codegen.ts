@@ -13,7 +13,7 @@ import { ClientCommand } from "../../Command";
 const waitForKey = async () => {
   console.log("Press any key to stop.");
   process.stdin.setRawMode!(true);
-  return new Promise<void>(resolve =>
+  return new Promise<void>((resolve) =>
     process.stdin.once("data", () => {
       (process.stdin as any).unref();
       process.stdin.setRawMode!(false);
@@ -31,84 +31,86 @@ export default class Generate extends ClientCommand {
     ...ClientCommand.flags,
 
     watch: flags.boolean({
-      description: "Watch for file changes and reload codegen"
+      description: "Watch for file changes and reload codegen",
     }),
     // general
     target: flags.string({
       description:
         "Type of code generator to use (swift | typescript | flow | scala | json | json-modern (exposes raw json types))",
-      required: true
+      required: true,
     }),
     localSchemaFile: flags.string({
       description:
-        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
+        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)",
     }),
     addTypename: flags.boolean({
       description:
         "[default: true] Automatically add __typename to your queries, can be unset with --no-addTypename",
       default: true,
-      allowNo: true
+      allowNo: true,
     }),
     passthroughCustomScalars: flags.boolean({
-      description: "Use your own types for custom scalars"
+      description: "Use your own types for custom scalars",
     }),
     customScalarsPrefix: flags.string({
       description:
-        "Include a prefix when using provided types for custom scalars"
+        "Include a prefix when using provided types for custom scalars",
     }),
     mergeInFieldsFromFragmentSpreads: flags.boolean({
-      description: "Merge fragment fields onto its enclosing type"
+      description: "Merge fragment fields onto its enclosing type",
     }),
 
     // swift
     namespace: flags.string({
-      description: "The namespace to emit generated code into."
+      description: "The namespace to emit generated code into.",
     }),
     omitDeprecatedEnumCases: flags.boolean({
-      description: "Omit deprecated enum cases from generated code [Swift only]"
+      description:
+        "Omit deprecated enum cases from generated code [Swift only]",
     }),
     operationIdsPath: flags.string({
       description:
-        "Path to an operation id JSON map file. If specified, also stores the operation ids (hashes) as properties on operation types [currently Swift-only]"
+        "Path to an operation id JSON map file. If specified, also stores the operation ids (hashes) as properties on operation types [currently Swift-only]",
     }),
     only: flags.string({
       description:
-        "Parse all input files, but only output generated code for the specified file [Swift only]"
+        "Parse all input files, but only output generated code for the specified file [Swift only]",
     }),
     suppressSwiftMultilineStringLiterals: flags.boolean({
       description:
-        "Prevents operations from being rendered as multiline strings [Swift only]"
+        "Prevents operations from being rendered as multiline strings [Swift only]",
     }),
 
     // flow
     useFlowExactObjects: flags.boolean({
-      description: "Use Flow exact objects for generated types [flow only]"
+      description: "Use Flow exact objects for generated types [flow only]",
     }),
 
     useFlowReadOnlyTypes: flags.boolean({
       description:
-        "Use read only types for generated types [flow only]. **Deprecated in favor of `useReadOnlyTypes`.**"
+        "Use read only types for generated types [flow only]. **Deprecated in favor of `useReadOnlyTypes`.**",
     }),
 
     // flow / TS
     useReadOnlyTypes: flags.boolean({
-      description: "Use read only types for generated types [flow | typescript]"
+      description:
+        "Use read only types for generated types [flow | typescript]",
     }),
 
     outputFlat: flags.boolean({
       description:
-        'By default, TypeScript/Flow will put each generated file in a directory next to its source file using the value of the "output" as the directory name. Set "outputFlat" to put all generated files in the directory relative to the current working directory defined by "output".'
+        'By default, TypeScript/Flow will put each generated file in a directory next to its source file using the value of the "output" as the directory name. Set "outputFlat" to put all generated files in the directory relative to the current working directory defined by "output".',
     }),
 
     // typescript
     globalTypesFile: flags.string({
       description:
-        'By default, TypeScript will put a file named "globalTypes.ts" inside the "output" directory. Set "globalTypesFile" to specify a different path. Alternatively, set "tsFileExtension" to modify the extension of the file, for example "d.ts" will output "globalTypes.d.ts"'
+        'By default, TypeScript will put a file named "globalTypes.ts" inside the "output" directory. Set "globalTypesFile" to specify a different path. Alternatively, set "tsFileExtension" to modify the extension of the file, for example "d.ts" will output "globalTypes.d.ts"',
     }),
     tsFileExtension: flags.string({
       description:
-        'By default, TypeScript will output "ts" files. Set "tsFileExtension" to specify a different file extension, for example "d.ts"'
-    })
+        'By default, TypeScript will output "ts" files. Set "tsFileExtension" to specify a different file extension, for example "d.ts"',
+    }),
   };
 
   static args = [
@@ -119,14 +121,14 @@ export default class Generate extends ClientCommand {
 - For TypeScript/Flow generators with the "outputFlat" flag is set, and for the Swift generator, this specifies a file or directory (absolute or relative to the current working directory) to which:
   - a file will be written for each query (if "output" is a directory)
   - all generated types will be written
-- For all other types, this defines a file (absolute or relative to the current working directory) to which all generated types are written.`
-    }
+- For all other types, this defines a file (absolute or relative to the current working directory) to which all generated types are written.`,
+    },
   ];
 
   async run() {
     const {
       flags: { watch },
-      args: { output }
+      args: { output },
     } = this.parse(Generate);
 
     let write;
@@ -140,7 +142,7 @@ export default class Generate extends ClientCommand {
             "swift",
             "typescript",
             "flow",
-            "scala"
+            "scala",
           ].includes(flags.target)
         ) {
           inferredTarget = flags.target as TargetType;
@@ -176,7 +178,7 @@ export default class Generate extends ClientCommand {
             task: async (ctx, task) => {
               task.title = `Generating query files with '${inferredTarget}' target`;
               const schema = await project.resolveSchema({
-                tag: config.variant
+                tag: config.variant,
               });
 
               if (!schema) throw new Error("Error loading schema");
@@ -192,7 +194,7 @@ export default class Generate extends ClientCommand {
                 for (const document of this.project.documents) {
                   if (document.syntaxErrors.length) {
                     const errors = document.syntaxErrors.map(
-                      e =>
+                      (e) =>
                         `Syntax error in ${document.source.name}: ${e.message}\n`
                     );
                     throw new Error(errors.toString());
@@ -210,7 +212,7 @@ export default class Generate extends ClientCommand {
 
                 const document: DocumentNode = {
                   kind: Kind.DOCUMENT,
-                  definitions: [...operations, ...fragments]
+                  definitions: [...operations, ...fragments],
                 };
                 return generate(
                   document,
@@ -241,7 +243,7 @@ export default class Generate extends ClientCommand {
                     suppressSwiftMultilineStringLiterals:
                       flags.suppressSwiftMultilineStringLiterals,
                     omitDeprecatedEnumCases: flags.omitDeprecatedEnumCases,
-                    exposeTypeNodes: inferredTarget === "json-modern"
+                    exposeTypeNodes: inferredTarget === "json-modern",
                   }
                 );
               };
@@ -249,8 +251,8 @@ export default class Generate extends ClientCommand {
               const writtenFiles = write();
 
               task.title = `Generating query files with '${inferredTarget}' target - wrote ${writtenFiles} files`;
-            }
-          }
+            },
+          },
         ];
       });
 

@@ -20,5 +20,5 @@ export = {
         .trim()
         .replace(/\n/g, "\n" + indentation)
     );
-  }
+  },
 } as Plugin;

@@ -12,14 +12,15 @@ export interface ManifestEntry {
 export function getOperationManifestFromProject(
   project: GraphQLClientProject,
   options: { preserveStringAndNumericLiterals: boolean } = {
-    preserveStringAndNumericLiterals: false
+    preserveStringAndNumericLiterals: false,
   }
 ): ManifestEntry[] {
   const manifest = Object.entries(
     project.mergedOperationsAndFragmentsForService
   ).map(([operationName, operationAST]) => {
     const printed = operationRegistrySignature(operationAST, operationName, {
-      preserveStringAndNumericLiterals: options.preserveStringAndNumericLiterals
+      preserveStringAndNumericLiterals:
+        options.preserveStringAndNumericLiterals,
     });
 
     return {
@@ -28,8 +29,8 @@ export function getOperationManifestFromProject(
       // TODO: unused. Remove or repurpose this field altogether with op. registry 2.0 work.
       // For now, this field is non-nullable on the input type.
       metadata: {
-        engineSignature: ""
-      }
+        engineSignature: "",
+      },
     };
   });
 

@@ -10,12 +10,12 @@ import {
   Selection,
   SelectionSet,
   Field,
-  FragmentSpread
+  FragmentSpread,
 } from "apollo-codegen-core/lib/compiler";
 
 import {
   typeCaseForSelectionSet,
-  Variant
+  Variant,
 } from "apollo-codegen-core/lib/compiler/visitors/typeCase";
 
 import { collectAndMergeFields } from "apollo-codegen-core/lib/compiler/visitors/collectAndMergeFields";
@@ -31,7 +31,7 @@ import {
   isObjectType,
   isNonNullType,
   isEnumType,
-  isInputObjectType
+  isInputObjectType,
 } from "graphql/type/definition";
 import { GraphQLOutputType, getNullableType } from "graphql";
 import { maybePush } from "apollo-codegen-core/lib/utilities/array";
@@ -61,14 +61,14 @@ function printEnumsAndInputObjects(
   typesUsed
     .filter(isEnumType)
     .sort()
-    .forEach(enumType => {
+    .forEach((enumType) => {
       generator.typeAliasForEnumType(enumType);
     });
 
   typesUsed
     .filter(isInputObjectType)
     .sort()
-    .forEach(inputObjectType => {
+    .forEach((inputObjectType) => {
       generator.typeAliasForInputObjectType(inputObjectType);
     });
 
@@ -110,7 +110,7 @@ export function generateSource(context: CompilerContext) {
     content: TypescriptGeneratedFile;
   }[] = [];
 
-  Object.values(context.operations).forEach(operation => {
+  Object.values(context.operations).forEach((operation) => {
     generator.fileHeader();
     generator.interfacesForOperation(operation);
 
@@ -118,13 +118,14 @@ export function generateSource(context: CompilerContext) {
 
     generatedFiles.push({
       sourcePath: operation.filePath,
-      fileName: `${operation.operationName}.${context.options.tsFileExtension ||
-        DEFAULT_FILE_EXTENSION}`,
-      content: new TypescriptGeneratedFile(output)
+      fileName: `${operation.operationName}.${
+        context.options.tsFileExtension || DEFAULT_FILE_EXTENSION
+      }`,
+      content: new TypescriptGeneratedFile(output),
     });
   });
 
-  Object.values(context.fragments).forEach(fragment => {
+  Object.values(context.fragments).forEach((fragment) => {
     generator.fileHeader();
     generator.interfacesForFragment(fragment);
 
@@ -133,7 +134,7 @@ export function generateSource(context: CompilerContext) {
     generatedFiles.push({
       sourcePath: fragment.filePath,
       fileName: `${fragment.fragmentName}.ts`,
-      content: new TypescriptGeneratedFile(output)
+      content: new TypescriptGeneratedFile(output),
     });
   });
 
@@ -143,7 +144,7 @@ export function generateSource(context: CompilerContext) {
 
   return {
     generatedFiles,
-    common
+    common,
   };
 }
 
@@ -163,10 +164,11 @@ export function generateLocalSource(
 ): IGeneratedFile[] {
   const generator = new TypescriptAPIGenerator(context);
 
-  const operations = Object.values(context.operations).map(operation => ({
+  const operations = Object.values(context.operations).map((operation) => ({
     sourcePath: operation.filePath,
-    fileName: `${operation.operationName}.${context.options.tsFileExtension ||
-      DEFAULT_FILE_EXTENSION}`,
+    fileName: `${operation.operationName}.${
+      context.options.tsFileExtension || DEFAULT_FILE_EXTENSION
+    }`,
     content: (options?: IGeneratedFileOptions) => {
       generator.fileHeader();
       if (options && options.outputPath && options.globalSourcePath) {
@@ -181,13 +183,14 @@ export function generateLocalSource(
       generator.interfacesForOperation(operation);
       const output = generator.printer.printAndClear();
       return new TypescriptGeneratedFile(output);
-    }
+    },
   }));
 
-  const fragments = Object.values(context.fragments).map(fragment => ({
+  const fragments = Object.values(context.fragments).map((fragment) => ({
     sourcePath: fragment.filePath,
-    fileName: `${fragment.fragmentName}.${context.options.tsFileExtension ||
-      DEFAULT_FILE_EXTENSION}`,
+    fileName: `${fragment.fragmentName}.${
+      context.options.tsFileExtension || DEFAULT_FILE_EXTENSION
+    }`,
     content: (options?: IGeneratedFileOptions) => {
       generator.fileHeader();
       if (options && options.outputPath && options.globalSourcePath) {
@@ -202,7 +205,7 @@ export function generateLocalSource(
       generator.interfacesForFragment(fragment);
       const output = generator.printer.printAndClear();
       return new TypescriptGeneratedFile(output);
-    }
+    },
   }));
 
   return operations.concat(fragments);
@@ -283,9 +286,9 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
         this.exportDeclaration(
           this.interface(
             interfaceName,
-            variables.map(variable => ({
+            variables.map((variable) => ({
               name: variable.name,
-              type: this.typeFromGraphQLType(variable.type)
+              type: this.typeFromGraphQLType(variable.type),
             })),
             { keyInheritsNullability: true }
           )
@@ -318,7 +321,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       this.printer.enqueue(exportedTypeAlias);
     } else {
       const unionMembers: t.Identifier[] = [];
-      variants.forEach(variant => {
+      variants.forEach((variant) => {
         this.scopeStackPush(variant.possibleTypes[0].toString());
         const properties = this.getPropertiesForVariant(variant);
 
@@ -340,7 +343,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
         this.exportDeclaration(
           this.typeAliasGenericUnion(
             this.nameFromScopeStack(this.scopeStack),
-            unionMembers.map(id => t.TSTypeReference(id))
+            unionMembers.map((id) => t.TSTypeReference(id))
           )
         )
       );
@@ -418,7 +421,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       acc: GraphQLType[]
     ) => {
       const {
-        selectionSet: { possibleTypes, selections }
+        selectionSet: { possibleTypes, selections },
       } = nestDoc;
 
       acc = possibleTypes.reduce(maybePush, acc);
@@ -447,8 +450,8 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       []
     );
 
-    return context.typesUsed.filter(type => {
-      return docTypesUsed.find(typeUsed => type === typeUsed);
+    return context.typesUsed.filter((type) => {
+      return docTypesUsed.find((typeUsed) => type === typeUsed);
     });
   }
 
@@ -468,7 +471,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       acc = maybePush(acc, type);
       const fields = type.getFields();
       acc = Object.keys(fields)
-        .map(key => fields[key] && fields[key].type)
+        .map((key) => fields[key] && fields[key].type)
         .reduce(this.reduceTypesUsed, acc);
     } else {
       acc = maybePush(acc, type);
@@ -493,7 +496,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       variant,
       this.context.options.mergeInFieldsFromFragmentSpreads
     );
-    return fields.map(field => {
+    return fields.map((field) => {
       const fieldName = field.alias !== undefined ? field.alias : field.name;
       this.scopeStackPush(fieldName);
 
@@ -533,7 +536,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
         this.interface(this.nameFromScopeStack(this.scopeStack), properties)
       );
     } else {
-      const identifiers = variants.map(variant => {
+      const identifiers = variants.map((variant) => {
         this.scopeStackPush(variant.possibleTypes[0].toString());
         const properties = this.getPropertiesForVariant(variant);
         const identifierName = this.nameFromScopeStack(this.scopeStack);
@@ -549,7 +552,7 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
       exportedTypeAlias = this.exportDeclaration(
         this.typeAliasGenericUnion(
           generatedIdentifier.name,
-          identifiers.map(i => t.TSTypeReference(i))
+          identifiers.map((i) => t.TSTypeReference(i))
         )
       );
     }
@@ -559,28 +562,28 @@ export class TypescriptAPIGenerator extends TypescriptGenerator {
     return {
       name: field.alias ? field.alias : field.name,
       description: field.description,
-      type
+      type,
     };
   }
 
   private handleFieldValue(field: Field, variant: Variant): ObjectProperty {
     let res: ObjectProperty;
     if (field.name === "__typename") {
-      const types = variant.possibleTypes.map(type => {
+      const types = variant.possibleTypes.map((type) => {
         return t.TSLiteralType(t.stringLiteral(type.toString()));
       });
 
       res = {
         name: field.alias ? field.alias : field.name,
         description: field.description,
-        type: t.TSUnionType(types)
+        type: t.TSUnionType(types),
       };
     } else {
       // TODO: Double check that this works
       res = {
         name: field.alias ? field.alias : field.name,
         description: field.description,
-        type: this.typeFromGraphQLType(field.type)
+        type: this.typeFromGraphQLType(field.type),
       };
     }
 
