@@ -1,5 +1,4 @@
-import cosmiconfig from "cosmiconfig";
-import { LoaderEntry } from "cosmiconfig";
+import { cosmiconfig, defaultLoaders, Loader } from "cosmiconfig";
 import TypeScriptLoader from "@endemolshinegroup/cosmiconfig-typescript-loader";
 import { resolve } from "path";
 import { readFileSync, existsSync, lstatSync } from "fs";
@@ -26,14 +25,9 @@ const defaultFileNames = [
 ];
 const envFileNames = [".env", ".env.local"];
 
-const loaders = {
-  // XXX improve types for config
-  ".json": (cosmiconfig as any).loadJson as LoaderEntry,
-  ".js": (cosmiconfig as any).loadJs as LoaderEntry,
-  ".cjs": (cosmiconfig as any).loadJs as LoaderEntry,
-  ".ts": {
-    async: TypeScriptLoader,
-  },
+const loaders: Record<string, Loader> = {
+  ...defaultLoaders,
+  ".ts": TypeScriptLoader
 };
 
 export const legacyKeyEnvVar = "ENGINE_API_KEY";
