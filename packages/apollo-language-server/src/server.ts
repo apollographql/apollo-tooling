@@ -7,7 +7,7 @@ import {
   FileChangeType,
   ServerCapabilities,
   TextDocuments,
-  TextDocumentSyncKind,
+  TextDocumentSyncKind
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { QuickPickItem } from "vscode";
