@@ -29,6 +29,12 @@
       ]
     },
     {
+      "groupName": "cosmiconfig",
+      "matchPackagePatterns": [
+        "cosmiconfig"
+      ]
+    },
+    {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true
     },
