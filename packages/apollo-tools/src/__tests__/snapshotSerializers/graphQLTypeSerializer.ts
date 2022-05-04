@@ -15,5 +15,5 @@ export = {
     printer: Printer
   ): string {
     return printType(value);
-  }
+  },
 } as Plugin;

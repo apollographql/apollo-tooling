@@ -6,11 +6,11 @@ import URI from "vscode-uri";
 import {
   compileToIR,
   CompilerContext,
-  CompilerOptions
+  CompilerOptions,
 } from "apollo-codegen-core/lib/compiler";
 import {
   compileToLegacyIR,
-  CompilerOptions as LegacyCompilerOptions
+  CompilerOptions as LegacyCompilerOptions,
 } from "apollo-codegen-core/lib/compiler/legacyIR";
 import serializeToJSON from "apollo-codegen-core/lib/serializeToJSON";
 import { BasicGeneratedFile } from "apollo-codegen-core/lib/utilities/CodeGenerator";
@@ -19,7 +19,7 @@ import { generateSource as generateSwiftSource } from "apollo-codegen-swift";
 import { generateSource as generateFlowSource } from "apollo-codegen-flow";
 import {
   generateLocalSource as generateTypescriptLocalSource,
-  generateGlobalSource as generateTypescriptGlobalSource
+  generateGlobalSource as generateTypescriptGlobalSource,
 } from "apollo-codegen-typescript";
 import { generateSource as generateScalaSource } from "apollo-codegen-scala";
 
@@ -115,7 +115,7 @@ export default function generate(
         }
 
         outFiles[path.join(dir, fileName)] = {
-          output: content.fileContents + common
+          output: content.fileContents + common,
         };
       });
 
@@ -128,7 +128,7 @@ export default function generate(
     ) {
       generatedFiles.forEach(({ fileName, content }) => {
         outFiles[fileName] = {
-          output: content.fileContents + common
+          output: content.fileContents + common,
         };
       });
 
@@ -138,7 +138,7 @@ export default function generate(
     } else {
       fs.writeFileSync(
         outputPath,
-        generatedFiles.map(o => o.content.fileContents).join("\n") + common
+        generatedFiles.map((o) => o.content.fileContents).join("\n") + common
       );
 
       writtenFiles += 1;
@@ -169,11 +169,12 @@ export default function generate(
         options.globalTypesFile ||
         path.join(
           outputPath,
-          `globalTypes.${options.tsFileExtension ||
-            TYPESCRIPT_DEFAULT_FILE_EXTENSION}`
+          `globalTypes.${
+            options.tsFileExtension || TYPESCRIPT_DEFAULT_FILE_EXTENSION
+          }`
         );
       outFiles[globalSourcePath] = {
-        output: generatedGlobalFile.fileContents
+        output: generatedGlobalFile.fileContents,
       };
 
       generatedFiles.forEach(({ sourcePath, fileName, content }) => {
@@ -191,7 +192,7 @@ export default function generate(
         const outFilePath = path.join(dir, fileName);
         outFiles[outFilePath] = {
           output: content({ outputPath: outFilePath, globalSourcePath })
-            .fileContents
+            .fileContents,
         };
       });
 
@@ -201,7 +202,7 @@ export default function generate(
     } else {
       fs.writeFileSync(
         outputPath,
-        generatedFiles.map(o => o.content().fileContents).join("\n") +
+        generatedFiles.map((o) => o.content().fileContents).join("\n") +
           "\n" +
           generatedGlobalFile.fileContents
       );
@@ -212,13 +213,13 @@ export default function generate(
     let output;
     const context = compileToLegacyIR(schema, document, {
       ...options,
-      exposeTypeNodes: target === "json-modern"
+      exposeTypeNodes: target === "json-modern",
     });
     switch (target) {
       case "json-modern":
       case "json":
         output = serializeToJSON(context, {
-          exposeTypeNodes: Boolean(options.exposeTypeNodes)
+          exposeTypeNodes: Boolean(options.exposeTypeNodes),
         });
         break;
       case "scala":
@@ -257,11 +258,11 @@ interface OperationIdsMap {
 function writeOperationIdsMap(context: CompilerContext) {
   let operationIdsMap: { [id: string]: OperationIdsMap } = {};
   Object.keys(context.operations)
-    .map(k => context.operations[k])
-    .forEach(operation => {
+    .map((k) => context.operations[k])
+    .forEach((operation) => {
       operationIdsMap[operation.operationId!] = {
         name: operation.operationName,
-        source: operation.sourceWithFragments!
+        source: operation.sourceWithFragments!,
       };
     });
   fs.writeFileSync(

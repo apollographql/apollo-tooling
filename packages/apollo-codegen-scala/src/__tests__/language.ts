@@ -4,14 +4,14 @@ import CodeGenerator from "apollo-codegen-core/lib/utilities/CodeGenerator";
 
 import { objectDeclaration, propertyDeclaration } from "../language";
 
-describe("Scala code generation: Basic language constructs", function() {
+describe("Scala code generation: Basic language constructs", function () {
   let generator;
 
-  beforeEach(function() {
+  beforeEach(function () {
     generator = new CodeGenerator();
   });
 
-  test(`should generate a object declaration`, function() {
+  test(`should generate a object declaration`, function () {
     objectDeclaration(generator, { objectName: "Hero" }, () => {
       propertyDeclaration(
         generator,

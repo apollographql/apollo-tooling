@@ -27,7 +27,7 @@ import {
   CheckPartialSchemaVariables,
   RemoveServiceAndCompose,
   RemoveServiceAndComposeVariables,
-  CheckPartialSchema_service_checkPartialSchema
+  CheckPartialSchema_service_checkPartialSchema,
 } from "../graphqlTypes";
 
 export interface ClientIdentity {
@@ -65,9 +65,8 @@ export class ApolloEngineClient extends GraphQLDataSource {
     request.headers["x-api-key"] = this.engineKey;
     if (this.clientIdentity && this.clientIdentity.name) {
       request.headers["apollo-client-name"] = this.clientIdentity.name;
-      request.headers[
-        "apollo-client-reference-id"
-      ] = this.clientIdentity.referenceID;
+      request.headers["apollo-client-reference-id"] =
+        this.clientIdentity.referenceID;
       request.headers["apollo-client-version"] = this.clientIdentity.version;
       return;
     }
@@ -76,19 +75,18 @@ export class ApolloEngineClient extends GraphQLDataSource {
     request.headers["apollo-client-name"] = "Apollo Language Server";
     request.headers["apollo-client-reference-id"] =
       "146d29c0-912c-46d3-b686-920e52586be6";
-    request.headers[
-      "apollo-client-version"
-    ] = require("../../package.json").version;
+    request.headers["apollo-client-version"] =
+      require("../../package.json").version;
   }
 
   public async listServices(variables: ListServicesVariables) {
     return this.execute<ListServices>({
       query: LIST_SERVICES,
-      variables
+      variables,
     }).then(({ data, errors }) => {
       // use error logger
       if (errors) {
-        throw new Error(errors.map(error => error.message).join("\n"));
+        throw new Error(errors.map((error) => error.message).join("\n"));
       }
 
       if (data && !data.service) {
@@ -105,11 +103,11 @@ export class ApolloEngineClient extends GraphQLDataSource {
   public async checkSchema(variables: CheckSchemaVariables) {
     return this.execute<CheckSchema>({
       query: CHECK_SCHEMA,
-      variables
+      variables,
     }).then(({ data, errors }) => {
       // use error logger
       if (errors) {
-        throw new Error(errors.map(error => error.message).join("\n"));
+        throw new Error(errors.map((error) => error.message).join("\n"));
       }
 
       if (data && !data.service) {
@@ -126,11 +124,11 @@ export class ApolloEngineClient extends GraphQLDataSource {
   public async uploadSchema(variables: UploadSchemaVariables) {
     return this.execute<UploadSchema>({
       query: UPLOAD_SCHEMA,
-      variables
+      variables,
     }).then(({ data, errors }) => {
       // use error logger
       if (errors) {
-        throw new Error(errors.map(error => error.message).join("\n"));
+        throw new Error(errors.map((error) => error.message).join("\n"));
       }
 
       if (data && !data.service) {
@@ -149,11 +147,11 @@ export class ApolloEngineClient extends GraphQLDataSource {
   ) {
     return this.execute<UploadAndComposePartialSchema>({
       query: UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA,
-      variables
+      variables,
     }).then(({ data, errors }) => {
       // use error logger
       if (errors) {
-        throw new Error(errors.map(error => error.message).join("\n"));
+        throw new Error(errors.map((error) => error.message).join("\n"));
       }
 
       if (data && !data.service) {
@@ -178,11 +176,11 @@ export class ApolloEngineClient extends GraphQLDataSource {
   ): Promise<CheckPartialSchema_service_checkPartialSchema> {
     return this.execute<CheckPartialSchema>({
       query: CHECK_PARTIAL_SCHEMA,
-      variables
+      variables,
     }).then(({ data, errors }) => {
       // use error logger
       if (errors) {
-        throw new Error(errors.map(error => error.message).join("\n"));
+        throw new Error(errors.map((error) => error.message).join("\n"));
       }
 
       if (data && !data.service) {
@@ -201,10 +199,10 @@ export class ApolloEngineClient extends GraphQLDataSource {
   ) {
     return this.execute<RemoveServiceAndCompose>({
       query: REMOVE_SERVICE_AND_COMPOSE,
-      variables
+      variables,
     }).then(({ data, errors }) => {
       if (errors) {
-        throw new Error(errors.map(error => error.message).join("\n"));
+        throw new Error(errors.map((error) => error.message).join("\n"));
       }
 
       if (!data || !data.service) {
@@ -218,11 +216,11 @@ export class ApolloEngineClient extends GraphQLDataSource {
   public async validateOperations(variables: ValidateOperationsVariables) {
     return this.execute<ValidateOperations>({
       query: VALIDATE_OPERATIONS,
-      variables
+      variables,
     }).then(({ data, errors }) => {
       // use error logger
       if (errors) {
-        throw new Error(errors.map(error => error.message).join("\n"));
+        throw new Error(errors.map((error) => error.message).join("\n"));
       }
 
       if (data && !data.service) {
@@ -240,11 +238,11 @@ export class ApolloEngineClient extends GraphQLDataSource {
   public async registerOperations(variables: RegisterOperationsVariables) {
     return this.execute<RegisterOperations>({
       query: REGISTER_OPERATIONS,
-      variables
+      variables,
     }).then(({ data, errors }) => {
       // use error logger
       if (errors) {
-        throw new Error(errors.map(error => error.message).join("\n"));
+        throw new Error(errors.map((error) => error.message).join("\n"));
       }
 
       if (data && !data.service) {
@@ -264,14 +262,14 @@ export class ApolloEngineClient extends GraphQLDataSource {
     const { data, errors } = await this.execute<SchemaTagsAndFieldStats>({
       query: SCHEMA_TAGS_AND_FIELD_STATS,
       variables: {
-        id: serviceID
-      }
+        id: serviceID,
+      },
     });
 
     if (!(data && data.service && data.service.schemaTags) || errors) {
       throw new Error(
         errors
-          ? errors.map(error => error.message).join("\n")
+          ? errors.map((error) => error.message).join("\n")
           : "No service returned. Make sure your service name and API key match"
       );
     }
@@ -282,7 +280,7 @@ export class ApolloEngineClient extends GraphQLDataSource {
 
     const fieldStats: FieldStats = new Map();
 
-    data.service.stats.fieldStats.forEach(fieldStat => {
+    data.service.stats.fieldStats.forEach((fieldStat) => {
       // Parse field "ParentType.fieldName:FieldType" into ["ParentType", "fieldName", "FieldType"]
       const [parentType = null, fieldName = null] = fieldStat.groupBy.field
         ? fieldStat.groupBy.field.split(/\.|:/)

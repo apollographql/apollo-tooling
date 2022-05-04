@@ -15,35 +15,35 @@ export default class ServiceDelete extends ProjectCommand {
       description:
         "[Deprecated: please use --variant instead] The variant to delete the implementing service from",
       hidden: true,
-      exclusive: ["variant"]
+      exclusive: ["variant"],
     }),
     variant: flags.string({
       char: "v",
       description: "The variant to delete the implementing service from",
-      exclusive: ["tag"]
+      exclusive: ["tag"],
     }),
     graph: flags.string({
       char: "g",
       description:
-        "The ID of the graph in Apollo for which to delete an implementing service. Overrides config file if set."
+        "The ID of the graph in Apollo for which to delete an implementing service. Overrides config file if set.",
     }),
     federated: flags.boolean({
       char: "f",
       default: false,
       hidden: true,
       description:
-        "[Deprecated: use --serviceName to indicate federation] Indicates that the schema is a partial schema from a federated service"
+        "[Deprecated: use --serviceName to indicate federation] Indicates that the schema is a partial schema from a federated service",
     }),
     serviceName: flags.string({
       required: true,
       description:
-        "Provides the name of the implementing service for a federated graph"
+        "Provides the name of the implementing service for a federated graph",
     }),
     yes: flags.boolean({
       char: "y",
       required: false,
-      description: "Bypass confirmation when deleting a service"
-    })
+      description: "Bypass confirmation when deleting a service",
+    }),
   };
 
   async run() {
@@ -80,32 +80,30 @@ export default class ServiceDelete extends ProjectCommand {
 
           const graphVariant = config.variant;
 
-          const {
-            errors,
-            updatedGateway
-          } = await project.engine.removeServiceAndCompose({
-            id: config.graph,
-            graphVariant,
-            name: flags.serviceName
-          });
+          const { errors, updatedGateway } =
+            await project.engine.removeServiceAndCompose({
+              id: config.graph,
+              graphVariant,
+              name: flags.serviceName,
+            });
 
           result = {
             serviceName: flags.serviceName,
             graphVariant,
             graphName: config.graph,
             errors,
-            updatedGateway
+            updatedGateway,
           };
 
           return;
-        }
-      }
+        },
+      },
     ]);
 
     this.log("\n");
 
     if (result.errors && result.errors.length) {
-      this.error(result.errors.map(error => error.message).join("\n"));
+      this.error(result.errors.map((error) => error.message).join("\n"));
     }
 
     if (result.updatedGateway) {

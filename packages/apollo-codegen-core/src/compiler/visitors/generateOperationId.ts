@@ -16,13 +16,13 @@ export function generateOperationId(
 
   const sourceWithFragments = [
     operation.source,
-    ...Array.from(fragmentsReferenced).map(fragmentName => {
+    ...Array.from(fragmentsReferenced).map((fragmentName) => {
       const fragment = fragments[fragmentName];
       if (!fragment) {
         throw new Error(`Cannot find fragment "${fragmentName}"`);
       }
       return fragment.source;
-    })
+    }),
   ].join("\n");
 
   const hash = createHash("sha256");

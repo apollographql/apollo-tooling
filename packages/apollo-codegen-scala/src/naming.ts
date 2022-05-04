@@ -11,12 +11,12 @@ import {
   getNamedType,
   isCompositeType,
   isNonNullType,
-  isListType
+  isListType,
 } from "graphql";
 import {
   LegacyCompilerContext,
   LegacyField,
-  LegacyInlineFragment
+  LegacyInlineFragment,
 } from "apollo-codegen-core/lib/compiler/legacyIR";
 import { GraphQLInputField } from "graphql";
 
@@ -62,7 +62,7 @@ export function propertyFromInputField(
         [
           namespace,
           parentTraitName,
-          escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)))
+          escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name))),
         ],
         "."
       )
@@ -80,7 +80,7 @@ export function propertyFromInputField(
     typeName,
     isOptional,
     isList,
-    description: field.description || undefined
+    description: field.description || undefined,
   };
 }
 
@@ -103,7 +103,7 @@ export function propertyFromLegacyField(
         [
           namespace,
           parentTraitName,
-          escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name)))
+          escapeIdentifierIfNeeded(pascalCase(Inflector.singularize(name))),
         ],
         "."
       )

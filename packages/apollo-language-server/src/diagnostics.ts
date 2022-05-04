@@ -3,7 +3,7 @@ import {
   GraphQLError,
   FragmentDefinitionNode,
   findDeprecatedUsages,
-  isExecutableDefinitionNode
+  isExecutableDefinitionNode,
 } from "graphql";
 
 import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver";
@@ -30,7 +30,7 @@ export function collectExecutableDefinitionDiagnositics(
 
   const astWithExecutableDefinitions = {
     ...ast,
-    definitions: ast.definitions.filter(isExecutableDefinitionNode)
+    definitions: ast.definitions.filter(isExecutableDefinitionNode),
   };
 
   const diagnostics = [];
@@ -67,13 +67,13 @@ export function diagnosticsFromError(
     return [];
   }
 
-  return error.nodes.map(node => {
+  return error.nodes.map((node) => {
     return {
       source: `GraphQL: ${type}`,
       message: error.message,
       severity,
       range: rangeForASTNode(highlightNodeForNode(node) || node),
-      error
+      error,
     };
   });
 }

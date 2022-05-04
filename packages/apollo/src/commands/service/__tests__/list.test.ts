@@ -94,7 +94,7 @@ function uncaptureApplicationOutput(): string | null {
  */
 function mockServiceListFederated() {
   nock(stagingAPI, {
-    encodedQueryParams: true
+    encodedQueryParams: true,
   })
     .post(
       "/api/graphql",
@@ -112,7 +112,7 @@ function mockServiceListFederated() {
                 updatedAt: "2019-05-16T21:34:29.245Z",
                 __typename: "FederatedImplementingService",
                 name: "reviews",
-                url: "http://localhost:4004/graphql"
+                url: "http://localhost:4004/graphql",
               },
               {
                 graphID: "maya-federation-demo",
@@ -120,7 +120,7 @@ function mockServiceListFederated() {
                 updatedAt: "2019-05-16T19:22:16.939Z",
                 __typename: "FederatedImplementingService",
                 name: "inventory",
-                url: "http://localhost:4002/graphql"
+                url: "http://localhost:4002/graphql",
               },
               {
                 graphID: "maya-federation-demo",
@@ -128,7 +128,7 @@ function mockServiceListFederated() {
                 updatedAt: "2019-05-13T14:56:04.172Z",
                 __typename: "FederatedImplementingService",
                 name: "accounts",
-                url: "http://localhost:4001/graphql"
+                url: "http://localhost:4001/graphql",
               },
               {
                 graphID: "maya-federation-demo",
@@ -136,13 +136,13 @@ function mockServiceListFederated() {
                 updatedAt: "2019-05-16T19:21:10.243Z",
                 __typename: "FederatedImplementingService",
                 name: "products",
-                url: "http://localhost:4003/graphql"
-              }
+                url: "http://localhost:4003/graphql",
+              },
             ],
-            __typename: "FederatedImplementingServices"
-          }
-        }
-      }
+            __typename: "FederatedImplementingServices",
+          },
+        },
+      },
     });
 }
 
@@ -151,7 +151,7 @@ function mockServiceListFederated() {
  */
 function mockServiceListNonFederated() {
   nock(stagingAPI, {
-    encodedQueryParams: true
+    encodedQueryParams: true,
   })
     .post(
       "/api/graphql",
@@ -163,10 +163,10 @@ function mockServiceListNonFederated() {
         service: {
           implementingServices: {
             services: [],
-            __typename: "FederatedImplementingServices"
-          }
-        }
-      }
+            __typename: "FederatedImplementingServices",
+          },
+        },
+      },
     });
 }
 

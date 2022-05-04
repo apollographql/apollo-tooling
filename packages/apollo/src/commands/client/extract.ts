@@ -3,7 +3,7 @@ import { writeFileSync } from "fs";
 import { ClientCommand } from "../../Command";
 import {
   getOperationManifestFromProject,
-  ManifestEntry
+  ManifestEntry,
 } from "../../utils/getOperationManifestFromProject";
 import { ClientIdentity } from "apollo-language-server";
 
@@ -17,8 +17,8 @@ export default class ClientExtract extends ClientCommand {
         " with empty strings (`''`) and zeroes (`0`) respectively.  This redaction is intended to avoid " +
         " inadvertently outputting potentially personally identifiable information (e.g. embedded passwords " +
         " or API keys) into operation manifests",
-      default: false
-    })
+      default: false,
+    }),
   };
 
   static args = [
@@ -26,8 +26,8 @@ export default class ClientExtract extends ClientCommand {
       name: "output",
       description: "Path to write the extracted queries to",
       required: true,
-      default: "manifest.json"
-    }
+      default: "manifest.json",
+    },
   ];
 
   async run() {
@@ -38,13 +38,13 @@ export default class ClientExtract extends ClientCommand {
     }>(({ flags, project, config, args }) => [
       {
         title: "Extracting operations from project",
-        task: async ctx => {
+        task: async (ctx) => {
           ctx.operations = getOperationManifestFromProject(this.project, {
             preserveStringAndNumericLiterals:
-              flags.preserveStringAndNumericLiterals
+              flags.preserveStringAndNumericLiterals,
           });
           ctx.clientIdentity = config.client;
-        }
+        },
       },
       {
         title: "Outputing extracted queries",
@@ -56,8 +56,8 @@ export default class ClientExtract extends ClientCommand {
             filename,
             JSON.stringify({ version: 2, operations: ctx.operations }, null, 2)
           );
-        }
-      }
+        },
+      },
     ]);
 
     this.log(

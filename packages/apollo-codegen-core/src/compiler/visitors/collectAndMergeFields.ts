@@ -39,9 +39,9 @@ export function collectAndMergeFields(
             selectionSet: selection.selectionSet
               ? {
                   possibleTypes: selection.selectionSet.possibleTypes,
-                  selections: [...selection.selectionSet.selections]
+                  selections: [...selection.selectionSet.selections],
                 }
-              : undefined
+              : undefined,
           });
           break;
         case "FragmentSpread":
@@ -51,7 +51,7 @@ export function collectAndMergeFields(
 
           // Only merge fragment spreads and type conditions if they match all possible types.
           if (
-            !possibleTypes.every(type =>
+            !possibleTypes.every((type) =>
               selection.selectionSet.possibleTypes.includes(type)
             )
           )
@@ -66,7 +66,7 @@ export function collectAndMergeFields(
         case "BooleanCondition":
           visitSelectionSet(selection.selectionSet.selections, possibleTypes, [
             ...conditions,
-            selection
+            selection,
           ]);
           break;
       }
@@ -77,13 +77,13 @@ export function collectAndMergeFields(
 
   // Merge selection sets
 
-  const fields = Array.from(groupedFields.values()).map(fields => {
+  const fields = Array.from(groupedFields.values()).map((fields) => {
     const isFieldIncludedUnconditionally = fields.some(
-      field => !field.isConditional
+      (field) => !field.isConditional
     );
 
     return fields
-      .map(field => {
+      .map((field) => {
         if (
           isFieldIncludedUnconditionally &&
           field.isConditional &&
@@ -147,8 +147,8 @@ export function wrapInBooleanConditionsIfNeeded(
       ...condition,
       selectionSet: {
         possibleTypes: condition.selectionSet.possibleTypes,
-        selections: wrapInBooleanConditionsIfNeeded(selections, rest)
-      }
-    }
+        selections: wrapInBooleanConditionsIfNeeded(selections, rest),
+      },
+    },
   ];
 }

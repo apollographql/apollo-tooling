@@ -5,7 +5,7 @@ const mergedOperationsAndFragmentsForService = require("./fixtures/mockOperation
 
 describe("getOperationManifestFromProject", () => {
   const mockProject = {
-    mergedOperationsAndFragmentsForService
+    mergedOperationsAndFragmentsForService,
   } as GraphQLClientProject;
 
   it("builds an operation manifest", () => {

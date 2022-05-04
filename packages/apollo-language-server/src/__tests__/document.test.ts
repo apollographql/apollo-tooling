@@ -11,13 +11,13 @@ describe("extractGraphQLDocuments", () => {
       positionAt(): Position {
         return {
           character: 0,
-          line: 0
+          line: 0,
         };
       },
       languageId: "javascript",
       lineCount: 0,
       uri: "",
-      version: 1
+      version: 1,
     });
 
     it("works with placeholders that span multiple rows", () => {
@@ -104,13 +104,13 @@ describe("extractGraphQLDocuments", () => {
       positionAt(): Position {
         return {
           character: 0,
-          line: 0
+          line: 0,
         };
       },
       languageId: "reason",
       lineCount: 0,
       uri: "",
-      version: 1
+      version: 1,
     });
 
     it("works with ReasonRelay nodes", () => {

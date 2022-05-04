@@ -60,7 +60,7 @@ describe("#valueFromValueNode", () => {
       "foo",
       1,
       "JEDI",
-      { kind: "Variable", variableName: "something" }
+      { kind: "Variable", variableName: "something" },
     ]);
   });
 
@@ -74,7 +74,7 @@ describe("#valueFromValueNode", () => {
       foo: "foo",
       bar: 1,
       bla: "JEDI",
-      baz: { kind: "Variable", variableName: "something" }
+      baz: { kind: "Variable", variableName: "something" },
     });
   });
 });

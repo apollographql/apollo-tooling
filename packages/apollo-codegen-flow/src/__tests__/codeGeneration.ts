@@ -16,7 +16,7 @@ function compile(
     mergeInFieldsFromFragmentSpreads: true,
     useFlowExactObjects: false,
     useReadOnlyTypes: false,
-    addTypename: true
+    addTypename: true,
   }
 ): CompilerContext {
   const document = parse(source);
@@ -56,7 +56,7 @@ describe("Flow codeGeneration", () => {
     context.fragments["someFragment"].filePath = "/some/file/ComponentB.js";
     const output = generateSource(context);
     expect(output).toBeInstanceOf(Object);
-    Object.keys(output).forEach(filePath => {
+    Object.keys(output).forEach((filePath) => {
       expect(filePath).toMatchSnapshot();
       expect(output[filePath]).toMatchSnapshot();
     });
@@ -288,7 +288,7 @@ describe("Flow codeGeneration", () => {
         mergeInFieldsFromFragmentSpreads: true,
         useReadOnlyTypes: true,
         useFlowExactObjects: true,
-        addTypename: true
+        addTypename: true,
       }
     );
     const output = generateSource(context);
@@ -311,7 +311,7 @@ describe("Flow codeGeneration", () => {
     const output = generateSource(
       compileToIR(miscSchema, document, {
         mergeInFieldsFromFragmentSpreads: true,
-        addTypename: true
+        addTypename: true,
       })
     );
 

@@ -18,7 +18,7 @@ import {
   isInterfaceType,
   isUnionType,
   FragmentDefinitionNode,
-  InlineFragmentNode
+  InlineFragmentNode,
 } from "graphql";
 
 import { ExecutionContext } from "graphql/execution/execute";
@@ -98,9 +98,10 @@ export function removeDirectives<AST extends ASTNode>(
   if (!directiveNames.length) return ast;
   return visit(ast, {
     Directive(node: DirectiveNode): DirectiveNode | null {
-      if (!!directiveNames.find(name => name === node.name.value)) return null;
+      if (!!directiveNames.find((name) => name === node.name.value))
+        return null;
       return node;
-    }
+    },
   });
 }
 
@@ -128,7 +129,7 @@ function removeOrphanedFragmentDefinitions<AST extends ASTNode>(
   visit(ast, {
     FragmentSpread(node) {
       fragmentSpreadNodeNames.add(node.name.value);
-    }
+    },
   });
 
   // Strip unused fragment definitions. Flag if we've removed any so we know if we need to continue
@@ -145,7 +146,7 @@ function removeOrphanedFragmentDefinitions<AST extends ASTNode>(
       }
 
       return undefined;
-    }
+    },
   });
 
   if (anyFragmentsRemoved) {
@@ -193,7 +194,7 @@ function removeNodesWithEmptySelectionSets<AST extends ASTNode>(ast: AST): AST {
         node.selectionSet.selections.length === 0
         ? null
         : undefined;
-    }
+    },
   });
 
   return ast;
@@ -234,7 +235,7 @@ export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
       if (
         "directives" in node &&
         node.directives &&
-        node.directives.find(directive =>
+        node.directives.find((directive) =>
           directiveNames.includes(directive.name.value)
         )
       ) {
@@ -270,7 +271,7 @@ export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
         visit(node, {
           FragmentSpread(node) {
             removedFragmentSpreadNames.add(node.name.value);
-          }
+          },
         });
 
         // Remove this node
@@ -278,7 +279,7 @@ export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
       }
 
       return undefined;
-    }
+    },
   });
 
   // For all fragment definitions we removed, also remove the fragment spreads
@@ -291,7 +292,7 @@ export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
       }
 
       return undefined;
-    }
+    },
   });
 
   // Remove all orphaned fragment definitions
@@ -303,7 +304,7 @@ export function removeDirectiveAnnotatedFields<AST extends ASTNode>(
 
 const typenameField = {
   kind: Kind.FIELD,
-  name: { kind: Kind.NAME, value: "__typename" }
+  name: { kind: Kind.NAME, value: "__typename" },
 };
 
 export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
@@ -313,14 +314,14 @@ export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
         return {
           ...node,
           selections: node.selections.filter(
-            selection =>
+            (selection) =>
               !(
                 selection.kind === "Field" &&
                 (selection as FieldNode).name.value === "__typename"
               )
-          )
+          ),
         };
-      }
+      },
     },
     leave(node: ASTNode) {
       if (
@@ -338,10 +339,10 @@ export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
         ...node,
         selectionSet: {
           ...node.selectionSet,
-          selections: [typenameField, ...node.selectionSet.selections]
-        }
+          selections: [typenameField, ...node.selectionSet.selections],
+        },
       };
-    }
+    },
   });
 }
 
@@ -400,7 +401,7 @@ export function hasClientDirective(
 ) {
   return (
     node.directives &&
-    node.directives.some(directive => directive.name.value === "client")
+    node.directives.some((directive) => directive.name.value === "client")
   );
 }
 

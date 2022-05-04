@@ -8,7 +8,7 @@ export function inlineRedundantTypeConditions(
   for (const selection of selectionSet.selections) {
     if (
       selection.kind === "TypeCondition" &&
-      selectionSet.possibleTypes.every(type =>
+      selectionSet.possibleTypes.every((type) =>
         selection.selectionSet.possibleTypes.includes(type)
       )
     ) {
@@ -22,6 +22,6 @@ export function inlineRedundantTypeConditions(
 
   return {
     possibleTypes: selectionSet.possibleTypes,
-    selections
+    selections,
   };
 }

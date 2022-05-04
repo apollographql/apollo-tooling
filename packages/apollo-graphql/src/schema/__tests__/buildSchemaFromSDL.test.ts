@@ -11,7 +11,7 @@ import {
   GraphQLEnumType,
   Kind,
   execute,
-  ExecutionResult
+  ExecutionResult,
 } from "graphql";
 
 import astSerializer from "./snapshotSerializers/astSerializer";
@@ -297,9 +297,9 @@ type MutationRoot {
             directives: [
               new GraphQLDirective({
                 name: "something",
-                locations: [DirectiveLocation.FIELD_DEFINITION]
-              })
-            ]
+                locations: [DirectiveLocation.FIELD_DEFINITION],
+              }),
+            ],
           })
         )
       ).toThrowErrorMatchingInlineSnapshot(
@@ -319,9 +319,9 @@ type MutationRoot {
           directives: [
             new GraphQLDirective({
               name: "something",
-              locations: [DirectiveLocation.FIELD_DEFINITION]
-            })
-          ]
+              locations: [DirectiveLocation.FIELD_DEFINITION],
+            }),
+          ],
         })
       );
     });
@@ -389,10 +389,10 @@ type MutationRoot {
           `,
           resolvers: {
             User: {
-              name
-            }
-          }
-        }
+              name,
+            },
+          },
+        },
       ]);
 
       const userType = schema.getType("User");
@@ -435,11 +435,11 @@ type MutationRoot {
 
       const resolvers = {
         Animal: {
-          __resolveType: resolveTypeUnion
+          __resolveType: resolveTypeUnion,
         },
         Creature: {
-          __resolveType: resolveTypeInterface
-        }
+          __resolveType: resolveTypeInterface,
+        },
       };
 
       const schema = buildSchemaFromSDL([{ typeDefs, resolvers }]);
@@ -459,14 +459,14 @@ type MutationRoot {
 
       const customTypeConfig: GraphQLScalarTypeConfig<string, string> = {
         name: "Custom",
-        serialize: value => value,
-        parseValue: value => value,
-        parseLiteral: input => {
+        serialize: (value) => value,
+        parseValue: (value) => value,
+        parseLiteral: (input) => {
           if (input.kind !== Kind.STRING) {
             throw new Error("Expected value to be string");
           }
           return input.value;
-        }
+        },
       };
 
       const CustomType = new GraphQLScalarType(customTypeConfig);
@@ -501,12 +501,12 @@ type MutationRoot {
         AllowedColor: {
           RED: "#f00",
           GREEN: "#0f0",
-          BLUE: "#00f"
+          BLUE: "#00f",
         },
         Query: {
           favoriteColor: () => "#f00",
-          avatar: (_: any, params: any) => mockResolver(_, params)
-        }
+          avatar: (_: any, params: any) => mockResolver(_, params),
+        },
       };
 
       const schema = buildSchemaFromSDL([{ typeDefs, resolvers }]);
@@ -543,12 +543,12 @@ type MutationRoot {
       const resolvers = {
         CustomerType: {
           EXISTING: 0,
-          NEW: 1
+          NEW: 1,
         },
         Query: {
           existingCustomer: () => 0,
-          newCustomer: () => 1
-        }
+          newCustomer: () => 1,
+        },
       };
 
       const schema = buildSchemaFromSDL([{ typeDefs, resolvers }]);

@@ -2,7 +2,7 @@ import CodeGenerator from "apollo-codegen-core/lib/utilities/CodeGenerator";
 
 import {
   join as _join,
-  wrap as _wrap
+  wrap as _wrap,
 } from "apollo-codegen-core/lib/utilities/printing";
 
 export interface Class {
@@ -93,7 +93,7 @@ export class SwiftSource {
     if (trim) {
       string = string
         .split(/\n/g)
-        .map(line => line.trim())
+        .map((line) => line.trim())
         .join(" ");
     }
     return new SwiftSource(
@@ -102,7 +102,7 @@ export class SwiftSource {
       // Technically we only need to escape ", \, newline, and carriage return, but as Swift
       // defines escapes for NUL and horizontal tab, it produces nicer output to escape those as
       // well.
-      `"${string.replace(/[\0\\\t\n\r"]/g, c => {
+      `"${string.replace(/[\0\\\t\n\r"]/g, (c) => {
         switch (c) {
           case "\0":
             return "\\0";
@@ -142,7 +142,7 @@ export class SwiftSource {
     }
     const rawToken = "#".repeat(rawCount);
     return new SwiftSource(
-      `${rawToken}"""\n${string.replace(/[\0\r]/g, c => {
+      `${rawToken}"""\n${string.replace(/[\0\r]/g, (c) => {
         // Even in a raw string, we want to escape a couple of characters.
         // It would be exceedingly weird to have these, but we can still handle them.
         switch (c) {
@@ -382,7 +382,7 @@ export class SwiftGenerator<Context> extends CodeGenerator<
     } else {
       SwiftSource.multilineString(string)
         .source.split("\n")
-        .forEach(line => {
+        .forEach((line) => {
           this.printOnNewline(new SwiftSource(line));
         });
     }
@@ -390,7 +390,7 @@ export class SwiftGenerator<Context> extends CodeGenerator<
 
   comment(comment?: string, trim: Boolean = true) {
     comment &&
-      comment.split("\n").forEach(line => {
+      comment.split("\n").forEach((line) => {
         this.printOnNewline(SwiftSource.raw`/// ${trim ? line.trim() : line}`);
       });
   }
@@ -465,7 +465,7 @@ export class SwiftGenerator<Context> extends CodeGenerator<
             superClass !== undefined
               ? SwiftSource.identifier(superClass)
               : undefined,
-            ...adoptedProtocols.map(SwiftSource.identifier)
+            ...adoptedProtocols.map(SwiftSource.identifier),
           ],
           ", "
         )
@@ -489,7 +489,7 @@ export class SwiftGenerator<Context> extends CodeGenerator<
       structName,
       description,
       adoptedProtocols = [],
-      namespace = undefined
+      namespace = undefined,
     }: Struct,
     outputIndividualFiles: boolean,
     closure: Function
@@ -519,7 +519,7 @@ export class SwiftGenerator<Context> extends CodeGenerator<
 
   propertyDeclarations(properties: Property[]) {
     if (!properties) return;
-    properties.forEach(property => this.propertyDeclaration(property));
+    properties.forEach((property) => this.propertyDeclaration(property));
   }
 
   protocolDeclaration(
@@ -550,6 +550,8 @@ export class SwiftGenerator<Context> extends CodeGenerator<
 
   protocolPropertyDeclarations(properties: Property[]) {
     if (!properties) return;
-    properties.forEach(property => this.protocolPropertyDeclaration(property));
+    properties.forEach((property) =>
+      this.protocolPropertyDeclaration(property)
+    );
   }
 }

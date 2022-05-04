@@ -128,7 +128,7 @@ export const gitInfo = async (
       commit,
       remoteUrl,
       message,
-      branch
+      branch,
     },
     identity
   ) as GitContext;

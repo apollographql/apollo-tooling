@@ -19,51 +19,51 @@ export default class ServicePush extends ProjectCommand {
       char: "t",
       description: "The tag (AKA variant) to publish your service to Apollo",
       hidden: true,
-      exclusive: ["variant"]
+      exclusive: ["variant"],
     }),
     variant: flags.string({
       char: "v",
       description: "The variant to publish your service to in Apollo",
-      exclusive: ["tag"]
+      exclusive: ["tag"],
     }),
     graph: flags.string({
       char: "g",
       description:
-        "The ID of the graph in Apollo to publish your service to. Overrides config file if set."
+        "The ID of the graph in Apollo to publish your service to. Overrides config file if set.",
     }),
     branch: flags.string({
-      description: "The branch name to associate with this publication"
+      description: "The branch name to associate with this publication",
     }),
     commitId: flags.string({
       description:
-        "The SHA-1 hash of the commit to associate with this publication"
+        "The SHA-1 hash of the commit to associate with this publication",
     }),
     author: flags.string({
-      description: "The author to associate with this publication"
+      description: "The author to associate with this publication",
     }),
     localSchemaFile: flags.string({
       description:
-        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)"
+        "Path to one or more local GraphQL schema file(s), as introspection result or SDL. Supports comma-separated list of paths (ex. `--localSchemaFile=schema.graphql,extensions.graphql`)",
     }),
     federated: flags.boolean({
       char: "f",
       default: false,
       hidden: true,
       description:
-        "[Deprecated: use --serviceName to indicate federation] Indicates that the schema is a partial schema from a federated service"
+        "[Deprecated: use --serviceName to indicate federation] Indicates that the schema is a partial schema from a federated service",
     }),
     serviceName: flags.string({
       description:
-        "Provides the name of the implementing service for a federated graph"
+        "Provides the name of the implementing service for a federated graph",
     }),
     serviceURL: flags.string({
       description:
-        "Provides the url to the location of the implementing service for a federated graph"
+        "Provides the url to the location of the implementing service for a federated graph",
     }),
     serviceRevision: flags.string({
       description:
-        "Provides a unique revision identifier for a change to an implementing service on a federated service push. The default of this is a git sha"
-    })
+        "Provides a unique revision identifier for a change to an implementing service on a federated service push. The default of this is a git sha",
+    }),
   };
 
   async run() {
@@ -93,13 +93,15 @@ export default class ServicePush extends ProjectCommand {
             ...gitInfoFromEnv,
             ...(flags.author ? { committer: flags.author } : undefined),
             ...(flags.branch ? { branch: flags.branch } : undefined),
-            ...(flags.commitId ? { commit: flags.commitId } : undefined)
+            ...(flags.commitId ? { commit: flags.commitId } : undefined),
           };
 
           // handle partial schema uploading
           if (isFederated) {
             this.log("Fetching info from federated service");
-            const sdl = await (project as GraphQLServiceProject).resolveFederatedServiceSDL();
+            const sdl = await (
+              project as GraphQLServiceProject
+            ).resolveFederatedServiceSDL();
 
             if (!sdl)
               throw new Error(
@@ -122,7 +124,7 @@ export default class ServicePush extends ProjectCommand {
               compositionConfig,
               errors,
               didUpdateGateway,
-              serviceWasCreated
+              serviceWasCreated,
             } = await project.engine.uploadAndComposePartialSchema({
               id: config.graph,
               graphVariant: config.variant,
@@ -133,8 +135,8 @@ export default class ServicePush extends ProjectCommand {
                 (gitContext && gitContext.commit) ||
                 "",
               activePartialSchema: {
-                sdl
-              }
+                sdl,
+              },
             });
 
             result = {
@@ -144,7 +146,7 @@ export default class ServicePush extends ProjectCommand {
               serviceWasCreated,
               didUpdateGateway,
               graphId: config.graph,
-              graphVariant: config.variant
+              graphVariant: config.variant,
             };
 
             return;
@@ -158,7 +160,7 @@ export default class ServicePush extends ProjectCommand {
             // XXX Looks like TS should be generating ReadonlyArrays instead
             schema: introspectionFromSchema(schema).__schema,
             tag: config.variant,
-            gitContext
+            gitContext,
           };
 
           const { schema: _, ...restVariables } = variables;
@@ -173,13 +175,13 @@ export default class ServicePush extends ProjectCommand {
               graphId: config.graph,
               graphVariant: response.tag ? response.tag.tag : "current",
               hash: response.tag ? response.tag.schema.hash : null,
-              code: response.code
+              code: response.code,
             };
             this.debug("Result received from Apollo:");
             this.debug(result);
           }
-        }
-      }
+        },
+      },
     ]);
 
     const graphString = `${result.graphId}@${result.graphVariant}`;
@@ -209,13 +211,13 @@ export default class ServicePush extends ProjectCommand {
       const messages = [
         ...compositionErrors.map(({ message }) => ({
           type: chalk.red("Error"),
-          description: message
-        }))
-      ].filter(x => x !== null);
+          description: message,
+        })),
+      ].filter((x) => x !== null);
 
       this.log(
         table([["Change", "Description"], ...messages.map(Object.values)], {
-          columns: { 1: { width: 70, wrapWord: true } }
+          columns: { 1: { width: 70, wrapWord: true } },
         })
       );
 
@@ -239,7 +241,7 @@ export default class ServicePush extends ProjectCommand {
       this.log(
         table([
           ["id", "graph", "tag"],
-          [result.hash.slice(0, 6), result.graphId, result.graphVariant]
+          [result.hash.slice(0, 6), result.graphId, result.graphVariant],
         ])
       );
       this.log("\n");

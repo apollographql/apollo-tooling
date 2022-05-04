@@ -6,7 +6,7 @@ import {
   GraphQLID,
   GraphQLNonNull,
   GraphQLList,
-  GraphQLScalarType
+  GraphQLScalarType,
 } from "graphql";
 
 import * as t from "@babel/types";
@@ -15,7 +15,7 @@ import { createTypeFromGraphQLTypeFunction } from "../helpers";
 
 const typeFromGraphQLType = createTypeFromGraphQLTypeFunction({
   passthroughCustomScalars: false,
-  useReadOnlyTypes: false
+  useReadOnlyTypes: false,
 });
 
 function nullableType(type: t.TSType) {
@@ -275,7 +275,7 @@ describe("Typescript typeAnnotationFromGraphQLType", () => {
       name: "Odd",
       serialize(value) {
         return value % 2 === 1 ? value : null;
-      }
+      },
     });
 
     expect(typeFromGraphQLType(OddType)).toMatchObject(
@@ -290,7 +290,7 @@ describe("passthrough custom scalars", () => {
   beforeAll(() => {
     getTypeAnnotation = createTypeFromGraphQLTypeFunction({
       passthroughCustomScalars: true,
-      useReadOnlyTypes: false
+      useReadOnlyTypes: false,
     });
   });
 
@@ -299,7 +299,7 @@ describe("passthrough custom scalars", () => {
       name: "Odd",
       serialize(value) {
         return value % 2 === 1 ? value : null;
-      }
+      },
     });
 
     expect(getTypeAnnotation(OddType)).toMatchObject(
@@ -315,7 +315,7 @@ describe("passthrough custom scalars with custom scalar prefix", () => {
     getTypeAnnotation = createTypeFromGraphQLTypeFunction({
       passthroughCustomScalars: true,
       customScalarsPrefix: "Foo$",
-      useReadOnlyTypes: false
+      useReadOnlyTypes: false,
     });
   });
 
@@ -324,7 +324,7 @@ describe("passthrough custom scalars with custom scalar prefix", () => {
       name: "Odd",
       serialize(value) {
         return value % 2 === 1 ? value : null;
-      }
+      },
     });
 
     expect(getTypeAnnotation(OddType)).toMatchObject(
@@ -338,7 +338,7 @@ describe("readonly arrays", () => {
 
   beforeAll(() => {
     getTypeAnnotation = createTypeFromGraphQLTypeFunction({
-      useReadOnlyTypes: true
+      useReadOnlyTypes: true,
     });
   });
 
@@ -350,7 +350,7 @@ describe("readonly arrays", () => {
         t.TSTypeReference(
           t.identifier("ReadonlyArray"),
           t.TSTypeParameterInstantiation([
-            t.TSParenthesizedType(nullableType(t.TSStringKeyword()))
+            t.TSParenthesizedType(nullableType(t.TSStringKeyword())),
           ])
         )
       )

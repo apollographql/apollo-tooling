@@ -15,7 +15,7 @@ describe("buildServiceDefinition", () => {
           type Post {
             title: String
           }
-        `
+        `,
       ]);
 
       expect(service.errors).toBeUndefined();
@@ -47,7 +47,7 @@ type Post {
           type User {
             title: String
           }
-        `
+        `,
       ]);
 
       expect(service.errors).toMatchInlineSnapshot(`
@@ -68,7 +68,7 @@ Array [
           type User {
             title: String
           }
-        `
+        `,
       ]);
 
       expect(service.errors).toMatchInlineSnapshot(`
@@ -99,7 +99,7 @@ Array [
           type Post {
             name: String
           }
-        `
+        `,
       ]);
 
       expect(service.errors).toMatchInlineSnapshot(`
@@ -116,7 +116,7 @@ Array [
       const service = buildServiceDefinition([
         gql`
           directive @something on FIELD_DEFINITION
-        `
+        `,
       ]);
 
       expect(service.errors).toBeUndefined();
@@ -134,7 +134,7 @@ Array [
         `,
         gql`
           directive @another on FIELD_DEFINITION
-        `
+        `,
       ]);
 
       expect(service.errors).toBeUndefined();
@@ -158,7 +158,7 @@ Array [
         `,
         gql`
           directive @something on FIELD_DEFINITION
-        `
+        `,
       ]);
 
       expect(service.errors).toMatchInlineSnapshot(`
@@ -175,7 +175,7 @@ Array [
         `,
         gql`
           directive @something on FIELD_DEFINITION
-        `
+        `,
       ]);
 
       expect(service.errors).toMatchInlineSnapshot(`
@@ -198,7 +198,7 @@ Array [
         `,
         gql`
           directive @another on FIELD_DEFINITION
-        `
+        `,
       ]);
 
       expect(service.errors).toMatchInlineSnapshot(`
@@ -221,7 +221,7 @@ Array [
           extend type User {
             email: String
           }
-        `
+        `,
       ]);
 
       expect(service.errors).toBeUndefined();
@@ -248,7 +248,7 @@ type User {
           extend type User {
             email: String
           }
-        `
+        `,
       ]);
 
       expect(service.errors).toBeUndefined();
@@ -270,7 +270,7 @@ type User {
           extend type User {
             email: String
           }
-        `
+        `,
       ]);
 
       expect(service.errors).toMatchInlineSnapshot(`
@@ -288,7 +288,7 @@ Array [
           extend type Query {
             rootField: String
           }
-        `
+        `,
       ]);
 
       expect(service.errors).toBeUndefined();
@@ -312,7 +312,7 @@ type Query {
           extend type QueryRoot {
             rootField: String
           }
-        `
+        `,
       ]);
 
       expect(service.errors).toBeUndefined();
@@ -344,7 +344,7 @@ type QueryRoot {
           extend type MutationRoot {
             rootField: String
           }
-        `
+        `,
       ]);
 
       expect(service.errors).toBeUndefined();
@@ -373,10 +373,10 @@ type MutationRoot {
           `,
           resolvers: {
             User: {
-              name
-            }
-          }
-        }
+              name,
+            },
+          },
+        },
       ]);
 
       expect(service.schema).toBeDefined();
@@ -393,7 +393,7 @@ type MutationRoot {
 
     it(`should handle subscriptions`, () => {
       const commentAddedSubscription = () =>
-        async function*() {
+        async function* () {
           yield "111";
           yield "222";
           yield "333";
@@ -409,11 +409,11 @@ type MutationRoot {
           resolvers: {
             Subscription: {
               commentAdded: {
-                subscribe: commentAddedSubscription
-              }
-            }
-          }
-        }
+                subscribe: commentAddedSubscription,
+              },
+            },
+          },
+        },
       ]);
 
       expect(service.schema).toBeDefined();

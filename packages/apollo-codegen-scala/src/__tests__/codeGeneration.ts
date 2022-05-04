@@ -5,7 +5,7 @@ import {
   GraphQLNonNull,
   GraphQLEnumType,
   GraphQLCompositeType,
-  GraphQLObjectType
+  GraphQLObjectType,
 } from "graphql";
 
 import {
@@ -13,7 +13,7 @@ import {
   classDeclarationForOperation,
   traitDeclarationForFragment,
   traitDeclarationForSelectionSet,
-  typeDeclarationForGraphQLType
+  typeDeclarationForGraphQLType,
 } from "../codeGeneration";
 
 import { loadSchema } from "apollo-codegen-core/lib/loading";
@@ -25,22 +25,22 @@ import CodeGenerator from "apollo-codegen-core/lib/utilities/CodeGenerator";
 
 import {
   compileToLegacyIR,
-  LegacyCompilerContext
+  LegacyCompilerContext,
 } from "apollo-codegen-core/lib/compiler/legacyIR";
 
-describe("Scala code generation", function() {
+describe("Scala code generation", function () {
   let generator;
   let resetGenerator;
   let compileFromSource;
   let addFragment;
 
-  beforeEach(function() {
+  beforeEach(function () {
     resetGenerator = () => {
       const context = {
         schema: schema,
         operations: {},
         fragments: {},
-        typesUsed: {}
+        typesUsed: {},
       };
       generator = new CodeGenerator(context);
     };
@@ -54,7 +54,7 @@ describe("Scala code generation", function() {
       options.generateOperationIds &&
         Object.assign(context.options, {
           generateOperationIds: true,
-          operationIdsMap: {}
+          operationIdsMap: {},
         });
       options.namespace &&
         Object.assign(context.options, { namespace: options.namespace });
@@ -62,15 +62,15 @@ describe("Scala code generation", function() {
       return context;
     };
 
-    addFragment = fragment => {
+    addFragment = (fragment) => {
       generator.context.fragments[fragment.fragmentName] = fragment;
     };
 
     resetGenerator();
   });
 
-  describe("#generateSource()", function() {
-    test(`should emit a package declaration when the namespace option is specified`, function() {
+  describe("#generateSource()", function () {
+    test(`should emit a package declaration when the namespace option is specified`, function () {
       const context = compileFromSource(
         `
         query HeroName($episode: Episode) {
@@ -86,8 +86,8 @@ describe("Scala code generation", function() {
     });
   });
 
-  describe("#classDeclarationForOperation()", function() {
-    test(`should generate a class declaration for a query with variables`, function() {
+  describe("#classDeclarationForOperation()", function () {
+    test(`should generate a class declaration for a query with variables`, function () {
       const { operations, fragments } = compileFromSource(`
         query HeroName($episode: Episode) {
           hero(episode: $episode) {
@@ -100,7 +100,7 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a class declaration for a query with fragment spreads`, function() {
+    test(`should generate a class declaration for a query with fragment spreads`, function () {
       const { operations, fragments } = compileFromSource(`
         query Hero {
           hero {
@@ -117,7 +117,7 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a class declaration for a query with conditional fragment spreads`, function() {
+    test(`should generate a class declaration for a query with conditional fragment spreads`, function () {
       const { operations, fragments } = compileFromSource(`
         query Hero {
           hero {
@@ -134,7 +134,7 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, function() {
+    test(`should generate a class declaration for a query with a fragment spread nested in an inline fragment`, function () {
       const { operations, fragments } = compileFromSource(`
         query Hero {
           hero {
@@ -154,7 +154,7 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a class declaration for a query with a fragment spread containing deep fields`, function() {
+    test(`should generate a class declaration for a query with a fragment spread containing deep fields`, function () {
       const { operations, fragments } = compileFromSource(`
         query Hero {
           hero {
@@ -177,7 +177,7 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a class declaration for a mutation with variables`, function() {
+    test(`should generate a class declaration for a mutation with variables`, function () {
       const { operations, fragments } = compileFromSource(`
         mutation CreateReview($episode: Episode) {
           createReview(episode: $episode, review: { stars: 5, commentary: "Wow!" }) {
@@ -192,10 +192,10 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    describe(`when generateOperationIds is specified`, function() {
+    describe(`when generateOperationIds is specified`, function () {
       let compileOptions = { generateOperationIds: true };
 
-      test(`should generate a class declaration with an operationId property`, function() {
+      test(`should generate a class declaration with an operationId property`, function () {
         const context = compileFromSource(
           `
           query Hero {
@@ -214,7 +214,7 @@ describe("Scala code generation", function() {
         expect(generator.output).toMatchSnapshot();
       });
 
-      test(`should generate different operation ids for different operations`, function() {
+      test(`should generate different operation ids for different operations`, function () {
         const context1 = compileFromSource(
           `
           query Hero {
@@ -253,7 +253,7 @@ describe("Scala code generation", function() {
         expect(output1).not.toBe(output2);
       });
 
-      test(`should generate the same operation id regardless of operation formatting/commenting`, function() {
+      test(`should generate the same operation id regardless of operation formatting/commenting`, function () {
         const context1 = compileFromSource(
           `
           query HeroName($episode: Episode) {
@@ -290,7 +290,7 @@ describe("Scala code generation", function() {
         expect(output1).toBe(output2);
       });
 
-      test(`should generate the same operation id regardless of fragment order`, function() {
+      test(`should generate the same operation id regardless of fragment order`, function () {
         const context1 = compileFromSource(
           `
           query Hero {
@@ -337,7 +337,7 @@ describe("Scala code generation", function() {
         expect(output1).toBe(output2);
       });
 
-      test(`should generate appropriate operation id mapping source when there are nested fragment references`, function() {
+      test(`should generate appropriate operation id mapping source when there are nested fragment references`, function () {
         const source = `
           query Hero {
             hero {
@@ -360,8 +360,8 @@ describe("Scala code generation", function() {
     });
   });
 
-  describe("#traitDeclarationForFragment()", function() {
-    test(`should generate a trait declaration for a fragment with an abstract type condition`, function() {
+  describe("#traitDeclarationForFragment()", function () {
+    test(`should generate a trait declaration for a fragment with an abstract type condition`, function () {
       const { fragments } = compileFromSource(`
         fragment HeroDetails on Character {
           name
@@ -374,7 +374,7 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a trait declaration for a fragment with a concrete type condition`, function() {
+    test(`should generate a trait declaration for a fragment with a concrete type condition`, function () {
       const { fragments } = compileFromSource(`
         fragment DroidDetails on Droid {
           name
@@ -387,7 +387,7 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a trait declaration for a fragment with a subselection`, function() {
+    test(`should generate a trait declaration for a fragment with a subselection`, function () {
       const { fragments } = compileFromSource(`
         fragment HeroDetails on Character {
           name
@@ -402,7 +402,7 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a trait declaration for a fragment that includes a fragment spread`, function() {
+    test(`should generate a trait declaration for a fragment that includes a fragment spread`, function () {
       const { fragments } = compileFromSource(`
         fragment HeroDetails on Character {
           name
@@ -420,8 +420,8 @@ describe("Scala code generation", function() {
     });
   });
 
-  describe("#traitDeclarationForSelectionSet()", function() {
-    test(`should generate a trait declaration for a selection set`, function() {
+  describe("#traitDeclarationForSelectionSet()", function () {
+    test(`should generate a trait declaration for a selection set`, function () {
       traitDeclarationForSelectionSet(generator, {
         traitName: "Hero",
         parentType: schema.getType("Character") as GraphQLCompositeType,
@@ -429,15 +429,15 @@ describe("Scala code generation", function() {
           {
             responseName: "name",
             fieldName: "name",
-            type: GraphQLString
-          }
-        ]
+            type: GraphQLString,
+          },
+        ],
       });
 
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should escape reserved keywords in a trait declaration for a selection set`, function() {
+    test(`should escape reserved keywords in a trait declaration for a selection set`, function () {
       traitDeclarationForSelectionSet(generator, {
         traitName: "Hero",
         parentType: schema.getType("Character") as GraphQLCompositeType,
@@ -445,15 +445,15 @@ describe("Scala code generation", function() {
           {
             responseName: "private",
             fieldName: "name",
-            type: GraphQLString
-          }
-        ]
+            type: GraphQLString,
+          },
+        ],
       });
 
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should handle underscores in a trait declaration for a selection set`, function() {
+    test(`should handle underscores in a trait declaration for a selection set`, function () {
       traitDeclarationForSelectionSet(generator, {
         traitName: "TypeWithUnderscore",
         parentType: undefined,
@@ -461,15 +461,15 @@ describe("Scala code generation", function() {
           {
             responseName: "_id",
             fieldName: "_id",
-            type: GraphQLString
-          }
-        ]
+            type: GraphQLString,
+          },
+        ],
       });
 
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should handle escaped values in a trait declaration for a selection set`, function() {
+    test(`should handle escaped values in a trait declaration for a selection set`, function () {
       traitDeclarationForSelectionSet(generator, {
         traitName: "TypeWithUnderscore",
         parentType: undefined,
@@ -477,15 +477,15 @@ describe("Scala code generation", function() {
           {
             responseName: "class",
             fieldName: "class",
-            type: GraphQLString
-          }
-        ]
+            type: GraphQLString,
+          },
+        ],
       });
 
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a nested trait declaration for a selection set with subselections`, function() {
+    test(`should generate a nested trait declaration for a selection set with subselections`, function () {
       traitDeclarationForSelectionSet(generator, {
         traitName: "Hero",
         parentType: schema.getType("Character") as GraphQLCompositeType,
@@ -498,20 +498,20 @@ describe("Scala code generation", function() {
               {
                 responseName: "name",
                 fieldName: "name",
-                type: GraphQLString
-              }
-            ]
-          }
-        ]
+                type: GraphQLString,
+              },
+            ],
+          },
+        ],
       });
 
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a trait declaration for a selection set with a fragment spread that matches the parent type`, function() {
+    test(`should generate a trait declaration for a selection set with a fragment spread that matches the parent type`, function () {
       addFragment({
         fragmentName: "HeroDetails",
-        typeCondition: schema.getType("Character")
+        typeCondition: schema.getType("Character"),
       });
 
       traitDeclarationForSelectionSet(generator, {
@@ -522,18 +522,18 @@ describe("Scala code generation", function() {
           {
             responseName: "name",
             fieldName: "name",
-            type: GraphQLString
-          }
-        ]
+            type: GraphQLString,
+          },
+        ],
       });
 
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a trait declaration for a selection set with a fragment spread with a more specific type condition`, function() {
+    test(`should generate a trait declaration for a selection set with a fragment spread with a more specific type condition`, function () {
       addFragment({
         fragmentName: "DroidDetails",
-        typeCondition: schema.getType("Droid")
+        typeCondition: schema.getType("Droid"),
       });
 
       traitDeclarationForSelectionSet(generator, {
@@ -544,15 +544,15 @@ describe("Scala code generation", function() {
           {
             responseName: "name",
             fieldName: "name",
-            type: GraphQLString
-          }
-        ]
+            type: GraphQLString,
+          },
+        ],
       });
 
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a trait declaration for a selection set with an inline fragment`, function() {
+    test(`should generate a trait declaration for a selection set with an inline fragment`, function () {
       traitDeclarationForSelectionSet(generator, {
         traitName: "Hero",
         parentType: schema.getType("Character") as GraphQLCompositeType,
@@ -560,8 +560,8 @@ describe("Scala code generation", function() {
           {
             responseName: "name",
             fieldName: "name",
-            type: new GraphQLNonNull(GraphQLString)
-          }
+            type: new GraphQLNonNull(GraphQLString),
+          },
         ],
         inlineFragments: [
           {
@@ -571,26 +571,26 @@ describe("Scala code generation", function() {
               {
                 responseName: "name",
                 fieldName: "name",
-                type: new GraphQLNonNull(GraphQLString)
+                type: new GraphQLNonNull(GraphQLString),
               },
               {
                 responseName: "primaryFunction",
                 fieldName: "primaryFunction",
-                type: GraphQLString
-              }
+                type: GraphQLString,
+              },
             ],
-            fragmentSpreads: []
-          }
-        ]
+            fragmentSpreads: [],
+          },
+        ],
       });
 
       expect(generator.output).toMatchSnapshot();
     });
 
-    test(`should generate a trait declaration for a fragment spread nested in an inline fragment`, function() {
+    test(`should generate a trait declaration for a fragment spread nested in an inline fragment`, function () {
       addFragment({
         fragmentName: "HeroDetails",
-        typeCondition: schema.getType("Character")
+        typeCondition: schema.getType("Character"),
       });
 
       traitDeclarationForSelectionSet(generator, {
@@ -602,23 +602,23 @@ describe("Scala code generation", function() {
             typeCondition: schema.getType("Droid") as GraphQLObjectType,
             possibleTypes: [schema.getType("Droid") as GraphQLObjectType],
             fields: [],
-            fragmentSpreads: ["HeroDetails"]
-          }
-        ]
+            fragmentSpreads: ["HeroDetails"],
+          },
+        ],
       });
 
       expect(generator.output).toMatchSnapshot();
     });
   });
 
-  describe("#typeDeclarationForGraphQLType()", function() {
-    test("should generate an enum declaration for a GraphQLEnumType", function() {
+  describe("#typeDeclarationForGraphQLType()", function () {
+    test("should generate an enum declaration for a GraphQLEnumType", function () {
       const generator = new CodeGenerator<LegacyCompilerContext, any>({
         options: {},
         schema: undefined,
         operations: undefined,
         fragments: undefined,
-        typesUsed: undefined
+        typesUsed: undefined,
       });
 
       typeDeclarationForGraphQLType(generator, schema.getType("Episode"));
@@ -626,18 +626,18 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test("should escape identifiers in cases of enum declaration for a GraphQLEnumType", function() {
+    test("should escape identifiers in cases of enum declaration for a GraphQLEnumType", function () {
       const generator = new CodeGenerator<LegacyCompilerContext, any>({
         options: {},
         schema: undefined,
         operations: undefined,
         fragments: undefined,
-        typesUsed: undefined
+        typesUsed: undefined,
       });
 
       const albumPrivaciesEnum = new GraphQLEnumType({
         name: "AlbumPrivacies",
-        values: { PUBLIC: { value: "PUBLIC" }, PRIVATE: { value: "PRIVATE" } }
+        values: { PUBLIC: { value: "PUBLIC" }, PRIVATE: { value: "PRIVATE" } },
       });
 
       typeDeclarationForGraphQLType(generator, albumPrivaciesEnum);
@@ -645,13 +645,13 @@ describe("Scala code generation", function() {
       expect(generator.output).toMatchSnapshot();
     });
 
-    test("should generate a trait declaration for a GraphQLInputObjectType", function() {
+    test("should generate a trait declaration for a GraphQLInputObjectType", function () {
       const generator = new CodeGenerator<LegacyCompilerContext, any>({
         options: {},
         schema: undefined,
         operations: undefined,
         fragments: undefined,
-        typesUsed: undefined
+        typesUsed: undefined,
       });
 
       typeDeclarationForGraphQLType(generator, schema.getType("ReviewInput"));

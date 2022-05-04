@@ -12,7 +12,7 @@ import {
   FieldNode,
   FragmentDefinitionNode,
   ObjectValueNode,
-  ListValueNode
+  ListValueNode,
 } from "graphql/language/ast";
 import { print } from "graphql/language/printer";
 import { separateOperations } from "graphql/utilities";
@@ -44,7 +44,7 @@ export function hideLiterals(ast: DocumentNode): DocumentNode {
     },
     ObjectValue(node: ObjectValueNode): ObjectValueNode {
       return { ...node, fields: [] };
-    }
+    },
   });
 }
 
@@ -60,7 +60,7 @@ export function hideStringAndNumericLiterals(ast: DocumentNode): DocumentNode {
     },
     StringValue(node: StringValueNode): StringValueNode {
       return { ...node, value: "", block: false };
-    }
+    },
   });
 }
 
@@ -106,7 +106,7 @@ export function sortAST(ast: DocumentNode): DocumentNode {
         ...node,
         // Use sortBy because 'definitions' is not optional.
         // The sort on "kind" places fragments before operations within the document
-        definitions: sortBy(node.definitions, "kind", "name.value")
+        definitions: sortBy(node.definitions, "kind", "name.value"),
       };
     },
     OperationDefinition(
@@ -117,7 +117,7 @@ export function sortAST(ast: DocumentNode): DocumentNode {
         variableDefinitions: sorted(
           node.variableDefinitions,
           "variable.name.value"
-        )
+        ),
       };
     },
     SelectionSet(node: SelectionSetNode): SelectionSetNode {
@@ -127,13 +127,13 @@ export function sortAST(ast: DocumentNode): DocumentNode {
         // then FragmentSpread, then InlineFragment.  By a lovely coincidence,
         // the order we want them to appear in is alphabetical by node.kind.
         // Use sortBy instead of sorted because 'selections' is not optional.
-        selections: sortBy(node.selections, "kind", "name.value")
+        selections: sortBy(node.selections, "kind", "name.value"),
       };
     },
     Field(node: FieldNode): FieldNode {
       return {
         ...node,
-        arguments: sorted(node.arguments, "name.value")
+        arguments: sorted(node.arguments, "name.value"),
       };
     },
     FragmentSpread(node: FragmentSpreadNode): FragmentSpreadNode {
@@ -149,12 +149,12 @@ export function sortAST(ast: DocumentNode): DocumentNode {
         variableDefinitions: sorted(
           node.variableDefinitions,
           "variable.name.value"
-        )
+        ),
       };
     },
     Directive(node: DirectiveNode): DirectiveNode {
       return { ...node, arguments: sorted(node.arguments, "name.value") };
-    }
+    },
   });
 }
 
@@ -167,9 +167,9 @@ export function removeAliases(ast: DocumentNode): DocumentNode {
     Field(node: FieldNode): FieldNode {
       return {
         ...node,
-        alias: undefined
+        alias: undefined,
       };
-    }
+    },
   });
 }
 
@@ -192,9 +192,9 @@ export function printWithReducedWhitespace(ast: DocumentNode): string {
       return {
         ...node,
         value: Buffer.from(node.value, "utf8").toString("hex"),
-        block: false
+        block: false,
       };
-    }
+    },
   });
   const withWhitespace = print(sanitizedAST);
   const minimizedButStillHex = withWhitespace

@@ -6,6 +6,6 @@ export class GraphQLSchemaValidationError extends Error {
 
     this.name = this.constructor.name;
     Error.captureStackTrace(this, this.constructor);
-    this.message = errors.map(error => error.message).join("\n\n");
+    this.message = errors.map((error) => error.message).join("\n\n");
   }
 }

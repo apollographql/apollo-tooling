@@ -7,7 +7,7 @@ import { ApolloConfig, DefaultEngineConfig } from "apollo-language-server";
 import chalk from "chalk";
 import {
   ListServices_service_implementingServices,
-  ListServices_service_implementingServices_FederatedImplementingServices_services
+  ListServices_service_implementingServices_FederatedImplementingServices_services,
 } from "apollo-language-server/lib/graphqlTypes";
 import { graphUndefinedError } from "../../utils/sharedMessages";
 
@@ -26,14 +26,14 @@ const formatImplementingService = (
     url: implementingService.url || "",
     updatedAt: `${moment(implementingService.updatedAt).format(
       "D MMMM YYYY"
-    )} (${moment(implementingService.updatedAt).from(effectiveDate)})`
+    )} (${moment(implementingService.updatedAt).from(effectiveDate)})`,
   };
 };
 
 function formatHumanReadable({
   implementingServices,
   graphName,
-  frontendUrlRoot
+  frontendUrlRoot,
 }: {
   implementingServices: ListServices_service_implementingServices | null;
   graphName: string | undefined;
@@ -50,15 +50,17 @@ function formatHumanReadable({
     result = "\nThere are no services on this federated graph";
   } else {
     // Create a sorted list of the services.
-    const sortedImplementingServices = sortBy<
-      ListServices_service_implementingServices_FederatedImplementingServices_services
-    >(implementingServices.services, [service => service.name.toUpperCase()]);
+    const sortedImplementingServices =
+      sortBy<ListServices_service_implementingServices_FederatedImplementingServices_services>(
+        implementingServices.services,
+        [(service) => service.name.toUpperCase()]
+      );
 
     console.log(
       table([
         ["Name", "URL", "Last Updated"],
         ...sortedImplementingServices
-          .map(sortedImplementingService =>
+          .map((sortedImplementingService) =>
             formatImplementingService(
               sortedImplementingService,
               // Force the time to a specific value if we're running tests. Otherwise the snapshots will break
@@ -72,7 +74,7 @@ function formatHumanReadable({
             s1.name.toUpperCase() > s2.name.toUpperCase() ? 1 : -1
           )
           .map(Object.values)
-          .filter(Boolean)
+          .filter(Boolean),
       ])
     );
 
@@ -94,18 +96,18 @@ export default class ServiceList extends ProjectCommand {
       description:
         "[Deprecated: please use --variant instead] The tag (AKA variant) to list implementing services for",
       hidden: true,
-      exclusive: ["variant"]
+      exclusive: ["variant"],
     }),
     variant: flags.string({
       char: "v",
       description: "The variant to list implementing services for",
-      exclusive: ["tag"]
+      exclusive: ["tag"],
     }),
     graph: flags.string({
       char: "g",
       description:
-        "The ID of the graph in the Apollo registry for which to list implementing services. Overrides config file if set."
-    })
+        "The ID of the graph in the Apollo registry for which to list implementing services. Overrides config file if set.",
+    }),
   };
 
   async run() {
@@ -138,24 +140,22 @@ export default class ServiceList extends ProjectCommand {
               graphID + "@" + graphVariant
             )}`,
             task: async (ctx: TasksOutput, task) => {
-              const {
-                frontendUrlRoot,
-                service
-              } = await project.engine.listServices({
-                id: graphID!,
-                graphVariant: graphVariant!
-              });
+              const { frontendUrlRoot, service } =
+                await project.engine.listServices({
+                  id: graphID!,
+                  graphVariant: graphVariant!,
+                });
               const { implementingServices } = service!;
               const newContext: typeof ctx = {
                 implementingServices,
                 frontendUrlRoot,
-                config
+                config,
               };
 
               Object.assign(ctx, newContext);
               Object.assign(taskOutput, ctx);
-            }
-          }
+            },
+          },
         ];
       });
     } catch (error) {
@@ -170,7 +170,7 @@ export default class ServiceList extends ProjectCommand {
       formatHumanReadable({
         implementingServices: taskOutput.implementingServices,
         graphName: taskOutput.config.graph,
-        frontendUrlRoot: taskOutput.frontendUrlRoot
+        frontendUrlRoot: taskOutput.frontendUrlRoot,
       })
     );
   }

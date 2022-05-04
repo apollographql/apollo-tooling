@@ -32,7 +32,7 @@ describe("transformSchema", () => {
     `);
 
     const originalSDL = printSchema(schema);
-    const newSchema = transformSchema(schema, namedType => namedType);
+    const newSchema = transformSchema(schema, (namedType) => namedType);
 
     expect(printSchema(schema)).toEqual(originalSDL);
     expect(printSchema(newSchema)).toEqual(originalSDL);

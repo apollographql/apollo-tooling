@@ -12,7 +12,7 @@ import {
   isScalarType,
   isUnionType,
   isInterfaceType,
-  parseType
+  parseType,
 } from "graphql";
 
 import { LegacyCompilerContext } from "./compiler/legacyIR";
@@ -36,9 +36,11 @@ export default function serializeToJSON(
     {
       operations: Object.values(context.operations),
       fragments: Object.values(context.fragments),
-      typesUsed: context.typesUsed.map(type => serializeType(type, options)),
-      unionTypes: context.unionTypes.map(type => serializeType(type, options)),
-      interfaceTypes: serializeInterfaceTypes(context.interfaceTypes)
+      typesUsed: context.typesUsed.map((type) => serializeType(type, options)),
+      unionTypes: context.unionTypes.map((type) =>
+        serializeType(type, options)
+      ),
+      interfaceTypes: serializeInterfaceTypes(context.interfaceTypes),
     },
     "\t"
   );
@@ -47,7 +49,7 @@ export default function serializeToJSON(
 export function serializeAST(ast: any, space?: string) {
   return JSON.stringify(
     ast,
-    function(_, value) {
+    function (_, value) {
       if (isType(value)) {
         return String(value);
       } else {
@@ -80,12 +82,12 @@ function serializeEnumType(type: GraphQLEnumType) {
     kind: "EnumType",
     name,
     description,
-    values: values.map(value => ({
+    values: values.map((value) => ({
       name: value.name,
       description: value.description,
       isDeprecated: value.isDeprecated,
-      deprecationReason: value.deprecationReason
-    }))
+      deprecationReason: value.deprecationReason,
+    })),
   };
 }
 
@@ -100,7 +102,7 @@ function serializeInputObjectType(
     kind: "InputObjectType",
     name,
     description,
-    fields: fields.map(field => ({
+    fields: fields.map((field) => ({
       name: field.name,
       type: String(field.type),
       typeNode:
@@ -108,8 +110,8 @@ function serializeInputObjectType(
           ? stripProp("loc", parseType(field.type.toString()))
           : undefined,
       description: field.description,
-      defaultValue: field.defaultValue
-    }))
+      defaultValue: field.defaultValue,
+    })),
   } as any;
 }
 
@@ -119,7 +121,7 @@ function serializeScalarType(type: GraphQLScalarType) {
   return {
     kind: "ScalarType",
     name,
-    description
+    description,
   };
 }
 
@@ -127,7 +129,7 @@ function serializeUnionType(type: GraphQLUnionType) {
   const { name } = type;
   return {
     name,
-    types: type.getTypes()
+    types: type.getTypes(),
   };
 }
 
@@ -144,7 +146,7 @@ function serializeInterfaceTypes(
   for (let [interfaceType, implementors] of interfaceTypes) {
     types.push({
       name: interfaceType.toString(),
-      types: implementors
+      types: implementors,
     });
   }
   return types;

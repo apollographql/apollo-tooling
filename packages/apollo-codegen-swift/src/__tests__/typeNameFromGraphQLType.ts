@@ -6,7 +6,7 @@ import {
   GraphQLID,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLScalarType
+  GraphQLScalarType,
 } from "graphql";
 
 import { Helpers } from "../helpers";

@@ -7,7 +7,7 @@ import {
   GraphQLType,
   isListType,
   isNonNullType,
-  isScalarType
+  isScalarType,
 } from "graphql";
 
 import * as t from "@babel/types";
@@ -21,7 +21,7 @@ const builtInScalarMap = {
   [GraphQLInt.name]: t.TSNumberKeyword(),
   [GraphQLFloat.name]: t.TSNumberKeyword(),
   [GraphQLBoolean.name]: t.TSBooleanKeyword(),
-  [GraphQLID.name]: t.TSStringKeyword()
+  [GraphQLID.name]: t.TSStringKeyword(),
 };
 
 export function createTypeFromGraphQLTypeFunction(

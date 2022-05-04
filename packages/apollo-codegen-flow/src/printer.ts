@@ -9,14 +9,16 @@ export default class Printer {
   private printQueue: Printable[] = [];
 
   public print(): string {
-    return (this.printQueue.reduce((document: string, printable) => {
-      if (typeof printable === "string") {
-        return document + printable;
-      } else {
-        const documentPart = generate(printable).code;
-        return document + this.fixCommas(documentPart);
-      }
-    }, "") as string).trim();
+    return (
+      this.printQueue.reduce((document: string, printable) => {
+        if (typeof printable === "string") {
+          return document + printable;
+        } else {
+          const documentPart = generate(printable).code;
+          return document + this.fixCommas(documentPart);
+        }
+      }, "") as string
+    ).trim();
   }
 
   public enqueue(printable: Printable) {
@@ -70,13 +72,13 @@ export default class Printer {
         const [contents, comment] = currentLineContents.split("//");
         newDocumentParts.push({
           main: contents.replace(/\s+$/g, "") + ",",
-          comment: comment ? comment.trim() : null
+          comment: comment ? comment.trim() : null,
         });
         currentLine++;
       } else {
         newDocumentParts.push({
           main: lines[currentLine],
-          comment: null
+          comment: null,
         });
       }
 

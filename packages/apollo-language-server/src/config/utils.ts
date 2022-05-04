@@ -4,7 +4,7 @@ import {
   ClientServiceConfig,
   LocalServiceConfig,
   ServiceConfig,
-  ApolloConfigFormat
+  ApolloConfigFormat,
 } from "./config";
 import { ServiceSpecifier, ServiceIDAndTag } from "../engine";
 
@@ -51,6 +51,6 @@ export function getGraphIdFromConfig(config: ApolloConfigFormat) {
 }
 
 export function parseServiceSpecifier(specifier: ServiceSpecifier) {
-  const [id, tag] = specifier.split("@").map(x => x.trim());
+  const [id, tag] = specifier.split("@").map((x) => x.trim());
   return [id, tag] as ServiceIDAndTag;
 }

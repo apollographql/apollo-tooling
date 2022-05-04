@@ -14,12 +14,12 @@ function compileFromSource(
   const document = parse(source);
   return compileToLegacyIR(schema, document, {
     mergeInFieldsFromFragmentSpreads: false,
-    addTypename: true
+    addTypename: true,
   });
 }
 
-describe("JSON output", function() {
-  test(`should generate JSON output for a query with an enum variable`, function() {
+describe("JSON output", function () {
+  test(`should generate JSON output for a query with an enum variable`, function () {
     const context = compileFromSource(`
       query HeroName($episode: Episode) {
         hero(episode: $episode) {
@@ -33,7 +33,7 @@ describe("JSON output", function() {
     expect(output).toMatchSnapshot();
   });
 
-  test(`should generate JSON output for a query with a nested selection set`, function() {
+  test(`should generate JSON output for a query with a nested selection set`, function () {
     const context = compileFromSource(`
       query HeroAndFriendsNames {
         hero {
@@ -50,7 +50,7 @@ describe("JSON output", function() {
     expect(output).toMatchSnapshot();
   });
 
-  test(`should generate JSON output for a query with a fragment spread and nested inline fragments`, function() {
+  test(`should generate JSON output for a query with a fragment spread and nested inline fragments`, function () {
     const context = compileFromSource(`
       query HeroAndDetails {
         hero {
@@ -75,7 +75,7 @@ describe("JSON output", function() {
     expect(output).toMatchSnapshot();
   });
 
-  test(`should generate JSON output for a mutation with an enum and an input object variable`, function() {
+  test(`should generate JSON output for a mutation with an enum and an input object variable`, function () {
     const context = compileFromSource(`
       mutation CreateReview($episode: Episode, $review: ReviewInput) {
         createReview(episode: $episode, review: $review) {
@@ -90,7 +90,7 @@ describe("JSON output", function() {
     expect(output).toMatchSnapshot();
   });
 
-  test(`should generate JSON output for an input object type with default field values`, function() {
+  test(`should generate JSON output for an input object type with default field values`, function () {
     const schema = buildSchema(`
       type Query {
         someField(input: ComplexInput!): String!
@@ -128,7 +128,7 @@ describe("JSON output", function() {
     expect(output).toMatchSnapshot();
   });
 
-  test(`should generate JSON output for a subscription`, function() {
+  test(`should generate JSON output for a subscription`, function () {
     const schema = buildSchema(`
       type Comment {
         id: Int!
@@ -158,7 +158,7 @@ describe("JSON output", function() {
     expect(output).toMatchSnapshot();
   });
 
-  test("should list all unions and their types under a `unionTypes` property", function() {
+  test("should list all unions and their types under a `unionTypes` property", function () {
     const context = compileFromSource(`
       query Search {
         search(text: "an") {
@@ -188,7 +188,7 @@ describe("JSON output", function() {
     expect(output).toMatchSnapshot();
   });
 
-  test("should list all interfaces and their implementing types under a `interfaceTypes` property", function() {
+  test("should list all interfaces and their implementing types under a `interfaceTypes` property", function () {
     const context = compileFromSource(`
       query HeroForEpisode {
         hero(episode: JEDI) {
@@ -201,10 +201,9 @@ describe("JSON output", function() {
     `);
 
     expect(context.interfaceTypes.size).toBe(1);
-    const [
-      interfaceType,
-      implementors
-    ] = context.interfaceTypes.entries().next().value;
+    const [interfaceType, implementors] = context.interfaceTypes
+      .entries()
+      .next().value;
     expect(interfaceType.toString()).toBe("Character");
     expect(implementors.length).toBe(2);
 

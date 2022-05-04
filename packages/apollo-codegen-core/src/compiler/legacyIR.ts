@@ -7,7 +7,7 @@ import {
   GraphQLUnionType,
   GraphQLInterfaceType,
   DocumentNode,
-  TypeNode
+  TypeNode,
 } from "graphql";
 
 import {
@@ -15,7 +15,7 @@ import {
   CompilerContext,
   SelectionSet,
   Field,
-  FragmentSpread
+  FragmentSpread,
 } from "./";
 
 import { collectFragmentsReferenced } from "./visitors/collectFragmentsReferenced";
@@ -116,7 +116,7 @@ export function compileToLegacyIR(
   document: DocumentNode,
   options: CompilerOptions = {
     mergeInFieldsFromFragmentSpreads: true,
-    exposeTypeNodes: false
+    exposeTypeNodes: false,
   }
 ): LegacyCompilerContext {
   const context = compileToIR(schema, document, options);
@@ -144,7 +144,7 @@ class LegacyIRTransformer {
         rootType,
         variables,
         source,
-        selectionSet
+        selectionSet,
       } = operation;
       const fragmentsReferenced = collectFragmentsReferenced(
         selectionSet,
@@ -167,7 +167,7 @@ class LegacyIRTransformer {
         ...this.transformSelectionSetToLegacyIR(selectionSet),
         fragmentsReferenced: Array.from(fragmentsReferenced),
         sourceWithFragments,
-        operationId
+        operationId,
       };
     }
 
@@ -183,7 +183,7 @@ class LegacyIRTransformer {
         typeCondition: type,
         possibleTypes: selectionSet.possibleTypes,
         ...fragmentWithoutSelectionSet,
-        ...this.transformSelectionSetToLegacyIR(selectionSet)
+        ...this.transformSelectionSetToLegacyIR(selectionSet),
       };
     }
 
@@ -194,7 +194,7 @@ class LegacyIRTransformer {
       typesUsed: this.context.typesUsed,
       options: this.options,
       unionTypes: this.context.unionTypes,
-      interfaceTypes: this.context.interfaceTypes
+      interfaceTypes: this.context.interfaceTypes,
     };
 
     return legacyContext;
@@ -211,14 +211,14 @@ class LegacyIRTransformer {
     );
 
     const inlineFragments: LegacyInlineFragment[] = typeCase.variants.flatMap(
-      variant => {
+      (variant) => {
         const fields = this.transformFieldsToLegacyIR(
           collectAndMergeFields(variant, false)
         );
 
         if (
           // Filter out records that represent the same possible types as the default record.
-          selectionSet.possibleTypes.every(type =>
+          selectionSet.possibleTypes.every((type) =>
             variant.possibleTypes.includes(type)
           ) &&
           // Filter out empty records for consistency with legacy compiler.
@@ -230,21 +230,20 @@ class LegacyIRTransformer {
           selectionSet,
           variant.possibleTypes
         ).map((fragmentSpread: FragmentSpread) => fragmentSpread.fragmentName);
-        return variant.possibleTypes.map(possibleType => {
+        return variant.possibleTypes.map((possibleType) => {
           return {
             typeCondition: possibleType,
             possibleTypes: [possibleType],
             fields,
-            fragmentSpreads
+            fragmentSpreads,
           } as LegacyInlineFragment;
         });
       }
     );
 
     for (const inlineFragment of inlineFragments) {
-      inlineFragments[
-        inlineFragment.typeCondition.name as any
-      ] = inlineFragment;
+      inlineFragments[inlineFragment.typeCondition.name as any] =
+        inlineFragment;
     }
 
     const fragmentSpreads: string[] = this.collectFragmentSpreads(
@@ -254,12 +253,12 @@ class LegacyIRTransformer {
     return {
       fields,
       fragmentSpreads,
-      inlineFragments
+      inlineFragments,
     };
   }
 
   transformFieldsToLegacyIR(fields: Field[]) {
-    return fields.map(field => {
+    return fields.map((field) => {
       const {
         args,
         type,
@@ -268,7 +267,7 @@ class LegacyIRTransformer {
         description,
         isDeprecated,
         deprecationReason,
-        selectionSet
+        selectionSet,
       } = field;
       const conditions =
         field.conditions && field.conditions.length > 0
@@ -276,7 +275,7 @@ class LegacyIRTransformer {
               return {
                 kind,
                 variableName,
-                inverted
+                inverted,
               };
             })
           : undefined;
@@ -293,7 +292,7 @@ class LegacyIRTransformer {
         deprecationReason,
         ...(selectionSet
           ? this.transformSelectionSetToLegacyIR(selectionSet)
-          : {})
+          : {}),
       } as LegacyField;
     });
   }
@@ -311,7 +310,7 @@ class LegacyIRTransformer {
           break;
         case "TypeCondition":
           if (
-            possibleTypes.every(type =>
+            possibleTypes.every((type) =>
               selection.selectionSet.possibleTypes.includes(type)
             )
           ) {

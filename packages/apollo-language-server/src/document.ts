@@ -5,14 +5,14 @@ import {
   TextDocument,
   Position,
   Diagnostic,
-  DiagnosticSeverity
+  DiagnosticSeverity,
 } from "vscode-languageserver";
 
 import { getRange as rangeOfTokenAtLocation } from "@apollographql/graphql-language-service-interface/dist/getDiagnostics";
 
 import {
   positionFromSourceLocation,
-  rangeInContainingDocument
+  rangeInContainingDocument,
 } from "./utilities/source";
 
 export class GraphQLDocument {
@@ -36,7 +36,7 @@ export class GraphQLDocument {
         severity: DiagnosticSeverity.Error,
         message: error.message,
         source: "GraphQL: Syntax",
-        range
+        range,
       });
     }
   }
@@ -58,7 +58,7 @@ export function extractGraphQLDocuments(
   switch (document.languageId) {
     case "graphql":
       return [
-        new GraphQLDocument(new Source(document.getText(), document.uri))
+        new GraphQLDocument(new Source(document.getText(), document.uri)),
       ];
     case "javascript":
     case "javascriptreact":
@@ -97,7 +97,7 @@ function extractGraphQLDocumentsFromJSTemplateLiterals(
     const position = document.positionAt(result.index + (tagName.length + 1));
     const locationOffset: SourceLocation = {
       line: position.line + 1,
-      column: position.character + 1
+      column: position.character + 1,
     };
     const source = new Source(contents, document.uri, locationOffset);
     documents.push(new GraphQLDocument(source));
@@ -127,7 +127,7 @@ function extractGraphQLDocumentsFromPythonStrings(
     const position = document.positionAt(result.index + result[1].length);
     const locationOffset: SourceLocation = {
       line: position.line + 1,
-      column: position.character + 1
+      column: position.character + 1,
     };
     const source = new Source(contents, document.uri, locationOffset);
     documents.push(new GraphQLDocument(source));
@@ -154,7 +154,7 @@ function extractGraphQLDocumentsFromRubyStrings(
     const position = document.positionAt(result.index + result[1].length);
     const locationOffset: SourceLocation = {
       line: position.line + 1,
-      column: position.character + 1
+      column: position.character + 1,
     };
     const source = new Source(contents, document.uri, locationOffset);
     documents.push(new GraphQLDocument(source));
@@ -184,7 +184,7 @@ function extractGraphQLDocumentsFromDartStrings(
     const position = document.positionAt(result.index + result[1].length);
     const locationOffset: SourceLocation = {
       line: position.line + 1,
-      column: position.character + 1
+      column: position.character + 1,
     };
     const source = new Source(contents, document.uri, locationOffset);
     documents.push(new GraphQLDocument(source));
@@ -219,7 +219,7 @@ function extractGraphQLDocumentsFromReasonStrings(
     const position = document.positionAt(result.index);
     const locationOffset: SourceLocation = {
       line: position.line + 1,
-      column: position.character + 1
+      column: position.character + 1,
     };
     const source = new Source(contents, document.uri, locationOffset);
     documents.push(new GraphQLDocument(source));
@@ -248,7 +248,7 @@ function extractGraphQLDocumentsFromElixirStrings(
     const position = document.positionAt(result.index + result[1].length);
     const locationOffset: SourceLocation = {
       line: position.line + 1,
-      column: position.character + 1
+      column: position.character + 1,
     };
     const source = new Source(contents, document.uri, locationOffset);
     documents.push(new GraphQLDocument(source));
@@ -260,7 +260,7 @@ function extractGraphQLDocumentsFromElixirStrings(
 }
 
 function replacePlaceholdersWithWhiteSpace(content: string) {
-  return content.replace(/\$\{([\s\S]+?)\}/gm, match => {
+  return content.replace(/\$\{([\s\S]+?)\}/gm, (match) => {
     return Array(match.length).join(" ");
   });
 }

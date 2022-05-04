@@ -9,7 +9,7 @@ export default class SchemaDownload extends ClientCommand {
     "Download a schema from Apollo or a GraphQL endpoint in JSON or SDL format";
 
   static flags = {
-    ...ClientCommand.flags
+    ...ClientCommand.flags,
   };
 
   static args = [
@@ -18,8 +18,8 @@ export default class SchemaDownload extends ClientCommand {
       description:
         "Path to write the introspection result to. Can be `.graphql`, `.gql`, `.graphqls`, or `.json`",
       required: true,
-      default: "schema.json"
-    }
+      default: "schema.json",
+    },
   ];
 
   async run() {
@@ -41,8 +41,8 @@ export default class SchemaDownload extends ClientCommand {
             } catch (err) {
               throw err;
             }
-          }
-        }
+          },
+        },
       ];
     });
   }

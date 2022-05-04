@@ -7,7 +7,7 @@ import {
   FileChangeType,
   ServerCapabilities,
   TextDocuments,
-  TextDocumentSyncKind
+  TextDocumentSyncKind,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { QuickPickItem } from "vscode";
@@ -24,7 +24,7 @@ let hasWorkspaceFolderCapability = false;
 // Awaitable promise for sending messages before the connection is initialized
 let initializeConnection: () => void;
 const whenConnectionInitialized: Promise<void> = new Promise(
-  resolve => (initializeConnection = resolve)
+  (resolve) => (initializeConnection = resolve)
 );
 
 const workspace = new GraphQLWorkspace(
@@ -33,27 +33,27 @@ const workspace = new GraphQLWorkspace(
     clientIdentity: {
       name: process.env["APOLLO_CLIENT_NAME"],
       version: process.env["APOLLO_CLIENT_VERSION"],
-      referenceID: process.env["APOLLO_CLIENT_REFERENCE_ID"]
-    }
+      referenceID: process.env["APOLLO_CLIENT_REFERENCE_ID"],
+    },
   }
 );
 
-workspace.onDiagnostics(params => {
+workspace.onDiagnostics((params) => {
   connection.sendDiagnostics(params);
 });
 
-workspace.onDecorations(params => {
+workspace.onDecorations((params) => {
   connection.sendNotification("apollographql/engineDecorations", params);
 });
 
-workspace.onSchemaTags(params => {
+workspace.onSchemaTags((params) => {
   connection.sendNotification(
     "apollographql/tagsLoaded",
     JSON.stringify(params)
   );
 });
 
-workspace.onConfigFilesFound(async params => {
+workspace.onConfigFilesFound(async (params) => {
   await whenConnectionInitialized;
 
   connection.sendNotification(
@@ -75,7 +75,7 @@ connection.onInitialize(async ({ capabilities, workspaceFolders }) => {
     // like `textDocument/codeLens`, and that way these can await `GraphQLProject#whenReady` to make sure
     // we provide them eventually.
     await Promise.all(
-      workspaceFolders.map(folder => workspace.addProjectsInFolder(folder))
+      workspaceFolders.map((folder) => workspace.addProjectsInFolder(folder))
     );
   }
 
@@ -84,33 +84,33 @@ connection.onInitialize(async ({ capabilities, workspaceFolders }) => {
       hoverProvider: true,
       completionProvider: {
         resolveProvider: false,
-        triggerCharacters: ["...", "@"]
+        triggerCharacters: ["...", "@"],
       },
       definitionProvider: true,
       referencesProvider: true,
       documentSymbolProvider: true,
       workspaceSymbolProvider: true,
       codeLensProvider: {
-        resolveProvider: false
+        resolveProvider: false,
       },
       codeActionProvider: true,
       executeCommandProvider: {
-        commands: []
+        commands: [],
       },
-      textDocumentSync: TextDocumentSyncKind.Incremental
-    } as ServerCapabilities
+      textDocumentSync: TextDocumentSyncKind.Incremental,
+    } as ServerCapabilities,
   };
 });
 
 connection.onInitialized(async () => {
   initializeConnection();
   if (hasWorkspaceFolderCapability) {
-    connection.workspace.onDidChangeWorkspaceFolders(async event => {
+    connection.workspace.onDidChangeWorkspaceFolders(async (event) => {
       await Promise.all([
-        ...event.removed.map(folder =>
+        ...event.removed.map((folder) =>
           workspace.removeProjectsInFolder(folder)
         ),
-        ...event.added.map(folder => workspace.addProjectsInFolder(folder))
+        ...event.added.map((folder) => workspace.addProjectsInFolder(folder)),
       ]);
     });
   }
@@ -123,7 +123,7 @@ const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 documents.listen(connection);
 
 documents.onDidChangeContent(
-  debounceHandler(params => {
+  debounceHandler((params) => {
     const project = workspace.projectForFile(params.document.uri);
     if (!project) return;
 
@@ -131,7 +131,7 @@ documents.onDidChangeContent(
   })
 );
 
-connection.onDidChangeWatchedFiles(params => {
+connection.onDidChangeWatchedFiles((params) => {
   for (const { uri, type } of params.changes) {
     if (
       uri.endsWith("apollo.config.cjs") ||

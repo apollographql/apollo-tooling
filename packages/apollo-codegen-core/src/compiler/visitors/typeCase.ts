@@ -18,9 +18,9 @@ export class Variant implements SelectionSet {
 
   inspect() {
     return `${inspect(this.possibleTypes)} -> ${inspect(
-      collectAndMergeFields(this, false).map(field => field.responseKey)
+      collectAndMergeFields(this, false).map((field) => field.responseKey)
     )} ${inspect(
-      this.fragmentSpreads.map(fragmentSpread => fragmentSpread.fragmentName)
+      this.fragmentSpreads.map((fragmentSpread) => fragmentSpread.fragmentName)
     )}\n`;
   }
 }
@@ -43,7 +43,7 @@ export function typeCaseForSelectionSet(
       case "FragmentSpread":
         if (
           typeCase.default.fragmentSpreads.some(
-            fragmentSpread =>
+            (fragmentSpread) =>
               fragmentSpread.fragmentName === selection.fragmentName
           )
         )
@@ -62,10 +62,10 @@ export function typeCaseForSelectionSet(
           typeCase.merge(
             typeCaseForSelectionSet(
               {
-                possibleTypes: selectionSet.possibleTypes.filter(type =>
+                possibleTypes: selectionSet.possibleTypes.filter((type) =>
                   selection.selectionSet.possibleTypes.includes(type)
                 ),
-                selections: selection.selectionSet.selections
+                selections: selection.selectionSet.selections,
               },
               mergeInFragmentSpreads
             )
@@ -76,10 +76,10 @@ export function typeCaseForSelectionSet(
         typeCase.merge(
           typeCaseForSelectionSet(
             {
-              possibleTypes: selectionSet.possibleTypes.filter(type =>
+              possibleTypes: selectionSet.possibleTypes.filter((type) =>
                 selection.selectionSet.possibleTypes.includes(type)
               ),
-              selections: selection.selectionSet.selections
+              selections: selection.selectionSet.selections,
             },
             mergeInFragmentSpreads
           )
@@ -91,11 +91,11 @@ export function typeCaseForSelectionSet(
             selection.selectionSet,
             mergeInFragmentSpreads
           ),
-          selectionSet => [
+          (selectionSet) => [
             {
               ...selection,
-              selectionSet
-            }
+              selectionSet,
+            },
           ]
         );
         break;
@@ -120,11 +120,11 @@ export class TypeCase {
 
   get remainder(): Variant | undefined {
     if (
-      this.default.possibleTypes.some(type => !this.variantsByType.has(type))
+      this.default.possibleTypes.some((type) => !this.variantsByType.has(type))
     ) {
       return new Variant(
         this.default.possibleTypes.filter(
-          type => !this.variantsByType.has(type)
+          (type) => !this.variantsByType.has(type)
         ),
         this.default.selections,
         this.default.fragmentSpreads
@@ -156,7 +156,7 @@ export class TypeCase {
   disjointVariantsFor(possibleTypes: GraphQLObjectType[]): Variant[] {
     const variants: Variant[] = [];
 
-    const matchesDefault = this.default.possibleTypes.every(type =>
+    const matchesDefault = this.default.possibleTypes.every((type) =>
       possibleTypes.includes(type)
     );
 
@@ -214,10 +214,10 @@ export class TypeCase {
           // Union of variant.fragmentSpreads and otherVariant.fragmentSpreads
           variant.fragmentSpreads = [
             ...variant.fragmentSpreads,
-            ...otherVariant.fragmentSpreads
+            ...otherVariant.fragmentSpreads,
           ].filter(
             (a, index, array) =>
-              array.findIndex(b => b.fragmentName == a.fragmentName) == index
+              array.findIndex((b) => b.fragmentName == a.fragmentName) == index
           );
         }
         variant.selections.push(
@@ -231,7 +231,7 @@ export class TypeCase {
     return (
       `TypeCase\n` +
       `  default -> ${inspect(this.default)}\n` +
-      this.variants.map(variant => `  ${inspect(variant)}\n`).join("")
+      this.variants.map((variant) => `  ${inspect(variant)}\n`).join("")
     );
   }
 }

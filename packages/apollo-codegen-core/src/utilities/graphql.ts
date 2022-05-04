@@ -24,7 +24,7 @@ import {
   isNonNullType,
   isObjectType,
   isInterfaceType,
-  isUnionType
+  isUnionType,
 } from "graphql";
 
 declare module "graphql/utilities/buildASTSchema" {
@@ -53,7 +53,7 @@ export function removeConnectionDirectives(ast: ASTNode) {
     Directive(node: DirectiveNode): DirectiveNode | null {
       if (node.name.value === "connection") return null;
       return node;
-    }
+    },
   });
 }
 
@@ -62,7 +62,7 @@ export function removeClientDirectives(ast: ASTNode) {
     Field(node: FieldNode): FieldNode | null {
       if (
         node.directives &&
-        node.directives.find(directive => directive.name.value === "client")
+        node.directives.find((directive) => directive.name.value === "client")
       )
         return null;
       return node;
@@ -71,14 +71,14 @@ export function removeClientDirectives(ast: ASTNode) {
       leave(node: OperationDefinitionNode): OperationDefinitionNode | null {
         if (!node.selectionSet.selections.length) return null;
         return node;
-      }
-    }
+      },
+    },
   });
 }
 
 const typenameField = {
   kind: Kind.FIELD,
-  name: { kind: Kind.NAME, value: "__typename" }
+  name: { kind: Kind.NAME, value: "__typename" },
 };
 
 export function sourceAt(location: Location) {
@@ -145,7 +145,7 @@ export function getOperationRootType(
       const mutationType = schema.getMutationType();
       if (!mutationType) {
         throw new GraphQLError("Schema is not configured for mutations", [
-          operation
+          operation,
         ]);
       }
       return mutationType;
@@ -153,7 +153,7 @@ export function getOperationRootType(
       const subscriptionType = schema.getSubscriptionType();
       if (!subscriptionType) {
         throw new GraphQLError("Schema is not configured for subscriptions", [
-          operation
+          operation,
         ]);
       }
       return subscriptionType;
