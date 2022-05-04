@@ -27,7 +27,7 @@ const envFileNames = [".env", ".env.local"];
 
 const loaders: Record<string, Loader> = {
   ...defaultLoaders,
-  ".ts": TypeScriptLoader
+  ".ts": TypeScriptLoader,
 };
 
 export const legacyKeyEnvVar = "ENGINE_API_KEY";
