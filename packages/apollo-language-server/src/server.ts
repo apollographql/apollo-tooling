@@ -7,7 +7,7 @@ import {
   FileChangeType,
   ServerCapabilities,
   TextDocuments,
-  TextDocumentSyncKind
+  TextDocumentSyncKind,
 } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { QuickPickItem } from "vscode";
@@ -97,7 +97,7 @@ connection.onInitialize(async ({ capabilities, workspaceFolders }) => {
       executeCommandProvider: {
         commands: [],
       },
-      textDocumentSync: TextDocumentSyncKind.Incremental
+      textDocumentSync: TextDocumentSyncKind.Incremental,
     } as ServerCapabilities,
   };
 });
