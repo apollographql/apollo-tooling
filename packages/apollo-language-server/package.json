@@ -1,7 +1,7 @@
 {
   "name": "apollo-language-server",
   "description": "A language server for Apollo GraphQL projects",
-  "version": "1.26.9-alpha.0",
+  "version": "1.26.8",
   "author": "Apollo GraphQL <packages@apollographql.com>",
   "license": "MIT",
   "repository": {
