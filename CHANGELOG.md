@@ -4,6 +4,12 @@
 
 ## vNEXT
 
+- _Nothing yet! Stay tuned._
+
+## `apollo@2.33.11`
+
+- This release includes a number of updates for dependencies within this repo's projects. Behavior changes aren't expected and should be considered reportable issues.
+
 - `apollo-language-server`
   - Remove `moment` as a dependency [#2595](https://github.com/apollographql/apollo-tooling/pull/2595)
 
