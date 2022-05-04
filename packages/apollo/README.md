@@ -33,7 +33,7 @@ $ npm install -g apollo
 $ apollo COMMAND
 running command...
 $ apollo (-v|--version|version)
-apollo/2.33.11 darwin-arm64 node-v16.14.2
+apollo/2.33.10 darwin-arm64 node-v16.5.0
 $ apollo --help [COMMAND]
 USAGE
   $ apollo COMMAND
@@ -474,56 +474,56 @@ _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.1
 
 ## `apollo plugins`
 
-List installed plugins.
+list installed plugins
 
 ```
 USAGE
   $ apollo plugins
 
 OPTIONS
-  --core  Show core plugins.
+  --core  show core plugins
 
 EXAMPLE
   $ apollo plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.1.0/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.11/src/commands/plugins/index.ts)_
 
 ## `apollo plugins:inspect PLUGIN...`
 
-Displays installation properties of a plugin.
+displays installation properties of a plugin
 
 ```
 USAGE
   $ apollo plugins:inspect PLUGIN...
 
 ARGUMENTS
-  PLUGIN  [default: .] Plugin to inspect.
+  PLUGIN  [default: .] plugin to inspect
 
 OPTIONS
-  -h, --help     Show CLI help.
+  -h, --help     show CLI help
   -v, --verbose
 
 EXAMPLE
   $ apollo plugins:inspect myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.1.0/src/commands/plugins/inspect.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.11/src/commands/plugins/inspect.ts)_
 
 ## `apollo plugins:install PLUGIN...`
 
-Installs a plugin into the CLI.
+installs a plugin into the CLI
 
 ```
 USAGE
   $ apollo plugins:install PLUGIN...
 
 ARGUMENTS
-  PLUGIN  Plugin to install.
+  PLUGIN  plugin to install
 
 OPTIONS
-  -f, --force    Run yarn install with force flag.
-  -h, --help     Show CLI help.
+  -f, --force    yarn install with force flag
+  -h, --help     show CLI help
   -v, --verbose
 
 DESCRIPTION
@@ -546,11 +546,11 @@ EXAMPLES
   $ apollo plugins:install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.1.0/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.11/src/commands/plugins/install.ts)_
 
 ## `apollo plugins:link PLUGIN`
 
-Links a plugin into the CLI for development.
+links a plugin into the CLI for development
 
 ```
 USAGE
@@ -560,7 +560,7 @@ ARGUMENTS
   PATH  [default: .] path to plugin
 
 OPTIONS
-  -h, --help     Show CLI help.
+  -h, --help     show CLI help
   -v, --verbose
 
 DESCRIPTION
@@ -576,11 +576,11 @@ EXAMPLE
   $ apollo plugins:link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.1.0/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.11/src/commands/plugins/link.ts)_
 
 ## `apollo plugins:uninstall PLUGIN...`
 
-Removes a plugin from the CLI.
+removes a plugin from the CLI
 
 ```
 USAGE
@@ -590,7 +590,7 @@ ARGUMENTS
   PLUGIN  plugin to uninstall
 
 OPTIONS
-  -h, --help     Show CLI help.
+  -h, --help     show CLI help
   -v, --verbose
 
 ALIASES
@@ -598,22 +598,22 @@ ALIASES
   $ apollo plugins:remove
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.1.0/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.11/src/commands/plugins/uninstall.ts)_
 
 ## `apollo plugins:update`
 
-Update installed plugins.
+update installed plugins
 
 ```
 USAGE
   $ apollo plugins:update
 
 OPTIONS
-  -h, --help     Show CLI help.
+  -h, --help     show CLI help
   -v, --verbose
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.1.0/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v1.10.11/src/commands/plugins/update.ts)_
 
 ## `apollo service:check`
 

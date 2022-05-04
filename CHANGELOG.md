@@ -8,18 +8,7 @@
 
 ## `apollo@2.33.11`
 
-- This release includes a number of dependency updates for the packages listed below. Behavior changes aren't expected and should be considered reportable issues.
-
- - apollo-codegen-core: 0.40.8 => 0.40.9
- - apollo-codegen-flow: 0.38.8 => 0.38.9
- - apollo-codegen-scala: 0.39.8 => 0.39.9
- - apollo-codegen-swift: 0.40.8 => 0.40.9
- - apollo-codegen-typescript: 0.40.8 => 0.40.9
- - apollo-env: 0.10.1 => 0.10.2
- - apollo-graphql: 0.9.6 => 0.9.7
- - apollo-language-server: 1.26.8 => 1.26.9
- - @apollographql/apollo-tools: 0.5.3 => 0.5.4
- - apollo: 2.33.10 => 2.33.11
+- This release includes a number of updates for dependencies within this repo's projects. Behavior changes aren't expected and should be considered reportable issues.
 
 - `apollo-language-server`
   - Remove `moment` as a dependency [#2595](https://github.com/apollographql/apollo-tooling/pull/2595)
