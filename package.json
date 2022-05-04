@@ -80,7 +80,7 @@
     "jest-matcher-utils": "28.0.2",
     "lerna": "4.0.0",
     "memfs": "3.4.1",
-    "nock": "11.9.1",
+    "nock": "13.2.4",
     "prettier": "2.6.2",
     "stdout-stderr": "0.1.13",
     "symlink-dir": "5.0.1",
