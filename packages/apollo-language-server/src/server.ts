@@ -4,10 +4,12 @@ import "apollo-env/lib/fetch/global";
 import {
   createConnection,
   ProposedFeatures,
-  TextDocuments,
   FileChangeType,
-  ServerCapabilities
-} from "vscode-languageserver";
+  ServerCapabilities,
+  TextDocuments,
+  TextDocumentSyncKind,
+} from "vscode-languageserver/node";
+import { TextDocument } from "vscode-languageserver-textdocument";
 import { QuickPickItem } from "vscode";
 import { GraphQLWorkspace } from "./workspace";
 import { GraphQLLanguageProvider } from "./languageProvider";
@@ -95,7 +97,7 @@ connection.onInitialize(async ({ capabilities, workspaceFolders }) => {
       executeCommandProvider: {
         commands: []
       },
-      textDocumentSync: documents.syncKind
+      textDocumentSync: TextDocumentSyncKind.Incremental
     } as ServerCapabilities
   };
 });
@@ -114,7 +116,7 @@ connection.onInitialized(async () => {
   }
 });
 
-const documents: TextDocuments = new TextDocuments();
+const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
