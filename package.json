@@ -86,7 +86,6 @@
     "symlink-dir": "5.0.1",
     "ts-jest": "28.0.1",
     "ts-node": "9.1.1",
-    "tslib": "1.14.1",
     "typescript": "4.6.3",
     "vscode": "1.1.37",
     "yarn": "1.22.18"
