@@ -23,24 +23,16 @@
     "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "changeset-publish": "changeset publish",
-    "client:codegen": "node ./packages/apollo/bin/run client:codegen --target=typescript --outputFlat ./packages/apollo-language-server/src/graphqlTypes.ts"
+    "client:codegen": "node ./packages/apollo/bin/run client:codegen --target=typescript --outputFlat ./packages/apollo-language-server/src/graphqlTypes.ts",
+    "install-with-npm-8.5": "npm i -g npm@^8.5.0 && npm i"
   },
   "engines": {
     "node": ">=8 <17",
-    "npm": ">=7.x <9.x"
+    "npm": ">=8.5.0 <9.x"
   },
-  "dependencies": {
-    "@apollographql/apollo-tools": "file:packages/apollo-tools",
-    "apollo": "file:packages/apollo",
-    "apollo-codegen-core": "file:packages/apollo-codegen-core",
-    "apollo-codegen-flow": "file:packages/apollo-codegen-flow",
-    "apollo-codegen-scala": "file:packages/apollo-codegen-scala",
-    "apollo-codegen-swift": "file:packages/apollo-codegen-swift",
-    "apollo-codegen-typescript": "file:packages/apollo-codegen-typescript",
-    "apollo-env": "file:packages/apollo-env",
-    "apollo-graphql": "file:packages/apollo-graphql",
-    "apollo-language-server": "file:packages/apollo-language-server"
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.4",
     "@changesets/cli": "^2.22.0",
