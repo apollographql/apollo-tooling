@@ -20,12 +20,9 @@
     "watch": "npm run build -- --watch",
     "test": "jest",
     "test:ci": "npm run test -- --ci --maxWorkers=2",
-    "test:ci:debug": "DEBUG=* node --inspect-brk=9001 node_modules/.bin/jest --runInBand",
-    "circle": "npm run test:ci",
     "lint": "prettier --list-different \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
     "lint-fix": "prettier --write \"packages/*/src/**/*.{js,jsx,ts,tsx}\"",
-    "release:version-bump": "lerna version --exact",
-    "release:start-ci-publish": "node -p '`Publish (dist-tag:${process.env.APOLLO_DIST_TAG || \"latest\"})`' | git tag -F - \"publish/$(date -u '+%Y%m%d%H%M%S')\" && git push origin \"$(git describe --match='publish/*' --tags --exact-match HEAD)\"",
+    "changeset-publish": "changeset publish",
     "client:codegen": "node ./packages/apollo/bin/run client:codegen --target=typescript --outputFlat ./packages/apollo-language-server/src/graphqlTypes.ts"
   },
   "engines": {
@@ -80,7 +77,6 @@
     "jest": "28.0.3",
     "jest-environment-node": "28.0.2",
     "jest-matcher-utils": "28.0.2",
-    "lerna": "4.0.0",
     "memfs": "3.4.1",
     "nock": "13.2.4",
     "prettier": "2.6.2",
