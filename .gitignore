@@ -26,3 +26,6 @@ __tmp__*
 
 #idea folder
 .idea/
+
+# volta files installed within the project if using direnv
+.volta

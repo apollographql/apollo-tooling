@@ -817,7 +817,7 @@ describe("service:check", () => {
         stripAnsi(
           formatHumanReadable({
             checkSchemaResult,
-            graphCompositionID: "fff"
+            graphCompositionID: "fff",
           })
         )
       ).toMatchSnapshot();
@@ -852,11 +852,11 @@ describe("service:check", () => {
                 severity: ChangeSeverity.NOTICE,
                 affectedQueries: [],
                 changes: checkSchemaResult.diffToPrevious.changes.filter(
-                  change => change.severity === ChangeSeverity.FAILURE
-                )
-              }
+                  (change) => change.severity === ChangeSeverity.FAILURE
+                ),
+              },
             },
-            graphCompositionID: "fff"
+            graphCompositionID: "fff",
           })
         )
       ).toMatchSnapshot();
