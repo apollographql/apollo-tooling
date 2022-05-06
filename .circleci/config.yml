@@ -1,127 +1,63 @@
 version: 2.1
 
-# These "CircleCI Orbs" are reusable bits of configuration that can be shared
-# across projects.  See https://circleci.com/orbs/ for more information.
 orbs:
-  # `oss` is a local reference to the package.  The source for Apollo Orbs can
-  # be found at http://github.com/apollographql/CircleCI-Orbs.
-  oss: apollo/oss-ci-cd-tooling@0.0.20
-  # win is a windows orb provided by circleci
-  win: circleci/windows@2.4.1
+  node: circleci/node@5.0.2
 
 commands:
-  # These are the steps used for each version of Node which we're testing
-  # against.  Thanks to YAMLs inability to merge arrays (though it is able
-  # to merge objects), every version of Node must use the exact same steps,
-  # or these steps would need to be repeated in a version of Node that needs
-  # something different.  Probably best to avoid that, out of principle, though.
-  common_test_steps:
-    description: Commands to run on every Node.js environment
+  install-volta:
+    description: Install volta to manage Node/npm versions
     steps:
-      - oss/install_specific_npm_version:
-          version: '7'
-      - checkout
-      - oss/npm_clean_install_with_caching
-      - run: npm run test:ci
+      - run:
+          name: Install volta
+          # Teach the volta installer to update Circle's special env
+          # file instead of the default.
+          command: |
+            curl https://get.volta.sh | PROFILE="$BASH_ENV" bash
 
-# Important! When adding a new job to `jobs`, make sure to define when it
-# executes by also adding it to the `workflows` section below!
+  setup-node:
+    parameters:
+      node-version:
+        type: string
+        default: ""
+    steps:
+      - install-volta
+      - checkout
+      - when:
+          condition: << parameters.node-version >>
+          steps:
+            - run: volta pin node@<< parameters.node-version >>
+      - run: node --version
+      - run: npm --version
+      - node/install-packages
+
 jobs:
-  # Platform tests, each with the same tests but different platform or version.
-  NodeJS 12:
+  NodeJS:
+    parameters:
+      node-version:
+        type: string
     docker:
-      - image: cimg/node:12.22.8
+      - image: cimg/base:stable
     steps:
-      - common_test_steps
-
-  NodeJS 14 Windows:
-    executor:
-      name: win/default
-    environment:
-      # Note: This is a no-op at the second, but bear with me on this.  If this
-      # comment is not removed by 2021-06-30 remove it along with the next line.
-      # renovate: datasource=github-tags depName=nodejs/node versioning=node
-      NODE_VERSION: 14.17.5
-      NPM_VERSION: 7.10.0
-    steps:
-      - run: git config --global core.autocrlf false
-      - run:
-          name: Install desired Node.js version with nvm
-          command: |
-            nvm install ${Env:NODE_VERSION}
-            nvm on
-      - run:
-          # https://github.com/coreybutler/nvm-windows/issues/300
-          # Have to move the command out of the way because it can't
-          # overwrite itself otherwise.   This is madness, but apparently
-          # accepted.  Other things I tried: using yarn to install npm,
-          # using http://npm.im/npm-windows-upgrade and even shouting.
-          name: Install specific version of npm in a crazy Windows way
-          command: |
-            $node_dir = (get-item (get-command npm).source).directory.fullname
-            foreach ($cmd in @("npm", "npx")) {
-              foreach ($ext in @(".ps1", ".cmd", "")) {
-                if (Test-Path "$node_dir/$cmd$ext") {
-                  rename-item -path (join-path -path $node_dir -childpath "$cmd$ext") "${cmd}-orig${ext}"
-                }
-              }
-            }
-            npm-orig install --global "npm@${Env:NPM_VERSION}"
-      - run:
-          name: Assert Node.js version
-          command: |
-            if ((node --version) -Ne "v${Env:NODE_VERSION}") { exit 1 }
-      - run:
-          name: Assert npm version
-          command: |
-            if ((npm --version) -Ne "${Env:NPM_VERSION}") { exit 1 }
-      - checkout
-      - oss/npm_clean_install_with_caching
-      - run: npm run circle
-
-  NodeJS 14:
-    docker:
-      - image: cimg/node:14.18.2
-    steps:
-      - common_test_steps
-      # We will save the results of this one particular invocation to use in
-      # the publish step. Not only does this make the publishing step take less
-      # time, this also ensures that a passing version gets deployed even if,
-      # theoretically, rebuilding the same commit on the same version of
-      # Node.js should yield the same results!
-      - persist_to_workspace:
-          root: .
-          paths:
-            - ./**
-
-  NodeJS 16:
-    docker:
-      - image: cimg/node:16.13.1
-    steps:
-      - common_test_steps
+      - setup-node:
+          node-version: <<parameters.node-version>>
+      - run: npm run test:ci
+      - store_test_results:
+          path: junit.xml
 
   # Other tests, unrelated to typical code tests.
   Linting:
     docker:
-      - image: cimg/node:12.22.8
+      - image: cimg/base:stable
     steps:
-      - oss/install_specific_npm_version:
-          version: '7'
-      - checkout
-      # (speed) --ignore-scripts to skip unnecessary build during linting.
-      - run: npm install --ignore-scripts
+      - setup-node
       - run: npm run lint
 
   Query Check:
     docker:
-      - image: cimg/node:12.22.8
+      - image: cimg/base:stable
     steps:
-      - oss/install_specific_npm_version:
-          version: '7'
-      - checkout
-      - oss/npm_clean_install_with_caching
+      - setup-node
       - run:
-          name:
           command: |
             if [ -z "$CHECKS_API_KEY" ]; then
               echo "NO CHECKS_API_KEY! CANNOT RUN! This is normal on PRs from Forks."
@@ -131,12 +67,9 @@ jobs:
 
   Generated Types Check:
     docker:
-      - image: cimg/node:12.22.8
+      - image: cimg/base:stable
     steps:
-      - oss/install_specific_npm_version:
-          version: '7'
-      - checkout
-      - oss/npm_clean_install_with_caching
+      - setup-node
       - run:
           name: Generate types locally and compare type files
           command: |
@@ -147,28 +80,18 @@ jobs:
             npx apollo client:codegen --key=$CHECKS_API_KEY --outputFlat --target=typescript currentTypes.ts
             cmp --silent currentTypes.ts ./packages/apollo-language-server/src/graphqlTypes.ts || (echo "Type check failed. Run 'npm run client:codegen'" && exit 1)
 
-common_non_publish_filters: &common_non_publish_filters
-  filters:
-    # Ensure every job has `tags` filters since the publish steps have tags.
-    # This is some wild configuration thing that's pretty hard to figure out.
-    tags:
-      only: /.*/
-
 workflows:
   version: 2
   Build:
     jobs:
-      - NodeJS 12:
-          <<: *common_non_publish_filters
-      #- NodeJS 14 Windows:
-      #    <<: *common_non_publish_filters
-      - NodeJS 14:
-          <<: *common_non_publish_filters
-      - NodeJS 16:
-          <<: *common_non_publish_filters
-      - Linting:
-          <<: *common_non_publish_filters
-      - Query Check:
-          <<: *common_non_publish_filters
-      - Generated Types Check:
-          <<: *common_non_publish_filters
+      - NodeJS:
+          name: NodeJS << matrix.node-version >>
+          matrix:
+            parameters:
+              node-version:
+                - "12"
+                - "14"
+                - "16"
+      - Linting
+      - Query Check
+      - Generated Types Check
