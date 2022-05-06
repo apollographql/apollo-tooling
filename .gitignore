@@ -18,8 +18,6 @@ packages/*/package-lock.json
 
 .DS_Store
 
-lerna-debug.log
-
 .env
 
 # files generated from tests
@@ -28,3 +26,6 @@ __tmp__*
 
 #idea folder
 .idea/
+
+# volta files installed within the project if using direnv
+.volta

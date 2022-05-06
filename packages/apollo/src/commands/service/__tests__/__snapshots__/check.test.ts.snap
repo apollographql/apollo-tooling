@@ -4,19 +4,19 @@ exports[`service:check formatHumanReadable should have correct output with break
 "╔════════╤═══════════════════════════╤═════════════════════════════════════════════════════════════════════════════════════════╗
 ║ Change │ Code                      │ Description                                                                             ║
 ╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mARG_REMOVED[39m               │ [31m\`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed[39m                             ║
+║ FAIL   │ ARG_REMOVED               │ \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed                             ║
 ╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mARG_REMOVED[39m               │ [31m\`ServiceMutation.uploadSchema\` arg \`schema\` was removed[39m                                 ║
+║ FAIL   │ ARG_REMOVED               │ \`ServiceMutation.uploadSchema\` arg \`schema\` was removed                                 ║
 ╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mARG_REMOVED[39m               │ [31m\`ServiceMutation.uploadSchema\` arg \`tag\` was removed[39m                                    ║
+║ FAIL   │ ARG_REMOVED               │ \`ServiceMutation.uploadSchema\` arg \`tag\` was removed                                    ║
 ╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mFIELD_CHANGED_TYPE[39m        │ [31m\`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`[39m ║
+║ FAIL   │ FIELD_CHANGED_TYPE        │ \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\` ║
 ╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mFIELD_REMOVED[39m             │ [31m\`Change.affectedClients\` was removed[39m                                                    ║
+║ FAIL   │ FIELD_REMOVED             │ \`Change.affectedClients\` was removed                                                    ║
 ╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mFIELD_REMOVED[39m             │ [31m\`NamedIntrospectionValue.printedType\` was removed[39m                                       ║
+║ FAIL   │ FIELD_REMOVED             │ \`NamedIntrospectionValue.printedType\` was removed                                       ║
 ╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mTYPE_REMOVED[39m              │ [31m\`NamedIntrospectionArg\` removed[39m                                                         ║
+║ FAIL   │ TYPE_REMOVED              │ \`NamedIntrospectionArg\` removed                                                         ║
 ╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
 ║ PASS   │ ARG_REMOVED               │ \`ServiceMutation.registerOperations\` arg \`manifestVersion\` was removed                  ║
 ╟────────┼───────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
@@ -49,19 +49,19 @@ exports[`service:check formatHumanReadable should have correct output with only 
 "╔════════╤════════════════════╤═════════════════════════════════════════════════════════════════════════════════════════╗
 ║ Change │ Code               │ Description                                                                             ║
 ╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mARG_REMOVED[39m        │ [31m\`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed[39m                             ║
+║ FAIL   │ ARG_REMOVED        │ \`ServiceMutation.uploadSchema\` arg \`gitContext\` was removed                             ║
 ╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mARG_REMOVED[39m        │ [31m\`ServiceMutation.uploadSchema\` arg \`schema\` was removed[39m                                 ║
+║ FAIL   │ ARG_REMOVED        │ \`ServiceMutation.uploadSchema\` arg \`schema\` was removed                                 ║
 ╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mARG_REMOVED[39m        │ [31m\`ServiceMutation.uploadSchema\` arg \`tag\` was removed[39m                                    ║
+║ FAIL   │ ARG_REMOVED        │ \`ServiceMutation.uploadSchema\` arg \`tag\` was removed                                    ║
 ╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mFIELD_CHANGED_TYPE[39m │ [31m\`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\`[39m ║
+║ FAIL   │ FIELD_CHANGED_TYPE │ \`Change.argNode\` changed type from \`NamedIntrospectionArg\` to \`NamedIntrospectionValue\` ║
 ╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mFIELD_REMOVED[39m      │ [31m\`Change.affectedClients\` was removed[39m                                                    ║
+║ FAIL   │ FIELD_REMOVED      │ \`Change.affectedClients\` was removed                                                    ║
 ╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mFIELD_REMOVED[39m      │ [31m\`NamedIntrospectionValue.printedType\` was removed[39m                                       ║
+║ FAIL   │ FIELD_REMOVED      │ \`NamedIntrospectionValue.printedType\` was removed                                       ║
 ╟────────┼────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────╢
-║ [31mFAIL[39m   │ [31mTYPE_REMOVED[39m       │ [31m\`NamedIntrospectionArg\` removed[39m                                                         ║
+║ FAIL   │ TYPE_REMOVED       │ \`NamedIntrospectionArg\` removed                                                         ║
 ╚════════╧════════════════════╧═════════════════════════════════════════════════════════════════════════════════════════╝
 
 

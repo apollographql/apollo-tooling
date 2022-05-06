@@ -10,6 +10,7 @@ import { stdout } from "stdout-stderr";
 import * as graphql from "graphql";
 import { graphqlTypes } from "apollo-language-server";
 import nock = require("nock");
+import stripAnsi from "strip-ansi";
 
 /**
  * Single URL for all local requests to be mocked
@@ -813,10 +814,12 @@ describe("service:check", () => {
   describe("formatHumanReadable", () => {
     it("should have correct output with breaking and non-breaking changes", () => {
       expect(
-        formatHumanReadable({
-          checkSchemaResult,
-          graphCompositionID: "fff",
-        })
+        stripAnsi(
+          formatHumanReadable({
+            checkSchemaResult,
+            graphCompositionID: "fff",
+          })
+        )
       ).toMatchSnapshot();
     });
 
@@ -839,20 +842,23 @@ describe("service:check", () => {
 
     it("should have correct output with only breaking changes", () => {
       expect(
-        formatHumanReadable({
-          checkSchemaResult: {
-            ...checkSchemaResult,
-            diffToPrevious: {
-              ...checkSchemaResult.diffToPrevious,
-              severity: ChangeSeverity.NOTICE,
-              affectedQueries: [],
-              changes: checkSchemaResult.diffToPrevious.changes.filter(
-                (change) => change.severity === ChangeSeverity.FAILURE
-              ),
+        // remove color from snapshot, circle ci doesn't like it
+        stripAnsi(
+          formatHumanReadable({
+            checkSchemaResult: {
+              ...checkSchemaResult,
+              diffToPrevious: {
+                ...checkSchemaResult.diffToPrevious,
+                severity: ChangeSeverity.NOTICE,
+                affectedQueries: [],
+                changes: checkSchemaResult.diffToPrevious.changes.filter(
+                  (change) => change.severity === ChangeSeverity.FAILURE
+                ),
+              },
             },
-          },
-          graphCompositionID: "fff",
-        })
+            graphCompositionID: "fff",
+          })
+        )
       ).toMatchSnapshot();
     });
   });

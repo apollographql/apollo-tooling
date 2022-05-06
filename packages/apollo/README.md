@@ -531,9 +531,9 @@ DESCRIPTION
 
   Installation of a user-installed plugin will override a core plugin.
 
-  e.g. If you have a core plugin that has a 'hello' command, installing a 
-  user-installed plugin with a 'hello' command will override the core 
-  plugin implementation. This is useful if a user needs to update core 
+  e.g. If you have a core plugin that has a 'hello' command, installing a
+  user-installed plugin with a 'hello' command will override the core
+  plugin implementation. This is useful if a user needs to update core
   plugin functionality in the CLI without the need to patch and update the
    whole CLI.
 
@@ -541,7 +541,7 @@ ALIASES
   $ apollo plugins:add
 
 EXAMPLES
-  $ apollo plugins:install myplugin 
+  $ apollo plugins:install myplugin
   $ apollo plugins:install https://github.com/someuser/someplugin
   $ apollo plugins:install someuser/someplugin
 ```
@@ -564,12 +564,12 @@ OPTIONS
   -v, --verbose
 
 DESCRIPTION
-  Installation of a linked plugin will override a user-installed or core 
+  Installation of a linked plugin will override a user-installed or core
   plugin.
 
-  e.g. If you have a user-installed or core plugin that has a 'hello' 
+  e.g. If you have a user-installed or core plugin that has a 'hello'
   command, installing a linked plugin with a 'hello' command will override
-   the user-installed or core plugin implementation. This is useful for 
+   the user-installed or core plugin implementation. This is useful for
   development work.
 
 EXAMPLE
@@ -691,8 +691,8 @@ OPTIONS
 
 DESCRIPTION
   -----------------------------------------------------------------
-  DEPRECATED: This command will be removed from the `apollo` CLI in 
-  its next major version. Replacement functionality is available in 
+  DEPRECATED: This command will be removed from the `apollo` CLI in
+  its next major version. Replacement functionality is available in
   the new Apollo Rover CLI: https://go.apollo.dev/t/migration
   -----------------------------------------------------------------
 
@@ -739,8 +739,8 @@ OPTIONS
 
 DESCRIPTION
   -----------------------------------------------------------------
-  DEPRECATED: This command will be removed from the `apollo` CLI in 
-  its next major version. Replacement functionality is available in 
+  DEPRECATED: This command will be removed from the `apollo` CLI in
+  its next major version. Replacement functionality is available in
   the new Apollo Rover CLI: https://go.apollo.dev/t/migration
   -----------------------------------------------------------------
 ```
@@ -782,8 +782,8 @@ OPTIONS
 
 DESCRIPTION
   -----------------------------------------------------------------
-  DEPRECATED: This command will be removed from the `apollo` CLI in 
-  its next major version. Replacement functionality is available in 
+  DEPRECATED: This command will be removed from the `apollo` CLI in
+  its next major version. Replacement functionality is available in
   the new Apollo Rover CLI: https://go.apollo.dev/t/migration
   -----------------------------------------------------------------
 
@@ -822,8 +822,8 @@ OPTIONS
 
 DESCRIPTION
   -----------------------------------------------------------------
-  DEPRECATED: This command will be removed from the `apollo` CLI in 
-  its next major version. Replacement functionality is available in 
+  DEPRECATED: This command will be removed from the `apollo` CLI in
+  its next major version. Replacement functionality is available in
   the new Apollo Rover CLI: https://go.apollo.dev/t/migration
   -----------------------------------------------------------------
 ```
@@ -887,8 +887,8 @@ OPTIONS
 
 DESCRIPTION
   -----------------------------------------------------------------
-  DEPRECATED: This command will be removed from the `apollo` CLI in 
-  its next major version. Replacement functionality is available in 
+  DEPRECATED: This command will be removed from the `apollo` CLI in
+  its next major version. Replacement functionality is available in
   the new Apollo Rover CLI: https://go.apollo.dev/t/migration
   -----------------------------------------------------------------
 
@@ -1028,7 +1028,7 @@ function CharacterFigures({ characters }: CharactersQuery) {
 
 [![Build Status](https://circleci.com/gh/apollographql/apollo-tooling.svg?style=svg)](https://circleci.com/gh/apollographql/apollo-tooling)
 
-This repo is composed of multiple packages managed by Lerna. The `apollo-cli` contains the core CLI commands. The `apollo-codegen-core` package contains all the compiler APIs needed to implement code generation support for new languages. The other `apollo-codegen-*` packages implement code generation support for individual languages.
+This repo is composed of multiple packages. The `apollo-cli` contains the core CLI commands. The `apollo-codegen-core` package contains all the compiler APIs needed to implement code generation support for new languages. The other `apollo-codegen-*` packages implement code generation support for individual languages.
 
 Running tests locally:
 
