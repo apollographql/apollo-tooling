@@ -18,8 +18,6 @@ packages/*/package-lock.json
 
 .DS_Store
 
-lerna-debug.log
-
 .env
 
 # files generated from tests
