@@ -1,16 +1,11 @@
 import { DataSourceConfig } from "apollo-datasource";
-import { ApolloLink, execute, GraphQLRequest, makePromise } from "apollo-link";
-import { setContext } from "apollo-link-context";
-import { onError } from "apollo-link-error";
-import { createHttpLink } from "apollo-link-http";
+import request, { RequestOptions, ClientError } from "graphql-request";
 import {
   ApolloError,
   AuthenticationError,
   ForbiddenError,
 } from "apollo-server-errors";
-import to from "await-to-js";
 import { GraphQLError } from "graphql";
-import { fetch } from "apollo-env";
 
 export interface GraphQLResponse<T> {
   data?: T;
@@ -24,34 +19,30 @@ export class GraphQLDataSource<TContext = any> {
     this.context = config.context;
   }
 
-  // XXX can we kill the casting here?
-  public async execute<T>(
-    operation: GraphQLRequest
-  ): Promise<GraphQLResponse<T>> {
-    return this.executeSingleOperation(operation) as Promise<
-      GraphQLResponse<T>
-    >;
+  public async execute<T>(options: RequestOptions): Promise<T> {
+    try {
+      return request(
+        this.resolveUri(),
+        options.document,
+        options.variables,
+        options.requestHeaders
+      );
+    } catch (error: unknown) {
+      if (error instanceof ClientError) {
+        this.didEncounterError(error);
+      }
+      throw error;
+    }
   }
 
   protected willSendRequest?(request: any): any;
 
-  private composeLinks(): ApolloLink {
-    const uri = this.resolveUri();
-
-    return ApolloLink.from([
-      this.onErrorLink(),
-      this.onRequestLink(),
-      createHttpLink({ fetch, uri }),
-    ]);
-  }
-
-  private didEncounterError(error: any) {
-    const status = error.statusCode ? error.statusCode : null;
-    const message = error.bodyText
-      ? error.bodyText
-      : error.message
-      ? error.message
-      : null;
+  private didEncounterError(error: ClientError) {
+    const status = error.response.status;
+    const message =
+      error.response.errors?.map((error) => error.message).join("\n") ??
+      error.message ??
+      null;
 
     let apolloError: ApolloError;
 
@@ -69,18 +60,6 @@ export class GraphQLDataSource<TContext = any> {
     throw apolloError;
   }
 
-  private async executeSingleOperation(operation: GraphQLRequest) {
-    const link = this.composeLinks();
-
-    const [error, response] = await to(makePromise(execute(link, operation)));
-
-    if (error) {
-      this.didEncounterError(error);
-    }
-
-    return response;
-  }
-
   private resolveUri(): string {
     const baseURL = this.baseURL;
 
@@ -91,34 +70,5 @@ export class GraphQLDataSource<TContext = any> {
     }
 
     return baseURL;
-  }
-
-  private onRequestLink() {
-    return setContext((_, request) => {
-      if (this.willSendRequest) {
-        this.willSendRequest(request);
-      }
-
-      return request;
-    });
-  }
-
-  private onErrorLink() {
-    return onError(({ graphQLErrors, networkError, operation }) => {
-      const { result, response } = operation.getContext();
-      if (graphQLErrors) {
-        graphQLErrors.map((graphqlError) =>
-          console.error(`[GraphQL error]: ${graphqlError.message}`)
-        );
-      }
-
-      if (networkError) {
-        console.log(`[Network Error]: ${networkError}`);
-      }
-
-      if (response && response.status >= 400) {
-        console.log(`[Network Error] ${response.bodyText}`);
-      }
-    });
   }
 }

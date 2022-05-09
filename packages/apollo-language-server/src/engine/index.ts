@@ -80,207 +80,150 @@ export class ApolloEngineClient extends GraphQLDataSource {
   }
 
   public async listServices(variables: ListServicesVariables) {
-    return this.execute<ListServices>({
-      query: LIST_SERVICES,
+    const result = await this.execute<ListServices>({
+      document: LIST_SERVICES,
       variables,
-    }).then(({ data, errors }) => {
-      // use error logger
-      if (errors) {
-        throw new Error(errors.map((error) => error.message).join("\n"));
-      }
-
-      if (data && !data.service) {
-        throw new Error(noServiceError(variables.id, this.baseURL));
-      }
-
-      if (!(data && data.service)) {
-        throw new Error("Error in response from Apollo");
-      }
-      return data;
     });
+
+    if (!result.service) {
+      throw new Error(noServiceError(variables.id, this.baseURL));
+    }
+    return result;
   }
 
   public async checkSchema(variables: CheckSchemaVariables) {
-    return this.execute<CheckSchema>({
-      query: CHECK_SCHEMA,
+    const result = await this.execute<CheckSchema>({
+      document: CHECK_SCHEMA,
       variables,
-    }).then(({ data, errors }) => {
-      // use error logger
-      if (errors) {
-        throw new Error(errors.map((error) => error.message).join("\n"));
-      }
-
-      if (data && !data.service) {
-        throw new Error(noServiceError(variables.id, this.baseURL));
-      }
-
-      if (!(data && data.service)) {
-        throw new Error("Error in response from Apollo");
-      }
-      return data.service.checkSchema;
     });
+
+    if (!result.service) {
+      throw new Error(noServiceError(variables.id, this.baseURL));
+    }
+    return result.service.checkSchema;
   }
 
   public async uploadSchema(variables: UploadSchemaVariables) {
-    return this.execute<UploadSchema>({
-      query: UPLOAD_SCHEMA,
+    const result = await this.execute<UploadSchema>({
+      document: UPLOAD_SCHEMA,
       variables,
-    }).then(({ data, errors }) => {
-      // use error logger
-      if (errors) {
-        throw new Error(errors.map((error) => error.message).join("\n"));
-      }
-
-      if (data && !data.service) {
-        throw new Error(noServiceError(variables.id, this.baseURL));
-      }
-
-      if (!(data && data.service)) {
-        throw new Error("Error in response from Apollo");
-      }
-      return data.service.uploadSchema;
     });
+
+    if (!result.service) {
+      throw new Error(noServiceError(variables.id, this.baseURL));
+    }
+    return result.service.uploadSchema;
   }
 
   public async uploadAndComposePartialSchema(
     variables: UploadAndComposePartialSchemaVariables
   ) {
-    return this.execute<UploadAndComposePartialSchema>({
-      query: UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA,
+    const result = await this.execute<UploadAndComposePartialSchema>({
+      document: UPLOAD_AND_COMPOSE_PARTIAL_SCHEMA,
       variables,
-    }).then(({ data, errors }) => {
-      // use error logger
-      if (errors) {
-        throw new Error(errors.map((error) => error.message).join("\n"));
-      }
-
-      if (data && !data.service) {
-        throw new Error(noServiceError(variables.id, this.baseURL));
-      }
-
-      if (
-        !(
-          data &&
-          data.service &&
-          data.service.upsertImplementingServiceAndTriggerComposition
-        )
-      ) {
-        throw new Error("Error in response from Apollo");
-      }
-      return data.service.upsertImplementingServiceAndTriggerComposition;
     });
+
+    if (!result.service) {
+      throw new Error(noServiceError(variables.id, this.baseURL));
+    }
+
+    if (
+      !(
+        result &&
+        result.service &&
+        result.service.upsertImplementingServiceAndTriggerComposition
+      )
+    ) {
+      throw new Error("Error in response from Apollo");
+    }
+    return result.service.upsertImplementingServiceAndTriggerComposition;
   }
 
   public async checkPartialSchema(
     variables: CheckPartialSchemaVariables
   ): Promise<CheckPartialSchema_service_checkPartialSchema> {
-    return this.execute<CheckPartialSchema>({
-      query: CHECK_PARTIAL_SCHEMA,
+    const result = await this.execute<CheckPartialSchema>({
+      document: CHECK_PARTIAL_SCHEMA,
       variables,
-    }).then(({ data, errors }) => {
-      // use error logger
-      if (errors) {
-        throw new Error(errors.map((error) => error.message).join("\n"));
-      }
-
-      if (data && !data.service) {
-        throw new Error(noServiceError(variables.id, this.baseURL));
-      }
-
-      if (!(data && data.service)) {
-        throw new Error("Error in response from Apollo");
-      }
-      return data.service.checkPartialSchema;
     });
+    if (result && !result.service) {
+      throw new Error(noServiceError(variables.id, this.baseURL));
+    }
+
+    if (!(result && result.service)) {
+      throw new Error("Error in response from Apollo");
+    }
+    return result.service.checkPartialSchema;
   }
 
   public async removeServiceAndCompose(
     variables: RemoveServiceAndComposeVariables
   ) {
-    return this.execute<RemoveServiceAndCompose>({
-      query: REMOVE_SERVICE_AND_COMPOSE,
+    const result = await this.execute<RemoveServiceAndCompose>({
+      document: REMOVE_SERVICE_AND_COMPOSE,
       variables,
-    }).then(({ data, errors }) => {
-      if (errors) {
-        throw new Error(errors.map((error) => error.message).join("\n"));
-      }
-
-      if (!data || !data.service) {
-        throw new Error("Error in response from Apollo");
-      }
-
-      return data.service.removeImplementingServiceAndTriggerComposition;
     });
+
+    if (!result || !result.service) {
+      throw new Error("Error in response from Apollo");
+    }
+
+    return result.service.removeImplementingServiceAndTriggerComposition;
   }
 
   public async validateOperations(variables: ValidateOperationsVariables) {
-    return this.execute<ValidateOperations>({
-      query: VALIDATE_OPERATIONS,
+    const result = await this.execute<ValidateOperations>({
+      document: VALIDATE_OPERATIONS,
       variables,
-    }).then(({ data, errors }) => {
-      // use error logger
-      if (errors) {
-        throw new Error(errors.map((error) => error.message).join("\n"));
-      }
-
-      if (data && !data.service) {
-        throw new Error(noServiceError(variables.id, this.baseURL));
-      }
-
-      if (!(data && data.service)) {
-        throw new Error("Error in response from Apollo");
-      }
-
-      return data.service.validateOperations.validationResults;
     });
+
+    if (result && !result.service) {
+      throw new Error(noServiceError(variables.id, this.baseURL));
+    }
+
+    if (!(result && result.service)) {
+      throw new Error("Error in response from Apollo");
+    }
+
+    return result.service.validateOperations.validationResults;
   }
 
   public async registerOperations(variables: RegisterOperationsVariables) {
-    return this.execute<RegisterOperations>({
-      query: REGISTER_OPERATIONS,
+    const result = await this.execute<RegisterOperations>({
+      document: REGISTER_OPERATIONS,
       variables,
-    }).then(({ data, errors }) => {
-      // use error logger
-      if (errors) {
-        throw new Error(errors.map((error) => error.message).join("\n"));
-      }
-
-      if (data && !data.service) {
-        throw new Error(noServiceError(variables.id, this.baseURL));
-      }
-
-      if (
-        !(data && data.service && data.service.registerOperationsWithResponse)
-      ) {
-        throw new Error("Error in response from Apollo");
-      }
-      return data.service.registerOperationsWithResponse;
     });
+    if (!result.service) {
+      throw new Error(noServiceError(variables.id, this.baseURL));
+    }
+
+    if (!result.service.registerOperationsWithResponse) {
+      throw new Error("Error in response from Apollo");
+    }
+    return result.service.registerOperationsWithResponse;
   }
 
   async loadSchemaTagsAndFieldStats(serviceID: string) {
-    const { data, errors } = await this.execute<SchemaTagsAndFieldStats>({
-      query: SCHEMA_TAGS_AND_FIELD_STATS,
+    const result = await this.execute<SchemaTagsAndFieldStats>({
+      document: SCHEMA_TAGS_AND_FIELD_STATS,
       variables: {
         id: serviceID,
       },
     });
 
-    if (!(data && data.service && data.service.schemaTags) || errors) {
+    if (!result.service?.schemaTags) {
       throw new Error(
-        errors
-          ? errors.map((error) => error.message).join("\n")
-          : "No service returned. Make sure your service name and API key match"
+        "No service returned. Make sure your service name and API key match"
       );
     }
 
-    const schemaTags: string[] = data.service.schemaTags.map(
+    const schemaTags: string[] = result.service.schemaTags.map(
       ({ tag }: { tag: string }) => tag
     );
 
     const fieldStats: FieldStats = new Map();
 
-    data.service.stats.fieldStats.forEach((fieldStat) => {
+    result.service.stats.fieldStats.forEach((fieldStat) => {
       // Parse field "ParentType.fieldName:FieldType" into ["ParentType", "fieldName", "FieldType"]
       const [parentType = null, fieldName = null] = fieldStat.groupBy.field
         ? fieldStat.groupBy.field.split(/\.|:/)
