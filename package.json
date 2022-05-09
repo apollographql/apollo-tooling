@@ -72,7 +72,6 @@
     "memfs": "3.4.1",
     "nock": "13.2.4",
     "prettier": "2.6.2",
-    "stdout-stderr": "0.1.13",
     "symlink-dir": "5.0.1",
     "ts-jest": "28.0.1",
     "ts-node": "10.7.0",
