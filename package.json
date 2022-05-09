@@ -27,7 +27,7 @@
     "install-with-npm-8.5": "npm i -g npm@^8.5.0 && npm i"
   },
   "engines": {
-    "node": ">=8 <17",
+    "node": ">=14",
     "npm": ">=8.5.0 <9.x"
   },
   "workspaces": [
@@ -57,7 +57,7 @@
     "@types/minimatch": "3.0.5",
     "@types/mkdirp": "1.0.2",
     "@types/nock": "10.0.3",
-    "@types/node": "8.10.66",
+    "@types/node": "14.14.31",
     "@types/node-fetch": "2.6.1",
     "@types/sha.js": "2.4.0",
     "@types/table": "6.0.0",

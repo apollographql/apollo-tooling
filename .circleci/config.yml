@@ -89,9 +89,9 @@ workflows:
           matrix:
             parameters:
               node-version:
-                - "12"
                 - "14"
                 - "16"
+                - "18"
       - Linting
       - Query Check
       - Generated Types Check
