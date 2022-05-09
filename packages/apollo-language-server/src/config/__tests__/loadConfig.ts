@@ -165,7 +165,7 @@ describe("loadConfig", () => {
 
     it("loads config from a ts file", async () => {
       writeFilesToDir(dir, {
-        "apollo.config.ts": `module.exports = {"client": {"service": "hello"}`,
+        "apollo.config.ts": `module.exports = {"client": {"service": "hello"} }`,
       });
       const config = await loadConfig({ configPath: dirPath });
 

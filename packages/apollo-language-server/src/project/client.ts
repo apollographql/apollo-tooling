@@ -41,7 +41,7 @@ import {
 import { defaultValidationRules } from "../errors/validation";
 
 import {
-  collectExecutableDefinitionDiagnositics,
+  collectExecutableDefinitionDiagnostics,
   DiagnosticSet,
   diagnosticsFromError,
 } from "../diagnostics";
@@ -317,7 +317,7 @@ export class GraphQLClientProject extends GraphQLProject {
       for (const document of documentsForFile) {
         diagnosticSet.addDiagnostics(
           uri,
-          collectExecutableDefinitionDiagnositics(
+          collectExecutableDefinitionDiagnostics(
             this.schema,
             document,
             fragments,

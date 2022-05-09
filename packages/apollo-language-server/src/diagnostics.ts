@@ -2,7 +2,8 @@ import {
   GraphQLSchema,
   GraphQLError,
   FragmentDefinitionNode,
-  findDeprecatedUsages,
+  validate,
+  NoDeprecatedCustomRule,
   isExecutableDefinitionNode,
 } from "graphql";
 
@@ -19,7 +20,7 @@ import { ValidationRule } from "graphql/validation/ValidationContext";
 /**
  * Build an array of code diagnostics for all executable definitions in a document.
  */
-export function collectExecutableDefinitionDiagnositics(
+export function collectExecutableDefinitionDiagnostics(
   schema: GraphQLSchema,
   queryDocument: GraphQLDocument,
   fragments: { [fragmentName: string]: FragmentDefinitionNode } = {},
@@ -46,14 +47,11 @@ export function collectExecutableDefinitionDiagnositics(
     );
   }
 
-  for (const error of findDeprecatedUsages(
-    schema,
-    astWithExecutableDefinitions
-  )) {
+  validate(schema, astWithExecutableDefinitions, [NoDeprecatedCustomRule]).map(error => {
     diagnostics.push(
       ...diagnosticsFromError(error, DiagnosticSeverity.Warning, "Deprecation")
     );
-  }
+  });
 
   return diagnostics;
 }

@@ -1,9 +1,5 @@
 it("is turned on after summit", () => {});
 
-// jest.mock("apollo-codegen-core/lib/localfs", () => {
-//   return require("../../../__mocks__/localfs");
-// });
-
 // // this is because of herkou-cli-utils hacky mocking system on their console logger
 // import { stdout, mockConsole } from "heroku-cli-util";
 // import { test as setup } from "apollo-cli-test";
@@ -11,7 +7,6 @@ it("is turned on after summit", () => {});
 // import { ENGINE_URI } from "../../../engine";
 // import { VALIDATE_OPERATIONS } from "../../../operations/validateOperations";
 
-// import { fs as mockFS, vol } from "apollo-codegen-core/lib/localfs";
 // const test = setup.do(() => mockConsole());
 // const APOLLO_KEY = "service:test:1234";
 // const hash = "12345";

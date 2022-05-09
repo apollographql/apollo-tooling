@@ -1,7 +1,23 @@
-import { Source } from "graphql";
-import { loadSchema } from "apollo-codegen-core/lib/loading";
+import { buildClientSchema, GraphQLSchema, Source } from "graphql";
 import { GraphQLDocument } from "../document";
-import { collectExecutableDefinitionDiagnositics } from "../diagnostics";
+import { collectExecutableDefinitionDiagnostics } from "../diagnostics";
+import { existsSync } from "fs";
+import { ToolError } from "../errors/logger";
+
+export function loadSchema(schemaPath: string): GraphQLSchema {
+  if (!existsSync(schemaPath)) {
+    throw new ToolError(`Cannot find GraphQL schema file: ${schemaPath}`);
+  }
+  const schemaData = require(schemaPath);
+
+  if (!schemaData.data && !schemaData.__schema) {
+    throw new ToolError(
+      "GraphQL schema file should contain a valid GraphQL introspection query result"
+    );
+  }
+  return buildClientSchema(schemaData.data ? schemaData.data : schemaData);
+}
+
 const schema = loadSchema(
   require.resolve("../../../../__fixtures__/starwars/schema.json")
 );
@@ -52,30 +68,30 @@ const documentWithOffset = new GraphQLDocument(
   })
 );
 describe("Language server diagnostics", () => {
-  describe("#collectExecutableDefinitionDiagnositics", () => {
+  describe("#collectExecutableDefinitionDiagnostics", () => {
     it("returns no diagnostics for a correct document", () => {
-      const diagnostics = collectExecutableDefinitionDiagnositics(
+      const diagnostics = collectExecutableDefinitionDiagnostics(
         schema,
         validDocument
       );
       expect(diagnostics.length).toEqual(0);
     });
     it("returns two diagnostics for a document with two errors", () => {
-      const diagnostics = collectExecutableDefinitionDiagnositics(
+      const diagnostics = collectExecutableDefinitionDiagnostics(
         schema,
         invalidDocument
       );
       expect(diagnostics.length).toEqual(2);
     });
     it("returns no diagnostics for a document that includes type definitions", () => {
-      const diagnostics = collectExecutableDefinitionDiagnositics(
+      const diagnostics = collectExecutableDefinitionDiagnostics(
         schema,
         documentWithTypes
       );
       expect(diagnostics.length).toEqual(0);
     });
     it("correctly offsets locations", () => {
-      const diagnostics = collectExecutableDefinitionDiagnositics(
+      const diagnostics = collectExecutableDefinitionDiagnostics(
         schema,
         documentWithOffset
       );

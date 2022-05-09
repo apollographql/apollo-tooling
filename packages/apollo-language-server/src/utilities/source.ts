@@ -6,74 +6,23 @@ import {
   BREAK,
   TypeInfo,
   GraphQLSchema,
-  getVisitFn,
-  Visitor,
-  ASTKindToNode,
-  FieldNode,
-  InlineFragmentNode,
-  FragmentDefinitionNode,
+  visitWithTypeInfo,
 } from "graphql";
+import { Position } from "graphql-language-service";
 import { SourceLocation, getLocation } from "graphql/language/location";
 
-import { Position, Range } from "vscode-languageserver";
+import { Position as VSCodePosition, Range } from "vscode-languageserver";
 
-import { isNode } from "./graphql";
-
-// XXX temp fix to silence ts errors with `apply`
-type applyArg = [
-  any,
-  string | number | undefined,
-  any,
-  readonly (string | number)[],
-  readonly any[]
-];
-
-/**
- * Creates a new visitor instance which maintains a provided TypeInfo instance
- * along with visiting visitor.
- */
-export function visitWithTypeInfo(
-  typeInfo: TypeInfo,
-  visitor: Visitor<ASTKindToNode>
-): Visitor<ASTKindToNode> {
-  return {
-    enter(node: ASTNode) {
-      typeInfo.enter(node);
-      const fn = getVisitFn(visitor, node.kind, /* isLeaving */ false);
-      if (fn) {
-        const result = fn.apply(visitor, arguments as unknown as applyArg);
-        if (result !== undefined) {
-          typeInfo.leave(node);
-          if (isNode(result)) {
-            typeInfo.enter(result);
-          }
-        }
-        return result;
-      }
-    },
-    leave(node: ASTNode) {
-      const fn = getVisitFn(visitor, node.kind, /* isLeaving */ true);
-      let result;
-      if (fn) {
-        result = fn.apply(visitor, arguments as unknown as applyArg);
-      }
-      // XXX we can't replace this function until we handle this
-      // case better. If we replace with the function in `graphql-js`,
-      // it breaks onHover types
-      if (result !== BREAK) {
-        typeInfo.leave(node);
-      }
-      return result;
-    },
-  };
-}
 
 export function positionFromPositionInContainingDocument(
   source: Source,
-  position: Position
+  position: VSCodePosition
 ) {
-  if (!source.locationOffset) return position;
-  return Position.create(
+  if (!source.locationOffset) {
+    return new Position(position.line, position.character);
+  }
+
+  return new Position(
     position.line - (source.locationOffset.line - 1),
     position.character
   );
@@ -81,10 +30,10 @@ export function positionFromPositionInContainingDocument(
 
 export function positionInContainingDocument(
   source: Source,
-  position: Position
-): Position {
+  position: VSCodePosition
+): VSCodePosition {
   if (!source.locationOffset) return position;
-  return Position.create(
+  return VSCodePosition.create(
     source.locationOffset.line - 1 + position.line,
     position.character
   );
@@ -112,7 +61,7 @@ export function positionFromSourceLocation(
   source: Source,
   location: SourceLocation
 ) {
-  return Position.create(
+  return VSCodePosition.create(
     (source.locationOffset ? source.locationOffset.line - 1 : 0) +
       location.line -
       1,
