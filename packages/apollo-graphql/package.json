@@ -8,7 +8,7 @@
   "author": "Apollo <packages@apollographql.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=6"
+    "node": ">=14"
   },
   "dependencies": {
     "core-js-pure": "^3.10.2",
