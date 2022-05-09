@@ -47,19 +47,15 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
       );
     }
 
-    const { data, errors } = await this.client.execute<GetSchemaByTag>({
-      query: SCHEMA_QUERY,
+    const result = await this.client.execute<GetSchemaByTag>({
+      document: SCHEMA_QUERY,
       variables: {
         id: this.config.graph,
         tag: override && override.tag ? override.tag : this.config.variant,
       },
     });
-    if (errors) {
-      // XXX better error handling of GraphQL errors
-      throw new Error(errors.map(({ message }: Error) => message).join("\n"));
-    }
 
-    if (!(data && data.service && data.service.__typename === "Service")) {
+    if (!(result.service?.__typename === "Service")) {
       throw new Error(
         `Unable to get schema from the Apollo registry for graph ${this.config.graph}`
       );
@@ -75,7 +71,6 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
     _handler: NotificationHandler<GraphQLSchema>
   ): SchemaChangeUnsubscribeHandler {
     throw new Error("Polling of Apollo not implemented yet");
-    return () => {};
   }
 
   async resolveFederatedServiceSDL() {

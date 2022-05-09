@@ -32,8 +32,7 @@ describe("withTypenameFieldAddedWhereNeeded", () => {
             value
           }
         }
-      }
-      "
+      }"
     `);
   });
 
@@ -71,8 +70,7 @@ describe("withTypenameFieldAddedWhereNeeded", () => {
             }
           }
         }
-      }
-      "
+      }"
     `);
   });
 });
@@ -87,11 +85,10 @@ describe("removeDirectiveAnnotatedFields", () => {
         )
       )
     ).toMatchInlineSnapshot(`
-            "query Query {
-              fieldToKeep
-            }
-            "
-        `);
+      "query Query {
+        fieldToKeep
+      }"
+    `);
   });
 
   it("trim selections sets that are client only", () => {
@@ -112,8 +109,7 @@ describe("removeDirectiveAnnotatedFields", () => {
     ).toMatchInlineSnapshot(`
       "query Query {
         fieldToKeep
-      }
-      "
+      }"
     `);
   });
 
@@ -134,12 +130,11 @@ describe("removeDirectiveAnnotatedFields", () => {
         )
       )
     ).toMatchInlineSnapshot(`
-        "{
-          me {
-            name
-          }
+      "{
+        me {
+          name
         }
-        "
+      }"
     `);
   });
 
@@ -159,13 +154,12 @@ describe("removeDirectiveAnnotatedFields", () => {
         )
       )
     ).toMatchInlineSnapshot(`
-            "{
-              me {
-                name
-              }
-            }
-            "
-        `);
+      "{
+        me {
+          name
+        }
+      }"
+    `);
   });
 
   it("should remove fragments when the client directive is on the definition", () => {
@@ -189,8 +183,7 @@ describe("removeDirectiveAnnotatedFields", () => {
         me {
           name
         }
-      }
-      "
+      }"
     `);
   });
 
@@ -258,8 +251,7 @@ describe("removeDirectiveAnnotatedFields", () => {
           }
           ...LaunchTile
         }
-      }
-      "
+      }"
     `);
   });
 
@@ -308,8 +300,7 @@ describe("removeDirectiveAnnotatedFields", () => {
         me {
           ...One
         }
-      }
-      "
+      }"
     `);
   });
 
@@ -341,8 +332,7 @@ describe("removeDirectiveAnnotatedFields", () => {
         me {
           name
         }
-      }
-      "
+      }"
     `);
   });
 
@@ -372,8 +362,7 @@ describe("removeDirectiveAnnotatedFields", () => {
     ).toMatchInlineSnapshot(`
       "{
         name
-      }
-      "
+      }"
     `);
   });
 
@@ -404,8 +393,7 @@ describe("removeDirectiveAnnotatedFields", () => {
         me {
           name
         }
-      }
-      "
+      }"
     `);
   });
 });

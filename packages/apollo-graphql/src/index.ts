@@ -6,7 +6,6 @@ export {
   // deprecated name for this function:
   defaultUsageReportingSignature as defaultEngineReportingSignature,
 } from "./operationId";
-export * from "./schema";
 export {
   printWithReducedWhitespace,
   hideStringAndNumericLiterals,

@@ -8,7 +8,7 @@ import {
   DiagnosticSeverity,
 } from "vscode-languageserver";
 
-import { getRange as rangeOfTokenAtLocation } from "@apollographql/graphql-language-service-interface/dist/getDiagnostics";
+import { getRange as rangeOfTokenAtLocation } from "graphql-language-service-interface";
 
 import {
   positionFromSourceLocation,
@@ -73,7 +73,7 @@ export function extractGraphQLDocuments(
     case "dart":
       return extractGraphQLDocumentsFromDartStrings(document, tagName);
     case "reason":
-      return extractGraphQLDocumentsFromReasonStrings(document, tagName);
+      return extractGraphQLDocumentsFromReasonStrings(document);
     case "elixir":
       return extractGraphQLDocumentsFromElixirStrings(document, tagName);
     default:
@@ -196,8 +196,7 @@ function extractGraphQLDocumentsFromDartStrings(
 }
 
 function extractGraphQLDocumentsFromReasonStrings(
-  document: TextDocument,
-  tagName: string
+  document: TextDocument
 ): GraphQLDocument[] | null {
   const text = document.getText();
 

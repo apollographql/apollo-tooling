@@ -18,12 +18,11 @@ import {
   CompletionItemKind,
 } from "vscode-languageserver";
 
-// should eventually be moved into this package, since we're overriding a lot of the existing behavior here
-import { getAutocompleteSuggestions } from "@apollographql/graphql-language-service-interface";
+import { getAutocompleteSuggestions } from "graphql-language-service-interface";
 import {
   getTokenAtPosition,
   getTypeInfo,
-} from "@apollographql/graphql-language-service-interface/dist/getAutocompleteSuggestions";
+} from "graphql-language-service-interface";
 import { GraphQLWorkspace } from "./workspace";
 import { DocumentUri } from "./project/base";
 
@@ -57,6 +56,9 @@ import {
   isTypeSystemExtensionNode,
   GraphQLError,
   DirectiveLocation,
+  isCompositeType,
+  isEnumType,
+  isScalarType,
 } from "graphql";
 import { highlightNodeForNode } from "./utilities/graphql";
 
@@ -64,6 +66,7 @@ import { GraphQLClientProject, isClientProject } from "./project/client";
 import { isNotNullOrUndefined } from "@apollographql/apollo-tools";
 import { CodeActionInfo } from "./errors/validation";
 import { GraphQLDiagnostic } from "./diagnostics";
+import { Maybe } from "graphql-language-service";
 
 const DirectiveLocations = Object.keys(DirectiveLocation);
 
@@ -134,7 +137,8 @@ export class GraphQLLanguageProvider {
       token.state.kind === "Invalid" ? token.state.prevState : token.state;
     const typeInfo = getTypeInfo(project.schema, token.state);
 
-    if (state.kind === "DirectiveLocation") {
+    // FIXME: is this change correct?
+    if (DirectiveLocations.includes(state?.kind ?? "")) {
       return DirectiveLocations.map((location) => ({
         label: location,
         kind: CompletionItemKind.Constant,
@@ -148,15 +152,17 @@ export class GraphQLLanguageProvider {
     );
 
     if (
-      state.kind === "SelectionSet" ||
-      state.kind === "Field" ||
-      state.kind === "AliasedField"
+      state?.kind === "SelectionSet" ||
+      state?.kind === "Field" ||
+      state?.kind === "AliasedField"
     ) {
       const parentType = typeInfo.parentType;
       const parentFields = {
-        ...(parentType.getFields() as {
-          [label: string]: GraphQLField<any, any>;
-        }),
+        ...(parentType &&
+          "getFields" in parentType &&
+          (parentType.getFields() as {
+            [label: string]: GraphQLField<any, any>;
+          })),
       };
 
       if (isAbstractType(parentType)) {
@@ -187,11 +193,11 @@ export class GraphQLLanguageProvider {
                   .join(", ")})`
               : ``;
 
-          const isClientType =
-            parentType.clientSchema &&
-            parentType.clientSchema.localFields &&
-            parentType.clientSchema.localFields.includes(suggestedField.name);
-          const directives = isClientType ? " @client" : "";
+          const hasClientDirective = isClientType(
+            parentType,
+            suggestedField.name
+          );
+          const directives = hasClientDirective ? " @client" : "";
 
           const snippet = hasFields(suggestedField.type)
             ? `${suggest.label}${paramsSection}${directives} {\n\t$0\n}`
@@ -206,7 +212,7 @@ export class GraphQLLanguageProvider {
       });
     }
 
-    if (state.kind === "Directive") {
+    if (state?.kind === "Directive") {
       return suggestions.map((suggest) => {
         const directive = project.schema!.getDirective(suggest.label);
         if (!directive) {
@@ -237,11 +243,7 @@ export class GraphQLLanguageProvider {
         ];
 
         if (suggest.documentation) {
-          if (typeof suggest.documentation === "string") {
-            content.push(suggest.documentation);
-          } else {
-            content.push(suggest.documentation.value);
-          }
+          content.push(suggest.documentation);
         }
 
         const doc = {
@@ -786,4 +788,21 @@ export class GraphQLLanguageProvider {
 
     return result;
   }
+}
+
+function isClientType(parentType: Maybe<GraphQLType>, fieldName: string) {
+  if (isCompositeType(parentType)) {
+    return !!parentType.extensions?.apolloLanguageServer?.clientSchema?.localFields?.includes(
+      fieldName
+    );
+  } else if (isEnumType(parentType)) {
+    return !!parentType.extensions?.apolloLanguageServer?.clientSchema?.localFields?.includes(
+      fieldName
+    );
+  } else if (isScalarType(parentType)) {
+    return !!parentType.extensions?.apolloLanguageServer?.clientSchema?.localFields?.includes(
+      fieldName
+    );
+  }
+  return false;
 }

@@ -17,24 +17,21 @@
     "npm": ">=8"
   },
   "dependencies": {
-    "@apollo/federation": "0.27.0",
+    "@apollo/subgraph": "^0.4.x",
     "@apollographql/apollo-tools": "0.5.4",
-    "@apollographql/graphql-language-service-interface": "^2.0.2",
     "@endemolshinegroup/cosmiconfig-typescript-loader": "^3.0.2",
     "apollo-datasource": "^3.0.0",
     "apollo-env": "^0.10.2",
     "apollo-graphql": "^0.9.7",
-    "apollo-link": "^1.2.3",
-    "apollo-link-context": "^1.0.9",
-    "apollo-link-error": "^1.1.1",
-    "apollo-link-http": "^1.5.5",
-    "apollo-server-errors": "^2.0.2",
+    "apollo-server-errors": "^3.3.1",
     "await-to-js": "^3.0.0",
     "core-js": "^3.0.1",
     "cosmiconfig": "^7.0.1",
     "dotenv": "^16.0.0",
     "glob": "^8.0.0",
-    "graphql": "14.0.2 - 14.2.0 || ^14.3.1 || ^15.0.0",
+    "graphql-language-service": "^5.0.4",
+    "graphql-language-service-interface": "^2.10.2",
+    "graphql-request": "^4.2.0",
     "graphql-tag": "^2.10.1",
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
@@ -42,6 +39,9 @@
     "vscode-languageserver": "^7.0.0",
     "vscode-languageserver-textdocument": "^1.0.4",
     "vscode-uri": "1.0.6"
+  },
+  "peerDependencies": {
+    "graphql": "^15.0.0 || ^16.0.0"
   },
   "jest": {
     "preset": "ts-jest",

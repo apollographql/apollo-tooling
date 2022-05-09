@@ -11,8 +11,8 @@ import { extname, resolve } from "path";
 import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
 import { NotificationHandler } from "vscode-languageserver";
 import { Debug } from "../../utilities";
-import { buildSchemaFromSDL } from "apollo-graphql";
-import { buildFederatedSchema } from "@apollo/federation";
+import { buildSubgraphSchema } from "@apollo/subgraph";
+import { buildSchemaFromSDL } from "@apollo/subgraph/dist/schema-helper";
 import URI from "vscode-uri";
 
 export interface FileSchemaProviderConfig {
@@ -112,7 +112,7 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
         }]`
       );
 
-    const federatedSchema = buildFederatedSchema(
+    const federatedSchema = buildSubgraphSchema(
       SDLs.map((sdl) => ({ typeDefs: parse(sdl as string) }))
     );
 
@@ -124,7 +124,7 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
     const serviceResults =
       serviceField &&
       serviceField.resolve &&
-      serviceField.resolve(null, {}, null, {} as any);
+      (serviceField.resolve(null, {}, null, {} as any) as { sdl: string });
 
     if (!serviceResults || !serviceResults.sdl)
       return Debug.error(

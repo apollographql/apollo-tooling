@@ -307,10 +307,10 @@ const typenameField = {
   name: { kind: Kind.NAME, value: "__typename" },
 };
 
-export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
-  return visit(ast, {
-    enter: {
-      SelectionSet(node: SelectionSetNode) {
+export function withTypenameFieldAddedWhereNeeded<T extends ASTNode>(ast: T): T {
+  return visit<T>(ast, {
+    enter(node: ASTNode) {
+      if (node.kind === Kind.SELECTION_SET) {
         return {
           ...node,
           selections: node.selections.filter(
@@ -321,7 +321,8 @@ export function withTypenameFieldAddedWhereNeeded(ast: ASTNode) {
               )
           ),
         };
-      },
+      };
+      return undefined;
     },
     leave(node: ASTNode) {
       if (
