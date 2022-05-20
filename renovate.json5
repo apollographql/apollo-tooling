@@ -78,7 +78,7 @@
     },
     {
       "matchPackageNames": ["@apollo/federation"],
-      "allowedVersions": "^0.27.0"
+      "allowedVersions": "0.27.0"
     },
     {
       "matchPaths": [
