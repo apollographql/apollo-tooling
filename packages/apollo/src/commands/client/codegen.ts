@@ -8,7 +8,7 @@ import chalk from "chalk";
 import { Debug } from "apollo-language-server";
 
 import { TargetType, default as generate } from "../../generate";
-import { ClientCommand } from "../../Command";
+import { ClientCommand, ProjectCommand } from "../../Command";
 
 const waitForKey = async () => {
   console.log("Press any key to stop.");
@@ -25,7 +25,7 @@ const waitForKey = async () => {
 export default class Generate extends ClientCommand {
   static aliases = ["codegen:generate"];
   static description =
-    "Generate static types for GraphQL queries. Can use the published schema in the Apollo registry or a downloaded schema.";
+    "[DEPRECATED] Generate static types for GraphQL queries. Can use the published schema in the Apollo registry or a downloaded schema.";
 
   static flags = {
     ...ClientCommand.flags,
@@ -111,6 +111,11 @@ export default class Generate extends ClientCommand {
       description:
         'By default, TypeScript will output "ts" files. Set "tsFileExtension" to specify a different file extension, for example "d.ts"',
     }),
+
+    suppressDeprecationWarning: flags.boolean({
+      description:
+        "Silence the deprecation warning output by the codegen command",
+    }),
   };
 
   static args = [
@@ -125,11 +130,27 @@ export default class Generate extends ClientCommand {
     },
   ];
 
+  DEPRECATION_MSG =
+    "\n--------------------------------------------------------------------------------\n" +
+    "DEPRECATED: This command will be removed from the `apollo` CLI in \n" +
+    "its next major version. Replacement functionality is available via \n" +
+    "the `graphql-code-generator` project: https://www.graphql-code-generator.com/\n" +
+    "This message can be suppressed with the --suppressDeprecationWarning flag.\n" +
+    "--------------------------------------------------------------------------------\n";
+
+  protected printDeprecationWarning() {
+    console.error(this.DEPRECATION_MSG);
+  }
+
   async run() {
     const {
-      flags: { watch },
+      flags: { watch, suppressDeprecationWarning },
       args: { output },
     } = this.parse(Generate);
+
+    if (!suppressDeprecationWarning) {
+      this.printDeprecationWarning();
+    }
 
     let write;
     const run = () =>

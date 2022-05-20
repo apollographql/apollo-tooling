@@ -345,6 +345,7 @@ export abstract class ClientCommand extends ProjectCommand {
     }),
   };
   public project!: GraphQLClientProject;
+
   constructor(argv, config) {
     super(argv, config);
     this.type = "client";
