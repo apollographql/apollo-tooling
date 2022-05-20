@@ -113,7 +113,8 @@ export default class Generate extends ClientCommand {
     }),
 
     suppressDeprecationWarning: flags.boolean({
-      description: 'Silence the deprecation warning output by the codegen command',
+      description:
+        "Silence the deprecation warning output by the codegen command",
     }),
   };
 
@@ -130,12 +131,12 @@ export default class Generate extends ClientCommand {
   ];
 
   DEPRECATION_MSG =
-  "\n--------------------------------------------------------------------------------\n" +
-  "DEPRECATED: This command will be removed from the `apollo` CLI in \n" +
-  "its next major version. Replacement functionality is available via \n" +
-  "the `graphql-code-generator` project: https://www.graphql-code-generator.com/\n" +
-  "This message can be suppressed with the --suppressDeprecationWarning flag.\n" +
-  "--------------------------------------------------------------------------------\n";
+    "\n--------------------------------------------------------------------------------\n" +
+    "DEPRECATED: This command will be removed from the `apollo` CLI in \n" +
+    "its next major version. Replacement functionality is available via \n" +
+    "the `graphql-code-generator` project: https://www.graphql-code-generator.com/\n" +
+    "This message can be suppressed with the --suppressDeprecationWarning flag.\n" +
+    "--------------------------------------------------------------------------------\n";
 
   protected printDeprecationWarning() {
     console.error(this.DEPRECATION_MSG);
