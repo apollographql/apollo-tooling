@@ -1742,18 +1742,12 @@ export enum ValidationErrorType {
   WARNING = "WARNING",
 }
 
-/**
- * Filter options to exclude by client reference ID, client name, and client version.
- */
 export interface ClientInfoFilter {
   name?: string | null;
   referenceID?: string | null;
   version?: string | null;
 }
 
-/**
- * This is stored with a schema when it is uploaded
- */
 export interface GitContextInput {
   branch?: string | null;
   commit?: string | null;
@@ -1856,11 +1850,9 @@ export interface OperationDocumentInput {
   name?: string | null;
 }
 
-/**
- * Options to filter by operation name.
- */
 export interface OperationNameFilterInput {
   name: string;
+  version?: string | null;
 }
 
 /**
