@@ -12,6 +12,11 @@
   // Disable circleci manager; see apollographql/federation's renovate file for details.
   "enabledManagers": ["npm"],
   "dependencyDashboard": true,
+  "baseBranches": [
+    "master",
+    "version-3",
+  ],
+  "postUpdateOptions": ["npmDedupe"],
   "packageRules": [
     // Bunch up all non-major dependencies into a single PR.  In the common case
     // where the upgrades apply cleanly, this causes less noise and is resolved faster
@@ -51,10 +56,16 @@
     },
     {
       "matchPackageNames": ["graphql"],
+      "matchBaseBranches": ["master"],
       "allowedVersions": "~14.2.1"
     },
     {
       "matchPackageNames": ["@types/node"],
+      "allowedVersions": "14.x"
+    },
+        {
+      "matchPackageNames": ["@types/node"],
+      "matchBaseBranches": ["version-3"],
       "allowedVersions": "14.x"
     },
     {
@@ -77,18 +88,9 @@
       "allowedVersions": "^6.0.0"
     },
     {
-      "matchPaths": [
-        "docs/package.json"
-      ],
-      "extends": [
-        "apollo-docs"
-      ],
-      // "Past" major version branches, preserved as
-      // "version-[0-9]" branches, should be added here!
-      // See Apollo Server or Apollo Client repos for examples.
-      "baseBranches": [
-        "main"
-      ]
+      "matchPackageNames": ["@apollo/federation"],
+      "matchBaseBranches": ["master"],
+      "allowedVersions": "0.27.0"
     },
   ],
 }
