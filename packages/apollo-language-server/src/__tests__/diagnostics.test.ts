@@ -1,7 +1,22 @@
-import { Source } from "graphql";
-import { loadSchema } from "apollo-codegen-core/lib/loading";
+import { buildClientSchema, GraphQLSchema, Source } from "graphql";
 import { GraphQLDocument } from "../document";
 import { collectExecutableDefinitionDiagnositics } from "../diagnostics";
+import { existsSync } from "fs";
+
+function loadSchema(schemaPath: string): GraphQLSchema {
+  if (!existsSync(schemaPath)) {
+    throw new Error(`Cannot find GraphQL schema file: ${schemaPath}`);
+  }
+  const schemaData = require(schemaPath);
+
+  if (!schemaData.data && !schemaData.__schema) {
+    throw new Error(
+      "GraphQL schema file should contain a valid GraphQL introspection query result"
+    );
+  }
+  return buildClientSchema(schemaData.data ? schemaData.data : schemaData);
+}
+
 const schema = loadSchema(
   require.resolve("../../../../__fixtures__/starwars/schema.json")
 );
