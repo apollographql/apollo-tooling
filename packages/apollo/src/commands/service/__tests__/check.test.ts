@@ -9,7 +9,7 @@ import chalk from "chalk";
 import { stdout } from "stdout-stderr";
 import * as graphql from "graphql";
 import { graphqlTypes } from "apollo-language-server";
-import nock = require("nock");
+import nock from "nock";
 import stripAnsi from "strip-ansi";
 
 /**
@@ -380,11 +380,11 @@ const mockPartialSchemaCheckFailure = () => {
 };
 
 describe("service:check", () => {
-  let originalChalkEnabled;
+  let originalChalkSupportsColor;
 
   beforeEach(() => {
-    originalChalkEnabled = chalk.enabled;
-    chalk.enabled = false;
+    originalChalkSupportsColor = chalk.supportsColor;
+    chalk.supportsColor = false;
 
     // Clean console log capturing before tests in the event that `afterEach` was not run successfully.
     uncaptureApplicationOutput();
@@ -404,7 +404,7 @@ describe("service:check", () => {
   });
 
   afterEach(() => {
-    chalk.enabled = originalChalkEnabled;
+    chalk.supportsColor = originalChalkSupportsColor;
 
     // Clean up console log mocking
     uncaptureApplicationOutput();
