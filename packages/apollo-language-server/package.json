@@ -34,7 +34,7 @@
     "cosmiconfig": "^7.0.1",
     "dotenv": "^16.0.0",
     "glob": "^8.0.0",
-    "graphql": "14.0.2 - 14.2.0 || ^14.3.1 || ^15.0.0",
+    "graphql": "^16.0.0",
     "graphql-tag": "^2.10.1",
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
