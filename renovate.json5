@@ -60,6 +60,11 @@
       "allowedVersions": "~14.2.1"
     },
     {
+      "matchPackageNames": ["graphql"],
+      "matchBaseBranches": ["version-3"],
+      "allowedVersions": "15.2.0"
+    },
+    {
       "matchPackageNames": ["@types/node"],
       "matchBaseBranches": ["master"],
       "allowedVersions": "8.x"
@@ -90,7 +95,6 @@
     },
     {
       "matchPackageNames": ["@apollo/federation"],
-      "matchBaseBranches": ["master"],
       "allowedVersions": "0.27.0"
     },
   ],
