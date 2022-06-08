@@ -1,0 +1,23 @@
+type Query {
+  hello: String!
+  serverSideField: ServerField!
+  someEnum: SomeEnum!
+}
+
+type ServerField {
+  serverData: String!
+}
+
+type RemovedField {
+  id: ID!
+  name: RemovedType
+}
+
+type RemovedType {
+  fieldName: String
+}
+
+enum SomeEnum {
+  foo
+  bar
+}

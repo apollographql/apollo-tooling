@@ -32,7 +32,7 @@ const {
   clientSideOnlySchema,
   clientSideOnlyQuery,
 } = resolveFiles({
-  graphQLSchema: "../../service/__tests__/fixtures/schema.graphql",
+  graphQLSchema: "./fixtures/schema.graphql",
   simpleQuery: "./fixtures/simpleQuery.graphql",
   otherQuery: "./fixtures/otherQuery.graphql",
   queryWithFragments: "./fixtures/queryWithFragments.graphql",
