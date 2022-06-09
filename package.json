@@ -61,7 +61,7 @@
     "@types/node-fetch": "2.6.1",
     "@types/sha.js": "2.4.0",
     "@types/table": "6.0.0",
-    "@types/vscode": "1.67.0",
+    "@types/vscode": "1.68.0",
     "chai": "4.3.6",
     "cross-env": "7.0.3",
     "graphql": "15.2.0",
