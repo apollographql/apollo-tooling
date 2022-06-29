@@ -234,11 +234,11 @@ type QueryRoot {
             }
 
             extend schema {
-            mutation: MutationRoot
-          }
-          extend type MutationRoot {
-            rootField: String
-          }
+              mutation: MutationRoot
+            }
+            extend type MutationRoot {
+              rootField: String
+            }
           `
         );
 
