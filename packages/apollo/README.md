@@ -4,6 +4,8 @@
 
 ---
 
+> **[2022-07-07] Are you here for codegen?** We highly recommend using [graphql-code-generator](https://www.graphql-code-generator.com/) instead. Codegen in this repo is no longer supported and will be removed completely in a future version. For additional migration details, please see this fantastic writeup by @dotansimha: https://github.com/apollographql/apollo-tooling/issues/2053
+
 > **[2022-01-21] Note - Upcoming Deprecation Plans:** We (Apollo) are working towards fully deprecating this repository and its related projects. Most of the functionality in this repository has been replaced by newer projects and the rest will be soon. We'll share detailed migration documentation when everything here is ready to be officially deprecated, but just a heads up in case you're planning on adopting anything here for a new project (which you still can of course if the tooling here works for you - support for this tooling will be minimal however).
 
 ---
