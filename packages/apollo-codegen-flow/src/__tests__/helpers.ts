@@ -6,19 +6,18 @@ import {
   GraphQLID,
   GraphQLNonNull,
   GraphQLList,
-  GraphQLScalarType
+  GraphQLScalarType,
 } from "graphql";
 
 import * as t from "@babel/types";
 
 import { createTypeAnnotationFromGraphQLTypeFunction } from "../helpers";
 
-const typeAnnotationFromGraphQLType = createTypeAnnotationFromGraphQLTypeFunction(
-  {
+const typeAnnotationFromGraphQLType =
+  createTypeAnnotationFromGraphQLTypeFunction({
     passthroughCustomScalars: false,
-    useReadOnlyTypes: false
-  }
-);
+    useReadOnlyTypes: false,
+  });
 
 describe("Flow typeAnnotationFromGraphQLType", () => {
   test("String", () => {
@@ -91,7 +90,7 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
         t.genericTypeAnnotation(
           t.identifier("Array"),
           t.typeParameterInstantiation([
-            t.nullableTypeAnnotation(t.stringTypeAnnotation())
+            t.nullableTypeAnnotation(t.stringTypeAnnotation()),
           ])
         )
       )
@@ -106,7 +105,7 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
         t.genericTypeAnnotation(
           t.identifier("Array"),
           t.typeParameterInstantiation([
-            t.nullableTypeAnnotation(t.numberTypeAnnotation())
+            t.nullableTypeAnnotation(t.numberTypeAnnotation()),
           ])
         )
       )
@@ -121,7 +120,7 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
         t.genericTypeAnnotation(
           t.identifier("Array"),
           t.typeParameterInstantiation([
-            t.nullableTypeAnnotation(t.numberTypeAnnotation())
+            t.nullableTypeAnnotation(t.numberTypeAnnotation()),
           ])
         )
       )
@@ -136,7 +135,7 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
         t.genericTypeAnnotation(
           t.identifier("Array"),
           t.typeParameterInstantiation([
-            t.nullableTypeAnnotation(t.booleanTypeAnnotation())
+            t.nullableTypeAnnotation(t.booleanTypeAnnotation()),
           ])
         )
       )
@@ -151,7 +150,7 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
         t.genericTypeAnnotation(
           t.identifier("Array"),
           t.typeParameterInstantiation([
-            t.nullableTypeAnnotation(t.stringTypeAnnotation())
+            t.nullableTypeAnnotation(t.stringTypeAnnotation()),
           ])
         )
       )
@@ -167,7 +166,7 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
       t.genericTypeAnnotation(
         t.identifier("Array"),
         t.typeParameterInstantiation([
-          t.nullableTypeAnnotation(t.stringTypeAnnotation())
+          t.nullableTypeAnnotation(t.stringTypeAnnotation()),
         ])
       )
     );
@@ -182,7 +181,7 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
       t.genericTypeAnnotation(
         t.identifier("Array"),
         t.typeParameterInstantiation([
-          t.nullableTypeAnnotation(t.numberTypeAnnotation())
+          t.nullableTypeAnnotation(t.numberTypeAnnotation()),
         ])
       )
     );
@@ -196,7 +195,7 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
       t.genericTypeAnnotation(
         t.identifier("Array"),
         t.typeParameterInstantiation([
-          t.nullableTypeAnnotation(t.numberTypeAnnotation())
+          t.nullableTypeAnnotation(t.numberTypeAnnotation()),
         ])
       )
     );
@@ -211,7 +210,7 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
       t.genericTypeAnnotation(
         t.identifier("Array"),
         t.typeParameterInstantiation([
-          t.nullableTypeAnnotation(t.booleanTypeAnnotation())
+          t.nullableTypeAnnotation(t.booleanTypeAnnotation()),
         ])
       )
     );
@@ -226,7 +225,7 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
       t.genericTypeAnnotation(
         t.identifier("Array"),
         t.typeParameterInstantiation([
-          t.nullableTypeAnnotation(t.stringTypeAnnotation())
+          t.nullableTypeAnnotation(t.stringTypeAnnotation()),
         ])
       )
     );
@@ -386,10 +385,10 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
               t.genericTypeAnnotation(
                 t.identifier("Array"),
                 t.typeParameterInstantiation([
-                  t.nullableTypeAnnotation(t.stringTypeAnnotation())
+                  t.nullableTypeAnnotation(t.stringTypeAnnotation()),
                 ])
               )
-            )
+            ),
           ])
         )
       )
@@ -409,10 +408,10 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
             t.genericTypeAnnotation(
               t.identifier("Array"),
               t.typeParameterInstantiation([
-                t.nullableTypeAnnotation(t.stringTypeAnnotation())
+                t.nullableTypeAnnotation(t.stringTypeAnnotation()),
               ])
             )
-          )
+          ),
         ])
       )
     );
@@ -423,7 +422,7 @@ describe("Flow typeAnnotationFromGraphQLType", () => {
       name: "Odd",
       serialize(value) {
         return value % 2 === 1 ? value : null;
-      }
+      },
     });
 
     expect(typeAnnotationFromGraphQLType(OddType)).toMatchObject(
@@ -438,7 +437,7 @@ describe("passthrough custom scalars", () => {
   beforeAll(() => {
     getTypeAnnotation = createTypeAnnotationFromGraphQLTypeFunction({
       passthroughCustomScalars: true,
-      useReadOnlyTypes: false
+      useReadOnlyTypes: false,
     });
   });
 
@@ -447,7 +446,7 @@ describe("passthrough custom scalars", () => {
       name: "Odd",
       serialize(value) {
         return value % 2 === 1 ? value : null;
-      }
+      },
     });
 
     expect(getTypeAnnotation(OddType)).toMatchObject(
@@ -463,7 +462,7 @@ describe("passthrough custom scalars with custom scalar prefix", () => {
     getTypeAnnotation = createTypeAnnotationFromGraphQLTypeFunction({
       passthroughCustomScalars: true,
       customScalarsPrefix: "Foo$",
-      useReadOnlyTypes: false
+      useReadOnlyTypes: false,
     });
   });
 
@@ -472,7 +471,7 @@ describe("passthrough custom scalars with custom scalar prefix", () => {
       name: "Odd",
       serialize(value) {
         return value % 2 === 1 ? value : null;
-      }
+      },
     });
 
     expect(getTypeAnnotation(OddType)).toMatchObject(

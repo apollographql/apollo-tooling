@@ -59,8 +59,9 @@ describe("TypeCase", () => {
       }
     `);
 
-    const selectionSet = (context.operations["Hero"].selectionSet
-      .selections[0] as Field).selectionSet as SelectionSet;
+    const selectionSet = (
+      context.operations["Hero"].selectionSet.selections[0] as Field
+    ).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(
@@ -97,8 +98,9 @@ describe("TypeCase", () => {
       }
     `);
 
-    const selectionSet = (context.operations["Hero"].selectionSet
-      .selections[0] as Field).selectionSet as SelectionSet;
+    const selectionSet = (
+      context.operations["Hero"].selectionSet.selections[0] as Field
+    ).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(
@@ -107,7 +109,7 @@ describe("TypeCase", () => {
     );
     expect(
       typeCase.default.fragmentSpreads.map(
-        fragmentSpread => fragmentSpread.fragmentName
+        (fragmentSpread) => fragmentSpread.fragmentName
       )
     ).toEqual(["HeroDetails", "MoreHeroDetails"]);
 
@@ -135,14 +137,15 @@ describe("TypeCase", () => {
       }
     `);
 
-    const selectionSet = (context.operations["Hero"].selectionSet
-      .selections[0] as Field).selectionSet as SelectionSet;
+    const selectionSet = (
+      context.operations["Hero"].selectionSet.selections[0] as Field
+    ).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], ["name"]);
     expect(
       typeCase.default.fragmentSpreads.map(
-        fragmentSpread => fragmentSpread.fragmentName
+        (fragmentSpread) => fragmentSpread.fragmentName
       )
     ).toEqual(["CharacterName"]);
 
@@ -169,16 +172,19 @@ describe("TypeCase", () => {
       }
     `);
 
-    const selectionSet = (context.operations["Hero"].selectionSet
-      .selections[0] as Field).selectionSet as SelectionSet;
-    const typeCase = typeCaseForSelectionSet(collectAndMergeFields(
-      typeCaseForSelectionSet(selectionSet).variants[0]
-    )[0].selectionSet as SelectionSet);
+    const selectionSet = (
+      context.operations["Hero"].selectionSet.selections[0] as Field
+    ).selectionSet as SelectionSet;
+    const typeCase = typeCaseForSelectionSet(
+      collectAndMergeFields(
+        typeCaseForSelectionSet(selectionSet).variants[0]
+      )[0].selectionSet as SelectionSet
+    );
 
     expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], ["name"]);
     expect(
       typeCase.default.fragmentSpreads.map(
-        fragmentSpread => fragmentSpread.fragmentName
+        (fragmentSpread) => fragmentSpread.fragmentName
       )
     ).toEqual(["CharacterName"]);
   });
@@ -215,8 +221,9 @@ describe("TypeCase", () => {
       schema
     );
 
-    const selectionSet = (context.operations["Hero"].selectionSet
-      .selections[0] as Field).selectionSet as SelectionSet;
+    const selectionSet = (
+      context.operations["Hero"].selectionSet.selections[0] as Field
+    ).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], ["name"]);
@@ -246,8 +253,9 @@ describe("TypeCase", () => {
       }
     `);
 
-    const selectionSet = (context.operations["Hero"].selectionSet
-      .selections[0] as Field).selectionSet as SelectionSet;
+    const selectionSet = (
+      context.operations["Hero"].selectionSet.selections[0] as Field
+    ).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(
@@ -291,8 +299,9 @@ describe("TypeCase", () => {
       }
     `);
 
-    const selectionSet = (context.operations["Hero"].selectionSet
-      .selections[0] as Field).selectionSet as SelectionSet;
+    const selectionSet = (
+      context.operations["Hero"].selectionSet.selections[0] as Field
+    ).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], ["name"]);
@@ -327,8 +336,9 @@ describe("TypeCase", () => {
       }
     `);
 
-    const selectionSet = (context.operations["Hero"].selectionSet
-      .selections[0] as Field).selectionSet as SelectionSet;
+    const selectionSet = (
+      context.operations["Hero"].selectionSet.selections[0] as Field
+    ).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], []);
@@ -363,8 +373,9 @@ describe("TypeCase", () => {
       }
     `);
 
-    const selectionSet = (context.operations["Hero"].selectionSet
-      .selections[0] as Field).selectionSet as SelectionSet;
+    const selectionSet = (
+      context.operations["Hero"].selectionSet.selections[0] as Field
+    ).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(["Human", "Droid"], []);
@@ -403,8 +414,9 @@ describe("TypeCase", () => {
       animalSchema
     );
 
-    const selectionSet = (context.operations["Animal"].selectionSet
-      .selections[0] as Field).selectionSet as SelectionSet;
+    const selectionSet = (
+      context.operations["Animal"].selectionSet.selections[0] as Field
+    ).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(
@@ -457,8 +469,9 @@ describe("TypeCase", () => {
       animalSchema
     );
 
-    const selectionSet = (context.operations["Animal"].selectionSet
-      .selections[0] as Field).selectionSet as SelectionSet;
+    const selectionSet = (
+      context.operations["Animal"].selectionSet.selections[0] as Field
+    ).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(
@@ -505,8 +518,9 @@ describe("TypeCase", () => {
       animalSchema
     );
 
-    const selectionSet = (context.operations["Animal"].selectionSet
-      .selections[0] as Field).selectionSet as SelectionSet;
+    const selectionSet = (
+      context.operations["Animal"].selectionSet.selections[0] as Field
+    ).selectionSet as SelectionSet;
     const typeCase = typeCaseForSelectionSet(selectionSet);
 
     expect(typeCase.default).toMatchSelectionSet(

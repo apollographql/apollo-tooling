@@ -11,20 +11,20 @@ const miscSchema = loadSchema(
 import {
   compileToIR,
   CompilerOptions,
-  CompilerContext
+  CompilerContext,
 } from "apollo-codegen-core/lib/compiler";
 
 import {
   generateSource,
   generateLocalSource,
-  generateGlobalSource
+  generateGlobalSource,
 } from "../codeGeneration";
 
 function compile(
   source: string,
   options: CompilerOptions = {
     mergeInFieldsFromFragmentSpreads: true,
-    addTypename: true
+    addTypename: true,
   }
 ): CompilerContext {
   const document = parse(source);
@@ -35,7 +35,7 @@ function compileMisc(
   source: string,
   options: CompilerOptions = {
     mergeInFieldsFromFragmentSpreads: true,
-    addTypename: true
+    addTypename: true,
   }
 ): CompilerContext {
   const document = parse(source);
@@ -75,7 +75,7 @@ describe("Typescript codeGeneration", () => {
     context.fragments["someFragment"].filePath = "/some/file/ComponentB.js";
     const output = generateSource(context);
     expect(output).toBeInstanceOf(Object);
-    Object.keys(output).forEach(filePath => {
+    Object.keys(output).forEach((filePath) => {
       expect(filePath).toMatchSnapshot();
       expect(output[filePath]).toMatchSnapshot();
     });
@@ -299,12 +299,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -320,12 +320,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -338,12 +338,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -361,12 +361,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -388,12 +388,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -413,12 +413,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -436,12 +436,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -468,12 +468,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -503,12 +503,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -543,12 +543,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -563,12 +563,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -583,12 +583,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -603,12 +603,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();
@@ -624,12 +624,12 @@ describe("Typescript codeGeneration local / global", () => {
       }
     `);
 
-    const output = generateLocalSource(context).map(f => ({
+    const output = generateLocalSource(context).map((f) => ({
       ...f,
       content: f.content({
         outputPath: "/some/file/ComponentA.tsx",
-        globalSourcePath: "/__generated__/globalTypes.ts"
-      })
+        globalSourcePath: "/__generated__/globalTypes.ts",
+      }),
     }));
     expect(output).toMatchSnapshot();
     expect(generateGlobalSource(context)).toMatchSnapshot();

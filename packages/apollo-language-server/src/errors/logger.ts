@@ -49,11 +49,7 @@ export function logErrorMessage(
   } else {
     if (fileName) {
       const truncatedFileName =
-        "/" +
-        fileName
-          .split(path.sep)
-          .slice(-4)
-          .join(path.sep);
+        "/" + fileName.split(path.sep).slice(-4).join(path.sep);
       console.error(`...${truncatedFileName}: ${message}`);
     } else {
       console.error(`error: ${message}`);

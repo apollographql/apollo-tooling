@@ -1,7 +1,44 @@
 {
-  "extends": ["apollo-open-source"],
+  "extends": [
+    "apollo-open-source",
+    // Bundle together Jest/TS-Jest updates (even major ones).
+    "group:jestMonorepo",
+    "group:jestPlusTSJest"
+  ],
+  "schedule": null,
+  // Override this value set in apollo-open-source back to the default.
+  // It's nice to be able to see PRs for everything in the Dependency Dashboard.
+  prCreation: "immediate",
+  // Disable circleci manager; see apollographql/federation's renovate file for details.
+  "enabledManagers": ["npm"],
   "dependencyDashboard": true,
+  "baseBranches": [
+    "master",
+    "version-3",
+  ],
+  "postUpdateOptions": ["npmDedupe"],
   "packageRules": [
+    // Bunch up all non-major dependencies into a single PR.  In the common case
+    // where the upgrades apply cleanly, this causes less noise and is resolved faster
+    // than starting a bunch of upgrades in parallel for what may turn out to be
+    // a suite of related packages all released at once.
+    {
+      "groupName": "all non-major dependencies",
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupSlug": "all-minor-patch",
+    },
+    {
+      "groupName": "oclif",
+      "matchPackagePrefixes": [
+        "@oclif/"
+      ]
+    },
+    {
+      "groupName": "cosmiconfig",
+      "matchPackagePatterns": [
+        "cosmiconfig"
+      ]
+    },
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true
@@ -19,49 +56,46 @@
     },
     {
       "matchPackageNames": ["graphql"],
+      "matchBaseBranches": ["master"],
       "allowedVersions": "~14.2.1"
     },
     {
+      "matchPackageNames": ["graphql"],
+      "matchBaseBranches": ["version-3"],
+      "allowedVersions": "15.2.0"
+    },
+    {
       "matchPackageNames": ["@types/node"],
+      "matchBaseBranches": ["master"],
       "allowedVersions": "8.x"
+    },
+        {
+      "matchPackageNames": ["@types/node"],
+      "matchBaseBranches": ["version-3"],
+      "allowedVersions": "14.x"
     },
     {
       "matchPackageNames": ["vscode-uri"],
       "allowedVersions": "=1.0.6"
     },
     {
-      "matchPackageNames": ["jest"],
-      "allowedVersions": "=24.9.0"
+      // v3 is ESM only
+      "matchPackageNames": ["node-fetch"],
+      "allowedVersions": "^2.0.0"
     },
     {
-      "matchPackageNames": ["jest-environment-node"],
-      "allowedVersions": "=24.9.0"
+      // v5 is importing node:tty which is breaking though I'm not sure why
+      "matchPackageNames": ["chalk"],
+      "allowedVersions": "^4.0.0"
     },
     {
-      "matchPackageNames": ["jest-matcher-utils"],
-      "allowedVersions": "=24.9.0"
+      // v7 is ESM only
+      "matchPackageNames": ["strip-ansi"],
+      "allowedVersions": "^6.0.0"
     },
     {
-      "matchPackageNames": ["@types/jest"],
-      "allowedVersions": "=24.9.1"
-    },
-    {
-      "matchPackageNames": ["ts-jest"],
-      "allowedVersions": "=24.3.0"
-    },
-    {
-      "matchPaths": [
-        "docs/package.json"
-      ],
-      "extends": [
-        "apollo-docs"
-      ],
-      // "Past" major version branches, preserved as
-      // "version-[0-9]" branches, should be added here!
-      // See Apollo Server or Apollo Client repos for examples.
-      "baseBranches": [
-        "main"
-      ]
+      "matchPackageNames": ["@apollo/federation"],
+      "allowedVersions": "0.27.0"
     },
   ],
 }

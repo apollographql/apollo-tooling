@@ -2,6 +2,32 @@
 
 > **Note:** Apollo's GraphQL VSCode extension is no longer housed in this repository. It is now maintained separately in [this repo](https://github.com/apollographql/vscode-graphql).
 
+## vNEXT
+
+- _Nothing yet! Stay tuned._
+
+## `apollo@2.33.11`
+
+- This release includes a number of updates for dependencies within this repo's projects. Behavior changes aren't expected and should be considered reportable issues.
+
+- `apollo-language-server`
+  - Remove `moment` as a dependency [#2595](https://github.com/apollographql/apollo-tooling/pull/2595)
+
+## `apollo@2.33.10`
+- This release includes a number of patch updates for dependencies within the following packages. Behavior changes aren't expected and should be considered reportable issues.
+  - apollo-codegen-core@0.40.8
+  - apollo-codegen-flow@0.38.8
+  - apollo-codegen-scala@0.39.8
+  - apollo-codegen-swift@0.40.8
+  - apollo-codegen-typescript@0.40.8
+  - apollo-graphql@0.9.6
+  - apollo-language-server@1.26.8
+  - @apollographql/apollo-tools@0.5.3
+  - apollo@2.33.10
+
+- `apollo-tools@0.5.3`
+  - Add undeclared peer dependency `graphql` [#2049](https://github.com/apollographql/apollo-tooling/pull/2049)
+
 ## `apollo@2.33.9`
 
 - `apollo-language-server@1.26.7` / `apollo-codegen-core@0.40.7`

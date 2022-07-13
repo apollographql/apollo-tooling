@@ -12,7 +12,7 @@ import {
   GraphQLServiceProject,
   isClientConfig,
   isServiceConfig,
-  loadConfig
+  loadConfig,
 } from "apollo-language-server";
 import { DeepPartial, WithRequired } from "apollo-env";
 import { OclifLoadingHandler } from "./OclifLoadingHandler";
@@ -60,7 +60,7 @@ const headersArrayToObject = (
 ): Record<string, string> | undefined => {
   if (!arr) return;
   return arr
-    .map(val => JSON.parse(val))
+    .map((val) => JSON.parse(val))
     .reduce((pre, next) => ({ ...pre, ...next }), {});
 };
 
@@ -68,30 +68,30 @@ export abstract class ProjectCommand extends Command {
   static flags = {
     config: flags.string({
       char: "c",
-      description: "Path to your Apollo config file"
+      description: "Path to your Apollo config file",
     }),
     header: flags.string({
       multiple: true,
-      parse: header => {
+      parse: (header) => {
         const separatorIndex = header.indexOf(":");
         const key = header.substring(0, separatorIndex).trim();
         const value = header.substring(separatorIndex + 1).trim();
         return JSON.stringify({ [key]: value });
       },
       description:
-        "Additional header to send during introspection. May be used multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag."
+        "Additional header to send during introspection. May be used multiple times to add multiple headers. NOTE: The `--endpoint` flag is REQUIRED if using the `--header` flag.",
     }),
     endpoint: flags.string({
-      description: "The URL for the CLI use to introspect your service"
+      description: "The URL for the CLI use to introspect your service",
     }),
     key: flags.string({
       description: "The API key to use for authentication to Apollo",
-      default: () => process.env.APOLLO_KEY || process.env.ENGINE_API_KEY
+      default: () => process.env.APOLLO_KEY || process.env.ENGINE_API_KEY,
     }),
     engine: flags.string({
       description: "URL for a custom Apollo deployment",
-      hidden: true
-    })
+      hidden: true,
+    }),
   };
 
   public project!: GraphQLProject;
@@ -102,8 +102,9 @@ export abstract class ProjectCommand extends Command {
   private ctx!: ProjectContext;
 
   async init() {
-    const { flags, args } = this.parse<Flags, { [name: string]: any }>(this
-      .constructor as any);
+    const { flags, args } = this.parse<Flags, { [name: string]: any }>(
+      this.constructor as any
+    );
     this.ctx = { flags, args } as any;
 
     // tell the language server to use the built-in loggers
@@ -111,7 +112,7 @@ export abstract class ProjectCommand extends Command {
     Debug.SetLoggers({
       info: this.log,
       warning: this.warn,
-      error: console.error
+      error: console.error,
     });
 
     const config = await this.createConfig(flags);
@@ -124,10 +125,10 @@ export abstract class ProjectCommand extends Command {
     // XXX Somehow this task gets pushed onto the stack multiple times sometimes
     this.tasks.push({
       title: "Loading Apollo Project",
-      task: async ctx => {
+      task: async (ctx) => {
         await this.project.whenReady;
         ctx = { ...ctx, ...this.ctx };
-      }
+      },
     });
   }
 
@@ -137,7 +138,7 @@ export abstract class ProjectCommand extends Command {
       configPath: flags.config && parse(resolve(flags.config)).dir,
       configFileName: flags.config,
       name: service,
-      type: this.type
+      type: this.type,
     });
 
     if (!config) {
@@ -160,8 +161,8 @@ export abstract class ProjectCommand extends Command {
     config.setDefaults({
       engine: {
         apiKey: flags.key,
-        endpoint: flags.engine
-      }
+        endpoint: flags.engine,
+      },
     });
 
     if (flags.endpoint) {
@@ -170,9 +171,9 @@ export abstract class ProjectCommand extends Command {
           endpoint: {
             url: flags.endpoint,
             headers: headersArrayToObject(flags.header),
-            ...(flags.skipSSLValidation && { skipSSLValidation: true })
-          }
-        }
+            ...(flags.skipSSLValidation && { skipSSLValidation: true }),
+          },
+        },
       });
     }
 
@@ -183,15 +184,15 @@ export abstract class ProjectCommand extends Command {
         config.setDefaults({
           client: {
             service: {
-              localSchemaFile: files
-            }
-          }
+              localSchemaFile: files,
+            },
+          },
         });
       } else if (isServiceConfig(config)) {
         config.setDefaults({
           service: {
-            localSchemaFile: files
-          }
+            localSchemaFile: files,
+          },
         });
       }
     }
@@ -227,7 +228,7 @@ export abstract class ProjectCommand extends Command {
     const clientIdentity = {
       name: "Apollo CLI",
       version,
-      referenceID
+      referenceID,
     };
 
     if (isServiceConfig(config)) {
@@ -235,14 +236,14 @@ export abstract class ProjectCommand extends Command {
         config,
         loadingHandler,
         rootURI,
-        clientIdentity
+        clientIdentity,
       });
     } else if (isClientConfig(config)) {
       this.project = new GraphQLClientProject({
         config,
         loadingHandler,
         rootURI,
-        clientIdentity
+        clientIdentity,
       });
     } else {
       throw new Error(
@@ -272,7 +273,7 @@ export abstract class ProjectCommand extends Command {
       ...(process.env.NODE_ENV === "test" && { renderer: "verbose" }),
       ...(options && typeof options === "function" ? options(ctx) : options),
       // @ts-ignore This option is added by https://github.com/SamVerschueren/listr-verbose-renderer#options
-      dateFormat: false
+      dateFormat: false,
     }).run();
   }
   async catch(err) {
@@ -300,50 +301,51 @@ export abstract class ClientCommand extends ProjectCommand {
     ...ProjectCommand.flags,
     clientReferenceId: flags.string({
       description:
-        "Reference id for the client which will match ids from client traces, will use clientName if not provided"
+        "Reference id for the client which will match ids from client traces, will use clientName if not provided",
     }),
     clientName: flags.string({
-      description: "Name of the client that the queries will be attached to"
+      description: "Name of the client that the queries will be attached to",
     }),
     clientVersion: flags.string({
       description:
-        "The version of the client that the queries will be attached to"
+        "The version of the client that the queries will be attached to",
     }),
     tag: flags.string({
       char: "t",
       description:
         "[Deprecated: please use --variant instead] The tag (AKA variant) of the graph in Apollo to associate this client to",
       hidden: true,
-      exclusive: ["variant"]
+      exclusive: ["variant"],
     }),
     variant: flags.string({
       char: "v",
       description:
         "The variant of the graph in Apollo to associate this client to",
-      exclusive: ["tag"]
+      exclusive: ["tag"],
     }),
     graph: flags.string({
       char: "g",
       description:
-        "The ID for the graph in Apollo to operate client commands with. Overrides config file if set."
+        "The ID for the graph in Apollo to operate client commands with. Overrides config file if set.",
     }),
     queries: flags.string({
-      description: "Deprecated in favor of the includes flag"
+      description: "Deprecated in favor of the includes flag",
     }),
     includes: flags.string({
       description:
-        "Glob of files to search for GraphQL operations. This should be used to find queries *and* any client schema extensions"
+        "Glob of files to search for GraphQL operations. This should be used to find queries *and* any client schema extensions",
     }),
     excludes: flags.string({
       description:
-        "Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently work in watch mode"
+        "Glob of files to exclude for GraphQL operations. Caveat: this doesn't currently work in watch mode",
     }),
     tagName: flags.string({
       description:
-        "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code"
-    })
+        "Name of the template literal tag used to identify template literals containing GraphQL queries in Javascript/Typescript code",
+    }),
   };
   public project!: GraphQLClientProject;
+
   constructor(argv, config) {
     super(argv, config);
     this.type = "client";
@@ -352,13 +354,13 @@ export abstract class ClientCommand extends ProjectCommand {
         client: {
           name: flags.clientName,
           referenceID: flags.clientReferenceId,
-          version: flags.clientVersion
-        }
+          version: flags.clientVersion,
+        },
       } as WithRequired<DeepPartial<ApolloConfig>, "client">;
       if (flags.endpoint) {
         config.client.service = {
           url: flags.endpoint,
-          headers: headersArrayToObject(flags.header)
+          headers: headersArrayToObject(flags.header),
         };
       }
 

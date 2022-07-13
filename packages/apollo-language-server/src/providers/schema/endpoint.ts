@@ -8,7 +8,7 @@ import {
   getIntrospectionQuery,
   ExecutionResult,
   IntrospectionQuery,
-  parse
+  parse,
 } from "graphql";
 import { Agent as HTTPSAgent } from "https";
 import { fetch } from "apollo-env";
@@ -27,20 +27,20 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
     const { skipSSLValidation, url, headers } = this.config;
     const options: HttpLink.Options = {
       uri: url,
-      fetch
+      fetch,
     };
     if (url.startsWith("https:") && skipSSLValidation) {
       options.fetchOptions = {
-        agent: new HTTPSAgent({ rejectUnauthorized: false })
+        agent: new HTTPSAgent({ rejectUnauthorized: false }),
       };
     }
 
     const { data, errors } = (await toPromise(
       linkExecute(createHttpLink(options), {
         query: parse(getIntrospectionQuery()),
-        context: { headers }
+        context: { headers },
       })
-    ).catch(e => {
+    ).catch((e) => {
       // html response from introspection
       if (isString(e.message) && e.message.includes("token <")) {
         throw new Error(
@@ -111,11 +111,11 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
     const { skipSSLValidation, url, headers } = this.config;
     const options: HttpLink.Options = {
       uri: url,
-      fetch
+      fetch,
     };
     if (url.startsWith("https:") && skipSSLValidation) {
       options.fetchOptions = {
-        agent: new HTTPSAgent({ rejectUnauthorized: false })
+        agent: new HTTPSAgent({ rejectUnauthorized: false }),
       };
     }
 
@@ -130,7 +130,7 @@ export class EndpointSchemaProvider implements GraphQLSchemaProvider {
     const { data, errors } = (await toPromise(
       linkExecute(createHttpLink(options), {
         query: parse(getFederationInfoQuery),
-        context: { headers }
+        context: { headers },
       })
     )) as ExecutionResult<{ _service: { sdl: string } }>;
 

@@ -2,7 +2,7 @@ import {
   ListrRenderer,
   ListrTaskObject,
   ListrOptions,
-  ListrError
+  ListrError,
 } from "listr";
 
 export class CompactRenderer<Ctx> implements ListrRenderer {
@@ -20,8 +20,8 @@ export class CompactRenderer<Ctx> implements ListrRenderer {
   }
 
   render() {
-    this._tasks.forEach(task => {
-      task.subscribe(event => {
+    this._tasks.forEach((task) => {
+      task.subscribe((event) => {
         if (
           event.type === "STATE" &&
           (task.state === "completed" || task.state === "failed")

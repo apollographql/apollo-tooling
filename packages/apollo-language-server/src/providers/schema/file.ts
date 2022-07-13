@@ -3,10 +3,8 @@ import {
   GraphQLSchema,
   buildClientSchema,
   Source,
-  buildSchema,
   printSchema,
   parse,
-  visit
 } from "graphql";
 import { readFileSync } from "fs";
 import { extname, resolve } from "path";
@@ -14,13 +12,8 @@ import { GraphQLSchemaProvider, SchemaChangeUnsubscribeHandler } from "./base";
 import { NotificationHandler } from "vscode-languageserver";
 import { Debug } from "../../utilities";
 import { buildSchemaFromSDL } from "apollo-graphql";
-import {
-  buildFederatedSchema,
-  composeServices,
-  printSchema as printFederatedSchema
-} from "@apollo/federation";
+import { buildFederatedSchema } from "@apollo/federation";
 import URI from "vscode-uri";
-// import federationDirectives from "@apollo/federation/src/directives";
 
 export interface FileSchemaProviderConfig {
   path?: string;
@@ -63,7 +56,7 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
     let result;
     try {
       result = readFileSync(path, {
-        encoding: "utf-8"
+        encoding: "utf-8",
       });
     } catch (err) {
       throw new Error(`Unable to read file ${path}. ${err.message}`);
@@ -112,7 +105,7 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
       ? paths.map(this.loadFileAndGetSDL, this)
       : undefined;
 
-    if (!SDLs || SDLs.filter(s => !Boolean(s)).length > 0)
+    if (!SDLs || SDLs.filter((s) => !Boolean(s)).length > 0)
       return Debug.error(
         `SDL could not be loaded for one of more files: [${
           path ? path : paths ? paths.join(", ") : "undefined"
@@ -120,7 +113,7 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
       );
 
     const federatedSchema = buildFederatedSchema(
-      SDLs.map(sdl => ({ typeDefs: parse(sdl as string) }))
+      SDLs.map((sdl) => ({ typeDefs: parse(sdl as string) }))
     );
 
     // call the `Query._service` resolver to get the actual printed sdl
@@ -147,7 +140,7 @@ export class FileSchemaProvider implements GraphQLSchemaProvider {
     let result;
     try {
       result = readFileSync(path, {
-        encoding: "utf-8"
+        encoding: "utf-8",
       });
     } catch (err) {
       return Debug.error(`Unable to read file ${path}. ${err.message}`);

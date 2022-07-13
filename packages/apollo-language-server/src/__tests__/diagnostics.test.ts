@@ -48,7 +48,7 @@ const documentWithTypes = new GraphQLDocument(
 const documentWithOffset = new GraphQLDocument(
   new Source(`query QueryWithOffset { hero { nam } }`, "testDocument", {
     line: 5,
-    column: 10
+    column: 10,
   })
 );
 describe("Language server diagnostics", () => {

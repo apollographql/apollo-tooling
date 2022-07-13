@@ -6,7 +6,7 @@ import {
   isClientConfig,
   isLocalServiceConfig,
   isServiceConfig,
-  parseServiceSpecifier
+  parseServiceSpecifier,
 } from "../";
 
 describe("getServiceFromKey", () => {
@@ -34,19 +34,19 @@ describe("getServiceName", () => {
   describe("client config", () => {
     it("finds service name when client.service is a string", () => {
       const rawConfig: ApolloConfigFormat = {
-        client: { service: "my-service" }
+        client: { service: "my-service" },
       };
       expect(getGraphIdFromConfig(rawConfig)).toEqual("my-service");
 
       const rawConfigWithTag: ApolloConfigFormat = {
-        client: { service: "my-service@master" }
+        client: { service: "my-service@master" },
       };
       expect(getGraphIdFromConfig(rawConfigWithTag)).toEqual("my-service");
     });
 
     it("finds service name when client.service is an object", () => {
       const rawConfig: ApolloConfigFormat = {
-        client: { service: { name: "my-service" } }
+        client: { service: { name: "my-service" } },
       };
       expect(getGraphIdFromConfig(rawConfig)).toEqual("my-service");
     });
@@ -86,9 +86,8 @@ describe("parseServiceSpecifier", () => {
     expect(id).toEqual("my-service");
     expect(tag).toEqual("master");
 
-    const [idFromSimpleName, tagFromSimpleName] = parseServiceSpecifier(
-      "my-service"
-    );
+    const [idFromSimpleName, tagFromSimpleName] =
+      parseServiceSpecifier("my-service");
     expect(idFromSimpleName).toEqual("my-service");
     expect(tagFromSimpleName).toBeUndefined();
   });

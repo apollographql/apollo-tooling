@@ -27,9 +27,8 @@ export default class FlowGenerator {
   constructor(compilerOptions: FlowCompilerOptions) {
     this.options = compilerOptions;
 
-    this.typeAnnotationFromGraphQLType = createTypeAnnotationFromGraphQLTypeFunction(
-      compilerOptions
-    );
+    this.typeAnnotationFromGraphQLType =
+      createTypeAnnotationFromGraphQLTypeFunction(compilerOptions);
   }
 
   public enumerationDeclaration(type: GraphQLEnumType) {
@@ -52,8 +51,8 @@ export default class FlowGenerator {
     typeAlias.leadingComments = [
       {
         type: "CommentBlock",
-        value: commentBlockContent(description || "")
-      } as t.CommentBlock
+        value: commentBlockContent(description || ""),
+      } as t.CommentBlock,
     ];
 
     return typeAlias;
@@ -69,13 +68,13 @@ export default class FlowGenerator {
       const field = fieldMap[fieldName];
       return {
         name: fieldName,
-        annotation: this.typeAnnotationFromGraphQLType(field.type)
+        annotation: this.typeAnnotationFromGraphQLType(field.type),
       };
     });
 
     const typeAlias = this.typeAliasObject(name, fields, {
       keyInheritsNullability: true,
-      exact: true
+      exact: true,
     });
 
     return typeAlias;
@@ -84,7 +83,7 @@ export default class FlowGenerator {
   public objectTypeAnnotation(
     fields: ObjectProperty[],
     {
-      keyInheritsNullability = false
+      keyInheritsNullability = false,
     }: {
       keyInheritsNullability?: boolean;
     } = {}
@@ -109,8 +108,8 @@ export default class FlowGenerator {
           objectTypeProperty.leadingComments = [
             {
               type: "CommentBlock",
-              value: commentBlockContent(description)
-            } as t.CommentBlock
+              value: commentBlockContent(description),
+            } as t.CommentBlock,
           ];
         }
 
@@ -130,14 +129,14 @@ export default class FlowGenerator {
     fields: ObjectProperty[],
     {
       keyInheritsNullability = false,
-      exact = false
+      exact = false,
     }: {
       keyInheritsNullability?: boolean;
       exact?: boolean;
     } = {}
   ) {
     const objectTypeAnnotation = this.objectTypeAnnotation(fields, {
-      keyInheritsNullability
+      keyInheritsNullability,
     });
 
     if (exact) {
@@ -152,7 +151,7 @@ export default class FlowGenerator {
       t.identifier(name),
       undefined,
       t.unionTypeAnnotation(
-        members.map(member => {
+        members.map((member) => {
           return this.objectTypeAnnotation(member);
         })
       )
@@ -177,8 +176,8 @@ export default class FlowGenerator {
       exportedDeclaration.trailingComments = [
         {
           type: "CommentBlock",
-          value: commentBlockContent(options.comments)
-        } as t.CommentBlock
+          value: commentBlockContent(options.comments),
+        } as t.CommentBlock,
       ];
     }
 

@@ -7,7 +7,7 @@ import {
   GraphQLType,
   isListType,
   isNonNullType,
-  isScalarType
+  isScalarType,
 } from "graphql";
 
 import * as t from "@babel/types";
@@ -19,7 +19,7 @@ const builtInScalarMap = {
   [GraphQLInt.name]: t.numberTypeAnnotation(),
   [GraphQLFloat.name]: t.numberTypeAnnotation(),
   [GraphQLBoolean.name]: t.booleanTypeAnnotation(),
-  [GraphQLID.name]: t.stringTypeAnnotation()
+  [GraphQLID.name]: t.stringTypeAnnotation(),
 };
 
 export function createTypeAnnotationFromGraphQLTypeFunction(
@@ -37,7 +37,7 @@ export function createTypeAnnotationFromGraphQLTypeFunction(
       return t.genericTypeAnnotation(
         t.identifier(arrayType),
         t.typeParameterInstantiation([
-          typeAnnotationFromGraphQLType(type.ofType, typeName)
+          typeAnnotationFromGraphQLType(type.ofType, typeName),
         ])
       );
     } else if (isScalarType(type)) {

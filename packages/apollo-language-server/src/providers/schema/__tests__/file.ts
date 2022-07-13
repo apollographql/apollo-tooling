@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { Debug } from "../../../utilities";
 import { isDone } from "nock";
 
-const makeNestedDir = dir => {
+const makeNestedDir = (dir) => {
   if (fs.existsSync(dir)) return;
 
   try {
@@ -17,17 +17,12 @@ const makeNestedDir = dir => {
   }
 };
 
-const deleteFolderRecursive = path => {
+const deleteFolderRecursive = (path) => {
   // don't delete files on windows -- will get a resource locked error
-  if (
-    require("os")
-      .type()
-      .includes("Windows")
-  )
-    return;
+  if (require("os").type().includes("Windows")) return;
 
   if (fs.existsSync(path)) {
-    fs.readdirSync(path).forEach(function(file, index) {
+    fs.readdirSync(path).forEach(function (file, index) {
       var curPath = path + "/" + file;
       if (fs.lstatSync(curPath).isDirectory()) {
         // recurse
@@ -42,7 +37,7 @@ const deleteFolderRecursive = path => {
 };
 
 const writeFilesToDir = (dir: string, files: Record<string, string>) => {
-  Object.keys(files).forEach(key => {
+  Object.keys(files).forEach((key) => {
     if (key.includes("/")) makeNestedDir(path.dirname(key));
     fs.writeFileSync(`${dir}/${key}`, files[key]);
   });
@@ -76,11 +71,11 @@ describe("FileSchemaProvider", () => {
             sku: ID
             name: String
           }
-        `
+        `,
       });
 
       const provider = new FileSchemaProvider({
-        path: dir + "/schema.graphql"
+        path: dir + "/schema.graphql",
       });
       const sdl = await provider.resolveFederatedServiceSDL();
       expect(sdl).toMatchInlineSnapshot;
@@ -101,11 +96,11 @@ describe("FileSchemaProvider", () => {
         "schema2.graphql": `
           extend type Product {
             weight: Float
-          }`
+          }`,
       });
 
       const provider = new FileSchemaProvider({
-        paths: [dir + "/schema.graphql", dir + "/schema2.graphql"]
+        paths: [dir + "/schema.graphql", dir + "/schema2.graphql"],
       });
       const sdl = await provider.resolveFederatedServiceSDL();
       expect(sdl).toMatchInlineSnapshot(`
@@ -137,7 +132,7 @@ describe("FileSchemaProvider", () => {
         }\`
       `;
       writeFilesToDir(dir, {
-        "schema.js": toWrite
+        "schema.js": toWrite,
       });
 
       // noop -- just spy on and silence the error

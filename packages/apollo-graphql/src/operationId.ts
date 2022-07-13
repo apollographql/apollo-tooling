@@ -59,7 +59,7 @@ import {
   sortAST,
   hideStringAndNumericLiterals,
   removeAliases,
-  hideLiterals
+  hideLiterals,
 } from "./transforms";
 import { createHash } from "./utilities/createHash";
 
@@ -85,7 +85,7 @@ export function operationRegistrySignature(
   ast: DocumentNode,
   operationName: string,
   options: { preserveStringAndNumericLiterals: boolean } = {
-    preserveStringAndNumericLiterals: false
+    preserveStringAndNumericLiterals: false,
   }
 ): string {
   const withoutUnusedDefs = dropUnusedDefinitions(ast, operationName);
@@ -100,12 +100,10 @@ export function defaultOperationRegistrySignature(
   operationName: string
 ): string {
   return operationRegistrySignature(ast, operationName, {
-    preserveStringAndNumericLiterals: false
+    preserveStringAndNumericLiterals: false,
   });
 }
 
 export function operationHash(operation: string): string {
-  return createHash("sha256")
-    .update(operation)
-    .digest("hex");
+  return createHash("sha256").update(operation).digest("hex");
 }

@@ -12,7 +12,7 @@ export { isServiceProject, GraphQLServiceProject } from "./project/service";
 // GraphQLSchemaProvider
 export {
   GraphQLSchemaProvider,
-  schemaProviderFromConfig
+  schemaProviderFromConfig,
 } from "./providers/schema";
 
 // Engine

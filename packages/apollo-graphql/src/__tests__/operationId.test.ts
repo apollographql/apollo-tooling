@@ -1,7 +1,7 @@
 import { default as gql, disableFragmentWarnings } from "graphql-tag";
 import {
   defaultUsageReportingSignature,
-  operationRegistrySignature
+  operationRegistrySignature,
 } from "../operationId";
 
 // The gql duplicate fragment warning feature really is just warnings; nothing
@@ -20,7 +20,7 @@ describe("defaultUsageReportingSignature", () => {
             name
           }
         }
-      `
+      `,
     },
     {
       name: "basic test with query",
@@ -31,7 +31,7 @@ describe("defaultUsageReportingSignature", () => {
             name
           }
         }
-      `
+      `,
     },
     {
       name: "basic with operation name",
@@ -42,7 +42,7 @@ describe("defaultUsageReportingSignature", () => {
             name
           }
         }
-      `
+      `,
     },
     {
       name: "with various inline types",
@@ -53,7 +53,7 @@ describe("defaultUsageReportingSignature", () => {
             name(apple: [[10]], cat: ENUM_VALUE, bag: { input: "value" })
           }
         }
-      `
+      `,
     },
     {
       name: "with various argument types",
@@ -64,7 +64,7 @@ describe("defaultUsageReportingSignature", () => {
             name(apple: $a, cat: $c, bag: $b)
           }
         }
-      `
+      `,
     },
     {
       name: "fragment",
@@ -84,7 +84,7 @@ describe("defaultUsageReportingSignature", () => {
         fragment Baz on User {
           jkl
         }
-      `
+      `,
     },
     {
       name: "fragments in various order",
@@ -104,7 +104,7 @@ describe("defaultUsageReportingSignature", () => {
         fragment Baz on User {
           jkl
         }
-      `
+      `,
     },
     {
       name: "full test",
@@ -134,8 +134,8 @@ describe("defaultUsageReportingSignature", () => {
         fragment Nested on User {
           blah
         }
-      `
-    }
+      `,
+    },
   ];
   cases.forEach(({ name, operationName, input }) => {
     test(name, () => {
@@ -158,7 +158,7 @@ describe("operationRegistrySignature", () => {
             name
           }
         }
-      `
+      `,
     },
     {
       name: "basic test with query",
@@ -169,7 +169,7 @@ describe("operationRegistrySignature", () => {
             name
           }
         }
-      `
+      `,
     },
     {
       name: "basic with operation name",
@@ -180,7 +180,7 @@ describe("operationRegistrySignature", () => {
             name
           }
         }
-      `
+      `,
     },
     {
       name: "with various inline types",
@@ -191,7 +191,7 @@ describe("operationRegistrySignature", () => {
             name(apple: [[10]], cat: ENUM_VALUE, bag: { input: "value" })
           }
         }
-      `
+      `,
     },
     {
       name: "with various argument types",
@@ -202,7 +202,7 @@ describe("operationRegistrySignature", () => {
             name(apple: $a, cat: $c, bag: $b)
           }
         }
-      `
+      `,
     },
     {
       name: "fragment",
@@ -222,7 +222,7 @@ describe("operationRegistrySignature", () => {
         fragment Baz on User {
           jkl
         }
-      `
+      `,
     },
     {
       name: "fragments in various order",
@@ -242,7 +242,7 @@ describe("operationRegistrySignature", () => {
         fragment Baz on User {
           jkl
         }
-      `
+      `,
     },
     {
       name: "full test",
@@ -272,7 +272,7 @@ describe("operationRegistrySignature", () => {
         fragment Nested on User {
           blah
         }
-      `
+      `,
     },
     {
       name: "test with preserveStringAndNumericLiterals=true",
@@ -292,8 +292,8 @@ describe("operationRegistrySignature", () => {
           }
         }
       `,
-      options: { preserveStringAndNumericLiterals: true }
-    }
+      options: { preserveStringAndNumericLiterals: true },
+    },
   ];
   cases.forEach(({ name, operationName, input, options }) => {
     test(name, () => {

@@ -1,4 +1,6 @@
-import moment from "moment";
+const ONE_SECOND_AS_MS = 1000;
+const ONE_MINUTE_AS_MS = 60 * ONE_SECOND_AS_MS;
+const ONE_HOUR_AS_MS = 60 * ONE_MINUTE_AS_MS;
 
 export function formatMS(
   ms: number,
@@ -8,12 +10,12 @@ export function formatMS(
 ) {
   if (ms === 0 || ms === null) return "0";
   const bounds = [
-    moment.duration(1, "hour").asMilliseconds(),
-    moment.duration(1, "minute").asMilliseconds(),
-    moment.duration(1, "second").asMilliseconds(),
+    ONE_HOUR_AS_MS,
+    ONE_MINUTE_AS_MS,
+    ONE_SECOND_AS_MS,
     1,
     0.001,
-    0.000001
+    0.000001,
   ];
   const units = ["hr", "min", "s", "ms", "μs", "ns"];
 
@@ -24,7 +26,7 @@ export function formatMS(
     return f.toFixed(2);
   };
 
-  const bound = bounds.find(b => b <= ms) || bounds[bounds.length - 1];
+  const bound = bounds.find((b) => b <= ms) || bounds[bounds.length - 1];
   const boundIndex = bounds.indexOf(bound);
   const unit = boundIndex >= 0 ? units[boundIndex] : "";
 

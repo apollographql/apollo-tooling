@@ -102,7 +102,7 @@ export const gitInfo = async (
       authorEmail ? `<${authorEmail}>` : ""
     }`.trim();
 
-    message = commit.message;
+    message = "message" in commit ? commit.message : "";
 
     // The remoteUrl call can fail and throw an error
     // https://github.com/kurttheviking/git-rev-sync-js#gitremoteurl--string
@@ -128,7 +128,7 @@ export const gitInfo = async (
       commit,
       remoteUrl,
       message,
-      branch
+      branch,
     },
     identity
   ) as GitContext;

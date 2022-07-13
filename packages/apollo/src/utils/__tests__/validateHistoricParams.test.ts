@@ -7,7 +7,7 @@ describe("validateHistoricParams", () => {
       to: -0,
       from: -86400,
       queryCountThreshold: 1,
-      queryCountThresholdPercentage: 0.5
+      queryCountThresholdPercentage: 0.5,
     });
 
     // Providing an ISO 8601 formatted duration
@@ -15,7 +15,7 @@ describe("validateHistoricParams", () => {
       to: -0,
       from: -86400,
       queryCountThreshold: 1,
-      queryCountThresholdPercentage: 0.5
+      queryCountThresholdPercentage: 0.5,
     });
   });
 
@@ -25,7 +25,7 @@ describe("validateHistoricParams", () => {
       validateHistoricParams({
         validationPeriod: "0",
         queryCountThreshold: 1,
-        queryCountThresholdPercentage: 50
+        queryCountThresholdPercentage: 50,
       })
     ).toThrow(/--validationPeriod/);
 
@@ -34,7 +34,7 @@ describe("validateHistoricParams", () => {
       validateHistoricParams({
         validationPeriod: "P1D",
         queryCountThreshold: 0.5,
-        queryCountThresholdPercentage: 50
+        queryCountThresholdPercentage: 50,
       })
     ).toThrow(/--queryCountThreshold/);
 
@@ -43,7 +43,7 @@ describe("validateHistoricParams", () => {
       validateHistoricParams({
         validationPeriod: "P1D",
         queryCountThreshold: 1,
-        queryCountThresholdPercentage: 101
+        queryCountThresholdPercentage: 101,
       })
     ).toThrow(/--queryCountThresholdPercentage/);
   });
@@ -53,26 +53,26 @@ describe("validateHistoricParams", () => {
 
     expect(
       validateHistoricParams({
-        validationPeriod: "P1D"
+        validationPeriod: "P1D",
       })
     ).toEqual({ to: -0, from: -86400 });
 
     expect(
       validateHistoricParams({
-        queryCountThreshold: 1
+        queryCountThreshold: 1,
       })
     ).toEqual({ queryCountThreshold: 1 });
 
     expect(
       validateHistoricParams({
-        queryCountThresholdPercentage: 50
+        queryCountThresholdPercentage: 50,
       })
     ).toEqual({ queryCountThresholdPercentage: 0.5 });
 
     expect(
       validateHistoricParams({
         validationPeriod: "P1D",
-        queryCountThresholdPercentage: 50
+        queryCountThresholdPercentage: 50,
       })
     ).toEqual({ to: -0, from: -86400, queryCountThresholdPercentage: 0.5 });
   });
@@ -82,6 +82,6 @@ function getValidParams(validationPeriod: string) {
   return validateHistoricParams({
     validationPeriod,
     queryCountThreshold: 1,
-    queryCountThresholdPercentage: 50
+    queryCountThresholdPercentage: 50,
   });
 }

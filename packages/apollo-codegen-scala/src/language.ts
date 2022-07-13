@@ -17,7 +17,7 @@ export function comment(
   const split = comment ? comment.split("\n") : [];
   if (split.length > 0) {
     generator.printOnNewline("/**");
-    split.forEach(line => {
+    split.forEach((line) => {
       generator.printOnNewline(` * ${line.trim()}`);
     });
 
@@ -37,7 +37,7 @@ export function objectDeclaration(
   generator: CodeGenerator<LegacyCompilerContext, any>,
   {
     objectName,
-    superclass
+    superclass,
   }: {
     objectName: string;
     superclass?: string;
@@ -61,7 +61,7 @@ export function traitDeclaration(
     traitName,
     annotations,
     superclasses,
-    description
+    description,
   }: {
     traitName: string;
     annotations?: string[];
@@ -77,7 +77,7 @@ export function traitDeclaration(
   }
 
   generator.printOnNewline(
-    `${(annotations || []).map(a => "@" + a).join(" ")} trait ${traitName}` +
+    `${(annotations || []).map((a) => "@" + a).join(" ")} trait ${traitName}` +
       (superclasses ? ` extends ${superclasses.join(" with ")}` : "")
   );
   generator.pushScope({ typeName: traitName });
@@ -92,7 +92,7 @@ export function methodDeclaration(
   {
     methodName,
     description,
-    params
+    params,
   }: {
     methodName: string;
     description?: string;
@@ -111,7 +111,7 @@ export function methodDeclaration(
   }
 
   const paramsSection = (params || [])
-    .map(v => {
+    .map((v) => {
       return (
         v.name + ": " + v.type + (v.defaultValue ? ` = ${v.defaultValue}` : "")
       );
@@ -133,7 +133,7 @@ export function propertyDeclaration(
     jsName,
     propertyName,
     typeName,
-    description
+    description,
   }: {
     jsName?: string;
     propertyName: string;
@@ -165,7 +165,7 @@ export function propertyDeclarations(
     description: string;
   }[]
 ) {
-  declarations.forEach(o => {
+  declarations.forEach((o) => {
     propertyDeclaration(generator, o);
   });
 }
@@ -194,7 +194,7 @@ const reservedKeywords = new Set([
   "val",
   "var",
   "while",
-  "with"
+  "with",
 ]);
 
 export function escapeIdentifierIfNeeded(identifier: string) {

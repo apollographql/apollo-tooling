@@ -53,12 +53,12 @@ export default class Printer {
         const [contents, comment] = currentLineContents.split("//");
         newDocumentParts.push({
           main: contents.replace(/\s+$/g, ""),
-          comment: comment ? comment.trim() : null
+          comment: comment ? comment.trim() : null,
         });
       } else {
         newDocumentParts.push({
           main: currentLineContents,
-          comment: null
+          comment: null,
         });
       }
 

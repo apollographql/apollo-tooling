@@ -1,7 +1,7 @@
 import ServiceCheck, {
   formatHumanReadable,
   formatMarkdown,
-  formatTimePeriod
+  formatTimePeriod,
 } from "../check";
 import checkSchemaResult from "../../../../__fixtures__/check-schema-result";
 import { ChangeSeverity } from "apollo-language-server/lib/graphqlTypes";
@@ -9,7 +9,8 @@ import chalk from "chalk";
 import { stdout } from "stdout-stderr";
 import * as graphql from "graphql";
 import { graphqlTypes } from "apollo-language-server";
-import nock = require("nock");
+import nock from "nock";
+import stripAnsi from "strip-ansi";
 
 /**
  * Single URL for all local requests to be mocked
@@ -115,11 +116,14 @@ function sdlToIntrospectionQueryResult(schemaSdl: string) {
  */
 function mockIntrospectionQuery() {
   nock(localURL, { encodedQueryParams: true })
-    .post("/graphql", request => request.operationName === "IntrospectionQuery")
+    .post(
+      "/graphql",
+      (request) => request.operationName === "IntrospectionQuery"
+    )
     .reply(200, {
       // The SDL doesn't actually get used because we'll be simulating network responses regardless of input,
       // so we just use a fake SDL.
-      data: sdlToIntrospectionQueryResult(`type Query { me: ID }`)
+      data: sdlToIntrospectionQueryResult(`type Query { me: ID }`),
     });
 }
 
@@ -131,7 +135,7 @@ function mockCompositionSuccess() {
   mockIntrospectionQuery();
 
   nock(localURL, {
-    encodedQueryParams: true
+    encodedQueryParams: true,
   })
     .post(
       "/graphql",
@@ -140,14 +144,13 @@ function mockCompositionSuccess() {
     .reply(200, {
       data: {
         _service: {
-          sdl:
-            'extend type Query {\n  me: User\n}\n\ntype User @key(fields: "id") {\n  name: String\n  username: String\n  birthDate: String\n}\n'
-        }
-      }
+          sdl: 'extend type Query {\n  me: User\n}\n\ntype User @key(fields: "id") {\n  name: String\n  username: String\n  birthDate: String\n}\n',
+        },
+      },
     });
 
   nock("https://engine-staging-graphql.apollographql.com:443", {
-    encodedQueryParams: true
+    encodedQueryParams: true,
   })
     .post(
       "/api/graphql",
@@ -160,10 +163,10 @@ function mockCompositionSuccess() {
             compositionValidationResult: {
               compositionValidationDetails: {
                 schemaHash:
-                  "645fdd4b789fffb5c5b59443a12e6f575e61345e95fe9e1dae3fe9acb23c68efa8ac31ea657892f0a85d1c90d8503fe9e482f520fe8d9786ae26948de10ce4a6"
+                  "645fdd4b789fffb5c5b59443a12e6f575e61345e95fe9e1dae3fe9acb23c68efa8ac31ea657892f0a85d1c90d8503fe9e482f520fe8d9786ae26948de10ce4a6",
               },
               graphCompositionID: null,
-              errors: []
+              errors: [],
             },
             checkSchemaResult: {
               targetUrl:
@@ -178,24 +181,24 @@ function mockCompositionSuccess() {
                     severity: "NOTICE",
                     code: "ARG_CHANGED_TYPE",
                     description:
-                      "`Query.launches` argument `after` has changed type from `String` to `String!`"
-                  }
+                      "`Query.launches` argument `after` has changed type from `String` to `String!`",
+                  },
                 ],
                 validationConfig: {
                   from: "-47347200",
                   to: "-0",
                   queryCountThreshold: 1,
-                  queryCountThresholdPercentage: 0
-                }
-              }
-            }
-          }
-        }
-      }
+                  queryCountThresholdPercentage: 0,
+                },
+              },
+            },
+          },
+        },
+      },
     });
 
   nock("https://engine-staging-graphql.apollographql.com:443", {
-    encodedQueryParams: true
+    encodedQueryParams: true,
   })
     .post(
       "/api/graphql",
@@ -217,19 +220,19 @@ function mockCompositionSuccess() {
                   severity: "NOTICE",
                   code: "ARG_CHANGED_TYPE",
                   description:
-                    "`Query.launches` argument `after` has changed type from `String` to `String!`"
-                }
+                    "`Query.launches` argument `after` has changed type from `String` to `String!`",
+                },
               ],
               validationConfig: {
                 from: "-47347200",
                 to: "-0",
                 queryCountThreshold: 1,
-                queryCountThresholdPercentage: 0
-              }
-            }
-          }
-        }
-      }
+                queryCountThresholdPercentage: 0,
+              },
+            },
+          },
+        },
+      },
     });
 }
 
@@ -240,7 +243,7 @@ function mockNonFederatedFailure() {
   mockIntrospectionQuery();
 
   nock("https://engine-staging-graphql.apollographql.com:443", {
-    encodedQueryParams: true
+    encodedQueryParams: true,
   })
     .post("/api/graphql", () => true)
     .reply(200, {
@@ -259,19 +262,19 @@ function mockNonFederatedFailure() {
                   severity: "FAILURE",
                   code: "ARG_CHANGED_TYPE",
                   description:
-                    "`Query.launches` argument `after` has changed type from `String` to `String!`"
-                }
+                    "`Query.launches` argument `after` has changed type from `String` to `String!`",
+                },
               ],
               validationConfig: {
                 from: "-47347200",
                 to: "-0",
                 queryCountThreshold: 1,
-                queryCountThresholdPercentage: 0
-              }
-            }
-          }
-        }
-      }
+                queryCountThresholdPercentage: 0,
+              },
+            },
+          },
+        },
+      },
     });
 }
 
@@ -282,7 +285,7 @@ function mockNonFederatedSuccess() {
   mockIntrospectionQuery();
 
   nock("https://engine-staging-graphql.apollographql.com:443", {
-    encodedQueryParams: true
+    encodedQueryParams: true,
   })
     .post("/api/graphql", () => true)
     .reply(200, {
@@ -301,19 +304,19 @@ function mockNonFederatedSuccess() {
                   severity: "NOTICE",
                   code: "ARG_CHANGED_TYPE",
                   description:
-                    "`Query.launches` argument `after` has changed type from `String` to `String!`"
-                }
+                    "`Query.launches` argument `after` has changed type from `String` to `String!`",
+                },
               ],
               validationConfig: {
                 from: "-47347200",
                 to: "-0",
                 queryCountThreshold: 1,
-                queryCountThresholdPercentage: 0
-              }
-            }
-          }
-        }
-      }
+                queryCountThresholdPercentage: 0,
+              },
+            },
+          },
+        },
+      },
     });
 }
 
@@ -324,7 +327,7 @@ const mockPartialSchemaCheckFailure = () => {
   mockIntrospectionQuery();
 
   nock(localURL, {
-    encodedQueryParams: true
+    encodedQueryParams: true,
   })
     .post(
       "/graphql",
@@ -333,14 +336,13 @@ const mockPartialSchemaCheckFailure = () => {
     .reply(200, {
       data: {
         _service: {
-          sdl:
-            'extend type Query {\n  me: User\n}\n\ntype User @key(fields: "id") {\n  name: String\n  username: String\n  birthDate: String\n}\n'
-        }
-      }
+          sdl: 'extend type Query {\n  me: User\n}\n\ntype User @key(fields: "id") {\n  name: String\n  username: String\n  birthDate: String\n}\n',
+        },
+      },
     });
 
   nock("https://engine-staging-graphql.apollographql.com:443", {
-    encodedQueryParams: true
+    encodedQueryParams: true,
   })
     .post(
       "/api/graphql",
@@ -352,37 +354,37 @@ const mockPartialSchemaCheckFailure = () => {
           checkPartialSchema: {
             compositionValidationResult: {
               compositionValidationDetails: {
-                schemaHash: null
+                schemaHash: null,
               },
               graphCompositionID: null,
               errors: [
                 {
                   message:
-                    "[reviews] User.id -> marked @external but it does not have a matching field on on the base service (accounts)"
+                    "[reviews] User.id -> marked @external but it does not have a matching field on on the base service (accounts)",
                 },
                 {
                   message:
-                    "[reviews] User -> A @key selects id, but User.id could not be found"
+                    "[reviews] User -> A @key selects id, but User.id could not be found",
                 },
                 {
                   message:
-                    "[accounts] User -> A @key selects id, but User.id could not be found"
-                }
-              ]
+                    "[accounts] User -> A @key selects id, but User.id could not be found",
+                },
+              ],
             },
-            checkSchemaResult
-          }
-        }
-      }
+            checkSchemaResult,
+          },
+        },
+      },
     });
 };
 
 describe("service:check", () => {
-  let originalChalkEnabled;
+  let originalChalkSupportsColor;
 
   beforeEach(() => {
-    originalChalkEnabled = chalk.enabled;
-    chalk.enabled = false;
+    originalChalkSupportsColor = chalk.supportsColor;
+    chalk.supportsColor = false;
 
     // Clean console log capturing before tests in the event that `afterEach` was not run successfully.
     uncaptureApplicationOutput();
@@ -402,7 +404,7 @@ describe("service:check", () => {
   });
 
   afterEach(() => {
-    chalk.enabled = originalChalkEnabled;
+    chalk.supportsColor = originalChalkSupportsColor;
 
     // Clean up console log mocking
     uncaptureApplicationOutput();
@@ -431,7 +433,7 @@ describe("service:check", () => {
             ServiceCheck.run([
               ...cliKeyParameter,
               "--serviceName=accounts",
-              `--endpoint=${localURL}/graphql`
+              `--endpoint=${localURL}/graphql`,
             ])
           ).rejects.toThrow();
 
@@ -451,7 +453,7 @@ describe("service:check", () => {
             ServiceCheck.run([
               ...cliKeyParameter,
               "--serviceName=accounts",
-              `--endpoint=${localURL}/graphql`
+              `--endpoint=${localURL}/graphql`,
             ])
           ).rejects.toThrow();
 
@@ -471,7 +473,7 @@ describe("service:check", () => {
               ...cliKeyParameter,
               "--serviceName=accounts",
               `--endpoint=${localURL}/graphql`,
-              "--markdown"
+              "--markdown",
             ])
           ).resolves.not.toThrow();
 
@@ -491,7 +493,7 @@ describe("service:check", () => {
               ...cliKeyParameter,
               "--serviceName=accounts",
               `--endpoint=${localURL}/graphql`,
-              "--json"
+              "--json",
             ])
           ).resolves.not.toThrow();
 
@@ -511,7 +513,7 @@ describe("service:check", () => {
             ServiceCheck.run([
               ...cliKeyParameter,
               "--serviceName=accounts",
-              `--endpoint=${localURL}/graphql`
+              `--endpoint=${localURL}/graphql`,
             ])
           ).resolves.not.toThrow();
 
@@ -530,7 +532,7 @@ describe("service:check", () => {
               ...cliKeyParameter,
               "--serviceName=accounts",
               `--endpoint=${localURL}/graphql`,
-              `--graph=happy-fun-times`
+              `--graph=happy-fun-times`,
             ])
           ).rejects.toThrow(
             /Cannot specify a service token that does not match graph./
@@ -549,7 +551,7 @@ describe("service:check", () => {
               "--serviceName=accounts",
               `--endpoint=${localURL}/graphql`,
               `--graph=happy-fun-times`,
-              `--key=service:happy-fun-times:asldf89jaose9jroinc`
+              `--key=service:happy-fun-times:asldf89jaose9jroinc`,
             ])
           ).resolves.not.toThrow();
         });
@@ -566,7 +568,7 @@ describe("service:check", () => {
             ServiceCheck.run([
               ...cliKeyParameter,
               "--serviceName=accounts",
-              `--endpoint=${localURL}/graphql`
+              `--endpoint=${localURL}/graphql`,
             ])
           ).resolves.not.toThrow();
 
@@ -585,7 +587,7 @@ describe("service:check", () => {
               ...cliKeyParameter,
               "--serviceName=accounts",
               `--endpoint=${localURL}/graphql`,
-              "--markdown"
+              "--markdown",
             ])
           ).resolves.not.toThrow();
 
@@ -604,7 +606,7 @@ describe("service:check", () => {
               ...cliKeyParameter,
               "--serviceName=accounts",
               `--endpoint=${localURL}/graphql`,
-              "--json"
+              "--json",
             ])
           ).resolves.not.toThrow();
 
@@ -708,7 +710,7 @@ describe("service:check", () => {
           graphName: "engine",
           tag: "staging",
           checkSchemaResult,
-          graphCompositionID: "fff"
+          graphCompositionID: "fff",
         })
       ).toMatchSnapshot();
       // Check when all the values are singluar
@@ -721,20 +723,20 @@ describe("service:check", () => {
             diffToPrevious: {
               ...checkSchemaResult.diffToPrevious,
               affectedClients: [
-                checkSchemaResult.diffToPrevious.affectedClients[0]
+                checkSchemaResult.diffToPrevious.affectedClients[0],
               ],
               affectedQueries: [
-                checkSchemaResult.diffToPrevious.affectedQueries[0]
+                checkSchemaResult.diffToPrevious.affectedQueries[0],
               ],
               changes: [
                 checkSchemaResult.diffToPrevious.changes.find(
-                  change => change.severity === ChangeSeverity.FAILURE
-                )
+                  (change) => change.severity === ChangeSeverity.FAILURE
+                ),
               ],
-              numberOfCheckedOperations: 1
-            }
+              numberOfCheckedOperations: 1,
+            },
           },
-          graphCompositionID: "fff"
+          graphCompositionID: "fff",
         })
       ).toMatchSnapshot();
     });
@@ -755,12 +757,12 @@ describe("service:check", () => {
                 {
                   __typename: "Change",
                   code: "FIELD_ADDED",
-                  severity: ChangeSeverity.NOTICE
-                } as graphqlTypes.CheckSchema_service_checkSchema_diffToPrevious_changes
-              ]
-            }
+                  severity: ChangeSeverity.NOTICE,
+                } as graphqlTypes.CheckSchema_service_checkSchema_diffToPrevious_changes,
+              ],
+            },
           },
-          graphCompositionID: "fff"
+          graphCompositionID: "fff",
         })
       ).toMatchSnapshot();
     });
@@ -778,10 +780,10 @@ describe("service:check", () => {
               affectedClients: [],
               affectedQueries: [],
               changes: [],
-              validationConfig: null
-            }
+              validationConfig: null,
+            },
           },
-          graphCompositionID: "fff"
+          graphCompositionID: "fff",
         })
       ).toMatchSnapshot();
     });
@@ -812,10 +814,12 @@ describe("service:check", () => {
   describe("formatHumanReadable", () => {
     it("should have correct output with breaking and non-breaking changes", () => {
       expect(
-        formatHumanReadable({
-          checkSchemaResult,
-          graphCompositionID: "fff"
-        })
+        stripAnsi(
+          formatHumanReadable({
+            checkSchemaResult,
+            graphCompositionID: "fff",
+          })
+        )
       ).toMatchSnapshot();
     });
 
@@ -828,30 +832,33 @@ describe("service:check", () => {
               ...checkSchemaResult.diffToPrevious,
               severity: ChangeSeverity.NOTICE,
               affectedQueries: [],
-              changes: []
-            }
+              changes: [],
+            },
           },
-          graphCompositionID: "fff"
+          graphCompositionID: "fff",
         })
       ).toMatchSnapshot();
     });
 
     it("should have correct output with only breaking changes", () => {
       expect(
-        formatHumanReadable({
-          checkSchemaResult: {
-            ...checkSchemaResult,
-            diffToPrevious: {
-              ...checkSchemaResult.diffToPrevious,
-              severity: ChangeSeverity.NOTICE,
-              affectedQueries: [],
-              changes: checkSchemaResult.diffToPrevious.changes.filter(
-                change => change.severity === ChangeSeverity.FAILURE
-              )
-            }
-          },
-          graphCompositionID: "fff"
-        })
+        // remove color from snapshot, circle ci doesn't like it
+        stripAnsi(
+          formatHumanReadable({
+            checkSchemaResult: {
+              ...checkSchemaResult,
+              diffToPrevious: {
+                ...checkSchemaResult.diffToPrevious,
+                severity: ChangeSeverity.NOTICE,
+                affectedQueries: [],
+                changes: checkSchemaResult.diffToPrevious.changes.filter(
+                  (change) => change.severity === ChangeSeverity.FAILURE
+                ),
+              },
+            },
+            graphCompositionID: "fff",
+          })
+        )
       ).toMatchSnapshot();
     });
   });

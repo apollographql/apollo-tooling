@@ -4,7 +4,7 @@ import {
   GraphQLNonNull,
   GraphQLString,
   GraphQLEnumType,
-  GraphQLList
+  GraphQLList,
 } from "graphql";
 
 import { loadSchema } from "apollo-codegen-core/lib/loading";
@@ -18,7 +18,7 @@ import {
   CompilerContext,
   SelectionSet,
   Field,
-  Argument
+  Argument,
 } from "apollo-codegen-core/lib/compiler";
 
 import { SwiftAPIGenerator } from "../codeGeneration";
@@ -34,7 +34,7 @@ describe("Swift code generation", () => {
     source: string,
     options: CompilerOptions = {
       mergeInFieldsFromFragmentSpreads: true,
-      omitDeprecatedEnumCases: false
+      omitDeprecatedEnumCases: false,
     }
   ): CompilerContext {
     const document = parse(source);
@@ -194,7 +194,7 @@ describe("Swift code generation", () => {
         {
           generateOperationIds: true,
           mergeInFieldsFromFragmentSpreads: true,
-          omitDeprecatedEnumCases: false
+          omitDeprecatedEnumCases: false,
         }
       );
 
@@ -207,7 +207,7 @@ describe("Swift code generation", () => {
   describe("#initializerDeclarationForProperties()", () => {
     it(`should generate initializer for a property`, () => {
       generator.initializerDeclarationForProperties([
-        { propertyName: "episode", typeName: "Episode" }
+        { propertyName: "episode", typeName: "Episode" },
       ]);
 
       expect(generator.output).toMatchSnapshot();
@@ -215,7 +215,7 @@ describe("Swift code generation", () => {
 
     it(`should generate initializer for an optional property`, () => {
       generator.initializerDeclarationForProperties([
-        { propertyName: "episode", typeName: "Episode?", isOptional: true }
+        { propertyName: "episode", typeName: "Episode?", isOptional: true },
       ]);
 
       expect(generator.output).toMatchSnapshot();
@@ -224,7 +224,7 @@ describe("Swift code generation", () => {
     it(`should generate initializer for multiple properties`, () => {
       generator.initializerDeclarationForProperties([
         { propertyName: "episode", typeName: "Episode?", isOptional: true },
-        { propertyName: "scene", typeName: "String?", isOptional: true }
+        { propertyName: "scene", typeName: "String?", isOptional: true },
       ]);
 
       expect(generator.output).toMatchSnapshot();
@@ -237,7 +237,7 @@ describe("Swift code generation", () => {
         generator.propertyAssignmentForField({
           responseKey: "response_key",
           propertyName: "propertyName",
-          type: GraphQLString
+          type: GraphQLString,
         }).source
       ).toBe('"response_key": propertyName');
     });
@@ -247,7 +247,7 @@ describe("Swift code generation", () => {
         generator.propertyAssignmentForField({
           responseKey: "response_key",
           propertyName: "propertyName",
-          type: new GraphQLNonNull(GraphQLString)
+          type: new GraphQLNonNull(GraphQLString),
         }).source
       ).toBe('"response_key": propertyName');
     });
@@ -257,7 +257,7 @@ describe("Swift code generation", () => {
         generator.propertyAssignmentForField({
           responseKey: "response_key",
           propertyName: "propertyName",
-          type: new GraphQLList(GraphQLString)
+          type: new GraphQLList(GraphQLString),
         }).source
       ).toBe('"response_key": propertyName');
     });
@@ -267,7 +267,7 @@ describe("Swift code generation", () => {
         generator.propertyAssignmentForField({
           responseKey: "response_key",
           propertyName: "propertyName",
-          type: new GraphQLList(new GraphQLNonNull(GraphQLString))
+          type: new GraphQLList(new GraphQLNonNull(GraphQLString)),
         }).source
       ).toBe('"response_key": propertyName');
     });
@@ -277,7 +277,7 @@ describe("Swift code generation", () => {
         generator.propertyAssignmentForField({
           responseKey: "response_key",
           propertyName: "propertyName",
-          type: new GraphQLNonNull(new GraphQLList(GraphQLString))
+          type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
         }).source
       ).toBe('"response_key": propertyName');
     });
@@ -289,7 +289,7 @@ describe("Swift code generation", () => {
           propertyName: "propertyName",
           type: new GraphQLNonNull(
             new GraphQLList(new GraphQLNonNull(GraphQLString))
-          )
+          ),
         }).source
       ).toBe('"response_key": propertyName');
     });
@@ -299,7 +299,7 @@ describe("Swift code generation", () => {
         generator.propertyAssignmentForField({
           responseKey: "response_key",
           propertyName: "propertyName",
-          type: schema.getType("Droid")
+          type: schema.getType("Droid"),
         }).source
       ).toBe(
         '"response_key": propertyName.flatMap { (value: Droid) -> ResultMap in value.resultMap }'
@@ -311,7 +311,7 @@ describe("Swift code generation", () => {
         generator.propertyAssignmentForField({
           responseKey: "response_key",
           propertyName: "propertyName",
-          type: new GraphQLNonNull(schema.getType("Droid"))
+          type: new GraphQLNonNull(schema.getType("Droid")),
         }).source
       ).toBe('"response_key": propertyName.resultMap');
     });
@@ -321,7 +321,7 @@ describe("Swift code generation", () => {
         generator.propertyAssignmentForField({
           responseKey: "response_key",
           propertyName: "propertyName",
-          type: new GraphQLList(schema.getType("Droid"))
+          type: new GraphQLList(schema.getType("Droid")),
         }).source
       ).toBe(
         '"response_key": propertyName.flatMap { (value: [Droid?]) -> [ResultMap?] in value.map { (value: Droid?) -> ResultMap? in value.flatMap { (value: Droid) -> ResultMap in value.resultMap } } }'
@@ -333,7 +333,7 @@ describe("Swift code generation", () => {
         generator.propertyAssignmentForField({
           responseKey: "response_key",
           propertyName: "propertyName",
-          type: new GraphQLList(new GraphQLNonNull(schema.getType("Droid")))
+          type: new GraphQLList(new GraphQLNonNull(schema.getType("Droid"))),
         }).source
       ).toBe(
         '"response_key": propertyName.flatMap { (value: [Droid]) -> [ResultMap] in value.map { (value: Droid) -> ResultMap in value.resultMap } }'
@@ -345,7 +345,7 @@ describe("Swift code generation", () => {
         generator.propertyAssignmentForField({
           responseKey: "response_key",
           propertyName: "propertyName",
-          type: new GraphQLNonNull(new GraphQLList(schema.getType("Droid")))
+          type: new GraphQLNonNull(new GraphQLList(schema.getType("Droid"))),
         }).source
       ).toBe(
         '"response_key": propertyName.map { (value: Droid?) -> ResultMap? in value.flatMap { (value: Droid) -> ResultMap in value.resultMap } }'
@@ -359,7 +359,7 @@ describe("Swift code generation", () => {
           propertyName: "propertyName",
           type: new GraphQLNonNull(
             new GraphQLList(new GraphQLNonNull(schema.getType("Droid")))
-          )
+          ),
         }).source
       ).toBe(
         '"response_key": propertyName.map { (value: Droid) -> ResultMap in value.resultMap }'
@@ -413,8 +413,9 @@ describe("Swift code generation", () => {
 
       const outputField = operations["Test"].selectionSet
         .selections[0] as Field;
-      generator.propertyDeclarationForField(outputField.selectionSet
-        .selections[0] as (Field & Property));
+      generator.propertyDeclarationForField(
+        outputField.selectionSet.selections[0] as Field & Property
+      );
 
       expect(generator.output).toMatchSnapshot();
     });
@@ -502,13 +503,14 @@ describe("Swift code generation", () => {
         }
       `);
 
-      const selectionSet = (operations["Hero"].selectionSet
-        .selections[0] as Field).selectionSet as SelectionSet;
+      const selectionSet = (
+        operations["Hero"].selectionSet.selections[0] as Field
+      ).selectionSet as SelectionSet;
 
       generator.structDeclarationForSelectionSet(
         {
           structName: "Hero",
-          selectionSet
+          selectionSet,
         },
         false
       );
@@ -526,13 +528,14 @@ describe("Swift code generation", () => {
         }
       `);
 
-      const selectionSet = (operations["Hero"].selectionSet
-        .selections[0] as Field).selectionSet as SelectionSet;
+      const selectionSet = (
+        operations["Hero"].selectionSet.selections[0] as Field
+      ).selectionSet as SelectionSet;
 
       generator.structDeclarationForSelectionSet(
         {
           structName: "Hero",
-          selectionSet
+          selectionSet,
         },
         false
       );
@@ -552,13 +555,14 @@ describe("Swift code generation", () => {
         }
       `);
 
-      const selectionSet = (operations["Hero"].selectionSet
-        .selections[0] as Field).selectionSet as SelectionSet;
+      const selectionSet = (
+        operations["Hero"].selectionSet.selections[0] as Field
+      ).selectionSet as SelectionSet;
 
       generator.structDeclarationForSelectionSet(
         {
           structName: "Hero",
-          selectionSet
+          selectionSet,
         },
         false
       );
@@ -591,14 +595,14 @@ describe("Swift code generation", () => {
       generator.structDeclarationForSelectionSet(
         {
           structName: "Human",
-          selectionSet: human0
+          selectionSet: human0,
         },
         false
       );
       generator.structDeclarationForSelectionSet(
         {
           structName: "Human",
-          selectionSet: human1
+          selectionSet: human1,
         },
         false
       );
@@ -617,13 +621,14 @@ describe("Swift code generation", () => {
         }
       `);
 
-      const selectionSet = (operations["Hero"].selectionSet
-        .selections[0] as Field).selectionSet as SelectionSet;
+      const selectionSet = (
+        operations["Hero"].selectionSet.selections[0] as Field
+      ).selectionSet as SelectionSet;
 
       generator.structDeclarationForSelectionSet(
         {
           structName: "Hero",
-          selectionSet
+          selectionSet,
         },
         false
       );
@@ -645,13 +650,14 @@ describe("Swift code generation", () => {
         }
       `);
 
-      const selectionSet = (operations["Hero"].selectionSet
-        .selections[0] as Field).selectionSet as SelectionSet;
+      const selectionSet = (
+        operations["Hero"].selectionSet.selections[0] as Field
+      ).selectionSet as SelectionSet;
 
       generator.structDeclarationForSelectionSet(
         {
           structName: "Hero",
-          selectionSet
+          selectionSet,
         },
         false
       );
@@ -673,13 +679,14 @@ describe("Swift code generation", () => {
         }
       `);
 
-      const selectionSet = (operations["Hero"].selectionSet
-        .selections[0] as Field).selectionSet as SelectionSet;
+      const selectionSet = (
+        operations["Hero"].selectionSet.selections[0] as Field
+      ).selectionSet as SelectionSet;
 
       generator.structDeclarationForSelectionSet(
         {
           structName: "Hero",
-          selectionSet
+          selectionSet,
         },
         false
       );
@@ -699,13 +706,14 @@ describe("Swift code generation", () => {
         }
       `);
 
-      const selectionSet = (operations["Hero"].selectionSet
-        .selections[0] as Field).selectionSet as SelectionSet;
+      const selectionSet = (
+        operations["Hero"].selectionSet.selections[0] as Field
+      ).selectionSet as SelectionSet;
 
       generator.structDeclarationForSelectionSet(
         {
           structName: "Hero",
-          selectionSet
+          selectionSet,
         },
         false
       );
@@ -729,13 +737,14 @@ describe("Swift code generation", () => {
         }
       `);
 
-      const selectionSet = (operations["Hero"].selectionSet
-        .selections[0] as Field).selectionSet as SelectionSet;
+      const selectionSet = (
+        operations["Hero"].selectionSet.selections[0] as Field
+      ).selectionSet as SelectionSet;
 
       generator.structDeclarationForSelectionSet(
         {
           structName: "Hero",
-          selectionSet
+          selectionSet,
         },
         false
       );
@@ -752,13 +761,14 @@ describe("Swift code generation", () => {
         }
       `);
 
-      const selectionSet = (operations["Hero"].selectionSet
-        .selections[0] as Field).selectionSet as SelectionSet;
+      const selectionSet = (
+        operations["Hero"].selectionSet.selections[0] as Field
+      ).selectionSet as SelectionSet;
 
       generator.structDeclarationForSelectionSet(
         {
           structName: "Hero",
-          selectionSet
+          selectionSet,
         },
         false
       );
@@ -777,7 +787,7 @@ describe("Swift code generation", () => {
     it("should escape identifiers in cases of enum declaration for a GraphQLEnumType", () => {
       const albumPrivaciesEnum = new GraphQLEnumType({
         name: "AlbumPrivacies",
-        values: { PUBLIC: { value: "PUBLIC" }, PRIVATE: { value: "PRIVATE" } }
+        values: { PUBLIC: { value: "PUBLIC" }, PRIVATE: { value: "PRIVATE" } },
       });
 
       generator.typeDeclarationForGraphQLType(albumPrivaciesEnum, false);
@@ -797,7 +807,7 @@ describe("Swift code generation", () => {
         {
           generateOperationIds: true,
           mergeInFieldsFromFragmentSpreads: true,
-          omitDeprecatedEnumCases: true
+          omitDeprecatedEnumCases: true,
         }
       );
 
@@ -848,11 +858,14 @@ describe("Swift code generation", () => {
         }
       `);
 
-      const fieldArguments = (operations["FieldArgumentsWithInputObjects"]
-        .selectionSet.selections[0] as Field).args as Argument[];
-      const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(
-        fieldArguments
-      ).source;
+      const fieldArguments = (
+        operations["FieldArgumentsWithInputObjects"].selectionSet
+          .selections[0] as Field
+      ).args as Argument[];
+      const dictionaryLiteral =
+        generator.helpers.dictionaryLiteralForFieldArguments(
+          fieldArguments
+        ).source;
 
       expect(dictionaryLiteral).toBe(
         '["episode": "JEDI", "review": ["stars": 2, "commentary": GraphQLVariable("commentary"), "favorite_color": ["red": GraphQLVariable("red"), "blue": 100, "green": 50]]]'
@@ -885,11 +898,14 @@ describe("Swift code generation", () => {
       generator.context = context;
 
       const { operations } = context;
-      const fieldArguments = (operations["FieldArgumentsWithEmptyInputObject"]
-        .selectionSet.selections[0] as Field).args as Argument[];
-      const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(
-        fieldArguments
-      ).source;
+      const fieldArguments = (
+        operations["FieldArgumentsWithEmptyInputObject"].selectionSet
+          .selections[0] as Field
+      ).args as Argument[];
+      const dictionaryLiteral =
+        generator.helpers.dictionaryLiteralForFieldArguments(
+          fieldArguments
+        ).source;
 
       expect(dictionaryLiteral).toBe('["input": [:]]');
     });
@@ -915,11 +931,14 @@ describe("Swift code generation", () => {
       generator.context = context;
 
       const { operations } = context;
-      const fieldArguments = (operations["FieldArgumentsWithEmptyInputArray"]
-        .selectionSet.selections[0] as Field).args as Argument[];
-      const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(
-        fieldArguments
-      ).source;
+      const fieldArguments = (
+        operations["FieldArgumentsWithEmptyInputArray"].selectionSet
+          .selections[0] as Field
+      ).args as Argument[];
+      const dictionaryLiteral =
+        generator.helpers.dictionaryLiteralForFieldArguments(
+          fieldArguments
+        ).source;
 
       expect(dictionaryLiteral).toBe('["input": []]');
     });
@@ -953,11 +972,14 @@ describe("Swift code generation", () => {
       generator.context = context;
 
       const { operations } = context;
-      const fieldArguments = (operations["FieldArgumentsWithVariousScalars"]
-        .selectionSet.selections[0] as Field).args as Argument[];
-      const dictionaryLiteral = generator.helpers.dictionaryLiteralForFieldArguments(
-        fieldArguments
-      ).source;
+      const fieldArguments = (
+        operations["FieldArgumentsWithVariousScalars"].selectionSet
+          .selections[0] as Field
+      ).args as Argument[];
+      const dictionaryLiteral =
+        generator.helpers.dictionaryLiteralForFieldArguments(
+          fieldArguments
+        ).source;
 
       expect(dictionaryLiteral).toBe(
         '["input": ["id": nil, "id2": "4", "name": "Anne", "age": 27, "rating": 4.7, "bool": true]]'

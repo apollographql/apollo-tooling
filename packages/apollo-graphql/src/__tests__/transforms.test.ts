@@ -3,7 +3,7 @@ import { default as gql, disableFragmentWarnings } from "graphql-tag";
 import {
   printWithReducedWhitespace,
   hideLiterals,
-  hideStringAndNumericLiterals
+  hideStringAndNumericLiterals,
 } from "../transforms";
 
 // The gql duplicate fragment warning feature really is just warnings; nothing
@@ -32,8 +32,8 @@ describe("printWithReducedWhitespace", () => {
         }
       `,
       output:
-        'query Foo($a:Int){user(name:"   tab->\\tyay",other:"apple\\n   bag\\ncat"){name}}'
-    }
+        'query Foo($a:Int){user(name:"   tab->\\tyay",other:"apple\\n   bag\\ncat"){name}}',
+    },
   ];
   cases.forEach(({ name, input, output }) => {
     test(name, () => {
@@ -84,8 +84,8 @@ describe("hideLiterals", () => {
       output:
         'query Foo($b:Int,$a:Boolean){user(name:"",age:0,pct:0,lst:[],obj:{}){...Bar...on User{hello bee}tz aliased:name ' +
         'withInputs(str:"",int:0,flt:0,lst:[],obj:{})}}' +
-        "fragment Bar on User{age@skip(if:$a)...Nested}fragment Nested on User{blah}"
-    }
+        "fragment Bar on User{age@skip(if:$a)...Nested}fragment Nested on User{blah}",
+    },
   ];
   cases.forEach(({ name, input, output }) => {
     test(name, () => {
@@ -136,8 +136,8 @@ describe("hideStringAndNumericLiterals", () => {
       output:
         'query Foo($b:Int,$a:Boolean){user(name:"",age:0,pct:0,lst:["","",""],obj:{a:"",b:0}){...Bar...on User{hello bee}tz aliased:name ' +
         'withInputs(str:"",int:0,flt:0,lst:["","",""],obj:{q:"",s:0})}}' +
-        "fragment Bar on User{age@skip(if:$a)...Nested}fragment Nested on User{blah}"
-    }
+        "fragment Bar on User{age@skip(if:$a)...Nested}fragment Nested on User{blah}",
+    },
   ];
   cases.forEach(({ name, input, output }) => {
     test(name, () => {

@@ -19,22 +19,22 @@ export default class ServiceDownload extends ProjectCommand {
       description:
         "[Deprecated: please use --variant instead] The tag (AKA variant) to download the schema of",
       hidden: true,
-      exclusive: ["variant"]
+      exclusive: ["variant"],
     }),
     variant: flags.string({
       char: "v",
       description: "The variant to download the schema of",
-      exclusive: ["tag"]
+      exclusive: ["tag"],
     }),
     graph: flags.string({
       char: "g",
       description:
-        "The ID of the graph in the Apollo registry for which to download the schema for. Overrides config file if provided."
+        "The ID of the graph in the Apollo registry for which to download the schema for. Overrides config file if provided.",
     }),
     skipSSLValidation: flags.boolean({
       char: "k",
-      description: "Allow connections to an SSL site without certs"
-    })
+      description: "Allow connections to an SSL site without certs",
+    }),
   };
 
   static args = [
@@ -43,8 +43,8 @@ export default class ServiceDownload extends ProjectCommand {
       description:
         "Path to write the introspection result to. Supports .json output only.",
       required: true,
-      default: "schema.json"
-    }
+      default: "schema.json",
+    },
   ];
 
   async run() {
@@ -82,8 +82,8 @@ export default class ServiceDownload extends ProjectCommand {
             }
             throw e;
           }
-        }
-      }
+        },
+      },
     ]);
   }
 }

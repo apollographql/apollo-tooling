@@ -1,4 +1,4 @@
-import { IConnection } from "vscode-languageserver";
+import { Connection } from "vscode-languageserver";
 
 /**
  * for errors (and other logs in debug mode) we want to print
@@ -10,44 +10,41 @@ const createAndTrimStackTrace = () => {
   let stack: string | undefined = new Error().stack;
   // remove the lines in the stack from _this_ function and the caller (in this file) and shorten the trace
   return stack && stack.split("\n").length > 2
-    ? stack
-        .split("\n")
-        .slice(3, 7)
-        .join("\n")
+    ? stack.split("\n").slice(3, 7).join("\n")
     : stack;
 };
 
 type Logger = (message?: any) => void;
 
 export class Debug {
-  private static connection?: IConnection;
-  private static infoLogger: Logger = message =>
+  private static connection?: Connection;
+  private static infoLogger: Logger = (message) =>
     console.log("[INFO] " + message);
-  private static warningLogger: Logger = message =>
+  private static warningLogger: Logger = (message) =>
     console.warn("[WARNING] " + message);
-  private static errorLogger: Logger = message =>
+  private static errorLogger: Logger = (message) =>
     console.error("[ERROR] " + message);
 
   /**
    * Setting a connection overrides the default info/warning/error
    * loggers to pass a notification to the connection
    */
-  public static SetConnection(conn: IConnection) {
+  public static SetConnection(conn: Connection) {
     Debug.connection = conn;
-    Debug.infoLogger = message =>
+    Debug.infoLogger = (message) =>
       Debug.connection!.sendNotification("serverDebugMessage", {
         type: "info",
-        message: message
+        message: message,
       });
-    Debug.warningLogger = message =>
+    Debug.warningLogger = (message) =>
       Debug.connection!.sendNotification("serverDebugMessage", {
         type: "warning",
-        message: message
+        message: message,
       });
-    Debug.errorLogger = message =>
+    Debug.errorLogger = (message) =>
       Debug.connection!.sendNotification("serverDebugMessage", {
         type: "error",
-        message: message
+        message: message,
       });
   }
 
@@ -58,7 +55,7 @@ export class Debug {
   public static SetLoggers({
     info,
     warning,
-    error
+    error,
   }: {
     info?: Logger;
     warning?: Logger;
@@ -86,7 +83,7 @@ export class Debug {
     Debug.connection &&
       Debug.connection.sendNotification("serverDebugMessage", {
         type: "errorTelemetry",
-        message: message
+        message: message,
       });
   }
 }

@@ -1,7 +1,7 @@
 import { ASTNode, print } from "graphql";
 import { Plugin, Config, Refs, Printer } from "pretty-format";
 
-export = (({
+export = {
   test(value: any) {
     return value && typeof value.kind === "string";
   },
@@ -20,5 +20,5 @@ export = (({
         .trim()
         .replace(/\n/g, "\n" + indentation)
     );
-  }
-} as Plugin) as unknown) as jest.SnapshotSerializerPlugin;
+  },
+} as Plugin as unknown as jest.SnapshotSerializerPlugin;

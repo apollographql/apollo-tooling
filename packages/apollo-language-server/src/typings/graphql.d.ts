@@ -3,7 +3,7 @@ import {
   TypeSystemDefinitionNode,
   TypeSystemExtensionNode,
   FragmentDefinitionNode,
-  OperationDefinitionNode
+  OperationDefinitionNode,
 } from "graphql";
 
 // FIXME: We should add proper type guards for these predicate functions

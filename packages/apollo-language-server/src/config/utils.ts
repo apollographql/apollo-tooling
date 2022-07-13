@@ -4,7 +4,7 @@ import {
   ClientServiceConfig,
   LocalServiceConfig,
   ServiceConfig,
-  ApolloConfigFormat
+  ApolloConfigFormat,
 } from "./config";
 import { ServiceSpecifier, ServiceIDAndTag } from "../engine";
 
@@ -40,8 +40,9 @@ export function getGraphIdFromConfig(config: ApolloConfigFormat) {
     return parseServiceSpecifier(config.service.name)[0];
   if (config.client) {
     if (typeof config.client.service === "string") {
-      return parseServiceSpecifier(config.client
-        .service as ServiceSpecifier)[0];
+      return parseServiceSpecifier(
+        config.client.service as ServiceSpecifier
+      )[0];
     }
     return config.client.service && config.client.service.name;
   } else {
@@ -50,6 +51,6 @@ export function getGraphIdFromConfig(config: ApolloConfigFormat) {
 }
 
 export function parseServiceSpecifier(specifier: ServiceSpecifier) {
-  const [id, tag] = specifier.split("@").map(x => x.trim());
+  const [id, tag] = specifier.split("@").map((x) => x.trim());
   return [id, tag] as ServiceIDAndTag;
 }

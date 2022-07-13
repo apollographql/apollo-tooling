@@ -7,7 +7,7 @@ import { sep } from "path";
  * print all items together separated by separator if provided
  */
 export function join(maybeArray?: any[], separator?: string) {
-  return maybeArray ? maybeArray.filter(x => x).join(separator || "") : "";
+  return maybeArray ? maybeArray.filter((x) => x).join(separator || "") : "";
 }
 
 /**
@@ -40,7 +40,7 @@ export function commentBlockContent(commentString: string) {
     "*\n" +
     commentString
       .split("\n")
-      .map(line => ` * ${line.replace("*/", "")}`)
+      .map((line) => ` * ${line.replace("*/", "")}`)
       .join("\n") +
     "\n "
   );

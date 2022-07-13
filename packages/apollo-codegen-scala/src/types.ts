@@ -9,7 +9,7 @@ import {
   isNonNullType,
   isListType,
   isScalarType,
-  isEnumType
+  isEnumType,
 } from "graphql";
 import { LegacyCompilerContext } from "apollo-codegen-core/lib/compiler/legacyIR";
 import { GraphQLType } from "graphql";
@@ -19,7 +19,7 @@ const builtInScalarMap = {
   [GraphQLInt.name]: "Int",
   [GraphQLFloat.name]: "Double",
   [GraphQLBoolean.name]: "Boolean",
-  [GraphQLID.name]: "String"
+  [GraphQLID.name]: "String",
 };
 
 export function possibleTypesForType(

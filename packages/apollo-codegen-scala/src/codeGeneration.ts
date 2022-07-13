@@ -6,7 +6,7 @@ import {
   GraphQLInputObjectType,
   isNonNullType,
   isEnumType,
-  isInputObjectType
+  isInputObjectType,
 } from "graphql";
 
 import { isTypeProperSuperTypeOf } from "apollo-codegen-core/lib/utilities/graphql";
@@ -20,7 +20,7 @@ import {
   comment,
   traitDeclaration,
   propertyDeclaration,
-  methodDeclaration
+  methodDeclaration,
 } from "./language";
 
 import {
@@ -30,7 +30,7 @@ import {
   operationClassName,
   enumCaseName,
   propertyFromLegacyField,
-  propertyFromInputField
+  propertyFromInputField,
 } from "./naming";
 
 import { multilineString } from "./values";
@@ -43,7 +43,7 @@ import {
   LegacyOperation,
   LegacyFragment,
   LegacyField,
-  LegacyInlineFragment
+  LegacyInlineFragment,
 } from "apollo-codegen-core/lib/compiler/legacyIR";
 import { GraphQLType } from "graphql";
 import { Property } from "./language";
@@ -62,15 +62,15 @@ export function generateSource(context: LegacyCompilerContext) {
     packageDeclaration(generator, context.options.namespace);
   }
 
-  context.typesUsed.forEach(type => {
+  context.typesUsed.forEach((type) => {
     typeDeclarationForGraphQLType(generator, type);
   });
 
-  Object.values(context.operations).forEach(operation => {
+  Object.values(context.operations).forEach((operation) => {
     classDeclarationForOperation(generator, operation);
   });
 
-  Object.values(context.fragments).forEach(fragment => {
+  Object.values(context.fragments).forEach((fragment) => {
     traitDeclarationForFragment(generator, fragment);
   });
 
@@ -89,7 +89,7 @@ export function classDeclarationForOperation(
     fragmentSpreads,
     fragmentsReferenced,
     source,
-    operationId
+    operationId,
   }: LegacyOperation
 ) {
   let objectName;
@@ -112,7 +112,7 @@ export function classDeclarationForOperation(
     generator,
     {
       objectName,
-      superclass: protocol
+      superclass: protocol,
     },
     () => {
       if (source) {
@@ -131,7 +131,7 @@ export function classDeclarationForOperation(
         generator.printOnNewline(
           "val requestString: String = { operationString"
         );
-        fragmentsReferenced.forEach(fragment => {
+        fragmentsReferenced.forEach((fragment) => {
           generator.print(
             ` + ${traitNameForFragmentName(fragment)}.fragmentString`
           );
@@ -165,7 +165,7 @@ export function classDeclarationForOperation(
 
         dataContainerDeclaration(generator, {
           name: "Variables",
-          properties
+          properties,
         });
       } else {
         generator.printOnNewline("type Variables = Unit");
@@ -176,7 +176,7 @@ export function classDeclarationForOperation(
         parentType: rootType,
         fields,
         inlineFragments,
-        fragmentSpreads
+        fragmentSpreads,
       });
     }
   );
@@ -190,7 +190,7 @@ export function traitDeclarationForFragment(
     fields,
     inlineFragments,
     fragmentSpreads,
-    source
+    source,
   }: LegacyFragment
 ) {
   const traitName = traitNameForFragmentName(fragmentName);
@@ -202,7 +202,7 @@ export function traitDeclarationForFragment(
       parentType: typeCondition,
       fields,
       inlineFragments,
-      fragmentSpreads
+      fragmentSpreads,
     },
     () => {
       if (source) {
@@ -224,7 +224,7 @@ export function traitDeclarationForSelectionSet(
     inlineFragments,
     fragmentSpreads,
     viewableAs,
-    parentFragments
+    parentFragments,
   }: {
     traitName: string;
     parentType: GraphQLCompositeType;
@@ -244,23 +244,27 @@ export function traitDeclarationForSelectionSet(
     : null;
 
   const properties = fields
-    .map(field => propertyFromLegacyField(generator.context, field, traitName))
-    .filter(field => field.propertyName != "__typename");
+    .map((field) =>
+      propertyFromLegacyField(generator.context, field, traitName)
+    )
+    .filter((field) => field.propertyName != "__typename");
 
-  const fragmentSpreadSuperClasses = (fragmentSpreads || []).filter(spread => {
-    const fragment = generator.context.fragments[spread];
-    const alwaysDefined = isTypeProperSuperTypeOf(
-      generator.context.schema,
-      fragment.typeCondition,
-      parentType
-    );
+  const fragmentSpreadSuperClasses = (fragmentSpreads || []).filter(
+    (spread) => {
+      const fragment = generator.context.fragments[spread];
+      const alwaysDefined = isTypeProperSuperTypeOf(
+        generator.context.schema,
+        fragment.typeCondition,
+        parentType
+      );
 
-    return alwaysDefined;
-  });
+      return alwaysDefined;
+    }
+  );
 
   // add types and implicit conversions
   if (inlineFragments && inlineFragments.length > 0) {
-    inlineFragments.forEach(inlineFragment => {
+    inlineFragments.forEach((inlineFragment) => {
       traitDeclarationForSelectionSet(generator, {
         traitName: traitNameForInlineFragment(inlineFragment),
         parentType: inlineFragment.typeCondition,
@@ -268,8 +272,8 @@ export function traitDeclarationForSelectionSet(
         fragmentSpreads: inlineFragment.fragmentSpreads,
         viewableAs: {
           traitName,
-          properties
-        }
+          properties,
+        },
       });
     });
   }
@@ -280,14 +284,17 @@ export function traitDeclarationForSelectionSet(
     extraSuperClasses: [
       ...(viewableAs ? [viewableAs.traitName] : []),
       ...(fragmentSpreadSuperClasses || []),
-      ...(parentFragments || [])
+      ...(parentFragments || []),
     ],
     insideCompanion: () => {
       if (possibleTypes) {
         generator.printNewlineIfNeeded();
         generator.printOnNewline("val possibleTypes = scala.collection.Set(");
         generator.print(
-          join(Array.from(possibleTypes).map(type => `"${String(type)}"`), ", ")
+          join(
+            Array.from(possibleTypes).map((type) => `"${String(type)}"`),
+            ", "
+          )
         );
         generator.print(")");
       }
@@ -298,7 +305,7 @@ export function traitDeclarationForSelectionSet(
       );
       generator.withinBlock(() => {
         if (inlineFragments && inlineFragments.length > 0) {
-          inlineFragments.forEach(inlineFragment => {
+          inlineFragments.forEach((inlineFragment) => {
             const fragClass = traitNameForInlineFragment(inlineFragment);
             generator.printOnNewline(`def as${inlineFragment.typeCondition}`);
             generator.print(`: Option[${fragClass}] =`);
@@ -311,7 +318,7 @@ export function traitDeclarationForSelectionSet(
         }
 
         if (fragmentSpreads) {
-          fragmentSpreads.forEach(s => {
+          fragmentSpreads.forEach((s) => {
             const fragment = generator.context.fragments[s];
             const alwaysDefined = isTypeProperSuperTypeOf(
               generator.context.schema,
@@ -332,11 +339,11 @@ export function traitDeclarationForSelectionSet(
       });
 
       const fragments = (fragmentSpreads || []).map(
-        f => generator.context.fragments[f]
+        (f) => generator.context.fragments[f]
       );
       fields
-        .filter(field => isCompositeType(getNamedType(field.type)))
-        .forEach(field => {
+        .filter((field) => isCompositeType(getNamedType(field.type)))
+        .forEach((field) => {
           traitDeclarationForSelectionSet(generator, {
             traitName: traitNameForPropertyName(field.responseName),
             parentType: getNamedType(field.type) as GraphQLCompositeType,
@@ -344,23 +351,25 @@ export function traitDeclarationForSelectionSet(
             inlineFragments: field.inlineFragments,
             fragmentSpreads: field.fragmentSpreads,
             parentFragments: fragments
-              .filter(f => {
-                return f.fields.some(o => field.responseName == o.responseName);
+              .filter((f) => {
+                return f.fields.some(
+                  (o) => field.responseName == o.responseName
+                );
               })
-              .map(f => {
+              .map((f) => {
                 return (
                   traitNameForFragmentName(f.fragmentName) +
                   "." +
                   traitNameForPropertyName(field.responseName)
                 );
-              })
+              }),
           });
         });
 
       if (objectClosure) {
         objectClosure();
       }
-    }
+    },
   });
 }
 
@@ -400,7 +409,7 @@ function enumerationDeclaration(
   comment(generator, description || "");
   generator.printOnNewline(`object ${name}`);
   generator.withinBlock(() => {
-    values.forEach(value => {
+    values.forEach((value) => {
       comment(generator, value.description || "");
       generator.printOnNewline(
         `val ${escapeIdentifierIfNeeded(enumCaseName(value.name))} = "${
@@ -418,7 +427,7 @@ function traitDeclarationForInputObjectType(
 ) {
   const { name, description } = type;
   const fields = Object.values(type.getFields());
-  const properties = fields.map(field =>
+  const properties = fields.map((field) =>
     propertyFromInputField(
       generator.context,
       field,
@@ -429,7 +438,7 @@ function traitDeclarationForInputObjectType(
   dataContainerDeclaration(generator, {
     name,
     properties,
-    description: description || undefined
+    description: description || undefined,
   });
 }
 
@@ -440,7 +449,7 @@ function dataContainerDeclaration(
     properties,
     extraSuperClasses,
     description,
-    insideCompanion
+    insideCompanion,
   }: {
     name: string;
     properties: (Property & {
@@ -458,14 +467,14 @@ function dataContainerDeclaration(
       traitName: name,
       superclasses: ["scala.scalajs.js.Object", ...(extraSuperClasses || [])],
       annotations: ["scala.scalajs.js.native"],
-      description: description || undefined
+      description: description || undefined,
     },
     () => {
-      properties.forEach(p => {
+      properties.forEach((p) => {
         propertyDeclaration(generator, {
           jsName: p.name || p.responseName,
           propertyName: p.propertyName,
-          typeName: p.typeName
+          typeName: p.typeName,
         });
       });
     }
@@ -474,26 +483,26 @@ function dataContainerDeclaration(
   objectDeclaration(
     generator,
     {
-      objectName: name
+      objectName: name,
     },
     () => {
       methodDeclaration(
         generator,
         {
           methodName: "apply",
-          params: properties.map(p => {
+          params: properties.map((p) => {
             return {
               name: p.propertyName,
               type: p.typeName,
               defaultValue: p.isOptional
                 ? "com.apollographql.scalajs.OptionalValue.empty"
-                : ""
+                : "",
             };
-          })
+          }),
         },
         () => {
           const propertiesIn = properties
-            .map(p => `"${p.name || p.responseName}" -> ${p.propertyName}`)
+            .map((p) => `"${p.name || p.responseName}" -> ${p.propertyName}`)
             .join(", ");
           generator.printOnNewline(
             `scala.scalajs.js.Dynamic.literal(${propertiesIn}).asInstanceOf[${name}]`
@@ -508,13 +517,13 @@ function dataContainerDeclaration(
           params: [
             {
               name: "value",
-              type: name
-            }
-          ]
+              type: name,
+            },
+          ],
         },
         () => {
           const propertiesExtracted = properties
-            .map(p => `value.${p.propertyName}`)
+            .map((p) => `value.${p.propertyName}`)
             .join(", ");
 
           generator.printOnNewline(`Some((${propertiesExtracted}))`);
@@ -530,17 +539,17 @@ function dataContainerDeclaration(
           generator,
           {
             methodName: "copy",
-            params: properties.map(p => {
+            params: properties.map((p) => {
               return {
                 name: p.propertyName,
                 type: p.typeName,
-                defaultValue: `orig.${p.propertyName}`
+                defaultValue: `orig.${p.propertyName}`,
               };
-            })
+            }),
           },
           () => {
             const propertiesIn = properties
-              .map(p => `"${p.name || p.responseName}" -> ${p.propertyName}`)
+              .map((p) => `"${p.name || p.responseName}" -> ${p.propertyName}`)
               .join(", ");
             generator.printOnNewline(
               `scala.scalajs.js.Dynamic.literal(${propertiesIn}).asInstanceOf[${name}]`

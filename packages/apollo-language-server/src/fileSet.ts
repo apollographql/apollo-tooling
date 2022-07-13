@@ -14,7 +14,7 @@ export class FileSet {
     rootURI,
     includes,
     excludes,
-    configURI
+    configURI,
   }: {
     rootURI: URI;
     includes: string[];
@@ -43,7 +43,7 @@ export class FileSet {
       .sync(joinedIncludes, {
         cwd: this.rootURI.fsPath,
         absolute: true,
-        ignore: this.excludes
+        ignore: this.excludes,
       })
       .map(normalizeURI);
   }

@@ -8,7 +8,7 @@ import { getServiceFromKey, isServiceKey } from "../../config";
 import {
   GraphQLSchemaProvider,
   SchemaChangeUnsubscribeHandler,
-  SchemaResolveConfig
+  SchemaResolveConfig,
 } from "./base";
 
 import { GetSchemaByTag } from "../../graphqlTypes";
@@ -51,8 +51,8 @@ export class EngineSchemaProvider implements GraphQLSchemaProvider {
       query: SCHEMA_QUERY,
       variables: {
         id: this.config.graph,
-        tag: override && override.tag ? override.tag : this.config.variant
-      }
+        tag: override && override.tag ? override.tag : this.config.variant,
+      },
     });
     if (errors) {
       // XXX better error handling of GraphQL errors

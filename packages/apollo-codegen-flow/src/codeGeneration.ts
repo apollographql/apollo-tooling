@@ -4,7 +4,7 @@ import {
   GraphQLEnumType,
   GraphQLInputObjectType,
   isEnumType,
-  isInputObjectType
+  isInputObjectType,
 } from "graphql";
 
 import {
@@ -12,12 +12,12 @@ import {
   Operation,
   Fragment,
   SelectionSet,
-  Field
+  Field,
 } from "apollo-codegen-core/lib/compiler";
 
 import {
   typeCaseForSelectionSet,
-  Variant
+  Variant,
 } from "apollo-codegen-core/lib/compiler/visitors/typeCase";
 
 import { collectAndMergeFields } from "apollo-codegen-core/lib/compiler/visitors/collectAndMergeFields";
@@ -47,11 +47,11 @@ function printEnumsAndInputObjects(
     //==============================================================
   `);
 
-  context.typesUsed.filter(isEnumType).forEach(enumType => {
+  context.typesUsed.filter(isEnumType).forEach((enumType) => {
     generator.typeAliasForEnumType(enumType);
   });
 
-  context.typesUsed.filter(isInputObjectType).forEach(inputObjectType => {
+  context.typesUsed.filter(isInputObjectType).forEach((inputObjectType) => {
     generator.typeAliasForInputObjectType(inputObjectType);
   });
 
@@ -70,7 +70,7 @@ export function generateSource(context: CompilerContext) {
     content: FlowGeneratedFile;
   }[] = [];
 
-  Object.values(context.operations).forEach(operation => {
+  Object.values(context.operations).forEach((operation) => {
     generator.fileHeader();
     generator.typeAliasesForOperation(operation);
 
@@ -79,11 +79,11 @@ export function generateSource(context: CompilerContext) {
     generatedFiles.push({
       sourcePath: operation.filePath,
       fileName: `${operation.operationName}.js`,
-      content: new FlowGeneratedFile(output)
+      content: new FlowGeneratedFile(output),
     });
   });
 
-  Object.values(context.fragments).forEach(fragment => {
+  Object.values(context.fragments).forEach((fragment) => {
     generator.fileHeader();
     generator.typeAliasesForFragment(fragment);
 
@@ -92,7 +92,7 @@ export function generateSource(context: CompilerContext) {
     generatedFiles.push({
       sourcePath: fragment.filePath,
       fileName: `${fragment.fragmentName}.js`,
-      content: new FlowGeneratedFile(output)
+      content: new FlowGeneratedFile(output),
     });
   });
 
@@ -102,7 +102,7 @@ export function generateSource(context: CompilerContext) {
 
   return {
     generatedFiles,
-    common
+    common,
   };
 }
 
@@ -182,9 +182,9 @@ export class FlowAPIGenerator extends FlowGenerator {
         this.exportDeclaration(
           this.typeAliasObject(
             interfaceName,
-            variables.map(variable => ({
+            variables.map((variable) => ({
               name: variable.name,
-              annotation: this.typeAnnotationFromGraphQLType(variable.type)
+              annotation: this.typeAnnotationFromGraphQLType(variable.type),
             })),
             { keyInheritsNullability: true }
           )
@@ -218,7 +218,7 @@ export class FlowAPIGenerator extends FlowGenerator {
       this.printer.enqueue(exportedTypeAlias);
     } else {
       const unionMembers: t.FlowTypeAnnotation[] = [];
-      variants.forEach(variant => {
+      variants.forEach((variant) => {
         this.scopeStackPush(variant.possibleTypes[0].toString());
         const properties = this.getPropertiesForVariant(variant);
 
@@ -264,7 +264,7 @@ export class FlowAPIGenerator extends FlowGenerator {
       this.context.options.mergeInFieldsFromFragmentSpreads
     );
 
-    return fields.map(field => {
+    return fields.map((field) => {
       const fieldName = field.alias !== undefined ? field.alias : field.name;
       this.scopeStackPush(fieldName);
 
@@ -310,7 +310,7 @@ export class FlowAPIGenerator extends FlowGenerator {
         )
       );
     } else {
-      const propertySets = variants.map(variant => {
+      const propertySets = variants.map((variant) => {
         this.scopeStackPush(variant.possibleTypes[0].toString());
         const properties = this.getPropertiesForVariant(variant);
         this.scopeStackPop();
@@ -327,14 +327,14 @@ export class FlowAPIGenerator extends FlowGenerator {
     return {
       name: field.alias ? field.alias : field.name,
       description: field.description,
-      annotation: annotation
+      annotation: annotation,
     };
   }
 
   private handleFieldValue(field: Field, variant: Variant) {
     let res;
     if (field.name === "__typename") {
-      const annotations = variant.possibleTypes.map(type => {
+      const annotations = variant.possibleTypes.map((type) => {
         const annotation = t.stringLiteralTypeAnnotation(type.toString());
         return annotation;
       });
@@ -342,14 +342,14 @@ export class FlowAPIGenerator extends FlowGenerator {
       res = {
         name: field.alias ? field.alias : field.name,
         description: field.description,
-        annotation: t.unionTypeAnnotation(annotations)
+        annotation: t.unionTypeAnnotation(annotations),
       };
     } else {
       // TODO: Double check that this works
       res = {
         name: field.alias ? field.alias : field.name,
         description: field.description,
-        annotation: this.typeAnnotationFromGraphQLType(field.type)
+        annotation: this.typeAnnotationFromGraphQLType(field.type),
       };
     }
 

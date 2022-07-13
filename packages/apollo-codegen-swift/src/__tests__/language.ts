@@ -16,11 +16,11 @@ describe("Swift code generation: Basic language constructs", () => {
       () => {
         generator.propertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
         });
         generator.propertyDeclaration({
           propertyName: "age",
-          typeName: "Int"
+          typeName: "Int",
         });
       }
     );
@@ -39,11 +39,11 @@ describe("Swift code generation: Basic language constructs", () => {
       () => {
         generator.propertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
         });
         generator.propertyDeclaration({
           propertyName: "age",
-          typeName: "Int"
+          typeName: "Int",
         });
       }
     );
@@ -62,15 +62,15 @@ describe("Swift code generation: Basic language constructs", () => {
       () => {
         generator.propertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
         });
         generator.propertyDeclaration({
           propertyName: "age",
-          typeName: "Int"
+          typeName: "Int",
         });
         generator.propertyDeclaration({
           propertyName: "self",
-          typeName: "Self"
+          typeName: "Self",
         });
       }
     );
@@ -88,11 +88,11 @@ describe("Swift code generation: Basic language constructs", () => {
     generator.structDeclaration({ structName: "Hero" }, false, () => {
       generator.propertyDeclaration({
         propertyName: "name",
-        typeName: "String"
+        typeName: "String",
       });
       generator.propertyDeclaration({
         propertyName: "age",
-        typeName: "Int"
+        typeName: "Int",
       });
     });
 
@@ -109,17 +109,17 @@ describe("Swift code generation: Basic language constructs", () => {
       {
         structName: "Hero",
         adoptedProtocols: ["GraphQLFragment"],
-        namespace: "StarWars"
+        namespace: "StarWars",
       },
       false,
       () => {
         generator.propertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
         });
         generator.propertyDeclaration({
           propertyName: "age",
-          typeName: "Int"
+          typeName: "Int",
         });
       }
     );
@@ -137,17 +137,17 @@ describe("Swift code generation: Basic language constructs", () => {
       {
         structName: "Hero",
         adoptedProtocols: ["GraphQLFragment"],
-        namespace: "StarWars"
+        namespace: "StarWars",
       },
       true,
       () => {
         generator.propertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
         });
         generator.propertyDeclaration({
           propertyName: "age",
-          typeName: "Int"
+          typeName: "Int",
         });
       }
     );
@@ -164,15 +164,15 @@ describe("Swift code generation: Basic language constructs", () => {
     generator.structDeclaration({ structName: "Type" }, false, () => {
       generator.propertyDeclaration({
         propertyName: "name",
-        typeName: "String"
+        typeName: "String",
       });
       generator.propertyDeclaration({
         propertyName: "yearOfBirth",
-        typeName: "Int"
+        typeName: "Int",
       });
       generator.propertyDeclaration({
         propertyName: "self",
-        typeName: "Self"
+        typeName: "Self",
       });
     });
 
@@ -189,17 +189,17 @@ describe("Swift code generation: Basic language constructs", () => {
     generator.structDeclaration({ structName: "Hero" }, false, () => {
       generator.propertyDeclaration({
         propertyName: "name",
-        typeName: "String"
+        typeName: "String",
       });
       generator.propertyDeclaration({
         propertyName: "friends",
-        typeName: "[Friend]"
+        typeName: "[Friend]",
       });
 
       generator.structDeclaration({ structName: "Friend" }, false, () => {
         generator.propertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
         });
       });
     });
@@ -222,15 +222,15 @@ describe("Swift code generation: Basic language constructs", () => {
       () => {
         generator.protocolPropertyDeclaration({
           propertyName: "name",
-          typeName: "String"
+          typeName: "String",
         });
         generator.protocolPropertyDeclaration({
           propertyName: "age",
-          typeName: "Int"
+          typeName: "Int",
         });
         generator.protocolPropertyDeclaration({
           propertyName: "default",
-          typeName: "Boolean"
+          typeName: "Boolean",
         });
       }
     );
@@ -252,12 +252,12 @@ describe("Swift code generation: Basic language constructs", () => {
         generator.propertyDeclaration({
           propertyName: "name",
           typeName: "String",
-          description: `A multiline comment \n on the hero's name.`
+          description: `A multiline comment \n on the hero's name.`,
         });
         generator.propertyDeclaration({
           propertyName: "age",
           typeName: "String",
-          description: `A multiline comment \n on the hero's age.`
+          description: `A multiline comment \n on the hero's age.`,
         });
       }
     );

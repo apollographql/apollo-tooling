@@ -12,12 +12,12 @@ import {
   isNonNullType,
   isListType,
   isScalarType,
-  isEnumType
+  isEnumType,
 } from "graphql";
 
 import {
   camelCase as _camelCase,
-  pascalCase as _pascalCase
+  pascalCase as _pascalCase,
 } from "change-case";
 import * as Inflector from "inflected";
 import { join, wrap } from "apollo-codegen-core/lib/utilities/printing";
@@ -29,7 +29,7 @@ import {
   SelectionSet,
   Field,
   FragmentSpread,
-  Argument
+  Argument,
 } from "apollo-codegen-core/lib/compiler";
 import { isMetaFieldName } from "apollo-codegen-core/lib/utilities/graphql";
 import { Variant } from "apollo-codegen-core/lib/compiler/visitors/typeCase";
@@ -44,7 +44,7 @@ const builtInScalarMap = {
   [GraphQLInt.name]: "Int",
   [GraphQLFloat.name]: "Double",
   [GraphQLBoolean.name]: "Bool",
-  [GraphQLID.name]: "GraphQLID"
+  [GraphQLID.name]: "GraphQLID",
 };
 
 export class Helpers {
@@ -131,7 +131,8 @@ export class Helpers {
 
   structNameForVariant(variant: SelectionSet) {
     return (
-      "As" + variant.possibleTypes.map(type => pascalCase(type.name)).join("Or")
+      "As" +
+      variant.possibleTypes.map((type) => pascalCase(type.name)).join("Or")
     );
   }
 
@@ -191,7 +192,7 @@ export class Helpers {
       propertyName,
       typeName,
       structName,
-      isOptional
+      isOptional,
     });
   }
 
@@ -201,7 +202,7 @@ export class Helpers {
     return Object.assign(variant, {
       propertyName: camelCase(structName),
       typeName: structName + "?",
-      structName
+      structName,
     });
   }
 
@@ -217,7 +218,7 @@ export class Helpers {
       propertyName: camelCase(fragmentSpread.fragmentName),
       typeName: isConditional ? structName + "?" : structName,
       structName,
-      isConditional
+      isConditional,
     });
   }
 
@@ -225,7 +226,7 @@ export class Helpers {
     return Object.assign({}, field, {
       propertyName: camelCase(field.name),
       typeName: this.typeNameFromGraphQLType(field.type),
-      isOptional: !isNonNullType(field.type)
+      isOptional: !isNonNullType(field.type),
     });
   }
 
@@ -234,16 +235,18 @@ export class Helpers {
     namespace?: string
   ): (Field & Property & Struct)[] | undefined {
     const properties = collectAndMergeFields(selectionSet, true)
-      .filter(field => field.name !== "__typename")
-      .map(field => this.propertyFromField(field, namespace));
+      .filter((field) => field.name !== "__typename")
+      .map((field) => this.propertyFromField(field, namespace));
 
     // If we're not merging in fields from fragment spreads, there is no guarantee there will a generated
     // type for a composite field, so to avoid compiler errors we skip the initializer for now.
     if (
       selectionSet.selections.some(
-        selection => selection.kind === "FragmentSpread"
+        (selection) => selection.kind === "FragmentSpread"
       ) &&
-      properties.some(property => isCompositeType(getNamedType(property.type)))
+      properties.some((property) =>
+        isCompositeType(getNamedType(property.type))
+      )
     ) {
       return undefined;
     }
@@ -295,7 +298,7 @@ export class Helpers {
       SwiftSource.wrap(
         swift`[`,
         SwiftSource.join(
-          args.map(arg => {
+          args.map((arg) => {
             return swift`${SwiftSource.string(arg.name)}: ${expressionFromValue(
               arg.value
             )}`;
@@ -390,7 +393,7 @@ function makeUniqueName(
   // Assume conflicts are very rare and property lists are short, and just do a linear search. If
   // we find a conflict, start over with the modified name.
   for (let name = proposedName; ; name += "_") {
-    if (properties.every(prop => prop.propertyName != name)) {
+    if (properties.every((prop) => prop.propertyName != name)) {
       return name;
     }
   }
@@ -406,7 +409,7 @@ function camelCase(value: string): string {
     "",
     "",
     value,
-    ""
+    "",
   ];
   return `${prefix}${_camelCase(middle)}${suffix}`;
 }
@@ -421,7 +424,7 @@ function pascalCase(value: string): string {
     "",
     "",
     value,
-    ""
+    "",
   ];
   return `${prefix}${_pascalCase(middle)}${suffix}`;
 }
