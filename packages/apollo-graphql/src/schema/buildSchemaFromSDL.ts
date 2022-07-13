@@ -68,8 +68,8 @@ try {
 // graphql 16. For compatible reason, try catch logic for 15 is kept with extra logic for 16.
 try {
   // Compatible for graphql-js@16
-  const PossibleTypeExtensionsRule = require("graphql")
-    .PossibleTypeExtensionsRule;
+  const PossibleTypeExtensionsRule =
+    require("graphql").PossibleTypeExtensionsRule;
 
   if (PossibleTypeExtensionsRule) {
     skippedSDLRules.push(PossibleTypeExtensionsRule);
