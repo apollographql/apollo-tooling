@@ -419,8 +419,9 @@ export class GraphQLClientProject extends GraphQLProject {
       for (const definition of document.ast.definitions) {
         if (definition.kind === Kind.OPERATION_DEFINITION) {
           if (!definition.name) {
+            sourceName = document.source.name
             throw new GraphQLError(
-              "Apollo does not support anonymous operations",
+              `Apollo does not support anonymous operations: ${sourceName}`,
               [definition]
             );
           }
