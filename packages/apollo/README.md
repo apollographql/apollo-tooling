@@ -4,6 +4,10 @@
 
 ---
 
+> **[2023-03-29] Note - all `apollo service:*` commands will reach end-of-life on April 28th, 2023.** Refer to this [blog post](https://www.apollographql.com/blog/announcement/backend/announcing-the-end-of-life-schedule-for-apollo-cli-service-commands/) for more details.
+
+---
+
 > **[2022-07-07] Are you here for codegen?** We highly recommend using [graphql-code-generator](https://www.graphql-code-generator.com/) instead. Codegen in this repo is no longer supported and will be removed completely in a future version. For additional migration details, please see this fantastic writeup by @dotansimha: https://github.com/apollographql/apollo-tooling/issues/2053
 
 ---
