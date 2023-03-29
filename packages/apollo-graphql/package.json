@@ -16,7 +16,7 @@
     "sha.js": "^2.4.11"
   },
   "peerDependencies": {
-    "graphql": "^14.2.1 || ^15.0.0"
+    "graphql": "^14.2.1 || ^15.0.0 || ^16.0.0"
   },
   "jest": {
     "preset": "ts-jest",
