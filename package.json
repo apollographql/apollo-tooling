@@ -54,7 +54,7 @@
     "@types/lodash.merge": "4.6.7",
     "@types/lodash.pickby": "4.6.7",
     "@types/lodash.sortby": "4.7.7",
-    "@types/minimatch": "3.0.5",
+    "@types/minimatch": "5.1.2",
     "@types/mkdirp": "1.0.2",
     "@types/nock": "10.0.3",
     "@types/node": "8.10.66",
