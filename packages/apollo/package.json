@@ -52,7 +52,7 @@
     "cli-ux": "6.0.9",
     "env-ci": "7.1.0",
     "gaze": "1.1.3",
-    "git-parse": "2.1.1",
+    "git-parse": "3.0.1",
     "git-rev-sync": "3.0.2",
     "git-url-parse": "11.6.0",
     "glob": "8.0.1",
