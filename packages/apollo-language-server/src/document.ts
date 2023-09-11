@@ -89,11 +89,14 @@ function extractGraphQLDocumentsFromJSTemplateLiterals(
 
   const documents: GraphQLDocument[] = [];
 
-  const regExp = new RegExp(`${tagName}\\s*\`([\\s\\S]+?)\``, "gm");
+  const regExp = new RegExp(
+    `${tagName}\\s*(?:<([\\sa-zA-Z0-9_,<>]+)>)?\\s*\`([\\s\\S]+?)\``,
+    "gm"
+  );
 
   let result;
   while ((result = regExp.exec(text)) !== null) {
-    const contents = replacePlaceholdersWithWhiteSpace(result[1]);
+    const contents = replacePlaceholdersWithWhiteSpace(result[2]);
     const position = document.positionAt(result.index + (tagName.length + 1));
     const locationOffset: SourceLocation = {
       line: position.line + 1,
