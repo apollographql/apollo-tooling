@@ -27,7 +27,7 @@
     "install-with-npm-8.5": "npm i -g npm@^8.5.0 && npm i"
   },
   "engines": {
-    "node": ">=8 <17",
+    "node": "<19",
     "npm": ">=8.5.0 <9.x"
   },
   "workspaces": [
@@ -85,7 +85,7 @@
     ]
   },
   "volta": {
-    "node": "16.15.1",
+    "node": "18.18.2",
     "npm": "8.13.1"
   }
 }
