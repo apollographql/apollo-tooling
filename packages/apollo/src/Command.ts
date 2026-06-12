@@ -100,6 +100,7 @@ export abstract class ProjectCommand extends Command {
   protected type: "service" | "client" = "service";
   protected configMap?: (flags: any) => DeepPartial<ApolloConfig>;
   private ctx!: ProjectContext;
+  private _deprecationWarningPrinted = false;
 
   async init() {
     const { flags, args } = this.parse<Flags, { [name: string]: any }>(
@@ -130,6 +131,8 @@ export abstract class ProjectCommand extends Command {
         ctx = { ...ctx, ...this.ctx };
       },
     });
+
+    this.printDeprecationWarning();
   }
 
   protected async createConfig(flags: Flags) {
@@ -292,7 +295,10 @@ export abstract class ProjectCommand extends Command {
     "-----------------------------------------------------------------\n";
 
   protected printDeprecationWarning() {
-    console.error(ProjectCommand.DEPRECATION_MSG);
+    if (!this._deprecationWarningPrinted) {
+      console.error(ProjectCommand.DEPRECATION_MSG);
+      this._deprecationWarningPrinted = true;
+    }
   }
 }
 
