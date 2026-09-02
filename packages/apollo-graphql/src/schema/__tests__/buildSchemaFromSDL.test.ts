@@ -380,6 +380,32 @@ type MutationRoot {
     it(`should add a resolver for a field`, () => {
       const name = () => {};
 
+      const schema = buildSchemaFromSDL(
+        {
+          typeDefs: gql`
+            type User {
+              name: String
+            }
+          `,
+          resolvers: {
+            User: {
+              name,
+            },
+          },
+        },
+      );
+
+      const userType = schema.getType("User");
+      expect(userType).toBeDefined();
+
+      const nameField = (userType! as GraphQLObjectType).getFields()["name"];
+      expect(nameField).toBeDefined();
+
+      expect(nameField.resolve).toEqual(name);
+    });
+    it(`should add a resolver for a field in array`, () => {
+      const name = () => {};
+
       const schema = buildSchemaFromSDL([
         {
           typeDefs: gql`
