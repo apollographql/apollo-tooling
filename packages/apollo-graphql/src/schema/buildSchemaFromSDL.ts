@@ -68,24 +68,24 @@ const sdlRules = specifiedSDLRules.filter(
   (rule) => !skippedSDLRules.includes(rule)
 );
 
+function moduleFromSDL(
+  moduleOrSDL: DocumentNode | GraphQLSchemaModule
+): GraphQLSchemaModule {
+  return isNode(moduleOrSDL) && isDocumentNode(moduleOrSDL) ? { typeDefs: moduleOrSDL } : moduleOrSDL;
+}
+
 export function modulesFromSDL(
-  modulesOrSDL: (GraphQLSchemaModule | DocumentNode)[] | DocumentNode
+  modulesOrSDL: (GraphQLSchemaModule | DocumentNode)[] | DocumentNode | GraphQLSchemaModule
 ): GraphQLSchemaModule[] {
   if (Array.isArray(modulesOrSDL)) {
-    return modulesOrSDL.map((moduleOrSDL) => {
-      if (isNode(moduleOrSDL) && isDocumentNode(moduleOrSDL)) {
-        return { typeDefs: moduleOrSDL };
-      } else {
-        return moduleOrSDL;
-      }
-    });
+    return modulesOrSDL.map(moduleFromSDL);
   } else {
-    return [{ typeDefs: modulesOrSDL }];
+    return [moduleFromSDL(modulesOrSDL)];
   }
 }
 
 export function buildSchemaFromSDL(
-  modulesOrSDL: (GraphQLSchemaModule | DocumentNode)[] | DocumentNode,
+  modulesOrSDL: (GraphQLSchemaModule | DocumentNode)[] | DocumentNode | GraphQLSchemaModule,
   schemaToExtend?: GraphQLSchema
 ): GraphQLSchema {
   const modules = modulesFromSDL(modulesOrSDL);
